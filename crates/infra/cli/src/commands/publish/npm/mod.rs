@@ -45,6 +45,14 @@ impl NpmController {
 
         if self.dry_run.get() {
             command = command.flag("--dry-run");
+        } else {
+            // Attach a sigstore-signed provenance attestation. `pnpm publish`
+            // (unlike `npm publish`) requires the flag explicitly even when
+            // OIDC trusted publishing is in use — the prior slang 1.3.5 release
+            // was OIDC-published but has `attestations: null` on the registry
+            // for exactly this reason. Requires the `id-token: write` permission
+            // already present on the publish job.
+            command = command.flag("--provenance");
         }
 
         command.current_dir(ArtifactPaths::root()).run();

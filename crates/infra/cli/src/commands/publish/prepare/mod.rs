@@ -115,6 +115,11 @@ fn prepare_cargo() -> Result<Vec<CargoArtifact>> {
     // The verification we lose by skipping is the safety net for cross-crate path-dep
     // rewrites; the batched workspace `cargo publish --dry-run` in the review job is what
     // catches problems there.
+    //
+    // `--allow-dirty` is required because `WasmPackage::build()` ran before this step and
+    // mutated generated files under `crates/solidity/outputs/npm/package/`. Those changes
+    // are intentional and don't affect the source crates we're packaging, but cargo would
+    // otherwise refuse to package with a dirty worktree.
     let mut command = Command::new("cargo")
         .arg("package")
         .flag("--no-verify")
@@ -170,24 +175,43 @@ fn prepare_cargo() -> Result<Vec<CargoArtifact>> {
     Ok(artifacts)
 }
 
-/// Extract `<crate>-<version>/Cargo.toml` from inside the `.crate` (gzipped tar)
-/// to a temp file and return its path. The crate file is just bytes — no code
-/// runs during extraction, by design.
+/// Extract `<crate>-<version>/Cargo.toml` (the *rewritten* manifest cargo writes
+/// alongside `Cargo.toml.orig`) from inside the `.crate` gzipped tar and write
+/// it to disk. The crate file is just bytes — no code runs during extraction,
+/// by design.
 fn extract_normalized_manifest(
     crate_path: &Path,
     crate_name: &str,
     version: &str,
 ) -> Result<PathBuf> {
-    let inner = format!("{crate_name}-{version}/Cargo.toml");
+    let inner_path = PathBuf::from(format!("{crate_name}-{version}/Cargo.toml"));
     let extracted = ArtifactPaths::cargo_dir().join(format!("{crate_name}-{version}.Cargo.toml"));
-    // Stream the .crate, decompress it, pick the Cargo.toml entry, write to disk.
-    let contents = Command::new("tar")
-        .args(["-xzOf", crate_path.unwrap_str(), inner.as_str()])
-        .evaluate()
-        .with_context(|| format!("Failed to extract {inner} from {crate_path:?}"))?;
-    fs::write(&extracted, contents)
-        .with_context(|| format!("Failed to write extracted manifest: {extracted:?}"))?;
-    Ok(extracted)
+
+    let file = fs::File::open(crate_path)
+        .with_context(|| format!("Failed to open .crate: {crate_path:?}"))?;
+    let mut archive = tar::Archive::new(flate2::read::GzDecoder::new(file));
+
+    for entry in archive
+        .entries()
+        .with_context(|| format!("Failed to read tar entries from {crate_path:?}"))?
+    {
+        let mut entry =
+            entry.with_context(|| format!("Failed to read tar entry from {crate_path:?}"))?;
+        let path = entry
+            .path()
+            .with_context(|| format!("Invalid path in {crate_path:?}"))?
+            .into_owned();
+        if path == inner_path {
+            let mut contents = Vec::new();
+            std::io::copy(&mut entry, &mut contents)
+                .with_context(|| format!("Failed to read {inner_path:?} from {crate_path:?}"))?;
+            fs::write(&extracted, contents)
+                .with_context(|| format!("Failed to write extracted manifest: {extracted:?}"))?;
+            return Ok(extracted);
+        }
+    }
+
+    bail!("Did not find {inner_path:?} inside {crate_path:?}");
 }
 
 fn find_single_file_with_extension(dir: &Path, extension: &str) -> Result<PathBuf> {

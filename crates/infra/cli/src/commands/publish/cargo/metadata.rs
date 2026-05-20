@@ -111,11 +111,12 @@ struct PackageTable {
 #[derive(Debug, Deserialize)]
 #[serde(untagged)]
 enum ReadmeField {
-    /// `readme = "README.md"` (or absent).
+    /// `readme = "README.md"`.
     Path(String),
-    /// `readme = false` — keep the variant so deserialization doesn't fail,
-    /// but treat it as "no readme" downstream.
-    Disabled(#[allow(dead_code)] bool),
+    /// `readme = false` — boolean form is allowed in TOML; we treat any value
+    /// downstream as "no readme", but we match against the bool so the field
+    /// isn't dead code.
+    Disabled(bool),
 }
 
 #[derive(Debug, Deserialize)]
@@ -157,7 +158,12 @@ impl PackagedManifest {
 
         let (readme, readme_file) = match self.package.readme {
             Some(ReadmeField::Path(p)) => (Some(p.clone()), Some(p)),
-            Some(ReadmeField::Disabled(_)) | None => (None, None),
+            Some(ReadmeField::Disabled(false)) | None => (None, None),
+            // `readme = true` is not a valid TOML manifest shape — fail loudly
+            // rather than silently emitting weird registry metadata.
+            Some(ReadmeField::Disabled(true)) => {
+                panic!("readme = true is not a valid Cargo.toml shape")
+            }
         };
 
         RegistryMetadata {
@@ -221,9 +227,20 @@ fn collect_dep_table(
 mod tests {
     use super::*;
 
-    /// Inline snippet of a real `.crate`-normalized Cargo.toml — what
-    /// `cargo package` writes for `metaslang_cst`. Captured so this test is
-    /// self-contained and runs in CI without any prior packaging step.
+    fn parse(toml_str: &str) -> RegistryMetadata {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("Cargo.toml");
+        std::fs::write(&path, toml_str).unwrap();
+        build_from_packaged_manifest(&path).expect("parse failed")
+    }
+
+    /// Real `.crate`-normalized `Cargo.toml` for `metaslang_cst` — captured
+    /// from `cargo package --no-verify --package metaslang_cst`. If `cargo`
+    /// changes its serializer in a way that breaks our parser, this fixture
+    /// will go stale; re-extract by running:
+    ///
+    ///     ./bin/cargo package --no-verify --allow-dirty --package metaslang_cst
+    ///     tar -xzOf target/package/metaslang_cst-*.crate metaslang_cst-*/Cargo.toml
     const NORMALIZED_FIXTURE: &str = r#"
 [package]
 edition = "2021"
@@ -255,11 +272,7 @@ version = "2.0.12"
 
     #[test]
     fn parses_normalized_manifest_shape() {
-        let dir = tempfile::tempdir().unwrap();
-        let path = dir.path().join("Cargo.toml");
-        std::fs::write(&path, NORMALIZED_FIXTURE).unwrap();
-
-        let md = build_from_packaged_manifest(&path).expect("parse failed");
+        let md = parse(NORMALIZED_FIXTURE);
         assert_eq!(md.name, "metaslang_cst");
         assert_eq!(md.vers, "1.3.5");
         assert_eq!(md.license.as_deref(), Some("MIT"));
@@ -281,5 +294,209 @@ version = "2.0.12"
 
         let nom_dep = md.deps.iter().find(|d| d.name == "nom").unwrap();
         assert_eq!(nom_dep.version_req, "8.0.0");
+    }
+
+    /// TOML treats `[dependencies.foo]` and `[dependencies] foo = { ... }` as
+    /// the same structure, so `cargo package`'s subtable form and any
+    /// hypothetical inline-table form deserialize identically. Lock that in.
+    #[test]
+    fn inline_table_dep_form_parses_identically() {
+        let inline = r#"
+[package]
+name = "x"
+version = "0.1.0"
+
+[dependencies]
+serde = { version = "1.0.219", features = ["derive"], default-features = false }
+"#;
+        let md = parse(inline);
+        let dep = md.deps.iter().find(|d| d.name == "serde").unwrap();
+        assert_eq!(dep.version_req, "1.0.219");
+        assert!(dep.features.contains(&"derive".to_string()));
+        assert!(!dep.default_features);
+    }
+
+    /// dev- and build-dependencies must each be tagged with the right `kind`.
+    #[test]
+    fn dev_and_build_dependencies_get_distinct_kinds() {
+        let toml = r#"
+[package]
+name = "x"
+version = "0.1.0"
+
+[dependencies]
+runtime_dep = "1"
+
+[dev-dependencies]
+test_dep = "2"
+
+[build-dependencies]
+build_dep = "3"
+"#;
+        let md = parse(toml);
+        let by_name = |n: &str| md.deps.iter().find(|d| d.name == n).expect(n);
+        assert_eq!(by_name("runtime_dep").kind, "normal");
+        assert_eq!(by_name("test_dep").kind, "dev");
+        assert_eq!(by_name("build_dep").kind, "build");
+    }
+
+    /// `[target.'cfg(unix)'.dependencies]` deps must carry the target string.
+    #[test]
+    fn target_specific_dependencies_carry_target() {
+        let toml = r#"
+[package]
+name = "x"
+version = "0.1.0"
+
+[target."cfg(unix)".dependencies]
+unix_only = "1"
+
+[target."cfg(windows)".dev-dependencies]
+windows_test = "2"
+"#;
+        let md = parse(toml);
+        let unix = md.deps.iter().find(|d| d.name == "unix_only").unwrap();
+        assert_eq!(unix.target.as_deref(), Some("cfg(unix)"));
+        assert_eq!(unix.kind, "normal");
+        let win = md.deps.iter().find(|d| d.name == "windows_test").unwrap();
+        assert_eq!(win.target.as_deref(), Some("cfg(windows)"));
+        assert_eq!(win.kind, "dev");
+    }
+
+    /// `key = { package = "real-name", ... }` is a rename: the registry entry
+    /// uses the real crate name; `explicit_name_in_toml` carries the alias.
+    #[test]
+    fn package_rename_uses_explicit_name_in_toml() {
+        let toml = r#"
+[package]
+name = "x"
+version = "0.1.0"
+
+[dependencies.aliased]
+version = "1"
+package = "real_crate"
+"#;
+        let md = parse(toml);
+        let dep = md.deps.iter().find(|d| d.name == "real_crate").unwrap();
+        assert_eq!(dep.explicit_name_in_toml.as_deref(), Some("aliased"));
+    }
+
+    /// `features` with `dep:` and `?/` syntax must pass through verbatim.
+    /// crates.io interprets these; we just ferry them.
+    #[test]
+    fn features_with_dep_syntax_pass_through() {
+        let toml = r#"
+[package]
+name = "x"
+version = "0.1.0"
+
+[dependencies.optional_dep]
+version = "1"
+optional = true
+
+[features]
+default = []
+extra = ["dep:optional_dep", "optional_dep?/std"]
+"#;
+        let md = parse(toml);
+        let extra = md.features.get("extra").expect("extra feature present");
+        assert!(extra.contains(&"dep:optional_dep".to_string()));
+        assert!(extra.contains(&"optional_dep?/std".to_string()));
+
+        let dep = md.deps.iter().find(|d| d.name == "optional_dep").unwrap();
+        assert!(dep.optional);
+    }
+
+    /// `readme = false` (disabling the README) must not produce a
+    /// `readme`/`readme_file` field in the registry JSON.
+    #[test]
+    fn readme_disabled_yields_no_readme_fields() {
+        let toml = r#"
+[package]
+name = "x"
+version = "0.1.0"
+readme = false
+"#;
+        let md = parse(toml);
+        assert!(md.readme.is_none());
+        assert!(md.readme_file.is_none());
+    }
+
+    /// Live round-trip: run `cargo package --no-verify` on a real slang crate,
+    /// extract the normalized `Cargo.toml` from the resulting `.crate`, and
+    /// feed it through our parser. Catches the moment cargo's serializer
+    /// changes a shape we don't understand.
+    ///
+    /// Marked `#[ignore]` because it shells out to cargo (which is heavy and
+    /// fragile under workspace lock contention). Run on demand:
+    ///
+    ///     ./bin/cargo test -p infra_cli -- --ignored metadata::tests::round_trip
+    #[test]
+    #[ignore = "shells out to cargo package; run with --ignored"]
+    fn round_trip_real_cargo_package() {
+        use std::process::Command;
+        let workspace_root = std::env::var("CARGO_MANIFEST_DIR")
+            .map(std::path::PathBuf::from)
+            .expect("CARGO_MANIFEST_DIR")
+            .ancestors()
+            .nth(3)
+            .expect("workspace root")
+            .to_path_buf();
+
+        let status = Command::new("cargo")
+            .current_dir(&workspace_root)
+            .args([
+                "package",
+                "--no-verify",
+                "--allow-dirty",
+                "--package",
+                "metaslang_cst",
+            ])
+            .status()
+            .expect("cargo package should run");
+        assert!(status.success(), "cargo package failed");
+
+        let pkg_dir = workspace_root.join("target/package");
+        let crate_file = std::fs::read_dir(&pkg_dir)
+            .expect("read target/package")
+            .filter_map(Result::ok)
+            .map(|e| e.path())
+            .find(|p| {
+                let name = p.file_name().and_then(|n| n.to_str()).unwrap_or("");
+                let ext_is_crate = p
+                    .extension()
+                    .is_some_and(|ext| ext.eq_ignore_ascii_case("crate"));
+                name.starts_with("metaslang_cst-") && ext_is_crate
+            })
+            .expect("expected metaslang_cst .crate");
+
+        // Reuse the extraction primitive a real publish would use.
+        let file = std::fs::File::open(&crate_file).unwrap();
+        let mut archive = tar::Archive::new(flate2::read::GzDecoder::new(file));
+        let dir = tempfile::tempdir().unwrap();
+        let manifest_path = dir.path().join("Cargo.toml");
+        let mut found = false;
+        for entry in archive.entries().unwrap() {
+            let mut entry = entry.unwrap();
+            let path = entry.path().unwrap().into_owned();
+            let filename = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
+            let parent_name = path
+                .parent()
+                .and_then(|p| p.file_name())
+                .and_then(|n| n.to_str())
+                .unwrap_or("");
+            if filename == "Cargo.toml" && parent_name.starts_with("metaslang_cst-") {
+                let mut contents = Vec::new();
+                std::io::copy(&mut entry, &mut contents).unwrap();
+                std::fs::write(&manifest_path, contents).unwrap();
+                found = true;
+                break;
+            }
+        }
+        assert!(found, "Cargo.toml not found inside .crate");
+
+        let md = build_from_packaged_manifest(&manifest_path).expect("parse should succeed");
+        assert_eq!(md.name, "metaslang_cst");
+        assert!(!md.deps.is_empty(), "expected metaslang_cst to have deps");
     }
 }

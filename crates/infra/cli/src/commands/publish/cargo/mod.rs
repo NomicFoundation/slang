@@ -7,7 +7,7 @@ use anyhow::{bail, Context, Result};
 use clap::Parser;
 use infra_utils::cargo::{CargoWorkspace, UserFacingV1Crate};
 use infra_utils::commands::Command;
-use infra_utils::http::put_crate_to_registry;
+use infra_utils::http::{fetch_index_versions, put_crate_to_registry};
 use strum::IntoEnumIterator;
 
 use crate::commands::publish::artifacts::Manifest;
@@ -114,15 +114,15 @@ fn run_registry_upload() -> Result<()> {
 
 /// crates.io confirms a successful upload immediately, but the sparse index can
 /// lag for a few seconds. The next crate in the sequence depends on this version
-/// being resolvable, so poll until `cargo search` reports the new version (or we
-/// time out).
+/// being resolvable, so poll the sparse index directly (CDN-cached, designed for
+/// high-frequency reads — not the search API, which is rate-limited).
 fn wait_for_index_propagation(crate_name: &str, expected_version: &str) -> Result<()> {
     const MAX_ATTEMPTS: u32 = 30;
     const POLL_INTERVAL: Duration = Duration::from_secs(2);
 
     for attempt in 1..=MAX_ATTEMPTS {
-        if let Ok(reported) = CargoWorkspace::published_version(crate_name) {
-            if reported.to_string() == expected_version {
+        if let Ok(versions) = fetch_index_versions(crate_name) {
+            if versions.iter().any(|v| v == expected_version) {
                 println!("Index updated for {crate_name} (attempt {attempt}).");
                 return Ok(());
             }
@@ -130,7 +130,7 @@ fn wait_for_index_propagation(crate_name: &str, expected_version: &str) -> Resul
         thread::sleep(POLL_INTERVAL);
     }
     bail!(
-        "Timed out waiting for crates.io index to show {crate_name} v{expected_version} \
+        "Timed out waiting for crates.io sparse index to show {crate_name} v{expected_version} \
          after {seconds}s. The upload may have succeeded; later crates that depend on \
          {crate_name} may fail until the index catches up.",
         seconds = MAX_ATTEMPTS * u32::try_from(POLL_INTERVAL.as_secs()).unwrap(),
