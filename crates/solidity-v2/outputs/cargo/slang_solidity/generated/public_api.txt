@@ -29,6 +29,13 @@ pub fn slang_solidity_v2::compilation::CompilationUnit::language_version(&self) 
 pub trait slang_solidity_v2::compilation::CompilationBuilderConfig
 pub fn slang_solidity_v2::compilation::CompilationBuilderConfig::read_file(&mut self, file_id: &str) -> core::result::Result<alloc::string::String, alloc::string::String>
 pub fn slang_solidity_v2::compilation::CompilationBuilderConfig::resolve_import(&mut self, source_file_id: &str, import_path: &str) -> core::result::Result<alloc::string::String, alloc::string::String>
+pub mod slang_solidity_v2::diagnostics
+pub use slang_solidity_v2::diagnostics::Diagnostic
+pub use slang_solidity_v2::diagnostics::DiagnosticCollection
+pub use slang_solidity_v2::diagnostics::DiagnosticExtensions
+pub use slang_solidity_v2::diagnostics::DiagnosticKind
+pub use slang_solidity_v2::diagnostics::DiagnosticSeverity
+pub use slang_solidity_v2::diagnostics::kinds
 pub mod slang_solidity_v2::utils
 pub use slang_solidity_v2::utils::FromSemverError
 pub use slang_solidity_v2::utils::LanguageVersion
