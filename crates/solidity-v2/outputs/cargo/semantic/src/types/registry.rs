@@ -144,6 +144,14 @@ impl TypeRegistry {
 
     #[allow(clippy::too_many_lines)]
     fn internal_implicitly_convertible_to(&self, from_type: &Type, to_type: &Type) -> bool {
+        // The public `implicitly_convertible_to` already
+        // short-circuits on `TypeId` equality, but this function is also called
+        // directly by `common_mobile_type` with `&Type` values constructed from
+        // `mobile_type()`, bypassing that short-circuit.
+        if from_type == to_type {
+            return true;
+        }
+
         match (from_type, to_type) {
             (
                 Type::Address {
@@ -279,6 +287,11 @@ impl TypeRegistry {
                     location: to_location,
                 },
             ) => from_location.implicitly_convertible_to(*to_location),
+
+            // `bytesN` widens to `bytesM` when `M >= N`.
+            (Type::ByteArray { width: from_width }, Type::ByteArray { width: to_width }) => {
+                from_width <= to_width
+            }
 
             (Type::Function(from_function_type), Type::Function(to_function_type)) => {
                 // This is full equality except for visibility and mutability
