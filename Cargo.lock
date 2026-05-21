@@ -2181,7 +2181,6 @@ dependencies = [
  "semver 1.0.28",
  "serde",
  "serde_json",
- "sha2",
  "strum 0.28.0",
  "tempfile",
  "toml 1.1.2+spec-1.1.0",

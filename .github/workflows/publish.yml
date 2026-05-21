@@ -255,7 +255,6 @@ jobs:
             echo "**Artifact:** \`${ARTIFACT_NAME}\` — download from the run's Artifacts panel to inspect."
             echo ""
             echo "### What was validated against the prepared artifact"
-            echo "- SHA-256 integrity for every file in \`manifest.json\`"
             echo "- \`pnpm publish --dry-run <tarball>\` (npm pack/structure check)"
             echo "- \`cargo publish --dry-run\` batched workspace verify-build (catches cross-crate path-dep rewrites)"
             if [ "${{ github.event_name }}" = "pull_request" ]; then

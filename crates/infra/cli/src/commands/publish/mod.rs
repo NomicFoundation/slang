@@ -1,4 +1,3 @@
-mod artifacts;
 mod cargo;
 mod changesets;
 mod github_release;

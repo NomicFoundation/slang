@@ -1,9 +1,10 @@
+use std::fs;
+
 use anyhow::{bail, Result};
 use clap::Parser;
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
 
-use crate::commands::publish::artifacts::Manifest;
 use crate::utils::DryRun;
 
 #[derive(Clone, Debug, Parser)]
@@ -14,22 +15,22 @@ pub struct NpmController {
 
 impl NpmController {
     pub fn execute(&self) -> Result<()> {
-        let manifest = Manifest::load()?;
-        manifest.verify_integrity()?;
-
-        let Some(npm) = manifest.npm.as_ref() else {
-            println!("No npm artifact in manifest; nothing to publish.");
-            return Ok(());
+        let root = std::path::Path::repo_path("target/publish-artifacts");
+        let tarballs: Vec<_> = fs::read_dir(&root)?
+            .filter_map(|entry| entry.ok().map(|e| e.path()))
+            .filter(|path| path.extension().and_then(|s| s.to_str()) == Some("tgz"))
+            .collect();
+        let tarball = match tarballs.as_slice() {
+            [] => {
+                println!("No tarball in {root:?}; nothing to publish.");
+                return Ok(());
+            }
+            [one] => one,
+            many => bail!(
+                "Expected one .tgz in {root:?}, found {}: {many:?}",
+                many.len()
+            ),
         };
-
-        let tarball = Manifest::absolute_path(&npm.path);
-        if !tarball.exists() {
-            bail!("Prebuilt npm tarball missing: {tarball:?}");
-        }
-
-        println!("Publishing prebuilt tarball: {tarball:?}");
-        println!("Workspace version: {}", manifest.workspace_version);
-        println!("SHA-256: {}", npm.sha256);
 
         let mut command = Command::new("pnpm")
             .arg("publish")
@@ -45,7 +46,6 @@ impl NpmController {
         }
 
         command.run();
-
         Ok(())
     }
 }
