@@ -205,8 +205,8 @@ jobs:
           retention-days: 7
 
   # ───────────────────────────────────────────────
-  # Review: download the prepared artifact, verify integrity, and dry-run
-  # publish against the exact bytes that would be uploaded.
+  # Review: download the prepared artifact and dry-run publish against the
+  # exact bytes that would be uploaded.
   # ───────────────────────────────────────────────
 
   review:
