@@ -20,9 +20,9 @@ runs:
       shell: "bash"
       run: |
         PACKAGE_JSON="crates/solidity/outputs/npm/package/package.json"
-        NAME=$(node -p "require('./${PACKAGE_JSON}').name")
-        LOCAL=$(node -p "require('./${PACKAGE_JSON}').version")
-        PUBLISHED=$(pnpm view "${NAME}" version)
+        NAME=$(./bin/node -p "require('./${PACKAGE_JSON}').name")
+        LOCAL=$(./bin/node -p "require('./${PACKAGE_JSON}').version")
+        PUBLISHED=$(./bin/pnpm view "${NAME}" version)
         echo "Published npm version: ${PUBLISHED:-<none>}"
         echo "Local npm version: ${LOCAL}"
         echo "local=${LOCAL}" >> "$GITHUB_OUTPUT"
@@ -48,7 +48,7 @@ runs:
       shell: "bash"
       working-directory: "crates/solidity/outputs/npm/package"
       run: |
-        pnpm pack --pack-destination "${GITHUB_WORKSPACE}/target/publish-artifacts"
+        "${GITHUB_WORKSPACE}/bin/pnpm" pack --pack-destination "${GITHUB_WORKSPACE}/target/publish-artifacts"
 
     - name: "Compute artifact name"
       id: "artifact-name"
