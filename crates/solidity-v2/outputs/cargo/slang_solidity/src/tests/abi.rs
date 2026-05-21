@@ -1,3 +1,5 @@
+use ruint::uint;
+
 use super::fixtures;
 use crate::abi::AbiEntry;
 
@@ -81,18 +83,18 @@ fn test_storage_layout() {
 
     assert_eq!(layout.len(), 12);
 
-    assert_layout_item_eq!(layout[0], "a", 0, 0, "uint256");
-    assert_layout_item_eq!(layout[1], "e", 1, 0, "uint8[]");
-    assert_layout_item_eq!(layout[2], "f", 2, 0, "mapping(uint256 => S)");
-    assert_layout_item_eq!(layout[3], "g", 3, 0, "uint16");
-    assert_layout_item_eq!(layout[4], "h", 3, 2, "uint16");
-    assert_layout_item_eq!(layout[5], "s", 4, 0, "S");
-    assert_layout_item_eq!(layout[6], "k", 5, 0, "int8");
-    assert_layout_item_eq!(layout[7], "l", 5, 1, "bytes21");
-    assert_layout_item_eq!(layout[8], "m", 6, 0, "uint8[10]");
-    assert_layout_item_eq!(layout[9], "n", 7, 0, "bytes5[8]");
-    assert_layout_item_eq!(layout[10], "t", 9, 0, "T[2]");
-    assert_layout_item_eq!(layout[11], "o", 13, 0, "bytes5");
+    assert_layout_item_eq!(layout[0], "a", uint!(0_U256), 0, "uint256");
+    assert_layout_item_eq!(layout[1], "e", uint!(1_U256), 0, "uint8[]");
+    assert_layout_item_eq!(layout[2], "f", uint!(2_U256), 0, "mapping(uint256 => S)");
+    assert_layout_item_eq!(layout[3], "g", uint!(3_U256), 0, "uint16");
+    assert_layout_item_eq!(layout[4], "h", uint!(3_U256), 2, "uint16");
+    assert_layout_item_eq!(layout[5], "s", uint!(4_U256), 0, "S");
+    assert_layout_item_eq!(layout[6], "k", uint!(5_U256), 0, "int8");
+    assert_layout_item_eq!(layout[7], "l", uint!(5_U256), 1, "bytes21");
+    assert_layout_item_eq!(layout[8], "m", uint!(6_U256), 0, "uint8[10]");
+    assert_layout_item_eq!(layout[9], "n", uint!(7_U256), 0, "bytes5[8]");
+    assert_layout_item_eq!(layout[10], "t", uint!(9_U256), 0, "T[2]");
+    assert_layout_item_eq!(layout[11], "o", uint!(13_U256), 0, "bytes5");
 
     let transient_layout = counter_abi.transient_storage_layout();
     assert!(transient_layout.is_empty());
@@ -130,6 +132,27 @@ fn test_transient_and_custom_storage_layout() {
     assert_eq!(e_transient_layout.len(), 2);
     assert_layout_item_eq!(e_transient_layout[0], "qt", 0, 0, "int8");
     assert_layout_item_eq!(e_transient_layout[1], "rt", 0, 1, "bytes5");
+}
+
+#[test]
+fn test_erc7201_storage_layout() {
+    let unit = fixtures::StorageLayout::build_compilation_unit();
+
+    let f_contract = unit
+        .find_contract_by_name("F")
+        .expect("contract can be found");
+    let f_abi = f_contract
+        .compute_abi_with_file_id("main.sol".to_string())
+        .expect("can compute ABI");
+    let f_layout = f_abi.storage_layout();
+
+    // EIP-7201 test vector: `erc7201("example.main")` →
+    // 0x183a6125c38840424c4a85fa12bab2ab606c4b6d0e7cc73c0c06ba5300eab500.
+    let base_slot = uint!(0x183a6125c38840424c4a85fa12bab2ab606c4b6d0e7cc73c0c06ba5300eab500_U256);
+
+    assert_eq!(f_layout.len(), 2);
+    assert_layout_item_eq!(f_layout[0], "u", base_slot, 0, "uint256");
+    assert_layout_item_eq!(f_layout[1], "v", base_slot + uint!(1_U256), 0, "uint256");
 }
 
 #[test]

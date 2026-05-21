@@ -1,10 +1,11 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use ruint::aliases::U256;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
-use super::evaluator::evaluate_compile_time_uint_constant;
+use super::evaluator::evaluate_compile_time_integer_constant;
 use super::Pass;
 use crate::binder::{Definition, Reference, Resolution, Scope, Typing, UsingDirective};
 use crate::built_ins::BuiltIn;
@@ -47,17 +48,24 @@ impl Visitor for Pass<'_> {
             // TODO(validation): if the base slot expression cannot be computed
             // at this time, it's not a compile time constant and hence it's an
             // error
-            if let Some(base_slot) = evaluate_compile_time_uint_constant(
+            let base_slot = evaluate_compile_time_integer_constant(
                 base_slot_expression,
                 self.current_contract_or_file_scope_id(),
                 self,
-            ) {
+            )
+            .and_then(|base_slot| {
+                // TODO(validation): if conversion fails the constant is
+                // negative or exceeds the 256 bit range
+                U256::try_from(base_slot).ok()
+            });
+
+            if base_slot.is_some() {
                 let Definition::Contract(contract_definition) =
                     self.binder.get_definition_mut(node.id())
                 else {
                     unreachable!("the definition is not a contract");
                 };
-                contract_definition.base_slot = Some(base_slot);
+                contract_definition.base_slot = base_slot;
             }
         }
     }

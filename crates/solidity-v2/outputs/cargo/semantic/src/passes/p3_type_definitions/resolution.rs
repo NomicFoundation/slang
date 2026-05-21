@@ -1,8 +1,10 @@
 use slang_solidity_v2_ir::ir;
 
-use super::evaluator::{evaluate_compile_time_uint_constant, ConstantIdentifierResolver};
+use super::evaluator::{
+    evaluate_compile_time_usize_constant, ComptimeResolution, ConstantIdentifierResolver,
+};
 use super::Pass;
-use crate::binder::{Definition, Resolution, ScopeId};
+use crate::binder::{Definition, Resolution, Scope, ScopeId};
 use crate::passes::common::resolve_identifier_path_in_scope;
 use crate::types::{DataLocation, FunctionType, Type, TypeId};
 
@@ -44,9 +46,9 @@ impl Pass<'_> {
                         .map(|element_type| {
                             if let Some(size_expression) = &array_type_name.index {
                                 // TODO(validation): if the size of the array
-                                // cannot be evaluated, it's not a compile-time
-                                // constant
-                                let size = evaluate_compile_time_uint_constant(
+                                // cannot be evaluated it's not a compile-time
+                                // constant, or it doesn't fit in `usize`.
+                                let size = evaluate_compile_time_usize_constant(
                                     size_expression,
                                     self.current_contract_or_file_scope_id(),
                                     self,
@@ -142,16 +144,56 @@ impl ConstantIdentifierResolver<ScopeId> for Pass<'_> {
         &self,
         identifier: &str,
         scope_id: &ScopeId,
-    ) -> Option<(ir::Expression, ScopeId)> {
-        let resolution = self.binder.resolve_in_scope(*scope_id, identifier);
-        let definition_id = resolution.as_definition_id()?;
-        match self.binder.find_definition_by_id(definition_id)? {
-            Definition::Constant(constant_definition) => constant_definition
-                .ir_node
-                .value
-                .as_ref()
-                .map(|value| (value.clone(), constant_definition.scope_id)),
-            _ => None,
+    ) -> ComptimeResolution<ScopeId> {
+        match self.binder.resolve_in_scope(*scope_id, identifier) {
+            Resolution::Definition(definition_id) => {
+                match self
+                    .binder
+                    .find_definition_by_id(definition_id)
+                    .expect("resolved definition is found")
+                {
+                    Definition::Constant(constant_definition) => {
+                        if let Some(value) = &constant_definition.ir_node.value {
+                            ComptimeResolution::Constant {
+                                value: value.clone(),
+                                target_scope: constant_definition.enclosing_scope_id,
+                            }
+                        } else {
+                            // TODO(validation): this is a constant state
+                            // variable for which the grammar allows an absent
+                            // value expression but it's a semantic error
+                            ComptimeResolution::Unresolved
+                        }
+                    }
+                    _ => ComptimeResolution::Unresolved,
+                }
+            }
+            Resolution::Ambiguous(_) => {
+                // TODO(validation): multiple definitions found which is an error
+                ComptimeResolution::Unresolved
+            }
+            Resolution::BuiltIn(_) => unreachable!("the binder doesn't resolve to built-ins"),
+
+            Resolution::Unresolved => {
+                // Try to resolve a built-in using the scope as context
+                let resolver = self.built_ins_resolver();
+                let built_in = match self.binder.get_scope_by_id(*scope_id) {
+                    Scope::Block(_)
+                    | Scope::Contract(_)
+                    | Scope::File(_)
+                    | Scope::Function(_)
+                    | Scope::Modifier(_) => resolver.lookup_global(identifier),
+
+                    Scope::Enum(_) | Scope::Parameters(_) | Scope::Struct(_) | Scope::Using(_) => {
+                        None
+                    }
+
+                    Scope::YulBlock(_) | Scope::YulFunction(_) => {
+                        resolver.lookup_yul_global(identifier)
+                    }
+                };
+                built_in.map_or(ComptimeResolution::Unresolved, ComptimeResolution::BuiltIn)
+            }
         }
     }
 }

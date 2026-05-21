@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use ruint::aliases::U256;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -39,7 +40,9 @@ pub enum Definition {
 #[derive(Debug)]
 pub struct ConstantDefinition {
     pub ir_node: ir::ConstantDefinition,
-    pub(crate) scope_id: ScopeId,
+    // This is the scope the constant is defined in, and is used to change the
+    // resolution context in the `CompileConstantEvaluator`.
+    pub(crate) enclosing_scope_id: ScopeId,
 }
 
 #[derive(Debug)]
@@ -47,8 +50,7 @@ pub struct ContractDefinition {
     pub ir_node: ir::ContractDefinition,
     pub bases: Option<Vec<NodeId>>,
     pub(crate) constructor_parameters_scope_id: Option<ScopeId>,
-    // TODO: this should be `Option<u256>`
-    pub base_slot: Option<usize>,
+    pub base_slot: Option<U256>,
 }
 
 #[derive(Debug)]
@@ -289,12 +291,15 @@ impl Definition {
         }
     }
 
-    pub(crate) fn new_constant(ir_node: &ir::ConstantDefinition, scope_id: ScopeId) -> Self {
+    pub(crate) fn new_constant(
+        ir_node: &ir::ConstantDefinition,
+        enclosing_scope_id: ScopeId,
+    ) -> Self {
         // for constants we store the scope_id where it's defined to use for
         // evaluation of compile-time constants (eg. fixed arrays size)
         Self::Constant(ConstantDefinition {
             ir_node: Arc::clone(ir_node),
-            scope_id,
+            enclosing_scope_id,
         })
     }
 

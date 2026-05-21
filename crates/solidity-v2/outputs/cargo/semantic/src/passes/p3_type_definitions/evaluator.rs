@@ -1,14 +1,27 @@
+use num_bigint::{BigInt, Sign};
+use ruint::aliases::U256;
+use sha3::{Digest, Keccak256};
 use slang_solidity_v2_ir::ir;
 
-use crate::types::Number;
+use crate::built_ins::BuiltIn;
+use crate::types::{literals, Number};
 
-pub(crate) fn evaluate_compile_time_uint_constant<Scope>(
+pub(crate) fn evaluate_compile_time_usize_constant<Scope>(
     expression: &ir::Expression,
     start_scope: Scope,
     identifier_resolver: &dyn ConstantIdentifierResolver<Scope>,
 ) -> Option<usize> {
     evaluate_compile_time_number_constant(expression, start_scope, identifier_resolver)
         .and_then(|value| value.as_usize())
+}
+
+pub(crate) fn evaluate_compile_time_integer_constant<Scope>(
+    expression: &ir::Expression,
+    start_scope: Scope,
+    identifier_resolver: &dyn ConstantIdentifierResolver<Scope>,
+) -> Option<BigInt> {
+    evaluate_compile_time_number_constant(expression, start_scope, identifier_resolver)
+        .and_then(Number::into_integer)
 }
 
 fn evaluate_compile_time_number_constant<Scope>(
@@ -23,6 +36,15 @@ fn evaluate_compile_time_number_constant<Scope>(
     evaluator.evaluate_expression_in_scope(expression, start_scope)
 }
 
+pub(crate) enum ComptimeResolution<Scope> {
+    Unresolved,
+    Constant {
+        value: ir::Expression,
+        target_scope: Scope,
+    },
+    BuiltIn(BuiltIn),
+}
+
 pub(crate) trait ConstantIdentifierResolver<Scope> {
     /// Resolve an identifier to a constant in the given context, returning the
     /// value expression of the constant and the scope in which the value
@@ -32,7 +54,7 @@ pub(crate) trait ConstantIdentifierResolver<Scope> {
         &self,
         identifier: &str,
         scope: &Scope,
-    ) -> Option<(ir::Expression, Scope)>;
+    ) -> ComptimeResolution<Scope>;
 }
 
 struct CompileConstantEvaluator<'a, Scope> {
@@ -95,6 +117,9 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
             ir::Expression::Identifier(identifier) => self.evaluate_identifier(identifier),
             ir::Expression::TupleExpression(tuple_expression) => {
                 self.evaluate_tuple_expression(tuple_expression)
+            }
+            ir::Expression::FunctionCallExpression(call) => {
+                self.evaluate_function_call_expression(call)
             }
             _ => {
                 // all other variants of expression cannot be evaluated at
@@ -194,9 +219,15 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
 
     fn evaluate_identifier(&mut self, identifier: &ir::Identifier) -> Option<Number> {
         let current_scope = self.scope_stack.last().expect("scope stack is empty");
-        let (target_expression, target_scope) = self
+        let ComptimeResolution::Constant {
+            value: target_expression,
+            target_scope,
+        } = self
             .identifier_resolver
-            .resolve_identifier_in_scope(identifier.unparse(), current_scope)?;
+            .resolve_identifier_in_scope(identifier.unparse(), current_scope)
+        else {
+            return None;
+        };
         self.evaluate_expression_in_scope(&target_expression, target_scope)
     }
 
@@ -211,6 +242,103 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
             None
         }
     }
+
+    /// Compile-time evaluation of a built-in function call. Only `erc7201`
+    /// is supported as of Solidity 0.8.35. Everything else returns `None`.
+    fn evaluate_function_call_expression(
+        &mut self,
+        call: &ir::FunctionCallExpression,
+    ) -> Option<Number> {
+        let ir::Expression::Identifier(operand) = &call.operand else {
+            return None;
+        };
+        let scope = self.scope_stack.last().expect("scope stack is empty");
+        let resolution = self
+            .identifier_resolver
+            .resolve_identifier_in_scope(operand.unparse(), scope);
+        match resolution {
+            ComptimeResolution::BuiltIn(BuiltIn::Erc7201) => {
+                self.evaluate_erc7201_built_in_call(&call.arguments)
+            }
+            _ => None,
+        }
+    }
+
+    fn evaluate_erc7201_built_in_call(
+        &mut self,
+        arguments: &ir::ArgumentsDeclaration,
+    ) -> Option<Number> {
+        let ir::ArgumentsDeclaration::PositionalArguments(arguments) = arguments else {
+            return None;
+        };
+        let [argument] = arguments.as_slice() else {
+            // Reject other arities
+            return None;
+        };
+        let value = self.evaluate_expression_as_string(argument)?;
+        Some(Number::Integer(compute_erc7201(&value)))
+    }
+
+    fn evaluate_expression_as_string(&mut self, expression: &ir::Expression) -> Option<Vec<u8>> {
+        match expression {
+            ir::Expression::StringExpression(string_expression) => {
+                let value = match string_expression {
+                    ir::StringExpression::StringLiterals(literals) => {
+                        literals::value_of_string_literals(literals)
+                    }
+                    ir::StringExpression::HexStringLiterals(literals) => {
+                        literals::value_of_hex_string_literals(literals)
+                    }
+                    ir::StringExpression::UnicodeStringLiterals(literals) => {
+                        literals::value_of_unicode_string_literals(literals)
+                    }
+                };
+                Some(value)
+            }
+            ir::Expression::Identifier(identifier) => {
+                self.evaluate_identifier_as_string(identifier)
+            }
+            _ => None,
+        }
+    }
+
+    fn evaluate_identifier_as_string(&mut self, identifier: &ir::Identifier) -> Option<Vec<u8>> {
+        let current_scope = self.scope_stack.last().expect("scope stack is empty");
+        let ComptimeResolution::Constant {
+            value: target_expression,
+            target_scope,
+        } = self
+            .identifier_resolver
+            .resolve_identifier_in_scope(identifier.unparse(), current_scope)
+        else {
+            return None;
+        };
+        if self.scope_stack.len() >= Self::MAX_SCOPE_DEPTH {
+            // TODO(validation): cyclic dependency in constant resolution or max depth reached
+            return None;
+        }
+        self.scope_stack.push(target_scope);
+        let result = self.evaluate_expression_as_string(&target_expression);
+        self.scope_stack
+            .pop()
+            .expect("scope stack should not be empty");
+        result
+    }
+}
+
+/// Computes the storage slot defined by ERC-7201 for the given value bytes:
+/// `keccak256(abi.encode(uint256(keccak256(value)) - 1)) & ~bytes32(uint256(0xff))`.
+fn compute_erc7201(value: &[u8]) -> BigInt {
+    let inner: [u8; 32] = Keccak256::digest(value).into();
+    // Wrapping subtraction matches Solidity's `uint256(...) - 1` semantics —
+    // the inner hash being zero is negligibly rare but well-defined.
+    let minus_one = U256::from_be_bytes(inner).wrapping_sub(U256::from(1u8));
+    // `abi.encode(uint256(...))` is the value's 32-byte big-endian encoding.
+    let encoded = minus_one.to_be_bytes::<32>();
+    let mut outer: [u8; 32] = Keccak256::digest(encoded).into();
+    // Mask off the lowest byte (`& ~bytes32(uint256(0xff))`).
+    outer[31] = 0;
+    BigInt::from_bytes_be(Sign::Plus, &outer)
 }
 
 #[cfg(test)]
@@ -219,16 +347,20 @@ mod tests {
 
     use num_bigint::{BigInt, ToBigInt};
     use num_rational::BigRational;
+    use num_traits::Num;
     use slang_solidity_v2_common::versions::LanguageVersion;
     use slang_solidity_v2_parser::{ParseOutput, Parser};
 
     use super::*;
 
-    #[derive(Default)]
     struct MapResolver {
         // qualified identifier => (target expression, target scope)
         // qualified identifier is the concatenation of the scope and identifier
         context: HashMap<String, (ir::Expression, String)>,
+        // Tests that exercise the erc7201 evaluation path opt in by toggling
+        // this flag, mirroring what the production resolver does when the
+        // language version enables the built-in and it isn't shadowed.
+        recognise_erc7201: bool,
     }
 
     impl ConstantIdentifierResolver<String> for MapResolver {
@@ -236,14 +368,56 @@ mod tests {
             &self,
             identifier: &str,
             scope: &String,
-        ) -> Option<(ir::Expression, String)> {
-            self.context.get(&format!("{scope}{identifier}")).cloned()
+        ) -> ComptimeResolution<String> {
+            if let Some((target_expression, target_scope)) =
+                self.context.get(&format!("{scope}{identifier}"))
+            {
+                ComptimeResolution::Constant {
+                    value: target_expression.clone(),
+                    target_scope: target_scope.clone(),
+                }
+            } else if self.recognise_erc7201 && identifier == "erc7201" {
+                ComptimeResolution::BuiltIn(BuiltIn::Erc7201)
+            } else {
+                ComptimeResolution::Unresolved
+            }
+        }
+    }
+
+    impl MapResolver {
+        fn build_context(
+            context: &[(&str, &str, &str)],
+        ) -> HashMap<String, (ir::Expression, String)> {
+            context
+                .iter()
+                .map(|(name, input, target_scope)| {
+                    (
+                        (*name).to_string(),
+                        (parse_expression(input), (*target_scope).to_string()),
+                    )
+                })
+                .collect()
+        }
+
+        fn with_context(context: &[(&str, &str, &str)]) -> Self {
+            Self {
+                context: Self::build_context(context),
+                recognise_erc7201: false,
+            }
+        }
+
+        fn recognise_erc7201_with_context(context: &[(&str, &str, &str)]) -> Self {
+            Self {
+                context: Self::build_context(context),
+                recognise_erc7201: true,
+            }
         }
     }
 
     fn parse_expression(input: &str) -> ir::Expression {
+        // NB. the declaration is only a harness to contain the expression
         let source = format!("uint constant x = {input};");
-        let version = LanguageVersion::V0_8_30;
+        let version = LanguageVersion::V0_8_35;
 
         let ParseOutput {
             source_unit,
@@ -276,29 +450,20 @@ mod tests {
         }
     }
 
-    fn eval_string(input: &str) -> Option<Number> {
-        let expression = parse_expression(input);
-        evaluate_compile_time_number_constant(&expression, String::new(), &MapResolver::default())
-    }
-
     // `context` is given as a list of constants defined as:
     // - the qualified identifier
     // - the target expression (to be parsed)
     // - the target scope
     // Resolution always starts at the empty string scope in these tests.
     fn eval_string_with_context(input: &str, context: &[(&str, &str, &str)]) -> Option<Number> {
-        let context: HashMap<String, (ir::Expression, String)> = context
-            .iter()
-            .map(|(name, input, target_scope)| {
-                (
-                    (*name).to_string(),
-                    (parse_expression(input), (*target_scope).to_string()),
-                )
-            })
-            .collect();
+        let resolver = MapResolver::with_context(context);
         let expression = parse_expression(input);
 
-        evaluate_compile_time_number_constant(&expression, String::new(), &MapResolver { context })
+        evaluate_compile_time_number_constant(&expression, String::new(), &resolver)
+    }
+
+    fn eval_string(input: &str) -> Option<Number> {
+        eval_string_with_context(input, &[])
     }
 
     #[test]
@@ -479,5 +644,81 @@ mod tests {
             &[("FOO", "BAR", "CTX."), ("CTX.BAR", "42", "CTX.")]
         )
         .is_some_and(|value| value == Number::Integer(42.to_bigint().unwrap())));
+    }
+
+    fn eval_string_with_erc7201_and_context(
+        input: &str,
+        context: &[(&str, &str, &str)],
+    ) -> Option<Number> {
+        let expression = parse_expression(input);
+        let resolver = MapResolver::recognise_erc7201_with_context(context);
+        evaluate_compile_time_number_constant(&expression, String::new(), &resolver)
+    }
+
+    fn eval_string_with_erc7201(input: &str) -> Option<Number> {
+        eval_string_with_erc7201_and_context(input, &[])
+    }
+
+    #[test]
+    fn test_erc7201_reference_vector() {
+        // EIP-7201 test vector: `erc7201("example.main")` →
+        // 0x183a6125c38840424c4a85fa12bab2ab606c4b6d0e7cc73c0c06ba5300eab500
+        let expected = BigInt::from_str_radix(
+            "183a6125c38840424c4a85fa12bab2ab606c4b6d0e7cc73c0c06ba5300eab500",
+            16,
+        )
+        .map(Number::Integer)
+        .unwrap();
+
+        assert!(eval_string_with_erc7201(r#"erc7201("example.main")"#)
+            .is_some_and(|value| value == expected));
+        assert!(
+            eval_string_with_erc7201(r#"erc7201(unicode"example.main")"#)
+                .is_some_and(|value| value == expected)
+        );
+        assert!(
+            eval_string_with_erc7201(r#"erc7201(hex"6578616D706C652E6D61696E")"#)
+                .is_some_and(|value| value == expected)
+        );
+    }
+
+    #[test]
+    fn test_erc7201_folds_inside_arithmetic() {
+        // Confirms the function-call result feeds further folding
+        let expected = BigInt::from_str_radix("b500", 16).unwrap();
+        assert!(
+            eval_string_with_erc7201(r#"erc7201("example.main") & 0xffff"#)
+                .is_some_and(|value| value == Number::Integer(expected))
+        );
+    }
+
+    #[test]
+    fn test_erc7201_not_recognised_without_resolver_opt_in() {
+        // Same expression, but the default resolver doesn't claim "erc7201"
+        // is the built-in; evaluation falls through to `None`.
+        assert!(eval_string(r#"erc7201("example.main")"#).is_none());
+    }
+
+    #[test]
+    fn test_erc7201_rejects_wrong_arity() {
+        assert!(eval_string_with_erc7201(r#"erc7201()"#).is_none());
+        assert!(eval_string_with_erc7201(r#"erc7201("a", "b")"#).is_none());
+    }
+
+    #[test]
+    fn test_erc7201_resolves_identifier_arguments() {
+        let expected = BigInt::from_str_radix(
+            "183a6125c38840424c4a85fa12bab2ab606c4b6d0e7cc73c0c06ba5300eab500",
+            16,
+        )
+        .unwrap();
+        assert!(eval_string_with_erc7201_and_context(
+            r#"erc7201(NAME)"#,
+            &[
+                ("NAME", "NAME", "SUB."),
+                ("SUB.NAME", "\"example.main\"", "")
+            ],
+        )
+        .is_some_and(|value| value == Number::Integer(expected)));
     }
 }

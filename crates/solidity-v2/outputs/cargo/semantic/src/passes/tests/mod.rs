@@ -27,11 +27,16 @@ impl SemanticFile for TestFile {
     }
 }
 
-fn build_file(name: &str, contents: &str, id_generator: &mut NodeIdGenerator) -> TestFile {
+fn build_file(
+    name: &str,
+    contents: &str,
+    id_generator: &mut NodeIdGenerator,
+    language_version: LanguageVersion,
+) -> TestFile {
     let ParseOutput {
         source_unit,
         diagnostics,
-    } = Parser::parse(name, contents, LanguageVersion::V0_8_30);
+    } = Parser::parse(name, contents, language_version);
 
     assert!(
         diagnostics.is_empty(),
