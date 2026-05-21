@@ -225,6 +225,22 @@ jobs:
         uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
         with:
           persist-credentials: false
+          fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
+
+      # Review only validates the prepared artifact; the publishable bytes come from
+      # `prepare`, not from this job's `target/`. Cache restore here is purely a
+      # speedup for `cargo publish --dry-run`'s verify-build and has no provenance impact.
+      - name: "Restore file mtimes from git"
+        uses: "./.github/actions/git/restore-mtime"
+
+      - name: "Restore Dependencies Cache"
+        uses: "./.github/actions/cache/dependencies/restore"
+
+      - name: "Restore Cargo Target Cache"
+        uses: "./.github/actions/cache/cargo-target/restore"
+
+      - name: "infra setup"
+        run: "./scripts/bin/infra setup"
 
       - name: "Download publish artifacts"
         uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c" # v8.0.1
