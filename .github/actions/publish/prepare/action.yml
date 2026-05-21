@@ -1,0 +1,62 @@
+name: "Publish — prepare"
+description: "Build the npm tarball into target/publish-artifacts/, or write a .skipped marker when the local version already matches what's on npm."
+
+outputs:
+  artifact-name:
+    description: "Workflow artifact name (versioned + commit-tagged)."
+    value: "${{ steps.artifact-name.outputs.name }}"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Clean staging dir"
+      shell: "bash"
+      run: |
+        rm -rf target/publish-artifacts
+        mkdir -p target/publish-artifacts
+
+    - name: "Read npm versions"
+      id: "versions"
+      shell: "bash"
+      run: |
+        PACKAGE_JSON="crates/solidity/outputs/npm/package/package.json"
+        NAME=$(node -p "require('./${PACKAGE_JSON}').name")
+        LOCAL=$(node -p "require('./${PACKAGE_JSON}').version")
+        # `pnpm view <pkg> version` errors when the package is unpublished;
+        # tolerate that and treat as "no published version" so the build runs.
+        PUBLISHED=$(pnpm view "${NAME}" version 2>/dev/null || true)
+        echo "Published npm version: ${PUBLISHED:-<none>}"
+        echo "Local npm version: ${LOCAL}"
+        echo "local=${LOCAL}" >> "$GITHUB_OUTPUT"
+        echo "published=${PUBLISHED}" >> "$GITHUB_OUTPUT"
+
+    - name: "Write .skipped marker"
+      if: "${{ steps.versions.outputs.local == steps.versions.outputs.published }}"
+      shell: "bash"
+      run: |
+        echo "npm ${{ steps.versions.outputs.local }} already published; writing .skipped marker."
+        # Marker keeps `if-no-files-found: error` on the artifact upload satisfied
+        # without producing a tarball that nothing consumes.
+        touch target/publish-artifacts/.skipped
+
+    - name: "Build WASM package"
+      if: "${{ steps.versions.outputs.local != steps.versions.outputs.published }}"
+      shell: "bash"
+      # `infra check npm` builds the WASM package into the npm source tree,
+      # so the `pnpm pack` below picks it up.
+      run: "./scripts/bin/infra check npm"
+
+    - name: "pnpm pack"
+      if: "${{ steps.versions.outputs.local != steps.versions.outputs.published }}"
+      shell: "bash"
+      working-directory: "crates/solidity/outputs/npm/package"
+      run: |
+        pnpm pack --pack-destination "${GITHUB_WORKSPACE}/target/publish-artifacts"
+
+    - name: "Compute artifact name"
+      id: "artifact-name"
+      shell: "bash"
+      run: |
+        VERSION=$(grep '^version = ' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+        SHORT_SHA="${GITHUB_SHA::12}"
+        echo "name=slang-publish-artifacts-${VERSION}-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
