@@ -144,10 +144,13 @@ pub mod gungraun {
             .evaluate()?;
 
         let local = parse_local_names(&output);
-        let remote = bencher::list_project_benchmarks(bencher_project)?
+
+        // Compare against benchmarks reported on the `main` branch
+        let remote = bencher::list_benchmarks_latest_report(bencher_project, "main")?
             .iter()
             .map(|name| canonicalize_label(name))
             .collect();
+
         Ok((local, remote))
     }
 
