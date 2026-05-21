@@ -417,7 +417,7 @@ mod tests {
     fn parse_expression(input: &str) -> ir::Expression {
         // NB. the declaration is only a harness to contain the expression
         let source = format!("uint constant x = {input};");
-        let version = LanguageVersion::V0_8_35;
+        let version = LanguageVersion::LATEST;
 
         let ParseOutput {
             source_unit,

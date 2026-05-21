@@ -48,6 +48,10 @@ pub enum LanguageVersion {
     V0_8_35,
 }
 
+impl LanguageVersion {
+    pub const LATEST: Self = Self::V0_8_35;
+}
+
 #[derive(Debug, Error, PartialEq)]
 pub enum FromSemverError {
     #[error("provided version is not supported")]

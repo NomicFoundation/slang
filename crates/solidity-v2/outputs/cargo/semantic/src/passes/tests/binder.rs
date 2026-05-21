@@ -22,7 +22,7 @@ contract Test is Base layout at 0 {}
         "test.sol",
         CONTENTS,
         &mut id_generator,
-        LanguageVersion::V0_8_35,
+        LanguageVersion::LATEST,
     );
 
     let files = [file];
@@ -80,7 +80,7 @@ interface A is C {}
         "test.sol",
         CONTENTS,
         &mut id_generator,
-        LanguageVersion::V0_8_35,
+        LanguageVersion::LATEST,
     );
 
     let files = [file];
@@ -125,7 +125,7 @@ contract Test is Base, Foo { // Base should resolve to the contract, not the var
         "test.sol",
         CONTENTS,
         &mut id_generator,
-        LanguageVersion::V0_8_35,
+        LanguageVersion::LATEST,
     );
 
     let files = [file];
@@ -173,7 +173,7 @@ contract Test is Base {
     "###;
 
     let mut id_generator = NodeIdGenerator::default();
-    let language_version = LanguageVersion::V0_8_35;
+    let language_version = LanguageVersion::LATEST;
     let file = build_file("test.sol", CONTENTS, &mut id_generator, language_version);
 
     let files = [file];
@@ -227,7 +227,7 @@ contract Test is Base {
     "###;
 
     let mut id_generator = NodeIdGenerator::default();
-    let language_version = LanguageVersion::V0_8_35;
+    let language_version = LanguageVersion::LATEST;
     let file = build_file("test.sol", CONTENTS, &mut id_generator, language_version);
 
     let files = [file];

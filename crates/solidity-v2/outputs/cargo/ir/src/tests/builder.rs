@@ -23,7 +23,7 @@ contract MyContract {
     let ParseOutput {
         source_unit,
         diagnostics,
-    } = Parser::parse("test.sol", CONTENTS, LanguageVersion::V0_8_30);
+    } = Parser::parse("test.sol", CONTENTS, LanguageVersion::LATEST);
 
     assert!(
         diagnostics.is_empty(),
@@ -101,7 +101,7 @@ contract Test is Base layout at 0 {}
     let ParseOutput {
         source_unit,
         diagnostics,
-    } = Parser::parse("test.sol", CONTENTS, LanguageVersion::V0_8_30);
+    } = Parser::parse("test.sol", CONTENTS, LanguageVersion::LATEST);
 
     assert!(
         diagnostics.is_empty(),
