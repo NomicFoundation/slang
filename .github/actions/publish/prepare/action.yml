@@ -28,13 +28,12 @@ runs:
         echo "local=${LOCAL}" >> "$GITHUB_OUTPUT"
         echo "published=${PUBLISHED}" >> "$GITHUB_OUTPUT"
 
+    # Marker satisfies the artifact upload's `if-no-files-found: error` when nothing was packed.
     - name: "Write .skipped marker"
       if: "${{ steps.versions.outputs.local == steps.versions.outputs.published }}"
       shell: "bash"
       run: |
         echo "npm ${{ steps.versions.outputs.local }} already published; writing .skipped marker."
-        # Marker keeps `if-no-files-found: error` on the artifact upload satisfied
-        # without producing a tarball that nothing consumes.
         touch target/publish-artifacts/.skipped
 
     - name: "Build WASM package"

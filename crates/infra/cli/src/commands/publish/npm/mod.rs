@@ -1,7 +1,8 @@
-use std::fs;
+use std::path::Path;
 
-use anyhow::{bail, Result};
+use anyhow::Result;
 use clap::Parser;
+use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
 
@@ -15,22 +16,14 @@ pub struct NpmController {
 
 impl NpmController {
     pub fn execute(&self) -> Result<()> {
-        let root = std::path::Path::repo_path("target/publish-artifacts");
-        let tarballs: Vec<_> = fs::read_dir(&root)?
-            .filter_map(|entry| entry.ok().map(|e| e.path()))
-            .filter(|path| path.extension().and_then(|s| s.to_str()) == Some("tgz"))
-            .collect();
-        let tarball = match tarballs.as_slice() {
-            [] => {
-                println!("No tarball in {root:?}; nothing to publish.");
-                return Ok(());
-            }
-            [one] => one,
-            many => bail!(
-                "Expected one .tgz in {root:?}, found {}: {many:?}",
-                many.len()
-            ),
-        };
+        let version = CargoWorkspace::local_version()?;
+        let tarball = Path::repo_path(format!(
+            "target/publish-artifacts/nomicfoundation-slang-{version}.tgz"
+        ));
+        if !tarball.exists() {
+            println!("No tarball at {tarball:?}; nothing to publish.");
+            return Ok(());
+        }
 
         let mut command = Command::new("pnpm")
             .arg("publish")
