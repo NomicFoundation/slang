@@ -5,7 +5,9 @@ use num_traits::Zero;
 use slang_solidity_v2_common::nodes::NodeId;
 
 use super::literals::numbers;
-use super::{DataLocation, FunctionType, FunctionVisibility, LiteralKind, Number, Type, TypeId};
+use super::{
+    DataLocation, FunctionType, FunctionTypeVisibility, LiteralKind, Number, Type, TypeId,
+};
 use crate::types::ImplicitlyConvertible;
 
 /// The `TypeRegistry` stores an index of registered types, both elementary
@@ -408,7 +410,7 @@ impl TypeRegistry {
         function_type: FunctionType,
     ) -> FunctionType {
         FunctionType {
-            visibility: FunctionVisibility::External,
+            visibility: FunctionTypeVisibility::External,
             parameter_types: function_type
                 .parameter_types
                 .into_iter()
@@ -596,10 +598,10 @@ impl TypeRegistry {
         // The exception is if the `other` function is external which allows
         // changing the data location of parameters from `memory` to `calldata`
         // (or viceversa) if the visibility of `ftype` is external or public.
-        } else if matches!(other.visibility, FunctionVisibility::External)
+        } else if matches!(other.visibility, FunctionTypeVisibility::External)
             && matches!(
                 ftype.visibility,
-                FunctionVisibility::External | FunctionVisibility::Public
+                FunctionTypeVisibility::External | FunctionTypeVisibility::Public
             )
         {
             ftype

@@ -109,29 +109,29 @@ pub struct FunctionType {
     pub implicit_receiver_type: Option<TypeId>,
     pub parameter_types: Vec<TypeId>,
     pub return_type: TypeId,
-    pub visibility: FunctionVisibility,
-    pub mutability: FunctionMutability,
+    pub visibility: FunctionTypeVisibility,
+    pub mutability: FunctionTypeMutability,
 }
 
 impl FunctionType {
     pub fn is_externally_visible(&self) -> bool {
         matches!(
             self.visibility,
-            FunctionVisibility::External | FunctionVisibility::Public
+            FunctionTypeVisibility::External | FunctionTypeVisibility::Public
         )
     }
 }
 
 // Mirrors `ir::FunctionVisibility`
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub enum FunctionVisibility {
+pub enum FunctionTypeVisibility {
     Public,
     Private,
     Internal,
     External,
 }
 
-impl From<&ir::FunctionVisibility> for FunctionVisibility {
+impl From<&ir::FunctionVisibility> for FunctionTypeVisibility {
     fn from(value: &ir::FunctionVisibility) -> Self {
         match value {
             ir::FunctionVisibility::Public => Self::Public,
@@ -144,14 +144,14 @@ impl From<&ir::FunctionVisibility> for FunctionVisibility {
 
 // Mirrors `ir::FunctionMutability`
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub enum FunctionMutability {
+pub enum FunctionTypeMutability {
     Pure,
     View,
     NonPayable,
     Payable,
 }
 
-impl From<&ir::FunctionMutability> for FunctionMutability {
+impl From<&ir::FunctionMutability> for FunctionTypeMutability {
     fn from(value: &ir::FunctionMutability) -> Self {
         match value {
             ir::FunctionMutability::Pure => Self::Pure,
@@ -166,50 +166,50 @@ pub(crate) trait ImplicitlyConvertible<T> {
     fn implicitly_convertible_to(&self, target: T) -> bool;
 }
 
-impl ImplicitlyConvertible<FunctionVisibility> for FunctionVisibility {
+impl ImplicitlyConvertible<FunctionTypeVisibility> for FunctionTypeVisibility {
     fn implicitly_convertible_to(&self, target: Self) -> bool {
         matches!(
             (self, target),
             // public can convert to public, external or internal (if called
             // internally)
             (
-                FunctionVisibility::Public,
-                FunctionVisibility::Public
-                    | FunctionVisibility::Internal
-                    | FunctionVisibility::External,
+                FunctionTypeVisibility::Public,
+                FunctionTypeVisibility::Public
+                    | FunctionTypeVisibility::Internal
+                    | FunctionTypeVisibility::External,
             )
                 // private converts to private or internal
                 | (
-                    FunctionVisibility::Private,
-                    FunctionVisibility::Private | FunctionVisibility::Internal,
+                    FunctionTypeVisibility::Private,
+                    FunctionTypeVisibility::Private | FunctionTypeVisibility::Internal,
                 )
                 // internal and external only convert to themselves
-                | (FunctionVisibility::Internal, FunctionVisibility::Internal)
-                | (FunctionVisibility::External, FunctionVisibility::External)
+                | (FunctionTypeVisibility::Internal, FunctionTypeVisibility::Internal)
+                | (FunctionTypeVisibility::External, FunctionTypeVisibility::External)
         )
     }
 }
 
-impl ImplicitlyConvertible<FunctionMutability> for FunctionMutability {
+impl ImplicitlyConvertible<FunctionTypeMutability> for FunctionTypeMutability {
     fn implicitly_convertible_to(&self, target: Self) -> bool {
         matches!(
             (self, target),
             // pure converts to view or non-payable
             (
-                FunctionMutability::Pure,
-                FunctionMutability::Pure | FunctionMutability::View | FunctionMutability::NonPayable,
+                FunctionTypeMutability::Pure,
+                FunctionTypeMutability::Pure | FunctionTypeMutability::View | FunctionTypeMutability::NonPayable,
             )
                 // view converts to non-payable
                 | (
-                FunctionMutability::View,
-                FunctionMutability::View | FunctionMutability::NonPayable
+                FunctionTypeMutability::View,
+                FunctionTypeMutability::View | FunctionTypeMutability::NonPayable
             )
                 // non-payable does not implicitly convert to any other kind
-                | (FunctionMutability::NonPayable, FunctionMutability::NonPayable)
+                | (FunctionTypeMutability::NonPayable, FunctionTypeMutability::NonPayable)
                 // payable converts to non-payable
                 | (
-                    FunctionMutability::Payable,
-                    FunctionMutability::Payable | FunctionMutability::NonPayable,
+                    FunctionTypeMutability::Payable,
+                    FunctionTypeMutability::Payable | FunctionTypeMutability::NonPayable,
                 )
         )
     }

@@ -4,7 +4,7 @@ use slang_solidity_v2_ir::ir;
 use super::Pass;
 use crate::binder::{Definition, Scope};
 use crate::types::{
-    DataLocation, FunctionMutability, FunctionType, FunctionVisibility, Type, TypeId,
+    DataLocation, FunctionType, FunctionTypeMutability, FunctionTypeVisibility, Type, TypeId,
 };
 
 impl Pass<'_> {
@@ -260,8 +260,8 @@ impl Pass<'_> {
             implicit_receiver_type: Some(receiver_type_id),
             parameter_types,
             return_type,
-            visibility: FunctionVisibility::Public,
-            mutability: FunctionMutability::View,
+            visibility: FunctionTypeVisibility::Public,
+            mutability: FunctionTypeMutability::View,
         });
         Some(self.types.register_type(getter_type))
     }

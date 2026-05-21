@@ -7,6 +7,8 @@ pub mod slang_solidity_v2::ast
 pub use slang_solidity_v2::ast::<<slang_solidity_v2_ast::ast::*>>
 pub use slang_solidity_v2::ast::BuiltIn
 pub use slang_solidity_v2::ast::DataLocation
+pub use slang_solidity_v2::ast::FunctionTypeMutability
+pub use slang_solidity_v2::ast::FunctionTypeVisibility
 pub use slang_solidity_v2::ast::NodeId
 pub use slang_solidity_v2::ast::TypeId
 pub mod slang_solidity_v2::compilation
