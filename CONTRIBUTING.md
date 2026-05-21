@@ -53,7 +53,7 @@ We manage versioning through [changesets](https://github.com/changesets/changese
 
 Once the version bump is merged, `.github/workflows/publish.yml` runs three jobs in sequence:
 
-1. **`prepare`** — builds the npm tarball (`pnpm pack`) into `target/publish-artifacts/` and uploads it as a workflow artifact (retained for 7 days). On the version-bump merge, this is what's about to ship; on every other PR/push, prepare writes a `.skipped` marker because the local version already matches what's on npm.
+1. **`prepare`** — builds the npm tarball (`pnpm pack`) into `target/publish-artifacts/` and uploads it as a workflow artifact (retained for 7 days). On the version-bump merge, this is what's about to ship; on every other PR/push, prepare writes a `SKIPPED` marker because the local version already matches what's on npm.
 2. **`review`** — downloads the prepared artifact and runs `pnpm publish --dry-run` against the tarball plus a batched `cargo publish --dry-run`. The cargo dry-run packages every crate, verify-builds each one in isolation from the extracted `.crate`, and resolves internal path-deps against the bumped versions — the closest dress rehearsal short of the actual upload.
 3. **`publish`** — gated by the `slang-release` environment (manual approval). Uploads the prepared npm tarball to npm and runs `cargo publish --no-verify` per crate against crates.io, both via OIDC trusted-publishing tokens.
 

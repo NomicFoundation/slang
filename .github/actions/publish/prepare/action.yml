@@ -29,12 +29,13 @@ runs:
         echo "published=${PUBLISHED}" >> "$GITHUB_OUTPUT"
 
     # Marker satisfies the artifact upload's `if-no-files-found: error` when nothing was packed.
-    - name: "Write .skipped marker"
+    # Non-dotfile name — actions/upload-artifact skips hidden files by default.
+    - name: "Write SKIPPED marker"
       if: "${{ steps.versions.outputs.local == steps.versions.outputs.published }}"
       shell: "bash"
       run: |
-        echo "npm ${{ steps.versions.outputs.local }} already published; writing .skipped marker."
-        touch target/publish-artifacts/.skipped
+        echo "npm ${{ steps.versions.outputs.local }} already published; writing SKIPPED marker."
+        touch target/publish-artifacts/SKIPPED
 
     - name: "Build WASM package"
       if: "${{ steps.versions.outputs.local != steps.versions.outputs.published }}"
