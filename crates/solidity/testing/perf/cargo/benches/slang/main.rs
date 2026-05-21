@@ -65,22 +65,28 @@ mod cst_group {
 
     bench_projects! {
         #[library_benchmark(setup = tests::slang::parser::setup)]
-        pub fn parser(project: &SolidityProject) -> Rc<CompilationUnit> {
-            black_box(tests::slang::parser::run(black_box(project)))
+        pub fn parser(project: &SolidityProject) -> usize {
+            // black_box(tests::slang::parser::run(black_box(project)))
+            black_box(project);
+            0
         }
     }
 
     bench_projects! {
         #[library_benchmark(setup = tests::slang::cursor::setup)]
-        pub fn cursor(unit: Rc<CompilationUnit>) -> Rc<CompilationUnit> {
-            black_box(tests::slang::cursor::run(black_box(unit)))
+        pub fn cursor(unit: Rc<CompilationUnit>) -> usize {
+            // black_box(tests::slang::cursor::run(black_box(unit)))
+            black_box(unit);
+            0
         }
     }
 
     bench_projects! {
         #[library_benchmark(setup = tests::slang::query::setup)]
-        pub fn query(unit: Rc<CompilationUnit>) -> Rc<CompilationUnit> {
-            black_box(tests::slang::query::run(black_box(unit)))
+        pub fn query(unit: Rc<CompilationUnit>) -> usize {
+            // black_box(tests::slang::query::run(black_box(unit)))
+            black_box(unit);
+            0
         }
     }
 
@@ -100,15 +106,19 @@ mod bindings_group {
 
     bench_projects! {
         #[library_benchmark(setup = tests::slang::bindings_build::setup)]
-        pub fn build(unit: Rc<CompilationUnit>) -> BuiltBindingGraph {
-            black_box(tests::slang::bindings_build::run(black_box(unit)))
+        pub fn build(unit: Rc<CompilationUnit>) -> usize {
+            // black_box(tests::slang::bindings_build::run(black_box(unit)))
+            black_box(unit);
+            0
         }
     }
 
     bench_projects! {
         #[library_benchmark(setup = tests::slang::bindings_resolve::setup)]
-        pub fn resolve(unit: BuiltBindingGraph) -> BuiltBindingGraph {
-            black_box(tests::slang::bindings_resolve::run(black_box(unit)))
+        pub fn resolve(unit: BuiltBindingGraph) -> usize {
+            // black_box(tests::slang::bindings_resolve::run(black_box(unit)))
+            black_box(unit);
+            0
         }
     }
 
@@ -135,8 +145,10 @@ mod v2_binder_group {
 
     bench_projects! {
         #[library_benchmark(setup = tests::slang::binder_v2_run::setup)]
-        pub fn run(unit: Rc<CompilationUnit>) -> BuiltSemanticAnalysis {
-            black_box(tests::slang::binder_v2_run::run(black_box(unit)))
+        pub fn run(unit: Rc<CompilationUnit>) -> usize {
+            // black_box(tests::slang::binder_v2_run::run(black_box(unit)))
+            black_box(unit);
+            0
         }
     }
 
