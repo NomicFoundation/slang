@@ -16,20 +16,20 @@ pub struct CargoController {
 impl CargoController {
     pub fn execute(&self) -> Result<()> {
         let local_version = CargoWorkspace::local_version()?;
-        let crates_to_run: Vec<String> = UserFacingV1Crate::iter()
+        let changed_crates: Vec<String> = UserFacingV1Crate::iter()
             .map(|c| c.to_string())
             .filter(|name| needs_publish(name, &local_version))
             .collect();
 
-        if crates_to_run.is_empty() {
+        if changed_crates.is_empty() {
             println!("No crates to publish.");
             return Ok(());
         }
 
         if self.dry_run.get() {
-            run_batched_dry_run(&crates_to_run);
+            run_batched_dry_run(&changed_crates);
         } else {
-            for crate_name in &crates_to_run {
+            for crate_name in &changed_crates {
                 run_cargo_publish(crate_name);
             }
         }
