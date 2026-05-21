@@ -93,3 +93,41 @@ fn find_single_file_with_extension(dir: &Path, extension: &str) -> Result<PathBu
         n => bail!("Expected exactly one .{extension} file in {dir:?}, found {n}: {matches:?}"),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn touch(dir: &Path, name: &str) {
+        fs::write(dir.join(name), b"").unwrap();
+    }
+
+    #[test]
+    fn returns_the_single_match() {
+        let dir = tempfile::tempdir().unwrap();
+        touch(dir.path(), "package.tgz");
+        touch(dir.path(), "README.md");
+
+        let found = find_single_file_with_extension(dir.path(), "tgz").unwrap();
+        assert_eq!(found, dir.path().join("package.tgz"));
+    }
+
+    #[test]
+    fn errors_when_no_match() {
+        let dir = tempfile::tempdir().unwrap();
+        touch(dir.path(), "README.md");
+
+        let err = find_single_file_with_extension(dir.path(), "tgz").unwrap_err();
+        assert!(err.to_string().contains("No .tgz files"));
+    }
+
+    #[test]
+    fn errors_when_multiple_matches() {
+        let dir = tempfile::tempdir().unwrap();
+        touch(dir.path(), "a.tgz");
+        touch(dir.path(), "b.tgz");
+
+        let err = find_single_file_with_extension(dir.path(), "tgz").unwrap_err();
+        assert!(err.to_string().contains("Expected exactly one"));
+    }
+}

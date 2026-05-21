@@ -166,6 +166,8 @@ jobs:
           persist-credentials: false
           fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
+      # Kept here because the WASM build is large; absent from `publish` below
+      # because that job only uploads prebuilt bytes — no compile happens there.
       - name: "Free up disk space"
         uses: "./.github/actions/free-disk-space"
 
@@ -356,7 +358,9 @@ jobs:
       - "prepare"
       - "review"
       - "notify-deploy"
-    # Explicit redundant condition for safety.
+    # Redundant with the needs chain, but explicit for safety: never publish
+    # from PRs, when there are pending changesets, or when the version is
+    # already published.
     if: >-
       github.event_name != 'pull_request'
       && needs.changesets.outputs.hasChangesets == 'false'

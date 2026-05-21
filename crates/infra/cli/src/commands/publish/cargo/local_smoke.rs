@@ -11,6 +11,7 @@ use tempfile::TempDir;
 use url::Url;
 
 const LOCAL_REGISTRY_NAME: &str = "local";
+const FAKE_TOKEN: &str = "fake-token-local-registry-ignores-it";
 
 #[derive(Deserialize)]
 struct RegistryConfig {
@@ -116,7 +117,7 @@ impl LocalRegistry {
                 .args(["--registry", LOCAL_REGISTRY_NAME])
                 .args(["--package", name])
                 .env(&index_env, &index_url)
-                .env(&token_env, "fake-token-local-registry-ignores-it")
+                .env(&token_env, FAKE_TOKEN)
                 // cargo-http-registry's index is plain HTTP git; libgit2 can't
                 // fetch that, so this flag falls back to the system git binary.
                 .env("CARGO_NET_GIT_FETCH_WITH_CLI", "true")
