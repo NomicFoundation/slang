@@ -1,0 +1,163 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 20
+
+Error: Operator == cannot be applied to operands of type "uint256" and "bool".
+    ╭─[input.sol:15:5]
+    │
+ 15 │     u == b;
+    │     ───┬──  
+    │        ╰──── Error occurred here.
+────╯
+
+Error: Operator == cannot be applied to operands of type "uint256" and "int256".
+    ╭─[input.sol:16:5]
+    │
+ 16 │     u == i;
+    │     ───┬──  
+    │        ╰──── Error occurred here.
+────╯
+
+Error: Operator == cannot be applied to operands of type "uint256" and "address".
+    ╭─[input.sol:17:5]
+    │
+ 17 │     u == a;
+    │     ───┬──  
+    │        ╰──── Error occurred here.
+────╯
+
+Error: Operator == cannot be applied to operands of type "E1" and "E2".
+    ╭─[input.sol:18:5]
+    │
+ 18 │     e1 == e2;
+    │     ────┬───  
+    │         ╰───── Error occurred here.
+────╯
+
+Error: Operator == cannot be applied to operands of type "function (uint256, int256, address, bool, E1, E2, string memory, string memory) returns void" and "uint256".
+    ╭─[input.sol:19:5]
+    │
+ 19 │     (this.equality) == u;
+    │     ──────────┬─────────  
+    │               ╰─────────── Error occurred here.
+────╯
+
+Error: Operator == cannot be applied to operands of type "string memory" and "string memory".
+    ╭─[input.sol:20:5]
+    │
+ 20 │     sa == sb;
+    │     ────┬───  
+    │         ╰───── Error occurred here.
+────╯
+
+Error: Operator != cannot be applied to operands of type "uint256" and "bool".
+    ╭─[input.sol:21:5]
+    │
+ 21 │     u != b;
+    │     ───┬──  
+    │        ╰──── Error occurred here.
+────╯
+
+Error: Operator != cannot be applied to operands of type "uint256" and "address".
+    ╭─[input.sol:22:5]
+    │
+ 22 │     u != a;
+    │     ───┬──  
+    │        ╰──── Error occurred here.
+────╯
+
+Error: Operator > cannot be applied to operands of type "uint256" and "bool".
+    ╭─[input.sol:35:5]
+    │
+ 35 │     u > b;
+    │     ──┬──  
+    │       ╰──── Error occurred here.
+────╯
+
+Error: Operator > cannot be applied to operands of type "uint256" and "int256".
+    ╭─[input.sol:36:5]
+    │
+ 36 │     u > i;
+    │     ──┬──  
+    │       ╰──── Error occurred here.
+────╯
+
+Error: Operator > cannot be applied to operands of type "uint256" and "address".
+    ╭─[input.sol:37:5]
+    │
+ 37 │     u > a;
+    │     ──┬──  
+    │       ╰──── Error occurred here.
+────╯
+
+Error: Operator > cannot be applied to operands of type "E1" and "E2".
+    ╭─[input.sol:38:5]
+    │
+ 38 │     e1 > e2;
+    │     ───┬───  
+    │        ╰───── Error occurred here.
+────╯
+
+Error: Operator > cannot be applied to operands of type "function (uint256, int256, address, bool, E1, E2, string memory, string memory) returns void" and "uint256".
+    ╭─[input.sol:39:5]
+    │
+ 39 │     (this.inequality) > u;
+    │     ──────────┬──────────  
+    │               ╰──────────── Error occurred here.
+────╯
+
+Error: Operator > cannot be applied to operands of type "string memory" and "string memory".
+    ╭─[input.sol:40:5]
+    │
+ 40 │     sa > sb;
+    │     ───┬───  
+    │        ╰───── Error occurred here.
+────╯
+
+Error: Operator < cannot be applied to operands of type "uint256" and "bool".
+    ╭─[input.sol:41:5]
+    │
+ 41 │     u < b;
+    │     ──┬──  
+    │       ╰──── Error occurred here.
+────╯
+
+Error: Operator < cannot be applied to operands of type "uint256" and "address".
+    ╭─[input.sol:42:5]
+    │
+ 42 │     u < a;
+    │     ──┬──  
+    │       ╰──── Error occurred here.
+────╯
+
+Error: Operator <= cannot be applied to operands of type "uint256" and "bool".
+    ╭─[input.sol:43:5]
+    │
+ 43 │     u <= b;
+    │     ───┬──  
+    │        ╰──── Error occurred here.
+────╯
+
+Error: Operator <= cannot be applied to operands of type "uint256" and "address".
+    ╭─[input.sol:44:5]
+    │
+ 44 │     u <= a;
+    │     ───┬──  
+    │        ╰──── Error occurred here.
+────╯
+
+Error: Operator >= cannot be applied to operands of type "uint256" and "bool".
+    ╭─[input.sol:45:5]
+    │
+ 45 │     u >= b;
+    │     ───┬──  
+    │        ╰──── Error occurred here.
+────╯
+
+Error: Operator >= cannot be applied to operands of type "uint256" and "address".
+    ╭─[input.sol:46:5]
+    │
+ 46 │     u >= a;
+    │     ───┬──  
+    │        ╰──── Error occurred here.
+────╯

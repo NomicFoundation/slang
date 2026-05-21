@@ -162,10 +162,8 @@ impl TypeRegistry {
             ) => {
                 if from_signed == to_signed {
                     from_bits <= to_bits
-                } else if *from_signed {
-                    false
                 } else {
-                    from_bits < to_bits
+                    false
                 }
             }
 

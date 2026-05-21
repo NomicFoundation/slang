@@ -1,6 +1,6 @@
 contract D {}
 
-contract C is D {
+contract C {
     C c;
     D d;
 

@@ -16,13 +16,13 @@ contract C {
     u == i;
     u == a;
     e1 == e2;
-    (this.f) == u;
+    (this.equality) == u;
     sa == sb;
     u != b;
     u != a;
   }
   
-    function inequality(
+  function inequality(
     uint256 u,
     int256 i,
     address a,
@@ -36,7 +36,7 @@ contract C {
     u > i;
     u > a;
     e1 > e2;
-    (this.f) > u;
+    (this.inequality) > u;
     sa > sb;
     u < b;
     u < a;

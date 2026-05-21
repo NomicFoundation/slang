@@ -4,6 +4,7 @@ use num_rational::BigRational;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
+pub(crate) mod display;
 pub mod literals;
 mod parsing;
 mod registry;
@@ -359,5 +360,56 @@ impl Type {
     /// TODO: This probably has a better way to resolve it, looking at the storage location
     pub(crate) fn can_be_array_element(&self) -> bool {
         !matches!(self, Type::Mapping { .. } | Type::Tuple { .. } | Type::Void)
+    }
+
+    /// Whether this type can be tested for equality with `==` or `!=`.
+    pub(crate) fn supports_equality(&self) -> bool {
+        match self {
+            Type::Array { .. }
+            | Type::Bytes { .. }
+            | Type::FixedSizeArray { .. }
+            | Type::Mapping { .. }
+            | Type::String { .. }
+            | Type::Struct { .. }
+            | Type::Tuple { .. }
+            | Type::Void
+            | Type::Literal(LiteralKind::String { .. } | LiteralKind::HexString { .. }) => false,
+            Type::Address { .. }
+            | Type::Boolean
+            | Type::ByteArray { .. }
+            | Type::Contract { .. }
+            | Type::Enum { .. }
+            | Type::FixedPointNumber { .. }
+            | Type::Function(_)
+            | Type::Integer { .. }
+            | Type::Interface { .. }
+            | Type::UserDefinedValue { .. }
+            | Type::Literal(_) => true,
+        }
+    }
+
+    /// Whether this type can be tested for inequality with `>`, `<`, `>=` or `<=`.
+    pub(crate) fn supports_inequality(&self) -> bool {
+        match self {
+            Type::Address { .. }
+            | Type::ByteArray { .. }
+            | Type::Enum { .. }
+            | Type::FixedPointNumber { .. }
+            | Type::Integer { .. }
+            | Type::Literal(_)
+            | Type::UserDefinedValue { .. } => true,
+            Type::Array { .. }
+            | Type::Boolean
+            | Type::Bytes { .. }
+            | Type::Contract { .. }
+            | Type::FixedSizeArray { .. }
+            | Type::Function(_)
+            | Type::Interface { .. }
+            | Type::Mapping { .. }
+            | Type::String { .. }
+            | Type::Struct { .. }
+            | Type::Tuple { .. }
+            | Type::Void => false,
+        }
     }
 }

@@ -84,16 +84,16 @@ fn test_storage_layout() {
     assert_eq!(layout.len(), 12);
 
     assert_layout_item_eq!(layout[0], "a", uint!(0_U256), 0, "uint256");
-    assert_layout_item_eq!(layout[1], "e", uint!(1_U256), 0, "uint8[]");
-    assert_layout_item_eq!(layout[2], "f", uint!(2_U256), 0, "mapping(uint256 => S)");
+    assert_layout_item_eq!(layout[1], "e", uint!(1_U256), 0, "uint8[] storage");
+    assert_layout_item_eq!(layout[2], "f", uint!(2_U256), 0, "uint256 => S storage");
     assert_layout_item_eq!(layout[3], "g", uint!(3_U256), 0, "uint16");
     assert_layout_item_eq!(layout[4], "h", uint!(3_U256), 2, "uint16");
-    assert_layout_item_eq!(layout[5], "s", uint!(4_U256), 0, "S");
+    assert_layout_item_eq!(layout[5], "s", uint!(4_U256), 0, "S storage");
     assert_layout_item_eq!(layout[6], "k", uint!(5_U256), 0, "int8");
     assert_layout_item_eq!(layout[7], "l", uint!(5_U256), 1, "bytes21");
-    assert_layout_item_eq!(layout[8], "m", uint!(6_U256), 0, "uint8[10]");
-    assert_layout_item_eq!(layout[9], "n", uint!(7_U256), 0, "bytes5[8]");
-    assert_layout_item_eq!(layout[10], "t", uint!(9_U256), 0, "T[2]");
+    assert_layout_item_eq!(layout[8], "m", uint!(6_U256), 0, "uint8[10] storage");
+    assert_layout_item_eq!(layout[9], "n", uint!(7_U256), 0, "bytes5[8] storage");
+    assert_layout_item_eq!(layout[10], "t", uint!(9_U256), 0, "T storage[2] storage");
     assert_layout_item_eq!(layout[11], "o", uint!(13_U256), 0, "bytes5");
 
     let transient_layout = counter_abi.transient_storage_layout();

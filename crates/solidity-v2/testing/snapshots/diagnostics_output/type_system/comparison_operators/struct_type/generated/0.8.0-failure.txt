@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Operator == cannot be applied to operands of type "s storage" and "s storage".
+   ╭─[input.sol:8:5]
+   │
+ 8 │     x == y;
+   │     ───┬──  
+   │        ╰──── Error occurred here.
+───╯

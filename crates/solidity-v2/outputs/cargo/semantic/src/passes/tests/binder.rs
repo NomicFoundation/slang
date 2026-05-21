@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::NodeIdGenerator;
 
@@ -233,11 +234,20 @@ contract Test is Base {
     let files = [file];
     let mut binder = Binder::default();
     let mut types = TypeRegistry::default();
+    let mut diagnostics = DiagnosticCollection::default();
+    let language_version = LanguageVersion::LATEST;
 
     p1_collect_definitions::run(&files, &mut binder);
     p2_linearise_contracts::run(&files, &mut binder);
     p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
-    p4_resolve_references::run(&files, &mut binder, &mut types, language_version);
+    p4_resolve_references::run(
+        &files,
+        &mut binder,
+        &mut types,
+        &mut diagnostics,
+        language_version,
+    );
+    assert!(diagnostics.is_empty(), "expected no diagnostics");
 
     // Verify that references were created and most are resolved
     let references = binder.references();

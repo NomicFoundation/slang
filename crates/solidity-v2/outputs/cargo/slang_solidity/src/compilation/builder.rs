@@ -169,7 +169,7 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
             })
             .collect();
 
-        let semantic = SemanticContext::build_from(language_version, &files);
+        let semantic = SemanticContext::build_from(language_version, &files, &mut diagnostics);
 
         CompilationUnit::create(language_version, files, semantic, diagnostics)
     }

@@ -1,5 +1,6 @@
 use num_bigint::BigInt;
 use num_rational::BigRational;
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
 
@@ -47,10 +48,19 @@ fn type_of_expressions(
 
     let mut binder = Binder::default();
     let mut types = TypeRegistry::default();
+    let mut diagnostics = DiagnosticCollection::default();
     p1_collect_definitions::run(&files, &mut binder);
     p2_linearise_contracts::run(&files, &mut binder);
     p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
-    p4_resolve_references::run(&files, &mut binder, &mut types, language_version);
+    p4_resolve_references::run(
+        &files,
+        &mut binder,
+        &mut types,
+        &mut diagnostics,
+        language_version,
+    );
+
+    assert!(diagnostics.is_empty(), "expected no diagnostics");
 
     let contract = match files[0].ir_root().members.last().unwrap() {
         ir::SourceUnitMember::ContractDefinition(c) => c,

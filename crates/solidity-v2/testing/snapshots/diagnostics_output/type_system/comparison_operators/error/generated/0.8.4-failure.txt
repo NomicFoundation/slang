@@ -1,14 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Diagnostics: 7
-
-Error: This syntax was introduced in version '0.8.4'.
-   ╭─[input.sol:1:1]
-   │
- 1 │ error MyCustomError(uint, bool);
-   │ ────────────────┬───────────────  
-   │                 ╰───────────────── Error occurred here.
-───╯
+Diagnostics: 6
 
 Error: Operator == cannot be applied to operands of type "error MyCustomError" and "error MyCustomError".
    ╭─[input.sol:5:9]

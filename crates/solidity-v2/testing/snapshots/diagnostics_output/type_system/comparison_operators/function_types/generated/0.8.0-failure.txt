@@ -1,0 +1,51 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 6
+
+Error: Operator > cannot be applied to operands of type "function () returns uint256" and "function () returns uint256".
+   ╭─[input.sol:8:9]
+   │
+ 8 │         this.f > this.f;
+   │         ───────┬───────  
+   │                ╰───────── Error occurred here.
+───╯
+
+Error: Operator < cannot be applied to operands of type "function () returns uint256" and "function () returns uint256".
+   ╭─[input.sol:9:9]
+   │
+ 9 │         f < f;
+   │         ──┬──  
+   │           ╰──── Error occurred here.
+───╯
+
+Error: Operator != cannot be applied to operands of type "function () returns void" and "function () returns void".
+    ╭─[input.sol:19:9]
+    │
+ 19 │         internal_function_pointer_local != external_function_pointer_local;
+    │         ─────────────────────────────────┬────────────────────────────────  
+    │                                          ╰────────────────────────────────── Error occurred here.
+────╯
+
+Error: Operator != cannot be applied to operands of type "function () returns void" and "function () returns void".
+    ╭─[input.sol:20:9]
+    │
+ 20 │         internal_test_function != this.external_test_function;
+    │         ──────────────────────────┬──────────────────────────  
+    │                                   ╰──────────────────────────── Error occurred here.
+────╯
+
+Error: Operator != cannot be applied to operands of type "function (bool) returns void" and "function (uint256) returns void".
+    ╭─[input.sol:30:9]
+    │
+ 30 │         external_function_pointer_local2 != external_function_pointer_local1;
+    │         ──────────────────────────────────┬─────────────────────────────────  
+    │                                           ╰─────────────────────────────────── Error occurred here.
+────╯
+
+Error: Operator != cannot be applied to operands of type "function (bool) returns void" and "function (uint256) returns void".
+    ╭─[input.sol:31:9]
+    │
+ 31 │         this.external_test_function2 != this.external_test_function1;
+    │         ──────────────────────────────┬─────────────────────────────  
+    │                                       ╰─────────────────────────────── Error occurred here.
+────╯

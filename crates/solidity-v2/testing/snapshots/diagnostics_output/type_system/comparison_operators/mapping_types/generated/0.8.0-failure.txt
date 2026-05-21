@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Operator == cannot be applied to operands of type "uint256 => uint256" and "uint256 => uint256".
+   ╭─[input.sol:5:16]
+   │
+ 5 │         return x == y;
+   │                ───┬──  
+   │                   ╰──── Error occurred here.
+───╯

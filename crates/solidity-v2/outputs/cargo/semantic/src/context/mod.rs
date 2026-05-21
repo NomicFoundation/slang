@@ -2,6 +2,7 @@ use std::collections::HashSet;
 use std::sync::Arc;
 
 use file_node_mapper::FileNodeMapper;
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::utils::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
@@ -58,14 +59,24 @@ pub struct SemanticContext {
 }
 
 impl SemanticContext {
-    pub fn build_from(language_version: LanguageVersion, files: &[impl SemanticFile]) -> Self {
+    pub fn build_from(
+        language_version: LanguageVersion,
+        files: &[impl SemanticFile],
+        diagnostics: &mut DiagnosticCollection,
+    ) -> Self {
         let mut binder = Binder::default();
         let mut types = TypeRegistry::default();
 
         p1_collect_definitions::run(files, &mut binder);
         p2_linearise_contracts::run(files, &mut binder);
         p3_type_definitions::run(files, &mut binder, &mut types, language_version);
-        p4_resolve_references::run(files, &mut binder, &mut types, language_version);
+        p4_resolve_references::run(
+            files,
+            &mut binder,
+            &mut types,
+            diagnostics,
+            language_version,
+        );
 
         let file_node_mapper = FileNodeMapper::build_from(files);
 
@@ -132,75 +143,8 @@ impl SemanticContext {
         reference.resolution.as_definition_id()
     }
 
-    pub(crate) fn definition_canonical_name(&self, definition_id: NodeId) -> String {
-        self.binder
-            .find_definition_by_id(definition_id)
-            .unwrap()
-            .identifier()
-            .unparse()
-            .to_string()
-    }
-
     pub fn type_internal_name(&self, type_id: TypeId) -> String {
-        match self.types.get_type_by_id(type_id) {
-            Type::Address { .. } => "address".to_string(),
-            Type::Array { element_type, .. } => {
-                format!(
-                    "{element}[]",
-                    element = self.type_internal_name(*element_type)
-                )
-            }
-            Type::Boolean => "bool".to_string(),
-            Type::ByteArray { width } => format!("bytes{width}"),
-            Type::Bytes { .. } => "bytes".to_string(),
-            Type::FixedPointNumber {
-                signed,
-                bits,
-                precision_bits,
-            } => format!(
-                "{prefix}{bits}x{precision_bits}",
-                prefix = if *signed { "fixed" } else { "ufixed" },
-            ),
-            Type::FixedSizeArray {
-                element_type, size, ..
-            } => {
-                format!(
-                    "{element}[{size}]",
-                    element = self.type_internal_name(*element_type),
-                )
-            }
-            Type::Function(_) => "function".to_string(),
-            Type::Integer { signed, bits } => format!(
-                "{prefix}{bits}",
-                prefix = if *signed { "int" } else { "uint" }
-            ),
-            Type::Literal(_) => "literal".to_string(),
-            Type::Mapping {
-                key_type_id,
-                value_type_id,
-            } => format!(
-                "mapping({key_type} => {value_type})",
-                key_type = self.type_internal_name(*key_type_id),
-                value_type = self.type_internal_name(*value_type_id)
-            ),
-            Type::String { .. } => "string".to_string(),
-            Type::Tuple { types } => format!(
-                "({types})",
-                types = types
-                    .iter()
-                    .map(|type_id| self.type_internal_name(*type_id))
-                    .collect::<Vec<_>>()
-                    .join(",")
-            ),
-            Type::Contract { definition_id }
-            | Type::Enum { definition_id }
-            | Type::Interface { definition_id }
-            | Type::Struct { definition_id, .. }
-            | Type::UserDefinedValue { definition_id } => {
-                self.definition_canonical_name(*definition_id)
-            }
-            Type::Void => "void".to_string(),
-        }
+        crate::types::display::type_display(&self.types, &self.binder, type_id)
     }
 
     pub fn type_canonical_name(&self, type_id: TypeId) -> Option<String> {
