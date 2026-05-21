@@ -22,9 +22,7 @@ runs:
         PACKAGE_JSON="crates/solidity/outputs/npm/package/package.json"
         NAME=$(node -p "require('./${PACKAGE_JSON}').name")
         LOCAL=$(node -p "require('./${PACKAGE_JSON}').version")
-        # `pnpm view <pkg> version` errors when the package is unpublished;
-        # tolerate that and treat as "no published version" so the build runs.
-        PUBLISHED=$(pnpm view "${NAME}" version 2>/dev/null || true)
+        PUBLISHED=$(pnpm view "${NAME}" version)
         echo "Published npm version: ${PUBLISHED:-<none>}"
         echo "Local npm version: ${LOCAL}"
         echo "local=${LOCAL}" >> "$GITHUB_OUTPUT"
