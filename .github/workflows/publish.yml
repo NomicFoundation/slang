@@ -232,10 +232,8 @@ jobs:
           name: "${{ needs.prepare.outputs.artifact-name }}"
           path: "target/publish-artifacts/"
 
-      - name: "Validate npm tarball (dry-run)"
-        uses: "./.github/actions/publish/npm"
-        with:
-          dry-run: "true"
+      - name: "infra publish npm --dry-run"
+        run: "./scripts/bin/infra publish npm --dry-run"
 
       - name: "infra publish cargo --dry-run"
         run: "./scripts/bin/infra publish cargo --dry-run"
@@ -383,8 +381,8 @@ jobs:
           name: "${{ needs.prepare.outputs.artifact-name }}"
           path: "target/publish-artifacts/"
 
-      - name: "Publish npm tarball"
-        uses: "./.github/actions/publish/npm"
+      - name: "infra publish npm"
+        run: "./scripts/bin/infra publish npm"
 
       - name: "Exchange Cargo Token"
         id: "exchangeCargoToken"
