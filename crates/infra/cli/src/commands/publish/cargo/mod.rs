@@ -1,5 +1,3 @@
-mod local_smoke;
-
 use anyhow::Result;
 use clap::Parser;
 use infra_utils::cargo::{CargoWorkspace, UserFacingV1Crate};
@@ -11,44 +9,31 @@ use crate::utils::DryRun;
 
 #[derive(Clone, Debug, Parser)]
 pub struct CargoController {
-    /// Tests the verify-compile of each packaged crate, which the local smoke test can't cover.
     #[command(flatten)]
     dry_run: DryRun,
-
-    /// Publish to a local `cargo-http-registry` instead of crates.io,
-    /// exercising the same per-crate sequential path production uses.
-    /// Mutually exclusive with --dry-run.
-    #[arg(long, conflicts_with = "dry_run")]
-    local_smoke: bool,
 }
 
 impl CargoController {
     pub fn execute(&self) -> Result<()> {
         let local_version = CargoWorkspace::local_version()?;
-        let mut crates_to_run: Vec<String> =
-            UserFacingV1Crate::iter().map(|c| c.to_string()).collect();
-        // Local smoke publishes every crate to a fresh empty registry,
-        // so the crates.io version check doesn't apply.
-        if !self.local_smoke {
-            crates_to_run.retain(|name| needs_publish(name, &local_version));
-        }
+        let crates_to_run: Vec<String> = UserFacingV1Crate::iter()
+            .map(|c| c.to_string())
+            .filter(|name| needs_publish(name, &local_version))
+            .collect();
 
         if crates_to_run.is_empty() {
             println!("No crates to publish.");
             return Ok(());
         }
 
-        if self.local_smoke {
-            local_smoke::run(&crates_to_run)
-        } else if self.dry_run.get() {
+        if self.dry_run.get() {
             run_batched_dry_run(&crates_to_run);
-            Ok(())
         } else {
             for crate_name in &crates_to_run {
                 run_cargo_publish(crate_name);
             }
-            Ok(())
         }
+        Ok(())
     }
 }
 

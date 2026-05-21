@@ -2185,7 +2185,6 @@ dependencies = [
  "strum 0.28.0",
  "tempfile",
  "toml 1.1.2+spec-1.1.0",
- "url",
 ]
 
 [[package]]

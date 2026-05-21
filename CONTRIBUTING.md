@@ -54,12 +54,10 @@ We manage versioning through [changesets](https://github.com/changesets/changese
 Once the version bump is merged, `.github/workflows/publish.yml` runs three jobs in sequence:
 
 1. **`prepare`** — builds the npm tarball (`pnpm pack`) into `target/publish-artifacts/`, computes SHA-256 hashes, and uploads the result as a workflow artifact (retained for 7 days). Also runs on every PR to validate the build.
-2. **`review`** — downloads the prepared artifact, verifies hashes, runs `pnpm publish --dry-run` and a batched `cargo publish --dry-run`. On PRs that touch publish code (or carry the `ci:smoke-publish` label), it additionally runs the end-to-end smoke test against a local `cargo-http-registry`.
+2. **`review`** — downloads the prepared artifact, verifies hashes, runs `pnpm publish --dry-run` and a batched `cargo publish --dry-run`.
 3. **`publish`** — gated by the `slang-release` environment (manual approval). Uploads the prepared npm tarball to npm and runs `cargo publish --no-verify` per crate against crates.io, both via OIDC trusted-publishing tokens.
 
 For npm, the bytes a reviewer signs off on are exactly the bytes that get uploaded — `publish` ships the same SHA-verified tarball that `prepare` built. For cargo there is no equivalent artifact handoff: each `cargo publish` invocation re-packages from the workspace source. `--no-verify` keeps the workspace `build.rs` and proc-macros from running alongside the crates.io OIDC token, but cargo's own packaging code still runs.
-
-You can exercise the cargo side end-to-end locally with `./scripts/bin/infra publish cargo --local-smoke`, which spins up a `cargo-http-registry` on an ephemeral port and runs the same per-crate publish flow used in CI.
 
 ## Managing Dependencies
 
