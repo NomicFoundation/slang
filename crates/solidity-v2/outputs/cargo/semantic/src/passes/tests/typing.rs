@@ -25,7 +25,23 @@ fn type_of_value_expression(input: &str) -> (Type, TypeRegistry) {
 /// did not resolve to a `Typing::Resolved`. Lets tests assert on the
 /// "unresolved" outcome without panicking.
 fn try_type_of_value_expression(input: &str) -> (Option<Type>, TypeRegistry) {
-    let source = format!("uint constant x = {input};");
+    try_type_of_value_expression_in_context("", input)
+}
+
+/// Like `type_of_value_expression`, with extra source-unit-level setup
+/// (e.g. free function or contract definitions) prepended before the
+/// `uint constant x = …` declaration.
+fn type_of_value_expression_in_context(setup: &str, input: &str) -> (Type, TypeRegistry) {
+    let (expr_type, types) = try_type_of_value_expression_in_context(setup, input);
+    let expr_type = expr_type.expect("expected resolved type for value expression");
+    (expr_type, types)
+}
+
+fn try_type_of_value_expression_in_context(
+    setup: &str,
+    input: &str,
+) -> (Option<Type>, TypeRegistry) {
+    let source = format!("{setup}\nuint constant x = {input};");
     let mut id_generator = NodeIdGenerator::default();
     let file = build_file("test.sol", &source, &mut id_generator);
     let files = [file];
@@ -39,7 +55,9 @@ fn try_type_of_value_expression(input: &str) -> (Option<Type>, TypeRegistry) {
     p3_type_definitions::run(&files, &mut binder, &mut types);
     p4_resolve_references::run(&files, &mut binder, &mut types, language_version);
 
-    let value_expr = match files[0].ir_root().members.first().unwrap() {
+    // The constant declaration is always appended last; earlier members may
+    // exist when the test passes setup (free functions, contracts, etc.).
+    let value_expr = match files[0].ir_root().members.last().unwrap() {
         ir::SourceUnitMember::ConstantDefinition(definition) => definition.value.as_ref().unwrap(),
         other => panic!("expected ConstantDefinition, got {other:?}"),
     };
@@ -541,6 +559,80 @@ fn test_array_literal_unresolved_when_elements_incompatible() {
     // Non-reducing rationals don't reify yet — array unification fails.
     let (type_, _) = try_type_of_value_expression("[0.5, 1]");
     assert_eq!(type_, None);
+}
+
+#[test]
+fn test_conditional_expression_unifies_byte_arrays() {
+    let (expr_type, types) = type_of_value_expression("true ? bytes32(0) : bytes32(1)");
+    assert_eq!(expr_type, *types.get_type_by_id(types.bytes32()));
+}
+
+#[test]
+fn test_conditional_expression_widens_byte_arrays() {
+    let (expr_type, types) = type_of_value_expression("true ? bytes20(0) : bytes32(0)");
+    assert_eq!(expr_type, *types.get_type_by_id(types.bytes32()));
+
+    let (expr_type, types) = type_of_value_expression("true ? bytes32(0) : bytes20(0)");
+    assert_eq!(expr_type, *types.get_type_by_id(types.bytes32()));
+}
+
+#[test]
+fn test_array_literal_unifies_byte_array_elements() {
+    let (expr_type, types) = type_of_value_expression("[bytes32(0), bytes32(1)]");
+    let Type::FixedSizeArray {
+        element_type,
+        size,
+        location,
+    } = expr_type
+    else {
+        panic!("expected FixedSizeArray, got {expr_type:?}");
+    };
+    assert_eq!(size, 2);
+    assert_eq!(location, DataLocation::Memory);
+    assert_eq!(element_type, types.bytes32());
+}
+
+#[test]
+fn test_bitwise_or_widens_byte_arrays() {
+    let (expr_type, types) = type_of_value_expression("bytes20(0) | bytes32(0)");
+    assert_eq!(expr_type, *types.get_type_by_id(types.bytes32()));
+
+    let (expr_type, types) = type_of_value_expression("bytes32(0) | bytes20(0)");
+    assert_eq!(expr_type, *types.get_type_by_id(types.bytes32()));
+}
+
+#[test]
+fn test_overload_resolution_widens_byte_array_argument() {
+    let setup = "
+        function pick(bytes32 a) pure returns (uint8) { a; return 1; }
+        function pick(string memory a) pure returns (uint16) { a; return 2; }
+    ";
+    let (type_, _) = type_of_value_expression_in_context(setup, "pick(bytes20(0))");
+    assert_eq!(
+        type_,
+        Type::Integer {
+            signed: false,
+            bits: 8,
+        }
+    );
+}
+
+#[test]
+fn test_overload_resolution_rejects_byte_array_narrowing() {
+    let setup = "
+        function pick(bytes20 a) pure returns (uint8) { a; return 1; }
+        function pick(string memory a) pure returns (uint16) { a; return 2; }
+    ";
+    let (type_, _) = try_type_of_value_expression_in_context(setup, "pick(bytes32(0))");
+    // Neither overload matches: `bytes32` does not convert to `bytes20` nor
+    // to `string`. The call is unresolved.
+    assert_eq!(type_, None);
+}
+
+#[test]
+fn test_conditional_expression_unifies_booleans() {
+    let (type_, _) = type_of_value_expression("true ? true : false");
+    assert_eq!(type_, Type::Boolean);
 }
 
 #[test]
