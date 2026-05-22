@@ -158,9 +158,12 @@ pub enum LiteralKind {
 }
 
 impl LiteralKind {
-    /// Returns the non-literal `Type` this literal flows into when its source
-    /// position needs a concrete EVM type.
-    pub(crate) fn mobile_type(&self) -> Option<Type> {
+    /// Returns the non-literal `Type` this literal can flow into (e.g., the
+    /// smallest integer type that fits an integer literal, or `string memory`
+    /// for a string literal). Returns `None` for literals without a mobile
+    /// type (e.g., non-reducing rationals).
+    // __SLANG_MOBILE_TYPE__ keep in sync with `ast::LiteralType::mobile_type`
+    pub fn mobile_type(&self) -> Option<Type> {
         match self {
             LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. } => {
                 numbers::smallest_integer_type_to_fit(value)

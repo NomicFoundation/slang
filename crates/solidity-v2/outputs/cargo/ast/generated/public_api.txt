@@ -2104,6 +2104,7 @@ pub fn slang_solidity_v2_ast::ast::LibraryMembersStruct::serialize<S: serde_core
 pub struct slang_solidity_v2_ast::ast::LiteralType
 impl slang_solidity_v2_ast::ast::LiteralType
 pub fn slang_solidity_v2_ast::ast::LiteralType::kind(&self) -> slang_solidity_v2_semantic::types::LiteralKind
+pub fn slang_solidity_v2_ast::ast::LiteralType::mobile_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 impl core::clone::Clone for slang_solidity_v2_ast::ast::LiteralType
 pub fn slang_solidity_v2_ast::ast::LiteralType::clone(&self) -> slang_solidity_v2_ast::ast::LiteralType
 pub struct slang_solidity_v2_ast::ast::MappingType

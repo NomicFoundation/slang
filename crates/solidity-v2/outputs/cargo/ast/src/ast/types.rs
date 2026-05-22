@@ -301,6 +301,22 @@ impl LiteralType {
     pub fn kind(&self) -> LiteralKind {
         self.inner.clone()
     }
+
+    /// Returns the non-literal mobile type this literal can flow into (e.g.,
+    /// the smallest integer type that fits an integer literal, or
+    /// `string memory` for a string literal). Returns `None` for literals
+    /// without a mobile type (e.g., non-reducing rationals).
+    // __SLANG_MOBILE_TYPE__ keep in sync with `LiteralKind::mobile_type`
+    pub fn mobile_type(&self) -> Option<Type> {
+        self.inner.mobile_type().and_then(|mobile| match mobile {
+            types::Type::Integer(inner) => Some(Type::Integer(IntegerType { inner })),
+            types::Type::String(inner) => Some(Type::String(StringType { inner })),
+            types::Type::Address(inner) => Some(Type::Address(AddressType { inner })),
+            // Other mobile types (e.g., future fixed-point for rational
+            // literals) are not yet surfaced to the AST.
+            _ => None,
+        })
+    }
 }
 
 impl MappingType {

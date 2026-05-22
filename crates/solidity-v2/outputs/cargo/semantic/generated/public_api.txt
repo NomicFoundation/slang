@@ -355,6 +355,8 @@ pub slang_solidity_v2_semantic::types::LiteralKind::Rational
 pub slang_solidity_v2_semantic::types::LiteralKind::Rational::value: num_rational::BigRational
 pub slang_solidity_v2_semantic::types::LiteralKind::String
 pub slang_solidity_v2_semantic::types::LiteralKind::String::bytes: usize
+impl slang_solidity_v2_semantic::types::LiteralKind
+pub fn slang_solidity_v2_semantic::types::LiteralKind::mobile_type(&self) -> core::option::Option<slang_solidity_v2_semantic::types::Type>
 impl core::clone::Clone for slang_solidity_v2_semantic::types::LiteralKind
 pub fn slang_solidity_v2_semantic::types::LiteralKind::clone(&self) -> slang_solidity_v2_semantic::types::LiteralKind
 impl core::cmp::Eq for slang_solidity_v2_semantic::types::LiteralKind
