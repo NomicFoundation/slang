@@ -1,0 +1,51 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 6
+
+Error: Receive function must have explicit `external` visibility and `payable` modifier.
+   ╭─[input.sol:2:3]
+   │
+ 2 │   receive() payable {}
+   │   ──────────┬─────────  
+   │             ╰─────────── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:6:30]
+   │
+ 6 │   receive() external payable external {}
+   │                              ────┬───  
+   │                                  ╰───── Error occurred here.
+───╯
+
+Error: Receive function must have explicit `external` visibility and `payable` modifier.
+    ╭─[input.sol:14:3]
+    │
+ 14 │   receive() external {}
+    │   ──────────┬──────────  
+    │             ╰──────────── Error occurred here.
+────╯
+
+Error: Only a single mutability specifier can be provided.
+    ╭─[input.sol:18:21]
+    │
+ 18 │   receive() payable payable {}
+    │                     ───┬───  
+    │                        ╰───── Error occurred here.
+────╯
+
+Error: Receive function must have explicit `external` visibility and `payable` modifier.
+    ╭─[input.sol:18:3]
+    │
+ 18 │   receive() payable payable {}
+    │   ──────────────┬─────────────  
+    │                 ╰─────────────── Error occurred here.
+────╯
+
+Error: Receive function must have explicit `external` visibility and `payable` modifier.
+    ╭─[input.sol:22:3]
+    │
+ 22 │   receive() {}
+    │   ──────┬─────  
+    │         ╰─────── Error occurred here.
+────╯

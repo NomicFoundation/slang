@@ -21,6 +21,33 @@ mod compilation {
 mod syntax {
     use super::*;
 
+    mod invalid_constructor_visibility {
+        use super::*;
+
+        #[test]
+        fn constructors() -> Result<()> {
+            run("syntax/invalid_constructor_visibility", "constructors")
+        }
+    }
+
+    mod invalid_fallback_visibility {
+        use super::*;
+
+        #[test]
+        fn fallbacks() -> Result<()> {
+            run("syntax/invalid_fallback_visibility", "fallbacks")
+        }
+    }
+
+    mod invalid_receive_attributes {
+        use super::*;
+
+        #[test]
+        fn receives() -> Result<()> {
+            run("syntax/invalid_receive_attributes", "receives")
+        }
+    }
+
     mod multiple_mutability_specifiers {
         use super::*;
 
@@ -55,6 +82,30 @@ mod syntax {
         #[test]
         fn state_variables() -> Result<()> {
             run("syntax/multiple_mutability_specifiers", "state_variables")
+        }
+    }
+
+    mod multiple_visibility_specifiers {
+        use super::*;
+
+        #[test]
+        fn constructors() -> Result<()> {
+            run("syntax/multiple_visibility_specifiers", "constructors")
+        }
+
+        #[test]
+        fn function_types() -> Result<()> {
+            run("syntax/multiple_visibility_specifiers", "function_types")
+        }
+
+        #[test]
+        fn functions() -> Result<()> {
+            run("syntax/multiple_visibility_specifiers", "functions")
+        }
+
+        #[test]
+        fn state_variables() -> Result<()> {
+            run("syntax/multiple_visibility_specifiers", "state_variables")
         }
     }
 

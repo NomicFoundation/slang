@@ -1,0 +1,179 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 22
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:2:25]
+   │
+ 2 │   function foo() public private returns (uint) {
+   │                         ───┬───  
+   │                            ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:6:26]
+   │
+ 6 │   function bar() private public returns (uint) {
+   │                          ───┬──  
+   │                             ╰──── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:10:30]
+    │
+ 10 │   function baz() public pure private returns (uint) {
+    │                              ───┬───  
+    │                                 ╰───── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:14:27]
+    │
+ 14 │   function qux() internal external returns (uint) {
+    │                           ────┬───  
+    │                               ╰───── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:18:27]
+    │
+ 18 │   function quux() private public internal returns (uint) {
+    │                           ───┬──  
+    │                              ╰──── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:18:34]
+    │
+ 18 │   function quux() private public internal returns (uint) {
+    │                                  ────┬───  
+    │                                      ╰───── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:22:42]
+    │
+ 22 │   function separated1() public pure view private returns (uint) {
+    │                                          ───┬───  
+    │                                             ╰───── Error occurred here.
+────╯
+
+Error: Only a single mutability specifier can be provided.
+    ╭─[input.sol:22:37]
+    │
+ 22 │   function separated1() public pure view private returns (uint) {
+    │                                     ──┬─  
+    │                                       ╰─── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:26:45]
+    │
+ 26 │   function separated2() public view payable private returns (uint) {
+    │                                             ───┬───  
+    │                                                ╰───── Error occurred here.
+────╯
+
+Error: Only a single mutability specifier can be provided.
+    ╭─[input.sol:26:37]
+    │
+ 26 │   function separated2() public view payable private returns (uint) {
+    │                                     ───┬───  
+    │                                        ╰───── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:30:52]
+    │
+ 30 │   function separated3() external pure payable view internal returns (uint) {
+    │                                                    ────┬───  
+    │                                                        ╰───── Error occurred here.
+────╯
+
+Error: Only a single mutability specifier can be provided.
+    ╭─[input.sol:30:39]
+    │
+ 30 │   function separated3() external pure payable view internal returns (uint) {
+    │                                       ───┬───  
+    │                                          ╰───── Error occurred here.
+────╯
+
+Error: Only a single mutability specifier can be provided.
+    ╭─[input.sol:30:47]
+    │
+ 30 │   function separated3() external pure payable view internal returns (uint) {
+    │                                               ──┬─  
+    │                                                 ╰─── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:34:42]
+    │
+ 34 │   function separated4() public pure view external returns (uint) {
+    │                                          ────┬───  
+    │                                              ╰───── Error occurred here.
+────╯
+
+Error: Only a single mutability specifier can be provided.
+    ╭─[input.sol:34:37]
+    │
+ 34 │   function separated4() public pure view external returns (uint) {
+    │                                     ──┬─  
+    │                                       ╰─── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:38:29]
+    │
+ 38 │   function triple1() public private internal returns (uint) {
+    │                             ───┬───  
+    │                                ╰───── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:38:37]
+    │
+ 38 │   function triple1() public private internal returns (uint) {
+    │                                     ────┬───  
+    │                                         ╰───── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:42:31]
+    │
+ 42 │   function triple2() external internal private returns (uint) {
+    │                               ────┬───  
+    │                                   ╰───── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:42:40]
+    │
+ 42 │   function triple2() external internal private returns (uint) {
+    │                                        ───┬───  
+    │                                           ╰───── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:46:29]
+    │
+ 46 │   function triple3() public private external internal returns (uint) {
+    │                             ───┬───  
+    │                                ╰───── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:46:37]
+    │
+ 46 │   function triple3() public private external internal returns (uint) {
+    │                                     ────┬───  
+    │                                         ╰───── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:46:46]
+    │
+ 46 │   function triple3() public private external internal returns (uint) {
+    │                                              ────┬───  
+    │                                                  ╰───── Error occurred here.
+────╯

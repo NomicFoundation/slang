@@ -1,11 +1,19 @@
 mod extra_terminal;
+mod invalid_constructor_visibility;
+mod invalid_fallback_visibility;
+mod invalid_receive_attributes;
 mod multiple_mutability_specifiers;
+mod multiple_visibility_specifiers;
 mod unexpected_eof;
 mod unexpected_terminal;
 mod unsupported_syntax;
 
 pub use extra_terminal::ExtraTerminal;
+pub use invalid_constructor_visibility::InvalidConstructorVisibility;
+pub use invalid_fallback_visibility::InvalidFallbackVisibility;
+pub use invalid_receive_attributes::InvalidReceiveAttributes;
 pub use multiple_mutability_specifiers::MultipleMutabilitySpecifiers;
+pub use multiple_visibility_specifiers::MultipleVisibilitySpecifiers;
 use serde::Serialize;
 pub use unexpected_eof::UnexpectedEof;
 pub use unexpected_terminal::UnexpectedTerminal;
@@ -32,5 +40,13 @@ define_diagnostic_kind! {
 
         /// More than one mutability specifier was provided on a definition.
         MultipleMutabilitySpecifiers(MultipleMutabilitySpecifiers),
+        /// More than one visibility specifier was provided on a definition.
+        MultipleVisibilitySpecifiers(MultipleVisibilitySpecifiers),
+        /// A constructor has a visibility specifier other than `public`.
+        InvalidConstructorVisibility(InvalidConstructorVisibility),
+        /// Fallback function does not have external visibility.
+        InvalidFallbackVisibility(InvalidFallbackVisibility),
+        /// Receive function does not have external visibility and payable modifier.
+        InvalidReceiveAttributes(InvalidReceiveAttributes),
     }
 }

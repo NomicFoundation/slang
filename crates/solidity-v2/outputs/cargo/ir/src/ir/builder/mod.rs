@@ -1,6 +1,9 @@
 use std::sync::Arc;
 
-use slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers;
+use slang_solidity_v2_common::diagnostics::kinds::syntax::{
+    InvalidConstructorVisibility, InvalidFallbackVisibility, InvalidReceiveAttributes,
+    MultipleMutabilitySpecifiers, MultipleVisibilitySpecifiers,
+};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 use slang_solidity_v2_cst::structured_cst::text_range::TextRange;
@@ -38,6 +41,11 @@ impl Default for NodeIdGenerator {
 pub struct BuildOutput {
     pub ir_root: output::SourceUnit,
     pub diagnostics: DiagnosticCollection,
+}
+
+struct ExtractedVisibilitySpecifier<Output> {
+    visibility: Option<Output>,
+    unique_range: Option<std::ops::Range<usize>>,
 }
 
 pub fn build_source_unit(
@@ -211,7 +219,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             input::FunctionName::ReceiveKeyword(_) => (output::FunctionKind::Receive, None),
         };
         let parameters = self.build_parameters_declaration(&source.parameters);
-        let visibility = Self::function_visibility(&source.attributes);
+        let visibility = self.function_visibility(&source.attributes);
         let mutability = self
             .extract_mutability_specifier(&source.attributes.elements)
             .unwrap_or(output::FunctionMutability::NonPayable);
@@ -251,7 +259,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
         let parameters = self.build_parameters_declaration(&source.parameters);
-        let visibility = Self::function_type_visibility(&source.attributes);
+        let visibility = self.function_type_visibility(&source.attributes);
         let mutability = self
             .extract_mutability_specifier(&source.attributes.elements)
             .unwrap_or(output::FunctionMutability::NonPayable);
@@ -341,7 +349,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .value
             .as_ref()
             .map(|value| self.build_state_variable_definition_value(value));
-        let visibility = Self::state_variable_visibility(&source.attributes);
+        let visibility = self.state_variable_visibility(&source.attributes);
         let mutability = self
             .extract_mutability_specifier(&source.attributes.elements)
             .unwrap_or(output::StateVariableMutability::Mutable);
@@ -441,25 +449,15 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         }
     }
 
-    fn function_visibility(attributes: &input::FunctionAttributes) -> output::FunctionVisibility {
-        // TODO(validation): only a single visibility keyword can be provided
+    fn function_visibility(
+        &mut self,
+        attributes: &input::FunctionAttributes,
+    ) -> output::FunctionVisibility {
         // TODO(validation): free functions are always internal, but
         // otherwise a visibility *must* be set explicitly (>= 0.8.0)
-        attributes.elements.iter().fold(
-            // For >= 0.8.0, default for free functions is internal
-            output::FunctionVisibility::Internal,
-            |visibility, attribute| match attribute {
-                input::FunctionAttribute::ExternalKeyword(_) => {
-                    output::FunctionVisibility::External
-                }
-                input::FunctionAttribute::InternalKeyword(_) => {
-                    output::FunctionVisibility::Internal
-                }
-                input::FunctionAttribute::PrivateKeyword(_) => output::FunctionVisibility::Private,
-                input::FunctionAttribute::PublicKeyword(_) => output::FunctionVisibility::Public,
-                _ => visibility,
-            },
-        )
+        self.extract_visibility_specifier(&attributes.elements)
+            .visibility
+            .unwrap_or(output::FunctionVisibility::Internal)
     }
 
     fn function_override_specifier(
@@ -493,27 +491,12 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     fn function_type_visibility(
+        &mut self,
         attributes: &input::FunctionTypeAttributes,
     ) -> output::FunctionVisibility {
-        // TODO(validation): only a single visibility keyword can be provided
-        attributes.elements.iter().fold(
-            output::FunctionVisibility::Internal,
-            |visibility, attribute| match attribute {
-                input::FunctionTypeAttribute::ExternalKeyword(_) => {
-                    output::FunctionVisibility::External
-                }
-                input::FunctionTypeAttribute::InternalKeyword(_) => {
-                    output::FunctionVisibility::Internal
-                }
-                input::FunctionTypeAttribute::PrivateKeyword(_) => {
-                    output::FunctionVisibility::Private
-                }
-                input::FunctionTypeAttribute::PublicKeyword(_) => {
-                    output::FunctionVisibility::Public
-                }
-                _ => visibility,
-            },
-        )
+        self.extract_visibility_specifier(&attributes.elements)
+            .visibility
+            .unwrap_or(output::FunctionVisibility::Internal)
     }
 
     //
@@ -529,7 +512,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let kind = output::FunctionKind::Constructor;
         let name = None;
         let parameters = self.build_parameters_declaration(&source.parameters);
-        let visibility = Self::constructor_visibility(&source.attributes);
+        let visibility = self.constructor_visibility(&source.attributes);
         let mutability = self
             .extract_mutability_specifier(&source.attributes.elements)
             .unwrap_or(output::FunctionMutability::NonPayable);
@@ -558,19 +541,30 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     fn constructor_visibility(
+        &mut self,
         attributes: &input::ConstructorAttributes,
     ) -> output::FunctionVisibility {
-        // TODO(validation): only a single visibility keyword can be provided
-        attributes.elements.iter().fold(
-            output::FunctionVisibility::Public,
-            |visibility, attribute| match attribute {
-                input::ConstructorAttribute::InternalKeyword(_) => {
-                    output::FunctionVisibility::Internal
-                }
-                input::ConstructorAttribute::PublicKeyword(_) => output::FunctionVisibility::Public,
-                _ => visibility,
-            },
-        )
+        // Constructor visibility in solc starting from 0.7.0:
+        // - `public` is accepted, and solc emits a warning saying that visibility is ignored.
+        // - non-public constructor visibility is rejected.
+        // TODO(validation): We don't emit the `public` warning for now.
+        // `MultipleVisibilitySpecifiers` is emitted separately for duplicate visibility keywords.
+        // `InvalidConstructorVisibility` is emitted for non-public constructor visibility.
+        let extracted = self.extract_visibility_specifier(&attributes.elements);
+
+        if !matches!(
+            extracted.visibility.as_ref(),
+            Some(output::FunctionVisibility::Public)
+        ) {
+            if let Some(range) = extracted.unique_range {
+                self.diagnostics
+                    .push(self.file_id.to_owned(), range, InvalidConstructorVisibility);
+            }
+        }
+
+        extracted
+            .visibility
+            .unwrap_or(output::FunctionVisibility::Public)
     }
 
     fn constructor_modifier_invocations(
@@ -599,8 +593,20 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let kind = output::FunctionKind::Fallback;
         let name = None;
         let parameters = self.build_parameters_declaration(&source.parameters);
-        // TODO(validation): fallback functions *must* have external visibility
-        let visibility = output::FunctionVisibility::External;
+        // Fallback functions *must* have external visibility
+        let visibility = if let Some(v) = self
+            .extract_visibility_specifier(&source.attributes.elements)
+            .visibility
+        {
+            v
+        } else {
+            self.diagnostics.push(
+                self.file_id.to_owned(),
+                range.clone(),
+                InvalidFallbackVisibility,
+            );
+            output::FunctionVisibility::External
+        };
         let mutability = self
             .extract_mutability_specifier(&source.attributes.elements)
             .unwrap_or(output::FunctionMutability::NonPayable);
@@ -674,12 +680,20 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let kind = output::FunctionKind::Receive;
         let name = None;
         let parameters = self.build_parameters_declaration(&source.parameters);
-        // TODO(validation): receive functions *must* have external visibility
-        let visibility = output::FunctionVisibility::External;
-        // TODO(validation): receive functions *must* have a 'payable' specifier
-        let mutability = self
-            .extract_mutability_specifier(&source.attributes.elements)
-            .unwrap_or(output::FunctionMutability::Payable);
+        // Receive functions must have explicit `external` visibility and `payable` mutability.
+        // Emit InvalidReceiveAttributes if either of these is missing.
+        // Duplicate visibility or mutability specifiers are handled by generic extractors.
+        let visibility = self
+            .extract_visibility_specifier(&source.attributes.elements)
+            .visibility;
+        let mutability = self.extract_mutability_specifier(&source.attributes.elements);
+        if visibility.is_none() || mutability.is_none() {
+            self.diagnostics.push(
+                self.file_id.to_owned(),
+                range.clone(),
+                InvalidReceiveAttributes,
+            );
+        }
         let virtual_keyword = source.attributes.elements.iter().find_map(|attribute| {
             if let input::ReceiveFunctionAttribute::VirtualKeyword(virtual_keyword) = attribute {
                 Some(self.build_virtual_keyword(virtual_keyword))
@@ -698,8 +712,8 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             kind,
             name,
             parameters,
-            visibility,
-            mutability,
+            visibility: visibility.unwrap_or(output::FunctionVisibility::External),
+            mutability: mutability.unwrap_or(output::FunctionMutability::Payable),
             virtual_keyword,
             override_specifier,
             modifier_invocations,
@@ -799,24 +813,12 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     //
 
     fn state_variable_visibility(
+        &mut self,
         attributes: &input::StateVariableAttributes,
     ) -> output::StateVariableVisibility {
-        // TODO(validation): only one visibility keyword is allowed
-        attributes.elements.iter().fold(
-            output::StateVariableVisibility::Internal,
-            |visibility, attribute| match attribute {
-                input::StateVariableAttribute::InternalKeyword(_) => {
-                    output::StateVariableVisibility::Internal
-                }
-                input::StateVariableAttribute::PrivateKeyword(_) => {
-                    output::StateVariableVisibility::Private
-                }
-                input::StateVariableAttribute::PublicKeyword(_) => {
-                    output::StateVariableVisibility::Public
-                }
-                _ => visibility,
-            },
-        )
+        self.extract_visibility_specifier(&attributes.elements)
+            .visibility
+            .unwrap_or(output::StateVariableVisibility::Internal)
     }
 
     fn state_variable_override_specifier(
@@ -998,5 +1000,48 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         }
 
         result
+    }
+
+    /// Extracts visibility from attributes and tracks whether it is unique.
+    ///
+    /// Returns:
+    /// - `visibility`: first parsed visibility, if any.
+    /// - `unique_range`: source range of that visibility only when it is the only one.
+    ///
+    /// If additional visibility specifiers are found, emits `MultipleVisibilitySpecifiers` for
+    /// each duplicate and clears `unique_range`.
+    fn extract_visibility_specifier<'a, Input, Output>(
+        &mut self,
+        attributes: impl IntoIterator<Item = &'a Input>,
+    ) -> ExtractedVisibilitySpecifier<Output>
+    where
+        Input: TextRange + 'a,
+        &'a Input: TryInto<Output>,
+    {
+        let mut visibility: Option<Output> = None;
+        let mut unique_range: Option<std::ops::Range<usize>> = None;
+
+        for attribute in attributes {
+            if let Ok(current) = attribute.try_into() {
+                let range = attribute.calculate_text_range().unwrap();
+
+                if visibility.is_some() {
+                    self.diagnostics.push(
+                        self.file_id.to_owned(),
+                        range,
+                        MultipleVisibilitySpecifiers,
+                    );
+                    unique_range = None;
+                } else {
+                    visibility = Some(current);
+                    unique_range = Some(range);
+                }
+            }
+        }
+
+        ExtractedVisibilitySpecifier {
+            visibility,
+            unique_range,
+        }
     }
 }

@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+Error: Fallback function must have explicit `external` visibility.
+   ╭─[input.sol:2:3]
+   │
+ 2 │   fallback() {}
+   │   ──────┬──────  
+   │         ╰──────── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:6:23]
+   │
+ 6 │   fallback() external external {}
+   │                       ────┬───  
+   │                           ╰───── Error occurred here.
+───╯
