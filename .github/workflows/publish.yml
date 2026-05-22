@@ -205,8 +205,10 @@ jobs:
           retention-days: 7
 
   # ───────────────────────────────────────────────
-  # Review: download the prepared artifact and dry-run publish against the
-  # exact bytes that would be uploaded.
+  # Review: dry-run npm publish against the prepared tarball (the exact bytes
+  # `publish` would upload) and cargo publish against the workspace source
+  # (cargo regenerates the `.crate` at publish time, so this is re-validation,
+  # not artifact verification).
   # ───────────────────────────────────────────────
 
   review:
