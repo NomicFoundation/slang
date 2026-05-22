@@ -129,7 +129,7 @@ impl core::fmt::Debug for slang_solidity_v2_ast::abi::StorageItem
 pub fn slang_solidity_v2_ast::abi::StorageItem::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::StorageItem
 pub fn slang_solidity_v2_ast::abi::selector_from_signature(signature: &str) -> u32
-pub type slang_solidity_v2_ast::abi::AbiMutability = slang_solidity_v2_semantic::types::FunctionMutability
+pub type slang_solidity_v2_ast::abi::AbiMutability = slang_solidity_v2_semantic::types::FunctionTypeMutability
 pub mod slang_solidity_v2_ast::ast
 pub use slang_solidity_v2_ast::ast::LiteralKind
 pub use slang_solidity_v2_ast::ast::Number
@@ -1724,10 +1724,10 @@ impl slang_solidity_v2_ast::ast::FunctionType
 pub fn slang_solidity_v2_ast::ast::FunctionType::associated_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::FunctionType::implicit_receiver_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub fn slang_solidity_v2_ast::ast::FunctionType::is_externally_visible(&self) -> bool
-pub fn slang_solidity_v2_ast::ast::FunctionType::mutability(&self) -> slang_solidity_v2_semantic::types::FunctionMutability
+pub fn slang_solidity_v2_ast::ast::FunctionType::mutability(&self) -> slang_solidity_v2_semantic::types::FunctionTypeMutability
 pub fn slang_solidity_v2_ast::ast::FunctionType::parameter_types(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Type>
 pub fn slang_solidity_v2_ast::ast::FunctionType::return_type(&self) -> slang_solidity_v2_ast::ast::Type
-pub fn slang_solidity_v2_ast::ast::FunctionType::visibility(&self) -> slang_solidity_v2_semantic::types::FunctionVisibility
+pub fn slang_solidity_v2_ast::ast::FunctionType::visibility(&self) -> slang_solidity_v2_semantic::types::FunctionTypeVisibility
 impl core::clone::Clone for slang_solidity_v2_ast::ast::FunctionType
 pub fn slang_solidity_v2_ast::ast::FunctionType::clone(&self) -> slang_solidity_v2_ast::ast::FunctionType
 pub struct slang_solidity_v2_ast::ast::FunctionTypeStruct

@@ -13,6 +13,10 @@ pub enum LanguageVersion {
     {%- endfor -%}
 }
 
+impl LanguageVersion {
+    pub const LATEST: Self = Self::V{{ model.language.versions | last | split(pat=".") | join(sep="_") }};
+}
+
 #[derive(Debug, Error, PartialEq)]
 pub enum FromSemverError {
     #[error("provided version is not supported")]

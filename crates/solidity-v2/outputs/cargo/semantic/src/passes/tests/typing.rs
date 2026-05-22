@@ -43,7 +43,7 @@ fn try_type_of_value_expression_in_context(
 ) -> (Option<Type>, TypeRegistry) {
     let source = format!("{setup}\nuint constant x = {input};");
     let mut id_generator = NodeIdGenerator::default();
-    let language_version = LanguageVersion::V0_8_35;
+    let language_version = LanguageVersion::LATEST;
     let file = build_file("test.sol", &source, &mut id_generator, language_version);
     let files = [file];
 
@@ -772,7 +772,7 @@ contract Test {
 "#;
 
     let mut id_generator = NodeIdGenerator::default();
-    let language_version = LanguageVersion::V0_8_35;
+    let language_version = LanguageVersion::LATEST;
     let file = build_file("test.sol", CONTENTS, &mut id_generator, language_version);
     let files = [file];
 

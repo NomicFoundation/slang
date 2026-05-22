@@ -76,7 +76,7 @@ impl CompilationBuilderConfig for FixtureBuildConfig<'_> {
 pub(super) fn build_compilation_unit_from_fixture(
     files: &[FixtureFile<'_>],
 ) -> Arc<CompilationUnit> {
-    let version = LanguageVersion::V0_8_35;
+    let version = LanguageVersion::LATEST;
     let mut builder = CompilationBuilder::create(version, FixtureBuildConfig { files });
 
     for file in files {

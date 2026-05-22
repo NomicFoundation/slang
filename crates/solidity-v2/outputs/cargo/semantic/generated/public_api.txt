@@ -305,42 +305,42 @@ impl core::hash::Hash for slang_solidity_v2_semantic::types::DataLocation
 pub fn slang_solidity_v2_semantic::types::DataLocation::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
 impl core::marker::Copy for slang_solidity_v2_semantic::types::DataLocation
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::DataLocation
-pub enum slang_solidity_v2_semantic::types::FunctionMutability
-pub slang_solidity_v2_semantic::types::FunctionMutability::NonPayable
-pub slang_solidity_v2_semantic::types::FunctionMutability::Payable
-pub slang_solidity_v2_semantic::types::FunctionMutability::Pure
-pub slang_solidity_v2_semantic::types::FunctionMutability::View
-impl core::clone::Clone for slang_solidity_v2_semantic::types::FunctionMutability
-pub fn slang_solidity_v2_semantic::types::FunctionMutability::clone(&self) -> slang_solidity_v2_semantic::types::FunctionMutability
-impl core::cmp::Eq for slang_solidity_v2_semantic::types::FunctionMutability
-impl core::cmp::PartialEq for slang_solidity_v2_semantic::types::FunctionMutability
-pub fn slang_solidity_v2_semantic::types::FunctionMutability::eq(&self, other: &slang_solidity_v2_semantic::types::FunctionMutability) -> bool
-impl core::convert::From<&slang_solidity_v2_ir::ir::nodes::FunctionMutability> for slang_solidity_v2_semantic::types::FunctionMutability
-pub fn slang_solidity_v2_semantic::types::FunctionMutability::from(value: &slang_solidity_v2_ir::ir::nodes::FunctionMutability) -> Self
-impl core::fmt::Debug for slang_solidity_v2_semantic::types::FunctionMutability
-pub fn slang_solidity_v2_semantic::types::FunctionMutability::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::hash::Hash for slang_solidity_v2_semantic::types::FunctionMutability
-pub fn slang_solidity_v2_semantic::types::FunctionMutability::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
-impl core::marker::Copy for slang_solidity_v2_semantic::types::FunctionMutability
-impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::FunctionMutability
-pub enum slang_solidity_v2_semantic::types::FunctionVisibility
-pub slang_solidity_v2_semantic::types::FunctionVisibility::External
-pub slang_solidity_v2_semantic::types::FunctionVisibility::Internal
-pub slang_solidity_v2_semantic::types::FunctionVisibility::Private
-pub slang_solidity_v2_semantic::types::FunctionVisibility::Public
-impl core::clone::Clone for slang_solidity_v2_semantic::types::FunctionVisibility
-pub fn slang_solidity_v2_semantic::types::FunctionVisibility::clone(&self) -> slang_solidity_v2_semantic::types::FunctionVisibility
-impl core::cmp::Eq for slang_solidity_v2_semantic::types::FunctionVisibility
-impl core::cmp::PartialEq for slang_solidity_v2_semantic::types::FunctionVisibility
-pub fn slang_solidity_v2_semantic::types::FunctionVisibility::eq(&self, other: &slang_solidity_v2_semantic::types::FunctionVisibility) -> bool
-impl core::convert::From<&slang_solidity_v2_ir::ir::nodes::FunctionVisibility> for slang_solidity_v2_semantic::types::FunctionVisibility
-pub fn slang_solidity_v2_semantic::types::FunctionVisibility::from(value: &slang_solidity_v2_ir::ir::nodes::FunctionVisibility) -> Self
-impl core::fmt::Debug for slang_solidity_v2_semantic::types::FunctionVisibility
-pub fn slang_solidity_v2_semantic::types::FunctionVisibility::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::hash::Hash for slang_solidity_v2_semantic::types::FunctionVisibility
-pub fn slang_solidity_v2_semantic::types::FunctionVisibility::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
-impl core::marker::Copy for slang_solidity_v2_semantic::types::FunctionVisibility
-impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::FunctionVisibility
+pub enum slang_solidity_v2_semantic::types::FunctionTypeMutability
+pub slang_solidity_v2_semantic::types::FunctionTypeMutability::NonPayable
+pub slang_solidity_v2_semantic::types::FunctionTypeMutability::Payable
+pub slang_solidity_v2_semantic::types::FunctionTypeMutability::Pure
+pub slang_solidity_v2_semantic::types::FunctionTypeMutability::View
+impl core::clone::Clone for slang_solidity_v2_semantic::types::FunctionTypeMutability
+pub fn slang_solidity_v2_semantic::types::FunctionTypeMutability::clone(&self) -> slang_solidity_v2_semantic::types::FunctionTypeMutability
+impl core::cmp::Eq for slang_solidity_v2_semantic::types::FunctionTypeMutability
+impl core::cmp::PartialEq for slang_solidity_v2_semantic::types::FunctionTypeMutability
+pub fn slang_solidity_v2_semantic::types::FunctionTypeMutability::eq(&self, other: &slang_solidity_v2_semantic::types::FunctionTypeMutability) -> bool
+impl core::convert::From<&slang_solidity_v2_ir::ir::nodes::FunctionMutability> for slang_solidity_v2_semantic::types::FunctionTypeMutability
+pub fn slang_solidity_v2_semantic::types::FunctionTypeMutability::from(value: &slang_solidity_v2_ir::ir::nodes::FunctionMutability) -> Self
+impl core::fmt::Debug for slang_solidity_v2_semantic::types::FunctionTypeMutability
+pub fn slang_solidity_v2_semantic::types::FunctionTypeMutability::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for slang_solidity_v2_semantic::types::FunctionTypeMutability
+pub fn slang_solidity_v2_semantic::types::FunctionTypeMutability::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::marker::Copy for slang_solidity_v2_semantic::types::FunctionTypeMutability
+impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::FunctionTypeMutability
+pub enum slang_solidity_v2_semantic::types::FunctionTypeVisibility
+pub slang_solidity_v2_semantic::types::FunctionTypeVisibility::External
+pub slang_solidity_v2_semantic::types::FunctionTypeVisibility::Internal
+pub slang_solidity_v2_semantic::types::FunctionTypeVisibility::Private
+pub slang_solidity_v2_semantic::types::FunctionTypeVisibility::Public
+impl core::clone::Clone for slang_solidity_v2_semantic::types::FunctionTypeVisibility
+pub fn slang_solidity_v2_semantic::types::FunctionTypeVisibility::clone(&self) -> slang_solidity_v2_semantic::types::FunctionTypeVisibility
+impl core::cmp::Eq for slang_solidity_v2_semantic::types::FunctionTypeVisibility
+impl core::cmp::PartialEq for slang_solidity_v2_semantic::types::FunctionTypeVisibility
+pub fn slang_solidity_v2_semantic::types::FunctionTypeVisibility::eq(&self, other: &slang_solidity_v2_semantic::types::FunctionTypeVisibility) -> bool
+impl core::convert::From<&slang_solidity_v2_ir::ir::nodes::FunctionVisibility> for slang_solidity_v2_semantic::types::FunctionTypeVisibility
+pub fn slang_solidity_v2_semantic::types::FunctionTypeVisibility::from(value: &slang_solidity_v2_ir::ir::nodes::FunctionVisibility) -> Self
+impl core::fmt::Debug for slang_solidity_v2_semantic::types::FunctionTypeVisibility
+pub fn slang_solidity_v2_semantic::types::FunctionTypeVisibility::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for slang_solidity_v2_semantic::types::FunctionTypeVisibility
+pub fn slang_solidity_v2_semantic::types::FunctionTypeVisibility::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::marker::Copy for slang_solidity_v2_semantic::types::FunctionTypeVisibility
+impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::FunctionTypeVisibility
 pub enum slang_solidity_v2_semantic::types::LiteralKind
 pub slang_solidity_v2_semantic::types::LiteralKind::Address
 pub slang_solidity_v2_semantic::types::LiteralKind::HexInteger
@@ -447,10 +447,10 @@ impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::Ty
 pub struct slang_solidity_v2_semantic::types::FunctionType
 pub slang_solidity_v2_semantic::types::FunctionType::definition_id: core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 pub slang_solidity_v2_semantic::types::FunctionType::implicit_receiver_type: core::option::Option<slang_solidity_v2_semantic::types::TypeId>
-pub slang_solidity_v2_semantic::types::FunctionType::mutability: slang_solidity_v2_semantic::types::FunctionMutability
+pub slang_solidity_v2_semantic::types::FunctionType::mutability: slang_solidity_v2_semantic::types::FunctionTypeMutability
 pub slang_solidity_v2_semantic::types::FunctionType::parameter_types: alloc::vec::Vec<slang_solidity_v2_semantic::types::TypeId>
 pub slang_solidity_v2_semantic::types::FunctionType::return_type: slang_solidity_v2_semantic::types::TypeId
-pub slang_solidity_v2_semantic::types::FunctionType::visibility: slang_solidity_v2_semantic::types::FunctionVisibility
+pub slang_solidity_v2_semantic::types::FunctionType::visibility: slang_solidity_v2_semantic::types::FunctionTypeVisibility
 impl slang_solidity_v2_semantic::types::FunctionType
 pub fn slang_solidity_v2_semantic::types::FunctionType::is_externally_visible(&self) -> bool
 impl core::clone::Clone for slang_solidity_v2_semantic::types::FunctionType

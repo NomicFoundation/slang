@@ -5,7 +5,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{
-    self, DataLocation, FunctionMutability, FunctionVisibility, TypeId,
+    self, DataLocation, FunctionTypeMutability, FunctionTypeVisibility, TypeId,
 };
 pub use slang_solidity_v2_semantic::types::{LiteralKind, Number};
 
@@ -321,14 +321,14 @@ impl FunctionType {
         function_type.is_externally_visible()
     }
 
-    pub fn visibility(&self) -> FunctionVisibility {
+    pub fn visibility(&self) -> FunctionTypeVisibility {
         let types::Type::Function(function_type) = self.internal_type() else {
             unreachable!("invalid function type");
         };
         function_type.visibility
     }
 
-    pub fn mutability(&self) -> FunctionMutability {
+    pub fn mutability(&self) -> FunctionTypeMutability {
         let types::Type::Function(function_type) = self.internal_type() else {
             unreachable!("invalid function type");
         };

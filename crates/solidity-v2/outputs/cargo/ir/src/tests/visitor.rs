@@ -79,7 +79,7 @@ contract Counter is Ownable {
     let ParseOutput {
         source_unit,
         diagnostics,
-    } = Parser::parse("test.sol", CONTENTS, LanguageVersion::V0_8_30);
+    } = Parser::parse("test.sol", CONTENTS, LanguageVersion::LATEST);
 
     assert!(
         diagnostics.is_empty(),
