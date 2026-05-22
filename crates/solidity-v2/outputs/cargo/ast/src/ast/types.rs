@@ -85,7 +85,7 @@ impl Type {
         Some(Self::create(type_id, semantic))
     }
 
-    pub fn create(type_id: TypeId, semantic: &Arc<SemanticContext>) -> Self {
+    pub(crate) fn create(type_id: TypeId, semantic: &Arc<SemanticContext>) -> Self {
         let type_ = semantic.types().get_type_by_id(type_id);
         let semantic = Arc::clone(semantic);
         match type_ {
@@ -115,31 +115,6 @@ impl Type {
                 Self::UserDefinedValue(UserDefinedValueType { type_id, semantic })
             }
             types::Type::Void => Self::Void(VoidType { type_id, semantic }),
-        }
-    }
-
-    pub fn type_id(&self) -> TypeId {
-        match self {
-            Type::Address(details) => details.type_id,
-            Type::Array(details) => details.type_id,
-            Type::Boolean(details) => details.type_id,
-            Type::ByteArray(details) => details.type_id,
-            Type::Bytes(details) => details.type_id,
-            Type::Contract(details) => details.type_id,
-            Type::Enum(details) => details.type_id,
-            Type::FixedSizeArray(details) => details.type_id,
-            Type::FixedPointNumber(details) => details.type_id,
-            Type::Function(details) => details.type_id,
-            Type::Integer(details) => details.type_id,
-            Type::Interface(details) => details.type_id,
-            Type::Library(details) => details.type_id,
-            Type::Literal(details) => details.type_id,
-            Type::Mapping(details) => details.type_id,
-            Type::String(details) => details.type_id,
-            Type::Struct(details) => details.type_id,
-            Type::Tuple(details) => details.type_id,
-            Type::UserDefinedValue(details) => details.type_id,
-            Type::Void(details) => details.type_id,
         }
     }
 
