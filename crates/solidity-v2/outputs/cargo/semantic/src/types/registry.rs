@@ -6,7 +6,9 @@ use slang_solidity_v2_common::nodes::NodeId;
 
 use super::literals::numbers;
 use super::{
-    DataLocation, FunctionType, FunctionTypeVisibility, LiteralKind, Number, Type, TypeId,
+    AddressType, ArrayType, ByteArrayType, BytesType, ContractType, DataLocation,
+    FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType, InterfaceType,
+    LiteralKind, Number, StringType, StructType, TupleType, Type, TypeId,
 };
 use crate::types::ImplicitlyConvertible;
 
@@ -43,35 +45,36 @@ impl Default for TypeRegistry {
     #[allow(clippy::similar_names)]
     fn default() -> Self {
         let mut types = IndexSet::new();
-        let (address_type, _) = types.insert_full(Type::Address { payable: false });
-        let (address_payable_type, _) = types.insert_full(Type::Address { payable: true });
+        let (address_type, _) = types.insert_full(Type::Address(AddressType { payable: false }));
+        let (address_payable_type, _) =
+            types.insert_full(Type::Address(AddressType { payable: true }));
         let (boolean_type, _) = types.insert_full(Type::Boolean);
-        let (bytes_calldata_type, _) = types.insert_full(Type::Bytes {
+        let (bytes_calldata_type, _) = types.insert_full(Type::Bytes(BytesType {
             location: DataLocation::Calldata,
-        });
-        let (bytes_memory_type, _) = types.insert_full(Type::Bytes {
+        }));
+        let (bytes_memory_type, _) = types.insert_full(Type::Bytes(BytesType {
             location: DataLocation::Memory,
-        });
-        let (bytes1_type, _) = types.insert_full(Type::ByteArray { width: 1 });
-        let (bytes20_type, _) = types.insert_full(Type::ByteArray { width: 20 });
-        let (bytes32_type, _) = types.insert_full(Type::ByteArray { width: 32 });
-        let (bytes4_type, _) = types.insert_full(Type::ByteArray { width: 4 });
-        let (string_memory_type, _) = types.insert_full(Type::String {
+        }));
+        let (bytes1_type, _) = types.insert_full(Type::ByteArray(ByteArrayType { width: 1 }));
+        let (bytes20_type, _) = types.insert_full(Type::ByteArray(ByteArrayType { width: 20 }));
+        let (bytes32_type, _) = types.insert_full(Type::ByteArray(ByteArrayType { width: 32 }));
+        let (bytes4_type, _) = types.insert_full(Type::ByteArray(ByteArrayType { width: 4 }));
+        let (string_memory_type, _) = types.insert_full(Type::String(StringType {
             location: DataLocation::Memory,
-        });
-        let (uint256_type, _) = types.insert_full(Type::Integer {
+        }));
+        let (uint256_type, _) = types.insert_full(Type::Integer(IntegerType {
             signed: false,
             bits: 256,
-        });
-        let (uint8_type, _) = types.insert_full(Type::Integer {
+        }));
+        let (uint8_type, _) = types.insert_full(Type::Integer(IntegerType {
             signed: false,
             bits: 8,
-        });
+        }));
         let (void_type, _) = types.insert_full(Type::Void);
 
-        let (boolean_bytes_tuple_type, _) = types.insert_full(Type::Tuple {
+        let (boolean_bytes_tuple_type, _) = types.insert_full(Type::Tuple(TupleType {
             types: vec![TypeId(boolean_type), TypeId(bytes_memory_type)],
-        });
+        }));
 
         Self {
             types,
@@ -144,21 +147,21 @@ impl TypeRegistry {
 
         match (from_type, to_type) {
             (
-                Type::Address {
+                Type::Address(AddressType {
                     payable: from_payable,
-                },
-                Type::Address { .. },
+                }),
+                Type::Address(_),
             ) => *from_payable,
 
             (
-                Type::Integer {
+                Type::Integer(IntegerType {
                     signed: from_signed,
                     bits: from_bits,
-                },
-                Type::Integer {
+                }),
+                Type::Integer(IntegerType {
                     signed: to_signed,
                     bits: to_bits,
-                },
+                }),
             ) => {
                 if from_signed == to_signed {
                     from_bits <= to_bits
@@ -173,21 +176,21 @@ impl TypeRegistry {
                 Type::Literal(
                     LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. },
                 ),
-                Type::Integer { signed, bits },
+                Type::Integer(IntegerType { signed, bits }),
             ) => numbers::integer_literal_fits(value, *signed, *bits),
 
             // Non-integer rational literals never implicitly convert to an
             // integer type — if a rational reduced to an integer it would have
             // been normalised to `LiteralKind::Integer` at construction time.
-            (Type::Literal(LiteralKind::Rational { .. }), Type::Integer { .. }) => false,
+            (Type::Literal(LiteralKind::Rational { .. }), Type::Integer(_)) => false,
 
             // TODO: Rational -> FixedPointNumber once v2 models implicit
             // conversion of rational literals to fixed-point types.
-            (Type::Integer { .. }, Type::Literal(_)) => false,
+            (Type::Integer(_), Type::Literal(_)) => false,
 
             (
                 Type::Literal(LiteralKind::HexString { .. } | LiteralKind::String { .. }),
-                Type::String { location } | Type::Bytes { location },
+                Type::String(StringType { location }) | Type::Bytes(BytesType { location }),
             ) if *location == DataLocation::Memory || *location == DataLocation::Calldata => true,
 
             // Zero (any source — decimal, hex, or folded) is always
@@ -196,49 +199,48 @@ impl TypeRegistry {
                 Type::Literal(
                     LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. },
                 ),
-                Type::ByteArray { .. },
+                Type::ByteArray(_),
             ) if value.is_zero() => true,
 
             // Non-zero hex-source literals convert to `bytesN` of exactly
             // matching source byte width. Plain `Integer` literals (decimal
             // source or any folded result) do NOT — folding any operation
             // erases the hex provenance and disables this conversion.
-            (Type::Literal(LiteralKind::HexInteger { bytes, .. }), Type::ByteArray { width })
-                if *bytes == *width =>
-            {
-                true
-            }
+            (
+                Type::Literal(LiteralKind::HexInteger { bytes, .. }),
+                Type::ByteArray(ByteArrayType { width }),
+            ) if *bytes == *width => true,
 
             (
                 Type::Literal(LiteralKind::HexString { bytes } | LiteralKind::String { bytes }),
-                Type::ByteArray { width },
+                Type::ByteArray(ByteArrayType { width }),
             ) if *bytes == *width as usize => true,
 
             (
-                Type::Array {
+                Type::Array(ArrayType {
                     element_type: from_element_type,
                     location: from_location,
-                },
-                Type::Array {
+                }),
+                Type::Array(ArrayType {
                     element_type: to_element_type,
                     location: to_location,
-                },
+                }),
             ) => {
                 from_location.implicitly_convertible_to(*to_location)
                     && self.implicitly_convertible_to(*from_element_type, *to_element_type)
             }
 
             (
-                Type::FixedSizeArray {
+                Type::FixedSizeArray(FixedSizeArrayType {
                     element_type: from_element_type,
                     location: from_location,
                     size: from_size,
-                },
-                Type::FixedSizeArray {
+                }),
+                Type::FixedSizeArray(FixedSizeArrayType {
                     element_type: to_element_type,
                     location: to_location,
                     size: to_size,
-                },
+                }),
             ) => {
                 // conversion rules are strict and only allow changing data
                 // location (from storage/calldata to memory)
@@ -248,40 +250,41 @@ impl TypeRegistry {
             }
 
             (
-                Type::Struct {
+                Type::Struct(StructType {
                     definition_id: from_definition,
                     location: from_location,
-                },
-                Type::Struct {
+                }),
+                Type::Struct(StructType {
                     definition_id: to_definition,
                     location: to_location,
-                },
+                }),
             ) => {
                 from_location.implicitly_convertible_to(*to_location)
                     && from_definition == to_definition
             }
 
             (
-                Type::Bytes {
+                Type::Bytes(BytesType {
                     location: from_location,
-                },
-                Type::Bytes {
+                }),
+                Type::Bytes(BytesType {
                     location: to_location,
-                },
+                }),
             )
             | (
-                Type::String {
+                Type::String(StringType {
                     location: from_location,
-                },
-                Type::String {
+                }),
+                Type::String(StringType {
                     location: to_location,
-                },
+                }),
             ) => from_location.implicitly_convertible_to(*to_location),
 
             // `bytesN` widens to `bytesM` when `M >= N`.
-            (Type::ByteArray { width: from_width }, Type::ByteArray { width: to_width }) => {
-                from_width <= to_width
-            }
+            (
+                Type::ByteArray(ByteArrayType { width: from_width }),
+                Type::ByteArray(ByteArrayType { width: to_width }),
+            ) => from_width <= to_width,
 
             (Type::Function(from_function_type), Type::Function(to_function_type)) => {
                 // This is full equality except for visibility and mutability
@@ -298,28 +301,23 @@ impl TypeRegistry {
 
             // Contracts and interfaces are implicitly converted to their super types
             (
-                Type::Contract {
+                Type::Contract(ContractType {
                     definition_id: from_node_id,
-                    ..
-                },
-                Type::Contract {
+                }),
+                Type::Contract(ContractType {
                     definition_id: to_node_id,
-                    ..
-                }
-                | Type::Interface {
+                })
+                | Type::Interface(InterfaceType {
                     definition_id: to_node_id,
-                    ..
-                },
+                }),
             )
             | (
-                Type::Interface {
+                Type::Interface(InterfaceType {
                     definition_id: from_node_id,
-                    ..
-                },
-                Type::Interface {
+                }),
+                Type::Interface(InterfaceType {
                     definition_id: to_node_id,
-                    ..
-                },
+                }),
             ) => self
                 .super_types
                 .get(from_node_id)
@@ -349,43 +347,42 @@ impl TypeRegistry {
         // this assumption.
         match (from_type, to_type) {
             (
-                Type::Array {
+                Type::Array(ArrayType {
                     element_type: from_element_type,
                     ..
-                },
-                Type::Array {
+                }),
+                Type::Array(ArrayType {
                     element_type: to_element_type,
                     ..
-                },
+                }),
             ) => self
                 .implicitly_convertible_to_for_external_call(*from_element_type, *to_element_type),
 
             (
-                Type::FixedSizeArray {
+                Type::FixedSizeArray(FixedSizeArrayType {
                     element_type: from_element_type,
                     size: from_size,
                     ..
-                },
-                Type::FixedSizeArray {
+                }),
+                Type::FixedSizeArray(FixedSizeArrayType {
                     element_type: to_element_type,
                     size: to_size,
                     ..
-                },
+                }),
             ) => from_size == to_size && from_element_type == to_element_type,
 
             (
-                Type::Struct {
+                Type::Struct(StructType {
                     definition_id: from_definition,
                     ..
-                },
-                Type::Struct {
+                }),
+                Type::Struct(StructType {
                     definition_id: to_definition,
                     ..
-                },
+                }),
             ) => from_definition == to_definition,
 
-            (Type::Bytes { .. }, Type::Bytes { .. })
-            | (Type::String { .. }, Type::String { .. }) => true,
+            (Type::Bytes(_), Type::Bytes(_)) | (Type::String(_), Type::String(_)) => true,
 
             _ => self.implicitly_convertible_to(from_type_id, to_type_id),
         }
@@ -423,33 +420,33 @@ impl TypeRegistry {
 
     pub(crate) fn find_canonical_type_id(&self, type_id: TypeId) -> Option<TypeId> {
         let canonical_type = match self.get_type_by_id(type_id) {
-            Type::Array { element_type, .. } => {
+            Type::Array(ArrayType { element_type, .. }) => {
                 let element_type = self.find_canonical_type_id(*element_type)?;
-                Type::Array {
+                Type::Array(ArrayType {
                     element_type,
                     location: DataLocation::Inherited,
-                }
+                })
             }
-            Type::Bytes { .. } => Type::Bytes {
+            Type::Bytes(_) => Type::Bytes(BytesType {
                 location: DataLocation::Inherited,
-            },
-            Type::FixedSizeArray {
+            }),
+            Type::FixedSizeArray(FixedSizeArrayType {
                 element_type, size, ..
-            } => {
+            }) => {
                 let element_type = self.find_canonical_type_id(*element_type)?;
-                Type::FixedSizeArray {
+                Type::FixedSizeArray(FixedSizeArrayType {
                     element_type,
                     size: *size,
                     location: DataLocation::Inherited,
-                }
+                })
             }
-            Type::String { .. } => Type::String {
+            Type::String(_) => Type::String(StringType {
                 location: DataLocation::Inherited,
-            },
-            Type::Struct { definition_id, .. } => Type::Struct {
+            }),
+            Type::Struct(StructType { definition_id, .. }) => Type::Struct(StructType {
                 definition_id: *definition_id,
                 location: DataLocation::Inherited,
-            },
+            }),
             Type::Function(FunctionType {
                 parameter_types,
                 return_type,
@@ -465,19 +462,19 @@ impl TypeRegistry {
                 mutability: *mutability,
             }),
 
-            Type::Address { .. }
+            Type::Address(_)
             | Type::Boolean
-            | Type::ByteArray { .. }
-            | Type::Contract { .. }
-            | Type::Enum { .. }
-            | Type::FixedPointNumber { .. }
-            | Type::Integer { .. }
-            | Type::Interface { .. }
-            | Type::Library { .. }
+            | Type::ByteArray(_)
+            | Type::Contract(_)
+            | Type::Enum(_)
+            | Type::FixedPointNumber(_)
+            | Type::Integer(_)
+            | Type::Interface(_)
+            | Type::Library(_)
             | Type::Literal(_)
-            | Type::Mapping { .. }
-            | Type::Tuple { .. }
-            | Type::UserDefinedValue { .. }
+            | Type::Mapping(_)
+            | Type::Tuple(_)
+            | Type::UserDefinedValue(_)
             | Type::Void => return Some(type_id),
         };
         self.find_type(&canonical_type)
@@ -498,45 +495,45 @@ impl TypeRegistry {
         location: DataLocation,
     ) -> TypeId {
         let type_with_location = match type_ {
-            Type::Array { element_type, .. } => Type::Array {
+            Type::Array(ArrayType { element_type, .. }) => Type::Array(ArrayType {
                 element_type: self.register_type_id_with_data_location(element_type, location),
                 location,
-            },
-            Type::Bytes { .. } => Type::Bytes { location },
-            Type::FixedSizeArray {
+            }),
+            Type::Bytes(_) => Type::Bytes(BytesType { location }),
+            Type::FixedSizeArray(FixedSizeArrayType {
                 element_type, size, ..
-            } => Type::FixedSizeArray {
+            }) => Type::FixedSizeArray(FixedSizeArrayType {
                 element_type: self.register_type_id_with_data_location(element_type, location),
                 size,
                 location,
-            },
-            Type::String { .. } => Type::String { location },
-            Type::Struct { definition_id, .. } => Type::Struct {
+            }),
+            Type::String(_) => Type::String(StringType { location }),
+            Type::Struct(StructType { definition_id, .. }) => Type::Struct(StructType {
                 definition_id,
                 location,
-            },
-            Type::Tuple { types } => {
+            }),
+            Type::Tuple(TupleType { types }) => {
                 let types_with_location = types
                     .iter()
                     .map(|id| self.register_type_id_with_data_location(*id, location))
                     .collect();
-                Type::Tuple {
+                Type::Tuple(TupleType {
                     types: types_with_location,
-                }
+                })
             }
-            Type::Address { .. }
+            Type::Address(_)
             | Type::Boolean
-            | Type::ByteArray { .. }
-            | Type::Contract { .. }
-            | Type::Enum { .. }
-            | Type::FixedPointNumber { .. }
+            | Type::ByteArray(_)
+            | Type::Contract(_)
+            | Type::Enum(_)
+            | Type::FixedPointNumber(_)
             | Type::Function(_)
-            | Type::Integer { .. }
-            | Type::Interface { .. }
-            | Type::Library { .. }
+            | Type::Integer(_)
+            | Type::Interface(_)
+            | Type::Library(_)
             | Type::Literal(_)
-            | Type::Mapping { .. }
-            | Type::UserDefinedValue { .. }
+            | Type::Mapping(_)
+            | Type::UserDefinedValue(_)
             | Type::Void => type_,
         };
         self.register_type(type_with_location)
@@ -549,12 +546,12 @@ impl TypeRegistry {
                 let mobile = kind.mobile_type()?;
                 Some(self.register_type(mobile))
             }
-            Type::Tuple { types: element_ids } => {
+            Type::Tuple(TupleType { types: element_ids }) => {
                 let mobile_ids: Option<Vec<TypeId>> = element_ids
                     .iter()
                     .map(|id| self.compute_mobile_type(*id))
                     .collect();
-                Some(self.register_type(Type::Tuple { types: mobile_ids? }))
+                Some(self.register_type(Type::Tuple(TupleType { types: mobile_ids? })))
             }
             _ => Some(type_id),
         }
@@ -663,14 +660,14 @@ impl TypeRegistry {
         let type_right = self.get_type_by_id(right);
         match (type_left, type_right) {
             (
-                Type::Array {
+                Type::Array(ArrayType {
                     element_type: element_type_left,
                     location: location_left,
-                },
-                Type::Array {
+                }),
+                Type::Array(ArrayType {
                     element_type: element_type_right,
                     location: location_right,
-                },
+                }),
             ) => {
                 location_left.overrides_in_external_function(*location_right)
                     && self.parameter_type_overrides_in_external_function(
@@ -679,16 +676,16 @@ impl TypeRegistry {
                     )
             }
             (
-                Type::FixedSizeArray {
+                Type::FixedSizeArray(FixedSizeArrayType {
                     element_type: element_type_left,
                     size: size_left,
                     location: location_left,
-                },
-                Type::FixedSizeArray {
+                }),
+                Type::FixedSizeArray(FixedSizeArrayType {
                     element_type: element_type_right,
                     size: size_right,
                     location: location_right,
-                },
+                }),
             ) => {
                 size_left == size_right
                     && location_left.overrides_in_external_function(*location_right)
@@ -698,30 +695,30 @@ impl TypeRegistry {
                     )
             }
             (
-                Type::Bytes {
+                Type::Bytes(BytesType {
                     location: location_left,
-                },
-                Type::Bytes {
+                }),
+                Type::Bytes(BytesType {
                     location: location_right,
-                },
+                }),
             )
             | (
-                Type::String {
+                Type::String(StringType {
                     location: location_left,
-                },
-                Type::String {
+                }),
+                Type::String(StringType {
                     location: location_right,
-                },
+                }),
             ) => location_left.overrides_in_external_function(*location_right),
             (
-                Type::Struct {
+                Type::Struct(StructType {
                     definition_id: definition_id_left,
                     location: location_left,
-                },
-                Type::Struct {
+                }),
+                Type::Struct(StructType {
                     definition_id: definition_id_right,
                     location: location_right,
-                },
+                }),
             ) => {
                 definition_id_left == definition_id_right
                     && location_left.overrides_in_external_function(*location_right)

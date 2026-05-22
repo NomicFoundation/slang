@@ -89,29 +89,29 @@ impl Type {
         let type_ = semantic.types().get_type_by_id(type_id);
         let semantic = Arc::clone(semantic);
         match type_ {
-            types::Type::Address { .. } => Self::Address(AddressType { type_id, semantic }),
-            types::Type::Array { .. } => Self::Array(ArrayType { type_id, semantic }),
+            types::Type::Address(_) => Self::Address(AddressType { type_id, semantic }),
+            types::Type::Array(_) => Self::Array(ArrayType { type_id, semantic }),
             types::Type::Boolean => Self::Boolean(BooleanType { type_id, semantic }),
-            types::Type::ByteArray { .. } => Self::ByteArray(ByteArrayType { type_id, semantic }),
-            types::Type::Bytes { .. } => Self::Bytes(BytesType { type_id, semantic }),
-            types::Type::Contract { .. } => Self::Contract(ContractType { type_id, semantic }),
-            types::Type::Enum { .. } => Self::Enum(EnumType { type_id, semantic }),
-            types::Type::FixedSizeArray { .. } => {
+            types::Type::ByteArray(_) => Self::ByteArray(ByteArrayType { type_id, semantic }),
+            types::Type::Bytes(_) => Self::Bytes(BytesType { type_id, semantic }),
+            types::Type::Contract(_) => Self::Contract(ContractType { type_id, semantic }),
+            types::Type::Enum(_) => Self::Enum(EnumType { type_id, semantic }),
+            types::Type::FixedSizeArray(_) => {
                 Self::FixedSizeArray(FixedSizeArrayType { type_id, semantic })
             }
-            types::Type::FixedPointNumber { .. } => {
+            types::Type::FixedPointNumber(_) => {
                 Self::FixedPointNumber(FixedPointNumberType { type_id, semantic })
             }
             types::Type::Function(_) => Self::Function(FunctionType { type_id, semantic }),
-            types::Type::Integer { .. } => Self::Integer(IntegerType { type_id, semantic }),
-            types::Type::Interface { .. } => Self::Interface(InterfaceType { type_id, semantic }),
-            types::Type::Library { .. } => Self::Library(LibraryType { type_id, semantic }),
+            types::Type::Integer(_) => Self::Integer(IntegerType { type_id, semantic }),
+            types::Type::Interface(_) => Self::Interface(InterfaceType { type_id, semantic }),
+            types::Type::Library(_) => Self::Library(LibraryType { type_id, semantic }),
             types::Type::Literal(_) => Self::Literal(LiteralType { type_id, semantic }),
-            types::Type::Mapping { .. } => Self::Mapping(MappingType { type_id, semantic }),
-            types::Type::String { .. } => Self::String(StringType { type_id, semantic }),
-            types::Type::Struct { .. } => Self::Struct(StructType { type_id, semantic }),
-            types::Type::Tuple { .. } => Self::Tuple(TupleType { type_id, semantic }),
-            types::Type::UserDefinedValue { .. } => {
+            types::Type::Mapping(_) => Self::Mapping(MappingType { type_id, semantic }),
+            types::Type::String(_) => Self::String(StringType { type_id, semantic }),
+            types::Type::Struct(_) => Self::Struct(StructType { type_id, semantic }),
+            types::Type::Tuple(_) => Self::Tuple(TupleType { type_id, semantic }),
+            types::Type::UserDefinedValue(_) => {
                 Self::UserDefinedValue(UserDefinedValueType { type_id, semantic })
             }
             types::Type::Void => Self::Void(VoidType { type_id, semantic }),
@@ -178,25 +178,25 @@ impl Type {
 
 impl AddressType {
     pub fn payable(&self) -> bool {
-        let types::Type::Address { payable } = self.internal_type() else {
+        let types::Type::Address(details) = self.internal_type() else {
             unreachable!("invalid address type");
         };
-        *payable
+        details.payable
     }
 }
 
 impl ArrayType {
     pub fn element_type(&self) -> Type {
-        let types::Type::Array { element_type, .. } = self.internal_type() else {
+        let types::Type::Array(details) = self.internal_type() else {
             unreachable!("invalid array type");
         };
-        Type::create(*element_type, &self.semantic)
+        Type::create(details.element_type, &self.semantic)
     }
     pub fn location(&self) -> DataLocation {
-        let types::Type::Array { location, .. } = self.internal_type() else {
+        let types::Type::Array(details) = self.internal_type() else {
             unreachable!("invalid array type");
         };
-        *location
+        details.location
     }
 }
 
@@ -204,79 +204,81 @@ impl BooleanType {}
 
 impl ByteArrayType {
     pub fn width(&self) -> u32 {
-        let types::Type::ByteArray { width } = self.internal_type() else {
+        let types::Type::ByteArray(details) = self.internal_type() else {
             unreachable!("invalid byte array type");
         };
-        *width
+        details.width
     }
 }
 
 impl BytesType {
     pub fn location(&self) -> DataLocation {
-        let types::Type::Bytes { location } = self.internal_type() else {
+        let types::Type::Bytes(details) = self.internal_type() else {
             unreachable!("invalid bytes type");
         };
-        *location
+        details.location
     }
 }
 
 impl ContractType {
     pub fn definition(&self) -> Definition {
-        let types::Type::Contract { definition_id } = self.internal_type() else {
+        let types::Type::Contract(details) = self.internal_type() else {
             unreachable!("invalid contract type");
         };
-        Definition::try_create(*definition_id, &self.semantic).expect("invalid contract definition")
+        Definition::try_create(details.definition_id, &self.semantic)
+            .expect("invalid contract definition")
     }
 }
 
 impl EnumType {
     pub fn definition(&self) -> Definition {
-        let types::Type::Enum { definition_id } = self.internal_type() else {
+        let types::Type::Enum(details) = self.internal_type() else {
             unreachable!("invalid enum type");
         };
-        Definition::try_create(*definition_id, &self.semantic).expect("invalid enum definition")
+        Definition::try_create(details.definition_id, &self.semantic)
+            .expect("invalid enum definition")
     }
 }
 
 impl FixedSizeArrayType {
     pub fn element_type(&self) -> Type {
-        let types::Type::FixedSizeArray { element_type, .. } = self.internal_type() else {
+        let types::Type::FixedSizeArray(details) = self.internal_type() else {
             unreachable!("invalid fixed-size array type");
         };
-        Type::create(*element_type, &self.semantic)
+        Type::create(details.element_type, &self.semantic)
     }
     pub fn location(&self) -> DataLocation {
-        let types::Type::FixedSizeArray { location, .. } = self.internal_type() else {
+        let types::Type::FixedSizeArray(details) = self.internal_type() else {
             unreachable!("invalid fixed-size array type");
         };
-        *location
+        details.location
     }
     pub fn size(&self) -> usize {
-        let types::Type::FixedSizeArray { size, .. } = self.internal_type() else {
+        let types::Type::FixedSizeArray(details) = self.internal_type() else {
             unreachable!("invalid fixed-size array type");
         };
-        *size
+        details.size
     }
 }
 
 impl FixedPointNumberType {
     pub fn signed(&self) -> bool {
-        let types::Type::FixedPointNumber { signed, .. } = self.internal_type() else {
+        let types::Type::FixedPointNumber(details) = self.internal_type() else {
             unreachable!("invalid fixed point number type");
         };
-        *signed
+        details.signed
     }
     pub fn bits(&self) -> u32 {
-        let types::Type::FixedPointNumber { bits, .. } = self.internal_type() else {
+        let types::Type::FixedPointNumber(details) = self.internal_type() else {
             unreachable!("invalid fixed point number type");
         };
-        *bits
+        details.bits
     }
     pub fn precision_bits(&self) -> u32 {
-        let types::Type::FixedPointNumber { precision_bits, .. } = self.internal_type() else {
+        let types::Type::FixedPointNumber(details) = self.internal_type() else {
             unreachable!("invalid fixed point number type");
         };
-        *precision_bits
+        details.precision_bits
     }
 }
 
@@ -342,35 +344,36 @@ impl FunctionType {
 
 impl IntegerType {
     pub fn signed(&self) -> bool {
-        let types::Type::Integer { signed, .. } = self.internal_type() else {
+        let types::Type::Integer(details) = self.internal_type() else {
             unreachable!("invalid integer type");
         };
-        *signed
+        details.signed
     }
     pub fn bits(&self) -> u32 {
-        let types::Type::Integer { bits, .. } = self.internal_type() else {
+        let types::Type::Integer(details) = self.internal_type() else {
             unreachable!("invalid integer type");
         };
-        *bits
+        details.bits
     }
 }
 
 impl InterfaceType {
     pub fn definition(&self) -> Definition {
-        let types::Type::Interface { definition_id } = self.internal_type() else {
+        let types::Type::Interface(details) = self.internal_type() else {
             unreachable!("invalid interface type");
         };
-        Definition::try_create(*definition_id, &self.semantic)
+        Definition::try_create(details.definition_id, &self.semantic)
             .expect("invalid interface definition")
     }
 }
 
 impl LibraryType {
     pub fn definition(&self) -> Definition {
-        let types::Type::Library { definition_id } = self.internal_type() else {
+        let types::Type::Library(details) = self.internal_type() else {
             unreachable!("invalid library type");
         };
-        Definition::try_create(*definition_id, &self.semantic).expect("invalid library definition")
+        Definition::try_create(details.definition_id, &self.semantic)
+            .expect("invalid library definition")
     }
 }
 
@@ -386,49 +389,51 @@ impl LiteralType {
 
 impl MappingType {
     pub fn key_type(&self) -> Type {
-        let types::Type::Mapping { key_type_id, .. } = self.internal_type() else {
+        let types::Type::Mapping(details) = self.internal_type() else {
             unreachable!("invalid mapping type");
         };
-        Type::create(*key_type_id, &self.semantic)
+        Type::create(details.key_type_id, &self.semantic)
     }
     pub fn value_type(&self) -> Type {
-        let types::Type::Mapping { value_type_id, .. } = self.internal_type() else {
+        let types::Type::Mapping(details) = self.internal_type() else {
             unreachable!("invalid mapping type");
         };
-        Type::create(*value_type_id, &self.semantic)
+        Type::create(details.value_type_id, &self.semantic)
     }
 }
 
 impl StringType {
     pub fn location(&self) -> DataLocation {
-        let types::Type::String { location } = self.internal_type() else {
+        let types::Type::String(details) = self.internal_type() else {
             unreachable!("invalid string type");
         };
-        *location
+        details.location
     }
 }
 
 impl StructType {
     pub fn definition(&self) -> Definition {
-        let types::Type::Struct { definition_id, .. } = self.internal_type() else {
+        let types::Type::Struct(details) = self.internal_type() else {
             unreachable!("invalid struct type");
         };
-        Definition::try_create(*definition_id, &self.semantic).expect("invalid struct definition")
+        Definition::try_create(details.definition_id, &self.semantic)
+            .expect("invalid struct definition")
     }
     pub fn location(&self) -> DataLocation {
-        let types::Type::Struct { location, .. } = self.internal_type() else {
+        let types::Type::Struct(details) = self.internal_type() else {
             unreachable!("invalid struct type");
         };
-        *location
+        details.location
     }
 }
 
 impl TupleType {
     pub fn types(&self) -> Vec<Type> {
-        let types::Type::Tuple { types } = self.internal_type() else {
+        let types::Type::Tuple(details) = self.internal_type() else {
             unreachable!("invalid tuple type");
         };
-        types
+        details
+            .types
             .iter()
             .map(|type_id| Type::create(*type_id, &self.semantic))
             .collect()
@@ -437,10 +442,10 @@ impl TupleType {
 
 impl UserDefinedValueType {
     pub fn definition(&self) -> Definition {
-        let types::Type::UserDefinedValue { definition_id } = self.internal_type() else {
+        let types::Type::UserDefinedValue(details) = self.internal_type() else {
             unreachable!("invalid user defined value type");
         };
-        Definition::try_create(*definition_id, &self.semantic)
+        Definition::try_create(details.definition_id, &self.semantic)
             .expect("invalid user defined value definition")
     }
 
@@ -448,13 +453,13 @@ impl UserDefinedValueType {
     /// if the binder did not resolve a target type (e.g., the declaration is
     /// ill-formed or references an unsupported elementary type).
     pub fn target_type(&self) -> Option<Type> {
-        let types::Type::UserDefinedValue { definition_id } = self.internal_type() else {
+        let types::Type::UserDefinedValue(details) = self.internal_type() else {
             unreachable!("invalid user defined value type");
         };
         let binder_definition = self
             .semantic
             .binder()
-            .find_definition_by_id(*definition_id)?;
+            .find_definition_by_id(details.definition_id)?;
         let binder::Definition::UserDefinedValueType(udvt_definition) = binder_definition else {
             unreachable!("UDVT type id should map to UDVT definition");
         };

@@ -8,7 +8,7 @@ use super::{Pass, ScopeFrame};
 use crate::binder::{
     Definition, Reference, Resolution, ResolveOptions, ScopeId, Typing, UsingDirective,
 };
-use crate::types::{FunctionType, Type, TypeId};
+use crate::types::{ContractType, FunctionType, InterfaceType, StructType, Type, TypeId};
 
 /// Lexical style resolution of symbols
 impl Pass<'_> {
@@ -162,9 +162,11 @@ impl Pass<'_> {
                     if matches!(typing, Typing::This) {
                         // Consider active `using` directives for `this`
                         // TODO(this-typing): Once `This` carries a type, use that and check it's a contract
-                        if let Some(receiver_type_id) = self.types.find_type(&Type::Contract {
-                            definition_id: node_id,
-                        }) {
+                        if let Some(receiver_type_id) =
+                            self.types.find_type(&Type::Contract(ContractType {
+                                definition_id: node_id,
+                            }))
+                        {
                             self.add_attached_functions_for_type(
                                 receiver_type_id,
                                 symbol,
@@ -239,7 +241,8 @@ impl Pass<'_> {
 
         // Resolve direct members of the type first
         let mut definition_ids = match type_ {
-            Type::Contract { definition_id, .. } | Type::Interface { definition_id, .. } => {
+            Type::Contract(ContractType { definition_id })
+            | Type::Interface(InterfaceType { definition_id }) => {
                 // A `Type::Library` doesn't belong here, since values of type `library` (ie `this`)
                 // can't be used to access to library members.
                 let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
@@ -251,7 +254,7 @@ impl Pass<'_> {
                             .into()
                     })
             }
-            Type::Struct { definition_id, .. } => {
+            Type::Struct(StructType { definition_id, .. }) => {
                 let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
                 self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
             }

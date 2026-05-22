@@ -4,7 +4,9 @@ use slang_solidity_v2_ir::ir;
 use super::Pass;
 use crate::binder::Definition;
 use crate::types::{
-    DataLocation, FunctionType, FunctionTypeMutability, FunctionTypeVisibility, Type, TypeId,
+    AddressType, ArrayType, ContractType, DataLocation, EnumType, FixedSizeArrayType, FunctionType,
+    FunctionTypeMutability, FunctionTypeVisibility, InterfaceType, LibraryType, MappingType,
+    StringType, StructType, TupleType, Type, TypeId, UserDefinedValueType,
 };
 
 impl Pass<'_> {
@@ -37,29 +39,34 @@ impl Pass<'_> {
     ) -> Option<TypeId> {
         if let Some(definition) = self.binder.find_definition_by_id(definition_id) {
             match definition {
-                Definition::Contract(_) => {
-                    Some(self.types.register_type(Type::Contract { definition_id }))
-                }
-                Definition::Library(_) => {
-                    Some(self.types.register_type(Type::Library { definition_id }))
-                }
-                Definition::Enum(_) => Some(self.types.register_type(Type::Enum { definition_id })),
-                Definition::Interface(_) => {
-                    Some(self.types.register_type(Type::Interface { definition_id }))
-                }
+                Definition::Contract(_) => Some(
+                    self.types
+                        .register_type(Type::Contract(ContractType { definition_id })),
+                ),
+                Definition::Library(_) => Some(
+                    self.types
+                        .register_type(Type::Library(LibraryType { definition_id })),
+                ),
+                Definition::Enum(_) => Some(
+                    self.types
+                        .register_type(Type::Enum(EnumType { definition_id })),
+                ),
+                Definition::Interface(_) => Some(
+                    self.types
+                        .register_type(Type::Interface(InterfaceType { definition_id })),
+                ),
                 Definition::Struct(_) => data_location.map(|data_location| {
-                    self.types.register_type(Type::Struct {
+                    self.types.register_type(Type::Struct(StructType {
                         definition_id,
                         location: data_location,
-                    })
+                    }))
                 }),
                 Definition::TypeParameter(_) => {
                     unreachable!("type parameter names don't have a type")
                 }
-                Definition::UserDefinedValueType(_) => Some(
-                    self.types
-                        .register_type(Type::UserDefinedValue { definition_id }),
-                ),
+                Definition::UserDefinedValueType(_) => Some(self.types.register_type(
+                    Type::UserDefinedValue(UserDefinedValueType { definition_id }),
+                )),
 
                 Definition::Constant(_)
                 | Definition::EnumMember(_)
@@ -89,9 +96,9 @@ impl Pass<'_> {
     ) -> Option<TypeId> {
         match elementary_type {
             ir::ElementaryType::AddressType(address_type) => {
-                Some(self.types.register_type(Type::Address {
+                Some(self.types.register_type(Type::Address(AddressType {
                     payable: address_type.payable_keyword.is_some(),
-                }))
+                })))
             }
             ir::ElementaryType::BytesKeyword(bytes_keyword) => {
                 Type::from_bytes_keyword(bytes_keyword.unparse(), data_location)
@@ -116,9 +123,9 @@ impl Pass<'_> {
             ir::ElementaryType::BoolKeyword(_) => Some(self.types.boolean()),
             // No ByteKeyword in v2 (removed since Solidity >= 0.8.0)
             ir::ElementaryType::StringKeyword(_) => data_location.map(|data_location| {
-                self.types.register_type(Type::String {
+                self.types.register_type(Type::String(StringType {
                     location: data_location,
-                })
+                }))
             }),
         }
     }
@@ -138,9 +145,9 @@ impl Pass<'_> {
                 // typing of function call expressions
                 return_types.first().copied().unwrap()
             } else {
-                self.types.register_type(Type::Tuple {
+                self.types.register_type(Type::Tuple(TupleType {
                     types: return_types,
-                })
+                }))
             }
         } else {
             self.types.void()
@@ -167,29 +174,29 @@ impl Pass<'_> {
         loop {
             match self.types.get_type_by_id(return_type) {
                 // scalar types
-                Type::Address { .. }
+                Type::Address(_)
                 | Type::Boolean
-                | Type::ByteArray { .. }
-                | Type::Contract { .. }
-                | Type::Enum { .. }
-                | Type::FixedPointNumber { .. }
-                | Type::Function { .. }
-                | Type::Integer { .. }
-                | Type::Interface { .. }
-                | Type::UserDefinedValue { .. } => break,
+                | Type::ByteArray(_)
+                | Type::Contract(_)
+                | Type::Enum(_)
+                | Type::FixedPointNumber(_)
+                | Type::Function(_)
+                | Type::Integer(_)
+                | Type::Interface(_)
+                | Type::UserDefinedValue(_) => break,
 
-                Type::Bytes { .. } => {
+                Type::Bytes(_) => {
                     // getters will always return values in memory
                     return_type = self.types.bytes_memory();
                     break;
                 }
-                Type::String { .. } => {
+                Type::String(_) => {
                     // getters will always return values in memory
                     return_type = self.types.string_memory();
                     break;
                 }
 
-                Type::Struct { definition_id, .. } => {
+                Type::Struct(StructType { definition_id, .. }) => {
                     // For structs the getter will return a tuple with all value
                     // type and string/bytes fields, in declaration order. It
                     // won't return nested mappings or arrays.
@@ -235,26 +242,27 @@ impl Pass<'_> {
                     return_type = match types.len() {
                         0 => return None,
                         1 => types[0],
-                        _ => self.types.register_type(Type::Tuple { types }),
+                        _ => self.types.register_type(Type::Tuple(TupleType { types })),
                     };
                     break;
                 }
 
                 // non-scalar types
-                Type::Array { element_type, .. } | Type::FixedSizeArray { element_type, .. } => {
+                Type::Array(ArrayType { element_type, .. })
+                | Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
                     return_type = *element_type;
                     parameter_types.push(self.types.uint256());
                 }
-                Type::Mapping {
+                Type::Mapping(MappingType {
                     key_type_id,
                     value_type_id,
-                } => {
+                }) => {
                     return_type = *value_type_id;
                     parameter_types.push(*key_type_id);
                 }
 
                 // invalid types
-                Type::Literal(_) | Type::Library { .. } | Type::Tuple { .. } | Type::Void => {
+                Type::Library(_) | Type::Literal(_) | Type::Tuple(_) | Type::Void => {
                     unreachable!("cannot compute the getter type for {type_id:?}")
                 }
             }
@@ -290,12 +298,12 @@ impl Pass<'_> {
                     unreachable!("base for {base_id:?} does not exist");
                 };
                 let base_type = match base {
-                    Definition::Contract(_) => Type::Contract {
+                    Definition::Contract(_) => Type::Contract(ContractType {
                         definition_id: *base_id,
-                    },
-                    Definition::Interface(_) => Type::Interface {
+                    }),
+                    Definition::Interface(_) => Type::Interface(InterfaceType {
                         definition_id: *base_id,
-                    },
+                    }),
                     _ => return None,
                 };
                 Some(self.types.register_type(base_type))

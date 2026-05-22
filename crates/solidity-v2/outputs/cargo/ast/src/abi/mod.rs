@@ -9,7 +9,9 @@ use sha3::{Digest, Keccak256};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::binder::Definition;
 use slang_solidity_v2_semantic::context::SemanticContext;
-use slang_solidity_v2_semantic::types::{FunctionTypeMutability, Type, TypeId};
+use slang_solidity_v2_semantic::types::{
+    ArrayType, FunctionTypeMutability, StructType, Type, TypeId,
+};
 
 pub struct ContractAbi {
     node_id: NodeId,
@@ -392,12 +394,12 @@ fn type_as_abi_parameter_impl(
     visited_structs: &mut HashSet<NodeId>,
 ) -> Option<(String, Vec<ParameterComponent>)> {
     match semantic.types().get_type_by_id(type_id) {
-        Type::Array { element_type, .. } => {
+        Type::Array(ArrayType { element_type, .. }) => {
             let (element_type_name, element_components) =
                 type_as_abi_parameter_impl(semantic, *element_type, visited_structs)?;
             Some((format!("{element_type_name}[]"), element_components))
         }
-        Type::Struct { definition_id, .. } => {
+        Type::Struct(StructType { definition_id, .. }) => {
             // Recursive structs are not valid Solidity, but guard against cycles
             // to avoid unbounded recursion if malformed types reach this point.
             // TODO(validation) SDR[1]: The recursion should be detected in the

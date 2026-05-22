@@ -7,7 +7,7 @@ use num_traits::cast::ToPrimitive;
 use num_traits::{Num, One, Signed, Zero};
 use slang_solidity_v2_ir::ir;
 
-use crate::types::{LiteralKind, Type};
+use crate::types::{IntegerType, LiteralKind, Type};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Number {
@@ -305,5 +305,5 @@ pub(crate) fn smallest_integer_type_to_fit(value: &BigInt) -> Option<Type> {
         return None;
     }
     let bits = bits.next_multiple_of(8).max(8);
-    Some(Type::Integer { signed, bits })
+    Some(Type::Integer(IntegerType { signed, bits }))
 }
