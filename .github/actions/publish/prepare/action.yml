@@ -1,5 +1,5 @@
 name: "Publish — prepare"
-description: "Build the npm tarball into target/publish-artifacts/, or write a .skipped marker when the local version already matches what's on npm."
+description: "Build the npm tarball into target/publish-artifacts/, or write a SKIPPED marker when the local version already matches what's on npm."
 
 outputs:
   artifact-name:
@@ -29,7 +29,6 @@ runs:
         echo "published=${PUBLISHED}" >> "$GITHUB_OUTPUT"
 
     # Marker satisfies the artifact upload's `if-no-files-found: error` when nothing was packed.
-    # Non-dotfile name — actions/upload-artifact skips hidden files by default.
     - name: "Write SKIPPED marker"
       if: "${{ steps.versions.outputs.local == steps.versions.outputs.published }}"
       shell: "bash"

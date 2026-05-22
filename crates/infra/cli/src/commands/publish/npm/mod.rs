@@ -18,8 +18,6 @@ pub struct NpmController {
 
 impl NpmController {
     pub fn execute(&self) -> Result<()> {
-        // Read the version from the same source `pnpm pack` did (package.json),
-        // so the computed tarball name can't drift from what's on disk.
         let package_dir = CargoWorkspace::locate_source_crate(NPM_CRATE)?;
         let version = Npm::local_version(&package_dir)?;
         let tarball = Path::repo_path(format!(
