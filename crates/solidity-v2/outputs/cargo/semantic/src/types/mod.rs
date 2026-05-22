@@ -354,11 +354,18 @@ impl Type {
             }
             Type::Literal(LiteralKind::Address) => Some(Type::Address { payable: false }),
 
-            // Some values cannot be elements of arrays
-            Type::Mapping { .. } | Type::Tuple { .. } | Type::Void => None,
-
             // Return self for all other cases
+            // TODO: Tuples are recursed for in solc, but they're a bit special on how they can be used,
+            // so for now we just clone them. ie the mobile type of `Tuple(Literal(0), Literal(1))` should be
+            // `Tuple(Integer(8), Integer(8))`
             _ => Some(self.clone()),
         }
+    }
+
+    /// Whether this type can appear as the element type of an array literal.
+    ///
+    /// TODO: This probably has a better way to resolve it, looking at the storage location
+    pub(crate) fn can_be_array_element(&self) -> bool {
+        !matches!(self, Type::Mapping { .. } | Type::Tuple { .. } | Type::Void)
     }
 }

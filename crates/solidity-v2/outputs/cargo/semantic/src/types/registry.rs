@@ -552,30 +552,51 @@ impl TypeRegistry {
         self.register_type(type_with_location)
     }
 
+    /// Returns the mobile type of `type_id` as a `TypeId`
+    pub(crate) fn mobile_type_id(&mut self, type_id: TypeId) -> Option<TypeId> {
+        let mobile = self.get_type_by_id(type_id).mobile_type()?;
+        Some(self.register_type(mobile))
+    }
+
+    /// Returns the common type of `left` and `right` based purely on implicit
+    /// convertibility, without lifting literals through their mobile type.
+    /// If `left` implicitly converts to `right` we return `right`; if `right`
+    /// implicitly converts to `left` we return `left`. Otherwise returns
+    /// `None`.
+    ///
+    /// Because there's no mobile-type promotion, literal-specific conversion
+    /// rules (e.g. `Literal(0) -> bytesN`) are preserved here.
+    pub(crate) fn common_type(&self, left: TypeId, right: TypeId) -> Option<TypeId> {
+        if self.implicitly_convertible_to(left, right) {
+            return Some(right);
+        }
+        if self.implicitly_convertible_to(right, left) {
+            return Some(left);
+        }
+        None
+    }
+
     /// Return a type that can be stored in the EVM and can hold values of all
     /// the given types. The first element dictates the type class. Returns
     /// `None` if the types cannot be reified or they are not compatible. This
-    /// is used to unify types of literal arrays and conditional branches.
+    /// is used to unify types of literal arrays.
+    ///
+    /// Only the first element is mobile-typed unconditionally.
     pub(crate) fn common_mobile_type(&mut self, type_ids: &[TypeId]) -> Option<TypeId> {
-        if type_ids.is_empty() {
-            return None;
-        }
-        let initial_type = self.get_type_by_id(type_ids[0]);
-        let mut element_type = initial_type.mobile_type()?;
+        let (first_id, rest) = type_ids.split_first()?;
+        let mut element_type_id = self.mobile_type_id(*first_id)?;
 
-        for item_type_id in &type_ids[1..] {
-            let item_type = self.get_type_by_id(*item_type_id).mobile_type()?;
-            if self.internal_implicitly_convertible_to(&item_type, &element_type) {
-                // ok, `element_type` can already hold `item_type`
-            } else if self.internal_implicitly_convertible_to(&element_type, &item_type) {
-                // `item_type` is "bigger"
-                element_type = item_type;
-            } else {
-                // TODO(validation) SDR[1741]: types are not compatible
-                return None;
+        for &item_type_id in rest {
+            if let Some(common) = self.common_type(element_type_id, item_type_id) {
+                element_type_id = common;
+                continue;
             }
+            // If the types are not directly compatible, try to mobile-type the item
+            // For example `[uint8(1), 256]` need this extra step.
+            let item_mobile_id = self.mobile_type_id(item_type_id)?;
+            element_type_id = self.common_type(element_type_id, item_mobile_id)?;
         }
-        Some(self.register_type(element_type))
+        Some(element_type_id)
     }
 
     // Returns true if a function type overrides another

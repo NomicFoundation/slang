@@ -3,7 +3,7 @@ use num_rational::BigRational;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
 
-use super::build_file;
+use super::{build_file, TestFile};
 use crate::binder::{Binder, Typing};
 use crate::context::SemanticFile;
 use crate::passes::common::node_id_for_expression_typing;
@@ -11,6 +11,57 @@ use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
 };
 use crate::types::{DataLocation, LiteralKind, Type, TypeId, TypeRegistry};
+
+const TEST_LANGUAGE_VERSION: LanguageVersion = LanguageVersion::LATEST;
+
+/// Everything a typing test needs after the semantic pipeline has run: the
+/// parsed file (for navigating the IR), plus the binder and type registry the
+/// passes populated.
+struct TestSetup {
+    file: TestFile,
+    binder: Binder,
+    types: TypeRegistry,
+}
+
+impl TestSetup {
+    /// Builds a single-file source, runs every semantic pass against it, and
+    /// returns a [`TestSetup`].
+    fn new(source: &str) -> TestSetup {
+        let mut id_generator = NodeIdGenerator::default();
+        let file = build_file("test.sol", source, &mut id_generator, TEST_LANGUAGE_VERSION);
+        let files = [file];
+
+        let mut binder = Binder::default();
+        let mut types = TypeRegistry::default();
+
+        p1_collect_definitions::run(&files, &mut binder);
+        p2_linearise_contracts::run(&files, &mut binder);
+        p3_type_definitions::run(&files, &mut binder, &mut types, TEST_LANGUAGE_VERSION);
+        p4_resolve_references::run(&files, &mut binder, &mut types, TEST_LANGUAGE_VERSION);
+
+        let [file] = files;
+        Self {
+            file,
+            binder,
+            types,
+        }
+    }
+
+    fn ir_root(&self) -> &ir::SourceUnit {
+        self.file.ir_root()
+    }
+
+    /// Resolves the type recorded for `expr` in the binder, returning `None`
+    /// if it isn't `Typing::Resolved`.
+    fn typing_of(&self, expr: &ir::Expression) -> Option<Type> {
+        let node_id = node_id_for_expression_typing(expr)
+            .expect("expression registers its typing in the binder");
+        match self.binder.node_typing(node_id) {
+            Typing::Resolved(type_id) => Some(self.types.get_type_by_id(type_id).clone()),
+            _ => None,
+        }
+    }
+}
 
 /// Parses a Solidity expression as the value of a top-level `uint constant`,
 /// runs all semantic passes, and returns a clone of the inferred type assigned
@@ -38,39 +89,18 @@ fn type_of_value_expression_in_context(setup: &str, input: &str) -> (Type, TypeR
 }
 
 fn try_type_of_value_expression_in_context(
-    setup: &str,
+    setup_src: &str,
     input: &str,
 ) -> (Option<Type>, TypeRegistry) {
-    let source = format!("{setup}\nuint constant x = {input};");
-    let mut id_generator = NodeIdGenerator::default();
-    let language_version = LanguageVersion::LATEST;
-    let file = build_file("test.sol", &source, &mut id_generator, language_version);
-    let files = [file];
-
-    let mut binder = Binder::default();
-    let mut types = TypeRegistry::default();
-
-    p1_collect_definitions::run(&files, &mut binder);
-    p2_linearise_contracts::run(&files, &mut binder);
-    p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
-    p4_resolve_references::run(&files, &mut binder, &mut types, language_version);
-
+    let setup = TestSetup::new(&format!("{setup_src}\nuint constant x = {input};"));
     // The constant declaration is always appended last; earlier members may
-    // exist when the test passes setup (free functions, contracts, etc.).
-    let value_expr = match files[0].ir_root().members.last().unwrap() {
+    // exist when the caller passes setup (free functions, contracts, etc.).
+    let value_expr = match setup.ir_root().members.last().unwrap() {
         ir::SourceUnitMember::ConstantDefinition(definition) => definition.value.as_ref().unwrap(),
         other => panic!("expected ConstantDefinition, got {other:?}"),
     };
-
-    let expr_type = match binder.node_typing(
-        node_id_for_expression_typing(value_expr)
-            .expect("expression registers its typing in the binder"),
-    ) {
-        Typing::Resolved(type_id) => Some(types.get_type_by_id(type_id).clone()),
-        _ => None,
-    };
-
-    (expr_type, types)
+    let expr_type = setup.typing_of(value_expr);
+    (expr_type, setup.types)
 }
 
 fn register_uint_type(types: &mut TypeRegistry, bits: u32) -> TypeId {
@@ -78,6 +108,41 @@ fn register_uint_type(types: &mut TypeRegistry, bits: u32) -> TypeId {
         signed: false,
         bits,
     })
+}
+
+/// Builds a single-contract source whose body holds `expr;` as an expression
+/// statement, runs all semantic passes, and returns the typing recorded for
+/// that expression. Used for cases that can't appear in a top-level
+/// `uint constant` initialiser — e.g. expressions whose operands are state
+/// variable mappings.
+fn try_type_of_function_body_expression(
+    contract_members: &str,
+    expr: &str,
+) -> (Option<Type>, TypeRegistry) {
+    let setup = TestSetup::new(&format!(
+        "contract _TestC {{\n{contract_members}\nfunction _test() public {{\n{expr};\n}}\n}}\n",
+    ));
+
+    let contract = match setup.ir_root().members.last().unwrap() {
+        ir::SourceUnitMember::ContractDefinition(c) => c,
+        other => panic!("expected ContractDefinition, got {other:?}"),
+    };
+    let function = contract
+        .members
+        .iter()
+        .find_map(|m| match m {
+            ir::ContractMember::FunctionDefinition(f) => Some(f),
+            _ => None,
+        })
+        .expect("expected a FunctionDefinition in the contract");
+    let block = function.body.as_ref().expect("function has a body");
+    let stmt = match block.statements.first().expect("at least one statement") {
+        ir::Statement::ExpressionStatement(s) => s,
+        other => panic!("expected ExpressionStatement, got {other:?}"),
+    };
+
+    let expr_type = setup.typing_of(&stmt.expression);
+    (expr_type, setup.types)
 }
 
 #[test]
@@ -593,6 +658,119 @@ fn test_array_literal_unifies_byte_array_elements() {
 }
 
 #[test]
+fn test_array_literal_unifies_byte_array_and_literal_zero() {
+    let (expr_type, types) = type_of_value_expression("[bytes32(0), 0]");
+    let Type::FixedSizeArray {
+        element_type,
+        size,
+        location,
+    } = expr_type
+    else {
+        panic!("expected FixedSizeArray, got {expr_type:?}");
+    };
+    assert_eq!(size, 2);
+    assert_eq!(location, DataLocation::Memory);
+    assert_eq!(element_type, types.bytes32());
+}
+
+#[test]
+fn test_conditional_expression_does_not_unify_byte_array_and_literal_zero() {
+    let (type_, _) = try_type_of_value_expression("true ? bytes32(0) : 0");
+    assert_eq!(type_, None);
+}
+
+#[test]
+fn test_array_literal_does_not_unify_when_literal_is_first_and_byte_array_follows() {
+    // The first element of the array is used to find the common type
+    // Matches solc behaviour
+    let (type_, _) = try_type_of_value_expression("[0, bytes32(0)]");
+    assert_eq!(type_, None);
+}
+
+#[test]
+fn test_array_literal_widens_past_first_element_integer_type() {
+    let (expr_type, mut types) = type_of_value_expression("[uint8(0), 256]");
+    let Type::FixedSizeArray {
+        element_type, size, ..
+    } = expr_type
+    else {
+        panic!("expected FixedSizeArray, got {expr_type:?}");
+    };
+    assert_eq!(size, 2);
+    assert_eq!(element_type, register_uint_type(&mut types, 16));
+}
+
+#[test]
+fn test_array_literal_unifies_byte_array_and_matching_hex_literal() {
+    let (expr_type, types) = type_of_value_expression("[bytes1(0x01), 0x01]");
+    let Type::FixedSizeArray {
+        element_type, size, ..
+    } = expr_type
+    else {
+        panic!("expected FixedSizeArray, got {expr_type:?}");
+    };
+    assert_eq!(size, 2);
+    assert_eq!(element_type, types.bytes1());
+}
+
+#[test]
+fn test_conditional_expression_loses_hex_literal_specialness() {
+    let (type_, _) = try_type_of_value_expression("true ? bytes1(0x01) : 0x01");
+    assert_eq!(type_, None);
+}
+
+#[test]
+fn test_conditional_expression_widens_literal_to_concrete_integer() {
+    let (expr_type, types) = type_of_value_expression("true ? uint256(0) : 0");
+    assert_eq!(expr_type, *types.get_type_by_id(types.uint256()));
+
+    let (expr_type, types) = type_of_value_expression("true ? 0 : uint256(0)");
+    assert_eq!(expr_type, *types.get_type_by_id(types.uint256()));
+}
+
+#[test]
+fn test_conditional_expression_unifies_mappings() {
+    let (expr_type, types) = try_type_of_function_body_expression(
+        "mapping(uint => uint) m1; mapping(uint => uint) m2;",
+        "true ? m1 : m2",
+    );
+    let Some(Type::Mapping {
+        key_type_id,
+        value_type_id,
+    }) = expr_type
+    else {
+        panic!("expected Mapping, got {expr_type:?}");
+    };
+    assert_eq!(key_type_id, types.uint256());
+    assert_eq!(value_type_id, types.uint256());
+}
+
+#[test]
+fn test_mappings_only_unify_on_equal_elements() {
+    // Mappings must match on key and value types
+    let (expr_type, _) = try_type_of_function_body_expression(
+        "mapping(uint => int128) m1; mapping(uint => int256) m2;",
+        "true ? m1 : m2",
+    );
+    assert_eq!(None, expr_type);
+}
+
+#[test]
+fn test_array_literal_rejects_mapping_element() {
+    let (type_, _) = try_type_of_function_body_expression(
+        "mapping(uint => uint) m1; mapping(uint => uint) m2;",
+        "[m1, m2]",
+    );
+    assert_eq!(type_, None);
+}
+
+#[test]
+fn test_array_literal_does_not_unify_byte_array_and_non_zero_literal() {
+    let (type_, _) = try_type_of_value_expression("[bytes32(0), 1]");
+    assert_eq!(type_, None);
+}
+
+#[test]
 fn test_bitwise_or_widens_byte_arrays() {
     let (expr_type, types) = type_of_value_expression("bytes20(0) | bytes32(0)");
     assert_eq!(expr_type, *types.get_type_by_id(types.bytes32()));
@@ -771,21 +949,9 @@ contract Test {
 }
 "#;
 
-    let mut id_generator = NodeIdGenerator::default();
-    let language_version = LanguageVersion::LATEST;
-    let file = build_file("test.sol", CONTENTS, &mut id_generator, language_version);
-    let files = [file];
-
-    let mut binder = Binder::default();
-    let mut types = TypeRegistry::default();
-
-    p1_collect_definitions::run(&files, &mut binder);
-    p2_linearise_contracts::run(&files, &mut binder);
-    p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
-    p4_resolve_references::run(&files, &mut binder, &mut types, language_version);
-
-    let function = find_contract_function(files[0].ir_root(), "Test", "test");
-    let expression_types = expression_statement_types(function, &binder, &types);
+    let setup = TestSetup::new(CONTENTS);
+    let function = find_contract_function(setup.ir_root(), "Test", "test");
+    let expression_types = expression_statement_types(function, &setup.binder, &setup.types);
 
     // In source order:
     //  - `bs;` — internal access to a `bytes` storage variable: `bytes storage`.

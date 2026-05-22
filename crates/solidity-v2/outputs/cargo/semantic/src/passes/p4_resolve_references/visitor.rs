@@ -177,9 +177,21 @@ impl Visitor for Pass<'_> {
         // TODO(validation) SDR[47]: both true_expression and false_expression should
         // have the compatible types
         let type_id = match (true_type_id, false_type_id) {
-            (Some(true_type_id), Some(false_type_id)) => self
-                .types
-                .common_mobile_type(&[true_type_id, false_type_id]),
+            (Some(true_type_id), Some(false_type_id)) => {
+                // Conditional branches mobile-type both sides before
+                // unifying.
+                // This is stricter than array literals, but it matches
+                // solc's behaviour
+                let true_mobile = self.types.mobile_type_id(true_type_id);
+                let false_mobile = self.types.mobile_type_id(false_type_id);
+                match (true_mobile, false_mobile) {
+                    (Some(true_mobile), Some(false_mobile)) => {
+                        self.types.common_type(true_mobile, false_mobile)
+                    }
+                    // TODO(validation): both branches should be typed
+                    _ => None,
+                }
+            }
             _ => None,
         };
         self.binder.set_node_type(node.id(), type_id);
