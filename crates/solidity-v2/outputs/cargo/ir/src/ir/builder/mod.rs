@@ -222,7 +222,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                 None
             }
         });
-        // TODO(validation): function definitions can have only a single override specifier
+        // TODO(validation) SDR[9]: function definitions can have only a single override specifier
         let override_specifier = self.function_override_specifier(&source.attributes);
         let modifier_invocations = self.function_modifier_invocations(&source.attributes);
         let returns = source
@@ -442,8 +442,8 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     fn function_visibility(attributes: &input::FunctionAttributes) -> output::FunctionVisibility {
-        // TODO(validation): only a single visibility keyword can be provided
-        // TODO(validation): free functions are always internal, but
+        // TODO(validation) SDR[13]: only a single visibility keyword can be provided
+        // TODO(validation) SDR[16]: free functions are always internal, but
         // otherwise a visibility *must* be set explicitly (>= 0.8.0)
         attributes.elements.iter().fold(
             // For >= 0.8.0, default for free functions is internal
@@ -495,7 +495,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     fn function_type_visibility(
         attributes: &input::FunctionTypeAttributes,
     ) -> output::FunctionVisibility {
-        // TODO(validation): only a single visibility keyword can be provided
+        // TODO(validation) SDR[13]: only a single visibility keyword can be provided
         attributes.elements.iter().fold(
             output::FunctionVisibility::Internal,
             |visibility, attribute| match attribute {
@@ -560,7 +560,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     fn constructor_visibility(
         attributes: &input::ConstructorAttributes,
     ) -> output::FunctionVisibility {
-        // TODO(validation): only a single visibility keyword can be provided
+        // TODO(validation) SDR[13]: only a single visibility keyword can be provided
         attributes.elements.iter().fold(
             output::FunctionVisibility::Public,
             |visibility, attribute| match attribute {
@@ -599,7 +599,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let kind = output::FunctionKind::Fallback;
         let name = None;
         let parameters = self.build_parameters_declaration(&source.parameters);
-        // TODO(validation): fallback functions *must* have external visibility
+        // TODO(validation) SDR[14]: fallback functions *must* have external visibility
         let visibility = output::FunctionVisibility::External;
         let mutability = self
             .extract_mutability_specifier(&source.attributes.elements)
@@ -674,9 +674,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let kind = output::FunctionKind::Receive;
         let name = None;
         let parameters = self.build_parameters_declaration(&source.parameters);
-        // TODO(validation): receive functions *must* have external visibility
+        // TODO(validation) SDR[8]: receive functions *must* have external visibility
         let visibility = output::FunctionVisibility::External;
-        // TODO(validation): receive functions *must* have a 'payable' specifier
+        // TODO(validation) SDR[7]: receive functions *must* have a 'payable' specifier
         let mutability = self
             .extract_mutability_specifier(&source.attributes.elements)
             .unwrap_or(output::FunctionMutability::Payable);
@@ -752,7 +752,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let visibility = output::FunctionVisibility::Internal;
         // mutability is irrelevant for modifiers
         let mutability = output::FunctionMutability::NonPayable;
-        // TODO(validation): check for duplicate attributes (virtual, ...)
+        // TODO(validation) SDR[1730]: check for duplicate attributes (virtual, ...)
         let virtual_keyword = source.attributes.elements.iter().find_map(|attribute| {
             if let input::ModifierAttribute::VirtualKeyword(virtual_keyword) = attribute {
                 Some(self.build_virtual_keyword(virtual_keyword))
@@ -801,7 +801,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     fn state_variable_visibility(
         attributes: &input::StateVariableAttributes,
     ) -> output::StateVariableVisibility {
-        // TODO(validation): only one visibility keyword is allowed
+        // TODO(validation) SDR[10]: only one visibility keyword is allowed
         attributes.elements.iter().fold(
             output::StateVariableVisibility::Internal,
             |visibility, attribute| match attribute {
@@ -823,7 +823,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         attributes: &input::StateVariableAttributes,
     ) -> Option<output::OverridePaths> {
-        // TODO(validation): only one override specifier is allowed
+        // TODO(validation) SDR[12]: only one override specifier is allowed
         attributes.elements.iter().find_map(|attribute| {
             if let input::StateVariableAttribute::OverrideSpecifier(specifier) = attribute {
                 Some(self.build_override_specifier_as_paths(specifier))

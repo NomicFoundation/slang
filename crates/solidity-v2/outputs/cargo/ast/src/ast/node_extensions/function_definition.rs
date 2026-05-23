@@ -34,6 +34,6 @@ impl FunctionDefinitionStruct {
             _ => false,
         }
 
-        // TODO(validation): check also that the function mutability is stricter than other's
+        // TODO(validation) SDR[6]: check also that the function mutability is stricter than other's
     }
 }

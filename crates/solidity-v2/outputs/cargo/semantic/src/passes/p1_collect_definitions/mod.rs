@@ -122,7 +122,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
             .resolved_import_by_node_id(import_node_id)
             .cloned()
 
-        // TODO(validation): emit an error/warning if the file cannot be resolved
+        // TODO(validation) SDR[22]: emit an error/warning if the file cannot be resolved
     }
 
     // Collects *all* the sequential parameters making and registering
@@ -163,7 +163,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         else {
             unreachable!("the current scope is not a contract");
         };
-        // TODO(validation): there should be a single constructor, so the
+        // TODO(validation) SDR[21]: there should be a single constructor, so the
         // current value should be None
         contract_definition.constructor_parameters_scope_id = Some(constructor_parameters_scope_id);
     }
@@ -280,7 +280,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                     if enclosing_contract_name
                         .is_some_and(|contract_name| contract_name == name.unparse())
                     {
-                        // TODO(validation): there cannot be a function with the
+                        // TODO(validation) SDR[20]: there cannot be a function with the
                         // same name as the enclosing contract (since Solidity
                         // 0.5.0). Regardless, we skip registering the function
                         // symbol in the current scope to avoid interference

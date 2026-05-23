@@ -33,7 +33,7 @@ impl Visitor for Pass<'_> {
             ir::visitor::accept_inheritance_type(inheritance_type, self);
         }
         if let Some(ref storage_layout) = node.storage_layout {
-            // TODO(validation): check that the expression is not binding constant variables up until 0.8.31
+            // TODO(validation) SDR[56]: check that the expression is not binding constant variables up until 0.8.31
             // https://www.soliditylang.org/blog/2025/12/03/solidity-0.8.31-release-announcement
             ir::visitor::accept_expression(storage_layout, self);
         }
@@ -62,7 +62,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_function_definition(&mut self, node: &ir::FunctionDefinition) -> bool {
-        // TODO(validation): for modifier kind, they are not allowed inside
+        // TODO(validation) SDR[51]: for modifier kind, they are not allowed inside
         // interfaces since 0.8.8
 
         for modifier_invocation in &node.modifier_invocations {
@@ -161,7 +161,7 @@ impl Visitor for Pass<'_> {
 
     fn leave_assignment_expression(&mut self, node: &ir::AssignmentExpression) {
         let type_id = self.typing_of_expression(&node.left_operand).as_type_id();
-        // TODO(validation): check that the type of right_operand can be applied
+        // TODO(validation) SDR[59]: check that the type of right_operand can be applied
         // to the left by means of the operator
         self.binder.set_node_type(node.id(), type_id);
     }
@@ -174,7 +174,7 @@ impl Visitor for Pass<'_> {
             .typing_of_expression(&node.false_expression)
             .as_type_id();
 
-        // TODO(validation): both true_expression and false_expression should
+        // TODO(validation) SDR[47]: both true_expression and false_expression should
         // have the compatible types
         let type_id = match (true_type_id, false_type_id) {
             (Some(true_type_id), Some(false_type_id)) => self
@@ -186,25 +186,25 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_or_expression(&mut self, node: &ir::OrExpression) {
-        // TODO(validation): check that both operands are boolean
+        // TODO(validation) SDR[57]: check that both operands are boolean
         self.binder
             .set_node_type(node.id(), Some(self.types.boolean()));
     }
 
     fn leave_and_expression(&mut self, node: &ir::AndExpression) {
-        // TODO(validation): check that both operands are boolean
+        // TODO(validation) SDR[57]: check that both operands are boolean
         self.binder
             .set_node_type(node.id(), Some(self.types.boolean()));
     }
 
     fn leave_equality_expression(&mut self, node: &ir::EqualityExpression) {
-        // TODO(validation): check that both operands have a compatible type
+        // TODO(validation) SDR[55]: check that both operands have a compatible type
         self.binder
             .set_node_type(node.id(), Some(self.types.boolean()));
     }
 
     fn leave_inequality_expression(&mut self, node: &ir::InequalityExpression) {
-        // TODO(validation): check that both operands have a compatible type
+        // TODO(validation) SDR[55]: check that both operands have a compatible type
         self.binder
             .set_node_type(node.id(), Some(self.types.boolean()));
     }
@@ -237,7 +237,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_shift_expression(&mut self, node: &ir::ShiftExpression) {
-        // TODO(validation): check that the left operand is an integer and the
+        // TODO(validation) SDR[54]: check that the left operand is an integer and the
         // right operand is an _unsigned_ integer
         let type_id = self.type_of_left_typed_binary_operator_expression(
             &node.left_operand,
@@ -286,7 +286,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_postfix_expression(&mut self, node: &ir::PostfixExpression) {
-        // TODO(validation): check that the operand is an integer
+        // TODO(validation) SDR[52]: check that the operand is an integer
         let type_id = self.typing_of_expression(&node.operand).as_type_id();
         self.binder.set_node_type(node.id(), type_id);
     }
@@ -373,12 +373,12 @@ impl Visitor for Pass<'_> {
                 match operand_type {
                     Type::Array { element_type, .. }
                     | Type::FixedSizeArray { element_type, .. } => {
-                        // TODO(validation): for fixed-size arrays, if the range
+                        // TODO(validation) SDR[58]: for fixed-size arrays, if the range
                         // is resolvable at compile time we should check for out
                         // of bounds accesses.
-                        // TODO(validation): array slices should only be
+                        // TODO(validation) SDR[46]: array slices should only be
                         // implemented for calldata arrays (as of 0.8.33).
-                        // TODO(validation): we should return a new
+                        // TODO(validation) SDR[50]: we should return a new
                         // (intermediate) type for array slices.
                         if range_access {
                             Typing::Resolved(operand_type_id)
@@ -408,7 +408,7 @@ impl Visitor for Pass<'_> {
                         }
                     }
                     _ => {
-                        // TODO(validation): the operand is not indexable
+                        // TODO(validation) SDR[45]: the operand is not indexable
                         Typing::Unresolved
                     }
                 }
@@ -440,12 +440,12 @@ impl Visitor for Pass<'_> {
 
     fn leave_array_expression(&mut self, node: &ir::ArrayExpression) {
         let typing = if node.items.is_empty() {
-            // TODO(validation): an empty array literal cannot be typed
+            // TODO(validation) SDR[1736]: an empty array literal cannot be typed
             Typing::Unresolved
         } else if let Some(type_id) = self.type_of_array_expression(node) {
             Typing::Resolved(type_id)
         } else {
-            // TODO(validation): all expressions in the array should have a type
+            // TODO(validation) SDR[48]: all expressions in the array should have a type
             // and fit in the type dictated by the first element
             Typing::Unresolved
         };

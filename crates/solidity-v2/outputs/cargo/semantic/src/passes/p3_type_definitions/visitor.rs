@@ -45,7 +45,7 @@ impl Visitor for Pass<'_> {
         self.binder.mark_user_meta_type_node(node.id());
 
         if let Some(base_slot_expression) = &node.storage_layout {
-            // TODO(validation): if the base slot expression cannot be computed
+            // TODO(validation) SDR[30]: if the base slot expression cannot be computed
             // at this time, it's not a compile time constant and hence it's an
             // error
             let base_slot = evaluate_compile_time_integer_constant(
@@ -54,7 +54,7 @@ impl Visitor for Pass<'_> {
                 self,
             )
             .and_then(|base_slot| {
-                // TODO(validation): if conversion fails the constant is
+                // TODO(validation) SDR[1733]: if conversion fails the constant is
                 // negative or exceeds the 256 bit range
                 U256::try_from(base_slot).ok()
             });
@@ -286,7 +286,7 @@ impl Visitor for Pass<'_> {
     fn leave_struct_member(&mut self, node: &ir::StructMember) {
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Inherited));
         self.binder.set_node_type(node.id(), type_id);
-        // TODO(validation): check that the struct definition is not recursive
+        // TODO(validation) SDR[28]: check that the struct definition is not recursive
     }
 
     fn leave_enum_definition(&mut self, node: &ir::EnumDefinition) {
@@ -361,7 +361,7 @@ impl Visitor for Pass<'_> {
                                 .map_or(Vec::new(), |reference| {
                                     reference.resolution.get_definition_ids()
                                 });
-                            // TODO(validation): *all* definitions should point to functions
+                            // TODO(validation) SDR[29]: *all* definitions should point to functions
 
                             symbols.insert(symbol_name.unparse().to_string(), definition_ids);
 
@@ -402,7 +402,7 @@ impl Visitor for Pass<'_> {
         if node.global_keyword.is_some() {
             self.binder.insert_global_using_directive(directive);
         } else {
-            // TODO(validation): `using` directives are not allowed in interfaces since 0.7.1
+            // TODO(validation) SDR[31]: `using` directives are not allowed in interfaces since 0.7.1
             let current_scope_id = self.current_contract_or_file_scope_id();
             self.binder
                 .insert_using_directive_in_scope(directive, current_scope_id);

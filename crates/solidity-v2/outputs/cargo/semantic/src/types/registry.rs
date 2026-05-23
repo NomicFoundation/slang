@@ -355,7 +355,7 @@ impl TypeRegistry {
         let from_type = self.get_type_by_id(from_type_id);
         let to_type = self.get_type_by_id(to_type_id);
 
-        // TODO(validation): we're assuming here that for external calls every
+        // TODO(validation) SDR[60]: we're assuming here that for external calls every
         // location is implicitly convertible to any other (although
         // reallistically the targets can be memory and calldata only). Verify
         // this assumption.
@@ -571,7 +571,7 @@ impl TypeRegistry {
                 // `item_type` is "bigger"
                 element_type = item_type;
             } else {
-                // TODO(validation): types are not compatible
+                // TODO(validation) SDR[1741]: types are not compatible
                 return None;
             }
         }

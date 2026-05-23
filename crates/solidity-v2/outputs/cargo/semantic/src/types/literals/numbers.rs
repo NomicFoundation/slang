@@ -170,7 +170,7 @@ impl Number {
     /// `2`. Only division by zero returns `None`.
     pub(crate) fn div(&self, other: &Self) -> Option<Self> {
         if other.is_zero() {
-            // TODO(validation): division by zero
+            // TODO(validation) SDR[1737]: division by zero
             return None;
         }
         Some(Self::from_rational(
@@ -180,18 +180,18 @@ impl Number {
 
     pub(crate) fn rem(&self, other: &Self) -> Option<Self> {
         if other.is_zero() {
-            // TODO(validation): division by zero
+            // TODO(validation) SDR[1737]: division by zero
             return None;
         }
         match (self, other) {
             (Self::Integer(lhs), Self::Integer(rhs)) => Some(Self::Integer(lhs % rhs)),
-            // TODO(validation): Modulo on rationals is not supported.
+            // TODO(validation) SDR[1739]: Modulo on rationals is not supported.
             _ => None,
         }
     }
 
     pub(crate) fn pow(&self, exponent: &Self) -> Option<Self> {
-        // TODO(validation): validate range of exponent
+        // TODO(validation) SDR[1738]: validate range of exponent
         let exponent = exponent.as_integer()?;
         let exp_abs = exponent.abs().to_u32()?;
         let raised = match self {
@@ -203,7 +203,7 @@ impl Number {
         };
         if exponent.is_negative() {
             if raised.is_zero() {
-                // TODO(validation): division by zero
+                // TODO(validation) SDR[1737]: division by zero
                 return None;
             }
             Some(Self::from_rational(
@@ -302,7 +302,7 @@ pub(crate) fn smallest_integer_type_to_fit(value: &BigInt) -> Option<Type> {
     let bits = integer_bits_required(value, signed);
 
     if bits > 256 {
-        // TODO(validation): the integers don't fit in the EVM
+        // TODO(validation) SDR[1740]: the integers don't fit in the EVM
         return None;
     }
     let bits = bits.next_multiple_of(8).max(8);

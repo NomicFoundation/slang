@@ -57,7 +57,7 @@ impl<'a> BuiltInsResolver<'a> {
 
     #[allow(clippy::too_many_lines)]
     pub(crate) fn lookup_yul_global(&self, symbol: &str) -> Option<BuiltIn> {
-        // TODO(validation): Yul built-in function names should be considered reserved words.
+        // TODO(validation) SDR[18]: Yul built-in function names should be considered reserved words.
         // They're currently parsed as Identifiers to facilitate their manipulation.
         match symbol {
             "add" => Some(BuiltIn::YulAdd),

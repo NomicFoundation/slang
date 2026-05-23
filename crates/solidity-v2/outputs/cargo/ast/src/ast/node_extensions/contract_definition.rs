@@ -26,7 +26,7 @@ impl ContractDefinitionStruct {
             .binder()
             .get_linearised_bases(self.ir_node.id())
         else {
-            // TODO(validation): once we have validation implemented, this
+            // TODO(validation) SDR[4]: once we have validation implemented, this
             // branch should not be reachable, or we should generate an error
             // while building the `SemanticAnalysis`.
             return Vec::new();
@@ -90,7 +90,7 @@ impl ContractDefinitionStruct {
         let mut functions: Vec<FunctionDefinition> = Vec::new();
         let bases = self.compute_linearised_bases();
         for base in &bases {
-            // TODO(validation): we don't pick up functions defined in
+            // TODO(validation) SDR[3]: we don't pick up functions defined in
             // interfaces because they should be implemented in inheriting
             // contracts, but this is not yet enforced anywhere
             let ContractBase::Contract(contract) = base else {

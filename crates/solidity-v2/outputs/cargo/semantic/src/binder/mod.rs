@@ -494,7 +494,7 @@ impl Binder {
                     Resolution::Definition,
                 ),
             Scope::YulFunction(yul_function_scope) => {
-                // TODO(validation): when delegating to the parent scope, we
+                // TODO(validation) SDR[17]: when delegating to the parent scope, we
                 // cannot resolve to a Yul variable defined in a parent block
                 yul_function_scope
                     .definitions

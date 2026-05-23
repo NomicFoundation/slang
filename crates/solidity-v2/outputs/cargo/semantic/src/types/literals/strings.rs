@@ -95,7 +95,7 @@ fn decode_escape_sequences(content: &str) -> Vec<u8> {
                 if let Some(ch) = char::from_u32(code_point) {
                     out.extend_from_slice(ch.encode_utf8(&mut buf).as_bytes());
                 }
-                // TODO(validation): emit an error/warning if the unicode scalar
+                // TODO(validation) SDR[5]: emit an error/warning if the unicode scalar
                 // is not valid
             }
             other => {

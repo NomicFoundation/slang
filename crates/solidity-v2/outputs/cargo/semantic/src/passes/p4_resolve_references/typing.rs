@@ -105,7 +105,7 @@ impl Pass<'_> {
             });
         }
 
-        // TODO(validation): check that both operands are valid for the operator
+        // TODO(validation) SDR[44]: check that both operands are valid for the operator
         // (needs additional parameter or check at the call site)
         if self
             .types
@@ -118,7 +118,7 @@ impl Pass<'_> {
         {
             Some(right_type_id)
         } else {
-            // TODO(validation): the types are not compatible, we should
+            // TODO(validation) SDR[43]: the types are not compatible, we should
             // emit an error, or signal our caller
             None
         }
@@ -144,7 +144,7 @@ impl Pass<'_> {
                             .register_type(Type::Literal(result.to_literal_kind())),
                     )
                 } else {
-                    // TODO(validation): check that the operand type supports the operator
+                    // TODO(validation) SDR[1734]: check that the operand type supports the operator
                     Some(operand_type_id)
                 }
             }
@@ -153,7 +153,7 @@ impl Pass<'_> {
                 self.typing_of_expression(&node.operand).as_type_id()
             }
             ir::PrefixExpressionOperator::Bang(_) => {
-                // TODO(validation): check that the operand is boolean
+                // TODO(validation) SDR[49]: check that the operand is boolean
                 Some(self.types.boolean())
             }
             ir::PrefixExpressionOperator::DeleteKeyword(_) => Some(self.types.void()),
@@ -210,7 +210,7 @@ impl Pass<'_> {
                 Some(self.types.uint256())
             }
         } else {
-            // TODO(validation): check that the operand types are valid (needs
+            // TODO(validation) SDR[1735]: check that the operand types are valid (needs
             // additional parameter or validation at call site)
             Some(left_type_id)
         }
@@ -293,7 +293,7 @@ impl Pass<'_> {
     }
 
     fn typing_of_cast(&mut self, argument_typing: &Typing, target_type: Type) -> Typing {
-        // TODO(validation): this is a cast to the given type, but we
+        // TODO(validation) SDR[40]: this is a cast to the given type, but we
         // need to verify that the (single) argument is convertible
         match argument_typing {
             Typing::Resolved(argument_type_id) => {
@@ -348,7 +348,7 @@ impl Pass<'_> {
                 {
                     Typing::Resolved(*return_type)
                 } else {
-                    // TODO(validation): the operand did not resolve to a function
+                    // TODO(validation) SDR[41]: the operand did not resolve to a function
                     Typing::Unresolved
                 }
             }
@@ -399,14 +399,14 @@ impl Pass<'_> {
                 // the value in memory
                 match self.binder.find_definition_by_id(node_id) {
                     Some(Definition::Contract(_)) => {
-                        // TODO(validation): the type of the first argument should be an address
+                        // TODO(validation) SDR[39]: the type of the first argument should be an address
                         let type_id = self.types.register_type(Type::Contract {
                             definition_id: node_id,
                         });
                         Typing::Resolved(type_id)
                     }
                     Some(Definition::Interface(_)) => {
-                        // TODO(validation): the type of the first argument should be an address
+                        // TODO(validation) SDR[39]: the type of the first argument should be an address
                         let type_id = self.types.register_type(Type::Interface {
                             definition_id: node_id,
                         });
@@ -439,7 +439,7 @@ impl Pass<'_> {
         }
         match &argument_typings[1] {
             Typing::Resolved(type_id) => {
-                // TODO(validation): this only makes sense if type_id is a tuple
+                // TODO(validation) SDR[42]: this only makes sense if type_id is a tuple
                 Typing::Resolved(*type_id)
             }
             Typing::UserMetaType(definition_id) => {
@@ -490,7 +490,7 @@ impl Pass<'_> {
                 {
                     (Typing::Resolved(*return_type), *definition_id)
                 } else {
-                    // TODO(validation): the operand did not resolve to a function
+                    // TODO(validation) SDR[41]: the operand did not resolve to a function
                     (Typing::Unresolved, None)
                 }
             }
@@ -608,7 +608,7 @@ impl Pass<'_> {
         // Source-text byte width: `0x` prefix is stripped
         let digits = u32::try_from(hex_number.len().saturating_sub(2)).ok()?;
         if digits == 40 {
-            // TODO(validation): verify the address is valid (ie. has a valid checksum)
+            // TODO(validation) SDR[38]: verify the address is valid (ie. has a valid checksum)
             // We need at least an implementation of SHA3 to compute the checksum
             return Some(LiteralKind::Address);
         }
