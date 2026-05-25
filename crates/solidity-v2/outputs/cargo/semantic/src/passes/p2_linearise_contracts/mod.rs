@@ -80,7 +80,7 @@ impl<'a> Pass<'a> {
         types: &ir::InheritanceTypes,
         scope_id: ScopeId,
     ) -> Vec<NodeId> {
-        // TODO(validation): check that we are able to resolve all bases as
+        // TODO(validation) SDR[23]: check that we are able to resolve all bases as
         // otherwise we end up with a short list saved in the definition
         types
             .iter()
@@ -113,7 +113,7 @@ impl<'a> Pass<'a> {
             if let Some(linearisation) = c3::linearise(&node_id, &parents) {
                 self.binder.insert_linearised_bases(node_id, linearisation);
             } else {
-                // TODO(validation): linearisation failed, so emit an error
+                // TODO(validation) SDR[24]: linearisation failed, so emit an error
                 self.binder.insert_linearised_bases(node_id, Vec::new());
             }
         }

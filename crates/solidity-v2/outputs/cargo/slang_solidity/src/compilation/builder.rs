@@ -94,7 +94,7 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
         let source = match self.config.read_file(&file_id) {
             Ok(source) => source,
             Err(reason) => {
-                // TODO(validation): instead of `file_id`, these errors should be placed
+                // TODO(validation) SDR[1742]: instead of `file_id`, these errors should be placed
                 // on all imports that need it, with the import path text range.
                 self.diagnostics.push(file_id, 0..0, MissingFile { reason });
                 return;
@@ -119,7 +119,7 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
                 Err(reason) => {
                     self.diagnostics.push(
                         file_id.clone(),
-                        // TODO(validation): surface import path range
+                        // TODO(validation) SDR[1743]: surface import path range
                         0..0,
                         UnresolvedImport { reason },
                     );

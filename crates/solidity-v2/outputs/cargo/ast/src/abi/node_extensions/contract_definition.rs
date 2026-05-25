@@ -67,7 +67,7 @@ impl ContractDefinitionStruct {
     fn compute_storage_layout(&self) -> Option<(Vec<StorageItem>, Vec<StorageItem>)> {
         let all_state_variables = self.compute_linearised_state_variables();
 
-        // TODO(validation): it is an error if any contract in the hierarchy
+        // TODO(validation) SDR[2]: it is an error if any contract in the hierarchy
         // other than the leaf has a custom offset layout
         let storage_layout = self.lay_out_state_variables(
             self.base_slot().unwrap_or(U256::ZERO),

@@ -24,7 +24,7 @@ impl Pass<'_> {
 
                 match first_definition {
                     Definition::StateVariable(_) => {
-                        // TODO(validation): the state variable should have the
+                        // TODO(validation) SDR[36]: the state variable should have the
                         // `override` attribute and the rest of the definitions
                         // should be either functions with the correct
                         // signature, state variables or private variables or
@@ -32,13 +32,13 @@ impl Pass<'_> {
                         Resolution::Definition(first_id)
                     }
                     Definition::Constant(_) => {
-                        // TODO(validation): if there are other definitions in
+                        // TODO(validation) SDR[33]: if there are other definitions in
                         // base contracts, they should be marked private and
                         // they should be constants or state variables
                         Resolution::Definition(first_id)
                     }
                     _ => {
-                        // TODO(validation): check that the returned definitions are
+                        // TODO(validation) SDR[32]: check that the returned definitions are
                         // all functions (or maybe modifiers?)
                         resolution
                     }
@@ -130,7 +130,7 @@ impl Pass<'_> {
             Typing::Undetermined(type_ids) => {
                 // We cannot use argument-type disambiguation here, so we will
                 // use the first result
-                // TODO(validation): check that the types are consistent (eg.
+                // TODO(validation) SDR[37]: check that the types are consistent (eg.
                 // they are all function types) and that it makes sense to use
                 // the first one
                 self.resolve_symbol_in_type(type_ids[0], symbol)
@@ -151,7 +151,7 @@ impl Pass<'_> {
                     } else {
                         ResolveOptions::Super(node_id)
                     };
-                    // TODO(validation): for `this` resolutions we need to check
+                    // TODO(validation) SDR[34]: for `this` resolutions we need to check
                     // that the returned definitions are externally available
                     // (ie. either `external` or `public`)
                     let mut definition_ids = self
@@ -368,7 +368,7 @@ impl Pass<'_> {
                 Resolution::Unresolved
             };
 
-            // TODO(validation): the found definition(s) must be modifiers
+            // TODO(validation) SDR[35]: the found definition(s) must be modifiers
             // and be in the current contract hierarchy. We could potentially
             // verify that the initial symbol lookup is reachable from the
             // contract only (ie. it's a contract modifier, a modifier in a

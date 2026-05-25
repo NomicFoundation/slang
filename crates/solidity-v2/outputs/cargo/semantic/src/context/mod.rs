@@ -238,7 +238,7 @@ impl SemanticContext {
             Type::Struct { definition_id, .. } => {
                 // Recursive structs are not valid Solidity, but guard against cycles
                 // to avoid unbounded recursion if malformed types reach this point.
-                // TODO(validation): The recursion should be detected in the
+                // TODO(validation) SDR[19]: The recursion should be detected in the
                 // `type_definition` pass.
                 if !visited_structs.insert(*definition_id) {
                     return None;
@@ -331,7 +331,7 @@ impl SemanticContext {
             Type::Struct { definition_id, .. } => {
                 // Recursive structs are not valid Solidity, but guard against cycles
                 // to avoid unbounded recursion if malformed types reach this point.
-                // TODO(validation): The recursion should be detected in the
+                // TODO(validation) SDR[19]: The recursion should be detected in the
                 // `type_definition` pass.
                 if !visited_structs.insert(*definition_id) {
                     return None;

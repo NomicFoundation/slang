@@ -71,7 +71,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         scope: Scope,
     ) -> Option<Number> {
         if self.scope_stack.len() >= Self::MAX_SCOPE_DEPTH {
-            // TODO(validation): cyclic dependency in constant resolution or max depth reached
+            // TODO(validation) SDR[25]: cyclic dependency in constant resolution or max depth reached
             return None;
         }
         self.scope_stack.push(scope);
@@ -314,7 +314,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
             return None;
         };
         if self.scope_stack.len() >= Self::MAX_SCOPE_DEPTH {
-            // TODO(validation): cyclic dependency in constant resolution or max depth reached
+            // TODO(validation) SDR[25]: cyclic dependency in constant resolution or max depth reached
             return None;
         }
         self.scope_stack.push(target_scope);

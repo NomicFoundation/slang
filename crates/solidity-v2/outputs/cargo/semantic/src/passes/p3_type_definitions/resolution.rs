@@ -45,7 +45,7 @@ impl Pass<'_> {
                     self.resolve_type_name(&array_type_name.operand, Some(data_location))
                         .map(|element_type| {
                             if let Some(size_expression) = &array_type_name.index {
-                                // TODO(validation): if the size of the array
+                                // TODO(validation) SDR[27]: if the size of the array
                                 // cannot be evaluated it's not a compile-time
                                 // constant, or it doesn't fit in `usize`.
                                 let size = evaluate_compile_time_usize_constant(
@@ -88,7 +88,7 @@ impl Pass<'_> {
                     implicit_receiver_type: None,
                     parameter_types,
                     return_type,
-                    // TODO(validation): function types can only be internal or external
+                    // TODO(validation) SDR[26]: function types can only be internal or external
                     visibility: (&function_type.visibility).into(),
                     mutability: (&function_type.mutability).into(),
                 })))
@@ -159,7 +159,7 @@ impl ConstantIdentifierResolver<ScopeId> for Pass<'_> {
                                 target_scope: constant_definition.enclosing_scope_id,
                             }
                         } else {
-                            // TODO(validation): this is a constant state
+                            // TODO(validation) SDR[1732]: this is a constant state
                             // variable for which the grammar allows an absent
                             // value expression but it's a semantic error
                             ComptimeResolution::Unresolved
@@ -169,7 +169,7 @@ impl ConstantIdentifierResolver<ScopeId> for Pass<'_> {
                 }
             }
             Resolution::Ambiguous(_) => {
-                // TODO(validation): multiple definitions found which is an error
+                // TODO(validation) SDR[1731]: multiple definitions found which is an error
                 ComptimeResolution::Unresolved
             }
             Resolution::BuiltIn(_) => unreachable!("the binder doesn't resolve to built-ins"),
