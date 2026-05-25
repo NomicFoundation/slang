@@ -159,20 +159,17 @@ pub enum LiteralKind {
 
 impl LiteralKind {
     /// Returns the non-literal `Type` this literal can flow into (e.g., the
-    /// smallest integer type that fits an integer literal, or `string memory`
-    /// for a string literal). Returns `None` for literals without a mobile
-    /// type (e.g., non-reducing rationals).
+    /// smallest integer type that fits an integer literal, the smallest
+    /// fixed-point type that fits a rational literal, or `string memory`
+    /// for a string literal). Returns `None` when the literal cannot be
+    /// represented (eg. integer would require more than 256 bits).
     // __SLANG_MOBILE_TYPE__ keep in sync with `ast::LiteralType::mobile_type`
     pub fn mobile_type(&self) -> Option<Type> {
         match self {
             LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. } => {
                 numbers::smallest_integer_type_to_fit(value)
             }
-            LiteralKind::Rational { .. } => {
-                // TODO: not supported yet, but narrow the rational type to the
-                // smallest fixed/ufixed available (eg. 1.2 -> ufixed8x1).
-                None
-            }
+            LiteralKind::Rational { value } => numbers::smallest_fixed_point_type_to_fit(value),
             LiteralKind::HexString { .. } | LiteralKind::String { .. } => {
                 Some(Type::String(StringType {
                     location: DataLocation::Memory,
