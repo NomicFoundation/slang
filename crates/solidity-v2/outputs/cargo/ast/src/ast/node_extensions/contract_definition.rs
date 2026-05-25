@@ -1,5 +1,4 @@
-use std::cmp::Ordering;
-
+use super::super::nodes::create_function_definition;
 use super::super::{
     ContractDefinitionStruct, Definition, ErrorDefinition, EventDefinition, FunctionDefinition,
     FunctionKind, StateVariableDefinition,
@@ -87,42 +86,12 @@ impl ContractDefinitionStruct {
     /// Returns the list of functions defined in all the hierarchy of the
     /// contract, in alphabetical order
     pub fn compute_linearised_functions(&self) -> Vec<FunctionDefinition> {
-        let mut functions: Vec<FunctionDefinition> = Vec::new();
-        let bases = self.compute_linearised_bases();
-        for base in &bases {
-            // TODO(validation) SDR[3]: we don't pick up functions defined in
-            // interfaces because they should be implemented in inheriting
-            // contracts, but this is not yet enforced anywhere
-            let ContractBase::Contract(contract) = base else {
-                continue;
-            };
-
-            // Handle function overriding
-            let contract_functions = contract
-                .functions()
-                .into_iter()
-                .filter(|function| {
-                    // check the existing functions and remove any duplicates
-                    // because they should be overridden by them
-                    let existing = functions
-                        .iter()
-                        .any(|linearised_function| linearised_function.overrides(function));
-                    !existing
-                })
-                // collect to avoid holding the read-borrow on `functions`
-                .collect::<Vec<_>>();
-
-            functions.extend(contract_functions);
-        }
-
-        // sort returned functions by name
-        functions.sort_by(|a, b| match (a.name(), b.name()) {
-            (None, None) => Ordering::Equal,
-            (None, Some(_)) => Ordering::Less,
-            (Some(_), None) => Ordering::Greater,
-            (Some(a), Some(b)) => a.name().cmp(&b.name()),
-        });
-        functions
+        self.semantic
+            .linearised_functions(self.ir_node.id())
+            .expect("contract definition is registered in the semantic cache")
+            .iter()
+            .map(|ir_node| create_function_definition(ir_node, &self.semantic))
+            .collect()
     }
 
     pub fn errors(&self) -> Vec<ErrorDefinition> {
