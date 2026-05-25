@@ -348,7 +348,7 @@ pub(crate) fn smallest_fixed_point_type_to_fit(value: &BigRational) -> Option<Ty
 
     // Factor the denominator as `2^a * 5^b * r`. The natural precision of
     // an exact representation is `max(a, b)`; if `r > 1` the rational has
-    // a periodic fractional part and no exact precision exists.
+    // a periodic fractional part and no exact representation exists.
     let two = BigInt::from(2u32);
     let five = BigInt::from(5u32);
     let mut remaining_denominator = denominator.clone();
@@ -365,10 +365,46 @@ pub(crate) fn smallest_fixed_point_type_to_fit(value: &BigRational) -> Option<Ty
     let has_finite_expansion = remaining_denominator.is_one();
     let natural_decimal_places = factors_of_two.max(factors_of_five);
 
-    // Binary search the maximum precision in `[0, MAX_DECIMAL_PLACES]` for
-    // which the scaled magnitude still fits `max_magnitude`. Equivalent
-    // condition: `|p| * 10^d < (max_magnitude + 1) * q`.
+    // The scaled magnitude `floor(|p| * 10^d / q)` fits the 256-bit range
+    // iff `|p| * 10^d < (max_magnitude + 1) * q`; both the fast path and
+    // the binary-search probe below use this `threshold` comparison.
     let threshold = (max_magnitude + BigInt::from(1u32)) * denominator;
+
+    let build_result = |scaled_magnitude: BigInt, decimal_places: u32| -> Type {
+        let scaled = if signed {
+            -scaled_magnitude
+        } else {
+            scaled_magnitude
+        };
+        let bits = integer_bits_required(&scaled, signed);
+        debug_assert!(bits <= 256, "scaled value must fit 256 bits at this point");
+        let bits = bits.next_multiple_of(8).max(8);
+        Type::FixedPointNumber(FixedPointNumberType {
+            signed,
+            bits,
+            decimal_places,
+        })
+    };
+
+    // Fast path: a finite expansion whose natural precision is within the
+    // 80-place cap and whose scaled magnitude already fits — the common
+    // shape for typical decimal literals (`1/2`, `1/4`, `1.2`, …). One
+    // `pow` + multiply + compare here saves the binary search's ~7 probes.
+    if has_finite_expansion && natural_decimal_places <= MAX_DECIMAL_PLACES {
+        let scaled_numerator =
+            &numerator_magnitude * BigInt::from(10u32).pow(natural_decimal_places);
+        if scaled_numerator < threshold {
+            return Some(build_result(
+                scaled_numerator / denominator,
+                natural_decimal_places,
+            ));
+        }
+    }
+
+    // Slow path: truncate at the largest precision in `[0, MAX_DECIMAL_PLACES]`
+    // whose scaled magnitude still fits. Reached when the rational is
+    // periodic, when its natural precision exceeds 80 places, or when its
+    // natural precision yields a scaled value over 256 bits.
     let mut lower_bound: u32 = 0;
     let mut upper_bound: u32 = MAX_DECIMAL_PLACES;
     while lower_bound < upper_bound {
@@ -379,38 +415,11 @@ pub(crate) fn smallest_fixed_point_type_to_fit(value: &BigRational) -> Option<Ty
             upper_bound = midpoint - 1;
         }
     }
-    let max_decimal_places = lower_bound;
-
-    // Prefer the natural precision when an exact representation fits;
-    // otherwise truncate at the largest precision that does. Since the
-    // scaled magnitude grows monotonically with `d`,
-    // `natural_decimal_places <= max_decimal_places` is exactly the
-    // "exact fit" condition (and also enforces `natural <= 80`).
-    let decimal_places = if has_finite_expansion && natural_decimal_places <= max_decimal_places {
-        natural_decimal_places
-    } else {
-        max_decimal_places
-    };
+    let decimal_places = lower_bound;
 
     let scaled_magnitude =
         &numerator_magnitude * BigInt::from(10u32).pow(decimal_places) / denominator;
-    let scaled = if signed {
-        -scaled_magnitude
-    } else {
-        scaled_magnitude
-    };
-
-    let bits = integer_bits_required(&scaled, signed);
-    debug_assert!(
-        bits <= 256,
-        "binary search guarantees the scaled value fits"
-    );
-    let bits = bits.next_multiple_of(8).max(8);
-    Some(Type::FixedPointNumber(FixedPointNumberType {
-        signed,
-        bits,
-        decimal_places,
-    }))
+    Some(build_result(scaled_magnitude, decimal_places))
 }
 
 #[cfg(test)]
