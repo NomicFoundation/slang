@@ -346,7 +346,7 @@ pub slang_solidity_v2_semantic::types::LiteralKind::Address
 pub slang_solidity_v2_semantic::types::LiteralKind::Address::value: ruint::aliases::U160
 pub slang_solidity_v2_semantic::types::LiteralKind::HexInteger
 pub slang_solidity_v2_semantic::types::LiteralKind::HexInteger::bytes: u32
-pub slang_solidity_v2_semantic::types::LiteralKind::HexInteger::value: num_bigint::bigint::BigInt
+pub slang_solidity_v2_semantic::types::LiteralKind::HexInteger::value: num_bigint::biguint::BigUint
 pub slang_solidity_v2_semantic::types::LiteralKind::HexString
 pub slang_solidity_v2_semantic::types::LiteralKind::HexString::bytes: usize
 pub slang_solidity_v2_semantic::types::LiteralKind::Integer

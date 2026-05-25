@@ -643,7 +643,9 @@ impl Pass<'_> {
         }
         let value = Number::from_hex_number_expression(hex_number_expression)?
             .into_integer()
-            .expect("hex literal must parse to an integer");
+            .expect("hex literal must parse to an integer")
+            .to_biguint()
+            .expect("hex literal must be non-negative");
         // Each pair of hex digits is one byte (with odd digit counts rounded up).
         let bytes = digits.div_ceil(2).max(1);
         Some(LiteralKind::HexInteger { value, bytes })

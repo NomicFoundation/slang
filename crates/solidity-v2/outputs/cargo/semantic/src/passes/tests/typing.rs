@@ -1,4 +1,4 @@
-use num_bigint::BigInt;
+use num_bigint::{BigInt, BigUint};
 use num_rational::BigRational;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
@@ -211,7 +211,7 @@ fn test_value_bearing_integer_literal_types() {
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::HexInteger {
-            value: BigInt::from(255),
+            value: BigUint::from(255u32),
             bytes: 1,
         })
     );
@@ -221,7 +221,7 @@ fn test_value_bearing_integer_literal_types() {
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::HexInteger {
-            value: BigInt::from(18),
+            value: BigUint::from(18u32),
             bytes: 2,
         })
     );
@@ -503,15 +503,15 @@ fn test_hex_literal_to_byte_array_conversion() {
 
     // Hex source literal: byte-width must match the target exactly.
     let hex_0x12 = types.register_type(Type::Literal(LiteralKind::HexInteger {
-        value: BigInt::from(0x12),
+        value: BigUint::from(0x12u32),
         bytes: 1,
     }));
     let hex_0x0012 = types.register_type(Type::Literal(LiteralKind::HexInteger {
-        value: BigInt::from(0x12),
+        value: BigUint::from(0x12u32),
         bytes: 2,
     }));
     let hex_0x10203040 = types.register_type(Type::Literal(LiteralKind::HexInteger {
-        value: BigInt::from(0x1020_3040u32),
+        value: BigUint::from(0x1020_3040u32),
         bytes: 4,
     }));
 
@@ -537,11 +537,11 @@ fn test_hex_literal_to_byte_array_conversion() {
         value: BigInt::from(0),
     }));
     let hex_0x0 = types.register_type(Type::Literal(LiteralKind::HexInteger {
-        value: BigInt::from(0),
+        value: BigUint::from(0u32),
         bytes: 1,
     }));
     let hex_0x0000 = types.register_type(Type::Literal(LiteralKind::HexInteger {
-        value: BigInt::from(0),
+        value: BigUint::from(0u32),
         bytes: 2,
     }));
     assert!(types.implicitly_convertible_to(dec_0, bytes1));

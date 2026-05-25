@@ -1,5 +1,5 @@
 use literals::numbers;
-use num_bigint::BigInt;
+use num_bigint::{BigInt, BigUint};
 use num_rational::BigRational;
 use ruint::aliases::U160;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -138,9 +138,10 @@ pub enum LiteralKind {
     /// source-text byte width (number of hex digits / 2, rounded up). The
     /// width is what determines convertibility with `bytesN` and is preserved
     /// distinctly from the value because `0x0012` and `0x12` share value `18`
-    /// but convert to `bytes2` and `bytes1` respectively.
+    /// but convert to `bytes2` and `bytes1` respectively. The value is
+    /// `BigUint` since hex literals are always non-negative.
     HexInteger {
-        value: BigInt,
+        value: BigUint,
         bytes: u32,
     },
     Rational {
@@ -166,8 +167,9 @@ impl LiteralKind {
     // __SLANG_MOBILE_TYPE__ keep in sync with `ast::LiteralType::mobile_type`
     pub fn mobile_type(&self) -> Option<Type> {
         match self {
-            LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. } => {
-                numbers::smallest_integer_type_to_fit(value)
+            LiteralKind::Integer { value } => numbers::smallest_integer_type_to_fit(value),
+            LiteralKind::HexInteger { value, .. } => {
+                numbers::smallest_integer_type_to_fit(&BigInt::from(value.clone()))
             }
             LiteralKind::Rational { value } => numbers::smallest_fixed_point_type_to_fit(value),
             LiteralKind::HexString { .. } | LiteralKind::String { .. } => {

@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use indexmap::IndexSet;
+use num_bigint::BigInt;
 use num_traits::Zero;
 use slang_solidity_v2_common::nodes::NodeId;
 
@@ -173,11 +174,14 @@ impl TypeRegistry {
             }
 
             (
-                Type::Literal(
-                    LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. },
-                ),
+                Type::Literal(LiteralKind::Integer { value }),
                 Type::Integer(IntegerType { signed, bits }),
             ) => numbers::integer_literal_fits(value, *signed, *bits),
+
+            (
+                Type::Literal(LiteralKind::HexInteger { value, .. }),
+                Type::Integer(IntegerType { signed, bits }),
+            ) => numbers::integer_literal_fits(&BigInt::from(value.clone()), *signed, *bits),
 
             // Non-integer rational literals never implicitly convert to an
             // integer type — if a rational reduced to an integer it would have
@@ -195,12 +199,16 @@ impl TypeRegistry {
 
             // Zero (any source — decimal, hex, or folded) is always
             // implicitly convertible to any byte-array type.
-            (
-                Type::Literal(
-                    LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. },
-                ),
-                Type::ByteArray(_),
-            ) if value.is_zero() => true,
+            (Type::Literal(LiteralKind::Integer { value }), Type::ByteArray(_))
+                if value.is_zero() =>
+            {
+                true
+            }
+            (Type::Literal(LiteralKind::HexInteger { value, .. }), Type::ByteArray(_))
+                if value.is_zero() =>
+            {
+                true
+            }
 
             // Non-zero hex-source literals convert to `bytesN` of exactly
             // matching source byte width. Plain `Integer` literals (decimal
