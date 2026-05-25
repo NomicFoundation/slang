@@ -175,7 +175,7 @@ rustdoc-json = { version = "0.9.5" }
 semver = { version = "1.0.28", features = ["serde"] }
 serde = { version = "1.0.219", features = ["derive", "rc"] }
 serde_json = { version = "1.0.143", features = ["preserve_order"] }
-sha3 = { version = "0.11.0" }
+sha3 = { version = "0.12.0" }
 similar-asserts = { version = "2.0.0" }
 smallvec = { version = "1.15.0", features = ["union"] }
 solar = { version = "0.1.3", package = "solar-compiler" }
