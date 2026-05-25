@@ -160,9 +160,9 @@ impl SemanticContext {
             Type::FixedPointNumber(FixedPointNumberType {
                 signed,
                 bits,
-                precision_bits,
+                decimal_places,
             }) => format!(
-                "{prefix}{bits}x{precision_bits}",
+                "{prefix}{bits}x{decimal_places}",
                 prefix = if *signed { "fixed" } else { "ufixed" },
             ),
             Type::FixedSizeArray(FixedSizeArrayType {

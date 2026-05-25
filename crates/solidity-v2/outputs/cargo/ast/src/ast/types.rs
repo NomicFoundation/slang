@@ -229,8 +229,8 @@ impl FixedPointNumberType {
     pub fn bits(&self) -> u32 {
         self.inner.bits
     }
-    pub fn precision_bits(&self) -> u32 {
-        self.inner.precision_bits
+    pub fn decimal_places(&self) -> u32 {
+        self.inner.decimal_places
     }
 }
 

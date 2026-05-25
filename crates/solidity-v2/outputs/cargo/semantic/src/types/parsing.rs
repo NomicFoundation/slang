@@ -43,11 +43,11 @@ impl Type {
             .split('x')
             .map(|part| part.parse::<u32>().unwrap());
         let bits = parts.next().unwrap();
-        let precision_bits = parts.next().unwrap_or(0);
+        let decimal_places = parts.next().unwrap_or(0);
         Self::FixedPointNumber(FixedPointNumberType {
             signed: true,
             bits,
-            precision_bits,
+            decimal_places,
         })
     }
 
@@ -58,11 +58,11 @@ impl Type {
             .split('x')
             .map(|part| part.parse::<u32>().unwrap());
         let bits = parts.next().unwrap();
-        let precision_bits = parts.next().unwrap_or(0);
+        let decimal_places = parts.next().unwrap_or(0);
         Self::FixedPointNumber(FixedPointNumberType {
             signed: false,
             bits,
-            precision_bits,
+            decimal_places,
         })
     }
 }

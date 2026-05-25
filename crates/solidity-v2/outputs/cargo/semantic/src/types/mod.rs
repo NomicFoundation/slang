@@ -75,7 +75,7 @@ pub struct EnumType {
 pub struct FixedPointNumberType {
     pub signed: bool,
     pub bits: u32,
-    pub precision_bits: u32,
+    pub decimal_places: u32,
 }
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]

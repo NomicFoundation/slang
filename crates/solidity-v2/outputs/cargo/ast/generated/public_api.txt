@@ -1679,7 +1679,7 @@ pub fn slang_solidity_v2_ast::ast::FixedKeywordStruct::serialize<S: serde_core::
 pub struct slang_solidity_v2_ast::ast::FixedPointNumberType
 impl slang_solidity_v2_ast::ast::FixedPointNumberType
 pub fn slang_solidity_v2_ast::ast::FixedPointNumberType::bits(&self) -> u32
-pub fn slang_solidity_v2_ast::ast::FixedPointNumberType::precision_bits(&self) -> u32
+pub fn slang_solidity_v2_ast::ast::FixedPointNumberType::decimal_places(&self) -> u32
 pub fn slang_solidity_v2_ast::ast::FixedPointNumberType::signed(&self) -> bool
 impl core::clone::Clone for slang_solidity_v2_ast::ast::FixedPointNumberType
 pub fn slang_solidity_v2_ast::ast::FixedPointNumberType::clone(&self) -> slang_solidity_v2_ast::ast::FixedPointNumberType
