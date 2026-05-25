@@ -59,6 +59,11 @@ mod syntax {
     }
 
     #[test]
+    fn multiple_override_specifiers() -> Result<()> {
+        run("syntax", "multiple_override_specifiers")
+    }
+
+    #[test]
     fn unexpected_eof() -> Result<()> {
         run("syntax", "unexpected_eof")
     }
