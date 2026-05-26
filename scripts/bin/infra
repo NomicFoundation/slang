@@ -17,10 +17,11 @@ source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
 
 crate_dir="${REPO_ROOT:?}/crates/infra/cli"
 
-cargo build \
-  --bin "infra_cli" \
-  --manifest-path "${crate_dir}/Cargo.toml" \
-  --target-dir "${crate_dir}/target"
+_github_collapse_group "Build 'infra_cli' binary" \
+  cargo build \
+    --bin "infra_cli" \
+    --manifest-path "${crate_dir}/Cargo.toml" \
+    --target-dir "${crate_dir}/target"
 
 "${crate_dir}/target/debug/infra_cli" "$@"
 

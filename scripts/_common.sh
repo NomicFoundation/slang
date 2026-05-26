@@ -2,10 +2,28 @@
 set -euo pipefail
 
 #
+# Wrap a command in a GitHub Actions log group when running in CI.
+# Usage: _github_collapse_group "Group Title" <command> [args...]
+#
+_github_collapse_group() {
+  local title="$1"
+  shift
+
+  if [[ -n "${CI:-}" ]]; then
+    echo "::group::${title}"
+  fi
+
+  "$@"
+
+  if [[ -n "${CI:-}" ]]; then
+    echo "::endgroup::"
+  fi
+}
+
+#
 # Activate the Hermit environment:
 #
-
-{
+_activate_hermit() {
   _repo_root="$(realpath "$(dirname "${BASH_SOURCE[0]}")/..")"
 
   # Check if another environment is already active:
@@ -24,6 +42,9 @@ set -euo pipefail
   commands="$("${_repo_root}/bin/hermit" env --activate)"
   eval "${commands}"
 }
+
+_github_collapse_group "Initialize 'hermit' Workspace" \
+  _activate_hermit
 
 #
 # This checks if the rust '$RUST_STABLE_VERSION' toolchain is already installed.
