@@ -6,21 +6,24 @@ use crate::binder::{Binder, Definition};
 use crate::context::{ADDRESS_BYTE_SIZE, SELECTOR_SIZE, SLOT_SIZE};
 use crate::types::{Type, TypeId, TypeRegistry};
 
+/// Pre-computed derivations for a single registered type.
+struct TypeData {
+    /// `type_internal_name` result.
+    internal_name: String,
+
+    /// `type_canonical_name` result. `None` is a valid outcome (e.g. mappings,
+    /// recursive structs).
+    canonical_name: Option<String>,
+
+    /// `storage_size_of_type_id` result. `None` signals a type that doesn't
+    /// live in storage (literals, void, tuples).
+    storage_size: Option<usize>,
+}
+
 /// Cache of type-derivation results, computed once at the end of the semantic
-/// passes. Every `TypeId` registered in the `TypeRegistry` has an entry in all
-/// three maps.
+/// passes. Every `TypeId` registered in the `TypeRegistry` has an entry.
 pub(super) struct TypeDataCache {
-    /// `type_internal_name` result for every registered type.
-    internal_names: HashMap<TypeId, String>,
-
-    /// `type_canonical_name` result for every registered type. Inner `None`
-    /// is a valid outcome (e.g. mappings, recursive structs).
-    canonical_names: HashMap<TypeId, Option<String>>,
-
-    /// `storage_size_of_type_id` result for every registered type. Inner
-    /// `None` signals a type that doesn't live in storage (literals, void,
-    /// tuples).
-    storage_sizes: HashMap<TypeId, Option<usize>>,
+    data: HashMap<TypeId, TypeData>,
 }
 
 impl TypeDataCache {
@@ -28,37 +31,32 @@ impl TypeDataCache {
         TypeDataCacheBuilder::new(binder, types).build()
     }
 
-    pub(super) fn internal_name(&self, type_id: TypeId) -> &str {
-        self.internal_names
+    fn get(&self, type_id: TypeId) -> &TypeData {
+        self.data
             .get(&type_id)
-            .map(String::as_str)
             .expect("type_id is registered in the type registry")
+    }
+
+    pub(super) fn internal_name(&self, type_id: TypeId) -> &str {
+        &self.get(type_id).internal_name
     }
 
     pub(super) fn canonical_name(&self, type_id: TypeId) -> Option<&str> {
-        self.canonical_names
-            .get(&type_id)
-            .expect("type_id is registered in the type registry")
-            .as_deref()
+        self.get(type_id).canonical_name.as_deref()
     }
 
     pub(super) fn storage_size(&self, type_id: TypeId) -> Option<usize> {
-        self.storage_sizes
-            .get(&type_id)
-            .copied()
-            .expect("type_id is registered in the type registry")
+        self.get(type_id).storage_size
     }
 }
 
-/// Builds all three per-type derivation caches in a single structural traversal
-/// of the type registry. Sub-type derivations are resolved by looking them up
-/// in the (partially built) cache, so each type is visited at most once.
+/// Builds the per-type derivation cache in a single structural traversal of
+/// the type registry. Sub-type derivations are resolved by looking them up in
+/// the (partially built) cache, so each type is visited at most once.
 struct TypeDataCacheBuilder<'a> {
     binder: &'a Binder,
     types: &'a TypeRegistry,
-    internal_names: HashMap<TypeId, String>,
-    canonical_names: HashMap<TypeId, Option<String>>,
-    storage_sizes: HashMap<TypeId, Option<usize>>,
+    data: HashMap<TypeId, TypeData>,
 }
 
 impl<'a> TypeDataCacheBuilder<'a> {
@@ -66,9 +64,7 @@ impl<'a> TypeDataCacheBuilder<'a> {
         Self {
             binder,
             types,
-            internal_names: HashMap::new(),
-            canonical_names: HashMap::new(),
-            storage_sizes: HashMap::new(),
+            data: HashMap::new(),
         }
     }
 
@@ -77,11 +73,7 @@ impl<'a> TypeDataCacheBuilder<'a> {
         for type_id in type_ids {
             self.compute(type_id);
         }
-        TypeDataCache {
-            internal_names: self.internal_names,
-            canonical_names: self.canonical_names,
-            storage_sizes: self.storage_sizes,
-        }
+        TypeDataCache { data: self.data }
     }
 
     fn definition_canonical_name(&self, definition_id: NodeId) -> String {
@@ -93,31 +85,31 @@ impl<'a> TypeDataCacheBuilder<'a> {
             .to_string()
     }
 
-    /// Populates all three caches for `type_id`. Sub-type derivations are
-    /// resolved by ensuring the sub-type is computed (recursive call), then
-    /// looking up the cached values — there are no separate recursive paths
-    /// per derivation.
+    /// Populates the cache for `type_id`. Sub-type derivations are resolved by
+    /// ensuring the sub-type is computed (recursive call), then looking up the
+    /// cached values — there are no separate recursive paths per derivation.
     ///
     /// Cycle detection (only relevant for self-referential structs, which are
-    /// invalid Solidity but guarded against defensively): `internal_name` is
-    /// inserted at the top of the `Struct` arm before recursing into members,
-    /// so a recursive `compute(self_type)` short-circuits via the
-    /// `internal_names.contains_key` check. The cycled struct's `canonical_name`
-    /// / `storage_size` aren't yet cached at that point, so the sub-type lookup
-    /// inside `struct_canonical_name` / `struct_storage_size` returns `None`,
-    /// which propagates up.
+    /// invalid Solidity but guarded against defensively): a placeholder entry
+    /// (with `internal_name` set and `canonical_name`/`storage_size` left as
+    /// `None`) is inserted at the top of the `Struct` arm before recursing
+    /// into members, so a recursive `compute(self_type)` short-circuits via
+    /// the `data.contains_key` check. The cycled struct's canonical/storage
+    /// are still `None` at that point, so the sub-type lookup inside
+    /// `struct_canonical_name` / `struct_storage_size` returns `None`, which
+    /// propagates up.
     fn compute(&mut self, type_id: TypeId) {
-        if self.internal_names.contains_key(&type_id) {
+        if self.data.contains_key(&type_id) {
             return;
         }
         match self.types.get_type_by_id(type_id) {
-            Type::Address { .. } => self.insert_all(
+            Type::Address { .. } => self.insert(
                 type_id,
                 "address".to_string(),
                 Some("address".to_string()),
                 Some(ADDRESS_BYTE_SIZE),
             ),
-            Type::Boolean => self.insert_all(
+            Type::Boolean => self.insert(
                 type_id,
                 "bool".to_string(),
                 Some("bool".to_string()),
@@ -127,9 +119,9 @@ impl<'a> TypeDataCacheBuilder<'a> {
                 let width = *width;
                 let name = format!("bytes{width}");
                 let storage = width.try_into().unwrap();
-                self.insert_all(type_id, name.clone(), Some(name), Some(storage));
+                self.insert(type_id, name.clone(), Some(name), Some(storage));
             }
-            Type::Bytes { .. } => self.insert_all(
+            Type::Bytes { .. } => self.insert(
                 type_id,
                 "bytes".to_string(),
                 Some("bytes".to_string()),
@@ -146,7 +138,7 @@ impl<'a> TypeDataCacheBuilder<'a> {
                     prefix = if signed { "fixed" } else { "ufixed" }
                 );
                 let storage = (bits.div_ceil(8)).try_into().unwrap();
-                self.insert_all(type_id, name.clone(), Some(name), Some(storage));
+                self.insert(type_id, name.clone(), Some(name), Some(storage));
             }
             Type::Function(function_type) => {
                 let externally_visible = function_type.is_externally_visible();
@@ -157,7 +149,7 @@ impl<'a> TypeDataCacheBuilder<'a> {
                 } else {
                     8
                 };
-                self.insert_all(
+                self.insert(
                     type_id,
                     "function".to_string(),
                     Some("function".to_string()),
@@ -171,27 +163,28 @@ impl<'a> TypeDataCacheBuilder<'a> {
                     prefix = if signed { "int" } else { "uint" }
                 );
                 let storage = (bits.div_ceil(8)).try_into().unwrap();
-                self.insert_all(type_id, name.clone(), Some(name), Some(storage));
+                self.insert(type_id, name.clone(), Some(name), Some(storage));
             }
             Type::Literal(_) => {
-                self.insert_all(type_id, "literal".to_string(), None, None);
+                self.insert(type_id, "literal".to_string(), None, None);
             }
-            Type::String { .. } => self.insert_all(
+            Type::String { .. } => self.insert(
                 type_id,
                 "string".to_string(),
                 Some("string".to_string()),
                 Some(SLOT_SIZE),
             ),
             Type::Void => {
-                self.insert_all(type_id, "void".to_string(), None, None);
+                self.insert(type_id, "void".to_string(), None, None);
             }
 
             Type::Array { element_type, .. } => {
                 let element_type = *element_type;
                 self.compute(element_type);
-                let element_internal = self.internal_names[&element_type].clone();
-                let element_canonical = self.canonical_names[&element_type].clone();
-                self.insert_all(
+                let element = &self.data[&element_type];
+                let element_internal = element.internal_name.clone();
+                let element_canonical = element.canonical_name.clone();
+                self.insert(
                     type_id,
                     format!("{element_internal}[]"),
                     element_canonical.map(|c| format!("{c}[]")),
@@ -204,9 +197,10 @@ impl<'a> TypeDataCacheBuilder<'a> {
                 let element_type = *element_type;
                 let size = *size;
                 self.compute(element_type);
-                let element_internal = self.internal_names[&element_type].clone();
-                let element_canonical = self.canonical_names[&element_type].clone();
-                let element_size = self.storage_sizes[&element_type];
+                let element = &self.data[&element_type];
+                let element_internal = element.internal_name.clone();
+                let element_canonical = element.canonical_name.clone();
+                let element_size = element.storage_size;
                 let storage = element_size.map(|es| {
                     if es > SLOT_SIZE {
                         let slots_per_element = es.div_ceil(SLOT_SIZE);
@@ -217,7 +211,7 @@ impl<'a> TypeDataCacheBuilder<'a> {
                         num_slots * SLOT_SIZE
                     }
                 });
-                self.insert_all(
+                self.insert(
                     type_id,
                     format!("{element_internal}[{size}]"),
                     element_canonical.map(|c| format!("{c}[{size}]")),
@@ -232,9 +226,9 @@ impl<'a> TypeDataCacheBuilder<'a> {
                 let value_type_id = *value_type_id;
                 self.compute(key_type_id);
                 self.compute(value_type_id);
-                let key_internal = self.internal_names[&key_type_id].clone();
-                let value_internal = self.internal_names[&value_type_id].clone();
-                self.insert_all(
+                let key_internal = self.data[&key_type_id].internal_name.clone();
+                let value_internal = self.data[&value_type_id].internal_name.clone();
+                self.insert(
                     type_id,
                     format!("mapping({key_internal} => {value_internal})"),
                     None,
@@ -250,15 +244,15 @@ impl<'a> TypeDataCacheBuilder<'a> {
                 }
                 let inner = element_type_ids
                     .iter()
-                    .map(|element_type_id| self.internal_names[element_type_id].clone())
+                    .map(|element_type_id| self.data[element_type_id].internal_name.clone())
                     .collect::<Vec<_>>()
                     .join(",");
-                self.insert_all(type_id, format!("({inner})"), None, None);
+                self.insert(type_id, format!("({inner})"), None, None);
             }
             Type::Contract { definition_id } | Type::Interface { definition_id } => {
                 let definition_id = *definition_id;
                 let name = self.definition_canonical_name(definition_id);
-                self.insert_all(
+                self.insert(
                     type_id,
                     name,
                     Some("address".to_string()),
@@ -268,21 +262,22 @@ impl<'a> TypeDataCacheBuilder<'a> {
             Type::Enum { definition_id } => {
                 let definition_id = *definition_id;
                 let name = self.definition_canonical_name(definition_id);
-                self.insert_all(type_id, name, Some("uint8".to_string()), Some(1));
+                self.insert(type_id, name, Some("uint8".to_string()), Some(1));
             }
             Type::Struct { definition_id, .. } => {
                 let definition_id = *definition_id;
-                // Insert internal_name first so a recursive `compute()` (from a
-                // self-referential struct member) short-circuits at the top.
-                // canonical/storage are not yet cached at that point, so the
-                // helpers below see `None` and break the cycle.
+                // Insert a placeholder entry first so a recursive `compute()`
+                // (from a self-referential struct member) short-circuits at
+                // the top. canonical/storage are still `None` at that point,
+                // so the helpers below see `None` and break the cycle.
                 let internal = self.definition_canonical_name(definition_id);
-                self.internal_names.insert(type_id, internal);
+                self.insert(type_id, internal, None, None);
 
                 let canonical = self.struct_canonical_name(definition_id);
                 let storage = self.struct_storage_size(definition_id);
-                self.canonical_names.insert(type_id, canonical);
-                self.storage_sizes.insert(type_id, storage);
+                let entry = self.data.get_mut(&type_id).unwrap();
+                entry.canonical_name = canonical;
+                entry.storage_size = storage;
             }
             Type::UserDefinedValue { definition_id } => {
                 let definition_id = *definition_id;
@@ -299,28 +294,31 @@ impl<'a> TypeDataCacheBuilder<'a> {
                 };
                 let (canonical, storage) = if let Some(target_type_id) = target_type_id {
                     self.compute(target_type_id);
-                    (
-                        self.canonical_names[&target_type_id].clone(),
-                        self.storage_sizes[&target_type_id],
-                    )
+                    let target = &self.data[&target_type_id];
+                    (target.canonical_name.clone(), target.storage_size)
                 } else {
                     (None, None)
                 };
-                self.insert_all(type_id, internal, canonical, storage);
+                self.insert(type_id, internal, canonical, storage);
             }
         }
     }
 
-    fn insert_all(
+    fn insert(
         &mut self,
         type_id: TypeId,
-        internal: String,
-        canonical: Option<String>,
-        storage: Option<usize>,
+        internal_name: String,
+        canonical_name: Option<String>,
+        storage_size: Option<usize>,
     ) {
-        self.internal_names.insert(type_id, internal);
-        self.canonical_names.insert(type_id, canonical);
-        self.storage_sizes.insert(type_id, storage);
+        self.data.insert(
+            type_id,
+            TypeData {
+                internal_name,
+                canonical_name,
+                storage_size,
+            },
+        );
     }
 
     fn struct_canonical_name(&mut self, definition_id: NodeId) -> Option<String> {
@@ -331,13 +329,9 @@ impl<'a> TypeDataCacheBuilder<'a> {
             self.compute(member_type_id);
             // `None` here is either "the member's canonical name itself is
             // None" (mapping, tuple, ...) or "we're in a cycle and the member's
-            // canonical entry hasn't been inserted yet". Either way the parent
+            // canonical entry is still the placeholder". Either way the parent
             // struct has no canonical name.
-            let field_canonical = self
-                .canonical_names
-                .get(&member_type_id)
-                .cloned()
-                .flatten()?;
+            let field_canonical = self.data[&member_type_id].canonical_name.clone()?;
             fields.push(field_canonical);
         }
         Some(format!("({})", fields.join(",")))
@@ -350,11 +344,7 @@ impl<'a> TypeDataCacheBuilder<'a> {
             let member_type_id = self.binder.node_typing(member_id).as_type_id()?;
             self.compute(member_type_id);
             // Same cycle/no-storage handling as canonical above.
-            let member_size = self
-                .storage_sizes
-                .get(&member_type_id)
-                .copied()
-                .flatten()?;
+            let member_size = self.data[&member_type_id].storage_size?;
             let remaining_bytes = SLOT_SIZE - (ptr % SLOT_SIZE);
             if remaining_bytes < SLOT_SIZE && member_size >= remaining_bytes {
                 ptr += remaining_bytes;
