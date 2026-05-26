@@ -581,7 +581,7 @@ impl TypeRegistry {
     /// Return a type that can be stored in the EVM and can hold values of all
     /// the given types. The first element dictates the type class. Returns
     /// `None` if the types cannot be reified, they are not compatible, or they don't belong
-    /// in an array litarl.
+    /// in an array literal.
     ///
     /// This is used to unify types of literal arrays.
     /// Only the first element is mobile-typed unconditionally.
