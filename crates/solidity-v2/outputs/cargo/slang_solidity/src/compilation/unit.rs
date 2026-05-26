@@ -6,11 +6,12 @@ use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
 
-use super::file::File;
+use super::file::InternalFile;
+use super::{File, FileStruct};
 
 pub struct CompilationUnit {
     language_version: LanguageVersion,
-    files: BTreeMap<String, Arc<File>>,
+    files: BTreeMap<String, Arc<InternalFile>>,
     semantic: Arc<SemanticContext>,
     diagnostics: DiagnosticCollection,
 }
@@ -18,11 +19,11 @@ pub struct CompilationUnit {
 impl CompilationUnit {
     pub(super) fn create(
         language_version: LanguageVersion,
-        files: Vec<File>,
+        files: Vec<InternalFile>,
         semantic: SemanticContext,
         diagnostics: DiagnosticCollection,
     ) -> Self {
-        let files: BTreeMap<String, Arc<File>> = files
+        let files: BTreeMap<String, Arc<InternalFile>> = files
             .into_iter()
             .map(|file| (file.id().to_string(), Arc::new(file)))
             .collect();
@@ -49,24 +50,22 @@ impl CompilationUnit {
         self.files.keys().cloned().collect()
     }
 
+    pub fn files(&self) -> impl Iterator<Item = File> + use<'_> {
+        self.files
+            .values()
+            .map(|internal_file| FileStruct::create(internal_file, &self.semantic))
+    }
+
+    pub fn file(&self, id: &str) -> Option<File> {
+        self.files
+            .get(id)
+            .map(|internal_file| FileStruct::create(internal_file, &self.semantic))
+    }
+
     #[cfg(feature = "__private_testing_utils")]
     #[doc(hidden)]
     pub fn semantic(&self) -> &Arc<SemanticContext> {
         &self.semantic
-    }
-
-    pub fn get_file_ast_root(&self, file_id: &str) -> Option<ast::SourceUnit> {
-        self.files
-            .get(file_id)
-            .map(|file| ast::create_source_unit(file.ir_root(), &self.semantic))
-    }
-
-    #[cfg(feature = "__private_testing_utils")]
-    #[doc(hidden)]
-    pub fn get_file_ir_root(&self, file_id: &str) -> Option<slang_solidity_v2_ir::ir::SourceUnit> {
-        self.files
-            .get(file_id)
-            .map(|file| Arc::clone(file.ir_root()))
     }
 
     pub fn all_definitions(&self) -> impl Iterator<Item = ast::Definition> + use<'_> {

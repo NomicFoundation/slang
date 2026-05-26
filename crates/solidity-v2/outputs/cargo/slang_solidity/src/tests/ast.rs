@@ -24,7 +24,7 @@ impl ast::visitor::Visitor for IdentifierCounter {
 fn test_ast_visitor() {
     let unit = fixtures::Counter::build_compilation_unit();
 
-    let main_ast = unit.get_file_ast_root("main.sol").unwrap();
+    let main_ast = unit.file("main.sol").unwrap().ast();
 
     let mut main_visitor = IdentifierCounter::default();
     ast::visitor::accept_source_unit(&main_ast, &mut main_visitor);
@@ -33,7 +33,7 @@ fn test_ast_visitor() {
     assert_eq!(main_visitor.definitions, 9);
     assert_eq!(main_visitor.references, 18);
 
-    let ownable_ast = unit.get_file_ast_root("ownable.sol").unwrap();
+    let ownable_ast = unit.file("ownable.sol").unwrap().ast();
 
     let mut ownable_visitor = IdentifierCounter::default();
     ast::visitor::accept_source_unit(&ownable_ast, &mut ownable_visitor);
@@ -42,7 +42,7 @@ fn test_ast_visitor() {
     assert_eq!(ownable_visitor.definitions, 3);
     assert_eq!(ownable_visitor.references, 8);
 
-    let activatable_ast = unit.get_file_ast_root("activatable.sol").unwrap();
+    let activatable_ast = unit.file("activatable.sol").unwrap().ast();
 
     let mut activatable_visitor = IdentifierCounter::default();
     ast::visitor::accept_source_unit(&activatable_ast, &mut activatable_visitor);
@@ -392,7 +392,7 @@ fn test_resolve_to_built_in() {
 
     // Collect all identifiers that resolve to built-ins from the ownable.sol file,
     // which contains `msg.sender` and `require`.
-    let ownable_ast = unit.get_file_ast_root("ownable.sol").unwrap();
+    let ownable_ast = unit.file("ownable.sol").unwrap().ast();
 
     let mut built_in_collector = BuiltInCollector::default();
     ast::visitor::accept_source_unit(&ownable_ast, &mut built_in_collector);

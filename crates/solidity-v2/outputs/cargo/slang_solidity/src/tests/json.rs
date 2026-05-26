@@ -5,7 +5,7 @@ use super::fixtures;
 #[test]
 fn source_unit_serializes_to_json_with_expected_shape() {
     let unit = fixtures::Counter::build_compilation_unit();
-    let source_unit = unit.get_file_ast_root("main.sol").unwrap();
+    let source_unit = unit.file("main.sol").unwrap().ast();
 
     let json = serde_json::to_value(&source_unit).expect("serialization succeeds");
 
@@ -37,7 +37,7 @@ fn source_unit_serializes_to_json_with_expected_shape() {
 #[test]
 fn function_definition_field_kind_does_not_collide_with_discriminator() {
     let unit = fixtures::Counter::build_compilation_unit();
-    let source_unit = unit.get_file_ast_root("ownable.sol").unwrap();
+    let source_unit = unit.file("ownable.sol").unwrap().ast();
 
     let json = serde_json::to_value(&source_unit).unwrap();
     let function =

@@ -11,7 +11,7 @@ use slang_solidity_v2_semantic::context::{
     extract_import_paths_from_source_unit, SemanticContext, SemanticFile,
 };
 
-use super::file::File;
+use super::file::InternalFile;
 use super::unit::CompilationUnit;
 
 /// User-provided callbacks necessary for the `CompilationBuilder` to perform its job.
@@ -39,7 +39,7 @@ pub trait CompilationBuilderConfig {
         -> Result<String, String>;
 }
 
-struct InternalFile {
+struct BuilderFile {
     source_unit: cst::SourceUnit,
     contents: String,
     resolved_imports: BTreeMap<String, String>,
@@ -54,7 +54,7 @@ pub struct CompilationBuilder<C: CompilationBuilderConfig> {
     language_version: LanguageVersion,
     diagnostics: DiagnosticCollection,
 
-    files: BTreeMap<String, InternalFile>,
+    files: BTreeMap<String, BuilderFile>,
     seen_files: HashSet<String>,
 }
 
@@ -129,7 +129,7 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
 
         self.files.insert(
             file_id,
-            InternalFile {
+            BuilderFile {
                 source_unit,
                 contents: source,
                 resolved_imports,
@@ -143,7 +143,7 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
         let mut diagnostics = self.diagnostics;
 
         let mut id_generator = ir::NodeIdGenerator::default();
-        let files: Vec<File> = self
+        let files: Vec<InternalFile> = self
             .files
             .into_iter()
             .map(|(file_id, internal_file)| {
@@ -158,7 +158,7 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
                 );
                 diagnostics.extend(ir_diagnostics);
 
-                let mut file = File::new(file_id, ir_root);
+                let mut file = InternalFile::new(file_id, ir_root);
                 for (node_id, import_path) in extract_import_paths_from_source_unit(file.ir_root())
                 {
                     if let Some(target_file_id) = internal_file.resolved_imports.get(&import_path) {

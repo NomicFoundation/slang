@@ -1,17 +1,20 @@
 use std::collections::HashMap;
+use std::sync::Arc;
 
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
-use slang_solidity_v2_semantic::context::SemanticFile;
+use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
 
-pub struct File {
+use crate::ast;
+
+pub(crate) struct InternalFile {
     // TODO(v2): abstract this into a `FileId` type
     id: String,
     ir_root: ir::SourceUnit,
     resolved_imports: HashMap<NodeId, String>,
 }
 
-impl File {
+impl InternalFile {
     pub(crate) fn new(id: String, ir_root: ir::SourceUnit) -> Self {
         Self {
             id,
@@ -25,7 +28,7 @@ impl File {
     }
 }
 
-impl SemanticFile for File {
+impl SemanticFile for InternalFile {
     fn id(&self) -> &str {
         &self.id
     }
@@ -36,5 +39,35 @@ impl SemanticFile for File {
 
     fn resolved_import_by_node_id(&self, node_id: NodeId) -> Option<&String> {
         self.resolved_imports.get(&node_id)
+    }
+}
+
+pub struct FileStruct {
+    file: Arc<InternalFile>,
+    semantic: Arc<SemanticContext>,
+}
+
+pub type File = Arc<FileStruct>;
+
+impl FileStruct {
+    pub(crate) fn create(file: &Arc<InternalFile>, semantic: &Arc<SemanticContext>) -> File {
+        Arc::new(Self {
+            file: Arc::clone(file),
+            semantic: Arc::clone(semantic),
+        })
+    }
+
+    pub fn id(&self) -> &str {
+        &self.file.id
+    }
+
+    pub fn ast(&self) -> ast::SourceUnit {
+        ast::create_source_unit(&self.file.ir_root, &self.semantic)
+    }
+
+    #[cfg(feature = "__private_testing_utils")]
+    #[doc(hidden)]
+    pub fn ir(&self) -> ir::SourceUnit {
+        Arc::clone(&self.file.ir_root)
     }
 }

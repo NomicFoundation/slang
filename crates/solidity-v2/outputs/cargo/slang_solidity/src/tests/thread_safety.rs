@@ -51,8 +51,9 @@ fn parallel_access_via_arc_consistent_with_serial_baseline() {
                 // so the AST node `Arc<…Struct>` handles are cloned across threads.
                 for file_id in &expected_file_ids {
                     let root = unit
-                        .get_file_ast_root(file_id)
-                        .unwrap_or_else(|| panic!("missing AST root for {file_id}"));
+                        .file(file_id)
+                        .unwrap_or_else(|| panic!("missing {file_id}"))
+                        .ast();
                     let members = root.members();
                     assert!(!members.is_empty());
                     let _collected: Vec<_> = members.iter().collect();
