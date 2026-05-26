@@ -1,162 +1,59 @@
-use std::cmp::Ordering;
 use std::collections::HashMap;
 
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition};
 use crate::context::{ADDRESS_BYTE_SIZE, SELECTOR_SIZE, SLOT_SIZE};
 use crate::types::{Type, TypeId, TypeRegistry};
 
-/// Cache of semantic information about contracts and other Solidity elements,
-/// derived from the binder and type registry after the semantic passes have
-/// run. Built once and stored on the `SemanticContext` so downstream consumers
-/// can look up commonly needed analyses without recomputing them.
-pub(super) struct SemanticCache {
-    /// For each contract definition, the functions visible following the C3
-    /// linearisation: overridden functions are dropped and the list is sorted
-    /// by name.
-    linearised_functions: HashMap<NodeId, Vec<ir::FunctionDefinition>>,
-
+/// Cache of type-derivation results, computed once at the end of the semantic
+/// passes. Every `TypeId` registered in the `TypeRegistry` has an entry in all
+/// three maps.
+pub(super) struct TypeDataCache {
     /// `type_internal_name` result for every registered type.
-    type_internal_names: HashMap<TypeId, String>,
+    internal_names: HashMap<TypeId, String>,
 
     /// `type_canonical_name` result for every registered type. Inner `None`
     /// is a valid outcome (e.g. mappings, recursive structs).
-    type_canonical_names: HashMap<TypeId, Option<String>>,
+    canonical_names: HashMap<TypeId, Option<String>>,
 
     /// `storage_size_of_type_id` result for every registered type. Inner
     /// `None` signals a type that doesn't live in storage (literals, void,
     /// tuples).
-    type_storage_sizes: HashMap<TypeId, Option<usize>>,
+    storage_sizes: HashMap<TypeId, Option<usize>>,
 }
 
-impl SemanticCache {
+impl TypeDataCache {
     pub(super) fn build_from(binder: &Binder, types: &TypeRegistry) -> Self {
-        let mut linearised_functions = HashMap::new();
-        for (contract_id, definition) in binder.definitions() {
-            if !matches!(definition, Definition::Contract(_)) {
-                continue;
-            }
-            let functions = compute_linearised_functions(binder, types, *contract_id);
-            linearised_functions.insert(*contract_id, functions);
-        }
-
-        let type_caches = TypeCacheBuilder::new(binder, types).build();
-
-        Self {
-            linearised_functions,
-            type_internal_names: type_caches.internal_names,
-            type_canonical_names: type_caches.canonical_names,
-            type_storage_sizes: type_caches.storage_sizes,
-        }
+        TypeDataCacheBuilder::new(binder, types).build()
     }
 
-    pub(super) fn linearised_functions(
-        &self,
-        contract_id: NodeId,
-    ) -> Option<&[ir::FunctionDefinition]> {
-        self.linearised_functions
-            .get(&contract_id)
-            .map(Vec::as_slice)
-    }
-
-    pub(super) fn type_internal_name(&self, type_id: TypeId) -> &str {
-        self.type_internal_names
+    pub(super) fn internal_name(&self, type_id: TypeId) -> &str {
+        self.internal_names
             .get(&type_id)
             .map(String::as_str)
             .expect("type_id is registered in the type registry")
     }
 
-    pub(super) fn type_canonical_name(&self, type_id: TypeId) -> Option<&str> {
-        self.type_canonical_names
+    pub(super) fn canonical_name(&self, type_id: TypeId) -> Option<&str> {
+        self.canonical_names
             .get(&type_id)
             .expect("type_id is registered in the type registry")
             .as_deref()
     }
 
-    pub(super) fn type_storage_size(&self, type_id: TypeId) -> Option<usize> {
-        self.type_storage_sizes
+    pub(super) fn storage_size(&self, type_id: TypeId) -> Option<usize> {
+        self.storage_sizes
             .get(&type_id)
             .copied()
             .expect("type_id is registered in the type registry")
     }
 }
 
-fn compute_linearised_functions(
-    binder: &Binder,
-    types: &TypeRegistry,
-    contract_id: NodeId,
-) -> Vec<ir::FunctionDefinition> {
-    let Some(linearised_bases) = binder.get_linearised_bases(contract_id) else {
-        return Vec::new();
-    };
-
-    let mut functions: Vec<ir::FunctionDefinition> = Vec::new();
-    for base_id in linearised_bases {
-        // TODO(validation) SDR[3]: we don't pick up functions defined in
-        // interfaces because they should be implemented in inheriting contracts,
-        // but this is not yet enforced anywhere.
-        let Some(Definition::Contract(base)) = binder.find_definition_by_id(*base_id) else {
-            continue;
-        };
-
-        for member in &base.ir_node.members {
-            let ir::ContractMember::FunctionDefinition(function) = member else {
-                continue;
-            };
-            if !matches!(
-                function.kind,
-                ir::FunctionKind::Regular | ir::FunctionKind::Fallback | ir::FunctionKind::Receive
-            ) {
-                continue;
-            }
-            let overridden = functions
-                .iter()
-                .any(|existing| function_overrides(binder, types, existing, function));
-            if !overridden {
-                functions.push(function.clone());
-            }
-        }
-    }
-
-    functions.sort_by(|a, b| match (&a.name, &b.name) {
-        (None, None) => Ordering::Equal,
-        (None, Some(_)) => Ordering::Less,
-        (Some(_), None) => Ordering::Greater,
-        (Some(a), Some(b)) => a.unparse().cmp(&b.unparse()),
-    });
-    functions
-}
-
-fn function_overrides(
-    binder: &Binder,
-    types: &TypeRegistry,
-    function: &ir::FunctionDefinition,
-    other: &ir::FunctionDefinition,
-) -> bool {
-    let name_matches = match (&function.name, &other.name) {
-        (None, None) => function.kind == other.kind,
-        (Some(name), Some(other_name)) => name.unparse() == other_name.unparse(),
-        _ => false,
-    };
-    if !name_matches {
-        return false;
-    }
-    let type_id = binder.node_typing(function.id()).as_type_id();
-    let other_type_id = binder.node_typing(other.id()).as_type_id();
-    match (type_id, other_type_id) {
-        (Some(type_id), Some(other_type_id)) => {
-            types.type_id_is_function_and_overrides(type_id, other_type_id)
-        }
-        _ => false,
-    }
-}
-
 /// Builds all three per-type derivation caches in a single structural traversal
 /// of the type registry. Sub-type derivations are resolved by looking them up
 /// in the (partially built) cache, so each type is visited at most once.
-struct TypeCacheBuilder<'a> {
+struct TypeDataCacheBuilder<'a> {
     binder: &'a Binder,
     types: &'a TypeRegistry,
     internal_names: HashMap<TypeId, String>,
@@ -164,13 +61,7 @@ struct TypeCacheBuilder<'a> {
     storage_sizes: HashMap<TypeId, Option<usize>>,
 }
 
-struct TypeCaches {
-    internal_names: HashMap<TypeId, String>,
-    canonical_names: HashMap<TypeId, Option<String>>,
-    storage_sizes: HashMap<TypeId, Option<usize>>,
-}
-
-impl<'a> TypeCacheBuilder<'a> {
+impl<'a> TypeDataCacheBuilder<'a> {
     fn new(binder: &'a Binder, types: &'a TypeRegistry) -> Self {
         Self {
             binder,
@@ -181,12 +72,12 @@ impl<'a> TypeCacheBuilder<'a> {
         }
     }
 
-    fn build(mut self) -> TypeCaches {
+    fn build(mut self) -> TypeDataCache {
         let type_ids: Vec<TypeId> = self.types.iter_types().map(|(id, _)| id).collect();
         for type_id in type_ids {
             self.compute(type_id);
         }
-        TypeCaches {
+        TypeDataCache {
             internal_names: self.internal_names,
             canonical_names: self.canonical_names,
             storage_sizes: self.storage_sizes,

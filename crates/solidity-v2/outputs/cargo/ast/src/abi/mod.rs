@@ -4,11 +4,11 @@ use std::cmp::Ordering;
 use std::collections::HashSet;
 use std::sync::Arc;
 
-use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::binder::Definition;
 use slang_solidity_v2_semantic::context::SemanticContext;
+pub use slang_solidity_v2_semantic::context::StorageItem;
 use slang_solidity_v2_semantic::types::{FunctionTypeMutability, Type, TypeId};
 
 pub struct ContractAbi {
@@ -307,37 +307,6 @@ impl AbiParameter {
 
     pub fn indexed(&self) -> bool {
         self.indexed
-    }
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct StorageItem {
-    node_id: NodeId,
-    label: String,
-    slot: U256,
-    offset: usize,
-    type_name: String,
-}
-
-impl StorageItem {
-    pub fn node_id(&self) -> NodeId {
-        self.node_id
-    }
-
-    pub fn label(&self) -> &str {
-        &self.label
-    }
-
-    pub fn slot(&self) -> U256 {
-        self.slot
-    }
-
-    pub fn offset(&self) -> usize {
-        self.offset
-    }
-
-    pub fn type_name(&self) -> &str {
-        &self.type_name
     }
 }
 

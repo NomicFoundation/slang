@@ -1,11 +1,11 @@
-use std::sync::Arc;
-
+use contract_data_cache::ContractDataCache;
+pub use contract_data_cache::StorageItem;
 use file_node_mapper::FileNodeMapper;
-use semantic_cache::SemanticCache;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::utils::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
+use type_data_cache::TypeDataCache;
 
 use crate::binder::{Binder, Definition, Reference};
 use crate::passes::{
@@ -13,8 +13,9 @@ use crate::passes::{
 };
 use crate::types::{TypeId, TypeRegistry};
 
+mod contract_data_cache;
 mod file_node_mapper;
-mod semantic_cache;
+mod type_data_cache;
 
 pub const SLOT_SIZE: usize = 32;
 pub(crate) const ADDRESS_BYTE_SIZE: usize = 20;
@@ -60,7 +61,8 @@ pub struct SemanticContext {
     binder: Binder,
     types: TypeRegistry,
     file_node_mapper: FileNodeMapper,
-    cache: SemanticCache,
+    type_data: TypeDataCache,
+    contract_data: ContractDataCache,
 }
 
 impl SemanticContext {
@@ -74,13 +76,15 @@ impl SemanticContext {
         p4_resolve_references::run(files, &mut binder, &mut types, language_version);
 
         let file_node_mapper = FileNodeMapper::build_from(files);
-        let cache = SemanticCache::build_from(&binder, &types);
+        let type_data = TypeDataCache::build_from(&binder, &types);
+        let contract_data = ContractDataCache::build_from(&binder, &types, &type_data);
 
         Self {
             binder,
             types,
             file_node_mapper,
-            cache,
+            type_data,
+            contract_data,
         }
     }
 
@@ -102,17 +106,14 @@ impl SemanticContext {
         self.binder.references().values()
     }
 
+    /// Iterates over every contract definition in this compilation unit, in
+    /// registration order.
+    pub fn all_contracts(&self) -> impl Iterator<Item = &ir::ContractDefinition> + use<'_> {
+        self.contract_data.all_contracts()
+    }
+
     pub fn find_contract_by_name(&self, name: &str) -> Option<ir::ContractDefinition> {
-        self.binder().definitions().values().find_map(|definition| {
-            let Definition::Contract(contract) = definition else {
-                return None;
-            };
-            if definition.identifier().unparse() == name {
-                Some(Arc::clone(&contract.ir_node))
-            } else {
-                None
-            }
-        })
+        self.contract_data.find_contract_by_name(name).cloned()
     }
 }
 
@@ -123,10 +124,47 @@ impl SemanticContext {
 
     /// Returns the pre-computed list of functions visible in the given
     /// contract's hierarchy (per C3 linearisation), with overrides resolved and
-    /// sorted by name. Returns `None` if `contract_id` is not a contract
-    /// definition (an entry exists for every contract, even when empty).
-    pub fn linearised_functions(&self, contract_id: NodeId) -> Option<&[ir::FunctionDefinition]> {
-        self.cache.linearised_functions(contract_id)
+    /// sorted by name. `contract_id` must be a registered contract definition.
+    pub fn linearised_functions(&self, contract_id: NodeId) -> &[ir::FunctionDefinition] {
+        self.contract_data.linearised_functions(contract_id)
+    }
+
+    /// Returns the pre-computed list of state variables visible in the given
+    /// contract's hierarchy, in storage-layout order (most-base first, then
+    /// each contract's own variables). `contract_id` must be a registered
+    /// contract definition.
+    pub fn linearised_state_variables(
+        &self,
+        contract_id: NodeId,
+    ) -> &[ir::StateVariableDefinition] {
+        self.contract_data.linearised_state_variables(contract_id)
+    }
+
+    /// Returns the pre-computed list of errors visible in the given contract's
+    /// hierarchy (including base contracts and interfaces, in reverse
+    /// linearisation order). `contract_id` must be a registered contract
+    /// definition.
+    pub fn linearised_errors(&self, contract_id: NodeId) -> &[ir::ErrorDefinition] {
+        self.contract_data.linearised_errors(contract_id)
+    }
+
+    /// Returns the pre-computed list of events visible in the given contract's
+    /// hierarchy (including base contracts and interfaces, in reverse
+    /// linearisation order). `contract_id` must be a registered contract
+    /// definition.
+    pub fn linearised_events(&self, contract_id: NodeId) -> &[ir::EventDefinition] {
+        self.contract_data.linearised_events(contract_id)
+    }
+
+    /// Returns the (mutable, transient) storage layouts pre-computed for the
+    /// given contract, or `None` if they couldn't be computed (e.g. because of
+    /// an unresolved state-variable type). `contract_id` must be a registered
+    /// contract definition.
+    pub fn storage_layouts(
+        &self,
+        contract_id: NodeId,
+    ) -> Option<&(Vec<StorageItem>, Vec<StorageItem>)> {
+        self.contract_data.storage_layouts(contract_id)
     }
 
     pub fn resolve_reference_identifier_to_definition_id(&self, node_id: NodeId) -> Option<NodeId> {
@@ -152,18 +190,18 @@ impl SemanticContext {
     /// for every `TypeId` registered in the type registry, so this never fails
     /// for a `TypeId` obtained from this context.
     pub fn type_internal_name(&self, type_id: TypeId) -> &str {
-        self.cache.type_internal_name(type_id)
+        self.type_data.internal_name(type_id)
     }
 
     /// Returns the canonical (ABI-encoded) name for a type, or `None` if the
     /// type has no canonical form (mappings, tuples, recursive structs, ...).
     pub fn type_canonical_name(&self, type_id: TypeId) -> Option<&str> {
-        self.cache.type_canonical_name(type_id)
+        self.type_data.canonical_name(type_id)
     }
 
     /// Returns the storage byte size for a type, or `None` if the type doesn't
     /// live in storage (literals, tuples, void).
     pub fn storage_size_of_type_id(&self, type_id: TypeId) -> Option<usize> {
-        self.cache.type_storage_size(type_id)
+        self.type_data.storage_size(type_id)
     }
 }
