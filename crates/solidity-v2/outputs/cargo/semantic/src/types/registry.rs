@@ -773,7 +773,6 @@ impl TypeRegistry {
     }
 }
 
-#[cfg(test)]
 impl TypeRegistry {
     pub(crate) fn iter_types(&self) -> impl Iterator<Item = (TypeId, &Type)> {
         (0usize..).map(TypeId).zip(self.types.iter())

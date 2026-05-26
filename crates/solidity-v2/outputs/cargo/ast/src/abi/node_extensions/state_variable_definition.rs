@@ -73,7 +73,7 @@ impl StateVariableDefinitionStruct {
         let parameters = function_type
             .parameter_types
             .iter()
-            .map(|type_id| self.semantic.type_internal_name(*type_id))
+            .map(|type_id| self.semantic.type_internal_name(*type_id).to_owned())
             .collect::<Vec<_>>()
             .join(",");
         Some(format!(
