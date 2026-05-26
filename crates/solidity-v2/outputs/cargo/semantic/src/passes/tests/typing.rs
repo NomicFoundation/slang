@@ -4,7 +4,7 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
 
 use super::build_file;
-use crate::binder::{Binder, Typing};
+use crate::binder::Binder;
 use crate::context::SemanticFile;
 use crate::passes::common::node_id_for_expression_typing;
 use crate::passes::{
@@ -77,10 +77,13 @@ fn type_of_expressions(
             ir::Statement::ExpressionStatement(s) => {
                 let node_id = node_id_for_expression_typing(&s.expression)
                     .expect("expression registers its typing in the binder");
-                Some(match binder.node_typing(node_id) {
-                    Typing::Resolved(type_id) => Some(types.get_type_by_id(type_id).clone()),
-                    _ => None,
-                })
+                Some(
+                    binder
+                        .node_typing(node_id)
+                        .as_type_id()
+                        .map(|type_id| types.get_type_by_id(type_id))
+                        .cloned(),
+                )
             }
             _ => None,
         })
