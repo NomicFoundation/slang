@@ -130,6 +130,7 @@ impl TypeRegistry {
         self.types.get_index(type_id.0).unwrap()
     }
 
+    #[allow(clippy::too_many_lines)]
     pub(crate) fn implicitly_convertible_to(
         &self,
         from_type_id: TypeId,
@@ -140,19 +141,6 @@ impl TypeRegistry {
         }
         let from_type = self.get_type_by_id(from_type_id);
         let to_type = self.get_type_by_id(to_type_id);
-
-        self.internal_implicitly_convertible_to(from_type, to_type)
-    }
-
-    #[allow(clippy::too_many_lines)]
-    fn internal_implicitly_convertible_to(&self, from_type: &Type, to_type: &Type) -> bool {
-        // The public `implicitly_convertible_to` already
-        // short-circuits on `TypeId` equality, but this function is also called
-        // directly by `common_mobile_type` with `&Type` values constructed from
-        // `mobile_type()`, bypassing that short-circuit.
-        if from_type == to_type {
-            return true;
-        }
 
         match (from_type, to_type) {
             (
@@ -552,49 +540,73 @@ impl TypeRegistry {
         self.register_type(type_with_location)
     }
 
-    /// Returns the mobile type of `type_id` as a `TypeId`
-    pub(crate) fn mobile_type_id(&mut self, type_id: TypeId) -> Option<TypeId> {
-        let mobile = self.get_type_by_id(type_id).mobile_type()?;
-        Some(self.register_type(mobile))
+    /// Computes the mobile type of `type_id` and returns its `TypeId`.
+    pub(crate) fn compute_mobile_type(&mut self, type_id: TypeId) -> Option<TypeId> {
+        match self.get_type_by_id(type_id).clone() {
+            Type::Literal(kind) => {
+                let mobile = kind.mobile_type()?;
+                Some(self.register_type(mobile))
+            }
+            Type::Tuple { types: element_ids } => {
+                let mobile_ids: Option<Vec<TypeId>> = element_ids
+                    .iter()
+                    .map(|id| self.compute_mobile_type(*id))
+                    .collect();
+                Some(self.register_type(Type::Tuple { types: mobile_ids? }))
+            }
+            _ => Some(type_id),
+        }
     }
 
-    /// Returns the common type of `left` and `right` based purely on implicit
-    /// convertibility, without lifting literals through their mobile type.
-    /// If `left` implicitly converts to `right` we return `right`; if `right`
-    /// implicitly converts to `left` we return `left`. Otherwise returns
-    /// `None`.
+    /// Returns the common type of two types, making them mobile first.
     ///
-    /// Because there's no mobile-type promotion, literal-specific conversion
-    /// rules (e.g. `Literal(0) -> bytesN`) are preserved here.
-    pub(crate) fn common_type(&self, left: TypeId, right: TypeId) -> Option<TypeId> {
-        if self.implicitly_convertible_to(left, right) {
-            return Some(right);
+    /// Stricter than [`Self::type_of_array_literal`] — a literal that
+    /// flows into `bytesN` via a literal-specific rule won't
+    /// flow that way through a ternary, because the literal is mobile-typed
+    /// to an integer first.
+    ///
+    /// Matches solc's ternary semantics.
+    pub(crate) fn common_mobile_type(&mut self, left: TypeId, right: TypeId) -> Option<TypeId> {
+        let left_mobile = self.compute_mobile_type(left)?;
+        let right_mobile = self.compute_mobile_type(right)?;
+        if self.implicitly_convertible_to(left_mobile, right_mobile) {
+            return Some(right_mobile);
         }
-        if self.implicitly_convertible_to(right, left) {
-            return Some(left);
+        if self.implicitly_convertible_to(right_mobile, left_mobile) {
+            return Some(left_mobile);
         }
         None
     }
 
     /// Return a type that can be stored in the EVM and can hold values of all
     /// the given types. The first element dictates the type class. Returns
-    /// `None` if the types cannot be reified or they are not compatible. This
-    /// is used to unify types of literal arrays.
+    /// `None` if the types cannot be reified, they are not compatible, or they don't belong
+    /// in an array litarl.
     ///
+    /// This is used to unify types of literal arrays.
     /// Only the first element is mobile-typed unconditionally.
-    pub(crate) fn common_mobile_type(&mut self, type_ids: &[TypeId]) -> Option<TypeId> {
+    pub(crate) fn type_of_array_literal(&mut self, type_ids: &[TypeId]) -> Option<TypeId> {
         let (first_id, rest) = type_ids.split_first()?;
-        let mut element_type_id = self.mobile_type_id(*first_id)?;
-
+        if !self.get_type_by_id(*first_id).can_be_array_element() {
+            // TODO(validation) SDR[750]: Error if the element type can't be an array element
+            return None;
+        }
+        let mut element_type_id = self.compute_mobile_type(*first_id)?;
         for &item_type_id in rest {
-            if let Some(common) = self.common_type(element_type_id, item_type_id) {
-                element_type_id = common;
+            if self.implicitly_convertible_to(item_type_id, element_type_id) {
+                // Item already fits the accumulator
                 continue;
             }
-            // If the types are not directly compatible, try to mobile-type the item
-            // For example `[uint8(1), 256]` need this extra step.
-            let item_mobile_id = self.mobile_type_id(item_type_id)?;
-            element_type_id = self.common_type(element_type_id, item_mobile_id)?;
+            if !self.get_type_by_id(item_type_id).can_be_array_element() {
+                // TODO(validation) SDR[750]: Error if the element type can't be an array element
+                return None;
+            }
+            let item_mobile_type_id = self.compute_mobile_type(item_type_id)?;
+            if !self.implicitly_convertible_to(element_type_id, item_mobile_type_id) {
+                // TODO(validation) SDR[1741,1353]: types are not compatible
+                return None;
+            }
+            element_type_id = item_mobile_type_id;
         }
         Some(element_type_id)
     }

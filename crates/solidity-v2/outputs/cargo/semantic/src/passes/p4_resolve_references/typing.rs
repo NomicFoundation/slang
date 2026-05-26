@@ -168,15 +168,7 @@ impl Pass<'_> {
         for item in &array.items {
             item_type_ids.push(self.typing_of_expression(item).as_type_id()?);
         }
-        let element_type = self.types.common_mobile_type(&item_type_ids)?;
-        if !self
-            .types
-            .get_type_by_id(element_type)
-            .can_be_array_element()
-        {
-            // TODO(validation): Error if the element type cannot be an array element
-            return None;
-        }
+        let element_type = self.types.type_of_array_literal(&item_type_ids)?;
         Some(self.types.register_type(Type::FixedSizeArray {
             element_type,
             size: array.items.len(),
