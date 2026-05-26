@@ -1,5 +1,5 @@
 use contract_data_cache::ContractDataCache;
-pub use contract_data_cache::StorageItem;
+pub use contract_data_cache::{StorageItem, StorageLayouts};
 use file_node_mapper::FileNodeMapper;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::utils::strip_string_literal_quotes;
@@ -156,14 +156,11 @@ impl SemanticContext {
         self.contract_data.linearised_events(contract_id)
     }
 
-    /// Returns the (mutable, transient) storage layouts pre-computed for the
-    /// given contract, or `None` if they couldn't be computed (e.g. because of
-    /// an unresolved state-variable type). `contract_id` must be a registered
-    /// contract definition.
-    pub fn storage_layouts(
-        &self,
-        contract_id: NodeId,
-    ) -> Option<&(Vec<StorageItem>, Vec<StorageItem>)> {
+    /// Returns the storage layouts pre-computed for the given contract, or
+    /// `None` if they couldn't be computed (e.g. because of an unresolved
+    /// state-variable type). `contract_id` must be a registered contract
+    /// definition.
+    pub fn storage_layouts(&self, contract_id: NodeId) -> Option<&StorageLayouts> {
         self.contract_data.storage_layouts(contract_id)
     }
 

@@ -8,7 +8,7 @@ use sha3::{Digest, Keccak256};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::binder::Definition;
 use slang_solidity_v2_semantic::context::SemanticContext;
-pub use slang_solidity_v2_semantic::context::StorageItem;
+pub use slang_solidity_v2_semantic::context::{StorageItem, StorageLayouts};
 use slang_solidity_v2_semantic::types::{FunctionTypeMutability, Type, TypeId};
 
 pub struct ContractAbi {

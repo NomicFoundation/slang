@@ -1,4 +1,4 @@
-use crate::abi::{AbiEntry, ContractAbi, StorageItem};
+use crate::abi::{AbiEntry, ContractAbi, StorageLayouts};
 use crate::ast::ContractDefinitionStruct;
 
 impl ContractDefinitionStruct {
@@ -8,15 +8,14 @@ impl ContractDefinitionStruct {
     pub fn compute_abi_with_file_id(&self, file_id: String) -> Option<ContractAbi> {
         let name = self.ir_node.name.unparse().to_string();
         let entries = self.compute_abi_entries()?;
-        let (storage_layout, transient_storage_layout) =
-            self.semantic.storage_layouts(self.ir_node.id())?.clone();
+        let layouts = self.semantic.storage_layouts(self.ir_node.id())?.clone();
         Some(ContractAbi {
             node_id: self.ir_node.id(),
             name,
             file_id,
             entries,
-            storage_layout,
-            transient_storage_layout,
+            storage_layout: layouts.permanent,
+            transient_storage_layout: layouts.transient,
         })
     }
 
@@ -46,10 +45,9 @@ impl ContractDefinitionStruct {
         Some(entries)
     }
 
-    /// Returns the (mutable, transient) storage layouts for this contract, or
-    /// `None` if they couldn't be computed (e.g. an unresolved state variable
-    /// type).
-    pub fn storage_layouts(&self) -> Option<(Vec<StorageItem>, Vec<StorageItem>)> {
+    /// Returns the storage layouts for this contract, or `None` if they
+    /// couldn't be computed (e.g. an unresolved state variable type).
+    pub fn storage_layouts(&self) -> Option<StorageLayouts> {
         self.semantic.storage_layouts(self.ir_node.id()).cloned()
     }
 }

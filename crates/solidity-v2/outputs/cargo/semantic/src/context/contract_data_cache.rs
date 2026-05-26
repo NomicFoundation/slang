@@ -44,9 +44,28 @@ impl StorageItem {
     }
 }
 
+/// Storage layouts computed for a contract, split into permanent (the
+/// regular contract storage) and transient slots.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct StorageLayouts {
+    pub permanent: Vec<StorageItem>,
+    pub transient: Vec<StorageItem>,
+}
+
+/// Pre-computed derived data for a single contract.
+struct ContractData {
+    linearised_functions: Vec<ir::FunctionDefinition>,
+    linearised_state_variables: Vec<ir::StateVariableDefinition>,
+    linearised_errors: Vec<ir::ErrorDefinition>,
+    linearised_events: Vec<ir::EventDefinition>,
+    /// Storage layouts. `None` means the layout couldn't be computed (e.g.
+    /// an unresolved state variable type).
+    storage_layouts: Option<StorageLayouts>,
+}
+
 /// Cache of derived data about contracts, computed once at the end of the
-/// semantic passes and stored on the `SemanticContext`. Every entry is keyed
-/// by the contract's `NodeId`.
+/// semantic passes and stored on the `SemanticContext`. Every contract's
+/// `NodeId` has an entry in `data`.
 pub(super) struct ContractDataCache {
     /// All contract definitions in this compilation unit, in registration
     /// order (deterministic iteration for `all_contracts`).
@@ -54,16 +73,8 @@ pub(super) struct ContractDataCache {
     /// Lookup by simple name. Picks one definition arbitrarily if multiple
     /// contracts share the same name across files.
     contract_by_name: HashMap<String, ir::ContractDefinition>,
-    /// Per-contract linearised data. Each map has an entry for every contract
-    /// `NodeId` (possibly empty / `None`).
-    linearised_functions: HashMap<NodeId, Vec<ir::FunctionDefinition>>,
-    linearised_state_variables: HashMap<NodeId, Vec<ir::StateVariableDefinition>>,
-    linearised_errors: HashMap<NodeId, Vec<ir::ErrorDefinition>>,
-    linearised_events: HashMap<NodeId, Vec<ir::EventDefinition>>,
-    /// Per-contract (mutable, transient) storage layouts. Inner `None` means
-    /// the layout couldn't be computed (e.g. an unresolved state variable
-    /// type).
-    storage_layouts: HashMap<NodeId, Option<(Vec<StorageItem>, Vec<StorageItem>)>>,
+    /// Per-contract derived data, keyed by contract `NodeId`.
+    data: HashMap<NodeId, ContractData>,
 }
 
 impl ContractDataCache {
@@ -74,11 +85,7 @@ impl ContractDataCache {
     ) -> Self {
         let mut contracts = Vec::new();
         let mut contract_by_name = HashMap::new();
-        let mut linearised_functions = HashMap::new();
-        let mut linearised_state_variables = HashMap::new();
-        let mut linearised_errors = HashMap::new();
-        let mut linearised_events = HashMap::new();
-        let mut storage_layouts = HashMap::new();
+        let mut data = HashMap::new();
 
         for (contract_id, definition) in binder.definitions() {
             let Definition::Contract(contract) = definition else {
@@ -88,24 +95,28 @@ impl ContractDataCache {
             let ir_node = contract.ir_node.clone();
             let name = contract.ir_node.name.unparse().to_string();
 
-            linearised_functions.insert(
-                contract_id,
-                compute_linearised_functions(binder, types, contract_id),
-            );
-            let state_variables = collect_linearised_state_variables(binder, contract_id);
-            let errors = collect_linearised_errors(binder, contract_id);
-            let events = collect_linearised_events(binder, contract_id);
-            let storage_layout = lay_out_storage(
+            let linearised_functions = compute_linearised_functions(binder, types, contract_id);
+            let linearised_state_variables =
+                collect_linearised_state_variables(binder, contract_id);
+            let linearised_errors = collect_linearised_errors(binder, contract_id);
+            let linearised_events = collect_linearised_events(binder, contract_id);
+            let storage_layouts = lay_out_storage(
                 binder,
                 type_data,
-                &state_variables,
+                &linearised_state_variables,
                 contract.base_slot.unwrap_or(U256::ZERO),
             );
 
-            linearised_state_variables.insert(contract_id, state_variables);
-            linearised_errors.insert(contract_id, errors);
-            linearised_events.insert(contract_id, events);
-            storage_layouts.insert(contract_id, storage_layout);
+            data.insert(
+                contract_id,
+                ContractData {
+                    linearised_functions,
+                    linearised_state_variables,
+                    linearised_errors,
+                    linearised_events,
+                    storage_layouts,
+                },
+            );
 
             contract_by_name.insert(name, ir_node.clone());
             contracts.push(ir_node);
@@ -114,12 +125,14 @@ impl ContractDataCache {
         Self {
             contracts,
             contract_by_name,
-            linearised_functions,
-            linearised_state_variables,
-            linearised_errors,
-            linearised_events,
-            storage_layouts,
+            data,
         }
+    }
+
+    fn get(&self, contract_id: NodeId) -> &ContractData {
+        self.data
+            .get(&contract_id)
+            .expect("contract_id is a registered contract")
     }
 
     pub(super) fn all_contracts(&self) -> impl Iterator<Item = &ir::ContractDefinition> {
@@ -131,47 +144,28 @@ impl ContractDataCache {
     }
 
     pub(super) fn linearised_functions(&self, contract_id: NodeId) -> &[ir::FunctionDefinition] {
-        self.linearised_functions
-            .get(&contract_id)
-            .map(Vec::as_slice)
-            .expect("contract_id is a registered contract")
+        &self.get(contract_id).linearised_functions
     }
 
     pub(super) fn linearised_state_variables(
         &self,
         contract_id: NodeId,
     ) -> &[ir::StateVariableDefinition] {
-        self.linearised_state_variables
-            .get(&contract_id)
-            .map(Vec::as_slice)
-            .expect("contract_id is a registered contract")
+        &self.get(contract_id).linearised_state_variables
     }
 
     pub(super) fn linearised_errors(&self, contract_id: NodeId) -> &[ir::ErrorDefinition] {
-        self.linearised_errors
-            .get(&contract_id)
-            .map(Vec::as_slice)
-            .expect("contract_id is a registered contract")
+        &self.get(contract_id).linearised_errors
     }
 
     pub(super) fn linearised_events(&self, contract_id: NodeId) -> &[ir::EventDefinition] {
-        self.linearised_events
-            .get(&contract_id)
-            .map(Vec::as_slice)
-            .expect("contract_id is a registered contract")
+        &self.get(contract_id).linearised_events
     }
 
-    /// Returns the (mutable, transient) storage layouts for a contract, or
-    /// `None` if they couldn't be computed (e.g. an unresolved state variable
-    /// type).
-    pub(super) fn storage_layouts(
-        &self,
-        contract_id: NodeId,
-    ) -> Option<&(Vec<StorageItem>, Vec<StorageItem>)> {
-        self.storage_layouts
-            .get(&contract_id)
-            .expect("contract_id is a registered contract")
-            .as_ref()
+    /// Returns the storage layouts for a contract, or `None` if they couldn't
+    /// be computed (e.g. an unresolved state variable type).
+    pub(super) fn storage_layouts(&self, contract_id: NodeId) -> Option<&StorageLayouts> {
+        self.get(contract_id).storage_layouts.as_ref()
     }
 }
 
@@ -313,17 +307,17 @@ fn collect_linearised_events(binder: &Binder, contract_id: NodeId) -> Vec<ir::Ev
     events
 }
 
-/// Computes the (mutable, transient) storage layouts for a contract. Returns
-/// `None` if any state-variable type isn't resolved or has no storage size.
+/// Computes the storage layouts for a contract. Returns `None` if any
+/// state-variable type isn't resolved or has no storage size.
 fn lay_out_storage(
     binder: &Binder,
     type_data: &TypeDataCache,
     state_variables: &[ir::StateVariableDefinition],
     base_slot: U256,
-) -> Option<(Vec<StorageItem>, Vec<StorageItem>)> {
+) -> Option<StorageLayouts> {
     // TODO(validation) SDR[2]: it is an error if any contract in the hierarchy
     // other than the leaf has a custom offset layout
-    let mutable = lay_out_filtered(
+    let permanent = lay_out_filtered(
         binder,
         type_data,
         state_variables,
@@ -337,7 +331,10 @@ fn lay_out_storage(
         U256::ZERO,
         ir::StateVariableMutability::Transient,
     )?;
-    Some((mutable, transient))
+    Some(StorageLayouts {
+        permanent,
+        transient,
+    })
 }
 
 fn lay_out_filtered(
