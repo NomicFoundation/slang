@@ -144,9 +144,9 @@ fn collect_all_identifiers(
         collector.current_file = files.get_key_value(file_id);
         accept_source_unit(
             &compilation
-                .get_file_by_id(file_id)
+                .file(file_id)
                 .expect("file is in the compilation unit")
-                .ir_root(),
+                .ir(),
             &mut collector,
         );
     }

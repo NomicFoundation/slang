@@ -50,13 +50,13 @@ impl CompilationUnit {
         self.files.keys().cloned().collect()
     }
 
-    pub fn iter_files(&self) -> impl Iterator<Item = File> + use<'_> {
+    pub fn files(&self) -> impl Iterator<Item = File> + use<'_> {
         self.files
             .values()
             .map(|internal_file| FileStruct::create(internal_file, &self.semantic))
     }
 
-    pub fn get_file_by_id(&self, id: &str) -> Option<File> {
+    pub fn file(&self, id: &str) -> Option<File> {
         self.files
             .get(id)
             .map(|internal_file| FileStruct::create(internal_file, &self.semantic))

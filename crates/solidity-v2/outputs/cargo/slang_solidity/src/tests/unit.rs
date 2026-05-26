@@ -8,17 +8,17 @@ fn test_get_file_ast_root() {
     assert_eq!(unit.file_ids().len(), 3);
 
     let main_ast = unit
-        .get_file_by_id("main.sol")
+        .file("main.sol")
         .expect("main.sol is a file of the compilation unit")
-        .ast_root();
+        .ast();
     let ownable_ast = unit
-        .get_file_by_id("ownable.sol")
+        .file("ownable.sol")
         .expect("ownable.sol is a file in the compilation unit")
-        .ast_root();
+        .ast();
     let activatable_ast = unit
-        .get_file_by_id("activatable.sol")
+        .file("activatable.sol")
         .expect("activatable.sol is a file in the compilation unit")
-        .ast_root();
+        .ast();
 
     assert_eq!(main_ast.file_id(), "main.sol");
     assert_eq!(ownable_ast.file_id(), "ownable.sol");
