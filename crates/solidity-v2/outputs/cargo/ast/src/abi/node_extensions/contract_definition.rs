@@ -6,11 +6,9 @@ use crate::abi::{AbiEntry, ContractAbi, StorageItem};
 use crate::ast::{ContractDefinitionStruct, StateVariableDefinition, StateVariableMutability};
 
 impl ContractDefinitionStruct {
-    // TODO: ideally the user wouldn't need to provide the file_id and we should
-    // be able to obtain it here, but for that we need bi-directional tree
-    // navigation
-    pub fn compute_abi_with_file_id(&self, file_id: String) -> Option<ContractAbi> {
+    pub fn compute_abi(&self) -> Option<ContractAbi> {
         let name = self.ir_node.name.unparse().to_string();
+        let file_id = self.get_file_id().to_string();
         let entries = self.compute_abi_entries()?;
         let (storage_layout, transient_storage_layout) = self.compute_storage_layout()?;
         Some(ContractAbi {

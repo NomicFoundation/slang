@@ -1425,7 +1425,7 @@ impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
 impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
-pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_abi_with_file_id(&self, file_id: alloc::string::String) -> core::option::Option<slang_solidity_v2_ast::abi::ContractAbi>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_abi(&self) -> core::option::Option<slang_solidity_v2_ast::abi::ContractAbi>
 impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_linearised_bases(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ContractBase>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_linearised_errors(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ErrorDefinition>

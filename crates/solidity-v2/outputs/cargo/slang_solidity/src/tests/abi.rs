@@ -76,9 +76,7 @@ fn test_storage_layout() {
     let counter = unit
         .find_contract_by_name("C")
         .expect("contract can be found");
-    let counter_abi = counter
-        .compute_abi_with_file_id("main.sol".to_string())
-        .expect("can compute ABI");
+    let counter_abi = counter.compute_abi().expect("can compute ABI");
     let layout = counter_abi.storage_layout();
 
     assert_eq!(layout.len(), 12);
@@ -107,9 +105,7 @@ fn test_transient_and_custom_storage_layout() {
     let d_contract = unit
         .find_contract_by_name("D")
         .expect("contract can be found");
-    let d_abi = d_contract
-        .compute_abi_with_file_id("main.sol".to_string())
-        .expect("can compute ABI");
+    let d_abi = d_contract.compute_abi().expect("can compute ABI");
     let d_layout = d_abi.storage_layout();
 
     assert_eq!(d_layout.len(), 2);
@@ -119,9 +115,7 @@ fn test_transient_and_custom_storage_layout() {
     let e_contract = unit
         .find_contract_by_name("E")
         .expect("contract can be found");
-    let e_abi = e_contract
-        .compute_abi_with_file_id("main.sol".to_string())
-        .expect("can compute ABI");
+    let e_abi = e_contract.compute_abi().expect("can compute ABI");
     let e_layout = e_abi.storage_layout();
     let e_transient_layout = e_abi.transient_storage_layout();
 
@@ -141,9 +135,7 @@ fn test_erc7201_storage_layout() {
     let f_contract = unit
         .find_contract_by_name("F")
         .expect("contract can be found");
-    let f_abi = f_contract
-        .compute_abi_with_file_id("main.sol".to_string())
-        .expect("can compute ABI");
+    let f_abi = f_contract.compute_abi().expect("can compute ABI");
     let f_layout = f_abi.storage_layout();
 
     // EIP-7201 test vector: `erc7201("example.main")` →
