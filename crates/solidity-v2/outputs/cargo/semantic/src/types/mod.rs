@@ -103,6 +103,25 @@ pub enum LiteralKind {
     Address,
 }
 
+impl LiteralKind {
+    /// Returns the non-literal `Type` this literal flows into when its source
+    /// position needs a concrete EVM type.
+    pub(crate) fn mobile_type(&self) -> Option<Type> {
+        match self {
+            LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. } => {
+                numbers::smallest_integer_type_to_fit(value)
+            }
+            // TODO: not supported yet, but narrow the rational type to the
+            // smallest fixed/ufixed available (eg. 1.2 -> ufixed8x1).
+            LiteralKind::Rational { .. } => None,
+            LiteralKind::HexString { .. } | LiteralKind::String { .. } => Some(Type::String {
+                location: DataLocation::Memory,
+            }),
+            LiteralKind::Address => Some(Type::Address { payable: false }),
+        }
+    }
+}
+
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct FunctionType {
     pub definition_id: Option<NodeId>, // this may point to a FunctionDefinition
@@ -335,30 +354,10 @@ impl Type {
         }
     }
 
-    /// Returns a new non-literal `Type` this can flow into. For use when
-    /// computing the type of literal arrays or conditional branches.
-    pub(crate) fn mobile_type(&self) -> Option<Self> {
-        match self {
-            Type::Literal(
-                LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. },
-            ) => numbers::smallest_integer_type_to_fit(value),
-            Type::Literal(LiteralKind::Rational { .. }) => {
-                // TODO: not supported yet, but narrow the rational type to the
-                // smallest fixed/ufixed available (eg. 1.2 -> ufixed8x1).
-                None
-            }
-            Type::Literal(LiteralKind::HexString { .. } | LiteralKind::String { .. }) => {
-                Some(Type::String {
-                    location: DataLocation::Memory,
-                })
-            }
-            Type::Literal(LiteralKind::Address) => Some(Type::Address { payable: false }),
-
-            // Some values cannot be elements of arrays
-            Type::Mapping { .. } | Type::Tuple { .. } | Type::Void => None,
-
-            // Return self for all other cases
-            _ => Some(self.clone()),
-        }
+    /// Whether this type can appear as the element type of an array literal.
+    ///
+    /// TODO: This probably has a better way to resolve it, looking at the storage location
+    pub(crate) fn can_be_array_element(&self) -> bool {
+        !matches!(self, Type::Mapping { .. } | Type::Tuple { .. } | Type::Void)
     }
 }

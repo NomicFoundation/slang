@@ -177,9 +177,9 @@ impl Visitor for Pass<'_> {
         // TODO(validation) SDR[47]: both true_expression and false_expression should
         // have the compatible types
         let type_id = match (true_type_id, false_type_id) {
-            (Some(true_type_id), Some(false_type_id)) => self
-                .types
-                .common_mobile_type(&[true_type_id, false_type_id]),
+            (Some(true_type_id), Some(false_type_id)) => {
+                self.types.common_mobile_type(true_type_id, false_type_id)
+            }
             _ => None,
         };
         self.binder.set_node_type(node.id(), type_id);

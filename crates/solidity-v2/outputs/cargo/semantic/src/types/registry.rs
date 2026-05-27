@@ -130,6 +130,7 @@ impl TypeRegistry {
         self.types.get_index(type_id.0).unwrap()
     }
 
+    #[allow(clippy::too_many_lines)]
     pub(crate) fn implicitly_convertible_to(
         &self,
         from_type_id: TypeId,
@@ -140,19 +141,6 @@ impl TypeRegistry {
         }
         let from_type = self.get_type_by_id(from_type_id);
         let to_type = self.get_type_by_id(to_type_id);
-
-        self.internal_implicitly_convertible_to(from_type, to_type)
-    }
-
-    #[allow(clippy::too_many_lines)]
-    fn internal_implicitly_convertible_to(&self, from_type: &Type, to_type: &Type) -> bool {
-        // The public `implicitly_convertible_to` already
-        // short-circuits on `TypeId` equality, but this function is also called
-        // directly by `common_mobile_type` with `&Type` values constructed from
-        // `mobile_type()`, bypassing that short-circuit.
-        if from_type == to_type {
-            return true;
-        }
 
         match (from_type, to_type) {
             (
@@ -552,30 +540,75 @@ impl TypeRegistry {
         self.register_type(type_with_location)
     }
 
+    /// Computes the mobile type of `type_id` and returns its `TypeId`.
+    pub(crate) fn compute_mobile_type(&mut self, type_id: TypeId) -> Option<TypeId> {
+        match self.get_type_by_id(type_id).clone() {
+            Type::Literal(kind) => {
+                let mobile = kind.mobile_type()?;
+                Some(self.register_type(mobile))
+            }
+            Type::Tuple { types: element_ids } => {
+                let mobile_ids: Option<Vec<TypeId>> = element_ids
+                    .iter()
+                    .map(|id| self.compute_mobile_type(*id))
+                    .collect();
+                Some(self.register_type(Type::Tuple { types: mobile_ids? }))
+            }
+            _ => Some(type_id),
+        }
+    }
+
+    /// Returns the common type of two types, making them mobile first.
+    ///
+    /// Stricter than [`Self::type_of_array_literal`] — a literal that
+    /// flows into `bytesN` via a literal-specific rule won't
+    /// flow that way through a ternary, because the literal is mobile-typed
+    /// to an integer first.
+    ///
+    /// Matches solc's ternary semantics.
+    pub(crate) fn common_mobile_type(&mut self, left: TypeId, right: TypeId) -> Option<TypeId> {
+        let left_mobile = self.compute_mobile_type(left)?;
+        let right_mobile = self.compute_mobile_type(right)?;
+        if self.implicitly_convertible_to(left_mobile, right_mobile) {
+            return Some(right_mobile);
+        }
+        if self.implicitly_convertible_to(right_mobile, left_mobile) {
+            return Some(left_mobile);
+        }
+        None
+    }
+
     /// Return a type that can be stored in the EVM and can hold values of all
     /// the given types. The first element dictates the type class. Returns
-    /// `None` if the types cannot be reified or they are not compatible. This
-    /// is used to unify types of literal arrays and conditional branches.
-    pub(crate) fn common_mobile_type(&mut self, type_ids: &[TypeId]) -> Option<TypeId> {
-        if type_ids.is_empty() {
+    /// `None` if the types cannot be reified, they are not compatible, or they don't belong
+    /// in an array literal.
+    ///
+    /// This is used to unify types of literal arrays.
+    /// Only the first element is mobile-typed unconditionally.
+    pub(crate) fn type_of_array_literal(&mut self, type_ids: &[TypeId]) -> Option<TypeId> {
+        let (first_id, rest) = type_ids.split_first()?;
+        if !self.get_type_by_id(*first_id).can_be_array_element() {
+            // TODO(validation) SDR[750]: Error if the element type can't be an array element
             return None;
         }
-        let initial_type = self.get_type_by_id(type_ids[0]);
-        let mut element_type = initial_type.mobile_type()?;
-
-        for item_type_id in &type_ids[1..] {
-            let item_type = self.get_type_by_id(*item_type_id).mobile_type()?;
-            if self.internal_implicitly_convertible_to(&item_type, &element_type) {
-                // ok, `element_type` can already hold `item_type`
-            } else if self.internal_implicitly_convertible_to(&element_type, &item_type) {
-                // `item_type` is "bigger"
-                element_type = item_type;
-            } else {
-                // TODO(validation) SDR[1741]: types are not compatible
+        let mut element_type_id = self.compute_mobile_type(*first_id)?;
+        for &item_type_id in rest {
+            if self.implicitly_convertible_to(item_type_id, element_type_id) {
+                // Item already fits the accumulator
+                continue;
+            }
+            if !self.get_type_by_id(item_type_id).can_be_array_element() {
+                // TODO(validation) SDR[750]: Error if the element type can't be an array element
                 return None;
             }
+            let item_mobile_type_id = self.compute_mobile_type(item_type_id)?;
+            if !self.implicitly_convertible_to(element_type_id, item_mobile_type_id) {
+                // TODO(validation) SDR[1741,1353]: types are not compatible
+                return None;
+            }
+            element_type_id = item_mobile_type_id;
         }
-        Some(self.register_type(element_type))
+        Some(element_type_id)
     }
 
     // Returns true if a function type overrides another
