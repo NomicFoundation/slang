@@ -5,16 +5,27 @@ use semver::Version;
 use serde::Serialize;
 use thiserror::Error;
 
-/// All supported versions of `{{ model.language.name }}`. 
+/// All supported versions of `{{ model.language.name }}`.
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Serialize)]
 pub enum LanguageVersion {
-    {% for version in model.language.versions %}    
+    {% for version in model.language.versions %}
         V{{ version | split(pat=".") | join(sep="_") }},
     {%- endfor -%}
 }
 
 impl LanguageVersion {
+    /// The earliest supported version of `{{ model.language.name }}`.
+    pub const EARLIEST: Self = Self::V{{ model.language.versions | first | split(pat=".") | join(sep="_") }};
+
+    /// The latest supported version of `{{ model.language.name }}`.
     pub const LATEST: Self = Self::V{{ model.language.versions | last | split(pat=".") | join(sep="_") }};
+
+    /// All supported versions of `{{ model.language.name }}`, in order.
+    pub const ALL: &'static [LanguageVersion] = &[
+        {%- for version in model.language.versions %}
+            LanguageVersion::V{{ version | split(pat=".") | join(sep="_") }},
+        {%- endfor %}
+    ];
 }
 
 #[derive(Debug, Error, PartialEq)]

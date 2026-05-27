@@ -4483,7 +4483,6 @@ dependencies = [
  "slang_solidity_v2_ir",
  "slang_solidity_v2_parser",
  "slang_solidity_v2_semantic",
- "solidity_v2_language",
  "solidity_v2_testing_utils",
 ]
 

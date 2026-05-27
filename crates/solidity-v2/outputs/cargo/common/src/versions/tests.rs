@@ -1,4 +1,4 @@
-use crate::versions::language_versions::{FromSemverError, LanguageVersion};
+use crate::versions::version::{FromSemverError, LanguageVersion};
 
 #[test]
 fn test_correct_version() {

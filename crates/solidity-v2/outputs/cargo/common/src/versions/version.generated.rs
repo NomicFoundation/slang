@@ -49,7 +49,51 @@ pub enum LanguageVersion {
 }
 
 impl LanguageVersion {
+    /// The earliest supported version of `Solidity`.
+    pub const EARLIEST: Self = Self::V0_8_0;
+
+    /// The latest supported version of `Solidity`.
     pub const LATEST: Self = Self::V0_8_35;
+
+    /// All supported versions of `Solidity`, in order.
+    pub const ALL: &'static [LanguageVersion] = &[
+        LanguageVersion::V0_8_0,
+        LanguageVersion::V0_8_1,
+        LanguageVersion::V0_8_2,
+        LanguageVersion::V0_8_3,
+        LanguageVersion::V0_8_4,
+        LanguageVersion::V0_8_5,
+        LanguageVersion::V0_8_6,
+        LanguageVersion::V0_8_7,
+        LanguageVersion::V0_8_8,
+        LanguageVersion::V0_8_9,
+        LanguageVersion::V0_8_10,
+        LanguageVersion::V0_8_11,
+        LanguageVersion::V0_8_12,
+        LanguageVersion::V0_8_13,
+        LanguageVersion::V0_8_14,
+        LanguageVersion::V0_8_15,
+        LanguageVersion::V0_8_16,
+        LanguageVersion::V0_8_17,
+        LanguageVersion::V0_8_18,
+        LanguageVersion::V0_8_19,
+        LanguageVersion::V0_8_20,
+        LanguageVersion::V0_8_21,
+        LanguageVersion::V0_8_22,
+        LanguageVersion::V0_8_23,
+        LanguageVersion::V0_8_24,
+        LanguageVersion::V0_8_25,
+        LanguageVersion::V0_8_26,
+        LanguageVersion::V0_8_27,
+        LanguageVersion::V0_8_28,
+        LanguageVersion::V0_8_29,
+        LanguageVersion::V0_8_30,
+        LanguageVersion::V0_8_31,
+        LanguageVersion::V0_8_32,
+        LanguageVersion::V0_8_33,
+        LanguageVersion::V0_8_34,
+        LanguageVersion::V0_8_35,
+    ];
 }
 
 #[derive(Debug, Error, PartialEq)]
