@@ -136,7 +136,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         Arc::new(output::{{ terminal_type }}Struct {
           id: self.next_id(),
           range: source.range.clone(),
-          {%- if not terminal.is_unique %}
+          {%- if not terminal.unique_symbol %}
             text: self.unparse_range(source.range.clone()),
           {%- endif %}
         })

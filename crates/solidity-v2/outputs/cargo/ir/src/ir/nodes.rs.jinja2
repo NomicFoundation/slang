@@ -89,7 +89,7 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
   pub struct {{ terminal_type }}Struct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
-    {%- if not terminal.is_unique %}
+    {%- if not terminal.unique_symbol %}
       pub text: String,
     {%- endif %}
   }
@@ -99,7 +99,7 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
       self.id
     }
 
-    {%- if not terminal.is_unique %}
+    {%- if not terminal.unique_symbol %}
       pub fn unparse(&self) -> &str {
         &self.text
       }

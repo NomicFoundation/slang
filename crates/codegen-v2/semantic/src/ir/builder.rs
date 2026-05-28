@@ -42,7 +42,9 @@ fn remove_redundant_terminal_nodes(cst_model: &IrModel, mutator: &mut IrModelMut
         for field in &sequence.fields {
             if !field.is_optional
                 && field.field_type.is_terminal()
-                && cst_model.terminals[field.field_type.as_identifier()].is_unique
+                && cst_model.terminals[field.field_type.as_identifier()]
+                    .unique_symbol
+                    .is_some()
             {
                 mutator.remove_sequence_field(sequence_id, &field.label);
             }

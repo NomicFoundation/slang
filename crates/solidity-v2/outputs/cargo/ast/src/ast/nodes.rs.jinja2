@@ -176,7 +176,7 @@ use super::types::Type;
       self.ir_node.id()
     }
 
-    {%- if not terminal.is_unique %}
+    {%- if not terminal.unique_symbol %}
       pub fn unparse(&self) -> &str {
         self.ir_node.unparse()
       }

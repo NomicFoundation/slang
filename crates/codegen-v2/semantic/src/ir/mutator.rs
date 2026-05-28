@@ -187,7 +187,7 @@ impl From<&MutatedCollection> for Collection {
 
 #[derive(Clone, Serialize)]
 pub struct MutatedTerminal {
-    pub is_unique: bool,
+    pub unique_symbol: Option<String>,
     pub is_identifier: bool,
 
     // Indicates this is a new terminal, created in this language.
@@ -197,7 +197,7 @@ pub struct MutatedTerminal {
 impl From<&Terminal> for MutatedTerminal {
     fn from(terminal: &Terminal) -> Self {
         Self {
-            is_unique: terminal.is_unique,
+            unique_symbol: terminal.unique_symbol.clone(),
             is_identifier: terminal.is_identifier,
             is_new: false,
         }
@@ -207,7 +207,7 @@ impl From<&Terminal> for MutatedTerminal {
 impl From<&MutatedTerminal> for Terminal {
     fn from(value: &MutatedTerminal) -> Self {
         Self {
-            is_unique: value.is_unique,
+            unique_symbol: value.unique_symbol.clone(),
             is_identifier: value.is_identifier,
         }
     }
@@ -414,7 +414,7 @@ impl IrModelMutator {
 
     fn find_node_type(&self, identifier: &model::Identifier) -> NodeType {
         if let Some(terminal) = self.terminals.get(identifier) {
-            if terminal.is_unique {
+            if terminal.unique_symbol.is_some() {
                 NodeType::UniqueTerminal(identifier.clone())
             } else {
                 NodeType::Terminal(identifier.clone())
@@ -560,7 +560,7 @@ impl IrModelMutator {
         let target_id: model::Identifier = target.into();
         if let Some(terminal) = self.terminals.get(&target_id) {
             assert!(
-                !terminal.is_unique,
+                terminal.unique_symbol.is_none(),
                 "Cannot collapse choice {choice_id} to unique terminal {target}",
             );
         } else {
@@ -568,7 +568,7 @@ impl IrModelMutator {
             self.terminals.insert(
                 target_id.clone(),
                 MutatedTerminal {
-                    is_unique: false,
+                    unique_symbol: None,
                     is_identifier: false,
                     is_new: true,
                 },
@@ -622,11 +622,11 @@ impl IrModelMutator {
             .unwrap_or_else(|| panic!("Target terminal {target} not found"));
 
         assert_eq!(
-            source_terminal.is_unique, target_terminal.is_unique,
-            "Source and target terminals must have the same uniqueness"
+            source_terminal.unique_symbol, target_terminal.unique_symbol,
+            "Source and target terminals must have the same unique symbol"
         );
 
-        let is_unique = source_terminal.is_unique;
+        let is_unique = source_terminal.unique_symbol.is_some();
         let target_is_identifier = target_terminal.is_identifier;
         let source_type = self.find_node_type(&source_id);
         let target_type = self.find_node_type(&target_id);
