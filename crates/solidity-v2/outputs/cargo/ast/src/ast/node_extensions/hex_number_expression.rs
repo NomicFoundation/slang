@@ -2,13 +2,18 @@ use num_bigint::BigInt;
 use slang_solidity_v2_semantic::types::Number;
 
 use super::super::HexNumberExpressionStruct;
-use super::common::{integer_value_of_node, number_value_of_node};
+use super::common::number_value_of_node;
 
 impl HexNumberExpressionStruct {
-    /// Returns the integer value of this literal, or `None` if the literal
-    /// cannot be evaluated (e.g. a malformed hex digit sequence).
+    /// Returns the integer value of this literal.
+    ///
+    /// Hex literals always carry an integer value as a property of the
+    /// literal text itself, regardless of whether the binder folded the
+    /// surrounding context as a numeric or non-numeric target (e.g.
+    /// `address`, `bytesN`).
     pub fn integer_value(&self) -> Option<BigInt> {
-        integer_value_of_node(&self.semantic, self.ir_node.id())
+        let hex = self.ir_node.literal.unparse();
+        BigInt::parse_bytes(hex.strip_prefix("0x")?.as_bytes(), 16)
     }
 
     /// Returns the literal number carried by this node's type. Hex number
