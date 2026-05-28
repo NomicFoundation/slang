@@ -65,8 +65,9 @@ jobs:
 
       - name: "Restore Dependencies Cache"
         uses: "./.github/actions/cache/dependencies/restore"
-        with:
-          cacheKeySuffix: "benchmark-cargo"
+
+      - name: "Restore Benchmarks Cache"
+        uses: "./.github/actions/cache/benchmarks/restore"
 
       - name: "Restore Cargo Target Cache"
         uses: "./.github/actions/cache/cargo-target/restore"
@@ -101,8 +102,8 @@ jobs:
           path: "target/iai"
           if-no-files-found: "error"
 
-      - name: "Save Dependencies Cache"
-        if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
-        uses: "./.github/actions/cache/dependencies/save"
-        with:
-          cacheKeySuffix: "benchmark-cargo"
+      - name: "Save Benchmarks Cache"
+        # We only save the benchmarks cache from the slang_v2 workflow, since they all save the same information
+        # and the V2 is the quickest workflow
+        if: false
+        uses: "./.github/actions/cache/benchmarks/save"

@@ -1,11 +1,5 @@
 name: "cache/dependencies/restore"
 
-inputs:
-  cacheKeySuffix:
-    description: "Optional suffix to isolate this cache (e.g. 'benchmark-cargo-slang'). Empty by default."
-    required: false
-    default: ""
-
 runs:
   using: "composite"
   steps:
@@ -13,7 +7,7 @@ runs:
       uses: "actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae" # v5.0.5
       with:
         # __SLANG_CI_CACHE_DEPENDENCIES_PATHS__ (keep in sync)
-        key: "dependencies-${{ runner.os }}-v1${{ inputs.cacheKeySuffix && format('-{0}', inputs.cacheKeySuffix) || '' }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('Pipfile.lock') }}"
+        key: "dependencies-${{ runner.os }}-v1-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('Pipfile.lock') }}"
         path: |
           ~/.cache/hermit/
           ~/.local/share/virtualenvs/
@@ -22,4 +16,4 @@ runs:
           ~/.cargo/git/
           ~/.local/share/pnpm/store/
         restore-keys: |
-          dependencies-${{ runner.os }}-v1${{ inputs.cacheKeySuffix && format('-{0}', inputs.cacheKeySuffix) || '' }}-
+          dependencies-${{ runner.os }}-v1-
