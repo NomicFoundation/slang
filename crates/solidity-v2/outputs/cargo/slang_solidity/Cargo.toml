@@ -30,6 +30,8 @@ slang_solidity_v2_parser = { workspace = true }
 slang_solidity_v2_semantic = { workspace = true }
 
 [dev-dependencies]
+num-bigint = { workspace = true }
+num-rational = { workspace = true }
 ruint = { workspace = true }
 serde_json = { workspace = true }
 

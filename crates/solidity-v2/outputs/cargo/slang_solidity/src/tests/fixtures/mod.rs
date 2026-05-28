@@ -7,6 +7,7 @@ mod abi_with_tuples;
 mod chained_imports;
 mod counter;
 mod full_abi;
+mod number_literals;
 mod overrides;
 mod storage_layout;
 
@@ -14,6 +15,7 @@ pub(super) use abi_with_tuples::AbiWithTuples;
 pub(super) use chained_imports::ChainedImports;
 pub(super) use counter::Counter;
 pub(super) use full_abi::FullAbi;
+pub(super) use number_literals::NumberLiterals;
 pub(super) use overrides::Overrides;
 pub(super) use storage_layout::StorageLayout;
 
@@ -117,6 +119,12 @@ fn test_build_counter_fixture() {
 #[test]
 fn test_build_full_abi_fixture() {
     let unit = FullAbi::build_compilation_unit();
+    assert_eq!(1, unit.file_ids().len());
+}
+
+#[test]
+fn test_build_number_literals_fixture() {
+    let unit = NumberLiterals::build_compilation_unit();
     assert_eq!(1, unit.file_ids().len());
 }
 
