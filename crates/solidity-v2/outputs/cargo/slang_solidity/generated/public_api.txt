@@ -20,6 +20,7 @@ pub fn slang_solidity_v2::compilation::CompilationBuilder<C>::build(self) -> sla
 pub fn slang_solidity_v2::compilation::CompilationBuilder<C>::create(language_version: slang_solidity_v2_common::versions::version::LanguageVersion, config: C) -> slang_solidity_v2::compilation::CompilationBuilder<C>
 pub struct slang_solidity_v2::compilation::CompilationUnit
 impl slang_solidity_v2::compilation::CompilationUnit
+pub fn slang_solidity_v2::compilation::CompilationUnit::all_contracts(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::nodes::ContractDefinition> + use<'_>
 pub fn slang_solidity_v2::compilation::CompilationUnit::all_definitions(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::definitions::Definition> + use<'_>
 pub fn slang_solidity_v2::compilation::CompilationUnit::all_references(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::references::Reference> + use<'_>
 pub fn slang_solidity_v2::compilation::CompilationUnit::compute_contracts_abi(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::abi::ContractAbi>

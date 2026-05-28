@@ -1,6 +1,6 @@
 use std::collections::HashSet;
-use std::sync::Arc;
 
+use contract_data_cache::ContractDataCache;
 use file_node_mapper::FileNodeMapper;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -18,6 +18,7 @@ use crate::types::{
     TypeRegistry, UserDefinedValueType,
 };
 
+mod contract_data_cache;
 mod file_node_mapper;
 
 /// Trait for files that can be used as input to the semantic analysis passes.
@@ -60,6 +61,7 @@ pub struct SemanticContext {
     binder: Binder,
     types: TypeRegistry,
     file_node_mapper: FileNodeMapper,
+    contract_data: ContractDataCache,
 }
 
 impl SemanticContext {
@@ -77,11 +79,13 @@ impl SemanticContext {
         p4_resolve_references::run(files, &mut binder, &mut types, language_version);
 
         let file_node_mapper = FileNodeMapper::build_from(files);
+        let contract_data = ContractDataCache::build_from(&binder, &types);
 
         Self {
             binder,
             types,
             file_node_mapper,
+            contract_data,
         }
     }
 
@@ -103,23 +107,54 @@ impl SemanticContext {
         self.binder.references().values()
     }
 
+    /// Iterates over every contract definition in this compilation unit, in
+    /// registration order.
+    pub fn all_contracts(&self) -> impl Iterator<Item = &ir::ContractDefinition> + use<'_> {
+        self.contract_data.all_contracts()
+    }
+
     pub fn find_contract_by_name(&self, name: &str) -> Option<ir::ContractDefinition> {
-        self.binder().definitions().values().find_map(|definition| {
-            let Definition::Contract(contract) = definition else {
-                return None;
-            };
-            if definition.identifier().unparse() == name {
-                Some(Arc::clone(&contract.ir_node))
-            } else {
-                None
-            }
-        })
+        self.contract_data.find_contract_by_name(name).cloned()
     }
 }
 
 impl SemanticContext {
     pub fn file_id_from_node_id(&self, node_id: NodeId) -> &str {
         self.file_node_mapper.file_id_from_node_id(node_id)
+    }
+
+    /// Returns the pre-computed list of functions visible in the given
+    /// contract's hierarchy (per C3 linearisation), with overrides resolved and
+    /// sorted by name. `contract_id` must be a registered contract definition.
+    pub fn linearised_functions(&self, contract_id: NodeId) -> &[ir::FunctionDefinition] {
+        self.contract_data.linearised_functions(contract_id)
+    }
+
+    /// Returns the pre-computed list of state variables visible in the given
+    /// contract's hierarchy, in storage-layout order (most-base first, then
+    /// each contract's own variables). `contract_id` must be a registered
+    /// contract definition.
+    pub fn linearised_state_variables(
+        &self,
+        contract_id: NodeId,
+    ) -> &[ir::StateVariableDefinition] {
+        self.contract_data.linearised_state_variables(contract_id)
+    }
+
+    /// Returns the pre-computed list of errors visible in the given contract's
+    /// hierarchy (including base contracts and interfaces, in reverse
+    /// linearisation order). `contract_id` must be a registered contract
+    /// definition.
+    pub fn linearised_errors(&self, contract_id: NodeId) -> &[ir::ErrorDefinition] {
+        self.contract_data.linearised_errors(contract_id)
+    }
+
+    /// Returns the pre-computed list of events visible in the given contract's
+    /// hierarchy (including base contracts and interfaces, in reverse
+    /// linearisation order). `contract_id` must be a registered contract
+    /// definition.
+    pub fn linearised_events(&self, contract_id: NodeId) -> &[ir::EventDefinition] {
+        self.contract_data.linearised_events(contract_id)
     }
 
     pub fn resolve_reference_identifier_to_definition_id(&self, node_id: NodeId) -> Option<NodeId> {

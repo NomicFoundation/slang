@@ -80,6 +80,14 @@ impl CompilationUnit {
             .map(|contract| ast::create_contract_definition(&contract, &self.semantic))
     }
 
+    /// Iterates over every contract definition in this compilation unit, in
+    /// registration order.
+    pub fn all_contracts(&self) -> impl Iterator<Item = ast::ContractDefinition> + use<'_> {
+        self.semantic
+            .all_contracts()
+            .map(|contract| ast::create_contract_definition(contract, &self.semantic))
+    }
+
     pub fn compute_contracts_abi(&self) -> Vec<abi::ContractAbi> {
         self.files
             .values()
