@@ -5,12 +5,10 @@ mod contract_definition;
 mod contract_members;
 mod decimal_number_expression;
 mod hex_number_expression;
-mod interface_definition;
 pub use contract_base::ContractBase;
 
 mod expression;
 mod function_call_expression;
-mod function_definition;
 mod identifier;
 mod identifier_path;
 mod source_unit;

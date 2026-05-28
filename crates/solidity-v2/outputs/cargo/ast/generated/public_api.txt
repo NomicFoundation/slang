@@ -1427,16 +1427,16 @@ pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::references(&self) -
 impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_abi(&self) -> core::option::Option<slang_solidity_v2_ast::abi::ContractAbi>
 impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
-pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_linearised_bases(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ContractBase>
-pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_linearised_errors(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ErrorDefinition>
-pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_linearised_events(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::EventDefinition>
-pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_linearised_functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
-pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_linearised_state_variables(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::StateVariableDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::constructor(&self) -> core::option::Option<slang_solidity_v2_ast::ast::FunctionDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::direct_bases(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ContractBase>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::errors(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ErrorDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::events(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::EventDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::linearised_bases(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ContractBase>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::linearised_errors(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ErrorDefinition>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::linearised_events(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::EventDefinition>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::linearised_functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::linearised_state_variables(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::StateVariableDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::modifiers(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::state_variables(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::StateVariableDefinition>
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::ContractDefinitionStruct

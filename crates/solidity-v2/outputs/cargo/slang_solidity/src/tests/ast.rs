@@ -239,13 +239,13 @@ fn test_contract_direct_bases() {
 }
 
 #[test]
-fn test_contract_compute_linearised_bases() {
+fn test_contract_linearised_bases() {
     let unit = fixtures::Counter::build_compilation_unit();
 
     let counter = unit
         .find_contract_by_name("Counter")
         .expect("can find Counter contract");
-    let bases = counter.compute_linearised_bases();
+    let bases = counter.linearised_bases();
     assert_eq!(bases.len(), 3);
 
     let ContractBase::Contract(counter) = &bases[0] else {
@@ -307,14 +307,14 @@ fn test_definition_references() {
 }
 
 #[test]
-fn test_contract_compute_linearised_state_variables() {
+fn test_contract_linearised_state_variables() {
     let unit = fixtures::Counter::build_compilation_unit();
 
     let counter = unit
         .find_contract_by_name("Counter")
         .expect("can find Counter contract");
 
-    let state_variables = counter.compute_linearised_state_variables();
+    let state_variables = counter.linearised_state_variables();
     assert_eq!(state_variables.len(), 4);
 
     assert_eq!(state_variables[0].name().name(), "_owner");
@@ -324,14 +324,14 @@ fn test_contract_compute_linearised_state_variables() {
 }
 
 #[test]
-fn test_contract_compute_linearised_functions() {
+fn test_contract_linearised_functions() {
     let unit = fixtures::Counter::build_compilation_unit();
 
     let counter = unit
         .find_contract_by_name("Counter")
         .expect("can find Counter contract");
 
-    let functions = counter.compute_linearised_functions();
+    let functions = counter.linearised_functions();
     assert_eq!(functions.len(), 5);
 
     assert!(functions[0]
@@ -367,13 +367,13 @@ fn test_contract_constructor_and_modifiers() {
 }
 
 #[test]
-fn test_contract_compute_linearised_functions_with_overrides() {
+fn test_contract_linearised_functions_with_overrides() {
     let unit = fixtures::Overrides::build_compilation_unit();
 
     let inherited = unit
         .find_contract_by_name("Inherited")
         .expect("can find contract");
-    let functions = inherited.compute_linearised_functions();
+    let functions = inherited.linearised_functions();
     assert_eq!(functions.len(), 3);
     assert!(functions[0]
         .name()
