@@ -386,7 +386,7 @@ impl CollectedDefinitionDisplay<'_> {
                 LiteralKind::Rational { value } => format!("lit-rational({value})"),
                 LiteralKind::HexString { bytes } => format!("lit-hexstring({bytes})"),
                 LiteralKind::String { bytes } => format!("lit-string({bytes})"),
-                LiteralKind::Address => "lit-address".to_string(),
+                LiteralKind::Address { value } => format!("lit-address({value})"),
             },
             Type::String { location } => {
                 format!(

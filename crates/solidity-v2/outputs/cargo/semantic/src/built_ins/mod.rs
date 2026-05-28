@@ -362,7 +362,9 @@ impl<'a> BuiltInsResolver<'a> {
                 }
             }
             Type::Integer { .. } => None,
-            Type::Literal(LiteralKind::Address) => Self::lookup_member_of_address(symbol, false),
+            Type::Literal(LiteralKind::Address { .. }) => {
+                Self::lookup_member_of_address(symbol, false)
+            }
             Type::Literal(_) => None,
             Type::Mapping { .. } => None,
             Type::String { .. } => match symbol {

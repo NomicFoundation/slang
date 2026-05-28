@@ -343,6 +343,7 @@ impl core::marker::Copy for slang_solidity_v2_semantic::types::FunctionTypeVisib
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::FunctionTypeVisibility
 pub enum slang_solidity_v2_semantic::types::LiteralKind
 pub slang_solidity_v2_semantic::types::LiteralKind::Address
+pub slang_solidity_v2_semantic::types::LiteralKind::Address::value: ruint::aliases::U160
 pub slang_solidity_v2_semantic::types::LiteralKind::HexInteger
 pub slang_solidity_v2_semantic::types::LiteralKind::HexInteger::bytes: u32
 pub slang_solidity_v2_semantic::types::LiteralKind::HexInteger::value: num_bigint::bigint::BigInt
