@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# bencher-plot-npm: creates a plot in the given bencher project for comparing with npm libraries.
+# plot-npm.sh: creates a plot in the given bencher project for comparing with npm libraries.
 #
 # In essence, it helps to pick the right benchmarks, and solves the internal uuids use by bencher from the slug name
 # of every part of it.
 #
-# usage: bencher-plot-npm project branches testbeds benchmarks title
+# usage: plot-npm.sh project branches testbeds benchmarks title
 #
 # Example of usage to build plots in batch using the projects.json file:
-# $  jq "[.projects,.files] | add | map(.name) | .[]" crates/solidity/testing/perf/projects.json | xargs -L1 -I{} bash ./scripts/bin/bencher-plot-npm slang-dashboard-npm main ci {} "{}"
+# $  jq "[.projects,.files] | add | map(.name) | .[]" crates/solidity/testing/perf/projects.json | xargs -L1 -I{} bash ./scripts/bencher/plot-npm.sh slang-dashboard-npm main ci {} "{}"
 
 set -e
 shopt -s inherit_errexit
@@ -20,13 +20,12 @@ benchmarks=$4
 title=$5
 measure="Duration"
 
-if [[ $# -ne 5 ]]
-then
-  echo "Usage: bencher-plot-npm project branches testbed benchmarks title";
-  exit 1;
+if [[ $# -ne 5 ]]; then
+  echo "Usage: plot-npm.sh project branches testbed benchmarks title"
+  exit 1
 fi
 
-source "$(dirname "$0")/bencher-common"
+source "$(dirname "$0")/_common.sh"
 
 function get_benchmarks() {
   details=$(bencher benchmark list --search "${benchmarks}" --per-page 255 "${project}")
