@@ -480,6 +480,8 @@ pub fn slang_solidity_v2_ir::ir::visitor::accept_yul_variable_declaration_value(
 pub enum slang_solidity_v2_ir::ir::AbicoderVersion
 pub slang_solidity_v2_ir::ir::AbicoderVersion::AbicoderV1Keyword(slang_solidity_v2_ir::ir::AbicoderV1Keyword)
 pub slang_solidity_v2_ir::ir::AbicoderVersion::AbicoderV2Keyword(slang_solidity_v2_ir::ir::AbicoderV2Keyword)
+impl slang_solidity_v2_ir::ir::AbicoderVersion
+pub fn slang_solidity_v2_ir::ir::AbicoderVersion::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::AbicoderVersion
 pub fn slang_solidity_v2_ir::ir::AbicoderVersion::clone(&self) -> slang_solidity_v2_ir::ir::AbicoderVersion
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::AbicoderVersion
@@ -487,6 +489,8 @@ pub fn slang_solidity_v2_ir::ir::AbicoderVersion::fmt(&self, f: &mut core::fmt::
 pub enum slang_solidity_v2_ir::ir::AdditiveExpressionOperator
 pub slang_solidity_v2_ir::ir::AdditiveExpressionOperator::Minus(slang_solidity_v2_ir::ir::Minus)
 pub slang_solidity_v2_ir::ir::AdditiveExpressionOperator::Plus(slang_solidity_v2_ir::ir::Plus)
+impl slang_solidity_v2_ir::ir::AdditiveExpressionOperator
+pub fn slang_solidity_v2_ir::ir::AdditiveExpressionOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::AdditiveExpressionOperator
 pub fn slang_solidity_v2_ir::ir::AdditiveExpressionOperator::clone(&self) -> slang_solidity_v2_ir::ir::AdditiveExpressionOperator
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::AdditiveExpressionOperator
@@ -511,6 +515,8 @@ pub slang_solidity_v2_ir::ir::AssignmentExpressionOperator::MinusEqual(slang_sol
 pub slang_solidity_v2_ir::ir::AssignmentExpressionOperator::PercentEqual(slang_solidity_v2_ir::ir::PercentEqual)
 pub slang_solidity_v2_ir::ir::AssignmentExpressionOperator::PlusEqual(slang_solidity_v2_ir::ir::PlusEqual)
 pub slang_solidity_v2_ir::ir::AssignmentExpressionOperator::SlashEqual(slang_solidity_v2_ir::ir::SlashEqual)
+impl slang_solidity_v2_ir::ir::AssignmentExpressionOperator
+pub fn slang_solidity_v2_ir::ir::AssignmentExpressionOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::AssignmentExpressionOperator
 pub fn slang_solidity_v2_ir::ir::AssignmentExpressionOperator::clone(&self) -> slang_solidity_v2_ir::ir::AssignmentExpressionOperator
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::AssignmentExpressionOperator
@@ -545,6 +551,8 @@ pub fn slang_solidity_v2_ir::ir::ElementaryType::fmt(&self, f: &mut core::fmt::F
 pub enum slang_solidity_v2_ir::ir::EqualityExpressionOperator
 pub slang_solidity_v2_ir::ir::EqualityExpressionOperator::BangEqual(slang_solidity_v2_ir::ir::BangEqual)
 pub slang_solidity_v2_ir::ir::EqualityExpressionOperator::EqualEqual(slang_solidity_v2_ir::ir::EqualEqual)
+impl slang_solidity_v2_ir::ir::EqualityExpressionOperator
+pub fn slang_solidity_v2_ir::ir::EqualityExpressionOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::EqualityExpressionOperator
 pub fn slang_solidity_v2_ir::ir::EqualityExpressionOperator::clone(&self) -> slang_solidity_v2_ir::ir::EqualityExpressionOperator
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::EqualityExpressionOperator
@@ -553,6 +561,8 @@ pub enum slang_solidity_v2_ir::ir::ExperimentalFeature
 pub slang_solidity_v2_ir::ir::ExperimentalFeature::ABIEncoderV2Keyword(slang_solidity_v2_ir::ir::ABIEncoderV2Keyword)
 pub slang_solidity_v2_ir::ir::ExperimentalFeature::SMTCheckerKeyword(slang_solidity_v2_ir::ir::SMTCheckerKeyword)
 pub slang_solidity_v2_ir::ir::ExperimentalFeature::StringLiteral(slang_solidity_v2_ir::ir::StringLiteral)
+impl slang_solidity_v2_ir::ir::ExperimentalFeature
+pub fn slang_solidity_v2_ir::ir::ExperimentalFeature::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::ExperimentalFeature
 pub fn slang_solidity_v2_ir::ir::ExperimentalFeature::clone(&self) -> slang_solidity_v2_ir::ir::ExperimentalFeature
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ExperimentalFeature
@@ -686,6 +696,8 @@ pub slang_solidity_v2_ir::ir::InequalityExpressionOperator::GreaterThan(slang_so
 pub slang_solidity_v2_ir::ir::InequalityExpressionOperator::GreaterThanEqual(slang_solidity_v2_ir::ir::GreaterThanEqual)
 pub slang_solidity_v2_ir::ir::InequalityExpressionOperator::LessThan(slang_solidity_v2_ir::ir::LessThan)
 pub slang_solidity_v2_ir::ir::InequalityExpressionOperator::LessThanEqual(slang_solidity_v2_ir::ir::LessThanEqual)
+impl slang_solidity_v2_ir::ir::InequalityExpressionOperator
+pub fn slang_solidity_v2_ir::ir::InequalityExpressionOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::InequalityExpressionOperator
 pub fn slang_solidity_v2_ir::ir::InequalityExpressionOperator::clone(&self) -> slang_solidity_v2_ir::ir::InequalityExpressionOperator
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::InequalityExpressionOperator
@@ -694,6 +706,8 @@ pub enum slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator
 pub slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator::Asterisk(slang_solidity_v2_ir::ir::Asterisk)
 pub slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator::Percent(slang_solidity_v2_ir::ir::Percent)
 pub slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator::Slash(slang_solidity_v2_ir::ir::Slash)
+impl slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator
+pub fn slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator
 pub fn slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator::clone(&self) -> slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator
@@ -707,6 +721,8 @@ pub slang_solidity_v2_ir::ir::NumberUnit::MinutesKeyword(slang_solidity_v2_ir::i
 pub slang_solidity_v2_ir::ir::NumberUnit::SecondsKeyword(slang_solidity_v2_ir::ir::SecondsKeyword)
 pub slang_solidity_v2_ir::ir::NumberUnit::WeeksKeyword(slang_solidity_v2_ir::ir::WeeksKeyword)
 pub slang_solidity_v2_ir::ir::NumberUnit::WeiKeyword(slang_solidity_v2_ir::ir::WeiKeyword)
+impl slang_solidity_v2_ir::ir::NumberUnit
+pub fn slang_solidity_v2_ir::ir::NumberUnit::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::NumberUnit
 pub fn slang_solidity_v2_ir::ir::NumberUnit::clone(&self) -> slang_solidity_v2_ir::ir::NumberUnit
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::NumberUnit
@@ -714,6 +730,8 @@ pub fn slang_solidity_v2_ir::ir::NumberUnit::fmt(&self, f: &mut core::fmt::Forma
 pub enum slang_solidity_v2_ir::ir::PostfixExpressionOperator
 pub slang_solidity_v2_ir::ir::PostfixExpressionOperator::MinusMinus(slang_solidity_v2_ir::ir::MinusMinus)
 pub slang_solidity_v2_ir::ir::PostfixExpressionOperator::PlusPlus(slang_solidity_v2_ir::ir::PlusPlus)
+impl slang_solidity_v2_ir::ir::PostfixExpressionOperator
+pub fn slang_solidity_v2_ir::ir::PostfixExpressionOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::PostfixExpressionOperator
 pub fn slang_solidity_v2_ir::ir::PostfixExpressionOperator::clone(&self) -> slang_solidity_v2_ir::ir::PostfixExpressionOperator
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::PostfixExpressionOperator
@@ -733,6 +751,8 @@ pub slang_solidity_v2_ir::ir::PrefixExpressionOperator::Minus(slang_solidity_v2_
 pub slang_solidity_v2_ir::ir::PrefixExpressionOperator::MinusMinus(slang_solidity_v2_ir::ir::MinusMinus)
 pub slang_solidity_v2_ir::ir::PrefixExpressionOperator::PlusPlus(slang_solidity_v2_ir::ir::PlusPlus)
 pub slang_solidity_v2_ir::ir::PrefixExpressionOperator::Tilde(slang_solidity_v2_ir::ir::Tilde)
+impl slang_solidity_v2_ir::ir::PrefixExpressionOperator
+pub fn slang_solidity_v2_ir::ir::PrefixExpressionOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::PrefixExpressionOperator
 pub fn slang_solidity_v2_ir::ir::PrefixExpressionOperator::clone(&self) -> slang_solidity_v2_ir::ir::PrefixExpressionOperator
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::PrefixExpressionOperator
@@ -741,6 +761,8 @@ pub enum slang_solidity_v2_ir::ir::ShiftExpressionOperator
 pub slang_solidity_v2_ir::ir::ShiftExpressionOperator::GreaterThanGreaterThan(slang_solidity_v2_ir::ir::GreaterThanGreaterThan)
 pub slang_solidity_v2_ir::ir::ShiftExpressionOperator::GreaterThanGreaterThanGreaterThan(slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThan)
 pub slang_solidity_v2_ir::ir::ShiftExpressionOperator::LessThanLessThan(slang_solidity_v2_ir::ir::LessThanLessThan)
+impl slang_solidity_v2_ir::ir::ShiftExpressionOperator
+pub fn slang_solidity_v2_ir::ir::ShiftExpressionOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::ShiftExpressionOperator
 pub fn slang_solidity_v2_ir::ir::ShiftExpressionOperator::clone(&self) -> slang_solidity_v2_ir::ir::ShiftExpressionOperator
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ShiftExpressionOperator
@@ -821,6 +843,8 @@ pub enum slang_solidity_v2_ir::ir::StorageLocation
 pub slang_solidity_v2_ir::ir::StorageLocation::CallDataKeyword(slang_solidity_v2_ir::ir::CallDataKeyword)
 pub slang_solidity_v2_ir::ir::StorageLocation::MemoryKeyword(slang_solidity_v2_ir::ir::MemoryKeyword)
 pub slang_solidity_v2_ir::ir::StorageLocation::StorageKeyword(slang_solidity_v2_ir::ir::StorageKeyword)
+impl slang_solidity_v2_ir::ir::StorageLocation
+pub fn slang_solidity_v2_ir::ir::StorageLocation::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::StorageLocation
 pub fn slang_solidity_v2_ir::ir::StorageLocation::clone(&self) -> slang_solidity_v2_ir::ir::StorageLocation
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::StorageLocation
@@ -866,6 +890,8 @@ pub slang_solidity_v2_ir::ir::UsingOperator::Percent(slang_solidity_v2_ir::ir::P
 pub slang_solidity_v2_ir::ir::UsingOperator::Plus(slang_solidity_v2_ir::ir::Plus)
 pub slang_solidity_v2_ir::ir::UsingOperator::Slash(slang_solidity_v2_ir::ir::Slash)
 pub slang_solidity_v2_ir::ir::UsingOperator::Tilde(slang_solidity_v2_ir::ir::Tilde)
+impl slang_solidity_v2_ir::ir::UsingOperator
+pub fn slang_solidity_v2_ir::ir::UsingOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::UsingOperator
 pub fn slang_solidity_v2_ir::ir::UsingOperator::clone(&self) -> slang_solidity_v2_ir::ir::UsingOperator
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::UsingOperator
@@ -906,6 +932,8 @@ pub slang_solidity_v2_ir::ir::VersionOperator::PragmaGreaterThanEqual(slang_soli
 pub slang_solidity_v2_ir::ir::VersionOperator::PragmaLessThan(slang_solidity_v2_ir::ir::PragmaLessThan)
 pub slang_solidity_v2_ir::ir::VersionOperator::PragmaLessThanEqual(slang_solidity_v2_ir::ir::PragmaLessThanEqual)
 pub slang_solidity_v2_ir::ir::VersionOperator::PragmaTilde(slang_solidity_v2_ir::ir::PragmaTilde)
+impl slang_solidity_v2_ir::ir::VersionOperator
+pub fn slang_solidity_v2_ir::ir::VersionOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::VersionOperator
 pub fn slang_solidity_v2_ir::ir::VersionOperator::clone(&self) -> slang_solidity_v2_ir::ir::VersionOperator
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::VersionOperator
@@ -925,6 +953,8 @@ pub slang_solidity_v2_ir::ir::YulLiteral::HexLiteral(slang_solidity_v2_ir::ir::H
 pub slang_solidity_v2_ir::ir::YulLiteral::HexStringLiteral(slang_solidity_v2_ir::ir::HexStringLiteral)
 pub slang_solidity_v2_ir::ir::YulLiteral::StringLiteral(slang_solidity_v2_ir::ir::StringLiteral)
 pub slang_solidity_v2_ir::ir::YulLiteral::TrueKeyword(slang_solidity_v2_ir::ir::TrueKeyword)
+impl slang_solidity_v2_ir::ir::YulLiteral
+pub fn slang_solidity_v2_ir::ir::YulLiteral::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::YulLiteral
 pub fn slang_solidity_v2_ir::ir::YulLiteral::clone(&self) -> slang_solidity_v2_ir::ir::YulLiteral
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulLiteral
@@ -956,6 +986,7 @@ pub struct slang_solidity_v2_ir::ir::ABIEncoderV2KeywordStruct
 pub slang_solidity_v2_ir::ir::ABIEncoderV2KeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::ABIEncoderV2KeywordStruct
 pub fn slang_solidity_v2_ir::ir::ABIEncoderV2KeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::ABIEncoderV2KeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::ABIEncoderV2KeywordStruct
 pub fn slang_solidity_v2_ir::ir::ABIEncoderV2KeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::ABIEncoderV2KeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::ABIEncoderV2KeywordStruct
@@ -975,6 +1006,7 @@ pub struct slang_solidity_v2_ir::ir::AbicoderV1KeywordStruct
 pub slang_solidity_v2_ir::ir::AbicoderV1KeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::AbicoderV1KeywordStruct
 pub fn slang_solidity_v2_ir::ir::AbicoderV1KeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::AbicoderV1KeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::AbicoderV1KeywordStruct
 pub fn slang_solidity_v2_ir::ir::AbicoderV1KeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::AbicoderV1KeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::AbicoderV1KeywordStruct
@@ -987,6 +1019,7 @@ pub struct slang_solidity_v2_ir::ir::AbicoderV2KeywordStruct
 pub slang_solidity_v2_ir::ir::AbicoderV2KeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::AbicoderV2KeywordStruct
 pub fn slang_solidity_v2_ir::ir::AbicoderV2KeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::AbicoderV2KeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::AbicoderV2KeywordStruct
 pub fn slang_solidity_v2_ir::ir::AbicoderV2KeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::AbicoderV2KeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::AbicoderV2KeywordStruct
@@ -999,6 +1032,7 @@ pub struct slang_solidity_v2_ir::ir::AbstractKeywordStruct
 pub slang_solidity_v2_ir::ir::AbstractKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::AbstractKeywordStruct
 pub fn slang_solidity_v2_ir::ir::AbstractKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::AbstractKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::AbstractKeywordStruct
 pub fn slang_solidity_v2_ir::ir::AbstractKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::AbstractKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::AbstractKeywordStruct
@@ -1027,6 +1061,7 @@ pub struct slang_solidity_v2_ir::ir::AmpersandEqualStruct
 pub slang_solidity_v2_ir::ir::AmpersandEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::AmpersandEqualStruct
 pub fn slang_solidity_v2_ir::ir::AmpersandEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::AmpersandEqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::AmpersandEqualStruct
 pub fn slang_solidity_v2_ir::ir::AmpersandEqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::AmpersandEqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::AmpersandEqualStruct
@@ -1039,6 +1074,7 @@ pub struct slang_solidity_v2_ir::ir::AmpersandStruct
 pub slang_solidity_v2_ir::ir::AmpersandStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::AmpersandStruct
 pub fn slang_solidity_v2_ir::ir::AmpersandStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::AmpersandStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::AmpersandStruct
 pub fn slang_solidity_v2_ir::ir::AmpersandStruct::clone(&self) -> slang_solidity_v2_ir::ir::AmpersandStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::AmpersandStruct
@@ -1059,6 +1095,7 @@ pub struct slang_solidity_v2_ir::ir::AnonymousKeywordStruct
 pub slang_solidity_v2_ir::ir::AnonymousKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::AnonymousKeywordStruct
 pub fn slang_solidity_v2_ir::ir::AnonymousKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::AnonymousKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::AnonymousKeywordStruct
 pub fn slang_solidity_v2_ir::ir::AnonymousKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::AnonymousKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::AnonymousKeywordStruct
@@ -1104,6 +1141,7 @@ pub struct slang_solidity_v2_ir::ir::AsteriskEqualStruct
 pub slang_solidity_v2_ir::ir::AsteriskEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::AsteriskEqualStruct
 pub fn slang_solidity_v2_ir::ir::AsteriskEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::AsteriskEqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::AsteriskEqualStruct
 pub fn slang_solidity_v2_ir::ir::AsteriskEqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::AsteriskEqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::AsteriskEqualStruct
@@ -1116,6 +1154,7 @@ pub struct slang_solidity_v2_ir::ir::AsteriskStruct
 pub slang_solidity_v2_ir::ir::AsteriskStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::AsteriskStruct
 pub fn slang_solidity_v2_ir::ir::AsteriskStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::AsteriskStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::AsteriskStruct
 pub fn slang_solidity_v2_ir::ir::AsteriskStruct::clone(&self) -> slang_solidity_v2_ir::ir::AsteriskStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::AsteriskStruct
@@ -1128,6 +1167,7 @@ pub struct slang_solidity_v2_ir::ir::BangEqualStruct
 pub slang_solidity_v2_ir::ir::BangEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::BangEqualStruct
 pub fn slang_solidity_v2_ir::ir::BangEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::BangEqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::BangEqualStruct
 pub fn slang_solidity_v2_ir::ir::BangEqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::BangEqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::BangEqualStruct
@@ -1140,6 +1180,7 @@ pub struct slang_solidity_v2_ir::ir::BangStruct
 pub slang_solidity_v2_ir::ir::BangStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::BangStruct
 pub fn slang_solidity_v2_ir::ir::BangStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::BangStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::BangStruct
 pub fn slang_solidity_v2_ir::ir::BangStruct::clone(&self) -> slang_solidity_v2_ir::ir::BangStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::BangStruct
@@ -1152,6 +1193,7 @@ pub struct slang_solidity_v2_ir::ir::BarEqualStruct
 pub slang_solidity_v2_ir::ir::BarEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::BarEqualStruct
 pub fn slang_solidity_v2_ir::ir::BarEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::BarEqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::BarEqualStruct
 pub fn slang_solidity_v2_ir::ir::BarEqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::BarEqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::BarEqualStruct
@@ -1164,6 +1206,7 @@ pub struct slang_solidity_v2_ir::ir::BarStruct
 pub slang_solidity_v2_ir::ir::BarStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::BarStruct
 pub fn slang_solidity_v2_ir::ir::BarStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::BarStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::BarStruct
 pub fn slang_solidity_v2_ir::ir::BarStruct::clone(&self) -> slang_solidity_v2_ir::ir::BarStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::BarStruct
@@ -1207,6 +1250,7 @@ pub struct slang_solidity_v2_ir::ir::BoolKeywordStruct
 pub slang_solidity_v2_ir::ir::BoolKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::BoolKeywordStruct
 pub fn slang_solidity_v2_ir::ir::BoolKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::BoolKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::BoolKeywordStruct
 pub fn slang_solidity_v2_ir::ir::BoolKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::BoolKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::BoolKeywordStruct
@@ -1242,6 +1286,7 @@ pub struct slang_solidity_v2_ir::ir::CallDataKeywordStruct
 pub slang_solidity_v2_ir::ir::CallDataKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::CallDataKeywordStruct
 pub fn slang_solidity_v2_ir::ir::CallDataKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::CallDataKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::CallDataKeywordStruct
 pub fn slang_solidity_v2_ir::ir::CallDataKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::CallDataKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::CallDataKeywordStruct
@@ -1262,6 +1307,7 @@ pub struct slang_solidity_v2_ir::ir::CaretEqualStruct
 pub slang_solidity_v2_ir::ir::CaretEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::CaretEqualStruct
 pub fn slang_solidity_v2_ir::ir::CaretEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::CaretEqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::CaretEqualStruct
 pub fn slang_solidity_v2_ir::ir::CaretEqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::CaretEqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::CaretEqualStruct
@@ -1274,6 +1320,7 @@ pub struct slang_solidity_v2_ir::ir::CaretStruct
 pub slang_solidity_v2_ir::ir::CaretStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::CaretStruct
 pub fn slang_solidity_v2_ir::ir::CaretStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::CaretStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::CaretStruct
 pub fn slang_solidity_v2_ir::ir::CaretStruct::clone(&self) -> slang_solidity_v2_ir::ir::CaretStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::CaretStruct
@@ -1338,6 +1385,7 @@ pub struct slang_solidity_v2_ir::ir::DaysKeywordStruct
 pub slang_solidity_v2_ir::ir::DaysKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::DaysKeywordStruct
 pub fn slang_solidity_v2_ir::ir::DaysKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::DaysKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::DaysKeywordStruct
 pub fn slang_solidity_v2_ir::ir::DaysKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::DaysKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::DaysKeywordStruct
@@ -1372,6 +1420,7 @@ pub struct slang_solidity_v2_ir::ir::DeleteKeywordStruct
 pub slang_solidity_v2_ir::ir::DeleteKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::DeleteKeywordStruct
 pub fn slang_solidity_v2_ir::ir::DeleteKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::DeleteKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::DeleteKeywordStruct
 pub fn slang_solidity_v2_ir::ir::DeleteKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::DeleteKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::DeleteKeywordStruct
@@ -1408,6 +1457,7 @@ pub struct slang_solidity_v2_ir::ir::EqualEqualStruct
 pub slang_solidity_v2_ir::ir::EqualEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::EqualEqualStruct
 pub fn slang_solidity_v2_ir::ir::EqualEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::EqualEqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::EqualEqualStruct
 pub fn slang_solidity_v2_ir::ir::EqualEqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::EqualEqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::EqualEqualStruct
@@ -1420,6 +1470,7 @@ pub struct slang_solidity_v2_ir::ir::EqualStruct
 pub slang_solidity_v2_ir::ir::EqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::EqualStruct
 pub fn slang_solidity_v2_ir::ir::EqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::EqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::EqualStruct
 pub fn slang_solidity_v2_ir::ir::EqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::EqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::EqualStruct
@@ -1449,6 +1500,7 @@ pub struct slang_solidity_v2_ir::ir::EtherKeywordStruct
 pub slang_solidity_v2_ir::ir::EtherKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::EtherKeywordStruct
 pub fn slang_solidity_v2_ir::ir::EtherKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::EtherKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::EtherKeywordStruct
 pub fn slang_solidity_v2_ir::ir::EtherKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::EtherKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::EtherKeywordStruct
@@ -1492,6 +1544,7 @@ pub struct slang_solidity_v2_ir::ir::FalseKeywordStruct
 pub slang_solidity_v2_ir::ir::FalseKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::FalseKeywordStruct
 pub fn slang_solidity_v2_ir::ir::FalseKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::FalseKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::FalseKeywordStruct
 pub fn slang_solidity_v2_ir::ir::FalseKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::FalseKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::FalseKeywordStruct
@@ -1562,6 +1615,7 @@ pub struct slang_solidity_v2_ir::ir::GlobalKeywordStruct
 pub slang_solidity_v2_ir::ir::GlobalKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::GlobalKeywordStruct
 pub fn slang_solidity_v2_ir::ir::GlobalKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::GlobalKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::GlobalKeywordStruct
 pub fn slang_solidity_v2_ir::ir::GlobalKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::GlobalKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::GlobalKeywordStruct
@@ -1574,6 +1628,7 @@ pub struct slang_solidity_v2_ir::ir::GreaterThanEqualStruct
 pub slang_solidity_v2_ir::ir::GreaterThanEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::GreaterThanEqualStruct
 pub fn slang_solidity_v2_ir::ir::GreaterThanEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::GreaterThanEqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::GreaterThanEqualStruct
 pub fn slang_solidity_v2_ir::ir::GreaterThanEqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::GreaterThanEqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::GreaterThanEqualStruct
@@ -1586,6 +1641,7 @@ pub struct slang_solidity_v2_ir::ir::GreaterThanGreaterThanEqualStruct
 pub slang_solidity_v2_ir::ir::GreaterThanGreaterThanEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::GreaterThanGreaterThanEqualStruct
 pub fn slang_solidity_v2_ir::ir::GreaterThanGreaterThanEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::GreaterThanGreaterThanEqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::GreaterThanGreaterThanEqualStruct
 pub fn slang_solidity_v2_ir::ir::GreaterThanGreaterThanEqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::GreaterThanGreaterThanEqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::GreaterThanGreaterThanEqualStruct
@@ -1598,6 +1654,7 @@ pub struct slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThanEqualStruc
 pub slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThanEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThanEqualStruct
 pub fn slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThanEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThanEqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThanEqualStruct
 pub fn slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThanEqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThanEqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThanEqualStruct
@@ -1610,6 +1667,7 @@ pub struct slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThanStruct
 pub slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThanStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThanStruct
 pub fn slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThanStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThanStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThanStruct
 pub fn slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThanStruct::clone(&self) -> slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThanStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::GreaterThanGreaterThanGreaterThanStruct
@@ -1622,6 +1680,7 @@ pub struct slang_solidity_v2_ir::ir::GreaterThanGreaterThanStruct
 pub slang_solidity_v2_ir::ir::GreaterThanGreaterThanStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::GreaterThanGreaterThanStruct
 pub fn slang_solidity_v2_ir::ir::GreaterThanGreaterThanStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::GreaterThanGreaterThanStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::GreaterThanGreaterThanStruct
 pub fn slang_solidity_v2_ir::ir::GreaterThanGreaterThanStruct::clone(&self) -> slang_solidity_v2_ir::ir::GreaterThanGreaterThanStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::GreaterThanGreaterThanStruct
@@ -1634,6 +1693,7 @@ pub struct slang_solidity_v2_ir::ir::GreaterThanStruct
 pub slang_solidity_v2_ir::ir::GreaterThanStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::GreaterThanStruct
 pub fn slang_solidity_v2_ir::ir::GreaterThanStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::GreaterThanStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::GreaterThanStruct
 pub fn slang_solidity_v2_ir::ir::GreaterThanStruct::clone(&self) -> slang_solidity_v2_ir::ir::GreaterThanStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::GreaterThanStruct
@@ -1646,6 +1706,7 @@ pub struct slang_solidity_v2_ir::ir::GweiKeywordStruct
 pub slang_solidity_v2_ir::ir::GweiKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::GweiKeywordStruct
 pub fn slang_solidity_v2_ir::ir::GweiKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::GweiKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::GweiKeywordStruct
 pub fn slang_solidity_v2_ir::ir::GweiKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::GweiKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::GweiKeywordStruct
@@ -1693,6 +1754,7 @@ pub struct slang_solidity_v2_ir::ir::HoursKeywordStruct
 pub slang_solidity_v2_ir::ir::HoursKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::HoursKeywordStruct
 pub fn slang_solidity_v2_ir::ir::HoursKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::HoursKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::HoursKeywordStruct
 pub fn slang_solidity_v2_ir::ir::HoursKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::HoursKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::HoursKeywordStruct
@@ -1753,6 +1815,7 @@ pub struct slang_solidity_v2_ir::ir::IndexedKeywordStruct
 pub slang_solidity_v2_ir::ir::IndexedKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::IndexedKeywordStruct
 pub fn slang_solidity_v2_ir::ir::IndexedKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::IndexedKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::IndexedKeywordStruct
 pub fn slang_solidity_v2_ir::ir::IndexedKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::IndexedKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::IndexedKeywordStruct
@@ -1805,6 +1868,7 @@ pub struct slang_solidity_v2_ir::ir::LessThanEqualStruct
 pub slang_solidity_v2_ir::ir::LessThanEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::LessThanEqualStruct
 pub fn slang_solidity_v2_ir::ir::LessThanEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::LessThanEqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::LessThanEqualStruct
 pub fn slang_solidity_v2_ir::ir::LessThanEqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::LessThanEqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::LessThanEqualStruct
@@ -1817,6 +1881,7 @@ pub struct slang_solidity_v2_ir::ir::LessThanLessThanEqualStruct
 pub slang_solidity_v2_ir::ir::LessThanLessThanEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::LessThanLessThanEqualStruct
 pub fn slang_solidity_v2_ir::ir::LessThanLessThanEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::LessThanLessThanEqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::LessThanLessThanEqualStruct
 pub fn slang_solidity_v2_ir::ir::LessThanLessThanEqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::LessThanLessThanEqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::LessThanLessThanEqualStruct
@@ -1829,6 +1894,7 @@ pub struct slang_solidity_v2_ir::ir::LessThanLessThanStruct
 pub slang_solidity_v2_ir::ir::LessThanLessThanStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::LessThanLessThanStruct
 pub fn slang_solidity_v2_ir::ir::LessThanLessThanStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::LessThanLessThanStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::LessThanLessThanStruct
 pub fn slang_solidity_v2_ir::ir::LessThanLessThanStruct::clone(&self) -> slang_solidity_v2_ir::ir::LessThanLessThanStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::LessThanLessThanStruct
@@ -1841,6 +1907,7 @@ pub struct slang_solidity_v2_ir::ir::LessThanStruct
 pub slang_solidity_v2_ir::ir::LessThanStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::LessThanStruct
 pub fn slang_solidity_v2_ir::ir::LessThanStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::LessThanStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::LessThanStruct
 pub fn slang_solidity_v2_ir::ir::LessThanStruct::clone(&self) -> slang_solidity_v2_ir::ir::LessThanStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::LessThanStruct
@@ -1877,6 +1944,7 @@ pub struct slang_solidity_v2_ir::ir::MemoryKeywordStruct
 pub slang_solidity_v2_ir::ir::MemoryKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::MemoryKeywordStruct
 pub fn slang_solidity_v2_ir::ir::MemoryKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::MemoryKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::MemoryKeywordStruct
 pub fn slang_solidity_v2_ir::ir::MemoryKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::MemoryKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::MemoryKeywordStruct
@@ -1889,6 +1957,7 @@ pub struct slang_solidity_v2_ir::ir::MinusEqualStruct
 pub slang_solidity_v2_ir::ir::MinusEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::MinusEqualStruct
 pub fn slang_solidity_v2_ir::ir::MinusEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::MinusEqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::MinusEqualStruct
 pub fn slang_solidity_v2_ir::ir::MinusEqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::MinusEqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::MinusEqualStruct
@@ -1901,6 +1970,7 @@ pub struct slang_solidity_v2_ir::ir::MinusMinusStruct
 pub slang_solidity_v2_ir::ir::MinusMinusStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::MinusMinusStruct
 pub fn slang_solidity_v2_ir::ir::MinusMinusStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::MinusMinusStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::MinusMinusStruct
 pub fn slang_solidity_v2_ir::ir::MinusMinusStruct::clone(&self) -> slang_solidity_v2_ir::ir::MinusMinusStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::MinusMinusStruct
@@ -1913,6 +1983,7 @@ pub struct slang_solidity_v2_ir::ir::MinusStruct
 pub slang_solidity_v2_ir::ir::MinusStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::MinusStruct
 pub fn slang_solidity_v2_ir::ir::MinusStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::MinusStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::MinusStruct
 pub fn slang_solidity_v2_ir::ir::MinusStruct::clone(&self) -> slang_solidity_v2_ir::ir::MinusStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::MinusStruct
@@ -1925,6 +1996,7 @@ pub struct slang_solidity_v2_ir::ir::MinutesKeywordStruct
 pub slang_solidity_v2_ir::ir::MinutesKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::MinutesKeywordStruct
 pub fn slang_solidity_v2_ir::ir::MinutesKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::MinutesKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::MinutesKeywordStruct
 pub fn slang_solidity_v2_ir::ir::MinutesKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::MinutesKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::MinutesKeywordStruct
@@ -2015,6 +2087,7 @@ pub struct slang_solidity_v2_ir::ir::PayableKeywordStruct
 pub slang_solidity_v2_ir::ir::PayableKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::PayableKeywordStruct
 pub fn slang_solidity_v2_ir::ir::PayableKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::PayableKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::PayableKeywordStruct
 pub fn slang_solidity_v2_ir::ir::PayableKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::PayableKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::PayableKeywordStruct
@@ -2027,6 +2100,7 @@ pub struct slang_solidity_v2_ir::ir::PercentEqualStruct
 pub slang_solidity_v2_ir::ir::PercentEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::PercentEqualStruct
 pub fn slang_solidity_v2_ir::ir::PercentEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::PercentEqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::PercentEqualStruct
 pub fn slang_solidity_v2_ir::ir::PercentEqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::PercentEqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::PercentEqualStruct
@@ -2039,6 +2113,7 @@ pub struct slang_solidity_v2_ir::ir::PercentStruct
 pub slang_solidity_v2_ir::ir::PercentStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::PercentStruct
 pub fn slang_solidity_v2_ir::ir::PercentStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::PercentStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::PercentStruct
 pub fn slang_solidity_v2_ir::ir::PercentStruct::clone(&self) -> slang_solidity_v2_ir::ir::PercentStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::PercentStruct
@@ -2051,6 +2126,7 @@ pub struct slang_solidity_v2_ir::ir::PlusEqualStruct
 pub slang_solidity_v2_ir::ir::PlusEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::PlusEqualStruct
 pub fn slang_solidity_v2_ir::ir::PlusEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::PlusEqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::PlusEqualStruct
 pub fn slang_solidity_v2_ir::ir::PlusEqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::PlusEqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::PlusEqualStruct
@@ -2063,6 +2139,7 @@ pub struct slang_solidity_v2_ir::ir::PlusPlusStruct
 pub slang_solidity_v2_ir::ir::PlusPlusStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::PlusPlusStruct
 pub fn slang_solidity_v2_ir::ir::PlusPlusStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::PlusPlusStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::PlusPlusStruct
 pub fn slang_solidity_v2_ir::ir::PlusPlusStruct::clone(&self) -> slang_solidity_v2_ir::ir::PlusPlusStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::PlusPlusStruct
@@ -2075,6 +2152,7 @@ pub struct slang_solidity_v2_ir::ir::PlusStruct
 pub slang_solidity_v2_ir::ir::PlusStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::PlusStruct
 pub fn slang_solidity_v2_ir::ir::PlusStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::PlusStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::PlusStruct
 pub fn slang_solidity_v2_ir::ir::PlusStruct::clone(&self) -> slang_solidity_v2_ir::ir::PlusStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::PlusStruct
@@ -2095,6 +2173,7 @@ pub struct slang_solidity_v2_ir::ir::PragmaCaretStruct
 pub slang_solidity_v2_ir::ir::PragmaCaretStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::PragmaCaretStruct
 pub fn slang_solidity_v2_ir::ir::PragmaCaretStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::PragmaCaretStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::PragmaCaretStruct
 pub fn slang_solidity_v2_ir::ir::PragmaCaretStruct::clone(&self) -> slang_solidity_v2_ir::ir::PragmaCaretStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::PragmaCaretStruct
@@ -2114,6 +2193,7 @@ pub struct slang_solidity_v2_ir::ir::PragmaEqualStruct
 pub slang_solidity_v2_ir::ir::PragmaEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::PragmaEqualStruct
 pub fn slang_solidity_v2_ir::ir::PragmaEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::PragmaEqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::PragmaEqualStruct
 pub fn slang_solidity_v2_ir::ir::PragmaEqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::PragmaEqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::PragmaEqualStruct
@@ -2126,6 +2206,7 @@ pub struct slang_solidity_v2_ir::ir::PragmaGreaterThanEqualStruct
 pub slang_solidity_v2_ir::ir::PragmaGreaterThanEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::PragmaGreaterThanEqualStruct
 pub fn slang_solidity_v2_ir::ir::PragmaGreaterThanEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::PragmaGreaterThanEqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::PragmaGreaterThanEqualStruct
 pub fn slang_solidity_v2_ir::ir::PragmaGreaterThanEqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::PragmaGreaterThanEqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::PragmaGreaterThanEqualStruct
@@ -2138,6 +2219,7 @@ pub struct slang_solidity_v2_ir::ir::PragmaGreaterThanStruct
 pub slang_solidity_v2_ir::ir::PragmaGreaterThanStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::PragmaGreaterThanStruct
 pub fn slang_solidity_v2_ir::ir::PragmaGreaterThanStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::PragmaGreaterThanStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::PragmaGreaterThanStruct
 pub fn slang_solidity_v2_ir::ir::PragmaGreaterThanStruct::clone(&self) -> slang_solidity_v2_ir::ir::PragmaGreaterThanStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::PragmaGreaterThanStruct
@@ -2150,6 +2232,7 @@ pub struct slang_solidity_v2_ir::ir::PragmaLessThanEqualStruct
 pub slang_solidity_v2_ir::ir::PragmaLessThanEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::PragmaLessThanEqualStruct
 pub fn slang_solidity_v2_ir::ir::PragmaLessThanEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::PragmaLessThanEqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::PragmaLessThanEqualStruct
 pub fn slang_solidity_v2_ir::ir::PragmaLessThanEqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::PragmaLessThanEqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::PragmaLessThanEqualStruct
@@ -2162,6 +2245,7 @@ pub struct slang_solidity_v2_ir::ir::PragmaLessThanStruct
 pub slang_solidity_v2_ir::ir::PragmaLessThanStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::PragmaLessThanStruct
 pub fn slang_solidity_v2_ir::ir::PragmaLessThanStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::PragmaLessThanStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::PragmaLessThanStruct
 pub fn slang_solidity_v2_ir::ir::PragmaLessThanStruct::clone(&self) -> slang_solidity_v2_ir::ir::PragmaLessThanStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::PragmaLessThanStruct
@@ -2174,6 +2258,7 @@ pub struct slang_solidity_v2_ir::ir::PragmaTildeStruct
 pub slang_solidity_v2_ir::ir::PragmaTildeStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::PragmaTildeStruct
 pub fn slang_solidity_v2_ir::ir::PragmaTildeStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::PragmaTildeStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::PragmaTildeStruct
 pub fn slang_solidity_v2_ir::ir::PragmaTildeStruct::clone(&self) -> slang_solidity_v2_ir::ir::PragmaTildeStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::PragmaTildeStruct
@@ -2209,6 +2294,7 @@ pub struct slang_solidity_v2_ir::ir::SMTCheckerKeywordStruct
 pub slang_solidity_v2_ir::ir::SMTCheckerKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::SMTCheckerKeywordStruct
 pub fn slang_solidity_v2_ir::ir::SMTCheckerKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::SMTCheckerKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::SMTCheckerKeywordStruct
 pub fn slang_solidity_v2_ir::ir::SMTCheckerKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::SMTCheckerKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::SMTCheckerKeywordStruct
@@ -2221,6 +2307,7 @@ pub struct slang_solidity_v2_ir::ir::SecondsKeywordStruct
 pub slang_solidity_v2_ir::ir::SecondsKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::SecondsKeywordStruct
 pub fn slang_solidity_v2_ir::ir::SecondsKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::SecondsKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::SecondsKeywordStruct
 pub fn slang_solidity_v2_ir::ir::SecondsKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::SecondsKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::SecondsKeywordStruct
@@ -2233,6 +2320,7 @@ pub struct slang_solidity_v2_ir::ir::SemicolonStruct
 pub slang_solidity_v2_ir::ir::SemicolonStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::SemicolonStruct
 pub fn slang_solidity_v2_ir::ir::SemicolonStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::SemicolonStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::SemicolonStruct
 pub fn slang_solidity_v2_ir::ir::SemicolonStruct::clone(&self) -> slang_solidity_v2_ir::ir::SemicolonStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::SemicolonStruct
@@ -2262,6 +2350,7 @@ pub struct slang_solidity_v2_ir::ir::SlashEqualStruct
 pub slang_solidity_v2_ir::ir::SlashEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::SlashEqualStruct
 pub fn slang_solidity_v2_ir::ir::SlashEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::SlashEqualStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::SlashEqualStruct
 pub fn slang_solidity_v2_ir::ir::SlashEqualStruct::clone(&self) -> slang_solidity_v2_ir::ir::SlashEqualStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::SlashEqualStruct
@@ -2274,6 +2363,7 @@ pub struct slang_solidity_v2_ir::ir::SlashStruct
 pub slang_solidity_v2_ir::ir::SlashStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::SlashStruct
 pub fn slang_solidity_v2_ir::ir::SlashStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::SlashStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::SlashStruct
 pub fn slang_solidity_v2_ir::ir::SlashStruct::clone(&self) -> slang_solidity_v2_ir::ir::SlashStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::SlashStruct
@@ -2305,6 +2395,7 @@ pub struct slang_solidity_v2_ir::ir::StorageKeywordStruct
 pub slang_solidity_v2_ir::ir::StorageKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::StorageKeywordStruct
 pub fn slang_solidity_v2_ir::ir::StorageKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::StorageKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::StorageKeywordStruct
 pub fn slang_solidity_v2_ir::ir::StorageKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::StorageKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::StorageKeywordStruct
@@ -2317,6 +2408,7 @@ pub struct slang_solidity_v2_ir::ir::StringKeywordStruct
 pub slang_solidity_v2_ir::ir::StringKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::StringKeywordStruct
 pub fn slang_solidity_v2_ir::ir::StringKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::StringKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::StringKeywordStruct
 pub fn slang_solidity_v2_ir::ir::StringKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::StringKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::StringKeywordStruct
@@ -2359,6 +2451,7 @@ pub struct slang_solidity_v2_ir::ir::SuperKeywordStruct
 pub slang_solidity_v2_ir::ir::SuperKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::SuperKeywordStruct
 pub fn slang_solidity_v2_ir::ir::SuperKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::SuperKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::SuperKeywordStruct
 pub fn slang_solidity_v2_ir::ir::SuperKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::SuperKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::SuperKeywordStruct
@@ -2371,6 +2464,7 @@ pub struct slang_solidity_v2_ir::ir::ThisKeywordStruct
 pub slang_solidity_v2_ir::ir::ThisKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::ThisKeywordStruct
 pub fn slang_solidity_v2_ir::ir::ThisKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::ThisKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::ThisKeywordStruct
 pub fn slang_solidity_v2_ir::ir::ThisKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::ThisKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::ThisKeywordStruct
@@ -2383,6 +2477,7 @@ pub struct slang_solidity_v2_ir::ir::TildeStruct
 pub slang_solidity_v2_ir::ir::TildeStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::TildeStruct
 pub fn slang_solidity_v2_ir::ir::TildeStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::TildeStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::TildeStruct
 pub fn slang_solidity_v2_ir::ir::TildeStruct::clone(&self) -> slang_solidity_v2_ir::ir::TildeStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::TildeStruct
@@ -2395,6 +2490,7 @@ pub struct slang_solidity_v2_ir::ir::TrueKeywordStruct
 pub slang_solidity_v2_ir::ir::TrueKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::TrueKeywordStruct
 pub fn slang_solidity_v2_ir::ir::TrueKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::TrueKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::TrueKeywordStruct
 pub fn slang_solidity_v2_ir::ir::TrueKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::TrueKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::TrueKeywordStruct
@@ -2572,6 +2668,7 @@ pub struct slang_solidity_v2_ir::ir::VirtualKeywordStruct
 pub slang_solidity_v2_ir::ir::VirtualKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::VirtualKeywordStruct
 pub fn slang_solidity_v2_ir::ir::VirtualKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::VirtualKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::VirtualKeywordStruct
 pub fn slang_solidity_v2_ir::ir::VirtualKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::VirtualKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::VirtualKeywordStruct
@@ -2584,6 +2681,7 @@ pub struct slang_solidity_v2_ir::ir::WeeksKeywordStruct
 pub slang_solidity_v2_ir::ir::WeeksKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::WeeksKeywordStruct
 pub fn slang_solidity_v2_ir::ir::WeeksKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::WeeksKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::WeeksKeywordStruct
 pub fn slang_solidity_v2_ir::ir::WeeksKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::WeeksKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::WeeksKeywordStruct
@@ -2596,6 +2694,7 @@ pub struct slang_solidity_v2_ir::ir::WeiKeywordStruct
 pub slang_solidity_v2_ir::ir::WeiKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::WeiKeywordStruct
 pub fn slang_solidity_v2_ir::ir::WeiKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::WeiKeywordStruct::unparse(&self) -> &'static str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::WeiKeywordStruct
 pub fn slang_solidity_v2_ir::ir::WeiKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::WeiKeywordStruct
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::WeiKeywordStruct

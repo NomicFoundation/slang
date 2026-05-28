@@ -46,13 +46,17 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
 //
 
 {% for parent_type, choice in target.choices %}
-  {% set_global all_external_terminals = true %}
+  {% set_global all_external = true %}
+  {% set_global all_terminals = true %}
   {% for variant in choice.variants %}
     {% if not variant.is_external %}
-      {% set_global all_external_terminals = false %}
+      {% set_global all_external = false %}
+    {% endif %}
+    {% if not variant.is_terminal %}
+      {% set_global all_terminals = false %}
     {% endif %}
   {% endfor %}
-  {% if all_external_terminals -%}
+  {% if all_external -%}
     #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
   {%- else -%}
     #[derive(Clone, Debug)]
@@ -66,6 +70,20 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
       ,
     {%- endfor -%}
   }
+  
+  {% if all_terminals -%}
+  impl {{ parent_type }} {
+    pub fn unparse(&self) -> &str {
+      match self {
+        {% for variant in choice.variants -%}
+          {{ parent_type }}::{{ variant.name }}(inner) => {
+            inner.unparse()
+          }
+        {%- endfor -%}
+      }
+    }
+   }
+   {%- endif %}
 {% endfor %}
 
 //
@@ -99,10 +117,14 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
       self.id
     }
 
-    {%- if not terminal.unique_symbol %}
-      pub fn unparse(&self) -> &str {
+    {%- if terminal.unique_symbol %}
+    pub fn unparse(&self) -> &'static str {
+        "{{ terminal.unique_symbol }}"
+    }
+    {%- else %}
+    pub fn unparse(&self) -> &str {
         &self.text
-      }
+    }
     {%- endif %}
   }
 {% endfor %}
