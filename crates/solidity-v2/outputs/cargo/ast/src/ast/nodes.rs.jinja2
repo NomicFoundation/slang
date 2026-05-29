@@ -176,11 +176,9 @@ use super::types::Type;
       self.ir_node.id()
     }
 
-    {%- if not terminal.unique_symbol %}
       pub fn unparse(&self) -> &str {
         self.ir_node.unparse()
       }
-    {%- endif %}
 
     pub fn get_type(&self) -> Option<Type> {
       Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)

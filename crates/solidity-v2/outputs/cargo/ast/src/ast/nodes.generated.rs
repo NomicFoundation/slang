@@ -6754,6 +6754,10 @@ impl ABIEncoderV2KeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -6787,6 +6791,10 @@ pub(crate) fn create_abicoder_v1_keyword(
 impl AbicoderV1KeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -6824,6 +6832,10 @@ impl AbicoderV2KeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -6857,6 +6869,10 @@ pub(crate) fn create_abstract_keyword(
 impl AbstractKeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -6894,6 +6910,10 @@ impl AmpersandStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -6927,6 +6947,10 @@ pub(crate) fn create_ampersand_equal(
 impl AmpersandEqualStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -6964,6 +6988,10 @@ impl AnonymousKeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -6994,6 +7022,10 @@ pub(crate) fn create_asterisk(ir_node: &ir::Asterisk, semantic: &Arc<SemanticCon
 impl AsteriskStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -7031,6 +7063,10 @@ impl AsteriskEqualStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -7061,6 +7097,10 @@ pub(crate) fn create_bang(ir_node: &ir::Bang, semantic: &Arc<SemanticContext>) -
 impl BangStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -7098,6 +7138,10 @@ impl BangEqualStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -7128,6 +7172,10 @@ pub(crate) fn create_bar(ir_node: &ir::Bar, semantic: &Arc<SemanticContext>) -> 
 impl BarStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -7165,6 +7213,10 @@ impl BarEqualStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -7198,6 +7250,10 @@ pub(crate) fn create_bool_keyword(
 impl BoolKeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -7234,6 +7290,7 @@ impl BytesKeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
+
     pub fn unparse(&self) -> &str {
         self.ir_node.unparse()
     }
@@ -7273,6 +7330,10 @@ impl CallDataKeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -7303,6 +7364,10 @@ pub(crate) fn create_caret(ir_node: &ir::Caret, semantic: &Arc<SemanticContext>)
 impl CaretStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -7340,6 +7405,10 @@ impl CaretEqualStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -7373,6 +7442,10 @@ pub(crate) fn create_days_keyword(
 impl DaysKeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -7409,6 +7482,7 @@ impl DecimalLiteralStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
+
     pub fn unparse(&self) -> &str {
         self.ir_node.unparse()
     }
@@ -7448,6 +7522,10 @@ impl DeleteKeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -7478,6 +7556,10 @@ pub(crate) fn create_equal(ir_node: &ir::Equal, semantic: &Arc<SemanticContext>)
 impl EqualStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -7515,6 +7597,10 @@ impl EqualEqualStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -7548,6 +7634,10 @@ pub(crate) fn create_ether_keyword(
 impl EtherKeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -7585,6 +7675,10 @@ impl FalseKeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -7619,6 +7713,7 @@ impl FixedKeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
+
     pub fn unparse(&self) -> &str {
         self.ir_node.unparse()
     }
@@ -7658,6 +7753,10 @@ impl GlobalKeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -7691,6 +7790,10 @@ pub(crate) fn create_greater_than(
 impl GreaterThanStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -7728,6 +7831,10 @@ impl GreaterThanEqualStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -7761,6 +7868,10 @@ pub(crate) fn create_greater_than_greater_than(
 impl GreaterThanGreaterThanStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -7798,6 +7909,10 @@ impl GreaterThanGreaterThanEqualStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -7831,6 +7946,10 @@ pub(crate) fn create_greater_than_greater_than_greater_than(
 impl GreaterThanGreaterThanGreaterThanStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -7868,6 +7987,10 @@ impl GreaterThanGreaterThanGreaterThanEqualStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -7901,6 +8024,10 @@ pub(crate) fn create_gwei_keyword(
 impl GweiKeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -7937,6 +8064,7 @@ impl HexLiteralStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
+
     pub fn unparse(&self) -> &str {
         self.ir_node.unparse()
     }
@@ -7975,6 +8103,7 @@ impl HexStringLiteralStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
+
     pub fn unparse(&self) -> &str {
         self.ir_node.unparse()
     }
@@ -8014,6 +8143,10 @@ impl HoursKeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -8048,6 +8181,7 @@ impl IdentifierStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
+
     pub fn unparse(&self) -> &str {
         self.ir_node.unparse()
     }
@@ -8087,6 +8221,10 @@ impl IndexedKeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -8121,6 +8259,7 @@ impl IntKeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
+
     pub fn unparse(&self) -> &str {
         self.ir_node.unparse()
     }
@@ -8160,6 +8299,10 @@ impl LessThanStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -8193,6 +8336,10 @@ pub(crate) fn create_less_than_equal(
 impl LessThanEqualStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -8230,6 +8377,10 @@ impl LessThanLessThanStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -8263,6 +8414,10 @@ pub(crate) fn create_less_than_less_than_equal(
 impl LessThanLessThanEqualStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -8300,6 +8455,10 @@ impl MemoryKeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -8330,6 +8489,10 @@ pub(crate) fn create_minus(ir_node: &ir::Minus, semantic: &Arc<SemanticContext>)
 impl MinusStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -8367,6 +8530,10 @@ impl MinusEqualStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -8400,6 +8567,10 @@ pub(crate) fn create_minus_minus(
 impl MinusMinusStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -8437,6 +8608,10 @@ impl MinutesKeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -8472,6 +8647,10 @@ impl PayableKeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -8502,6 +8681,10 @@ pub(crate) fn create_percent(ir_node: &ir::Percent, semantic: &Arc<SemanticConte
 impl PercentStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -8539,6 +8722,10 @@ impl PercentEqualStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -8569,6 +8756,10 @@ pub(crate) fn create_plus(ir_node: &ir::Plus, semantic: &Arc<SemanticContext>) -
 impl PlusStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -8606,6 +8797,10 @@ impl PlusEqualStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -8639,6 +8834,10 @@ pub(crate) fn create_plus_plus(
 impl PlusPlusStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -8676,6 +8875,10 @@ impl PragmaCaretStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -8709,6 +8912,10 @@ pub(crate) fn create_pragma_equal(
 impl PragmaEqualStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -8746,6 +8953,10 @@ impl PragmaGreaterThanStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -8779,6 +8990,10 @@ pub(crate) fn create_pragma_greater_than_equal(
 impl PragmaGreaterThanEqualStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -8816,6 +9031,10 @@ impl PragmaLessThanStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -8849,6 +9068,10 @@ pub(crate) fn create_pragma_less_than_equal(
 impl PragmaLessThanEqualStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -8886,6 +9109,10 @@ impl PragmaTildeStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -8919,6 +9146,10 @@ pub(crate) fn create_smt_checker_keyword(
 impl SMTCheckerKeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -8956,6 +9187,10 @@ impl SecondsKeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -8991,6 +9226,10 @@ impl SemicolonStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -9021,6 +9260,10 @@ pub(crate) fn create_slash(ir_node: &ir::Slash, semantic: &Arc<SemanticContext>)
 impl SlashStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -9058,6 +9301,10 @@ impl SlashEqualStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -9091,6 +9338,10 @@ pub(crate) fn create_storage_keyword(
 impl StorageKeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -9128,6 +9379,10 @@ impl StringKeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -9162,6 +9417,7 @@ impl StringLiteralStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
+
     pub fn unparse(&self) -> &str {
         self.ir_node.unparse()
     }
@@ -9201,6 +9457,10 @@ impl SuperKeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -9236,6 +9496,10 @@ impl ThisKeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -9266,6 +9530,10 @@ pub(crate) fn create_tilde(ir_node: &ir::Tilde, semantic: &Arc<SemanticContext>)
 impl TildeStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -9303,6 +9571,10 @@ impl TrueKeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -9337,6 +9609,7 @@ impl UfixedKeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
+
     pub fn unparse(&self) -> &str {
         self.ir_node.unparse()
     }
@@ -9375,6 +9648,7 @@ impl UintKeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
+
     pub fn unparse(&self) -> &str {
         self.ir_node.unparse()
     }
@@ -9413,6 +9687,7 @@ impl UnicodeStringLiteralStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
+
     pub fn unparse(&self) -> &str {
         self.ir_node.unparse()
     }
@@ -9451,6 +9726,7 @@ impl VersionSpecifierStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
+
     pub fn unparse(&self) -> &str {
         self.ir_node.unparse()
     }
@@ -9490,6 +9766,10 @@ impl VirtualKeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -9525,6 +9805,10 @@ impl WeeksKeywordStruct {
         self.ir_node.id()
     }
 
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
@@ -9558,6 +9842,10 @@ pub(crate) fn create_wei_keyword(
 impl WeiKeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn get_type(&self) -> Option<Type> {
