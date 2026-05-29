@@ -1,12 +1,10 @@
 mod ast;
 mod bindings;
+mod ir;
 mod kinds;
 mod parser;
 
-pub mod ir;
-
 use std::collections::{BTreeMap, BTreeSet};
-use std::path::Path;
 
 use anyhow::Result;
 use codegen_v2_cst::structured_cst::model::StructuredCstModel;
@@ -15,7 +13,6 @@ use codegen_v2_semantic::ir::builder::build_v2_ir_model;
 use codegen_v2_semantic::ir::ModelWithBuilder;
 use indexmap::IndexSet;
 use infra_utils::cargo::CargoWorkspace;
-use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
 use ir::builders::{build_ir_models, GenericModel};
 use language_definition::model::Language;
 use language_v2_definition::model::Language as LanguageV2;
@@ -27,31 +24,8 @@ use crate::bindings::BindingsModel;
 use crate::kinds::KindsModel;
 use crate::parser::ParserModel;
 
-pub struct RuntimeGenerator;
-
-impl RuntimeGenerator {
-    pub fn generate_templates_in_place(
-        language: &Language,
-        fs: &mut CodegenFileSystem,
-        dir: &Path,
-    ) -> Result<()> {
-        let model = RuntimeModel::from_language(language)?;
-        CodegenRuntime::render_templates_in_place(fs, dir, model)
-    }
-
-    pub fn generate_templates_in_place_v2(
-        language: &LanguageV2,
-        fs: &mut CodegenFileSystem,
-        dir: &Path,
-    ) -> Result<()> {
-        let model = RuntimeModelV2::from_language(language);
-
-        CodegenRuntime::render_templates_in_place(fs, dir, model)
-    }
-}
-
 #[derive(Serialize)]
-struct RuntimeModel {
+pub struct RuntimeModel {
     slang_version: Version,
     language_name: String,
     all_language_versions: BTreeSet<Version>,
@@ -66,7 +40,7 @@ struct RuntimeModel {
 }
 
 impl RuntimeModel {
-    fn from_language(language: &Language) -> Result<Self> {
+    pub fn from_language(language: &Language) -> Result<Self> {
         Ok(Self {
             slang_version: CargoWorkspace::local_version()?,
             language_name: language.name.to_string(),
@@ -84,39 +58,39 @@ impl RuntimeModel {
 }
 
 #[derive(Serialize)]
-struct LanguageModelV2 {
+pub struct RuntimeModelV2 {
+    language: LanguageModelV2,
+
+    parser: ParserModelV2,
+    structured_cst_model: StructuredCstModel,
+    ir_language_model: ModelWithBuilder,
+}
+
+impl RuntimeModelV2 {
+    pub fn from_language(language: &LanguageV2) -> Self {
+        Self {
+            language: LanguageModelV2::from_language(language),
+            parser: ParserModelV2::from_language(language),
+
+            structured_cst_model: StructuredCstModel::from_language(language),
+            ir_language_model: build_v2_ir_model(language),
+        }
+    }
+}
+
+#[derive(Serialize)]
+pub struct LanguageModelV2 {
     name: String,
     versions: IndexSet<Version>,
     built_ins: Vec<codegen_v2_semantic::built_ins::BuiltInContextModel>,
 }
 
 impl LanguageModelV2 {
-    fn from_language(language: &LanguageV2) -> Self {
+    pub fn from_language(language: &LanguageV2) -> Self {
         Self {
             name: language.name.to_string(),
             versions: language.versions.clone(),
             built_ins: codegen_v2_semantic::built_ins::build_built_ins_model(language),
-        }
-    }
-}
-
-#[derive(Serialize)]
-struct RuntimeModelV2 {
-    parser: ParserModelV2,
-
-    language: LanguageModelV2,
-
-    structured_cst_model: StructuredCstModel,
-    ir_language_model: ModelWithBuilder,
-}
-
-impl RuntimeModelV2 {
-    fn from_language(language: &LanguageV2) -> Self {
-        Self {
-            parser: ParserModelV2::from_language(language),
-            language: LanguageModelV2::from_language(language),
-            structured_cst_model: StructuredCstModel::from_language(language),
-            ir_language_model: build_v2_ir_model(language),
         }
     }
 }

@@ -1,8 +1,8 @@
 use anyhow::Result;
-use codegen_generator::RuntimeGenerator;
+use codegen_generator::{RuntimeModel, RuntimeModelV2};
 use codegen_spec::Spec;
 use infra_utils::cargo::CargoWorkspace;
-use infra_utils::codegen::CodegenFileSystem;
+use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
 use language_definition::model::Language;
 use language_v2_definition::model::Language as LanguageV2;
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
@@ -10,95 +10,88 @@ use solidity_language::SolidityDefinition;
 use solidity_v2_language::SolidityDefinition as SolidityDefinitionV2;
 
 fn main() {
-    // TODO(#1286):
-    // Using a cargo binary rather than a build task, to avoid invalidating the build tree when only the inputs change.
-    // This is a poor man's version of a "build script" that runs all codegen steps in parallel.
-    // It is temporary step, and should be simplified/removed in subsequent PRs.
-
     [
-        || generate_solidity_spec(),
+        || generate_solidity_v1_spec(),
+        || generate_solidity_v1_builtins(),
         || {
-            let mut fs = CodegenFileSystem::default();
-            let language = SolidityDefinition::create();
-
-            generate_in_place(&mut fs, &language, "slang_solidity")?;
-
-            generate_builtins(&mut fs, &language, "slang_solidity")?;
-
-            Ok(())
+            generate_tera_templates_v1(
+                &mut CodegenFileSystem::default(),
+                &SolidityDefinition::create(),
+                "slang_solidity",
+            )
         },
         || {
-            generate_in_place(
+            generate_tera_templates_v1(
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinition::create(),
                 "solidity_cargo_wasm",
             )
         },
         || {
-            generate_in_place(
+            generate_tera_templates_v1(
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinition::create(),
                 "solidity_npm_package",
             )
         },
         || {
-            generate_in_place(
+            generate_tera_templates_v1(
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinition::create(),
                 "solidity_cargo_tests",
             )
         },
         || {
-            generate_in_place_v2(
+            generate_tera_templates_v2(
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinitionV2::create(),
                 "slang_solidity_v2_ast",
             )
         },
         || {
-            generate_in_place_v2(
+            generate_tera_templates_v2(
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinitionV2::create(),
                 "slang_solidity_v2_cst",
             )
         },
         || {
-            generate_in_place_v2(
+            generate_tera_templates_v2(
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinitionV2::create(),
                 "slang_solidity_v2_parser",
             )
         },
         || {
-            generate_in_place_v2(
+            generate_tera_templates_v2(
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinitionV2::create(),
                 "slang_solidity_v2_common",
             )
         },
         || {
-            generate_in_place_v2(
+            generate_tera_templates_v2(
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinitionV2::create(),
                 "slang_solidity_v2_ir",
             )
         },
         || {
-            generate_in_place_v2(
+            generate_tera_templates_v2(
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinitionV2::create(),
                 "slang_solidity_v2_semantic",
             )
         },
         || {
-            generate_in_place_v2(
+            generate_tera_templates_v2(
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinitionV2::create(),
                 "solidity_v2_testing_utils",
             )
         },
         || {
-            generate_in_place_v2(
+            generate_tera_templates_v2(
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinitionV2::create(),
                 "solidity_v2_cargo_tests",
@@ -109,7 +102,7 @@ fn main() {
     .for_each(|op| op().unwrap());
 }
 
-fn generate_solidity_spec() -> Result<()> {
+fn generate_solidity_v1_spec() -> Result<()> {
     let language = SolidityDefinition::create();
 
     let output_dir = CargoWorkspace::locate_source_crate("solidity_spec")?.join("generated");
@@ -117,35 +110,35 @@ fn generate_solidity_spec() -> Result<()> {
     Spec::generate(language, &output_dir)
 }
 
-fn generate_in_place(
+fn generate_solidity_v1_builtins() -> Result<()> {
+    let language = SolidityDefinition::create();
+    let contents = solidity_language::render_built_ins(&language)?;
+
+    let file_path = CargoWorkspace::locate_source_crate("slang_solidity")?
+        .join("src/bindings/built_ins.generated.rs");
+
+    let mut fs = CodegenFileSystem::default();
+    fs.write_file_formatted(file_path, contents)
+}
+
+fn generate_tera_templates_v1(
     fs: &mut CodegenFileSystem,
     language: &Language,
     crate_name: &str,
 ) -> Result<()> {
-    let the_crate = CargoWorkspace::locate_source_crate(crate_name)?;
+    let crate_dir = CargoWorkspace::locate_source_crate(crate_name)?;
+    let model = RuntimeModel::from_language(language)?;
 
-    RuntimeGenerator::generate_templates_in_place(language, fs, &the_crate)
+    CodegenRuntime::render_templates_in_place(fs, &crate_dir, model)
 }
 
-fn generate_in_place_v2(
+fn generate_tera_templates_v2(
     fs: &mut CodegenFileSystem,
     language: &LanguageV2,
     crate_name: &str,
 ) -> Result<()> {
     let crate_dir = CargoWorkspace::locate_source_crate(crate_name)?;
+    let model = RuntimeModelV2::from_language(language);
 
-    RuntimeGenerator::generate_templates_in_place_v2(language, fs, &crate_dir)
-}
-
-fn generate_builtins(
-    fs: &mut CodegenFileSystem,
-    language: &Language,
-    output_crate: &str,
-) -> Result<()> {
-    let file_path = CargoWorkspace::locate_source_crate(output_crate)?
-        .join("src/bindings/built_ins.generated.rs");
-
-    let contents = solidity_language::render_built_ins(language)?;
-
-    fs.write_file_formatted(file_path, contents)
+    CodegenRuntime::render_templates_in_place(fs, &crate_dir, model)
 }
