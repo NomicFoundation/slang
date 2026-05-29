@@ -4583,7 +4583,7 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                         BuiltInDefinition(name = ModifierUnderscore),
                         BuiltInDefinition(name = ErrorSelector, enabled = From("0.8.4")),
                         BuiltInDefinition(name = EventSelector, enabled = From("0.8.15")),
-                        BuiltInDefinition(name = FunctionAddress, enabled = From("0.8.2")),
+                        BuiltInDefinition(name = FunctionAddress),
                         BuiltInDefinition(name = FunctionSelector),
                         BuiltInDefinition(name = StringConcat),
                         BuiltInDefinition(

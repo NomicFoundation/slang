@@ -9087,7 +9087,7 @@
             "item": {
               "name": "%ExternalFunction",
               "fields": [
-                { "definition": "address address", "enabled": { "From": { "from": "0.8.2" } } },
+                { "definition": "address address", "enabled": { "From": { "from": "0.6.0" } } },
                 { "definition": "bytes4 selector", "enabled": { "From": { "from": "0.4.17" } } }
               ],
               "functions": [

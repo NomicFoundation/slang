@@ -396,10 +396,6 @@ impl InternalBuiltIn {
         LanguageVersionSpecifier::From {
             from: LanguageVersion::V0_8_15,
         };
-    pub(super) const FUNCTION_ADDRESS_VERSIONS: LanguageVersionSpecifier =
-        LanguageVersionSpecifier::From {
-            from: LanguageVersion::V0_8_2,
-        };
     pub(super) const UNWRAP_VERSIONS: LanguageVersionSpecifier = LanguageVersionSpecifier::From {
         from: LanguageVersion::V0_8_8,
     };
