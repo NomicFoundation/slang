@@ -6,17 +6,17 @@ use serde::Serialize;
 
 use crate::codegen::tera::TeraWrapper;
 use crate::codegen::CodegenFileSystem;
-use crate::paths::PathExtensions;
+use crate::paths::{PathExtensions, PrivatePathExtensions};
 
 pub struct CodegenRuntime;
 
 impl CodegenRuntime {
     pub fn render_templates_in_place(
-        fs: &mut CodegenFileSystem,
-        dir: &Path,
         model: impl Serialize,
+        filter: impl Fn(&Path) -> bool,
     ) -> Result<()> {
-        let tera = TeraWrapper::new(dir)?;
+        let repo_root = Path::repo_root();
+        let tera = TeraWrapper::new(&repo_root)?;
 
         let all_templates = tera
             .find_all_templates()?
@@ -24,12 +24,15 @@ impl CodegenRuntime {
             // Templates starting with underscore are meant to contain common macros.
             // They are not rendered directly, but imported by other templates.
             !path.unwrap_name().starts_with('_'))
+            .filter(|path| filter(path))
             .collect::<Vec<_>>();
 
         assert!(
             !all_templates.is_empty(),
-            "No templates found in directory: {dir:?}",
+            "No templates under {repo_root:?} matched the provided filter.",
         );
+
+        let mut fs = CodegenFileSystem::default();
 
         let mut context = tera::Context::new();
         context.insert("model", &model);

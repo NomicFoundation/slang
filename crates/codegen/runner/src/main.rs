@@ -1,108 +1,27 @@
+use std::path::Path;
+
 use anyhow::Result;
 use codegen_generator::{RuntimeModel, RuntimeModelV2};
 use codegen_spec::Spec;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
-use language_definition::model::Language;
-use language_v2_definition::model::Language as LanguageV2;
+use infra_utils::paths::PathExtensions;
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use solidity_language::SolidityDefinition;
 use solidity_v2_language::SolidityDefinition as SolidityDefinitionV2;
 
 fn main() {
     [
-        || generate_solidity_v1_spec(),
-        || generate_solidity_v1_builtins(),
-        || {
-            generate_tera_templates_v1(
-                &mut CodegenFileSystem::default(),
-                &SolidityDefinition::create(),
-                "slang_solidity",
-            )
-        },
-        || {
-            generate_tera_templates_v1(
-                &mut CodegenFileSystem::default(),
-                &SolidityDefinition::create(),
-                "solidity_cargo_wasm",
-            )
-        },
-        || {
-            generate_tera_templates_v1(
-                &mut CodegenFileSystem::default(),
-                &SolidityDefinition::create(),
-                "solidity_npm_package",
-            )
-        },
-        || {
-            generate_tera_templates_v1(
-                &mut CodegenFileSystem::default(),
-                &SolidityDefinition::create(),
-                "solidity_cargo_tests",
-            )
-        },
-        || {
-            generate_tera_templates_v2(
-                &mut CodegenFileSystem::default(),
-                &SolidityDefinitionV2::create(),
-                "slang_solidity_v2_ast",
-            )
-        },
-        || {
-            generate_tera_templates_v2(
-                &mut CodegenFileSystem::default(),
-                &SolidityDefinitionV2::create(),
-                "slang_solidity_v2_cst",
-            )
-        },
-        || {
-            generate_tera_templates_v2(
-                &mut CodegenFileSystem::default(),
-                &SolidityDefinitionV2::create(),
-                "slang_solidity_v2_parser",
-            )
-        },
-        || {
-            generate_tera_templates_v2(
-                &mut CodegenFileSystem::default(),
-                &SolidityDefinitionV2::create(),
-                "slang_solidity_v2_common",
-            )
-        },
-        || {
-            generate_tera_templates_v2(
-                &mut CodegenFileSystem::default(),
-                &SolidityDefinitionV2::create(),
-                "slang_solidity_v2_ir",
-            )
-        },
-        || {
-            generate_tera_templates_v2(
-                &mut CodegenFileSystem::default(),
-                &SolidityDefinitionV2::create(),
-                "slang_solidity_v2_semantic",
-            )
-        },
-        || {
-            generate_tera_templates_v2(
-                &mut CodegenFileSystem::default(),
-                &SolidityDefinitionV2::create(),
-                "solidity_v2_testing_utils",
-            )
-        },
-        || {
-            generate_tera_templates_v2(
-                &mut CodegenFileSystem::default(),
-                &SolidityDefinitionV2::create(),
-                "solidity_v2_cargo_tests",
-            )
-        },
+        || generate_solidity_spec_v1(),
+        || generate_solidity_builtins_v1(),
+        || generate_tera_templates_v1(),
+        || generate_tera_templates_v2(),
     ]
     .par_iter()
     .for_each(|op| op().unwrap());
 }
 
-fn generate_solidity_v1_spec() -> Result<()> {
+fn generate_solidity_spec_v1() -> Result<()> {
     let language = SolidityDefinition::create();
 
     let output_dir = CargoWorkspace::locate_source_crate("solidity_spec")?.join("generated");
@@ -110,7 +29,7 @@ fn generate_solidity_v1_spec() -> Result<()> {
     Spec::generate(language, &output_dir)
 }
 
-fn generate_solidity_v1_builtins() -> Result<()> {
+fn generate_solidity_builtins_v1() -> Result<()> {
     let language = SolidityDefinition::create();
     let contents = solidity_language::render_built_ins(&language)?;
 
@@ -121,24 +40,40 @@ fn generate_solidity_v1_builtins() -> Result<()> {
     fs.write_file_formatted(file_path, contents)
 }
 
-fn generate_tera_templates_v1(
-    fs: &mut CodegenFileSystem,
-    language: &Language,
-    crate_name: &str,
-) -> Result<()> {
-    let crate_dir = CargoWorkspace::locate_source_crate(crate_name)?;
-    let model = RuntimeModel::from_language(language)?;
+fn generate_tera_templates_v1() -> Result<()> {
+    let language = SolidityDefinition::create();
+    let model = RuntimeModel::from_language(&language)?;
 
-    CodegenRuntime::render_templates_in_place(fs, &crate_dir, model)
+    CodegenRuntime::render_templates_in_place(model, |template_path| {
+        classify_template(template_path) == TemplateVersion::V1
+    })
 }
 
-fn generate_tera_templates_v2(
-    fs: &mut CodegenFileSystem,
-    language: &LanguageV2,
-    crate_name: &str,
-) -> Result<()> {
-    let crate_dir = CargoWorkspace::locate_source_crate(crate_name)?;
-    let model = RuntimeModelV2::from_language(language);
+fn generate_tera_templates_v2() -> Result<()> {
+    let language = SolidityDefinitionV2::create();
+    let model = RuntimeModelV2::from_language(&language);
 
-    CodegenRuntime::render_templates_in_place(fs, &crate_dir, model)
+    CodegenRuntime::render_templates_in_place(model, |template_path| {
+        classify_template(template_path) == TemplateVersion::V2
+    })
+}
+
+#[derive(PartialEq, Eq)]
+enum TemplateVersion {
+    V1,
+    V2,
+}
+
+fn classify_template(template_path: &Path) -> TemplateVersion {
+    match template_path.strip_repo_root() {
+        Ok(p) if p.starts_with("crates/language/") || p.starts_with("crates/solidity/") => {
+            TemplateVersion::V1
+        }
+        Ok(p) if p.starts_with("crates/language-v2/") || p.starts_with("crates/solidity-v2/") => {
+            TemplateVersion::V2
+        }
+        _ => {
+            panic!("Cannot categorize template (Slang v1 or v2?): {template_path:?}");
+        }
+    }
 }

@@ -845,8 +845,6 @@ dependencies = [
  "codegen_generator",
  "codegen_spec",
  "infra_utils",
- "language_definition",
- "language_v2_definition",
  "rayon",
  "solidity_language",
  "solidity_v2_language",
