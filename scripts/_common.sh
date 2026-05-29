@@ -10,13 +10,13 @@ _github_collapse_group() {
   shift
 
   if [[ -n "${CI:-}" ]]; then
-    echo "::group::${title}"
+    echo "::group::${title}" >&2
   fi
 
   "$@"
 
   if [[ -n "${CI:-}" ]]; then
-    echo "::endgroup::"
+    echo "::endgroup::" >&2
   fi
 }
 
