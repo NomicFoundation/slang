@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Operator == cannot be applied to operands of type "DerivedA" and "DerivedB".
+   ╭─[input.sol:7:9]
+   │
+ 7 │         da == db;
+   │         ────┬───  
+   │             ╰───── Error occurred here.
+───╯

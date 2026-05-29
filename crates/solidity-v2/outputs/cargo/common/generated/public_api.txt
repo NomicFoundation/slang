@@ -370,9 +370,53 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub mod slang_solidity_v2_common::diagnostics::kinds::type_system
+pub enum slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::OperatorNotApplicableToTypes(slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes)
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::eq(&self, other: &slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes::left_type: alloc::string::String
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes::operator: alloc::string::String
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes::right_type: alloc::string::String
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes::eq(&self, other: &slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub enum slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::Compilation(slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind)
 pub slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::Syntax(slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind)
+pub slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::TypeSystem(slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind)
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -396,6 +440,10 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::U
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind) -> Self
 impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -509,6 +557,14 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub mod slang_solidity_v2_common::nodes
 #[repr(transparent)] pub struct slang_solidity_v2_common::nodes::NodeId(_)
 impl core::clone::Clone for slang_solidity_v2_common::nodes::NodeId

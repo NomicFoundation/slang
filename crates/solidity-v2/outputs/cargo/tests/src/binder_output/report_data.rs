@@ -8,7 +8,6 @@ use slang_solidity_v2_ir::ir::visitor::{accept_source_unit, Visitor};
 use slang_solidity_v2_ir::ir::Identifier;
 use slang_solidity_v2_semantic::binder::{Definition, Resolution, Typing};
 use slang_solidity_v2_semantic::context::SemanticContext;
-use slang_solidity_v2_semantic::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
 
 // Types
 
@@ -289,7 +288,7 @@ impl CollectedDefinitionDisplay<'_> {
         let typing = self.semantic.binder().node_typing(node_id);
         match typing {
             Typing::Unresolved => "unresolved".to_string(),
-            Typing::Resolved(type_id) => self.type_display(type_id),
+            Typing::Resolved(type_id) => self.semantic.type_internal_name(type_id),
             Typing::This => "this".to_string(),
             Typing::Super => "super".to_string(),
             Typing::UserMetaType(meta_node_id) => {
@@ -300,133 +299,6 @@ impl CollectedDefinitionDisplay<'_> {
                 unreachable!("unexpected typing {typing:?} of user definition");
             }
         }
-    }
-
-    #[allow(clippy::too_many_lines)]
-    fn type_display(&self, type_id: TypeId) -> String {
-        match self.semantic.types().get_type_by_id(type_id) {
-            Type::Address { payable } => {
-                if *payable {
-                    "address payable".to_string()
-                } else {
-                    "address".to_string()
-                }
-            }
-            Type::Array {
-                element_type,
-                location,
-            } => format!(
-                "{element_type}[] {location}",
-                element_type = self.type_display(*element_type),
-                location = data_location_display(*location),
-            ),
-            Type::Boolean => "bool".to_string(),
-            Type::ByteArray { width } => format!("bytes{width}"),
-            Type::Bytes { location } => {
-                format!(
-                    "bytes {location}",
-                    location = data_location_display(*location)
-                )
-            }
-            Type::Contract { definition_id } => self.definition_name(*definition_id),
-            Type::Enum { definition_id } => self.definition_name(*definition_id),
-            Type::FixedPointNumber {
-                signed,
-                bits,
-                precision_bits,
-            } => {
-                format!(
-                    "{signed}fixed{bits}x{precision_bits}",
-                    signed = if *signed { "" } else { "u" }
-                )
-            }
-            Type::FixedSizeArray {
-                element_type,
-                size,
-                location,
-            } => format!(
-                "{element_type}[{size}] {location}",
-                element_type = self.type_display(*element_type),
-                location = data_location_display(*location),
-            ),
-            Type::Function(FunctionType {
-                parameter_types,
-                return_type,
-                ..
-            }) => {
-                format!(
-                    "function ({parameters}) returns {returns}",
-                    parameters = parameter_types
-                        .iter()
-                        .map(|type_id| self.type_display(*type_id))
-                        .collect::<Vec<_>>()
-                        .join(", "),
-                    returns = self.type_display(*return_type),
-                )
-            }
-            Type::Integer { signed, bits } => {
-                format!("{signed}int{bits}", signed = if *signed { "" } else { "u" })
-            }
-            Type::Interface { definition_id } => self.definition_name(*definition_id),
-            Type::Mapping {
-                key_type_id,
-                value_type_id,
-            } => {
-                format!(
-                    "{key} => {value}",
-                    key = self.type_display(*key_type_id),
-                    value = self.type_display(*value_type_id)
-                )
-            }
-            Type::Literal(kind) => match kind {
-                LiteralKind::Integer { value } => format!("lit-integer({value})"),
-                LiteralKind::HexInteger { value, bytes } => {
-                    format!("lit-hex({value}, {bytes})")
-                }
-                LiteralKind::Rational { value } => format!("lit-rational({value})"),
-                LiteralKind::HexString { bytes } => format!("lit-hexstring({bytes})"),
-                LiteralKind::String { bytes } => format!("lit-string({bytes})"),
-                LiteralKind::Address => "lit-address".to_string(),
-            },
-            Type::String { location } => {
-                format!(
-                    "string {location}",
-                    location = data_location_display(*location)
-                )
-            }
-            Type::Struct {
-                definition_id,
-                location,
-            } => {
-                format!(
-                    "{name} {location}",
-                    name = self.definition_name(*definition_id),
-                    location = data_location_display(*location)
-                )
-            }
-            Type::Tuple { types } => {
-                format!(
-                    "({types})",
-                    types = types
-                        .iter()
-                        .map(|type_id| self.type_display(*type_id))
-                        .collect::<Vec<_>>()
-                        .join(", ")
-                )
-            }
-            Type::UserDefinedValue { definition_id } => self.definition_name(*definition_id),
-            Type::Void => "void".to_string(),
-        }
-    }
-
-    fn definition_name(&self, definition_id: NodeId) -> String {
-        self.semantic
-            .binder()
-            .find_definition_by_id(definition_id)
-            .unwrap()
-            .identifier()
-            .text
-            .clone()
     }
 }
 
@@ -500,14 +372,5 @@ impl Display for UnboundIdentifierDisplay<'_> {
             line = self.identifier.line,
             column = self.identifier.column,
         )
-    }
-}
-
-fn data_location_display(location: DataLocation) -> &'static str {
-    match location {
-        DataLocation::Memory => "memory",
-        DataLocation::Storage => "storage",
-        DataLocation::Calldata => "calldata",
-        DataLocation::Inherited => "(inherited)",
     }
 }

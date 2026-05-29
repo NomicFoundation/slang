@@ -1,0 +1,51 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 6
+
+Error: Operator == cannot be applied to operands of type "event MyCustomEvent" and "event MyCustomEvent".
+   ╭─[input.sol:4:9]
+   │
+ 4 │         MyCustomEvent == MyCustomEvent;
+   │         ───────────────┬──────────────  
+   │                        ╰──────────────── Error occurred here.
+───╯
+
+Error: Operator != cannot be applied to operands of type "event MyCustomEvent" and "event MyCustomEvent".
+   ╭─[input.sol:5:9]
+   │
+ 5 │         MyCustomEvent != MyCustomEvent;
+   │         ───────────────┬──────────────  
+   │                        ╰──────────────── Error occurred here.
+───╯
+
+Error: Operator >= cannot be applied to operands of type "event MyCustomEvent" and "event MyCustomEvent".
+   ╭─[input.sol:6:9]
+   │
+ 6 │         MyCustomEvent >= MyCustomEvent;
+   │         ───────────────┬──────────────  
+   │                        ╰──────────────── Error occurred here.
+───╯
+
+Error: Operator <= cannot be applied to operands of type "event MyCustomEvent" and "event MyCustomEvent".
+   ╭─[input.sol:7:9]
+   │
+ 7 │         MyCustomEvent <= MyCustomEvent;
+   │         ───────────────┬──────────────  
+   │                        ╰──────────────── Error occurred here.
+───╯
+
+Error: Operator < cannot be applied to operands of type "event MyCustomEvent" and "event MyCustomEvent".
+   ╭─[input.sol:8:9]
+   │
+ 8 │         MyCustomEvent < MyCustomEvent;
+   │         ──────────────┬──────────────  
+   │                       ╰──────────────── Error occurred here.
+───╯
+
+Error: Operator > cannot be applied to operands of type "event MyCustomEvent" and "event MyCustomEvent".
+   ╭─[input.sol:9:9]
+   │
+ 9 │         MyCustomEvent > MyCustomEvent;
+   │         ──────────────┬──────────────  
+   │                       ╰──────────────── Error occurred here.
+───╯

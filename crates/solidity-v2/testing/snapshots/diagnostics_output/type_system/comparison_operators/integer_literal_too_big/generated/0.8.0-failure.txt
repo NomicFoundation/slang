@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Operator == cannot be applied to operands of type "int256" and "lit-integer(115792089237316195423570985008687907853269984665640564039457584007913129639935)".
+   ╭─[input.sol:3:9]
+   │
+ 3 │         int(23) == 2**256 - 1;
+   │         ──────────┬──────────  
+   │                   ╰──────────── Error occurred here.
+───╯

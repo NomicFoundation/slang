@@ -1,0 +1,51 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 6
+
+Error: Operator == cannot be applied to operands of type "error MyCustomError" and "error MyCustomError".
+   ╭─[input.sol:5:9]
+   │
+ 5 │         MyCustomError == MyCustomError;
+   │         ───────────────┬──────────────  
+   │                        ╰──────────────── Error occurred here.
+───╯
+
+Error: Operator != cannot be applied to operands of type "error MyCustomError" and "error MyCustomError".
+   ╭─[input.sol:6:9]
+   │
+ 6 │         MyCustomError != MyCustomError;
+   │         ───────────────┬──────────────  
+   │                        ╰──────────────── Error occurred here.
+───╯
+
+Error: Operator >= cannot be applied to operands of type "error MyCustomError" and "error MyCustomError".
+   ╭─[input.sol:7:9]
+   │
+ 7 │         MyCustomError >= MyCustomError;
+   │         ───────────────┬──────────────  
+   │                        ╰──────────────── Error occurred here.
+───╯
+
+Error: Operator <= cannot be applied to operands of type "error MyCustomError" and "error MyCustomError".
+   ╭─[input.sol:8:9]
+   │
+ 8 │         MyCustomError <= MyCustomError;
+   │         ───────────────┬──────────────  
+   │                        ╰──────────────── Error occurred here.
+───╯
+
+Error: Operator < cannot be applied to operands of type "error MyCustomError" and "error MyCustomError".
+   ╭─[input.sol:9:9]
+   │
+ 9 │         MyCustomError < MyCustomError;
+   │         ──────────────┬──────────────  
+   │                       ╰──────────────── Error occurred here.
+───╯
+
+Error: Operator > cannot be applied to operands of type "error MyCustomError" and "error MyCustomError".
+    ╭─[input.sol:10:9]
+    │
+ 10 │         MyCustomError > MyCustomError;
+    │         ──────────────┬──────────────  
+    │                       ╰──────────────── Error occurred here.
+────╯

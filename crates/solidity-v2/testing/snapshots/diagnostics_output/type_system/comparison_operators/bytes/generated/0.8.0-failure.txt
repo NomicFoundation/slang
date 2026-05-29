@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Operator == cannot be applied to operands of type "bytes storage" and "bytes storage".
+   ╭─[input.sol:3:57]
+   │
+ 3 │ contract test { bytes a; bytes b; fallback() external { a == b; } }
+   │                                                         ───┬──  
+   │                                                            ╰──── Error occurred here.
+───╯

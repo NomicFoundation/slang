@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+Error: Operator > cannot be applied to operands of type "bool" and "bool".
+   ╭─[input.sol:9:13]
+   │
+ 9 │         c = a > b;
+   │             ──┬──  
+   │               ╰──── Error occurred here.
+───╯
+
+Error: Operator < cannot be applied to operands of type "bool" and "bool".
+    ╭─[input.sol:10:13]
+    │
+ 10 │         c = a < b;
+    │             ──┬──  
+    │               ╰──── Error occurred here.
+────╯
+
+Error: Operator >= cannot be applied to operands of type "bool" and "bool".
+    ╭─[input.sol:11:13]
+    │
+ 11 │         c = a >= b;
+    │             ───┬──  
+    │                ╰──── Error occurred here.
+────╯
+
+Error: Operator <= cannot be applied to operands of type "bool" and "bool".
+    ╭─[input.sol:12:13]
+    │
+ 12 │         c = a <= b;
+    │             ───┬──  
+    │                ╰──── Error occurred here.
+────╯

@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use slang_solidity_v2_common::diagnostics::kinds::type_system::OperatorNotApplicableToTypes;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
@@ -7,7 +8,7 @@ use super::Pass;
 use crate::binder::{Reference, Resolution, Typing};
 use crate::built_ins::BuiltIn;
 use crate::passes::common::node_id_for_string_expression_typing;
-use crate::types::{DataLocation, Number, Type};
+use crate::types::{display, DataLocation, Number, Type, TypeId, TypeRegistry};
 
 impl Visitor for Pass<'_> {
     fn enter_source_unit(&mut self, node: &ir::SourceUnit) -> bool {
@@ -198,13 +199,39 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_equality_expression(&mut self, node: &ir::EqualityExpression) {
-        // TODO(validation) SDR[55]: check that both operands have a compatible type
+        let operator_name = match node.operator {
+            ir::EqualityExpressionOperator::EqualEqual(_) => "==",
+            ir::EqualityExpressionOperator::BangEqual(_) => "!=",
+        };
+
+        self.check_binary_operator_applicability(
+            operator_name,
+            &node.left_operand,
+            &node.right_operand,
+            node.range.clone(),
+            |common_type| common_type.supports_equality(),
+        );
+
         self.binder
             .set_node_type(node.id(), Some(self.types.boolean()));
     }
 
     fn leave_inequality_expression(&mut self, node: &ir::InequalityExpression) {
-        // TODO(validation) SDR[55]: check that both operands have a compatible type
+        let operator_name = match node.operator {
+            ir::InequalityExpressionOperator::LessThan(_) => "<",
+            ir::InequalityExpressionOperator::LessThanEqual(_) => "<=",
+            ir::InequalityExpressionOperator::GreaterThan(_) => ">",
+            ir::InequalityExpressionOperator::GreaterThanEqual(_) => ">=",
+        };
+
+        self.check_binary_operator_applicability(
+            operator_name,
+            &node.left_operand,
+            &node.right_operand,
+            node.range.clone(),
+            |common_type| common_type.supports_inequality(),
+        );
+
         self.binder
             .set_node_type(node.id(), Some(self.types.boolean()));
     }
@@ -600,4 +627,101 @@ impl Visitor for Pass<'_> {
         self.replace_scope_for_node_id(node.id());
         // NOTE: ensure following code does not need to perform resolution
     }
+}
+
+impl Pass<'_> {
+    fn check_binary_operator_applicability(
+        &mut self,
+        operator_name: &str,
+        left_operand: &ir::Expression,
+        right_operand: &ir::Expression,
+
+        range: std::ops::Range<usize>,
+        common_type_checker: impl FnOnce(&Type) -> bool,
+    ) {
+        let left_typing = self.typing_of_expression(left_operand);
+        let right_typing = self.typing_of_expression(right_operand);
+
+        if is_non_value_typing(&left_typing) || is_non_value_typing(&right_typing) {
+            self.push_operator_diagnostic(
+                operator_name.to_owned(),
+                &left_typing,
+                &right_typing,
+                range,
+            );
+            return;
+        }
+
+        if let Some(left_type_id) = left_typing.as_type_id() {
+            if let Some(right_type_id) = right_typing.as_type_id() {
+                let common_type_id =
+                    common_type_for_comparison(self.types, left_type_id, right_type_id);
+
+                if match common_type_id {
+                    None => true,
+                    Some(common_type_id) => {
+                        !common_type_checker(self.types.get_type_by_id(common_type_id))
+                    }
+                } {
+                    self.push_operator_diagnostic(
+                        operator_name.to_owned(),
+                        &left_typing,
+                        &right_typing,
+                        range,
+                    );
+                }
+            }
+        }
+    }
+
+    fn push_operator_diagnostic(
+        &mut self,
+        operator_name: String,
+        left_typing: &Typing,
+        right_typing: &Typing,
+        range: std::ops::Range<usize>,
+    ) {
+        let left_type_name = display::typing_display_name(self.types, self.binder, left_typing);
+        let right_type_name = display::typing_display_name(self.types, self.binder, right_typing);
+
+        self.diagnostics.push(
+            self.file_id.clone(),
+            range,
+            OperatorNotApplicableToTypes {
+                operator: operator_name,
+                left_type: left_type_name,
+                right_type: right_type_name,
+            },
+        );
+    }
+}
+
+fn is_non_value_typing(typing: &Typing) -> bool {
+    matches!(
+        typing,
+        Typing::Super | Typing::UserMetaType(_) | Typing::MetaType(_)
+    )
+}
+
+/// Returns the common type the two operands unify to for the purpose of a
+/// comparison, or `None` if no such type exists.
+///
+/// We try direct implicit convertibility first so that special literal rules
+/// (e.g. `Literal(0)` converting to any `bytesN`) are preserved.
+fn common_type_for_comparison(
+    types: &mut TypeRegistry,
+    left_type_id: TypeId,
+    right_type_id: TypeId,
+) -> Option<TypeId> {
+    if let Some(mobile_right_type) = types.compute_mobile_type(right_type_id) {
+        if types.implicitly_convertible_to(left_type_id, mobile_right_type) {
+            return Some(mobile_right_type);
+        }
+    }
+    if let Some(mobile_left_type) = types.compute_mobile_type(left_type_id) {
+        if types.implicitly_convertible_to(right_type_id, mobile_left_type) {
+            return Some(mobile_left_type);
+        }
+    }
+    None
 }

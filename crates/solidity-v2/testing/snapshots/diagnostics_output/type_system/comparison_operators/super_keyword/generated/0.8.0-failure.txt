@@ -1,0 +1,51 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 6
+
+Error: Operator != cannot be applied to operands of type "super" and "this".
+   ╭─[input.sol:9:9]
+   │
+ 9 │         super != this;
+   │         ──────┬──────  
+   │               ╰──────── Error occurred here.
+───╯
+
+Error: Operator != cannot be applied to operands of type "this" and "super".
+    ╭─[input.sol:10:9]
+    │
+ 10 │         this != super;
+    │         ──────┬──────  
+    │               ╰──────── Error occurred here.
+────╯
+
+Error: Operator != cannot be applied to operands of type "super" and "C".
+    ╭─[input.sol:13:9]
+    │
+ 13 │         super != c;
+    │         ─────┬────  
+    │              ╰────── Error occurred here.
+────╯
+
+Error: Operator != cannot be applied to operands of type "C" and "super".
+    ╭─[input.sol:14:9]
+    │
+ 14 │         c != super;
+    │         ─────┬────  
+    │              ╰────── Error occurred here.
+────╯
+
+Error: Operator != cannot be applied to operands of type "super" and "D".
+    ╭─[input.sol:17:9]
+    │
+ 17 │         super != d;
+    │         ─────┬────  
+    │              ╰────── Error occurred here.
+────╯
+
+Error: Operator != cannot be applied to operands of type "D" and "super".
+    ╭─[input.sol:18:9]
+    │
+ 18 │         d != super;
+    │         ─────┬────  
+    │              ╰────── Error occurred here.
+────╯
