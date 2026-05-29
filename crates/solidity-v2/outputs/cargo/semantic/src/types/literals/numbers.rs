@@ -70,10 +70,9 @@ impl Number {
             LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. } => {
                 Some(Self::Integer(value.clone()))
             }
+            LiteralKind::Address { value } => Some(Self::Integer(value.into())),
             LiteralKind::Rational { value } => Some(Self::Rational(value.clone())),
-            LiteralKind::HexString { .. } | LiteralKind::String { .. } | LiteralKind::Address => {
-                None
-            }
+            LiteralKind::HexString { .. } | LiteralKind::String { .. } => None,
         }
     }
 

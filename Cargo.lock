@@ -4045,6 +4045,8 @@ dependencies = [
 name = "slang_solidity_v2"
 version = "1.3.5"
 dependencies = [
+ "num-bigint",
+ "num-rational",
  "ruint",
  "serde_json",
  "slang_solidity_v2_ast",
