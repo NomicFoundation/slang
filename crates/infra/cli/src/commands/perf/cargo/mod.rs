@@ -2,11 +2,10 @@ use std::path::Path;
 
 use anyhow::Result;
 use clap::{Parser, Subcommand};
-use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
-use infra_utils::github::GitHub;
 use infra_utils::paths::{FileWalker, PathExtensions};
 
+use crate::commands::perf::binaries;
 use crate::toolchains::bencher::{run_bench, BencherThreshold};
 use crate::toolchains::pipenv::PipEnv;
 use crate::utils::DryRun;
@@ -15,6 +14,7 @@ const DEFAULT_BENCHER_PROJECT_CMP: &str = "slang-dashboard-cargo-cmp";
 const DEFAULT_BENCHER_PROJECT_SLANG: &str = "slang-dashboard-cargo-slang";
 const DEFAULT_BENCHER_PROJECT_SLANG_V2: &str = "slang-dashboard-cargo-slang-v2";
 
+#[allow(clippy::struct_excessive_bools)]
 #[derive(Clone, Debug, Parser)]
 pub struct CargoController {
     #[command(subcommand)]
@@ -26,6 +26,9 @@ pub struct CargoController {
     pr_benchmark: bool,
     #[arg(long)]
     no_deps: bool,
+    /// Skip installing apt-managed deps (valgrind, graphviz).
+    #[arg(long)]
+    no_apt_deps: bool,
     /// Install deps and build bench binaries, but skip running benchmarks.
     #[arg(long, conflicts_with = "pr_benchmark")]
     smoke: bool,
@@ -44,11 +47,12 @@ enum Benches {
 impl CargoController {
     pub fn execute(&self) -> Result<()> {
         if !self.no_deps {
-            Self::install_valgrind();
-            CargoWorkspace::install_binary("iai-callgrind-runner")?;
-            CargoWorkspace::install_binary("bencher_cli")?;
-
-            Self::install_graphviz();
+            if !self.no_apt_deps {
+                binaries::install_valgrind()?;
+                binaries::install_graphviz()?;
+            }
+            binaries::install_iai_callgrind_runner()?;
+            binaries::install_bencher_cli()?;
         }
 
         if self.smoke {
@@ -85,65 +89,6 @@ impl CargoController {
             ),
         }
         Ok(())
-    }
-
-    fn install_valgrind() {
-        Self::install_from_apt("valgrind", "1:3.22.0-0ubuntu3");
-
-        match Command::new("valgrind").flag("--version").evaluate() {
-            Ok(output) if output.starts_with("valgrind-") => {
-                // Valgrind is available
-            }
-            other => {
-                panic!(
-                    "valgrind needs to be installed on this machine to run perf tests.
-                    Supported Platforms: https://valgrind.org/downloads/current.html
-                    {other:?}"
-                );
-            }
-        }
-    }
-
-    fn install_graphviz() {
-        Self::install_from_apt("graphviz", "2.42.2-9ubuntu0.1");
-
-        // dot prints its version to stderr, using the help page instead
-        match Command::new("dot").flag("-?").evaluate() {
-            Ok(output) if output.starts_with("Usage: dot") => {
-                // graphviz is available
-            }
-            other => {
-                panic!(
-                    "graphviz needs to be installed on this machine to generate callgraphs.
-                    Supported Platforms: https://graphviz.org/download/
-                    {other:?}"
-                );
-            }
-        }
-    }
-
-    fn install_from_apt(package_name: &str, version: &str) {
-        if GitHub::is_running_in_ci() {
-            Command::new("sudo").args(["apt", "update"]).run();
-
-            Command::new("sudo")
-                .args(["apt", "install"])
-                .arg(format!("{package_name}={version}"))
-                .flag("--yes")
-                .run();
-
-            return;
-        }
-
-        if GitHub::is_running_in_devcontainer() {
-            Command::new("sudo").args(["apt-get", "update"]).run();
-
-            Command::new("sudo")
-                .args(["apt-get", "install"])
-                .arg(format!("{package_name}={version}"))
-                .flag("--yes")
-                .run();
-        }
     }
 
     fn run_iai_bench(&self, package_name: &str, bench_name: &str, bencher_project: &str) {

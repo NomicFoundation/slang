@@ -1,8 +1,8 @@
 use anyhow::{bail, Result};
 use clap::Parser;
-use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 
+use crate::commands::perf::binaries;
 use crate::toolchains::bencher;
 
 const BENCHER_PROJECTS: &[&str] = &[
@@ -49,7 +49,7 @@ fn resolve_branch(branch: Option<&str>) -> Result<String> {
 impl ArchiveController {
     pub fn execute(&self) -> Result<()> {
         let branch = resolve_branch(self.branch.as_deref())?;
-        CargoWorkspace::install_binary("bencher_cli")?;
+        binaries::install_bencher_cli()?;
 
         for project in BENCHER_PROJECTS {
             bencher::archive_branch(project, &branch);
@@ -62,7 +62,7 @@ impl ArchiveController {
 impl UnarchiveController {
     pub fn execute(&self) -> Result<()> {
         let branch = resolve_branch(self.branch.as_deref())?;
-        CargoWorkspace::install_binary("bencher_cli")?;
+        binaries::install_bencher_cli()?;
 
         for project in BENCHER_PROJECTS {
             bencher::unarchive_branch(project, &branch);

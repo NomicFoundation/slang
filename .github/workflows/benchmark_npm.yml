@@ -74,8 +74,8 @@ jobs:
           echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProject }}" >> $GITHUB_ENV
         if: "${{ inputs.bencherProject }}"
 
-      - name: "infra setup"
-        run: "./scripts/bin/infra setup"
+      - name: "infra setup cargo npm"
+        run: "./scripts/bin/infra setup cargo npm"
 
       - name: "infra check npm"
         run: "./scripts/bin/infra check npm"
