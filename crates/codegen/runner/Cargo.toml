@@ -14,6 +14,7 @@ infra_utils = { workspace = true }
 rayon = { workspace = true }
 solidity_language = { workspace = true }
 solidity_v2_language = { workspace = true }
+tera = { workspace = true }
 
 [lints]
 workspace = true

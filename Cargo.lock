@@ -848,6 +848,7 @@ dependencies = [
  "rayon",
  "solidity_language",
  "solidity_v2_language",
+ "tera",
 ]
 
 [[package]]

@@ -2,7 +2,7 @@ use std::ffi::OsStr;
 use std::path::{Path, PathBuf};
 
 use anyhow::Result;
-use serde::Serialize;
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
 use crate::codegen::tera::TeraWrapper;
 use crate::codegen::CodegenFileSystem;
@@ -11,9 +11,8 @@ use crate::paths::{PathExtensions, PrivatePathExtensions};
 pub struct CodegenRuntime;
 
 impl CodegenRuntime {
-    pub fn render_templates_in_place(
-        model: impl Serialize,
-        filter: impl Fn(&Path) -> bool,
+    pub fn render_templates_in_place<'c>(
+        context_for: impl Fn(&Path) -> &'c tera::Context + Sync,
     ) -> Result<()> {
         let repo_root = Path::repo_root();
         let tera = TeraWrapper::new(&repo_root)?;
@@ -24,27 +23,20 @@ impl CodegenRuntime {
             // Templates starting with underscore are meant to contain common macros.
             // They are not rendered directly, but imported by other templates.
             !path.unwrap_name().starts_with('_'))
-            .filter(|path| filter(path))
             .collect::<Vec<_>>();
 
         assert!(
             !all_templates.is_empty(),
-            "No templates under {repo_root:?} matched the provided filter.",
+            "No templates under {repo_root:?}",
         );
 
-        let mut fs = CodegenFileSystem::default();
+        all_templates.par_iter().try_for_each(|template_path| {
+            let generated_path = Self::get_in_place_path(template_path);
+            let rendered = tera.render(template_path, context_for(template_path))?;
 
-        let mut context = tera::Context::new();
-        context.insert("model", &model);
-
-        for template_path in all_templates {
-            let generated_path = Self::get_in_place_path(&template_path);
-            let rendered = tera.render(&template_path, &context)?;
-
-            fs.write_file_formatted(&generated_path, rendered)?;
-        }
-
-        Ok(())
+            let mut fs = CodegenFileSystem::default();
+            fs.write_file_formatted(&generated_path, rendered)
+        })
     }
 
     fn get_in_place_path(template_path: &Path) -> PathBuf {
