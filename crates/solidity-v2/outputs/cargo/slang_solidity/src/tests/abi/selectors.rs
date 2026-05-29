@@ -30,7 +30,7 @@ fn test_function_selector() {
 
 #[test]
 fn test_events_and_errors_selectors() {
-    let unit = fixtures::FullAbi::build_compilation_unit();
+    let unit = super::FullAbi::build_compilation_unit();
 
     let test_contract = unit
         .find_contract_by_name("Test")
@@ -47,7 +47,7 @@ fn test_events_and_errors_selectors() {
 
 #[test]
 fn test_selectors_for_functions_with_tuple_parameters() {
-    let unit = fixtures::AbiWithTuples::build_compilation_unit();
+    let unit = super::AbiWithTuples::build_compilation_unit();
 
     let test = unit
         .find_contract_by_name("Test")

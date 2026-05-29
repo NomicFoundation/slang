@@ -1,8 +1,6 @@
-use super::fixtures;
-
 #[test]
 fn test_compute_internal_signature() {
-    let unit = fixtures::FullAbi::build_compilation_unit();
+    let unit = super::FullAbi::build_compilation_unit();
 
     let test_contract = unit
         .find_contract_by_name("Test")

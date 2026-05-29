@@ -1,5 +1,30 @@
 use super::fixtures;
 use crate::ast::ContractBase;
+use crate::define_fixture;
+
+define_fixture!(
+    Overrides,
+    file: "main.sol", r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.29;
+
+contract Base
+{
+    function in_base() internal pure {}
+    function override_me() virtual external view {}
+}
+
+contract Middle is Base {
+    function in_middle() external pure {}
+    function override_me() virtual override public view {}
+}
+
+contract Inherited is Middle
+{
+    function override_me() override public pure {}
+}
+"#,
+);
 
 #[test]
 fn test_contract_compute_linearised_bases() {
@@ -72,7 +97,7 @@ fn test_contract_compute_linearised_functions() {
 
 #[test]
 fn test_contract_compute_linearised_functions_with_overrides() {
-    let unit = fixtures::Overrides::build_compilation_unit();
+    let unit = Overrides::build_compilation_unit();
 
     let inherited = unit
         .find_contract_by_name("Inherited")

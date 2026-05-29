@@ -1,5 +1,26 @@
 use super::fixtures;
-use crate::ast;
+use crate::{ast, define_fixture};
+
+define_fixture!(
+    ChainedImports,
+    file: "first.sol", r#"
+import {B2 as B1} from "second.sol";
+interface I1 {}
+contract A1 is I1, B1 {}
+"#,
+    file: "second.sol", r#"
+import {B3 as B2} from "third.sol";
+"#,
+    file: "third.sol", r#"
+contract B3 {}
+"#,
+);
+
+#[test]
+fn test_build_chained_imports_fixture() {
+    let unit = ChainedImports::build_compilation_unit();
+    assert_eq!(3, unit.file_ids().len());
+}
 
 #[test]
 fn test_identifier_path_resolve_to_immediate_definition() {
@@ -38,7 +59,7 @@ fn test_identifier_path_resolve_to_immediate_definition() {
 
 #[test]
 fn test_identifier_path_resolve_to_immediate_resolves_to_direct_definition() {
-    let unit = fixtures::ChainedImports::build_compilation_unit();
+    let unit = ChainedImports::build_compilation_unit();
 
     let a1 = unit.find_contract_by_name("A1").expect("contract is found");
     let i1_typename = a1
@@ -63,7 +84,7 @@ fn test_identifier_path_resolve_to_immediate_resolves_to_direct_definition() {
 
 #[test]
 fn test_chained_imports_resolution() {
-    let unit = fixtures::ChainedImports::build_compilation_unit();
+    let unit = ChainedImports::build_compilation_unit();
 
     let a1 = unit.find_contract_by_name("A1").expect("contract is found");
     let b1_typename = a1

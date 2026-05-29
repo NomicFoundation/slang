@@ -60,7 +60,7 @@ fn test_get_contracts_abi() {
 
 #[test]
 fn test_full_abi_with_events_and_errors() {
-    let unit = fixtures::FullAbi::build_compilation_unit();
+    let unit = super::FullAbi::build_compilation_unit();
 
     let contracts_abi = unit.compute_contracts_abi();
     assert_eq!(contracts_abi.len(), 1);
@@ -82,7 +82,7 @@ fn test_full_abi_with_events_and_errors() {
 
 #[test]
 fn test_abi_entries_with_tuples() {
-    let unit = fixtures::AbiWithTuples::build_compilation_unit();
+    let unit = super::AbiWithTuples::build_compilation_unit();
 
     let contracts_abi = unit.compute_contracts_abi();
     assert_eq!(contracts_abi.len(), 1);
