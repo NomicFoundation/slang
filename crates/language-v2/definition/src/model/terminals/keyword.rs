@@ -21,8 +21,13 @@ pub struct KeywordItem {
 }
 
 impl KeywordItem {
-    pub fn is_unique(&self) -> bool {
-        self.scanner.collect_variations().len() == 1
+    pub fn unique_symbol(&self) -> Option<String> {
+        let variations = self.scanner.collect_variations();
+        if variations.len() == 1 {
+            Some(variations.into_iter().next().unwrap())
+        } else {
+            None
+        }
     }
 }
 

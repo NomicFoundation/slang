@@ -23,7 +23,7 @@ pub struct IrModel {
 
 #[derive(Clone, Serialize)]
 pub struct Terminal {
-    pub is_unique: bool,
+    pub unique_symbol: Option<String>,
     pub is_identifier: bool,
 }
 
@@ -201,7 +201,7 @@ impl IrModelBuilder {
                     // These items are skipped by the parser.
                 }
                 model::Item::Keyword { item } => {
-                    let node_type = if item.is_unique() {
+                    let node_type = if item.unique_symbol().is_some() {
                         NodeType::UniqueTerminal(item.name.clone())
                     } else {
                         NodeType::Terminal(item.name.clone())
@@ -209,7 +209,7 @@ impl IrModelBuilder {
                     self.node_types.insert(item.name.clone(), node_type);
                 }
                 model::Item::Token { item } => {
-                    let node_type = if item.is_unique() {
+                    let node_type = if item.unique_symbol().is_some() {
                         NodeType::UniqueTerminal(item.name.clone())
                     } else {
                         NodeType::Terminal(item.name.clone())
@@ -258,7 +258,7 @@ impl IrModelBuilder {
                     self.terminals.insert(
                         item.name.clone(),
                         Terminal {
-                            is_unique: item.is_unique(),
+                            unique_symbol: item.unique_symbol(),
                             is_identifier: false,
                         },
                     );
@@ -267,7 +267,7 @@ impl IrModelBuilder {
                     self.terminals.insert(
                         item.name.clone(),
                         Terminal {
-                            is_unique: item.is_unique(),
+                            unique_symbol: item.unique_symbol(),
                             is_identifier: identifier_tokens.contains(&item.name),
                         },
                     );

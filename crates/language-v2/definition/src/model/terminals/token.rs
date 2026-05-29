@@ -20,7 +20,7 @@ pub struct TokenItem {
 }
 
 impl TokenItem {
-    pub fn is_unique(&self) -> bool {
-        self.scanner.is_unique()
+    pub fn unique_symbol(&self) -> Option<String> {
+        self.scanner.unique_symbol()
     }
 }

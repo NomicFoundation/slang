@@ -1535,10 +1535,28 @@ pub enum AbicoderVersion {
     AbicoderV2Keyword(AbicoderV2Keyword),
 }
 
+impl AbicoderVersion {
+    pub fn unparse(&self) -> &str {
+        match self {
+            AbicoderVersion::AbicoderV1Keyword(inner) => inner.unparse(),
+            AbicoderVersion::AbicoderV2Keyword(inner) => inner.unparse(),
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub enum AdditiveExpressionOperator {
     Minus(Minus),
     Plus(Plus),
+}
+
+impl AdditiveExpressionOperator {
+    pub fn unparse(&self) -> &str {
+        match self {
+            AdditiveExpressionOperator::Minus(inner) => inner.unparse(),
+            AdditiveExpressionOperator::Plus(inner) => inner.unparse(),
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -1561,6 +1579,27 @@ pub enum AssignmentExpressionOperator {
     PercentEqual(PercentEqual),
     PlusEqual(PlusEqual),
     SlashEqual(SlashEqual),
+}
+
+impl AssignmentExpressionOperator {
+    pub fn unparse(&self) -> &str {
+        match self {
+            AssignmentExpressionOperator::AmpersandEqual(inner) => inner.unparse(),
+            AssignmentExpressionOperator::AsteriskEqual(inner) => inner.unparse(),
+            AssignmentExpressionOperator::BarEqual(inner) => inner.unparse(),
+            AssignmentExpressionOperator::CaretEqual(inner) => inner.unparse(),
+            AssignmentExpressionOperator::Equal(inner) => inner.unparse(),
+            AssignmentExpressionOperator::GreaterThanGreaterThanEqual(inner) => inner.unparse(),
+            AssignmentExpressionOperator::GreaterThanGreaterThanGreaterThanEqual(inner) => {
+                inner.unparse()
+            }
+            AssignmentExpressionOperator::LessThanLessThanEqual(inner) => inner.unparse(),
+            AssignmentExpressionOperator::MinusEqual(inner) => inner.unparse(),
+            AssignmentExpressionOperator::PercentEqual(inner) => inner.unparse(),
+            AssignmentExpressionOperator::PlusEqual(inner) => inner.unparse(),
+            AssignmentExpressionOperator::SlashEqual(inner) => inner.unparse(),
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -1594,11 +1633,30 @@ pub enum EqualityExpressionOperator {
     EqualEqual(EqualEqual),
 }
 
+impl EqualityExpressionOperator {
+    pub fn unparse(&self) -> &str {
+        match self {
+            EqualityExpressionOperator::BangEqual(inner) => inner.unparse(),
+            EqualityExpressionOperator::EqualEqual(inner) => inner.unparse(),
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub enum ExperimentalFeature {
     ABIEncoderV2Keyword(ABIEncoderV2Keyword),
     SMTCheckerKeyword(SMTCheckerKeyword),
     StringLiteral(StringLiteral),
+}
+
+impl ExperimentalFeature {
+    pub fn unparse(&self) -> &str {
+        match self {
+            ExperimentalFeature::ABIEncoderV2Keyword(inner) => inner.unparse(),
+            ExperimentalFeature::SMTCheckerKeyword(inner) => inner.unparse(),
+            ExperimentalFeature::StringLiteral(inner) => inner.unparse(),
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -1690,11 +1748,32 @@ pub enum InequalityExpressionOperator {
     LessThanEqual(LessThanEqual),
 }
 
+impl InequalityExpressionOperator {
+    pub fn unparse(&self) -> &str {
+        match self {
+            InequalityExpressionOperator::GreaterThan(inner) => inner.unparse(),
+            InequalityExpressionOperator::GreaterThanEqual(inner) => inner.unparse(),
+            InequalityExpressionOperator::LessThan(inner) => inner.unparse(),
+            InequalityExpressionOperator::LessThanEqual(inner) => inner.unparse(),
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub enum MultiplicativeExpressionOperator {
     Asterisk(Asterisk),
     Percent(Percent),
     Slash(Slash),
+}
+
+impl MultiplicativeExpressionOperator {
+    pub fn unparse(&self) -> &str {
+        match self {
+            MultiplicativeExpressionOperator::Asterisk(inner) => inner.unparse(),
+            MultiplicativeExpressionOperator::Percent(inner) => inner.unparse(),
+            MultiplicativeExpressionOperator::Slash(inner) => inner.unparse(),
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -1709,10 +1788,34 @@ pub enum NumberUnit {
     WeeksKeyword(WeeksKeyword),
 }
 
+impl NumberUnit {
+    pub fn unparse(&self) -> &str {
+        match self {
+            NumberUnit::WeiKeyword(inner) => inner.unparse(),
+            NumberUnit::GweiKeyword(inner) => inner.unparse(),
+            NumberUnit::EtherKeyword(inner) => inner.unparse(),
+            NumberUnit::SecondsKeyword(inner) => inner.unparse(),
+            NumberUnit::MinutesKeyword(inner) => inner.unparse(),
+            NumberUnit::HoursKeyword(inner) => inner.unparse(),
+            NumberUnit::DaysKeyword(inner) => inner.unparse(),
+            NumberUnit::WeeksKeyword(inner) => inner.unparse(),
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub enum PostfixExpressionOperator {
     MinusMinus(MinusMinus),
     PlusPlus(PlusPlus),
+}
+
+impl PostfixExpressionOperator {
+    pub fn unparse(&self) -> &str {
+        match self {
+            PostfixExpressionOperator::MinusMinus(inner) => inner.unparse(),
+            PostfixExpressionOperator::PlusPlus(inner) => inner.unparse(),
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -1732,11 +1835,34 @@ pub enum PrefixExpressionOperator {
     Tilde(Tilde),
 }
 
+impl PrefixExpressionOperator {
+    pub fn unparse(&self) -> &str {
+        match self {
+            PrefixExpressionOperator::Bang(inner) => inner.unparse(),
+            PrefixExpressionOperator::DeleteKeyword(inner) => inner.unparse(),
+            PrefixExpressionOperator::Minus(inner) => inner.unparse(),
+            PrefixExpressionOperator::MinusMinus(inner) => inner.unparse(),
+            PrefixExpressionOperator::PlusPlus(inner) => inner.unparse(),
+            PrefixExpressionOperator::Tilde(inner) => inner.unparse(),
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub enum ShiftExpressionOperator {
     GreaterThanGreaterThan(GreaterThanGreaterThan),
     GreaterThanGreaterThanGreaterThan(GreaterThanGreaterThanGreaterThan),
     LessThanLessThan(LessThanLessThan),
+}
+
+impl ShiftExpressionOperator {
+    pub fn unparse(&self) -> &str {
+        match self {
+            ShiftExpressionOperator::GreaterThanGreaterThan(inner) => inner.unparse(),
+            ShiftExpressionOperator::GreaterThanGreaterThanGreaterThan(inner) => inner.unparse(),
+            ShiftExpressionOperator::LessThanLessThan(inner) => inner.unparse(),
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -1797,6 +1923,16 @@ pub enum StorageLocation {
     CallDataKeyword(CallDataKeyword),
 }
 
+impl StorageLocation {
+    pub fn unparse(&self) -> &str {
+        match self {
+            StorageLocation::MemoryKeyword(inner) => inner.unparse(),
+            StorageLocation::StorageKeyword(inner) => inner.unparse(),
+            StorageLocation::CallDataKeyword(inner) => inner.unparse(),
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub enum StringExpression {
     StringLiterals(StringLiterals),
@@ -1838,6 +1974,28 @@ pub enum UsingOperator {
     Tilde(Tilde),
 }
 
+impl UsingOperator {
+    pub fn unparse(&self) -> &str {
+        match self {
+            UsingOperator::Ampersand(inner) => inner.unparse(),
+            UsingOperator::Asterisk(inner) => inner.unparse(),
+            UsingOperator::BangEqual(inner) => inner.unparse(),
+            UsingOperator::Bar(inner) => inner.unparse(),
+            UsingOperator::Caret(inner) => inner.unparse(),
+            UsingOperator::EqualEqual(inner) => inner.unparse(),
+            UsingOperator::GreaterThan(inner) => inner.unparse(),
+            UsingOperator::GreaterThanEqual(inner) => inner.unparse(),
+            UsingOperator::LessThan(inner) => inner.unparse(),
+            UsingOperator::LessThanEqual(inner) => inner.unparse(),
+            UsingOperator::Minus(inner) => inner.unparse(),
+            UsingOperator::Percent(inner) => inner.unparse(),
+            UsingOperator::Plus(inner) => inner.unparse(),
+            UsingOperator::Slash(inner) => inner.unparse(),
+            UsingOperator::Tilde(inner) => inner.unparse(),
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub enum UsingTarget {
     TypeName(TypeName),
@@ -1873,6 +2031,20 @@ pub enum VersionOperator {
     PragmaGreaterThanEqual(PragmaGreaterThanEqual),
 }
 
+impl VersionOperator {
+    pub fn unparse(&self) -> &str {
+        match self {
+            VersionOperator::PragmaCaret(inner) => inner.unparse(),
+            VersionOperator::PragmaTilde(inner) => inner.unparse(),
+            VersionOperator::PragmaEqual(inner) => inner.unparse(),
+            VersionOperator::PragmaLessThan(inner) => inner.unparse(),
+            VersionOperator::PragmaGreaterThan(inner) => inner.unparse(),
+            VersionOperator::PragmaLessThanEqual(inner) => inner.unparse(),
+            VersionOperator::PragmaGreaterThanEqual(inner) => inner.unparse(),
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub enum YulExpression {
     YulFunctionCallExpression(YulFunctionCallExpression),
@@ -1888,6 +2060,19 @@ pub enum YulLiteral {
     HexLiteral(HexLiteral),
     HexStringLiteral(HexStringLiteral),
     StringLiteral(StringLiteral),
+}
+
+impl YulLiteral {
+    pub fn unparse(&self) -> &str {
+        match self {
+            YulLiteral::TrueKeyword(inner) => inner.unparse(),
+            YulLiteral::FalseKeyword(inner) => inner.unparse(),
+            YulLiteral::DecimalLiteral(inner) => inner.unparse(),
+            YulLiteral::HexLiteral(inner) => inner.unparse(),
+            YulLiteral::HexStringLiteral(inner) => inner.unparse(),
+            YulLiteral::StringLiteral(inner) => inner.unparse(),
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -2001,6 +2186,9 @@ impl ABIEncoderV2KeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "ABIEncoderV2"
+    }
 }
 
 pub type AbicoderV1Keyword = Arc<AbicoderV1KeywordStruct>;
@@ -2014,6 +2202,9 @@ pub struct AbicoderV1KeywordStruct {
 impl AbicoderV1KeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "v1"
     }
 }
 
@@ -2029,6 +2220,9 @@ impl AbicoderV2KeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "v2"
+    }
 }
 
 pub type AbstractKeyword = Arc<AbstractKeywordStruct>;
@@ -2042,6 +2236,9 @@ pub struct AbstractKeywordStruct {
 impl AbstractKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "abstract"
     }
 }
 
@@ -2057,6 +2254,9 @@ impl AmpersandStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "&"
+    }
 }
 
 pub type AmpersandEqual = Arc<AmpersandEqualStruct>;
@@ -2070,6 +2270,9 @@ pub struct AmpersandEqualStruct {
 impl AmpersandEqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "&="
     }
 }
 
@@ -2085,6 +2288,9 @@ impl AnonymousKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "anonymous"
+    }
 }
 
 pub type Asterisk = Arc<AsteriskStruct>;
@@ -2098,6 +2304,9 @@ pub struct AsteriskStruct {
 impl AsteriskStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "*"
     }
 }
 
@@ -2113,6 +2322,9 @@ impl AsteriskEqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "*="
+    }
 }
 
 pub type Bang = Arc<BangStruct>;
@@ -2126,6 +2338,9 @@ pub struct BangStruct {
 impl BangStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "!"
     }
 }
 
@@ -2141,6 +2356,9 @@ impl BangEqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "!="
+    }
 }
 
 pub type Bar = Arc<BarStruct>;
@@ -2154,6 +2372,9 @@ pub struct BarStruct {
 impl BarStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "|"
     }
 }
 
@@ -2169,6 +2390,9 @@ impl BarEqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "|="
+    }
 }
 
 pub type BoolKeyword = Arc<BoolKeywordStruct>;
@@ -2182,6 +2406,9 @@ pub struct BoolKeywordStruct {
 impl BoolKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "bool"
     }
 }
 
@@ -2215,6 +2442,9 @@ impl CallDataKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "calldata"
+    }
 }
 
 pub type Caret = Arc<CaretStruct>;
@@ -2228,6 +2458,9 @@ pub struct CaretStruct {
 impl CaretStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "^"
     }
 }
 
@@ -2243,6 +2476,9 @@ impl CaretEqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "^="
+    }
 }
 
 pub type DaysKeyword = Arc<DaysKeywordStruct>;
@@ -2256,6 +2492,9 @@ pub struct DaysKeywordStruct {
 impl DaysKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "days"
     }
 }
 
@@ -2289,6 +2528,9 @@ impl DeleteKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "delete"
+    }
 }
 
 pub type Equal = Arc<EqualStruct>;
@@ -2302,6 +2544,9 @@ pub struct EqualStruct {
 impl EqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "="
     }
 }
 
@@ -2317,6 +2562,9 @@ impl EqualEqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "=="
+    }
 }
 
 pub type EtherKeyword = Arc<EtherKeywordStruct>;
@@ -2331,6 +2579,9 @@ impl EtherKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "ether"
+    }
 }
 
 pub type FalseKeyword = Arc<FalseKeywordStruct>;
@@ -2344,6 +2595,9 @@ pub struct FalseKeywordStruct {
 impl FalseKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "false"
     }
 }
 
@@ -2377,6 +2631,9 @@ impl GlobalKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "global"
+    }
 }
 
 pub type GreaterThan = Arc<GreaterThanStruct>;
@@ -2390,6 +2647,9 @@ pub struct GreaterThanStruct {
 impl GreaterThanStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        ">"
     }
 }
 
@@ -2405,6 +2665,9 @@ impl GreaterThanEqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        ">="
+    }
 }
 
 pub type GreaterThanGreaterThan = Arc<GreaterThanGreaterThanStruct>;
@@ -2418,6 +2681,9 @@ pub struct GreaterThanGreaterThanStruct {
 impl GreaterThanGreaterThanStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        ">>"
     }
 }
 
@@ -2433,6 +2699,9 @@ impl GreaterThanGreaterThanEqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        ">>="
+    }
 }
 
 pub type GreaterThanGreaterThanGreaterThan = Arc<GreaterThanGreaterThanGreaterThanStruct>;
@@ -2446,6 +2715,9 @@ pub struct GreaterThanGreaterThanGreaterThanStruct {
 impl GreaterThanGreaterThanGreaterThanStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        ">>>"
     }
 }
 
@@ -2461,6 +2733,9 @@ impl GreaterThanGreaterThanGreaterThanEqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        ">>>="
+    }
 }
 
 pub type GweiKeyword = Arc<GweiKeywordStruct>;
@@ -2474,6 +2749,9 @@ pub struct GweiKeywordStruct {
 impl GweiKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "gwei"
     }
 }
 
@@ -2525,6 +2803,9 @@ impl HoursKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "hours"
+    }
 }
 
 pub type Identifier = Arc<IdentifierStruct>;
@@ -2556,6 +2837,9 @@ pub struct IndexedKeywordStruct {
 impl IndexedKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "indexed"
     }
 }
 
@@ -2589,6 +2873,9 @@ impl LessThanStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "<"
+    }
 }
 
 pub type LessThanEqual = Arc<LessThanEqualStruct>;
@@ -2602,6 +2889,9 @@ pub struct LessThanEqualStruct {
 impl LessThanEqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "<="
     }
 }
 
@@ -2617,6 +2907,9 @@ impl LessThanLessThanStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "<<"
+    }
 }
 
 pub type LessThanLessThanEqual = Arc<LessThanLessThanEqualStruct>;
@@ -2630,6 +2923,9 @@ pub struct LessThanLessThanEqualStruct {
 impl LessThanLessThanEqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "<<="
     }
 }
 
@@ -2645,6 +2941,9 @@ impl MemoryKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "memory"
+    }
 }
 
 pub type Minus = Arc<MinusStruct>;
@@ -2658,6 +2957,9 @@ pub struct MinusStruct {
 impl MinusStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "-"
     }
 }
 
@@ -2673,6 +2975,9 @@ impl MinusEqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "-="
+    }
 }
 
 pub type MinusMinus = Arc<MinusMinusStruct>;
@@ -2686,6 +2991,9 @@ pub struct MinusMinusStruct {
 impl MinusMinusStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "--"
     }
 }
 
@@ -2701,6 +3009,9 @@ impl MinutesKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "minutes"
+    }
 }
 
 pub type PayableKeyword = Arc<PayableKeywordStruct>;
@@ -2714,6 +3025,9 @@ pub struct PayableKeywordStruct {
 impl PayableKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "payable"
     }
 }
 
@@ -2729,6 +3043,9 @@ impl PercentStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "%"
+    }
 }
 
 pub type PercentEqual = Arc<PercentEqualStruct>;
@@ -2742,6 +3059,9 @@ pub struct PercentEqualStruct {
 impl PercentEqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "%="
     }
 }
 
@@ -2757,6 +3077,9 @@ impl PlusStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "+"
+    }
 }
 
 pub type PlusEqual = Arc<PlusEqualStruct>;
@@ -2770,6 +3093,9 @@ pub struct PlusEqualStruct {
 impl PlusEqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "+="
     }
 }
 
@@ -2785,6 +3111,9 @@ impl PlusPlusStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "++"
+    }
 }
 
 pub type PragmaCaret = Arc<PragmaCaretStruct>;
@@ -2798,6 +3127,9 @@ pub struct PragmaCaretStruct {
 impl PragmaCaretStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "^"
     }
 }
 
@@ -2813,6 +3145,9 @@ impl PragmaEqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "="
+    }
 }
 
 pub type PragmaGreaterThan = Arc<PragmaGreaterThanStruct>;
@@ -2826,6 +3161,9 @@ pub struct PragmaGreaterThanStruct {
 impl PragmaGreaterThanStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        ">"
     }
 }
 
@@ -2841,6 +3179,9 @@ impl PragmaGreaterThanEqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        ">="
+    }
 }
 
 pub type PragmaLessThan = Arc<PragmaLessThanStruct>;
@@ -2854,6 +3195,9 @@ pub struct PragmaLessThanStruct {
 impl PragmaLessThanStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "<"
     }
 }
 
@@ -2869,6 +3213,9 @@ impl PragmaLessThanEqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "<="
+    }
 }
 
 pub type PragmaTilde = Arc<PragmaTildeStruct>;
@@ -2882,6 +3229,9 @@ pub struct PragmaTildeStruct {
 impl PragmaTildeStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "~"
     }
 }
 
@@ -2897,6 +3247,9 @@ impl SMTCheckerKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "SMTChecker"
+    }
 }
 
 pub type SecondsKeyword = Arc<SecondsKeywordStruct>;
@@ -2910,6 +3263,9 @@ pub struct SecondsKeywordStruct {
 impl SecondsKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "seconds"
     }
 }
 
@@ -2925,6 +3281,9 @@ impl SemicolonStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        ";"
+    }
 }
 
 pub type Slash = Arc<SlashStruct>;
@@ -2938,6 +3297,9 @@ pub struct SlashStruct {
 impl SlashStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "/"
     }
 }
 
@@ -2953,6 +3315,9 @@ impl SlashEqualStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "/="
+    }
 }
 
 pub type StorageKeyword = Arc<StorageKeywordStruct>;
@@ -2967,6 +3332,9 @@ impl StorageKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "storage"
+    }
 }
 
 pub type StringKeyword = Arc<StringKeywordStruct>;
@@ -2980,6 +3348,9 @@ pub struct StringKeywordStruct {
 impl StringKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "string"
     }
 }
 
@@ -3013,6 +3384,9 @@ impl SuperKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "super"
+    }
 }
 
 pub type ThisKeyword = Arc<ThisKeywordStruct>;
@@ -3026,6 +3400,9 @@ pub struct ThisKeywordStruct {
 impl ThisKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "this"
     }
 }
 
@@ -3041,6 +3418,9 @@ impl TildeStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "~"
+    }
 }
 
 pub type TrueKeyword = Arc<TrueKeywordStruct>;
@@ -3054,6 +3434,9 @@ pub struct TrueKeywordStruct {
 impl TrueKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "true"
     }
 }
 
@@ -3141,6 +3524,9 @@ impl VirtualKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "virtual"
+    }
 }
 
 pub type WeeksKeyword = Arc<WeeksKeywordStruct>;
@@ -3155,6 +3541,9 @@ impl WeeksKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    pub fn unparse(&self) -> &'static str {
+        "weeks"
+    }
 }
 
 pub type WeiKeyword = Arc<WeiKeywordStruct>;
@@ -3168,5 +3557,8 @@ pub struct WeiKeywordStruct {
 impl WeiKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "wei"
     }
 }

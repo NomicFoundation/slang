@@ -16,7 +16,7 @@ pub trait Visitor {
     fn leave_{{ parent_type | snake_case }}(&mut self, _items: &{{ parent_type }}) {}
   {% endfor -%}
   {%- for terminal_type, terminal in target.terminals %}
-    {%- if not terminal.is_unique %}
+    {%- if not terminal.unique_symbol %}
       fn visit_{{ terminal_type | snake_case }}(&mut self, _node: &{{ terminal_type }}) {}
     {% endif -%}
   {% endfor -%}
@@ -37,7 +37,7 @@ pub trait Visitor {
           if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }}() {
             accept_{{ field.field_type.name | snake_case }}({{ field.label | snake_case }}, visitor);
           }
-        {%- elif field.field_type.is_terminal and not target.terminals[field.field_type.name].is_unique -%}
+        {%- elif field.field_type.is_terminal and not target.terminals[field.field_type.name].unique_symbol -%}
           if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }}() {
             visitor.visit_{{ field.field_type.name | snake_case }}({{ field.label | snake_case }});
           }
@@ -45,7 +45,7 @@ pub trait Visitor {
       {%- else -%}
         {%- if not field.field_type.is_terminal and field.field_type.kind != "External" -%}
           accept_{{ field.field_type.name | snake_case }}(&node.{{ field.label | snake_case }}(), visitor);
-        {%- elif field.field_type.is_terminal and not target.terminals[field.field_type.name].is_unique -%}
+        {%- elif field.field_type.is_terminal and not target.terminals[field.field_type.name].unique_symbol -%}
           visitor.visit_{{ field.field_type.name | snake_case }}(&node.{{ field.label | snake_case }}());
         {%- endif -%}
       {%- endif -%}
@@ -99,7 +99,7 @@ pub trait Visitor {
       for item in items.iter() {
         accept_{{ collection.item_type.name | snake_case }}(&item, visitor);
       }
-    {% elif not target.terminals[collection.item_type.name].is_unique %}
+    {% elif not target.terminals[collection.item_type.name].unique_symbol %}
       for item in items.iter() {
         visitor.visit_{{ collection.item_type.name | snake_case }}(&item);
       }
