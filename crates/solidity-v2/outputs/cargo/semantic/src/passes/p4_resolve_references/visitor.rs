@@ -5,7 +5,7 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 
 use super::Pass;
 use crate::binder::{Reference, Resolution, Typing};
-use crate::built_ins::BuiltIn;
+use crate::built_ins::InternalBuiltIn;
 use crate::passes::common::node_id_for_string_expression_typing;
 use crate::types::{
     ArrayType, DataLocation, FixedSizeArrayType, MappingType, Number, TupleType, Type,
@@ -119,7 +119,7 @@ impl Visitor for Pass<'_> {
         if let ir::Expression::Identifier(identifier) = node {
             let symbol = identifier.unparse();
             let resolution = if symbol == "_" && self.is_in_modifier_scope() {
-                Resolution::BuiltIn(BuiltIn::ModifierUnderscore)
+                Resolution::BuiltIn(InternalBuiltIn::ModifierUnderscore)
             } else {
                 let scope_id = self.current_scope_id();
                 self.filter_overriden_definitions(self.resolve_symbol_in_scope(scope_id, symbol))

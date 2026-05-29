@@ -8,7 +8,7 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 use super::evaluator::evaluate_compile_time_integer_constant;
 use super::Pass;
 use crate::binder::{Definition, Reference, Resolution, Scope, Typing, UsingDirective};
-use crate::built_ins::BuiltIn;
+use crate::built_ins::InternalBuiltIn;
 use crate::types::{ContractType, DataLocation, EnumType, InterfaceType, LibraryType, Type};
 
 impl Visitor for Pass<'_> {
@@ -437,7 +437,7 @@ impl Visitor for Pass<'_> {
     fn enter_catch_clause_error(&mut self, node: &ir::CatchClauseError) -> bool {
         if let Some(name) = &node.name {
             let resolution = match name.unparse() {
-                "Error" | "Panic" => Resolution::BuiltIn(BuiltIn::ErrorOrPanic),
+                "Error" | "Panic" => Resolution::BuiltIn(InternalBuiltIn::ErrorOrPanic),
                 _ => Resolution::Unresolved,
             };
             let reference = Reference::new(Arc::clone(name), resolution);
@@ -455,7 +455,7 @@ impl Visitor for Pass<'_> {
     fn leave_type_expression(&mut self, node: &ir::TypeExpression) {
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
         let typing = type_id.map_or(Typing::Unresolved, |type_id| {
-            Typing::BuiltIn(BuiltIn::Type(type_id))
+            Typing::BuiltIn(InternalBuiltIn::Type(type_id))
         });
         self.binder.set_node_typing(node.id(), typing);
     }

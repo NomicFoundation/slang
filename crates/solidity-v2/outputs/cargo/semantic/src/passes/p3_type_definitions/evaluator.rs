@@ -3,7 +3,7 @@ use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
 use slang_solidity_v2_ir::ir;
 
-use crate::built_ins::BuiltIn;
+use crate::built_ins::InternalBuiltIn;
 use crate::types::{literals, Number};
 
 pub(crate) fn evaluate_compile_time_usize_constant<Scope>(
@@ -42,7 +42,7 @@ pub(crate) enum ComptimeResolution<Scope> {
         value: ir::Expression,
         target_scope: Scope,
     },
-    BuiltIn(BuiltIn),
+    BuiltIn(InternalBuiltIn),
 }
 
 pub(crate) trait ConstantIdentifierResolver<Scope> {
@@ -257,7 +257,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
             .identifier_resolver
             .resolve_identifier_in_scope(operand.unparse(), scope);
         match resolution {
-            ComptimeResolution::BuiltIn(BuiltIn::Erc7201) => {
+            ComptimeResolution::BuiltIn(InternalBuiltIn::Erc7201) => {
                 self.evaluate_erc7201_built_in_call(&call.arguments)
             }
             _ => None,
@@ -377,7 +377,7 @@ mod tests {
                     target_scope: target_scope.clone(),
                 }
             } else if self.recognise_erc7201 && identifier == "erc7201" {
-                ComptimeResolution::BuiltIn(BuiltIn::Erc7201)
+                ComptimeResolution::BuiltIn(InternalBuiltIn::Erc7201)
             } else {
                 ComptimeResolution::Unresolved
             }

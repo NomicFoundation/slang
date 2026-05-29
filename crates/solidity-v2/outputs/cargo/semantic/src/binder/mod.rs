@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet, VecDeque};
 
 use slang_solidity_v2_common::nodes::NodeId;
 
-use super::built_ins::BuiltIn;
+use super::built_ins::InternalBuiltIn;
 use super::types::{Type, TypeId};
 
 mod definitions;
@@ -58,7 +58,7 @@ pub enum Typing {
     /// resolves to `Resolution::BuiltIn(Addmod)` and will type to
     /// `Typing::BuiltIn(Addmod)` which in turn will type to the `uint256` type
     /// when evaluated in the context of a function call.
-    BuiltIn(BuiltIn),
+    BuiltIn(InternalBuiltIn),
     /// A special typing that's used as the result of applying the `new`
     /// operator, and will type to a contract reference when evaluated as a
     /// function call.
