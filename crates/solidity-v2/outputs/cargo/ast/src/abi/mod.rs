@@ -370,14 +370,39 @@ pub(crate) fn extract_function_type_parameters_abi(
             indexed: false,
         });
     }
-    let (type_name, components) = type_as_abi_parameter(semantic, function_type.return_type)?;
-    let outputs = vec![AbiParameter {
-        node_id: None,
-        name: None,
-        type_name,
-        components,
-        indexed: false,
-    }];
+    // A getter that returns more than one value — most notably the auto-generated
+    // accessor of a multi-field struct, which returns each non-mapping/non-array
+    // member — has a tuple return type. Expand it into one ABI output parameter per
+    // element; a single (non-tuple) return stays a single output. Without this, a
+    // tuple return falls through to `type_as_abi_parameter`'s default arm, whose
+    // `type_canonical_name` yields `None`, nulling the whole contract ABI (and its
+    // storage layout) for any contract declaring a public multi-field struct.
+    let outputs = match semantic.types().get_type_by_id(function_type.return_type) {
+        Type::Tuple { types } => types
+            .iter()
+            .map(|element_type_id| {
+                let (type_name, components) = type_as_abi_parameter(semantic, *element_type_id)?;
+                Some(AbiParameter {
+                    node_id: None,
+                    name: None,
+                    type_name,
+                    components,
+                    indexed: false,
+                })
+            })
+            .collect::<Option<Vec<_>>>()?,
+        _ => {
+            let (type_name, components) =
+                type_as_abi_parameter(semantic, function_type.return_type)?;
+            vec![AbiParameter {
+                node_id: None,
+                name: None,
+                type_name,
+                components,
+                indexed: false,
+            }]
+        }
+    };
     Some((inputs, outputs))
 }
 
