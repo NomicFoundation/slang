@@ -73,10 +73,11 @@ jobs:
         run: "./scripts/bin/infra setup cargo pipenv"
 
       - name: "Set bencher project"
-
-        run: |
-          echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProject }}" >> $GITHUB_ENV
         if: "${{ inputs.bencherProject }}"
+        env:
+          BENCHER_PROJECT: "${{ inputs.bencherProject }}"
+        run: |
+          echo "SLANG_BENCHER_PROJECT=$BENCHER_PROJECT" >> "$GITHUB_ENV"
 
       - name: "Smoke Test > infra perf cargo --smoke comparison"
         if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"

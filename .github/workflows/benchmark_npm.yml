@@ -70,9 +70,11 @@ jobs:
         uses: "./.github/actions/cache/cargo-target/restore"
 
       - name: "Set bencher project"
-        run: |
-          echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProject }}" >> $GITHUB_ENV
         if: "${{ inputs.bencherProject }}"
+        env:
+          BENCHER_PROJECT: "${{ inputs.bencherProject }}"
+        run: |
+          echo "SLANG_BENCHER_PROJECT=$BENCHER_PROJECT" >> "$GITHUB_ENV"
 
       - name: "infra setup cargo npm"
         run: "./scripts/bin/infra setup cargo npm"

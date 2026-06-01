@@ -72,10 +72,11 @@ jobs:
         run: "./scripts/bin/infra setup cargo pipenv"
 
       - name: "Set bencher project"
-
-        run: |
-          echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProject }}" >> $GITHUB_ENV
         if: "${{ inputs.bencherProject }}"
+        env:
+          BENCHER_PROJECT: "${{ inputs.bencherProject }}"
+        run: |
+          echo "SLANG_BENCHER_PROJECT=$BENCHER_PROJECT" >> "$GITHUB_ENV"
 
       - name: "Benchmark > infra perf cargo slang-v2"
         run: "./scripts/bin/infra perf cargo ${{ github.event_name == 'pull_request' && '--pr-benchmark' || (inputs.dryRun == true && '--dry-run' || '') }} slang-v2"
