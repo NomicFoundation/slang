@@ -57,6 +57,7 @@ fn needs_publish(crate_name: &str, local_version: &Version) -> bool {
 fn run_cargo_publish(crate_name: &str) {
     Command::new("cargo")
         .arg("publish")
+        .flag("--locked")
         .flag("--no-verify")
         .flag("--all-features")
         .property("--package", crate_name)
@@ -69,6 +70,7 @@ fn run_cargo_publish(crate_name: &str) {
 fn run_batched_dry_run(crate_names: &[String]) {
     let mut command = Command::new("cargo")
         .arg("publish")
+        .flag("--locked")
         .flag("--all-features")
         .flag("--dry-run");
     for crate_name in crate_names {
