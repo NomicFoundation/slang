@@ -14,7 +14,10 @@ description: >
 
 inputs:
   mode:
-    description: 'SFW mode: "firewall" blocks risky packages, "audit" only warns.'
+    description: >
+      socketdev/action operation mode: "firewall" (the MITM proxy), "patch", or
+      "cli". Socket Firewall Free has no warn-only mode — "firewall" blocks
+      confirmed-malicious packages and only warns on AI-flagged-unconfirmed ones.
     required: false
     default: "firewall"
 

@@ -57,15 +57,16 @@ jobs:
         if: "${{ github.ref_name != 'main' && github.event_name != 'merge_group' }}"
         uses: "./.github/actions/cache/cargo-target/restore"
 
-      # PoC: Socket Firewall in AUDIT mode — warns on risky packages, never
-      # blocks. Exports SFW_PREFIX (`sfw`), which the wrapped step below uses to
-      # route its dependency fetches through SFW's malware-scanning MITM proxy.
-      # Audit-first so it can't break CI while we validate compatibility — in
-      # particular whether hermit/rustup downloads survive the MITM (see PR).
-      - name: "Setup SFW (audit)"
+      # PoC: Socket Firewall (Free) via socketdev/action. Free has no warn-only
+      # mode — it blocks confirmed-malicious packages and only warns (without
+      # blocking) on AI-flagged-unconfirmed ones. slang's tree is known-clean,
+      # so this shouldn't block anything; the run validates MITM compatibility,
+      # notably whether hermit/rustup downloads survive it (see PR). Exports
+      # SFW_PREFIX (`sfw`) for the wrapped step below.
+      - name: "Setup SFW (firewall)"
         uses: "./.github/actions/setup-sfw"
         with:
-          mode: "audit"
+          mode: "firewall"
 
       #
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
