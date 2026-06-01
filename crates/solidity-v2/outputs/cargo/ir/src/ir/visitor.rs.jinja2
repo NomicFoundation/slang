@@ -1,4 +1,6 @@
 {%- set target = model.ir_language_model.target -%}
+#![allow(clippy::too_many_lines)]
+
 #[allow(clippy::wildcard_imports)]
 use super::nodes::*;
 
@@ -15,11 +17,10 @@ pub trait Visitor {
     fn enter_{{ parent_type | snake_case }}(&mut self, _items: &{{ parent_type }}) -> bool { true }
     fn leave_{{ parent_type | snake_case }}(&mut self, _items: &{{ parent_type }}) {}
   {% endfor -%}
+  // Terminals are not entered or left, since there's no children to them.
+  // Instead they're just visited.
   {%- for terminal_type, terminal in target.terminals %}
-    {# We only visit terminal identifiers #}
-    {%- if terminal.is_identifier -%}
-      fn visit_{{ terminal_type | snake_case }}(&mut self, _node: &{{ terminal_type }}) {}
-    {%- endif -%}
+    fn visit_{{ terminal_type | snake_case }}(&mut self, _node: &{{ terminal_type }}) {}
   {% endfor -%}
 }
 
@@ -35,13 +36,13 @@ pub trait Visitor {
     {% for field in sequence.fields -%}
       {%- if not field.field_type.is_terminal and field.field_type.kind != "External" -%}
         {%- if field.is_optional -%}
-          if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }} {
+          if let Some({{ field.label | snake_case }}) = &node.{{ field.label | snake_case }} {
             accept_{{ field.field_type.name | snake_case }}({{ field.label | snake_case }}, visitor);
           }
         {% else -%}
           accept_{{ field.field_type.name | snake_case }}(&node.{{ field.label | snake_case }}, visitor);
         {%- endif -%}
-      {%- elif field.field_type.is_terminal and target.terminals[field.field_type.name].is_identifier -%}
+      {%- elif field.field_type.is_terminal -%}
         {%- if field.is_optional -%}
           if let Some({{ field.label | snake_case }}) = &node.{{ field.label | snake_case }} {
             visitor.visit_{{ field.field_type.name | snake_case }}({{ field.label | snake_case }});
@@ -65,22 +66,16 @@ pub trait Visitor {
     if !visitor.enter_{{ parent_type | snake_case }}(node) {
       return;
     }
-    match node {
+    match &node {
       {% for variant in choice.variants -%}
         {% if variant.kind == "External" -%}
           {{ parent_type }}::{{ variant.name }} => {},
-        {% elif variant.kind == "UniqueTerminal" -%}
-          {{ parent_type }}::{{ variant.name }}(_) => {},
-        {% elif variant.kind == "Terminal" -%}
-          {%- if target.terminals[variant.name].is_identifier -%}
-            {{ parent_type }}::{{ variant.name }}(ref {{ variant.name | snake_case }}) => {
-              visitor.visit_{{ variant.name | snake_case }}({{ variant.name | snake_case }});
+        {% elif variant.is_terminal -%}
+            {{ parent_type }}::{{ variant.name }}({{ variant.name | snake_case }}) => {
+                visitor.visit_{{ variant.name | snake_case }}({{ variant.name | snake_case }});
             },
-          {%- else -%}
-            {{ parent_type }}::{{ variant.name }}(_) => {},
-          {%- endif -%}
         {% else -%}
-          {{ parent_type }}::{{ variant.name }}(ref {{ variant.name | snake_case }}) => {
+          {{ parent_type }}::{{ variant.name }}({{ variant.name | snake_case }}) => {
             accept_{{ variant.name | snake_case }}({{ variant.name | snake_case }}, visitor);
           }
         {%- endif %}
@@ -100,15 +95,15 @@ pub trait Visitor {
     if !visitor.enter_{{ parent_type | snake_case }}(items) {
       return;
     }
-    {%- if not collection.item_type.is_terminal %}
-      for item in items {
-        accept_{{ collection.item_type.name | snake_case }}(item, visitor);
-      }
-    {% elif target.terminals[collection.item_type.name].is_identifier %}
-      for item in items {
+    
+    for item in items {
+      {%- if collection.item_type.is_terminal %}
         visitor.visit_{{ collection.item_type.name | snake_case }}(item);
-      }
-    {% endif -%}
+      {% else %}
+        accept_{{ collection.item_type.name | snake_case }}(item, visitor);
+      {% endif -%}
+    }
+    
     visitor.leave_{{ parent_type | snake_case }}(items);
   }
 {% endfor %}
