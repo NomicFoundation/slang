@@ -4062,7 +4062,6 @@ dependencies = [
  "num-bigint",
  "num-rational",
  "paste",
- "ruint",
  "serde",
  "sha3 0.12.0",
  "slang_solidity_v2_common",
