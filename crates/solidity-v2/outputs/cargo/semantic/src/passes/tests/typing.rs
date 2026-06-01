@@ -1,5 +1,6 @@
 use num_bigint::{BigInt, BigUint};
 use num_rational::BigRational;
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
 
@@ -29,7 +30,12 @@ fn analyze(language_version: LanguageVersion, source: &str) -> TypeAnalysis {
 
     let mut binder = Binder::default();
     let mut types = TypeRegistry::default();
-    p1_collect_definitions::run(&files, &mut binder);
+    let mut diagnostics = DiagnosticCollection::default();
+    p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    assert!(
+        diagnostics.is_empty(),
+        "Semantic diagnostics: {diagnostics:?}"
+    );
     p2_linearise_contracts::run(&files, &mut binder);
     p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
     p4_resolve_references::run(&files, &mut binder, &mut types, language_version);

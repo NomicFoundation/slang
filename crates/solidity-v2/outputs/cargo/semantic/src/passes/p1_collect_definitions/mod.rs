@@ -1,3 +1,5 @@
+use slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer;
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
@@ -11,9 +13,13 @@ use crate::context::SemanticFile;
 /// instantiates a `Binder` object which will store all this information as well
 /// as references and typing information for the nodes, to be resolved in later
 /// passes.
-pub fn run(files: &[impl SemanticFile], binder: &mut Binder) {
+pub fn run(
+    files: &[impl SemanticFile],
+    binder: &mut Binder,
+    diagnostics: &mut DiagnosticCollection,
+) {
     for file in files {
-        Pass::visit_file(file, binder);
+        Pass::visit_file(file, binder, diagnostics);
     }
 }
 
@@ -29,14 +35,16 @@ struct Pass<'a, F: SemanticFile> {
     current_file: &'a F,
     scope_stack: Vec<ScopeFrame>,
     binder: &'a mut Binder,
+    diagnostics: &'a mut DiagnosticCollection,
 }
 
 impl<'a, F: SemanticFile> Pass<'a, F> {
-    fn visit_file(file: &'a F, binder: &'a mut Binder) {
+    fn visit_file(file: &'a F, binder: &'a mut Binder, diagnostics: &'a mut DiagnosticCollection) {
         let mut pass = Self {
             current_file: file,
             scope_stack: Vec::new(),
             binder,
+            diagnostics,
         };
         ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
         assert!(pass.scope_stack.is_empty());
@@ -266,9 +274,14 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                     let current_scope_node_id = self.current_scope().node_id();
                     let enclosing_definition =
                         self.binder.find_definition_by_id(current_scope_node_id);
-                    let enclosing_contract_name =
+                    let enclosing_container_name =
                         if let Some(enclosing_definition) = enclosing_definition {
-                            if matches!(enclosing_definition, Definition::Contract(_)) {
+                            if matches!(
+                                enclosing_definition,
+                                Definition::Contract(_)
+                                    | Definition::Interface(_)
+                                    | Definition::Library(_)
+                            ) {
                                 Some(enclosing_definition.identifier().unparse())
                             } else {
                                 None
@@ -277,14 +290,17 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                             None
                         };
 
-                    if enclosing_contract_name
-                        .is_some_and(|contract_name| contract_name == name.unparse())
+                    if enclosing_container_name
+                        .is_some_and(|container_name| container_name == name.unparse())
                     {
-                        // TODO(validation) SDR[20]: there cannot be a function with the
-                        // same name as the enclosing contract (since Solidity
-                        // 0.5.0). Regardless, we skip registering the function
-                        // symbol in the current scope to avoid interference
-                        // with resolution.
+                        self.diagnostics.push(
+                            self.current_file.id().to_owned(),
+                            node.range.clone(),
+                            FunctionNameMatchesContainer,
+                        );
+
+                        // Skip registering the function symbol in the current scope
+                        // to avoid interference with resolution.
                         self.binder.insert_definition_no_scope(definition);
                     } else {
                         self.insert_definition_in_current_scope(definition);

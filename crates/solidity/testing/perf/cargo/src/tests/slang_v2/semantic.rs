@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::binder::{self, Resolution};
@@ -80,7 +81,13 @@ pub fn test(
     (project, files): (&'static SolidityProject, Vec<impl SemanticFile>),
 ) -> SemanticContext {
     let language_version = super::parser::parse_version(project);
-    SemanticContext::build_from(language_version, &files)
+    let mut diagnostics = DiagnosticCollection::default();
+    let semantic = SemanticContext::build_from(language_version, &files, &mut diagnostics);
+    assert!(
+        diagnostics.is_empty(),
+        "Semantic diagnostics: {diagnostics:?}"
+    );
+    semantic
 }
 
 pub fn count_contracts(semantic: &SemanticContext) -> usize {

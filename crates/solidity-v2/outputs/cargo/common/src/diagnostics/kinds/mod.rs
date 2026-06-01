@@ -1,10 +1,12 @@
 mod utils;
 
 pub mod compilation;
+pub mod structure;
 pub mod syntax;
 
 use compilation::CompilationDiagnosticKind;
 use serde::Serialize;
+use structure::StructureDiagnosticKind;
 use syntax::SyntaxDiagnosticKind;
 
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
@@ -19,5 +21,7 @@ define_diagnostic_kind! {
         Compilation(CompilationDiagnosticKind),
         /// A diagnostic produced while parsing source text.
         Syntax(SyntaxDiagnosticKind),
+        /// A diagnostic about structural shape.
+        Structure(StructureDiagnosticKind),
     }
 }

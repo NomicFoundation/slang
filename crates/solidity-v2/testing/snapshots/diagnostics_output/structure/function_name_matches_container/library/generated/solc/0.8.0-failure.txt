@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[SyntaxError 5796] Error: Functions are not allowed to have the same name as the contract. If you intend this to be a constructor, use "constructor(...) { ... }" to define it.
+   ╭─[input.sol:5:3]
+   │
+ 5 │   function L() internal pure {}
+   │   ──────────────┬──────────────  
+   │                 ╰──────────────── Error occurred here.
+───╯
+
+[Warning 2519] Warning: This declaration shadows an existing declaration.
+   ╭─[input.sol:5:3]
+   │
+ 5 │   function L() internal pure {}
+   │   ──────────────┬──────────────  
+   │                 ╰──────────────── Error occurred here.
+───╯

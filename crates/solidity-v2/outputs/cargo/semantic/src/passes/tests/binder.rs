@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::NodeIdGenerator;
 
@@ -27,7 +28,12 @@ contract Test is Base layout at 0 {}
 
     let files = [file];
     let mut binder = Binder::default();
-    p1_collect_definitions::run(&files, &mut binder);
+    let mut diagnostics = DiagnosticCollection::default();
+    p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    assert!(
+        diagnostics.is_empty(),
+        "Semantic diagnostics: {diagnostics:?}"
+    );
     p2_linearise_contracts::run(&files, &mut binder);
 
     // Verify definitions were collected
@@ -85,7 +91,12 @@ interface A is C {}
 
     let files = [file];
     let mut binder = Binder::default();
-    p1_collect_definitions::run(&files, &mut binder);
+    let mut diagnostics = DiagnosticCollection::default();
+    p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    assert!(
+        diagnostics.is_empty(),
+        "Semantic diagnostics: {diagnostics:?}"
+    );
     p2_linearise_contracts::run(&files, &mut binder);
 
     let contract_to_bases = get_contract_to_bases_map(&binder);
@@ -130,7 +141,12 @@ contract Test is Base, Foo { // Base should resolve to the contract, not the var
 
     let files = [file];
     let mut binder = Binder::default();
-    p1_collect_definitions::run(&files, &mut binder);
+    let mut diagnostics = DiagnosticCollection::default();
+    p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    assert!(
+        diagnostics.is_empty(),
+        "Semantic diagnostics: {diagnostics:?}"
+    );
     p2_linearise_contracts::run(&files, &mut binder);
 
     let contract_to_bases = get_contract_to_bases_map(&binder);
@@ -180,7 +196,12 @@ contract Test is Base {
     let mut binder = Binder::default();
     let mut types = TypeRegistry::default();
 
-    p1_collect_definitions::run(&files, &mut binder);
+    let mut diagnostics = DiagnosticCollection::default();
+    p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    assert!(
+        diagnostics.is_empty(),
+        "Semantic diagnostics: {diagnostics:?}"
+    );
     p2_linearise_contracts::run(&files, &mut binder);
 
     let types_before = types.iter_types().count();
@@ -234,7 +255,12 @@ contract Test is Base {
     let mut binder = Binder::default();
     let mut types = TypeRegistry::default();
 
-    p1_collect_definitions::run(&files, &mut binder);
+    let mut diagnostics = DiagnosticCollection::default();
+    p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    assert!(
+        diagnostics.is_empty(),
+        "Semantic diagnostics: {diagnostics:?}"
+    );
     p2_linearise_contracts::run(&files, &mut binder);
     p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
     p4_resolve_references::run(&files, &mut binder, &mut types, language_version);

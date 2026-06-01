@@ -2,6 +2,7 @@ use std::collections::HashSet;
 use std::sync::Arc;
 
 use file_node_mapper::FileNodeMapper;
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::utils::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
@@ -62,11 +63,15 @@ pub struct SemanticContext {
 }
 
 impl SemanticContext {
-    pub fn build_from(language_version: LanguageVersion, files: &[impl SemanticFile]) -> Self {
+    pub fn build_from(
+        language_version: LanguageVersion,
+        files: &[impl SemanticFile],
+        diagnostics: &mut DiagnosticCollection,
+    ) -> Self {
         let mut binder = Binder::default();
         let mut types = TypeRegistry::default();
 
-        p1_collect_definitions::run(files, &mut binder);
+        p1_collect_definitions::run(files, &mut binder, diagnostics);
         p2_linearise_contracts::run(files, &mut binder);
         p3_type_definitions::run(files, &mut binder, &mut types, language_version);
         p4_resolve_references::run(files, &mut binder, &mut types, language_version);
