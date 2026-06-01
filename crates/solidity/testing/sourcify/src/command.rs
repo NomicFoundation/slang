@@ -55,7 +55,7 @@ pub struct TestOptions {
     pub check_infer_version: bool,
 
     /// Run bindings tests
-    #[arg(long, value_enum, default_value = "none")]
+    #[arg(long, value_enum, default_value_t = CheckBinderMode::None)]
     pub check_binder: CheckBinderMode,
 }
 
