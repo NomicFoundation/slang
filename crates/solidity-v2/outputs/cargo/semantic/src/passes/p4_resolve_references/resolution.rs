@@ -277,9 +277,13 @@ impl Pass<'_> {
         let mut seen_ids = HashSet::new();
         for directive in active_directives {
             let scope_id = directive.get_scope_id();
+            // A `using` attachment may name an import alias
+            // (`import {g as f} from "…"; using {f} for T`); follow it to the
+            // underlying function so `x.f` resolves like a direct attachment.
+            let resolution = self.binder.resolve_in_scope_as_namespace(scope_id, symbol);
             let ids = self
                 .binder
-                .resolve_in_scope_as_namespace(scope_id, symbol)
+                .follow_symbol_aliases(&resolution)
                 .get_definition_ids();
             for id in &ids {
                 // Avoid returning duplicate definition IDs. That may happen
