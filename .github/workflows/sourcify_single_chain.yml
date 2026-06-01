@@ -212,7 +212,9 @@ jobs:
           name: "solidity_testing_sourcify_${{ inputs.chain_id }}"
 
       - name: "Output shards results"
-        run: "echo '${{ toJSON(needs.singleShard.outputs) }}' > __SLANG_SOURCIFY_MATRIX_RESULTS__.json"
+        env:
+          MATRIX_RESULTS: "${{ toJSON(needs.singleShard.outputs) }}"
+        run: 'printf "%s\n" "$MATRIX_RESULTS" > __SLANG_SOURCIFY_MATRIX_RESULTS__.json'
 
       - name: "Show combined results"
         run: |
