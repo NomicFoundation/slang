@@ -84,6 +84,7 @@ overrides:
   brace-expansion: ^5.0.6
   diff@>=4.0.0 <4.0.4: ^4.0.4
   follow-redirects@<1.16.0: ^1.16.0
+  ip-address@<=10.1.0: ^10.1.1
   picomatch@<2.3.2: ^2.3.2
   picomatch@>=4.0.0 <4.0.4: ^4.0.4
   smol-toml@<1.6.1: ^1.6.1
@@ -2437,8 +2438,8 @@ packages:
     resolution: {integrity: sha512-IBTdIkzZNOpqm7q3dRqJvMaldXjDHWkEDfrwGEQTs5eaQMWV+djAhR+wahyNNMAa+qpbDUhBMVt4ZKNwpPm7xQ==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  ip-address@10.0.1:
-    resolution: {integrity: sha512-NWv9YLW4PoW2B7xtzaS3NCot75m6nK7Icdv0o3lfMceJVRfSoQwqD4wEH5rLwoKJwUiZ/rfpiVBhnaF0FK4HoA==}
+  ip-address@10.2.0:
+    resolution: {integrity: sha512-/+S6j4E9AHvW9SWMSEY9Xfy66O5PWvVEJ08O0y5JGyEKQpojb0K0GKpz/v5HJ/G0vi3D2sjGK78119oXZeE0qA==}
     engines: {node: '>= 12'}
 
   is-absolute-url@4.0.1:
@@ -6099,7 +6100,7 @@ snapshots:
 
   ini@6.0.0: {}
 
-  ip-address@10.0.1: {}
+  ip-address@10.2.0: {}
 
   is-absolute-url@4.0.1: {}
 
@@ -7358,7 +7359,7 @@ snapshots:
 
   socks@2.8.7:
     dependencies:
-      ip-address: 10.0.1
+      ip-address: 10.2.0
       smart-buffer: 4.2.0
 
   solc@0.8.35:

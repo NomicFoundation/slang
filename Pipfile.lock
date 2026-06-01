@@ -239,11 +239,11 @@
         },
         "idna": {
             "hashes": [
-                "sha256:466d810d7a2cc1022bea9b037c39728d51ae7dad40d480fc9b7d7ecf98ba8ee3",
-                "sha256:e677eaf072e290f7b725f9acf0b3a2bd55f9fd6f7c70abe5f0e34823d0accf69"
+                "sha256:466e48829084efe2548012b855df21540b96f2e20e51bd124c851536556a592c",
+                "sha256:5eb0cb53bc467c12eadcf6de83163ad8527cec9416f44b9b61b19caedad2b87f"
             ],
-            "markers": "python_version >= '3.8'",
-            "version": "==3.14"
+            "markers": "python_version >= '3.9'",
+            "version": "==3.17"
         },
         "jinja2": {
             "hashes": [
@@ -489,11 +489,11 @@
         },
         "pymdown-extensions": {
             "hashes": [
-                "sha256:5c0fd2a2bea14eb39af8ff284f1066d898ab2187d81b889b75d46d4348c01638",
-                "sha256:c3f55a5b8a1d0edf6699e35dcbea71d978d34ff3fa79f3d807b8a5b3fa90fbdc"
+                "sha256:72cfcf55f07aea0d4af2c4f11dd4e52466ddfb1bb819673146398e0bd3a77354",
+                "sha256:d7a5d08014fc571e80ca21dd6f854e31f94c489800350564d55d15b3c41e76b6"
             ],
             "markers": "python_version >= '3.9'",
-            "version": "==10.21.2"
+            "version": "==10.21.3"
         },
         "pyparsing": {
             "hashes": [
