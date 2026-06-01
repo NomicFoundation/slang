@@ -57,12 +57,26 @@ jobs:
         if: "${{ github.ref_name != 'main' && github.event_name != 'merge_group' }}"
         uses: "./.github/actions/cache/cargo-target/restore"
 
+      # PoC: Socket Firewall in AUDIT mode — warns on risky packages, never
+      # blocks. Exports SFW_PREFIX (`sfw`), which the wrapped step below uses to
+      # route its dependency fetches through SFW's malware-scanning MITM proxy.
+      # Audit-first so it can't break CI while we validate compatibility — in
+      # particular whether hermit/rustup downloads survive the MITM (see PR).
+      - name: "Setup SFW (audit)"
+        uses: "./.github/actions/setup-sfw"
+        with:
+          mode: "audit"
+
       #
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
       #
 
+      # `${SFW_PREFIX:-}` wraps the command with `sfw` when SFW is available, and
+      # expands to nothing otherwise (so a non-Linux runner or SFW failure just
+      # runs setup unwrapped). PoC wraps only `setup` — that's where the cargo
+      # crates + pnpm package fetches happen.
       - name: "infra setup"
-        run: "./scripts/bin/infra setup"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra setup"
 
       - name: "infra check"
         run: "./scripts/bin/infra check"
