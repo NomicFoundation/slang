@@ -514,6 +514,25 @@ impl Visitor for Pass<'_> {
         false
     }
 
+    fn visit_this_keyword(&mut self, node: &ir::ThisKeyword) {
+        // `this` is a special keyword that resolves to the current contract or library type
+        if let Some(scope_id) = self.current_contract_scope_id() {
+            let scope = self.binder.get_scope_by_id(scope_id);
+            let node_id = scope.node_id();
+            let type_ = self
+                .type_of_definition(node_id)
+                .expect("the scope of `this` should be a contract or library definition");
+            let type_id = self.types.register_type(type_);
+
+            self.binder
+                .set_node_typing(node.id(), Typing::This(type_id));
+        } else {
+            // TODO(validation) SDR[1473]: `this` cannot be used outside of a contract context
+            // The error 1473 doesn't directly match to this, but because of how we resolve
+            // `this` it flows through here.
+        }
+    }
+
     fn enter_yul_for_statement(&mut self, node: &ir::YulForStatement) -> bool {
         // Visit the initialization block first
         ir::visitor::accept_yul_block(&node.initialization, self);

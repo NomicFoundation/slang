@@ -11,8 +11,8 @@ use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
 };
 use crate::types::{
-    ByteArrayType, BytesType, DataLocation, FixedSizeArrayType, IntegerType, LiteralKind,
-    MappingType, StringType, TupleType, Type, TypeId, TypeRegistry,
+    ByteArrayType, BytesType, ContractType, DataLocation, FixedSizeArrayType, IntegerType,
+    LibraryType, LiteralKind, MappingType, StringType, TupleType, Type, TypeId, TypeRegistry,
 };
 
 struct TypeAnalysis {
@@ -82,6 +82,18 @@ fn find_contract<'a>(file: &'a TestFile, name: &str) -> &'a ir::ContractDefiniti
         .unwrap_or_else(|| panic!("contract `{name}` not found"))
 }
 
+/// Finds the top-level library named `name`.
+fn find_library<'a>(file: &'a TestFile, name: &str) -> &'a ir::LibraryDefinition {
+    file.ir_root()
+        .members
+        .iter()
+        .find_map(|member| match member {
+            ir::SourceUnitMember::LibraryDefinition(l) if l.name.unparse() == name => Some(l),
+            _ => None,
+        })
+        .unwrap_or_else(|| panic!("library `{name}` not found"))
+}
+
 /// Collects the recovered type of each expression statement in `body`, in
 /// source order.
 fn expression_statement_types(
@@ -111,10 +123,12 @@ fn expression_statement_types(
 /// before the `__test()` definition.
 fn type_of_expressions(
     language_version: LanguageVersion,
+    contract_name: Option<&str>,
     contract_context: Option<&str>,
     expressions: &[&str],
 ) -> (Vec<Option<Type>>, TypeRegistry) {
     let context_block = contract_context.unwrap_or("");
+    let contract_name = contract_name.unwrap_or("Test");
     let expression_statements = expressions
         .iter()
         .map(|expr| format!("{expr};"))
@@ -122,7 +136,7 @@ fn type_of_expressions(
         .join("\n");
     let source = format!(
         r#"
-        contract Test {{
+        contract {contract_name} {{
             {context_block}
             function __test() internal {{
                 {expression_statements}
@@ -137,7 +151,7 @@ fn type_of_expressions(
         types,
     } = analyze(language_version, &source);
 
-    let contract = find_contract(&file, "Test");
+    let contract = find_contract(&file, contract_name);
     let function = find_function(&contract.members, "__test").expect("__test function not found");
     let block = function.body.as_ref().expect("__test has a body");
 
@@ -159,7 +173,7 @@ fn type_of_expression(expr: &str) -> (Type, TypeRegistry) {
 /// Convenience wrapper for `type_of_expressions` with a single expression and
 /// no contract context. Returns `None` if the typing didn't resolve.
 fn try_type_of_expression(expr: &str) -> (Option<Type>, TypeRegistry) {
-    let (typings, types) = type_of_expressions(LanguageVersion::LATEST, None, &[expr]);
+    let (typings, types) = type_of_expressions(LanguageVersion::LATEST, None, None, &[expr]);
     let typing = typings.into_iter().next().expect("at least one expression");
     (typing, types)
 }
@@ -175,7 +189,8 @@ fn type_of_expression_in_context(context: &str, expr: &str) -> (Type, TypeRegist
 }
 
 fn try_type_of_expression_in_context(context: &str, expr: &str) -> (Option<Type>, TypeRegistry) {
-    let (typings, types) = type_of_expressions(LanguageVersion::LATEST, Some(context), &[expr]);
+    let (typings, types) =
+        type_of_expressions(LanguageVersion::LATEST, None, Some(context), &[expr]);
     let typing = typings.into_iter().next().expect("at least one expression");
     (typing, types)
 }
@@ -936,6 +951,7 @@ fn test_data_locations_of_state_variable_and_getter_accesses() {
     //    returns just `bytes`, again in memory.
     let (typings, _) = type_of_expressions(
         LanguageVersion::LATEST,
+        None,
         Some(
             r#"
             struct Foo { bytes xs; }
@@ -1075,5 +1091,63 @@ fn test_getter_of_struct_with_struct_member() {
             ]
         ),
         "expected getter tuple `(Struct, uint256)`, got {element_types:?}",
+    );
+}
+
+#[test]
+fn test_this_in_library_is_library_typed() {
+    // `this` inside a library function is valid Solidity and has the library
+    // type
+    let source = r#"
+        library MyLib {
+            function probe() internal view {
+                this;
+            }
+        }
+        contract Test {}
+        "#;
+
+    let TypeAnalysis {
+        file,
+        binder,
+        types,
+    } = analyze(LanguageVersion::LATEST, source);
+
+    let library = find_library(&file, "MyLib");
+    let probe = find_function(&library.members, "probe").expect("probe function");
+    let body = probe.body.as_ref().expect("probe has a body");
+
+    let typings = expression_statement_types(body, &binder, &types);
+    assert!(
+        matches!(typings.as_slice(), [Some(Type::Library(LibraryType { definition_id }))] if definition_id == &library.id()),
+        "expected `this` to be typed as the library, got {typings:?}",
+    );
+}
+
+#[test]
+fn test_this_inside_contract() {
+    let source = r#"
+        contract MyContract {
+            function probe() internal view {
+                this;
+            }
+        }
+        contract Test {}
+        "#;
+
+    let TypeAnalysis {
+        file,
+        binder,
+        types,
+    } = analyze(LanguageVersion::LATEST, source);
+
+    let contract = find_contract(&file, "MyContract");
+    let probe = find_function(&contract.members, "probe").expect("probe function");
+    let body = probe.body.as_ref().expect("probe has a body");
+
+    let typings = expression_statement_types(body, &binder, &types);
+
+    assert!(
+        matches!(typings.as_slice(), [Some(Type::Contract(ContractType { definition_id }))] if definition_id == &contract.id())
     );
 }

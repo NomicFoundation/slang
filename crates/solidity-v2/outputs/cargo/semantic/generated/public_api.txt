@@ -57,7 +57,7 @@ pub slang_solidity_v2_semantic::binder::Typing::MetaType(slang_solidity_v2_seman
 pub slang_solidity_v2_semantic::binder::Typing::NewExpression(slang_solidity_v2_semantic::types::TypeId)
 pub slang_solidity_v2_semantic::binder::Typing::Resolved(slang_solidity_v2_semantic::types::TypeId)
 pub slang_solidity_v2_semantic::binder::Typing::Super
-pub slang_solidity_v2_semantic::binder::Typing::This
+pub slang_solidity_v2_semantic::binder::Typing::This(slang_solidity_v2_semantic::types::TypeId)
 pub slang_solidity_v2_semantic::binder::Typing::Undetermined(alloc::vec::Vec<slang_solidity_v2_semantic::types::TypeId>)
 pub slang_solidity_v2_semantic::binder::Typing::Unresolved
 pub slang_solidity_v2_semantic::binder::Typing::UserMetaType(slang_solidity_v2_common::nodes::NodeId)

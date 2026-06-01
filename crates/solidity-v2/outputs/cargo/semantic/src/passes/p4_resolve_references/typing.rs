@@ -32,7 +32,6 @@ impl Pass<'_> {
             ir::Expression::PayableKeyword(_) => {
                 Typing::MetaType(Type::Address(AddressType { payable: true }))
             }
-            ir::Expression::ThisKeyword(_) => Typing::This,
             ir::Expression::SuperKeyword(_) => Typing::Super,
 
             // By default, query the binder for registered typing information
@@ -250,9 +249,7 @@ impl Pass<'_> {
 
     pub(super) fn typing_is_contract_reference(&self, typing: &Typing) -> bool {
         match typing {
-            // TODO(this-typing): Once `This` carries a type, check that it's either a contract or an interface type
-            Typing::This => true,
-            Typing::Resolved(type_id) => matches!(
+            Typing::This(type_id) | Typing::Resolved(type_id) => matches!(
                 self.types.get_type_by_id(*type_id),
                 Type::Contract(_) | Type::Interface(_)
             ),
@@ -312,7 +309,7 @@ impl Pass<'_> {
         // TODO(validation) SDR[40]: this is a cast to the given type, but we
         // need to verify that the (single) argument is convertible
         match argument_typing {
-            Typing::Resolved(argument_type_id) => {
+            Typing::Resolved(argument_type_id) | Typing::This(argument_type_id) => {
                 // the resulting cast type inherits the data location of the argument
                 let argument_type = self.types.get_type_by_id(*argument_type_id);
                 let type_id = if let Some(data_location) = argument_type.data_location() {
@@ -322,14 +319,6 @@ impl Pass<'_> {
                     self.types.register_type(target_type)
                 };
                 Typing::Resolved(type_id)
-            }
-            Typing::This => {
-                // special case: "this" can be cast to an address
-                if let Type::Address(_) = target_type {
-                    Typing::Resolved(self.types.address())
-                } else {
-                    Typing::Unresolved
-                }
             }
             _ => Typing::Unresolved,
         }
@@ -354,7 +343,7 @@ impl Pass<'_> {
         let argument_typings = self.collect_positional_argument_typings(arguments);
 
         match operand_typing {
-            Typing::Unresolved | Typing::This | Typing::Super => {
+            Typing::Unresolved | Typing::This(_) | Typing::Super => {
                 // `this` and `super` are not callable
                 Typing::Unresolved
             }
@@ -500,7 +489,7 @@ impl Pass<'_> {
         let operand_typing = self.typing_of_expression(&node.operand);
 
         let (typing, definition_id) = match operand_typing {
-            Typing::Unresolved | Typing::This | Typing::Super => {
+            Typing::Unresolved | Typing::This(_) | Typing::Super => {
                 // `this` and `super` are not callable
                 (Typing::Unresolved, None)
             }

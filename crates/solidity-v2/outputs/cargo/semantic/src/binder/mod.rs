@@ -64,9 +64,8 @@ pub enum Typing {
     /// function call.
     NewExpression(TypeId),
     /// Typing of the `this` keyword. Resolving a member of `this` requires
-    /// special lookup rules and it can also type to an address-type equivalent
-    /// if used as a value.
-    This,
+    /// special lookup rules.
+    This(TypeId),
     /// Typing of the `super` keyword. Resolving members requires special lookup
     /// rules.
     Super,
@@ -76,6 +75,7 @@ impl Typing {
     pub fn as_type_id(&self) -> Option<TypeId> {
         match self {
             Self::Resolved(type_id) => Some(*type_id),
+            Self::This(type_id) => Some(*type_id),
             _ => None,
         }
     }
