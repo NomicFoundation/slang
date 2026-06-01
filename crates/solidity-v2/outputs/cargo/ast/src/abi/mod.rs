@@ -428,6 +428,9 @@ fn type_as_abi_parameter_impl(
             visited_structs.remove(definition_id);
             Some(("tuple".to_string(), components))
         }
-        _ => Some((semantic.type_canonical_name(type_id)?, Vec::new())),
+        _ => Some((
+            semantic.type_canonical_name(type_id)?.to_owned(),
+            Vec::new(),
+        )),
     }
 }

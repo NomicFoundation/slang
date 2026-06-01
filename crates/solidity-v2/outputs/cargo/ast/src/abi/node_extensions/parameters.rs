@@ -39,7 +39,7 @@ impl ParametersStruct {
     pub(crate) fn compute_canonical_signature(&self) -> Option<String> {
         let mut result = Vec::new();
         for type_id in self.parameter_types_iter() {
-            result.push(self.semantic.type_canonical_name(type_id?)?);
+            result.push(self.semantic.type_canonical_name(type_id?)?.to_owned());
         }
         Some(result.join(","))
     }
@@ -47,7 +47,7 @@ impl ParametersStruct {
     pub(crate) fn compute_internal_signature(&self) -> Option<String> {
         let mut result = Vec::new();
         for type_id in self.parameter_types_iter() {
-            result.push(self.semantic.type_internal_name(type_id?));
+            result.push(self.semantic.type_internal_name(type_id?).to_owned());
         }
         Some(result.join(","))
     }
