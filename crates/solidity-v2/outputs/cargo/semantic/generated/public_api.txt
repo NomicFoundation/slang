@@ -408,6 +408,8 @@ pub slang_solidity_v2_semantic::types::Type::Integer::bits: u32
 pub slang_solidity_v2_semantic::types::Type::Integer::signed: bool
 pub slang_solidity_v2_semantic::types::Type::Interface
 pub slang_solidity_v2_semantic::types::Type::Interface::definition_id: slang_solidity_v2_common::nodes::NodeId
+pub slang_solidity_v2_semantic::types::Type::Library
+pub slang_solidity_v2_semantic::types::Type::Library::definition_id: slang_solidity_v2_common::nodes::NodeId
 pub slang_solidity_v2_semantic::types::Type::Literal(slang_solidity_v2_semantic::types::LiteralKind)
 pub slang_solidity_v2_semantic::types::Type::Mapping
 pub slang_solidity_v2_semantic::types::Type::Mapping::key_type_id: slang_solidity_v2_semantic::types::TypeId

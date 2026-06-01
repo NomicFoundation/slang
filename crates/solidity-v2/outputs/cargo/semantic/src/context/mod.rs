@@ -196,9 +196,8 @@ impl SemanticContext {
             | Type::Enum { definition_id }
             | Type::Interface { definition_id }
             | Type::Struct { definition_id, .. }
-            | Type::UserDefinedValue { definition_id } => {
-                self.definition_canonical_name(*definition_id)
-            }
+            | Type::UserDefinedValue { definition_id }
+            | Type::Library { definition_id } => self.definition_canonical_name(*definition_id),
             Type::Void => "void".to_string(),
         }
     }
@@ -273,7 +272,11 @@ impl SemanticContext {
                     .and_then(|type_id| self.type_canonical_name_impl(type_id, visited_structs))
             }
 
-            Type::Literal(_) | Type::Mapping { .. } | Type::Tuple { .. } | Type::Void => None,
+            Type::Literal(_)
+            | Type::Mapping { .. }
+            | Type::Tuple { .. }
+            | Type::Void
+            | Type::Library { .. } => None,
         }
     }
 
@@ -370,9 +373,7 @@ impl SemanticContext {
                 )
             }
 
-            Type::Literal(_) => None,
-            Type::Tuple { .. } => None,
-            Type::Void => None,
+            Type::Literal(_) | Type::Tuple { .. } | Type::Void | Type::Library { .. } => None,
         }
     }
 }

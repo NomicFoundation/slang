@@ -473,6 +473,7 @@ impl TypeRegistry {
             | Type::FixedPointNumber { .. }
             | Type::Integer { .. }
             | Type::Interface { .. }
+            | Type::Library { .. }
             | Type::Literal(_)
             | Type::Mapping { .. }
             | Type::Tuple { .. }
@@ -532,6 +533,7 @@ impl TypeRegistry {
             | Type::Function(_)
             | Type::Integer { .. }
             | Type::Interface { .. }
+            | Type::Library { .. }
             | Type::Literal(_)
             | Type::Mapping { .. }
             | Type::UserDefinedValue { .. }

@@ -57,6 +57,9 @@ pub enum Type {
     Interface {
         definition_id: NodeId,
     },
+    Library {
+        definition_id: NodeId,
+    },
     Literal(LiteralKind),
     Mapping {
         key_type_id: TypeId,
@@ -319,6 +322,7 @@ impl Type {
             | Type::Literal(_)
             | Type::Struct { .. }
             | Type::Tuple { .. }
+            | Type::Library { .. }
             | Type::Void => false,
         }
     }
@@ -352,7 +356,8 @@ impl Type {
             | Type::Enum { definition_id }
             | Type::Interface { definition_id }
             | Type::Struct { definition_id, .. }
-            | Type::UserDefinedValue { definition_id } => Some(*definition_id),
+            | Type::UserDefinedValue { definition_id }
+            | Type::Library { definition_id } => Some(*definition_id),
             _ => None,
         }
     }

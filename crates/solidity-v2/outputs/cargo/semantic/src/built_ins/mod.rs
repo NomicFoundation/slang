@@ -207,11 +207,10 @@ impl<'a> BuiltInsResolver<'a> {
                 _ => None,
             },
             BuiltIn::Type(type_id) => match self.types.get_type_by_id(*type_id) {
-                Type::Contract { .. } => match symbol {
+                Type::Contract { .. } | Type::Library { .. } => match symbol {
                     "name" => Some(BuiltIn::TypeName),
                     "creationCode" => Some(BuiltIn::TypeCreationCode),
                     "runtimeCode" => Some(BuiltIn::TypeRuntimeCode),
-                    "interfaceId" => Some(BuiltIn::TypeInterfaceId),
                     _ => None,
                 },
                 Type::Interface { .. } => match symbol {
@@ -338,7 +337,7 @@ impl<'a> BuiltInsResolver<'a> {
                 }
                 _ => None,
             },
-            Type::Contract { .. } | Type::Interface { .. } => None,
+            Type::Contract { .. } | Type::Interface { .. } | Type::Library { .. } => None,
             Type::Enum { .. } => None,
             Type::FixedPointNumber { .. } => None,
             Type::FixedSizeArray { .. } => match symbol {

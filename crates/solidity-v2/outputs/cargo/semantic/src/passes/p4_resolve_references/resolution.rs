@@ -161,6 +161,7 @@ impl Pass<'_> {
 
                     if matches!(typing, Typing::This) {
                         // Consider active `using` directives for `this`
+                        // TODO(this-typing): Once `This` carries a type, use that and check it's a contract
                         if let Some(receiver_type_id) = self.types.find_type(&Type::Contract {
                             definition_id: node_id,
                         }) {
@@ -239,6 +240,8 @@ impl Pass<'_> {
         // Resolve direct members of the type first
         let mut definition_ids = match type_ {
             Type::Contract { definition_id, .. } | Type::Interface { definition_id, .. } => {
+                // A `Type::Library` doesn't belong here, since values of type `library` (ie `this`)
+                // can't be used to acces to library members.
                 let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
                 self.binder
                     .resolve_in_contract_scope(scope_id, symbol, ResolveOptions::External)

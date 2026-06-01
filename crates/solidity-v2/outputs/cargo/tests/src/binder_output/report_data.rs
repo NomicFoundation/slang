@@ -328,8 +328,11 @@ impl CollectedDefinitionDisplay<'_> {
                     location = data_location_display(*location)
                 )
             }
-            Type::Contract { definition_id } => self.definition_name(*definition_id),
-            Type::Enum { definition_id } => self.definition_name(*definition_id),
+            Type::Contract { definition_id }
+            | Type::Enum { definition_id }
+            | Type::Interface { definition_id }
+            | Type::Library { definition_id } => self.definition_name(*definition_id),
+
             Type::FixedPointNumber {
                 signed,
                 bits,
@@ -367,7 +370,6 @@ impl CollectedDefinitionDisplay<'_> {
             Type::Integer { signed, bits } => {
                 format!("{signed}int{bits}", signed = if *signed { "" } else { "u" })
             }
-            Type::Interface { definition_id } => self.definition_name(*definition_id),
             Type::Mapping {
                 key_type_id,
                 value_type_id,

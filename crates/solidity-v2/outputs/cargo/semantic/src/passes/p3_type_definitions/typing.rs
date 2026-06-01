@@ -37,9 +37,11 @@ impl Pass<'_> {
     ) -> Option<TypeId> {
         if let Some(definition) = self.binder.find_definition_by_id(definition_id) {
             match definition {
-                Definition::Contract(_) | Definition::Library(_) => {
-                    // TODO: do we need a separate type for libraries?
+                Definition::Contract(_) => {
                     Some(self.types.register_type(Type::Contract { definition_id }))
+                }
+                Definition::Library(_) => {
+                    Some(self.types.register_type(Type::Library { definition_id }))
                 }
                 Definition::Enum(_) => Some(self.types.register_type(Type::Enum { definition_id })),
                 Definition::Interface(_) => {
@@ -249,7 +251,7 @@ impl Pass<'_> {
                 }
 
                 // invalid types
-                Type::Literal(_) | Type::Tuple { .. } | Type::Void => {
+                Type::Literal(_) | Type::Library { .. } | Type::Tuple { .. } | Type::Void => {
                     unreachable!("cannot compute the getter type for {type_id:?}")
                 }
             }
