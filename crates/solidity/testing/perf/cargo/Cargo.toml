@@ -7,9 +7,8 @@ publish = false
 
 [dependencies]
 anyhow = { workspace = true }
-iai-callgrind = { workspace = true }
+gungraun = { workspace = true }
 infra_utils = { workspace = true }
-paste = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
@@ -25,6 +24,9 @@ solidity_testing_utils = { workspace = true }
 streaming-iterator = { workspace = true }
 tree-sitter-solidity = { workspace = true }
 tree-sitter = { workspace = true }
+
+[dev-dependencies]
+paste = { workspace = true }
 
 [[bench]]
 name = "slang"

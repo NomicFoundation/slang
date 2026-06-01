@@ -80,7 +80,7 @@ jobs:
 
       - name: "Smoke Test > infra perf cargo --smoke comparison"
         if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
-        run: "./scripts/bin/infra perf cargo --smoke comparison"
+        run: "./scripts/bin/infra perf cargo --smoke --pr-benchmark comparison"
 
       - name: "Benchmark > infra perf cargo comparison"
         if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
@@ -91,10 +91,38 @@ jobs:
           BENCHER_PR_HEAD_HASH: "${{ github.event.pull_request.head.sha }}"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
+      - name: "Bench list > Detect diff"
+        id: "bench_list_diff_comparison"
+        if: "${{ github.event_name == 'pull_request' }}"
+        continue-on-error: true
+        run: |
+          f="target/perf-new-benches-comparison.md"
+          if [ -s "$f" ]; then
+            echo "has_diff=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_diff=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: "Bench list > Sticky comment with diff"
+        if: "${{ steps.bench_list_diff_comparison.outputs.has_diff == 'true' }}"
+        continue-on-error: true
+        uses: "marocchino/sticky-pull-request-comment@52423e01640425a022ef5fd42c6fb5f633a02728" # v2.9.4
+        with:
+          header: "bench-list-comparison"
+          path: "target/perf-new-benches-comparison.md"
+
+      - name: "Bench list > Resolve sticky comment when bench-list matches"
+        if: "${{ steps.bench_list_diff_comparison.outputs.has_diff == 'false' }}"
+        continue-on-error: true
+        uses: "marocchino/sticky-pull-request-comment@52423e01640425a022ef5fd42c6fb5f633a02728" # v2.9.4
+        with:
+          header: "bench-list-comparison"
+          delete: true
+
       - name: "Benchmark > Upload Benchmarking Data"
         if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
         uses: "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a" # v7.0.1
         with:
           name: "benchmarking-data"
-          path: "target/iai"
+          path: "target/gungraun"
           if-no-files-found: "error"
