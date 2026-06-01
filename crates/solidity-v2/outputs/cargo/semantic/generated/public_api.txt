@@ -276,9 +276,36 @@ pub fn slang_solidity_v2_semantic::context::SemanticContext::linearised_function
 pub fn slang_solidity_v2_semantic::context::SemanticContext::linearised_state_variables(&self, contract_id: slang_solidity_v2_common::nodes::NodeId) -> &[slang_solidity_v2_ir::ir::nodes::StateVariableDefinition]
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_reference_identifier_to_definition_id(&self, node_id: slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_reference_identifier_to_immediate_definition_id(&self, node_id: slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
+pub fn slang_solidity_v2_semantic::context::SemanticContext::storage_layouts(&self, contract_id: slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&slang_solidity_v2_semantic::context::StorageLayouts>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::storage_size_of_type_id(&self, type_id: slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<usize>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_canonical_name(&self, type_id: slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<&str>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_internal_name(&self, type_id: slang_solidity_v2_semantic::types::TypeId) -> &str
+pub struct slang_solidity_v2_semantic::context::StorageItem
+impl slang_solidity_v2_semantic::context::StorageItem
+pub fn slang_solidity_v2_semantic::context::StorageItem::label(&self) -> &str
+pub fn slang_solidity_v2_semantic::context::StorageItem::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_semantic::context::StorageItem::offset(&self) -> usize
+pub fn slang_solidity_v2_semantic::context::StorageItem::slot(&self) -> ruint::aliases::U256
+pub fn slang_solidity_v2_semantic::context::StorageItem::type_name(&self) -> &str
+impl core::clone::Clone for slang_solidity_v2_semantic::context::StorageItem
+pub fn slang_solidity_v2_semantic::context::StorageItem::clone(&self) -> slang_solidity_v2_semantic::context::StorageItem
+impl core::cmp::Eq for slang_solidity_v2_semantic::context::StorageItem
+impl core::cmp::PartialEq for slang_solidity_v2_semantic::context::StorageItem
+pub fn slang_solidity_v2_semantic::context::StorageItem::eq(&self, other: &slang_solidity_v2_semantic::context::StorageItem) -> bool
+impl core::fmt::Debug for slang_solidity_v2_semantic::context::StorageItem
+pub fn slang_solidity_v2_semantic::context::StorageItem::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::context::StorageItem
+pub struct slang_solidity_v2_semantic::context::StorageLayouts
+pub slang_solidity_v2_semantic::context::StorageLayouts::permanent: alloc::vec::Vec<slang_solidity_v2_semantic::context::StorageItem>
+pub slang_solidity_v2_semantic::context::StorageLayouts::transient: alloc::vec::Vec<slang_solidity_v2_semantic::context::StorageItem>
+impl core::clone::Clone for slang_solidity_v2_semantic::context::StorageLayouts
+pub fn slang_solidity_v2_semantic::context::StorageLayouts::clone(&self) -> slang_solidity_v2_semantic::context::StorageLayouts
+impl core::cmp::Eq for slang_solidity_v2_semantic::context::StorageLayouts
+impl core::cmp::PartialEq for slang_solidity_v2_semantic::context::StorageLayouts
+pub fn slang_solidity_v2_semantic::context::StorageLayouts::eq(&self, other: &slang_solidity_v2_semantic::context::StorageLayouts) -> bool
+impl core::fmt::Debug for slang_solidity_v2_semantic::context::StorageLayouts
+pub fn slang_solidity_v2_semantic::context::StorageLayouts::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::context::StorageLayouts
 pub const slang_solidity_v2_semantic::context::SLOT_SIZE: usize
 pub trait slang_solidity_v2_semantic::context::SemanticFile
 pub fn slang_solidity_v2_semantic::context::SemanticFile::id(&self) -> &str

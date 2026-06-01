@@ -2,6 +2,8 @@
 
 pub mod slang_solidity_v2_ast
 pub mod slang_solidity_v2_ast::abi
+pub use slang_solidity_v2_ast::abi::StorageItem
+pub use slang_solidity_v2_ast::abi::StorageLayouts
 pub enum slang_solidity_v2_ast::abi::AbiEntry
 pub slang_solidity_v2_ast::abi::AbiEntry::Constructor(slang_solidity_v2_ast::abi::AbiConstructor)
 pub slang_solidity_v2_ast::abi::AbiEntry::Error(slang_solidity_v2_ast::abi::AbiError)
@@ -98,8 +100,8 @@ pub fn slang_solidity_v2_ast::abi::ContractAbi::entries(&self) -> &[slang_solidi
 pub fn slang_solidity_v2_ast::abi::ContractAbi::file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::abi::ContractAbi::name(&self) -> &str
 pub fn slang_solidity_v2_ast::abi::ContractAbi::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::abi::ContractAbi::storage_layout(&self) -> &[slang_solidity_v2_ast::abi::StorageItem]
-pub fn slang_solidity_v2_ast::abi::ContractAbi::transient_storage_layout(&self) -> &[slang_solidity_v2_ast::abi::StorageItem]
+pub fn slang_solidity_v2_ast::abi::ContractAbi::storage_layout(&self) -> &[slang_solidity_v2_semantic::context::contract_data_cache::StorageItem]
+pub fn slang_solidity_v2_ast::abi::ContractAbi::transient_storage_layout(&self) -> &[slang_solidity_v2_semantic::context::contract_data_cache::StorageItem]
 pub struct slang_solidity_v2_ast::abi::ParameterComponent
 impl slang_solidity_v2_ast::abi::ParameterComponent
 pub fn slang_solidity_v2_ast::abi::ParameterComponent::components(&self) -> &[slang_solidity_v2_ast::abi::ParameterComponent]
@@ -113,21 +115,6 @@ pub fn slang_solidity_v2_ast::abi::ParameterComponent::eq(&self, other: &slang_s
 impl core::fmt::Debug for slang_solidity_v2_ast::abi::ParameterComponent
 pub fn slang_solidity_v2_ast::abi::ParameterComponent::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::ParameterComponent
-pub struct slang_solidity_v2_ast::abi::StorageItem
-impl slang_solidity_v2_ast::abi::StorageItem
-pub fn slang_solidity_v2_ast::abi::StorageItem::label(&self) -> &str
-pub fn slang_solidity_v2_ast::abi::StorageItem::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::abi::StorageItem::offset(&self) -> usize
-pub fn slang_solidity_v2_ast::abi::StorageItem::slot(&self) -> ruint::aliases::U256
-pub fn slang_solidity_v2_ast::abi::StorageItem::type_name(&self) -> &str
-impl core::clone::Clone for slang_solidity_v2_ast::abi::StorageItem
-pub fn slang_solidity_v2_ast::abi::StorageItem::clone(&self) -> slang_solidity_v2_ast::abi::StorageItem
-impl core::cmp::Eq for slang_solidity_v2_ast::abi::StorageItem
-impl core::cmp::PartialEq for slang_solidity_v2_ast::abi::StorageItem
-pub fn slang_solidity_v2_ast::abi::StorageItem::eq(&self, other: &slang_solidity_v2_ast::abi::StorageItem) -> bool
-impl core::fmt::Debug for slang_solidity_v2_ast::abi::StorageItem
-pub fn slang_solidity_v2_ast::abi::StorageItem::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::StorageItem
 pub fn slang_solidity_v2_ast::abi::selector_from_signature(signature: &str) -> u32
 pub type slang_solidity_v2_ast::abi::AbiMutability = slang_solidity_v2_semantic::types::FunctionTypeMutability
 pub mod slang_solidity_v2_ast::ast
