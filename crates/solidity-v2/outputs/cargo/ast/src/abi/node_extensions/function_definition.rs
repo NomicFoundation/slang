@@ -74,7 +74,17 @@ impl FunctionDefinitionStruct {
     /// well-defined for any function, including internal ones with parameter
     /// types that cannot be ABI-encoded.
     pub fn compute_internal_signature(&self) -> Option<String> {
-        let name = self.ir_node.name.as_ref()?.unparse();
+        let name = match self.ir_node.kind {
+            ir::FunctionKind::Regular | ir::FunctionKind::Modifier => self
+                .ir_node
+                .name
+                .as_ref()
+                .expect("regular functions and modifiers must have a name")
+                .unparse(),
+            ir::FunctionKind::Constructor => "@constructor",
+            ir::FunctionKind::Fallback => "fallback",
+            ir::FunctionKind::Receive => "receive",
+        };
         let parameters = self.parameters().compute_internal_signature()?;
         Some(format!("{name}({parameters})"))
     }
