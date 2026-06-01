@@ -55,12 +55,13 @@ pub struct TestOptions {
     pub check_infer_version: bool,
 
     /// Run bindings tests
-    #[arg(long, value_enum)]
-    pub check_binder: Option<CheckBinderMode>,
+    #[arg(long, value_enum, default_value = "none")]
+    pub check_binder: CheckBinderMode,
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
 pub enum CheckBinderMode {
+    None,
     V1,
     V2,
     Compare,

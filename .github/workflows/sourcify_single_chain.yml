@@ -41,7 +41,7 @@ on:
         description: "Check name bindings on contracts reporting if there's any unresolved symbol."
         type: "string"
         required: false
-        default: null
+        default: "none"
 
 permissions: {}
 
@@ -178,17 +178,11 @@ jobs:
           CHECK_BINDER: "${{ inputs.check_binder }}"
         run: |
           chmod +x solidity_testing_sourcify
-
-          check_binder_args=()
-          if [ -n "$CHECK_BINDER" ] && [ "$CHECK_BINDER" != "none" ]; then
-            check_binder_args=("--check-binder=$CHECK_BINDER")
-          fi
-
           ./scripts/bin/with-hermit ./solidity_testing_sourcify test \
               --chain-id ${{ inputs.chain_id }} \
               --shard-count ${{ env.SHARD_COUNT }} \
               --shard-index ${{ matrix.shard_index }} \
-              "${check_binder_args[@]}" \
+              --check-binder="$CHECK_BINDER" \
               ${{ inputs.check_infer_version == true && '--check-infer-version' || '' }}
 
       - name: "Write shard results to output"
