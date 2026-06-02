@@ -1,9 +1,8 @@
 name: "Setup Socket Firewall (SFW)"
 description: >
-  Installs Socket Firewall Free (Linux-only) and exports SFW_PREFIX, a wrapper
-  that callers prefix onto dependency commands to run installs behind the
-  firewall (it also fixes sfw's CA handling — see the wrapper step). Left unset
-  on non-Linux runners, so callers run unwrapped.
+  Installs Socket Firewall Free and exports SFW_PREFIX, a wrapper that callers
+  prefix onto dependency commands to run installs behind the firewall (it also
+  fixes sfw's CA handling — see the wrapper step).
 
 inputs:
   mode:
@@ -18,7 +17,6 @@ runs:
   using: "composite"
   steps:
     - name: "Install SFW"
-      if: "${{ runner.os == 'Linux' }}"
       uses: "socketdev/action@937f824ec476dfd164d4a4d9995751427b0be143" # v1
       with:
         mode: "${{ inputs.mode }}"
@@ -29,7 +27,6 @@ runs:
     # its temp-CA env into the wrapper, which merges that root with the system
     # bundle, re-points the CA vars at the union, and exec's the real command.
     - name: "Create SFW CA-merge wrapper"
-      if: "${{ runner.os == 'Linux' }}"
       shell: "bash"
       run: |
         if ! command -v sfw &>/dev/null; then
