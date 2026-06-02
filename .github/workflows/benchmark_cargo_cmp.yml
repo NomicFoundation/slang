@@ -69,7 +69,7 @@ jobs:
       - name: "Restore Cargo Target Cache"
         uses: "./.github/actions/cache/cargo-target/restore"
 
-      - name: "Setup SFW (firewall)"
+      - name: "Setup SFW"
         uses: "./.github/actions/setup-sfw"
 
       - name: "infra setup cargo pipenv"
