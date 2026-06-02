@@ -58,9 +58,8 @@ impl IdentifierStruct {
         self.as_definition().is_some()
     }
 
-    /// Returns the `Definition` corresponding to this identifier. Panics if the
-    /// identifier is not a definition by itself, ie. this can only be called
-    /// safely if `is_definition()` returns `true`.
+    /// Returns the `Definition` for this identifier, if the identifier is a
+    /// definitions by itself (eg. an enum member), or `None` otherwise.
     pub fn as_definition(&self) -> Option<Definition> {
         Definition::try_create(self.ir_node.id(), &self.semantic)
     }
@@ -72,6 +71,15 @@ impl IdentifierStruct {
             .binder()
             .find_definition_by_identifier_node_id(self.ir_node.id())
             .is_some()
+    }
+
+    /// Returns the `Definition` this identifier names, if any. If the
+    /// identifier is a reference only, returns `None`.
+    pub fn named_definition(&self) -> Option<Definition> {
+        self.semantic
+            .binder()
+            .find_definition_by_identifier_node_id(self.ir_node.id())
+            .and_then(|definition| Definition::try_create(definition.node_id(), &self.semantic))
     }
 
     // only makes sense if `is_definition()` is true
