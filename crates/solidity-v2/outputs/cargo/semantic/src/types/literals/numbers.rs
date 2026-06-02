@@ -93,6 +93,21 @@ impl Number {
         self.as_integer()?.to_usize()
     }
 
+    /// Truncates toward zero, then converts to `usize`.
+    ///
+    /// Array sizes like `uint[a / b]` (with `a`, `b` integer-typed
+    /// constants) use Solidity integer division, but the literal evaluator
+    /// carries the quotient as a rational (`7 / 3` → `7/3`). Truncating
+    /// toward zero recovers the integer size rather than collapsing the
+    /// rational to `None` (which would silently fall back to a zero-length
+    /// array). Returns `None` if the truncated value does not fit `usize`.
+    pub(crate) fn trunc_to_usize(&self) -> Option<usize> {
+        match self {
+            Self::Integer(value) => value.to_usize(),
+            Self::Rational(value) => value.trunc().to_integer().to_usize(),
+        }
+    }
+
     pub(crate) fn to_literal_kind(&self) -> LiteralKind {
         match self {
             Self::Integer(value) => LiteralKind::Integer {
