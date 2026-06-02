@@ -38,8 +38,6 @@ jobs:
 
       - name: "Setup SFW (firewall)"
         uses: "./.github/actions/setup-sfw"
-        with:
-          mode: "firewall"
 
       - name: "infra setup cargo"
         run: "${SFW_PREFIX:-} ./scripts/bin/infra setup cargo"

@@ -71,8 +71,6 @@ jobs:
 
       - name: "Setup SFW (firewall)"
         uses: "./.github/actions/setup-sfw"
-        with:
-          mode: "firewall"
 
       - name: "infra setup cargo npm"
         run: "${SFW_PREFIX:-} ./scripts/bin/infra setup cargo npm"

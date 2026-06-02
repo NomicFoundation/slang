@@ -73,8 +73,6 @@ jobs:
 
       - name: "Setup SFW (firewall)"
         uses: "./.github/actions/setup-sfw"
-        with:
-          mode: "firewall"
 
       - name: "Build Test Binary"
         run: "${SFW_PREFIX:-} ./scripts/bin/with-hermit cargo build --locked --bin solidity_testing_sourcify --release"

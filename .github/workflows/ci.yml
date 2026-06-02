@@ -68,8 +68,6 @@ jobs:
       # Route the dependency installs in the steps below through Socket Firewall.
       - name: "Setup SFW (firewall)"
         uses: "./.github/actions/setup-sfw"
-        with:
-          mode: "firewall"
 
       #
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
@@ -135,8 +133,6 @@ jobs:
 
       - name: "Setup SFW (firewall)"
         uses: "./.github/actions/setup-sfw"
-        with:
-          mode: "firewall"
 
       - name: "Cargo cooldown check"
         run: "${SFW_PREFIX:-} ./scripts/bin/with-hermit cargo cooldown-check"
@@ -159,8 +155,6 @@ jobs:
 
       - name: "Setup SFW (firewall)"
         uses: "./.github/actions/setup-sfw"
-        with:
-          mode: "firewall"
 
       - name: "Renovate schema check"
         run: "${SFW_PREFIX:-} ./bin/npx --yes --package renovate -- renovate-config-validator renovate.json"

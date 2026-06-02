@@ -4,22 +4,15 @@ description: >
   prefix onto dependency commands to run installs behind the firewall (it also
   fixes sfw's CA handling — see the wrapper step).
 
-inputs:
-  mode:
-    description: >
-      socketdev/action operation mode: "firewall" (the proxy), "patch", or
-      "cli". Socket Firewall Free has no warn-only mode — "firewall" blocks
-      confirmed-malicious packages and only warns on AI-flagged-unconfirmed ones.
-    required: false
-    default: "firewall"
-
 runs:
   using: "composite"
   steps:
+    # "firewall" is the only useful Free mode (no warn-only): it blocks
+    # confirmed-malicious packages and warns on AI-flagged-unconfirmed ones.
     - name: "Install SFW"
       uses: "socketdev/action@937f824ec476dfd164d4a4d9995751427b0be143" # v1
       with:
-        mode: "${{ inputs.mode }}"
+        mode: "firewall"
 
     # sfw has no persistent CA file and overrides the CA env vars inside every
     # wrap, so the union bundle must be built *inside* the wrap. Write a wrapper
