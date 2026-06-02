@@ -1,11 +1,9 @@
-use std::collections::BTreeSet;
-
 use indexmap::IndexSet;
 use language_v2_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
 use semver::Version;
 use serde::{Deserialize, Serialize};
 
-use crate::model::{BuiltInContext, Field, Identifier, Item, VersionSpecifier};
+use crate::model::{BuiltInContext, Identifier, Item};
 
 /// A representation of a Language definition
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -32,91 +30,6 @@ impl Language {
     /// Returns every item in the language definition (across all contexts).
     pub fn items(&self) -> impl Iterator<Item = &Item> {
         self.contexts.iter().flat_map(|context| context.items())
-    }
-
-    /// Collects all versions that change the language syntax in a breaking way.
-    ///
-    /// Includes the first supported version. Only considers grammar items
-    /// (structs, enums, tokens, etc.), not built-in definitions.
-    pub fn collect_syntax_breaking_versions(&self) -> BTreeSet<Version> {
-        let first = self.versions.first().unwrap().clone();
-        let mut res = BTreeSet::from_iter([first]);
-
-        let mut add_spec = |spec: &Option<VersionSpecifier>| {
-            if let Some(spec) = spec {
-                res.extend(spec.breaking_versions().cloned());
-            }
-        };
-
-        for item in self.items() {
-            match item {
-                Item::Struct { item } => {
-                    add_spec(&item.enabled);
-                    for field in item.fields.values() {
-                        match field {
-                            Field::Required { .. } => (),
-                            Field::Optional { enabled, .. } => add_spec(enabled),
-                        }
-                    }
-                }
-                Item::Enum { item } => {
-                    add_spec(&item.enabled);
-                    for variant in &item.variants {
-                        add_spec(&variant.enabled);
-                    }
-                }
-                Item::Repeated { item } => add_spec(&item.enabled),
-                Item::Separated { item } => add_spec(&item.enabled),
-                Item::Precedence { item } => {
-                    add_spec(&item.enabled);
-                    for prec in &item.precedence_expressions {
-                        for op in &prec.operators {
-                            add_spec(&op.enabled);
-                            for field in op.fields.values() {
-                                match field {
-                                    Field::Required { .. } => (),
-                                    Field::Optional { enabled, .. } => add_spec(enabled),
-                                }
-                            }
-                        }
-                    }
-                    for prim in &item.primary_expressions {
-                        add_spec(&prim.enabled);
-                    }
-                }
-                Item::Keyword { item } => {
-                    add_spec(&item.enabled);
-                    add_spec(&item.reserved);
-                }
-                Item::Token { item } => {
-                    add_spec(&item.enabled);
-                }
-                Item::Fragment { item } => add_spec(&item.enabled),
-                Item::Trivia { .. } => {}
-            }
-        }
-
-        res
-    }
-
-    /// Collects all versions that change the language semantics in a breaking way.
-    ///
-    /// Includes the first supported version. Considers both grammar items and
-    /// built-in definitions.
-    pub fn collect_semantic_breaking_versions(&self) -> BTreeSet<Version> {
-        let mut res = self.collect_syntax_breaking_versions();
-
-        for context in &self.built_ins {
-            for scope in &context.scopes {
-                for definition in &scope.definitions {
-                    if let Some(spec) = &definition.enabled {
-                        res.extend(spec.breaking_versions().cloned());
-                    }
-                }
-            }
-        }
-
-        res
     }
 }
 

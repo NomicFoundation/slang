@@ -11,6 +11,6 @@ pub fn slang_solidity_v2_parser::ParseOutput::fmt(&self, f: &mut core::fmt::Form
 impl core::marker::StructuralPartialEq for slang_solidity_v2_parser::ParseOutput
 pub struct slang_solidity_v2_parser::Parser
 impl slang_solidity_v2_parser::Parser
-pub fn slang_solidity_v2_parser::Parser::parse(file_id: &str, source: &str, language_version: slang_solidity_v2_common::versions::language_versions::LanguageVersion) -> slang_solidity_v2_parser::ParseOutput
+pub fn slang_solidity_v2_parser::Parser::parse(file_id: &str, source: &str, language_version: slang_solidity_v2_common::versions::version::LanguageVersion) -> slang_solidity_v2_parser::ParseOutput
 impl core::default::Default for slang_solidity_v2_parser::Parser
 pub fn slang_solidity_v2_parser::Parser::default() -> slang_solidity_v2_parser::Parser

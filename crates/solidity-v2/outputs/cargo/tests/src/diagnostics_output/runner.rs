@@ -7,7 +7,6 @@ use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig};
 use slang_solidity_v2_common::versions::LanguageVersion;
-use solidity_v2_language::SolidityDefinition;
 use solidity_v2_testing_utils::reporting::diagnostic;
 
 use crate::utils::multi_part_file::split_multi_file;
@@ -54,15 +53,9 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         .map(|part| (part.name.to_string(), part.contents.to_string()))
         .collect();
 
-    let tested_versions: Vec<LanguageVersion> = SolidityDefinition::create()
-        .collect_semantic_breaking_versions()
-        .into_iter()
-        .filter_map(|version| LanguageVersion::try_from(version).ok())
-        .collect();
-
     let mut last_report = None;
 
-    for &version in &tested_versions {
+    for &version in LanguageVersion::ALL {
         let config = TestConfig {
             files: files.clone(),
         };

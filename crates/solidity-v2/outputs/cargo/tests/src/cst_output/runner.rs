@@ -4,7 +4,6 @@ use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_parser::Parser as V2Parser;
-use solidity_v2_language::SolidityDefinition;
 
 pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     let test_dir = CargoWorkspace::locate_source_crate("solidity_v2_testing_snapshots")?
@@ -20,13 +19,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
 
     let mut last_output = None;
 
-    let tested_versions: Vec<LanguageVersion> = SolidityDefinition::create()
-        .collect_syntax_breaking_versions()
-        .into_iter()
-        .map(|v| LanguageVersion::try_from(v).unwrap())
-        .collect();
-
-    for &lang_version in &tested_versions {
+    for &lang_version in LanguageVersion::ALL {
         let v2_output = V2Parser::parse(&source_id, &source, lang_version);
 
         match last_output {
