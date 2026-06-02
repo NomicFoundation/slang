@@ -75,7 +75,6 @@ jobs:
       - name: "infra setup cargo pipenv"
         run: "${SFW_PREFIX:-} ./scripts/bin/infra setup cargo pipenv"
 
-      # Not SFW-wrapped: builds/runs benchmarks and uploads to bencher, not a dependency install.
       - name: "Smoke Test > infra perf cargo --smoke slang"
         if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
         run: "./scripts/bin/infra perf cargo --smoke slang"

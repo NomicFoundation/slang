@@ -176,7 +176,6 @@ jobs:
         with:
           name: "solidity_testing_sourcify_${{ inputs.chain_id }}"
 
-      # Not SFW-wrapped: hits chain RPCs / the Sourcify API, not package registries.
       - name: "Run Tests"
         env:
           CHECK_BINDER: "${{ inputs.check_binder }}"

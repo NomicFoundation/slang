@@ -78,7 +78,6 @@ jobs:
       - name: "infra check npm"
         run: "${SFW_PREFIX:-} ./scripts/bin/infra check npm"
 
-      # Not SFW-wrapped: builds/runs benchmarks and uploads to bencher, not a dependency install.
       - name: "Smoke Test > infra perf npm --smoke"
         if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
         run: "./scripts/bin/infra perf npm --smoke"
