@@ -19,6 +19,24 @@ impl GitHub {
         var("IS_INSIDE_SLANG_DEVCONTAINER").is_ok()
     }
 
+    /// Set a GitHub Actions step output by appending to `$GITHUB_OUTPUT`. Outside
+    /// Actions (env var unset) it logs the assignment instead.
+    pub fn set_output(name: &str, value: &str) -> Result<()> {
+        match var("GITHUB_OUTPUT") {
+            std::result::Result::Ok(path) => {
+                use std::io::Write;
+
+                let mut file = std::fs::OpenOptions::new().append(true).open(path)?;
+                writeln!(file, "{name}={value}")?;
+            }
+            std::result::Result::Err(_) => {
+                println!("[github output] {name}={value}");
+            }
+        }
+
+        Ok(())
+    }
+
     /// Collapses the output of the given operation in the GitHub log viewer.
     /// They can be expanded individually when needed.
     /// This has no effect when running locally.

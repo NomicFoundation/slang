@@ -1,8 +1,10 @@
+mod artifacts;
 mod cargo;
 mod changesets;
 mod github_release;
 mod mkdocs;
 mod npm;
+mod prepare;
 
 use anyhow::Result;
 use clap::{Parser, Subcommand};
@@ -12,6 +14,7 @@ use crate::commands::publish::changesets::ChangesetsController;
 use crate::commands::publish::github_release::GithubReleaseController;
 use crate::commands::publish::mkdocs::MkdocsController;
 use crate::commands::publish::npm::NpmController;
+use crate::commands::publish::prepare::PrepareController;
 
 #[derive(Clone, Debug, Parser)]
 pub struct PublishController {
@@ -25,6 +28,8 @@ pub enum PublishCommand {
     Changesets(ChangesetsController),
     /// Publish the documentation to GitHub pages.
     Mkdocs(MkdocsController),
+    /// Build the npm publish artifacts (or mark SKIPPED when already published).
+    Prepare(PrepareController),
     /// Publish the prebuilt npm tarball (passed via `--tarball`) to [npmjs.com].
     Npm(NpmController),
     /// Publish the user-facing v1 cargo crates to [crates.io].
@@ -44,6 +49,7 @@ impl PublishCommand {
         match self {
             PublishCommand::Changesets(controller) => controller.execute(),
             PublishCommand::Mkdocs(controller) => controller.execute(),
+            PublishCommand::Prepare(controller) => controller.execute(),
             PublishCommand::Npm(controller) => controller.execute(),
             PublishCommand::Cargo(controller) => controller.execute(),
             PublishCommand::GithubRelease(controller) => controller.execute(),
