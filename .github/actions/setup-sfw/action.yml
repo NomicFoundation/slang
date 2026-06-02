@@ -38,18 +38,21 @@ runs:
       shell: "bash"
       run: |
         command -v sfw &>/dev/null || { echo "::warning::sfw not found — skipping CA trust"; exit 0; }
-        # Generation is lazy; a wrapped command triggers it. The cert's directory
-        # isn't documented, so locate it by its documented filename. The trailing
-        # `|| true` keeps find's nonzero exit (it descends unreadable dirs) from
-        # tripping this step's pipefail+errexit before we can check the result.
-        sfw npm ping >/dev/null 2>&1 || true
-        ca="$(find / -name "socketFirewallCa.crt" 2>/dev/null | head -n1 || true)"
-        if [ -z "$ca" ]; then
-          echo "::error::SFW CA (socketFirewallCa.crt) not found after install"
+        # sfw (free) doesn't drop the CA at a fixed path; it advertises the cert
+        # to processes it wraps via NODE_EXTRA_CA_CERTS. Read that path from a
+        # wrapped shell, then install the file system-wide (the documented Linux
+        # method) so curl/git/cargo trust it — node/pnpm already get the env var.
+        ca="$(sfw bash -c 'printf "%s" "${NODE_EXTRA_CA_CERTS:-}"' 2>/dev/null || true)"
+        if [ -z "$ca" ] || [ ! -f "$ca" ]; then
+          echo "::error::could not resolve SFW CA from NODE_EXTRA_CA_CERTS (got: '${ca:-<empty>}')"
+          echo "== env sfw injects into wrapped processes =="
+          sfw bash -c 'env' 2>/dev/null | grep -iE "ca|cert|ssl|proxy" | sort || true
+          echo "== candidate cert files on disk =="
+          find / \( -iname "*.crt" -o -iname "*.pem" \) 2>/dev/null | grep -iE "socket|sfw|firewall" || true
           exit 1
         fi
         echo "SFW CA: $ca"
-        sudo cp "$ca" /usr/local/share/ca-certificates/socketFirewallCa.crt
+        sudo cp "$ca" /usr/local/share/ca-certificates/socket-firewall.crt
         sudo update-ca-certificates
 
     - name: "Export SFW prefix"
