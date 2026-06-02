@@ -64,11 +64,6 @@ jobs:
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
       #
 
-      # `${SFW_PREFIX:-}` wraps the command with the sfw CA-merge wrapper when SFW
-      # is available, and expands to nothing otherwise (so a non-Linux runner or
-      # SFW failure just runs unwrapped). Every infra step is wrapped: setup pulls
-      # crates/pnpm/toolchains, and check/test/lint can still hit the network via
-      # build.rs or npx, so the whole pipeline runs behind the firewall.
       - name: "infra setup"
         run: "${SFW_PREFIX:-} ./scripts/bin/infra setup"
 
