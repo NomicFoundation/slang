@@ -402,10 +402,7 @@ jobs:
           name: "${{ needs.prepare.outputs.artifact-name }}"
           path: "target/publish-artifacts/"
 
-      # Compile infra_cli + bootstrap the toolchain before any registry token is in
-      # scope. The first `infra` call builds infra_cli (running its deps' build
-      # scripts); the npm step is skipped once the version is already on npm, which
-      # would otherwise drop that first compile into the cargo-token step below.
+      # Compile infra_cli with no registry token in scope.
       - name: "Build infra_cli (before any token)"
         run: "./scripts/bin/infra --version"
 
