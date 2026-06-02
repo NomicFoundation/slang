@@ -4,14 +4,11 @@ use std::ops::Range;
 
 use anyhow::Result;
 use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
-use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_semantic::binder::Resolution;
-use slang_solidity_v2_semantic::context::SemanticContext;
+use slang_solidity_v2::diagnostics::DiagnosticCollection;
 use solidity_v2_testing_utils::reporting::diagnostic;
 
 use super::report_data::{
-    CollectedDefinition, CollectedIdentifier, CollectedReference, ReportData,
+    CollectedDefinition, CollectedIdentifier, CollectedReference, CollectedResolution, ReportData,
 };
 
 const SEPARATOR: &str =
@@ -29,7 +26,6 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
         all_definitions,
         all_references,
         unbound_identifiers,
-        definitions_by_id,
     } = report_data;
 
     if !compilation.diagnostics().is_empty() {
@@ -37,11 +33,11 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
         writeln!(report, "{SEPARATOR}")?;
     }
 
-    report_all_definitions(&mut report, all_definitions, compilation.semantic())?;
+    report_all_definitions(&mut report, all_definitions)?;
 
     writeln!(report, "{SEPARATOR}")?;
 
-    report_all_references(&mut report, all_references, definitions_by_id)?;
+    report_all_references(&mut report, all_references)?;
 
     writeln!(report, "{SEPARATOR}")?;
 
@@ -58,7 +54,6 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
                 all_definitions,
                 all_references,
                 unbound_identifiers,
-                definitions_by_id,
             )?;
         }
     }
@@ -69,7 +64,6 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
 fn report_all_definitions(
     report: &mut String,
     all_definitions: &[CollectedDefinition],
-    semantic: &SemanticContext,
 ) -> Result<()> {
     writeln!(
         report,
@@ -77,31 +71,19 @@ fn report_all_definitions(
         definitions_count = all_definitions.len(),
     )?;
     for definition in all_definitions {
-        writeln!(
-            report,
-            "- {definition}",
-            definition = definition.display(semantic)
-        )?;
+        writeln!(report, "- {definition}")?;
     }
     Ok(())
 }
 
-fn report_all_references(
-    report: &mut String,
-    all_references: &[CollectedReference],
-    definitions_by_id: &BTreeMap<NodeId, usize>,
-) -> Result<()> {
+fn report_all_references(report: &mut String, all_references: &[CollectedReference]) -> Result<()> {
     writeln!(
         report,
         "References ({references_count}):",
         references_count = all_references.len()
     )?;
     for reference in all_references {
-        writeln!(
-            report,
-            "- {reference}",
-            reference = reference.display(definitions_by_id)
-        )?;
+        writeln!(report, "- {reference}")?;
     }
     Ok(())
 }
@@ -116,11 +98,7 @@ fn report_unbound_identifiers(
         unbound_identifiers_count = unbound_identifiers.len()
     )?;
     for unbound_identifier in unbound_identifiers {
-        writeln!(
-            report,
-            "- {unbound_identifier}",
-            unbound_identifier = unbound_identifier.display_unbound(),
-        )?;
+        writeln!(report, "- {unbound_identifier}")?;
     }
     Ok(())
 }
@@ -147,7 +125,6 @@ fn render_bindings_for_file(
     all_definitions: &[CollectedDefinition],
     all_references: &[CollectedReference],
     unbound_identifiers: &[CollectedIdentifier],
-    definitions_by_id: &BTreeMap<NodeId, usize>,
 ) -> Result<()> {
     let mut builder: BuilderType<'_> =
         Report::build(ReportKind::Custom("Bindings", Color::Unset), file_id, 0)
@@ -167,50 +144,38 @@ fn render_bindings_for_file(
     };
 
     for definition in all_definitions {
-        if definition.identifier.file_id != file_id {
+        if definition.identifier.file_id() != file_id {
             continue;
         }
 
         let message = format!(
             "name: {definition_id}",
-            definition_id = definition.report_id
+            definition_id = definition.definition_id,
         );
-        builder.add_label(new_label(&definition.identifier.range, &message));
+        builder.add_label(new_label(definition.identifier.range(), &message));
     }
 
     for reference in all_references {
-        if reference.identifier.file_id != file_id {
+        if reference.identifier.file_id() != file_id {
             continue;
         }
 
         let message = match &reference.resolution {
-            Resolution::Unresolved => "unresolved".to_string(),
-            Resolution::BuiltIn(_) => "built-in".to_string(),
-            Resolution::Definition(definition_id) => {
-                format!(
-                    "ref: {definition_id}",
-                    definition_id = definitions_by_id.get(definition_id).unwrap()
-                )
-            }
-            Resolution::Ambiguous(definitions) => {
-                format!(
-                    "refs: {ids:?}",
-                    ids = definitions
-                        .iter()
-                        .map(|id| definitions_by_id.get(id).unwrap())
-                        .collect::<Vec<_>>()
-                )
+            CollectedResolution::Unresolved => "unresolved".to_string(),
+            CollectedResolution::BuiltIn => "built-in".to_string(),
+            CollectedResolution::Definition(definition_id) => {
+                format!("ref: {definition_id}")
             }
         };
-        builder.add_label(new_label(&reference.identifier.range, &message));
+        builder.add_label(new_label(reference.identifier.range(), &message));
     }
 
     for unbound_identifier in unbound_identifiers {
-        if unbound_identifier.file_id != file_id {
+        if unbound_identifier.file_id() != file_id {
             continue;
         }
 
-        builder.add_label(new_label(&unbound_identifier.range, "???"));
+        builder.add_label(new_label(unbound_identifier.range(), "???"));
     }
 
     let mut buffer = Vec::<u8>::new();
