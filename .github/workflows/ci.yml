@@ -73,6 +73,17 @@ jobs:
       - name: "infra lint"
         run: "./scripts/bin/infra lint"
 
+      # On main pushes, warm the dependency and cargo-target caches with the perf
+      # toolchain (bencher_cli, iai-callgrind-runner, and the bench binaries) so
+      # subsequent PR perf runs don't compile them from scratch.
+      - name: "infra perf cargo --smoke slang-v2"
+        if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
+        run: "./scripts/bin/infra perf cargo --smoke --no-apt-deps slang-v2"
+
+      - name: "infra perf npm --smoke"
+        if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
+        run: "./scripts/bin/infra perf npm --smoke"
+
       - name: "Save Cargo Target Cache"
         if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
         uses: "./.github/actions/cache/cargo-target/save"

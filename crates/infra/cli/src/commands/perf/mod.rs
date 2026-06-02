@@ -1,4 +1,5 @@
 mod archive;
+mod binaries;
 mod cargo;
 mod npm;
 

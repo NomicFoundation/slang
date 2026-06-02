@@ -1,8 +1,8 @@
 use anyhow::Result;
 use clap::Parser;
-use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 
+use crate::commands::perf::binaries;
 use crate::toolchains::bencher::{run_bench, BencherThreshold};
 use crate::utils::DryRun;
 
@@ -34,11 +34,6 @@ pub struct NpmController {
 }
 
 impl NpmController {
-    fn install_deps() -> Result<()> {
-        CargoWorkspace::install_binary("bencher_cli")?;
-        Ok(())
-    }
-
     fn execute_npm_benchmarks(&self) {
         let test_runner = format!(
             "cargo run --package {package} -- --pattern=\"{pattern}\" --cold={cold} --hot={hot}",
@@ -62,7 +57,7 @@ impl NpmController {
 
     #[allow(clippy::unnecessary_wraps)]
     pub fn execute(&self) -> Result<()> {
-        Self::install_deps()?;
+        binaries::install_bencher_cli()?;
 
         if self.smoke {
             Command::new("cargo")
