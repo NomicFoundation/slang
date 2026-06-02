@@ -2,11 +2,13 @@ name: "Setup Socket Firewall (SFW)"
 description: >
   Installs Socket Firewall (SFW) Free via socketdev/action and exports
   SFW_PREFIX (`sfw`) so callers can wrap their dependency-fetching commands with
-  it. SFW is documented as zero-config — it wraps the package manager
-  (npm/pnpm/pip/cargo) and sets up its own proxy + TLS trust for the wrapped
-  process tree — so this action does NO manual CA handling. Linux-only (the MITM
-  is incompatible with macOS/Windows TLS stacks); on other runners SFW_PREFIX is
-  left unset and callers run unwrapped.
+  it. SFW auto-trusts only the package managers it wraps (npm/pnpm/pip/cargo);
+  a raw `curl` — like the hermit bootstrap that runs first in `infra setup` —
+  reads the system trust store and rejects the MITM cert. So this action also
+  installs SFW's CA system-wide the way Socket documents for Linux (drop it in
+  /usr/local/share/ca-certificates and run update-ca-certificates), which covers
+  curl/git/cargo. Linux-only (the MITM is incompatible with macOS/Windows TLS
+  stacks); on other runners SFW_PREFIX is left unset and callers run unwrapped.
 
 inputs:
   mode:
@@ -25,6 +27,30 @@ runs:
       uses: "socketdev/action@937f824ec476dfd164d4a4d9995751427b0be143" # v1
       with:
         mode: "${{ inputs.mode }}"
+
+    # socketdev/action injects its CA only into the package managers sfw wraps,
+    # not into the system trust store. `infra setup` first bootstraps hermit via
+    # a raw curl, which then fails TLS verification against the MITM cert. Trust
+    # the CA system-wide using Socket's documented Linux method so curl (and git
+    # + cargo/rustls) accept it.
+    - name: "Trust SFW CA system-wide"
+      if: "${{ runner.os == 'Linux' }}"
+      shell: "bash"
+      run: |
+        command -v sfw &>/dev/null || { echo "::warning::sfw not found — skipping CA trust"; exit 0; }
+        # Generation is lazy; a wrapped command triggers it. The cert's directory
+        # isn't documented, so locate it by its documented filename. The trailing
+        # `|| true` keeps find's nonzero exit (it descends unreadable dirs) from
+        # tripping this step's pipefail+errexit before we can check the result.
+        sfw npm ping >/dev/null 2>&1 || true
+        ca="$(find / -name "socketFirewallCa.crt" 2>/dev/null | head -n1 || true)"
+        if [ -z "$ca" ]; then
+          echo "::error::SFW CA (socketFirewallCa.crt) not found after install"
+          exit 1
+        fi
+        echo "SFW CA: $ca"
+        sudo cp "$ca" /usr/local/share/ca-certificates/socketFirewallCa.crt
+        sudo update-ca-certificates
 
     - name: "Export SFW prefix"
       if: "${{ runner.os == 'Linux' }}"
