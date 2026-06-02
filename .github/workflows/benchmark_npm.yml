@@ -69,11 +69,18 @@ jobs:
       - name: "Restore Cargo Target Cache"
         uses: "./.github/actions/cache/cargo-target/restore"
 
+      # Wrap the dependency-fetching steps through SFW (the perf steps below
+      # build/run benchmarks and upload to bencher, so they're left unwrapped).
+      - name: "Setup SFW (firewall)"
+        uses: "./.github/actions/setup-sfw"
+        with:
+          mode: "firewall"
+
       - name: "infra setup cargo npm"
-        run: "./scripts/bin/infra setup cargo npm"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra setup cargo npm"
 
       - name: "infra check npm"
-        run: "./scripts/bin/infra check npm"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra check npm"
 
       - name: "Smoke Test > infra perf npm --smoke"
         if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"

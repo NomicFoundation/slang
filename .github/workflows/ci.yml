@@ -80,21 +80,22 @@ jobs:
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
       #
 
-      # `${SFW_PREFIX:-}` wraps the command with `sfw` when SFW is available, and
-      # expands to nothing otherwise (so a non-Linux runner or SFW failure just
-      # runs setup unwrapped). PoC wraps only `setup` — that's where the cargo
-      # crates + pnpm package fetches happen.
+      # `${SFW_PREFIX:-}` wraps the command with the sfw CA-merge wrapper when SFW
+      # is available, and expands to nothing otherwise (so a non-Linux runner or
+      # SFW failure just runs unwrapped). Every infra step is wrapped: setup pulls
+      # crates/pnpm/toolchains, and check/test/lint can still hit the network via
+      # build.rs or npx, so the whole pipeline runs behind the firewall.
       - name: "infra setup"
         run: "${SFW_PREFIX:-} ./scripts/bin/infra setup"
 
       - name: "infra check"
-        run: "./scripts/bin/infra check"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra check"
 
       - name: "infra test"
-        run: "./scripts/bin/infra test"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra test"
 
       - name: "infra lint"
-        run: "./scripts/bin/infra lint"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra lint"
 
       # On main pushes, warm the dependency and cargo-target caches with the perf
       # toolchain (bencher_cli, iai-callgrind-runner, and the bench binaries) so
@@ -137,8 +138,14 @@ jobs:
         if: "${{ github.ref_name != 'main' }}"
         uses: "./.github/actions/cache/cargo-cooldown/restore"
 
+      # Route the cargo cooldown check (which fetches crate metadata) through SFW.
+      - name: "Setup SFW (firewall)"
+        uses: "./.github/actions/setup-sfw"
+        with:
+          mode: "firewall"
+
       - name: "Cargo cooldown check"
-        run: "./scripts/bin/with-hermit cargo cooldown-check"
+        run: "${SFW_PREFIX:-} ./scripts/bin/with-hermit cargo cooldown-check"
 
       - name: "Save Cargo Cooldown Cache"
         if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
@@ -156,8 +163,14 @@ jobs:
         with:
           persist-credentials: false
 
+      # `npx --yes renovate` pulls renovate (and its deps) from npm — wrap it.
+      - name: "Setup SFW (firewall)"
+        uses: "./.github/actions/setup-sfw"
+        with:
+          mode: "firewall"
+
       - name: "Renovate schema check"
-        run: "./bin/npx --yes --package renovate -- renovate-config-validator renovate.json"
+        run: "${SFW_PREFIX:-} ./bin/npx --yes --package renovate -- renovate-config-validator renovate.json"
 
       - name: "Renovate extraction dry-run"
         env:
@@ -165,7 +178,7 @@ jobs:
           # anonymous 60 req/hr rate limit shared across the runner IP.
           GITHUB_COM_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           LOG_LEVEL: "debug"
-        run: "./bin/npx --yes renovate --platform=local --dry-run=full"
+        run: "${SFW_PREFIX:-} ./bin/npx --yes renovate --platform=local --dry-run=full"
 
   # The full CI runs on the bare runner so it can reuse the cargo-target cache;
   # reproducing that cache-mount setup inside a devcontainer would slow CI down
