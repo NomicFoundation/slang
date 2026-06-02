@@ -415,6 +415,13 @@ impl Pass<'_> {
                         });
                         Typing::Resolved(type_id)
                     }
+                    Some(Definition::Library(_)) => {
+                        // TODO(validation) SDR[39]: the type of the first argument should be an address
+                        let type_id = self.types.register_type(Type::Library {
+                            definition_id: node_id,
+                        });
+                        Typing::Resolved(type_id)
+                    }
                     Some(Definition::Struct(_)) => {
                         // struct construction
                         let type_id = self.types.register_type(Type::Struct {
