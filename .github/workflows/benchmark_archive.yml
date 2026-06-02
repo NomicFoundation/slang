@@ -36,8 +36,6 @@ jobs:
       - name: "Restore Cargo Target Cache"
         uses: "./.github/actions/cache/cargo-target/restore"
 
-      # Wrap the dependency-fetching setup step through SFW (the perf step below
-      # only archives results, so it's left unwrapped).
       - name: "Setup SFW (firewall)"
         uses: "./.github/actions/setup-sfw"
         with:
@@ -46,6 +44,7 @@ jobs:
       - name: "infra setup cargo"
         run: "${SFW_PREFIX:-} ./scripts/bin/infra setup cargo"
 
+      # Not SFW-wrapped: archives benchmark results, not a dependency install.
       - name: "infra perf archive"
         continue-on-error: true
         env:

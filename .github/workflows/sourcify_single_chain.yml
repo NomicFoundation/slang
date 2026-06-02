@@ -71,9 +71,6 @@ jobs:
       - name: "Restore Cargo Target Cache"
         uses: "./.github/actions/cache/cargo-target/restore"
 
-      # Wrap the build (which fetches crates) through SFW. The test run in the
-      # other job hits chain RPCs / the Sourcify API, not package registries, so
-      # it is intentionally left unwrapped.
       - name: "Setup SFW (firewall)"
         uses: "./.github/actions/setup-sfw"
         with:
@@ -181,6 +178,7 @@ jobs:
         with:
           name: "solidity_testing_sourcify_${{ inputs.chain_id }}"
 
+      # Not SFW-wrapped: hits chain RPCs / the Sourcify API, not package registries.
       - name: "Run Tests"
         env:
           CHECK_BINDER: "${{ inputs.check_binder }}"

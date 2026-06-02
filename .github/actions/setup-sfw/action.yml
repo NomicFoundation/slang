@@ -1,16 +1,9 @@
 name: "Setup Socket Firewall (SFW)"
 description: >
-  Installs Socket Firewall (SFW) Free via socketdev/action and exports
-  SFW_PREFIX so callers can wrap their dependency-fetching commands with it.
-  Inside a wrap, sfw points the CA vars (SSL_CERT_FILE, CARGO_HTTP_CAINFO, …) at
-  a temp bundle holding ONLY its MITM root and hijacks SSL_CERT_DIR — so raw TLS
-  to hosts sfw passes through (github.com for the hermit bootstrap,
-  static.rust-lang.org for rustup) fails with "unable to get local issuer
-  certificate" for lack of the public roots. SFW_PREFIX therefore points at a
-  wrapper that, inside the wrap, merges sfw's root with the system bundle and
-  re-points the CA vars at the union before exec'ing the command. Linux-only
-  (the MITM is incompatible with macOS/Windows TLS stacks); on other runners
-  SFW_PREFIX is left unset and callers run unwrapped.
+  Installs Socket Firewall Free (Linux-only) and exports SFW_PREFIX, a wrapper
+  that callers prefix onto dependency commands to run installs behind the
+  firewall (it also fixes sfw's CA handling — see the wrapper step). Left unset
+  on non-Linux runners, so callers run unwrapped.
 
 inputs:
   mode:

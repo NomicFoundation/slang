@@ -65,12 +65,7 @@ jobs:
         if: "${{ github.ref_name != 'main' && github.event_name != 'merge_group' }}"
         uses: "./.github/actions/cache/cargo-target/restore"
 
-      # PoC: Socket Firewall (Free) via socketdev/action. Free has no warn-only
-      # mode — it blocks confirmed-malicious packages and only warns (without
-      # blocking) on AI-flagged-unconfirmed ones. slang's tree is known-clean,
-      # so this shouldn't block anything; the run validates MITM compatibility,
-      # notably whether hermit/rustup downloads survive it (see PR). Exports
-      # SFW_PREFIX (`sfw`) for the wrapped step below.
+      # Route the dependency installs in the steps below through Socket Firewall.
       - name: "Setup SFW (firewall)"
         uses: "./.github/actions/setup-sfw"
         with:
@@ -138,7 +133,6 @@ jobs:
         if: "${{ github.ref_name != 'main' }}"
         uses: "./.github/actions/cache/cargo-cooldown/restore"
 
-      # Route the cargo cooldown check (which fetches crate metadata) through SFW.
       - name: "Setup SFW (firewall)"
         uses: "./.github/actions/setup-sfw"
         with:
@@ -163,7 +157,6 @@ jobs:
         with:
           persist-credentials: false
 
-      # `npx --yes renovate` pulls renovate (and its deps) from npm — wrap it.
       - name: "Setup SFW (firewall)"
         uses: "./.github/actions/setup-sfw"
         with:
