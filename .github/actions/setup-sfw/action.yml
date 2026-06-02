@@ -7,8 +7,6 @@ description: >
 runs:
   using: "composite"
   steps:
-    # "firewall" is the only useful Free mode (no warn-only): it blocks
-    # confirmed-malicious packages and warns on AI-flagged-unconfirmed ones.
     - name: "Install SFW"
       uses: "socketdev/action@937f824ec476dfd164d4a4d9995751427b0be143" # v1
       with:
