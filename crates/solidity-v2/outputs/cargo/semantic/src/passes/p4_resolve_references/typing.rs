@@ -309,9 +309,15 @@ impl Pass<'_> {
                 Typing::Resolved(type_id)
             }
             Typing::This => {
-                // special case: "this" can be cast to an address
-                if let Type::Address { .. } = target_type {
-                    Typing::Resolved(self.types.address())
+                // special case: "this" can be cast to an address, preserving the
+                // target's payable-ness (`payable(this)` is `address payable`, so
+                // `.transfer` / `.send` resolve).
+                if let Type::Address { payable } = target_type {
+                    Typing::Resolved(if payable {
+                        self.types.address_payable()
+                    } else {
+                        self.types.address()
+                    })
                 } else {
                     Typing::Unresolved
                 }
