@@ -57,7 +57,6 @@ jobs:
         if: "${{ github.ref_name != 'main' && github.event_name != 'merge_group' }}"
         uses: "./.github/actions/cache/cargo-target/restore"
 
-      # Route the dependency installs in the steps below through Socket Firewall.
       - name: "Setup SFW (firewall)"
         uses: "./.github/actions/setup-sfw"
 
