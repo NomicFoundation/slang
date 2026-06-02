@@ -51,9 +51,11 @@ fn needs_publish(crate_name: &str, local_version: &Version) -> bool {
     true
 }
 
-/// `--no-verify` skips the verification compile — no workspace
-/// `build.rs` or proc-macros run alongside the OIDC crates.io token.
-/// cargo's own code (dep resolution, packaging) still runs.
+/// `cargo publish` always packages the `.crate` (the upload artifact); `--no-verify`
+/// skips only the post-package verify-*compile*, so no workspace `build.rs` or
+/// proc-macros run alongside the OIDC crates.io token. cargo's own code (dep
+/// resolution, packaging) still runs. The verify-build isn't lost — the `review`
+/// job already ran it, tokenless, via `cargo publish --dry-run` on the same commit.
 fn run_cargo_publish(crate_name: &str) {
     Command::new("cargo")
         .arg("publish")

@@ -25,7 +25,7 @@ pub enum PublishCommand {
     Changesets(ChangesetsController),
     /// Publish the documentation to GitHub pages.
     Mkdocs(MkdocsController),
-    /// Publish the prebuilt npm tarball from `target/publish-artifacts/` to [npmjs.com].
+    /// Publish the prebuilt npm tarball (passed via `--tarball`) to [npmjs.com].
     Npm(NpmController),
     /// Publish the user-facing v1 cargo crates to [crates.io].
     Cargo(CargoController),

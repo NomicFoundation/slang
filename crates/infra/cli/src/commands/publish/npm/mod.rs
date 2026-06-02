@@ -1,36 +1,27 @@
-use std::path::Path;
+use std::path::PathBuf;
 
 use anyhow::Result;
 use clap::Parser;
-use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
 
-use crate::toolchains::npm::Npm;
-use crate::toolchains::wasm::NPM_CRATE;
 use crate::utils::DryRun;
 
 #[derive(Clone, Debug, Parser)]
 pub struct NpmController {
+    /// Path to the prebuilt tarball produced by `publish prepare`.
+    #[arg(long)]
+    tarball: PathBuf,
+
     #[command(flatten)]
     dry_run: DryRun,
 }
 
 impl NpmController {
     pub fn execute(&self) -> Result<()> {
-        let package_dir = CargoWorkspace::locate_source_crate(NPM_CRATE)?;
-        let version = Npm::local_version(&package_dir)?;
-        let tarball = Path::repo_path(format!(
-            "target/publish-artifacts/nomicfoundation-slang-{version}.tgz"
-        ));
-        if !tarball.exists() {
-            println!("No tarball at {tarball:?}; nothing to publish.");
-            return Ok(());
-        }
-
         let mut command = Command::new("pnpm")
             .arg("publish")
-            .arg(tarball.unwrap_str())
+            .arg(self.tarball.unwrap_str())
             .property("--access", "public")
             // CI checkout is detached HEAD; pnpm's branch check would reject it.
             // The workflow's `branches:` filter and the slang-release environment
