@@ -46,8 +46,16 @@ jobs:
 
       # Cache is updated in this workflow, and reused in subsequent workflows.
       # Always start with a fresh cache when running on the main branch.
+      #
+      # TEMP (SFW PoC — revert before merge): force `if: false` so the
+      # dependencies cache is NOT restored. That cache holds ~/.cache/hermit/,
+      # the pnpm store, and ~/.cargo/registry/; its restore-keys prefix
+      # (dependencies-${{ runner.os }}-v1-) means a key bump still hits, so the
+      # only way to force a cold fetch through the firewall is to skip the
+      # restore entirely. With it skipped, hermit/rustup/pnpm/cargo all download
+      # cold through SFW, which is what this PoC actually needs to validate.
       - name: "Restore Dependencies Cache"
-        if: "${{ github.ref_name != 'main' }}"
+        if: "${{ false && github.ref_name != 'main' }}"
         uses: "./.github/actions/cache/dependencies/restore"
 
       # Restore compiled Rust artifacts from a previous build on main for non-main runs,
