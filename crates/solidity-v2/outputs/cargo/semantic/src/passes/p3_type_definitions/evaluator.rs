@@ -12,7 +12,7 @@ pub(crate) fn evaluate_compile_time_usize_constant<Scope>(
     identifier_resolver: &dyn ConstantIdentifierResolver<Scope>,
 ) -> Option<usize> {
     evaluate_compile_time_number_constant(expression, start_scope, identifier_resolver)
-        .and_then(|value| value.as_usize())
+        .and_then(|value| value.trunc_to_usize())
 }
 
 pub(crate) fn evaluate_compile_time_integer_constant<Scope>(
