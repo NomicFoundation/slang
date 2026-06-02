@@ -8,10 +8,11 @@ use crate::compiler::analysis::Analysis;
 use crate::internals::Spanned;
 use crate::model::{
     Identifier, SpannedBuiltInContext, SpannedBuiltInDefinition, SpannedBuiltInScope,
-    SpannedEnumItem, SpannedEnumVariant, SpannedField, SpannedFragmentItem, SpannedItem,
-    SpannedKeywordItem, SpannedPrecedenceExpression, SpannedPrecedenceItem,
-    SpannedPrecedenceOperator, SpannedPrimaryExpression, SpannedRepeatedItem, SpannedSeparatedItem,
-    SpannedStructItem, SpannedTokenItem, SpannedVersionSpecifier,
+    SpannedEnumItem, SpannedEnumVariant, SpannedEvmHardForkSpecifier, SpannedField,
+    SpannedFragmentItem, SpannedItem, SpannedKeywordItem, SpannedPrecedenceExpression,
+    SpannedPrecedenceItem, SpannedPrecedenceOperator, SpannedPrimaryExpression,
+    SpannedRepeatedItem, SpannedSeparatedItem, SpannedStructItem, SpannedTokenItem,
+    SpannedVersionSpecifier,
 };
 
 pub(crate) fn run(analysis: &mut Analysis) {
@@ -222,10 +223,12 @@ fn check_built_in_definition(analysis: &mut Analysis, definition: &SpannedBuiltI
     let SpannedBuiltInDefinition {
         name: _,
         enabled,
+        evm_enabled,
         internal_parameter: _,
     } = definition;
 
     check_version_specifier(analysis, enabled.as_ref());
+    check_hard_fork_specifier(analysis, evm_enabled.as_ref());
 }
 
 fn check_version_specifier(
@@ -240,36 +243,44 @@ fn check_version_specifier(
 
     match &**specifier {
         SpannedVersionSpecifier::Always => {
-            analysis.errors.add(specifier, &Errors::RedundantAlways);
+            analysis
+                .errors
+                .add(specifier, &VersionErrors::RedundantAlways);
         }
         SpannedVersionSpecifier::Never => {}
         SpannedVersionSpecifier::From { from } => {
             check_version(analysis, from);
 
-            if **from == *first_version {
-                analysis.errors.add(from, &Errors::RedundantFrom(from));
+            if *from == first_version {
+                analysis
+                    .errors
+                    .add(from, &VersionErrors::RedundantFrom(from));
             }
         }
         SpannedVersionSpecifier::Till { till } => {
             check_version(analysis, till);
 
-            if **till == *first_version {
-                analysis.errors.add(till, &Errors::RedundantTill(till));
+            if *till == first_version {
+                analysis
+                    .errors
+                    .add(till, &VersionErrors::RedundantTill(till));
             }
         }
         SpannedVersionSpecifier::Range { from, till } => {
             if from >= till {
                 analysis
                     .errors
-                    .add(from, &Errors::UnorderedVersionPair(from, till));
+                    .add(from, &VersionErrors::UnorderedVersionPair(from, till));
                 return;
             }
 
             check_version(analysis, from);
             check_version(analysis, till);
 
-            if **from == *first_version {
-                analysis.errors.add(from, &Errors::RedundantRangeFrom(from));
+            if *from == first_version {
+                analysis
+                    .errors
+                    .add(from, &VersionErrors::RedundantRangeFrom(from));
             }
         }
     }
@@ -279,12 +290,79 @@ fn check_version(analysis: &mut Analysis, version: &Spanned<Version>) {
     if !analysis.language.versions.contains(version) {
         analysis
             .errors
-            .add(version, &Errors::VersionNotFound(version));
+            .add(version, &VersionErrors::VersionNotFound(version));
+    }
+}
+
+fn check_hard_fork_specifier(
+    analysis: &mut Analysis,
+    specifier: Option<&Spanned<SpannedEvmHardForkSpecifier>>,
+) {
+    let Some(specifier) = specifier else {
+        return;
+    };
+
+    let first_hard_fork = analysis.language.evm_hard_forks.first().unwrap().clone();
+
+    match &**specifier {
+        SpannedEvmHardForkSpecifier::Always => {
+            analysis
+                .errors
+                .add(specifier, &HardForkErrors::RedundantAlways);
+        }
+        SpannedEvmHardForkSpecifier::From { from } => {
+            check_hard_fork(analysis, from);
+
+            if *from == first_hard_fork {
+                analysis
+                    .errors
+                    .add(from, &HardForkErrors::RedundantFrom(from));
+            }
+        }
+        SpannedEvmHardForkSpecifier::Till { till } => {
+            check_hard_fork(analysis, till);
+
+            if *till == first_hard_fork {
+                analysis
+                    .errors
+                    .add(till, &HardForkErrors::RedundantTill(till));
+            }
+        }
+        SpannedEvmHardForkSpecifier::Range { from, till } => {
+            if let (Some(from_index), Some(till_index)) = (
+                analysis.language.evm_hard_forks.get_index_of(from),
+                analysis.language.evm_hard_forks.get_index_of(till),
+            ) {
+                if from_index >= till_index {
+                    analysis
+                        .errors
+                        .add(from, &HardForkErrors::UnorderedHardForkPair(from, till));
+                    return;
+                }
+            }
+
+            check_hard_fork(analysis, from);
+            check_hard_fork(analysis, till);
+
+            if *from == first_hard_fork {
+                analysis
+                    .errors
+                    .add(from, &HardForkErrors::RedundantRangeFrom(from));
+            }
+        }
+    }
+}
+
+fn check_hard_fork(analysis: &mut Analysis, hard_fork: &Spanned<Identifier>) {
+    if !analysis.language.evm_hard_forks.contains(hard_fork) {
+        analysis
+            .errors
+            .add(hard_fork, &HardForkErrors::HardForkNotFound(hard_fork));
     }
 }
 
 #[derive(thiserror::Error, Debug)]
-enum Errors<'err> {
+enum VersionErrors<'err> {
     #[error("Version '{0}' does not exist in the language definition.")]
     VersionNotFound(&'err Version),
     #[error("Version '{0}' must be less than corresponding version '{1}'.")]
@@ -301,4 +379,24 @@ enum Errors<'err> {
         "'Range' starting from the first supported version '{0}' can be simplified to 'Till'."
     )]
     RedundantRangeFrom(&'err Version),
+}
+
+#[derive(thiserror::Error, Debug)]
+enum HardForkErrors<'err> {
+    #[error("Hard fork '{0}' does not exist in the language definition.")]
+    HardForkNotFound(&'err Identifier),
+    #[error("Hard fork '{0}' must precede corresponding hard fork '{1}'.")]
+    UnorderedHardForkPair(&'err Identifier, &'err Identifier),
+    #[error(
+        "Explicit 'Always' is redundant, since it is the default when 'evm_enabled' is not specified."
+    )]
+    RedundantAlways,
+    #[error("'From' with the first supported hard fork '{0}' is equivalent to 'Always', and can be removed.")]
+    RedundantFrom(&'err Identifier),
+    #[error("'Till' with the first supported hard fork '{0}' produces an empty range, disabling the built-in on every hard fork.")]
+    RedundantTill(&'err Identifier),
+    #[error(
+        "'Range' starting from the first supported hard fork '{0}' can be simplified to 'Till'."
+    )]
+    RedundantRangeFrom(&'err Identifier),
 }

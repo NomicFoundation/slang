@@ -1,7 +1,7 @@
 use language_v2_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
 use serde::{Deserialize, Serialize};
 
-use crate::model::{Code, Identifier, VersionSpecifier};
+use crate::model::{Code, EvmHardForkSpecifier, Identifier, VersionSpecifier};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
@@ -25,6 +25,10 @@ pub struct BuiltInDefinition {
     /// The version range this built-in is available.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub enabled: Option<VersionSpecifier>,
+
+    /// The EVM hard fork range this built-in is available.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub evm_enabled: Option<EvmHardForkSpecifier>,
 
     /// A verbatim Rust type to use in the definition of the variant in the
     /// internal enum if required for correct resolution or typing.

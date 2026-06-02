@@ -1,0 +1,5 @@
+error: Hard fork 'Cancun' must precede corresponding hard fork 'Homestead'.
+  --> src/fail/p2_specifiers/hard_fork_unordered_pair/test.rs:25:91
+   |
+25 |             definitions = [BuiltInDefinition(name = MyBuiltIn, evm_enabled = Range(from = Cancun, till = Homestead))]
+   |                                                                                           ^^^^^^

@@ -56,7 +56,7 @@ impl LanguageVersion {
     pub const LATEST: Self = Self::V0_8_35;
 
     /// All supported versions of `Solidity`, in order.
-    pub const ALL: &'static [LanguageVersion] = &[
+    pub const ALL: &'static [LanguageVersion; 36] = &[
         LanguageVersion::V0_8_0,
         LanguageVersion::V0_8_1,
         LanguageVersion::V0_8_2,

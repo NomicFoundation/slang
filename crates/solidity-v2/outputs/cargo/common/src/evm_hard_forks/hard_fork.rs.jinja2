@@ -1,0 +1,57 @@
+use std::fmt::{Display, Formatter};
+use std::str::FromStr;
+
+use serde::Serialize;
+use thiserror::Error;
+
+/// All supported EVM hard forks of `{{ model.language.name }}`, in chronological order.
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Serialize)]
+pub enum EvmHardFork {
+    {% for hard_fork in model.language.evm_hard_forks %}
+        {{ hard_fork }} = {{ loop.index0 }},
+    {%- endfor -%}
+}
+
+impl EvmHardFork {
+    /// The earliest supported EVM hard fork of `{{ model.language.name }}`.
+    pub const EARLIEST: Self = Self::{{ model.language.evm_hard_forks | first }};
+
+    /// The latest supported EVM hard fork of `{{ model.language.name }}`.
+    pub const LATEST: Self = Self::{{ model.language.evm_hard_forks | last }};
+
+    /// All supported EVM hard forks of `{{ model.language.name }}`, in order.
+    pub const ALL: &'static [EvmHardFork; {{ model.language.evm_hard_forks | length }}] = &[
+        {%- for hard_fork in model.language.evm_hard_forks %}
+            EvmHardFork::{{ hard_fork }},
+        {%- endfor %}
+    ];
+}
+
+impl Display for EvmHardFork {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            {%- for hard_fork in model.language.evm_hard_forks %}
+                EvmHardFork::{{ hard_fork }} => write!(f, "{{ hard_fork }}"),
+            {%- endfor %}
+        }
+    }
+}
+
+#[derive(Debug, Error, PartialEq)]
+pub enum FromStrError {
+    #[error("Provided value is not recognized as a supported EVM hard fork.")]
+    UnrecognizedEvmHardFork,
+}
+
+impl FromStr for EvmHardFork {
+    type Err = FromStrError;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        match value {
+            {%- for hard_fork in model.language.evm_hard_forks %}
+                "{{ hard_fork }}" => Ok(EvmHardFork::{{ hard_fork }}),
+            {%- endfor %}
+            _ => Err(FromStrError::UnrecognizedEvmHardFork),
+        }
+    }
+}

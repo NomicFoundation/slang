@@ -1,3 +1,4 @@
+use indexmap::IndexSet;
 use language_v2_definition::model::{
     Field, Item, Language, LexicalContext, Section, StructItem, TokenItem, TokenScanner, Topic,
 };
@@ -7,6 +8,7 @@ language_v2_macros::compile!(Language(
     name = Tiny,
     root_item = Foo,
     versions = ["1.0.0", "2.0.0", "3.0.0"],
+    evm_hard_forks = [],
     contexts = [LexicalContext(
         name = Tiny,
         sections = [Section(
@@ -44,6 +46,7 @@ fn definition() {
                 Version::parse("3.0.0").unwrap(),
             ]
             .into(),
+            evm_hard_forks: IndexSet::default(),
             contexts: vec![LexicalContext {
                 name: "Tiny".into(),
                 identifier_token: None,

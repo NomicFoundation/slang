@@ -18,6 +18,9 @@ pub struct Language {
     /// The supported versions of the language
     pub versions: IndexSet<Version>,
 
+    /// The supported hard forks of the EVM
+    pub evm_hard_forks: IndexSet<Identifier>,
+
     /// The lexical contexts of the language, splitting grammar elements based
     /// on which lexer can recognize their terminals.
     pub contexts: Vec<LexicalContext>,

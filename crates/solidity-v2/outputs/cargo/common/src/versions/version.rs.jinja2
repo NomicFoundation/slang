@@ -21,7 +21,7 @@ impl LanguageVersion {
     pub const LATEST: Self = Self::V{{ model.language.versions | last | split(pat=".") | join(sep="_") }};
 
     /// All supported versions of `{{ model.language.name }}`, in order.
-    pub const ALL: &'static [LanguageVersion] = &[
+    pub const ALL: &'static [LanguageVersion; {{ model.language.versions | length }}] = &[
         {%- for version in model.language.versions %}
             LanguageVersion::V{{ version | split(pat=".") | join(sep="_") }},
         {%- endfor %}
