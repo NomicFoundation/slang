@@ -978,3 +978,72 @@ fn test_cast_address_to_library_is_library_typed() {
         "expected `MyLib(x) == MyLib(y)` to be a boolean",
     );
 }
+
+#[test]
+fn test_getter_of_struct_with_function_member() {
+    // The auto-generated getter of a public struct state variable returns a
+    // tuple of its value-type fields.
+    let (getter_type, types) = type_of_expression_in_context(
+        "struct S { uint a; function() external fn; }\n\
+         S public s;\n\
+         Test other;",
+        "other.s()",
+    );
+
+    let Type::Tuple { types: elements } = getter_type else {
+        panic!("expected the getter to return a tuple, got {getter_type:?}");
+    };
+    let element_types: Vec<&Type> = elements
+        .iter()
+        .map(|type_id| types.get_type_by_id(*type_id))
+        .collect();
+
+    assert!(
+        matches!(
+            element_types.as_slice(),
+            [
+                Type::Integer {
+                    signed: false,
+                    bits: 256
+                },
+                Type::Function(_),
+            ]
+        ),
+        "expected getter tuple `(function() external)`, got {element_types:?}",
+    );
+}
+
+#[test]
+fn test_getter_of_struct_with_struct_member() {
+    // The auto-generated getter of a public struct state variable returns a
+    // tuple of its value-type fields.
+    let (getter_type, types) = type_of_expression_in_context(
+        "struct P { bool a; }\n\
+         struct S { P p; uint a; }\n\
+         S public s;\n\
+         Test other;",
+        "other.s()",
+    );
+
+    let Type::Tuple { types: elements } = getter_type else {
+        panic!("expected the getter to return a tuple, got {getter_type:?}");
+    };
+    let element_types: Vec<&Type> = elements
+        .iter()
+        .map(|type_id| types.get_type_by_id(*type_id))
+        .collect();
+
+    assert!(
+        matches!(
+            element_types.as_slice(),
+            [
+                Type::Struct { .. },
+                Type::Integer {
+                    signed: false,
+                    bits: 256
+                },
+            ]
+        ),
+        "expected getter tuple `(Struct)`, got {element_types:?}",
+    );
+}

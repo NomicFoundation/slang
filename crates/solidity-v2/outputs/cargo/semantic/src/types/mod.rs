@@ -301,7 +301,11 @@ impl Type {
             .is_some_and(|location| location == DataLocation::Inherited)
     }
 
-    pub fn can_return_from_getter(&self) -> bool {
+    /// This function determines whether a type can be returned directly from
+    /// a getter function without any extra parameter.
+    ///
+    /// Arrays and mapping can't
+    pub fn can_return_from_getter_directly(&self) -> bool {
         match self {
             Type::Address { .. }
             | Type::Boolean
@@ -313,16 +317,18 @@ impl Type {
             | Type::Integer { .. }
             | Type::Interface { .. }
             | Type::String { .. }
+            | Type::Function(_)
+            | Type::Struct { .. }
             | Type::UserDefinedValue { .. } => true,
 
+            // Can be returned, just not inside a struct
             Type::Array { .. }
             | Type::FixedSizeArray { .. }
-            | Type::Function(_)
             | Type::Mapping { .. }
+            // Actually can't return from a getter
             | Type::Literal(_)
-            | Type::Struct { .. }
-            | Type::Tuple { .. }
             | Type::Library { .. }
+            | Type::Tuple { .. }
             | Type::Void => false,
         }
     }

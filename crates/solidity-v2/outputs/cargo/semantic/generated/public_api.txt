@@ -425,7 +425,7 @@ pub slang_solidity_v2_semantic::types::Type::UserDefinedValue
 pub slang_solidity_v2_semantic::types::Type::UserDefinedValue::definition_id: slang_solidity_v2_common::nodes::NodeId
 pub slang_solidity_v2_semantic::types::Type::Void
 impl slang_solidity_v2_semantic::types::Type
-pub fn slang_solidity_v2_semantic::types::Type::can_return_from_getter(&self) -> bool
+pub fn slang_solidity_v2_semantic::types::Type::can_return_from_getter_directly(&self) -> bool
 pub fn slang_solidity_v2_semantic::types::Type::data_location(&self) -> core::option::Option<slang_solidity_v2_semantic::types::DataLocation>
 pub fn slang_solidity_v2_semantic::types::Type::is_contract_or_interface(&self) -> bool
 pub fn slang_solidity_v2_semantic::types::Type::is_inherited_location(&self) -> bool

@@ -241,7 +241,7 @@ impl Pass<'_> {
         let mut definition_ids = match type_ {
             Type::Contract { definition_id, .. } | Type::Interface { definition_id, .. } => {
                 // A `Type::Library` doesn't belong here, since values of type `library` (ie `this`)
-                // can't be used to acces to library members.
+                // can't be used to access to library members.
                 let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
                 self.binder
                     .resolve_in_contract_scope(scope_id, symbol, ResolveOptions::External)

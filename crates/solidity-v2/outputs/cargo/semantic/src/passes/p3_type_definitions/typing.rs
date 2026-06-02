@@ -212,7 +212,7 @@ impl Pass<'_> {
                             return None;
                         };
                         let member_type = self.types.get_type_by_id(member_type_id);
-                        if !member_type.can_return_from_getter() {
+                        if !member_type.can_return_from_getter_directly() {
                             continue;
                         }
                         let member_type_id = if member_type
