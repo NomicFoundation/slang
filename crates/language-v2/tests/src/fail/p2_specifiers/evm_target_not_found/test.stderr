@@ -1,5 +1,5 @@
-error: Hard fork 'Shanghai' does not exist in the language definition.
-  --> src/fail/p2_specifiers/hard_fork_not_found/test.rs:25:83
+error: EVM target 'Shanghai' does not exist in the language definition.
+  --> src/fail/p2_specifiers/evm_target_not_found/test.rs:25:83
    |
 25 |             definitions = [BuiltInDefinition(name = MyBuiltIn, evm_enabled = From(Shanghai))]
    |                                                                                   ^^^^^^^^

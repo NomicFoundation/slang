@@ -1,5 +1,5 @@
 error: Explicit 'Always' is redundant, since it is the default when 'evm_enabled' is not specified.
-  --> src/fail/p2_specifiers/hard_fork_redundant_always/test.rs:25:78
+  --> src/fail/p2_specifiers/evm_target_redundant_always/test.rs:25:78
    |
 25 |             definitions = [BuiltInDefinition(name = MyBuiltIn, evm_enabled = Always)]
    |                                                                              ^^^^^^

@@ -752,81 +752,81 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
-pub mod slang_solidity_v2_common::evm_hard_forks
-pub enum slang_solidity_v2_common::evm_hard_forks::EvmHardFork
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardFork::Berlin = 8
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardFork::Byzantium = 4
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardFork::Cancun = 12
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardFork::Constantinople = 5
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardFork::Frontier = 0
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardFork::Homestead = 1
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardFork::Istanbul = 7
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardFork::London = 9
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardFork::Osaka = 14
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardFork::Paris = 10
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardFork::Petersburg = 6
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardFork::Prague = 13
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardFork::Shanghai = 11
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardFork::SpuriousDragon = 3
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardFork::TangerineWhistle = 2
-impl slang_solidity_v2_common::evm_hard_forks::EvmHardFork
-pub const slang_solidity_v2_common::evm_hard_forks::EvmHardFork::ALL: &'static [slang_solidity_v2_common::evm_hard_forks::EvmHardFork; 15]
-pub const slang_solidity_v2_common::evm_hard_forks::EvmHardFork::EARLIEST: Self
-pub const slang_solidity_v2_common::evm_hard_forks::EvmHardFork::LATEST: Self
-impl core::clone::Clone for slang_solidity_v2_common::evm_hard_forks::EvmHardFork
-pub fn slang_solidity_v2_common::evm_hard_forks::EvmHardFork::clone(&self) -> slang_solidity_v2_common::evm_hard_forks::EvmHardFork
-impl core::cmp::Eq for slang_solidity_v2_common::evm_hard_forks::EvmHardFork
-impl core::cmp::Ord for slang_solidity_v2_common::evm_hard_forks::EvmHardFork
-pub fn slang_solidity_v2_common::evm_hard_forks::EvmHardFork::cmp(&self, other: &slang_solidity_v2_common::evm_hard_forks::EvmHardFork) -> core::cmp::Ordering
-impl core::cmp::PartialEq for slang_solidity_v2_common::evm_hard_forks::EvmHardFork
-pub fn slang_solidity_v2_common::evm_hard_forks::EvmHardFork::eq(&self, other: &slang_solidity_v2_common::evm_hard_forks::EvmHardFork) -> bool
-impl core::cmp::PartialOrd for slang_solidity_v2_common::evm_hard_forks::EvmHardFork
-pub fn slang_solidity_v2_common::evm_hard_forks::EvmHardFork::partial_cmp(&self, other: &slang_solidity_v2_common::evm_hard_forks::EvmHardFork) -> core::option::Option<core::cmp::Ordering>
-impl core::fmt::Debug for slang_solidity_v2_common::evm_hard_forks::EvmHardFork
-pub fn slang_solidity_v2_common::evm_hard_forks::EvmHardFork::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::fmt::Display for slang_solidity_v2_common::evm_hard_forks::EvmHardFork
-pub fn slang_solidity_v2_common::evm_hard_forks::EvmHardFork::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::Copy for slang_solidity_v2_common::evm_hard_forks::EvmHardFork
-impl core::marker::StructuralPartialEq for slang_solidity_v2_common::evm_hard_forks::EvmHardFork
-impl core::str::traits::FromStr for slang_solidity_v2_common::evm_hard_forks::EvmHardFork
-pub type slang_solidity_v2_common::evm_hard_forks::EvmHardFork::Err = slang_solidity_v2_common::evm_hard_forks::FromStrError
-pub fn slang_solidity_v2_common::evm_hard_forks::EvmHardFork::from_str(value: &str) -> core::result::Result<Self, Self::Err>
-impl serde_core::ser::Serialize for slang_solidity_v2_common::evm_hard_forks::EvmHardFork
-pub fn slang_solidity_v2_common::evm_hard_forks::EvmHardFork::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
-pub enum slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier::From
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier::From::from: slang_solidity_v2_common::evm_hard_forks::EvmHardFork
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier::Range
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier::Range::from: slang_solidity_v2_common::evm_hard_forks::EvmHardFork
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier::Range::till: slang_solidity_v2_common::evm_hard_forks::EvmHardFork
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier::Till
-pub slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier::Till::till: slang_solidity_v2_common::evm_hard_forks::EvmHardFork
-impl slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier
-pub const fn slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier::contains(&self, other: slang_solidity_v2_common::evm_hard_forks::EvmHardFork) -> bool
-impl slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier
-pub const fn slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier::from(from: slang_solidity_v2_common::evm_hard_forks::EvmHardFork) -> Self
-pub const fn slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier::range(from: slang_solidity_v2_common::evm_hard_forks::EvmHardFork, till: slang_solidity_v2_common::evm_hard_forks::EvmHardFork) -> Self
-pub const fn slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier::till(till: slang_solidity_v2_common::evm_hard_forks::EvmHardFork) -> Self
-impl core::clone::Clone for slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier
-pub fn slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier::clone(&self) -> slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier
-impl core::cmp::Eq for slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier
-impl core::cmp::PartialEq for slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier
-pub fn slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier::eq(&self, other: &slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier) -> bool
-impl core::fmt::Debug for slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier
-pub fn slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier
-impl serde_core::ser::Serialize for slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier
-pub fn slang_solidity_v2_common::evm_hard_forks::EvmHardForkSpecifier::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
-pub enum slang_solidity_v2_common::evm_hard_forks::FromStrError
-pub slang_solidity_v2_common::evm_hard_forks::FromStrError::UnrecognizedEvmHardFork
-impl core::cmp::PartialEq for slang_solidity_v2_common::evm_hard_forks::FromStrError
-pub fn slang_solidity_v2_common::evm_hard_forks::FromStrError::eq(&self, other: &slang_solidity_v2_common::evm_hard_forks::FromStrError) -> bool
-impl core::error::Error for slang_solidity_v2_common::evm_hard_forks::FromStrError
-impl core::fmt::Debug for slang_solidity_v2_common::evm_hard_forks::FromStrError
-pub fn slang_solidity_v2_common::evm_hard_forks::FromStrError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::fmt::Display for slang_solidity_v2_common::evm_hard_forks::FromStrError
-pub fn slang_solidity_v2_common::evm_hard_forks::FromStrError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_common::evm_hard_forks::FromStrError
+pub mod slang_solidity_v2_common::evm_targets
+pub enum slang_solidity_v2_common::evm_targets::EvmTarget
+pub slang_solidity_v2_common::evm_targets::EvmTarget::Berlin = 8
+pub slang_solidity_v2_common::evm_targets::EvmTarget::Byzantium = 4
+pub slang_solidity_v2_common::evm_targets::EvmTarget::Cancun = 12
+pub slang_solidity_v2_common::evm_targets::EvmTarget::Constantinople = 5
+pub slang_solidity_v2_common::evm_targets::EvmTarget::Frontier = 0
+pub slang_solidity_v2_common::evm_targets::EvmTarget::Homestead = 1
+pub slang_solidity_v2_common::evm_targets::EvmTarget::Istanbul = 7
+pub slang_solidity_v2_common::evm_targets::EvmTarget::London = 9
+pub slang_solidity_v2_common::evm_targets::EvmTarget::Osaka = 14
+pub slang_solidity_v2_common::evm_targets::EvmTarget::Paris = 10
+pub slang_solidity_v2_common::evm_targets::EvmTarget::Petersburg = 6
+pub slang_solidity_v2_common::evm_targets::EvmTarget::Prague = 13
+pub slang_solidity_v2_common::evm_targets::EvmTarget::Shanghai = 11
+pub slang_solidity_v2_common::evm_targets::EvmTarget::SpuriousDragon = 3
+pub slang_solidity_v2_common::evm_targets::EvmTarget::TangerineWhistle = 2
+impl slang_solidity_v2_common::evm_targets::EvmTarget
+pub const slang_solidity_v2_common::evm_targets::EvmTarget::ALL: &'static [slang_solidity_v2_common::evm_targets::EvmTarget; 15]
+pub const slang_solidity_v2_common::evm_targets::EvmTarget::EARLIEST: Self
+pub const slang_solidity_v2_common::evm_targets::EvmTarget::LATEST: Self
+impl core::clone::Clone for slang_solidity_v2_common::evm_targets::EvmTarget
+pub fn slang_solidity_v2_common::evm_targets::EvmTarget::clone(&self) -> slang_solidity_v2_common::evm_targets::EvmTarget
+impl core::cmp::Eq for slang_solidity_v2_common::evm_targets::EvmTarget
+impl core::cmp::Ord for slang_solidity_v2_common::evm_targets::EvmTarget
+pub fn slang_solidity_v2_common::evm_targets::EvmTarget::cmp(&self, other: &slang_solidity_v2_common::evm_targets::EvmTarget) -> core::cmp::Ordering
+impl core::cmp::PartialEq for slang_solidity_v2_common::evm_targets::EvmTarget
+pub fn slang_solidity_v2_common::evm_targets::EvmTarget::eq(&self, other: &slang_solidity_v2_common::evm_targets::EvmTarget) -> bool
+impl core::cmp::PartialOrd for slang_solidity_v2_common::evm_targets::EvmTarget
+pub fn slang_solidity_v2_common::evm_targets::EvmTarget::partial_cmp(&self, other: &slang_solidity_v2_common::evm_targets::EvmTarget) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for slang_solidity_v2_common::evm_targets::EvmTarget
+pub fn slang_solidity_v2_common::evm_targets::EvmTarget::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity_v2_common::evm_targets::EvmTarget
+pub fn slang_solidity_v2_common::evm_targets::EvmTarget::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for slang_solidity_v2_common::evm_targets::EvmTarget
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::evm_targets::EvmTarget
+impl core::str::traits::FromStr for slang_solidity_v2_common::evm_targets::EvmTarget
+pub type slang_solidity_v2_common::evm_targets::EvmTarget::Err = slang_solidity_v2_common::evm_targets::FromStrError
+pub fn slang_solidity_v2_common::evm_targets::EvmTarget::from_str(value: &str) -> core::result::Result<Self, Self::Err>
+impl serde_core::ser::Serialize for slang_solidity_v2_common::evm_targets::EvmTarget
+pub fn slang_solidity_v2_common::evm_targets::EvmTarget::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+pub enum slang_solidity_v2_common::evm_targets::EvmTargetSpecifier
+pub slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::From
+pub slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::From::from: slang_solidity_v2_common::evm_targets::EvmTarget
+pub slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::Range
+pub slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::Range::from: slang_solidity_v2_common::evm_targets::EvmTarget
+pub slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::Range::till: slang_solidity_v2_common::evm_targets::EvmTarget
+pub slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::Till
+pub slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::Till::till: slang_solidity_v2_common::evm_targets::EvmTarget
+impl slang_solidity_v2_common::evm_targets::EvmTargetSpecifier
+pub const fn slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::contains(&self, other: slang_solidity_v2_common::evm_targets::EvmTarget) -> bool
+impl slang_solidity_v2_common::evm_targets::EvmTargetSpecifier
+pub const fn slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::from(from: slang_solidity_v2_common::evm_targets::EvmTarget) -> Self
+pub const fn slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::range(from: slang_solidity_v2_common::evm_targets::EvmTarget, till: slang_solidity_v2_common::evm_targets::EvmTarget) -> Self
+pub const fn slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::till(till: slang_solidity_v2_common::evm_targets::EvmTarget) -> Self
+impl core::clone::Clone for slang_solidity_v2_common::evm_targets::EvmTargetSpecifier
+pub fn slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::clone(&self) -> slang_solidity_v2_common::evm_targets::EvmTargetSpecifier
+impl core::cmp::Eq for slang_solidity_v2_common::evm_targets::EvmTargetSpecifier
+impl core::cmp::PartialEq for slang_solidity_v2_common::evm_targets::EvmTargetSpecifier
+pub fn slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::eq(&self, other: &slang_solidity_v2_common::evm_targets::EvmTargetSpecifier) -> bool
+impl core::fmt::Debug for slang_solidity_v2_common::evm_targets::EvmTargetSpecifier
+pub fn slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::evm_targets::EvmTargetSpecifier
+impl serde_core::ser::Serialize for slang_solidity_v2_common::evm_targets::EvmTargetSpecifier
+pub fn slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+pub enum slang_solidity_v2_common::evm_targets::FromStrError
+pub slang_solidity_v2_common::evm_targets::FromStrError::UnrecognizedEvmTarget
+impl core::cmp::PartialEq for slang_solidity_v2_common::evm_targets::FromStrError
+pub fn slang_solidity_v2_common::evm_targets::FromStrError::eq(&self, other: &slang_solidity_v2_common::evm_targets::FromStrError) -> bool
+impl core::error::Error for slang_solidity_v2_common::evm_targets::FromStrError
+impl core::fmt::Debug for slang_solidity_v2_common::evm_targets::FromStrError
+pub fn slang_solidity_v2_common::evm_targets::FromStrError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity_v2_common::evm_targets::FromStrError
+pub fn slang_solidity_v2_common::evm_targets::FromStrError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::evm_targets::FromStrError
 pub mod slang_solidity_v2_common::nodes
 #[repr(transparent)] pub struct slang_solidity_v2_common::nodes::NodeId(_)
 impl core::clone::Clone for slang_solidity_v2_common::nodes::NodeId

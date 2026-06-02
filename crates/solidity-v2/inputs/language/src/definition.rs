@@ -9,7 +9,7 @@ language_v2_macros::compile!(Language(
         "0.8.20", "0.8.21", "0.8.22", "0.8.23", "0.8.24", "0.8.25", "0.8.26", "0.8.27", "0.8.28", "0.8.29",
         "0.8.30", "0.8.31", "0.8.32", "0.8.33", "0.8.34", "0.8.35"
     ],
-    evm_hard_forks = [
+    evm_targets = [
         Frontier, Homestead, TangerineWhistle, SpuriousDragon, Byzantium, Constantinople, Petersburg,
         Istanbul, Berlin, London, Paris, Shanghai, Cancun, Prague, Osaka
     ],

@@ -8,7 +8,7 @@ use crate::compiler::analysis::Analysis;
 use crate::internals::Spanned;
 use crate::model::{
     Identifier, SpannedBuiltInContext, SpannedBuiltInDefinition, SpannedBuiltInScope,
-    SpannedEnumItem, SpannedEnumVariant, SpannedEvmHardForkSpecifier, SpannedField,
+    SpannedEnumItem, SpannedEnumVariant, SpannedEvmTargetSpecifier, SpannedField,
     SpannedFragmentItem, SpannedItem, SpannedKeywordItem, SpannedPrecedenceExpression,
     SpannedPrecedenceItem, SpannedPrecedenceOperator, SpannedPrimaryExpression,
     SpannedRepeatedItem, SpannedSeparatedItem, SpannedStructItem, SpannedTokenItem,
@@ -228,7 +228,7 @@ fn check_built_in_definition(analysis: &mut Analysis, definition: &SpannedBuiltI
     } = definition;
 
     check_version_specifier(analysis, enabled.as_ref());
-    check_hard_fork_specifier(analysis, evm_enabled.as_ref());
+    check_evm_target_specifier(analysis, evm_enabled.as_ref());
 }
 
 fn check_version_specifier(
@@ -294,70 +294,70 @@ fn check_version(analysis: &mut Analysis, version: &Spanned<Version>) {
     }
 }
 
-fn check_hard_fork_specifier(
+fn check_evm_target_specifier(
     analysis: &mut Analysis,
-    specifier: Option<&Spanned<SpannedEvmHardForkSpecifier>>,
+    specifier: Option<&Spanned<SpannedEvmTargetSpecifier>>,
 ) {
     let Some(specifier) = specifier else {
         return;
     };
 
-    let first_hard_fork = analysis.language.evm_hard_forks.first().unwrap().clone();
+    let first_evm_target = analysis.language.evm_targets.first().unwrap().clone();
 
     match &**specifier {
-        SpannedEvmHardForkSpecifier::Always => {
+        SpannedEvmTargetSpecifier::Always => {
             analysis
                 .errors
-                .add(specifier, &HardForkErrors::RedundantAlways);
+                .add(specifier, &EvmTargetErrors::RedundantAlways);
         }
-        SpannedEvmHardForkSpecifier::From { from } => {
-            check_hard_fork(analysis, from);
+        SpannedEvmTargetSpecifier::From { from } => {
+            check_evm_target(analysis, from);
 
-            if *from == first_hard_fork {
+            if *from == first_evm_target {
                 analysis
                     .errors
-                    .add(from, &HardForkErrors::RedundantFrom(from));
+                    .add(from, &EvmTargetErrors::RedundantFrom(from));
             }
         }
-        SpannedEvmHardForkSpecifier::Till { till } => {
-            check_hard_fork(analysis, till);
+        SpannedEvmTargetSpecifier::Till { till } => {
+            check_evm_target(analysis, till);
 
-            if *till == first_hard_fork {
+            if *till == first_evm_target {
                 analysis
                     .errors
-                    .add(till, &HardForkErrors::RedundantTill(till));
+                    .add(till, &EvmTargetErrors::RedundantTill(till));
             }
         }
-        SpannedEvmHardForkSpecifier::Range { from, till } => {
+        SpannedEvmTargetSpecifier::Range { from, till } => {
             if let (Some(from_index), Some(till_index)) = (
-                analysis.language.evm_hard_forks.get_index_of(from),
-                analysis.language.evm_hard_forks.get_index_of(till),
+                analysis.language.evm_targets.get_index_of(from),
+                analysis.language.evm_targets.get_index_of(till),
             ) {
                 if from_index >= till_index {
                     analysis
                         .errors
-                        .add(from, &HardForkErrors::UnorderedHardForkPair(from, till));
+                        .add(from, &EvmTargetErrors::UnorderedEvmTargetPair(from, till));
                     return;
                 }
             }
 
-            check_hard_fork(analysis, from);
-            check_hard_fork(analysis, till);
+            check_evm_target(analysis, from);
+            check_evm_target(analysis, till);
 
-            if *from == first_hard_fork {
+            if *from == first_evm_target {
                 analysis
                     .errors
-                    .add(from, &HardForkErrors::RedundantRangeFrom(from));
+                    .add(from, &EvmTargetErrors::RedundantRangeFrom(from));
             }
         }
     }
 }
 
-fn check_hard_fork(analysis: &mut Analysis, hard_fork: &Spanned<Identifier>) {
-    if !analysis.language.evm_hard_forks.contains(hard_fork) {
+fn check_evm_target(analysis: &mut Analysis, evm_target: &Spanned<Identifier>) {
+    if !analysis.language.evm_targets.contains(evm_target) {
         analysis
             .errors
-            .add(hard_fork, &HardForkErrors::HardForkNotFound(hard_fork));
+            .add(evm_target, &EvmTargetErrors::EvmTargetNotFound(evm_target));
     }
 }
 
@@ -382,21 +382,21 @@ enum VersionErrors<'err> {
 }
 
 #[derive(thiserror::Error, Debug)]
-enum HardForkErrors<'err> {
-    #[error("Hard fork '{0}' does not exist in the language definition.")]
-    HardForkNotFound(&'err Identifier),
-    #[error("Hard fork '{0}' must precede corresponding hard fork '{1}'.")]
-    UnorderedHardForkPair(&'err Identifier, &'err Identifier),
+enum EvmTargetErrors<'err> {
+    #[error("EVM target '{0}' does not exist in the language definition.")]
+    EvmTargetNotFound(&'err Identifier),
+    #[error("EVM target '{0}' must precede corresponding EVM target '{1}'.")]
+    UnorderedEvmTargetPair(&'err Identifier, &'err Identifier),
     #[error(
         "Explicit 'Always' is redundant, since it is the default when 'evm_enabled' is not specified."
     )]
     RedundantAlways,
-    #[error("'From' with the first supported hard fork '{0}' is equivalent to 'Always', and can be removed.")]
+    #[error("'From' with the first supported EVM target '{0}' is equivalent to 'Always', and can be removed.")]
     RedundantFrom(&'err Identifier),
-    #[error("'Till' with the first supported hard fork '{0}' produces an empty range, disabling the built-in on every hard fork.")]
+    #[error("'Till' with the first supported EVM target '{0}' produces an empty range, disabling the built-in on every EVM target.")]
     RedundantTill(&'err Identifier),
     #[error(
-        "'Range' starting from the first supported hard fork '{0}' can be simplified to 'Till'."
+        "'Range' starting from the first supported EVM target '{0}' can be simplified to 'Till'."
     )]
     RedundantRangeFrom(&'err Identifier),
 }

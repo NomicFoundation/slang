@@ -82,7 +82,7 @@ impl RuntimeModelV2 {
 pub struct LanguageModelV2 {
     name: String,
     versions: IndexSet<Version>,
-    evm_hard_forks: IndexSet<Identifier>,
+    evm_targets: IndexSet<Identifier>,
     built_ins: Vec<codegen_v2_semantic::built_ins::BuiltInContextModel>,
 }
 
@@ -91,7 +91,7 @@ impl LanguageModelV2 {
         Self {
             name: language.name.to_string(),
             versions: language.versions.clone(),
-            evm_hard_forks: language.evm_hard_forks.clone(),
+            evm_targets: language.evm_targets.clone(),
             built_ins: codegen_v2_semantic::built_ins::build_built_ins_model(language),
         }
     }

@@ -4,7 +4,7 @@ language_v2_macros::compile!(Language(
     name = Foo,
     root_item = Bar1,
     versions = ["1.0.0"],
-    evm_hard_forks = [],
+    evm_targets = [],
     contexts = [LexicalContext(
         name = Foo,
         sections = [Section(

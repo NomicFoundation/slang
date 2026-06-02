@@ -6,7 +6,7 @@ use crate::model::Identifier;
 #[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 #[serde(tag = "type")]
-pub enum EvmHardForkSpecifier {
+pub enum EvmTargetSpecifier {
     #[default]
     Always,
     From {

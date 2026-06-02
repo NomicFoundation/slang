@@ -1,0 +1,57 @@
+use std::fmt::{Display, Formatter};
+use std::str::FromStr;
+
+use serde::Serialize;
+use thiserror::Error;
+
+/// All supported EVM targets of `{{ model.language.name }}`, in chronological order.
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Serialize)]
+pub enum EvmTarget {
+    {% for evm_target in model.language.evm_targets %}
+        {{ evm_target }} = {{ loop.index0 }},
+    {%- endfor -%}
+}
+
+impl EvmTarget {
+    /// The earliest supported EVM target of `{{ model.language.name }}`.
+    pub const EARLIEST: Self = Self::{{ model.language.evm_targets | first }};
+
+    /// The latest supported EVM target of `{{ model.language.name }}`.
+    pub const LATEST: Self = Self::{{ model.language.evm_targets | last }};
+
+    /// All supported EVM targets of `{{ model.language.name }}`, in order.
+    pub const ALL: &'static [EvmTarget; {{ model.language.evm_targets | length }}] = &[
+        {%- for evm_target in model.language.evm_targets %}
+            EvmTarget::{{ evm_target }},
+        {%- endfor %}
+    ];
+}
+
+impl Display for EvmTarget {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            {%- for evm_target in model.language.evm_targets %}
+                EvmTarget::{{ evm_target }} => write!(f, "{{ evm_target }}"),
+            {%- endfor %}
+        }
+    }
+}
+
+#[derive(Debug, Error, PartialEq)]
+pub enum FromStrError {
+    #[error("Provided value is not recognized as a supported EVM target.")]
+    UnrecognizedEvmTarget,
+}
+
+impl FromStr for EvmTarget {
+    type Err = FromStrError;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        match value {
+            {%- for evm_target in model.language.evm_targets %}
+                "{{ evm_target }}" => Ok(EvmTarget::{{ evm_target }}),
+            {%- endfor %}
+            _ => Err(FromStrError::UnrecognizedEvmTarget),
+        }
+    }
+}

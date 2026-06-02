@@ -44,7 +44,7 @@ impl Analysis {
         for pass in &[
             // This pass creates `ItemMetadata` definitions for all language `Item` entries, and verifies they are correct/unique.
             p1_definitions::run,
-            // This pass checks all version ranges (`enabled`) and EVM hard fork ranges (`evm_enabled`) in the grammar for correctness.
+            // This pass checks all version ranges (`enabled`) and EVM target ranges (`evm_enabled`) in the grammar for correctness.
             p2_specifiers::run,
             // This pass collects all references between items, making sure they conform to their enabled version ranges.
             p3_references::run,
