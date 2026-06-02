@@ -35,12 +35,15 @@ runs:
         if [ -n "${SSL_CERT_FILE:-}" ] && [ -f "${SSL_CERT_FILE}" ]; then
           merged="$(mktemp)"
           cat /etc/ssl/certs/ca-certificates.crt "${SSL_CERT_FILE}" > "${merged}"
+          # REQUESTS_CA_BUNDLE: pip/requests can ignore CURL_CA_BUNDLE inside a venv (pipenv) — psf/requests#6660.
           export SSL_CERT_FILE="${merged}" CURL_CA_BUNDLE="${merged}" \
                  CARGO_HTTP_CAINFO="${merged}" GIT_SSL_CAINFO="${merged}" \
-                 NODE_EXTRA_CA_CERTS="${merged}"
+                 NODE_EXTRA_CA_CERTS="${merged}" REQUESTS_CA_BUNDLE="${merged}"
           unset SSL_CERT_DIR
         fi
         exec "$@"
         EOF
         chmod +x "${wrapper}"
+        # Consumed UNQUOTED by callers (`${SFW_PREFIX:-} <cmd>`) so the shell splits
+        # it into two argv entries — `sfw` and the wrapper path. Quoting it breaks that.
         echo "SFW_PREFIX=sfw ${wrapper}" >> "$GITHUB_ENV"
