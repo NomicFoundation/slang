@@ -3,13 +3,10 @@ description: "Build the npm tarball into target/publish-artifacts/, or write a S
 
 outputs:
   artifact-name:
-    description: "Workflow artifact name (versioned + commit-tagged)."
+    description: "Workflow artifact name (versioned + commit-tagged); always set."
     value: "${{ steps.artifact-name.outputs.name }}"
-  should-publish:
-    description: "Whether the npm package needs publishing ('false' when the local version is already on npm). The gate for the downstream npm publish steps."
-    value: "${{ steps.versions.outputs.should-publish }}"
   tarball-name:
-    description: "Packed npm tarball filename (only set when should-publish is 'true')."
+    description: "Packed npm tarball filename; empty when nothing was packed (version already on npm). The downstream npm steps gate on this being non-empty."
     value: "${{ steps.pack.outputs.name }}"
 
 runs:

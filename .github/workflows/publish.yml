@@ -159,7 +159,6 @@ jobs:
       contents: "read"
     outputs:
       artifact-name: "${{ steps.prepare.outputs.artifact-name }}"
-      should-publish: "${{ steps.prepare.outputs.should-publish }}"
       tarball-name: "${{ steps.prepare.outputs.tarball-name }}"
     steps:
       - name: "Checkout Repository"
@@ -253,7 +252,8 @@ jobs:
           path: "target/publish-artifacts/"
 
       - name: "infra publish npm --dry-run"
-        if: "${{ needs.prepare.outputs.should-publish == 'true' }}"
+        # No tarball means prepare packed nothing (version already on npm) — nothing to validate.
+        if: "${{ needs.prepare.outputs.tarball-name != '' }}"
         run: "./scripts/bin/infra publish npm --dry-run --tarball target/publish-artifacts/${{ needs.prepare.outputs.tarball-name }}"
 
       - name: "infra publish cargo --dry-run"
@@ -403,7 +403,8 @@ jobs:
           path: "target/publish-artifacts/"
 
       - name: "infra publish npm"
-        if: "${{ needs.prepare.outputs.should-publish == 'true' }}"
+        # No tarball means prepare packed nothing (version already on npm) — nothing to publish.
+        if: "${{ needs.prepare.outputs.tarball-name != '' }}"
         run: "./scripts/bin/infra publish npm --tarball target/publish-artifacts/${{ needs.prepare.outputs.tarball-name }}"
 
       - name: "Exchange Cargo Token"
