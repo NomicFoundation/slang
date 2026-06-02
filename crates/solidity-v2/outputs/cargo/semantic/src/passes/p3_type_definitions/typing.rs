@@ -2,7 +2,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use super::Pass;
-use crate::binder::{Definition, Scope};
+use crate::binder::Definition;
 use crate::types::{
     DataLocation, FunctionType, FunctionTypeMutability, FunctionTypeVisibility, Type, TypeId,
 };
@@ -191,19 +191,22 @@ impl Pass<'_> {
 
                 Type::Struct { definition_id, .. } => {
                     // For structs the getter will return a tuple with all value
-                    // type and string/bytes fields. It won't return nested
-                    // structs or arrays.
-                    // To retrieve the fields we need to go through the
-                    // scope associated to the struct...
-                    let scope_id = self
-                        .binder
-                        .scope_id_for_node_id(*definition_id)
-                        .expect("definition in struct type has no associated scope");
-                    let Scope::Struct(struct_scope) = self.binder.get_scope_by_id(scope_id) else {
-                        unreachable!("definition in struct type has no valid scope");
+                    // type and string/bytes fields, in declaration order. It
+                    // won't return nested mappings or arrays.
+                    // We iterate the struct's IR members directly: the struct
+                    // scope is a name->id map with no stable ordering, but the
+                    // getter's tuple must preserve the source field order.
+                    let Some(Definition::Struct(struct_definition)) =
+                        self.binder.find_definition_by_id(*definition_id)
+                    else {
+                        unreachable!("struct type does not refer to a struct definition");
                     };
-                    let member_ids: Vec<NodeId> =
-                        struct_scope.definitions.values().copied().collect();
+                    let member_ids: Vec<NodeId> = struct_definition
+                        .ir_node
+                        .members
+                        .iter()
+                        .map(|member| member.id())
+                        .collect();
                     let mut types = Vec::new();
                     for member_id in member_ids {
                         let Some(member_type_id) = self.binder.node_typing(member_id).as_type_id()

@@ -1009,7 +1009,7 @@ fn test_getter_of_struct_with_function_member() {
                 Type::Function(_),
             ]
         ),
-        "expected getter tuple `(function() external)`, got {element_types:?}",
+        "expected getter tuple `(uint256, function() external)`, got {element_types:?}",
     );
 }
 
@@ -1044,6 +1044,6 @@ fn test_getter_of_struct_with_struct_member() {
                 },
             ]
         ),
-        "expected getter tuple `(Struct)`, got {element_types:?}",
+        "expected getter tuple `(Struct, uint256)`, got {element_types:?}",
     );
 }
