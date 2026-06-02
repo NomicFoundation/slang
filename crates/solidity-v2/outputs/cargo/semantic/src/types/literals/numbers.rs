@@ -183,8 +183,16 @@ impl Number {
         }
         match (self, other) {
             (Self::Integer(lhs), Self::Integer(rhs)) => Some(Self::Integer(lhs % rhs)),
-            // TODO(validation) SDR[1739]: Modulo on rationals is not supported.
-            _ => None,
+            // Solidity defines modulo on rational literals as `a - trunc(a / b) * b`,
+            // with the quotient truncated toward zero (e.g. `-5.2 % 3 == -2.2`). The
+            // result is itself a rational, normalised back to an integer by
+            // `from_rational` when the denominator reduces to one.
+            _ => {
+                let lhs = self.to_rational();
+                let rhs = other.to_rational();
+                let quotient = (lhs.clone() / rhs.clone()).trunc();
+                Some(Self::from_rational(lhs - quotient * rhs))
+            }
         }
     }
 
