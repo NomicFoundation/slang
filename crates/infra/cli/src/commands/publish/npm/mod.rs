@@ -18,6 +18,7 @@ pub struct NpmController {
 }
 
 impl NpmController {
+    #[allow(clippy::unnecessary_wraps)]
     pub fn execute(&self) -> Result<()> {
         let mut command = Command::new("pnpm")
             .arg("publish")
