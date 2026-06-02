@@ -99,8 +99,16 @@ jobs:
       - name: "Restore Cargo Target Cache"
         uses: "./.github/actions/cache/cargo-target/restore"
 
+      - name: "Setup SFW"
+        uses: "./.github/actions/setup-sfw"
+
+      # Release path: refuse to install deps unprotected if SFW is unavailable.
+      # Each release job needs its own guard (they set up SFW on separate runners).
+      - name: "Require SFW"
+        run: '[ -n "${SFW_PREFIX:-}" ] || { echo "::error::SFW unavailable — refusing to install deps unprotected on the release path"; exit 1; }'
+
       - name: "infra setup"
-        run: "./scripts/bin/infra setup"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra setup"
 
       # Consume the changesets, and create a git stash, to be popped by the next step:
       - name: "infra publish changesets"
@@ -184,8 +192,19 @@ jobs:
         if: "${{ needs.changesets.outputs.publishNeeded != 'true' }}"
         uses: "./.github/actions/cache/cargo-target/restore"
 
+      - name: "Setup SFW"
+        uses: "./.github/actions/setup-sfw"
+
+      # On a real release this job builds the published npm tarball, so if SFW
+      # couldn't be installed, stop here rather than build the release without it.
+      # On PRs/pending pushes the build still runs without SFW (same condition the
+      # cache-restore steps above gate on).
+      - name: "Require SFW"
+        if: "${{ needs.changesets.outputs.publishNeeded == 'true' }}"
+        run: '[ -n "${SFW_PREFIX:-}" ] || { echo "::error::SFW unavailable — refusing to build release artifacts unprotected"; exit 1; }'
+
       - name: "infra setup"
-        run: "./scripts/bin/infra setup"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra setup"
 
       - name: "Prepare publish artifacts"
         id: "prepare"
@@ -242,8 +261,11 @@ jobs:
       - name: "Restore Cargo Target Cache"
         uses: "./.github/actions/cache/cargo-target/restore"
 
+      - name: "Setup SFW"
+        uses: "./.github/actions/setup-sfw"
+
       - name: "infra setup"
-        run: "./scripts/bin/infra setup"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra setup"
 
       - name: "Download publish artifacts"
         uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c" # v8.0.1
@@ -402,9 +424,15 @@ jobs:
           name: "${{ needs.prepare.outputs.artifact-name }}"
           path: "target/publish-artifacts/"
 
-      # Compile infra_cli with no registry token in scope.
+      - name: "Setup SFW"
+        uses: "./.github/actions/setup-sfw"
+
+      # Compile infra_cli with no registry token in scope. Routed through SFW when
+      # available, but no Require SFW guard here: if SFW didn't install, this still
+      # builds without it (the published bytes were already checked behind SFW in
+      # prepare). The infra publish steps below upload with auth, left unwrapped.
       - name: "Build infra_cli (before any token)"
-        run: "./scripts/bin/infra --help"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra --help"
 
       - name: "infra publish npm"
         # No tarball means prepare packed nothing (version already on npm) — nothing to publish.

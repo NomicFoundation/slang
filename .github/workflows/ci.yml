@@ -71,21 +71,22 @@ jobs:
         run: "${SFW_PREFIX:-} ./scripts/bin/infra check"
 
       - name: "infra test"
-        run: "${SFW_PREFIX:-} ./scripts/bin/infra test"
+        run: "./scripts/bin/infra test"
 
       - name: "infra lint"
-        run: "${SFW_PREFIX:-} ./scripts/bin/infra lint"
+        run: "./scripts/bin/infra lint"
 
       # On main pushes, warm the dependency and cargo-target caches with the perf
       # toolchain (bencher_cli, iai-callgrind-runner, and the bench binaries) so
-      # subsequent PR perf runs don't compile them from scratch.
+      # subsequent PR perf runs don't compile them from scratch. Wrapped: these
+      # cargo-install from crates.io (no bencher upload, so no MITM concern).
       - name: "infra perf cargo --smoke slang-v2"
         if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
-        run: "./scripts/bin/infra perf cargo --smoke --no-apt-deps slang-v2"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra perf cargo --smoke --no-apt-deps slang-v2"
 
       - name: "infra perf npm --smoke"
         if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
-        run: "./scripts/bin/infra perf npm --smoke"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra perf npm --smoke"
 
       - name: "Save Cargo Target Cache"
         if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
