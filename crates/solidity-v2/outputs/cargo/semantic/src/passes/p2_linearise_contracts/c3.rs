@@ -2,6 +2,15 @@ use std::collections::{HashMap, VecDeque};
 use std::fmt::Debug;
 use std::hash::Hash;
 
+/// The reason why linearisation failed.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum LinearisationFailure {
+    /// The inheritance graph contains a cycle.
+    Cycle,
+    /// The base orderings are inconsistent.
+    Inconsistent,
+}
+
 /// Produces a linearisation of a hierarchy of items using the C3 linearisation
 /// algorithm. Given an item `A` with parents `(B1, B2)` in that order, the
 /// linearisation of A can be defined as:
@@ -16,7 +25,7 @@ use std::hash::Hash;
 pub(crate) fn linearise<Item: Clone + Debug + Eq + Hash + PartialEq>(
     target: &Item,
     parents: &HashMap<Item, Vec<Item>>,
-) -> Option<Vec<Item>> {
+) -> Result<Vec<Item>, LinearisationFailure> {
     let mut linearisations: HashMap<Item, Vec<Item>> = HashMap::new();
 
     // Keeps a running queue of pending linearisations.
@@ -50,7 +59,7 @@ pub(crate) fn linearise<Item: Clone + Debug + Eq + Hash + PartialEq>(
         }
         if merge_set.len() == item_parents.len() {
             merge_set.push(item_parents.clone());
-            let merge_result = merge(merge_set)?;
+            let merge_result = merge(merge_set).ok_or(LinearisationFailure::Inconsistent)?;
 
             let mut result = Vec::new();
             result.push(item.clone());
@@ -71,7 +80,7 @@ pub(crate) fn linearise<Item: Clone + Debug + Eq + Hash + PartialEq>(
                     if *check_item == item {
                         if items_linearised == linearisations.len() {
                             // no progress since last checkpoint; this indicates a cycle
-                            return None;
+                            return Err(LinearisationFailure::Cycle);
                         }
                         // Update progress and re-try
                         checkpoint = Some((item.clone(), linearisations.len()));
@@ -86,7 +95,9 @@ pub(crate) fn linearise<Item: Clone + Debug + Eq + Hash + PartialEq>(
         }
     }
 
-    linearisations.remove(target)
+    linearisations
+        .remove(target)
+        .ok_or(LinearisationFailure::Inconsistent)
 }
 
 /// Merges the items in the set in C3 linearisation order. Returns None if
@@ -201,8 +212,8 @@ mod tests {
         parents.insert('D', vec!['B', 'C']);
         parents.insert('E', vec!['C', 'B']);
 
-        assert_eq!(Some(vec!['D', 'B', 'C', 'A']), linearise(&'D', &parents));
-        assert_eq!(Some(vec!['E', 'C', 'B', 'A']), linearise(&'E', &parents));
+        assert_eq!(Ok(vec!['D', 'B', 'C', 'A']), linearise(&'D', &parents));
+        assert_eq!(Ok(vec!['E', 'C', 'B', 'A']), linearise(&'E', &parents));
     }
 
     #[test]
@@ -212,7 +223,10 @@ mod tests {
         parents.insert('A', vec!['X']);
         parents.insert('C', vec!['X', 'A']);
 
-        assert_eq!(None, linearise(&'C', &parents));
+        assert_eq!(
+            Err(LinearisationFailure::Inconsistent),
+            linearise(&'C', &parents)
+        );
     }
 
     #[test]
@@ -221,8 +235,8 @@ mod tests {
         parents.insert('B', vec!['A']);
         parents.insert('A', vec!['B']);
 
-        assert_eq!(None, linearise(&'A', &parents));
-        assert_eq!(None, linearise(&'B', &parents));
+        assert_eq!(Err(LinearisationFailure::Cycle), linearise(&'A', &parents));
+        assert_eq!(Err(LinearisationFailure::Cycle), linearise(&'B', &parents));
     }
 
     #[test]
@@ -232,8 +246,8 @@ mod tests {
         parents.insert('Y', vec!['Z']);
         parents.insert('Z', vec!['X']);
 
-        assert_eq!(None, linearise(&'X', &parents));
-        assert_eq!(None, linearise(&'Y', &parents));
-        assert_eq!(None, linearise(&'Z', &parents));
+        assert_eq!(Err(LinearisationFailure::Cycle), linearise(&'X', &parents));
+        assert_eq!(Err(LinearisationFailure::Cycle), linearise(&'Y', &parents));
+        assert_eq!(Err(LinearisationFailure::Cycle), linearise(&'Z', &parents));
     }
 }

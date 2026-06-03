@@ -31,6 +31,43 @@ mod resolution {
     }
 }
 
+mod semantic {
+    use super::*;
+
+    mod cyclic_inheritance {
+        use super::*;
+
+        #[test]
+        fn deep() -> Result<()> {
+            run("semantic/cyclic_inheritance", "deep")
+        }
+
+        #[test]
+        fn mutual() -> Result<()> {
+            run("semantic/cyclic_inheritance", "mutual")
+        }
+
+        #[test]
+        fn self_inheritance() -> Result<()> {
+            run("semantic/cyclic_inheritance", "self_inheritance")
+        }
+    }
+
+    mod linearisation_impossible {
+        use super::*;
+
+        #[test]
+        fn contract() -> Result<()> {
+            run("semantic/linearisation_impossible", "contract")
+        }
+
+        #[test]
+        fn interface() -> Result<()> {
+            run("semantic/linearisation_impossible", "interface")
+        }
+    }
+}
+
 mod structure {
     use super::*;
 
