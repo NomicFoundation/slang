@@ -7,7 +7,8 @@ runs:
       uses: "actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae" # v5.0.5
       with:
         # __SLANG_CI_CACHE_CARGO_COOLDOWN_PATHS__ (keep in sync)
-        key: "cargo-cooldown-${{ runner.os }}-v1-${{ hashFiles('**/Cargo.lock') }}"
+        key: "cargo-cooldown-${{ runner.os }}-v1-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}"
         path: "**/target/slang-cache/cargo-cooldown-check"
         restore-keys: |
+          cargo-cooldown-${{ runner.os }}-v1-${{ hashFiles('**/Cargo.lock') }}-
           cargo-cooldown-${{ runner.os }}-v1-

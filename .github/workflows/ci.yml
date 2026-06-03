@@ -11,7 +11,7 @@ on:
   # Run on merge queue validation:
   merge_group: {}
 
-  # Run on pushes to 'main' to refresh the CI cache from scratch, so that it doesn't grow indefinitely:
+  # Run on 'main' pushes to refresh the CI caches that PRs restore from
   push:
     branches:
       - "main"

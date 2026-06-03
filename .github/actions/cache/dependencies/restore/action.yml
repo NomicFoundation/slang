@@ -7,7 +7,7 @@ runs:
       uses: "actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae" # v5.0.5
       with:
         # __SLANG_CI_CACHE_DEPENDENCIES_PATHS__ (keep in sync)
-        key: "dependencies-${{ runner.os }}-v1-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('Pipfile.lock') }}"
+        key: "dependencies-${{ runner.os }}-v1-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('Pipfile.lock') }}-${{ github.sha }}"
         path: |
           ~/.cache/hermit/
           ~/.local/share/virtualenvs/
@@ -16,4 +16,5 @@ runs:
           ~/.cargo/git/
           ~/.local/share/pnpm/store/
         restore-keys: |
+          dependencies-${{ runner.os }}-v1-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('Pipfile.lock') }}-
           dependencies-${{ runner.os }}-v1-
