@@ -1,0 +1,68 @@
+name: "Publish — prepare"
+description: "Build the npm tarball into target/publish-artifacts/, or write a SKIPPED marker when the local version already matches what's on npm."
+
+outputs:
+  artifact-name:
+    description: "Workflow artifact name (versioned + commit-tagged); always set."
+    value: "${{ steps.artifact-name.outputs.name }}"
+  tarball-name:
+    description: "Packed npm tarball filename; empty when nothing was packed (version already on npm). The downstream npm steps gate on this being non-empty."
+    value: "${{ steps.pack.outputs.name }}"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Clean staging dir"
+      shell: "bash"
+      run: |
+        rm -rf target/publish-artifacts
+        mkdir -p target/publish-artifacts
+
+    - name: "Read npm versions"
+      id: "versions"
+      shell: "bash"
+      run: |
+        PACKAGE_JSON="crates/solidity/outputs/npm/package/package.json"
+        NAME=$(./bin/node -p "require('./${PACKAGE_JSON}').name")
+        LOCAL=$(./bin/node -p "require('./${PACKAGE_JSON}').version")
+        PUBLISHED=$(./bin/pnpm view "${NAME}" version)
+        echo "Published npm version: ${PUBLISHED:-<none>}"
+        echo "Local npm version: ${LOCAL}"
+        # Single publish/skip decision, reused by every downstream `if` and the publish job.
+        if [ "${LOCAL}" = "${PUBLISHED}" ]; then
+          echo "should-publish=false" >> "$GITHUB_OUTPUT"
+        else
+          echo "should-publish=true" >> "$GITHUB_OUTPUT"
+        fi
+
+    # Marker satisfies the artifact upload's `if-no-files-found: error` when nothing was packed.
+    - name: "Write SKIPPED marker"
+      if: "${{ steps.versions.outputs.should-publish == 'false' }}"
+      shell: "bash"
+      run: "touch target/publish-artifacts/SKIPPED"
+
+    - name: "Build WASM package"
+      if: "${{ steps.versions.outputs.should-publish == 'true' }}"
+      shell: "bash"
+      # `infra check npm` builds the WASM package into the npm source tree,
+      # so the `pnpm pack` below picks it up.
+      run: "./scripts/bin/infra check npm"
+
+    - name: "pnpm pack"
+      id: "pack"
+      if: "${{ steps.versions.outputs.should-publish == 'true' }}"
+      shell: "bash"
+      working-directory: "crates/solidity/outputs/npm/package"
+      # Capture the tarball name pnpm emits (last line of its output) and export it,
+      # so the publish job can pass the exact path without reconstructing the name.
+      run: |
+        TARBALL=$("${GITHUB_WORKSPACE}/bin/pnpm" pack --pack-destination "${GITHUB_WORKSPACE}/target/publish-artifacts" | tail -1)
+        echo "name=$(basename "${TARBALL}")" >> "$GITHUB_OUTPUT"
+
+    - name: "Compute artifact name"
+      id: "artifact-name"
+      shell: "bash"
+      run: |
+        VERSION=$(grep '^version = ' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+        SHORT_SHA="${GITHUB_SHA::12}"
+        echo "name=slang-publish-artifacts-${VERSION}-${SHORT_SHA}" >> "$GITHUB_OUTPUT"

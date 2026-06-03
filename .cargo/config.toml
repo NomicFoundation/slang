@@ -11,5 +11,4 @@ incremental = true
 strip = false
 
 [profile.release]
-incremental = true
 lto = true

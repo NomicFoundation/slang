@@ -49,7 +49,15 @@ You can access all such commands (from the hermit environment) by just running t
 
 ## Versioning and Publishing
 
-We manage versioning through [changesets](https://github.com/changesets/changesets). Each pull request can describe what user facing changes it is introducing, and include this information as a "changeset" markdown file along with source changes. These changeset files are analyzed and used to create another pull request to bump the repository version and update dependencies. Once the version bump is merged, artifacts are built and released to all registries.
+We manage versioning through [changesets](https://github.com/changesets/changesets). Each pull request can describe what user facing changes it is introducing, and include this information as a "changeset" markdown file along with source changes. These changeset files are analyzed and used to create another pull request to bump the repository version and update dependencies.
+
+Once the version bump is merged, `.github/workflows/publish.yml` runs three jobs in sequence:
+
+1. **`prepare`** — builds the npm tarball (`pnpm pack`) into `target/publish-artifacts/` and uploads it as a workflow artifact (retained for 7 days). On the version-bump merge, this is what's about to ship; on every other PR/push, prepare writes a `SKIPPED` marker because the local version already matches what's on npm.
+2. **`review`** — downloads the prepared artifact and runs `pnpm publish --dry-run` against the tarball plus a batched `cargo publish --dry-run`. The cargo dry-run packages every crate, verify-builds each one in isolation from the extracted `.crate`, and resolves internal path-deps against the bumped versions — the closest dress rehearsal short of the actual upload.
+3. **`publish`** — gated by the `slang-release` environment (manual approval). Uploads the prepared npm tarball to npm and runs `cargo publish --no-verify` per crate against crates.io, both via OIDC trusted-publishing tokens.
+
+For npm, the bytes a reviewer signs off on are exactly the bytes that get uploaded — `publish` ships the same tarball `prepare` built. For cargo there is no equivalent artifact handoff: `cargo publish` re-packages from source on upload. The review step exercises the same packaging and verify-build code paths the publish step uses, so the gap is "no byte-level handoff", not "untested code at publish time". `--no-verify` at publish keeps the workspace `build.rs` and proc-macros from running alongside the crates.io OIDC token.
 
 ## Managing Dependencies
 
