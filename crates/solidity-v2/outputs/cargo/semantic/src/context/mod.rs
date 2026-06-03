@@ -72,7 +72,7 @@ impl SemanticContext {
         let mut types = TypeRegistry::default();
 
         p1_collect_definitions::run(files, &mut binder, diagnostics);
-        p2_linearise_contracts::run(files, &mut binder);
+        p2_linearise_contracts::run(files, &mut binder, diagnostics);
         p3_type_definitions::run(files, &mut binder, &mut types, language_version);
         p4_resolve_references::run(files, &mut binder, &mut types, language_version);
 

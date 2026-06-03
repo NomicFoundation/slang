@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Identifier not found.
+   ╭─[input.sol:4:15]
+   │
+ 4 │ contract C is Missing {}
+   │               ───┬───  
+   │                  ╰───── Error occurred here.
+───╯

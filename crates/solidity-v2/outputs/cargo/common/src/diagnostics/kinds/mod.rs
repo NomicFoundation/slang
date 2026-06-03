@@ -1,13 +1,17 @@
 mod utils;
 
 pub mod compilation;
+pub mod resolution;
 pub mod structure;
 pub mod syntax;
+pub mod type_system;
 
 use compilation::CompilationDiagnosticKind;
+use resolution::ResolutionDiagnosticKind;
 use serde::Serialize;
 use structure::StructureDiagnosticKind;
 use syntax::SyntaxDiagnosticKind;
+use type_system::TypeSystemDiagnosticKind;
 
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
 
@@ -23,5 +27,11 @@ define_diagnostic_kind! {
         Syntax(SyntaxDiagnosticKind),
         /// A diagnostic about structural shape.
         Structure(StructureDiagnosticKind),
+        /// A diagnostic produced for undeclared identifiers, duplicate
+        /// definitions, import failures, shadowing, ambiguous references
+        /// and scope errors.
+        Resolution(ResolutionDiagnosticKind),
+        /// A diagnostic about the type system.
+        TypeSystem(TypeSystemDiagnosticKind),
     }
 }

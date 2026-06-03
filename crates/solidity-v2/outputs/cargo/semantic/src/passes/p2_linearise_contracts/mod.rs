@@ -1,5 +1,8 @@
 use std::collections::HashMap;
 
+use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound;
+use slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase;
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -11,27 +14,49 @@ mod c3;
 
 /// In this pass we collect all bases of contracts and interfaces and then
 /// compute the linearisation for each of them.
-pub fn run(files: &[impl SemanticFile], binder: &mut Binder) {
+pub fn run(
+    files: &[impl SemanticFile],
+    binder: &mut Binder,
+    diagnostics: &mut DiagnosticCollection,
+) {
     for file in files {
-        Pass::visit_file_collect_bases(file, binder);
+        Pass::visit_file_collect_bases(file, binder, diagnostics);
     }
     for file in files {
-        Pass::visit_file_linearise_contracts(file, binder);
+        Pass::visit_file_linearise_contracts(file, binder, diagnostics);
     }
 }
 
 struct Pass<'a> {
     binder: &'a mut Binder,
+    diagnostics: &'a mut DiagnosticCollection,
+    file_id: String,
 }
 
 impl<'a> Pass<'a> {
-    fn visit_file_collect_bases(file: &impl SemanticFile, binder: &'a mut Binder) {
-        let mut pass = Self { binder };
+    fn visit_file_collect_bases(
+        file: &impl SemanticFile,
+        binder: &'a mut Binder,
+        diagnostics: &'a mut DiagnosticCollection,
+    ) {
+        let mut pass = Self {
+            binder,
+            diagnostics,
+            file_id: file.id().to_owned(),
+        };
         pass.collect_bases_from(file.ir_root());
     }
 
-    fn visit_file_linearise_contracts(file: &impl SemanticFile, binder: &'a mut Binder) {
-        let mut pass = Self { binder };
+    fn visit_file_linearise_contracts(
+        file: &impl SemanticFile,
+        binder: &'a mut Binder,
+        diagnostics: &'a mut DiagnosticCollection,
+    ) {
+        let mut pass = Self {
+            binder,
+            diagnostics,
+            file_id: file.id().to_owned(),
+        };
         pass.linearise_contracts_from(file.ir_root());
     }
 
@@ -80,22 +105,38 @@ impl<'a> Pass<'a> {
         types: &ir::InheritanceTypes,
         scope_id: ScopeId,
     ) -> Vec<NodeId> {
-        // TODO(validation) SDR[23]: check that we are able to resolve all bases as
-        // otherwise we end up with a short list saved in the definition
-        types
-            .iter()
-            .filter_map(|inheritance_type| {
-                resolve_identifier_path_in_scope(self.binder, &inheritance_type.type_name, scope_id)
-                    .as_definition_id()
-                    .filter(|definition_id| {
-                        // bases are either contracts or interfaces, discard anything else
-                        matches!(
-                            self.binder.find_definition_by_id(*definition_id).unwrap(),
-                            Definition::Contract(_) | Definition::Interface(_)
-                        )
-                    })
-            })
-            .collect()
+        let mut resolved_bases = Vec::new();
+        for inheritance_type in types {
+            let resolution = resolve_identifier_path_in_scope(
+                self.binder,
+                &inheritance_type.type_name,
+                scope_id,
+            );
+            match resolution.as_definition_id() {
+                None => {
+                    self.diagnostics.push(
+                        self.file_id.clone(),
+                        inheritance_type.range.clone(),
+                        IdentifierNotFound,
+                    );
+                }
+                Some(definition_id) => {
+                    match self.binder.find_definition_by_id(definition_id).unwrap() {
+                        Definition::Contract(_) | Definition::Interface(_) => {
+                            resolved_bases.push(definition_id);
+                        }
+                        _ => {
+                            self.diagnostics.push(
+                                self.file_id.clone(),
+                                inheritance_type.range.clone(),
+                                InvalidBase,
+                            );
+                        }
+                    }
+                }
+            }
+        }
+        resolved_bases
     }
 
     fn linearise_contracts_from(&mut self, source_unit: &ir::SourceUnit) {

@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind;
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::NodeIdGenerator;
@@ -30,11 +32,11 @@ contract Test is Base layout at 0 {}
     let mut binder = Binder::default();
     let mut diagnostics = DiagnosticCollection::default();
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
     );
-    p2_linearise_contracts::run(&files, &mut binder);
 
     // Verify definitions were collected
     assert_eq!(2, binder.definitions().len());
@@ -93,11 +95,11 @@ interface A is C {}
     let mut binder = Binder::default();
     let mut diagnostics = DiagnosticCollection::default();
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
     );
-    p2_linearise_contracts::run(&files, &mut binder);
 
     let contract_to_bases = get_contract_to_bases_map(&binder);
 
@@ -147,7 +149,20 @@ contract Test is Base, Foo { // Base should resolve to the contract, not the var
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
     );
-    p2_linearise_contracts::run(&files, &mut binder);
+    p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
+
+    // `Foo` is a library which can't be used as a base, so check if the
+    // expected diagnostic was emitted.
+    let emitted: Vec<_> = diagnostics.iter().collect();
+    assert_eq!(
+        emitted.len(),
+        1,
+        "expected one diagnostic, got: {emitted:?}"
+    );
+    assert!(matches!(
+        emitted[0].kind(),
+        DiagnosticKind::TypeSystem(TypeSystemDiagnosticKind::InvalidBase(_))
+    ));
 
     let contract_to_bases = get_contract_to_bases_map(&binder);
 
@@ -198,11 +213,11 @@ contract Test is Base {
 
     let mut diagnostics = DiagnosticCollection::default();
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
     );
-    p2_linearise_contracts::run(&files, &mut binder);
 
     let types_before = types.iter_types().count();
     p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
@@ -257,11 +272,11 @@ contract Test is Base {
 
     let mut diagnostics = DiagnosticCollection::default();
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
     );
-    p2_linearise_contracts::run(&files, &mut binder);
     p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
     p4_resolve_references::run(&files, &mut binder, &mut types, language_version);
 
