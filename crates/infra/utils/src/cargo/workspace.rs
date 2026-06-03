@@ -13,13 +13,26 @@ pub struct CargoWorkspace;
 
 impl CargoWorkspace {
     pub fn install_binary(crate_name: impl AsRef<str>) -> Result<()> {
-        let crate_name = crate_name.as_ref();
+        Self::install_binary_impl(crate_name.as_ref(), None)
+    }
 
+    /// Like [`Self::install_binary`], but restricts the install to a single binary via `--bin`.
+    ///
+    /// Useful to skip rebuilding unnecessarily due to a [cargo bug](https://github.com/rust-lang/cargo/issues/8703).
+    pub fn install_binary_bin(crate_name: impl AsRef<str>, bin: impl AsRef<str>) -> Result<()> {
+        Self::install_binary_impl(crate_name.as_ref(), Some(bin.as_ref()))
+    }
+
+    fn install_binary_impl(crate_name: &str, bin: Option<&str>) -> Result<()> {
         let manifest = WorkspaceManifest::load()?;
 
         let mut command = Command::new("cargo")
             .args(["install", crate_name])
             .flag("--locked");
+
+        if let Some(bin) = bin {
+            command = command.property("--bin", bin);
+        }
 
         let dependency = manifest.dependency(crate_name)?;
 
