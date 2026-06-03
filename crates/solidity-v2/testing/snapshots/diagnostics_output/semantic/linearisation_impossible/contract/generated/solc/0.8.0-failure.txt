@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 5005] Error: Linearization of inheritance graph impossible
+   ╭─[input.sol:8:1]
+   │
+ 8 │ contract ListsBoth is Sub, ParentA, ParentB {}
+   │ ───────────────────────┬──────────────────────  
+   │                        ╰──────────────────────── Error occurred here.
+───╯

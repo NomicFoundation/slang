@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+Error: Circular inheritance is not allowed.
+   ╭─[a.sol:6:1]
+   │
+ 6 │ contract A is B {}
+   │ ─────────┬────────  
+   │          ╰────────── Error occurred here.
+───╯
+
+Error: Circular inheritance is not allowed.
+   ╭─[b.sol:6:1]
+   │
+ 6 │ contract B is C {}
+   │ ─────────┬────────  
+   │          ╰────────── Error occurred here.
+───╯
+
+Error: Circular inheritance is not allowed.
+   ╭─[c.sol:6:1]
+   │
+ 6 │ contract C is A {}
+   │ ─────────┬────────  
+   │          ╰────────── Error occurred here.
+───╯
