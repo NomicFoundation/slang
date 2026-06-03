@@ -1800,6 +1800,13 @@ impl IndexAccessExpressionStruct {
             .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
 
+    /// MANUAL PATCH (not regenerated): whether this is a slice (`x[a:]` /
+    /// `x[:b]` / `x[a:b]`) rather than an index (`x[a]`). `end()` alone cannot
+    /// distinguish `x[a:]` (open-ended slice) from `x[a]` — both have no end.
+    pub fn is_slice(&self) -> bool {
+        self.ir_node.is_slice
+    }
+
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }

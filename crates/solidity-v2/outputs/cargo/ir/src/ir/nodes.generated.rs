@@ -640,6 +640,10 @@ pub struct IndexAccessExpressionStruct {
     pub operand: Expression,
     pub start: Option<Expression>,
     pub end: Option<Expression>,
+    // MANUAL PATCH (not regenerated): whether the source had a `:` — i.e. this is
+    // a slice `x[a:]`/`x[:b]`/`x[a:b]`, not an index `x[a]`. `end` alone cannot
+    // tell `x[a:]` (open-ended slice) from `x[a]` (index); both have `end: None`.
+    pub is_slice: bool,
 }
 
 impl IndexAccessExpressionStruct {
