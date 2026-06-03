@@ -281,6 +281,11 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .start
             .as_ref()
             .map(|start| self.build_expression(start));
+        // `source.end` is the `[ … : … ]` slice clause, present iff the source
+        // had a colon; `end.end` is its optional upper bound. So `source.end`
+        // being present means this is a slice — distinguishing `x[a:]` (slice,
+        // no bound) from `x[a]` (index), which both have `end: None`.
+        let is_slice = source.end.is_some();
         let end = source
             .end
             .as_ref()
@@ -292,6 +297,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             operand,
             start,
             end,
+            is_slice,
         })
     }
 

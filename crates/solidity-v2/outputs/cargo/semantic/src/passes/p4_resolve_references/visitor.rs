@@ -368,7 +368,11 @@ impl Visitor for Pass<'_> {
     fn leave_index_access_expression(&mut self, node: &ir::IndexAccessExpression) {
         let typing = match self.typing_of_expression(&node.operand) {
             Typing::Resolved(operand_type_id) => {
-                let range_access = node.end.is_some();
+                // A slice is any `[ : ]` form (`x[a:]` / `x[:b]` / `x[a:b]`),
+                // not just one with an upper bound: `node.end` is `None` for
+                // both `x[a:]` (a slice) and `x[a]` (an index), so key on the
+                // colon-presence flag instead.
+                let range_access = node.is_slice;
                 let operand_type = self.types.get_type_by_id(operand_type_id);
                 match operand_type {
                     Type::Array { element_type, .. }
