@@ -1,4 +1,22 @@
+mod entries;
+mod internal_signature;
+mod selectors;
+mod storage_layout;
+
+use super::fixtures;
 use crate::define_fixture;
+
+define_fixture!(
+    AbiWithTuples,
+    file: "main.sol", r#"
+contract Test {
+    struct S { uint a; uint[] b; T[] c; }
+    struct T { uint x; uint y; }
+    function f(S memory, T memory, uint) public pure {}
+    function g() public pure returns (S memory, T memory, uint) {}
+}
+"#,
+);
 
 define_fixture!(
     FullAbi,
@@ -6,12 +24,17 @@ define_fixture!(
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8;
 
-interface Base {
+interface ITest {
     error SomethingWrong(string);
     event BaseEvent(uint a, string m) anonymous;
 }
 
-contract Test is Base {
+contract Base {
+    uint[] public xs;
+    bool a;
+}
+
+contract Test is ITest, Base {
     bytes32 public b;
     constructor() { b = hex"12345678901234567890123456789012"; }
     event Event(uint indexed a, bytes32 b);

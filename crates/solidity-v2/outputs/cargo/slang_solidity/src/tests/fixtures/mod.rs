@@ -3,25 +3,13 @@ use std::sync::Arc;
 use crate::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
 use crate::utils::LanguageVersion;
 
-mod abi_with_tuples;
-mod chained_imports;
 mod counter;
-mod full_abi;
-mod number_literals;
-mod overrides;
-mod storage_layout;
 
-pub(super) use abi_with_tuples::AbiWithTuples;
-pub(super) use chained_imports::ChainedImports;
 pub(super) use counter::Counter;
-pub(super) use full_abi::FullAbi;
-pub(super) use number_literals::NumberLiterals;
-pub(super) use overrides::Overrides;
-pub(super) use storage_layout::StorageLayout;
 
 pub(super) struct FixtureFile<'a> {
-    id: &'a str,
-    contents: &'a str,
+    pub(crate) id: &'a str,
+    pub(crate) contents: &'a str,
 }
 
 #[macro_export]
@@ -36,13 +24,14 @@ macro_rules! define_fixture {
 
     // Base case: emit the declaration
     (@accum [$($acc:expr),*] ; $name:ident ;) => {
-        const FILES: &[$crate::tests::fixtures::FixtureFile<'_>] = &[$($acc),*];
         pub(crate) struct $name;
 
         impl $name {
+            const FILES: &[$crate::tests::fixtures::FixtureFile<'_>] = &[$($acc),*];
+
             pub(crate) fn build_compilation_unit(
             ) -> std::sync::Arc<$crate::compilation::CompilationUnit> {
-                $crate::tests::fixtures::build_compilation_unit_from_fixture(FILES)
+                $crate::tests::fixtures::build_compilation_unit_from_fixture(Self::FILES)
             }
         }
     };
@@ -99,43 +88,7 @@ pub(super) fn build_compilation_unit_from_fixture(
 // Fixture build tests
 
 #[test]
-fn test_build_abi_with_tuples_fixture() {
-    let unit = AbiWithTuples::build_compilation_unit();
-    assert_eq!(1, unit.file_ids().len());
-}
-
-#[test]
-fn test_build_chained_imports_fixture() {
-    let unit = ChainedImports::build_compilation_unit();
-    assert_eq!(3, unit.file_ids().len());
-}
-
-#[test]
 fn test_build_counter_fixture() {
     let unit = Counter::build_compilation_unit();
     assert_eq!(3, unit.file_ids().len());
-}
-
-#[test]
-fn test_build_full_abi_fixture() {
-    let unit = FullAbi::build_compilation_unit();
-    assert_eq!(1, unit.file_ids().len());
-}
-
-#[test]
-fn test_build_number_literals_fixture() {
-    let unit = NumberLiterals::build_compilation_unit();
-    assert_eq!(1, unit.file_ids().len());
-}
-
-#[test]
-fn test_build_overrides_fixture() {
-    let unit = Overrides::build_compilation_unit();
-    assert_eq!(1, unit.file_ids().len());
-}
-
-#[test]
-fn test_build_storage_layout_fixture() {
-    let unit = StorageLayout::build_compilation_unit();
-    assert_eq!(1, unit.file_ids().len());
 }
