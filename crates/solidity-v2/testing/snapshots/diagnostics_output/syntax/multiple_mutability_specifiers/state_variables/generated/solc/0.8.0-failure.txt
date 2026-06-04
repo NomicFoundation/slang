@@ -2,10 +2,10 @@
 
 Diagnostics: 1
 
-Error: Only a single mutability specifier can be provided.
-   ╭─[input.sol:2:17]
+Error: Mutability already set to "constant"
+   ╭─[input.sol:5:17]
    │
- 2 │   uint constant immutable x = 1;
+ 5 │   uint constant immutable x = 1;
    │                 ────┬────  
    │                     ╰────── Error occurred here.
 ───╯

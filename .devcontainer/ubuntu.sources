@@ -1,0 +1,40 @@
+# Multi-architecture apt sources for the slang devcontainer.
+#
+# Applied (in place of the base image's default) when building on arm64 hosts,
+# so the foreign amd64 architecture enabled in the Dockerfile can install
+# `libc6:amd64` from a mirror that actually carries x86_64 binaries.
+#
+# Without per-stanza `Architectures:` constraints, apt asks ports.ubuntu.com
+# (the arm64 mirror) for amd64 packages and gets 404s. The four-stanza layout
+# below routes each architecture to its own mirror:
+#   - ports.ubuntu.com    -> arm64 (regular + security suites)
+#   - archive.ubuntu.com  -> amd64 (regular suites)
+#   - security.ubuntu.com -> amd64 (security suite)
+
+Types: deb
+URIs: https://ports.ubuntu.com/ubuntu-ports/
+Suites: noble noble-updates noble-backports
+Components: main restricted universe multiverse
+Architectures: arm64
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+Types: deb
+URIs: https://ports.ubuntu.com/ubuntu-ports/
+Suites: noble-security
+Components: main restricted universe multiverse
+Architectures: arm64
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+Types: deb
+URIs: https://archive.ubuntu.com/ubuntu/
+Suites: noble noble-updates noble-backports
+Components: main restricted universe multiverse
+Architectures: amd64
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+Types: deb
+URIs: https://security.ubuntu.com/ubuntu/
+Suites: noble-security
+Components: main restricted universe multiverse
+Architectures: amd64
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg

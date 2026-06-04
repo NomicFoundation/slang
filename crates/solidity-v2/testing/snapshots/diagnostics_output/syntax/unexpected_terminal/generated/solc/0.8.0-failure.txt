@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Expected primary expression.
+   ╭─[input.sol:4:25]
+   │
+ 4 │ contract Foo { uint x = ; }
+   │                         ┬  
+   │                         ╰── Error occurred here.
+───╯

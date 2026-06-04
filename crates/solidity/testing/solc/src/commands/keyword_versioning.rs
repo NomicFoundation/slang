@@ -1,8 +1,9 @@
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 
 use anyhow::Result;
 use clap::Parser;
 use indicatif::{ProgressBar, ProgressStyle};
+use infra_utils::solc::{Binary, CliInput, InputSource, LanguageSelector};
 use infra_utils::terminal::NumbersDefaultDisplay;
 use language_definition::model::{Item, KeywordDefinition, KeywordItem, Language};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
@@ -10,7 +11,7 @@ use regex::Regex;
 use semver::Version;
 use solidity_language::SolidityDefinition;
 
-use crate::utils::{Binary, CliInput, InputSource, LanguageSelector};
+use crate::utils::is_solc_segfault;
 
 /// Makes sure all Solidity definition keywords have the correct version specifiers.
 #[derive(Debug, Parser)]
@@ -39,7 +40,13 @@ impl KeywordVersioningCommand {
         println!("  > Downloading solc binaries:");
         println!();
 
-        let binaries = Binary::fetch_all(&language)?;
+        let binaries = Binary::fetch_all(
+            language
+                .versions
+                .iter()
+                .filter(|version| !is_solc_segfault(version))
+                .cloned(),
+        )?;
 
         println!();
         println!("  > Testing all variations:");
@@ -226,11 +233,11 @@ impl TestCase {
         }
     }
 
-    fn execute(&self, binaries: &Vec<Binary>) -> TestResult {
+    fn execute(&self, binaries: &BTreeMap<Version, Binary>) -> TestResult {
         let mut should_be_reserved_in = vec![];
         let mut should_be_unreserved_in = vec![];
 
-        for binary in binaries {
+        for binary in binaries.values() {
             let success = self.test_version(binary).unwrap();
             let is_reserved = self.reserved_in.contains(&binary.version);
 

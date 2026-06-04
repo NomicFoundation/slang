@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: State mutability already specified as "payable".
+   ╭─[input.sol:5:30]
+   │
+ 5 │   receive() external payable payable {}
+   │                              ───┬───  
+   │                                 ╰───── Error occurred here.
+───╯

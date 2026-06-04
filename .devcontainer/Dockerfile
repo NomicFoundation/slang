@@ -23,9 +23,29 @@
 # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04@sha256:d94c97dd9cacf183d0a6fd12a8e87b526e9e928307674ae9c94139139c0c6eae
 
+# Populated by BuildKit with the target platform's arch (`amd64`, `arm64`, ...).
+ARG TARGETARCH
+
+# On arm64 hosts (Apple Silicon, Linux aarch64), enable the amd64 architecture
+# so we can install `libc6:amd64` below — needed to exec the x86_64 `solc`
+# binaries used by the diagnostics tests, via Rosetta on macOS or
+# qemu-user-static on Linux aarch64 (the latter installed on the host).
+#
+# We also replace the base image's default `ubuntu.sources` (which points
+# everything at ports.ubuntu.com and 404s for amd64) with the multiarch-aware
+# version in `./ubuntu.sources` — see that file for the per-arch mirror split.
+COPY ./ubuntu.sources /tmp/ubuntu.sources.multiarch
+RUN if [ "$TARGETARCH" = "arm64" ]; then \
+    sudo dpkg --add-architecture amd64 \
+    && sudo cp /tmp/ubuntu.sources.multiarch /etc/apt/sources.list.d/ubuntu.sources; \
+  fi \
+  && rm /tmp/ubuntu.sources.multiarch
+
 RUN sudo apt-get update \
-  && sudo apt-get install --yes "pkg-config" \
-  && rm -rf /var/lib/apt/lists/*
+  && sudo apt-get install --yes \
+    "pkg-config" \
+    $([ "$TARGETARCH" = "arm64" ] && echo "libc6:amd64") \
+  && rm -rf "/var/lib/apt/lists/*"
 
 # Setup default Bash and Zsh for local development inside the image:
 COPY --chown=vscode:vscode ./scripts/ /home/vscode/

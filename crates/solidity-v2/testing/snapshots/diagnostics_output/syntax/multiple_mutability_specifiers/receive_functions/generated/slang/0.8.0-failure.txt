@@ -3,9 +3,9 @@
 Diagnostics: 1
 
 Error: Only a single mutability specifier can be provided.
-   ╭─[input.sol:2:30]
+   ╭─[input.sol:5:30]
    │
- 2 │   receive() external payable payable {}
+ 5 │   receive() external payable payable {}
    │                              ───┬───  
    │                                 ╰───── Error occurred here.
 ───╯

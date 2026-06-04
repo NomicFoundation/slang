@@ -1,5 +1,3 @@
-mod binaries;
-mod json_cli;
+mod versions;
 
-pub use binaries::*;
-pub use json_cli::*;
+pub use versions::*;

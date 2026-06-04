@@ -3,9 +3,9 @@
 Diagnostics: 1
 
 Error: This syntax was introduced in version '0.8.4'.
-   ╭─[input.sol:1:1]
+   ╭─[input.sol:4:1]
    │
- 1 │ error MyError();
+ 4 │ error MyError();
    │ ────────┬───────  
    │         ╰───────── Error occurred here.
 ───╯

@@ -9,14 +9,15 @@ use anyhow::Result;
 use clap::Parser;
 use console::{style, Color};
 use infra_utils::paths::PathExtensions;
+use infra_utils::solc::{
+    Binary, CliInput, Error, InputSource, LanguageSelector, Severity, SourceLocation,
+};
 use infra_utils::terminal::Terminal;
 use itertools::Itertools;
 use semver::Version;
 use solidity_language::SolidityDefinition;
 
-use crate::utils::{
-    Binary, CliInput, Error, InputSource, LanguageSelector, Severity, SourceLocation,
-};
+use crate::utils::is_solc_segfault;
 
 /// Compiles a Solidity file with all versions of `solc`, listing which versions succeeded/failed.
 #[derive(Debug, Parser)]
@@ -28,12 +29,18 @@ pub struct DissectCommand {
 impl DissectCommand {
     pub fn execute(self) -> Result<()> {
         let language = SolidityDefinition::create();
-        let binaries = Binary::fetch_all(&language)?;
+        let binaries = Binary::fetch_all(
+            language
+                .versions
+                .iter()
+                .filter(|version| !is_solc_segfault(version))
+                .cloned(),
+        )?;
 
         let mut dissector = Dissector::new(self.file.clone())?;
 
-        for binary in binaries {
-            dissector.inspect_version(&binary)?;
+        for binary in binaries.values() {
+            dissector.inspect_version(binary)?;
         }
 
         dissector.flush()?;

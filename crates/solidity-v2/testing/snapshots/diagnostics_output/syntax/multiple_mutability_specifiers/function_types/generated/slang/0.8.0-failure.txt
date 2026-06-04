@@ -3,9 +3,9 @@
 Diagnostics: 1
 
 Error: Only a single mutability specifier can be provided.
-   ╭─[input.sol:2:32]
+   ╭─[input.sol:5:32]
    │
- 2 │   function foo(function() pure view returns (uint) callback) {}
+ 5 │   function foo(function() pure view returns (uint) callback) {}
    │                                ──┬─  
    │                                  ╰─── Error occurred here.
 ───╯

@@ -4431,13 +4431,9 @@ dependencies = [
  "language_definition",
  "rayon",
  "regex",
- "reqwest",
  "semver 1.0.28",
- "serde",
  "serde_json",
  "solidity_language",
- "strum 0.28.0",
- "url",
 ]
 
 [[package]]
@@ -4480,6 +4476,7 @@ dependencies = [
  "indoc",
  "infra_utils",
  "regex",
+ "semver 1.0.28",
  "slang_solidity_v2",
  "slang_solidity_v2_common",
  "slang_solidity_v2_ir",

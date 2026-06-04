@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Source "oops.sol" not found: File outside of allowed directories.
+   ╭─[input.sol:5:1]
+   │
+ 5 │ import "../../oops.sol";
+   │ ────────────┬───────────  
+   │             ╰───────────── Error occurred here.
+───╯
