@@ -11,7 +11,7 @@ pub(crate) use solc::SolcTarget;
 pub(crate) trait TestTarget {
     fn name(&self) -> &'static str;
 
-    fn get_errors(
+    fn collect_diagnostics(
         &self,
         files: &BTreeMap<String, String>,
         version: &Version,

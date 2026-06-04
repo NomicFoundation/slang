@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Source "lib/missing.sol" not found: File not found. Searched the following locations: "".
+[ParserError 6275] Error: Source "lib/missing.sol" not found: File not found. Searched the following locations: "".
    ╭─[main.sol:4:1]
    │
  4 │ import "lib/missing.sol";

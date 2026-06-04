@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: State mutability already specified as "payable".
+[ParserError 9680] Error: State mutability already specified as "payable".
    ╭─[input.sol:5:25]
    │
  5 │   constructor() payable payable {}

@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Source "oops.sol" not found: File not found. Searched the following locations: "".
+[ParserError 6275] Error: Source "oops.sol" not found: File not found. Searched the following locations: "".
    ╭─[input.sol:5:1]
    │
  5 │ import "../../oops.sol";

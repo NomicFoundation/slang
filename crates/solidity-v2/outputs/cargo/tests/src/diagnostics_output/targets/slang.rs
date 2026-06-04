@@ -16,7 +16,7 @@ impl TestTarget for SlangTarget {
         "slang"
     }
 
-    fn get_errors(
+    fn collect_diagnostics(
         &self,
         files: &BTreeMap<String, String>,
         version: &Version,
@@ -36,14 +36,14 @@ impl TestTarget for SlangTarget {
         let compilation = builder.build();
         let diagnostics = compilation.diagnostics();
 
-        let mut errors = Vec::new();
+        let mut rendered = Vec::new();
         for diagnostic in diagnostics {
             let file_id = diagnostic.file_id();
             let source = files.get(file_id).cloned().unwrap_or_default();
-            errors.push(diagnostic::render(diagnostic, file_id, &source, false));
+            rendered.push(diagnostic::render(diagnostic, file_id, &source, false));
         }
 
-        Ok(errors)
+        Ok(rendered)
     }
 }
 

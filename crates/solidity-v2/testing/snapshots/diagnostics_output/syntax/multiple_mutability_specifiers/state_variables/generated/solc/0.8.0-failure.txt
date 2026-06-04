@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Mutability already set to "constant"
+[ParserError 3109] Error: Mutability already set to "constant"
    ╭─[input.sol:5:17]
    │
  5 │   uint constant immutable x = 1;

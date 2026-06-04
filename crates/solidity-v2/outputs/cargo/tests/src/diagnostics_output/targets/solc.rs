@@ -23,7 +23,7 @@ impl TestTarget for SolcTarget {
         "solc"
     }
 
-    fn get_errors(
+    fn collect_diagnostics(
         &self,
         files: &BTreeMap<String, String>,
         version: &Version,
@@ -49,15 +49,13 @@ impl TestTarget for SolcTarget {
         };
 
         let output = binary.run(&input)?;
-        let raw_errors = output.errors.unwrap_or_default();
-        let mut errors = Vec::with_capacity(raw_errors.len());
+        let errors = output.errors.unwrap_or_default();
 
-        for error in &raw_errors {
-            let mut rendered = String::new();
-            render_solc_error(error, files, &mut rendered)?;
-            errors.push(rendered);
-        }
+        let rendered = errors
+            .into_iter()
+            .map(|error| render_solc_error(&error, files).unwrap())
+            .collect();
 
-        Ok(errors)
+        Ok(rendered)
     }
 }

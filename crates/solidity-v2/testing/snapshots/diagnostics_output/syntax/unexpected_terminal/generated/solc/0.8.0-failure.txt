@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Expected primary expression.
+[ParserError 6933] Error: Expected primary expression.
    ╭─[input.sol:4:25]
    │
  4 │ contract Foo { uint x = ; }

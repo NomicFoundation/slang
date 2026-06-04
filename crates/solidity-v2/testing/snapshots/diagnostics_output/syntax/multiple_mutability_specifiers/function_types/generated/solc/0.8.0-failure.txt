@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: State mutability already specified as "pure".
+[ParserError 9680] Error: State mutability already specified as "pure".
    ╭─[input.sol:5:32]
    │
  5 │   function foo(function() pure view returns (uint) callback) {}

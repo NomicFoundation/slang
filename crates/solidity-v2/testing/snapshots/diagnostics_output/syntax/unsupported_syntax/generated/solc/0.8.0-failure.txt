@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Expected ';' but got '('
+[ParserError 2314] Error: Expected ';' but got '('
    ╭─[input.sol:4:14]
    │
  4 │ error MyError();
