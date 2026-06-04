@@ -34,11 +34,16 @@ fn test_compute_internal_signature() {
     );
 
     // State variables are linearised in storage layout order (bases first).
-    // Only the public `b` defines a getter with an internal signature.
+    // Only the public variables defines a getter with an internal signature.
     let state_variables = test_contract.compute_linearised_state_variables();
-    assert_eq!(state_variables.len(), 1);
+    assert_eq!(state_variables.len(), 3);
     assert_eq!(
         state_variables[0].compute_internal_signature(),
+        Some("xs(uint256)".to_string())
+    );
+    assert_eq!(state_variables[1].compute_internal_signature(), None,);
+    assert_eq!(
+        state_variables[2].compute_internal_signature(),
         Some("b()".to_string())
     );
 

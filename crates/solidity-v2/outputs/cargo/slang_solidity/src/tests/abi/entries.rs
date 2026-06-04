@@ -63,12 +63,16 @@ fn test_full_abi_with_events_and_errors() {
     let unit = super::FullAbi::build_compilation_unit();
 
     let contracts_abi = unit.compute_contracts_abi();
-    assert_eq!(contracts_abi.len(), 1);
-    assert_eq!(contracts_abi[0].name(), "Test");
+    assert_eq!(contracts_abi.len(), 2);
+    assert_eq!(contracts_abi[0].name(), "Base");
+    assert_eq!(contracts_abi[1].name(), "Test");
 
     let entries = contracts_abi[0].entries();
-    assert_eq!(entries.len(), 9);
+    assert_eq!(entries.len(), 1);
+    assert!(matches!(&entries[0], AbiEntry::Function(f) if f.name() == "xs"));
 
+    let entries = contracts_abi[1].entries();
+    assert_eq!(entries.len(), 10);
     assert!(matches!(entries[0], AbiEntry::Constructor(_)));
     assert!(matches!(&entries[1], AbiEntry::Error(e) if e.name() == "InsufficientBalance"));
     assert!(matches!(&entries[2], AbiEntry::Error(e) if e.name() == "SomethingWrong"));
@@ -77,7 +81,8 @@ fn test_full_abi_with_events_and_errors() {
     assert!(matches!(entries[5], AbiEntry::Fallback(_)));
     assert!(matches!(&entries[6], AbiEntry::Function(f) if f.name() == "b"));
     assert!(matches!(&entries[7], AbiEntry::Function(f) if f.name() == "foo"));
-    assert!(matches!(entries[8], AbiEntry::Receive(_)));
+    assert!(matches!(&entries[8], AbiEntry::Function(f) if f.name() == "xs"));
+    assert!(matches!(entries[9], AbiEntry::Receive(_)));
 }
 
 #[test]

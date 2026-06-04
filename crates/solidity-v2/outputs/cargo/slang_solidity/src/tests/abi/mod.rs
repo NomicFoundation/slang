@@ -24,12 +24,17 @@ define_fixture!(
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8;
 
-interface Base {
+interface ITest {
     error SomethingWrong(string);
     event BaseEvent(uint a, string m) anonymous;
 }
 
-contract Test is Base {
+contract Base {
+    uint[] public xs;
+    bool a;
+}
+
+contract Test is ITest, Base {
     bytes32 public b;
     constructor() { b = hex"12345678901234567890123456789012"; }
     event Event(uint indexed a, bytes32 b);
