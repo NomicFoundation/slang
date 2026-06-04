@@ -919,6 +919,7 @@ pub slang_solidity_v2_ast::ast::Type::FixedSizeArray(slang_solidity_v2_ast::ast:
 pub slang_solidity_v2_ast::ast::Type::Function(slang_solidity_v2_ast::ast::FunctionType)
 pub slang_solidity_v2_ast::ast::Type::Integer(slang_solidity_v2_ast::ast::IntegerType)
 pub slang_solidity_v2_ast::ast::Type::Interface(slang_solidity_v2_ast::ast::InterfaceType)
+pub slang_solidity_v2_ast::ast::Type::Library(slang_solidity_v2_ast::ast::types::LibraryType)
 pub slang_solidity_v2_ast::ast::Type::Literal(slang_solidity_v2_ast::ast::LiteralType)
 pub slang_solidity_v2_ast::ast::Type::Mapping(slang_solidity_v2_ast::ast::MappingType)
 pub slang_solidity_v2_ast::ast::Type::String(slang_solidity_v2_ast::ast::StringType)

@@ -57,6 +57,9 @@ pub enum Type {
     Interface {
         definition_id: NodeId,
     },
+    Library {
+        definition_id: NodeId,
+    },
     Literal(LiteralKind),
     Mapping {
         key_type_id: TypeId,
@@ -298,7 +301,11 @@ impl Type {
             .is_some_and(|location| location == DataLocation::Inherited)
     }
 
-    pub fn can_return_from_getter(&self) -> bool {
+    /// This function determines whether a type can be returned directly from
+    /// a getter function without any extra parameter.
+    ///
+    /// Arrays and mapping can't
+    pub fn can_return_from_getter_directly(&self) -> bool {
         match self {
             Type::Address { .. }
             | Type::Boolean
@@ -310,14 +317,22 @@ impl Type {
             | Type::Integer { .. }
             | Type::Interface { .. }
             | Type::String { .. }
+            | Type::Struct { .. }
             | Type::UserDefinedValue { .. } => true,
+            Type::Function(FunctionType { visibility, .. }) => {
+                // Function types can only be returned if they're external
+                visibility == &FunctionTypeVisibility::External
+            }
 
+            // Can be returned, just not inside a struct
             Type::Array { .. }
             | Type::FixedSizeArray { .. }
-            | Type::Function(_)
             | Type::Mapping { .. }
+            // Actually can't return from a getter
+            // TODO(validation) SDR[1394]: Not sure if this is the best place for this check,
+            // but it's related.
             | Type::Literal(_)
-            | Type::Struct { .. }
+            | Type::Library { .. }
             | Type::Tuple { .. }
             | Type::Void => false,
         }
@@ -352,7 +367,8 @@ impl Type {
             | Type::Enum { definition_id }
             | Type::Interface { definition_id }
             | Type::Struct { definition_id, .. }
-            | Type::UserDefinedValue { definition_id } => Some(*definition_id),
+            | Type::UserDefinedValue { definition_id }
+            | Type::Library { definition_id } => Some(*definition_id),
             _ => None,
         }
     }

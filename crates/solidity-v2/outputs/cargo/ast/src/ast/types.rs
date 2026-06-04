@@ -26,6 +26,7 @@ pub enum Type {
     Function(FunctionType),
     Integer(IntegerType),
     Interface(InterfaceType),
+    Library(LibraryType),
     Literal(LiteralType),
     Mapping(MappingType),
     String(StringType),
@@ -66,6 +67,7 @@ define_type_variant!(FixedPointNumber);
 define_type_variant!(Function);
 define_type_variant!(Integer);
 define_type_variant!(Interface);
+define_type_variant!(Library);
 define_type_variant!(Literal);
 define_type_variant!(Mapping);
 define_type_variant!(String);
@@ -103,6 +105,7 @@ impl Type {
             types::Type::Function(_) => Self::Function(FunctionType { type_id, semantic }),
             types::Type::Integer { .. } => Self::Integer(IntegerType { type_id, semantic }),
             types::Type::Interface { .. } => Self::Interface(InterfaceType { type_id, semantic }),
+            types::Type::Library { .. } => Self::Library(LibraryType { type_id, semantic }),
             types::Type::Literal(_) => Self::Literal(LiteralType { type_id, semantic }),
             types::Type::Mapping { .. } => Self::Mapping(MappingType { type_id, semantic }),
             types::Type::String { .. } => Self::String(StringType { type_id, semantic }),
@@ -129,6 +132,7 @@ impl Type {
             Type::Function(details) => details.type_id,
             Type::Integer(details) => details.type_id,
             Type::Interface(details) => details.type_id,
+            Type::Library(details) => details.type_id,
             Type::Literal(details) => details.type_id,
             Type::Mapping(details) => details.type_id,
             Type::String(details) => details.type_id,
@@ -358,6 +362,15 @@ impl InterfaceType {
         };
         Definition::try_create(*definition_id, &self.semantic)
             .expect("invalid interface definition")
+    }
+}
+
+impl LibraryType {
+    pub fn definition(&self) -> Definition {
+        let types::Type::Library { definition_id } = self.internal_type() else {
+            unreachable!("invalid library type");
+        };
+        Definition::try_create(*definition_id, &self.semantic).expect("invalid library definition")
     }
 }
 

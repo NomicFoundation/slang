@@ -96,6 +96,11 @@ impl Visitor for Pass<'_> {
 
     fn enter_library_definition(&mut self, node: &ir::LibraryDefinition) -> bool {
         self.enter_scope_for_node_id(node.id());
+
+        self.types.register_type(Type::Library {
+            definition_id: node.id(),
+        });
+
         true
     }
 

@@ -70,6 +70,7 @@ impl Pass<'_> {
             Definition::Contract(_) => Some(Type::Contract { definition_id }),
             Definition::Enum(_) => Some(Type::Enum { definition_id }),
             Definition::Interface(_) => Some(Type::Interface { definition_id }),
+            Definition::Library(_) => Some(Type::Library { definition_id }),
             Definition::Struct(_) => Some(Type::Struct {
                 definition_id,
                 location: DataLocation::Memory,
@@ -236,6 +237,7 @@ impl Pass<'_> {
 
     pub(super) fn typing_is_contract_reference(&self, typing: &Typing) -> bool {
         match typing {
+            // TODO(this-typing): Once `This` carries a type, check that it's either a contract or an interface type
             Typing::This => true,
             Typing::Resolved(type_id) => matches!(
                 self.types.get_type_by_id(*type_id),
@@ -409,6 +411,13 @@ impl Pass<'_> {
                     Some(Definition::Interface(_)) => {
                         // TODO(validation) SDR[39]: the type of the first argument should be an address
                         let type_id = self.types.register_type(Type::Interface {
+                            definition_id: node_id,
+                        });
+                        Typing::Resolved(type_id)
+                    }
+                    Some(Definition::Library(_)) => {
+                        // TODO(validation) SDR[39]: the type of the first argument should be an address
+                        let type_id = self.types.register_type(Type::Library {
                             definition_id: node_id,
                         });
                         Typing::Resolved(type_id)

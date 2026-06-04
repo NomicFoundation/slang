@@ -3,7 +3,7 @@ use num_rational::BigRational;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
 
-use super::build_file;
+use super::{build_file, TestFile};
 use crate::binder::Binder;
 use crate::context::SemanticFile;
 use crate::passes::common::node_id_for_expression_typing;
@@ -11,6 +11,91 @@ use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
 };
 use crate::types::{DataLocation, LiteralKind, Type, TypeId, TypeRegistry};
+
+struct TypeAnalysis {
+    file: TestFile,
+    binder: Binder,
+    types: TypeRegistry,
+}
+
+/// Builds and runs every semantic pass over an arbitrary Solidity `source`,
+fn analyze(language_version: LanguageVersion, source: &str) -> TypeAnalysis {
+    let mut id_generator = NodeIdGenerator::default();
+    let file = build_file("test.sol", source, &mut id_generator, language_version);
+    let files = vec![file];
+
+    let mut binder = Binder::default();
+    let mut types = TypeRegistry::default();
+    p1_collect_definitions::run(&files, &mut binder);
+    p2_linearise_contracts::run(&files, &mut binder);
+    p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
+    p4_resolve_references::run(&files, &mut binder, &mut types, language_version);
+
+    TypeAnalysis {
+        file: files.into_iter().next().unwrap(),
+        binder,
+        types,
+    }
+}
+
+/// Recovers the typing recorded for an expression `node`, resolved to a
+/// concrete [`Type`].
+fn recover_expression_type(
+    node: &ir::Expression,
+    binder: &Binder,
+    types: &TypeRegistry,
+) -> Option<Type> {
+    let node_id = node_id_for_expression_typing(node)?;
+    binder
+        .node_typing(node_id)
+        .as_type_id()
+        .map(|type_id| types.get_type_by_id(type_id).clone())
+}
+
+/// Finds the function named `name` among a contract's or library's `members`.
+fn find_function<'a>(
+    members: &'a [ir::ContractMember],
+    name: &str,
+) -> Option<&'a ir::FunctionDefinition> {
+    members.iter().find_map(|member| match member {
+        ir::ContractMember::FunctionDefinition(function)
+            if function.name.as_ref().is_some_and(|n| n.unparse() == name) =>
+        {
+            Some(function)
+        }
+        _ => None,
+    })
+}
+
+/// Finds the top-level contract named `name`.
+fn find_contract<'a>(file: &'a TestFile, name: &str) -> &'a ir::ContractDefinition {
+    file.ir_root()
+        .members
+        .iter()
+        .find_map(|member| match member {
+            ir::SourceUnitMember::ContractDefinition(c) if c.name.unparse() == name => Some(c),
+            _ => None,
+        })
+        .unwrap_or_else(|| panic!("contract `{name}` not found"))
+}
+
+/// Collects the recovered type of each expression statement in `body`, in
+/// source order.
+fn expression_statement_types(
+    body: &ir::Block,
+    binder: &Binder,
+    types: &TypeRegistry,
+) -> Vec<Option<Type>> {
+    body.statements
+        .iter()
+        .filter_map(|stmt| match stmt {
+            ir::Statement::ExpressionStatement(s) => {
+                Some(recover_expression_type(&s.expression, binder, types))
+            }
+            _ => None,
+        })
+        .collect()
+}
 
 /// Wraps each expression in a no-op expression statement inside the body of an
 /// `__test()` function of a synthesized `Test` contract, runs every semantic
@@ -33,61 +118,27 @@ fn type_of_expressions(
         .collect::<Vec<_>>()
         .join("\n");
     let source = format!(
-        "contract Test {{\n\
-            {context_block}\n\
-            function __test() internal {{\n\
-                {expression_statements}\n\
-            }}\n\
-        }}\n"
+        r#"
+        contract Test {{
+            {context_block}
+            function __test() internal {{
+                {expression_statements}
+            }}
+        }}
+        "#
     );
 
-    let mut id_generator = NodeIdGenerator::default();
-    let file = build_file("test.sol", &source, &mut id_generator, language_version);
-    let files = [file];
+    let TypeAnalysis {
+        file,
+        binder,
+        types,
+    } = analyze(language_version, &source);
 
-    let mut binder = Binder::default();
-    let mut types = TypeRegistry::default();
-    p1_collect_definitions::run(&files, &mut binder);
-    p2_linearise_contracts::run(&files, &mut binder);
-    p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
-    p4_resolve_references::run(&files, &mut binder, &mut types, language_version);
-
-    let contract = match files[0].ir_root().members.last().unwrap() {
-        ir::SourceUnitMember::ContractDefinition(c) => c,
-        other => panic!("expected ContractDefinition, got {other:?}"),
-    };
-    let function = contract
-        .members
-        .iter()
-        .find_map(|member| match member {
-            ir::ContractMember::FunctionDefinition(f)
-                if f.name.as_ref().is_some_and(|n| n.unparse() == "__test") =>
-            {
-                Some(f)
-            }
-            _ => None,
-        })
-        .expect("__test function not found");
+    let contract = find_contract(&file, "Test");
+    let function = find_function(&contract.members, "__test").expect("__test function not found");
     let block = function.body.as_ref().expect("__test has a body");
 
-    let typings = block
-        .statements
-        .iter()
-        .filter_map(|stmt| match stmt {
-            ir::Statement::ExpressionStatement(s) => {
-                let node_id = node_id_for_expression_typing(&s.expression)
-                    .expect("expression registers its typing in the binder");
-                Some(
-                    binder
-                        .node_typing(node_id)
-                        .as_type_id()
-                        .map(|type_id| types.get_type_by_id(type_id))
-                        .cloned(),
-                )
-            }
-            _ => None,
-        })
-        .collect();
+    let typings = expression_statement_types(block, &binder, &types);
 
     (typings, types)
 }
@@ -883,10 +934,12 @@ fn test_data_locations_of_state_variable_and_getter_accesses() {
     let (typings, _) = type_of_expressions(
         LanguageVersion::LATEST,
         Some(
-            "struct Foo { bytes xs; }\n\
-             bytes public bs;\n\
-             Foo public foo;\n\
-             Test t;",
+            r#"
+            struct Foo { bytes xs; }
+            bytes public bs;
+            Foo public foo;
+            Test t;
+            "#,
         ),
         &["bs", "foo.xs", "t.bs()", "t.foo()"],
     );
@@ -905,4 +958,119 @@ fn test_data_locations_of_state_variable_and_getter_accesses() {
         }),
     ];
     assert_eq!(typings, expected);
+}
+
+#[test]
+fn test_cast_address_to_library_is_library_typed() {
+    // Casting an address to a library (`MyLib(x)`) is valid Solidity and
+    // yields a value of the library type, which can then be compared against
+    // another library value.
+    let source = r#"
+        library MyLib {
+            function f() public pure returns (uint) { return 1; }
+        }
+        contract Test {
+            function probe(address x, address y) internal pure {
+                MyLib(x);
+                MyLib(x) == MyLib(y);
+            }
+        }
+    "#;
+    let TypeAnalysis {
+        file,
+        binder,
+        types,
+    } = analyze(LanguageVersion::LATEST, source);
+
+    let contract = find_contract(&file, "Test");
+    let probe = find_function(&contract.members, "probe").expect("probe function");
+    let body = probe.body.as_ref().expect("probe has a body");
+
+    let typings = expression_statement_types(body, &binder, &types);
+    let [cast, comparison] = typings.as_slice() else {
+        panic!("expected two expression statements, got {typings:?}");
+    };
+
+    assert!(
+        matches!(cast, Some(Type::Library { .. })),
+        "expected `MyLib(x)` to be typed as the library, got {cast:?}",
+    );
+    assert_eq!(
+        comparison,
+        &Some(Type::Boolean),
+        "expected `MyLib(x) == MyLib(y)` to be a boolean",
+    );
+}
+
+#[test]
+fn test_getter_of_struct_with_function_member() {
+    // The auto-generated getter of a public struct state variable returns a
+    // tuple of its value-type fields.
+    let (getter_type, types) = type_of_expression_in_context(
+        r#"
+        struct S { uint a; function() external fn; }
+        S public s;
+        Test other;
+        "#,
+        "other.s()",
+    );
+
+    let Type::Tuple { types: elements } = getter_type else {
+        panic!("expected the getter to return a tuple, got {getter_type:?}");
+    };
+    let element_types: Vec<&Type> = elements
+        .iter()
+        .map(|type_id| types.get_type_by_id(*type_id))
+        .collect();
+
+    assert!(
+        matches!(
+            element_types.as_slice(),
+            [
+                Type::Integer {
+                    signed: false,
+                    bits: 256
+                },
+                Type::Function(_),
+            ]
+        ),
+        "expected getter tuple `(uint256, function() external)`, got {element_types:?}",
+    );
+}
+
+#[test]
+fn test_getter_of_struct_with_struct_member() {
+    // The auto-generated getter of a public struct state variable returns a
+    // tuple of its value-type fields.
+    let (getter_type, types) = type_of_expression_in_context(
+        r#"
+        struct P { bool a; }
+        struct S { P p; uint a; }
+        S public s;
+        Test other;
+        "#,
+        "other.s()",
+    );
+
+    let Type::Tuple { types: elements } = getter_type else {
+        panic!("expected the getter to return a tuple, got {getter_type:?}");
+    };
+    let element_types: Vec<&Type> = elements
+        .iter()
+        .map(|type_id| types.get_type_by_id(*type_id))
+        .collect();
+
+    assert!(
+        matches!(
+            element_types.as_slice(),
+            [
+                Type::Struct { .. },
+                Type::Integer {
+                    signed: false,
+                    bits: 256
+                },
+            ]
+        ),
+        "expected getter tuple `(Struct, uint256)`, got {element_types:?}",
+    );
 }
