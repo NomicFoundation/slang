@@ -317,15 +317,20 @@ impl Type {
             | Type::Integer { .. }
             | Type::Interface { .. }
             | Type::String { .. }
-            | Type::Function(_)
             | Type::Struct { .. }
             | Type::UserDefinedValue { .. } => true,
+            Type::Function(FunctionType { visibility, .. }) => {
+                // Function types can only be returned if they're external
+                visibility == &FunctionTypeVisibility::External
+            }
 
             // Can be returned, just not inside a struct
             Type::Array { .. }
             | Type::FixedSizeArray { .. }
             | Type::Mapping { .. }
             // Actually can't return from a getter
+            // TODO(validation) SDR[1394]: Not sure if this is the best place for this check,
+            // but it's related.
             | Type::Literal(_)
             | Type::Library { .. }
             | Type::Tuple { .. }

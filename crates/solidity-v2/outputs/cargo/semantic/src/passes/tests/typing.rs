@@ -12,8 +12,14 @@ use crate::passes::{
 };
 use crate::types::{DataLocation, LiteralKind, Type, TypeId, TypeRegistry};
 
+struct TypeAnalysis {
+    file: TestFile,
+    binder: Binder,
+    types: TypeRegistry,
+}
+
 /// Builds and runs every semantic pass over an arbitrary Solidity `source`,
-fn analyze(language_version: LanguageVersion, source: &str) -> (TestFile, Binder, TypeRegistry) {
+fn analyze(language_version: LanguageVersion, source: &str) -> TypeAnalysis {
     let mut id_generator = NodeIdGenerator::default();
     let file = build_file("test.sol", source, &mut id_generator, language_version);
     let files = vec![file];
@@ -25,7 +31,11 @@ fn analyze(language_version: LanguageVersion, source: &str) -> (TestFile, Binder
     p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
     p4_resolve_references::run(&files, &mut binder, &mut types, language_version);
 
-    (files.into_iter().next().unwrap(), binder, types)
+    TypeAnalysis {
+        file: files.into_iter().next().unwrap(),
+        binder,
+        types,
+    }
 }
 
 /// Recovers the typing recorded for an expression `node`, resolved to a
@@ -108,15 +118,21 @@ fn type_of_expressions(
         .collect::<Vec<_>>()
         .join("\n");
     let source = format!(
-        "contract Test {{\n\
-            {context_block}\n\
-            function __test() internal {{\n\
-                {expression_statements}\n\
-            }}\n\
-        }}\n"
+        r#"
+        contract Test {{
+            {context_block}
+            function __test() internal {{
+                {expression_statements}
+            }}
+        }}
+        "#
     );
 
-    let (file, binder, types) = analyze(language_version, &source);
+    let TypeAnalysis {
+        file,
+        binder,
+        types,
+    } = analyze(language_version, &source);
 
     let contract = find_contract(&file, "Test");
     let function = find_function(&contract.members, "__test").expect("__test function not found");
@@ -918,10 +934,12 @@ fn test_data_locations_of_state_variable_and_getter_accesses() {
     let (typings, _) = type_of_expressions(
         LanguageVersion::LATEST,
         Some(
-            "struct Foo { bytes xs; }\n\
-             bytes public bs;\n\
-             Foo public foo;\n\
-             Test t;",
+            r#"
+            struct Foo { bytes xs; }
+            bytes public bs;
+            Foo public foo;
+            Test t;
+            "#,
         ),
         &["bs", "foo.xs", "t.bs()", "t.foo()"],
     );
@@ -947,17 +965,22 @@ fn test_cast_address_to_library_is_library_typed() {
     // Casting an address to a library (`MyLib(x)`) is valid Solidity and
     // yields a value of the library type, which can then be compared against
     // another library value.
-    let source = "\
-        library MyLib {\n\
-            function f() public pure returns (uint) { return 1; }\n\
-        }\n\
-        contract Test {\n\
-            function probe(address x, address y) internal pure {\n\
-                MyLib(x);\n\
-                MyLib(x) == MyLib(y);\n\
-            }\n\
-        }\n";
-    let (file, binder, types) = analyze(LanguageVersion::LATEST, source);
+    let source = r#"
+        library MyLib {
+            function f() public pure returns (uint) { return 1; }
+        }
+        contract Test {
+            function probe(address x, address y) internal pure {
+                MyLib(x);
+                MyLib(x) == MyLib(y);
+            }
+        }
+    "#;
+    let TypeAnalysis {
+        file,
+        binder,
+        types,
+    } = analyze(LanguageVersion::LATEST, source);
 
     let contract = find_contract(&file, "Test");
     let probe = find_function(&contract.members, "probe").expect("probe function");
@@ -984,9 +1007,11 @@ fn test_getter_of_struct_with_function_member() {
     // The auto-generated getter of a public struct state variable returns a
     // tuple of its value-type fields.
     let (getter_type, types) = type_of_expression_in_context(
-        "struct S { uint a; function() external fn; }\n\
-         S public s;\n\
-         Test other;",
+        r#"
+        struct S { uint a; function() external fn; }
+        S public s;
+        Test other;
+        "#,
         "other.s()",
     );
 
@@ -1018,10 +1043,12 @@ fn test_getter_of_struct_with_struct_member() {
     // The auto-generated getter of a public struct state variable returns a
     // tuple of its value-type fields.
     let (getter_type, types) = type_of_expression_in_context(
-        "struct P { bool a; }\n\
-         struct S { P p; uint a; }\n\
-         S public s;\n\
-         Test other;",
+        r#"
+        struct P { bool a; }
+        struct S { P p; uint a; }
+        S public s;
+        Test other;
+        "#,
         "other.s()",
     );
 
