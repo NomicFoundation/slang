@@ -31,18 +31,26 @@ pub struct CliOutput {
 #[derive(Debug, Deserialize, Eq, PartialEq)]
 pub struct Error {
     pub message: String,
+
     pub severity: Severity,
+
+    #[serde(rename = "type")]
+    pub r#type: String,
+
+    #[serde(rename = "errorCode")]
+    pub error_code: String,
+
     #[serde(rename = "sourceLocation")]
-    pub location: Option<SourceLocation>,
+    pub location: SourceLocation,
 }
 
-#[derive(Debug, Deserialize, Eq, PartialEq)]
+#[derive(Debug, Default, Deserialize, Eq, PartialEq)]
 pub struct SourceLocation {
     pub file: PathBuf,
-    /// 0-based character index (-1 means not applicable)
-    pub start: i32,
-    /// 0-based character index (-1 means not applicable)
-    pub end: i32,
+    /// 0-based character index
+    pub start: usize,
+    /// 0-based character index
+    pub end: usize,
 }
 
 #[derive(Display, Debug, Deserialize, Eq, Ord, PartialEq, PartialOrd)]

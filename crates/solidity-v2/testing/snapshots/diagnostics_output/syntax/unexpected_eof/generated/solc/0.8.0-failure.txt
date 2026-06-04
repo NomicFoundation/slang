@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 9182] Error: Function, variable, struct or modifier declaration expected.
+   ╭─[input.sol:4:16]
+   │
+ 4 │ contract Foo {
+   │                │ 
+   │                ╰─ Error occurred here.
+───╯

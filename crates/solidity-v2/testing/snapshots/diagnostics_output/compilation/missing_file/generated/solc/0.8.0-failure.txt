@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 6275] Error: Source "lib/missing.sol" not found: File outside of allowed directories.
+   ╭─[main.sol:4:1]
+   │
+ 4 │ import "lib/missing.sol";
+   │ ────────────┬────────────  
+   │             ╰────────────── Error occurred here.
+───╯

@@ -7,7 +7,6 @@ publish = false
 
 [dependencies]
 anyhow = { workspace = true }
-ariadne = { workspace = true }
 clap = { workspace = true }
 console = { workspace = true }
 indicatif = { workspace = true }
@@ -16,13 +15,9 @@ itertools = { workspace = true }
 language_definition = { workspace = true }
 rayon = { workspace = true }
 regex = { workspace = true }
-reqwest = { workspace = true }
 semver = { workspace = true }
-serde = { workspace = true }
 serde_json = { workspace = true }
 solidity_language = { workspace = true }
-strum = { workspace = true }
-url = { workspace = true }
 
 [lints]
 workspace = true

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 3109] Error: Mutability already set to "constant"
+   ╭─[input.sol:5:17]
+   │
+ 5 │   uint constant immutable x = 1;
+   │                 ────┬────  
+   │                     ╰────── Error occurred here.
+───╯

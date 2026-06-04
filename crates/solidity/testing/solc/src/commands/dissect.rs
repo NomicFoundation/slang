@@ -3,20 +3,23 @@
 //! This way, it can show which versions succeeded/failed and what the errors were.
 //! This is useful when working on the Solidity grammar, to detect syntactic breaking changes.
 
+use std::collections::BTreeMap;
 use std::path::PathBuf;
 
 use anyhow::Result;
 use clap::Parser;
 use console::{style, Color};
 use infra_utils::paths::PathExtensions;
+use infra_utils::solc::{
+    render_solc_error, Binary, CliInput, Error, InputSource, LanguageSelector, Severity,
+    SourceLocation,
+};
 use infra_utils::terminal::Terminal;
 use itertools::Itertools;
 use semver::Version;
 use solidity_language::SolidityDefinition;
 
-use crate::utils::{
-    Binary, CliInput, Error, InputSource, LanguageSelector, Severity, SourceLocation,
-};
+use crate::utils::is_solc_segfault;
 
 /// Compiles a Solidity file with all versions of `solc`, listing which versions succeeded/failed.
 #[derive(Debug, Parser)]
@@ -28,12 +31,18 @@ pub struct DissectCommand {
 impl DissectCommand {
     pub fn execute(self) -> Result<()> {
         let language = SolidityDefinition::create();
-        let binaries = Binary::fetch_all(&language)?;
+        let binaries = Binary::fetch_all(
+            language
+                .versions
+                .iter()
+                .filter(|version| !is_solc_segfault(version))
+                .cloned(),
+        )?;
 
         let mut dissector = Dissector::new(self.file.clone())?;
 
-        for binary in binaries {
-            dissector.inspect_version(&binary)?;
+        for binary in binaries.values() {
+            dissector.inspect_version(binary)?;
         }
 
         dissector.flush()?;
@@ -108,9 +117,11 @@ impl Dissector {
 
             // Normalize any process/execution errors into the same compiler error types:
             Err(error) => vec![Error {
+                r#type: "Error".to_string(),
+                error_code: "<none>".to_string(),
                 message: format!("{error}"),
                 severity: Severity::Error,
-                location: None,
+                location: SourceLocation::default(),
             }],
         };
 
@@ -146,50 +157,10 @@ impl Dissector {
     }
 
     fn print_error(&self, error: &Error) -> Result<()> {
-        let Error {
-            message,
-            severity,
-            location,
-        } = error;
-
-        let (start, end) = match location {
-            Some(SourceLocation { start, end, file })
-                if !start.is_negative() && !end.is_negative() =>
-            {
-                assert_eq!(file, &self.file);
-
-                #[allow(clippy::cast_sign_loss)]
-                (*start as usize, *end as usize)
-            }
-            _ => {
-                println!(
-                    "[{severity}] {message}",
-                    severity = style(severity).fg(get_color(severity))
-                );
-
-                return Ok(());
-            }
-        };
-
-        let kind = match severity {
-            Severity::Info => ariadne::ReportKind::Advice,
-            Severity::Warning => ariadne::ReportKind::Warning,
-            Severity::Error => ariadne::ReportKind::Error,
-        };
-
         let source_id = self.file.unwrap_str();
+        let sources = BTreeMap::from_iter([(source_id.to_string(), self.source.clone())]);
 
-        let label = ariadne::Label::new((source_id, start..end))
-            .with_message("Error occurred here.".to_string());
-
-        let source = ariadne::Source::from(&self.source);
-
-        ariadne::Report::build(kind, source_id, start)
-            .with_message(message)
-            .with_label(label)
-            .finish()
-            .write((source_id, source), &mut std::io::stdout())?;
-
+        println!("{}", render_solc_error(error, &sources)?);
         Ok(())
     }
 }

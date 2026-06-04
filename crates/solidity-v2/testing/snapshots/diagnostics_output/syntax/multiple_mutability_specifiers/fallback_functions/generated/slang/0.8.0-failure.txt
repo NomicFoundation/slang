@@ -3,9 +3,9 @@
 Diagnostics: 1
 
 Error: Only a single mutability specifier can be provided.
-   ╭─[input.sol:2:17]
+   ╭─[input.sol:5:28]
    │
- 2 │   uint constant immutable x = 1;
-   │                 ────┬────  
-   │                     ╰────── Error occurred here.
+ 5 │   fallback() external pure view {}
+   │                            ──┬─  
+   │                              ╰─── Error occurred here.
 ───╯

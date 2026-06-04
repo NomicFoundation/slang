@@ -2,10 +2,10 @@
 
 Diagnostics: 1
 
-Error: Only a single mutability specifier can be provided.
-   ╭─[input.sol:2:25]
+[ParserError 9680] Error: State mutability already specified as "payable".
+   ╭─[input.sol:5:25]
    │
- 2 │   constructor() payable payable {}
+ 5 │   constructor() payable payable {}
    │                         ───┬───  
    │                            ╰───── Error occurred here.
 ───╯

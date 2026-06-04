@@ -1,37 +1,21 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write;
+use std::path::Path;
 
-use anyhow::Result;
+use anyhow::{bail, Result};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
-use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig};
+use semver::Version;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use solidity_v2_testing_utils::reporting::diagnostic;
 
+use crate::diagnostics_output::targets::{SlangTarget, SolcTarget, TestTarget};
 use crate::utils::multi_part_file::split_multi_file;
-use crate::utils::path_resolver;
 
-struct TestConfig {
-    files: BTreeMap<String, String>,
-}
-
-impl CompilationBuilderConfig for TestConfig {
-    fn read_file(&mut self, file_id: &str) -> Result<String, String> {
-        self.files
-            .get(file_id)
-            .cloned()
-            .ok_or_else(|| format!("file not found: {file_id}"))
-    }
-
-    fn resolve_import(
-        &mut self,
-        source_file_id: &str,
-        import_path: &str,
-    ) -> Result<String, String> {
-        path_resolver::resolve_import(source_file_id, import_path)
-            .ok_or_else(|| format!("unresolved import: {import_path} (from {source_file_id})"))
-    }
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum CompilationStatus {
+    Success,
+    Failure,
 }
 
 pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
@@ -53,30 +37,49 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         .map(|part| (part.name.to_string(), part.contents.to_string()))
         .collect();
 
+    let versions = LanguageVersion::ALL
+        .iter()
+        .map(|v| (*v).into())
+        .collect::<BTreeSet<Version>>();
+
+    let slang_target = SlangTarget;
+    let solc_target = SolcTarget::new(versions.clone())?;
+
+    let slang_statuses = run_target(&slang_target, &test_dir, &mut fs, &files, &versions)?;
+    let solc_statuses = run_target(&solc_target, &test_dir, &mut fs, &files, &versions)?;
+
+    compare_statuses(
+        group_name,
+        test_name,
+        &versions,
+        &slang_statuses,
+        &solc_statuses,
+    )
+}
+
+fn run_target(
+    target: &dyn TestTarget,
+    test_dir: &Path,
+    fs: &mut CodegenFileSystem,
+    files: &BTreeMap<String, String>,
+    versions: &BTreeSet<Version>,
+) -> Result<Vec<CompilationStatus>> {
     let mut last_report = None;
+    let mut statuses = Vec::with_capacity(versions.len());
 
-    for &version in LanguageVersion::ALL {
-        let config = TestConfig {
-            files: files.clone(),
+    for version in versions {
+        let errors = target.collect_diagnostics(files, version)?;
+
+        let status = if errors.is_empty() {
+            CompilationStatus::Success
+        } else {
+            CompilationStatus::Failure
         };
-        let mut builder = CompilationBuilder::create(version, config);
-
-        for file in files.keys() {
-            builder.add_file(file.clone());
-        }
-
-        let compilation = builder.build();
-        let diagnostics = compilation.diagnostics();
-
-        let count = diagnostics.iter().count();
-        let status = if count == 0 { "success" } else { "failure" };
+        statuses.push(status);
 
         let mut report = String::new();
-        writeln!(report, "Diagnostics: {count}")?;
-        for diagnostic in diagnostics {
-            let file_id = diagnostic.file_id();
-            let source = files.get(file_id).cloned().unwrap_or_default();
-            let rendered = diagnostic::render(diagnostic, file_id, &source, false);
+        writeln!(report, "Diagnostics: {count}", count = errors.len())?;
+        for rendered in &errors {
             writeln!(report)?;
             writeln!(report, "{rendered}")?;
         }
@@ -86,12 +89,50 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
             _ => {
                 let snapshot_path = test_dir
                     .join("generated")
-                    .join(format!("{version}-{status}.txt"));
+                    .join(target.name())
+                    .join(format!("{version}-{status:?}.txt").to_lowercase());
+
                 fs.write_file_raw(snapshot_path, &report)?;
                 last_report = Some(report);
             }
         }
     }
 
-    Ok(())
+    Ok(statuses)
+}
+
+fn compare_statuses(
+    group_name: &str,
+    test_name: &str,
+    versions: &BTreeSet<Version>,
+    slang_statuses: &[CompilationStatus],
+    solc_statuses: &[CompilationStatus],
+) -> Result<()> {
+    // Both targets run over the same versions, in the same (sorted) order.
+    assert_eq!(versions.len(), slang_statuses.len());
+    assert_eq!(versions.len(), solc_statuses.len());
+
+    if slang_statuses == solc_statuses {
+        return Ok(());
+    }
+
+    let mut message = String::new();
+    writeln!(
+        message,
+        "slang and solc disagree on the compilation status of `{group_name}/{test_name}`."
+    )?;
+    writeln!(message)?;
+
+    for (index, version) in versions.iter().enumerate() {
+        let slang = slang_statuses[index];
+        let solc = solc_statuses[index];
+        let outcome = if slang == solc { "match" } else { "differ" };
+
+        writeln!(
+            message,
+            "  {version}: slang={slang:?}, solc={solc:?} ({outcome})"
+        )?;
+    }
+
+    bail!(message)
 }
