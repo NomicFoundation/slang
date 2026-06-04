@@ -1904,6 +1904,7 @@ pub fn slang_solidity_v2_ast::ast::IdentifierStruct::is_definition(&self) -> boo
 pub fn slang_solidity_v2_ast::ast::IdentifierStruct::is_name_of_definition(&self) -> bool
 pub fn slang_solidity_v2_ast::ast::IdentifierStruct::is_reference(&self) -> bool
 pub fn slang_solidity_v2_ast::ast::IdentifierStruct::name(&self) -> alloc::string::String
+pub fn slang_solidity_v2_ast::ast::IdentifierStruct::named_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::IdentifierStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
 pub fn slang_solidity_v2_ast::ast::IdentifierStruct::resolve_to_built_in(&self) -> core::option::Option<slang_solidity_v2_common::built_ins::built_in::BuiltIn>
 pub fn slang_solidity_v2_ast::ast::IdentifierStruct::resolve_to_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>

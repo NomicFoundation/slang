@@ -4478,9 +4478,7 @@ dependencies = [
  "semver 1.0.28",
  "slang_solidity_v2",
  "slang_solidity_v2_common",
- "slang_solidity_v2_ir",
  "slang_solidity_v2_parser",
- "slang_solidity_v2_semantic",
  "solidity_v2_testing_utils",
 ]
 

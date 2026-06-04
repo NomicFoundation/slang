@@ -1,61 +1,77 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 use std::fmt::Display;
 use std::ops::Range;
+use std::sync::Arc;
 
+use slang_solidity_v2::ast::visitor::{accept_source_unit, Visitor};
+use slang_solidity_v2::ast::{DataLocation, Definition, Identifier, LiteralKind, NodeId, Type};
 use slang_solidity_v2::compilation::CompilationUnit;
-use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_ir::ir::visitor::{accept_source_unit, Visitor};
-use slang_solidity_v2_ir::ir::Identifier;
-use slang_solidity_v2_semantic::binder::{Definition, Resolution, Typing};
-use slang_solidity_v2_semantic::context::SemanticContext;
-use slang_solidity_v2_semantic::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
 
 // Types
 
+type FileSourceMap = BTreeMap<String, String>;
+
 pub(crate) struct ReportData<'a> {
     pub(crate) compilation: &'a CompilationUnit,
-    pub(crate) files: &'a BTreeMap<String, String>,
+    pub(crate) files: &'a FileSourceMap,
     pub(crate) all_definitions: Vec<CollectedDefinition>,
     pub(crate) all_references: Vec<CollectedReference>,
     pub(crate) unbound_identifiers: Vec<CollectedIdentifier>,
-    pub(crate) definitions_by_id: BTreeMap<NodeId, usize>,
 }
+
+/// This `DefinitionId` is local to the `ReportData` and represents the position
+/// in the `all_definitions` vector of a given definition (strictly its index+1).
+pub(crate) type DefinitionId = usize;
 
 #[derive(Clone)]
 pub(crate) struct CollectedIdentifier {
-    pub(crate) file_id: String,
-    pub(crate) node_id: NodeId,
-    pub(crate) range: Range<usize>,
-    pub(crate) text: String,
-    pub(crate) line: usize,
-    pub(crate) column: usize,
+    node: Identifier,
+    line: usize,
+    column: usize,
+}
+
+impl CollectedIdentifier {
+    pub(crate) fn file_id(&self) -> &str {
+        self.node.get_file_id()
+    }
+    pub(crate) fn range(&self) -> &Range<usize> {
+        self.node.get_text_range()
+    }
 }
 
 pub(crate) struct CollectedDefinition {
-    pub(crate) report_id: usize,
-    pub(crate) definition_node_id: NodeId,
+    // This is the index+1 of this definition in the `all_definitions` vector.
+    pub(crate) definition_id: DefinitionId,
     pub(crate) identifier: CollectedIdentifier,
+    definition: Definition,
+}
+
+#[derive(Clone, PartialEq, Eq)]
+pub(crate) enum CollectedResolution {
+    Unresolved,
+    BuiltIn,
+    // The `DefinitionId` payload is internal to the `ReportData`
+    Definition(DefinitionId),
 }
 
 pub(crate) struct CollectedReference {
     pub(crate) identifier: CollectedIdentifier,
-    pub(crate) resolution: Resolution,
+    pub(crate) resolution: CollectedResolution,
 }
 
 // Implementation
 
 impl<'a> ReportData<'a> {
-    pub(crate) fn prepare(
-        compilation: &'a CompilationUnit,
-        files: &'a BTreeMap<String, String>,
-    ) -> Self {
-        let all_identifiers = collect_all_identifiers(compilation, files);
-        let (all_definitions, all_references, unbound_identifiers) =
-            classify_identifiers(compilation.semantic(), all_identifiers);
-        let definitions_by_id = all_definitions
+    pub(crate) fn prepare(compilation: &'a CompilationUnit, files: &'a FileSourceMap) -> Self {
+        let all_definitions = DefinitionCollector::collect_from(compilation, files);
+        // This is used to map the reference resolutions to the internal
+        // `DefinitionId` of the report.
+        let definitions_by_node_id: HashMap<NodeId, DefinitionId> = all_definitions
             .iter()
-            .map(|definition| (definition.definition_node_id, definition.report_id))
-            .collect::<BTreeMap<NodeId, usize>>();
+            .map(|definition| (definition.definition.node_id(), definition.definition_id))
+            .collect();
+        let (all_references, unbound_identifiers) =
+            ReferenceCollector::collect_from(compilation, files, &definitions_by_node_id);
 
         Self {
             compilation,
@@ -63,7 +79,6 @@ impl<'a> ReportData<'a> {
             all_definitions,
             all_references,
             unbound_identifiers,
-            definitions_by_id,
         }
     }
 
@@ -73,50 +88,31 @@ impl<'a> ReportData<'a> {
             && self
                 .all_references
                 .iter()
-                .all(|reference| reference.resolution != Resolution::Unresolved)
+                .all(|reference| reference.resolution != CollectedResolution::Unresolved)
     }
 }
 
-// Identifiers collection
+// Identifier collector trait, to allow reuse in the two collectors
 
-struct IdentifierCollector<'a> {
-    identifiers: Vec<CollectedIdentifier>,
-    current_file: Option<(&'a String, &'a String)>,
-}
+trait IdentifierCollector {
+    fn file_contents(&self, file_id: &str) -> &str;
 
-impl Visitor for IdentifierCollector<'_> {
-    fn visit_identifier(&mut self, node: &Identifier) {
-        let (line, column) = self.byte_offset_to_line_column(node.range.start);
-        self.identifiers.push(CollectedIdentifier {
-            file_id: self.current_file_id(),
-            node_id: node.id(),
-            range: node.range.clone(),
-            text: node.text.clone(),
+    fn collect_identifier(&self, node: &Identifier) -> CollectedIdentifier {
+        let range = node.get_text_range().clone();
+        let file_id = node.get_file_id();
+        let file_contents = self.file_contents(file_id);
+        let (line, column) = Self::byte_offset_to_line_column(file_contents, range.start);
+        CollectedIdentifier {
+            node: Arc::clone(node),
             line,
             column,
-        });
-    }
-}
-
-impl IdentifierCollector<'_> {
-    fn current_file_id(&self) -> String {
-        let Some((file_id, _)) = self.current_file else {
-            unreachable!("file is not set for collecting identifiers");
-        };
-        file_id.clone()
+        }
     }
 
-    fn current_file_contents(&self) -> &String {
-        let Some((_, contents)) = self.current_file else {
-            unreachable!("file is not set for collecting identifiers");
-        };
-        contents
-    }
-
-    fn byte_offset_to_line_column(&self, byte_offset: usize) -> (usize, usize) {
+    fn byte_offset_to_line_column(contents: &str, byte_offset: usize) -> (usize, usize) {
         let mut line = 1;
         let mut column = 1;
-        for (index, ch) in self.current_file_contents().char_indices() {
+        for (index, ch) in contents.char_indices() {
             if index >= byte_offset {
                 break;
             }
@@ -131,349 +127,157 @@ impl IdentifierCollector<'_> {
     }
 }
 
-fn collect_all_identifiers(
-    compilation: &CompilationUnit,
-    files: &BTreeMap<String, String>,
-) -> Vec<CollectedIdentifier> {
-    let mut collector = IdentifierCollector {
-        identifiers: Vec::new(),
-        current_file: None,
-    };
-
-    for file_id in &compilation.file_ids() {
-        collector.current_file = files.get_key_value(file_id);
-        accept_source_unit(
-            &compilation
-                .file(file_id)
-                .expect("file is in the compilation unit")
-                .ir(),
-            &mut collector,
-        );
-    }
-
-    collector.identifiers
+/// Collects definitions in order of appearance in the AST. File visiting order
+/// is determined by `CompilationUnit` given to
+/// `DefinitionCollector::collect_from()`.
+struct DefinitionCollector<'a> {
+    files: &'a FileSourceMap,
+    all_definitions: Vec<CollectedDefinition>,
 }
 
-fn classify_identifiers(
-    semantic: &SemanticContext,
-    all_identifiers: Vec<CollectedIdentifier>,
-) -> (
-    Vec<CollectedDefinition>,
-    Vec<CollectedReference>,
-    Vec<CollectedIdentifier>,
-) {
-    let mut all_definitions = Vec::new();
-    let mut all_references = Vec::new();
-    let mut unbound_identifiers = Vec::new();
+impl<'a> DefinitionCollector<'a> {
+    fn collect_from(
+        compilation: &CompilationUnit,
+        files: &'a BTreeMap<String, String>,
+    ) -> Vec<CollectedDefinition> {
+        let mut collector = Self {
+            files,
+            all_definitions: Vec::new(),
+        };
+        for file in compilation.files() {
+            let source_unit = file.ast();
+            accept_source_unit(&source_unit, &mut collector);
+        }
+        collector.all_definitions
+    }
+}
 
-    let binder = semantic.binder();
+impl Visitor for DefinitionCollector<'_> {
+    fn visit_identifier(&mut self, node: &Identifier) {
+        let Some(definition) = node.named_definition() else {
+            return;
+        };
+        let identifier = self.collect_identifier(node);
+        self.all_definitions.push(CollectedDefinition {
+            definition_id: self.all_definitions.len() + 1,
+            definition: definition.clone(),
+            identifier: identifier.clone(),
+        });
+    }
+}
 
-    // Walk all identifiers in file/source order and classify each one
-    for identifier in all_identifiers {
+impl IdentifierCollector for DefinitionCollector<'_> {
+    fn file_contents(&self, file_id: &str) -> &str {
+        &self.files[file_id]
+    }
+}
+
+// Identifiers collection and classification
+
+struct ReferenceCollector<'a> {
+    files: &'a BTreeMap<String, String>,
+    definitions_by_node_id: &'a HashMap<NodeId, DefinitionId>,
+    all_references: Vec<CollectedReference>,
+    unbound_identifiers: Vec<CollectedIdentifier>,
+}
+
+impl<'a> ReferenceCollector<'a> {
+    fn collect_from(
+        compilation: &CompilationUnit,
+        files: &'a FileSourceMap,
+        definitions_by_node_id: &'a HashMap<NodeId, DefinitionId>,
+    ) -> (Vec<CollectedReference>, Vec<CollectedIdentifier>) {
+        let mut collector = Self {
+            files,
+            definitions_by_node_id,
+            all_references: Vec::new(),
+            unbound_identifiers: Vec::new(),
+        };
+        for file in compilation.files() {
+            let source_unit = file.ast();
+            accept_source_unit(&source_unit, &mut collector);
+        }
+        (collector.all_references, collector.unbound_identifiers)
+    }
+}
+
+impl Visitor for ReferenceCollector<'_> {
+    fn visit_identifier(&mut self, node: &Identifier) {
         let mut bound = false;
 
-        if let Some(definition) = binder.find_definition_by_identifier_node_id(identifier.node_id) {
-            all_definitions.push(CollectedDefinition {
-                report_id: all_definitions.len() + 1,
-                definition_node_id: definition.node_id(),
-                identifier: identifier.clone(),
-            });
+        // An identifier is a definition when it is the name of one of the
+        // collected definitions (this includes definitions that are identifiers
+        // by themselves, like enum members).
+        if node.is_name_of_definition() {
             bound = true;
         }
 
-        if let Some(reference) = binder.find_reference_by_identifier_node_id(identifier.node_id) {
-            all_references.push(CollectedReference {
+        // The same identifier may additionally be acting as a reference (eg. the
+        // name in an import deconstruction).
+        if node.is_reference() {
+            let identifier = self.collect_identifier(node);
+            let resolution = if node.resolve_to_built_in().is_some() {
+                CollectedResolution::BuiltIn
+            } else if let Some(definition) = node.resolve_to_immediate_definition() {
+                let definition_id = self
+                    .definitions_by_node_id
+                    .get(&definition.node_id())
+                    .expect("resolution references an existing definition");
+                CollectedResolution::Definition(*definition_id)
+            } else {
+                CollectedResolution::Unresolved
+            };
+            self.all_references.push(CollectedReference {
                 identifier: identifier.clone(),
-                resolution: reference.resolution.clone(),
+                resolution,
             });
             bound = true;
         }
 
         if !bound {
-            unbound_identifiers.push(identifier);
+            let identifier = self.collect_identifier(node);
+            self.unbound_identifiers.push(identifier);
         }
     }
+}
 
-    (all_definitions, all_references, unbound_identifiers)
+impl IdentifierCollector for ReferenceCollector<'_> {
+    fn file_contents(&self, file_id: &str) -> &str {
+        &self.files[file_id]
+    }
 }
 
 // Display helpers
 
-impl CollectedDefinition {
-    pub(crate) fn display<'a>(
-        &'a self,
-        semantic: &'a SemanticContext,
-    ) -> CollectedDefinitionDisplay<'a> {
-        CollectedDefinitionDisplay {
-            definition: self,
-            semantic,
-        }
-    }
-}
-
-pub(crate) struct CollectedDefinitionDisplay<'a> {
-    definition: &'a CollectedDefinition,
-    semantic: &'a SemanticContext,
-}
-
-impl Display for CollectedDefinitionDisplay<'_> {
+impl Display for CollectedDefinition {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let identifier = &self.definition.identifier;
+        let identifier = &self.identifier;
         write!(
             f,
             "Def: #{id} [\"{identifier}\" @ {file_id}:{line}:{column}] ({def_type})",
-            id = self.definition.report_id,
-            identifier = identifier.text,
-            file_id = identifier.file_id,
-            def_type = self.definition_type(),
+            id = self.definition_id,
+            identifier = identifier.node.name(),
+            file_id = identifier.node.get_file_id(),
+            def_type = definition_type(&self.definition),
             line = identifier.line,
             column = identifier.column,
         )
     }
 }
 
-impl CollectedDefinitionDisplay<'_> {
-    fn definition_type(&self) -> String {
-        if let Some(definition) = self
-            .semantic
-            .binder()
-            .find_definition_by_id(self.definition.definition_node_id)
-        {
-            match definition {
-                Definition::Constant(_) => {
-                    format!("constant, type: {}", self.definition_type_display())
-                }
-                Definition::Contract(_) => "contract".to_string(),
-                Definition::Enum(_) => "enum".to_string(),
-                Definition::EnumMember(_) => {
-                    format!("enum member of {}", self.definition_type_display())
-                }
-                Definition::Error(_) => "error".to_string(),
-                Definition::Event(_) => "event".to_string(),
-                Definition::Function(_) => {
-                    format!("function, type: {}", self.definition_type_display())
-                }
-                Definition::Import(_) => "import".to_string(),
-                Definition::ImportedSymbol(_) => "imported symbol".to_string(),
-                Definition::Interface(_) => "interface".to_string(),
-                Definition::Library(_) => "library".to_string(),
-                Definition::Modifier(_) => "modifier".to_string(),
-                Definition::Parameter(_) => {
-                    format!("parameter, type: {}", self.definition_type_display())
-                }
-                Definition::StateVariable(_) => {
-                    format!("state var, type: {}", self.definition_type_display())
-                }
-                Definition::Struct(_) => "struct".to_string(),
-                Definition::StructMember(_) => {
-                    format!("struct member, type: {}", self.definition_type_display())
-                }
-                Definition::TypeParameter(_) => "type param".to_string(),
-                Definition::UserDefinedValueType(_) => {
-                    format!("udvt, type: {}", self.definition_type_display())
-                }
-                Definition::Variable(_) => {
-                    format!("variable, type: {}", self.definition_type_display())
-                }
-                Definition::YulFunction(_) => "yul function".to_string(),
-                Definition::YulParameter(_) => "yul parameter".to_string(),
-                Definition::YulVariable(_) => "yul variable".to_string(),
-            }
-        } else {
-            "(unknown)".to_string()
-        }
-    }
-
-    fn definition_type_display(&self) -> String {
-        let node_id = self.definition.definition_node_id;
-        let typing = self.semantic.binder().node_typing(node_id);
-        match typing {
-            Typing::Unresolved => "unresolved".to_string(),
-            Typing::Resolved(type_id) => self.type_display(type_id),
-            Typing::This => "this".to_string(),
-            Typing::Super => "super".to_string(),
-            Typing::UserMetaType(meta_node_id) => {
-                assert_eq!(meta_node_id, self.definition.definition_node_id);
-                "meta-type".to_string()
-            }
-            _ => {
-                unreachable!("unexpected typing {typing:?} of user definition");
-            }
-        }
-    }
-
-    #[allow(clippy::too_many_lines)]
-    fn type_display(&self, type_id: TypeId) -> String {
-        match self.semantic.types().get_type_by_id(type_id) {
-            Type::Address { payable } => {
-                if *payable {
-                    "address payable".to_string()
-                } else {
-                    "address".to_string()
-                }
-            }
-            Type::Array {
-                element_type,
-                location,
-            } => format!(
-                "{element_type}[] {location}",
-                element_type = self.type_display(*element_type),
-                location = data_location_display(*location),
-            ),
-            Type::Boolean => "bool".to_string(),
-            Type::ByteArray { width } => format!("bytes{width}"),
-            Type::Bytes { location } => {
-                format!(
-                    "bytes {location}",
-                    location = data_location_display(*location)
-                )
-            }
-            Type::Contract { definition_id }
-            | Type::Enum { definition_id }
-            | Type::Interface { definition_id }
-            | Type::Library { definition_id } => self.definition_name(*definition_id),
-
-            Type::FixedPointNumber {
-                signed,
-                bits,
-                precision_bits,
-            } => {
-                format!(
-                    "{signed}fixed{bits}x{precision_bits}",
-                    signed = if *signed { "" } else { "u" }
-                )
-            }
-            Type::FixedSizeArray {
-                element_type,
-                size,
-                location,
-            } => format!(
-                "{element_type}[{size}] {location}",
-                element_type = self.type_display(*element_type),
-                location = data_location_display(*location),
-            ),
-            Type::Function(FunctionType {
-                parameter_types,
-                return_type,
-                ..
-            }) => {
-                format!(
-                    "function ({parameters}) returns {returns}",
-                    parameters = parameter_types
-                        .iter()
-                        .map(|type_id| self.type_display(*type_id))
-                        .collect::<Vec<_>>()
-                        .join(", "),
-                    returns = self.type_display(*return_type),
-                )
-            }
-            Type::Integer { signed, bits } => {
-                format!("{signed}int{bits}", signed = if *signed { "" } else { "u" })
-            }
-            Type::Mapping {
-                key_type_id,
-                value_type_id,
-            } => {
-                format!(
-                    "{key} => {value}",
-                    key = self.type_display(*key_type_id),
-                    value = self.type_display(*value_type_id)
-                )
-            }
-            Type::Literal(kind) => match kind {
-                LiteralKind::Integer { value } => format!("lit-integer({value})"),
-                LiteralKind::HexInteger { value, bytes } => {
-                    format!("lit-hex({value}, {bytes})")
-                }
-                LiteralKind::Rational { value } => format!("lit-rational({value})"),
-                LiteralKind::HexString { bytes } => format!("lit-hexstring({bytes})"),
-                LiteralKind::String { bytes } => format!("lit-string({bytes})"),
-                LiteralKind::Address { value } => format!("lit-address({value})"),
-            },
-            Type::String { location } => {
-                format!(
-                    "string {location}",
-                    location = data_location_display(*location)
-                )
-            }
-            Type::Struct {
-                definition_id,
-                location,
-            } => {
-                format!(
-                    "{name} {location}",
-                    name = self.definition_name(*definition_id),
-                    location = data_location_display(*location)
-                )
-            }
-            Type::Tuple { types } => {
-                format!(
-                    "({types})",
-                    types = types
-                        .iter()
-                        .map(|type_id| self.type_display(*type_id))
-                        .collect::<Vec<_>>()
-                        .join(", ")
-                )
-            }
-            Type::UserDefinedValue { definition_id } => self.definition_name(*definition_id),
-            Type::Void => "void".to_string(),
-        }
-    }
-
-    fn definition_name(&self, definition_id: NodeId) -> String {
-        self.semantic
-            .binder()
-            .find_definition_by_id(definition_id)
-            .unwrap()
-            .identifier()
-            .text
-            .clone()
-    }
-}
-
-impl CollectedReference {
-    pub(crate) fn display<'a>(
-        &'a self,
-        definitions_by_id: &'a BTreeMap<NodeId, usize>,
-    ) -> CollectedReferenceDisplay<'a> {
-        CollectedReferenceDisplay {
-            reference: self,
-            definitions_by_id,
-        }
-    }
-}
-
-pub(crate) struct CollectedReferenceDisplay<'a> {
-    reference: &'a CollectedReference,
-    definitions_by_id: &'a BTreeMap<NodeId, usize>,
-}
-
-impl Display for CollectedReferenceDisplay<'_> {
+impl Display for CollectedReference {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let identifier = &self.reference.identifier;
+        let identifier = &self.identifier;
         write!(
             f,
             "Ref: [\"{identifier}\" @ {file_id}:{line}:{column}] -> {definition}",
-            identifier = identifier.text,
-            file_id = identifier.file_id,
-            definition = match &self.reference.resolution {
-                Resolution::Unresolved => "unresolved".to_string(),
-                Resolution::BuiltIn(_) => "built-in".to_string(),
-                Resolution::Definition(definition_id) => {
-                    format!(
-                        "#{id}",
-                        id = self.definitions_by_id.get(definition_id).unwrap()
-                    )
-                }
-                Resolution::Ambiguous(definitions) => {
-                    format!(
-                        "refs: {ids:?}",
-                        ids = definitions
-                            .iter()
-                            .map(|id| self.definitions_by_id.get(id).unwrap())
-                            .collect::<Vec<_>>(),
-                    )
+            identifier = identifier.node.name(),
+            file_id = identifier.node.get_file_id(),
+            definition = match &self.resolution {
+                CollectedResolution::Unresolved => "unresolved".to_string(),
+                CollectedResolution::BuiltIn => "built-in".to_string(),
+                CollectedResolution::Definition(definition_id) => {
+                    format!("#{definition_id}")
                 }
             },
             line = identifier.line,
@@ -482,26 +286,202 @@ impl Display for CollectedReferenceDisplay<'_> {
     }
 }
 
-impl CollectedIdentifier {
-    pub(crate) fn display_unbound(&self) -> UnboundIdentifierDisplay<'_> {
-        UnboundIdentifierDisplay { identifier: self }
-    }
-}
-
-pub(crate) struct UnboundIdentifierDisplay<'a> {
-    identifier: &'a CollectedIdentifier,
-}
-
-impl Display for UnboundIdentifierDisplay<'_> {
+/// Displays a collected identifier as unbound by default
+impl Display for CollectedIdentifier {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
             "???: [\"{identifier}\" @ {file_id}:{line}:{column}]",
-            identifier = self.identifier.text,
-            file_id = self.identifier.file_id,
-            line = self.identifier.line,
-            column = self.identifier.column,
+            identifier = self.node.name(),
+            file_id = self.node.get_file_id(),
+            line = self.line,
+            column = self.column,
         )
+    }
+}
+
+// Data display helpers
+
+fn definition_name(definition: &Definition) -> String {
+    definition.identifier().name()
+}
+
+fn definition_type(definition: &Definition) -> String {
+    match definition {
+        Definition::Constant(constant) => {
+            format!(
+                "constant, type: {}",
+                type_or_unresolved(constant.get_type())
+            )
+        }
+        Definition::Contract(_) => "contract".to_string(),
+        Definition::Enum(_) => "enum".to_string(),
+        Definition::EnumMember(enum_member) => {
+            format!(
+                "enum member of {}",
+                type_or_unresolved(enum_member.get_type())
+            )
+        }
+        Definition::Error(_) => "error".to_string(),
+        Definition::Event(_) => "event".to_string(),
+        Definition::Function(function) => {
+            format!(
+                "function, type: {}",
+                type_or_unresolved(function.get_type())
+            )
+        }
+        Definition::Import(_) => "import".to_string(),
+        Definition::ImportedSymbol(_) => "imported symbol".to_string(),
+        Definition::Interface(_) => "interface".to_string(),
+        Definition::Library(_) => "library".to_string(),
+        Definition::Modifier(_) => "modifier".to_string(),
+        Definition::Parameter(parameter) => {
+            format!(
+                "parameter, type: {}",
+                type_or_unresolved(parameter.get_type())
+            )
+        }
+        Definition::StateVariable(state_variable) => {
+            format!(
+                "state var, type: {}",
+                type_or_unresolved(state_variable.get_type())
+            )
+        }
+        Definition::Struct(_) => "struct".to_string(),
+        Definition::StructMember(struct_member) => {
+            format!(
+                "struct member, type: {}",
+                type_or_unresolved(struct_member.get_type())
+            )
+        }
+        Definition::TypeParameter(_) => "type param".to_string(),
+        // A user-defined value type definition names the type itself, so its
+        // typing is always the meta-type (it has no value type of its own).
+        Definition::UserDefinedValueType(_) => "udvt, type: meta-type".to_string(),
+        Definition::Variable(variable) => {
+            format!(
+                "variable, type: {}",
+                type_or_unresolved(variable.get_type())
+            )
+        }
+        Definition::YulFunction(_) => "yul function".to_string(),
+        Definition::YulParameter(_) => "yul parameter".to_string(),
+        Definition::YulVariable(_) => "yul variable".to_string(),
+    }
+}
+
+fn type_or_unresolved(type_: Option<Type>) -> String {
+    match type_ {
+        Some(type_) => type_display(&type_),
+        None => "unresolved".to_string(),
+    }
+}
+
+#[allow(clippy::too_many_lines)]
+fn type_display(type_: &Type) -> String {
+    match type_ {
+        Type::Address(address) => {
+            if address.payable() {
+                "address payable".to_string()
+            } else {
+                "address".to_string()
+            }
+        }
+        Type::Array(array) => format!(
+            "{element_type}[] {location}",
+            element_type = type_display(&array.element_type()),
+            location = data_location_display(array.location()),
+        ),
+        Type::Boolean(_) => "bool".to_string(),
+        Type::ByteArray(byte_array) => format!("bytes{width}", width = byte_array.width()),
+        Type::Bytes(bytes) => {
+            format!(
+                "bytes {location}",
+                location = data_location_display(bytes.location())
+            )
+        }
+        Type::Contract(contract) => definition_name(&contract.definition()),
+        Type::Enum(enum_) => definition_name(&enum_.definition()),
+        Type::FixedPointNumber(fixed) => {
+            format!(
+                "{signed}fixed{bits}x{precision_bits}",
+                signed = if fixed.signed() { "" } else { "u" },
+                bits = fixed.bits(),
+                precision_bits = fixed.precision_bits(),
+            )
+        }
+        Type::FixedSizeArray(fixed_size_array) => format!(
+            "{element_type}[{size}] {location}",
+            element_type = type_display(&fixed_size_array.element_type()),
+            size = fixed_size_array.size(),
+            location = data_location_display(fixed_size_array.location()),
+        ),
+        Type::Function(function) => {
+            format!(
+                "function ({parameters}) returns {returns}",
+                parameters = function
+                    .parameter_types()
+                    .iter()
+                    .map(type_display)
+                    .collect::<Vec<_>>()
+                    .join(", "),
+                returns = type_display(&function.return_type()),
+            )
+        }
+        Type::Integer(integer) => {
+            format!(
+                "{signed}int{bits}",
+                signed = if integer.signed() { "" } else { "u" },
+                bits = integer.bits(),
+            )
+        }
+        Type::Interface(interface) => definition_name(&interface.definition()),
+        Type::Library(library) => definition_name(&library.definition()),
+        Type::Literal(literal) => match literal.kind() {
+            LiteralKind::Integer { value } => format!("lit-integer({value})"),
+            LiteralKind::HexInteger { value, bytes } => {
+                format!("lit-hex({value}, {bytes})")
+            }
+            LiteralKind::Rational { value } => format!("lit-rational({value})"),
+            LiteralKind::HexString { bytes } => format!("lit-hexstring({bytes})"),
+            LiteralKind::String { bytes } => format!("lit-string({bytes})"),
+            LiteralKind::Address { value } => format!("lit-address({value})"),
+        },
+        Type::Mapping(mapping) => {
+            format!(
+                "{key} => {value}",
+                key = type_display(&mapping.key_type()),
+                value = type_display(&mapping.value_type()),
+            )
+        }
+        Type::String(string) => {
+            format!(
+                "string {location}",
+                location = data_location_display(string.location())
+            )
+        }
+        Type::Struct(struct_) => {
+            format!(
+                "{name} {location}",
+                name = definition_name(&struct_.definition()),
+                location = data_location_display(struct_.location()),
+            )
+        }
+        Type::Tuple(tuple) => {
+            format!(
+                "({types})",
+                types = tuple
+                    .types()
+                    .iter()
+                    .map(type_display)
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            )
+        }
+        Type::UserDefinedValue(user_defined_value) => {
+            definition_name(&user_defined_value.definition())
+        }
+        Type::Void(_) => "void".to_string(),
     }
 }
 

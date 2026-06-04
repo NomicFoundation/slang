@@ -62,12 +62,6 @@ impl CompilationUnit {
             .map(|internal_file| FileStruct::create(internal_file, &self.semantic))
     }
 
-    #[cfg(feature = "__private_testing_utils")]
-    #[doc(hidden)]
-    pub fn semantic(&self) -> &Arc<SemanticContext> {
-        &self.semantic
-    }
-
     pub fn all_definitions(&self) -> impl Iterator<Item = ast::Definition> + use<'_> {
         self.semantic.all_definitions().map(|definition| {
             ast::Definition::try_create(definition.node_id(), &self.semantic).unwrap()
