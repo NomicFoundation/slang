@@ -8,7 +8,16 @@ pub fn install_bencher_cli() -> Result<()> {
 }
 
 pub fn install_iai_callgrind_runner() -> Result<()> {
-    CargoWorkspace::install_binary("iai-callgrind-runner")
+    // Specify the bin `iai-callgrind-runner` to avoid reinstalling every time due to a
+    // [cargo bug](https://github.com/rust-lang/cargo/issues/8703).
+    //
+    // `iai-callgrind-runner` defines two binaries, one of them behind a feature flag.
+    // When `cargo install` checks if binaries are up to date, it checks all of them,
+    // not only those enabled by the current feature flags, it then proceeds to install
+    // only the enabled ones.
+    // This causes a reinstall every time. By installing the single binary we need,
+    // we force cargo to only check if that one is up to date.
+    CargoWorkspace::install_binary_bin("iai-callgrind-runner", "iai-callgrind-runner")
 }
 
 pub fn install_valgrind() -> Result<()> {
