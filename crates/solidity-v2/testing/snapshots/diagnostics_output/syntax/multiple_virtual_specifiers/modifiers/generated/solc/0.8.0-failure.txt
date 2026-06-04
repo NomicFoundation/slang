@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 2662] Error: Virtual already specified.
+   ╭─[input.sol:5:29]
+   │
+ 5 │     modifier modi() virtual virtual {_;}
+   │                             ───┬───  
+   │                                ╰───── Error occurred here.
+───╯

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Only a single virtual specifier can be provided.
+   ╭─[input.sol:5:33]
+   │
+ 5 │     fallback() external virtual virtual {}
+   │                                 ───┬───  
+   │                                    ╰───── Error occurred here.
+───╯

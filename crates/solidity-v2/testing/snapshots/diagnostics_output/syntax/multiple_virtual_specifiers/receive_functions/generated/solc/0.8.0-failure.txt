@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 6879] Error: Virtual already specified.
+   ╭─[input.sol:5:40]
+   │
+ 5 │     receive() external payable virtual virtual {}
+   │                                        ───┬───  
+   │                                           ╰───── Error occurred here.
+───╯
