@@ -1,7 +1,10 @@
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use super::binder::{Binder, Definition, Typing};
-use super::types::{DataLocation, LiteralKind, Type, TypeId, TypeRegistry};
+use super::types::{
+    AddressType, ArrayType, BytesType, DataLocation, LiteralKind, Type, TypeId, TypeRegistry,
+    UserDefinedValueType,
+};
 
 #[path = "internal.generated.rs"]
 mod internal;
@@ -207,18 +210,18 @@ impl<'a> BuiltInsResolver<'a> {
                 _ => None,
             },
             BuiltIn::Type(type_id) => match self.types.get_type_by_id(*type_id) {
-                Type::Contract { .. } | Type::Library { .. } => match symbol {
+                Type::Contract(_) | Type::Library(_) => match symbol {
                     "name" => Some(BuiltIn::TypeName),
                     "creationCode" => Some(BuiltIn::TypeCreationCode),
                     "runtimeCode" => Some(BuiltIn::TypeRuntimeCode),
                     _ => None,
                 },
-                Type::Interface { .. } => match symbol {
+                Type::Interface(_) => match symbol {
                     "name" => Some(BuiltIn::TypeName),
                     "interfaceId" => Some(BuiltIn::TypeInterfaceId),
                     _ => None,
                 },
-                Type::Enum { .. } => match symbol {
+                Type::Enum(_) => match symbol {
                     "min" if BuiltIn::TYPE_ENUM_MIN_VERSIONS.contains(self.language_version) => {
                         Some(BuiltIn::TypeEnumMin(*type_id))
                     }
@@ -227,7 +230,7 @@ impl<'a> BuiltInsResolver<'a> {
                     }
                     _ => None,
                 },
-                Type::Integer { .. } => match symbol {
+                Type::Integer(_) => match symbol {
                     "min" => Some(BuiltIn::TypeMin(*type_id)),
                     "max" => Some(BuiltIn::TypeMax(*type_id)),
                     _ => None,
@@ -283,11 +286,11 @@ impl<'a> BuiltInsResolver<'a> {
         symbol: &str,
     ) -> Option<BuiltIn> {
         match parent_type {
-            Type::Bytes { .. } => match symbol {
+            Type::Bytes(_) => match symbol {
                 "concat" => Some(BuiltIn::BytesConcat),
                 _ => None,
             },
-            Type::String { .. } => match symbol {
+            Type::String(_) => match symbol {
                 "concat" => Some(BuiltIn::StringConcat),
                 _ => None,
             },
@@ -317,19 +320,21 @@ impl<'a> BuiltInsResolver<'a> {
     ) -> Option<BuiltIn> {
         let type_ = self.types.get_type_by_id(type_id);
         match type_ {
-            Type::Address { payable } => Self::lookup_member_of_address(symbol, *payable),
-            Type::Array { element_type, .. } => match symbol {
+            Type::Address(AddressType { payable }) => {
+                Self::lookup_member_of_address(symbol, *payable)
+            }
+            Type::Array(ArrayType { element_type, .. }) => match symbol {
                 "length" => Some(BuiltIn::Length),
                 "pop" => Some(BuiltIn::ArrayPop),
                 "push" => Some(BuiltIn::ArrayPush(*element_type)),
                 _ => None,
             },
             Type::Boolean => None,
-            Type::ByteArray { .. } => match symbol {
+            Type::ByteArray(_) => match symbol {
                 "length" => Some(BuiltIn::Length),
                 _ => None,
             },
-            Type::Bytes { location } => match symbol {
+            Type::Bytes(BytesType { location }) => match symbol {
                 "length" => Some(BuiltIn::Length),
                 "pop" if *location == DataLocation::Storage => Some(BuiltIn::ArrayPop),
                 "push" if *location == DataLocation::Storage => {
@@ -337,10 +342,10 @@ impl<'a> BuiltInsResolver<'a> {
                 }
                 _ => None,
             },
-            Type::Contract { .. } | Type::Interface { .. } | Type::Library { .. } => None,
-            Type::Enum { .. } => None,
-            Type::FixedPointNumber { .. } => None,
-            Type::FixedSizeArray { .. } => match symbol {
+            Type::Contract(_) | Type::Interface(_) | Type::Library(_) => None,
+            Type::Enum(_) => None,
+            Type::FixedPointNumber(_) => None,
+            Type::FixedSizeArray(_) => match symbol {
                 "length" => Some(BuiltIn::Length),
                 _ => None,
             },
@@ -360,19 +365,19 @@ impl<'a> BuiltInsResolver<'a> {
                     None
                 }
             }
-            Type::Integer { .. } => None,
+            Type::Integer(_) => None,
             Type::Literal(LiteralKind::Address { .. }) => {
                 Self::lookup_member_of_address(symbol, false)
             }
             Type::Literal(_) => None,
-            Type::Mapping { .. } => None,
-            Type::String { .. } => match symbol {
+            Type::Mapping(_) => None,
+            Type::String(_) => match symbol {
                 "length" => Some(BuiltIn::Length),
                 _ => None,
             },
-            Type::Struct { .. } => None,
-            Type::Tuple { .. } => None,
-            Type::UserDefinedValue { .. } => None,
+            Type::Struct(_) => None,
+            Type::Tuple(_) => None,
+            Type::UserDefinedValue(_) => None,
             Type::Void => None,
         }
     }
@@ -552,9 +557,9 @@ impl<'a> BuiltInsResolver<'a> {
                 };
                 Typing::Resolved(
                     self.types
-                        .find_type(&Type::UserDefinedValue {
+                        .find_type(&Type::UserDefinedValue(UserDefinedValueType {
                             definition_id: *definition_id,
-                        })
+                        }))
                         .unwrap(),
                 )
             }

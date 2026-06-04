@@ -5,7 +5,7 @@ use slang_solidity_v2_ir::ir;
 use crate::binder::{Binder, Definition, Scope, ScopeId};
 use crate::built_ins::BuiltInsResolver;
 use crate::context::SemanticFile;
-use crate::types::{Type, TypeId, TypeRegistry};
+use crate::types::{ContractType, Type, TypeId, TypeRegistry};
 
 mod evaluator;
 mod resolution;
@@ -93,9 +93,9 @@ impl<'a> Pass<'a> {
             else {
                 continue;
             };
-            let receiver_type_id = self.types.register_type(Type::Contract {
+            let receiver_type_id = self.types.register_type(Type::Contract(ContractType {
                 definition_id: contract_definition.id(),
-            });
+            }));
             for contract_member in &contract_definition.members {
                 let ir::ContractMember::StateVariableDefinition(state_var_definition) =
                     contract_member

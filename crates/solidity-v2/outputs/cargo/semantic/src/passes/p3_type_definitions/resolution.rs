@@ -6,7 +6,9 @@ use super::evaluator::{
 use super::Pass;
 use crate::binder::{Definition, Resolution, Scope, ScopeId};
 use crate::passes::common::resolve_identifier_path_in_scope;
-use crate::types::{DataLocation, FunctionType, Type, TypeId};
+use crate::types::{
+    ArrayType, DataLocation, FixedSizeArrayType, FunctionType, MappingType, TupleType, Type, TypeId,
+};
 
 impl Pass<'_> {
     // Resolves an IdentifierPath starting at the "contract" scope level, or at
@@ -54,16 +56,17 @@ impl Pass<'_> {
                                     self,
                                 )
                                 .unwrap_or_default();
-                                self.types.register_type(Type::FixedSizeArray {
-                                    element_type,
-                                    size,
-                                    location: data_location,
-                                })
+                                self.types
+                                    .register_type(Type::FixedSizeArray(FixedSizeArrayType {
+                                        element_type,
+                                        size,
+                                        location: data_location,
+                                    }))
                             } else {
-                                self.types.register_type(Type::Array {
+                                self.types.register_type(Type::Array(ArrayType {
                                     element_type,
                                     location: data_location,
-                                })
+                                }))
                             }
                         })
                 })
@@ -76,9 +79,9 @@ impl Pass<'_> {
                     if return_types.len() == 1 {
                         return_types.first().copied().unwrap()
                     } else {
-                        self.types.register_type(Type::Tuple {
+                        self.types.register_type(Type::Tuple(TupleType {
                             types: return_types,
-                        })
+                        }))
                     }
                 } else {
                     self.types.void()
@@ -99,10 +102,10 @@ impl Pass<'_> {
                     self.resolve_type_name(&mapping_type.key_type.type_name, data_location)?;
                 let value_type_id =
                     self.resolve_type_name(&mapping_type.value_type.type_name, data_location)?;
-                Some(self.types.register_type(Type::Mapping {
+                Some(self.types.register_type(Type::Mapping(MappingType {
                     key_type_id,
                     value_type_id,
-                }))
+                })))
             }
             ir::TypeName::ElementaryType(elementary_type) => {
                 self.type_of_elementary_type(elementary_type, data_location)

@@ -6,7 +6,11 @@ use super::Pass;
 use crate::binder::{Definition, Resolution, Typing};
 use crate::built_ins::BuiltIn;
 use crate::passes::common::node_id_for_expression_typing;
-use crate::types::{literals, DataLocation, FunctionType, LiteralKind, Number, Type, TypeId};
+use crate::types::{
+    literals, AddressType, ContractType, DataLocation, EnumType, FixedSizeArrayType, FunctionType,
+    IntegerType, InterfaceType, LibraryType, LiteralKind, Number, StringType, StructType, Type,
+    TypeId, UserDefinedValueType,
+};
 
 impl Pass<'_> {
     pub(super) fn typing_of_expression(&self, node: &ir::Expression) -> Typing {
@@ -25,7 +29,9 @@ impl Pass<'_> {
             }
 
             // Other special cases
-            ir::Expression::PayableKeyword(_) => Typing::MetaType(Type::Address { payable: true }),
+            ir::Expression::PayableKeyword(_) => {
+                Typing::MetaType(Type::Address(AddressType { payable: true }))
+            }
             ir::Expression::ThisKeyword(_) => Typing::This,
             ir::Expression::SuperKeyword(_) => Typing::Super,
 
@@ -41,9 +47,9 @@ impl Pass<'_> {
 
     fn type_of_elementary_type(elementary_type: &ir::ElementaryType) -> Type {
         match elementary_type {
-            ir::ElementaryType::AddressType(address_type) => Type::Address {
+            ir::ElementaryType::AddressType(address_type) => Type::Address(AddressType {
                 payable: address_type.payable_keyword.is_some(),
-            },
+            }),
             ir::ElementaryType::BytesKeyword(terminal) => {
                 Type::from_bytes_keyword(terminal.unparse(), Some(DataLocation::Memory)).unwrap()
             }
@@ -58,24 +64,28 @@ impl Pass<'_> {
                 Type::from_ufixed_keyword(terminal.unparse())
             }
             ir::ElementaryType::BoolKeyword(_) => Type::Boolean,
-            ir::ElementaryType::StringKeyword(_) => Type::String {
+            ir::ElementaryType::StringKeyword(_) => Type::String(StringType {
                 location: DataLocation::Memory,
-            },
+            }),
         }
     }
 
     pub(super) fn type_of_definition(&mut self, definition_id: NodeId) -> Option<Type> {
         let definition = self.binder.find_definition_by_id(definition_id)?;
         match definition {
-            Definition::Contract(_) => Some(Type::Contract { definition_id }),
-            Definition::Enum(_) => Some(Type::Enum { definition_id }),
-            Definition::Interface(_) => Some(Type::Interface { definition_id }),
-            Definition::Library(_) => Some(Type::Library { definition_id }),
-            Definition::Struct(_) => Some(Type::Struct {
+            Definition::Contract(_) => Some(Type::Contract(ContractType { definition_id })),
+            Definition::Enum(_) => Some(Type::Enum(EnumType { definition_id })),
+            Definition::Interface(_) => Some(Type::Interface(InterfaceType { definition_id })),
+            Definition::Library(_) => Some(Type::Library(LibraryType { definition_id })),
+            Definition::Struct(_) => Some(Type::Struct(StructType {
                 definition_id,
                 location: DataLocation::Memory,
-            }),
-            Definition::UserDefinedValueType(_) => Some(Type::UserDefinedValue { definition_id }),
+            })),
+            Definition::UserDefinedValueType(_) => {
+                Some(Type::UserDefinedValue(UserDefinedValueType {
+                    definition_id,
+                }))
+            }
             _ => None,
         }
     }
@@ -171,11 +181,14 @@ impl Pass<'_> {
             item_type_ids.push(self.typing_of_expression(item).as_type_id()?);
         }
         let element_type = self.types.type_of_array_literal(&item_type_ids)?;
-        Some(self.types.register_type(Type::FixedSizeArray {
-            element_type,
-            size: array.items.len(),
-            location: DataLocation::Memory,
-        }))
+        Some(
+            self.types
+                .register_type(Type::FixedSizeArray(FixedSizeArrayType {
+                    element_type,
+                    size: array.items.len(),
+                    location: DataLocation::Memory,
+                })),
+        )
     }
 
     pub(super) fn type_of_left_typed_binary_operator_expression<F>(
@@ -204,10 +217,10 @@ impl Pass<'_> {
             // the result is either a `uint256` or an `int256` depending on the
             // sign of `left_operand`.
             if left_value.is_negative() {
-                Some(self.types.register_type(Type::Integer {
+                Some(self.types.register_type(Type::Integer(IntegerType {
                     signed: true,
                     bits: 256,
-                }))
+                })))
             } else {
                 Some(self.types.uint256())
             }
@@ -241,7 +254,7 @@ impl Pass<'_> {
             Typing::This => true,
             Typing::Resolved(type_id) => matches!(
                 self.types.get_type_by_id(*type_id),
-                Type::Contract { .. } | Type::Interface { .. }
+                Type::Contract(_) | Type::Interface(_)
             ),
             _ => false,
         }
@@ -312,7 +325,7 @@ impl Pass<'_> {
             }
             Typing::This => {
                 // special case: "this" can be cast to an address
-                if let Type::Address { .. } = target_type {
+                if let Type::Address(_) = target_type {
                     Typing::Resolved(self.types.address())
                 } else {
                     Typing::Unresolved
@@ -389,7 +402,7 @@ impl Pass<'_> {
             }
             Typing::NewExpression(type_id) => {
                 match self.types.get_type_by_id(type_id) {
-                    Type::Array { .. } | Type::Contract { .. } => Typing::Resolved(type_id),
+                    Type::Array(_) | Type::Contract(_) => Typing::Resolved(type_id),
                     _ => {
                         // only contracts can be created with `new`
                         Typing::Unresolved
@@ -403,31 +416,31 @@ impl Pass<'_> {
                 match self.binder.find_definition_by_id(node_id) {
                     Some(Definition::Contract(_)) => {
                         // TODO(validation) SDR[39]: the type of the first argument should be an address
-                        let type_id = self.types.register_type(Type::Contract {
+                        let type_id = self.types.register_type(Type::Contract(ContractType {
                             definition_id: node_id,
-                        });
+                        }));
                         Typing::Resolved(type_id)
                     }
                     Some(Definition::Interface(_)) => {
                         // TODO(validation) SDR[39]: the type of the first argument should be an address
-                        let type_id = self.types.register_type(Type::Interface {
+                        let type_id = self.types.register_type(Type::Interface(InterfaceType {
                             definition_id: node_id,
-                        });
+                        }));
                         Typing::Resolved(type_id)
                     }
                     Some(Definition::Library(_)) => {
                         // TODO(validation) SDR[39]: the type of the first argument should be an address
-                        let type_id = self.types.register_type(Type::Library {
+                        let type_id = self.types.register_type(Type::Library(LibraryType {
                             definition_id: node_id,
-                        });
+                        }));
                         Typing::Resolved(type_id)
                     }
                     Some(Definition::Struct(_)) => {
                         // struct construction
-                        let type_id = self.types.register_type(Type::Struct {
+                        let type_id = self.types.register_type(Type::Struct(StructType {
                             definition_id: node_id,
                             location: DataLocation::Memory,
-                        });
+                        }));
                         Typing::Resolved(type_id)
                     }
                     _ => Typing::Unresolved,
@@ -535,7 +548,9 @@ impl Pass<'_> {
                 (Typing::Unresolved, None)
             }
             Typing::NewExpression(type_id) => {
-                if let Type::Contract { definition_id } = self.types.get_type_by_id(type_id) {
+                if let Type::Contract(ContractType { definition_id }) =
+                    self.types.get_type_by_id(type_id)
+                {
                     (Typing::Resolved(type_id), Some(*definition_id))
                 } else {
                     // only contracts can be created with `new`
@@ -549,10 +564,10 @@ impl Pass<'_> {
                 match self.binder.find_definition_by_id(node_id) {
                     Some(Definition::Struct(_)) => {
                         // struct construction
-                        let type_id = self.types.register_type(Type::Struct {
+                        let type_id = self.types.register_type(Type::Struct(StructType {
                             definition_id: node_id,
                             location: DataLocation::Memory,
-                        });
+                        }));
                         (Typing::Resolved(type_id), Some(node_id))
                     }
                     Some(Definition::Event(_)) => {
@@ -628,7 +643,9 @@ impl Pass<'_> {
         }
         let value = Number::from_hex_number_expression(hex_number_expression)?
             .into_integer()
-            .expect("hex literal must parse to an integer");
+            .expect("hex literal must parse to an integer")
+            .to_biguint()
+            .expect("hex literal must be non-negative");
         // Each pair of hex digits is one byte (with odd digit counts rounded up).
         let bytes = digits.div_ceil(2).max(1);
         Some(LiteralKind::HexInteger { value, bytes })

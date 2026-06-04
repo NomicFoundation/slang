@@ -1,4 +1,4 @@
-use num_bigint::BigInt;
+use num_bigint::{BigInt, BigUint};
 use num_rational::BigRational;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
@@ -10,7 +10,10 @@ use crate::passes::common::node_id_for_expression_typing;
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
 };
-use crate::types::{DataLocation, LiteralKind, Type, TypeId, TypeRegistry};
+use crate::types::{
+    ByteArrayType, BytesType, DataLocation, FixedSizeArrayType, IntegerType, LiteralKind,
+    MappingType, StringType, TupleType, Type, TypeId, TypeRegistry,
+};
 
 struct TypeAnalysis {
     file: TestFile,
@@ -178,10 +181,10 @@ fn try_type_of_expression_in_context(context: &str, expr: &str) -> (Option<Type>
 }
 
 fn register_uint_type(types: &mut TypeRegistry, bits: u32) -> TypeId {
-    types.register_type(Type::Integer {
+    types.register_type(Type::Integer(IntegerType {
         signed: false,
         bits,
-    })
+    }))
 }
 
 #[test]
@@ -208,7 +211,7 @@ fn test_value_bearing_integer_literal_types() {
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::HexInteger {
-            value: BigInt::from(255),
+            value: BigUint::from(255u32),
             bytes: 1,
         })
     );
@@ -218,7 +221,7 @@ fn test_value_bearing_integer_literal_types() {
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::HexInteger {
-            value: BigInt::from(18),
+            value: BigUint::from(18u32),
             bytes: 2,
         })
     );
@@ -426,10 +429,10 @@ fn test_bitwise_operations_unresolved_for_rationals() {
 fn test_implicit_conversion_uses_literal_value() {
     let (_, mut types) = type_of_expression("0");
 
-    let int8 = types.register_type(Type::Integer {
+    let int8 = types.register_type(Type::Integer(IntegerType {
         signed: true,
         bits: 8,
-    });
+    }));
     let uint8 = types.uint8();
     let uint256 = types.uint256();
 
@@ -494,21 +497,21 @@ fn test_implicit_conversion_uses_literal_value() {
 fn test_hex_literal_to_byte_array_conversion() {
     let (_, mut types) = type_of_expression("0");
 
-    let bytes1 = types.register_type(Type::ByteArray { width: 1 });
-    let bytes2 = types.register_type(Type::ByteArray { width: 2 });
-    let bytes4 = types.register_type(Type::ByteArray { width: 4 });
+    let bytes1 = types.register_type(Type::ByteArray(ByteArrayType { width: 1 }));
+    let bytes2 = types.register_type(Type::ByteArray(ByteArrayType { width: 2 }));
+    let bytes4 = types.register_type(Type::ByteArray(ByteArrayType { width: 4 }));
 
     // Hex source literal: byte-width must match the target exactly.
     let hex_0x12 = types.register_type(Type::Literal(LiteralKind::HexInteger {
-        value: BigInt::from(0x12),
+        value: BigUint::from(0x12u32),
         bytes: 1,
     }));
     let hex_0x0012 = types.register_type(Type::Literal(LiteralKind::HexInteger {
-        value: BigInt::from(0x12),
+        value: BigUint::from(0x12u32),
         bytes: 2,
     }));
     let hex_0x10203040 = types.register_type(Type::Literal(LiteralKind::HexInteger {
-        value: BigInt::from(0x1020_3040u32),
+        value: BigUint::from(0x1020_3040u32),
         bytes: 4,
     }));
 
@@ -534,11 +537,11 @@ fn test_hex_literal_to_byte_array_conversion() {
         value: BigInt::from(0),
     }));
     let hex_0x0 = types.register_type(Type::Literal(LiteralKind::HexInteger {
-        value: BigInt::from(0),
+        value: BigUint::from(0u32),
         bytes: 1,
     }));
     let hex_0x0000 = types.register_type(Type::Literal(LiteralKind::HexInteger {
-        value: BigInt::from(0),
+        value: BigUint::from(0u32),
         bytes: 2,
     }));
     assert!(types.implicitly_convertible_to(dec_0, bytes1));
@@ -553,39 +556,39 @@ fn test_conditional_expression_unifies_branch_types() {
     let (type_, _) = type_of_expression("true ? 1 : 2");
     assert_eq!(
         type_,
-        Type::Integer {
+        Type::Integer(IntegerType {
             signed: false,
             bits: 8,
-        }
+        })
     );
 
     // uint8 (1) widens to uint16 (256).
     let (type_, _) = type_of_expression("true ? 1 : 256");
     assert_eq!(
         type_,
-        Type::Integer {
+        Type::Integer(IntegerType {
             signed: false,
             bits: 16,
-        }
+        })
     );
 
     // int8 (-1) and int8 (1) — common type is int8.
     let (type_, _) = type_of_expression("true ? -1 : -128");
     assert_eq!(
         type_,
-        Type::Integer {
+        Type::Integer(IntegerType {
             signed: true,
             bits: 8,
-        }
+        })
     );
 
     // Both branches are string literals — both reify to `string memory`.
     let (type_, _) = type_of_expression(r#"true ? "abc" : "x""#);
     assert_eq!(
         type_,
-        Type::String {
+        Type::String(StringType {
             location: DataLocation::Memory,
-        }
+        })
     );
 }
 
@@ -606,11 +609,11 @@ fn test_conditional_expression_unresolved_when_branches_incompatible() {
 fn test_array_literal_unifies_element_types() {
     // Homogeneous uint8 elements.
     let (expr_type, types) = type_of_expression("[1, 2, 3]");
-    let Type::FixedSizeArray {
+    let Type::FixedSizeArray(FixedSizeArrayType {
         element_type,
         size,
         location,
-    } = expr_type
+    }) = expr_type
     else {
         panic!("expected FixedSizeArray, got {expr_type:?}");
     };
@@ -620,9 +623,9 @@ fn test_array_literal_unifies_element_types() {
 
     // Mixed widths widen to the largest required.
     let (expr_type, mut types) = type_of_expression("[1, 256, 3]");
-    let Type::FixedSizeArray {
+    let Type::FixedSizeArray(FixedSizeArrayType {
         element_type, size, ..
-    } = expr_type
+    }) = expr_type
     else {
         panic!("expected FixedSizeArray, got {expr_type:?}");
     };
@@ -631,22 +634,22 @@ fn test_array_literal_unifies_element_types() {
 
     // Negative values force the result to a signed type.
     let (expr_type, mut types) = type_of_expression("[-1, -2]");
-    let Type::FixedSizeArray { element_type, .. } = expr_type else {
+    let Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) = expr_type else {
         panic!("expected FixedSizeArray, got {expr_type:?}");
     };
     assert_eq!(
         element_type,
-        types.register_type(Type::Integer {
+        types.register_type(Type::Integer(IntegerType {
             signed: true,
             bits: 8,
-        })
+        }))
     );
 
     // String literal arrays reify each element to `string memory`.
     let (expr_type, types) = type_of_expression(r#"["abc", "x"]"#);
-    let Type::FixedSizeArray {
+    let Type::FixedSizeArray(FixedSizeArrayType {
         element_type, size, ..
-    } = expr_type
+    }) = expr_type
     else {
         panic!("expected FixedSizeArray, got {expr_type:?}");
     };
@@ -683,11 +686,11 @@ fn test_conditional_expression_widens_byte_arrays() {
 #[test]
 fn test_array_literal_unifies_byte_array_elements() {
     let (expr_type, types) = type_of_expression("[bytes32(0), bytes32(1)]");
-    let Type::FixedSizeArray {
+    let Type::FixedSizeArray(FixedSizeArrayType {
         element_type,
         size,
         location,
-    } = expr_type
+    }) = expr_type
     else {
         panic!("expected FixedSizeArray, got {expr_type:?}");
     };
@@ -699,11 +702,11 @@ fn test_array_literal_unifies_byte_array_elements() {
 #[test]
 fn test_array_literal_unifies_byte_array_and_literal_zero() {
     let (expr_type, types) = type_of_expression("[bytes32(0), 0]");
-    let Type::FixedSizeArray {
+    let Type::FixedSizeArray(FixedSizeArrayType {
         element_type,
         size,
         location,
-    } = expr_type
+    }) = expr_type
     else {
         panic!("expected FixedSizeArray, got {expr_type:?}");
     };
@@ -729,9 +732,9 @@ fn test_array_literal_does_not_unify_when_literal_is_first_and_byte_array_follow
 #[test]
 fn test_array_literal_widens_past_first_element_integer_type() {
     let (expr_type, mut types) = type_of_expression("[uint8(0), 256]");
-    let Type::FixedSizeArray {
+    let Type::FixedSizeArray(FixedSizeArrayType {
         element_type, size, ..
-    } = expr_type
+    }) = expr_type
     else {
         panic!("expected FixedSizeArray, got {expr_type:?}");
     };
@@ -742,9 +745,9 @@ fn test_array_literal_widens_past_first_element_integer_type() {
 #[test]
 fn test_array_literal_unifies_byte_array_and_matching_hex_literal() {
     let (expr_type, types) = type_of_expression("[bytes1(0x01), 0x01]");
-    let Type::FixedSizeArray {
+    let Type::FixedSizeArray(FixedSizeArrayType {
         element_type, size, ..
-    } = expr_type
+    }) = expr_type
     else {
         panic!("expected FixedSizeArray, got {expr_type:?}");
     };
@@ -773,10 +776,10 @@ fn test_conditional_expression_unifies_mappings() {
         "mapping(uint => uint) m1; mapping(uint => uint) m2;",
         "true ? m1 : m2",
     );
-    let Some(Type::Mapping {
+    let Some(Type::Mapping(MappingType {
         key_type_id,
         value_type_id,
-    }) = expr_type
+    })) = expr_type
     else {
         panic!("expected Mapping, got {expr_type:?}");
     };
@@ -787,7 +790,7 @@ fn test_conditional_expression_unifies_mappings() {
 #[test]
 fn test_conditional_expression_unifies_literal_tuples() {
     let (expr_type, types) = type_of_expression("true ? (1, 2) : (3, 4)");
-    let Type::Tuple { types: tuple_types } = expr_type else {
+    let Type::Tuple(TupleType { types: tuple_types }) = expr_type else {
         panic!("expected Tuple, got {expr_type:?}");
     };
 
@@ -839,10 +842,10 @@ fn test_overload_resolution_widens_byte_array_argument() {
     let (type_, _) = type_of_expression_in_context(setup, "pick(bytes20(0))");
     assert_eq!(
         type_,
-        Type::Integer {
+        Type::Integer(IntegerType {
             signed: false,
             bits: 8,
-        }
+        })
     );
 }
 
@@ -944,18 +947,18 @@ fn test_data_locations_of_state_variable_and_getter_accesses() {
         &["bs", "foo.xs", "t.bs()", "t.foo()"],
     );
     let expected = vec![
-        Some(Type::Bytes {
+        Some(Type::Bytes(BytesType {
             location: DataLocation::Storage,
-        }),
-        Some(Type::Bytes {
+        })),
+        Some(Type::Bytes(BytesType {
             location: DataLocation::Storage,
-        }),
-        Some(Type::Bytes {
+        })),
+        Some(Type::Bytes(BytesType {
             location: DataLocation::Memory,
-        }),
-        Some(Type::Bytes {
+        })),
+        Some(Type::Bytes(BytesType {
             location: DataLocation::Memory,
-        }),
+        })),
     ];
     assert_eq!(typings, expected);
 }
@@ -1015,7 +1018,7 @@ fn test_getter_of_struct_with_function_member() {
         "other.s()",
     );
 
-    let Type::Tuple { types: elements } = getter_type else {
+    let Type::Tuple(TupleType { types: elements }) = getter_type else {
         panic!("expected the getter to return a tuple, got {getter_type:?}");
     };
     let element_types: Vec<&Type> = elements
@@ -1027,10 +1030,10 @@ fn test_getter_of_struct_with_function_member() {
         matches!(
             element_types.as_slice(),
             [
-                Type::Integer {
+                Type::Integer(IntegerType {
                     signed: false,
                     bits: 256
-                },
+                }),
                 Type::Function(_),
             ]
         ),
@@ -1052,7 +1055,7 @@ fn test_getter_of_struct_with_struct_member() {
         "other.s()",
     );
 
-    let Type::Tuple { types: elements } = getter_type else {
+    let Type::Tuple(TupleType { types: elements }) = getter_type else {
         panic!("expected the getter to return a tuple, got {getter_type:?}");
     };
     let element_types: Vec<&Type> = elements
@@ -1064,11 +1067,11 @@ fn test_getter_of_struct_with_struct_member() {
         matches!(
             element_types.as_slice(),
             [
-                Type::Struct { .. },
-                Type::Integer {
+                Type::Struct(_),
+                Type::Integer(IntegerType {
                     signed: false,
                     bits: 256
-                },
+                }),
             ]
         ),
         "expected getter tuple `(Struct, uint256)`, got {element_types:?}",

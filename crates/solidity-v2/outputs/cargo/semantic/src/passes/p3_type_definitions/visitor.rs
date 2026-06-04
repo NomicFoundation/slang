@@ -9,7 +9,7 @@ use super::evaluator::evaluate_compile_time_integer_constant;
 use super::Pass;
 use crate::binder::{Definition, Reference, Resolution, Scope, Typing, UsingDirective};
 use crate::built_ins::BuiltIn;
-use crate::types::{DataLocation, Type};
+use crate::types::{ContractType, DataLocation, EnumType, InterfaceType, LibraryType, Type};
 
 impl Visitor for Pass<'_> {
     fn enter_source_unit(&mut self, node: &ir::SourceUnit) -> bool {
@@ -24,9 +24,9 @@ impl Visitor for Pass<'_> {
     fn enter_contract_definition(&mut self, node: &ir::ContractDefinition) -> bool {
         self.enter_scope_for_node_id(node.id());
 
-        let type_id = self.types.register_type(Type::Contract {
+        let type_id = self.types.register_type(Type::Contract(ContractType {
             definition_id: node.id(),
-        });
+        }));
         self.current_receiver_type = Some(type_id);
 
         if let Some(bases) = self.binder.get_linearised_bases(node.id()) {
@@ -73,9 +73,9 @@ impl Visitor for Pass<'_> {
     fn enter_interface_definition(&mut self, node: &ir::InterfaceDefinition) -> bool {
         self.enter_scope_for_node_id(node.id());
 
-        let type_id = self.types.register_type(Type::Interface {
+        let type_id = self.types.register_type(Type::Interface(InterfaceType {
             definition_id: node.id(),
-        });
+        }));
         self.current_receiver_type = Some(type_id);
 
         if let Some(bases) = self.binder.get_linearised_bases(node.id()) {
@@ -97,9 +97,9 @@ impl Visitor for Pass<'_> {
     fn enter_library_definition(&mut self, node: &ir::LibraryDefinition) -> bool {
         self.enter_scope_for_node_id(node.id());
 
-        self.types.register_type(Type::Library {
+        self.types.register_type(Type::Library(LibraryType {
             definition_id: node.id(),
-        });
+        }));
 
         true
     }
@@ -295,9 +295,9 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_enum_definition(&mut self, node: &ir::EnumDefinition) {
-        let type_id = self.types.register_type(Type::Enum {
+        let type_id = self.types.register_type(Type::Enum(EnumType {
             definition_id: node.id(),
-        });
+        }));
         for member in &node.members {
             self.binder.set_node_type(member.id(), Some(type_id));
         }

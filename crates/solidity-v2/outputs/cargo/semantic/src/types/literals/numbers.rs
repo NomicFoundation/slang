@@ -7,7 +7,7 @@ use num_traits::cast::ToPrimitive;
 use num_traits::{Num, One, Signed, Zero};
 use slang_solidity_v2_ir::ir;
 
-use crate::types::{LiteralKind, Type};
+use crate::types::{FixedPointNumberType, IntegerType, LiteralKind, Type};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Number {
@@ -67,10 +67,9 @@ impl Number {
 
     pub fn from_literal_kind(kind: &LiteralKind) -> Option<Self> {
         match kind {
-            LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. } => {
-                Some(Self::Integer(value.clone()))
-            }
             LiteralKind::Address { value } => Some(Self::Integer(value.into())),
+            LiteralKind::Integer { value } => Some(Self::Integer(value.clone())),
+            LiteralKind::HexInteger { value, .. } => Some(Self::Integer(value.clone().into())),
             LiteralKind::Rational { value } => Some(Self::Rational(value.clone())),
             LiteralKind::HexString { .. } | LiteralKind::String { .. } => None,
         }
@@ -305,5 +304,267 @@ pub(crate) fn smallest_integer_type_to_fit(value: &BigInt) -> Option<Type> {
         return None;
     }
     let bits = bits.next_multiple_of(8).max(8);
-    Some(Type::Integer { signed, bits })
+    Some(Type::Integer(IntegerType { signed, bits }))
+}
+
+/// Returns the smallest fixed-point type that holds `value`.
+///
+/// For rationals with a finite decimal expansion (`q = 2^a * 5^b` in
+/// lowest terms) the natural precision `max(a, b)` gives an exact
+/// representation; that's what we pick when it doesn't exceed 80 and the
+/// scaled value still fits in 256 bits — so `1/2` becomes `ufixed8x1`,
+/// `1/4` becomes `ufixed8x2`, `6/5` becomes `ufixed8x1`, etc.
+///
+/// Otherwise — periodic fractional part, natural precision over 80, or
+/// natural precision yielding a scaled value over 256 bits — we truncate
+/// at the largest precision `N` in `[0, 80]` that keeps
+/// `floor(|p| * 10^N / q)` within the chosen 256-bit range (`2^256 - 1`
+/// unsigned, `2^255` signed). `M` is then the smallest multiple of 8 in
+/// `[8, 256]` that holds the scaled value. Returns `None` only when the
+/// integer part alone overflows the range, since for any rational a
+/// low-enough `N` (down to 0) would otherwise let it fit.
+pub(crate) fn smallest_fixed_point_type_to_fit(value: &BigRational) -> Option<Type> {
+    const MAX_DECIMAL_PLACES: u32 = 80;
+
+    let signed = value.is_negative();
+    let numerator_magnitude = value.numer().abs();
+    // `BigRational` normalises to a positive denominator, so `denom()` is
+    // always > 0 and carries no sign information.
+    let denominator = value.denom();
+
+    // Maximum scaled magnitude that fits in 256 bits with the chosen
+    // signedness: `2^255` for signed (reachable by `INT256_MIN`), and
+    // `2^256 - 1` for unsigned.
+    let max_magnitude = if signed {
+        BigInt::from(1u32) << 255
+    } else {
+        (BigInt::from(1u32) << 256) - BigInt::from(1u32)
+    };
+
+    if &numerator_magnitude / denominator > max_magnitude {
+        return None;
+    }
+
+    // Factor the denominator as `2^a * 5^b * r`. The natural precision of
+    // an exact representation is `max(a, b)`; if `r > 1` the rational has
+    // a periodic fractional part and no exact representation exists.
+    let five = BigInt::from(5u32);
+    let mut remaining_denominator = denominator.clone();
+    let factors_of_two: u32 = remaining_denominator
+        .trailing_zeros()
+        .unwrap_or(0)
+        .try_into()
+        .unwrap();
+    remaining_denominator >>= factors_of_two;
+    let mut factors_of_five: u32 = 0;
+    while remaining_denominator.is_multiple_of(&five) {
+        remaining_denominator /= &five;
+        factors_of_five += 1;
+    }
+    let has_finite_expansion = remaining_denominator.is_one();
+    let natural_decimal_places = factors_of_two.max(factors_of_five);
+
+    // The scaled magnitude `floor(|p| * 10^d / q)` fits the 256-bit range
+    // iff `|p| * 10^d < (max_magnitude + 1) * q`; both the fast path and
+    // the binary-search probe below use this `threshold` comparison.
+    let threshold = (max_magnitude + BigInt::from(1u32)) * denominator;
+
+    let build_result = |scaled_magnitude: BigInt, decimal_places: u32| -> Type {
+        let scaled = if signed {
+            -scaled_magnitude
+        } else {
+            scaled_magnitude
+        };
+        let bits = integer_bits_required(&scaled, signed);
+        debug_assert!(bits <= 256, "scaled value must fit 256 bits at this point");
+        let bits = bits.next_multiple_of(8).max(8);
+        Type::FixedPointNumber(FixedPointNumberType {
+            signed,
+            bits,
+            decimal_places,
+        })
+    };
+
+    // Fast path: a finite expansion whose natural precision is within the
+    // 80-place cap and whose scaled magnitude already fits — the common
+    // shape for typical decimal literals (`1/2`, `1/4`, `1.2`, …). One
+    // `pow` + multiply + compare here saves the binary search's ~7 probes.
+    if has_finite_expansion && natural_decimal_places <= MAX_DECIMAL_PLACES {
+        let scaled_numerator =
+            &numerator_magnitude * BigInt::from(10u32).pow(natural_decimal_places);
+        if scaled_numerator < threshold {
+            return Some(build_result(
+                scaled_numerator / denominator,
+                natural_decimal_places,
+            ));
+        }
+    }
+
+    // Slow path: truncate at the largest precision in `[0, MAX_DECIMAL_PLACES]`
+    // whose scaled magnitude still fits. Reached when the rational is
+    // periodic, when its natural precision exceeds 80 places, or when its
+    // natural precision yields a scaled value over 256 bits.
+    let mut lower_bound: u32 = 0;
+    let mut upper_bound: u32 = MAX_DECIMAL_PLACES;
+    while lower_bound < upper_bound {
+        let midpoint = lower_bound + (upper_bound - lower_bound).div_ceil(2);
+        if &numerator_magnitude * BigInt::from(10u32).pow(midpoint) < threshold {
+            lower_bound = midpoint;
+        } else {
+            upper_bound = midpoint - 1;
+        }
+    }
+    let decimal_places = lower_bound;
+
+    let scaled_magnitude =
+        &numerator_magnitude * BigInt::from(10u32).pow(decimal_places) / denominator;
+    Some(build_result(scaled_magnitude, decimal_places))
+}
+
+#[cfg(test)]
+mod tests {
+    use num_bigint::BigInt;
+    use num_rational::BigRational;
+
+    use super::{smallest_fixed_point_type_to_fit, Type};
+    use crate::types::FixedPointNumberType;
+
+    fn fit(numerator: BigInt, denominator: BigInt) -> Option<FixedPointNumberType> {
+        match smallest_fixed_point_type_to_fit(&BigRational::new(numerator, denominator))? {
+            Type::FixedPointNumber(inner) => Some(inner),
+            other => panic!("expected FixedPointNumber, got {other:?}"),
+        }
+    }
+
+    fn unsigned_fixed(bits: u32, decimal_places: u32) -> FixedPointNumberType {
+        FixedPointNumberType {
+            signed: false,
+            bits,
+            decimal_places,
+        }
+    }
+
+    fn signed_fixed(bits: u32, decimal_places: u32) -> FixedPointNumberType {
+        FixedPointNumberType {
+            signed: true,
+            bits,
+            decimal_places,
+        }
+    }
+
+    fn pow2(exponent: u32) -> BigInt {
+        BigInt::from(2u32).pow(exponent)
+    }
+
+    fn pow10(exponent: u32) -> BigInt {
+        BigInt::from(10u32).pow(exponent)
+    }
+
+    // 1/2 = 0.5: terminating, denom = 2^1, natural d = 1. Scaled = 5
+    // (3 bits, rounded to M = 8).
+    #[test]
+    fn terminating_one_half() {
+        assert_eq!(
+            fit(BigInt::from(1u32), BigInt::from(2u32)),
+            Some(unsigned_fixed(8, 1)),
+        );
+    }
+
+    // 1/4 = 0.25: terminating, denom = 2^2, natural d = 2. Scaled = 25
+    // (5 bits → M = 8).
+    #[test]
+    fn terminating_one_quarter() {
+        assert_eq!(
+            fit(BigInt::from(1u32), BigInt::from(4u32)),
+            Some(unsigned_fixed(8, 2)),
+        );
+    }
+
+    // 6/5 = 1.2: terminating, denom = 5^1, natural d = 1. Scaled = 12
+    // (4 bits → M = 8).
+    #[test]
+    fn terminating_one_point_two() {
+        assert_eq!(
+            fit(BigInt::from(6u32), BigInt::from(5u32)),
+            Some(unsigned_fixed(8, 1)),
+        );
+    }
+
+    // -1/2: terminating negative — natural d = 1, scaled = -5
+    // (signed bits required = 4 → M = 8).
+    #[test]
+    fn terminating_signed_negative_one_half() {
+        assert_eq!(
+            fit(-BigInt::from(1u32), BigInt::from(2u32)),
+            Some(signed_fixed(8, 1)),
+        );
+    }
+
+    // 1/3: periodic — algorithm falls back to truncation, maximising d
+    // within the unsigned 256-bit range. d = 77 since `10^77 / 3` fits
+    // but `10^78 / 3` would not.
+    #[test]
+    fn non_terminating_one_third_truncates() {
+        assert_eq!(
+            fit(BigInt::from(1u32), BigInt::from(3u32)),
+            Some(unsigned_fixed(256, 77)),
+        );
+    }
+
+    // -1/3: signed variant of the truncation case. The signed bound
+    // `2^255` still admits d = 77 (`10^77 / 3 ≈ 3.33 * 10^76 < 2^255`).
+    #[test]
+    fn non_terminating_signed_negative_one_third_truncates() {
+        assert_eq!(
+            fit(-BigInt::from(1u32), BigInt::from(3u32)),
+            Some(signed_fixed(256, 77)),
+        );
+    }
+
+    // (2^256 - 1) / 2: terminating with natural d = 1, but the scaled
+    // value `5 * (2^256 - 1)` overflows 256 bits. Falls back to d = 0
+    // (which truncates the .5 fractional part).
+    #[test]
+    fn terminating_natural_precision_overflows_falls_back_to_truncation() {
+        let numerator = pow2(256) - BigInt::from(1u32);
+        assert_eq!(
+            fit(numerator, BigInt::from(2u32)),
+            Some(unsigned_fixed(256, 0)),
+        );
+    }
+
+    // 5 / 10^80: terminating, reduces to `1 / (2^80 * 5^79)`, natural
+    // d = 80. Scaled = 5, fits in the smallest M = 8.
+    #[test]
+    fn terminating_natural_precision_at_maximum() {
+        assert_eq!(
+            fit(BigInt::from(5u32), pow10(80)),
+            Some(unsigned_fixed(8, 80)),
+        );
+    }
+
+    // 1 / 10^100: natural d = 100 exceeds the 80-place cap, so we
+    // truncate. At d = 80 the scaled magnitude floors to 0.
+    #[test]
+    fn terminating_natural_precision_over_cap_truncates_to_zero() {
+        assert_eq!(
+            fit(BigInt::from(1u32), pow10(100)),
+            Some(unsigned_fixed(8, 80)),
+        );
+    }
+
+    // 2^260 / 3: integer part alone exceeds `2^256 - 1`, so no unsigned
+    // fixed-point type can hold this value.
+    #[test]
+    fn unsigned_integer_part_overflows() {
+        assert_eq!(fit(pow2(260), BigInt::from(3u32)), None);
+    }
+
+    // -2^257 / 3: signed bound is `2^255`, but `|2^257 / 3| ≈ 7.7 * 10^76`
+    // overflows it. The same magnitude as a positive value would fit
+    // unsigned, but signedness is fixed by the negative sign.
+    #[test]
+    fn signed_integer_part_overflows() {
+        assert_eq!(fit(-pow2(257), BigInt::from(3u32)), None);
+    }
 }

@@ -1,5 +1,5 @@
 use literals::numbers;
-use num_bigint::BigInt;
+use num_bigint::{BigInt, BigUint};
 use num_rational::BigRational;
 use ruint::aliases::U160;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -18,67 +18,115 @@ pub struct TypeId(usize);
 // __SLANG_TYPE_TYPES__ keep in sync with AST types
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Type {
-    Address {
-        payable: bool,
-    },
-    Array {
-        element_type: TypeId,
-        location: DataLocation,
-    },
+    Address(AddressType),
+    Array(ArrayType),
     Boolean,
-    ByteArray {
-        width: u32,
-    },
-    Bytes {
-        location: DataLocation,
-    },
-    Contract {
-        definition_id: NodeId,
-    },
-    Enum {
-        definition_id: NodeId,
-    },
-    FixedPointNumber {
-        signed: bool,
-        bits: u32,
-        precision_bits: u32,
-    },
-    FixedSizeArray {
-        element_type: TypeId,
-        location: DataLocation,
-        // TODO: this should be u256, although in practice usize should suffice
-        size: usize,
-    },
+    ByteArray(ByteArrayType),
+    Bytes(BytesType),
+    Contract(ContractType),
+    Enum(EnumType),
+    FixedPointNumber(FixedPointNumberType),
+    FixedSizeArray(FixedSizeArrayType),
     Function(FunctionType),
-    Integer {
-        signed: bool,
-        bits: u32,
-    },
-    Interface {
-        definition_id: NodeId,
-    },
-    Library {
-        definition_id: NodeId,
-    },
+    Integer(IntegerType),
+    Interface(InterfaceType),
+    Library(LibraryType),
     Literal(LiteralKind),
-    Mapping {
-        key_type_id: TypeId,
-        value_type_id: TypeId,
-    },
-    String {
-        location: DataLocation,
-    },
-    Struct {
-        definition_id: NodeId,
-        location: DataLocation,
-    },
-    Tuple {
-        types: Vec<TypeId>,
-    },
-    UserDefinedValue {
-        definition_id: NodeId,
-    },
+    Mapping(MappingType),
+    String(StringType),
+    Struct(StructType),
+    Tuple(TupleType),
+    UserDefinedValue(UserDefinedValueType),
     Void,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct AddressType {
+    pub payable: bool,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct ArrayType {
+    pub element_type: TypeId,
+    pub location: DataLocation,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct ByteArrayType {
+    pub width: u32,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct BytesType {
+    pub location: DataLocation,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct ContractType {
+    pub definition_id: NodeId,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct EnumType {
+    pub definition_id: NodeId,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct FixedPointNumberType {
+    pub signed: bool,
+    pub bits: u32,
+    pub decimal_places: u32,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct FixedSizeArrayType {
+    pub element_type: TypeId,
+    pub location: DataLocation,
+    // TODO: this should be u256, although in practice usize should suffice
+    pub size: usize,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct IntegerType {
+    pub signed: bool,
+    pub bits: u32,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct InterfaceType {
+    pub definition_id: NodeId,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct LibraryType {
+    pub definition_id: NodeId,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct MappingType {
+    pub key_type_id: TypeId,
+    pub value_type_id: TypeId,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct StringType {
+    pub location: DataLocation,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct StructType {
+    pub definition_id: NodeId,
+    pub location: DataLocation,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct TupleType {
+    pub types: Vec<TypeId>,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct UserDefinedValueType {
+    pub definition_id: NodeId,
 }
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
@@ -90,9 +138,10 @@ pub enum LiteralKind {
     /// source-text byte width (number of hex digits / 2, rounded up). The
     /// width is what determines convertibility with `bytesN` and is preserved
     /// distinctly from the value because `0x0012` and `0x12` share value `18`
-    /// but convert to `bytes2` and `bytes1` respectively.
+    /// but convert to `bytes2` and `bytes1` respectively. The value is
+    /// `BigUint` since hex literals are always non-negative.
     HexInteger {
-        value: BigInt,
+        value: BigUint,
         bytes: u32,
     },
     Rational {
@@ -110,20 +159,25 @@ pub enum LiteralKind {
 }
 
 impl LiteralKind {
-    /// Returns the non-literal `Type` this literal flows into when its source
-    /// position needs a concrete EVM type.
-    pub(crate) fn mobile_type(&self) -> Option<Type> {
+    /// Returns the non-literal `Type` this literal can flow into (e.g., the
+    /// smallest integer type that fits an integer literal, the smallest
+    /// fixed-point type that fits a rational literal, or `string memory`
+    /// for a string literal). Returns `None` when the literal cannot be
+    /// represented (eg. integer would require more than 256 bits).
+    // __SLANG_MOBILE_TYPE__ keep in sync with `ast::LiteralType::mobile_type`
+    pub fn mobile_type(&self) -> Option<Type> {
         match self {
-            LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. } => {
-                numbers::smallest_integer_type_to_fit(value)
+            LiteralKind::Integer { value } => numbers::smallest_integer_type_to_fit(value),
+            LiteralKind::HexInteger { value, .. } => {
+                numbers::smallest_integer_type_to_fit(&BigInt::from(value.clone()))
             }
-            // TODO: not supported yet, but narrow the rational type to the
-            // smallest fixed/ufixed available (eg. 1.2 -> ufixed8x1).
-            LiteralKind::Rational { .. } => None,
-            LiteralKind::HexString { .. } | LiteralKind::String { .. } => Some(Type::String {
-                location: DataLocation::Memory,
-            }),
-            LiteralKind::Address { .. } => Some(Type::Address { payable: false }),
+            LiteralKind::Rational { value } => numbers::smallest_fixed_point_type_to_fit(value),
+            LiteralKind::HexString { .. } | LiteralKind::String { .. } => {
+                Some(Type::String(StringType {
+                    location: DataLocation::Memory,
+                }))
+            }
+            LiteralKind::Address { .. } => Some(Type::Address(AddressType { payable: false })),
         }
     }
 }
@@ -286,12 +340,12 @@ impl ImplicitlyConvertible<DataLocation> for DataLocation {
 impl Type {
     pub fn data_location(&self) -> Option<DataLocation> {
         match self {
-            Self::Array { location, .. }
-            | Self::Bytes { location }
-            | Self::FixedSizeArray { location, .. }
-            | Self::String { location }
-            | Self::Struct { location, .. } => Some(*location),
-            Self::Mapping { .. } => Some(DataLocation::Storage),
+            Self::Array(ArrayType { location, .. })
+            | Self::Bytes(BytesType { location })
+            | Self::FixedSizeArray(FixedSizeArrayType { location, .. })
+            | Self::String(StringType { location })
+            | Self::Struct(StructType { location, .. }) => Some(*location),
+            Self::Mapping(_) => Some(DataLocation::Storage),
             _ => None,
         }
     }
@@ -307,33 +361,33 @@ impl Type {
     /// Arrays and mapping can't
     pub fn can_return_from_getter_directly(&self) -> bool {
         match self {
-            Type::Address { .. }
+            Type::Address(_)
             | Type::Boolean
-            | Type::ByteArray { .. }
-            | Type::Bytes { .. }
-            | Type::Contract { .. }
-            | Type::Enum { .. }
-            | Type::FixedPointNumber { .. }
-            | Type::Integer { .. }
-            | Type::Interface { .. }
-            | Type::String { .. }
-            | Type::Struct { .. }
-            | Type::UserDefinedValue { .. } => true,
+            | Type::ByteArray(_)
+            | Type::Bytes(_)
+            | Type::Contract(_)
+            | Type::Enum(_)
+            | Type::FixedPointNumber(_)
+            | Type::Integer(_)
+            | Type::Interface(_)
+            | Type::String(_)
+            | Type::Struct(_)
+            | Type::UserDefinedValue(_) => true,
             Type::Function(FunctionType { visibility, .. }) => {
                 // Function types can only be returned if they're external
                 visibility == &FunctionTypeVisibility::External
             }
 
             // Can be returned, just not inside a struct
-            Type::Array { .. }
-            | Type::FixedSizeArray { .. }
-            | Type::Mapping { .. }
+            Type::Array(_)
+            | Type::FixedSizeArray(_)
+            | Type::Mapping(_)
             // Actually can't return from a getter
             // TODO(validation) SDR[1394]: Not sure if this is the best place for this check,
             // but it's related.
             | Type::Literal(_)
-            | Type::Library { .. }
-            | Type::Tuple { .. }
+            | Type::Library(_)
+            | Type::Tuple(_)
             | Type::Void => false,
         }
     }
@@ -358,17 +412,19 @@ impl Type {
     }
 
     pub fn is_contract_or_interface(&self) -> bool {
-        matches!(self, Type::Contract { .. } | Type::Interface { .. })
+        matches!(self, Type::Contract(_) | Type::Interface(_))
     }
 
     pub(crate) fn get_definition_id(&self) -> Option<NodeId> {
         match self {
-            Type::Contract { definition_id }
-            | Type::Enum { definition_id }
-            | Type::Interface { definition_id }
-            | Type::Struct { definition_id, .. }
-            | Type::UserDefinedValue { definition_id }
-            | Type::Library { definition_id } => Some(*definition_id),
+            Type::Contract(ContractType { definition_id })
+            | Type::Enum(EnumType { definition_id })
+            | Type::Interface(InterfaceType { definition_id })
+            | Type::Library(LibraryType { definition_id })
+            | Type::Struct(StructType { definition_id, .. })
+            | Type::UserDefinedValue(UserDefinedValueType { definition_id }) => {
+                Some(*definition_id)
+            }
             _ => None,
         }
     }
@@ -377,6 +433,6 @@ impl Type {
     ///
     /// TODO: This probably has a better way to resolve it, looking at the storage location
     pub(crate) fn can_be_array_element(&self) -> bool {
-        !matches!(self, Type::Mapping { .. } | Type::Tuple { .. } | Type::Void)
+        !matches!(self, Type::Mapping(_) | Type::Tuple(_) | Type::Void)
     }
 }

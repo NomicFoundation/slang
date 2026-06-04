@@ -7,7 +7,9 @@ use super::Pass;
 use crate::binder::{Reference, Resolution, Typing};
 use crate::built_ins::BuiltIn;
 use crate::passes::common::node_id_for_string_expression_typing;
-use crate::types::{DataLocation, Number, Type};
+use crate::types::{
+    ArrayType, DataLocation, FixedSizeArrayType, MappingType, Number, TupleType, Type,
+};
 
 impl Visitor for Pass<'_> {
     fn enter_source_unit(&mut self, node: &ir::SourceUnit) -> bool {
@@ -316,7 +318,7 @@ impl Visitor for Pass<'_> {
                     .unwrap_or(self.types.void());
                 types.push(type_id);
             }
-            let type_id = self.types.register_type(Type::Tuple { types });
+            let type_id = self.types.register_type(Type::Tuple(TupleType { types }));
             Typing::Resolved(type_id)
         };
         self.binder.set_node_typing(node.id(), typing);
@@ -371,8 +373,8 @@ impl Visitor for Pass<'_> {
                 let range_access = node.end.is_some();
                 let operand_type = self.types.get_type_by_id(operand_type_id);
                 match operand_type {
-                    Type::Array { element_type, .. }
-                    | Type::FixedSizeArray { element_type, .. } => {
+                    Type::Array(ArrayType { element_type, .. })
+                    | Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
                         // TODO(validation) SDR[58]: for fixed-size arrays, if the range
                         // is resolvable at compile time we should check for out
                         // of bounds accesses.
@@ -386,21 +388,21 @@ impl Visitor for Pass<'_> {
                             Typing::Resolved(*element_type)
                         }
                     }
-                    Type::ByteArray { .. } => {
+                    Type::ByteArray(_) => {
                         if range_access {
                             Typing::Unresolved
                         } else {
                             Typing::Resolved(self.types.bytes1())
                         }
                     }
-                    Type::Bytes { .. } => {
+                    Type::Bytes(_) => {
                         if range_access {
                             Typing::Resolved(operand_type_id)
                         } else {
                             Typing::Resolved(self.types.bytes1())
                         }
                     }
-                    Type::Mapping { value_type_id, .. } => {
+                    Type::Mapping(MappingType { value_type_id, .. }) => {
                         if range_access {
                             Typing::Unresolved
                         } else {
@@ -416,19 +418,19 @@ impl Visitor for Pass<'_> {
             Typing::MetaType(operand_type) => {
                 // indexing a meta-type creates a new meta-type of the array
                 let operand_type_id = self.types.register_type(operand_type);
-                Typing::MetaType(Type::Array {
+                Typing::MetaType(Type::Array(ArrayType {
                     element_type: operand_type_id,
                     location: DataLocation::Memory,
-                })
+                }))
             }
             Typing::UserMetaType(definition_id) => {
                 // indexing a user meta-type creates a new meta-type of the array
                 if let Some(operand_type) = self.type_of_definition(definition_id) {
                     let operand_type_id = self.types.register_type(operand_type);
-                    Typing::MetaType(Type::Array {
+                    Typing::MetaType(Type::Array(ArrayType {
                         element_type: operand_type_id,
                         location: DataLocation::Memory,
-                    })
+                    }))
                 } else {
                     Typing::Unresolved
                 }

@@ -36,45 +36,61 @@ pub enum Type {
     Void(VoidType),
 }
 
-macro_rules! define_type_variant {
+macro_rules! define_value_type_variant {
     ($type:ident) => {
         paste! {
             #[derive(Clone)]
             pub struct [<$type Type>] {
-                type_id: TypeId,
-                semantic: Arc<SemanticContext>,
-            }
-
-            impl [<$type Type>] {
-                #[allow(unused)]
-                fn internal_type(&self) -> &types::Type {
-                    self.semantic.types().get_type_by_id(self.type_id)
-                }
+                inner: types::[<$type Type>],
             }
         }
     };
 }
 
-define_type_variant!(Address);
+macro_rules! define_type_variant {
+    ($type:ident) => {
+        paste! {
+            #[derive(Clone)]
+            pub struct [<$type Type>] {
+                inner: types::[<$type Type>],
+                semantic: Arc<SemanticContext>,
+            }
+        }
+    };
+}
+
+// Variants whose accessors only read fields from the inner struct.
+define_value_type_variant!(Address);
+define_value_type_variant!(ByteArray);
+define_value_type_variant!(Bytes);
+define_value_type_variant!(FixedPointNumber);
+define_value_type_variant!(Integer);
+define_value_type_variant!(String);
+
+// Variants that need the semantic context to resolve nested types or
+// definitions.
 define_type_variant!(Array);
-define_type_variant!(Boolean);
-define_type_variant!(ByteArray);
-define_type_variant!(Bytes);
 define_type_variant!(Contract);
 define_type_variant!(Enum);
 define_type_variant!(FixedSizeArray);
-define_type_variant!(FixedPointNumber);
 define_type_variant!(Function);
-define_type_variant!(Integer);
 define_type_variant!(Interface);
 define_type_variant!(Library);
-define_type_variant!(Literal);
 define_type_variant!(Mapping);
-define_type_variant!(String);
 define_type_variant!(Struct);
 define_type_variant!(Tuple);
 define_type_variant!(UserDefinedValue);
-define_type_variant!(Void);
+
+#[derive(Clone)]
+pub struct LiteralType {
+    inner: LiteralKind,
+}
+
+#[derive(Clone)]
+pub struct BooleanType;
+
+#[derive(Clone)]
+pub struct VoidType;
 
 impl Type {
     pub fn try_create_for_node_id(
@@ -85,61 +101,36 @@ impl Type {
         Some(Self::create(type_id, semantic))
     }
 
-    pub fn create(type_id: TypeId, semantic: &Arc<SemanticContext>) -> Self {
-        let type_ = semantic.types().get_type_by_id(type_id);
+    pub(crate) fn create(type_id: TypeId, semantic: &Arc<SemanticContext>) -> Self {
+        let type_ = semantic.types().get_type_by_id(type_id).clone();
         let semantic = Arc::clone(semantic);
         match type_ {
-            types::Type::Address { .. } => Self::Address(AddressType { type_id, semantic }),
-            types::Type::Array { .. } => Self::Array(ArrayType { type_id, semantic }),
-            types::Type::Boolean => Self::Boolean(BooleanType { type_id, semantic }),
-            types::Type::ByteArray { .. } => Self::ByteArray(ByteArrayType { type_id, semantic }),
-            types::Type::Bytes { .. } => Self::Bytes(BytesType { type_id, semantic }),
-            types::Type::Contract { .. } => Self::Contract(ContractType { type_id, semantic }),
-            types::Type::Enum { .. } => Self::Enum(EnumType { type_id, semantic }),
-            types::Type::FixedSizeArray { .. } => {
-                Self::FixedSizeArray(FixedSizeArrayType { type_id, semantic })
+            types::Type::Address(inner) => Self::Address(AddressType { inner }),
+            types::Type::Array(inner) => Self::Array(ArrayType { inner, semantic }),
+            types::Type::Boolean => Self::Boolean(BooleanType),
+            types::Type::ByteArray(inner) => Self::ByteArray(ByteArrayType { inner }),
+            types::Type::Bytes(inner) => Self::Bytes(BytesType { inner }),
+            types::Type::Contract(inner) => Self::Contract(ContractType { inner, semantic }),
+            types::Type::Enum(inner) => Self::Enum(EnumType { inner, semantic }),
+            types::Type::FixedSizeArray(inner) => {
+                Self::FixedSizeArray(FixedSizeArrayType { inner, semantic })
             }
-            types::Type::FixedPointNumber { .. } => {
-                Self::FixedPointNumber(FixedPointNumberType { type_id, semantic })
+            types::Type::FixedPointNumber(inner) => {
+                Self::FixedPointNumber(FixedPointNumberType { inner })
             }
-            types::Type::Function(_) => Self::Function(FunctionType { type_id, semantic }),
-            types::Type::Integer { .. } => Self::Integer(IntegerType { type_id, semantic }),
-            types::Type::Interface { .. } => Self::Interface(InterfaceType { type_id, semantic }),
-            types::Type::Library { .. } => Self::Library(LibraryType { type_id, semantic }),
-            types::Type::Literal(_) => Self::Literal(LiteralType { type_id, semantic }),
-            types::Type::Mapping { .. } => Self::Mapping(MappingType { type_id, semantic }),
-            types::Type::String { .. } => Self::String(StringType { type_id, semantic }),
-            types::Type::Struct { .. } => Self::Struct(StructType { type_id, semantic }),
-            types::Type::Tuple { .. } => Self::Tuple(TupleType { type_id, semantic }),
-            types::Type::UserDefinedValue { .. } => {
-                Self::UserDefinedValue(UserDefinedValueType { type_id, semantic })
+            types::Type::Function(inner) => Self::Function(FunctionType { inner, semantic }),
+            types::Type::Integer(inner) => Self::Integer(IntegerType { inner }),
+            types::Type::Interface(inner) => Self::Interface(InterfaceType { inner, semantic }),
+            types::Type::Library(inner) => Self::Library(LibraryType { inner, semantic }),
+            types::Type::Literal(inner) => Self::Literal(LiteralType { inner }),
+            types::Type::Mapping(inner) => Self::Mapping(MappingType { inner, semantic }),
+            types::Type::String(inner) => Self::String(StringType { inner }),
+            types::Type::Struct(inner) => Self::Struct(StructType { inner, semantic }),
+            types::Type::Tuple(inner) => Self::Tuple(TupleType { inner, semantic }),
+            types::Type::UserDefinedValue(inner) => {
+                Self::UserDefinedValue(UserDefinedValueType { inner, semantic })
             }
-            types::Type::Void => Self::Void(VoidType { type_id, semantic }),
-        }
-    }
-
-    pub fn type_id(&self) -> TypeId {
-        match self {
-            Type::Address(details) => details.type_id,
-            Type::Array(details) => details.type_id,
-            Type::Boolean(details) => details.type_id,
-            Type::ByteArray(details) => details.type_id,
-            Type::Bytes(details) => details.type_id,
-            Type::Contract(details) => details.type_id,
-            Type::Enum(details) => details.type_id,
-            Type::FixedSizeArray(details) => details.type_id,
-            Type::FixedPointNumber(details) => details.type_id,
-            Type::Function(details) => details.type_id,
-            Type::Integer(details) => details.type_id,
-            Type::Interface(details) => details.type_id,
-            Type::Library(details) => details.type_id,
-            Type::Literal(details) => details.type_id,
-            Type::Mapping(details) => details.type_id,
-            Type::String(details) => details.type_id,
-            Type::Struct(details) => details.type_id,
-            Type::Tuple(details) => details.type_id,
-            Type::UserDefinedValue(details) => details.type_id,
-            Type::Void(details) => details.type_id,
+            types::Type::Void => Self::Void(VoidType),
         }
     }
 
@@ -178,25 +169,16 @@ impl Type {
 
 impl AddressType {
     pub fn payable(&self) -> bool {
-        let types::Type::Address { payable } = self.internal_type() else {
-            unreachable!("invalid address type");
-        };
-        *payable
+        self.inner.payable
     }
 }
 
 impl ArrayType {
     pub fn element_type(&self) -> Type {
-        let types::Type::Array { element_type, .. } = self.internal_type() else {
-            unreachable!("invalid array type");
-        };
-        Type::create(*element_type, &self.semantic)
+        Type::create(self.inner.element_type, &self.semantic)
     }
     pub fn location(&self) -> DataLocation {
-        let types::Type::Array { location, .. } = self.internal_type() else {
-            unreachable!("invalid array type");
-        };
-        *location
+        self.inner.location
     }
 }
 
@@ -204,107 +186,70 @@ impl BooleanType {}
 
 impl ByteArrayType {
     pub fn width(&self) -> u32 {
-        let types::Type::ByteArray { width } = self.internal_type() else {
-            unreachable!("invalid byte array type");
-        };
-        *width
+        self.inner.width
     }
 }
 
 impl BytesType {
     pub fn location(&self) -> DataLocation {
-        let types::Type::Bytes { location } = self.internal_type() else {
-            unreachable!("invalid bytes type");
-        };
-        *location
+        self.inner.location
     }
 }
 
 impl ContractType {
     pub fn definition(&self) -> Definition {
-        let types::Type::Contract { definition_id } = self.internal_type() else {
-            unreachable!("invalid contract type");
-        };
-        Definition::try_create(*definition_id, &self.semantic).expect("invalid contract definition")
+        Definition::try_create(self.inner.definition_id, &self.semantic)
+            .expect("invalid contract definition")
     }
 }
 
 impl EnumType {
     pub fn definition(&self) -> Definition {
-        let types::Type::Enum { definition_id } = self.internal_type() else {
-            unreachable!("invalid enum type");
-        };
-        Definition::try_create(*definition_id, &self.semantic).expect("invalid enum definition")
+        Definition::try_create(self.inner.definition_id, &self.semantic)
+            .expect("invalid enum definition")
     }
 }
 
 impl FixedSizeArrayType {
     pub fn element_type(&self) -> Type {
-        let types::Type::FixedSizeArray { element_type, .. } = self.internal_type() else {
-            unreachable!("invalid fixed-size array type");
-        };
-        Type::create(*element_type, &self.semantic)
+        Type::create(self.inner.element_type, &self.semantic)
     }
     pub fn location(&self) -> DataLocation {
-        let types::Type::FixedSizeArray { location, .. } = self.internal_type() else {
-            unreachable!("invalid fixed-size array type");
-        };
-        *location
+        self.inner.location
     }
     pub fn size(&self) -> usize {
-        let types::Type::FixedSizeArray { size, .. } = self.internal_type() else {
-            unreachable!("invalid fixed-size array type");
-        };
-        *size
+        self.inner.size
     }
 }
 
 impl FixedPointNumberType {
     pub fn signed(&self) -> bool {
-        let types::Type::FixedPointNumber { signed, .. } = self.internal_type() else {
-            unreachable!("invalid fixed point number type");
-        };
-        *signed
+        self.inner.signed
     }
     pub fn bits(&self) -> u32 {
-        let types::Type::FixedPointNumber { bits, .. } = self.internal_type() else {
-            unreachable!("invalid fixed point number type");
-        };
-        *bits
+        self.inner.bits
     }
-    pub fn precision_bits(&self) -> u32 {
-        let types::Type::FixedPointNumber { precision_bits, .. } = self.internal_type() else {
-            unreachable!("invalid fixed point number type");
-        };
-        *precision_bits
+    pub fn decimal_places(&self) -> u32 {
+        self.inner.decimal_places
     }
 }
 
 impl FunctionType {
     pub fn associated_definition(&self) -> Option<Definition> {
-        let types::Type::Function(function_type) = self.internal_type() else {
-            unreachable!("invalid function type");
-        };
-        function_type.definition_id.map(|definition_id| {
+        self.inner.definition_id.map(|definition_id| {
             Definition::try_create(definition_id, &self.semantic)
                 .expect("invalid function definition")
         })
     }
 
     pub fn implicit_receiver_type(&self) -> Option<Type> {
-        let types::Type::Function(function_type) = self.internal_type() else {
-            unreachable!("invalid function type");
-        };
-        function_type
+        self.inner
             .implicit_receiver_type
             .map(|type_id| Type::create(type_id, &self.semantic))
     }
 
     pub fn parameter_types(&self) -> Vec<Type> {
-        let types::Type::Function(function_type) = self.internal_type() else {
-            unreachable!("invalid function type");
-        };
-        function_type
+        self.inner
             .parameter_types
             .iter()
             .map(|type_id| Type::create(*type_id, &self.semantic))
@@ -312,123 +257,99 @@ impl FunctionType {
     }
 
     pub fn return_type(&self) -> Type {
-        let types::Type::Function(function_type) = self.internal_type() else {
-            unreachable!("invalid function type");
-        };
-        Type::create(function_type.return_type, &self.semantic)
+        Type::create(self.inner.return_type, &self.semantic)
     }
 
     pub fn is_externally_visible(&self) -> bool {
-        let types::Type::Function(function_type) = self.internal_type() else {
-            unreachable!("invalid function type");
-        };
-        function_type.is_externally_visible()
+        self.inner.is_externally_visible()
     }
 
     pub fn visibility(&self) -> FunctionTypeVisibility {
-        let types::Type::Function(function_type) = self.internal_type() else {
-            unreachable!("invalid function type");
-        };
-        function_type.visibility
+        self.inner.visibility
     }
 
     pub fn mutability(&self) -> FunctionTypeMutability {
-        let types::Type::Function(function_type) = self.internal_type() else {
-            unreachable!("invalid function type");
-        };
-        function_type.mutability
+        self.inner.mutability
     }
 }
 
 impl IntegerType {
     pub fn signed(&self) -> bool {
-        let types::Type::Integer { signed, .. } = self.internal_type() else {
-            unreachable!("invalid integer type");
-        };
-        *signed
+        self.inner.signed
     }
     pub fn bits(&self) -> u32 {
-        let types::Type::Integer { bits, .. } = self.internal_type() else {
-            unreachable!("invalid integer type");
-        };
-        *bits
+        self.inner.bits
     }
 }
 
 impl InterfaceType {
     pub fn definition(&self) -> Definition {
-        let types::Type::Interface { definition_id } = self.internal_type() else {
-            unreachable!("invalid interface type");
-        };
-        Definition::try_create(*definition_id, &self.semantic)
+        Definition::try_create(self.inner.definition_id, &self.semantic)
             .expect("invalid interface definition")
     }
 }
 
 impl LibraryType {
     pub fn definition(&self) -> Definition {
-        let types::Type::Library { definition_id } = self.internal_type() else {
-            unreachable!("invalid library type");
-        };
-        Definition::try_create(*definition_id, &self.semantic).expect("invalid library definition")
+        Definition::try_create(self.inner.definition_id, &self.semantic)
+            .expect("invalid library definition")
     }
 }
 
 impl LiteralType {
     /// Returns the narrowed kind of this literal type.
     pub fn kind(&self) -> LiteralKind {
-        let types::Type::Literal(kind) = self.internal_type() else {
-            unreachable!("LiteralType wraps a literal variant by construction")
-        };
-        kind.clone()
+        self.inner.clone()
+    }
+
+    /// Returns the non-literal mobile type this literal can flow into (e.g.,
+    /// the smallest integer type that fits an integer literal, the smallest
+    /// fixed-point type that fits a rational literal, or `string memory`
+    /// for a string literal). Returns `None` when the literal cannot be
+    /// represented (eg. integer would require more than 256 bits).
+    // __SLANG_MOBILE_TYPE__ keep in sync with `LiteralKind::mobile_type`
+    pub fn mobile_type(&self) -> Option<Type> {
+        self.inner.mobile_type().and_then(|mobile| match mobile {
+            types::Type::Integer(inner) => Some(Type::Integer(IntegerType { inner })),
+            types::Type::FixedPointNumber(inner) => {
+                Some(Type::FixedPointNumber(FixedPointNumberType { inner }))
+            }
+            types::Type::String(inner) => Some(Type::String(StringType { inner })),
+            types::Type::Address(inner) => Some(Type::Address(AddressType { inner })),
+            _ => None,
+        })
     }
 }
 
 impl MappingType {
     pub fn key_type(&self) -> Type {
-        let types::Type::Mapping { key_type_id, .. } = self.internal_type() else {
-            unreachable!("invalid mapping type");
-        };
-        Type::create(*key_type_id, &self.semantic)
+        Type::create(self.inner.key_type_id, &self.semantic)
     }
     pub fn value_type(&self) -> Type {
-        let types::Type::Mapping { value_type_id, .. } = self.internal_type() else {
-            unreachable!("invalid mapping type");
-        };
-        Type::create(*value_type_id, &self.semantic)
+        Type::create(self.inner.value_type_id, &self.semantic)
     }
 }
 
 impl StringType {
     pub fn location(&self) -> DataLocation {
-        let types::Type::String { location } = self.internal_type() else {
-            unreachable!("invalid string type");
-        };
-        *location
+        self.inner.location
     }
 }
 
 impl StructType {
     pub fn definition(&self) -> Definition {
-        let types::Type::Struct { definition_id, .. } = self.internal_type() else {
-            unreachable!("invalid struct type");
-        };
-        Definition::try_create(*definition_id, &self.semantic).expect("invalid struct definition")
+        Definition::try_create(self.inner.definition_id, &self.semantic)
+            .expect("invalid struct definition")
     }
     pub fn location(&self) -> DataLocation {
-        let types::Type::Struct { location, .. } = self.internal_type() else {
-            unreachable!("invalid struct type");
-        };
-        *location
+        self.inner.location
     }
 }
 
 impl TupleType {
     pub fn types(&self) -> Vec<Type> {
-        let types::Type::Tuple { types } = self.internal_type() else {
-            unreachable!("invalid tuple type");
-        };
-        types
+        self.inner
+            .types
             .iter()
             .map(|type_id| Type::create(*type_id, &self.semantic))
             .collect()
@@ -437,10 +358,7 @@ impl TupleType {
 
 impl UserDefinedValueType {
     pub fn definition(&self) -> Definition {
-        let types::Type::UserDefinedValue { definition_id } = self.internal_type() else {
-            unreachable!("invalid user defined value type");
-        };
-        Definition::try_create(*definition_id, &self.semantic)
+        Definition::try_create(self.inner.definition_id, &self.semantic)
             .expect("invalid user defined value definition")
     }
 
@@ -448,13 +366,10 @@ impl UserDefinedValueType {
     /// if the binder did not resolve a target type (e.g., the declaration is
     /// ill-formed or references an unsupported elementary type).
     pub fn target_type(&self) -> Option<Type> {
-        let types::Type::UserDefinedValue { definition_id } = self.internal_type() else {
-            unreachable!("invalid user defined value type");
-        };
         let binder_definition = self
             .semantic
             .binder()
-            .find_definition_by_id(*definition_id)?;
+            .find_definition_by_id(self.inner.definition_id)?;
         let binder::Definition::UserDefinedValueType(udvt_definition) = binder_definition else {
             unreachable!("UDVT type id should map to UDVT definition");
         };

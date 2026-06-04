@@ -407,7 +407,7 @@ fn type_display(type_: &Type) -> String {
                 "{signed}fixed{bits}x{precision_bits}",
                 signed = if fixed.signed() { "" } else { "u" },
                 bits = fixed.bits(),
-                precision_bits = fixed.precision_bits(),
+                precision_bits = fixed.decimal_places(),
             )
         }
         Type::FixedSizeArray(fixed_size_array) => format!(
