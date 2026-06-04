@@ -348,14 +348,14 @@ pub(crate) fn smallest_fixed_point_type_to_fit(value: &BigRational) -> Option<Ty
     // Factor the denominator as `2^a * 5^b * r`. The natural precision of
     // an exact representation is `max(a, b)`; if `r > 1` the rational has
     // a periodic fractional part and no exact representation exists.
-    let two = BigInt::from(2u32);
     let five = BigInt::from(5u32);
     let mut remaining_denominator = denominator.clone();
-    let mut factors_of_two: u32 = 0;
-    while remaining_denominator.is_multiple_of(&two) {
-        remaining_denominator /= &two;
-        factors_of_two += 1;
-    }
+    let factors_of_two: u32 = remaining_denominator
+        .trailing_zeros()
+        .unwrap_or(0)
+        .try_into()
+        .unwrap();
+    remaining_denominator >>= factors_of_two;
     let mut factors_of_five: u32 = 0;
     while remaining_denominator.is_multiple_of(&five) {
         remaining_denominator /= &five;
