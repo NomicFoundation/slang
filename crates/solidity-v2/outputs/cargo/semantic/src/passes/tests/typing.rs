@@ -515,6 +515,33 @@ fn test_implicit_conversion_uses_literal_value() {
 }
 
 #[test]
+fn test_overload_resolution_unsigned_to_signed_argument_is_version_gated() {
+    // End-to-end: an overload taking `int16` is only reachable from a `uint8`
+    // argument before 0.8.1, where `uint8` still implicitly converts to `int16`.
+    let setup = "
+        uint8 u;
+        function pick(int16 a) pure returns (uint8) { a; return 1; }
+        function pick(string memory a) pure returns (uint16) { a; return 2; }
+    ";
+
+    // 0.8.0: `uint8` -> `int16` is allowed, so the `int16` overload matches.
+    let (typings, _) =
+        type_of_expressions(LanguageVersion::V0_8_0, None, Some(setup), &["pick(u)"]);
+    assert_eq!(
+        typings.into_iter().next().unwrap(),
+        Some(Type::Integer(IntegerType {
+            signed: false,
+            bits: 8,
+        })),
+    );
+
+    // 0.8.1: `uint8` -> `int16` is rejected, so neither overload matches.
+    let (typings, _) =
+        type_of_expressions(LanguageVersion::V0_8_1, None, Some(setup), &["pick(u)"]);
+    assert_eq!(typings.into_iter().next().unwrap(), None);
+}
+
+#[test]
 fn test_hex_literal_to_byte_array_conversion() {
     let (_, mut types) = type_of_expression("0");
 

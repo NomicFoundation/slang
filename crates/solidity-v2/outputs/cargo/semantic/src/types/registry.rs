@@ -170,11 +170,16 @@ impl TypeRegistry {
                 }),
             ) => {
                 if from_signed == to_signed {
+                    // Same signedness widens (or keeps the same width).
                     from_bits <= to_bits
                 } else if *from_signed {
+                    // `intN` never implicitly converts to an unsigned type.
                     false
                 } else {
-                    from_bits < to_bits
+                    // `uintN` was implicitly convertible to `intM` for `M > N`
+                    // until 0.8.1 disallowed it.
+                    // https://github.com/ethereum/solidity/releases/tag/v0.8.1
+                    self.language_version < LanguageVersion::V0_8_1 && from_bits < to_bits
                 }
             }
 
