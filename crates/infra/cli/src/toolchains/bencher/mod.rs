@@ -62,7 +62,10 @@ pub(crate) fn run_bench(
         "dev"
     };
 
-    let project = std::env::var("SLANG_BENCHER_PROJECT").unwrap_or(project.to_owned());
+    let project = std::env::var("SLANG_BENCHER_PROJECT")
+        .ok()
+        .filter(|value| !value.is_empty())
+        .unwrap_or_else(|| project.to_owned());
 
     let mut command = Command::new("bencher")
         .arg("run")

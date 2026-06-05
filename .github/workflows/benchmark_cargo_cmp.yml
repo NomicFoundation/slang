@@ -72,12 +72,6 @@ jobs:
       - name: "infra setup cargo pipenv"
         run: "./scripts/bin/infra setup cargo pipenv"
 
-      - name: "Set bencher project"
-
-        run: |
-          echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProject }}" >> $GITHUB_ENV
-        if: "${{ inputs.bencherProject }}"
-
       - name: "Smoke Test > infra perf cargo --smoke comparison"
         if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
         run: "./scripts/bin/infra perf cargo --smoke comparison"
@@ -86,6 +80,7 @@ jobs:
         if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
         run: "./scripts/bin/infra perf cargo ${{ github.event_name == 'pull_request' && '--pr-benchmark' || (inputs.dryRun == true && '--dry-run' || '') }} comparison"
         env:
+          SLANG_BENCHER_PROJECT: "${{ inputs.bencherProject }}"
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
           BENCHER_PR_HEAD_HASH: "${{ github.event.pull_request.head.sha }}"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

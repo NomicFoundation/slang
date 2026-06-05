@@ -76,16 +76,16 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
 
             if v1_test_outcome == SingleTestOutcome::Passed {
                 match opts.check_binder {
-                    Some(CheckBinderMode::V1) => {
+                    CheckBinderMode::None => {}
+                    CheckBinderMode::V1 => {
                         v1_test_outcome = binder_v1_check::run(contract, &unit, events);
                     }
-                    Some(CheckBinderMode::V2) => {
+                    CheckBinderMode::V2 => {
                         v1_test_outcome = binder_v2_check::run(contract, &unit, events);
                     }
-                    Some(CheckBinderMode::Compare) => {
+                    CheckBinderMode::Compare => {
                         v1_test_outcome = compare_binders::run(contract, &unit, events);
                     }
-                    _ => {}
                 }
             }
 

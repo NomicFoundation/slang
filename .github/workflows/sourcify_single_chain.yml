@@ -41,7 +41,7 @@ on:
         description: "Check name bindings on contracts reporting if there's any unresolved symbol."
         type: "string"
         required: false
-        default: null
+        default: "none"
 
 permissions: {}
 
@@ -174,13 +174,15 @@ jobs:
           name: "solidity_testing_sourcify_${{ inputs.chain_id }}"
 
       - name: "Run Tests"
+        env:
+          CHECK_BINDER: "${{ inputs.check_binder }}"
         run: |
           chmod +x solidity_testing_sourcify
           ./scripts/bin/with-hermit ./solidity_testing_sourcify test \
               --chain-id ${{ inputs.chain_id }} \
               --shard-count ${{ env.SHARD_COUNT }} \
               --shard-index ${{ matrix.shard_index }} \
-              ${{ inputs.check_binder != 'none' && format('--check-binder={0}', inputs.check_binder) || '' }} \
+              --check-binder="$CHECK_BINDER" \
               ${{ inputs.check_infer_version == true && '--check-infer-version' || '' }}
 
       - name: "Write shard results to output"
@@ -210,7 +212,9 @@ jobs:
           name: "solidity_testing_sourcify_${{ inputs.chain_id }}"
 
       - name: "Output shards results"
-        run: "echo '${{ toJSON(needs.singleShard.outputs) }}' > __SLANG_SOURCIFY_MATRIX_RESULTS__.json"
+        env:
+          MATRIX_RESULTS: "${{ toJSON(needs.singleShard.outputs) }}"
+        run: 'printf "%s\n" "$MATRIX_RESULTS" > __SLANG_SOURCIFY_MATRIX_RESULTS__.json'
 
       - name: "Show combined results"
         run: |

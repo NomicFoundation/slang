@@ -69,11 +69,6 @@ jobs:
       - name: "Restore Cargo Target Cache"
         uses: "./.github/actions/cache/cargo-target/restore"
 
-      - name: "Set bencher project"
-        run: |
-          echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProject }}" >> $GITHUB_ENV
-        if: "${{ inputs.bencherProject }}"
-
       - name: "infra setup cargo npm"
         run: "./scripts/bin/infra setup cargo npm"
 
@@ -88,6 +83,7 @@ jobs:
         if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
         run: "./scripts/bin/infra perf npm ${{ github.event_name == 'pull_request' && '--pr-benchmark' || (inputs.dryRun == true && '--dry-run' || '') }}"
         env:
+          SLANG_BENCHER_PROJECT: "${{ inputs.bencherProject }}"
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
           BENCHER_PR_HEAD_HASH: "${{ github.event.pull_request.head.sha }}"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
