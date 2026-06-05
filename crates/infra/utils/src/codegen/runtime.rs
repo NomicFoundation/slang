@@ -2,21 +2,20 @@ use std::ffi::OsStr;
 use std::path::{Path, PathBuf};
 
 use anyhow::Result;
-use serde::Serialize;
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
 use crate::codegen::tera::TeraWrapper;
 use crate::codegen::CodegenFileSystem;
-use crate::paths::PathExtensions;
+use crate::paths::{PathExtensions, PrivatePathExtensions};
 
 pub struct CodegenRuntime;
 
 impl CodegenRuntime {
-    pub fn render_templates_in_place(
-        fs: &mut CodegenFileSystem,
-        dir: &Path,
-        model: impl Serialize,
+    pub fn render_templates_in_place<'c>(
+        context_for: impl Fn(&Path) -> &'c tera::Context + Sync,
     ) -> Result<()> {
-        let tera = TeraWrapper::new(dir)?;
+        let repo_root = Path::repo_root();
+        let tera = TeraWrapper::new(&repo_root)?;
 
         let all_templates = tera
             .find_all_templates()?
@@ -28,20 +27,16 @@ impl CodegenRuntime {
 
         assert!(
             !all_templates.is_empty(),
-            "No templates found in directory: {dir:?}",
+            "No templates under {repo_root:?}",
         );
 
-        let mut context = tera::Context::new();
-        context.insert("model", &model);
+        all_templates.par_iter().try_for_each(|template_path| {
+            let generated_path = Self::get_in_place_path(template_path);
+            let rendered = tera.render(template_path, context_for(template_path))?;
 
-        for template_path in all_templates {
-            let generated_path = Self::get_in_place_path(&template_path);
-            let rendered = tera.render(&template_path, &context)?;
-
-            fs.write_file_formatted(&generated_path, rendered)?;
-        }
-
-        Ok(())
+            let mut fs = CodegenFileSystem::default();
+            fs.write_file_formatted(&generated_path, rendered)
+        })
     }
 
     fn get_in_place_path(template_path: &Path) -> PathBuf {

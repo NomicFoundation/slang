@@ -105,15 +105,6 @@ impl IrModel {
             collections: builder.collections,
         }
     }
-
-    pub fn from_model(model: &Self) -> Self {
-        Self {
-            terminals: model.terminals.clone(),
-            sequences: model.sequences.clone(),
-            choices: model.choices.clone(),
-            collections: model.collections.clone(),
-        }
-    }
 }
 
 struct IrModelBuilder {

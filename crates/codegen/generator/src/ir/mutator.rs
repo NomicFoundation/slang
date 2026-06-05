@@ -225,18 +225,6 @@ impl IrModelMutator {
         }
     }
 
-    pub fn add_choice_type(&mut self, name: &str) {
-        self.choices.insert(
-            name.into(),
-            MutatedChoice {
-                variants: Vec::new(),
-                added_variants: Vec::new(),
-                is_new: true,
-                has_removed_variants: false,
-            },
-        );
-    }
-
     pub fn add_choice_variant(&mut self, choice_id: &str, variant: &str) {
         let variant_type = self.find_node_type(&variant.into());
         let identifier: model::Identifier = choice_id.into();

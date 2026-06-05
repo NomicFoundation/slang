@@ -11,11 +11,10 @@ anyhow = { workspace = true }
 codegen_generator = { workspace = true }
 codegen_spec = { workspace = true }
 infra_utils = { workspace = true }
-language_definition = { workspace = true }
-language_v2_definition = { workspace = true }
 rayon = { workspace = true }
 solidity_language = { workspace = true }
 solidity_v2_language = { workspace = true }
+tera = { workspace = true }
 
 [lints]
 workspace = true
