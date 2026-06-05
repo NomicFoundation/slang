@@ -1,7 +1,7 @@
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
-use crate::built_ins::BuiltIn;
+use crate::built_ins::InternalBuiltIn;
 
 //////////////////////////////////////////////////////////////////////////////
 // References
@@ -30,7 +30,7 @@ pub enum Resolution {
     /// The symbol refers to a Solidity built-in of some kind. The possible
     /// variants are encoded in an enum and the behaviour of each is encoded in
     /// the `built_ins.rs` module.
-    BuiltIn(BuiltIn),
+    BuiltIn(InternalBuiltIn),
 }
 
 impl Reference {
@@ -106,8 +106,8 @@ impl From<Vec<NodeId>> for Resolution {
     }
 }
 
-impl From<Option<BuiltIn>> for Resolution {
-    fn from(value: Option<BuiltIn>) -> Self {
+impl From<Option<InternalBuiltIn>> for Resolution {
+    fn from(value: Option<InternalBuiltIn>) -> Self {
         if let Some(built_in) = value {
             Self::BuiltIn(built_in)
         } else {

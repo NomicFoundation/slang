@@ -4,7 +4,7 @@ use slang_solidity_v2_ir::ir;
 
 use super::Pass;
 use crate::binder::{Definition, Resolution, Typing};
-use crate::built_ins::BuiltIn;
+use crate::built_ins::InternalBuiltIn;
 use crate::passes::common::node_id_for_expression_typing;
 use crate::types::{
     literals, AddressType, ContractType, DataLocation, EnumType, FixedSizeArrayType, FunctionType,
@@ -438,7 +438,9 @@ impl Pass<'_> {
             // Special case: for `abi.decode` we need to register the types
             // given as the second argument and we need a mutable `TypeRegistry`
             // for that.
-            Typing::BuiltIn(BuiltIn::AbiDecode) => self.typing_of_abi_decode(&argument_typings),
+            Typing::BuiltIn(InternalBuiltIn::AbiDecode) => {
+                self.typing_of_abi_decode(&argument_typings)
+            }
             Typing::BuiltIn(built_in) => self
                 .built_ins_resolver()
                 .typing_of_function_call(&built_in, &argument_typings),
