@@ -620,6 +620,11 @@ mod expressions {
     }
 
     #[test]
+    fn funcalls_overload_contract_type() -> Result<()> {
+        run("expressions", "funcalls_overload_contract_type")
+    }
+
+    #[test]
     fn funcalls_overload_indexed() -> Result<()> {
         run("expressions", "funcalls_overload_indexed")
     }

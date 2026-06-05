@@ -134,9 +134,9 @@ impl Pass<'_> {
                         .implicitly_convertible_to(*type_id, parameter_type)
                 }
             }
-            Typing::This => self
+            Typing::This(type_id) => self
                 .types
-                .implicitly_convertible_to(self.types.address(), parameter_type),
+                .implicitly_convertible_to(*type_id, parameter_type),
             _ => false,
         }
     }

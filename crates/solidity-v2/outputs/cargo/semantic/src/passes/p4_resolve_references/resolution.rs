@@ -136,7 +136,7 @@ impl Pass<'_> {
                 self.resolve_symbol_in_type(type_ids[0], symbol)
             }
             Typing::Resolved(type_id) => self.resolve_symbol_in_type(*type_id, symbol),
-            Typing::This | Typing::Super => {
+            Typing::This(_) | Typing::Super => {
                 // TODO: the contract scope here is not necessarily the current
                 // lexical scope; for compilation we should set it to the scope
                 // of the contract being compiled, as this will affect the
@@ -146,7 +146,7 @@ impl Pass<'_> {
                 // resolution option which is always lexical.
                 if let Some(scope_id) = self.current_contract_scope_id() {
                     let node_id = self.binder.get_scope_by_id(scope_id).node_id();
-                    let options = if matches!(typing, Typing::This) {
+                    let options = if matches!(typing, Typing::This(_)) {
                         ResolveOptions::This(node_id)
                     } else {
                         ResolveOptions::Super(node_id)
@@ -159,16 +159,14 @@ impl Pass<'_> {
                         .resolve_in_contract_scope(scope_id, symbol, options)
                         .get_definition_ids();
 
-                    if matches!(typing, Typing::This) {
-                        // Consider active `using` directives for `this`
-                        // TODO(this-typing): Once `This` carries a type, use that and check it's a contract
-                        if let Some(receiver_type_id) =
-                            self.types.find_type(&Type::Contract(ContractType {
-                                definition_id: node_id,
-                            }))
-                        {
+                    // Consider active `using` directives for `this`
+                    if let Typing::This(receiver_type_id) = typing {
+                        if matches!(
+                            self.types.get_type_by_id(*receiver_type_id),
+                            Type::Contract(_)
+                        ) {
                             self.add_attached_functions_for_type(
-                                receiver_type_id,
+                                *receiver_type_id,
                                 symbol,
                                 &mut definition_ids,
                             );
