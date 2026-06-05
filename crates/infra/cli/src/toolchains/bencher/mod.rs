@@ -80,15 +80,12 @@ pub(crate) fn run_bench(
             .expect("GITHUB_HEAD_REF must be set for --pr-benchmark (are you running in a PR?)");
         let base_ref = std::env::var("GITHUB_BASE_REF")
             .expect("GITHUB_BASE_REF must be set for --pr-benchmark (are you running in a PR?)");
-        let start_point_hash = std::env::var("BENCHER_PR_START_POINT_HASH")
-            .expect("BENCHER_PR_START_POINT_HASH must be set for --pr-benchmark");
         let head_hash = std::env::var("BENCHER_PR_HEAD_HASH")
             .expect("BENCHER_PR_HEAD_HASH must be set for --pr-benchmark");
 
         command = command
             .property("--branch", &head_ref)
             .property("--start-point", &base_ref)
-            .property("--start-point-hash", &start_point_hash)
             .flag("--start-point-reset")
             .property("--hash", &head_hash);
 
