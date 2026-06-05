@@ -379,12 +379,7 @@ impl<'a> BuiltInsResolver<'a> {
             Type::Function(ftype) => {
                 if ftype.is_externally_visible() {
                     match symbol {
-                        "address"
-                            if InternalBuiltIn::FUNCTION_ADDRESS_VERSIONS
-                                .contains(self.language_version) =>
-                        {
-                            Some(InternalBuiltIn::FunctionAddress)
-                        }
+                        "address" => Some(InternalBuiltIn::FunctionAddress),
                         "selector" => Some(InternalBuiltIn::FunctionSelector),
                         _ => None,
                     }

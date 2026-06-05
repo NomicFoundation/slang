@@ -92,6 +92,11 @@ mod built_ins {
     }
 
     #[test]
+    fn function_address() -> Result<()> {
+        run("built_ins", "function_address")
+    }
+
+    #[test]
     fn function_type() -> Result<()> {
         run("built_ins", "function_type")
     }

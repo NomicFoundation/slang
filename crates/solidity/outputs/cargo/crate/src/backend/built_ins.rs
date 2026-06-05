@@ -6,8 +6,8 @@ use crate::cst::NodeId;
 use crate::utils::versions::{
     VERSION_0_4_12, VERSION_0_4_17, VERSION_0_4_21, VERSION_0_4_22, VERSION_0_5_0, VERSION_0_5_3,
     VERSION_0_6_0, VERSION_0_6_2, VERSION_0_6_7, VERSION_0_6_8, VERSION_0_7_0, VERSION_0_8_0,
-    VERSION_0_8_11, VERSION_0_8_15, VERSION_0_8_18, VERSION_0_8_2, VERSION_0_8_24, VERSION_0_8_31,
-    VERSION_0_8_35, VERSION_0_8_4, VERSION_0_8_7, VERSION_0_8_8,
+    VERSION_0_8_11, VERSION_0_8_15, VERSION_0_8_18, VERSION_0_8_24, VERSION_0_8_31, VERSION_0_8_35,
+    VERSION_0_8_4, VERSION_0_8_7, VERSION_0_8_8,
 };
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -572,7 +572,7 @@ impl<'a> BuiltInsResolver<'a> {
                 // Solidity < 0.5.0 didn't require explicit visibility attributes
                 if *external || self.language_version < VERSION_0_5_0 {
                     match symbol {
-                        "address" if self.language_version >= VERSION_0_8_2 => {
+                        "address" if self.language_version >= VERSION_0_6_0 => {
                             Some(BuiltIn::Address)
                         }
                         "selector" if self.language_version >= VERSION_0_4_17 => {
