@@ -73,6 +73,7 @@ fn test_storage_layout() {
 
     let counter = unit
         .find_contract_by_name("C")
+        .next()
         .expect("contract can be found");
     let counter_abi = counter.compute_abi().expect("can compute ABI");
     let layout = counter_abi.storage_layout();
@@ -102,6 +103,7 @@ fn test_transient_and_custom_storage_layout() {
 
     let d_contract = unit
         .find_contract_by_name("D")
+        .next()
         .expect("contract can be found");
     let d_abi = d_contract.compute_abi().expect("can compute ABI");
     let d_layout = d_abi.storage_layout();
@@ -112,6 +114,7 @@ fn test_transient_and_custom_storage_layout() {
 
     let e_contract = unit
         .find_contract_by_name("E")
+        .next()
         .expect("contract can be found");
     let e_abi = e_contract.compute_abi().expect("can compute ABI");
     let e_layout = e_abi.storage_layout();
@@ -132,6 +135,7 @@ fn test_erc7201_storage_layout() {
 
     let f_contract = unit
         .find_contract_by_name("F")
+        .next()
         .expect("contract can be found");
     let f_abi = f_contract.compute_abi().expect("can compute ABI");
     let f_layout = f_abi.storage_layout();

@@ -4,6 +4,7 @@ fn test_compute_internal_signature() {
 
     let test_contract = unit
         .find_contract_by_name("Test")
+        .next()
         .expect("Test contract can be found");
 
     // Functions are linearised in alphabetical order, with the unnamed

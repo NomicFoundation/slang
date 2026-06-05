@@ -7,6 +7,7 @@ fn test_definition_references() {
 
     let ownable = unit
         .find_contract_by_name("Ownable")
+        .next()
         .expect("can find Ownable contract");
 
     // find the `onlyOwner` modifier defined in the `Ownable` contract

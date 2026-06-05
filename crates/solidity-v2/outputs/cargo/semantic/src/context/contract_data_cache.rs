@@ -24,9 +24,6 @@ pub(super) struct ContractDataCache {
     /// All contract definitions in this compilation unit, in registration
     /// order (deterministic iteration for `all_contracts`).
     contracts: Vec<ir::ContractDefinition>,
-    /// Lookup by simple name. Picks one definition arbitrarily if multiple
-    /// contracts share the same name across files.
-    contract_by_name: HashMap<String, ir::ContractDefinition>,
     /// Per-contract derived data, keyed by contract `NodeId`.
     data: HashMap<NodeId, ContractData>,
 }
@@ -34,7 +31,6 @@ pub(super) struct ContractDataCache {
 impl ContractDataCache {
     pub(super) fn build_from(binder: &Binder, types: &TypeRegistry) -> Self {
         let mut contracts = Vec::new();
-        let mut contract_by_name = HashMap::new();
         let mut data = HashMap::new();
 
         for (contract_id, definition) in binder.definitions() {
@@ -43,7 +39,6 @@ impl ContractDataCache {
             };
             let contract_id = *contract_id;
             let ir_node = Arc::clone(&contract.ir_node);
-            let name = contract.ir_node.name.unparse().to_string();
 
             let linearised_functions = compute_linearised_functions(binder, types, contract_id);
             let linearised_state_variables =
@@ -61,15 +56,10 @@ impl ContractDataCache {
                 },
             );
 
-            contract_by_name.insert(name, Arc::clone(&ir_node));
             contracts.push(ir_node);
         }
 
-        Self {
-            contracts,
-            contract_by_name,
-            data,
-        }
+        Self { contracts, data }
     }
 
     fn get(&self, contract_id: NodeId) -> &ContractData {
@@ -82,8 +72,14 @@ impl ContractDataCache {
         self.contracts.iter()
     }
 
-    pub(super) fn find_contract_by_name(&self, name: &str) -> Option<&ir::ContractDefinition> {
-        self.contract_by_name.get(name)
+    pub(super) fn find_contract_by_name<'a>(
+        &'a self,
+        name: &'a str,
+    ) -> impl Iterator<Item = ir::ContractDefinition> + use<'a> {
+        self.contracts
+            .iter()
+            .filter(move |contract| contract.name.unparse() == name)
+            .cloned()
     }
 
     pub(super) fn linearised_functions(&self, contract_id: NodeId) -> &[ir::FunctionDefinition] {

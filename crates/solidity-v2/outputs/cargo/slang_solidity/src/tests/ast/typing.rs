@@ -7,6 +7,7 @@ fn test_get_type() {
 
     let ownable = unit
         .find_contract_by_name("Ownable")
+        .next()
         .expect("contract is found");
 
     let state_variables = ownable
@@ -37,6 +38,7 @@ fn test_function_get_type() {
 
     let counter = unit
         .find_contract_by_name("Counter")
+        .next()
         .expect("contract is found");
 
     let increment = counter

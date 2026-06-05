@@ -6,6 +6,7 @@ fn test_function_selector() {
 
     let counter = unit
         .find_contract_by_name("Counter")
+        .next()
         .expect("contract can be found");
 
     let functions = counter.linearised_functions();
@@ -34,6 +35,7 @@ fn test_events_and_errors_selectors() {
 
     let test_contract = unit
         .find_contract_by_name("Test")
+        .next()
         .expect("Test contract can be found");
 
     let events = test_contract.events();
@@ -51,6 +53,7 @@ fn test_selectors_for_functions_with_tuple_parameters() {
 
     let test = unit
         .find_contract_by_name("Test")
+        .next()
         .expect("contract is found");
     let functions = test.functions();
 

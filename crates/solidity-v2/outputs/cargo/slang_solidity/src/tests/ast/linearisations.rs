@@ -32,6 +32,7 @@ fn test_contract_compute_linearised_bases() {
 
     let counter = unit
         .find_contract_by_name("Counter")
+        .next()
         .expect("can find Counter contract");
     let bases = counter.linearised_bases();
     assert_eq!(bases.len(), 3);
@@ -56,6 +57,7 @@ fn test_contract_compute_linearised_state_variables() {
 
     let counter = unit
         .find_contract_by_name("Counter")
+        .next()
         .expect("can find Counter contract");
 
     let state_variables = counter.linearised_state_variables();
@@ -73,6 +75,7 @@ fn test_contract_compute_linearised_functions() {
 
     let counter = unit
         .find_contract_by_name("Counter")
+        .next()
         .expect("can find Counter contract");
 
     let functions = counter.linearised_functions();
@@ -101,6 +104,7 @@ fn test_contract_compute_linearised_functions_with_overrides() {
 
     let inherited = unit
         .find_contract_by_name("Inherited")
+        .next()
         .expect("can find contract");
     let functions = inherited.linearised_functions();
     assert_eq!(functions.len(), 3);

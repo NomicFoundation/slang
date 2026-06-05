@@ -107,14 +107,19 @@ impl SemanticContext {
         self.binder.references().values()
     }
 
-    /// Iterates over every contract definition in this compilation unit, in
-    /// registration order.
+    /// Iterates over every contract definition in this compilation unit.
     pub fn all_contracts(&self) -> impl Iterator<Item = &ir::ContractDefinition> + use<'_> {
         self.contract_data.all_contracts()
     }
 
-    pub fn find_contract_by_name(&self, name: &str) -> Option<ir::ContractDefinition> {
-        self.contract_data.find_contract_by_name(name).cloned()
+    pub fn find_contract_by_name<'a, 'b>(
+        &'a self,
+        name: &'b str,
+    ) -> impl Iterator<Item = ir::ContractDefinition> + use<'a>
+    where
+        'b: 'a,
+    {
+        self.contract_data.find_contract_by_name(name)
     }
 }
 
