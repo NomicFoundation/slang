@@ -28,7 +28,7 @@ pub fn slang_solidity_v2::compilation::CompilationUnit::diagnostics(&self) -> &s
 pub fn slang_solidity_v2::compilation::CompilationUnit::file(&self, id: &str) -> core::option::Option<slang_solidity_v2::compilation::File>
 pub fn slang_solidity_v2::compilation::CompilationUnit::file_ids(&self) -> alloc::vec::Vec<alloc::string::String>
 pub fn slang_solidity_v2::compilation::CompilationUnit::files(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2::compilation::File> + use<'_>
-pub fn slang_solidity_v2::compilation::CompilationUnit::find_contract_by_name(&self, name: &str) -> core::option::Option<slang_solidity_v2_ast::ast::nodes::ContractDefinition>
+pub fn slang_solidity_v2::compilation::CompilationUnit::find_contract_by_name<'a, 'b>(&'a self, name: &'b str) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::nodes::ContractDefinition> + use<'a> where 'b: 'a
 pub fn slang_solidity_v2::compilation::CompilationUnit::language_version(&self) -> slang_solidity_v2_common::versions::version::LanguageVersion
 pub struct slang_solidity_v2::compilation::FileStruct
 impl slang_solidity_v2::compilation::FileStruct
