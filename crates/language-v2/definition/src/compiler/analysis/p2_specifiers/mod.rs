@@ -2,6 +2,7 @@ use std::fmt::Debug;
 use std::rc::Rc;
 
 use indexmap::IndexMap;
+use inflector::Inflector;
 use semver::Version;
 
 use crate::compiler::analysis::Analysis;
@@ -18,12 +19,28 @@ use crate::model::{
 pub(crate) fn run(analysis: &mut Analysis) {
     let language = Rc::clone(&analysis.language);
 
+    for evm_target in &language.evm_targets {
+        check_evm_target_definition(analysis, evm_target);
+    }
+
     for item in language.items() {
         check_item(analysis, item);
     }
 
     for built_in_context in &language.built_ins {
         check_built_in_context(analysis, built_in_context);
+    }
+}
+
+fn check_evm_target_definition(analysis: &mut Analysis, evm_target: &Spanned<Identifier>) {
+    let actual = evm_target.as_str();
+    let expected = actual.to_pascal_case();
+
+    if actual != expected.as_str() {
+        analysis.errors.add(
+            evm_target,
+            &EvmTargetErrors::IncorrectCase(evm_target, expected),
+        );
     }
 }
 
@@ -385,6 +402,8 @@ enum VersionErrors<'err> {
 enum EvmTargetErrors<'err> {
     #[error("EVM target '{0}' does not exist in the language definition.")]
     EvmTargetNotFound(&'err Identifier),
+    #[error("EVM target '{0}' must use PascalCase spelling ('{1}').")]
+    IncorrectCase(&'err Identifier, String),
     #[error("EVM target '{0}' must precede corresponding EVM target '{1}'.")]
     UnorderedEvmTargetPair(&'err Identifier, &'err Identifier),
     #[error(
