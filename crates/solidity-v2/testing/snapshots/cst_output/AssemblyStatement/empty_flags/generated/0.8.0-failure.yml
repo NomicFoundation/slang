@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                     │ 0..12
+  2  │     function f() public {                                                        │ 13..38
+  3  │         assembly () {}                                                           │ 39..61
+  4  │     }                                                                            │ 62..67
+  5  │ }                                                                                │ 68..69
+
+Errors: # 1 total
+  - >
+    Error: Unexpected YulCloseParen. One of YulStringLiteral was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/AssemblyStatement/empty_flags/input.sol:3:19]
+       │
+     3 │         assembly () {}
+       │                   ┬  
+       │                   ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

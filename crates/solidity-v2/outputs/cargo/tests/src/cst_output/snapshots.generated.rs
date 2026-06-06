@@ -8,6 +8,11 @@ mod assembly_statement {
     use super::*;
 
     #[test]
+    fn empty_flags() -> Result<()> {
+        run("AssemblyStatement", "empty_flags")
+    }
+
+    #[test]
     fn simple() -> Result<()> {
         run("AssemblyStatement", "simple")
     }
@@ -76,6 +81,11 @@ mod constant_definition {
     #[test]
     fn int() -> Result<()> {
         run("ConstantDefinition", "int")
+    }
+
+    #[test]
+    fn invalid_visibility() -> Result<()> {
+        run("ConstantDefinition", "invalid_visibility")
     }
 }
 
@@ -210,6 +220,11 @@ mod contract_definition {
     #[test]
     fn member_using_directive() -> Result<()> {
         run("ContractDefinition", "member_using_directive")
+    }
+
+    #[test]
+    fn member_var_keyword() -> Result<()> {
+        run("ContractDefinition", "member_var_keyword")
     }
 
     #[test]
@@ -478,6 +493,11 @@ mod enum_definition {
 
 mod error_definition {
     use super::*;
+
+    #[test]
+    fn parameter_with_location() -> Result<()> {
+        run("ErrorDefinition", "parameter_with_location")
+    }
 
     #[test]
     fn top_level() -> Result<()> {
@@ -939,6 +959,20 @@ mod fallback_function_definition {
     }
 }
 
+mod for_statement {
+    use super::*;
+
+    #[test]
+    fn unchecked_in_initializer() -> Result<()> {
+        run("ForStatement", "unchecked_in_initializer")
+    }
+
+    #[test]
+    fn unchecked_in_iterator() -> Result<()> {
+        run("ForStatement", "unchecked_in_iterator")
+    }
+}
+
 mod function_call_expression {
     use super::*;
 
@@ -1377,6 +1411,11 @@ mod source_unit {
     #[test]
     fn layout_at() -> Result<()> {
         run("SourceUnit", "layout_at")
+    }
+
+    #[test]
+    fn layout_at_missing_expression() -> Result<()> {
+        run("SourceUnit", "layout_at_missing_expression")
     }
 
     #[test]
@@ -1949,6 +1988,11 @@ mod user_defined_value_type_definition {
     fn bool() -> Result<()> {
         run("UserDefinedValueTypeDefinition", "bool")
     }
+
+    #[test]
+    fn missing_identifier() -> Result<()> {
+        run("UserDefinedValueTypeDefinition", "missing_identifier")
+    }
 }
 
 mod using_deconstruction_symbol {
@@ -1991,6 +2035,11 @@ mod using_directive {
     #[test]
     fn destructure_single() -> Result<()> {
         run("UsingDirective", "destructure_single")
+    }
+
+    #[test]
+    fn operator_missing_name() -> Result<()> {
+        run("UsingDirective", "operator_missing_name")
     }
 
     #[test]

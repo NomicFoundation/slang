@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                     │ 0..12
+  2  │     var a;                                                                       │ 13..23
+  3  │ }                                                                                │ 24..25
+
+Errors: # 1 total
+  - >
+    Error: Unexpected VarKeyword. One of AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, CloseBrace, ConstructorKeyword, EnumKeyword, ErrorKeyword, EventKeyword, FallbackKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, ModifierKeyword, ReceiveKeyword, RevertKeyword, StringKeyword, StructKeyword, TransientKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UsingKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/member_var_keyword/input.sol:2:5]
+       │
+     2 │     var a;
+       │     ─┬─  
+       │      ╰─── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []
