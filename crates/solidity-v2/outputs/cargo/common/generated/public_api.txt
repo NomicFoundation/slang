@@ -802,7 +802,7 @@ pub slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::Range::till: slan
 pub slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::Till
 pub slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::Till::till: slang_solidity_v2_common::evm_targets::EvmTarget
 impl slang_solidity_v2_common::evm_targets::EvmTargetSpecifier
-pub const fn slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::contains(&self, other: slang_solidity_v2_common::evm_targets::EvmTarget) -> bool
+pub fn slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::contains(&self, other: slang_solidity_v2_common::evm_targets::EvmTarget) -> bool
 impl slang_solidity_v2_common::evm_targets::EvmTargetSpecifier
 pub const fn slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::from(from: slang_solidity_v2_common::evm_targets::EvmTarget) -> Self
 pub const fn slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::range(from: slang_solidity_v2_common::evm_targets::EvmTarget, till: slang_solidity_v2_common::evm_targets::EvmTarget) -> Self
@@ -1173,7 +1173,7 @@ pub slang_solidity_v2_common::versions::LanguageVersionSpecifier::Range::till: s
 pub slang_solidity_v2_common::versions::LanguageVersionSpecifier::Till
 pub slang_solidity_v2_common::versions::LanguageVersionSpecifier::Till::till: slang_solidity_v2_common::versions::LanguageVersion
 impl slang_solidity_v2_common::versions::LanguageVersionSpecifier
-pub const fn slang_solidity_v2_common::versions::LanguageVersionSpecifier::contains(&self, other: slang_solidity_v2_common::versions::LanguageVersion) -> bool
+pub fn slang_solidity_v2_common::versions::LanguageVersionSpecifier::contains(&self, other: slang_solidity_v2_common::versions::LanguageVersion) -> bool
 impl slang_solidity_v2_common::versions::LanguageVersionSpecifier
 pub const fn slang_solidity_v2_common::versions::LanguageVersionSpecifier::from(from: slang_solidity_v2_common::versions::LanguageVersion) -> Self
 pub const fn slang_solidity_v2_common::versions::LanguageVersionSpecifier::range(from: slang_solidity_v2_common::versions::LanguageVersion, till: slang_solidity_v2_common::versions::LanguageVersion) -> Self

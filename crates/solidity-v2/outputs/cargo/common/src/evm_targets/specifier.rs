@@ -27,14 +27,11 @@ impl EvmTargetSpecifier {
 }
 
 impl EvmTargetSpecifier {
-    #[inline]
-    pub const fn contains(&self, other: EvmTarget) -> bool {
+    pub fn contains(&self, other: EvmTarget) -> bool {
         match self {
-            Self::From { from } => (*from as u32) <= (other as u32),
-            Self::Till { till } => (other as u32) < (*till as u32),
-            Self::Range { from, till } => {
-                (*from as u32) <= (other as u32) && (other as u32) < (*till as u32)
-            }
+            Self::From { from } => *from <= other,
+            Self::Till { till } => other < *till,
+            Self::Range { from, till } => *from <= other && other < *till,
         }
     }
 }
