@@ -10,7 +10,8 @@ impl ContractDefinitionStruct {
         let name = self.ir_node.name.unparse().to_string();
         let file_id = self.get_file_id().to_string();
         let entries = self.compute_abi_entries()?;
-        let (storage_layout, transient_storage_layout) = self.compute_storage_layout()?;
+        let (storage_layout, transient_storage_layout, immutable_storage_layout) =
+            self.compute_storage_layout()?;
         Some(ContractAbi {
             node_id: self.ir_node.id(),
             name,
@@ -18,6 +19,7 @@ impl ContractDefinitionStruct {
             entries,
             storage_layout,
             transient_storage_layout,
+            immutable_storage_layout,
         })
     }
 
@@ -61,8 +63,17 @@ impl ContractDefinitionStruct {
         definition.base_slot
     }
 
-    /// Computes the layouts of both permanent and transient state variables
-    fn compute_storage_layout(&self) -> Option<(Vec<StorageItem>, Vec<StorageItem>)> {
+    /// Computes the layouts of permanent, transient, and immutable state
+    /// variables.
+    ///
+    /// `immutable` variables have no native storage — they live in code. For
+    /// the experimental Slang backend they are laid out as ordinary storage
+    /// slots appended after the persistent layout, so a read after the
+    /// constructor's write observes the assigned value. The slot space is
+    /// shared with persistent storage, hence the appended base.
+    fn compute_storage_layout(
+        &self,
+    ) -> Option<(Vec<StorageItem>, Vec<StorageItem>, Vec<StorageItem>)> {
         let all_state_variables = self.linearised_state_variables();
 
         // TODO(validation) SDR[2]: it is an error if any contract in the hierarchy
@@ -85,7 +96,26 @@ impl ContractDefinitionStruct {
                 )
             }),
         )?;
-        Some((storage_layout, transient_storage_layout))
+        let immutable_base = storage_layout
+            .iter()
+            .map(StorageItem::slot)
+            .max()
+            .map(|max| max + U256::from(1u64))
+            .unwrap_or(U256::ZERO);
+        let immutable_storage_layout = self.lay_out_state_variables(
+            immutable_base,
+            all_state_variables.iter().filter(|state_variable| {
+                matches!(
+                    state_variable.mutability(),
+                    StateVariableMutability::Immutable
+                )
+            }),
+        )?;
+        Some((
+            storage_layout,
+            transient_storage_layout,
+            immutable_storage_layout,
+        ))
     }
 
     fn lay_out_state_variables<'a>(
