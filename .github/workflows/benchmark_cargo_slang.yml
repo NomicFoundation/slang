@@ -41,7 +41,7 @@ jobs:
 
     permissions:
       contents: "read"
-      pull-requests: "write"
+      checks: "write" # Bencher posts results as a GitHub Check on the commit.
 
     # Skip fork PRs (can't access BENCHER_API_TOKEN). For non-PR events, only run on the main repo.
     if: >-
