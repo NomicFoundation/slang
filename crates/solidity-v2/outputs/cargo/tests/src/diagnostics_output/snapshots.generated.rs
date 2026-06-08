@@ -18,6 +18,29 @@ mod compilation {
     }
 }
 
+mod structure {
+    use super::*;
+
+    mod function_name_matches_container {
+        use super::*;
+
+        #[test]
+        fn contract() -> Result<()> {
+            run("structure/function_name_matches_container", "contract")
+        }
+
+        #[test]
+        fn interface() -> Result<()> {
+            run("structure/function_name_matches_container", "interface")
+        }
+
+        #[test]
+        fn library() -> Result<()> {
+            run("structure/function_name_matches_container", "library")
+        }
+    }
+}
+
 mod syntax {
     use super::*;
 

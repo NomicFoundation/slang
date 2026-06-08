@@ -1,7 +1,7 @@
 contract token {
     mapping(address => uint256) public balanceOf;
 
-    function token(uint256, string, string) public {}
+    function init(uint256, string, string) public {}
 }
 
 contract Test is token {
