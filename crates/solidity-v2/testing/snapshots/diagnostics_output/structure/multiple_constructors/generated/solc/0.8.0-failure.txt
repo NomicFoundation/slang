@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 7997] Error: More than one constructor defined.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     constructor(uint256 _x) {}
+   │     ─────────────┬────────────  
+   │                  ╰────────────── Error occurred here.
+───╯

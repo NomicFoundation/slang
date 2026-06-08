@@ -1,4 +1,6 @@
-use slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer;
+use slang_solidity_v2_common::diagnostics::kinds::structure::{
+    FunctionNameMatchesContainer, MultipleConstructors,
+};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -164,16 +166,31 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         }
     }
 
-    fn register_constructor_parameters(&mut self, constructor_parameters_scope_id: ScopeId) {
+    fn register_constructor(
+        &mut self,
+        node: &ir::FunctionDefinition,
+        constructor_parameters_scope_id: ScopeId,
+    ) {
         let current_scope_node_id = self.current_scope().node_id();
         let Definition::Contract(contract_definition) =
             self.binder.get_definition_mut(current_scope_node_id)
         else {
             unreachable!("the current scope is not a contract");
         };
-        // TODO(validation) SDR[21]: there should be a single constructor, so the
-        // current value should be None
-        contract_definition.constructor_parameters_scope_id = Some(constructor_parameters_scope_id);
+
+        if contract_definition
+            .constructor_parameters_scope_id
+            .is_some()
+        {
+            self.diagnostics.push(
+                self.current_file.id().to_owned(),
+                node.range.clone(),
+                MultipleConstructors,
+            );
+        } else {
+            contract_definition.constructor_parameters_scope_id =
+                Some(constructor_parameters_scope_id);
+        }
     }
 }
 
@@ -308,7 +325,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                 } else if matches!(node.kind, ir::FunctionKind::Constructor) {
                     // Register the constructor to resolve named parameters when
                     // constructing this contract
-                    self.register_constructor_parameters(parameters_scope_id);
+                    self.register_constructor(node, parameters_scope_id);
                 }
 
                 let function_scope =

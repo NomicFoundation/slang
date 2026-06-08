@@ -39,6 +39,11 @@ mod structure {
             run("structure/function_name_matches_container", "library")
         }
     }
+
+    #[test]
+    fn multiple_constructors() -> Result<()> {
+        run("structure", "multiple_constructors")
+    }
 }
 
 mod syntax {
