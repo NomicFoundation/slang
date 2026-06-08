@@ -5,7 +5,6 @@
 use std::rc::Rc;
 
 use slang_solidity_v2_common::diagnostics::kinds::syntax::ExpectedArrayLengthExpression;
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_cst::structured_cst::nodes::{
     new_array_type_name, new_expression_elementary_type, new_expression_identifier,
     new_expression_index_access_expression, new_expression_member_access_expression,
@@ -15,6 +14,8 @@ use slang_solidity_v2_cst::structured_cst::nodes::{
     FunctionTypeAttribute, FunctionTypeStruct, Identifier, IdentifierPath, IdentifierPathElement,
     IndexAccessEnd, OpenBracket, Period, StateVariableAttribute, TypeName,
 };
+
+use crate::parser::GrammarCtx;
 
 /// An `IndexAccessPath` represents a path or elementary type followed by
 /// zero or more index accesses, e.g. `foo.bar[0][1:3]` or `uint256[5][]`
@@ -91,8 +92,7 @@ pub(crate) fn new_index_access_path_from_elementary_type(
 pub(crate) fn new_type_name_index_access_path(
     index_access_path: IndexAccessPath,
     start: usize,
-    file_id: &str,
-    diagnostics: &mut DiagnosticCollection,
+    ctx: &mut GrammarCtx<'_>,
 ) -> TypeName {
     let IndexAccessPath { path, indices } = index_access_path;
 
@@ -106,8 +106,8 @@ pub(crate) fn new_type_name_index_access_path(
             // Report from the start of the index access path up to the closing
             // bracket of the offending index, matching solc's range.
             let end = index.close_bracket.range.end;
-            diagnostics.push(
-                file_id.to_owned(),
+            ctx.diagnostics.push(
+                ctx.file_id.to_owned(),
                 start..end,
                 ExpectedArrayLengthExpression,
             );

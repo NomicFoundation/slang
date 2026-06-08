@@ -1,9 +1,8 @@
 use crate::lexer::LexemeKind;
 use slang_solidity_v2_cst::structured_cst::nodes::*;
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use crate::parser::parser_helpers;
 
-grammar<'source>(source: &'source str, file_id: &'source str, diagnostics: &mut DiagnosticCollection);
+grammar<'source>(ctx: &mut crate::parser::GrammarCtx<'source>);
 
 SeparatedAllowEmpty<S, T>: Vec<T> = {
     => vec![],
@@ -83,7 +82,7 @@ Repeated<T>: Vec<T> = {
 #[inline]
 {{ id }}: {{ id }} = {
 {% for lexeme in lexemes %}
-        <l:@L> L_{{ lexeme }} <r:@L> => new_{{id | snake_case}}(l..r, source),
+        <l:@L> L_{{ lexeme }} <r:@L> => new_{{id | snake_case}}(l..r, ctx.source),
 {% endfor %}
 };
 {%- else -%}
@@ -98,7 +97,7 @@ Identifier: Identifier = {
 // this is an easy way to express "Any identifier except `X`" as `SomeIdentifier<"X">`
 SomeIdentifier<Except>: {{ id }} = {
 {% for lexeme in lexemes %}
-        <l:@L> L_{{ lexeme }} <r:@L> if Except !~ "{{ lexeme }}" => new_{{id | snake_case}}(l..r, source),
+        <l:@L> L_{{ lexeme }} <r:@L> if Except !~ "{{ lexeme }}" => new_{{id | snake_case}}(l..r, ctx.source),
 {% endfor %}
 };
 

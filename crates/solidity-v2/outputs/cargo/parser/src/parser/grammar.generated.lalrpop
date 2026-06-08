@@ -2,10 +2,9 @@
 
 use crate::lexer::LexemeKind;
 use slang_solidity_v2_cst::structured_cst::nodes::*;
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use crate::parser::parser_helpers;
 
-grammar<'source>(source: &'source str, file_id: &'source str, diagnostics: &mut DiagnosticCollection);
+grammar<'source>(ctx: &mut crate::parser::GrammarCtx<'source>);
 
 SeparatedAllowEmpty<S, T>: Vec<T> = {
     => vec![],
@@ -431,11 +430,10 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
     <attributes: StateVariableAttributes> <name: Identifier> <value:
     (StateVariableDefinitionValue)?> <semicolon: Semicolon> =>
     {
-        let identifier = new_identifier(l..r, source); let iap =
+        let identifier = new_identifier(l..r, ctx.source); let iap =
         parser_helpers::new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
         let type_name =
-        parser_helpers::new_type_name_index_access_path(iap, l, file_id,
-        diagnostics);
+        parser_helpers::new_type_name_index_access_path(iap, l, ctx);
         new_state_variable_definition(type_name, attributes, name, value,
         semicolon)
     }, <type_name: FunctionTypeInternalNoReturn> <special_attributes:
@@ -683,7 +681,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
     <mapping_type: MappingType> => new_type_name_mapping_type(<>), <l:@L>
     <index_access_path: IAPRule> =>
     parser_helpers::new_type_name_index_access_path(index_access_path, l,
-    file_id, diagnostics),
+    ctx),
 }; TypeName1<FunctionRule, IAPRule>: TypeName =
 {
     <type_name: ArrayTypeName> => new_type_name_array_type_name(<>),
@@ -824,11 +822,10 @@ VariableDeclarationStatementSpecialRevert: VariableDeclarationStatement =
     <l:@L> L_RevertKeyword_Unreserved <r:@R> <storage_location:
     (StorageLocation)?> <name: Identifier> =>
     {
-        let identifier = new_identifier(l..r, source); let iap =
+        let identifier = new_identifier(l..r, ctx.source); let iap =
         parser_helpers::new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
         let type_name =
-        parser_helpers::new_type_name_index_access_path(iap, l, file_id,
-        diagnostics);
+        parser_helpers::new_type_name_index_access_path(iap, l, ctx);
         new_variable_declaration(type_name, storage_location, name)
     }
 }; #[inline] IdentifierPathNoRevert: IdentifierPath =
@@ -1647,481 +1644,481 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> =
 #[inline]
 ABIEncoderV2Keyword: ABIEncoderV2Keyword = {
 
-        <l:@L> L_ABIEncoderV2Keyword_Reserved <r:@L> => new_abi_encoder_v2_keyword(l..r, source),
+        <l:@L> L_ABIEncoderV2Keyword_Reserved <r:@L> => new_abi_encoder_v2_keyword(l..r, ctx.source),
 
 };
 #[inline]
 AbicoderKeyword: AbicoderKeyword = {
 
-        <l:@L> L_AbicoderKeyword_Reserved <r:@L> => new_abicoder_keyword(l..r, source),
+        <l:@L> L_AbicoderKeyword_Reserved <r:@L> => new_abicoder_keyword(l..r, ctx.source),
 
 };
 #[inline]
 AbicoderV1Keyword: AbicoderV1Keyword = {
 
-        <l:@L> L_AbicoderV1Keyword_Reserved <r:@L> => new_abicoder_v1_keyword(l..r, source),
+        <l:@L> L_AbicoderV1Keyword_Reserved <r:@L> => new_abicoder_v1_keyword(l..r, ctx.source),
 
 };
 #[inline]
 AbicoderV2Keyword: AbicoderV2Keyword = {
 
-        <l:@L> L_AbicoderV2Keyword_Reserved <r:@L> => new_abicoder_v2_keyword(l..r, source),
+        <l:@L> L_AbicoderV2Keyword_Reserved <r:@L> => new_abicoder_v2_keyword(l..r, ctx.source),
 
 };
 #[inline]
 AbstractKeyword: AbstractKeyword = {
 
-        <l:@L> L_AbstractKeyword_Reserved <r:@L> => new_abstract_keyword(l..r, source),
+        <l:@L> L_AbstractKeyword_Reserved <r:@L> => new_abstract_keyword(l..r, ctx.source),
 
 };
 #[inline]
 AddressKeyword: AddressKeyword = {
 
-        <l:@L> L_AddressKeyword_Reserved <r:@L> => new_address_keyword(l..r, source),
+        <l:@L> L_AddressKeyword_Reserved <r:@L> => new_address_keyword(l..r, ctx.source),
 
 };
 #[inline]
 AfterKeyword: AfterKeyword = {
 
-        <l:@L> L_AfterKeyword_Reserved <r:@L> => new_after_keyword(l..r, source),
+        <l:@L> L_AfterKeyword_Reserved <r:@L> => new_after_keyword(l..r, ctx.source),
 
 };
 #[inline]
 AliasKeyword: AliasKeyword = {
 
-        <l:@L> L_AliasKeyword_Reserved <r:@L> => new_alias_keyword(l..r, source),
+        <l:@L> L_AliasKeyword_Reserved <r:@L> => new_alias_keyword(l..r, ctx.source),
 
 };
 #[inline]
 Ampersand: Ampersand = {
 
-        <l:@L> L_Ampersand <r:@L> => new_ampersand(l..r, source),
+        <l:@L> L_Ampersand <r:@L> => new_ampersand(l..r, ctx.source),
 
 };
 #[inline]
 AmpersandAmpersand: AmpersandAmpersand = {
 
-        <l:@L> L_AmpersandAmpersand <r:@L> => new_ampersand_ampersand(l..r, source),
+        <l:@L> L_AmpersandAmpersand <r:@L> => new_ampersand_ampersand(l..r, ctx.source),
 
 };
 #[inline]
 AmpersandEqual: AmpersandEqual = {
 
-        <l:@L> L_AmpersandEqual <r:@L> => new_ampersand_equal(l..r, source),
+        <l:@L> L_AmpersandEqual <r:@L> => new_ampersand_equal(l..r, ctx.source),
 
 };
 #[inline]
 AnonymousKeyword: AnonymousKeyword = {
 
-        <l:@L> L_AnonymousKeyword_Reserved <r:@L> => new_anonymous_keyword(l..r, source),
+        <l:@L> L_AnonymousKeyword_Reserved <r:@L> => new_anonymous_keyword(l..r, ctx.source),
 
 };
 #[inline]
 ApplyKeyword: ApplyKeyword = {
 
-        <l:@L> L_ApplyKeyword_Reserved <r:@L> => new_apply_keyword(l..r, source),
+        <l:@L> L_ApplyKeyword_Reserved <r:@L> => new_apply_keyword(l..r, ctx.source),
 
 };
 #[inline]
 AsKeyword: AsKeyword = {
 
-        <l:@L> L_AsKeyword_Reserved <r:@L> => new_as_keyword(l..r, source),
+        <l:@L> L_AsKeyword_Reserved <r:@L> => new_as_keyword(l..r, ctx.source),
 
 };
 #[inline]
 AssemblyKeyword: AssemblyKeyword = {
 
-        <l:@L> L_AssemblyKeyword_Reserved <r:@L> => new_assembly_keyword(l..r, source),
+        <l:@L> L_AssemblyKeyword_Reserved <r:@L> => new_assembly_keyword(l..r, ctx.source),
 
 };
 #[inline]
 Asterisk: Asterisk = {
 
-        <l:@L> L_Asterisk <r:@L> => new_asterisk(l..r, source),
+        <l:@L> L_Asterisk <r:@L> => new_asterisk(l..r, ctx.source),
 
 };
 #[inline]
 AsteriskAsterisk: AsteriskAsterisk = {
 
-        <l:@L> L_AsteriskAsterisk <r:@L> => new_asterisk_asterisk(l..r, source),
+        <l:@L> L_AsteriskAsterisk <r:@L> => new_asterisk_asterisk(l..r, ctx.source),
 
 };
 #[inline]
 AsteriskEqual: AsteriskEqual = {
 
-        <l:@L> L_AsteriskEqual <r:@L> => new_asterisk_equal(l..r, source),
+        <l:@L> L_AsteriskEqual <r:@L> => new_asterisk_equal(l..r, ctx.source),
 
 };
 #[inline]
 AtKeyword: AtKeyword = {
 
-        <l:@L> L_AtKeyword_Unreserved <r:@L> => new_at_keyword(l..r, source),
+        <l:@L> L_AtKeyword_Unreserved <r:@L> => new_at_keyword(l..r, ctx.source),
 
 };
 #[inline]
 AutoKeyword: AutoKeyword = {
 
-        <l:@L> L_AutoKeyword_Reserved <r:@L> => new_auto_keyword(l..r, source),
+        <l:@L> L_AutoKeyword_Reserved <r:@L> => new_auto_keyword(l..r, ctx.source),
 
 };
 #[inline]
 Bang: Bang = {
 
-        <l:@L> L_Bang <r:@L> => new_bang(l..r, source),
+        <l:@L> L_Bang <r:@L> => new_bang(l..r, ctx.source),
 
 };
 #[inline]
 BangEqual: BangEqual = {
 
-        <l:@L> L_BangEqual <r:@L> => new_bang_equal(l..r, source),
+        <l:@L> L_BangEqual <r:@L> => new_bang_equal(l..r, ctx.source),
 
 };
 #[inline]
 Bar: Bar = {
 
-        <l:@L> L_Bar <r:@L> => new_bar(l..r, source),
+        <l:@L> L_Bar <r:@L> => new_bar(l..r, ctx.source),
 
 };
 #[inline]
 BarBar: BarBar = {
 
-        <l:@L> L_BarBar <r:@L> => new_bar_bar(l..r, source),
+        <l:@L> L_BarBar <r:@L> => new_bar_bar(l..r, ctx.source),
 
 };
 #[inline]
 BarEqual: BarEqual = {
 
-        <l:@L> L_BarEqual <r:@L> => new_bar_equal(l..r, source),
+        <l:@L> L_BarEqual <r:@L> => new_bar_equal(l..r, ctx.source),
 
 };
 #[inline]
 BoolKeyword: BoolKeyword = {
 
-        <l:@L> L_BoolKeyword_Reserved <r:@L> => new_bool_keyword(l..r, source),
+        <l:@L> L_BoolKeyword_Reserved <r:@L> => new_bool_keyword(l..r, ctx.source),
 
 };
 #[inline]
 BreakKeyword: BreakKeyword = {
 
-        <l:@L> L_BreakKeyword_Reserved <r:@L> => new_break_keyword(l..r, source),
+        <l:@L> L_BreakKeyword_Reserved <r:@L> => new_break_keyword(l..r, ctx.source),
 
 };
 #[inline]
 ByteKeyword: ByteKeyword = {
 
-        <l:@L> L_ByteKeyword_Reserved <r:@L> => new_byte_keyword(l..r, source),
+        <l:@L> L_ByteKeyword_Reserved <r:@L> => new_byte_keyword(l..r, ctx.source),
 
 };
 #[inline]
 BytesKeyword: BytesKeyword = {
 
-        <l:@L> L_BytesKeyword_Reserved <r:@L> => new_bytes_keyword(l..r, source),
+        <l:@L> L_BytesKeyword_Reserved <r:@L> => new_bytes_keyword(l..r, ctx.source),
 
 };
 #[inline]
 CallDataKeyword: CallDataKeyword = {
 
-        <l:@L> L_CallDataKeyword_Reserved <r:@L> => new_call_data_keyword(l..r, source),
+        <l:@L> L_CallDataKeyword_Reserved <r:@L> => new_call_data_keyword(l..r, ctx.source),
 
 };
 #[inline]
 Caret: Caret = {
 
-        <l:@L> L_Caret <r:@L> => new_caret(l..r, source),
+        <l:@L> L_Caret <r:@L> => new_caret(l..r, ctx.source),
 
 };
 #[inline]
 CaretEqual: CaretEqual = {
 
-        <l:@L> L_CaretEqual <r:@L> => new_caret_equal(l..r, source),
+        <l:@L> L_CaretEqual <r:@L> => new_caret_equal(l..r, ctx.source),
 
 };
 #[inline]
 CaseKeyword: CaseKeyword = {
 
-        <l:@L> L_CaseKeyword_Reserved <r:@L> => new_case_keyword(l..r, source),
+        <l:@L> L_CaseKeyword_Reserved <r:@L> => new_case_keyword(l..r, ctx.source),
 
 };
 #[inline]
 CatchKeyword: CatchKeyword = {
 
-        <l:@L> L_CatchKeyword_Reserved <r:@L> => new_catch_keyword(l..r, source),
+        <l:@L> L_CatchKeyword_Reserved <r:@L> => new_catch_keyword(l..r, ctx.source),
 
 };
 #[inline]
 CloseBrace: CloseBrace = {
 
-        <l:@L> L_CloseBrace <r:@L> => new_close_brace(l..r, source),
+        <l:@L> L_CloseBrace <r:@L> => new_close_brace(l..r, ctx.source),
 
 };
 #[inline]
 CloseBracket: CloseBracket = {
 
-        <l:@L> L_CloseBracket <r:@L> => new_close_bracket(l..r, source),
+        <l:@L> L_CloseBracket <r:@L> => new_close_bracket(l..r, ctx.source),
 
 };
 #[inline]
 CloseParen: CloseParen = {
 
-        <l:@L> L_CloseParen <r:@L> => new_close_paren(l..r, source),
+        <l:@L> L_CloseParen <r:@L> => new_close_paren(l..r, ctx.source),
 
 };
 #[inline]
 Colon: Colon = {
 
-        <l:@L> L_Colon <r:@L> => new_colon(l..r, source),
+        <l:@L> L_Colon <r:@L> => new_colon(l..r, ctx.source),
 
 };
 #[inline]
 Comma: Comma = {
 
-        <l:@L> L_Comma <r:@L> => new_comma(l..r, source),
+        <l:@L> L_Comma <r:@L> => new_comma(l..r, ctx.source),
 
 };
 #[inline]
 ConstantKeyword: ConstantKeyword = {
 
-        <l:@L> L_ConstantKeyword_Reserved <r:@L> => new_constant_keyword(l..r, source),
+        <l:@L> L_ConstantKeyword_Reserved <r:@L> => new_constant_keyword(l..r, ctx.source),
 
 };
 #[inline]
 ConstructorKeyword: ConstructorKeyword = {
 
-        <l:@L> L_ConstructorKeyword_Reserved <r:@L> => new_constructor_keyword(l..r, source),
+        <l:@L> L_ConstructorKeyword_Reserved <r:@L> => new_constructor_keyword(l..r, ctx.source),
 
 };
 #[inline]
 ContinueKeyword: ContinueKeyword = {
 
-        <l:@L> L_ContinueKeyword_Reserved <r:@L> => new_continue_keyword(l..r, source),
+        <l:@L> L_ContinueKeyword_Reserved <r:@L> => new_continue_keyword(l..r, ctx.source),
 
 };
 #[inline]
 ContractKeyword: ContractKeyword = {
 
-        <l:@L> L_ContractKeyword_Reserved <r:@L> => new_contract_keyword(l..r, source),
+        <l:@L> L_ContractKeyword_Reserved <r:@L> => new_contract_keyword(l..r, ctx.source),
 
 };
 #[inline]
 CopyOfKeyword: CopyOfKeyword = {
 
-        <l:@L> L_CopyOfKeyword_Reserved <r:@L> => new_copy_of_keyword(l..r, source),
+        <l:@L> L_CopyOfKeyword_Reserved <r:@L> => new_copy_of_keyword(l..r, ctx.source),
 
 };
 #[inline]
 DaysKeyword: DaysKeyword = {
 
-        <l:@L> L_DaysKeyword_Reserved <r:@L> => new_days_keyword(l..r, source),
+        <l:@L> L_DaysKeyword_Reserved <r:@L> => new_days_keyword(l..r, ctx.source),
 
 };
 #[inline]
 DecimalLiteral: DecimalLiteral = {
 
-        <l:@L> L_DecimalLiteral <r:@L> => new_decimal_literal(l..r, source),
+        <l:@L> L_DecimalLiteral <r:@L> => new_decimal_literal(l..r, ctx.source),
 
 };
 #[inline]
 DefaultKeyword: DefaultKeyword = {
 
-        <l:@L> L_DefaultKeyword_Reserved <r:@L> => new_default_keyword(l..r, source),
+        <l:@L> L_DefaultKeyword_Reserved <r:@L> => new_default_keyword(l..r, ctx.source),
 
 };
 #[inline]
 DefineKeyword: DefineKeyword = {
 
-        <l:@L> L_DefineKeyword_Reserved <r:@L> => new_define_keyword(l..r, source),
+        <l:@L> L_DefineKeyword_Reserved <r:@L> => new_define_keyword(l..r, ctx.source),
 
 };
 #[inline]
 DeleteKeyword: DeleteKeyword = {
 
-        <l:@L> L_DeleteKeyword_Reserved <r:@L> => new_delete_keyword(l..r, source),
+        <l:@L> L_DeleteKeyword_Reserved <r:@L> => new_delete_keyword(l..r, ctx.source),
 
 };
 #[inline]
 DoKeyword: DoKeyword = {
 
-        <l:@L> L_DoKeyword_Reserved <r:@L> => new_do_keyword(l..r, source),
+        <l:@L> L_DoKeyword_Reserved <r:@L> => new_do_keyword(l..r, ctx.source),
 
 };
 #[inline]
 ElseKeyword: ElseKeyword = {
 
-        <l:@L> L_ElseKeyword_Reserved <r:@L> => new_else_keyword(l..r, source),
+        <l:@L> L_ElseKeyword_Reserved <r:@L> => new_else_keyword(l..r, ctx.source),
 
 };
 #[inline]
 EmitKeyword: EmitKeyword = {
 
-        <l:@L> L_EmitKeyword_Reserved <r:@L> => new_emit_keyword(l..r, source),
+        <l:@L> L_EmitKeyword_Reserved <r:@L> => new_emit_keyword(l..r, ctx.source),
 
 };
 #[inline]
 EnumKeyword: EnumKeyword = {
 
-        <l:@L> L_EnumKeyword_Reserved <r:@L> => new_enum_keyword(l..r, source),
+        <l:@L> L_EnumKeyword_Reserved <r:@L> => new_enum_keyword(l..r, ctx.source),
 
 };
 #[inline]
 Equal: Equal = {
 
-        <l:@L> L_Equal <r:@L> => new_equal(l..r, source),
+        <l:@L> L_Equal <r:@L> => new_equal(l..r, ctx.source),
 
 };
 #[inline]
 EqualEqual: EqualEqual = {
 
-        <l:@L> L_EqualEqual <r:@L> => new_equal_equal(l..r, source),
+        <l:@L> L_EqualEqual <r:@L> => new_equal_equal(l..r, ctx.source),
 
 };
 #[inline]
 EqualGreaterThan: EqualGreaterThan = {
 
-        <l:@L> L_EqualGreaterThan <r:@L> => new_equal_greater_than(l..r, source),
+        <l:@L> L_EqualGreaterThan <r:@L> => new_equal_greater_than(l..r, ctx.source),
 
 };
 #[inline]
 ErrorKeyword: ErrorKeyword = {
 
-        <l:@L> L_ErrorKeyword_Unreserved <r:@L> => new_error_keyword(l..r, source),
+        <l:@L> L_ErrorKeyword_Unreserved <r:@L> => new_error_keyword(l..r, ctx.source),
 
 };
 #[inline]
 EtherKeyword: EtherKeyword = {
 
-        <l:@L> L_EtherKeyword_Reserved <r:@L> => new_ether_keyword(l..r, source),
+        <l:@L> L_EtherKeyword_Reserved <r:@L> => new_ether_keyword(l..r, ctx.source),
 
 };
 #[inline]
 EventKeyword: EventKeyword = {
 
-        <l:@L> L_EventKeyword_Reserved <r:@L> => new_event_keyword(l..r, source),
+        <l:@L> L_EventKeyword_Reserved <r:@L> => new_event_keyword(l..r, ctx.source),
 
 };
 #[inline]
 ExperimentalKeyword: ExperimentalKeyword = {
 
-        <l:@L> L_ExperimentalKeyword_Reserved <r:@L> => new_experimental_keyword(l..r, source),
+        <l:@L> L_ExperimentalKeyword_Reserved <r:@L> => new_experimental_keyword(l..r, ctx.source),
 
 };
 #[inline]
 ExternalKeyword: ExternalKeyword = {
 
-        <l:@L> L_ExternalKeyword_Reserved <r:@L> => new_external_keyword(l..r, source),
+        <l:@L> L_ExternalKeyword_Reserved <r:@L> => new_external_keyword(l..r, ctx.source),
 
 };
 #[inline]
 FallbackKeyword: FallbackKeyword = {
 
-        <l:@L> L_FallbackKeyword_Reserved <r:@L> => new_fallback_keyword(l..r, source),
+        <l:@L> L_FallbackKeyword_Reserved <r:@L> => new_fallback_keyword(l..r, ctx.source),
 
 };
 #[inline]
 FalseKeyword: FalseKeyword = {
 
-        <l:@L> L_FalseKeyword_Reserved <r:@L> => new_false_keyword(l..r, source),
+        <l:@L> L_FalseKeyword_Reserved <r:@L> => new_false_keyword(l..r, ctx.source),
 
 };
 #[inline]
 FinalKeyword: FinalKeyword = {
 
-        <l:@L> L_FinalKeyword_Reserved <r:@L> => new_final_keyword(l..r, source),
+        <l:@L> L_FinalKeyword_Reserved <r:@L> => new_final_keyword(l..r, ctx.source),
 
 };
 #[inline]
 FixedKeyword: FixedKeyword = {
 
-        <l:@L> L_FixedKeyword_Reserved <r:@L> => new_fixed_keyword(l..r, source),
+        <l:@L> L_FixedKeyword_Reserved <r:@L> => new_fixed_keyword(l..r, ctx.source),
 
 };
 #[inline]
 ForKeyword: ForKeyword = {
 
-        <l:@L> L_ForKeyword_Reserved <r:@L> => new_for_keyword(l..r, source),
+        <l:@L> L_ForKeyword_Reserved <r:@L> => new_for_keyword(l..r, ctx.source),
 
 };
 #[inline]
 FromKeyword: FromKeyword = {
 
-        <l:@L> L_FromKeyword_Unreserved <r:@L> => new_from_keyword(l..r, source),
+        <l:@L> L_FromKeyword_Unreserved <r:@L> => new_from_keyword(l..r, ctx.source),
 
 };
 #[inline]
 FunctionKeyword: FunctionKeyword = {
 
-        <l:@L> L_FunctionKeyword_Reserved <r:@L> => new_function_keyword(l..r, source),
+        <l:@L> L_FunctionKeyword_Reserved <r:@L> => new_function_keyword(l..r, ctx.source),
 
 };
 #[inline]
 GlobalKeyword: GlobalKeyword = {
 
-        <l:@L> L_GlobalKeyword_Unreserved <r:@L> => new_global_keyword(l..r, source),
+        <l:@L> L_GlobalKeyword_Unreserved <r:@L> => new_global_keyword(l..r, ctx.source),
 
 };
 #[inline]
 GreaterThan: GreaterThan = {
 
-        <l:@L> L_GreaterThan <r:@L> => new_greater_than(l..r, source),
+        <l:@L> L_GreaterThan <r:@L> => new_greater_than(l..r, ctx.source),
 
 };
 #[inline]
 GreaterThanEqual: GreaterThanEqual = {
 
-        <l:@L> L_GreaterThanEqual <r:@L> => new_greater_than_equal(l..r, source),
+        <l:@L> L_GreaterThanEqual <r:@L> => new_greater_than_equal(l..r, ctx.source),
 
 };
 #[inline]
 GreaterThanGreaterThan: GreaterThanGreaterThan = {
 
-        <l:@L> L_GreaterThanGreaterThan <r:@L> => new_greater_than_greater_than(l..r, source),
+        <l:@L> L_GreaterThanGreaterThan <r:@L> => new_greater_than_greater_than(l..r, ctx.source),
 
 };
 #[inline]
 GreaterThanGreaterThanEqual: GreaterThanGreaterThanEqual = {
 
-        <l:@L> L_GreaterThanGreaterThanEqual <r:@L> => new_greater_than_greater_than_equal(l..r, source),
+        <l:@L> L_GreaterThanGreaterThanEqual <r:@L> => new_greater_than_greater_than_equal(l..r, ctx.source),
 
 };
 #[inline]
 GreaterThanGreaterThanGreaterThan: GreaterThanGreaterThanGreaterThan = {
 
-        <l:@L> L_GreaterThanGreaterThanGreaterThan <r:@L> => new_greater_than_greater_than_greater_than(l..r, source),
+        <l:@L> L_GreaterThanGreaterThanGreaterThan <r:@L> => new_greater_than_greater_than_greater_than(l..r, ctx.source),
 
 };
 #[inline]
 GreaterThanGreaterThanGreaterThanEqual: GreaterThanGreaterThanGreaterThanEqual = {
 
-        <l:@L> L_GreaterThanGreaterThanGreaterThanEqual <r:@L> => new_greater_than_greater_than_greater_than_equal(l..r, source),
+        <l:@L> L_GreaterThanGreaterThanGreaterThanEqual <r:@L> => new_greater_than_greater_than_greater_than_equal(l..r, ctx.source),
 
 };
 #[inline]
 GweiKeyword: GweiKeyword = {
 
-        <l:@L> L_GweiKeyword_Reserved <r:@L> => new_gwei_keyword(l..r, source),
+        <l:@L> L_GweiKeyword_Reserved <r:@L> => new_gwei_keyword(l..r, ctx.source),
 
 };
 #[inline]
 HexKeyword: HexKeyword = {
 
-        <l:@L> L_HexKeyword_Reserved <r:@L> => new_hex_keyword(l..r, source),
+        <l:@L> L_HexKeyword_Reserved <r:@L> => new_hex_keyword(l..r, ctx.source),
 
 };
 #[inline]
 HexLiteral: HexLiteral = {
 
-        <l:@L> L_HexLiteral <r:@L> => new_hex_literal(l..r, source),
+        <l:@L> L_HexLiteral <r:@L> => new_hex_literal(l..r, ctx.source),
 
 };
 #[inline]
 HexStringLiteral: HexStringLiteral = {
 
-        <l:@L> L_HexStringLiteral <r:@L> => new_hex_string_literal(l..r, source),
+        <l:@L> L_HexStringLiteral <r:@L> => new_hex_string_literal(l..r, ctx.source),
 
 };
 #[inline]
 HoursKeyword: HoursKeyword = {
 
-        <l:@L> L_HoursKeyword_Reserved <r:@L> => new_hours_keyword(l..r, source),
+        <l:@L> L_HoursKeyword_Reserved <r:@L> => new_hours_keyword(l..r, ctx.source),
 
 };
 #[inline]
@@ -2135,819 +2132,819 @@ Identifier: Identifier = {
 // this is an easy way to express "Any identifier except `X`" as `SomeIdentifier<"X">`
 SomeIdentifier<Except>: Identifier = {
 
-        <l:@L> L_AtKeyword_Unreserved <r:@L> if Except !~ "AtKeyword_Unreserved" => new_identifier(l..r, source),
+        <l:@L> L_AtKeyword_Unreserved <r:@L> if Except !~ "AtKeyword_Unreserved" => new_identifier(l..r, ctx.source),
 
-        <l:@L> L_ErrorKeyword_Unreserved <r:@L> if Except !~ "ErrorKeyword_Unreserved" => new_identifier(l..r, source),
+        <l:@L> L_ErrorKeyword_Unreserved <r:@L> if Except !~ "ErrorKeyword_Unreserved" => new_identifier(l..r, ctx.source),
 
-        <l:@L> L_FromKeyword_Unreserved <r:@L> if Except !~ "FromKeyword_Unreserved" => new_identifier(l..r, source),
+        <l:@L> L_FromKeyword_Unreserved <r:@L> if Except !~ "FromKeyword_Unreserved" => new_identifier(l..r, ctx.source),
 
-        <l:@L> L_GlobalKeyword_Unreserved <r:@L> if Except !~ "GlobalKeyword_Unreserved" => new_identifier(l..r, source),
+        <l:@L> L_GlobalKeyword_Unreserved <r:@L> if Except !~ "GlobalKeyword_Unreserved" => new_identifier(l..r, ctx.source),
 
-        <l:@L> L_Identifier <r:@L> if Except !~ "Identifier" => new_identifier(l..r, source),
+        <l:@L> L_Identifier <r:@L> if Except !~ "Identifier" => new_identifier(l..r, ctx.source),
 
-        <l:@L> L_LayoutKeyword_Unreserved <r:@L> if Except !~ "LayoutKeyword_Unreserved" => new_identifier(l..r, source),
+        <l:@L> L_LayoutKeyword_Unreserved <r:@L> if Except !~ "LayoutKeyword_Unreserved" => new_identifier(l..r, ctx.source),
 
-        <l:@L> L_RevertKeyword_Unreserved <r:@L> if Except !~ "RevertKeyword_Unreserved" => new_identifier(l..r, source),
+        <l:@L> L_RevertKeyword_Unreserved <r:@L> if Except !~ "RevertKeyword_Unreserved" => new_identifier(l..r, ctx.source),
 
-        <l:@L> L_TransientKeyword_Unreserved <r:@L> if Except !~ "TransientKeyword_Unreserved" => new_identifier(l..r, source),
+        <l:@L> L_TransientKeyword_Unreserved <r:@L> if Except !~ "TransientKeyword_Unreserved" => new_identifier(l..r, ctx.source),
 
 };
 #[inline]
 IfKeyword: IfKeyword = {
 
-        <l:@L> L_IfKeyword_Reserved <r:@L> => new_if_keyword(l..r, source),
+        <l:@L> L_IfKeyword_Reserved <r:@L> => new_if_keyword(l..r, ctx.source),
 
 };
 #[inline]
 ImmutableKeyword: ImmutableKeyword = {
 
-        <l:@L> L_ImmutableKeyword_Reserved <r:@L> => new_immutable_keyword(l..r, source),
+        <l:@L> L_ImmutableKeyword_Reserved <r:@L> => new_immutable_keyword(l..r, ctx.source),
 
 };
 #[inline]
 ImplementsKeyword: ImplementsKeyword = {
 
-        <l:@L> L_ImplementsKeyword_Reserved <r:@L> => new_implements_keyword(l..r, source),
+        <l:@L> L_ImplementsKeyword_Reserved <r:@L> => new_implements_keyword(l..r, ctx.source),
 
 };
 #[inline]
 ImportKeyword: ImportKeyword = {
 
-        <l:@L> L_ImportKeyword_Reserved <r:@L> => new_import_keyword(l..r, source),
+        <l:@L> L_ImportKeyword_Reserved <r:@L> => new_import_keyword(l..r, ctx.source),
 
 };
 #[inline]
 InKeyword: InKeyword = {
 
-        <l:@L> L_InKeyword_Reserved <r:@L> => new_in_keyword(l..r, source),
+        <l:@L> L_InKeyword_Reserved <r:@L> => new_in_keyword(l..r, ctx.source),
 
 };
 #[inline]
 IndexedKeyword: IndexedKeyword = {
 
-        <l:@L> L_IndexedKeyword_Reserved <r:@L> => new_indexed_keyword(l..r, source),
+        <l:@L> L_IndexedKeyword_Reserved <r:@L> => new_indexed_keyword(l..r, ctx.source),
 
 };
 #[inline]
 InlineKeyword: InlineKeyword = {
 
-        <l:@L> L_InlineKeyword_Reserved <r:@L> => new_inline_keyword(l..r, source),
+        <l:@L> L_InlineKeyword_Reserved <r:@L> => new_inline_keyword(l..r, ctx.source),
 
 };
 #[inline]
 IntKeyword: IntKeyword = {
 
-        <l:@L> L_IntKeyword_Reserved <r:@L> => new_int_keyword(l..r, source),
+        <l:@L> L_IntKeyword_Reserved <r:@L> => new_int_keyword(l..r, ctx.source),
 
 };
 #[inline]
 InterfaceKeyword: InterfaceKeyword = {
 
-        <l:@L> L_InterfaceKeyword_Reserved <r:@L> => new_interface_keyword(l..r, source),
+        <l:@L> L_InterfaceKeyword_Reserved <r:@L> => new_interface_keyword(l..r, ctx.source),
 
 };
 #[inline]
 InternalKeyword: InternalKeyword = {
 
-        <l:@L> L_InternalKeyword_Reserved <r:@L> => new_internal_keyword(l..r, source),
+        <l:@L> L_InternalKeyword_Reserved <r:@L> => new_internal_keyword(l..r, ctx.source),
 
 };
 #[inline]
 IsKeyword: IsKeyword = {
 
-        <l:@L> L_IsKeyword_Reserved <r:@L> => new_is_keyword(l..r, source),
+        <l:@L> L_IsKeyword_Reserved <r:@L> => new_is_keyword(l..r, ctx.source),
 
 };
 #[inline]
 LayoutKeyword: LayoutKeyword = {
 
-        <l:@L> L_LayoutKeyword_Unreserved <r:@L> => new_layout_keyword(l..r, source),
+        <l:@L> L_LayoutKeyword_Unreserved <r:@L> => new_layout_keyword(l..r, ctx.source),
 
 };
 #[inline]
 LessThan: LessThan = {
 
-        <l:@L> L_LessThan <r:@L> => new_less_than(l..r, source),
+        <l:@L> L_LessThan <r:@L> => new_less_than(l..r, ctx.source),
 
 };
 #[inline]
 LessThanEqual: LessThanEqual = {
 
-        <l:@L> L_LessThanEqual <r:@L> => new_less_than_equal(l..r, source),
+        <l:@L> L_LessThanEqual <r:@L> => new_less_than_equal(l..r, ctx.source),
 
 };
 #[inline]
 LessThanLessThan: LessThanLessThan = {
 
-        <l:@L> L_LessThanLessThan <r:@L> => new_less_than_less_than(l..r, source),
+        <l:@L> L_LessThanLessThan <r:@L> => new_less_than_less_than(l..r, ctx.source),
 
 };
 #[inline]
 LessThanLessThanEqual: LessThanLessThanEqual = {
 
-        <l:@L> L_LessThanLessThanEqual <r:@L> => new_less_than_less_than_equal(l..r, source),
+        <l:@L> L_LessThanLessThanEqual <r:@L> => new_less_than_less_than_equal(l..r, ctx.source),
 
 };
 #[inline]
 LetKeyword: LetKeyword = {
 
-        <l:@L> L_LetKeyword_Reserved <r:@L> => new_let_keyword(l..r, source),
+        <l:@L> L_LetKeyword_Reserved <r:@L> => new_let_keyword(l..r, ctx.source),
 
 };
 #[inline]
 LibraryKeyword: LibraryKeyword = {
 
-        <l:@L> L_LibraryKeyword_Reserved <r:@L> => new_library_keyword(l..r, source),
+        <l:@L> L_LibraryKeyword_Reserved <r:@L> => new_library_keyword(l..r, ctx.source),
 
 };
 #[inline]
 MacroKeyword: MacroKeyword = {
 
-        <l:@L> L_MacroKeyword_Reserved <r:@L> => new_macro_keyword(l..r, source),
+        <l:@L> L_MacroKeyword_Reserved <r:@L> => new_macro_keyword(l..r, ctx.source),
 
 };
 #[inline]
 MappingKeyword: MappingKeyword = {
 
-        <l:@L> L_MappingKeyword_Reserved <r:@L> => new_mapping_keyword(l..r, source),
+        <l:@L> L_MappingKeyword_Reserved <r:@L> => new_mapping_keyword(l..r, ctx.source),
 
 };
 #[inline]
 MatchKeyword: MatchKeyword = {
 
-        <l:@L> L_MatchKeyword_Reserved <r:@L> => new_match_keyword(l..r, source),
+        <l:@L> L_MatchKeyword_Reserved <r:@L> => new_match_keyword(l..r, ctx.source),
 
 };
 #[inline]
 MemoryKeyword: MemoryKeyword = {
 
-        <l:@L> L_MemoryKeyword_Reserved <r:@L> => new_memory_keyword(l..r, source),
+        <l:@L> L_MemoryKeyword_Reserved <r:@L> => new_memory_keyword(l..r, ctx.source),
 
 };
 #[inline]
 Minus: Minus = {
 
-        <l:@L> L_Minus <r:@L> => new_minus(l..r, source),
+        <l:@L> L_Minus <r:@L> => new_minus(l..r, ctx.source),
 
 };
 #[inline]
 MinusEqual: MinusEqual = {
 
-        <l:@L> L_MinusEqual <r:@L> => new_minus_equal(l..r, source),
+        <l:@L> L_MinusEqual <r:@L> => new_minus_equal(l..r, ctx.source),
 
 };
 #[inline]
 MinusMinus: MinusMinus = {
 
-        <l:@L> L_MinusMinus <r:@L> => new_minus_minus(l..r, source),
+        <l:@L> L_MinusMinus <r:@L> => new_minus_minus(l..r, ctx.source),
 
 };
 #[inline]
 MinutesKeyword: MinutesKeyword = {
 
-        <l:@L> L_MinutesKeyword_Reserved <r:@L> => new_minutes_keyword(l..r, source),
+        <l:@L> L_MinutesKeyword_Reserved <r:@L> => new_minutes_keyword(l..r, ctx.source),
 
 };
 #[inline]
 ModifierKeyword: ModifierKeyword = {
 
-        <l:@L> L_ModifierKeyword_Reserved <r:@L> => new_modifier_keyword(l..r, source),
+        <l:@L> L_ModifierKeyword_Reserved <r:@L> => new_modifier_keyword(l..r, ctx.source),
 
 };
 #[inline]
 MutableKeyword: MutableKeyword = {
 
-        <l:@L> L_MutableKeyword_Reserved <r:@L> => new_mutable_keyword(l..r, source),
+        <l:@L> L_MutableKeyword_Reserved <r:@L> => new_mutable_keyword(l..r, ctx.source),
 
 };
 #[inline]
 NewKeyword: NewKeyword = {
 
-        <l:@L> L_NewKeyword_Reserved <r:@L> => new_new_keyword(l..r, source),
+        <l:@L> L_NewKeyword_Reserved <r:@L> => new_new_keyword(l..r, ctx.source),
 
 };
 #[inline]
 NullKeyword: NullKeyword = {
 
-        <l:@L> L_NullKeyword_Reserved <r:@L> => new_null_keyword(l..r, source),
+        <l:@L> L_NullKeyword_Reserved <r:@L> => new_null_keyword(l..r, ctx.source),
 
 };
 #[inline]
 OfKeyword: OfKeyword = {
 
-        <l:@L> L_OfKeyword_Reserved <r:@L> => new_of_keyword(l..r, source),
+        <l:@L> L_OfKeyword_Reserved <r:@L> => new_of_keyword(l..r, ctx.source),
 
 };
 #[inline]
 OpenBrace: OpenBrace = {
 
-        <l:@L> L_OpenBrace <r:@L> => new_open_brace(l..r, source),
+        <l:@L> L_OpenBrace <r:@L> => new_open_brace(l..r, ctx.source),
 
 };
 #[inline]
 OpenBracket: OpenBracket = {
 
-        <l:@L> L_OpenBracket <r:@L> => new_open_bracket(l..r, source),
+        <l:@L> L_OpenBracket <r:@L> => new_open_bracket(l..r, ctx.source),
 
 };
 #[inline]
 OpenParen: OpenParen = {
 
-        <l:@L> L_OpenParen <r:@L> => new_open_paren(l..r, source),
+        <l:@L> L_OpenParen <r:@L> => new_open_paren(l..r, ctx.source),
 
 };
 #[inline]
 OverrideKeyword: OverrideKeyword = {
 
-        <l:@L> L_OverrideKeyword_Reserved <r:@L> => new_override_keyword(l..r, source),
+        <l:@L> L_OverrideKeyword_Reserved <r:@L> => new_override_keyword(l..r, ctx.source),
 
 };
 #[inline]
 PartialKeyword: PartialKeyword = {
 
-        <l:@L> L_PartialKeyword_Reserved <r:@L> => new_partial_keyword(l..r, source),
+        <l:@L> L_PartialKeyword_Reserved <r:@L> => new_partial_keyword(l..r, ctx.source),
 
 };
 #[inline]
 PayableKeyword: PayableKeyword = {
 
-        <l:@L> L_PayableKeyword_Reserved <r:@L> => new_payable_keyword(l..r, source),
+        <l:@L> L_PayableKeyword_Reserved <r:@L> => new_payable_keyword(l..r, ctx.source),
 
 };
 #[inline]
 Percent: Percent = {
 
-        <l:@L> L_Percent <r:@L> => new_percent(l..r, source),
+        <l:@L> L_Percent <r:@L> => new_percent(l..r, ctx.source),
 
 };
 #[inline]
 PercentEqual: PercentEqual = {
 
-        <l:@L> L_PercentEqual <r:@L> => new_percent_equal(l..r, source),
+        <l:@L> L_PercentEqual <r:@L> => new_percent_equal(l..r, ctx.source),
 
 };
 #[inline]
 Period: Period = {
 
-        <l:@L> L_Period <r:@L> => new_period(l..r, source),
+        <l:@L> L_Period <r:@L> => new_period(l..r, ctx.source),
 
 };
 #[inline]
 Plus: Plus = {
 
-        <l:@L> L_Plus <r:@L> => new_plus(l..r, source),
+        <l:@L> L_Plus <r:@L> => new_plus(l..r, ctx.source),
 
 };
 #[inline]
 PlusEqual: PlusEqual = {
 
-        <l:@L> L_PlusEqual <r:@L> => new_plus_equal(l..r, source),
+        <l:@L> L_PlusEqual <r:@L> => new_plus_equal(l..r, ctx.source),
 
 };
 #[inline]
 PlusPlus: PlusPlus = {
 
-        <l:@L> L_PlusPlus <r:@L> => new_plus_plus(l..r, source),
+        <l:@L> L_PlusPlus <r:@L> => new_plus_plus(l..r, ctx.source),
 
 };
 #[inline]
 PragmaBarBar: PragmaBarBar = {
 
-        <l:@L> L_PragmaBarBar <r:@L> => new_pragma_bar_bar(l..r, source),
+        <l:@L> L_PragmaBarBar <r:@L> => new_pragma_bar_bar(l..r, ctx.source),
 
 };
 #[inline]
 PragmaCaret: PragmaCaret = {
 
-        <l:@L> L_PragmaCaret <r:@L> => new_pragma_caret(l..r, source),
+        <l:@L> L_PragmaCaret <r:@L> => new_pragma_caret(l..r, ctx.source),
 
 };
 #[inline]
 PragmaEqual: PragmaEqual = {
 
-        <l:@L> L_PragmaEqual <r:@L> => new_pragma_equal(l..r, source),
+        <l:@L> L_PragmaEqual <r:@L> => new_pragma_equal(l..r, ctx.source),
 
 };
 #[inline]
 PragmaGreaterThan: PragmaGreaterThan = {
 
-        <l:@L> L_PragmaGreaterThan <r:@L> => new_pragma_greater_than(l..r, source),
+        <l:@L> L_PragmaGreaterThan <r:@L> => new_pragma_greater_than(l..r, ctx.source),
 
 };
 #[inline]
 PragmaGreaterThanEqual: PragmaGreaterThanEqual = {
 
-        <l:@L> L_PragmaGreaterThanEqual <r:@L> => new_pragma_greater_than_equal(l..r, source),
+        <l:@L> L_PragmaGreaterThanEqual <r:@L> => new_pragma_greater_than_equal(l..r, ctx.source),
 
 };
 #[inline]
 PragmaKeyword: PragmaKeyword = {
 
-        <l:@L> L_PragmaKeyword_Reserved <r:@L> => new_pragma_keyword(l..r, source),
+        <l:@L> L_PragmaKeyword_Reserved <r:@L> => new_pragma_keyword(l..r, ctx.source),
 
 };
 #[inline]
 PragmaLessThan: PragmaLessThan = {
 
-        <l:@L> L_PragmaLessThan <r:@L> => new_pragma_less_than(l..r, source),
+        <l:@L> L_PragmaLessThan <r:@L> => new_pragma_less_than(l..r, ctx.source),
 
 };
 #[inline]
 PragmaLessThanEqual: PragmaLessThanEqual = {
 
-        <l:@L> L_PragmaLessThanEqual <r:@L> => new_pragma_less_than_equal(l..r, source),
+        <l:@L> L_PragmaLessThanEqual <r:@L> => new_pragma_less_than_equal(l..r, ctx.source),
 
 };
 #[inline]
 PragmaMinus: PragmaMinus = {
 
-        <l:@L> L_PragmaMinus <r:@L> => new_pragma_minus(l..r, source),
+        <l:@L> L_PragmaMinus <r:@L> => new_pragma_minus(l..r, ctx.source),
 
 };
 #[inline]
 PragmaPeriod: PragmaPeriod = {
 
-        <l:@L> L_PragmaPeriod <r:@L> => new_pragma_period(l..r, source),
+        <l:@L> L_PragmaPeriod <r:@L> => new_pragma_period(l..r, ctx.source),
 
 };
 #[inline]
 PragmaSemicolon: PragmaSemicolon = {
 
-        <l:@L> L_PragmaSemicolon <r:@L> => new_pragma_semicolon(l..r, source),
+        <l:@L> L_PragmaSemicolon <r:@L> => new_pragma_semicolon(l..r, ctx.source),
 
 };
 #[inline]
 PragmaStringLiteral: PragmaStringLiteral = {
 
-        <l:@L> L_PragmaStringLiteral <r:@L> => new_pragma_string_literal(l..r, source),
+        <l:@L> L_PragmaStringLiteral <r:@L> => new_pragma_string_literal(l..r, ctx.source),
 
 };
 #[inline]
 PragmaTilde: PragmaTilde = {
 
-        <l:@L> L_PragmaTilde <r:@L> => new_pragma_tilde(l..r, source),
+        <l:@L> L_PragmaTilde <r:@L> => new_pragma_tilde(l..r, ctx.source),
 
 };
 #[inline]
 PrivateKeyword: PrivateKeyword = {
 
-        <l:@L> L_PrivateKeyword_Reserved <r:@L> => new_private_keyword(l..r, source),
+        <l:@L> L_PrivateKeyword_Reserved <r:@L> => new_private_keyword(l..r, ctx.source),
 
 };
 #[inline]
 PromiseKeyword: PromiseKeyword = {
 
-        <l:@L> L_PromiseKeyword_Reserved <r:@L> => new_promise_keyword(l..r, source),
+        <l:@L> L_PromiseKeyword_Reserved <r:@L> => new_promise_keyword(l..r, ctx.source),
 
 };
 #[inline]
 PublicKeyword: PublicKeyword = {
 
-        <l:@L> L_PublicKeyword_Reserved <r:@L> => new_public_keyword(l..r, source),
+        <l:@L> L_PublicKeyword_Reserved <r:@L> => new_public_keyword(l..r, ctx.source),
 
 };
 #[inline]
 PureKeyword: PureKeyword = {
 
-        <l:@L> L_PureKeyword_Reserved <r:@L> => new_pure_keyword(l..r, source),
+        <l:@L> L_PureKeyword_Reserved <r:@L> => new_pure_keyword(l..r, ctx.source),
 
 };
 #[inline]
 QuestionMark: QuestionMark = {
 
-        <l:@L> L_QuestionMark <r:@L> => new_question_mark(l..r, source),
+        <l:@L> L_QuestionMark <r:@L> => new_question_mark(l..r, ctx.source),
 
 };
 #[inline]
 ReceiveKeyword: ReceiveKeyword = {
 
-        <l:@L> L_ReceiveKeyword_Reserved <r:@L> => new_receive_keyword(l..r, source),
+        <l:@L> L_ReceiveKeyword_Reserved <r:@L> => new_receive_keyword(l..r, ctx.source),
 
 };
 #[inline]
 ReferenceKeyword: ReferenceKeyword = {
 
-        <l:@L> L_ReferenceKeyword_Reserved <r:@L> => new_reference_keyword(l..r, source),
+        <l:@L> L_ReferenceKeyword_Reserved <r:@L> => new_reference_keyword(l..r, ctx.source),
 
 };
 #[inline]
 RelocatableKeyword: RelocatableKeyword = {
 
-        <l:@L> L_RelocatableKeyword_Reserved <r:@L> => new_relocatable_keyword(l..r, source),
+        <l:@L> L_RelocatableKeyword_Reserved <r:@L> => new_relocatable_keyword(l..r, ctx.source),
 
 };
 #[inline]
 ReturnKeyword: ReturnKeyword = {
 
-        <l:@L> L_ReturnKeyword_Reserved <r:@L> => new_return_keyword(l..r, source),
+        <l:@L> L_ReturnKeyword_Reserved <r:@L> => new_return_keyword(l..r, ctx.source),
 
 };
 #[inline]
 ReturnsKeyword: ReturnsKeyword = {
 
-        <l:@L> L_ReturnsKeyword_Reserved <r:@L> => new_returns_keyword(l..r, source),
+        <l:@L> L_ReturnsKeyword_Reserved <r:@L> => new_returns_keyword(l..r, ctx.source),
 
 };
 #[inline]
 RevertKeyword: RevertKeyword = {
 
-        <l:@L> L_RevertKeyword_Unreserved <r:@L> => new_revert_keyword(l..r, source),
+        <l:@L> L_RevertKeyword_Unreserved <r:@L> => new_revert_keyword(l..r, ctx.source),
 
 };
 #[inline]
 SMTCheckerKeyword: SMTCheckerKeyword = {
 
-        <l:@L> L_SMTCheckerKeyword_Reserved <r:@L> => new_smt_checker_keyword(l..r, source),
+        <l:@L> L_SMTCheckerKeyword_Reserved <r:@L> => new_smt_checker_keyword(l..r, ctx.source),
 
 };
 #[inline]
 SealedKeyword: SealedKeyword = {
 
-        <l:@L> L_SealedKeyword_Reserved <r:@L> => new_sealed_keyword(l..r, source),
+        <l:@L> L_SealedKeyword_Reserved <r:@L> => new_sealed_keyword(l..r, ctx.source),
 
 };
 #[inline]
 SecondsKeyword: SecondsKeyword = {
 
-        <l:@L> L_SecondsKeyword_Reserved <r:@L> => new_seconds_keyword(l..r, source),
+        <l:@L> L_SecondsKeyword_Reserved <r:@L> => new_seconds_keyword(l..r, ctx.source),
 
 };
 #[inline]
 Semicolon: Semicolon = {
 
-        <l:@L> L_Semicolon <r:@L> => new_semicolon(l..r, source),
+        <l:@L> L_Semicolon <r:@L> => new_semicolon(l..r, ctx.source),
 
 };
 #[inline]
 SizeOfKeyword: SizeOfKeyword = {
 
-        <l:@L> L_SizeOfKeyword_Reserved <r:@L> => new_size_of_keyword(l..r, source),
+        <l:@L> L_SizeOfKeyword_Reserved <r:@L> => new_size_of_keyword(l..r, ctx.source),
 
 };
 #[inline]
 Slash: Slash = {
 
-        <l:@L> L_Slash <r:@L> => new_slash(l..r, source),
+        <l:@L> L_Slash <r:@L> => new_slash(l..r, ctx.source),
 
 };
 #[inline]
 SlashEqual: SlashEqual = {
 
-        <l:@L> L_SlashEqual <r:@L> => new_slash_equal(l..r, source),
+        <l:@L> L_SlashEqual <r:@L> => new_slash_equal(l..r, ctx.source),
 
 };
 #[inline]
 SolidityKeyword: SolidityKeyword = {
 
-        <l:@L> L_SolidityKeyword_Reserved <r:@L> => new_solidity_keyword(l..r, source),
+        <l:@L> L_SolidityKeyword_Reserved <r:@L> => new_solidity_keyword(l..r, ctx.source),
 
 };
 #[inline]
 StaticKeyword: StaticKeyword = {
 
-        <l:@L> L_StaticKeyword_Reserved <r:@L> => new_static_keyword(l..r, source),
+        <l:@L> L_StaticKeyword_Reserved <r:@L> => new_static_keyword(l..r, ctx.source),
 
 };
 #[inline]
 StorageKeyword: StorageKeyword = {
 
-        <l:@L> L_StorageKeyword_Reserved <r:@L> => new_storage_keyword(l..r, source),
+        <l:@L> L_StorageKeyword_Reserved <r:@L> => new_storage_keyword(l..r, ctx.source),
 
 };
 #[inline]
 StringKeyword: StringKeyword = {
 
-        <l:@L> L_StringKeyword_Reserved <r:@L> => new_string_keyword(l..r, source),
+        <l:@L> L_StringKeyword_Reserved <r:@L> => new_string_keyword(l..r, ctx.source),
 
 };
 #[inline]
 StringLiteral: StringLiteral = {
 
-        <l:@L> L_StringLiteral <r:@L> => new_string_literal(l..r, source),
+        <l:@L> L_StringLiteral <r:@L> => new_string_literal(l..r, ctx.source),
 
 };
 #[inline]
 StructKeyword: StructKeyword = {
 
-        <l:@L> L_StructKeyword_Reserved <r:@L> => new_struct_keyword(l..r, source),
+        <l:@L> L_StructKeyword_Reserved <r:@L> => new_struct_keyword(l..r, ctx.source),
 
 };
 #[inline]
 SuperKeyword: SuperKeyword = {
 
-        <l:@L> L_SuperKeyword_Reserved <r:@L> => new_super_keyword(l..r, source),
+        <l:@L> L_SuperKeyword_Reserved <r:@L> => new_super_keyword(l..r, ctx.source),
 
 };
 #[inline]
 SupportsKeyword: SupportsKeyword = {
 
-        <l:@L> L_SupportsKeyword_Reserved <r:@L> => new_supports_keyword(l..r, source),
+        <l:@L> L_SupportsKeyword_Reserved <r:@L> => new_supports_keyword(l..r, ctx.source),
 
 };
 #[inline]
 SwitchKeyword: SwitchKeyword = {
 
-        <l:@L> L_SwitchKeyword_Reserved <r:@L> => new_switch_keyword(l..r, source),
+        <l:@L> L_SwitchKeyword_Reserved <r:@L> => new_switch_keyword(l..r, ctx.source),
 
 };
 #[inline]
 ThisKeyword: ThisKeyword = {
 
-        <l:@L> L_ThisKeyword_Reserved <r:@L> => new_this_keyword(l..r, source),
+        <l:@L> L_ThisKeyword_Reserved <r:@L> => new_this_keyword(l..r, ctx.source),
 
 };
 #[inline]
 ThrowKeyword: ThrowKeyword = {
 
-        <l:@L> L_ThrowKeyword_Reserved <r:@L> => new_throw_keyword(l..r, source),
+        <l:@L> L_ThrowKeyword_Reserved <r:@L> => new_throw_keyword(l..r, ctx.source),
 
 };
 #[inline]
 Tilde: Tilde = {
 
-        <l:@L> L_Tilde <r:@L> => new_tilde(l..r, source),
+        <l:@L> L_Tilde <r:@L> => new_tilde(l..r, ctx.source),
 
 };
 #[inline]
 TransientKeyword: TransientKeyword = {
 
-        <l:@L> L_TransientKeyword_Unreserved <r:@L> => new_transient_keyword(l..r, source),
+        <l:@L> L_TransientKeyword_Unreserved <r:@L> => new_transient_keyword(l..r, ctx.source),
 
 };
 #[inline]
 TrueKeyword: TrueKeyword = {
 
-        <l:@L> L_TrueKeyword_Reserved <r:@L> => new_true_keyword(l..r, source),
+        <l:@L> L_TrueKeyword_Reserved <r:@L> => new_true_keyword(l..r, ctx.source),
 
 };
 #[inline]
 TryKeyword: TryKeyword = {
 
-        <l:@L> L_TryKeyword_Reserved <r:@L> => new_try_keyword(l..r, source),
+        <l:@L> L_TryKeyword_Reserved <r:@L> => new_try_keyword(l..r, ctx.source),
 
 };
 #[inline]
 TypeDefKeyword: TypeDefKeyword = {
 
-        <l:@L> L_TypeDefKeyword_Reserved <r:@L> => new_type_def_keyword(l..r, source),
+        <l:@L> L_TypeDefKeyword_Reserved <r:@L> => new_type_def_keyword(l..r, ctx.source),
 
 };
 #[inline]
 TypeKeyword: TypeKeyword = {
 
-        <l:@L> L_TypeKeyword_Reserved <r:@L> => new_type_keyword(l..r, source),
+        <l:@L> L_TypeKeyword_Reserved <r:@L> => new_type_keyword(l..r, ctx.source),
 
 };
 #[inline]
 TypeOfKeyword: TypeOfKeyword = {
 
-        <l:@L> L_TypeOfKeyword_Reserved <r:@L> => new_type_of_keyword(l..r, source),
+        <l:@L> L_TypeOfKeyword_Reserved <r:@L> => new_type_of_keyword(l..r, ctx.source),
 
 };
 #[inline]
 UfixedKeyword: UfixedKeyword = {
 
-        <l:@L> L_UfixedKeyword_Reserved <r:@L> => new_ufixed_keyword(l..r, source),
+        <l:@L> L_UfixedKeyword_Reserved <r:@L> => new_ufixed_keyword(l..r, ctx.source),
 
 };
 #[inline]
 UintKeyword: UintKeyword = {
 
-        <l:@L> L_UintKeyword_Reserved <r:@L> => new_uint_keyword(l..r, source),
+        <l:@L> L_UintKeyword_Reserved <r:@L> => new_uint_keyword(l..r, ctx.source),
 
 };
 #[inline]
 UncheckedKeyword: UncheckedKeyword = {
 
-        <l:@L> L_UncheckedKeyword_Reserved <r:@L> => new_unchecked_keyword(l..r, source),
+        <l:@L> L_UncheckedKeyword_Reserved <r:@L> => new_unchecked_keyword(l..r, ctx.source),
 
 };
 #[inline]
 UnicodeStringLiteral: UnicodeStringLiteral = {
 
-        <l:@L> L_UnicodeStringLiteral <r:@L> => new_unicode_string_literal(l..r, source),
+        <l:@L> L_UnicodeStringLiteral <r:@L> => new_unicode_string_literal(l..r, ctx.source),
 
 };
 #[inline]
 UsingKeyword: UsingKeyword = {
 
-        <l:@L> L_UsingKeyword_Reserved <r:@L> => new_using_keyword(l..r, source),
+        <l:@L> L_UsingKeyword_Reserved <r:@L> => new_using_keyword(l..r, ctx.source),
 
 };
 #[inline]
 VarKeyword: VarKeyword = {
 
-        <l:@L> L_VarKeyword_Reserved <r:@L> => new_var_keyword(l..r, source),
+        <l:@L> L_VarKeyword_Reserved <r:@L> => new_var_keyword(l..r, ctx.source),
 
 };
 #[inline]
 VersionSpecifier: VersionSpecifier = {
 
-        <l:@L> L_VersionSpecifier <r:@L> => new_version_specifier(l..r, source),
+        <l:@L> L_VersionSpecifier <r:@L> => new_version_specifier(l..r, ctx.source),
 
 };
 #[inline]
 ViewKeyword: ViewKeyword = {
 
-        <l:@L> L_ViewKeyword_Reserved <r:@L> => new_view_keyword(l..r, source),
+        <l:@L> L_ViewKeyword_Reserved <r:@L> => new_view_keyword(l..r, ctx.source),
 
 };
 #[inline]
 VirtualKeyword: VirtualKeyword = {
 
-        <l:@L> L_VirtualKeyword_Reserved <r:@L> => new_virtual_keyword(l..r, source),
+        <l:@L> L_VirtualKeyword_Reserved <r:@L> => new_virtual_keyword(l..r, ctx.source),
 
 };
 #[inline]
 WeeksKeyword: WeeksKeyword = {
 
-        <l:@L> L_WeeksKeyword_Reserved <r:@L> => new_weeks_keyword(l..r, source),
+        <l:@L> L_WeeksKeyword_Reserved <r:@L> => new_weeks_keyword(l..r, ctx.source),
 
 };
 #[inline]
 WeiKeyword: WeiKeyword = {
 
-        <l:@L> L_WeiKeyword_Reserved <r:@L> => new_wei_keyword(l..r, source),
+        <l:@L> L_WeiKeyword_Reserved <r:@L> => new_wei_keyword(l..r, ctx.source),
 
 };
 #[inline]
 WhileKeyword: WhileKeyword = {
 
-        <l:@L> L_WhileKeyword_Reserved <r:@L> => new_while_keyword(l..r, source),
+        <l:@L> L_WhileKeyword_Reserved <r:@L> => new_while_keyword(l..r, ctx.source),
 
 };
 #[inline]
 YearsKeyword: YearsKeyword = {
 
-        <l:@L> L_YearsKeyword_Reserved <r:@L> => new_years_keyword(l..r, source),
+        <l:@L> L_YearsKeyword_Reserved <r:@L> => new_years_keyword(l..r, ctx.source),
 
 };
 #[inline]
 YulBreakKeyword: YulBreakKeyword = {
 
-        <l:@L> L_YulBreakKeyword_Reserved <r:@L> => new_yul_break_keyword(l..r, source),
+        <l:@L> L_YulBreakKeyword_Reserved <r:@L> => new_yul_break_keyword(l..r, ctx.source),
 
 };
 #[inline]
 YulCaseKeyword: YulCaseKeyword = {
 
-        <l:@L> L_YulCaseKeyword_Reserved <r:@L> => new_yul_case_keyword(l..r, source),
+        <l:@L> L_YulCaseKeyword_Reserved <r:@L> => new_yul_case_keyword(l..r, ctx.source),
 
 };
 #[inline]
 YulCloseBrace: YulCloseBrace = {
 
-        <l:@L> L_YulCloseBrace <r:@L> => new_yul_close_brace(l..r, source),
+        <l:@L> L_YulCloseBrace <r:@L> => new_yul_close_brace(l..r, ctx.source),
 
 };
 #[inline]
 YulCloseParen: YulCloseParen = {
 
-        <l:@L> L_YulCloseParen <r:@L> => new_yul_close_paren(l..r, source),
+        <l:@L> L_YulCloseParen <r:@L> => new_yul_close_paren(l..r, ctx.source),
 
 };
 #[inline]
 YulColonEqual: YulColonEqual = {
 
-        <l:@L> L_YulColonEqual <r:@L> => new_yul_colon_equal(l..r, source),
+        <l:@L> L_YulColonEqual <r:@L> => new_yul_colon_equal(l..r, ctx.source),
 
 };
 #[inline]
 YulComma: YulComma = {
 
-        <l:@L> L_YulComma <r:@L> => new_yul_comma(l..r, source),
+        <l:@L> L_YulComma <r:@L> => new_yul_comma(l..r, ctx.source),
 
 };
 #[inline]
 YulContinueKeyword: YulContinueKeyword = {
 
-        <l:@L> L_YulContinueKeyword_Reserved <r:@L> => new_yul_continue_keyword(l..r, source),
+        <l:@L> L_YulContinueKeyword_Reserved <r:@L> => new_yul_continue_keyword(l..r, ctx.source),
 
 };
 #[inline]
 YulDecimalLiteral: YulDecimalLiteral = {
 
-        <l:@L> L_YulDecimalLiteral <r:@L> => new_yul_decimal_literal(l..r, source),
+        <l:@L> L_YulDecimalLiteral <r:@L> => new_yul_decimal_literal(l..r, ctx.source),
 
 };
 #[inline]
 YulDefaultKeyword: YulDefaultKeyword = {
 
-        <l:@L> L_YulDefaultKeyword_Reserved <r:@L> => new_yul_default_keyword(l..r, source),
+        <l:@L> L_YulDefaultKeyword_Reserved <r:@L> => new_yul_default_keyword(l..r, ctx.source),
 
 };
 #[inline]
 YulFalseKeyword: YulFalseKeyword = {
 
-        <l:@L> L_YulFalseKeyword_Reserved <r:@L> => new_yul_false_keyword(l..r, source),
+        <l:@L> L_YulFalseKeyword_Reserved <r:@L> => new_yul_false_keyword(l..r, ctx.source),
 
 };
 #[inline]
 YulForKeyword: YulForKeyword = {
 
-        <l:@L> L_YulForKeyword_Reserved <r:@L> => new_yul_for_keyword(l..r, source),
+        <l:@L> L_YulForKeyword_Reserved <r:@L> => new_yul_for_keyword(l..r, ctx.source),
 
 };
 #[inline]
 YulFunctionKeyword: YulFunctionKeyword = {
 
-        <l:@L> L_YulFunctionKeyword_Reserved <r:@L> => new_yul_function_keyword(l..r, source),
+        <l:@L> L_YulFunctionKeyword_Reserved <r:@L> => new_yul_function_keyword(l..r, ctx.source),
 
 };
 #[inline]
 YulHexKeyword: YulHexKeyword = {
 
-        <l:@L> L_YulHexKeyword_Reserved <r:@L> => new_yul_hex_keyword(l..r, source),
+        <l:@L> L_YulHexKeyword_Reserved <r:@L> => new_yul_hex_keyword(l..r, ctx.source),
 
 };
 #[inline]
 YulHexLiteral: YulHexLiteral = {
 
-        <l:@L> L_YulHexLiteral <r:@L> => new_yul_hex_literal(l..r, source),
+        <l:@L> L_YulHexLiteral <r:@L> => new_yul_hex_literal(l..r, ctx.source),
 
 };
 #[inline]
 YulHexStringLiteral: YulHexStringLiteral = {
 
-        <l:@L> L_YulHexStringLiteral <r:@L> => new_yul_hex_string_literal(l..r, source),
+        <l:@L> L_YulHexStringLiteral <r:@L> => new_yul_hex_string_literal(l..r, ctx.source),
 
 };
 #[inline]
 YulIdentifier: YulIdentifier = {
 
-        <l:@L> L_YulIdentifier <r:@L> => new_yul_identifier(l..r, source),
+        <l:@L> L_YulIdentifier <r:@L> => new_yul_identifier(l..r, ctx.source),
 
 };
 #[inline]
 YulIfKeyword: YulIfKeyword = {
 
-        <l:@L> L_YulIfKeyword_Reserved <r:@L> => new_yul_if_keyword(l..r, source),
+        <l:@L> L_YulIfKeyword_Reserved <r:@L> => new_yul_if_keyword(l..r, ctx.source),
 
 };
 #[inline]
 YulLeaveKeyword: YulLeaveKeyword = {
 
-        <l:@L> L_YulLeaveKeyword_Reserved <r:@L> => new_yul_leave_keyword(l..r, source),
+        <l:@L> L_YulLeaveKeyword_Reserved <r:@L> => new_yul_leave_keyword(l..r, ctx.source),
 
 };
 #[inline]
 YulLetKeyword: YulLetKeyword = {
 
-        <l:@L> L_YulLetKeyword_Reserved <r:@L> => new_yul_let_keyword(l..r, source),
+        <l:@L> L_YulLetKeyword_Reserved <r:@L> => new_yul_let_keyword(l..r, ctx.source),
 
 };
 #[inline]
 YulMinusGreaterThan: YulMinusGreaterThan = {
 
-        <l:@L> L_YulMinusGreaterThan <r:@L> => new_yul_minus_greater_than(l..r, source),
+        <l:@L> L_YulMinusGreaterThan <r:@L> => new_yul_minus_greater_than(l..r, ctx.source),
 
 };
 #[inline]
 YulOpenBrace: YulOpenBrace = {
 
-        <l:@L> L_YulOpenBrace <r:@L> => new_yul_open_brace(l..r, source),
+        <l:@L> L_YulOpenBrace <r:@L> => new_yul_open_brace(l..r, ctx.source),
 
 };
 #[inline]
 YulOpenParen: YulOpenParen = {
 
-        <l:@L> L_YulOpenParen <r:@L> => new_yul_open_paren(l..r, source),
+        <l:@L> L_YulOpenParen <r:@L> => new_yul_open_paren(l..r, ctx.source),
 
 };
 #[inline]
 YulPeriod: YulPeriod = {
 
-        <l:@L> L_YulPeriod <r:@L> => new_yul_period(l..r, source),
+        <l:@L> L_YulPeriod <r:@L> => new_yul_period(l..r, ctx.source),
 
 };
 #[inline]
 YulStringLiteral: YulStringLiteral = {
 
-        <l:@L> L_YulStringLiteral <r:@L> => new_yul_string_literal(l..r, source),
+        <l:@L> L_YulStringLiteral <r:@L> => new_yul_string_literal(l..r, ctx.source),
 
 };
 #[inline]
 YulSuperKeyword: YulSuperKeyword = {
 
-        <l:@L> L_YulSuperKeyword_Reserved <r:@L> => new_yul_super_keyword(l..r, source),
+        <l:@L> L_YulSuperKeyword_Reserved <r:@L> => new_yul_super_keyword(l..r, ctx.source),
 
 };
 #[inline]
 YulSwitchKeyword: YulSwitchKeyword = {
 
-        <l:@L> L_YulSwitchKeyword_Reserved <r:@L> => new_yul_switch_keyword(l..r, source),
+        <l:@L> L_YulSwitchKeyword_Reserved <r:@L> => new_yul_switch_keyword(l..r, ctx.source),
 
 };
 #[inline]
 YulThisKeyword: YulThisKeyword = {
 
-        <l:@L> L_YulThisKeyword_Reserved <r:@L> => new_yul_this_keyword(l..r, source),
+        <l:@L> L_YulThisKeyword_Reserved <r:@L> => new_yul_this_keyword(l..r, ctx.source),
 
 };
 #[inline]
 YulTrueKeyword: YulTrueKeyword = {
 
-        <l:@L> L_YulTrueKeyword_Reserved <r:@L> => new_yul_true_keyword(l..r, source),
+        <l:@L> L_YulTrueKeyword_Reserved <r:@L> => new_yul_true_keyword(l..r, ctx.source),
 
 };
 
