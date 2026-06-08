@@ -4,6 +4,8 @@
 
 use std::rc::Rc;
 
+use slang_solidity_v2_common::diagnostics::kinds::syntax::ExpectedArrayLengthExpression;
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_cst::structured_cst::nodes::{
     new_array_type_name, new_expression_elementary_type, new_expression_identifier,
     new_expression_index_access_expression, new_expression_member_access_expression,
@@ -13,6 +15,7 @@ use slang_solidity_v2_cst::structured_cst::nodes::{
     FunctionTypeAttribute, FunctionTypeStruct, Identifier, IdentifierPath, IdentifierPathElement,
     IndexAccessEnd, OpenBracket, Period, StateVariableAttribute, TypeName,
 };
+use slang_solidity_v2_cst::structured_cst::TextRange;
 
 /// An `IndexAccessPath` represents a path or elementary type followed by
 /// zero or more index accesses, e.g. `foo.bar[0][1:3]` or `uint256[5][]`
@@ -78,8 +81,15 @@ pub(crate) fn new_index_access_path_from_elementary_type(
 
 /// Consumes an IAP and creates a `TypeName`
 ///
-/// TODO(v2): Return an error if any index has slicing rather than panicing
-pub(crate) fn new_type_name_index_access_path(index_access_path: IndexAccessPath) -> TypeName {
+/// A range/slice index access (`[start:end]`) is not a valid array length, so
+/// an error is reported and the slice end is dropped, treating the start of the index as the start.
+///
+/// TODO(error-recovery): Once the CST allows for error nodes, the failure here should be present in there.
+pub(crate) fn new_type_name_index_access_path(
+    index_access_path: IndexAccessPath,
+    file_id: &str,
+    diagnostics: &mut DiagnosticCollection,
+) -> TypeName {
     let IndexAccessPath { path, indices } = index_access_path;
 
     let mut type_name = match path {
@@ -88,10 +98,20 @@ pub(crate) fn new_type_name_index_access_path(index_access_path: IndexAccessPath
     };
 
     for index in indices {
-        assert!(
-            index.end.is_none(),
-            "Slicing is not supported in type names yet"
-        );
+        if index.end.is_some() {
+            // Report from the start of the type name parsed so far up to the
+            // closing bracket of the offending index, matching solc's range.
+            let start = type_name
+                .calculate_text_range()
+                .expect("type name should have a text range")
+                .start;
+            let end = index.close_bracket.range.end;
+            diagnostics.push(
+                file_id.to_owned(),
+                start..end,
+                ExpectedArrayLengthExpression,
+            );
+        }
         let array_type = new_array_type_name(
             type_name,
             index.open_bracket,

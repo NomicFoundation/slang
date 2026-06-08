@@ -1864,7 +1864,7 @@ StateVariableDefinition: StateVariableDefinition = {
     <l:@L> L_ErrorKeyword_Unreserved <r:@R>  <attributes: StateVariableAttributes>  <name: Identifier>  <value: (StateVariableDefinitionValue)?>  <semicolon: Semicolon> => {
         let identifier = new_identifier(l..r, source);
         let iap = parser_helpers::new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
-        let type_name = parser_helpers::new_type_name_index_access_path(iap);
+        let type_name = parser_helpers::new_type_name_index_access_path(iap, file_id, diagnostics);
 
         new_state_variable_definition(type_name, attributes, name, value, semicolon)
     },
@@ -2276,7 +2276,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
 TypeName0<FunctionRule, IAPRule>: TypeName = {
     <function_type: FunctionRule> => new_type_name_function_type(<>),
     <mapping_type: MappingType>  => new_type_name_mapping_type(<>),
-    <index_access_path: IAPRule> => parser_helpers::new_type_name_index_access_path(<>),
+    <index_access_path: IAPRule> => parser_helpers::new_type_name_index_access_path(<>, file_id, diagnostics),
 };
 TypeName1<FunctionRule, IAPRule>: TypeName = {
     <type_name: ArrayTypeName>  => new_type_name_array_type_name(<>),
@@ -2523,7 +2523,7 @@ VariableDeclarationSpecialRevert: VariableDeclaration = {
     <l:@L> L_RevertKeyword_Unreserved <r:@R>  <storage_location: (StorageLocation)?>  <name: Identifier>  => {
         let identifier = new_identifier(l..r, source);
         let iap = parser_helpers::new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
-        let type_name = parser_helpers::new_type_name_index_access_path(iap);
+        let type_name = parser_helpers::new_type_name_index_access_path(iap, file_id, diagnostics);
         new_variable_declaration(type_name, storage_location, name)
     }
 };

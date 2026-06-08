@@ -1,3 +1,4 @@
+mod expected_array_length_expression;
 mod extra_terminal;
 mod multiple_mutability_specifiers;
 mod multiple_virtual_specifiers;
@@ -5,6 +6,7 @@ mod unexpected_eof;
 mod unexpected_terminal;
 mod unsupported_syntax;
 
+pub use expected_array_length_expression::ExpectedArrayLengthExpression;
 pub use extra_terminal::ExtraTerminal;
 pub use multiple_mutability_specifiers::MultipleMutabilitySpecifiers;
 pub use multiple_virtual_specifiers::MultipleVirtualSpecifiers;
@@ -37,5 +39,9 @@ define_diagnostic_kind! {
 
         /// More than one `virtual` specifier was provided on a definition.
         MultipleVirtualSpecifiers(MultipleVirtualSpecifiers),
+
+        /// A range/slice index access was used where an array length
+        /// expression is expected
+        ExpectedArrayLengthExpression(ExpectedArrayLengthExpression),
     }
 }
