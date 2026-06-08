@@ -15,7 +15,6 @@ use slang_solidity_v2_cst::structured_cst::nodes::{
     FunctionTypeAttribute, FunctionTypeStruct, Identifier, IdentifierPath, IdentifierPathElement,
     IndexAccessEnd, OpenBracket, Period, StateVariableAttribute, TypeName,
 };
-use slang_solidity_v2_cst::structured_cst::TextRange;
 
 /// An `IndexAccessPath` represents a path or elementary type followed by
 /// zero or more index accesses, e.g. `foo.bar[0][1:3]` or `uint256[5][]`
@@ -81,6 +80,9 @@ pub(crate) fn new_index_access_path_from_elementary_type(
 
 /// Consumes an IAP and creates a `TypeName`
 ///
+/// `start` is the byte offset of the beginning of the IAP (the start of its
+/// path), used as the start of any reported diagnostic range.
+///
 /// A range/slice index access (`[start:end]`) is not a valid array length, so
 /// an error is reported and recovery ignores everything after the colon
 /// (i.e. treating `[start:end]` as `[start]`).
@@ -88,6 +90,7 @@ pub(crate) fn new_index_access_path_from_elementary_type(
 /// TODO(error-recovery): Once the CST allows for error nodes, the failure here should be present in there.
 pub(crate) fn new_type_name_index_access_path(
     index_access_path: IndexAccessPath,
+    start: usize,
     file_id: &str,
     diagnostics: &mut DiagnosticCollection,
 ) -> TypeName {
@@ -100,12 +103,8 @@ pub(crate) fn new_type_name_index_access_path(
 
     for index in indices {
         if index.end.is_some() {
-            // Report from the start of the type name parsed so far up to the
-            // closing bracket of the offending index, matching solc's range.
-            let start = type_name
-                .calculate_text_range()
-                .expect("type name should have a text range")
-                .start;
+            // Report from the start of the index access path up to the closing
+            // bracket of the offending index, matching solc's range.
             let end = index.close_bracket.range.end;
             diagnostics.push(
                 file_id.to_owned(),
