@@ -120,6 +120,12 @@
       "groupName": "node"
     },
     {
+      "description": "node: engines.node is a major-range guard; the exact runtime version is owned by Hermit. Don't let the npm manager bump engines.node, since its datasource (nodejs.org) leads the Hermit package index — an npm-only bump breaks engine-strict because Hermit can't install the new version yet. Node minor/patch flows through Hermit only; majors are bumped manually (see @types/node rule).",
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["node"],
+      "enabled": false
+    },
+    {
       "description": "strum: used in CST hot path via derive macros; flag for perf review",
       "matchPackageNames": ["strum"],
       "labels": ["ci:perf"]
