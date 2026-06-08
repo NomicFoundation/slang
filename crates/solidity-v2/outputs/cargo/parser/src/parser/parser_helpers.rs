@@ -82,7 +82,8 @@ pub(crate) fn new_index_access_path_from_elementary_type(
 /// Consumes an IAP and creates a `TypeName`
 ///
 /// A range/slice index access (`[start:end]`) is not a valid array length, so
-/// an error is reported and the slice end is dropped, treating the start of the index as the start.
+/// an error is reported and recovery ignores everything after the colon
+/// (i.e. treating `[start:end]` as `[start]`).
 ///
 /// TODO(error-recovery): Once the CST allows for error nodes, the failure here should be present in there.
 pub(crate) fn new_type_name_index_access_path(
