@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Only a single virtual specifier can be provided.
+   ╭─[input.sol:5:29]
+   │
+ 5 │     modifier modi() virtual virtual {_;}
+   │                             ───┬───  
+   │                                ╰───── Error occurred here.
+───╯

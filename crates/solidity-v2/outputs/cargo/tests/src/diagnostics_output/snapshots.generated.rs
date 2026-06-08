@@ -58,6 +58,30 @@ mod syntax {
         }
     }
 
+    mod multiple_virtual_specifiers {
+        use super::*;
+
+        #[test]
+        fn fallback_functions() -> Result<()> {
+            run("syntax/multiple_virtual_specifiers", "fallback_functions")
+        }
+
+        #[test]
+        fn functions() -> Result<()> {
+            run("syntax/multiple_virtual_specifiers", "functions")
+        }
+
+        #[test]
+        fn modifiers() -> Result<()> {
+            run("syntax/multiple_virtual_specifiers", "modifiers")
+        }
+
+        #[test]
+        fn receive_functions() -> Result<()> {
+            run("syntax/multiple_virtual_specifiers", "receive_functions")
+        }
+    }
+
     #[test]
     fn unexpected_eof() -> Result<()> {
         run("syntax", "unexpected_eof")

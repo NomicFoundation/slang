@@ -1,6 +1,8 @@
 use std::sync::Arc;
 
-use slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers;
+use slang_solidity_v2_common::diagnostics::kinds::syntax::{
+    MultipleMutabilitySpecifiers, MultipleVirtualSpecifiers,
+};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 use slang_solidity_v2_cst::structured_cst::text_range::TextRange;
@@ -215,13 +217,15 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let mutability = self
             .extract_mutability_specifier(&source.attributes.elements)
             .unwrap_or(output::FunctionMutability::NonPayable);
-        let virtual_keyword = source.attributes.elements.iter().find_map(|attribute| {
-            if let input::FunctionAttribute::VirtualKeyword(virtual_keyword) = attribute {
-                Some(self.build_virtual_keyword(virtual_keyword))
-            } else {
-                None
-            }
-        });
+
+        let virtual_keyword =
+            self.extract_first_virtual(source.attributes.elements.iter().filter_map(|attribute| {
+                if let input::FunctionAttribute::VirtualKeyword(virtual_keyword) = attribute {
+                    Some(virtual_keyword)
+                } else {
+                    None
+                }
+            }));
         // TODO(validation) SDR[9]: function definitions can have only a single override specifier
         let override_specifier = self.function_override_specifier(&source.attributes);
         let modifier_invocations = self.function_modifier_invocations(&source.attributes);
@@ -604,13 +608,16 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let mutability = self
             .extract_mutability_specifier(&source.attributes.elements)
             .unwrap_or(output::FunctionMutability::NonPayable);
-        let virtual_keyword = source.attributes.elements.iter().find_map(|attribute| {
-            if let input::FallbackFunctionAttribute::VirtualKeyword(virtual_keyword) = attribute {
-                Some(self.build_virtual_keyword(virtual_keyword))
-            } else {
-                None
-            }
-        });
+        let virtual_keyword =
+            self.extract_first_virtual(source.attributes.elements.iter().filter_map(|attribute| {
+                if let input::FallbackFunctionAttribute::VirtualKeyword(virtual_keyword) = attribute
+                {
+                    Some(virtual_keyword)
+                } else {
+                    None
+                }
+            }));
+
         let override_specifier = self.fallback_function_override_specifier(&source.attributes);
         let modifier_invocations = self.fallback_function_modifier_invocations(&source.attributes);
         let returns = source
@@ -680,13 +687,15 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let mutability = self
             .extract_mutability_specifier(&source.attributes.elements)
             .unwrap_or(output::FunctionMutability::Payable);
-        let virtual_keyword = source.attributes.elements.iter().find_map(|attribute| {
-            if let input::ReceiveFunctionAttribute::VirtualKeyword(virtual_keyword) = attribute {
-                Some(self.build_virtual_keyword(virtual_keyword))
-            } else {
-                None
-            }
-        });
+        let virtual_keyword =
+            self.extract_first_virtual(source.attributes.elements.iter().filter_map(|attribute| {
+                if let input::ReceiveFunctionAttribute::VirtualKeyword(virtual_keyword) = attribute
+                {
+                    Some(virtual_keyword)
+                } else {
+                    None
+                }
+            }));
         let override_specifier = self.receive_function_override_specifier(&source.attributes);
         let modifier_invocations = self.receive_function_modifier_invocations(&source.attributes);
         let returns = None;
@@ -752,14 +761,15 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let visibility = output::FunctionVisibility::Internal;
         // mutability is irrelevant for modifiers
         let mutability = output::FunctionMutability::NonPayable;
-        // TODO(validation) SDR[1730]: check for duplicate attributes (virtual, ...)
-        let virtual_keyword = source.attributes.elements.iter().find_map(|attribute| {
-            if let input::ModifierAttribute::VirtualKeyword(virtual_keyword) = attribute {
-                Some(self.build_virtual_keyword(virtual_keyword))
-            } else {
-                None
-            }
-        });
+        // TODO(validation) SDR[1730]: modifiers can have only a single override specifier
+        let virtual_keyword =
+            self.extract_first_virtual(source.attributes.elements.iter().filter_map(|attribute| {
+                if let input::ModifierAttribute::VirtualKeyword(virtual_keyword) = attribute {
+                    Some(virtual_keyword)
+                } else {
+                    None
+                }
+            }));
         let override_specifier = self.modifier_override_specifier(&source.attributes);
         let modifier_invocations = Vec::new();
         let returns = None;
@@ -998,5 +1008,25 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         }
 
         result
+    }
+
+    /// Extracts and transforms the first virtual keyword, emitting an error
+    /// for any subsequent ones.
+    fn extract_first_virtual<'a>(
+        &mut self,
+        virtual_kws: impl IntoIterator<Item = &'a input::VirtualKeyword>,
+    ) -> Option<output::VirtualKeyword> {
+        let mut virtual_kws = virtual_kws.into_iter();
+        let first = self.build_virtual_keyword(virtual_kws.next()?);
+
+        for keyword in virtual_kws {
+            self.diagnostics.push(
+                self.file_id.to_owned(),
+                keyword.calculate_text_range().unwrap(),
+                MultipleVirtualSpecifiers,
+            );
+        }
+
+        Some(first)
     }
 }

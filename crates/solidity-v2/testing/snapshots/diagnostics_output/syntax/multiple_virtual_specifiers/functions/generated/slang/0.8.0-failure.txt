@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+Error: Only a single virtual specifier can be provided.
+   ╭─[input.sol:5:35]
+   │
+ 5 │     function foo() virtual public virtual {}
+   │                                   ───┬───  
+   │                                      ╰───── Error occurred here.
+───╯
+
+Error: Only a single virtual specifier can be provided.
+   ╭─[input.sol:6:35]
+   │
+ 6 │     function bar() virtual public virtual virtual {}
+   │                                   ───┬───  
+   │                                      ╰───── Error occurred here.
+───╯
+
+Error: Only a single virtual specifier can be provided.
+   ╭─[input.sol:6:43]
+   │
+ 6 │     function bar() virtual public virtual virtual {}
+   │                                           ───┬───  
+   │                                              ╰───── Error occurred here.
+───╯
