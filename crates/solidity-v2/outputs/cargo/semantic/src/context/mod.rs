@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use contract_data_cache::ContractDataCache;
+pub(crate) use contract_data::{ContractData, ContractLinearisations};
 use file_node_mapper::FileNodeMapper;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -11,6 +11,7 @@ use slang_solidity_v2_ir::ir;
 use crate::binder::{Binder, Definition, Reference};
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
+    p5_compute_linearisations,
 };
 use crate::types::{
     ArrayType, ByteArrayType, ContractType, EnumType, FixedPointNumberType, FixedSizeArrayType,
@@ -18,7 +19,7 @@ use crate::types::{
     TypeRegistry, UserDefinedValueType,
 };
 
-mod contract_data_cache;
+mod contract_data;
 mod file_node_mapper;
 
 /// Trait for files that can be used as input to the semantic analysis passes.
@@ -61,7 +62,7 @@ pub struct SemanticContext {
     binder: Binder,
     types: TypeRegistry,
     file_node_mapper: FileNodeMapper,
-    contract_data: ContractDataCache,
+    contract_data: ContractData,
 }
 
 impl SemanticContext {
@@ -77,9 +78,9 @@ impl SemanticContext {
         p2_linearise_contracts::run(files, &mut binder, diagnostics);
         p3_type_definitions::run(files, &mut binder, &mut types, language_version);
         p4_resolve_references::run(files, &mut binder, &mut types, language_version);
+        let contract_data = p5_compute_linearisations::run(&binder, &types);
 
         let file_node_mapper = FileNodeMapper::build_from(files);
-        let contract_data = ContractDataCache::build_from(&binder, &types);
 
         Self {
             binder,

@@ -6,99 +6,49 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition};
+use crate::context::{ContractData, ContractLinearisations};
 use crate::types::TypeRegistry;
 
-/// Pre-computed derived data for a single contract.
-#[allow(clippy::struct_field_names)]
-struct ContractData {
-    linearised_functions: Vec<ir::FunctionDefinition>,
-    linearised_state_variables: Vec<ir::StateVariableDefinition>,
-    linearised_errors: Vec<ir::ErrorDefinition>,
-    linearised_events: Vec<ir::EventDefinition>,
+/// In this pass we walk every contract's linearised bases and pre-compute the
+/// collections of functions, state variables, errors and events visible in the
+/// contract's hierarchy, storing them in a `ContractDataCache`.
+pub fn run(binder: &Binder, types: &TypeRegistry) -> ContractData {
+    let mut contracts = Vec::new();
+    let mut data = HashMap::new();
+
+    for (contract_id, definition) in binder.definitions() {
+        let Definition::Contract(contract) = definition else {
+            continue;
+        };
+        let contract_id = *contract_id;
+
+        let ir_node = Arc::clone(&contract.ir_node);
+        contracts.push(ir_node);
+
+        let linearisations = compute_linearised_members(binder, types, contract_id);
+        data.insert(contract_id, linearisations);
+    }
+
+    ContractData::new(contracts, data)
 }
 
-/// Cache of derived data about contracts, computed once at the end of the
-/// semantic passes and stored on the `SemanticContext`. Every contract's
-/// `NodeId` has an entry in `data`.
-pub(super) struct ContractDataCache {
-    /// All contract definitions in this compilation unit, in registration
-    /// order (deterministic iteration for `all_contracts`).
-    contracts: Vec<ir::ContractDefinition>,
-    /// Per-contract derived data, keyed by contract `NodeId`.
-    data: HashMap<NodeId, ContractData>,
-}
+fn compute_linearised_members(
+    binder: &Binder,
+    types: &TypeRegistry,
+    contract_id: NodeId,
+) -> ContractLinearisations {
+    let functions = compute_linearised_functions(binder, types, contract_id);
+    let state_variables = collect_linearised_state_variables(binder, contract_id);
+    let errors = collect_linearised_errors(binder, contract_id);
+    let events = collect_linearised_events(binder, contract_id);
 
-impl ContractDataCache {
-    pub(super) fn build_from(binder: &Binder, types: &TypeRegistry) -> Self {
-        let mut contracts = Vec::new();
-        let mut data = HashMap::new();
+    // TODO(validation): check that there is no redefinition of identifiers among all contracts in the hierarchy
 
-        for (contract_id, definition) in binder.definitions() {
-            let Definition::Contract(contract) = definition else {
-                continue;
-            };
-            let contract_id = *contract_id;
-            let ir_node = Arc::clone(&contract.ir_node);
-
-            let linearised_functions = compute_linearised_functions(binder, types, contract_id);
-            let linearised_state_variables =
-                collect_linearised_state_variables(binder, contract_id);
-            let linearised_errors = collect_linearised_errors(binder, contract_id);
-            let linearised_events = collect_linearised_events(binder, contract_id);
-
-            data.insert(
-                contract_id,
-                ContractData {
-                    linearised_functions,
-                    linearised_state_variables,
-                    linearised_errors,
-                    linearised_events,
-                },
-            );
-
-            contracts.push(ir_node);
-        }
-
-        Self { contracts, data }
-    }
-
-    fn get(&self, contract_id: NodeId) -> &ContractData {
-        self.data
-            .get(&contract_id)
-            .expect("contract_id is a registered contract")
-    }
-
-    pub(super) fn all_contracts(&self) -> impl Iterator<Item = &ir::ContractDefinition> {
-        self.contracts.iter()
-    }
-
-    pub(super) fn find_contract_by_name<'a>(
-        &'a self,
-        name: &'a str,
-    ) -> impl Iterator<Item = ir::ContractDefinition> + use<'a> {
-        self.contracts
-            .iter()
-            .filter(move |contract| contract.name.unparse() == name)
-            .cloned()
-    }
-
-    pub(super) fn linearised_functions(&self, contract_id: NodeId) -> &[ir::FunctionDefinition] {
-        &self.get(contract_id).linearised_functions
-    }
-
-    pub(super) fn linearised_state_variables(
-        &self,
-        contract_id: NodeId,
-    ) -> &[ir::StateVariableDefinition] {
-        &self.get(contract_id).linearised_state_variables
-    }
-
-    pub(super) fn linearised_errors(&self, contract_id: NodeId) -> &[ir::ErrorDefinition] {
-        &self.get(contract_id).linearised_errors
-    }
-
-    pub(super) fn linearised_events(&self, contract_id: NodeId) -> &[ir::EventDefinition] {
-        &self.get(contract_id).linearised_events
+    ContractLinearisations {
+        functions,
+        state_variables,
+        errors,
+        events,
     }
 }
 
@@ -136,6 +86,8 @@ fn compute_linearised_functions(
             if !overridden {
                 functions.push(Arc::clone(function));
             }
+            // TODO(validation): if overriding, function must have the `override` specifier and the overriden functions must be marked `virtual`
+            // TODO(validation): if overriding multiple ancestors, the function needs to specify the bases in a specifier
         }
     }
 
@@ -170,6 +122,7 @@ fn function_overrides(
         }
         _ => false,
     }
+    // TODO(validation) SDR[6]: check also that the function mutability is stricter than other's
 }
 
 /// Walks the linearised bases in reverse (most-base first) and concatenates
@@ -191,6 +144,10 @@ fn collect_linearised_state_variables(
             if let ir::ContractMember::StateVariableDefinition(state_variable) = member {
                 state_variables.push(Arc::clone(state_variable));
             }
+            // TODO(validation): check for duplicate declarations
+            // TODO(validation): if the state variable is `public`, check if it
+            // overrides a function and validate the presence of `override` (in
+            // the variable) and `virtual` (in the function) modifiers
         }
     }
     state_variables
@@ -213,6 +170,7 @@ fn collect_linearised_errors(binder: &Binder, contract_id: NodeId) -> Vec<ir::Er
             if let ir::ContractMember::ErrorDefinition(error) = member {
                 errors.push(Arc::clone(error));
             }
+            // TODO(validation): check for duplicate declarations
         }
     }
     errors
@@ -235,6 +193,8 @@ fn collect_linearised_events(binder: &Binder, contract_id: NodeId) -> Vec<ir::Ev
             if let ir::ContractMember::EventDefinition(event) = member {
                 events.push(Arc::clone(event));
             }
+            // TODO(validation): check for duplicate declarations, considering
+            // the full signature since events can be overloaded
         }
     }
     events
