@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     '@bytecodealliance/preview2-shim':
-      specifier: ^0.17.9
-      version: 0.17.9
+      specifier: ^0.18.0
+      version: 0.18.0
     '@changesets/changelog-github':
       specifier: ^0.7.0
       version: 0.7.0
@@ -151,7 +151,7 @@ importers:
     dependencies:
       '@bytecodealliance/preview2-shim':
         specifier: 'catalog:'
-        version: 0.17.9
+        version: 0.18.0
 
   crates/solidity/outputs/npm/tests:
     devDependencies:
@@ -371,11 +371,11 @@ packages:
     resolution: {integrity: sha512-xyn/mvCjMCHX5dr2m7Ijx7HK/EaPbFvAU/BQ9F6HaZ6W2N/ajx5/eP+UgkQpiN58tjKGLSKbyoOjRxpCJOYfWg==}
     hasBin: true
 
-  '@bytecodealliance/preview2-shim@0.17.8':
-    resolution: {integrity: sha512-wS5kg8u0KCML1UeHQPJ1IuOI24x/XLentCzsqPER1+gDNC5Cz2hG4G2blLOZap+3CEGhIhnJ9mmZYj6a2W0Lww==}
-
   '@bytecodealliance/preview2-shim@0.17.9':
     resolution: {integrity: sha512-i0R3eQBe6PA/o/1EFE3Owe4In2rcccb6QxnjpntM/lPe3/duJ0bRQTVZM2Ufpo99X4eofGeltQUkape1C91FFA==}
+
+  '@bytecodealliance/preview2-shim@0.18.0':
+    resolution: {integrity: sha512-f7+HY98GBrfdKjXb2QT6ycbz+NR+Ocn3Aq87IZ8aVf0lThJocQ4E6dyCC9Y/5l0oOgS9nJ0Z1edeYfmTU87EdA==}
 
   '@bytecodealliance/weval@0.3.4':
     resolution: {integrity: sha512-+GCKtZXhPj7qyDl5pR0F3PTEk8tWINV8dv1tUbKMjMXvqjHIkvzalkWo5ZL2kCKwh8Bwn8rWpSmyvRC/Nlu9nQ==}
@@ -3962,16 +3962,16 @@ snapshots:
   '@bytecodealliance/jco@1.15.1':
     dependencies:
       '@bytecodealliance/componentize-js': 0.19.2
-      '@bytecodealliance/preview2-shim': 0.17.8
+      '@bytecodealliance/preview2-shim': 0.17.9
       binaryen: 123.0.0
       commander: 14.0.3
       mkdirp: 3.0.1
       ora: 8.2.0
       terser: 5.44.0
 
-  '@bytecodealliance/preview2-shim@0.17.8': {}
-
   '@bytecodealliance/preview2-shim@0.17.9': {}
+
+  '@bytecodealliance/preview2-shim@0.18.0': {}
 
   '@bytecodealliance/weval@0.3.4':
     dependencies:
@@ -4524,7 +4524,7 @@ snapshots:
   '@ignored/slang-jco@1.9.1-slang.1':
     dependencies:
       '@bytecodealliance/componentize-js': 0.16.0
-      '@bytecodealliance/preview2-shim': 0.17.8
+      '@bytecodealliance/preview2-shim': 0.17.9
       binaryen: 120.0.0
       chalk-template: 1.1.2
       commander: 12.1.0
