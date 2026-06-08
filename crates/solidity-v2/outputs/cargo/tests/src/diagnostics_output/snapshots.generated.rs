@@ -18,6 +18,19 @@ mod compilation {
     }
 }
 
+mod resolution {
+    use super::*;
+
+    mod identifier_not_found {
+        use super::*;
+
+        #[test]
+        fn unresolved_base() -> Result<()> {
+            run("resolution/identifier_not_found", "unresolved_base")
+        }
+    }
+}
+
 mod structure {
     use super::*;
 
@@ -123,5 +136,23 @@ mod syntax {
     #[test]
     fn unsupported_syntax() -> Result<()> {
         run("syntax", "unsupported_syntax")
+    }
+}
+
+mod type_system {
+    use super::*;
+
+    mod invalid_base {
+        use super::*;
+
+        #[test]
+        fn function() -> Result<()> {
+            run("type_system/invalid_base", "function")
+        }
+
+        #[test]
+        fn library() -> Result<()> {
+            run("type_system/invalid_base", "library")
+        }
     }
 }
