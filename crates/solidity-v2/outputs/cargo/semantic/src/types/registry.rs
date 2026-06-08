@@ -4,6 +4,7 @@ use indexmap::IndexSet;
 use num_bigint::BigInt;
 use num_traits::Zero;
 use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_common::versions::LanguageVersion;
 
 use super::literals::numbers;
 use super::{
@@ -24,6 +25,9 @@ pub struct TypeRegistry {
     // between contract/interface types. The `NodeId`s correspond to the
     // `definition_id` in the respective `Type` variants.
     super_types: HashMap<NodeId, Vec<NodeId>>,
+    // Some implicit conversion rules are version dependant. The version is
+    // threaded in here so we can gate those rules on it.
+    language_version: LanguageVersion,
 
     // Pre-defined core types
     address_type_id: TypeId,
@@ -42,9 +46,9 @@ pub struct TypeRegistry {
     void_type_id: TypeId,
 }
 
-impl Default for TypeRegistry {
+impl TypeRegistry {
     #[allow(clippy::similar_names)]
-    fn default() -> Self {
+    pub(crate) fn new(language_version: LanguageVersion) -> Self {
         let mut types = IndexSet::new();
         let (address_type, _) = types.insert_full(Type::Address(AddressType { payable: false }));
         let (address_payable_type, _) =
@@ -80,6 +84,7 @@ impl Default for TypeRegistry {
         Self {
             types,
             super_types: HashMap::new(),
+            language_version,
 
             address_type_id: TypeId(address_type),
             address_payable_type_id: TypeId(address_payable_type),

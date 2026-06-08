@@ -29,7 +29,7 @@ fn analyze(language_version: LanguageVersion, source: &str) -> TypeAnalysis {
     let files = vec![file];
 
     let mut binder = Binder::default();
-    let mut types = TypeRegistry::default();
+    let mut types = TypeRegistry::new(language_version);
     let mut diagnostics = DiagnosticCollection::default();
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);

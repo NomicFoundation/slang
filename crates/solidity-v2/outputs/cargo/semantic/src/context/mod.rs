@@ -69,7 +69,7 @@ impl SemanticContext {
         diagnostics: &mut DiagnosticCollection,
     ) -> Self {
         let mut binder = Binder::default();
-        let mut types = TypeRegistry::default();
+        let mut types = TypeRegistry::new(language_version);
 
         p1_collect_definitions::run(files, &mut binder, diagnostics);
         p2_linearise_contracts::run(files, &mut binder, diagnostics);
