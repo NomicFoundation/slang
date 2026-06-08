@@ -33,6 +33,22 @@ lalrpop_mod!(
     #[allow(clippy::wildcard_imports)]
     pub(crate) grammar, "/parser/grammar.generated.rs"); // synthesized by LALRPOP
 
+/// Ambient state the grammar's actions need.
+///
+/// These are bundled into a single struct and threaded through the grammar as
+/// one `&mut Ctx` parameter, rather than as several separate parameters. LALRPOP
+/// forwards grammar parameters through every reduction, so passing a single
+/// pointer (and dereferencing its fields only where needed) keeps the hot
+/// reduction path cheap.
+pub(crate) struct GrammarCtx<'a> {
+    /// Source text being parsed (consumed by terminal constructors).
+    pub source: &'a str,
+    /// Id of the file being parsed, used when reporting diagnostics.
+    pub file_id: &'a str,
+    /// Diagnostics accumulated during parsing.
+    pub diagnostics: DiagnosticCollection,
+}
+
 /// The output of a parse operation, containing both the source unit and any diagnostics.
 #[derive(Debug, PartialEq)]
 pub struct ParseOutput {
@@ -52,23 +68,33 @@ impl Parser {
         let lexer = Lexer::new(source, language_version);
         let parser = grammar::SourceUnitParser::new();
 
-        let mut diagnostics = DiagnosticCollection::default();
-        match parser.parse(source, lexer) {
+        let mut ctx = GrammarCtx {
+            source,
+            file_id,
+            diagnostics: DiagnosticCollection::default(),
+        };
+        let result = parser.parse(&mut ctx, lexer);
+        match result {
             Ok(source_unit) => {
                 // TODO(v2): these tests should really go through 'CompilationUnit' once it is ready.
                 // This way, we won't have to call individual validation APIs.
                 // All errors should be collected during the compilation unit construction.
-                validate_syntax_version(&source_unit, language_version, file_id, &mut diagnostics);
+                validate_syntax_version(
+                    &source_unit,
+                    language_version,
+                    file_id,
+                    &mut ctx.diagnostics,
+                );
                 ParseOutput {
                     source_unit,
-                    diagnostics,
+                    diagnostics: ctx.diagnostics,
                 }
             }
             Err(e) => {
-                convert_parse_error(file_id, &mut diagnostics, e);
+                convert_parse_error(file_id, &mut ctx.diagnostics, e);
                 ParseOutput {
                     source_unit: new_source_unit(new_source_unit_members(vec![])),
-                    diagnostics,
+                    diagnostics: ctx.diagnostics,
                 }
             }
         }

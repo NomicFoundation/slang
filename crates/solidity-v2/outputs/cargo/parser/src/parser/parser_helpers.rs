@@ -4,6 +4,7 @@
 
 use std::rc::Rc;
 
+use slang_solidity_v2_common::diagnostics::kinds::syntax::ExpectedArrayLengthExpression;
 use slang_solidity_v2_cst::structured_cst::nodes::{
     new_array_type_name, new_expression_elementary_type, new_expression_identifier,
     new_expression_index_access_expression, new_expression_member_access_expression,
@@ -13,6 +14,8 @@ use slang_solidity_v2_cst::structured_cst::nodes::{
     FunctionTypeAttribute, FunctionTypeStruct, Identifier, IdentifierPath, IdentifierPathElement,
     IndexAccessEnd, OpenBracket, Period, StateVariableAttribute, TypeName,
 };
+
+use crate::parser::GrammarCtx;
 
 /// An `IndexAccessPath` represents a path or elementary type followed by
 /// zero or more index accesses, e.g. `foo.bar[0][1:3]` or `uint256[5][]`
@@ -78,8 +81,19 @@ pub(crate) fn new_index_access_path_from_elementary_type(
 
 /// Consumes an IAP and creates a `TypeName`
 ///
-/// TODO(v2): Return an error if any index has slicing rather than panicing
-pub(crate) fn new_type_name_index_access_path(index_access_path: IndexAccessPath) -> TypeName {
+/// `start` is the byte offset of the beginning of the IAP (the start of its
+/// path), used as the start of any reported diagnostic range.
+///
+/// A range/slice index access (`[start:end]`) is not a valid array length, so
+/// an error is reported and recovery ignores everything after the colon
+/// (i.e. treating `[start:end]` as `[start]`).
+///
+/// TODO(error-recovery): Once the CST allows for error nodes, the failure here should be present in there.
+pub(crate) fn new_type_name_index_access_path(
+    index_access_path: IndexAccessPath,
+    start: usize,
+    ctx: &mut GrammarCtx<'_>,
+) -> TypeName {
     let IndexAccessPath { path, indices } = index_access_path;
 
     let mut type_name = match path {
@@ -88,10 +102,16 @@ pub(crate) fn new_type_name_index_access_path(index_access_path: IndexAccessPath
     };
 
     for index in indices {
-        assert!(
-            index.end.is_none(),
-            "Slicing is not supported in type names yet"
-        );
+        if index.end.is_some() {
+            // Report from the start of the index access path up to the closing
+            // bracket of the offending index, matching solc's range.
+            let end = index.close_bracket.range.end;
+            ctx.diagnostics.push(
+                ctx.file_id.to_owned(),
+                start..end,
+                ExpectedArrayLengthExpression,
+            );
+        }
         let array_type = new_array_type_name(
             type_name,
             index.open_bracket,

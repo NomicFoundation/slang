@@ -62,6 +62,20 @@ mod structure {
 mod syntax {
     use super::*;
 
+    mod expected_array_length_expression {
+        use super::*;
+
+        #[test]
+        fn array_types() -> Result<()> {
+            run("syntax/expected_array_length_expression", "array_types")
+        }
+
+        #[test]
+        fn state_variable() -> Result<()> {
+            run("syntax/expected_array_length_expression", "state_variable")
+        }
+    }
+
     mod multiple_mutability_specifiers {
         use super::*;
 

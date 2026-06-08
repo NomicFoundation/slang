@@ -1,0 +1,51 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 6
+
+[ParserError 5464] Error: Expected array length expression.
+   ╭─[input.sol:6:9]
+   │
+ 6 │         uint[][1:] memory a;
+   │         ─────┬────  
+   │              ╰────── Error occurred here.
+───╯
+
+[ParserError 5464] Error: Expected array length expression.
+   ╭─[input.sol:7:9]
+   │
+ 7 │         uint[][1:2] memory b;
+   │         ─────┬─────  
+   │              ╰─────── Error occurred here.
+───╯
+
+[ParserError 5464] Error: Expected array length expression.
+   ╭─[input.sol:8:9]
+   │
+ 8 │         uint[1:] memory c;
+   │         ────┬───  
+   │             ╰───── Error occurred here.
+───╯
+
+[ParserError 5464] Error: Expected array length expression.
+   ╭─[input.sol:9:9]
+   │
+ 9 │         uint[1:2] memory d;
+   │         ────┬────  
+   │             ╰────── Error occurred here.
+───╯
+
+[ParserError 5464] Error: Expected array length expression.
+    ╭─[input.sol:10:9]
+    │
+ 10 │         uint[1:][] memory e;
+    │         ────┬───  
+    │             ╰───── Error occurred here.
+────╯
+
+[ParserError 5464] Error: Expected array length expression.
+    ╭─[input.sol:11:9]
+    │
+ 11 │         uint[1:2][] memory f;
+    │         ────┬────  
+    │             ╰────── Error occurred here.
+────╯
