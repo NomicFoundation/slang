@@ -1,0 +1,1 @@
+contract C layout at {}

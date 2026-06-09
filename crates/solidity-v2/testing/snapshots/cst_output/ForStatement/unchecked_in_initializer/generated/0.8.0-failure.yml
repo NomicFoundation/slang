@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                     │ 0..12
+  2  │     function f() public {                                                        │ 13..38
+  3  │         for (unchecked { uint x = 2; }; x < 2; x++) {}                           │ 39..93
+  4  │     }                                                                            │ 94..99
+  5  │ }                                                                                │ 100..101
+
+Errors: # 1 total
+  - >
+    Error: Unexpected UncheckedKeyword. One of AddressKeyword, AtKeyword, Bang, BoolKeyword, BytesKeyword, DecimalLiteral, DeleteKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, Minus, MinusMinus, NewKeyword, OpenBracket, OpenParen, PayableKeyword, PlusPlus, RevertKeyword, Semicolon, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UnicodeStringLiteral was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ForStatement/unchecked_in_initializer/input.sol:3:14]
+       │
+     3 │         for (unchecked { uint x = 2; }; x < 2; x++) {}
+       │              ────┬────  
+       │                  ╰────── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []
