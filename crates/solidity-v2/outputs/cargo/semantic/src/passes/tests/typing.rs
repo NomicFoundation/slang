@@ -9,7 +9,7 @@ use crate::binder::Binder;
 use crate::context::SemanticFile;
 use crate::passes::common::node_id_for_expression_typing;
 use crate::passes::{
-    p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
+    p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p5_resolve_references,
 };
 use crate::types::{
     ByteArrayType, BytesType, ContractType, DataLocation, FixedSizeArrayType, IntegerType,
@@ -38,7 +38,7 @@ fn analyze(language_version: LanguageVersion, source: &str) -> TypeAnalysis {
         "Semantic diagnostics: {diagnostics:?}"
     );
     p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
-    p4_resolve_references::run(&files, &mut binder, &mut types, language_version);
+    p5_resolve_references::run(&files, &mut binder, &mut types, language_version);
 
     TypeAnalysis {
         file: files.into_iter().next().unwrap(),

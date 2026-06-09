@@ -37,7 +37,7 @@ fn compute_linearised_members(
     types: &TypeRegistry,
     contract_id: NodeId,
 ) -> ContractLinearisations {
-    let functions = compute_linearised_functions(binder, types, contract_id);
+    let functions = collect_linearised_functions(binder, types, contract_id);
     let state_variables = collect_linearised_state_variables(binder, contract_id);
     let errors = collect_linearised_errors(binder, contract_id);
     let events = collect_linearised_events(binder, contract_id);
@@ -52,7 +52,7 @@ fn compute_linearised_members(
     }
 }
 
-fn compute_linearised_functions(
+fn collect_linearised_functions(
     binder: &Binder,
     types: &TypeRegistry,
     contract_id: NodeId,
