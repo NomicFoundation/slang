@@ -1,5 +1,4 @@
 mod expected_array_length_expression;
-mod extra_terminal;
 mod multiple_mutability_specifiers;
 mod multiple_override_specifiers;
 mod multiple_virtual_specifiers;
@@ -8,7 +7,6 @@ mod unexpected_terminal;
 mod unsupported_syntax;
 
 pub use expected_array_length_expression::ExpectedArrayLengthExpression;
-pub use extra_terminal::ExtraTerminal;
 pub use multiple_mutability_specifiers::MultipleMutabilitySpecifiers;
 pub use multiple_override_specifiers::MultipleOverrideSpecifiers;
 pub use multiple_virtual_specifiers::MultipleVirtualSpecifiers;
@@ -30,8 +28,6 @@ define_diagnostic_kind! {
         UnexpectedEof(UnexpectedEof),
         /// The parser encountered a terminal not valid at the current position.
         UnexpectedTerminal(UnexpectedTerminal),
-        /// The parser encountered extra input after a complete source unit.
-        ExtraTerminal(ExtraTerminal),
 
         /// A piece of syntax is not supported by the currently selected version.
         UnsupportedSyntax(UnsupportedSyntax),

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Unexpected CloseBrace. One of AbstractKeyword, AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, ContractKeyword, EnumKeyword, ErrorKeyword, EventKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, ImportKeyword, IntKeyword, InterfaceKeyword, LayoutKeyword, LibraryKeyword, MappingKeyword, PragmaKeyword, RevertKeyword, StringKeyword, StructKeyword, TransientKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UsingKeyword was expected
+   ╭─[input.sol:5:1]
+   │
+ 5 │ }
+   │ ┬  
+   │ ╰── Error occurred here.
+───╯
