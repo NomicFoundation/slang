@@ -1,3 +1,4 @@
+use slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDefinition;
 use slang_solidity_v2_ir::ir;
 
 use super::evaluator::{
@@ -47,15 +48,22 @@ impl Pass<'_> {
                     self.resolve_type_name(&array_type_name.operand, Some(data_location))
                         .map(|element_type| {
                             if let Some(size_expression) = &array_type_name.index {
-                                // TODO(validation) SDR[27]: if the size of the array
-                                // cannot be evaluated it's not a compile-time
-                                // constant, or it doesn't fit in `usize`.
-                                let size = evaluate_compile_time_usize_constant(
+                                let evaluation = evaluate_compile_time_usize_constant(
                                     size_expression,
                                     self.current_contract_or_file_scope_id(),
                                     self,
-                                )
-                                .unwrap_or_default();
+                                );
+                                if evaluation.depth_limit_reached {
+                                    self.diagnostics.push(
+                                        self.file_id.clone(),
+                                        array_type_name.range.clone(),
+                                        CyclicConstantDefinition,
+                                    );
+                                }
+                                // TODO(validation) SDR[27]: if the size of the array
+                                // cannot be evaluated it's not a compile-time
+                                // constant, or it doesn't fit in `usize`.
+                                let size = evaluation.value.unwrap_or_default();
                                 self.types
                                     .register_type(Type::FixedSizeArray(FixedSizeArrayType {
                                         element_type,

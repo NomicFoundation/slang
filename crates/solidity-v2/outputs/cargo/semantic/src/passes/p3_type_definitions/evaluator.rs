@@ -6,34 +6,52 @@ use slang_solidity_v2_ir::ir;
 use crate::built_ins::InternalBuiltIn;
 use crate::types::{literals, Number};
 
+pub(crate) struct ConstantEvaluation<T> {
+    pub value: Option<T>,
+    pub depth_limit_reached: bool,
+}
+
 pub(crate) fn evaluate_compile_time_usize_constant<Scope>(
     expression: &ir::Expression,
     start_scope: Scope,
     identifier_resolver: &dyn ConstantIdentifierResolver<Scope>,
-) -> Option<usize> {
-    evaluate_compile_time_number_constant(expression, start_scope, identifier_resolver)
-        .and_then(|value| value.as_usize())
+) -> ConstantEvaluation<usize> {
+    let evaluation =
+        evaluate_compile_time_number_constant(expression, start_scope, identifier_resolver);
+    ConstantEvaluation {
+        value: evaluation.value.and_then(|value| value.as_usize()),
+        depth_limit_reached: evaluation.depth_limit_reached,
+    }
 }
 
 pub(crate) fn evaluate_compile_time_integer_constant<Scope>(
     expression: &ir::Expression,
     start_scope: Scope,
     identifier_resolver: &dyn ConstantIdentifierResolver<Scope>,
-) -> Option<BigInt> {
-    evaluate_compile_time_number_constant(expression, start_scope, identifier_resolver)
-        .and_then(Number::into_integer)
+) -> ConstantEvaluation<BigInt> {
+    let evaluation =
+        evaluate_compile_time_number_constant(expression, start_scope, identifier_resolver);
+    ConstantEvaluation {
+        value: evaluation.value.and_then(Number::into_integer),
+        depth_limit_reached: evaluation.depth_limit_reached,
+    }
 }
 
 fn evaluate_compile_time_number_constant<Scope>(
     expression: &ir::Expression,
     start_scope: Scope,
     identifier_resolver: &dyn ConstantIdentifierResolver<Scope>,
-) -> Option<Number> {
+) -> ConstantEvaluation<Number> {
     let mut evaluator = CompileConstantEvaluator {
         identifier_resolver,
         scope_stack: Vec::new(),
+        depth_limit_reached: false,
     };
-    evaluator.evaluate_expression_in_scope(expression, start_scope)
+    let value = evaluator.evaluate_expression_in_scope(expression, start_scope);
+    ConstantEvaluation {
+        value,
+        depth_limit_reached: evaluator.depth_limit_reached,
+    }
 }
 
 pub(crate) enum ComptimeResolution<Scope> {
@@ -60,10 +78,11 @@ pub(crate) trait ConstantIdentifierResolver<Scope> {
 struct CompileConstantEvaluator<'a, Scope> {
     identifier_resolver: &'a dyn ConstantIdentifierResolver<Scope>,
     scope_stack: Vec<Scope>,
+    depth_limit_reached: bool,
 }
 
 impl<Scope> CompileConstantEvaluator<'_, Scope> {
-    const MAX_SCOPE_DEPTH: usize = 10;
+    const MAX_SCOPE_DEPTH: usize = 32;
 
     fn evaluate_expression_in_scope(
         &mut self,
@@ -71,7 +90,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         scope: Scope,
     ) -> Option<Number> {
         if self.scope_stack.len() >= Self::MAX_SCOPE_DEPTH {
-            // TODO(validation) SDR[25]: cyclic dependency in constant resolution or max depth reached
+            self.depth_limit_reached = true;
             return None;
         }
         self.scope_stack.push(scope);
@@ -314,7 +333,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
             return None;
         };
         if self.scope_stack.len() >= Self::MAX_SCOPE_DEPTH {
-            // TODO(validation) SDR[25]: cyclic dependency in constant resolution or max depth reached
+            self.depth_limit_reached = true;
             return None;
         }
         self.scope_stack.push(target_scope);
@@ -456,7 +475,7 @@ mod tests {
         let resolver = MapResolver::with_context(context);
         let expression = parse_expression(input);
 
-        evaluate_compile_time_number_constant(&expression, String::new(), &resolver)
+        evaluate_compile_time_number_constant(&expression, String::new(), &resolver).value
     }
 
     fn eval_string(input: &str) -> Option<Number> {
@@ -649,7 +668,7 @@ mod tests {
     ) -> Option<Number> {
         let expression = parse_expression(input);
         let resolver = MapResolver::recognise_erc7201_with_context(context);
-        evaluate_compile_time_number_constant(&expression, String::new(), &resolver)
+        evaluate_compile_time_number_constant(&expression, String::new(), &resolver).value
     }
 
     fn eval_string_with_erc7201(input: &str) -> Option<Number> {

@@ -213,13 +213,19 @@ contract Test is Base {
     let mut diagnostics = DiagnosticCollection::default();
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
+
+    let types_before = types.iter_types().count();
+    p3_type_definitions::run(
+        &files,
+        &mut binder,
+        &mut types,
+        language_version,
+        &mut diagnostics,
+    );
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
     );
-
-    let types_before = types.iter_types().count();
-    p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
     let types_after = types.iter_types().count();
 
     // The pass registers new types for: contracts, mappings, structs, enums,
@@ -272,11 +278,17 @@ contract Test is Base {
     let mut diagnostics = DiagnosticCollection::default();
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
+    p3_type_definitions::run(
+        &files,
+        &mut binder,
+        &mut types,
+        language_version,
+        &mut diagnostics,
+    );
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
     );
-    p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
     p5_resolve_references::run(&files, &mut binder, &mut types, language_version);
 
     // Verify that references were created and most are resolved

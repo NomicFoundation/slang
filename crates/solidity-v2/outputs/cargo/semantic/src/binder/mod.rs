@@ -11,7 +11,9 @@ mod references;
 mod scopes;
 
 pub use definitions::Definition;
-pub(crate) use definitions::{ContractDefinition, ImportDefinition, InterfaceDefinition};
+pub(crate) use definitions::{
+    ConstantDefinition, ContractDefinition, ImportDefinition, InterfaceDefinition,
+};
 pub use references::{Reference, Resolution};
 use scopes::ContractScope;
 pub(crate) use scopes::{FileScope, ParameterDefinition, ParametersScope, Scope, UsingDirective};
@@ -144,6 +146,20 @@ impl Binder {
 
     pub(crate) fn scope_id_for_file_id(&self, file_id: &str) -> Option<ScopeId> {
         self.scopes_by_file_id.get(file_id).copied()
+    }
+
+    pub(crate) fn file_id_for_scope_id(&self, scope_id: ScopeId) -> Option<&str> {
+        match self.get_scope_by_id(scope_id) {
+            Scope::File(file_scope) => Some(&file_scope.file_id),
+            Scope::Contract(contract_scope) => {
+                let Scope::File(file_scope) = self.get_scope_by_id(contract_scope.file_scope_id)
+                else {
+                    unreachable!("contract file scope should point to a file scope");
+                };
+                Some(&file_scope.file_id)
+            }
+            _ => None,
+        }
     }
 
     pub(crate) fn insert_scope(&mut self, scope: Scope) -> ScopeId {

@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[TypeError 6161] Error: The value of the constant a has a cyclic dependency via c.
+   ╭─[input.sol:5:5]
+   │
+ 5 │     uint256 constant a = b * c;
+   │     ─────────────┬────────────  
+   │                  ╰────────────── Error occurred here.
+───╯
+
+[TypeError 6161] Error: The value of the constant c has a cyclic dependency via d.
+   ╭─[input.sol:7:5]
+   │
+ 7 │     uint256 constant c = b + uint256(keccak256(abi.encodePacked(d)));
+   │     ────────────────────────────────┬───────────────────────────────  
+   │                                     ╰───────────────────────────────── Error occurred here.
+───╯
+
+[TypeError 6161] Error: The value of the constant d has a cyclic dependency via a.
+   ╭─[input.sol:8:5]
+   │
+ 8 │     uint256 constant d = 2 + a;
+   │     ─────────────┬────────────  
+   │                  ╰────────────── Error occurred here.
+───╯

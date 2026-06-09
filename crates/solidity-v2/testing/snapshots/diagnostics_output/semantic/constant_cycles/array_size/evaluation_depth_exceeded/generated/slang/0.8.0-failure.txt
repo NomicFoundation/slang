@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Cyclic constant definition (or maximum recursion depth exhausted).
+    ╭─[input.sol:46:5]
+    │
+ 46 │     uint256[C0] data;
+    │     ─────┬─────  
+    │          ╰─────── Error occurred here.
+────╯
