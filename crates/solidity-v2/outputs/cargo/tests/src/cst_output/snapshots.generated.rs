@@ -830,6 +830,11 @@ mod expression {
     }
 
     #[test]
+    fn member_access_elementary_type() -> Result<()> {
+        run("Expression", "member_access_elementary_type")
+    }
+
+    #[test]
     fn member_access_function_call() -> Result<()> {
         run("Expression", "member_access_function_call")
     }

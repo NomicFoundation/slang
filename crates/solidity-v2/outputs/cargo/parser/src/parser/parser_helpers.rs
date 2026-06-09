@@ -11,7 +11,7 @@ use slang_solidity_v2_cst::structured_cst::nodes::{
     new_function_type, new_function_type_attributes, new_index_access_expression,
     new_member_access_expression, new_type_name_array_type_name, new_type_name_elementary_type,
     new_type_name_identifier_path, CloseBracket, ElementaryType, Expression, FunctionType,
-    FunctionTypeAttribute, FunctionTypeStruct, Identifier, IdentifierPath, IdentifierPathElement,
+    FunctionTypeAttribute, FunctionTypeStruct, IdentifierPath, IdentifierPathElement,
     IndexAccessEnd, OpenBracket, Period, StateVariableAttribute, TypeName,
 };
 
@@ -155,9 +155,7 @@ pub(crate) fn new_expression_identifier_path(identifier_path: IdentifierPath) ->
             match acc {
                 None => Some(match id {
                     IdentifierPathElement::AddressKeyword(_) => {
-                        // TODO(v2) we should validate that this is not the case and fail gracefully
-                        // instead of returning a wrong identifier
-                        new_expression_identifier(Identifier { range: 0..0 })
+                        unreachable!("Address should never be the first element in an identifier path, the parser shouldn't allow it");
                     }
                     IdentifierPathElement::Identifier(id) => new_expression_identifier(id),
                 }),
