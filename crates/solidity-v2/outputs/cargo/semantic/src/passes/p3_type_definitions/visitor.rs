@@ -407,7 +407,6 @@ impl Visitor for Pass<'_> {
         if node.global_keyword.is_some() {
             self.binder.insert_global_using_directive(directive);
         } else {
-            // TODO(validation) SDR[31]: `using` directives are not allowed in interfaces since 0.7.1
             let current_scope_id = self.current_contract_or_file_scope_id();
             self.binder
                 .insert_using_directive_in_scope(directive, current_scope_id);

@@ -1,5 +1,16 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Using directives are only allowed at the file level, or inside contracts and libraries.
+   ╭─[input.sol:5:5]
+   │
+ 5 │     using Utils for Bar;
+   │     ──────────┬─────────  
+   │               ╰─────────── Error occurred here.
+───╯
+
+------------------------------------------------------------------------
+
 Definitions (3):
 - Def: #1 ["Bar" @ input.sol:1:11] (interface)
 - Def: #2 ["Foo" @ input.sol:3:11] (interface)

@@ -1,5 +1,5 @@
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
-    FunctionNameMatchesContainer, MultipleConstructors,
+    FunctionNameMatchesContainer, InvalidUsingDirectiveContainer, MultipleConstructors,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -246,6 +246,28 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
 
     fn leave_interface_definition(&mut self, node: &ir::InterfaceDefinition) {
         self.leave_scope_for_node_id(node.id());
+    }
+
+    fn enter_using_directive(&mut self, node: &ir::UsingDirective) -> bool {
+        let current_scope_node_id = self.current_scope().node_id();
+        let in_allowed_container = match self.binder.find_definition_by_id(current_scope_node_id) {
+            None => {
+                true // allow in global (file-level) scope
+            }
+            Some(definition) => {
+                matches!(definition, Definition::Contract(_) | Definition::Library(_))
+            }
+        };
+
+        if !in_allowed_container {
+            self.diagnostics.push(
+                self.current_file.id().to_owned(),
+                node.range.clone(),
+                InvalidUsingDirectiveContainer,
+            );
+        }
+
+        true
     }
 
     fn enter_path_import(&mut self, node: &ir::PathImport) -> bool {
