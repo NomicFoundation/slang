@@ -404,7 +404,7 @@ jobs:
 
       # Compile infra_cli with no registry token in scope.
       - name: "Build infra_cli (before any token)"
-        run: "./scripts/bin/infra --version"
+        run: "./scripts/bin/infra --help"
 
       - name: "infra publish npm"
         # No tarball means prepare packed nothing (version already on npm) — nothing to publish.
