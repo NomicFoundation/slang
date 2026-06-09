@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+Error: This syntax was introduced in version '0.8.29'.
+    ╭─[input.sol:45:12]
+    │
+ 45 │ contract C layout at C0 {}
+    │            ──────┬─────  
+    │                  ╰─────── Error occurred here.
+────╯
+
+Error: Cyclic constant definition (or maximum recursion depth exhausted).
+    ╭─[input.sol:45:22]
+    │
+ 45 │ contract C layout at C0 {}
+    │                      ─┬  
+    │                       ╰── Error occurred here.
+────╯

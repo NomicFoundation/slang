@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+Error: The value of the constant A has a cyclic dependency via X.
+   ╭─[constants.sol:6:1]
+   │
+ 6 │ uint256 constant A = X;
+   │ ───────────┬───────────  
+   │            ╰───────────── Error occurred here.
+───╯
+
+Error: The value of the constant X has a cyclic dependency via A.
+   ╭─[main.sol:6:1]
+   │
+ 6 │ uint256 constant X = M.A;
+   │ ────────────┬────────────  
+   │             ╰────────────── Error occurred here.
+───╯

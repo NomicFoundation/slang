@@ -367,6 +367,144 @@ mod resolution {
     }
 }
 
+mod semantic {
+    use super::*;
+
+    mod constant_cycles {
+        use super::*;
+
+        mod array_size {
+            use super::*;
+
+            #[test]
+            fn cyclic() -> Result<()> {
+                run("semantic/constant_cycles/array_size", "cyclic")
+            }
+
+            #[test]
+            fn evaluation_depth_exceeded() -> Result<()> {
+                run(
+                    "semantic/constant_cycles/array_size",
+                    "evaluation_depth_exceeded",
+                )
+            }
+        }
+
+        mod constants {
+            use super::*;
+
+            #[test]
+            fn approach_declared_first_exceeds_depth_limit_a1_b1() -> Result<()> {
+                run(
+                    "semantic/constant_cycles/constants",
+                    "approach_declared_first_exceeds_depth_limit_a1_b1",
+                )
+            }
+
+            #[test]
+            fn approach_declared_first_exceeds_depth_limit_b1_a1() -> Result<()> {
+                run(
+                    "semantic/constant_cycles/constants",
+                    "approach_declared_first_exceeds_depth_limit_b1_a1",
+                )
+            }
+
+            #[test]
+            fn cycle_through_call_arguments() -> Result<()> {
+                run(
+                    "semantic/constant_cycles/constants",
+                    "cycle_through_call_arguments",
+                )
+            }
+
+            #[test]
+            fn dependency_depth_boundary() -> Result<()> {
+                run(
+                    "semantic/constant_cycles/constants",
+                    "dependency_depth_boundary",
+                )
+            }
+
+            #[test]
+            fn dependency_depth_exceeded() -> Result<()> {
+                run(
+                    "semantic/constant_cycles/constants",
+                    "dependency_depth_exceeded",
+                )
+            }
+
+            #[test]
+            fn imported_cycle() -> Result<()> {
+                run("semantic/constant_cycles/constants", "imported_cycle")
+            }
+
+            #[test]
+            fn indirect_cycle() -> Result<()> {
+                run("semantic/constant_cycles/constants", "indirect_cycle")
+            }
+
+            #[test]
+            fn member_access_cycle() -> Result<()> {
+                run("semantic/constant_cycles/constants", "member_access_cycle")
+            }
+
+            #[test]
+            fn module_member_access_cycle() -> Result<()> {
+                run(
+                    "semantic/constant_cycles/constants",
+                    "module_member_access_cycle",
+                )
+            }
+
+            #[test]
+            fn parenthesized_member_access_cycle() -> Result<()> {
+                run(
+                    "semantic/constant_cycles/constants",
+                    "parenthesized_member_access_cycle",
+                )
+            }
+
+            #[test]
+            fn qualified_self_reference_cycle() -> Result<()> {
+                run(
+                    "semantic/constant_cycles/constants",
+                    "qualified_self_reference_cycle",
+                )
+            }
+
+            #[test]
+            fn shared_dependency_past_depth_limit() -> Result<()> {
+                run(
+                    "semantic/constant_cycles/constants",
+                    "shared_dependency_past_depth_limit",
+                )
+            }
+
+            #[test]
+            fn standalone_cycle() -> Result<()> {
+                run("semantic/constant_cycles/constants", "standalone_cycle")
+            }
+        }
+
+        mod storage_base_slot {
+            use super::*;
+
+            #[test]
+            fn cyclic() -> Result<()> {
+                run("semantic/constant_cycles/storage_base_slot", "cyclic")
+            }
+
+            #[test]
+            fn evaluation_depth_exceeded() -> Result<()> {
+                run(
+                    "semantic/constant_cycles/storage_base_slot",
+                    "evaluation_depth_exceeded",
+                )
+            }
+        }
+    }
+}
+
 mod structure {
     use super::*;
 

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Cyclic constant definition (or maximum recursion depth exhausted).
+    ╭─[input.sol:45:22]
+    │
+ 45 │ contract C layout at C0 {}
+    │                      ─┬  
+    │                       ╰── Error occurred here.
+────╯

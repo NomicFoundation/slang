@@ -1,8 +1,10 @@
 use slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility;
 use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_ir::ir::TextRange;
 
 use super::evaluator::{
     evaluate_compile_time_usize_constant, ComptimeResolution, ConstantIdentifierResolver,
+    EvaluationError,
 };
 use super::Pass;
 use crate::binder::{Definition, Resolution, Scope, ScopeId};
@@ -51,12 +53,25 @@ impl Pass<'_> {
                                 // TODO(validation) SDR[27]: if the size of the array
                                 // cannot be evaluated it's not a compile-time
                                 // constant, or it doesn't fit in `usize`.
-                                let size = evaluate_compile_time_usize_constant(
+                                let size = match evaluate_compile_time_usize_constant(
                                     size_expression,
                                     self.current_contract_or_file_scope_id(),
                                     self,
-                                )
-                                .unwrap_or_default();
+                                ) {
+                                    Ok(size) => size,
+                                    Err(error) => {
+                                        if let EvaluationError::Diagnostic(kind) = error {
+                                            self.diagnostics.push(
+                                                self.file_id.clone(),
+                                                size_expression
+                                                    .calculate_text_range()
+                                                    .expect("expression has a text range"),
+                                                kind,
+                                            );
+                                        }
+                                        usize::default()
+                                    }
+                                };
                                 self.types
                                     .register_type(Type::FixedSizeArray(FixedSizeArrayType {
                                         element_type,
