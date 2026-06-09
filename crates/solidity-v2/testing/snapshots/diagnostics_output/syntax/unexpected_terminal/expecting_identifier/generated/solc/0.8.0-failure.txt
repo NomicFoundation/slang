@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 2314] Error: Expected identifier but got '='
+   ╭─[input.sol:5:17]
+   │
+ 5 │     uint public = 123;
+   │                 ┬  
+   │                 ╰── Error occurred here.
+───╯

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Unexpected Equal. One of AtKeyword, ConstantKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, ImmutableKeyword, InternalKeyword, LayoutKeyword, OverrideKeyword, PrivateKeyword, PublicKeyword, RevertKeyword, TransientKeyword was expected
+   ╭─[input.sol:5:17]
+   │
+ 5 │     uint public = 123;
+   │                 ┬  
+   │                 ╰── Error occurred here.
+───╯

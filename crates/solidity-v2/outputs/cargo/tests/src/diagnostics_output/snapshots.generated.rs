@@ -171,9 +171,18 @@ mod syntax {
         run("syntax", "unexpected_eof")
     }
 
-    #[test]
-    fn unexpected_terminal() -> Result<()> {
-        run("syntax", "unexpected_terminal")
+    mod unexpected_terminal {
+        use super::*;
+
+        #[test]
+        fn expecting_identifier() -> Result<()> {
+            run("syntax/unexpected_terminal", "expecting_identifier")
+        }
+
+        #[test]
+        fn semicolon() -> Result<()> {
+            run("syntax/unexpected_terminal", "semicolon")
+        }
     }
 
     #[test]
