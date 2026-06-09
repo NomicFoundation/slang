@@ -1,5 +1,5 @@
 mod p1_definitions;
-mod p2_version_specifiers;
+mod p2_specifiers;
 mod p3_references;
 mod p4_unreachable_items;
 mod p5_unused_versions;
@@ -44,8 +44,8 @@ impl Analysis {
         for pass in &[
             // This pass creates `ItemMetadata` definitions for all language `Item` entries, and verifies they are correct/unique.
             p1_definitions::run,
-            // This pass checks all version ranges in the grammar for correctness.
-            p2_version_specifiers::run,
+            // This pass checks all version ranges (`enabled`) and EVM target ranges (`evm_enabled`) in the grammar for correctness.
+            p2_specifiers::run,
             // This pass collects all references between items, making sure they conform to their enabled version ranges.
             p3_references::run,
             // This pass makes sure all items are reachable from the grammar root.

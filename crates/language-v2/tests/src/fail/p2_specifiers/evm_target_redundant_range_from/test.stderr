@@ -1,0 +1,5 @@
+error: 'Range' starting from the first supported EVM target 'Frontier' can be simplified to 'Till'.
+  --> src/fail/p2_specifiers/evm_target_redundant_range_from/test.rs:25:91
+   |
+25 |             definitions = [BuiltInDefinition(name = MyBuiltIn, evm_enabled = Range(from = Frontier, till = Cancun))]
+   |                                                                                           ^^^^^^^^

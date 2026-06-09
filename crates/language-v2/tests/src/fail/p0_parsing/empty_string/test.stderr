@@ -1,5 +1,5 @@
 error: Expected a non-empty string.
-  --> src/fail/p0_parsing/empty_string/test.rs:13:59
+  --> src/fail/p0_parsing/empty_string/test.rs:14:59
    |
-13 |                 items = [Token(name = Bar, scanner = Atom(""))]
+14 |                 items = [Token(name = Bar, scanner = Atom(""))]
    |                                                           ^^

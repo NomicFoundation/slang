@@ -9,6 +9,10 @@ language_v2_macros::compile!(Language(
         "0.8.20", "0.8.21", "0.8.22", "0.8.23", "0.8.24", "0.8.25", "0.8.26", "0.8.27", "0.8.28", "0.8.29",
         "0.8.30", "0.8.31", "0.8.32", "0.8.33", "0.8.34", "0.8.35"
     ],
+    evm_targets = [
+        Frontier, Homestead, TangerineWhistle, SpuriousDragon, Byzantium, Constantinople, Petersburg,
+        Istanbul, Berlin, London, Paris, Shanghai, Cancun, Prague, Osaka
+    ],
     contexts = [
         LexicalContext(
             name = Pragma,
@@ -4474,7 +4478,11 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                         BuiltInDefinition(name = Abi),
                         BuiltInDefinition(name = Addmod),
                         BuiltInDefinition(name = Assert),
-                        BuiltInDefinition(name = Blobhash, enabled = From("0.8.24")),
+                        BuiltInDefinition(
+                            name = Blobhash,
+                            enabled = From("0.8.24"),
+                            evm_enabled = From(Cancun)
+                        ),
                         BuiltInDefinition(name = Block),
                         BuiltInDefinition(name = Blockhash),
                         BuiltInDefinition(name = Ecrecover),
@@ -4505,14 +4513,26 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                 BuiltInScope(
                     name = Block,
                     definitions = [
-                        BuiltInDefinition(name = BlockBasefee, enabled = From("0.8.7")),
-                        BuiltInDefinition(name = BlockBlobbasefee, enabled = From("0.8.24")),
-                        BuiltInDefinition(name = BlockChainid),
+                        BuiltInDefinition(
+                            name = BlockBasefee,
+                            enabled = From("0.8.7"),
+                            evm_enabled = From(London)
+                        ),
+                        BuiltInDefinition(
+                            name = BlockBlobbasefee,
+                            enabled = From("0.8.24"),
+                            evm_enabled = From(Cancun)
+                        ),
+                        BuiltInDefinition(name = BlockChainid, evm_enabled = From(Istanbul)),
                         BuiltInDefinition(name = BlockCoinbase),
-                        BuiltInDefinition(name = BlockDifficulty),
+                        BuiltInDefinition(name = BlockDifficulty, evm_enabled = Till(Paris)),
                         BuiltInDefinition(name = BlockGaslimit),
                         BuiltInDefinition(name = BlockNumber),
-                        BuiltInDefinition(name = BlockPrevrandao, enabled = From("0.8.18")),
+                        BuiltInDefinition(
+                            name = BlockPrevrandao,
+                            enabled = From("0.8.18"),
+                            evm_enabled = From(Paris)
+                        ),
                         BuiltInDefinition(name = BlockTimestamp)
                     ]
                 ),
@@ -4540,10 +4560,10 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                         BuiltInDefinition(name = AddressCall),
                         BuiltInDefinition(name = AddressCallcode),
                         BuiltInDefinition(name = AddressCode),
-                        BuiltInDefinition(name = AddressCodehash),
-                        BuiltInDefinition(name = AddressDelegatecall),
+                        BuiltInDefinition(name = AddressCodehash, evm_enabled = From(Constantinople)),
+                        BuiltInDefinition(name = AddressDelegatecall, evm_enabled = From(Homestead)),
                         BuiltInDefinition(name = AddressSend),
-                        BuiltInDefinition(name = AddressStaticcall),
+                        BuiltInDefinition(name = AddressStaticcall, evm_enabled = From(Byzantium)),
                         BuiltInDefinition(name = AddressTransfer)
                     ]
                 ),
@@ -4611,9 +4631,21 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                         BuiltInDefinition(name = YulAddress),
                         BuiltInDefinition(name = YulAnd),
                         BuiltInDefinition(name = YulBalance),
-                        BuiltInDefinition(name = YulBasefee, enabled = From("0.8.7")),
-                        BuiltInDefinition(name = YulBlobbasefee, enabled = From("0.8.24")),
-                        BuiltInDefinition(name = YulBlobhash, enabled = From("0.8.24")),
+                        BuiltInDefinition(
+                            name = YulBasefee,
+                            enabled = From("0.8.7"),
+                            evm_enabled = From(London)
+                        ),
+                        BuiltInDefinition(
+                            name = YulBlobbasefee,
+                            enabled = From("0.8.24"),
+                            evm_enabled = From(Cancun)
+                        ),
+                        BuiltInDefinition(
+                            name = YulBlobhash,
+                            enabled = From("0.8.24"),
+                            evm_enabled = From(Cancun)
+                        ),
                         BuiltInDefinition(name = YulBlockhash),
                         BuiltInDefinition(name = YulByte),
                         BuiltInDefinition(name = YulCall),
@@ -4623,20 +4655,28 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                         BuiltInDefinition(name = YulCalldatasize),
                         BuiltInDefinition(name = YulCaller),
                         BuiltInDefinition(name = YulCallvalue),
-                        BuiltInDefinition(name = YulChainid),
-                        BuiltInDefinition(name = YulClz, enabled = From("0.8.31")),
+                        BuiltInDefinition(name = YulChainid, evm_enabled = From(Istanbul)),
+                        BuiltInDefinition(
+                            name = YulClz,
+                            enabled = From("0.8.31"),
+                            evm_enabled = From(Osaka)
+                        ),
                         BuiltInDefinition(name = YulCodecopy),
                         BuiltInDefinition(name = YulCodesize),
                         BuiltInDefinition(name = YulCoinbase),
                         BuiltInDefinition(name = YulCreate),
-                        BuiltInDefinition(name = YulCreate2),
+                        BuiltInDefinition(name = YulCreate2, evm_enabled = From(Constantinople)),
                         BuiltInDefinition(name = YulDelegatecall),
-                        BuiltInDefinition(name = YulDifficulty, enabled = Till("0.8.18")),
+                        BuiltInDefinition(
+                            name = YulDifficulty,
+                            enabled = Till("0.8.18"),
+                            evm_enabled = Till(Paris)
+                        ),
                         BuiltInDefinition(name = YulDiv),
                         BuiltInDefinition(name = YulEq),
                         BuiltInDefinition(name = YulExp),
                         BuiltInDefinition(name = YulExtcodecopy),
-                        BuiltInDefinition(name = YulExtcodehash),
+                        BuiltInDefinition(name = YulExtcodehash, evm_enabled = From(Constantinople)),
                         BuiltInDefinition(name = YulExtcodesize),
                         BuiltInDefinition(name = YulGas),
                         BuiltInDefinition(name = YulGaslimit),
@@ -4647,7 +4687,11 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                         BuiltInDefinition(name = YulKeccak256),
                         BuiltInDefinition(name = YulLog, internal_parameter = Code(u8)),
                         BuiltInDefinition(name = YulLt),
-                        BuiltInDefinition(name = YulMcopy, enabled = From("0.8.24")),
+                        BuiltInDefinition(
+                            name = YulMcopy,
+                            enabled = From("0.8.24"),
+                            evm_enabled = From(Cancun)
+                        ),
                         BuiltInDefinition(name = YulMload),
                         BuiltInDefinition(name = YulMod),
                         BuiltInDefinition(name = YulMsize),
@@ -4660,29 +4704,41 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                         BuiltInDefinition(name = YulOr),
                         BuiltInDefinition(name = YulOrigin),
                         BuiltInDefinition(name = YulPop),
-                        BuiltInDefinition(name = YulPrevrandao, enabled = From("0.8.18")),
+                        BuiltInDefinition(
+                            name = YulPrevrandao,
+                            enabled = From("0.8.18"),
+                            evm_enabled = From(Paris)
+                        ),
                         BuiltInDefinition(name = YulReturn),
-                        BuiltInDefinition(name = YulReturndatacopy),
-                        BuiltInDefinition(name = YulReturndatasize),
+                        BuiltInDefinition(name = YulReturndatacopy, evm_enabled = From(Byzantium)),
+                        BuiltInDefinition(name = YulReturndatasize, evm_enabled = From(Byzantium)),
                         BuiltInDefinition(name = YulRevert),
-                        BuiltInDefinition(name = YulSar),
+                        BuiltInDefinition(name = YulSar, evm_enabled = From(Constantinople)),
                         BuiltInDefinition(name = YulSdiv),
-                        BuiltInDefinition(name = YulSelfbalance),
+                        BuiltInDefinition(name = YulSelfbalance, evm_enabled = From(Istanbul)),
                         BuiltInDefinition(name = YulSelfdestruct),
                         BuiltInDefinition(name = YulSgt),
-                        BuiltInDefinition(name = YulShl),
-                        BuiltInDefinition(name = YulShr),
+                        BuiltInDefinition(name = YulShl, evm_enabled = From(Constantinople)),
+                        BuiltInDefinition(name = YulShr, evm_enabled = From(Constantinople)),
                         BuiltInDefinition(name = YulSignextend),
                         BuiltInDefinition(name = YulSload),
                         BuiltInDefinition(name = YulSlt),
                         BuiltInDefinition(name = YulSmod),
                         BuiltInDefinition(name = YulSstore),
-                        BuiltInDefinition(name = YulStaticcall),
+                        BuiltInDefinition(name = YulStaticcall, evm_enabled = From(Byzantium)),
                         BuiltInDefinition(name = YulStop),
                         BuiltInDefinition(name = YulSub),
                         BuiltInDefinition(name = YulTimestamp),
-                        BuiltInDefinition(name = YulTload, enabled = From("0.8.24")),
-                        BuiltInDefinition(name = YulTstore, enabled = From("0.8.24")),
+                        BuiltInDefinition(
+                            name = YulTload,
+                            enabled = From("0.8.24"),
+                            evm_enabled = From(Cancun)
+                        ),
+                        BuiltInDefinition(
+                            name = YulTstore,
+                            enabled = From("0.8.24"),
+                            evm_enabled = From(Cancun)
+                        ),
                         BuiltInDefinition(name = YulXor)
                     ]
                 ),

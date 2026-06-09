@@ -6,6 +6,7 @@ edition.workspace = true
 publish = false
 
 [dev-dependencies]
+indexmap = { workspace = true }
 infra_utils = { workspace = true }
 language_v2_definition = { workspace = true }
 language_v2_macros = { workspace = true }

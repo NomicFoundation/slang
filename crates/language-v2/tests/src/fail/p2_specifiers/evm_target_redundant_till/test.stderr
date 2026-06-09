@@ -1,0 +1,5 @@
+error: 'Till' with the first supported EVM target 'Frontier' produces an empty range, disabling the built-in on every EVM target.
+  --> src/fail/p2_specifiers/evm_target_redundant_till/test.rs:25:83
+   |
+25 |             definitions = [BuiltInDefinition(name = MyBuiltIn, evm_enabled = Till(Frontier))]
+   |                                                                                   ^^^^^^^^

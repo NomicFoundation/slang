@@ -15,7 +15,7 @@ use indexmap::IndexSet;
 use infra_utils::cargo::CargoWorkspace;
 use ir::builders::{build_ir_models, GenericModel};
 use language_definition::model::Language;
-use language_v2_definition::model::Language as LanguageV2;
+use language_v2_definition::model::{Identifier, Language as LanguageV2};
 use semver::Version;
 use serde::Serialize;
 
@@ -82,6 +82,7 @@ impl RuntimeModelV2 {
 pub struct LanguageModelV2 {
     name: String,
     versions: IndexSet<Version>,
+    evm_targets: IndexSet<Identifier>,
     built_ins: Vec<codegen_v2_semantic::built_ins::BuiltInContextModel>,
 }
 
@@ -90,6 +91,7 @@ impl LanguageModelV2 {
         Self {
             name: language.name.to_string(),
             versions: language.versions.clone(),
+            evm_targets: language.evm_targets.clone(),
             built_ins: codegen_v2_semantic::built_ins::build_built_ins_model(language),
         }
     }

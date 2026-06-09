@@ -4,6 +4,7 @@ language_v2_macros::compile!(Language(
     name = CodeTest,
     root_item = Foo,
     versions = ["1.0.0"],
+    evm_targets = [],
     contexts = [LexicalContext(
         name = CodeTest,
         sections = [Section(
