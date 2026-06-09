@@ -29,6 +29,46 @@ mod resolution {
             run("resolution/identifier_not_found", "unresolved_base")
         }
     }
+
+    mod identifier_redeclaration {
+        use super::*;
+
+        #[test]
+        fn enum_member() -> Result<()> {
+            run("resolution/identifier_redeclaration", "enum_member")
+        }
+
+        #[test]
+        fn imported_symbol_alias() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "imported_symbol_alias",
+            )
+        }
+
+        #[test]
+        fn local_variable() -> Result<()> {
+            run("resolution/identifier_redeclaration", "local_variable")
+        }
+
+        #[test]
+        fn state_variable() -> Result<()> {
+            run("resolution/identifier_redeclaration", "state_variable")
+        }
+
+        #[test]
+        fn top_level() -> Result<()> {
+            run("resolution/identifier_redeclaration", "top_level")
+        }
+
+        #[test]
+        fn variable_vs_function() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "variable_vs_function",
+            )
+        }
+    }
 }
 
 mod structure {
