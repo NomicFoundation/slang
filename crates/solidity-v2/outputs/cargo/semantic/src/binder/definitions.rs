@@ -291,6 +291,16 @@ impl Definition {
         }
     }
 
+    /// Whether `self` is allowed to share a name with `other` in the same
+    /// scope. Only same-kind overloadable definitions may coexist: functions
+    /// overload other functions, and events overload other events.
+    pub(crate) fn overloads_with(&self, other: &Definition) -> bool {
+        matches!(
+            (self, other),
+            (Self::Function(_), Self::Function(_)) | (Self::Event(_), Self::Event(_))
+        )
+    }
+
     pub(crate) fn new_constant(
         ir_node: &ir::ConstantDefinition,
         enclosing_scope_id: ScopeId,

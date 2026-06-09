@@ -450,8 +450,9 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     fn leave_variable_declaration_statement(&mut self, node: &ir::VariableDeclarationStatement) {
         // Open a new scope that replaces but is linked to the current one so
         // definitions declared here are only available for statements after
-        // this one.
-        let scope = Scope::new_block(node.id(), self.current_scope_id());
+        // this one. This is a "chained" scope that continues the parent's
+        // lexical scope, not a new lexical scope of its own.
+        let scope = Scope::new_block(node.id(), self.current_scope_id(), false);
         self.replace_scope(scope);
 
         match &node.target {
@@ -471,7 +472,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn enter_block(&mut self, node: &ir::Block) -> bool {
-        let scope = Scope::new_block(node.id(), self.current_scope_id());
+        let scope = Scope::new_block(node.id(), self.current_scope_id(), true);
         self.enter_scope(scope);
         true
     }
@@ -482,8 +483,8 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
 
     fn enter_for_statement(&mut self, node: &ir::ForStatement) -> bool {
         // Open a new block here to hold declarations in the initialization
-        // clause.
-        let scope = Scope::new_block(node.id(), self.current_scope_id());
+        // clause. This is a new lexical scope.
+        let scope = Scope::new_block(node.id(), self.current_scope_id(), true);
         self.enter_scope(scope);
         true
     }

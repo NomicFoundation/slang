@@ -509,6 +509,136 @@ impl Binder {
         }
     }
 
+    // Looks for a previously-registered definition that conflicts with
+    // `new_definition` being declared under `symbol` in `scope_id`, returning
+    // the conflicting definition's `NodeId` (or `None` if the declaration is
+    // allowed).
+    //
+    // The search is bounded to the *local lexical chain*: block, function,
+    // modifier, parameters and yul scopes delegate to their enclosing local
+    // scope, but the walk stops at namespace boundaries (contract/file/struct/
+    // enum). This means shadowing a contract- or file-level member from an
+    // inner scope is permitted, matching Solidity. Function and event overloads
+    // are also permitted (see `Definition::overloads_with`).
+    pub(crate) fn find_conflicting_definition(
+        &self,
+        scope_id: ScopeId,
+        symbol: &str,
+        new_definition: &Definition,
+    ) -> Option<NodeId> {
+        let scope = self.get_scope_by_id(scope_id);
+        match scope {
+            Scope::Block(block_scope) => block_scope
+                .definitions
+                .get(symbol)
+                .copied()
+                .and_then(|existing| self.conflicting_definition(existing, new_definition))
+                .or_else(|| {
+                    // Only continue into the parent when this block is a
+                    // "chained" continuation of the same lexical scope. A new
+                    // lexical scope (a real `{ }` block or for-init clause) may
+                    // legally shadow declarations in its enclosing scopes.
+                    if block_scope.is_lexical_scope {
+                        None
+                    } else {
+                        self.find_conflicting_definition(
+                            block_scope.parent_scope_id,
+                            symbol,
+                            new_definition,
+                        )
+                    }
+                }),
+            Scope::Function(function_scope) => function_scope
+                .definitions
+                .get(symbol)
+                .copied()
+                .and_then(|existing| self.conflicting_definition(existing, new_definition))
+                .or_else(|| {
+                    // Continue into the parameters scope, but *not* the
+                    // enclosing contract/file scope (shadowing is allowed there).
+                    self.find_conflicting_definition(
+                        function_scope.parameters_scope_id,
+                        symbol,
+                        new_definition,
+                    )
+                }),
+            Scope::Modifier(modifier_scope) => modifier_scope
+                .definitions
+                .get(symbol)
+                .copied()
+                .and_then(|existing| self.conflicting_definition(existing, new_definition)),
+            Scope::Parameters(parameters_scope) => parameters_scope
+                .lookup_definition(symbol)
+                .and_then(|existing| self.conflicting_definition(existing, new_definition)),
+            Scope::YulBlock(yul_block_scope) => yul_block_scope
+                .definitions
+                .get(symbol)
+                .copied()
+                .and_then(|existing| self.conflicting_definition(existing, new_definition))
+                .or_else(|| {
+                    // Shadowing is not allowed in Yul, so continue lookup in the parent block
+                    self.find_conflicting_definition(
+                        yul_block_scope.parent_scope_id,
+                        symbol,
+                        new_definition,
+                    )
+                }),
+            Scope::YulFunction(yul_function_scope) => yul_function_scope
+                .definitions
+                .get(symbol)
+                .copied()
+                .and_then(|existing| self.conflicting_definition(existing, new_definition)),
+            // Namespace scopes are only checked against their own definitions;
+            // the `Vec`-based ones may hold several entries for a symbol (eg.
+            // function/event overloads).
+            Scope::Contract(contract_scope) => contract_scope
+                .definitions
+                .get(symbol)
+                .and_then(|existing| self.first_conflicting_definition(existing, new_definition)),
+            Scope::File(file_scope) => file_scope
+                .definitions
+                .get(symbol)
+                .and_then(|existing| self.first_conflicting_definition(existing, new_definition)),
+            Scope::Enum(enum_scope) => enum_scope
+                .definitions
+                .get(symbol)
+                .copied()
+                .and_then(|existing| self.conflicting_definition(existing, new_definition)),
+            Scope::Struct(struct_scope) => struct_scope
+                .definitions
+                .get(symbol)
+                .copied()
+                .and_then(|existing| self.conflicting_definition(existing, new_definition)),
+            Scope::Using(_) => None,
+        }
+    }
+
+    // Returns `Some(existing_id)` when an existing definition conflicts with the
+    // one being declared, or `None` when they may legally coexist (overloads).
+    fn conflicting_definition(
+        &self,
+        existing_id: NodeId,
+        new_definition: &Definition,
+    ) -> Option<NodeId> {
+        let existing = self.find_definition_by_id(existing_id)?;
+        if new_definition.overloads_with(existing) {
+            None
+        } else {
+            Some(existing_id)
+        }
+    }
+
+    // Returns the first of `existing_ids` that conflicts with `new_definition`.
+    fn first_conflicting_definition(
+        &self,
+        existing_ids: &[NodeId],
+        new_definition: &Definition,
+    ) -> Option<NodeId> {
+        existing_ids
+            .iter()
+            .find_map(|existing_id| self.conflicting_definition(*existing_id, new_definition))
+    }
+
     // If the resolution points to definitions that are symbols aliases (eg.
     // import deconstruction symbols) this function will recursively follow them
     // and return an appropriate resulting resolution. Ambiguities and missing
