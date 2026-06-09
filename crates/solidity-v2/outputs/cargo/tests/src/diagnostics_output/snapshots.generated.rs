@@ -113,6 +113,35 @@ mod syntax {
         }
     }
 
+    mod multiple_override_specifiers {
+        use super::*;
+
+        #[test]
+        fn fallback_functions() -> Result<()> {
+            run("syntax/multiple_override_specifiers", "fallback_functions")
+        }
+
+        #[test]
+        fn functions() -> Result<()> {
+            run("syntax/multiple_override_specifiers", "functions")
+        }
+
+        #[test]
+        fn modifiers() -> Result<()> {
+            run("syntax/multiple_override_specifiers", "modifiers")
+        }
+
+        #[test]
+        fn receive_functions() -> Result<()> {
+            run("syntax/multiple_override_specifiers", "receive_functions")
+        }
+
+        #[test]
+        fn state_variables() -> Result<()> {
+            run("syntax/multiple_override_specifiers", "state_variables")
+        }
+    }
+
     mod multiple_virtual_specifiers {
         use super::*;
 

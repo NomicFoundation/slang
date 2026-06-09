@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Only a single override specifier can be provided.
+   ╭─[input.sol:5:34]
+   │
+ 5 │     fallback() external override override {}
+   │                                  ────┬───  
+   │                                      ╰───── Error occurred here.
+───╯

@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::syntax::{
-    MultipleMutabilitySpecifiers, MultipleVirtualSpecifiers,
+    MultipleMutabilitySpecifiers, MultipleOverrideSpecifiers, MultipleVirtualSpecifiers,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
@@ -226,7 +226,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                     None
                 }
             }));
-        // TODO(validation) SDR[9]: function definitions can have only a single override specifier
         let override_specifier = self.function_override_specifier(&source.attributes);
         let modifier_invocations = self.function_modifier_invocations(&source.attributes);
         let returns = source
@@ -470,13 +469,13 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         attributes: &input::FunctionAttributes,
     ) -> Option<output::OverridePaths> {
-        attributes.elements.iter().find_map(|attribute| {
+        self.extract_single_override(attributes.elements.iter().filter_map(|attribute| {
             if let input::FunctionAttribute::OverrideSpecifier(specifier) = attribute {
-                Some(self.build_override_specifier_as_paths(specifier))
+                Some(specifier)
             } else {
                 None
             }
-        })
+        }))
     }
 
     fn function_modifier_invocations(
@@ -646,13 +645,13 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         attributes: &input::FallbackFunctionAttributes,
     ) -> Option<output::OverridePaths> {
-        attributes.elements.iter().find_map(|attribute| {
+        self.extract_single_override(attributes.elements.iter().filter_map(|attribute| {
             if let input::FallbackFunctionAttribute::OverrideSpecifier(specifier) = attribute {
-                Some(self.build_override_specifier_as_paths(specifier))
+                Some(specifier)
             } else {
                 None
             }
-        })
+        }))
     }
 
     fn fallback_function_modifier_invocations(
@@ -721,13 +720,13 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         attributes: &input::ReceiveFunctionAttributes,
     ) -> Option<output::OverridePaths> {
-        attributes.elements.iter().find_map(|attribute| {
+        self.extract_single_override(attributes.elements.iter().filter_map(|attribute| {
             if let input::ReceiveFunctionAttribute::OverrideSpecifier(specifier) = attribute {
-                Some(self.build_override_specifier_as_paths(specifier))
+                Some(specifier)
             } else {
                 None
             }
-        })
+        }))
     }
 
     fn receive_function_modifier_invocations(
@@ -761,7 +760,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let visibility = output::FunctionVisibility::Internal;
         // mutability is irrelevant for modifiers
         let mutability = output::FunctionMutability::NonPayable;
-        // TODO(validation) SDR[1730]: modifiers can have only a single override specifier
         let virtual_keyword =
             self.extract_first_virtual(source.attributes.elements.iter().filter_map(|attribute| {
                 if let input::ModifierAttribute::VirtualKeyword(virtual_keyword) = attribute {
@@ -795,13 +793,13 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         attributes: &input::ModifierAttributes,
     ) -> Option<output::OverridePaths> {
-        attributes.elements.iter().find_map(|attribute| {
+        self.extract_single_override(attributes.elements.iter().filter_map(|attribute| {
             if let input::ModifierAttribute::OverrideSpecifier(specifier) = attribute {
-                Some(self.build_override_specifier_as_paths(specifier))
+                Some(specifier)
             } else {
                 None
             }
-        })
+        }))
     }
 
     //
@@ -833,14 +831,13 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         attributes: &input::StateVariableAttributes,
     ) -> Option<output::OverridePaths> {
-        // TODO(validation) SDR[12]: only one override specifier is allowed
-        attributes.elements.iter().find_map(|attribute| {
+        self.extract_single_override(attributes.elements.iter().filter_map(|attribute| {
             if let input::StateVariableAttribute::OverrideSpecifier(specifier) = attribute {
-                Some(self.build_override_specifier_as_paths(specifier))
+                Some(specifier)
             } else {
                 None
             }
-        })
+        }))
     }
 
     fn state_variable_as_constant_definition(
@@ -1024,6 +1021,26 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                 self.file_id.to_owned(),
                 keyword.calculate_text_range().unwrap(),
                 MultipleVirtualSpecifiers,
+            );
+        }
+
+        Some(first)
+    }
+
+    /// Extracts and transforms the first `override` specifier, emitting an
+    /// error for any subsequent ones.
+    fn extract_single_override<'a>(
+        &mut self,
+        specifiers: impl IntoIterator<Item = &'a input::OverrideSpecifier>,
+    ) -> Option<output::OverridePaths> {
+        let mut specifiers = specifiers.into_iter();
+        let first = self.build_override_specifier_as_paths(specifiers.next()?);
+
+        for specifier in specifiers {
+            self.diagnostics.push(
+                self.file_id.to_owned(),
+                specifier.calculate_text_range().unwrap(),
+                MultipleOverrideSpecifiers,
             );
         }
 
