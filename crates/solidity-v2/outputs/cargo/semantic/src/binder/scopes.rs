@@ -25,6 +25,12 @@ pub(crate) enum Scope {
 pub(crate) struct BlockScope {
     pub(crate) node_id: NodeId,
     pub(crate) parent_scope_id: ScopeId,
+    /// Whether this block opens a *new* lexical scope (a real `{ }` block or a
+    /// for-statement initialisation clause), as opposed to a "chained"
+    /// continuation of the parent's lexical scope. Chained scopes are opened
+    /// after each local variable declaration so that the variable is only
+    /// visible to subsequent statements; they share the parent's lexical scope.
+    pub(crate) is_lexical_scope: bool,
     pub(crate) definitions: Map<String, NodeId>,
 }
 
@@ -153,8 +159,12 @@ impl Scope {
         }
     }
 
-    pub(crate) fn new_block(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
-        Self::Block(BlockScope::new(node_id, parent_scope_id))
+    pub(crate) fn new_block(
+        node_id: NodeId,
+        parent_scope_id: ScopeId,
+        is_lexical_scope: bool,
+    ) -> Self {
+        Self::Block(BlockScope::new(node_id, parent_scope_id, is_lexical_scope))
     }
 
     pub(crate) fn new_contract(node_id: NodeId, file_scope_id: ScopeId) -> Self {
@@ -203,10 +213,11 @@ impl Scope {
 }
 
 impl BlockScope {
-    fn new(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
+    fn new(node_id: NodeId, parent_scope_id: ScopeId, is_lexical_scope: bool) -> Self {
         Self {
             node_id,
             parent_scope_id,
+            is_lexical_scope,
             definitions: Map::default(),
         }
     }
