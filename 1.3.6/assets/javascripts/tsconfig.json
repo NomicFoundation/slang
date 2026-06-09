@@ -1,0 +1,13 @@
+{
+  "extends": "../../../../tsconfig.json",
+
+  "include": ["./**/*"],
+
+  "compilerOptions": {
+    /* Projects */
+    "composite": true,
+    "incremental": true,
+    "rootDir": "./",
+    "tsBuildInfoFile": "target/tsc/.tsbuildinfo"
+  }
+}
