@@ -7,7 +7,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected end of file. One of AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, CloseBrace, ConstructorKeyword, EnumKeyword, ErrorKeyword, EventKeyword, FallbackKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, ModifierKeyword, ReceiveKeyword, RevertKeyword, StringKeyword, StructKeyword, TransientKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UsingKeyword was expected
+    Error: Unexpected end of file. One of AddressKeyword, BoolKeyword, BytesKeyword, CloseBrace, ConstructorKeyword, EnumKeyword, EventKeyword, FallbackKeyword, FixedKeyword, FunctionKeyword, Identifier, IntKeyword, MappingKeyword, ModifierKeyword, ReceiveKeyword, StringKeyword, StructKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UsingKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/unterminated_body/input.sol:2:18]
        │
      2 │ contract Sample {

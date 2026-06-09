@@ -12,7 +12,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected ConstructorKeyword. One of AddressKeyword, AssemblyKeyword, AtKeyword, Bang, BoolKeyword, BreakKeyword, BytesKeyword, CloseBrace, ContinueKeyword, DecimalLiteral, DeleteKeyword, DoKeyword, EmitKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, ForKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IfKeyword, IntKeyword, LayoutKeyword, MappingKeyword, Minus, MinusMinus, NewKeyword, OpenBrace, OpenBracket, OpenParen, PayableKeyword, PlusPlus, ReturnKeyword, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TryKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UncheckedKeyword, UnicodeStringLiteral, WhileKeyword was expected
+    Error: Unexpected ConstructorKeyword. One of AddressKeyword, AssemblyKeyword, Bang, BoolKeyword, BreakKeyword, BytesKeyword, CloseBrace, ContinueKeyword, DecimalLiteral, DeleteKeyword, DoKeyword, EmitKeyword, FalseKeyword, FixedKeyword, ForKeyword, FunctionKeyword, HexLiteral, HexStringLiteral, Identifier, IfKeyword, IntKeyword, MappingKeyword, Minus, MinusMinus, NewKeyword, OpenBrace, OpenBracket, OpenParen, PayableKeyword, PlusPlus, ReturnKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TrueKeyword, TryKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UncheckedKeyword, UnicodeStringLiteral, WhileKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/Expression/keyword_constructor/input.sol:4:1]
        │
      4 │ constructor

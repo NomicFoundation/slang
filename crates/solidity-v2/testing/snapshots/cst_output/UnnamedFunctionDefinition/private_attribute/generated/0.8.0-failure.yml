@@ -10,7 +10,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected OpenBrace. One of AtKeyword, ConstantKeyword, ErrorKeyword, ExternalKeyword, FromKeyword, GlobalKeyword, Identifier, ImmutableKeyword, InternalKeyword, LayoutKeyword, OpenBracket, OverrideKeyword, PayableKeyword, PrivateKeyword, PublicKeyword, PureKeyword, ReturnsKeyword, RevertKeyword, TransientKeyword, ViewKeyword was expected
+    Error: Unexpected OpenBrace. One of ConstantKeyword, ExternalKeyword, Identifier, ImmutableKeyword, InternalKeyword, OpenBracket, OverrideKeyword, PayableKeyword, PrivateKeyword, PublicKeyword, PureKeyword, ReturnsKeyword, ViewKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/UnnamedFunctionDefinition/private_attribute/input.sol:3:21]
        │
      3 │ function () private {}

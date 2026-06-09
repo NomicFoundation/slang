@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected OpenParen. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
+    Error: Unexpected OpenParen. One of Identifier was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/UserDefinedValueTypeDefinition/missing_identifier/input.sol:1:5]
        │
      1 │ type(MyInt) is uint256;

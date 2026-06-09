@@ -11,7 +11,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected ByteKeyword. One of AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, CloseParen, ErrorKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, RevertKeyword, StringKeyword, TransientKeyword, UfixedKeyword, UintKeyword was expected
+    Error: Unexpected ByteKeyword. One of AddressKeyword, BoolKeyword, BytesKeyword, CloseParen, FixedKeyword, FunctionKeyword, Identifier, IntKeyword, MappingKeyword, StringKeyword, UfixedKeyword, UintKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionType/basic/input.sol:3:11]
        │
      3 │ function (byte) internal pure returns (uint)

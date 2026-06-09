@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected Period. One of AddressKeyword, AtKeyword, Bang, BoolKeyword, BytesKeyword, DecimalLiteral, DeleteKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, FromKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IntKeyword, LayoutKeyword, Minus, MinusMinus, NewKeyword, OpenBracket, OpenParen, PayableKeyword, PlusPlus, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UnicodeStringLiteral was expected
+    Error: Unexpected Period. One of AddressKeyword, Bang, BoolKeyword, BytesKeyword, DecimalLiteral, DeleteKeyword, FalseKeyword, FixedKeyword, HexLiteral, HexStringLiteral, Identifier, IntKeyword, Minus, MinusMinus, NewKeyword, OpenBracket, OpenParen, PayableKeyword, PlusPlus, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TrueKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UnicodeStringLiteral was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/DecimalNumberExpression/leading_period_ident_exponent_like/input.sol:1:19]
        │
      1 │ uint constant x = .e1;

@@ -107,17 +107,34 @@ fn convert_parse_error(
     diagnostics: &mut DiagnosticCollection,
     value: lalrpop_util::ParseError<usize, LexemeKind, ()>,
 ) {
-    /// This function transforms the `String` representation returned by LALRPOP into an instance of `LexemeKind`
+    /// This function transforms the `String` representation returned by LALRPOP into an instance of `TerminalKind`
     ///
     /// TODO(v2): We may be able to improve on this if there's room for returning a discriminant instead of a string representation.
     /// [Ongoing discussion](https://github.com/lalrpop/lalrpop/issues/1089#issuecomment-4011323139)
     fn convert_expectations(expected: &[String]) -> BTreeSet<TerminalKind> {
-        expected
+        let mut expected: BTreeSet<TerminalKind> = expected
             .iter()
             .map(|str| str.strip_prefix("L_").unwrap())
             .map(|str| str.parse::<LexemeKind>().unwrap())
             .map(|lexeme| TerminalKind::from(&lexeme))
-            .collect()
+            .collect();
+
+        // This is a heuristic to improve the error message when an identifier is expected.
+        //
+        // Due to certain keywords being unreserved in Solidity, and therefore context dependent,
+        // we assume that if an identifier is expected, then these keywords are only expected as
+        // identifiers, and not as keywords.
+        if expected.contains(&TerminalKind::Identifier) {
+            expected.remove(&TerminalKind::AtKeyword);
+            expected.remove(&TerminalKind::ErrorKeyword);
+            expected.remove(&TerminalKind::FromKeyword);
+            expected.remove(&TerminalKind::GlobalKeyword);
+            expected.remove(&TerminalKind::LayoutKeyword);
+            expected.remove(&TerminalKind::RevertKeyword);
+            expected.remove(&TerminalKind::TransientKeyword);
+        }
+
+        expected
     }
 
     match value {

@@ -16,7 +16,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected UNRECOGNIZED. One of AddressKeyword, AtKeyword, Bang, BoolKeyword, BytesKeyword, CloseParen, DecimalLiteral, DeleteKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, FromKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IntKeyword, LayoutKeyword, Minus, MinusMinus, NewKeyword, OpenBrace, OpenBracket, OpenParen, PayableKeyword, PlusPlus, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UnicodeStringLiteral was expected
+    Error: Unexpected UNRECOGNIZED. One of AddressKeyword, Bang, BoolKeyword, BytesKeyword, CloseParen, DecimalLiteral, DeleteKeyword, FalseKeyword, FixedKeyword, HexLiteral, HexStringLiteral, Identifier, IntKeyword, Minus, MinusMinus, NewKeyword, OpenBrace, OpenBracket, OpenParen, PayableKeyword, PlusPlus, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TrueKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UnicodeStringLiteral was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/Block/postfix_recovery_regression/input.sol:7:9]
        │
      7 │     a.b('

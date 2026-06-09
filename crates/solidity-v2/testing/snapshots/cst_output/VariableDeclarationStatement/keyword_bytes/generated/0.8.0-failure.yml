@@ -12,7 +12,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected BytesKeyword. One of Ampersand, AmpersandAmpersand, AmpersandEqual, Asterisk, AsteriskAsterisk, AsteriskEqual, AtKeyword, BangEqual, Bar, BarBar, BarEqual, CallDataKeyword, Caret, CaretEqual, Equal, EqualEqual, ErrorKeyword, FromKeyword, GlobalKeyword, GreaterThan, GreaterThanEqual, GreaterThanGreaterThan, GreaterThanGreaterThanEqual, GreaterThanGreaterThanGreaterThan, GreaterThanGreaterThanGreaterThanEqual, Identifier, LayoutKeyword, LessThan, LessThanEqual, LessThanLessThan, LessThanLessThanEqual, MemoryKeyword, Minus, MinusEqual, MinusMinus, OpenBrace, OpenBracket, OpenParen, Percent, PercentEqual, Period, Plus, PlusEqual, PlusPlus, QuestionMark, RevertKeyword, Semicolon, Slash, SlashEqual, StorageKeyword, TransientKeyword was expected
+    Error: Unexpected BytesKeyword. One of Ampersand, AmpersandAmpersand, AmpersandEqual, Asterisk, AsteriskAsterisk, AsteriskEqual, BangEqual, Bar, BarBar, BarEqual, CallDataKeyword, Caret, CaretEqual, Equal, EqualEqual, GreaterThan, GreaterThanEqual, GreaterThanGreaterThan, GreaterThanGreaterThanEqual, GreaterThanGreaterThanGreaterThan, GreaterThanGreaterThanGreaterThanEqual, Identifier, LessThan, LessThanEqual, LessThanLessThan, LessThanLessThanEqual, MemoryKeyword, Minus, MinusEqual, MinusMinus, OpenBrace, OpenBracket, OpenParen, Percent, PercentEqual, Period, Plus, PlusEqual, PlusPlus, QuestionMark, Semicolon, Slash, SlashEqual, StorageKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_bytes/input.sol:4:6]
        │
      4 │ uint bytes;

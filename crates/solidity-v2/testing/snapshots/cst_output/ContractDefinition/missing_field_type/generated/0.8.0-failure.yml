@@ -10,7 +10,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected Semicolon. One of AtKeyword, ConstantKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, ImmutableKeyword, InternalKeyword, LayoutKeyword, OpenBracket, OverrideKeyword, Period, PrivateKeyword, PublicKeyword, RevertKeyword, TransientKeyword was expected
+    Error: Unexpected Semicolon. One of ConstantKeyword, Identifier, ImmutableKeyword, InternalKeyword, OpenBracket, OverrideKeyword, Period, PrivateKeyword, PublicKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/missing_field_type/input.sol:3:8]
        │
      3 │   field;

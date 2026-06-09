@@ -11,7 +11,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected ReturnsKeyword. One of AtKeyword, ConstantKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, ImmutableKeyword, InternalKeyword, LayoutKeyword, OverrideKeyword, PrivateKeyword, PublicKeyword, RevertKeyword, TransientKeyword was expected
+    Error: Unexpected ReturnsKeyword. One of ConstantKeyword, Identifier, ImmutableKeyword, InternalKeyword, OverrideKeyword, PrivateKeyword, PublicKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionType/constant_state_mutability/input.sol:3:31]
        │
      3 │ function () constant internal returns (uint)
