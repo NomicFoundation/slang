@@ -1,5 +1,11 @@
 # changelog
 
+## 1.3.6
+
+### Patch Changes
+
+- [#1822](https://github.com/NomicFoundation/slang/pull/1822) [`2056031`](https://github.com/NomicFoundation/slang/commit/20560319d0c312afb3b245eaba276ae0eaa4b6be) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - Bug fix: make `function.address` built-in available from `v0.6.0`.
+
 ## 1.3.5
 
 ### Patch Changes
