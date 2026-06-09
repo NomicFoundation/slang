@@ -1,3 +1,4 @@
+use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     FunctionNameMatchesContainer, InvalidUsingDirectiveContainer, MultipleConstructors,
 };
@@ -123,8 +124,28 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     }
 
     fn insert_definition_in_current_scope(&mut self, definition: Definition) {
-        self.binder
-            .insert_definition_in_scope(definition, self.current_scope_id());
+        self.insert_definition_in_scope(definition, self.current_scope_id());
+    }
+
+    // Registers `definition` under the given scope, first checking whether its
+    // identifier collides with a pre-existing definition in that scope (or an
+    // enclosing lexical scope). If so, an `IdentifierRedeclaration` diagnostic
+    // is emitted; the definition is registered regardless, so later passes can
+    // still resolve references to it.
+    fn insert_definition_in_scope(&mut self, definition: Definition, scope_id: ScopeId) {
+        let symbol = definition.identifier().unparse().to_string();
+        if self
+            .binder
+            .find_conflicting_definition(scope_id, &symbol, &definition)
+            .is_some()
+        {
+            self.diagnostics.push(
+                self.current_file.id().to_owned(),
+                definition.identifier().range.clone(),
+                IdentifierRedeclaration,
+            );
+        }
+        self.binder.insert_definition_in_scope(definition, scope_id);
     }
 
     fn resolve_import_path(&self, import_node_id: NodeId) -> Option<String> {
@@ -161,7 +182,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         for parameter in parameters {
             if parameter.name.is_some() {
                 let definition = Definition::new_parameter(parameter);
-                self.binder.insert_definition_in_scope(definition, scope_id);
+                self.insert_definition_in_scope(definition, scope_id);
             }
         }
     }
@@ -383,8 +404,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         let enum_scope_id = self.binder.insert_scope(enum_scope);
         for member in &node.members {
             let definition = Definition::new_enum_member(member);
-            self.binder
-                .insert_definition_in_scope(definition, enum_scope_id);
+            self.insert_definition_in_scope(definition, enum_scope_id);
         }
 
         false
@@ -398,8 +418,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         let struct_scope_id = self.binder.insert_scope(struct_scope);
         for member in &node.members {
             let definition = Definition::new_struct_member(member);
-            self.binder
-                .insert_definition_in_scope(definition, struct_scope_id);
+            self.insert_definition_in_scope(definition, struct_scope_id);
         }
 
         true
@@ -563,12 +582,12 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
 
         for parameter in &node.parameters {
             let definition = Definition::new_yul_parameter(parameter);
-            self.binder.insert_definition_in_scope(definition, scope_id);
+            self.insert_definition_in_scope(definition, scope_id);
         }
         if let Some(returns) = &node.returns {
             for parameter in returns {
                 let definition = Definition::new_yul_variable(parameter);
-                self.binder.insert_definition_in_scope(definition, scope_id);
+                self.insert_definition_in_scope(definition, scope_id);
             }
         }
 
