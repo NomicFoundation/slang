@@ -23,11 +23,15 @@ permissions: {}
 
 jobs:
   run_tests:
+    permissions:
+      contents: "read"
+
     uses: "./.github/workflows/sourcify_single_chain.yml"
     with:
       chain_id: "${{ matrix.chain_id }}"
       check_infer_version: "${{ inputs.check_infer_version }}"
       check_binder: "${{ inputs.check_binder }}"
+
     strategy:
       fail-fast: false
       matrix:
