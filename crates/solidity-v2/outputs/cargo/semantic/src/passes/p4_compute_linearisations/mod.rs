@@ -11,7 +11,13 @@ use crate::types::TypeRegistry;
 
 /// In this pass we walk every contract's linearised bases and pre-compute the
 /// collections of functions, state variables, errors and events visible in the
-/// contract's hierarchy, storing them in a `ContractDataCache`.
+/// contract's hierarchy, storing them in a `ContractData`.
+///
+/// This pass depends on all definitions being fully typed, which is
+/// accomplished in the previous pass. The next pass is not strictly dependant
+/// on the result of this pass. Eventually we could use the linearisation
+/// information produced by this pass to aid in expressions/statements
+/// resolution and typing, but it's fully independent for now.
 pub fn run(binder: &Binder, types: &TypeRegistry) -> ContractData {
     let mut contracts = Vec::new();
     let mut data = HashMap::new();
