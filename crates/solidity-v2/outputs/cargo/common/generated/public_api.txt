@@ -172,10 +172,11 @@ pub fn slang_solidity_v2_common::built_ins::BuiltIn::hash<__H: core::hash::Hashe
 impl core::marker::Copy for slang_solidity_v2_common::built_ins::BuiltIn
 impl core::marker::StructuralPartialEq for slang_solidity_v2_common::built_ins::BuiltIn
 pub mod slang_solidity_v2_common::collections
-pub type slang_solidity_v2_common::collections::Map<K, V> = std::collections::hash::map::HashMap<K, V>
-pub type slang_solidity_v2_common::collections::OrderedMap<K, V> = indexmap::map::IndexMap<K, V>
-pub type slang_solidity_v2_common::collections::OrderedSet<T> = indexmap::set::IndexSet<T>
-pub type slang_solidity_v2_common::collections::Set<T> = std::collections::hash::set::HashSet<T>
+pub type slang_solidity_v2_common::collections::DeterministicState = core::hash::BuildHasherDefault<std::hash::random::DefaultHasher>
+pub type slang_solidity_v2_common::collections::Map<K, V> = std::collections::hash::map::HashMap<K, V, slang_solidity_v2_common::collections::DeterministicState>
+pub type slang_solidity_v2_common::collections::OrderedMap<K, V> = indexmap::map::IndexMap<K, V, slang_solidity_v2_common::collections::DeterministicState>
+pub type slang_solidity_v2_common::collections::OrderedSet<T> = indexmap::set::IndexSet<T, slang_solidity_v2_common::collections::DeterministicState>
+pub type slang_solidity_v2_common::collections::Set<T> = std::collections::hash::set::HashSet<T, slang_solidity_v2_common::collections::DeterministicState>
 pub type slang_solidity_v2_common::collections::SortedMap<K, V> = alloc::collections::btree::map::BTreeMap<K, V>
 pub type slang_solidity_v2_common::collections::SortedSet<T> = alloc::collections::btree::set::BTreeSet<T>
 pub mod slang_solidity_v2_common::diagnostics
