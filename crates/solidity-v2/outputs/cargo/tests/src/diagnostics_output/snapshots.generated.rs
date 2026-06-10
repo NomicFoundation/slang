@@ -126,6 +126,14 @@ mod resolution {
         }
 
         #[test]
+        fn local_variable_disjoint_scope() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "local_variable_disjoint_scope",
+            )
+        }
+
+        #[test]
         fn path_import_alias_vs_contract() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
@@ -139,8 +147,21 @@ mod resolution {
         }
 
         #[test]
+        fn struct_member() -> Result<()> {
+            run("resolution/identifier_redeclaration", "struct_member")
+        }
+
+        #[test]
         fn top_level() -> Result<()> {
             run("resolution/identifier_redeclaration", "top_level")
+        }
+
+        #[test]
+        fn transient_state_variable() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "transient_state_variable",
+            )
         }
 
         #[test]
