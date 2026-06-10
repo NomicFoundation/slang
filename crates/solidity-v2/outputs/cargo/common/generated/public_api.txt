@@ -671,6 +671,7 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticCollection
 pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::is_empty(&self) -> bool
 pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = &slang_solidity_v2_common::diagnostics::Diagnostic>
 pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::push(&mut self, file_id: alloc::string::String, text_range: core::ops::range::Range<usize>, kind: impl core::convert::Into<slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind>)
+pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::sort(&mut self)
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::DiagnosticCollection
 pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::clone(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticCollection
 impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::DiagnosticCollection

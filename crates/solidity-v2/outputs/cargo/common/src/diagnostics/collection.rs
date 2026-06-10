@@ -31,6 +31,16 @@ impl DiagnosticCollection {
     pub fn iter(&self) -> impl Iterator<Item = &Diagnostic> {
         self.contents.iter()
     }
+
+    /// Sorts the diagnostics by file ID and start of their text range,
+    /// preserving the insertion order of diagnostics at the same position.
+    pub fn sort(&mut self) {
+        self.contents.sort_by(|a, b| {
+            a.file_id()
+                .cmp(b.file_id())
+                .then(a.text_range().start.cmp(&b.text_range().start))
+        });
+    }
 }
 
 impl<'a> IntoIterator for &'a DiagnosticCollection {

@@ -171,6 +171,8 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
 
         let semantic = SemanticContext::build_from(language_version, &files, &mut diagnostics);
 
+        diagnostics.sort();
+
         CompilationUnit::create(language_version, files, semantic, diagnostics)
     }
 }
