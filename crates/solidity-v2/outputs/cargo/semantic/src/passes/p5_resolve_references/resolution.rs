@@ -431,11 +431,37 @@ impl Pass<'_> {
     ) -> Resolution {
         let resolution =
             self.filter_overriden_definitions(self.binder.resolve_in_scope(scope_id, symbol));
-        if resolution == Resolution::Unresolved {
-            self.built_ins_resolver().lookup_yul_global(symbol).into()
-        } else {
-            resolution
+        // A Solidity function is not callable by name in inline assembly, so it
+        // never shadows a Yul built-in: a built-in name (`add`, `shl`, …) that
+        // lexically resolved to a Solidity function is the opcode. Anything else
+        // a built-in name can resolve to in Yul — a Yul-local, or a variable /
+        // state variable / constant read (`stateVar.slot`) — keeps its lexical
+        // resolution, so only a function (or function overload set) is overridden.
+        let resolves_to_solidity_function = match &resolution {
+            Resolution::Definition(node_id) => self.is_solidity_function(*node_id),
+            Resolution::Ambiguous(node_ids) => {
+                node_ids.iter().all(|node_id| self.is_solidity_function(*node_id))
+            }
+            _ => false,
+        };
+        if resolution == Resolution::Unresolved || resolves_to_solidity_function {
+            let built_in: Resolution = self.built_ins_resolver().lookup_yul_global(symbol).into();
+            if built_in != Resolution::Unresolved {
+                return built_in;
+            }
         }
+        resolution
+    }
+
+    /// Whether `node_id` is a Solidity `function` definition — the kind that a
+    /// Yul built-in name shadows in a Yul context (it cannot be called by name
+    /// in inline assembly), as opposed to a Yul-local function or a value
+    /// definition that resolves normally.
+    fn is_solidity_function(&self, node_id: NodeId) -> bool {
+        matches!(
+            self.binder.find_definition_by_id(node_id),
+            Some(Definition::Function(_))
+        )
     }
 
     pub(super) fn resolve_yul_suffix(
