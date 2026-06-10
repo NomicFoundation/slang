@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 2333] Error: Identifier already declared.
+   ╭─[input.sol:7:5]
+   │
+ 7 │ ╭─▶     function dup() public pure returns (uint) {
+   ┆ ┆   
+ 9 │ ├─▶     }
+   │ │           
+   │ ╰─────────── Error occurred here.
+───╯

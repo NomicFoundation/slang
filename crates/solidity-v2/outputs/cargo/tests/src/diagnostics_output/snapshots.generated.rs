@@ -34,8 +34,61 @@ mod resolution {
         use super::*;
 
         #[test]
+        fn constant_redefinition() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "constant_redefinition",
+            )
+        }
+
+        #[test]
+        fn constant_vs_function() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "constant_vs_function",
+            )
+        }
+
+        #[test]
+        fn duplicate_imported_symbol() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "duplicate_imported_symbol",
+            )
+        }
+
+        #[test]
         fn enum_member() -> Result<()> {
             run("resolution/identifier_redeclaration", "enum_member")
+        }
+
+        #[test]
+        fn error_no_overloading() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "error_no_overloading",
+            )
+        }
+
+        #[test]
+        fn error_vs_function() -> Result<()> {
+            run("resolution/identifier_redeclaration", "error_vs_function")
+        }
+
+        #[test]
+        fn free_function_vs_contract() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "free_function_vs_contract",
+            )
+        }
+
+        #[test]
+        fn function_event_clash() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "function_event_clash",
+            )
         }
 
         #[test]
@@ -52,6 +105,14 @@ mod resolution {
         }
 
         #[test]
+        fn path_import_alias_vs_contract() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "path_import_alias_vs_contract",
+            )
+        }
+
+        #[test]
         fn state_variable() -> Result<()> {
             run("resolution/identifier_redeclaration", "state_variable")
         }
@@ -59,6 +120,14 @@ mod resolution {
         #[test]
         fn top_level() -> Result<()> {
             run("resolution/identifier_redeclaration", "top_level")
+        }
+
+        #[test]
+        fn user_defined_value_type() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "user_defined_value_type",
+            )
         }
 
         #[test]
