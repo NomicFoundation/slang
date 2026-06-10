@@ -9,6 +9,7 @@ pub use contract_base::ContractBase;
 
 mod expression;
 mod function_call_expression;
+mod function_definition;
 mod identifier;
 mod identifier_path;
 mod source_unit;

@@ -193,6 +193,17 @@ impl Binder {
         self.definitions.get(&node_id)
     }
 
+    /// The node id of the scope lexically enclosing `node_id` — for a function,
+    /// the contract / library / interface it is a member of, or the file's
+    /// source unit for a free function (callers turn that into `None` via
+    /// `Definition::try_create`). Walks the scope chain: a node's own scope is
+    /// keyed by its id and its parent scope belongs to the enclosing definition.
+    pub fn enclosing_definition_node_id(&self, node_id: NodeId) -> Option<NodeId> {
+        let scope_id = self.scope_id_for_node_id(node_id)?;
+        let parent_scope_id = self.get_scope_by_id(scope_id).parent_scope_id()?;
+        Some(self.get_scope_by_id(parent_scope_id).node_id())
+    }
+
     pub fn find_definition_by_identifier_node_id(&self, node_id: NodeId) -> Option<&Definition> {
         self.definitions_by_identifier
             .get(&node_id)

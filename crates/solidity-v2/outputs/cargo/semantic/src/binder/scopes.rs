@@ -126,6 +126,26 @@ impl Scope {
         }
     }
 
+    /// The enclosing scope, for scopes that nest lexically inside another.
+    /// Type-level scopes (contract/file/enum/struct), the using scope, and the
+    /// parameters scope resolve their surroundings by other means and expose no
+    /// single lexical parent here.
+    pub(crate) fn parent_scope_id(&self) -> Option<ScopeId> {
+        match self {
+            Self::Block(block_scope) => Some(block_scope.parent_scope_id),
+            Self::Function(function_scope) => Some(function_scope.parent_scope_id),
+            Self::Modifier(modifier_scope) => Some(modifier_scope.parent_scope_id),
+            Self::YulBlock(yul_block_scope) => Some(yul_block_scope.parent_scope_id),
+            Self::YulFunction(yul_function_scope) => Some(yul_function_scope.parent_scope_id),
+            Self::Contract(_)
+            | Self::Enum(_)
+            | Self::File(_)
+            | Self::Parameters(_)
+            | Self::Struct(_)
+            | Self::Using(_) => None,
+        }
+    }
+
     pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
         match self {
             Self::Block(block_scope) => block_scope.insert_definition(symbol, node_id),
