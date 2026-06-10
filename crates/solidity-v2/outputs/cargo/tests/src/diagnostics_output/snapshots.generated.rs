@@ -50,6 +50,27 @@ mod resolution {
         }
 
         #[test]
+        fn cross_file_constant() -> Result<()> {
+            run("resolution/identifier_redeclaration", "cross_file_constant")
+        }
+
+        #[test]
+        fn default_import_struct_vs_contract() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "default_import_struct_vs_contract",
+            )
+        }
+
+        #[test]
+        fn default_import_vs_contract() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "default_import_vs_contract",
+            )
+        }
+
+        #[test]
         fn duplicate_imported_symbol() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
@@ -120,6 +141,14 @@ mod resolution {
         #[test]
         fn top_level() -> Result<()> {
             run("resolution/identifier_redeclaration", "top_level")
+        }
+
+        #[test]
+        fn transitive_default_import() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "transitive_default_import",
+            )
         }
 
         #[test]

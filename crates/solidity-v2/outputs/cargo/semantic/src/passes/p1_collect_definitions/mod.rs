@@ -24,6 +24,20 @@ pub fn run(
     for file in files {
         Pass::visit_file(file, binder, diagnostics);
     }
+
+    // Once every file scope is populated, detect clashes between a file's own
+    // declarations and the symbols brought into its scope through default
+    // imports (which, unlike aliased/deconstructed imports, don't register a
+    // local definition and so can't be caught while visiting a single file).
+    for (file_id, definition_id) in binder.find_default_import_conflicts() {
+        let range = binder
+            .find_definition_by_id(definition_id)
+            .expect("conflicting definition must exist")
+            .identifier()
+            .range
+            .clone();
+        diagnostics.push(file_id, range, IdentifierRedeclaration);
+    }
 }
 
 struct ScopeFrame {

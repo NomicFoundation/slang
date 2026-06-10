@@ -146,6 +146,10 @@ impl Binder {
         self.scopes_by_file_id.get(file_id).copied()
     }
 
+    pub(crate) fn file_ids(&self) -> impl Iterator<Item = &String> {
+        self.scopes_by_file_id.keys()
+    }
+
     pub(crate) fn insert_scope(&mut self, scope: Scope) -> ScopeId {
         let scope_id = ScopeId(self.scopes.len());
 
@@ -637,6 +641,96 @@ impl Binder {
         existing_ids
             .iter()
             .find_map(|existing_id| self.conflicting_definition(*existing_id, new_definition))
+    }
+
+    // Detects clashes between each file's own declarations and the symbols
+    // brought into its scope through (unqualified) default imports.
+    //
+    // Unlike aliased or deconstructed imports — which register a local
+    // definition and are therefore caught while collecting definitions — a
+    // default import (`import "file";`) makes *all* of the imported file's
+    // symbols available without a local definition. A clash can only be
+    // detected once every file scope is populated, so this runs as a second
+    // step after all files have been visited.
+    //
+    // Returns the list of `(file_id, definition_id)` pairs identifying each
+    // local definition that conflicts with a default-imported one, ordered
+    // deterministically (by file, then symbol name).
+    pub(crate) fn find_default_import_conflicts(&self) -> Vec<(String, NodeId)> {
+        let mut conflicts: Vec<(String, NodeId)> = Vec::new();
+
+        let mut file_ids: Vec<&String> = self.file_ids().collect();
+        file_ids.sort();
+
+        for file_id in file_ids {
+            let file_scope = self.get_file_scope(file_id);
+
+            let imported_scopes = self.transitive_default_imports(file_scope);
+            if imported_scopes.is_empty() {
+                continue;
+            }
+
+            let mut symbols: Vec<&String> = file_scope.definitions.keys().collect();
+            symbols.sort();
+
+            for symbol in symbols {
+                let imported: Vec<NodeId> = imported_scopes
+                    .iter()
+                    .flat_map(|scope| scope.lookup_symbol(symbol))
+                    .collect();
+                if imported.is_empty() {
+                    continue;
+                }
+
+                for &local_id in &file_scope.definitions[symbol] {
+                    let Some(local_definition) = self.find_definition_by_id(local_id) else {
+                        continue;
+                    };
+                    let conflicts_with_import = imported.iter().any(|imported_id| {
+                        self.find_definition_by_id(*imported_id)
+                            .is_some_and(|imported| !local_definition.overloads_with(imported))
+                    });
+                    if conflicts_with_import {
+                        conflicts.push((file_id.clone(), local_id));
+                    }
+                }
+            }
+        }
+
+        conflicts
+    }
+
+    // Collects the file scopes reachable through the (transitive) default
+    // imports of `file_scope`, excluding `file_scope` itself. Mutually-recursive
+    // imports are handled by the `visited` set, which is seeded with the
+    // starting file so its own scope is never collected (even when reached
+    // again through a cycle).
+    fn transitive_default_imports<'a>(&'a self, file_scope: &'a FileScope) -> Vec<&'a FileScope> {
+        let mut found = Vec::new();
+        let mut visited: HashSet<&str> = HashSet::new();
+        visited.insert(&file_scope.file_id);
+
+        let mut queue: VecDeque<&str> = file_scope
+            .imported_files
+            .iter()
+            .map(String::as_str)
+            .collect();
+
+        while let Some(imported_file_id) = queue.pop_front() {
+            if !visited.insert(imported_file_id) {
+                continue;
+            }
+            let Some(scope_id) = self.scope_id_for_file_id(imported_file_id) else {
+                continue;
+            };
+            let Scope::File(imported_scope) = self.get_scope_by_id(scope_id) else {
+                continue;
+            };
+            found.push(imported_scope);
+            queue.extend(imported_scope.imported_files.iter().map(String::as_str));
+        }
+
+        found
     }
 
     // If the resolution points to definitions that are symbols aliases (eg.
