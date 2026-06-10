@@ -138,6 +138,20 @@ When source changes cause snapshot mismatches, the test output shows the diff.
 Simply re-run the tests, and they will update the snapshot files on disk automatically.
 Then commit the updated snapshots alongside your code change.
 
+## PR Reviews
+
+When addressing review feedback on a pull request:
+
+- **Work on top of the latest remote.** Before addressing feedback, fetch and check the remote branch in case the user pushed to it; always build on the most recent changes.
+- **Never resolve comment threads.** Leave that to the user.
+- **Only act on unresolved threads.** Ignore threads that are already resolved.
+- **Read all unresolved threads first**, before acting on any of them, in case they reference each other or conflict with one another.
+- **Never use PR-level comments.** Only interact through comment threads.
+- **Reply within the thread.** Respond to each thread as a reply on that same thread, not as a new top-level comment:
+    - **Clear, direct requests**: execute them, then update the thread by adding a reply describing what was done.
+    - **Questions**: reply to the thread directly with the answer.
+    - **Ambiguous requests**: reply to the thread directly to ask for clarification.
+
 ## Important Gotchas
 
 - **Asking for help/more info**: If you need more context or have questions, use the `AskUserQuestion` tool to ask the user for clarification. Don't guess or make assumptions about project details.
