@@ -1,6 +1,6 @@
-use std::collections::HashSet;
 use std::sync::Arc;
 
+use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -278,7 +278,7 @@ impl Pass<'_> {
         definition_ids: &mut Vec<NodeId>,
     ) {
         let active_directives = self.active_using_directives_for_type(receiver_type_id);
-        let mut seen_ids = HashSet::new();
+        let mut seen_ids = Set::default();
         for directive in active_directives {
             let scope_id = directive.get_scope_id();
             let ids = self

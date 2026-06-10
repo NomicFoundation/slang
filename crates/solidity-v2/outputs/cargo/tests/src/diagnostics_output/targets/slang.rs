@@ -1,8 +1,7 @@
-use std::collections::BTreeMap;
-
 use anyhow::Result;
 use semver::Version;
 use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig};
+use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use solidity_v2_testing_utils::reporting::diagnostic;
 
@@ -18,7 +17,7 @@ impl TestTarget for SlangTarget {
 
     fn collect_diagnostics(
         &self,
-        files: &BTreeMap<String, String>,
+        files: &SortedMap<String, String>,
         version: &Version,
     ) -> Result<Vec<String>> {
         let language_version = LanguageVersion::try_from(version.clone())
@@ -48,7 +47,7 @@ impl TestTarget for SlangTarget {
 }
 
 struct TestConfig {
-    files: BTreeMap<String, String>,
+    files: SortedMap<String, String>,
 }
 
 impl CompilationBuilderConfig for TestConfig {

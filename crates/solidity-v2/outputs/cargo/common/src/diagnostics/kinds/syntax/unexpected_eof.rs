@@ -1,8 +1,7 @@
-use std::collections::BTreeSet;
-
 use itertools::Itertools;
 use serde::Serialize;
 
+use crate::collections::SortedSet;
 use crate::diagnostics::extensions::DiagnosticExtensions;
 use crate::diagnostics::severity::DiagnosticSeverity;
 use crate::terminals::TerminalKind;
@@ -12,7 +11,7 @@ use crate::terminals::TerminalKind;
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct UnexpectedEof {
     /// The set of terminals that could have legally appeared at this position.
-    pub expected: BTreeSet<TerminalKind>,
+    pub expected: SortedSet<TerminalKind>,
 }
 
 impl DiagnosticExtensions for UnexpectedEof {

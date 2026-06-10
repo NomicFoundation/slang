@@ -1,6 +1,6 @@
-use std::collections::HashMap;
 use std::sync::Arc;
 
+use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
@@ -11,7 +11,7 @@ pub(crate) struct InternalFile {
     // TODO(v2): abstract this into a `FileId` type
     id: String,
     ir_root: ir::SourceUnit,
-    resolved_imports: HashMap<NodeId, String>,
+    resolved_imports: Map<NodeId, String>,
 }
 
 impl InternalFile {
@@ -19,7 +19,7 @@ impl InternalFile {
         Self {
             id,
             ir_root,
-            resolved_imports: HashMap::new(),
+            resolved_imports: Map::default(),
         }
     }
 

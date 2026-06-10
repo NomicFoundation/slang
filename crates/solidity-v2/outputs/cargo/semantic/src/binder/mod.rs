@@ -1,5 +1,6 @@
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::VecDeque;
 
+use slang_solidity_v2_common::collections::{Map, Set};
 use slang_solidity_v2_common::nodes::NodeId;
 
 use super::built_ins::InternalBuiltIn;
@@ -89,25 +90,25 @@ pub struct Binder {
     /// Index of `Scope` objects. The `ScopeId` is an opaque index into this vector
     scopes: Vec<Scope>,
     /// Scopes (set of definitions contained and relationship to other scopes), indexed by `NodeId`
-    scopes_by_node_id: HashMap<NodeId, ScopeId>,
+    scopes_by_node_id: Map<NodeId, ScopeId>,
     /// Index of root `FileScope`s for all files in the `CompilationUnit`
-    scopes_by_file_id: HashMap<String, ScopeId>,
+    scopes_by_file_id: Map<String, ScopeId>,
     /// `UsingDirective` objects registered globally (contract level directives
     /// are stored in the corresponding `ContractScope`)
     global_using_directives: Vec<UsingDirective>,
     /// `Definition` objects (identifier + definiens node), indexed by definiens `NodeId`
-    definitions: HashMap<NodeId, Definition>,
+    definitions: Map<NodeId, Definition>,
     /// Definitions indexed by the `NodeId` of the identifier that names them
-    definitions_by_identifier: HashMap<NodeId, NodeId>,
+    definitions_by_identifier: Map<NodeId, NodeId>,
     /// `Reference` objects (identifier + `Resolution`), indexed by identifier `NodeId`
-    references: HashMap<NodeId, Reference>,
+    references: Map<NodeId, Reference>,
     /// `Typing` information for each relevant `NodeId` of the AST
-    node_typing: HashMap<NodeId, Typing>,
+    node_typing: Map<NodeId, Typing>,
     /// Linearisations, as a vector of definitions, indexed by the
     /// contract/interface definition's `NodeId`
-    linearisations: HashMap<NodeId, Vec<NodeId>>,
+    linearisations: Map<NodeId, Vec<NodeId>>,
     /// Reverse mapping from definition `NodeId` to the set of references that bind to it
-    definitions_to_references: HashMap<NodeId, Vec<NodeId>>,
+    definitions_to_references: Map<NodeId, Vec<NodeId>>,
 }
 
 /// This controls visibility filtering and how to use the linearisation when
@@ -222,11 +223,11 @@ impl Binder {
     }
 
     #[cfg(test)]
-    pub(crate) fn linearisations(&self) -> &HashMap<NodeId, Vec<NodeId>> {
+    pub(crate) fn linearisations(&self) -> &Map<NodeId, Vec<NodeId>> {
         &self.linearisations
     }
 
-    pub fn definitions(&self) -> &HashMap<NodeId, Definition> {
+    pub fn definitions(&self) -> &Map<NodeId, Definition> {
         &self.definitions
     }
 
@@ -244,13 +245,13 @@ impl Binder {
         self.references.get(&node_id)
     }
 
-    pub fn references(&self) -> &HashMap<NodeId, Reference> {
+    pub fn references(&self) -> &Map<NodeId, Reference> {
         &self.references
     }
 
     pub(crate) fn update_definitions_to_references_index(&mut self) {
         // Build reverse mapping from definitions to references
-        let mut definitions: HashMap<NodeId, Vec<NodeId>> = HashMap::new();
+        let mut definitions: Map<NodeId, Vec<NodeId>> = Map::default();
         for (reference_id, reference) in &self.references {
             match &reference.resolution {
                 Resolution::Definition(node_id) => {
@@ -347,7 +348,7 @@ impl Binder {
     // the file.
     fn resolve_in_file_scope(&self, file_id: &str, symbol: &str) -> Resolution {
         let mut found_definitions = Vec::new();
-        let mut visited_files = HashSet::new();
+        let mut visited_files = Set::default();
         let mut files_to_search = VecDeque::new();
         files_to_search.push_back(file_id.to_owned());
 
@@ -525,7 +526,7 @@ impl Binder {
         // it to try and avoid them by returning iterators from the delegated
         // resolution functions
         let mut found_ids = Vec::new();
-        let mut seen_ids = HashSet::new();
+        let mut seen_ids = Set::default();
         let mut working_set = resolution.get_definition_ids();
 
         while let Some(definition_id) = working_set.pop() {

@@ -1,11 +1,11 @@
 mod node_extensions;
 
 use std::cmp::Ordering;
-use std::collections::HashSet;
 use std::sync::Arc;
 
 use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
+use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::binder::Definition;
 use slang_solidity_v2_semantic::context::SemanticContext;
@@ -385,13 +385,13 @@ pub(crate) fn type_as_abi_parameter(
     semantic: &Arc<SemanticContext>,
     type_id: TypeId,
 ) -> Option<(String, Vec<ParameterComponent>)> {
-    type_as_abi_parameter_impl(semantic, type_id, &mut HashSet::new())
+    type_as_abi_parameter_impl(semantic, type_id, &mut Set::default())
 }
 
 fn type_as_abi_parameter_impl(
     semantic: &Arc<SemanticContext>,
     type_id: TypeId,
-    visited_structs: &mut HashSet<NodeId>,
+    visited_structs: &mut Set<NodeId>,
 ) -> Option<(String, Vec<ParameterComponent>)> {
     match semantic.types().get_type_by_id(type_id) {
         Type::Array(ArrayType { element_type, .. }) => {

@@ -1,5 +1,4 @@
-use std::collections::HashMap;
-
+use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -19,13 +18,13 @@ pub(crate) struct ContractData {
     /// order (deterministic iteration for `all_contracts`).
     contracts: Vec<ir::ContractDefinition>,
     /// Per-contract linearised members, keyed by contract `NodeId`.
-    linearisations: HashMap<NodeId, ContractLinearisations>,
+    linearisations: Map<NodeId, ContractLinearisations>,
 }
 
 impl ContractData {
     pub(crate) fn new(
         contracts: Vec<ir::ContractDefinition>,
-        data: HashMap<NodeId, ContractLinearisations>,
+        data: Map<NodeId, ContractLinearisations>,
     ) -> Self {
         Self {
             contracts,

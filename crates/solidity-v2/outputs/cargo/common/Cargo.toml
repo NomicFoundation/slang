@@ -19,6 +19,7 @@ keywords = ["utilities"]
 categories = ["compilers", "utilities"]
 
 [dependencies]
+indexmap = { workspace = true }
 itertools = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }

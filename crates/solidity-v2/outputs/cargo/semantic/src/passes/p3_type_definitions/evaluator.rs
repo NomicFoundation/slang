@@ -343,11 +343,10 @@ fn compute_erc7201(value: &[u8]) -> BigInt {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
-
     use num_bigint::{BigInt, ToBigInt};
     use num_rational::BigRational;
     use num_traits::Num;
+    use slang_solidity_v2_common::collections::Map;
     use slang_solidity_v2_common::versions::LanguageVersion;
     use slang_solidity_v2_parser::{ParseOutput, Parser};
 
@@ -356,7 +355,7 @@ mod tests {
     struct MapResolver {
         // qualified identifier => (target expression, target scope)
         // qualified identifier is the concatenation of the scope and identifier
-        context: HashMap<String, (ir::Expression, String)>,
+        context: Map<String, (ir::Expression, String)>,
         // Tests that exercise the erc7201 evaluation path opt in by toggling
         // this flag, mirroring what the production resolver does when the
         // language version enables the built-in and it isn't shadowed.
@@ -385,9 +384,7 @@ mod tests {
     }
 
     impl MapResolver {
-        fn build_context(
-            context: &[(&str, &str, &str)],
-        ) -> HashMap<String, (ir::Expression, String)> {
+        fn build_context(context: &[(&str, &str, &str)]) -> Map<String, (ir::Expression, String)> {
             context
                 .iter()
                 .map(|(name, input, target_scope)| {

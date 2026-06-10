@@ -1,7 +1,6 @@
-use std::collections::HashSet;
-
 pub(crate) use contract_data::{ContractData, ContractLinearisations};
 use file_node_mapper::FileNodeMapper;
+use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::utils::strip_string_literal_quotes;
@@ -255,13 +254,13 @@ impl SemanticContext {
     }
 
     pub fn type_canonical_name(&self, type_id: TypeId) -> Option<String> {
-        self.type_canonical_name_impl(type_id, &mut HashSet::new())
+        self.type_canonical_name_impl(type_id, &mut Set::default())
     }
 
     fn type_canonical_name_impl(
         &self,
         type_id: TypeId,
-        visited_structs: &mut HashSet<NodeId>,
+        visited_structs: &mut Set<NodeId>,
     ) -> Option<String> {
         match self.types.get_type_by_id(type_id) {
             Type::Address(_)
@@ -337,13 +336,13 @@ impl SemanticContext {
     pub(crate) const SELECTOR_SIZE: usize = 4;
 
     pub fn storage_size_of_type_id(&self, type_id: TypeId) -> Option<usize> {
-        self.storage_size_of_type_id_impl(type_id, &mut HashSet::new())
+        self.storage_size_of_type_id_impl(type_id, &mut Set::default())
     }
 
     fn storage_size_of_type_id_impl(
         &self,
         type_id: TypeId,
-        visited_structs: &mut HashSet<NodeId>,
+        visited_structs: &mut Set<NodeId>,
     ) -> Option<usize> {
         match self.types.get_type_by_id(type_id) {
             Type::Address(_) | Type::Contract(_) | Type::Interface(_) => {

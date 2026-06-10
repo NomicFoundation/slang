@@ -1,5 +1,4 @@
-use std::collections::HashMap;
-
+use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -160,8 +159,8 @@ impl<'a> Pass<'a> {
         }
     }
 
-    fn find_contract_bases_recursively(&self, node_id: NodeId) -> HashMap<NodeId, Vec<NodeId>> {
-        let mut result = HashMap::new();
+    fn find_contract_bases_recursively(&self, node_id: NodeId) -> Map<NodeId, Vec<NodeId>> {
+        let mut result = Map::default();
         let mut queue = vec![node_id];
         while let Some(node_id) = queue.pop() {
             if result.contains_key(&node_id) {

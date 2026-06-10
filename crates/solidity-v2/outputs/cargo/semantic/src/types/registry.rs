@@ -1,8 +1,6 @@
-use std::collections::HashMap;
-
-use indexmap::IndexSet;
 use num_bigint::BigInt;
 use num_traits::Zero;
+use slang_solidity_v2_common::collections::{Map, OrderedSet};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
@@ -20,11 +18,11 @@ use crate::types::ImplicitlyConvertible;
 /// some common elementary types required to type most built-ins functions and
 /// some kinds of expressions (eg. the boolean type).
 pub struct TypeRegistry {
-    types: IndexSet<Type>,
+    types: OrderedSet<Type>,
     // This is used to register the _is-subclass_ and _implements_ relationships
     // between contract/interface types. The `NodeId`s correspond to the
     // `definition_id` in the respective `Type` variants.
-    super_types: HashMap<NodeId, Vec<NodeId>>,
+    super_types: Map<NodeId, Vec<NodeId>>,
     // Some implicit conversion rules are version dependant. The version is
     // threaded in here so we can gate those rules on it.
     language_version: LanguageVersion,
@@ -49,7 +47,7 @@ pub struct TypeRegistry {
 impl TypeRegistry {
     #[allow(clippy::similar_names)]
     pub(crate) fn new(language_version: LanguageVersion) -> Self {
-        let mut types = IndexSet::new();
+        let mut types = OrderedSet::default();
         let (address_type, _) = types.insert_full(Type::Address(AddressType { payable: false }));
         let (address_payable_type, _) =
             types.insert_full(Type::Address(AddressType { payable: true }));
@@ -83,7 +81,7 @@ impl TypeRegistry {
 
         Self {
             types,
-            super_types: HashMap::new(),
+            super_types: Map::default(),
             language_version,
 
             address_type_id: TypeId(address_type),

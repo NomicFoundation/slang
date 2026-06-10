@@ -1,6 +1,5 @@
-use std::collections::BTreeSet;
-
 use lalrpop_util::lalrpop_mod;
+use slang_solidity_v2_common::collections::SortedSet;
 use slang_solidity_v2_common::diagnostics::kinds::syntax::{UnexpectedEof, UnexpectedTerminal};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::terminals::TerminalKind;
@@ -109,7 +108,7 @@ fn convert_parse_error(
     ///
     /// TODO(v2): We may be able to improve on this if there's room for returning a discriminant instead of a string representation.
     /// [Ongoing discussion](https://github.com/lalrpop/lalrpop/issues/1089#issuecomment-4011323139)
-    fn convert_expectations(expected: &[String]) -> BTreeSet<TerminalKind> {
+    fn convert_expectations(expected: &[String]) -> SortedSet<TerminalKind> {
         expected
             .iter()
             .map(|str| str.strip_prefix("L_").unwrap())

@@ -1,7 +1,7 @@
-use std::collections::BTreeMap;
 use std::sync::Arc;
 
 use slang_solidity_v2_ast::{abi, ast};
+use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
@@ -11,7 +11,7 @@ use super::{File, FileStruct};
 
 pub struct CompilationUnit {
     language_version: LanguageVersion,
-    files: BTreeMap<String, Arc<InternalFile>>,
+    files: SortedMap<String, Arc<InternalFile>>,
     semantic: Arc<SemanticContext>,
     diagnostics: DiagnosticCollection,
 }
@@ -23,7 +23,7 @@ impl CompilationUnit {
         semantic: SemanticContext,
         diagnostics: DiagnosticCollection,
     ) -> Self {
-        let files: BTreeMap<String, Arc<InternalFile>> = files
+        let files: SortedMap<String, Arc<InternalFile>> = files
             .into_iter()
             .map(|file| (file.id().to_string(), Arc::new(file)))
             .collect();

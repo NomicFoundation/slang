@@ -1,9 +1,9 @@
-use std::collections::HashSet;
 use std::fmt::Write;
 use std::path::{Path, PathBuf};
 
 use anyhow::{bail, Result};
 use infra_utils::paths::{FileWalker, PathExtensions};
+use slang_solidity_v2_common::collections::Set;
 
 /// Migrates v1 test inputs to v2 format by wrapping them in valid `SourceUnit` boilerplate.
 ///
@@ -11,7 +11,7 @@ use infra_utils::paths::{FileWalker, PathExtensions};
 /// The v2 parser only supports parsing `SourceUnit`, so we wrap each snippet in appropriate
 /// Solidity context.
 pub fn migrate_v1_tests_to_v2(v1_snapshots_dir: &Path, v2_output_dir: &Path) -> Result<()> {
-    let mut written_files = HashSet::<PathBuf>::new();
+    let mut written_files = Set::<PathBuf>::default();
 
     for file in FileWalker::from_directory(v1_snapshots_dir).find_all()? {
         if file.is_generated() {

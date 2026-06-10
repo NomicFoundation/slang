@@ -1,7 +1,7 @@
-use std::collections::HashMap;
 use std::sync::Arc;
 
 use ruint::aliases::U256;
+use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
@@ -355,8 +355,8 @@ impl Visitor for Pass<'_> {
                         UsingDirective::new_single_type(scope_id, type_id)
                     }
                     ir::UsingClause::UsingDeconstruction(using_deconstruction) => {
-                        let mut symbols = HashMap::new();
-                        let mut operators = HashMap::new();
+                        let mut symbols = Map::default();
+                        let mut operators = Map::default();
 
                         for symbol in &using_deconstruction.symbols {
                             let symbol_name = symbol.name.last().unwrap();

@@ -1,5 +1,4 @@
-use std::collections::{BTreeMap, BTreeSet, HashSet};
-
+use slang_solidity_v2_common::collections::{Set, SortedMap, SortedSet};
 use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::utils::strip_string_literal_quotes;
@@ -42,7 +41,7 @@ pub trait CompilationBuilderConfig {
 struct BuilderFile {
     source_unit: cst::SourceUnit,
     contents: String,
-    resolved_imports: BTreeMap<String, String>,
+    resolved_imports: SortedMap<String, String>,
 }
 
 /// A builder for creating compilation units.
@@ -54,8 +53,8 @@ pub struct CompilationBuilder<C: CompilationBuilderConfig> {
     language_version: LanguageVersion,
     diagnostics: DiagnosticCollection,
 
-    files: BTreeMap<String, BuilderFile>,
-    seen_files: HashSet<String>,
+    files: SortedMap<String, BuilderFile>,
+    seen_files: Set<String>,
 }
 
 impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
@@ -67,8 +66,8 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
             language_version,
             diagnostics: DiagnosticCollection::default(),
 
-            files: BTreeMap::new(),
-            seen_files: HashSet::new(),
+            files: SortedMap::new(),
+            seen_files: Set::default(),
         }
     }
 
@@ -109,7 +108,7 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
 
         let import_paths = extract_import_paths_from_cst(&source_unit, &source);
 
-        let mut resolved_imports = BTreeMap::new();
+        let mut resolved_imports = SortedMap::new();
         for import_path in import_paths {
             match self.config.resolve_import(&file_id, &import_path) {
                 Ok(resolved_id) => {
@@ -178,8 +177,8 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
 fn extract_import_paths_from_cst(
     source_unit: &cst::SourceUnit,
     contents: &str,
-) -> BTreeSet<String> {
-    let mut import_paths = BTreeSet::new();
+) -> SortedSet<String> {
+    let mut import_paths = SortedSet::new();
 
     for member in &source_unit.members.elements {
         let cst::SourceUnitMember::ImportDirective(import_directive) = member else {

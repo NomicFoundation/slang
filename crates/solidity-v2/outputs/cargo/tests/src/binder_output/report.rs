@@ -1,10 +1,10 @@
-use std::collections::BTreeMap;
 use std::fmt::Write;
 use std::ops::Range;
 
 use anyhow::Result;
 use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
 use slang_solidity_v2::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::collections::SortedMap;
 use solidity_v2_testing_utils::reporting::diagnostic;
 
 use super::report_data::{
@@ -106,7 +106,7 @@ fn report_unbound_identifiers(
 fn report_diagnostics(
     report: &mut String,
     diagnostics: &DiagnosticCollection,
-    file_contents: &BTreeMap<String, String>,
+    file_contents: &SortedMap<String, String>,
 ) -> Result<()> {
     writeln!(report, "Parse errors:")?;
     for diagnostic in diagnostics {
