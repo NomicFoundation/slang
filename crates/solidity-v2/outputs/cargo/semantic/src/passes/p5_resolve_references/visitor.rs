@@ -311,11 +311,13 @@ impl Visitor for Pass<'_> {
         } else {
             let mut types = Vec::new();
             for item in &node.items {
-                let type_id = item
-                    .expression
-                    .as_ref()
-                    .and_then(|expression| self.typing_of_expression(expression).as_type_id())
-                    .unwrap_or(self.types.void());
+                let type_id = match item.expression.as_ref() {
+                    Some(expression) => {
+                        let typing = self.typing_of_expression(expression);
+                        self.tuple_element_type_id(typing)
+                    }
+                    None => self.types.void(),
+                };
                 types.push(type_id);
             }
             let type_id = self.types.register_type(Type::Tuple(TupleType { types }));

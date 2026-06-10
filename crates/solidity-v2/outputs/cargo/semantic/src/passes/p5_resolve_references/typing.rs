@@ -476,6 +476,24 @@ impl Pass<'_> {
         }
     }
 
+    /// Resolves a tuple element's typing to a concrete `TypeId`. A type-name
+    /// element (`uint256`, `bytes`, a user type) types as a meta-type, so its
+    /// underlying type is registered — a tuple of type names, such as the
+    /// `(A, B, …)` second argument of `abi.decode`, then types as the tuple of
+    /// those types rather than a tuple of voids. A value element is already
+    /// `Resolved`; an empty hole in a destructuring tuple is `void`.
+    pub(super) fn tuple_element_type_id(&mut self, typing: Typing) -> TypeId {
+        match typing {
+            Typing::Resolved(type_id) => type_id,
+            Typing::MetaType(type_) => self.types.register_type(type_),
+            Typing::UserMetaType(definition_id) => self
+                .type_of_definition(definition_id)
+                .map(|type_| self.types.register_type(type_))
+                .unwrap_or_else(|| self.types.void()),
+            _ => self.types.void(),
+        }
+    }
+
     pub(super) fn collect_named_argument_typings(
         &self,
         arguments: &[ir::NamedArgument],
