@@ -12,3 +12,17 @@ pub enum TerminalKind {
         {{ terminal }},
     {% endfor %}
 }
+
+impl TerminalKind {
+    /// Whether this terminal is a keyword that is not reserved in some (or all) versions,
+    /// and can therefore also appear as an identifier.
+    pub fn is_unreserved_keyword(&self) -> bool {
+        matches!(
+            self,
+            {% for keyword in model.unreserved_keywords -%}
+                Self::{{ keyword }}
+                {% if not loop.last %} | {% endif %}
+            {% endfor %}
+        )
+    }
+}

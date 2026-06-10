@@ -1095,6 +1095,8 @@ pub slang_solidity_v2_common::terminals::TerminalKind::YulSuperKeyword
 pub slang_solidity_v2_common::terminals::TerminalKind::YulSwitchKeyword
 pub slang_solidity_v2_common::terminals::TerminalKind::YulThisKeyword
 pub slang_solidity_v2_common::terminals::TerminalKind::YulTrueKeyword
+impl slang_solidity_v2_common::terminals::TerminalKind
+pub fn slang_solidity_v2_common::terminals::TerminalKind::is_unreserved_keyword(&self) -> bool
 impl core::clone::Clone for slang_solidity_v2_common::terminals::TerminalKind
 pub fn slang_solidity_v2_common::terminals::TerminalKind::clone(&self) -> slang_solidity_v2_common::terminals::TerminalKind
 impl core::cmp::Eq for slang_solidity_v2_common::terminals::TerminalKind

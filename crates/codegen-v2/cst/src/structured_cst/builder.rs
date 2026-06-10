@@ -7,6 +7,7 @@ use super::model::{Choice, ChoiceVariant, Collection, Field, NodeType, Sequence}
 
 pub(super) struct StructuredCstModelBuilder {
     pub terminals: BTreeSet<model::Identifier>,
+    pub unreserved_keywords: BTreeSet<model::Identifier>,
     pub sequences: BTreeMap<model::Identifier, Sequence>,
     pub choices: BTreeMap<model::Identifier, Choice>,
     pub collections: BTreeMap<model::Identifier, Collection>,
@@ -16,6 +17,7 @@ impl StructuredCstModelBuilder {
     pub fn create(language: &model::Language) -> Self {
         let mut builder = Self {
             terminals: BTreeSet::new(),
+            unreserved_keywords: BTreeSet::new(),
             sequences: BTreeMap::new(),
             choices: BTreeMap::new(),
             collections: BTreeMap::new(),
@@ -45,6 +47,13 @@ impl StructuredCstModelBuilder {
                 }
                 model::Item::Keyword { item } => {
                     self.terminals.insert(item.name.clone());
+
+                    // Keywords that are not reserved in some (or all) versions can also
+                    // appear as identifiers, depending on the context.
+                    if item.reserved.clone().unwrap_or_default() != model::VersionSpecifier::Always
+                    {
+                        self.unreserved_keywords.insert(item.name.clone());
+                    }
                 }
                 model::Item::Token { item } => {
                     self.terminals.insert(item.name.clone());

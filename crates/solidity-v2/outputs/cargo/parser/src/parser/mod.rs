@@ -125,13 +125,7 @@ fn convert_parse_error(
         // we assume that if an identifier is expected, then these keywords are only expected as
         // identifiers, and not as keywords.
         if expected.contains(&TerminalKind::Identifier) {
-            expected.remove(&TerminalKind::AtKeyword);
-            expected.remove(&TerminalKind::ErrorKeyword);
-            expected.remove(&TerminalKind::FromKeyword);
-            expected.remove(&TerminalKind::GlobalKeyword);
-            expected.remove(&TerminalKind::LayoutKeyword);
-            expected.remove(&TerminalKind::RevertKeyword);
-            expected.remove(&TerminalKind::TransientKeyword);
+            expected.retain(|terminal| !terminal.is_unreserved_keyword());
         }
 
         expected

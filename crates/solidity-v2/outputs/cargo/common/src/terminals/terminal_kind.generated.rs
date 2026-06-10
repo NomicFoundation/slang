@@ -223,3 +223,20 @@ pub enum TerminalKind {
     YulThisKeyword,
     YulTrueKeyword,
 }
+
+impl TerminalKind {
+    /// Whether this terminal is a keyword that is not reserved in some (or all) versions,
+    /// and can therefore also appear as an identifier.
+    pub fn is_unreserved_keyword(&self) -> bool {
+        matches!(
+            self,
+            Self::AtKeyword
+                | Self::ErrorKeyword
+                | Self::FromKeyword
+                | Self::GlobalKeyword
+                | Self::LayoutKeyword
+                | Self::RevertKeyword
+                | Self::TransientKeyword
+        )
+    }
+}

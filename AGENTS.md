@@ -100,7 +100,7 @@ Many source files are auto-generated, and are either under a `/generated/` direc
 **Never edit these files directly.** Instead, modify the source definitions and regenerate using:
 
 ```sh
-./scripts/bin/infra check codegen
+./scripts/bin/infra check codegen public-api
 ```
 
 Most of the generated files are produced from an accompanying `.jinja2` template next to them.

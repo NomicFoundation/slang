@@ -23,6 +23,10 @@ pub struct StructuredCstModel {
     /// Terminal nodes.
     pub terminals: BTreeSet<model::Identifier>,
 
+    /// Keywords that are not reserved in some (or all) versions,
+    /// and can therefore also appear as identifiers.
+    pub unreserved_keywords: BTreeSet<model::Identifier>,
+
     /// Nonterminal nodes that are a fixed size group of potentially different nodes
     /// ie a struct
     pub sequences: BTreeMap<model::Identifier, Sequence>,
@@ -125,6 +129,7 @@ impl StructuredCstModel {
 
         Self {
             terminals: builder.terminals,
+            unreserved_keywords: builder.unreserved_keywords,
             sequences: builder.sequences,
             choices: builder.choices,
             collections: builder.collections,
