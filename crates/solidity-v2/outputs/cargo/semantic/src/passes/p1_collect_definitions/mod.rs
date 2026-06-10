@@ -10,6 +10,8 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 use crate::binder::{Binder, Definition, FileScope, ParametersScope, Scope, ScopeId};
 use crate::context::SemanticFile;
 
+mod conflicts;
+
 /// In this pass all definitions are collected with their naming identifiers.
 /// Also lexical (and other kinds of) scopes are identified and linked together,
 /// and definitions are registered into them for later lookup. The pass
@@ -29,7 +31,8 @@ pub fn run(
     // declarations and the symbols brought into its scope through default
     // imports (which, unlike aliased/deconstructed imports, don't register a
     // local definition and so can't be caught while visiting a single file).
-    for (file_id, definition_id) in binder.find_default_import_conflicts() {
+    let file_ids = files.iter().map(|file| file.id());
+    for (file_id, definition_id) in conflicts::find_default_import_conflicts(binder, file_ids) {
         let range = binder
             .find_definition_by_id(definition_id)
             .expect("conflicting definition must exist")
@@ -148,9 +151,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     // still resolve references to it.
     fn insert_definition_in_scope(&mut self, definition: Definition, scope_id: ScopeId) {
         let symbol = definition.identifier().unparse().to_string();
-        if self
-            .binder
-            .find_conflicting_definition(scope_id, &symbol, &definition)
+        if conflicts::find_conflicting_definition(self.binder, scope_id, &symbol, &definition)
             .is_some()
         {
             self.diagnostics.push(

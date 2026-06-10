@@ -282,7 +282,7 @@ impl FileScope {
         self.imported_files.insert(file_id);
     }
 
-    pub(super) fn lookup_symbol<'a>(&'a self, symbol: &str) -> impl Iterator<Item = NodeId> + 'a {
+    pub(crate) fn lookup_symbol<'a>(&'a self, symbol: &str) -> impl Iterator<Item = NodeId> + 'a {
         match self.definitions.get(symbol) {
             Some(defs) => OptionIter::Some(defs.iter().copied()),
             None => OptionIter::Empty,
