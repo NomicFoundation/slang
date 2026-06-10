@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Identifier already declared.
+   ╭─[input.sol:5:6]
+   │
+ 5 │ type MyInt is int;
+   │      ──┬──  
+   │        ╰──── Error occurred here.
+───╯

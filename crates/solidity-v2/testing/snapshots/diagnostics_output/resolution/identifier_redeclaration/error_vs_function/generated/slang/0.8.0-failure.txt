@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+Error: This syntax was introduced in version '0.8.4'.
+   ╭─[input.sol:6:1]
+   │
+ 6 │ error Err();
+   │ ──────┬─────  
+   │       ╰─────── Error occurred here.
+───╯
+
+Error: Identifier already declared.
+   ╭─[input.sol:6:7]
+   │
+ 6 │ error Err();
+   │       ─┬─  
+   │        ╰─── Error occurred here.
+───╯
