@@ -29,7 +29,7 @@ fn analyze(language_version: LanguageVersion, source: &str) -> TypeAnalysis {
     let files = vec![file];
 
     let mut binder = Binder::default();
-    let mut types = TypeRegistry::default();
+    let mut types = TypeRegistry::new(language_version);
     let mut diagnostics = DiagnosticCollection::default();
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
@@ -512,6 +512,33 @@ fn test_implicit_conversion_uses_literal_value() {
     assert!(!types.implicitly_convertible_to(lit_half, uint8));
     assert!(!types.implicitly_convertible_to(lit_half, int8));
     assert!(!types.implicitly_convertible_to(lit_half, uint256));
+}
+
+#[test]
+fn test_overload_resolution_unsigned_to_signed_argument_is_version_gated() {
+    // End-to-end: an overload taking `int16` is only reachable from a `uint8`
+    // argument before 0.8.1, where `uint8` still implicitly converts to `int16`.
+    let setup = "
+        uint8 u;
+        function pick(int16 a) pure returns (uint8) { a; return 1; }
+        function pick(string memory a) pure returns (uint16) { a; return 2; }
+    ";
+
+    // 0.8.0: `uint8` -> `int16` is allowed, so the `int16` overload matches.
+    let (typings, _) =
+        type_of_expressions(LanguageVersion::V0_8_0, None, Some(setup), &["pick(u)"]);
+    assert_eq!(
+        typings.into_iter().next().unwrap(),
+        Some(Type::Integer(IntegerType {
+            signed: false,
+            bits: 8,
+        })),
+    );
+
+    // 0.8.1: `uint8` -> `int16` is rejected, so neither overload matches.
+    let (typings, _) =
+        type_of_expressions(LanguageVersion::V0_8_1, None, Some(setup), &["pick(u)"]);
+    assert_eq!(typings.into_iter().next().unwrap(), None);
 }
 
 #[test]

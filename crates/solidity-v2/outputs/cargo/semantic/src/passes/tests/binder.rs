@@ -209,7 +209,7 @@ contract Test is Base {
 
     let files = [file];
     let mut binder = Binder::default();
-    let mut types = TypeRegistry::default();
+    let mut types = TypeRegistry::new(language_version);
 
     let mut diagnostics = DiagnosticCollection::default();
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
@@ -268,7 +268,7 @@ contract Test is Base {
 
     let files = [file];
     let mut binder = Binder::default();
-    let mut types = TypeRegistry::default();
+    let mut types = TypeRegistry::new(language_version);
 
     let mut diagnostics = DiagnosticCollection::default();
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
