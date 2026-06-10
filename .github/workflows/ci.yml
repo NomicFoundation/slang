@@ -57,15 +57,20 @@ jobs:
         if: "${{ github.ref_name != 'main' && github.event_name != 'merge_group' }}"
         uses: "./.github/actions/cache/cargo-target/restore"
 
+      - name: "Setup SFW (optional)"
+        uses: "./.github/actions/setup-sfw"
+        with:
+          optional: "true"
+
       #
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
       #
 
       - name: "infra setup"
-        run: "./scripts/bin/infra setup"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra setup"
 
       - name: "infra check"
-        run: "./scripts/bin/infra check"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra check"
 
       - name: "infra test"
         run: "./scripts/bin/infra test"
@@ -75,14 +80,15 @@ jobs:
 
       # On main pushes, warm the dependency and cargo-target caches with the perf
       # toolchain (bencher_cli, iai-callgrind-runner, and the bench binaries) so
-      # subsequent PR perf runs don't compile them from scratch.
+      # subsequent PR perf runs don't compile them from scratch. Wrapped: these
+      # cargo-install from crates.io (no bencher upload, so no MITM concern).
       - name: "infra perf cargo --smoke slang-v2"
         if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
-        run: "./scripts/bin/infra perf cargo --smoke --no-apt-deps slang-v2"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra perf cargo --smoke --no-apt-deps slang-v2"
 
       - name: "infra perf npm --smoke"
         if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
-        run: "./scripts/bin/infra perf npm --smoke"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra perf npm --smoke"
 
       - name: "Save Cargo Target Cache"
         if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
@@ -114,8 +120,13 @@ jobs:
         if: "${{ github.ref_name != 'main' }}"
         uses: "./.github/actions/cache/cargo-cooldown/restore"
 
+      - name: "Setup SFW (optional)"
+        uses: "./.github/actions/setup-sfw"
+        with:
+          optional: "true"
+
       - name: "Cargo cooldown check"
-        run: "./scripts/bin/with-hermit cargo cooldown-check"
+        run: "${SFW_PREFIX:-} ./scripts/bin/with-hermit cargo cooldown-check"
 
       - name: "Save Cargo Cooldown Cache"
         if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
@@ -133,8 +144,13 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: "Setup SFW (optional)"
+        uses: "./.github/actions/setup-sfw"
+        with:
+          optional: "true"
+
       - name: "Renovate schema check"
-        run: "./bin/npx --yes --package renovate -- renovate-config-validator renovate.json"
+        run: "${SFW_PREFIX:-} ./bin/npx --yes --package renovate -- renovate-config-validator renovate.json"
 
       - name: "Renovate extraction dry-run"
         env:
@@ -142,7 +158,7 @@ jobs:
           # anonymous 60 req/hr rate limit shared across the runner IP.
           GITHUB_COM_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           LOG_LEVEL: "debug"
-        run: "./bin/npx --yes renovate --platform=local --dry-run=full"
+        run: "${SFW_PREFIX:-} ./bin/npx --yes renovate --platform=local --dry-run=full"
 
   # The full CI runs on the bare runner so it can reuse the cargo-target cache;
   # reproducing that cache-mount setup inside a devcontainer would slow CI down

@@ -99,8 +99,13 @@ jobs:
       - name: "Restore Cargo Target Cache"
         uses: "./.github/actions/cache/cargo-target/restore"
 
+      # Release path: SFW is required (the action's default) — fail rather than
+      # install deps unprotected.
+      - name: "Setup SFW"
+        uses: "./.github/actions/setup-sfw"
+
       - name: "infra setup"
-        run: "./scripts/bin/infra setup"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra setup"
 
       # Consume the changesets, and create a git stash, to be popped by the next step:
       - name: "infra publish changesets"
@@ -184,8 +189,16 @@ jobs:
         if: "${{ needs.changesets.outputs.publishNeeded != 'true' }}"
         uses: "./.github/actions/cache/cargo-target/restore"
 
+      # On a real release this job builds the published npm tarball, so SFW is
+      # required and a failed install stops the job. On PRs/pending pushes the
+      # build is best-effort (same condition the cache-restore steps above gate on).
+      - name: "Setup SFW"
+        uses: "./.github/actions/setup-sfw"
+        with:
+          optional: "${{ needs.changesets.outputs.publishNeeded != 'true' }}"
+
       - name: "infra setup"
-        run: "./scripts/bin/infra setup"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra setup"
 
       - name: "Prepare publish artifacts"
         id: "prepare"
@@ -242,8 +255,13 @@ jobs:
       - name: "Restore Cargo Target Cache"
         uses: "./.github/actions/cache/cargo-target/restore"
 
+      - name: "Setup SFW (optional)"
+        uses: "./.github/actions/setup-sfw"
+        with:
+          optional: "true"
+
       - name: "infra setup"
-        run: "./scripts/bin/infra setup"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra setup"
 
       - name: "Download publish artifacts"
         uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c" # v8.0.1
@@ -402,9 +420,17 @@ jobs:
           name: "${{ needs.prepare.outputs.artifact-name }}"
           path: "target/publish-artifacts/"
 
-      # Compile infra_cli with no registry token in scope.
+      - name: "Setup SFW (optional)"
+        uses: "./.github/actions/setup-sfw"
+        with:
+          # Best-effort: this job only uploads the artifact built in `prepare`;
+          # the published bytes were already fetched behind SFW there.
+          optional: "true"
+
+      # Compile infra_cli with no registry token in scope. The infra publish
+      # steps below upload with auth, left unwrapped.
       - name: "Build infra_cli (before any token)"
-        run: "./scripts/bin/infra --help"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra --help"
 
       - name: "infra publish npm"
         # No tarball means prepare packed nothing (version already on npm) — nothing to publish.

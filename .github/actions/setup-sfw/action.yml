@@ -1,0 +1,71 @@
+name: "Setup Socket Firewall (SFW)"
+description: >
+  Installs Socket Firewall Free and exports SFW_PREFIX, a wrapper that callers
+  prefix onto dependency commands to run installs behind the firewall (it also
+  fixes sfw's CA handling — see the wrapper step).
+  Fails the job if SFW can't be installed, so dependency installs never silently
+  run unprotected. Jobs where SFW is best-effort (a socket.dev outage must not
+  fail them) opt out with optional, which warns and leaves SFW_PREFIX unset
+  instead — callers then run unwrapped.
+
+inputs:
+  optional:
+    description: >
+      When "true", a failed SFW install warns and leaves SFW_PREFIX unset
+      (callers run unprotected) instead of failing the job.
+    required: false
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Install SFW"
+      # Failures are decided by the wrapper step below, which knows the
+      # optional input — keep this step itself from failing the job.
+      continue-on-error: true
+      uses: "socketdev/action@937f824ec476dfd164d4a4d9995751427b0be143" # v1
+      with:
+        mode: "firewall"
+
+    # sfw has no persistent CA file and overrides the CA env vars inside every
+    # wrap, so the union bundle must be built *inside* the wrap. Write a wrapper
+    # that does exactly that, then run it as `sfw <wrapper> <command>`: sfw injects
+    # its temp-CA env into the wrapper, which merges that root with the system
+    # bundle, re-points the CA vars at the union, and exec's the real command.
+    - name: "Create SFW CA-merge wrapper"
+      shell: "bash"
+      env:
+        SFW_OPTIONAL: "${{ inputs.optional }}"
+      run: |
+        if ! command -v sfw &>/dev/null; then
+          if [ "${SFW_OPTIONAL}" = "true" ]; then
+            echo "::warning::sfw not found after install — dependency installs will run UNPROTECTED."
+            exit 0
+          fi
+          echo "::error::sfw not found after install — refusing to run dependency installs unprotected. Pass optional: \"true\" if this job may run without SFW."
+          exit 1
+        fi
+        wrapper="${RUNNER_TEMP}/sfw-wrap"
+        cat > "${wrapper}" <<'EOF'
+        #!/usr/bin/env bash
+        # Invoked as: sfw sfw-wrap <command...>. sfw has injected SSL_CERT_FILE
+        # (and friends) pointing at a temp bundle that holds only its MITM root.
+        # Merge that root with the system roots so TLS works for both the hosts
+        # sfw MITMs (registries) and the ones it passes through (github.com etc.).
+        set -euo pipefail
+        if [ -n "${SSL_CERT_FILE:-}" ] && [ -f "${SSL_CERT_FILE}" ]; then
+          merged="$(mktemp)"
+          cat /etc/ssl/certs/ca-certificates.crt "${SSL_CERT_FILE}" > "${merged}"
+          # REQUESTS_CA_BUNDLE: pip/requests can ignore CURL_CA_BUNDLE inside a venv (pipenv) — psf/requests#6660.
+          export SSL_CERT_FILE="${merged}" CURL_CA_BUNDLE="${merged}" \
+                 CARGO_HTTP_CAINFO="${merged}" GIT_SSL_CAINFO="${merged}" \
+                 NODE_EXTRA_CA_CERTS="${merged}" REQUESTS_CA_BUNDLE="${merged}"
+          unset SSL_CERT_DIR
+        fi
+        exec "$@"
+        EOF
+        chmod +x "${wrapper}"
+        # Consumed UNQUOTED by callers (`${SFW_PREFIX:-} <cmd>`) so the shell splits
+        # it into two argv entries — `sfw` and the wrapper path. Quoting it breaks that;
+        # when unset (optional + failed install) it expands to nothing and <cmd> runs unwrapped.
+        echo "SFW_PREFIX=sfw ${wrapper}" >> "$GITHUB_ENV"

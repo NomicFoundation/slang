@@ -69,8 +69,13 @@ jobs:
       - name: "Restore Cargo Target Cache"
         uses: "./.github/actions/cache/cargo-target/restore"
 
+      - name: "Setup SFW (optional)"
+        uses: "./.github/actions/setup-sfw"
+        with:
+          optional: "true"
+
       - name: "infra setup cargo pipenv"
-        run: "./scripts/bin/infra setup cargo pipenv"
+        run: "${SFW_PREFIX:-} ./scripts/bin/infra setup cargo pipenv"
 
       - name: "Smoke Test > infra perf cargo --smoke slang"
         if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"

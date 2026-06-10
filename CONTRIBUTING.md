@@ -73,3 +73,33 @@ The following still need to be updated manually:
 
 1. Rust toolchains: `$RUST_STABLE_VERSION` and `$RUST_NIGHTLY_VERSION` defined in `hermit.hcl` and updated via `rustup install`.
 2. Node.js major versions (only even LTS releases): bump the hermit package, then `@types/node` follows automatically.
+
+## Supply-Chain Firewall (Socket)
+
+CI installs dependencies behind [Socket Firewall](https://docs.socket.dev/) (`sfw`)
+in _firewall_ mode, which intercepts package-manager traffic (cargo, npm, pip) and
+blocks packages Socket flags as malicious. The `setup-sfw` composite action installs
+it and exports `SFW_PREFIX`, which prefixes the dependency-fetching steps (`infra
+setup`, `infra check`, and the cooldown and renovate checks). It runs **only in CI** —
+local `infra` commands are unaffected.
+
+**Required by default.** If Socket Firewall can't be installed (e.g. a socket.dev
+outage), the `Setup SFW` step fails the job rather than let dependency installs run
+_unprotected_, so we never publish dependencies that were installed unprotected. Jobs
+where the firewall is best-effort — PR/benchmark CI, and release jobs that only
+consume artifacts already built behind SFW — opt out with `optional: "true"`, which
+logs a `::warning::` and continues unprotected instead.
+
+### When a build fails because of Socket
+
+The two failure modes look different:
+
+- **SFW unavailable (not a block).** The `Setup SFW` step fails with
+  `::error::sfw not found after install …` (or, on `optional: "true"` jobs, logs a
+  `::warning::` and continues unprotected). This is a Socket/network availability
+  problem, not a flagged package — re-run once Socket is reachable.
+- **A package was blocked.** A wrapped step (usually `infra setup`) fails and the `sfw`
+  output names the offending package, version, and why Socket flagged it. This is the
+  firewall doing its job. Note that firewall mode blocks _transitively_ — a flagged
+  package deep in the dependency tree fails the whole install, even if you didn't add
+  it directly.
