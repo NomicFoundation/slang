@@ -6,9 +6,10 @@ fn test_function_selector() {
 
     let counter = unit
         .find_contract_by_name("Counter")
+        .next()
         .expect("contract can be found");
 
-    let functions = counter.compute_linearised_functions();
+    let functions = counter.linearised_functions();
     assert_eq!(functions.len(), 5);
 
     // all the functions in the contract are public
@@ -18,7 +19,7 @@ fn test_function_selector() {
     assert_eq!(functions[3].compute_selector(), Some(0x7cf5_dab0_u32)); // increment(uint256)
     assert_eq!(functions[4].compute_selector(), Some(0x6aa6_33b6_u32)); // isEnabled()
 
-    let state_variables = counter.compute_linearised_state_variables();
+    let state_variables = counter.linearised_state_variables();
     assert_eq!(state_variables.len(), 4);
 
     // for state variables, selectors only make sense for public getters
@@ -34,6 +35,7 @@ fn test_events_and_errors_selectors() {
 
     let test_contract = unit
         .find_contract_by_name("Test")
+        .next()
         .expect("Test contract can be found");
 
     let events = test_contract.events();
@@ -51,6 +53,7 @@ fn test_selectors_for_functions_with_tuple_parameters() {
 
     let test = unit
         .find_contract_by_name("Test")
+        .next()
         .expect("contract is found");
     let functions = test.functions();
 

@@ -4,11 +4,12 @@ fn test_compute_internal_signature() {
 
     let test_contract = unit
         .find_contract_by_name("Test")
+        .next()
         .expect("Test contract can be found");
 
     // Functions are linearised in alphabetical order, with the unnamed
     // `receive`/`fallback` functions sorted first.
-    let functions = test_contract.compute_linearised_functions();
+    let functions = test_contract.linearised_functions();
     assert_eq!(functions.len(), 3);
 
     assert_eq!(
@@ -35,7 +36,7 @@ fn test_compute_internal_signature() {
 
     // State variables are linearised in storage layout order (bases first).
     // Only the public variables defines a getter with an internal signature.
-    let state_variables = test_contract.compute_linearised_state_variables();
+    let state_variables = test_contract.linearised_state_variables();
     assert_eq!(state_variables.len(), 3);
     assert_eq!(
         state_variables[0].compute_internal_signature(),
@@ -48,7 +49,7 @@ fn test_compute_internal_signature() {
     );
 
     // Errors and events are linearised with base contracts first.
-    let errors = test_contract.compute_linearised_errors();
+    let errors = test_contract.linearised_errors();
     assert_eq!(errors.len(), 2);
     assert_eq!(
         errors[0].compute_internal_signature(),
@@ -59,7 +60,7 @@ fn test_compute_internal_signature() {
         Some("InsufficientBalance(uint256,uint256)".to_string())
     );
 
-    let events = test_contract.compute_linearised_events();
+    let events = test_contract.linearised_events();
     assert_eq!(events.len(), 2);
     assert_eq!(
         events[0].compute_internal_signature(),

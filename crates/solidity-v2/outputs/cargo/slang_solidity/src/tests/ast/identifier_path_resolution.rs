@@ -28,6 +28,7 @@ fn test_identifier_path_resolve_to_immediate_definition() {
 
     let counter = unit
         .find_contract_by_name("Counter")
+        .next()
         .expect("contract is found");
     let counter_bases: Vec<_> = counter
         .inheritance_types()
@@ -61,7 +62,10 @@ fn test_identifier_path_resolve_to_immediate_definition() {
 fn test_identifier_path_resolve_to_immediate_resolves_to_direct_definition() {
     let unit = ChainedImports::build_compilation_unit();
 
-    let a1 = unit.find_contract_by_name("A1").expect("contract is found");
+    let a1 = unit
+        .find_contract_by_name("A1")
+        .next()
+        .expect("contract is found");
     let i1_typename = a1
         .inheritance_types()
         .iter()
@@ -86,7 +90,10 @@ fn test_identifier_path_resolve_to_immediate_resolves_to_direct_definition() {
 fn test_chained_imports_resolution() {
     let unit = ChainedImports::build_compilation_unit();
 
-    let a1 = unit.find_contract_by_name("A1").expect("contract is found");
+    let a1 = unit
+        .find_contract_by_name("A1")
+        .next()
+        .expect("contract is found");
     let b1_typename = a1
         .inheritance_types()
         .iter()

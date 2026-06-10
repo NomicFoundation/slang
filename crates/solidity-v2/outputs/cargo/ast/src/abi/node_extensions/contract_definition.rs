@@ -26,20 +26,20 @@ impl ContractDefinitionStruct {
         if let Some(constructor) = self.constructor() {
             entries.push(constructor.compute_abi_entry()?);
         }
-        for function in &self.compute_linearised_functions() {
+        for function in &self.linearised_functions() {
             if function.is_externally_visible() {
                 entries.push(function.compute_abi_entry()?);
             }
         }
-        for state_variable in &self.compute_linearised_state_variables() {
+        for state_variable in &self.linearised_state_variables() {
             if state_variable.is_externally_visible() {
                 entries.push(state_variable.compute_abi_entry()?);
             }
         }
-        for error in &self.compute_linearised_errors() {
+        for error in &self.linearised_errors() {
             entries.push(error.compute_abi_entry()?);
         }
-        for event in &self.compute_linearised_events() {
+        for event in &self.linearised_events() {
             entries.push(event.compute_abi_entry()?);
         }
 
@@ -63,7 +63,7 @@ impl ContractDefinitionStruct {
 
     /// Computes the layouts of both permanent and transient state variables
     fn compute_storage_layout(&self) -> Option<(Vec<StorageItem>, Vec<StorageItem>)> {
-        let all_state_variables = self.compute_linearised_state_variables();
+        let all_state_variables = self.linearised_state_variables();
 
         // TODO(validation) SDR[2]: it is an error if any contract in the hierarchy
         // other than the leaf has a custom offset layout

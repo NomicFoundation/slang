@@ -7,6 +7,7 @@ fn test_contract_direct_bases() {
 
     let counter = unit
         .find_contract_by_name("Counter")
+        .next()
         .expect("can find Counter contract");
     let bases = counter.direct_bases();
     assert_eq!(bases.len(), 2);
@@ -27,6 +28,7 @@ fn test_contract_constructor_and_modifiers() {
 
     let counter = unit
         .find_contract_by_name("Counter")
+        .next()
         .expect("can find Counter contract");
 
     let constructor = counter.constructor();

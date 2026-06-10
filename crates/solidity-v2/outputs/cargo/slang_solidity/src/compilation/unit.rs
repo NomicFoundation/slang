@@ -74,10 +74,23 @@ impl CompilationUnit {
         })
     }
 
-    pub fn find_contract_by_name(&self, name: &str) -> Option<ast::ContractDefinition> {
+    pub fn find_contract_by_name<'a, 'b>(
+        &'a self,
+        name: &'b str,
+    ) -> impl Iterator<Item = ast::ContractDefinition> + use<'a>
+    where
+        'b: 'a,
+    {
         self.semantic
             .find_contract_by_name(name)
             .map(|contract| ast::create_contract_definition(&contract, &self.semantic))
+    }
+
+    /// Iterates over every contract definition in this compilation unit.
+    pub fn all_contracts(&self) -> impl Iterator<Item = ast::ContractDefinition> + use<'_> {
+        self.semantic
+            .all_contracts()
+            .map(|contract| ast::create_contract_definition(contract, &self.semantic))
     }
 
     pub fn compute_contracts_abi(&self) -> Vec<abi::ContractAbi> {

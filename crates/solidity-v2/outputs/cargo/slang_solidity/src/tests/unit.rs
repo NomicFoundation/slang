@@ -71,12 +71,15 @@ fn test_find_contract_by_name() {
 
     let counter = unit
         .find_contract_by_name("Counter")
+        .next()
         .expect("Counter contract is found");
     let ownable = unit
         .find_contract_by_name("Ownable")
+        .next()
         .expect("Ownable contract is found");
     let activatable = unit
         .find_contract_by_name("Activatable")
+        .next()
         .expect("Activatable contract is found");
 
     assert_eq!(counter.name().name(), "Counter");

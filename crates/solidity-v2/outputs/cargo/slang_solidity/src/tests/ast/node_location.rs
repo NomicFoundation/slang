@@ -7,6 +7,7 @@ fn test_get_file_id_and_text_range() {
 
     let ownable = unit
         .find_contract_by_name("Ownable")
+        .next()
         .expect("contract is found");
     assert_eq!(ownable.get_file_id(), "ownable.sol");
 
@@ -30,11 +31,13 @@ fn test_get_file_id_and_text_range() {
 
     let activatable = unit
         .find_contract_by_name("Activatable")
+        .next()
         .expect("contract is found");
     assert_eq!(activatable.get_file_id(), "activatable.sol");
 
     let counter = unit
         .find_contract_by_name("Counter")
+        .next()
         .expect("contract is found");
     assert_eq!(counter.get_file_id(), "main.sol");
 }

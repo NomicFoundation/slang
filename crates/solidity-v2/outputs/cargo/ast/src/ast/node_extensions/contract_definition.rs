@@ -1,5 +1,7 @@
-use std::cmp::Ordering;
-
+use super::super::nodes::{
+    create_error_definition, create_event_definition, create_function_definition,
+    create_state_variable_definition,
+};
 use super::super::{
     ContractDefinitionStruct, Definition, ErrorDefinition, EventDefinition, FunctionDefinition,
     FunctionKind, StateVariableDefinition,
@@ -20,7 +22,7 @@ impl ContractDefinitionStruct {
     /// Returns the list of contracts/interfaces in the hierarchy (including
     /// self) in the order given by the C3 linearisation, with self contract
     /// always first
-    pub fn compute_linearised_bases(&self) -> Vec<ContractBase> {
+    pub fn linearised_bases(&self) -> Vec<ContractBase> {
         let Some(base_node_ids) = self
             .semantic
             .binder()
@@ -47,16 +49,12 @@ impl ContractDefinitionStruct {
     }
 
     /// Returns the list of state variable definitions in the order laid out in storage
-    pub fn compute_linearised_state_variables(&self) -> Vec<StateVariableDefinition> {
-        let mut state_variables = Vec::new();
-        let bases = self.compute_linearised_bases();
-        for base in bases.iter().rev() {
-            let ContractBase::Contract(contract) = base else {
-                continue;
-            };
-            state_variables.extend(contract.members().iter_state_variable_definitions());
-        }
-        state_variables
+    pub fn linearised_state_variables(&self) -> Vec<StateVariableDefinition> {
+        self.semantic
+            .linearised_state_variables(self.ir_node.id())
+            .iter()
+            .map(|ir_node| create_state_variable_definition(ir_node, &self.semantic))
+            .collect()
     }
 
     pub fn functions(&self) -> Vec<FunctionDefinition> {
@@ -86,82 +84,35 @@ impl ContractDefinitionStruct {
 
     /// Returns the list of functions defined in all the hierarchy of the
     /// contract, in alphabetical order
-    pub fn compute_linearised_functions(&self) -> Vec<FunctionDefinition> {
-        let mut functions: Vec<FunctionDefinition> = Vec::new();
-        let bases = self.compute_linearised_bases();
-        for base in &bases {
-            // TODO(validation) SDR[3]: we don't pick up functions defined in
-            // interfaces because they should be implemented in inheriting
-            // contracts, but this is not yet enforced anywhere
-            let ContractBase::Contract(contract) = base else {
-                continue;
-            };
-
-            // Handle function overriding
-            let contract_functions = contract
-                .functions()
-                .into_iter()
-                .filter(|function| {
-                    // check the existing functions and remove any duplicates
-                    // because they should be overridden by them
-                    let existing = functions
-                        .iter()
-                        .any(|linearised_function| linearised_function.overrides(function));
-                    !existing
-                })
-                // collect to avoid holding the read-borrow on `functions`
-                .collect::<Vec<_>>();
-
-            functions.extend(contract_functions);
-        }
-
-        // sort returned functions by name
-        functions.sort_by(|a, b| match (a.name(), b.name()) {
-            (None, None) => Ordering::Equal,
-            (None, Some(_)) => Ordering::Less,
-            (Some(_), None) => Ordering::Greater,
-            (Some(a), Some(b)) => a.name().cmp(&b.name()),
-        });
-        functions
+    pub fn linearised_functions(&self) -> Vec<FunctionDefinition> {
+        self.semantic
+            .linearised_functions(self.ir_node.id())
+            .iter()
+            .map(|ir_node| create_function_definition(ir_node, &self.semantic))
+            .collect()
     }
 
     pub fn errors(&self) -> Vec<ErrorDefinition> {
         self.members().iter_error_definitions().collect()
     }
 
-    pub fn compute_linearised_errors(&self) -> Vec<ErrorDefinition> {
-        let mut errors = Vec::new();
-        let bases = self.compute_linearised_bases();
-        for base in bases.iter().rev() {
-            match base {
-                ContractBase::Contract(contract) => {
-                    errors.extend(contract.members().iter_error_definitions());
-                }
-                ContractBase::Interface(interface) => {
-                    errors.extend(interface.members().iter_error_definitions());
-                }
-            }
-        }
-        errors
+    pub fn linearised_errors(&self) -> Vec<ErrorDefinition> {
+        self.semantic
+            .linearised_errors(self.ir_node.id())
+            .iter()
+            .map(|ir_node| create_error_definition(ir_node, &self.semantic))
+            .collect()
     }
 
     pub fn events(&self) -> Vec<EventDefinition> {
         self.members().iter_event_definitions().collect()
     }
 
-    pub fn compute_linearised_events(&self) -> Vec<EventDefinition> {
-        let mut events = Vec::new();
-        let bases = self.compute_linearised_bases();
-        for base in bases.iter().rev() {
-            match base {
-                ContractBase::Contract(contract) => {
-                    events.extend(contract.members().iter_event_definitions());
-                }
-                ContractBase::Interface(interface) => {
-                    events.extend(interface.members().iter_event_definitions());
-                }
-            }
-        }
-        events
+    pub fn linearised_events(&self) -> Vec<EventDefinition> {
+        self.semantic
+            .linearised_events(self.ir_node.id())
+            .iter()
+            .map(|ir_node| create_event_definition(ir_node, &self.semantic))
+            .collect()
     }
 }

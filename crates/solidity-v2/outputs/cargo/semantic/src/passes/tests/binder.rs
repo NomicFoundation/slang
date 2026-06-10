@@ -9,7 +9,7 @@ use slang_solidity_v2_ir::ir::NodeIdGenerator;
 use super::build_file;
 use crate::binder::{Binder, Resolution};
 use crate::passes::{
-    p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
+    p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p5_resolve_references,
 };
 use crate::types::TypeRegistry;
 
@@ -278,7 +278,7 @@ contract Test is Base {
         "Semantic diagnostics: {diagnostics:?}"
     );
     p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
-    p4_resolve_references::run(&files, &mut binder, &mut types, language_version);
+    p5_resolve_references::run(&files, &mut binder, &mut types, language_version);
 
     // Verify that references were created and most are resolved
     let references = binder.references();
