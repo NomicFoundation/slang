@@ -57,8 +57,10 @@ jobs:
         if: "${{ github.ref_name != 'main' && github.event_name != 'merge_group' }}"
         uses: "./.github/actions/cache/cargo-target/restore"
 
-      - name: "Setup SFW"
+      - name: "Setup SFW (optional)"
         uses: "./.github/actions/setup-sfw"
+        with:
+          optional: "true"
 
       #
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
@@ -118,8 +120,10 @@ jobs:
         if: "${{ github.ref_name != 'main' }}"
         uses: "./.github/actions/cache/cargo-cooldown/restore"
 
-      - name: "Setup SFW"
+      - name: "Setup SFW (optional)"
         uses: "./.github/actions/setup-sfw"
+        with:
+          optional: "true"
 
       - name: "Cargo cooldown check"
         run: "${SFW_PREFIX:-} ./scripts/bin/with-hermit cargo cooldown-check"
@@ -140,8 +144,10 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: "Setup SFW"
+      - name: "Setup SFW (optional)"
         uses: "./.github/actions/setup-sfw"
+        with:
+          optional: "true"
 
       - name: "Renovate schema check"
         run: "${SFW_PREFIX:-} ./bin/npx --yes --package renovate -- renovate-config-validator renovate.json"

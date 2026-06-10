@@ -3,18 +3,25 @@ description: >
   Installs Socket Firewall Free and exports SFW_PREFIX, a wrapper that callers
   prefix onto dependency commands to run installs behind the firewall (it also
   fixes sfw's CA handling — see the wrapper step).
-  Soft-fails: if SFW can't be installed, SFW_PREFIX is left unset and callers
-  run unprotected (so a socket.dev outage doesn't redden every PR). Jobs that
-  must never install unprotected deps (publish) add an explicit Require SFW
-  guard that fails when SFW_PREFIX is empty.
+  Fails the job if SFW can't be installed, so dependency installs never silently
+  run unprotected. Jobs where SFW is best-effort (a socket.dev outage must not
+  fail them) opt out with optional, which warns and leaves SFW_PREFIX unset
+  instead — callers then run unwrapped.
+
+inputs:
+  optional:
+    description: >
+      When "true", a failed SFW install warns and leaves SFW_PREFIX unset
+      (callers run unprotected) instead of failing the job.
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
   steps:
     - name: "Install SFW"
-      # Soft-fail: a socket.dev outage must not block PR/benchmark CI. The
-      # wrapper step below leaves SFW_PREFIX unset when sfw is absent; publish
-      # jobs re-assert it via a Require SFW guard.
+      # Failures are decided by the wrapper step below, which knows the
+      # optional input — keep this step itself from failing the job.
       continue-on-error: true
       uses: "socketdev/action@937f824ec476dfd164d4a4d9995751427b0be143" # v1
       with:
@@ -27,10 +34,16 @@ runs:
     # bundle, re-points the CA vars at the union, and exec's the real command.
     - name: "Create SFW CA-merge wrapper"
       shell: "bash"
+      env:
+        SFW_OPTIONAL: "${{ inputs.optional }}"
       run: |
         if ! command -v sfw &>/dev/null; then
-          echo "::warning::sfw not found after install — dependency installs will run UNPROTECTED. Jobs requiring SFW (publish) fail at their Require SFW guard."
-          exit 0
+          if [ "${SFW_OPTIONAL}" = "true" ]; then
+            echo "::warning::sfw not found after install — dependency installs will run UNPROTECTED."
+            exit 0
+          fi
+          echo "::error::sfw not found after install — refusing to run dependency installs unprotected. Pass optional: \"true\" if this job may run without SFW."
+          exit 1
         fi
         wrapper="${RUNNER_TEMP}/sfw-wrap"
         cat > "${wrapper}" <<'EOF'
@@ -54,5 +67,5 @@ runs:
         chmod +x "${wrapper}"
         # Consumed UNQUOTED by callers (`${SFW_PREFIX:-} <cmd>`) so the shell splits
         # it into two argv entries — `sfw` and the wrapper path. Quoting it breaks that;
-        # when unset (soft-fail) it expands to nothing and <cmd> runs unwrapped.
+        # when unset (optional + failed install) it expands to nothing and <cmd> runs unwrapped.
         echo "SFW_PREFIX=sfw ${wrapper}" >> "$GITHUB_ENV"

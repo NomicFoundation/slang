@@ -83,21 +83,21 @@ it and exports `SFW_PREFIX`, which prefixes the dependency-fetching steps (`infr
 setup`, `infra check`, and the cooldown and renovate checks). It runs **only in CI** —
 local `infra` commands are unaffected.
 
-**Soft-fail by default.** If Socket Firewall can't be installed (e.g. a socket.dev
-outage), the affected step logs a `::warning::` and runs _unprotected_ rather than
-failing, so a Socket outage doesn't fail every PR. The exception is the **release
-path** (`changesets` and `publish` jobs in `publish.yml`): those carry a `Require SFW`
-guard and fail hard if SFW is unavailable, so we never publish dependencies that were
-installed unprotected.
+**Required by default.** If Socket Firewall can't be installed (e.g. a socket.dev
+outage), the `Setup SFW` step fails the job rather than let dependency installs run
+_unprotected_, so we never publish dependencies that were installed unprotected. Jobs
+where the firewall is best-effort — PR/benchmark CI, and release jobs that only
+consume artifacts already built behind SFW — opt out with `optional: "true"`, which
+logs a `::warning::` and continues unprotected instead.
 
 ### When a build fails because of Socket
 
 The two failure modes look different:
 
-- **SFW unavailable (not a block).** A wrapped step logs
-  `::warning::sfw not found after install …` and continues unprotected. This is a
-  Socket/network availability problem, not a flagged package. On the release path the
-  `Require SFW` step fails instead — re-run once Socket is reachable.
+- **SFW unavailable (not a block).** The `Setup SFW` step fails with
+  `::error::sfw not found after install …` (or, on `optional: "true"` jobs, logs a
+  `::warning::` and continues unprotected). This is a Socket/network availability
+  problem, not a flagged package — re-run once Socket is reachable.
 - **A package was blocked.** A wrapped step (usually `infra setup`) fails and the `sfw`
   output names the offending package, version, and why Socket flagged it. This is the
   firewall doing its job. Note that firewall mode blocks _transitively_ — a flagged

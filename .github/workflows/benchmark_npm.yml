@@ -69,8 +69,10 @@ jobs:
       - name: "Restore Cargo Target Cache"
         uses: "./.github/actions/cache/cargo-target/restore"
 
-      - name: "Setup SFW"
+      - name: "Setup SFW (optional)"
         uses: "./.github/actions/setup-sfw"
+        with:
+          optional: "true"
 
       - name: "infra setup cargo npm"
         run: "${SFW_PREFIX:-} ./scripts/bin/infra setup cargo npm"

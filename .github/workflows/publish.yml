@@ -99,13 +99,10 @@ jobs:
       - name: "Restore Cargo Target Cache"
         uses: "./.github/actions/cache/cargo-target/restore"
 
+      # Release path: SFW is required (the action's default) — fail rather than
+      # install deps unprotected.
       - name: "Setup SFW"
         uses: "./.github/actions/setup-sfw"
-
-      # Release path: refuse to install deps unprotected if SFW is unavailable.
-      # Each release job needs its own guard (they set up SFW on separate runners).
-      - name: "Require SFW"
-        run: '[ -n "${SFW_PREFIX:-}" ] || { echo "::error::SFW unavailable — refusing to install deps unprotected on the release path"; exit 1; }'
 
       - name: "infra setup"
         run: "${SFW_PREFIX:-} ./scripts/bin/infra setup"
@@ -192,16 +189,13 @@ jobs:
         if: "${{ needs.changesets.outputs.publishNeeded != 'true' }}"
         uses: "./.github/actions/cache/cargo-target/restore"
 
+      # On a real release this job builds the published npm tarball, so SFW is
+      # required and a failed install stops the job. On PRs/pending pushes the
+      # build is best-effort (same condition the cache-restore steps above gate on).
       - name: "Setup SFW"
         uses: "./.github/actions/setup-sfw"
-
-      # On a real release this job builds the published npm tarball, so if SFW
-      # couldn't be installed, stop here rather than build the release without it.
-      # On PRs/pending pushes the build still runs without SFW (same condition the
-      # cache-restore steps above gate on).
-      - name: "Require SFW"
-        if: "${{ needs.changesets.outputs.publishNeeded == 'true' }}"
-        run: '[ -n "${SFW_PREFIX:-}" ] || { echo "::error::SFW unavailable — refusing to build release artifacts unprotected"; exit 1; }'
+        with:
+          optional: "${{ needs.changesets.outputs.publishNeeded != 'true' }}"
 
       - name: "infra setup"
         run: "${SFW_PREFIX:-} ./scripts/bin/infra setup"
@@ -261,8 +255,10 @@ jobs:
       - name: "Restore Cargo Target Cache"
         uses: "./.github/actions/cache/cargo-target/restore"
 
-      - name: "Setup SFW"
+      - name: "Setup SFW (optional)"
         uses: "./.github/actions/setup-sfw"
+        with:
+          optional: "true"
 
       - name: "infra setup"
         run: "${SFW_PREFIX:-} ./scripts/bin/infra setup"
@@ -424,13 +420,15 @@ jobs:
           name: "${{ needs.prepare.outputs.artifact-name }}"
           path: "target/publish-artifacts/"
 
-      - name: "Setup SFW"
+      - name: "Setup SFW (optional)"
         uses: "./.github/actions/setup-sfw"
+        with:
+          # Best-effort: this job only uploads the artifact built in `prepare`;
+          # the published bytes were already fetched behind SFW there.
+          optional: "true"
 
-      # Compile infra_cli with no registry token in scope. Routed through SFW when
-      # available, but no Require SFW guard here: if SFW didn't install, this still
-      # builds without it (the published bytes were already checked behind SFW in
-      # prepare). The infra publish steps below upload with auth, left unwrapped.
+      # Compile infra_cli with no registry token in scope. The infra publish
+      # steps below upload with auth, left unwrapped.
       - name: "Build infra_cli (before any token)"
         run: "${SFW_PREFIX:-} ./scripts/bin/infra --help"
 

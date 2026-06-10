@@ -71,8 +71,10 @@ jobs:
       - name: "Restore Cargo Target Cache"
         uses: "./.github/actions/cache/cargo-target/restore"
 
-      - name: "Setup SFW"
+      - name: "Setup SFW (optional)"
         uses: "./.github/actions/setup-sfw"
+        with:
+          optional: "true"
 
       - name: "Build Test Binary"
         run: "${SFW_PREFIX:-} ./scripts/bin/with-hermit cargo build --locked --bin solidity_testing_sourcify --release"
