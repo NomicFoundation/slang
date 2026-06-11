@@ -7,9 +7,7 @@ use super::Pass;
 use crate::binder::{Reference, Resolution, Typing};
 use crate::built_ins::InternalBuiltIn;
 use crate::passes::common::node_id_for_string_expression_typing;
-use crate::types::{
-    ArrayType, DataLocation, FixedSizeArrayType, MappingType, Number, TupleType, Type,
-};
+use crate::types::{ArrayType, FixedSizeArrayType, MappingType, Number, TupleType, Type};
 
 impl Visitor for Pass<'_> {
     fn enter_source_unit(&mut self, node: &ir::SourceUnit) -> bool {
@@ -433,21 +431,16 @@ impl Visitor for Pass<'_> {
                 }
             }
             Typing::MetaType(operand_type) => {
-                // indexing a meta-type creates a new meta-type of the array
-                let operand_type_id = self.types.register_type(operand_type);
-                Typing::MetaType(Type::Array(ArrayType {
-                    element_type: operand_type_id,
-                    location: DataLocation::Memory,
-                }))
+                // indexing a meta-type creates a new meta-type of the array,
+                // fixed-size when the index carries a constant size (`T[n]`)
+                let element_type = self.types.register_type(operand_type);
+                Typing::MetaType(self.meta_array_type(element_type, node))
             }
             Typing::UserMetaType(definition_id) => {
                 // indexing a user meta-type creates a new meta-type of the array
                 if let Some(operand_type) = self.type_of_definition(definition_id) {
-                    let operand_type_id = self.types.register_type(operand_type);
-                    Typing::MetaType(Type::Array(ArrayType {
-                        element_type: operand_type_id,
-                        location: DataLocation::Memory,
-                    }))
+                    let element_type = self.types.register_type(operand_type);
+                    Typing::MetaType(self.meta_array_type(element_type, node))
                 } else {
                     Typing::Unresolved
                 }

@@ -7,9 +7,9 @@ use crate::binder::{Definition, Resolution, Typing};
 use crate::built_ins::InternalBuiltIn;
 use crate::passes::common::node_id_for_expression_typing;
 use crate::types::{
-    literals, AddressType, ContractType, DataLocation, EnumType, FixedSizeArrayType, FunctionType,
-    IntegerType, InterfaceType, LibraryType, LiteralKind, Number, StringType, StructType, Type,
-    TypeId, UserDefinedValueType,
+    literals, AddressType, ArrayType, ContractType, DataLocation, EnumType, FixedSizeArrayType,
+    FunctionType, IntegerType, InterfaceType, LibraryType, LiteralKind, Number, StringType,
+    StructType, Type, TypeId, UserDefinedValueType,
 };
 
 impl Pass<'_> {
@@ -169,6 +169,41 @@ impl Pass<'_> {
             }
             ir::PrefixExpressionOperator::DeleteKeyword(_) => Some(self.types.void()),
         }
+    }
+
+    /// The array meta-type produced by indexing a type name: `T[n]` with a
+    /// constant size (not a slice) is a fixed-size array carrying `n`; `T[]` (no
+    /// size) is a dynamic array. Indexing a meta-type previously always produced
+    /// a dynamic array, dropping the size, so `abi.decode(d, (uint256[2][3]))`
+    /// typed as `uint256[][]`.
+    pub(super) fn meta_array_type(
+        &self,
+        element_type: TypeId,
+        node: &ir::IndexAccessExpression,
+    ) -> Type {
+        if !node.is_slice {
+            if let Some(size_expression) = &node.start {
+                if let Some(size_type_id) =
+                    self.typing_of_expression(size_expression).as_type_id()
+                {
+                    if let Some(size) = self
+                        .types
+                        .number_value_of_type_id(size_type_id)
+                        .and_then(|number| number.as_usize())
+                    {
+                        return Type::FixedSizeArray(FixedSizeArrayType {
+                            element_type,
+                            size,
+                            location: DataLocation::Memory,
+                        });
+                    }
+                }
+            }
+        }
+        Type::Array(ArrayType {
+            element_type,
+            location: DataLocation::Memory,
+        })
     }
 
     pub(super) fn type_of_array_expression(
