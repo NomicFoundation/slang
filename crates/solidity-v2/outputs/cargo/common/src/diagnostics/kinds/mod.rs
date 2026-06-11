@@ -6,6 +6,8 @@ pub mod structure;
 pub mod syntax;
 pub mod type_system;
 
+use std::cmp::Ordering;
+
 use compilation::CompilationDiagnosticKind;
 use resolution::ResolutionDiagnosticKind;
 use serde::Serialize;
@@ -13,6 +15,7 @@ use structure::StructureDiagnosticKind;
 use syntax::SyntaxDiagnosticKind;
 use type_system::TypeSystemDiagnosticKind;
 
+use super::extensions::DiagnosticExtensions;
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
 
 define_diagnostic_kind! {
@@ -33,5 +36,19 @@ define_diagnostic_kind! {
         Resolution(ResolutionDiagnosticKind),
         /// A diagnostic about the type system.
         TypeSystem(TypeSystemDiagnosticKind),
+    }
+}
+
+impl Ord for DiagnosticKind {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.severity()
+            .cmp(&other.severity())
+            .then(self.code().cmp(other.code()))
+    }
+}
+
+impl PartialOrd for DiagnosticKind {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
     }
 }
