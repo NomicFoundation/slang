@@ -394,10 +394,25 @@ impl Pass<'_> {
                 .binder
                 .follow_symbol_aliases(&resolution)
                 .as_definition_id()
-                .and_then(|definition_id| self.binder.scope_id_for_node_id(definition_id));
+                .and_then(|definition_id| self.namespace_scope_of(definition_id));
 
             let reference = Reference::new(Arc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
+        }
+    }
+
+    /// The scope a qualified path continues into after one segment resolves to
+    /// `definition_id`: an `import "…" as M` alias continues into the imported
+    /// file's scope, every other definition into its own node scope. Without the
+    /// import case, a base-constructor invocation through an import alias
+    /// (`constructor() M.C(p)`) leaves the next segment unresolved.
+    fn namespace_scope_of(&self, definition_id: NodeId) -> Option<ScopeId> {
+        match self.binder.find_definition_by_id(definition_id) {
+            Some(Definition::Import(import_definition)) => import_definition
+                .resolved_file_id
+                .as_ref()
+                .and_then(|file_id| self.binder.scope_id_for_file_id(file_id)),
+            _ => self.binder.scope_id_for_node_id(definition_id),
         }
     }
 
