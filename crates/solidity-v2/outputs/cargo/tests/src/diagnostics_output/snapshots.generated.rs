@@ -171,9 +171,18 @@ mod syntax {
         run("syntax", "unexpected_eof")
     }
 
-    #[test]
-    fn unexpected_terminal() -> Result<()> {
-        run("syntax", "unexpected_terminal")
+    mod unexpected_terminal {
+        use super::*;
+
+        #[test]
+        fn in_expression() -> Result<()> {
+            run("syntax/unexpected_terminal", "in_expression")
+        }
+
+        #[test]
+        fn trailing_token() -> Result<()> {
+            run("syntax/unexpected_terminal", "trailing_token")
+        }
     }
 
     #[test]

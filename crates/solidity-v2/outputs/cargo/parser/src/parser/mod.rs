@@ -1,9 +1,7 @@
 use std::collections::BTreeSet;
 
 use lalrpop_util::lalrpop_mod;
-use slang_solidity_v2_common::diagnostics::kinds::syntax::{
-    ExtraTerminal, UnexpectedEof, UnexpectedTerminal,
-};
+use slang_solidity_v2_common::diagnostics::kinds::syntax::{UnexpectedEof, UnexpectedTerminal};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::terminals::TerminalKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
@@ -143,19 +141,9 @@ fn convert_parse_error(
                 },
             );
         }
-        lalrpop_util::ParseError::ExtraToken {
-            token: (left, lexeme, right),
-        } => {
-            diagnostics.push(
-                file_id.to_owned(),
-                left..right,
-                ExtraTerminal {
-                    found: TerminalKind::from(&lexeme),
-                },
-            );
-        }
-        lalrpop_util::ParseError::User { .. } => panic!("The parser should never return a user error, since we're not using any custom error types in our grammar"),
-        lalrpop_util::ParseError::InvalidToken { .. } => panic!("The parser should never return an invalid token error, since it's not using the default lexer"),
+        lalrpop_util::ParseError::ExtraToken { .. } => unreachable!("The parser should never return an extra token error: the top-level `SourceUnit` rule is a greedy repetition"),
+        lalrpop_util::ParseError::User { .. } => unreachable!("The parser should never return a user error, since we're not using any custom error types in our grammar"),
+        lalrpop_util::ParseError::InvalidToken { .. } => unreachable!("The parser should never return an invalid token error, since it's not using the default lexer"),
     }
 }
 
