@@ -53,6 +53,30 @@ mod structure {
         }
     }
 
+    mod invalid_using_directive_container {
+        use super::*;
+
+        #[test]
+        fn contract() -> Result<()> {
+            run("structure/invalid_using_directive_container", "contract")
+        }
+
+        #[test]
+        fn file_level() -> Result<()> {
+            run("structure/invalid_using_directive_container", "file_level")
+        }
+
+        #[test]
+        fn interface() -> Result<()> {
+            run("structure/invalid_using_directive_container", "interface")
+        }
+
+        #[test]
+        fn library() -> Result<()> {
+            run("structure/invalid_using_directive_container", "library")
+        }
+    }
+
     #[test]
     fn multiple_constructors() -> Result<()> {
         run("structure", "multiple_constructors")

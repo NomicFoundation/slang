@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9088] Error: The "using for" directive is not allowed inside interfaces.
+   ╭─[input.sol:7:5]
+   │
+ 7 │     using L for uint256;
+   │     ──────────┬─────────  
+   │               ╰─────────── Error occurred here.
+───╯
