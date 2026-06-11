@@ -435,9 +435,9 @@ impl Pass<'_> {
                     Some(Definition::Enum(_)) => {
                         // `E(x)` casts an integer to the enum; the reverse
                         // direction is a member access / underlying-type read.
-                        let type_id = self.types.register_type(Type::Enum {
+                        let type_id = self.types.register_type(Type::Enum(EnumType {
                             definition_id: node_id,
-                        });
+                        }));
                         Typing::Resolved(type_id)
                     }
                     _ => Typing::Unresolved,
