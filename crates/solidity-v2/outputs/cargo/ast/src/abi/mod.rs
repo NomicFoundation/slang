@@ -10,7 +10,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::binder::Definition;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{
-    ArrayType, FunctionTypeMutability, StructType, Type, TypeId,
+    ArrayType, FunctionTypeMutability, StructType, TupleType, Type, TypeId,
 };
 
 pub struct ContractAbi {
@@ -385,7 +385,7 @@ pub(crate) fn extract_function_type_parameters_abi(
     // `type_canonical_name` yields `None`, nulling the whole contract ABI (and its
     // storage layout) for any contract declaring a public multi-field struct.
     let outputs = match semantic.types().get_type_by_id(function_type.return_type) {
-        Type::Tuple { types } => types
+        Type::Tuple(TupleType { types }) => types
             .iter()
             .map(|element_type_id| {
                 let (type_name, components) = type_as_abi_parameter(semantic, *element_type_id)?;
