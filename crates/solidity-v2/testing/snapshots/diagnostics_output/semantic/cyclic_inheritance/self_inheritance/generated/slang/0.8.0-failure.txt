@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Circular inheritance is not allowed.
+   ╭─[input.sol:4:1]
+   │
+ 4 │ contract A is A {}
+   │ ─────────┬────────  
+   │          ╰────────── Error occurred here.
+───╯
