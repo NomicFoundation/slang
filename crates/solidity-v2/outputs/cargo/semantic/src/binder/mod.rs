@@ -597,8 +597,12 @@ impl Binder {
                 parameters_scope.lookup_definition(symbol).into()
             }
 
+            // A qualified lookup whose namespace is an imported file (`M.C`,
+            // where `M` is an `import "..." as M` alias) resolves the symbol
+            // among the file's top-level definitions, like `resolve_in_scope`.
+            Scope::File(file_scope) => self.resolve_in_file_scope(&file_scope.file_id, symbol),
+
             Scope::Block(_)
-            | Scope::File(_)
             | Scope::Function(_)
             | Scope::Modifier(_)
             | Scope::YulBlock(_)
