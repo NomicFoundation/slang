@@ -1154,11 +1154,6 @@ mod using {
     }
 
     #[test]
-    fn in_interface() -> Result<()> {
-        run("using", "in_interface")
-    }
-
-    #[test]
     fn in_library() -> Result<()> {
         run("using", "in_library")
     }
