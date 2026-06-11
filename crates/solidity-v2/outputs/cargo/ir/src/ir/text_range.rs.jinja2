@@ -1,0 +1,71 @@
+{%- set target = model.ir_language_model.target -%}
+
+#![allow(clippy::wildcard_imports)]
+
+use std::ops::Range;
+use std::sync::Arc;
+
+use super::nodes::*;
+
+/// A trait for IR nodes that can report their text range in the source.
+///
+/// It returns `None` for nodes that can be legitimately
+/// empty, ie. collections (eg. the positional arguments of `f()`),
+/// and for nodes that may not be represented in the source code,
+/// ie. external nodes.
+pub trait TextRange {
+    /// Returns the text range of this node, or `None` if the node is empty.
+    fn calculate_range(&self) -> Option<Range<usize>>;
+}
+
+impl<T: TextRange> TextRange for Arc<T> {
+    fn calculate_range(&self) -> Option<Range<usize>> {
+        self.as_ref().calculate_range()
+    }
+}
+
+impl<T: TextRange> TextRange for Option<T> {
+    fn calculate_range(&self) -> Option<Range<usize>> {
+        self.as_ref().and_then(TextRange::calculate_range)
+    }
+}
+
+impl<T: TextRange> TextRange for Vec<T> {
+    fn calculate_range(&self) -> Option<Range<usize>> {
+        let start = self.first()?.calculate_range()?.start;
+        let end = self.last()?.calculate_range()?.end;
+        Some(start..end)
+    }
+}
+
+{% for parent_type, sequence in target.sequences %}
+    impl TextRange for {{ parent_type }}Struct {
+        fn calculate_range(&self) -> Option<Range<usize>> {
+            Some(self.range.clone())
+        }
+    }
+{% endfor %}
+
+{% for parent_type, choice in target.choices %}
+    impl TextRange for {{ parent_type }} {
+        fn calculate_range(&self) -> Option<Range<usize>> {
+            match self {
+                {% for variant in choice.variants -%}
+                    {% if variant.is_external %}
+                    {{ parent_type }}::{{ variant.name }} => None,
+                    {% else %}
+                    {{ parent_type }}::{{ variant.name }}(inner) => inner.calculate_range(),
+                    {% endif %}
+                {%- endfor %}
+            }
+        }
+    }
+{% endfor %}
+
+{% for terminal_type, terminal in target.terminals %}
+    impl TextRange for {{ terminal_type }}Struct {
+        fn calculate_range(&self) -> Option<Range<usize>> {
+            Some(self.range.clone())
+        }
+    }
+{% endfor %}
