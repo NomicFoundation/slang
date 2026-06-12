@@ -2,6 +2,10 @@
 mod nodes;
 pub use nodes::*;
 
+#[path = "text_range.generated.rs"]
+mod text_range;
+pub use text_range::TextRange;
+
 mod node_extensions;
 
 mod builder;
