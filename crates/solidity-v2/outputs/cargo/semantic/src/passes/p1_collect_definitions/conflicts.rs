@@ -423,10 +423,7 @@ fn find_local_definition_conflicts(
         return;
     }
 
-    // TODO: order won't matter after #1852 is merged.
-    let mut symbols: Vec<&String> = file_scope.definitions.keys().collect();
-    symbols.sort();
-
+    let symbols: Vec<&String> = file_scope.definitions.keys().collect();
     for symbol in symbols {
         let imported: Vec<NodeId> = imported_scopes
             .iter()
