@@ -121,6 +121,11 @@ mod resolution {
         }
 
         #[test]
+        fn function_parameter() -> Result<()> {
+            run("resolution/identifier_redeclaration", "function_parameter")
+        }
+
+        #[test]
         fn imported_symbol_alias() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
@@ -142,11 +147,24 @@ mod resolution {
         }
 
         #[test]
+        fn parameter_vs_return_parameter() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "parameter_vs_return_parameter",
+            )
+        }
+
+        #[test]
         fn path_import_alias_vs_contract() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
                 "path_import_alias_vs_contract",
             )
+        }
+
+        #[test]
+        fn return_parameter() -> Result<()> {
+            run("resolution/identifier_redeclaration", "return_parameter")
         }
 
         #[test]
