@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 3859] Error: This declaration shadows a declaration outside the inline assembly block.
+   ╭─[main.sol:9:17]
+   │
+ 9 │             let b := 3
+   │                 ┬  
+   │                 ╰── Error occurred here.
+───╯
