@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 7380] Error: Variable definition exhausting cyclic dependency validator.
+     ╭─[input.sol:259:1]
+     │
+ 259 │ uint256 constant C255 = 1;
+     │ ────────────┬────────────  
+     │             ╰────────────── Error occurred here.
+─────╯

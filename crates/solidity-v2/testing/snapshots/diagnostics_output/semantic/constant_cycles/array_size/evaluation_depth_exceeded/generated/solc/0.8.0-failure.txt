@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 5210] Error: Cyclic constant definition (or maximum recursion depth exhausted).
+    ╭─[input.sol:36:1]
+    │
+ 36 │ uint256 constant C32 = C33 + 1;
+    │ ───────────────┬──────────────  
+    │                ╰──────────────── Error occurred here.
+────╯

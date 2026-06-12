@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use ruint::aliases::U256;
 use slang_solidity_v2_common::collections::Map;
+use slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDefinition;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
@@ -45,15 +46,22 @@ impl Visitor for Pass<'_> {
         self.binder.mark_user_meta_type_node(node.id());
 
         if let Some(base_slot_expression) = &node.storage_layout {
-            // TODO(validation) SDR[30]: if the base slot expression cannot be computed
-            // at this time, it's not a compile time constant and hence it's an
-            // error
-            let base_slot = evaluate_compile_time_integer_constant(
+            let evaluation = evaluate_compile_time_integer_constant(
                 base_slot_expression,
                 self.current_contract_or_file_scope_id(),
                 self,
-            )
-            .and_then(|base_slot| {
+            );
+            if evaluation.depth_limit_reached {
+                self.diagnostics.push(
+                    self.file_id.clone(),
+                    node.range.clone(),
+                    CyclicConstantDefinition,
+                );
+            }
+            // TODO(validation) SDR[30]: if the base slot expression cannot be computed
+            // at this time, it's not a compile time constant and hence it's an
+            // error
+            let base_slot = evaluation.value.and_then(|base_slot| {
                 // TODO(validation) SDR[1733]: if conversion fails the constant is
                 // negative or exceeds the 256 bit range
                 U256::try_from(base_slot).ok()

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 8349] Error: Initial value for constant variable has to be compile-time constant.
+   ╭─[input.sol:8:22]
+   │
+ 8 │ uint256 constant X = L.A;
+   │                      ─┬─  
+   │                       ╰─── Error occurred here.
+───╯

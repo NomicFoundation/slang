@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 8349] Error: Initial value for constant variable has to be compile-time constant.
+   ╭─[input.sol:5:35]
+   │
+ 5 │     uint256 internal constant A = B.A;
+   │                                   ─┬─  
+   │                                    ╰─── Error occurred here.
+───╯

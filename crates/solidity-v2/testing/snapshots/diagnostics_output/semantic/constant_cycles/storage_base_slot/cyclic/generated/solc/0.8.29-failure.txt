@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 6161] Error: The value of the constant A has a cyclic dependency via B.
+   ╭─[input.sol:4:1]
+   │
+ 4 │ uint256 constant A = B;
+   │ ───────────┬──────────  
+   │            ╰──────────── Error occurred here.
+───╯
+
+[TypeError 6161] Error: The value of the constant B has a cyclic dependency via A.
+   ╭─[input.sol:5:1]
+   │
+ 5 │ uint256 constant B = A;
+   │ ───────────┬──────────  
+   │            ╰──────────── Error occurred here.
+───╯
