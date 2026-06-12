@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result};
@@ -16,7 +16,7 @@ pub struct WorkspaceManifest {
 #[derive(Deserialize)]
 struct Workspace {
     package: WorkspacePackage,
-    dependencies: HashMap<String, Dependency>,
+    dependencies: BTreeMap<String, Dependency>,
 }
 
 #[derive(Deserialize)]
