@@ -359,7 +359,12 @@ impl Binder {
             }
 
             found_definitions.extend(file_scope.lookup_symbol(symbol));
-            files_to_search.extend(file_scope.imported_files.iter().cloned());
+            files_to_search.extend(
+                file_scope
+                    .default_imports
+                    .iter()
+                    .map(|import| import.file_id.clone()),
+            );
         }
 
         Resolution::from(found_definitions)
