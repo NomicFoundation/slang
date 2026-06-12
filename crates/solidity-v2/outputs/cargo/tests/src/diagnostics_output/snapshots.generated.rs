@@ -213,6 +213,48 @@ mod resolution {
                 "variable_vs_function",
             )
         }
+
+        #[test]
+        fn yul_function() -> Result<()> {
+            run("resolution/identifier_redeclaration", "yul_function")
+        }
+
+        #[test]
+        fn yul_function_parameter() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_parameter",
+            )
+        }
+
+        #[test]
+        fn yul_function_parameter_vs_return() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_parameter_vs_return",
+            )
+        }
+
+        #[test]
+        fn yul_variable() -> Result<()> {
+            run("resolution/identifier_redeclaration", "yul_variable")
+        }
+
+        #[test]
+        fn yul_variable_nested_block() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_variable_nested_block",
+            )
+        }
+
+        #[test]
+        fn yul_variable_vs_solidity_local() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_variable_vs_solidity_local",
+            )
+        }
     }
 }
 
