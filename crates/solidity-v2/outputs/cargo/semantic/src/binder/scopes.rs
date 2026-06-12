@@ -1,4 +1,6 @@
-use slang_solidity_v2_common::collections::{Map, Set};
+use std::ops::Range;
+
+use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -10,6 +12,7 @@ use crate::types::TypeId;
 
 pub(crate) enum Scope {
     Block(BlockScope),
+    Chained(ChainedScope),
     Contract(ContractScope),
     Enum(EnumScope),
     File(FileScope),
@@ -22,7 +25,19 @@ pub(crate) enum Scope {
     YulFunction(YulFunctionScope),
 }
 
+/// A *new* lexical scope opened by a real `{ }` block or a for-statement
+/// initialisation clause.
 pub(crate) struct BlockScope {
+    pub(crate) node_id: NodeId,
+    pub(crate) parent_scope_id: ScopeId,
+    pub(crate) definitions: Map<String, NodeId>,
+}
+
+/// A "chained" continuation of the parent's lexical scope, as opposed to a
+/// [`BlockScope`] which opens a new one. Chained scopes are opened after each
+/// local variable declaration so that the variable is only visible to
+/// subsequent statements; they share the parent's lexical scope.
+pub(crate) struct ChainedScope {
     pub(crate) node_id: NodeId,
     pub(crate) parent_scope_id: ScopeId,
     pub(crate) definitions: Map<String, NodeId>,
@@ -44,8 +59,19 @@ pub(crate) struct FileScope {
     pub(crate) node_id: NodeId,
     pub(crate) file_id: String,
     pub(crate) definitions: Map<String, Vec<NodeId>>,
-    pub(crate) imported_files: Set<String>,
+    /// Files brought into scope through (unqualified) default imports, in
+    /// source order. The same file may appear more than once if imported by
+    /// several directives.
+    pub(crate) default_imports: Vec<DefaultImport>,
     pub(crate) using_directives: Vec<UsingDirective>,
+}
+
+/// A default (`import "file";`) import directive registered in a [`FileScope`].
+/// The directive's text range is kept so that symbol clashes introduced by the
+/// import can be reported on the directive itself.
+pub(crate) struct DefaultImport {
+    pub(crate) file_id: String,
+    pub(crate) range: Range<usize>,
 }
 
 pub(crate) struct FunctionScope {
@@ -112,6 +138,7 @@ impl Scope {
     pub(crate) fn node_id(&self) -> NodeId {
         match self {
             Self::Block(block_scope) => block_scope.node_id,
+            Self::Chained(chained_scope) => chained_scope.node_id,
             Self::Contract(contract_scope) => contract_scope.node_id,
             Self::Enum(enum_scope) => enum_scope.node_id,
             Self::File(file_scope) => file_scope.node_id,
@@ -128,6 +155,7 @@ impl Scope {
     pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
         match self {
             Self::Block(block_scope) => block_scope.insert_definition(symbol, node_id),
+            Self::Chained(chained_scope) => chained_scope.insert_definition(symbol, node_id),
             Self::Contract(contract_scope) => contract_scope.insert_definition(symbol, node_id),
             Self::Enum(enum_scope) => enum_scope.insert_definition(symbol, node_id),
             Self::File(file_scope) => file_scope.insert_definition(symbol, node_id),
@@ -155,6 +183,10 @@ impl Scope {
 
     pub(crate) fn new_block(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
         Self::Block(BlockScope::new(node_id, parent_scope_id))
+    }
+
+    pub(crate) fn new_chained(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
+        Self::Chained(ChainedScope::new(node_id, parent_scope_id))
     }
 
     pub(crate) fn new_contract(node_id: NodeId, file_scope_id: ScopeId) -> Self {
@@ -216,6 +248,20 @@ impl BlockScope {
     }
 }
 
+impl ChainedScope {
+    fn new(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
+        Self {
+            node_id,
+            parent_scope_id,
+            definitions: Map::default(),
+        }
+    }
+
+    pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
+        self.definitions.insert(symbol, node_id);
+    }
+}
+
 impl ContractScope {
     fn new(node_id: NodeId, file_scope_id: ScopeId) -> Self {
         Self {
@@ -254,7 +300,7 @@ impl FileScope {
             node_id,
             file_id: file_id.to_string(),
             definitions: Map::default(),
-            imported_files: Set::default(),
+            default_imports: Vec::new(),
             using_directives: Vec::new(),
         }
     }
@@ -267,15 +313,17 @@ impl FileScope {
         }
     }
 
-    pub(crate) fn add_imported_file(&mut self, file_id: String) {
-        self.imported_files.insert(file_id);
+    pub(crate) fn add_default_import(&mut self, file_id: String, range: Range<usize>) {
+        self.default_imports.push(DefaultImport { file_id, range });
     }
 
-    pub(super) fn lookup_symbol<'a>(&'a self, symbol: &str) -> impl Iterator<Item = NodeId> + 'a {
-        match self.definitions.get(symbol) {
-            Some(defs) => OptionIter::Some(defs.iter().copied()),
-            None => OptionIter::Empty,
-        }
+    pub(crate) fn lookup_symbol<'a>(&'a self, symbol: &str) -> impl Iterator<Item = NodeId> + 'a {
+        self.definitions
+            .get(symbol)
+            .map(|defs| defs.as_slice())
+            .unwrap_or_default()
+            .iter()
+            .copied()
     }
 }
 
@@ -483,25 +531,6 @@ impl UsingDirective {
             UsingDirective::AllTypes { scope_id }
             | UsingDirective::SingleType { scope_id, .. }
             | UsingDirective::SingleTypeOperator { scope_id, .. } => *scope_id,
-        }
-    }
-}
-
-pub(crate) enum OptionIter<T: Iterator> {
-    Some(T),
-    Empty,
-}
-
-impl<T> Iterator for OptionIter<T>
-where
-    T: Iterator,
-{
-    type Item = T::Item;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        match self {
-            OptionIter::Some(iter) => iter.next(),
-            OptionIter::Empty => None,
         }
     }
 }

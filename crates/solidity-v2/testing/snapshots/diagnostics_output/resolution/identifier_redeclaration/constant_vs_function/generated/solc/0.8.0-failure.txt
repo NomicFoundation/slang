@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 2333] Error: Identifier already declared.
+   ╭─[input.sol:6:1]
+   │
+ 6 │ ╭─▶ function c() pure returns (uint) {
+   ┆ ┆   
+ 8 │ ├─▶ }
+   │ │       
+   │ ╰─────── Error occurred here.
+───╯

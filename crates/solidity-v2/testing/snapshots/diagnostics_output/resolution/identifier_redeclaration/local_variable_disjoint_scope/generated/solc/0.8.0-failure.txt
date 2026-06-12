@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[DeclarationError 2333] Error: Identifier already declared.
+    ╭─[input.sol:12:9]
+    │
+ 12 │         uint x;
+    │         ───┬──  
+    │            ╰──── Error occurred here.
+────╯
+
+[Warning 2519] Warning: This declaration shadows an existing declaration.
+   ╭─[input.sol:9:13]
+   │
+ 9 │             uint x;
+   │             ───┬──  
+   │                ╰──── Error occurred here.
+───╯
