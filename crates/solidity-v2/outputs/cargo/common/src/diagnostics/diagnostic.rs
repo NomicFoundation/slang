@@ -1,3 +1,4 @@
+use std::cmp::Ordering;
 use std::ops::Range;
 
 use serde::Serialize;
@@ -67,5 +68,21 @@ impl DiagnosticExtensions for Diagnostic {
 
     fn message(&self) -> String {
         self.kind.message()
+    }
+}
+
+impl Ord for Diagnostic {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.file_id()
+            .cmp(other.file_id())
+            .then(self.text_range().start.cmp(&other.text_range().start))
+            .then(self.text_range().end.cmp(&other.text_range().end))
+            .then(self.kind().cmp(other.kind()))
+    }
+}
+
+impl PartialOrd for Diagnostic {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
     }
 }

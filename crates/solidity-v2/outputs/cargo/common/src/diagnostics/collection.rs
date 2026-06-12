@@ -1,5 +1,7 @@
 use std::ops::Range;
 
+use itertools::Itertools;
+
 use crate::diagnostics::diagnostic::Diagnostic;
 use crate::diagnostics::kinds::DiagnosticKind;
 
@@ -27,18 +29,18 @@ impl DiagnosticCollection {
         self.contents.is_empty()
     }
 
-    /// Returns an iterator over the diagnostics in the collection.
+    /// Returns an iterator over the sorted diagnostics in the collection.
     pub fn iter(&self) -> impl Iterator<Item = &Diagnostic> {
-        self.contents.iter()
+        self.contents.iter().sorted()
     }
 }
 
 impl<'a> IntoIterator for &'a DiagnosticCollection {
     type Item = &'a Diagnostic;
-    type IntoIter = std::slice::Iter<'a, Diagnostic>;
+    type IntoIter = std::vec::IntoIter<&'a Diagnostic>;
 
     fn into_iter(self) -> Self::IntoIter {
-        self.contents.iter()
+        self.contents.iter().sorted()
     }
 }
 
@@ -47,7 +49,7 @@ impl IntoIterator for DiagnosticCollection {
     type IntoIter = std::vec::IntoIter<Diagnostic>;
 
     fn into_iter(self) -> Self::IntoIter {
-        self.contents.into_iter()
+        self.contents.into_iter().sorted()
     }
 }
 
