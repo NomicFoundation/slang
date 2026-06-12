@@ -171,11 +171,20 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     fn collect_parameters(&mut self, parameters: &ir::Parameters) -> ScopeId {
         let mut scope = ParametersScope::new();
         for parameter in parameters {
-            scope.add_parameter(parameter.name.as_ref().map(|id| &id.text), parameter.id());
-            if parameter.name.is_some() {
+            if let Some(name) = &parameter.name {
+                // Parameters cannot overload, so any earlier parameter with
+                // the same name is a redeclaration.
+                if scope.lookup_definition(&name.text).is_some() {
+                    self.diagnostics.push(
+                        self.current_file.id().to_owned(),
+                        name.range.clone(),
+                        IdentifierRedeclaration,
+                    );
+                }
                 let definition = Definition::new_parameter(parameter);
                 self.binder.insert_definition_no_scope(definition);
             }
+            scope.add_parameter(parameter.name.as_ref().map(|id| &id.text), parameter.id());
         }
         self.binder.insert_scope(Scope::Parameters(scope))
     }

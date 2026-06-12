@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Identifier already declared.
+   ╭─[input.sol:5:29]
+   │
+ 5 │     function f(uint a, uint a) public pure {}
+   │                             ┬  
+   │                             ╰── Error occurred here.
+───╯
