@@ -584,6 +584,15 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         let scope = Scope::new_yul_block(node.id(), self.current_scope_id());
         self.enter_scope(scope);
 
+        // Yul function definitions are hoisted: their names are visible in
+        // the entire enclosing block, even before their definition statement.
+        for statement in &node.statements {
+            if let ir::YulStatement::YulFunctionDefinition(function) = statement {
+                let definition = Definition::new_yul_function(function);
+                self.insert_definition_in_current_scope(definition);
+            }
+        }
+
         true
     }
 
@@ -592,9 +601,8 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn enter_yul_function_definition(&mut self, node: &ir::YulFunctionDefinition) -> bool {
-        let definition = Definition::new_yul_function(node);
-        self.insert_definition_in_current_scope(definition);
-
+        // The function name definition was already inserted (hoisted) when
+        // entering the enclosing Yul block.
         let scope = Scope::new_yul_function(node.id(), self.current_scope_id());
         let scope_id = self.enter_scope(scope);
 

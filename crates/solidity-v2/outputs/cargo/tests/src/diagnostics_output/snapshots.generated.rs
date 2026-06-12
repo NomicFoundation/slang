@@ -215,6 +215,14 @@ mod resolution {
         }
 
         #[test]
+        fn yul_for_loop_variable() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_for_loop_variable",
+            )
+        }
+
+        #[test]
         fn yul_function() -> Result<()> {
             run("resolution/identifier_redeclaration", "yul_function")
         }
@@ -236,6 +244,83 @@ mod resolution {
         }
 
         #[test]
+        fn yul_function_return_vs_outer_variable() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_return_vs_outer_variable",
+            )
+        }
+
+        #[test]
+        fn yul_function_vs_subscope_function() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_vs_subscope_function",
+            )
+        }
+
+        #[test]
+        fn yul_function_vs_subscope_variable() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_vs_subscope_variable",
+            )
+        }
+
+        #[test]
+        fn yul_multi_variable_declaration() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_multi_variable_declaration",
+            )
+        }
+
+        #[test]
+        fn yul_nested_function_redefinition() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_nested_function_redefinition",
+            )
+        }
+
+        #[test]
+        fn yul_shadow_constant() -> Result<()> {
+            run("resolution/identifier_redeclaration", "yul_shadow_constant")
+        }
+
+        #[test]
+        fn yul_shadow_contract_name() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_shadow_contract_name",
+            )
+        }
+
+        #[test]
+        fn yul_shadow_function_name() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_shadow_function_name",
+            )
+        }
+
+        #[test]
+        fn yul_shadow_function_parameter() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_shadow_function_parameter",
+            )
+        }
+
+        #[test]
+        fn yul_shadow_import_alias() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_shadow_import_alias",
+            )
+        }
+
+        #[test]
         fn yul_variable() -> Result<()> {
             run("resolution/identifier_redeclaration", "yul_variable")
         }
@@ -249,10 +334,26 @@ mod resolution {
         }
 
         #[test]
+        fn yul_variable_vs_enclosing_yul_function() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_variable_vs_enclosing_yul_function",
+            )
+        }
+
+        #[test]
         fn yul_variable_vs_solidity_local() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
                 "yul_variable_vs_solidity_local",
+            )
+        }
+
+        #[test]
+        fn yul_variable_vs_yul_function() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_variable_vs_yul_function",
             )
         }
     }

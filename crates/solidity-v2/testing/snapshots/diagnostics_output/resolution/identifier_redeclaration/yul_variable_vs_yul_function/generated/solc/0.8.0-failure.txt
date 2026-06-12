@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 1395] Error: Variable name g already taken in this scope.
+   ╭─[input.sol:7:13]
+   │
+ 7 │             let g := 2
+   │             ─────┬────  
+   │                  ╰────── Error occurred here.
+───╯
