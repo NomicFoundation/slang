@@ -350,10 +350,10 @@ impl Binder {
         let mut found_definitions = Vec::new();
         let mut visited_files = Set::default();
         let mut files_to_search = VecDeque::new();
-        files_to_search.push_back(file_id.to_owned());
+        files_to_search.push_back(file_id);
 
         while let Some(file_id) = files_to_search.pop_front() {
-            let file_scope = self.get_file_scope(&file_id);
+            let file_scope = self.get_file_scope(file_id);
             if !visited_files.insert(file_id) {
                 continue;
             }
@@ -363,7 +363,7 @@ impl Binder {
                 file_scope
                     .default_imports
                     .iter()
-                    .map(|import| import.file_id.clone()),
+                    .map(|import| import.file_id.as_str()),
             );
         }
 

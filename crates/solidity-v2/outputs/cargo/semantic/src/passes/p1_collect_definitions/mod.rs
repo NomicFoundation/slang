@@ -144,8 +144,8 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     // registered regardless, so later passes can still resolve references to
     // it.
     fn insert_definition_in_scope(&mut self, definition: Definition, scope_id: ScopeId) {
-        let symbol = definition.identifier().unparse().to_string();
-        if conflicts::find_conflicting_definition(self.binder, scope_id, &symbol, &definition)
+        let symbol = definition.identifier().unparse();
+        if conflicts::find_conflicting_definition(self.binder, scope_id, symbol, &definition)
             .is_some()
         {
             self.diagnostics.push(
