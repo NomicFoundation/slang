@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Invalid visibility, can only be "external" or "internal".
+   ╭─[input.sol:5:71]
+   │
+ 5 │     function f() external pure returns (function () internal returns (function () public)) {}
+   │                                                                       ─────────┬────────  
+   │                                                                                ╰────────── Error occurred here.
+───╯

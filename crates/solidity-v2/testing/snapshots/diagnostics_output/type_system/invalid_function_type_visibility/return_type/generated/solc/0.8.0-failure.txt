@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 6012] Error: Invalid visibility, can only be "external" or "internal".
+   ╭─[input.sol:5:36]
+   │
+ 5 │     function f() external returns (function (uint256) private) {}
+   │                                    ─────────────┬─────────────  
+   │                                                 ╰─────────────── Error occurred here.
+───╯

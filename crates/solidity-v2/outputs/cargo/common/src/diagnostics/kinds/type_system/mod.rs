@@ -1,6 +1,8 @@
 mod invalid_base;
+mod invalid_function_type_visibility;
 
 pub use invalid_base::InvalidBase;
+pub use invalid_function_type_visibility::InvalidFunctionTypeVisibility;
 use serde::Serialize;
 
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
@@ -16,5 +18,7 @@ define_diagnostic_kind! {
     pub enum TypeSystemDiagnosticKind {
         /// A base in an inheritance list is not a contract or interface.
         InvalidBase(InvalidBase),
+        /// A function type has a visibility other than `internal` or `external`.
+        InvalidFunctionTypeVisibility(InvalidFunctionTypeVisibility),
     }
 }
