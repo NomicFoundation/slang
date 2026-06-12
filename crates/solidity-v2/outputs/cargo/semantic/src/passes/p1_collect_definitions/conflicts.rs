@@ -29,26 +29,28 @@ pub(super) fn find_conflicting_definition(
 ) -> Option<NodeId> {
     let scope = binder.get_scope_by_id(scope_id);
     match scope {
+        // A block opens a new lexical scope (a real `{ }` block or for-init
+        // clause), which may legally shadow declarations in its enclosing
+        // scopes, so the walk stops here.
         Scope::Block(block_scope) => block_scope
+            .definitions
+            .get(symbol)
+            .copied()
+            .and_then(|existing| conflicting_definition(binder, existing, new_definition)),
+        // A chained scope is a continuation of the parent's lexical scope, so
+        // continue the search into the parent.
+        Scope::Chained(chained_scope) => chained_scope
             .definitions
             .get(symbol)
             .copied()
             .and_then(|existing| conflicting_definition(binder, existing, new_definition))
             .or_else(|| {
-                // Only continue into the parent when this block is a
-                // "chained" continuation of the same lexical scope. A new
-                // lexical scope (a real `{ }` block or for-init clause) may
-                // legally shadow declarations in its enclosing scopes.
-                if block_scope.is_lexical_scope {
-                    None
-                } else {
-                    find_conflicting_definition(
-                        binder,
-                        block_scope.parent_scope_id,
-                        symbol,
-                        new_definition,
-                    )
-                }
+                find_conflicting_definition(
+                    binder,
+                    chained_scope.parent_scope_id,
+                    symbol,
+                    new_definition,
+                )
             }),
         Scope::Function(function_scope) => function_scope
             .definitions

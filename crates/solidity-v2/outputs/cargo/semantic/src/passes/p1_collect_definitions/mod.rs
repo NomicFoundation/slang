@@ -139,10 +139,10 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     }
 
     // Registers `definition` under the given scope, first checking whether its
-    // identifier collides with a pre-existing definition in that scope (or an
-    // enclosing lexical scope). If so, an `IdentifierRedeclaration` diagnostic
-    // is emitted; the definition is registered regardless, so later passes can
-    // still resolve references to it.
+    // identifier collides with a pre-existing definition in that scope. If so,
+    // an `IdentifierRedeclaration` diagnostic is emitted; the definition is
+    // registered regardless, so later passes can still resolve references to
+    // it.
     fn insert_definition_in_scope(&mut self, definition: Definition, scope_id: ScopeId) {
         let symbol = definition.identifier().unparse().to_string();
         if conflicts::find_conflicting_definition(self.binder, scope_id, &symbol, &definition)
@@ -480,7 +480,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         // definitions declared here are only available for statements after
         // this one. This is a "chained" scope that continues the parent's
         // lexical scope, not a new lexical scope of its own.
-        let scope = Scope::new_block(node.id(), self.current_scope_id(), false);
+        let scope = Scope::new_chained(node.id(), self.current_scope_id());
         self.replace_scope(scope);
 
         match &node.target {
@@ -500,7 +500,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn enter_block(&mut self, node: &ir::Block) -> bool {
-        let scope = Scope::new_block(node.id(), self.current_scope_id(), true);
+        let scope = Scope::new_block(node.id(), self.current_scope_id());
         self.enter_scope(scope);
         true
     }
@@ -512,7 +512,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     fn enter_for_statement(&mut self, node: &ir::ForStatement) -> bool {
         // Open a new block here to hold declarations in the initialization
         // clause. This is a new lexical scope.
-        let scope = Scope::new_block(node.id(), self.current_scope_id(), true);
+        let scope = Scope::new_block(node.id(), self.current_scope_id());
         self.enter_scope(scope);
         true
     }
