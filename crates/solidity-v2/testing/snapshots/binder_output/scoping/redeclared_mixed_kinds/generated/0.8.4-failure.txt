@@ -1,0 +1,106 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Identifier already declared.
+   ╭─[input.sol:5:8]
+   │
+ 5 │ struct S {
+   │        ┬  
+   │        ╰── Error occurred here.
+───╯
+Error: Identifier already declared.
+    ╭─[input.sol:12:14]
+    │
+ 12 │     function dup(bool flag) public {}
+    │              ─┬─  
+    │               ╰─── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
+Definitions (11):
+- Def: #1 ["S" @ input.sol:1:10] (contract)
+- Def: #2 ["f" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["S" @ input.sol:5:8] (struct)
+- Def: #4 ["u" @ input.sol:6:10] (struct member, type: uint256)
+- Def: #5 ["Test" @ input.sol:9:10] (contract)
+- Def: #6 ["dup" @ input.sol:10:11] (error)
+- Def: #7 ["code" @ input.sol:10:20] (parameter, type: uint256)
+- Def: #8 ["dup" @ input.sol:12:14] (function, type: function (bool) returns void)
+- Def: #9 ["flag" @ input.sol:12:23] (parameter, type: bool)
+- Def: #10 ["test" @ input.sol:14:14] (function, type: unresolved)
+- Def: #11 ["s" @ input.sol:14:28] (parameter, type: unresolved)
+
+------------------------------------------------------------------------
+
+References (7):
+- Ref: ["S" @ input.sol:14:19] -> unresolved
+- Ref: ["s" @ input.sol:15:9] -> #11
+- Ref: ["u" @ input.sol:15:11] -> unresolved
+- Ref: ["s" @ input.sol:16:9] -> #11
+- Ref: ["f" @ input.sol:16:11] -> unresolved
+- Ref: ["dup" @ input.sol:17:9] -> #8
+- Ref: ["dup" @ input.sol:18:16] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract S {
+    │          ┬  
+    │          ╰── name: 1
+  2 │     function f() public {}
+    │              ┬  
+    │              ╰── name: 2
+    │ 
+  5 │ struct S {
+    │        ┬  
+    │        ╰── name: 3
+  6 │     uint u;
+    │          ┬  
+    │          ╰── name: 4
+    │ 
+  9 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 5
+ 10 │     error dup(uint code);
+    │           ─┬─      ──┬─  
+    │            ╰───────────── name: 6
+    │                      │   
+    │                      ╰─── name: 7
+    │ 
+ 12 │     function dup(bool flag) public {}
+    │              ─┬─      ──┬─  
+    │               ╰───────────── name: 8
+    │                         │   
+    │                         ╰─── name: 9
+    │ 
+ 14 │     function test(S memory s) public {
+    │              ──┬─ ┬        ┬  
+    │                ╰────────────── name: 10
+    │                   │        │  
+    │                   ╰─────────── unresolved
+    │                            │  
+    │                            ╰── name: 11
+ 15 │         s.u;
+    │         ┬ ┬  
+    │         ╰──── ref: 11
+    │           │  
+    │           ╰── unresolved
+ 16 │         s.f;
+    │         ┬ ┬  
+    │         ╰──── ref: 11
+    │           │  
+    │           ╰── unresolved
+ 17 │         dup(true);
+    │         ─┬─  
+    │          ╰─── ref: 8
+ 18 │         revert dup(1);
+    │                ─┬─  
+    │                 ╰─── unresolved
+────╯

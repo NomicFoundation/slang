@@ -982,6 +982,26 @@ mod scoping {
     }
 
     #[test]
+    fn redeclared_contracts() -> Result<()> {
+        run("scoping", "redeclared_contracts")
+    }
+
+    #[test]
+    fn redeclared_locals() -> Result<()> {
+        run("scoping", "redeclared_locals")
+    }
+
+    #[test]
+    fn redeclared_members() -> Result<()> {
+        run("scoping", "redeclared_members")
+    }
+
+    #[test]
+    fn redeclared_mixed_kinds() -> Result<()> {
+        run("scoping", "redeclared_mixed_kinds")
+    }
+
+    #[test]
     fn shadowing() -> Result<()> {
         run("scoping", "shadowing")
     }
