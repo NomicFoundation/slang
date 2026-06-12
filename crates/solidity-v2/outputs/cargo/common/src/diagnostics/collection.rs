@@ -49,7 +49,7 @@ impl IntoIterator for DiagnosticCollection {
     type IntoIter = std::vec::IntoIter<Diagnostic>;
 
     fn into_iter(self) -> Self::IntoIter {
-        itertools::sorted(self.contents)
+        self.contents.into_iter().sorted()
     }
 }
 

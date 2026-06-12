@@ -76,6 +76,7 @@ impl Ord for Diagnostic {
         self.file_id()
             .cmp(other.file_id())
             .then(self.text_range().start.cmp(&other.text_range().start))
+            .then(self.text_range().end.cmp(&other.text_range().end))
             .then(self.kind().cmp(other.kind()))
     }
 }
