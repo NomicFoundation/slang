@@ -1,6 +1,6 @@
-use slang_solidity_v2_common::collections::Map;
 use std::ops::Range;
 
+use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 

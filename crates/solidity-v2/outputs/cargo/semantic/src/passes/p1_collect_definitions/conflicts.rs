@@ -16,9 +16,10 @@
 //! and need provenance (which import directive brought a symbol in) that
 //! `Resolution` discards.
 
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::VecDeque;
 use std::ops::Range;
 
+use slang_solidity_v2_common::collections::{Map, Set};
 use slang_solidity_v2_common::nodes::NodeId;
 
 use crate::binder::{Binder, Definition, FileScope, Scope, ScopeId};
@@ -349,7 +350,7 @@ fn find_imported_symbol_conflicts<'a>(
     conflicts: &mut Vec<(String, Range<usize>)>,
 ) {
     // All the symbols imported by the directives processed so far.
-    let mut seen: HashMap<&'a str, Vec<NodeId>> = HashMap::new();
+    let mut seen: Map<&'a str, Vec<NodeId>> = Map::default();
 
     let mut import_iter = file_scope.default_imports.iter().peekable();
     while let Some(import) = import_iter.next() {
@@ -476,7 +477,7 @@ fn transitive_file_scopes<'a>(
     excluded_file_id: &str,
 ) -> Vec<&'a FileScope> {
     let mut found = Vec::new();
-    let mut visited = HashSet::new();
+    let mut visited = Set::default();
     visited.insert(excluded_file_id);
 
     let mut queue: VecDeque<&str> = start.into_iter().collect();
