@@ -1,5 +1,4 @@
-use std::collections::HashMap;
-
+use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -44,8 +43,8 @@ contract Test is Base layout at 0 {}
     assert_eq!(2, binder.linearisations().len());
 }
 
-fn get_contract_to_bases_map(binder: &Binder) -> HashMap<String, Vec<String>> {
-    let mut contract_to_bases = HashMap::new();
+fn get_contract_to_bases_map(binder: &Binder) -> Map<String, Vec<String>> {
+    let mut contract_to_bases = Map::default();
     for (key, values) in binder.linearisations() {
         let contract_name = binder
             .find_definition_by_id(*key)
@@ -103,7 +102,7 @@ interface A is C {}
 
     let contract_to_bases = get_contract_to_bases_map(&binder);
 
-    let mut expected = HashMap::new();
+    let mut expected = Map::default();
     expected.insert(
         "D".to_string(),
         vec![
@@ -166,7 +165,7 @@ contract Test is Base, Foo { // Base should resolve to the contract, not the var
 
     let contract_to_bases = get_contract_to_bases_map(&binder);
 
-    let mut expected = HashMap::new();
+    let mut expected = Map::default();
     expected.insert("Base".to_string(), vec!["Base".to_string()]);
     expected.insert(
         "Test".to_string(),

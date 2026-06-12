@@ -1,5 +1,4 @@
-use std::collections::HashMap;
-
+use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -14,7 +13,7 @@ use crate::dataset::SolidityProject;
 pub struct File {
     id: String,
     ir_root: ir::SourceUnit,
-    resolved_imports: HashMap<NodeId, String>,
+    resolved_imports: Map<NodeId, String>,
 }
 
 impl File {

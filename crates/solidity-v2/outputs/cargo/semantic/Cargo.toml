@@ -19,7 +19,6 @@ keywords = ["utilities"]
 categories = ["compilers", "utilities"]
 
 [dependencies]
-indexmap = { workspace = true }
 num-bigint = { workspace = true }
 num-integer = { workspace = true }
 num-rational = { workspace = true }

@@ -171,6 +171,14 @@ impl core::hash::Hash for slang_solidity_v2_common::built_ins::BuiltIn
 pub fn slang_solidity_v2_common::built_ins::BuiltIn::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
 impl core::marker::Copy for slang_solidity_v2_common::built_ins::BuiltIn
 impl core::marker::StructuralPartialEq for slang_solidity_v2_common::built_ins::BuiltIn
+pub mod slang_solidity_v2_common::collections
+pub type slang_solidity_v2_common::collections::DeterministicState = core::hash::BuildHasherDefault<std::hash::random::DefaultHasher>
+pub type slang_solidity_v2_common::collections::Map<K, V> = std::collections::hash::map::HashMap<K, V, slang_solidity_v2_common::collections::DeterministicState>
+pub type slang_solidity_v2_common::collections::OrderedMap<K, V> = indexmap::map::IndexMap<K, V, slang_solidity_v2_common::collections::DeterministicState>
+pub type slang_solidity_v2_common::collections::OrderedSet<T> = indexmap::set::IndexSet<T, slang_solidity_v2_common::collections::DeterministicState>
+pub type slang_solidity_v2_common::collections::Set<T> = std::collections::hash::set::HashSet<T, slang_solidity_v2_common::collections::DeterministicState>
+pub type slang_solidity_v2_common::collections::SortedMap<K, V> = alloc::collections::btree::map::BTreeMap<K, V>
+pub type slang_solidity_v2_common::collections::SortedSet<T> = alloc::collections::btree::set::BTreeSet<T>
 pub mod slang_solidity_v2_common::diagnostics
 pub mod slang_solidity_v2_common::diagnostics::kinds
 pub mod slang_solidity_v2_common::diagnostics::kinds::compilation
@@ -477,7 +485,7 @@ pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVirtualSpec
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVirtualSpecifiers::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVirtualSpecifiers::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof
-pub slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof::expected: alloc::collections::btree::set::BTreeSet<slang_solidity_v2_common::terminals::TerminalKind>
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof::expected: slang_solidity_v2_common::collections::SortedSet<slang_solidity_v2_common::terminals::TerminalKind>
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof
 impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof
@@ -497,7 +505,7 @@ pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof::code
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal
-pub slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal::expected: alloc::collections::btree::set::BTreeSet<slang_solidity_v2_common::terminals::TerminalKind>
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal::expected: slang_solidity_v2_common::collections::SortedSet<slang_solidity_v2_common::terminals::TerminalKind>
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal::found: slang_solidity_v2_common::terminals::TerminalKind
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal

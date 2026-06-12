@@ -1,5 +1,4 @@
-use std::collections::{HashMap, HashSet};
-
+use slang_solidity_v2_common::collections::{Map, Set};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -26,26 +25,26 @@ pub(crate) enum Scope {
 pub(crate) struct BlockScope {
     pub(crate) node_id: NodeId,
     pub(crate) parent_scope_id: ScopeId,
-    pub(crate) definitions: HashMap<String, NodeId>,
+    pub(crate) definitions: Map<String, NodeId>,
 }
 
 pub(crate) struct ContractScope {
     pub(crate) node_id: NodeId,
     pub(crate) file_scope_id: ScopeId,
-    pub(crate) definitions: HashMap<String, Vec<NodeId>>,
+    pub(crate) definitions: Map<String, Vec<NodeId>>,
     pub(crate) using_directives: Vec<UsingDirective>,
 }
 
 pub(crate) struct EnumScope {
     pub(crate) node_id: NodeId,
-    pub(crate) definitions: HashMap<String, NodeId>,
+    pub(crate) definitions: Map<String, NodeId>,
 }
 
 pub(crate) struct FileScope {
     pub(crate) node_id: NodeId,
     pub(crate) file_id: String,
-    pub(crate) definitions: HashMap<String, Vec<NodeId>>,
-    pub(crate) imported_files: HashSet<String>,
+    pub(crate) definitions: Map<String, Vec<NodeId>>,
+    pub(crate) imported_files: Set<String>,
     pub(crate) using_directives: Vec<UsingDirective>,
 }
 
@@ -53,7 +52,7 @@ pub(crate) struct FunctionScope {
     pub(crate) node_id: NodeId,
     pub(crate) parent_scope_id: ScopeId,
     pub(crate) parameters_scope_id: ScopeId,
-    pub(crate) definitions: HashMap<String, NodeId>,
+    pub(crate) definitions: Map<String, NodeId>,
 }
 
 // TODO: this is similar to a function scope, but it doesn't have a separate
@@ -65,7 +64,7 @@ pub(crate) struct FunctionScope {
 pub(crate) struct ModifierScope {
     pub(crate) node_id: NodeId,
     pub(crate) parent_scope_id: ScopeId,
-    pub(crate) definitions: HashMap<String, NodeId>,
+    pub(crate) definitions: Map<String, NodeId>,
 }
 
 /// This is stored in a vector in the `ParametersScope` below preserving order
@@ -86,24 +85,24 @@ pub(crate) struct ParametersScope {
 
 pub(crate) struct StructScope {
     pub(crate) node_id: NodeId,
-    pub(crate) definitions: HashMap<String, NodeId>,
+    pub(crate) definitions: Map<String, NodeId>,
 }
 
 pub(crate) struct UsingScope {
     pub(crate) node_id: NodeId,
-    pub(crate) symbols: HashMap<String, Vec<NodeId>>,
+    pub(crate) symbols: Map<String, Vec<NodeId>>,
 }
 
 pub(crate) struct YulBlockScope {
     pub(crate) node_id: NodeId,
     pub(crate) parent_scope_id: ScopeId,
-    pub(crate) definitions: HashMap<String, NodeId>,
+    pub(crate) definitions: Map<String, NodeId>,
 }
 
 pub(crate) struct YulFunctionScope {
     pub(crate) node_id: NodeId,
     pub(crate) parent_scope_id: ScopeId,
-    pub(crate) definitions: HashMap<String, NodeId>,
+    pub(crate) definitions: Map<String, NodeId>,
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -190,7 +189,7 @@ impl Scope {
         Self::Struct(StructScope::new(node_id))
     }
 
-    pub(crate) fn new_using(node_id: NodeId, symbols: HashMap<String, Vec<NodeId>>) -> Self {
+    pub(crate) fn new_using(node_id: NodeId, symbols: Map<String, Vec<NodeId>>) -> Self {
         Self::Using(UsingScope::new(node_id, symbols))
     }
 
@@ -208,7 +207,7 @@ impl BlockScope {
         Self {
             node_id,
             parent_scope_id,
-            definitions: HashMap::new(),
+            definitions: Map::default(),
         }
     }
 
@@ -222,7 +221,7 @@ impl ContractScope {
         Self {
             node_id,
             file_scope_id,
-            definitions: HashMap::new(),
+            definitions: Map::default(),
             using_directives: Vec::new(),
         }
     }
@@ -240,7 +239,7 @@ impl EnumScope {
     fn new(node_id: NodeId) -> Self {
         Self {
             node_id,
-            definitions: HashMap::new(),
+            definitions: Map::default(),
         }
     }
 
@@ -254,8 +253,8 @@ impl FileScope {
         Self {
             node_id,
             file_id: file_id.to_string(),
-            definitions: HashMap::new(),
-            imported_files: HashSet::new(),
+            definitions: Map::default(),
+            imported_files: Set::default(),
             using_directives: Vec::new(),
         }
     }
@@ -286,7 +285,7 @@ impl FunctionScope {
             node_id,
             parent_scope_id,
             parameters_scope_id,
-            definitions: HashMap::new(),
+            definitions: Map::default(),
         }
     }
 
@@ -300,7 +299,7 @@ impl ModifierScope {
         Self {
             node_id,
             parent_scope_id,
-            definitions: HashMap::new(),
+            definitions: Map::default(),
         }
     }
 
@@ -345,7 +344,7 @@ impl StructScope {
     fn new(node_id: NodeId) -> Self {
         Self {
             node_id,
-            definitions: HashMap::new(),
+            definitions: Map::default(),
         }
     }
 
@@ -355,7 +354,7 @@ impl StructScope {
 }
 
 impl UsingScope {
-    fn new(node_id: NodeId, symbols: HashMap<String, Vec<NodeId>>) -> Self {
+    fn new(node_id: NodeId, symbols: Map<String, Vec<NodeId>>) -> Self {
         Self { node_id, symbols }
     }
 }
@@ -365,7 +364,7 @@ impl YulBlockScope {
         Self {
             node_id,
             parent_scope_id,
-            definitions: HashMap::new(),
+            definitions: Map::default(),
         }
     }
 
@@ -379,7 +378,7 @@ impl YulFunctionScope {
         Self {
             node_id,
             parent_scope_id,
-            definitions: HashMap::new(),
+            definitions: Map::default(),
         }
     }
 
@@ -402,7 +401,7 @@ pub(crate) enum UsingDirective {
     },
     SingleTypeOperator {
         scope_id: ScopeId,
-        operator_mapping: HashMap<UsingOperator, String>,
+        operator_mapping: Map<UsingOperator, String>,
         type_id: TypeId,
     },
 }
@@ -461,7 +460,7 @@ impl UsingDirective {
     pub(crate) fn new_single_type_with_operators(
         scope_id: ScopeId,
         type_id: TypeId,
-        operator_mapping: HashMap<UsingOperator, String>,
+        operator_mapping: Map<UsingOperator, String>,
     ) -> Self {
         Self::SingleTypeOperator {
             scope_id,

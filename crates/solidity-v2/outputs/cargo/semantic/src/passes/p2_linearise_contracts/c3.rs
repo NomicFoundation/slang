@@ -1,6 +1,8 @@
-use std::collections::{HashMap, VecDeque};
+use std::collections::VecDeque;
 use std::fmt::Debug;
 use std::hash::Hash;
+
+use slang_solidity_v2_common::collections::Map;
 
 /// Produces a linearisation of a hierarchy of items using the C3 linearisation
 /// algorithm. Given an item `A` with parents `(B1, B2)` in that order, the
@@ -15,9 +17,9 @@ use std::hash::Hash;
 /// linearisation algorithm, ie. Python style.
 pub(crate) fn linearise<Item: Clone + Debug + Eq + Hash + PartialEq>(
     target: &Item,
-    parents: &HashMap<Item, Vec<Item>>,
+    parents: &Map<Item, Vec<Item>>,
 ) -> Option<Vec<Item>> {
-    let mut linearisations: HashMap<Item, Vec<Item>> = HashMap::new();
+    let mut linearisations: Map<Item, Vec<Item>> = Map::default();
 
     // Keeps a running queue of pending linearisations.
     let mut queue: VecDeque<Item> = VecDeque::new();
@@ -194,7 +196,7 @@ mod tests {
 
     #[test]
     fn test_linearise() {
-        let mut parents = HashMap::new();
+        let mut parents = Map::default();
         parents.insert('A', vec![]);
         parents.insert('B', vec!['A']);
         parents.insert('C', vec!['A']);
@@ -207,7 +209,7 @@ mod tests {
 
     #[test]
     fn test_linearise_not_linearisable() {
-        let mut parents = HashMap::new();
+        let mut parents = Map::default();
         parents.insert('X', vec![]);
         parents.insert('A', vec!['X']);
         parents.insert('C', vec!['X', 'A']);
@@ -217,7 +219,7 @@ mod tests {
 
     #[test]
     fn test_linearise_with_shallow_cycles() {
-        let mut parents = HashMap::new();
+        let mut parents = Map::default();
         parents.insert('B', vec!['A']);
         parents.insert('A', vec!['B']);
 
@@ -227,7 +229,7 @@ mod tests {
 
     #[test]
     fn test_linearise_with_deep_cycles() {
-        let mut parents = HashMap::new();
+        let mut parents = Map::default();
         parents.insert('X', vec!['Y']);
         parents.insert('Y', vec!['Z']);
         parents.insert('Z', vec!['X']);

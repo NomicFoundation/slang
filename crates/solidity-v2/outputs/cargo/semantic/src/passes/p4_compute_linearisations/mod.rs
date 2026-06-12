@@ -1,7 +1,7 @@
 use std::cmp::Ordering;
-use std::collections::HashMap;
 use std::sync::Arc;
 
+use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -20,7 +20,7 @@ use crate::types::TypeRegistry;
 /// resolution and typing, but it's fully independent for now.
 pub fn run(binder: &Binder, types: &TypeRegistry) -> ContractData {
     let mut contracts = Vec::new();
-    let mut data = HashMap::new();
+    let mut data = Map::default();
 
     for (contract_id, definition) in binder.definitions() {
         let Definition::Contract(contract) = definition else {

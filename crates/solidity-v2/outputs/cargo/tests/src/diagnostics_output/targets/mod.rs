@@ -1,11 +1,10 @@
 mod slang;
 mod solc;
 
-use std::collections::BTreeMap;
-
 use anyhow::Result;
 use semver::Version;
 pub(crate) use slang::SlangTarget;
+use slang_solidity_v2_common::collections::SortedMap;
 pub(crate) use solc::SolcTarget;
 
 pub(crate) trait TestTarget {
@@ -13,7 +12,7 @@ pub(crate) trait TestTarget {
 
     fn collect_diagnostics(
         &self,
-        files: &BTreeMap<String, String>,
+        files: &SortedMap<String, String>,
         version: &Version,
     ) -> Result<Vec<String>>;
 }

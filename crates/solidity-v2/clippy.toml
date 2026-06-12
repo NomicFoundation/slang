@@ -1,0 +1,13 @@
+# Applies to all crates under `crates/solidity-v2/`.
+#
+# All maps and sets must be picked from the `slang_solidity_v2_common::collections`
+# aliases, which document the guarantees (determinism, iteration order, indexing)
+# of each type in a single place.
+disallowed-types = [
+  { path = "std::collections::HashMap", reason = "use `slang_solidity_v2_common::collections::Map` instead" },
+  { path = "std::collections::HashSet", reason = "use `slang_solidity_v2_common::collections::Set` instead" },
+  { path = "indexmap::IndexMap", reason = "use `slang_solidity_v2_common::collections::OrderedMap` instead" },
+  { path = "indexmap::IndexSet", reason = "use `slang_solidity_v2_common::collections::OrderedSet` instead" },
+  { path = "std::collections::BTreeMap", reason = "use `slang_solidity_v2_common::collections::SortedMap` instead" },
+  { path = "std::collections::BTreeSet", reason = "use `slang_solidity_v2_common::collections::SortedSet` instead" },
+]

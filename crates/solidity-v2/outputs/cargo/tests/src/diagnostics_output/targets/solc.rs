@@ -1,13 +1,12 @@
-use std::collections::BTreeMap;
-
 use anyhow::{anyhow, Result};
 use infra_utils::solc::{render_solc_error, Binary, CliInput, InputSource, LanguageSelector};
 use semver::Version;
+use slang_solidity_v2_common::collections::SortedMap;
 
 use crate::diagnostics_output::targets::TestTarget;
 
 pub(crate) struct SolcTarget {
-    binaries: BTreeMap<Version, Binary>,
+    binaries: SortedMap<Version, Binary>,
 }
 
 impl SolcTarget {
@@ -25,7 +24,7 @@ impl TestTarget for SolcTarget {
 
     fn collect_diagnostics(
         &self,
-        files: &BTreeMap<String, String>,
+        files: &SortedMap<String, String>,
         version: &Version,
     ) -> Result<Vec<String>> {
         let binary = self

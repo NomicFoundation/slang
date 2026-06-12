@@ -1,4 +1,3 @@
-use std::collections::{BTreeMap, HashMap};
 use std::fmt::Display;
 use std::ops::Range;
 use std::sync::Arc;
@@ -6,10 +5,11 @@ use std::sync::Arc;
 use slang_solidity_v2::ast::visitor::{accept_source_unit, Visitor};
 use slang_solidity_v2::ast::{DataLocation, Definition, Identifier, LiteralKind, NodeId, Type};
 use slang_solidity_v2::compilation::CompilationUnit;
+use slang_solidity_v2_common::collections::{Map, SortedMap};
 
 // Types
 
-type FileSourceMap = BTreeMap<String, String>;
+type FileSourceMap = SortedMap<String, String>;
 
 pub(crate) struct ReportData<'a> {
     pub(crate) compilation: &'a CompilationUnit,
@@ -66,7 +66,7 @@ impl<'a> ReportData<'a> {
         let all_definitions = DefinitionCollector::collect_from(compilation, files);
         // This is used to map the reference resolutions to the internal
         // `DefinitionId` of the report.
-        let definitions_by_node_id: HashMap<NodeId, DefinitionId> = all_definitions
+        let definitions_by_node_id: Map<NodeId, DefinitionId> = all_definitions
             .iter()
             .map(|definition| (definition.definition.node_id(), definition.definition_id))
             .collect();
@@ -138,7 +138,7 @@ struct DefinitionCollector<'a> {
 impl<'a> DefinitionCollector<'a> {
     fn collect_from(
         compilation: &CompilationUnit,
-        files: &'a BTreeMap<String, String>,
+        files: &'a SortedMap<String, String>,
     ) -> Vec<CollectedDefinition> {
         let mut collector = Self {
             files,
@@ -175,8 +175,8 @@ impl IdentifierCollector for DefinitionCollector<'_> {
 // Identifiers collection and classification
 
 struct ReferenceCollector<'a> {
-    files: &'a BTreeMap<String, String>,
-    definitions_by_node_id: &'a HashMap<NodeId, DefinitionId>,
+    files: &'a SortedMap<String, String>,
+    definitions_by_node_id: &'a Map<NodeId, DefinitionId>,
     all_references: Vec<CollectedReference>,
     unbound_identifiers: Vec<CollectedIdentifier>,
 }
@@ -185,7 +185,7 @@ impl<'a> ReferenceCollector<'a> {
     fn collect_from(
         compilation: &CompilationUnit,
         files: &'a FileSourceMap,
-        definitions_by_node_id: &'a HashMap<NodeId, DefinitionId>,
+        definitions_by_node_id: &'a Map<NodeId, DefinitionId>,
     ) -> (Vec<CollectedReference>, Vec<CollectedIdentifier>) {
         let mut collector = Self {
             files,

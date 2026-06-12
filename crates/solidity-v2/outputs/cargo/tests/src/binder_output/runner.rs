@@ -1,10 +1,9 @@
-use std::collections::BTreeMap;
-
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig};
+use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use super::report::binder_report;
@@ -13,7 +12,7 @@ use crate::utils::multi_part_file::split_multi_file;
 use crate::utils::path_resolver;
 
 struct TestConfig {
-    files: BTreeMap<String, String>,
+    files: SortedMap<String, String>,
 }
 
 impl CompilationBuilderConfig for TestConfig {
@@ -46,7 +45,7 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
 
     let multi_part = split_multi_file(&contents);
 
-    let files: BTreeMap<String, String> = multi_part
+    let files: SortedMap<String, String> = multi_part
         .parts
         .iter()
         .map(|part| (part.name.to_string(), part.contents.to_string()))
