@@ -94,31 +94,38 @@ impl CargoController {
     fn run_iai_bench(&self, package_name: &str, bench_name: &str, bencher_project: &str) {
         let test_runner = format!("cargo bench --package {package_name} --bench {bench_name}");
 
-        // 1% threshold: iai-callgrind uses deterministic hardware counters (not wall clock),
+        // iai-callgrind uses deterministic hardware counters (not wall clock),
         // so any change reflects a real code change, not noise.
         // We also keep the window small (only 1 measurement), for the same reason.
-        let threshold = |measure| BencherThreshold::new(measure, "0.01").with_max_sample_size("1");
+        let threshold = |measure, upper_boundary| {
+            BencherThreshold::new(measure, upper_boundary).with_max_sample_size("1")
+        };
 
-        // We don't add thresholds for l1-hits, l2-hits, and ram-hits, since there's not a simple
-        // rule that could catch all cases (ie more l1-hits is better if total bytes read remains the same,
-        // but less l1-hits is also better if it decreases total bytes read)
         run_bench(
             self.dry_run.get(),
             self.pr_benchmark,
             bencher_project,
             "rust_iai_callgrind",
             &[
-                threshold("estimated-cycles"),
-                threshold("instructions"),
-                threshold("total-read-write"),
-                threshold("total-bytes"),
-                threshold("total-blocks"),
-                threshold("at-t-gmax-bytes"),
-                threshold("at-t-gmax-blocks"),
-                threshold("at-t-end-bytes"),
-                threshold("at-t-end-blocks"),
-                threshold("reads-bytes"),
-                threshold("writes-bytes"),
+                // Most measures use a tight 1% threshold:
+                threshold("estimated-cycles", "0.01"),
+                threshold("instructions", "0.01"),
+                threshold("total-read-write", "0.01"),
+                threshold("total-bytes", "0.01"),
+                threshold("total-blocks", "0.01"),
+                threshold("at-t-gmax-bytes", "0.01"),
+                threshold("at-t-gmax-blocks", "0.01"),
+                threshold("at-t-end-bytes", "0.01"),
+                threshold("at-t-end-blocks", "0.01"),
+                threshold("reads-bytes", "0.01"),
+                threshold("writes-bytes", "0.01"),
+                // l1-hits, l2-hits, and ram-hits instead use 100%, since there's not a simple
+                // rule that could catch all cases  (ie more l1-hits is better if total bytes read remains the same,
+                // but less l1-hits is  also better if it decreases total bytes read).
+                // We still track them, but only alert on drastic (2x) regressions.
+                threshold("l1-hits", "1"),
+                threshold("l2-hits", "1"),
+                threshold("ram-hits", "1"),
             ],
             &test_runner,
         );
