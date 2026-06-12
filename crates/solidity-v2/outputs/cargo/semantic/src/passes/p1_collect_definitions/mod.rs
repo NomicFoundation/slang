@@ -141,8 +141,8 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     // Registers `definition` under the given scope, first checking whether its
     // identifier collides with a pre-existing definition in that scope. If so,
     // an `IdentifierRedeclaration` diagnostic is emitted; the definition is
-    // registered regardless, so later passes can still resolve references to
-    // it.
+    // registered regardless, so later passes can still type this definition and
+    // resolve references to it.
     fn insert_definition_in_scope(&mut self, definition: Definition, scope_id: ScopeId) {
         let symbol = definition.identifier().unparse();
         if conflicts::find_conflicting_definition(self.binder, scope_id, symbol, &definition)
