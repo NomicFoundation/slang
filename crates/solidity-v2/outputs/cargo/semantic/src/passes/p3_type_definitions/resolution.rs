@@ -182,6 +182,7 @@ impl ConstantIdentifierResolver<ScopeId> for Pass<'_> {
                 let resolver = self.built_ins_resolver();
                 let built_in = match self.binder.get_scope_by_id(*scope_id) {
                     Scope::Block(_)
+                    | Scope::Chained(_)
                     | Scope::Contract(_)
                     | Scope::File(_)
                     | Scope::Function(_)

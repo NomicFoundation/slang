@@ -454,6 +454,12 @@ impl Binder {
                 || self.resolve_in_scope(block_scope.parent_scope_id, symbol),
                 Resolution::Definition,
             ),
+            Scope::Chained(chained_scope) => {
+                chained_scope.definitions.get(symbol).copied().map_or_else(
+                    || self.resolve_in_scope(chained_scope.parent_scope_id, symbol),
+                    Resolution::Definition,
+                )
+            }
             Scope::Contract(contract_scope) => {
                 self.resolve_in_contract_scope_internal(
                     contract_scope,
@@ -593,6 +599,7 @@ impl Binder {
             }
 
             Scope::Block(_)
+            | Scope::Chained(_)
             | Scope::File(_)
             | Scope::Function(_)
             | Scope::Modifier(_)

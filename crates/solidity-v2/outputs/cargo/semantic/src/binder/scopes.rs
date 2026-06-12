@@ -12,6 +12,7 @@ use crate::types::TypeId;
 
 pub(crate) enum Scope {
     Block(BlockScope),
+    Chained(ChainedScope),
     Contract(ContractScope),
     Enum(EnumScope),
     File(FileScope),
@@ -24,15 +25,21 @@ pub(crate) enum Scope {
     YulFunction(YulFunctionScope),
 }
 
+/// A *new* lexical scope opened by a real `{ }` block or a for-statement
+/// initialisation clause.
 pub(crate) struct BlockScope {
     pub(crate) node_id: NodeId,
     pub(crate) parent_scope_id: ScopeId,
-    /// Whether this block opens a *new* lexical scope (a real `{ }` block or a
-    /// for-statement initialisation clause), as opposed to a "chained"
-    /// continuation of the parent's lexical scope. Chained scopes are opened
-    /// after each local variable declaration so that the variable is only
-    /// visible to subsequent statements; they share the parent's lexical scope.
-    pub(crate) is_lexical_scope: bool,
+    pub(crate) definitions: Map<String, NodeId>,
+}
+
+/// A "chained" continuation of the parent's lexical scope, as opposed to a
+/// [`BlockScope`] which opens a new one. Chained scopes are opened after each
+/// local variable declaration so that the variable is only visible to
+/// subsequent statements; they share the parent's lexical scope.
+pub(crate) struct ChainedScope {
+    pub(crate) node_id: NodeId,
+    pub(crate) parent_scope_id: ScopeId,
     pub(crate) definitions: Map<String, NodeId>,
 }
 
@@ -131,6 +138,7 @@ impl Scope {
     pub(crate) fn node_id(&self) -> NodeId {
         match self {
             Self::Block(block_scope) => block_scope.node_id,
+            Self::Chained(chained_scope) => chained_scope.node_id,
             Self::Contract(contract_scope) => contract_scope.node_id,
             Self::Enum(enum_scope) => enum_scope.node_id,
             Self::File(file_scope) => file_scope.node_id,
@@ -147,6 +155,7 @@ impl Scope {
     pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
         match self {
             Self::Block(block_scope) => block_scope.insert_definition(symbol, node_id),
+            Self::Chained(chained_scope) => chained_scope.insert_definition(symbol, node_id),
             Self::Contract(contract_scope) => contract_scope.insert_definition(symbol, node_id),
             Self::Enum(enum_scope) => enum_scope.insert_definition(symbol, node_id),
             Self::File(file_scope) => file_scope.insert_definition(symbol, node_id),
@@ -172,12 +181,12 @@ impl Scope {
         }
     }
 
-    pub(crate) fn new_block(
-        node_id: NodeId,
-        parent_scope_id: ScopeId,
-        is_lexical_scope: bool,
-    ) -> Self {
-        Self::Block(BlockScope::new(node_id, parent_scope_id, is_lexical_scope))
+    pub(crate) fn new_block(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
+        Self::Block(BlockScope::new(node_id, parent_scope_id))
+    }
+
+    pub(crate) fn new_chained(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
+        Self::Chained(ChainedScope::new(node_id, parent_scope_id))
     }
 
     pub(crate) fn new_contract(node_id: NodeId, file_scope_id: ScopeId) -> Self {
@@ -226,11 +235,24 @@ impl Scope {
 }
 
 impl BlockScope {
-    fn new(node_id: NodeId, parent_scope_id: ScopeId, is_lexical_scope: bool) -> Self {
+    fn new(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
         Self {
             node_id,
             parent_scope_id,
-            is_lexical_scope,
+            definitions: Map::default(),
+        }
+    }
+
+    pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
+        self.definitions.insert(symbol, node_id);
+    }
+}
+
+impl ChainedScope {
+    fn new(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
+        Self {
+            node_id,
+            parent_scope_id,
             definitions: Map::default(),
         }
     }
