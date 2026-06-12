@@ -1,12 +1,59 @@
 use num_bigint::BigInt;
 
 use super::super::{
-    DecimalNumberExpressionStruct, FunctionCallExpressionStruct, HexNumberExpressionStruct,
-    StringExpression,
+    DecimalNumberExpressionStruct, Expression, FunctionCallExpressionStruct,
+    HexNumberExpressionStruct, StringExpression, Type,
 };
 use crate::backend::binder::Typing;
 use crate::backend::ir::ir2_flat_contracts as input_ir;
 use crate::backend::types::ConstantValue;
+
+impl Expression {
+    /// Returns the slang type of the value produced by this expression.
+    ///
+    /// Dispatches to each variant's `get_type()`. For `Identifier`, follows
+    /// the binder via `resolved_type()` because slang types value-bearing
+    /// references at the definition node, not at the use-site identifier.
+    /// Returns `None` for keyword expressions (`this`, `true`, `false`, etc.)
+    /// and for type-position variants (`ElementaryType`, `StringExpression`).
+    pub fn get_type(&self) -> Option<Type> {
+        match self {
+            Expression::AssignmentExpression(expression) => expression.get_type(),
+            Expression::ConditionalExpression(expression) => expression.get_type(),
+            Expression::OrExpression(expression) => expression.get_type(),
+            Expression::AndExpression(expression) => expression.get_type(),
+            Expression::EqualityExpression(expression) => expression.get_type(),
+            Expression::InequalityExpression(expression) => expression.get_type(),
+            Expression::BitwiseOrExpression(expression) => expression.get_type(),
+            Expression::BitwiseXorExpression(expression) => expression.get_type(),
+            Expression::BitwiseAndExpression(expression) => expression.get_type(),
+            Expression::ShiftExpression(expression) => expression.get_type(),
+            Expression::AdditiveExpression(expression) => expression.get_type(),
+            Expression::MultiplicativeExpression(expression) => expression.get_type(),
+            Expression::ExponentiationExpression(expression) => expression.get_type(),
+            Expression::PostfixExpression(expression) => expression.get_type(),
+            Expression::PrefixExpression(expression) => expression.get_type(),
+            Expression::FunctionCallExpression(expression) => expression.get_type(),
+            Expression::CallOptionsExpression(expression) => expression.get_type(),
+            Expression::MemberAccessExpression(expression) => expression.get_type(),
+            Expression::IndexAccessExpression(expression) => expression.get_type(),
+            Expression::NewExpression(expression) => expression.get_type(),
+            Expression::TupleExpression(expression) => expression.get_type(),
+            Expression::TypeExpression(expression) => expression.get_type(),
+            Expression::ArrayExpression(expression) => expression.get_type(),
+            Expression::HexNumberExpression(expression) => expression.get_type(),
+            Expression::DecimalNumberExpression(expression) => expression.get_type(),
+            Expression::Identifier(identifier) => identifier.resolved_type(),
+            Expression::StringExpression(_)
+            | Expression::ElementaryType(_)
+            | Expression::PayableKeyword
+            | Expression::ThisKeyword
+            | Expression::SuperKeyword
+            | Expression::TrueKeyword
+            | Expression::FalseKeyword => None,
+        }
+    }
+}
 
 impl StringExpression {
     /// Returns the concatenated decoded string value as bytes.

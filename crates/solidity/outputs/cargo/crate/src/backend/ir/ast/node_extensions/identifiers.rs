@@ -94,6 +94,24 @@ impl IdentifierStruct {
         self.semantic.get_type_from_node_id(self.ir_node.id())
     }
 
+    /// Returns the slang type of the value referenced by this identifier.
+    ///
+    /// Walks `resolve_to_definition` and returns the declared type of the
+    /// targeted state variable / variable / parameter / constant. Unlike
+    /// `get_type()`, which is keyed on the identifier's own node id and
+    /// returns `None` for reference uses (slang types those at the
+    /// definition node, not at every reference site), this accessor follows
+    /// the binder to the definition.
+    pub fn resolved_type(&self) -> Option<Type> {
+        match self.resolve_to_definition()? {
+            Definition::StateVariable(state_variable) => state_variable.get_type(),
+            Definition::Variable(variable) => variable.get_type(),
+            Definition::Parameter(parameter) => parameter.get_type(),
+            Definition::Constant(constant) => constant.get_type(),
+            _ => None,
+        }
+    }
+
     /// If this identifier resolves to a built-in (e.g. `msg`, `block`,
     /// `tx`), returns the corresponding [`BuiltIn`] variant.
     pub fn resolved_built_in(&self) -> Option<BuiltIn> {
