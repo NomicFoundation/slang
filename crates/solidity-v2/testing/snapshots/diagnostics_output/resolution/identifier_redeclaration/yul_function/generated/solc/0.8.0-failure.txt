@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 6052] Error: Function name g already taken in this scope.
+    ╭─[input.sol:11:13]
+    │
+ 11 │ ╭─▶             function g(a) -> v {
+    ┆ ┆   
+ 13 │ ├─▶             }
+    │ │                   
+    │ ╰─────────────────── Error occurred here.
+────╯
