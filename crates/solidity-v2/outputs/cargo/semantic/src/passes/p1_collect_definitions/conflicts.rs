@@ -2,6 +2,19 @@
 //! that a definition being declared doesn't illegally redeclare an identifier
 //! that is already visible in its scope, either locally or through default
 //! imports.
+//!
+//! Although these walks look similar to the `Binder` resolution methods
+//! (`resolve_in_scope` and friends), they intentionally don't share code:
+//! resolution answers "what is visible here?" while this module answers "may
+//! I declare this here?", and those questions traverse different scope
+//! relations. Resolution walks the full lexical chain and stops at the first
+//! hit; the conflict search stops at lexical/namespace boundaries (shadowing
+//! outer Solidity scopes is legal) but continues *past* non-conflicting hits
+//! (overloads), and for Yul walks even further than resolution would, since
+//! Yul forbids shadowing entirely. Conflict checks also run during pass 1 —
+//! before linearisations exist, which contract-scope resolution depends on —
+//! and need provenance (which import directive brought a symbol in) that
+//! `Resolution` discards.
 
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::ops::Range;
