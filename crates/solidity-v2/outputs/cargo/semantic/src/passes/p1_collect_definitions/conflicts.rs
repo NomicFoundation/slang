@@ -3,7 +3,8 @@
 //! that is already visible in its scope, either locally or through default
 //! imports.
 
-use std::collections::{HashSet, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque};
+use std::ops::Range;
 
 use slang_solidity_v2_common::nodes::NodeId;
 
@@ -142,8 +143,8 @@ fn first_conflicting_definition(
         .find_map(|existing_id| conflicting_definition(binder, *existing_id, new_definition))
 }
 
-// Detects clashes between each file's own declarations and the symbols
-// brought into its scope through (unqualified) default imports.
+// Detects clashes involving the symbols brought into a file's scope through
+// (unqualified) default imports.
 //
 // Unlike aliased or deconstructed imports — which register a local
 // definition and are therefore caught while collecting definitions — a
@@ -152,71 +153,180 @@ fn first_conflicting_definition(
 // detected once every file scope is populated, so this runs as a second
 // step after all files have been visited.
 //
-// Returns the list of `(file_id, definition_id)` pairs identifying each
-// local definition that conflicts with a default-imported one, ordered
-// deterministically (by the given file order, then symbol name).
+// Two kinds of clash are detected for each file: between symbols brought in
+// by two different import directives (reported at the later directive, like
+// solc does), and between the file's own declarations and an imported symbol
+// (reported at the local declaration).
+//
+// Returns the list of `(file_id, range)` pairs locating each conflict,
+// ordered deterministically (by the given file order, then directive order,
+// then symbol name).
 pub(super) fn find_default_import_conflicts<'a>(
     binder: &Binder,
     file_ids: impl Iterator<Item = &'a str>,
-) -> Vec<(String, NodeId)> {
-    let mut conflicts: Vec<(String, NodeId)> = Vec::new();
+) -> Vec<(String, Range<usize>)> {
+    let mut conflicts: Vec<(String, Range<usize>)> = Vec::new();
 
     for file_id in file_ids {
         let file_scope = binder.get_file_scope(file_id);
-
-        let imported_scopes = transitive_default_imports(binder, file_scope);
-        if imported_scopes.is_empty() {
+        if file_scope.default_imports.is_empty() {
             continue;
         }
-
-        // TODO: order here shouldn't matter if we sort the diagnostics
-        // collection before reporting, which probably makes more sense since
-        // we'll be adding to the collection from multiple points in the
-        // pipeline.
-        let mut symbols: Vec<&String> = file_scope.definitions.keys().collect();
-        symbols.sort();
-
-        for symbol in symbols {
-            let imported: Vec<NodeId> = imported_scopes
-                .iter()
-                .flat_map(|scope| scope.lookup_symbol(symbol))
-                .collect();
-            if imported.is_empty() {
-                continue;
-            }
-
-            for &local_id in &file_scope.definitions[symbol] {
-                let Some(local_definition) = binder.find_definition_by_id(local_id) else {
-                    continue;
-                };
-                if first_conflicting_definition(binder, &imported, local_definition).is_some() {
-                    conflicts.push((file_id.to_owned(), local_id));
-                }
-            }
+        if file_scope.default_imports.len() > 1 {
+            // Look for conflicts among imported symbols if there is more than
+            // one default import
+            find_imported_symbol_conflicts(binder, file_scope, &mut conflicts);
         }
+        find_local_definition_conflicts(binder, file_scope, &mut conflicts);
     }
 
     conflicts
 }
 
+// Detects clashes between symbols brought in by two different default import
+// directives of `file_scope`. Mirroring solc, directives are processed in
+// source order, and a clash is reported at the directive that re-imports an
+// already-visible symbol. Re-importing the *same* definition through several
+// paths (eg. diamond imports) is legal, as are clashes between symbols
+// brought in by a single directive (those are reported when processing the
+// imported file itself).
+fn find_imported_symbol_conflicts<'a>(
+    binder: &'a Binder,
+    file_scope: &'a FileScope,
+    conflicts: &mut Vec<(String, Range<usize>)>,
+) {
+    // All the symbols imported by the directives processed so far.
+    let mut seen: HashMap<&'a str, Vec<NodeId>> = HashMap::new();
+
+    let mut import_iter = file_scope.default_imports.iter().peekable();
+    while let Some(import) = import_iter.next() {
+        let imported_scopes =
+            transitive_file_scopes(binder, [import.file_id.as_str()], &file_scope.file_id);
+
+        // Gather the symbols this directive brings in. We don't care about them
+        // being sorted because if there's any conflict we will report the
+        // conflict on the import directive anyway.
+        // NOTE: if we ever add secondary diagnostics (eg. "first declared here"
+        // information), ordering would be relevant.
+        let imported: Vec<(&str, NodeId)> = imported_scopes
+            .iter()
+            .flat_map(|scope| {
+                scope
+                    .definitions
+                    .iter()
+                    .flat_map(|(symbol, ids)| ids.iter().map(|id| (symbol.as_str(), *id)))
+            })
+            .collect();
+
+        // Look for clashes with already seen symbols from previous imports
+        // Skip if there are no seen imported symbols
+        if !seen.is_empty() {
+            for &(symbol, definition_id) in &imported {
+                let Some(seen_ids) = seen.get(symbol) else {
+                    continue;
+                };
+                if seen_ids.contains(&definition_id) {
+                    // The same definition is visible through an earlier directive.
+                    continue;
+                }
+                let definition = binder
+                    .find_definition_by_id(definition_id)
+                    .expect("definition is registered");
+                if first_conflicting_definition(binder, seen_ids, definition).is_some() {
+                    conflicts.push((file_scope.file_id.clone(), import.range.clone()));
+                    // If we found a conflict produced by this import directive,
+                    // we report it only once and stop looking for more
+                    // conflicts from the same directive.
+                    break;
+                }
+            }
+        }
+
+        // Now register imported symbols as seen
+        // Skip if this is the last import, as it's unnecessary
+        if import_iter.peek().is_none() {
+            break;
+        }
+        for (symbol, definition_id) in imported {
+            let seen_ids = seen.entry(symbol).or_default();
+            if !seen_ids.contains(&definition_id) {
+                seen_ids.push(definition_id);
+            }
+        }
+    }
+}
+
+// Detects clashes between `file_scope`'s own declarations and the symbols
+// brought into its scope through default imports, reported at the local
+// declaration.
+fn find_local_definition_conflicts(
+    binder: &Binder,
+    file_scope: &FileScope,
+    conflicts: &mut Vec<(String, Range<usize>)>,
+) {
+    let imported_scopes = transitive_default_imports(binder, file_scope);
+    if imported_scopes.is_empty() {
+        return;
+    }
+
+    // TODO: order won't matter after #1852 is merged.
+    let mut symbols: Vec<&String> = file_scope.definitions.keys().collect();
+    symbols.sort();
+
+    for symbol in symbols {
+        let imported: Vec<NodeId> = imported_scopes
+            .iter()
+            .flat_map(|scope| scope.lookup_symbol(symbol))
+            .collect();
+        if imported.is_empty() {
+            continue;
+        }
+
+        for &local_id in &file_scope.definitions[symbol] {
+            let local_definition = binder
+                .find_definition_by_id(local_id)
+                .expect("local definition is registered");
+            if first_conflicting_definition(binder, &imported, local_definition).is_some() {
+                conflicts.push((
+                    file_scope.file_id.clone(),
+                    local_definition.identifier().range.clone(),
+                ));
+            }
+        }
+    }
+}
+
 // Collects the file scopes reachable through the (transitive) default
-// imports of `file_scope`, excluding `file_scope` itself. Mutually-recursive
-// imports are handled by the `visited` set, which is seeded with the
-// starting file so its own scope is never collected (even when reached
-// again through a cycle).
+// imports of `file_scope`, excluding `file_scope` itself.
 fn transitive_default_imports<'a>(
     binder: &'a Binder,
     file_scope: &'a FileScope,
 ) -> Vec<&'a FileScope> {
-    let mut found = Vec::new();
-    let mut visited: HashSet<&str> = HashSet::new();
-    visited.insert(&file_scope.file_id);
+    transitive_file_scopes(
+        binder,
+        file_scope
+            .default_imports
+            .iter()
+            .map(|import| import.file_id.as_str()),
+        &file_scope.file_id,
+    )
+}
 
-    let mut queue: VecDeque<&str> = file_scope
-        .imported_files
-        .iter()
-        .map(String::as_str)
-        .collect();
+// Collects the file scopes reachable through (transitive) default imports
+// starting from the `start` file IDs, excluding `excluded_file_id`.
+// Mutually-recursive imports are handled by the `visited` set, which is
+// seeded with the excluded file so its scope is never collected (even when
+// reached through a cycle).
+fn transitive_file_scopes<'a>(
+    binder: &'a Binder,
+    start: impl IntoIterator<Item = &'a str>,
+    excluded_file_id: &str,
+) -> Vec<&'a FileScope> {
+    let mut found = Vec::new();
+    let mut visited = HashSet::new();
+    visited.insert(excluded_file_id);
+
+    let mut queue: VecDeque<&str> = start.into_iter().collect();
 
     while let Some(imported_file_id) = queue.pop_front() {
         if !visited.insert(imported_file_id) {
@@ -229,7 +339,12 @@ fn transitive_default_imports<'a>(
             continue;
         };
         found.push(imported_scope);
-        queue.extend(imported_scope.imported_files.iter().map(String::as_str));
+        queue.extend(
+            imported_scope
+                .default_imports
+                .iter()
+                .map(|import| import.file_id.as_str()),
+        );
     }
 
     found

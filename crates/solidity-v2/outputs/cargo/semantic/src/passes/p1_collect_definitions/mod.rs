@@ -27,18 +27,12 @@ pub fn run(
         Pass::visit_file(file, binder, diagnostics);
     }
 
-    // Once every file scope is populated, detect clashes between a file's own
-    // declarations and the symbols brought into its scope through default
-    // imports (which, unlike aliased/deconstructed imports, don't register a
-    // local definition and so can't be caught while visiting a single file).
+    // Once every file scope is populated, detect clashes involving the
+    // symbols brought into each file's scope through default imports (which,
+    // unlike aliased/deconstructed imports, don't register a local definition
+    // and so can't be caught while visiting a single file).
     let file_ids = files.iter().map(|file| file.id());
-    for (file_id, definition_id) in conflicts::find_default_import_conflicts(binder, file_ids) {
-        let range = binder
-            .find_definition_by_id(definition_id)
-            .expect("conflicting definition must exist")
-            .identifier()
-            .range
-            .clone();
+    for (file_id, range) in conflicts::find_default_import_conflicts(binder, file_ids) {
         diagnostics.push(file_id, range, IdentifierRedeclaration);
     }
 }
@@ -314,7 +308,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
             self.insert_definition_in_current_scope(definition);
         } else if let Some(imported_file_id) = imported_file_id {
             self.current_file_scope()
-                .add_imported_file(imported_file_id);
+                .add_default_import(imported_file_id, node.range.clone());
         }
 
         false

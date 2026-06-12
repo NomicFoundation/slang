@@ -79,6 +79,14 @@ mod resolution {
         }
 
         #[test]
+        fn duplicate_symbol_via_default_import() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "duplicate_symbol_via_default_import",
+            )
+        }
+
+        #[test]
         fn enum_member() -> Result<()> {
             run("resolution/identifier_redeclaration", "enum_member")
         }

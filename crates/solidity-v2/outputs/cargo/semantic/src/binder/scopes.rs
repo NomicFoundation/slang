@@ -1,4 +1,6 @@
-use slang_solidity_v2_common::collections::{Map, Set};
+use slang_solidity_v2_common::collections::Map;
+use std::ops::Range;
+
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -50,8 +52,19 @@ pub(crate) struct FileScope {
     pub(crate) node_id: NodeId,
     pub(crate) file_id: String,
     pub(crate) definitions: Map<String, Vec<NodeId>>,
-    pub(crate) imported_files: Set<String>,
+    /// Files brought into scope through (unqualified) default imports, in
+    /// source order. The same file may appear more than once if imported by
+    /// several directives.
+    pub(crate) default_imports: Vec<DefaultImport>,
     pub(crate) using_directives: Vec<UsingDirective>,
+}
+
+/// A default (`import "file";`) import directive registered in a [`FileScope`].
+/// The directive's text range is kept so that symbol clashes introduced by the
+/// import can be reported on the directive itself.
+pub(crate) struct DefaultImport {
+    pub(crate) file_id: String,
+    pub(crate) range: Range<usize>,
 }
 
 pub(crate) struct FunctionScope {
@@ -265,7 +278,7 @@ impl FileScope {
             node_id,
             file_id: file_id.to_string(),
             definitions: Map::default(),
-            imported_files: Set::default(),
+            default_imports: Vec::new(),
             using_directives: Vec::new(),
         }
     }
@@ -278,15 +291,17 @@ impl FileScope {
         }
     }
 
-    pub(crate) fn add_imported_file(&mut self, file_id: String) {
-        self.imported_files.insert(file_id);
+    pub(crate) fn add_default_import(&mut self, file_id: String, range: Range<usize>) {
+        self.default_imports.push(DefaultImport { file_id, range });
     }
 
     pub(crate) fn lookup_symbol<'a>(&'a self, symbol: &str) -> impl Iterator<Item = NodeId> + 'a {
-        match self.definitions.get(symbol) {
-            Some(defs) => OptionIter::Some(defs.iter().copied()),
-            None => OptionIter::Empty,
-        }
+        self.definitions
+            .get(symbol)
+            .map(|defs| defs.as_slice())
+            .unwrap_or_default()
+            .iter()
+            .copied()
     }
 }
 
@@ -494,25 +509,6 @@ impl UsingDirective {
             UsingDirective::AllTypes { scope_id }
             | UsingDirective::SingleType { scope_id, .. }
             | UsingDirective::SingleTypeOperator { scope_id, .. } => *scope_id,
-        }
-    }
-}
-
-pub(crate) enum OptionIter<T: Iterator> {
-    Some(T),
-    Empty,
-}
-
-impl<T> Iterator for OptionIter<T>
-where
-    T: Iterator,
-{
-    type Item = T::Item;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        match self {
-            OptionIter::Some(iter) => iter.next(),
-            OptionIter::Empty => None,
         }
     }
 }
