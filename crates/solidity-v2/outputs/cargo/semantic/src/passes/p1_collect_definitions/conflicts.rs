@@ -476,7 +476,7 @@ fn transitive_file_scopes<'a>(
             continue;
         };
         let Scope::File(imported_scope) = binder.get_scope_by_id(scope_id) else {
-            continue;
+            unreachable!("expected a file scope");
         };
         found.push(imported_scope);
         queue.extend(
