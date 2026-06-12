@@ -33,11 +33,17 @@ fn analyze(language_version: LanguageVersion, source: &str) -> TypeAnalysis {
     let mut diagnostics = DiagnosticCollection::default();
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
+    p3_type_definitions::run(
+        &files,
+        &mut binder,
+        &mut types,
+        language_version,
+        &mut diagnostics,
+    );
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
     );
-    p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
     p5_resolve_references::run(&files, &mut binder, &mut types, language_version);
 
     TypeAnalysis {
