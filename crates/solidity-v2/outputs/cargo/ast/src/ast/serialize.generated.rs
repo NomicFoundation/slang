@@ -56,7 +56,7 @@ impl Serialize for AddressTypeStruct {
         map.serialize_entry("type", "AddressType")?;
         map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
         map.serialize_entry("file", self.get_file_id())?;
-        map.serialize_entry("payable_keyword", &self.payable_keyword())?;
+        map.serialize_entry("is_payable", &self.is_payable())?;
         map.end()
     }
 }
@@ -275,7 +275,7 @@ impl Serialize for ContractDefinitionStruct {
         map.serialize_entry("type", "ContractDefinition")?;
         map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
         map.serialize_entry("file", self.get_file_id())?;
-        map.serialize_entry("abstract_keyword", &self.abstract_keyword())?;
+        map.serialize_entry("is_abstract", &self.is_abstract())?;
         map.serialize_entry("name", &self.name())?;
         map.serialize_entry("inheritance_types", &self.inheritance_types())?;
         map.serialize_entry("storage_layout", &self.storage_layout())?;
@@ -371,7 +371,7 @@ impl Serialize for EventDefinitionStruct {
         map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
         map.serialize_entry("file", self.get_file_id())?;
         map.serialize_entry("name", &self.name())?;
-        map.serialize_entry("anonymous_keyword", &self.anonymous_keyword())?;
+        map.serialize_entry("is_anonymous", &self.is_anonymous())?;
         map.serialize_entry("parameters", &self.parameters())?;
         map.end()
     }
@@ -454,7 +454,7 @@ impl Serialize for FunctionDefinitionStruct {
         map.serialize_entry("parameters", &self.parameters())?;
         map.serialize_entry("visibility", &self.visibility())?;
         map.serialize_entry("mutability", &self.mutability())?;
-        map.serialize_entry("virtual_keyword", &self.virtual_keyword())?;
+        map.serialize_entry("is_virtual", &self.is_virtual())?;
         map.serialize_entry("override_specifier", &self.override_specifier())?;
         map.serialize_entry("modifier_invocations", &self.modifier_invocations())?;
         map.serialize_entry("returns", &self.returns())?;
@@ -724,7 +724,7 @@ impl Serialize for ParameterStruct {
         map.serialize_entry("type_name", &self.type_name())?;
         map.serialize_entry("storage_location", &self.storage_location())?;
         map.serialize_entry("name", &self.name())?;
-        map.serialize_entry("indexed", &self.indexed())?;
+        map.serialize_entry("is_indexed", &self.is_indexed())?;
         map.end()
     }
 }
@@ -997,7 +997,7 @@ impl Serialize for UsingDirectiveStruct {
         map.serialize_entry("file", self.get_file_id())?;
         map.serialize_entry("clause", &self.clause())?;
         map.serialize_entry("target", &self.target())?;
-        map.serialize_entry("global_keyword", &self.global_keyword())?;
+        map.serialize_entry("is_global", &self.is_global())?;
         map.end()
     }
 }
@@ -2243,17 +2243,6 @@ impl Serialize for AbicoderV2KeywordStruct {
     }
 }
 
-impl Serialize for AbstractKeywordStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(4))?;
-        map.serialize_entry("id", &self.ir_node.id())?;
-        map.serialize_entry("type", "AbstractKeyword")?;
-        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
-        map.serialize_entry("file", self.get_file_id())?;
-        map.end()
-    }
-}
-
 impl Serialize for AmpersandStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut map = serializer.serialize_map(Some(4))?;
@@ -2270,17 +2259,6 @@ impl Serialize for AmpersandEqualStruct {
         let mut map = serializer.serialize_map(Some(4))?;
         map.serialize_entry("id", &self.ir_node.id())?;
         map.serialize_entry("type", "AmpersandEqual")?;
-        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
-        map.serialize_entry("file", self.get_file_id())?;
-        map.end()
-    }
-}
-
-impl Serialize for AnonymousKeywordStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(4))?;
-        map.serialize_entry("id", &self.ir_node.id())?;
-        map.serialize_entry("type", "AnonymousKeyword")?;
         map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
         map.serialize_entry("file", self.get_file_id())?;
         map.end()
@@ -2499,17 +2477,6 @@ impl Serialize for FixedKeywordStruct {
     }
 }
 
-impl Serialize for GlobalKeywordStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(4))?;
-        map.serialize_entry("id", &self.ir_node.id())?;
-        map.serialize_entry("type", "GlobalKeyword")?;
-        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
-        map.serialize_entry("file", self.get_file_id())?;
-        map.end()
-    }
-}
-
 impl Serialize for GreaterThanStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut map = serializer.serialize_map(Some(4))?;
@@ -2630,17 +2597,6 @@ impl Serialize for IdentifierStruct {
         map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
         map.serialize_entry("file", self.get_file_id())?;
         map.serialize_entry("text", self.ir_node.unparse())?;
-        map.end()
-    }
-}
-
-impl Serialize for IndexedKeywordStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(4))?;
-        map.serialize_entry("id", &self.ir_node.id())?;
-        map.serialize_entry("type", "IndexedKeyword")?;
-        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
-        map.serialize_entry("file", self.get_file_id())?;
         map.end()
     }
 }
@@ -3076,17 +3032,6 @@ impl Serialize for VersionSpecifierStruct {
         map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
         map.serialize_entry("file", self.get_file_id())?;
         map.serialize_entry("text", self.ir_node.unparse())?;
-        map.end()
-    }
-}
-
-impl Serialize for VirtualKeywordStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(4))?;
-        map.serialize_entry("id", &self.ir_node.id())?;
-        map.serialize_entry("type", "VirtualKeyword")?;
-        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
-        map.serialize_entry("file", self.get_file_id())?;
         map.end()
     }
 }

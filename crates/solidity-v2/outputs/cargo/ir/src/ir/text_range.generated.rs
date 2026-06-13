@@ -1317,12 +1317,6 @@ impl TextRange for AbicoderV2KeywordStruct {
     }
 }
 
-impl TextRange for AbstractKeywordStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
-    }
-}
-
 impl TextRange for AmpersandStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.range.clone())
@@ -1330,12 +1324,6 @@ impl TextRange for AmpersandStruct {
 }
 
 impl TextRange for AmpersandEqualStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
-    }
-}
-
-impl TextRange for AnonymousKeywordStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.range.clone())
     }
@@ -1455,12 +1443,6 @@ impl TextRange for FixedKeywordStruct {
     }
 }
 
-impl TextRange for GlobalKeywordStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
-    }
-}
-
 impl TextRange for GreaterThanStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.range.clone())
@@ -1522,12 +1504,6 @@ impl TextRange for HoursKeywordStruct {
 }
 
 impl TextRange for IdentifierStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
-    }
-}
-
-impl TextRange for IndexedKeywordStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.range.clone())
     }
@@ -1762,12 +1738,6 @@ impl TextRange for UnicodeStringLiteralStruct {
 }
 
 impl TextRange for VersionSpecifierStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
-    }
-}
-
-impl TextRange for VirtualKeywordStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.range.clone())
     }

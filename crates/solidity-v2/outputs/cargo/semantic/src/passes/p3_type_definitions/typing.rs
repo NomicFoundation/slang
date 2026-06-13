@@ -97,7 +97,7 @@ impl Pass<'_> {
         match elementary_type {
             ir::ElementaryType::AddressType(address_type) => {
                 Some(self.types.register_type(Type::Address(AddressType {
-                    payable: address_type.payable_keyword.is_some(),
+                    is_payable: address_type.is_payable,
                 })))
             }
             ir::ElementaryType::BytesKeyword(bytes_keyword) => {

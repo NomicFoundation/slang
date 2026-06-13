@@ -21,7 +21,10 @@ impl Type {
             .unwrap()
             .parse::<u32>()
             .unwrap_or(256);
-        Self::Integer(IntegerType { signed: true, bits })
+        Self::Integer(IntegerType {
+            is_signed: true,
+            bits,
+        })
     }
 
     pub fn from_uint_keyword(keyword: &str) -> Self {
@@ -31,7 +34,7 @@ impl Type {
             .parse::<u32>()
             .unwrap_or(256);
         Self::Integer(IntegerType {
-            signed: false,
+            is_signed: false,
             bits,
         })
     }
@@ -45,7 +48,7 @@ impl Type {
         let bits = parts.next().unwrap();
         let decimal_places = parts.next().unwrap_or(0);
         Self::FixedPointNumber(FixedPointNumberType {
-            signed: true,
+            is_signed: true,
             bits,
             decimal_places,
         })
@@ -60,7 +63,7 @@ impl Type {
         let bits = parts.next().unwrap();
         let decimal_places = parts.next().unwrap_or(0);
         Self::FixedPointNumber(FixedPointNumberType {
-            signed: false,
+            is_signed: false,
             bits,
             decimal_places,
         })

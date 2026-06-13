@@ -209,12 +209,12 @@ impl SemanticContext {
             Type::ByteArray(ByteArrayType { width }) => format!("bytes{width}"),
             Type::Bytes(_) => "bytes".to_string(),
             Type::FixedPointNumber(FixedPointNumberType {
-                signed,
+                is_signed,
                 bits,
                 decimal_places,
             }) => format!(
                 "{prefix}{bits}x{decimal_places}",
-                prefix = if *signed { "fixed" } else { "ufixed" },
+                prefix = if *is_signed { "fixed" } else { "ufixed" },
             ),
             Type::FixedSizeArray(FixedSizeArrayType {
                 element_type, size, ..
@@ -225,9 +225,9 @@ impl SemanticContext {
                 )
             }
             Type::Function(_) => "function".to_string(),
-            Type::Integer(IntegerType { signed, bits }) => format!(
+            Type::Integer(IntegerType { is_signed, bits }) => format!(
                 "{prefix}{bits}",
-                prefix = if *signed { "int" } else { "uint" }
+                prefix = if *is_signed { "int" } else { "uint" }
             ),
             Type::Literal(_) => "literal".to_string(),
             Type::Mapping(MappingType {

@@ -42,7 +42,7 @@ pub enum Type {
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct AddressType {
-    pub payable: bool,
+    pub is_payable: bool,
 }
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
@@ -73,7 +73,7 @@ pub struct EnumType {
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct FixedPointNumberType {
-    pub signed: bool,
+    pub is_signed: bool,
     pub bits: u32,
     pub decimal_places: u32,
 }
@@ -88,7 +88,7 @@ pub struct FixedSizeArrayType {
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct IntegerType {
-    pub signed: bool,
+    pub is_signed: bool,
     pub bits: u32,
 }
 
@@ -177,7 +177,7 @@ impl LiteralKind {
                     location: DataLocation::Memory,
                 }))
             }
-            LiteralKind::Address { .. } => Some(Type::Address(AddressType { payable: false })),
+            LiteralKind::Address { .. } => Some(Type::Address(AddressType { is_payable: false })),
         }
     }
 }

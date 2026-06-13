@@ -431,7 +431,7 @@ impl core::hash::Hash for slang_solidity_v2_semantic::types::Type
 pub fn slang_solidity_v2_semantic::types::Type::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::Type
 pub struct slang_solidity_v2_semantic::types::AddressType
-pub slang_solidity_v2_semantic::types::AddressType::payable: bool
+pub slang_solidity_v2_semantic::types::AddressType::is_payable: bool
 impl core::clone::Clone for slang_solidity_v2_semantic::types::AddressType
 pub fn slang_solidity_v2_semantic::types::AddressType::clone(&self) -> slang_solidity_v2_semantic::types::AddressType
 impl core::cmp::Eq for slang_solidity_v2_semantic::types::AddressType
@@ -506,7 +506,7 @@ impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::En
 pub struct slang_solidity_v2_semantic::types::FixedPointNumberType
 pub slang_solidity_v2_semantic::types::FixedPointNumberType::bits: u32
 pub slang_solidity_v2_semantic::types::FixedPointNumberType::decimal_places: u32
-pub slang_solidity_v2_semantic::types::FixedPointNumberType::signed: bool
+pub slang_solidity_v2_semantic::types::FixedPointNumberType::is_signed: bool
 impl core::clone::Clone for slang_solidity_v2_semantic::types::FixedPointNumberType
 pub fn slang_solidity_v2_semantic::types::FixedPointNumberType::clone(&self) -> slang_solidity_v2_semantic::types::FixedPointNumberType
 impl core::cmp::Eq for slang_solidity_v2_semantic::types::FixedPointNumberType
@@ -552,7 +552,7 @@ pub fn slang_solidity_v2_semantic::types::FunctionType::hash<__H: core::hash::Ha
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::FunctionType
 pub struct slang_solidity_v2_semantic::types::IntegerType
 pub slang_solidity_v2_semantic::types::IntegerType::bits: u32
-pub slang_solidity_v2_semantic::types::IntegerType::signed: bool
+pub slang_solidity_v2_semantic::types::IntegerType::is_signed: bool
 impl core::clone::Clone for slang_solidity_v2_semantic::types::IntegerType
 pub fn slang_solidity_v2_semantic::types::IntegerType::clone(&self) -> slang_solidity_v2_semantic::types::IntegerType
 impl core::cmp::Eq for slang_solidity_v2_semantic::types::IntegerType
