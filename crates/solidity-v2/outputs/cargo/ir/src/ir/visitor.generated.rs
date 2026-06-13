@@ -900,13 +900,9 @@ pub trait Visitor {
 
     fn visit_abicoder_v2_keyword(&mut self, _node: &AbicoderV2Keyword) {}
 
-    fn visit_abstract_keyword(&mut self, _node: &AbstractKeyword) {}
-
     fn visit_ampersand(&mut self, _node: &Ampersand) {}
 
     fn visit_ampersand_equal(&mut self, _node: &AmpersandEqual) {}
-
-    fn visit_anonymous_keyword(&mut self, _node: &AnonymousKeyword) {}
 
     fn visit_asterisk(&mut self, _node: &Asterisk) {}
 
@@ -946,8 +942,6 @@ pub trait Visitor {
 
     fn visit_fixed_keyword(&mut self, _node: &FixedKeyword) {}
 
-    fn visit_global_keyword(&mut self, _node: &GlobalKeyword) {}
-
     fn visit_greater_than(&mut self, _node: &GreaterThan) {}
 
     fn visit_greater_than_equal(&mut self, _node: &GreaterThanEqual) {}
@@ -977,8 +971,6 @@ pub trait Visitor {
     fn visit_hours_keyword(&mut self, _node: &HoursKeyword) {}
 
     fn visit_identifier(&mut self, _node: &Identifier) {}
-
-    fn visit_indexed_keyword(&mut self, _node: &IndexedKeyword) {}
 
     fn visit_int_keyword(&mut self, _node: &IntKeyword) {}
 
@@ -1058,8 +1050,6 @@ pub trait Visitor {
 
     fn visit_version_specifier(&mut self, _node: &VersionSpecifier) {}
 
-    fn visit_virtual_keyword(&mut self, _node: &VirtualKeyword) {}
-
     fn visit_weeks_keyword(&mut self, _node: &WeeksKeyword) {}
 
     fn visit_wei_keyword(&mut self, _node: &WeiKeyword) {}
@@ -1090,9 +1080,6 @@ pub fn accept_additive_expression(node: &AdditiveExpression, visitor: &mut impl 
 pub fn accept_address_type(node: &AddressType, visitor: &mut impl Visitor) {
     if !visitor.enter_address_type(node) {
         return;
-    }
-    if let Some(payable_keyword) = &node.payable_keyword {
-        visitor.visit_payable_keyword(payable_keyword);
     }
     visitor.leave_address_type(node);
 }
@@ -1258,9 +1245,6 @@ pub fn accept_contract_definition(node: &ContractDefinition, visitor: &mut impl 
     if !visitor.enter_contract_definition(node) {
         return;
     }
-    if let Some(abstract_keyword) = &node.abstract_keyword {
-        visitor.visit_abstract_keyword(abstract_keyword);
-    }
     visitor.visit_identifier(&node.name);
     accept_inheritance_types(&node.inheritance_types, visitor);
     if let Some(storage_layout) = &node.storage_layout {
@@ -1335,9 +1319,6 @@ pub fn accept_event_definition(node: &EventDefinition, visitor: &mut impl Visito
         return;
     }
     visitor.visit_identifier(&node.name);
-    if let Some(anonymous_keyword) = &node.anonymous_keyword {
-        visitor.visit_anonymous_keyword(anonymous_keyword);
-    }
     accept_parameters(&node.parameters, visitor);
     visitor.leave_event_definition(node);
 }
@@ -1403,9 +1384,6 @@ pub fn accept_function_definition(node: &FunctionDefinition, visitor: &mut impl 
     accept_parameters(&node.parameters, visitor);
     accept_function_visibility(&node.visibility, visitor);
     accept_function_mutability(&node.mutability, visitor);
-    if let Some(virtual_keyword) = &node.virtual_keyword {
-        visitor.visit_virtual_keyword(virtual_keyword);
-    }
     if let Some(override_specifier) = &node.override_specifier {
         accept_override_paths(override_specifier, visitor);
     }
@@ -1632,9 +1610,6 @@ pub fn accept_parameter(node: &Parameter, visitor: &mut impl Visitor) {
     if let Some(name) = &node.name {
         visitor.visit_identifier(name);
     }
-    if let Some(indexed) = &node.indexed {
-        visitor.visit_indexed_keyword(indexed);
-    }
     visitor.leave_parameter(node);
 }
 
@@ -1848,9 +1823,6 @@ pub fn accept_using_directive(node: &UsingDirective, visitor: &mut impl Visitor)
     }
     accept_using_clause(&node.clause, visitor);
     accept_using_target(&node.target, visitor);
-    if let Some(global_keyword) = &node.global_keyword {
-        visitor.visit_global_keyword(global_keyword);
-    }
     visitor.leave_using_directive(node);
 }
 

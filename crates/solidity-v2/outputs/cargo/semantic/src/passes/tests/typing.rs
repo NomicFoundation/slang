@@ -203,7 +203,7 @@ fn try_type_of_expression_in_context(context: &str, expr: &str) -> (Option<Type>
 
 fn register_uint_type(types: &mut TypeRegistry, bits: u32) -> TypeId {
     types.register_type(Type::Integer(IntegerType {
-        signed: false,
+        is_signed: false,
         bits,
     }))
 }
@@ -451,7 +451,7 @@ fn test_implicit_conversion_uses_literal_value() {
     let (_, mut types) = type_of_expression("0");
 
     let int8 = types.register_type(Type::Integer(IntegerType {
-        signed: true,
+        is_signed: true,
         bits: 8,
     }));
     let uint8 = types.uint8();
@@ -530,7 +530,7 @@ fn test_overload_resolution_unsigned_to_signed_argument_is_version_gated() {
     assert_eq!(
         typings.into_iter().next().unwrap(),
         Some(Type::Integer(IntegerType {
-            signed: false,
+            is_signed: false,
             bits: 8,
         })),
     );
@@ -605,7 +605,7 @@ fn test_conditional_expression_unifies_branch_types() {
     assert_eq!(
         type_,
         Type::Integer(IntegerType {
-            signed: false,
+            is_signed: false,
             bits: 8,
         })
     );
@@ -615,7 +615,7 @@ fn test_conditional_expression_unifies_branch_types() {
     assert_eq!(
         type_,
         Type::Integer(IntegerType {
-            signed: false,
+            is_signed: false,
             bits: 16,
         })
     );
@@ -625,7 +625,7 @@ fn test_conditional_expression_unifies_branch_types() {
     assert_eq!(
         type_,
         Type::Integer(IntegerType {
-            signed: true,
+            is_signed: true,
             bits: 8,
         })
     );
@@ -688,7 +688,7 @@ fn test_array_literal_unifies_element_types() {
     assert_eq!(
         element_type,
         types.register_type(Type::Integer(IntegerType {
-            signed: true,
+            is_signed: true,
             bits: 8,
         }))
     );
@@ -891,7 +891,7 @@ fn test_overload_resolution_widens_byte_array_argument() {
     assert_eq!(
         type_,
         Type::Integer(IntegerType {
-            signed: false,
+            is_signed: false,
             bits: 8,
         })
     );
@@ -1080,7 +1080,7 @@ fn test_getter_of_struct_with_function_member() {
             element_types.as_slice(),
             [
                 Type::Integer(IntegerType {
-                    signed: false,
+                    is_signed: false,
                     bits: 256
                 }),
                 Type::Function(_),
@@ -1118,7 +1118,7 @@ fn test_getter_of_struct_with_struct_member() {
             [
                 Type::Struct(_),
                 Type::Integer(IntegerType {
-                    signed: false,
+                    is_signed: false,
                     bits: 256
                 }),
             ]

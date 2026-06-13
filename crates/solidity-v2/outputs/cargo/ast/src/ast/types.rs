@@ -168,8 +168,8 @@ impl Type {
 }
 
 impl AddressType {
-    pub fn payable(&self) -> bool {
-        self.inner.payable
+    pub fn is_payable(&self) -> bool {
+        self.inner.is_payable
     }
 }
 
@@ -223,8 +223,8 @@ impl FixedSizeArrayType {
 }
 
 impl FixedPointNumberType {
-    pub fn signed(&self) -> bool {
-        self.inner.signed
+    pub fn is_signed(&self) -> bool {
+        self.inner.is_signed
     }
     pub fn bits(&self) -> u32 {
         self.inner.bits
@@ -274,8 +274,8 @@ impl FunctionType {
 }
 
 impl IntegerType {
-    pub fn signed(&self) -> bool {
-        self.inner.signed
+    pub fn is_signed(&self) -> bool {
+        self.inner.is_signed
     }
     pub fn bits(&self) -> u32 {
         self.inner.bits

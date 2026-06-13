@@ -30,6 +30,9 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
     simplify_mapping_type_parameters(&mut mutator);
     rename_operator_fields(&mut mutator);
     rename_operator_choice_types(&mut mutator);
+    simplify_booleans(&mut mutator);
+
+    // Final clean-up:
     remove_unused_types(&mut mutator);
     remove_unreferenced_terminals(&mut mutator);
 
@@ -332,7 +335,7 @@ fn simplify_imports(mutator: &mut IrModelMutator) {
 fn simplify_parameters(mutator: &mut IrModelMutator) {
     // Replace `EventParameter` and `ErrorParameter` with `Parameter`. This
     // requires adding an `indexed` attribute (required for event parameters).
-    mutator.add_sequence_field("Parameter", "indexed", "IndexedKeyword", true);
+    mutator.add_sequence_field("Parameter", "indexed_keyword", "IndexedKeyword", true);
 
     mutator.remove_type("EventParametersDeclaration");
     mutator.remove_type("EventParameters");
@@ -343,6 +346,15 @@ fn simplify_parameters(mutator: &mut IrModelMutator) {
     mutator.remove_type("ErrorParameters");
     mutator.remove_type("ErrorParameter");
     mutator.add_sequence_field("ErrorDefinition", "parameters", "Parameters", false);
+}
+
+fn simplify_booleans(mutator: &mut IrModelMutator) {
+    mutator.convert_optional_to_boolean("AddressType", "payable_keyword", "is_payable");
+    mutator.convert_optional_to_boolean("ContractDefinition", "abstract_keyword", "is_abstract");
+    mutator.convert_optional_to_boolean("EventDefinition", "anonymous_keyword", "is_anonymous");
+    mutator.convert_optional_to_boolean("FunctionDefinition", "virtual_keyword", "is_virtual");
+    mutator.convert_optional_to_boolean("Parameter", "indexed_keyword", "is_indexed");
+    mutator.convert_optional_to_boolean("UsingDirective", "global_keyword", "is_global");
 }
 
 fn simplify_mapping_type_parameters(mutator: &mut IrModelMutator) {

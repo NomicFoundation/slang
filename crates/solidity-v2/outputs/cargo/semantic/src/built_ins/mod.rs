@@ -347,8 +347,8 @@ impl<'a> BuiltInsResolver<'a> {
     ) -> Option<InternalBuiltIn> {
         let type_ = self.types.get_type_by_id(type_id);
         match type_ {
-            Type::Address(AddressType { payable }) => {
-                Self::lookup_member_of_address(symbol, *payable)
+            Type::Address(AddressType { is_payable }) => {
+                Self::lookup_member_of_address(symbol, *is_payable)
             }
             Type::Array(ArrayType { element_type, .. }) => match symbol {
                 "length" => Some(InternalBuiltIn::Length),

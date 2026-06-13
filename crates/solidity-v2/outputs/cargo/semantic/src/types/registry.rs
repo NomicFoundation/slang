@@ -48,9 +48,10 @@ impl TypeRegistry {
     #[allow(clippy::similar_names)]
     pub(crate) fn new(language_version: LanguageVersion) -> Self {
         let mut types = OrderedSet::default();
-        let (address_type, _) = types.insert_full(Type::Address(AddressType { payable: false }));
+        let (address_type, _) =
+            types.insert_full(Type::Address(AddressType { is_payable: false }));
         let (address_payable_type, _) =
-            types.insert_full(Type::Address(AddressType { payable: true }));
+            types.insert_full(Type::Address(AddressType { is_payable: true }));
         let (boolean_type, _) = types.insert_full(Type::Boolean);
         let (bytes_calldata_type, _) = types.insert_full(Type::Bytes(BytesType {
             location: DataLocation::Calldata,
@@ -66,11 +67,11 @@ impl TypeRegistry {
             location: DataLocation::Memory,
         }));
         let (uint256_type, _) = types.insert_full(Type::Integer(IntegerType {
-            signed: false,
+            is_signed: false,
             bits: 256,
         }));
         let (uint8_type, _) = types.insert_full(Type::Integer(IntegerType {
-            signed: false,
+            is_signed: false,
             bits: 8,
         }));
         let (void_type, _) = types.insert_full(Type::Void);
@@ -152,18 +153,18 @@ impl TypeRegistry {
         match (from_type, to_type) {
             (
                 Type::Address(AddressType {
-                    payable: from_payable,
+                    is_payable: from_payable,
                 }),
                 Type::Address(_),
             ) => *from_payable,
 
             (
                 Type::Integer(IntegerType {
-                    signed: from_signed,
+                    is_signed: from_signed,
                     bits: from_bits,
                 }),
                 Type::Integer(IntegerType {
-                    signed: to_signed,
+                    is_signed: to_signed,
                     bits: to_bits,
                 }),
             ) => {
@@ -183,13 +184,13 @@ impl TypeRegistry {
 
             (
                 Type::Literal(LiteralKind::Integer { value }),
-                Type::Integer(IntegerType { signed, bits }),
-            ) => numbers::integer_literal_fits(value, *signed, *bits),
+                Type::Integer(IntegerType { is_signed, bits }),
+            ) => numbers::integer_literal_fits(value, *is_signed, *bits),
 
             (
                 Type::Literal(LiteralKind::HexInteger { value, .. }),
-                Type::Integer(IntegerType { signed, bits }),
-            ) => numbers::integer_literal_fits(&BigInt::from(value.clone()), *signed, *bits),
+                Type::Integer(IntegerType { is_signed, bits }),
+            ) => numbers::integer_literal_fits(&BigInt::from(value.clone()), *is_signed, *bits),
 
             // Non-integer rational literals never implicitly convert to an
             // integer type — if a rational reduced to an integer it would have

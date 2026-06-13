@@ -122,11 +122,8 @@ impl AddressTypeStruct {
         self.ir_node.id()
     }
 
-    pub fn payable_keyword(&self) -> Option<PayableKeyword> {
-        self.ir_node
-            .payable_keyword
-            .as_ref()
-            .map(|ir_node| create_payable_keyword(ir_node, &self.semantic))
+    pub fn is_payable(&self) -> bool {
+        self.ir_node.is_payable
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -866,11 +863,8 @@ impl ContractDefinitionStruct {
         self.ir_node.id()
     }
 
-    pub fn abstract_keyword(&self) -> Option<AbstractKeyword> {
-        self.ir_node
-            .abstract_keyword
-            .as_ref()
-            .map(|ir_node| create_abstract_keyword(ir_node, &self.semantic))
+    pub fn is_abstract(&self) -> bool {
+        self.ir_node.is_abstract
     }
 
     pub fn name(&self) -> Identifier {
@@ -1196,11 +1190,8 @@ impl EventDefinitionStruct {
         create_identifier(&self.ir_node.name, &self.semantic)
     }
 
-    pub fn anonymous_keyword(&self) -> Option<AnonymousKeyword> {
-        self.ir_node
-            .anonymous_keyword
-            .as_ref()
-            .map(|ir_node| create_anonymous_keyword(ir_node, &self.semantic))
+    pub fn is_anonymous(&self) -> bool {
+        self.ir_node.is_anonymous
     }
 
     pub fn parameters(&self) -> Parameters {
@@ -1483,11 +1474,8 @@ impl FunctionDefinitionStruct {
         create_function_mutability(&self.ir_node.mutability, &self.semantic)
     }
 
-    pub fn virtual_keyword(&self) -> Option<VirtualKeyword> {
-        self.ir_node
-            .virtual_keyword
-            .as_ref()
-            .map(|ir_node| create_virtual_keyword(ir_node, &self.semantic))
+    pub fn is_virtual(&self) -> bool {
+        self.ir_node.is_virtual
     }
 
     pub fn override_specifier(&self) -> Option<OverridePaths> {
@@ -2425,11 +2413,8 @@ impl ParameterStruct {
             .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
 
-    pub fn indexed(&self) -> Option<IndexedKeyword> {
-        self.ir_node
-            .indexed
-            .as_ref()
-            .map(|ir_node| create_indexed_keyword(ir_node, &self.semantic))
+    pub fn is_indexed(&self) -> bool {
+        self.ir_node.is_indexed
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -3346,11 +3331,8 @@ impl UsingDirectiveStruct {
         create_using_target(&self.ir_node.target, &self.semantic)
     }
 
-    pub fn global_keyword(&self) -> Option<GlobalKeyword> {
-        self.ir_node
-            .global_keyword
-            .as_ref()
-            .map(|ir_node| create_global_keyword(ir_node, &self.semantic))
+    pub fn is_global(&self) -> bool {
+        self.ir_node.is_global
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -6849,45 +6831,6 @@ impl AbicoderV2KeywordStruct {
     }
 }
 
-pub type AbstractKeyword = Arc<AbstractKeywordStruct>;
-
-pub struct AbstractKeywordStruct {
-    pub(crate) ir_node: ir::AbstractKeyword,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub(crate) fn create_abstract_keyword(
-    ir_node: &ir::AbstractKeyword,
-    semantic: &Arc<SemanticContext>,
-) -> AbstractKeyword {
-    Arc::new(AbstractKeywordStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    })
-}
-
-impl AbstractKeywordStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &str {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
 pub type Ampersand = Arc<AmpersandStruct>;
 
 pub struct AmpersandStruct {
@@ -6945,45 +6888,6 @@ pub(crate) fn create_ampersand_equal(
 }
 
 impl AmpersandEqualStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &str {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
-pub type AnonymousKeyword = Arc<AnonymousKeywordStruct>;
-
-pub struct AnonymousKeywordStruct {
-    pub(crate) ir_node: ir::AnonymousKeyword,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub(crate) fn create_anonymous_keyword(
-    ir_node: &ir::AnonymousKeyword,
-    semantic: &Arc<SemanticContext>,
-) -> AnonymousKeyword {
-    Arc::new(AnonymousKeywordStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    })
-}
-
-impl AnonymousKeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
@@ -7731,45 +7635,6 @@ impl FixedKeywordStruct {
     }
 }
 
-pub type GlobalKeyword = Arc<GlobalKeywordStruct>;
-
-pub struct GlobalKeywordStruct {
-    pub(crate) ir_node: ir::GlobalKeyword,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub(crate) fn create_global_keyword(
-    ir_node: &ir::GlobalKeyword,
-    semantic: &Arc<SemanticContext>,
-) -> GlobalKeyword {
-    Arc::new(GlobalKeywordStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    })
-}
-
-impl GlobalKeywordStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &str {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
 pub type GreaterThan = Arc<GreaterThanStruct>;
 
 pub struct GreaterThanStruct {
@@ -8178,45 +8043,6 @@ pub(crate) fn create_identifier(
 }
 
 impl IdentifierStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &str {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
-pub type IndexedKeyword = Arc<IndexedKeywordStruct>;
-
-pub struct IndexedKeywordStruct {
-    pub(crate) ir_node: ir::IndexedKeyword,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub(crate) fn create_indexed_keyword(
-    ir_node: &ir::IndexedKeyword,
-    semantic: &Arc<SemanticContext>,
-) -> IndexedKeyword {
-    Arc::new(IndexedKeywordStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    })
-}
-
-impl IndexedKeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
@@ -9723,45 +9549,6 @@ pub(crate) fn create_version_specifier(
 }
 
 impl VersionSpecifierStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &str {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
-pub type VirtualKeyword = Arc<VirtualKeywordStruct>;
-
-pub struct VirtualKeywordStruct {
-    pub(crate) ir_node: ir::VirtualKeyword,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub(crate) fn create_virtual_keyword(
-    ir_node: &ir::VirtualKeyword,
-    semantic: &Arc<SemanticContext>,
-) -> VirtualKeyword {
-    Arc::new(VirtualKeywordStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    })
-}
-
-impl VirtualKeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }

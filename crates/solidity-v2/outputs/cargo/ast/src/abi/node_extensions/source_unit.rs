@@ -6,7 +6,7 @@ impl SourceUnitStruct {
         self.contracts()
             .iter()
             .filter_map(|contract| {
-                if contract.abstract_keyword().is_some() {
+                if contract.is_abstract() {
                     None
                 } else {
                     contract.compute_abi()

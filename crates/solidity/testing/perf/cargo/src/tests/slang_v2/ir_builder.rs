@@ -67,7 +67,7 @@ pub fn count_concrete_contracts(source_units: &Vec<SourceUnit>) -> usize {
     for source_unit in source_units {
         for member in &source_unit.members {
             if let SourceUnitMember::ContractDefinition(contract) = member {
-                if contract.abstract_keyword.is_none() {
+                if !contract.is_abstract {
                     count += 1;
                 }
             }
