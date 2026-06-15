@@ -434,6 +434,15 @@ impl TypeRegistry {
         }
     }
 
+    // Marks a function type as partially applied (its first argument is bound,
+    // or call options have been pre-applied).
+    pub(crate) fn partially_apply_function_type(&mut self, function_type: FunctionType) -> TypeId {
+        self.register_type(Type::Function(FunctionType {
+            partially_applied: true,
+            ..function_type
+        }))
+    }
+
     pub(crate) fn find_canonical_type_id(&self, type_id: TypeId) -> Option<TypeId> {
         let canonical_type = match self.get_type_by_id(type_id) {
             Type::Array(ArrayType { element_type, .. }) => {
@@ -476,6 +485,7 @@ impl TypeRegistry {
                 return_type: *return_type,
                 visibility: *visibility,
                 mutability: *mutability,
+                partially_applied: false,
             }),
 
             Type::Address(_)
@@ -569,6 +579,11 @@ impl TypeRegistry {
                     .collect();
                 Some(self.register_type(Type::Tuple(TupleType { types: mobile_ids? })))
             }
+            // A partially applied function (bound first argument or pre-applied
+            // call options) doesn't have a mobile type.
+            //
+            // Matches solc behaviour
+            Type::Function(function_type) if function_type.partially_applied => None,
             _ => Some(type_id),
         }
     }

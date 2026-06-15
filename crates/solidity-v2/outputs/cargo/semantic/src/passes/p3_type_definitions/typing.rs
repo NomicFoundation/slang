@@ -159,6 +159,7 @@ impl Pass<'_> {
             return_type,
             visibility: (&function_definition.visibility).into(),
             mutability: (&function_definition.mutability).into(),
+            partially_applied: false,
         })))
     }
 
@@ -275,6 +276,7 @@ impl Pass<'_> {
             return_type,
             visibility: FunctionTypeVisibility::Public,
             mutability: FunctionTypeMutability::View,
+            partially_applied: false,
         });
         Some(self.types.register_type(getter_type))
     }

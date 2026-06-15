@@ -343,7 +343,8 @@ impl Visitor for Pass<'_> {
 
         // Special cases
         if let Some(type_id) = typing.as_type_id() {
-            let type_ = self.types.get_type_by_id(type_id);
+            let type_ = self.types.get_type_by_id(type_id).clone();
+
             if type_.is_inherited_location() {
                 // If the type is a reference type with location "inherited", we
                 // use the operand's location for the resulting typing
@@ -355,6 +356,27 @@ impl Visitor for Pass<'_> {
                         .types
                         .register_type_with_data_location(type_.clone(), operand_location);
                     typing = Typing::Resolved(type_id_with_location);
+                }
+            }
+
+            // If this member is a function attached via `using for`, accessing it
+            // on a value binds the receiver as its first argument, producing a
+            // partially applied function (which has no mobile type).
+            if let Type::Function(function_type) = type_ {
+                if let Some(receiver_type_id) = operand_typing.as_type_id() {
+                    if function_type.implicit_receiver_type.is_none()
+                        && function_type.parameter_types.first().is_some_and(|first| {
+                            self.types.implicitly_convertible_to_for_external_call(
+                                receiver_type_id,
+                                *first,
+                            )
+                        })
+                    {
+                        let function_type = function_type.clone();
+                        typing = Typing::Resolved(
+                            self.types.partially_apply_function_type(function_type),
+                        );
+                    }
                 }
             }
         }
@@ -478,7 +500,20 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_call_options_expression(&mut self, node: &ir::CallOptionsExpression) {
-        let typing = self.typing_of_expression(&node.operand);
+        let operand_typing = self.typing_of_expression(&node.operand);
+
+        // Pre-applying call options (eg. `foo{value: 3}`) partially applies the
+        // function.
+        let typing = match operand_typing.as_type_id() {
+            Some(type_id) => match self.types.get_type_by_id(type_id) {
+                Type::Function(function_type) => {
+                    let function_type = function_type.clone();
+                    Typing::Resolved(self.types.partially_apply_function_type(function_type))
+                }
+                _ => operand_typing,
+            },
+            None => operand_typing,
+        };
         self.binder.set_node_typing(node.id(), typing);
     }
 

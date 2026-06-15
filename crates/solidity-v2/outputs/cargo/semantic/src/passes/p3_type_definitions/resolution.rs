@@ -122,6 +122,7 @@ impl Pass<'_> {
                     return_type,
                     visibility: (&function_type.visibility).into(),
                     mutability: (&function_type.mutability).into(),
+                    partially_applied: false,
                 })))
             }
             ir::TypeName::MappingType(mapping_type) => {
