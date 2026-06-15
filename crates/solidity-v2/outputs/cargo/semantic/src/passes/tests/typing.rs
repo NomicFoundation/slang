@@ -1328,3 +1328,34 @@ fn int_to_enum_conversion_is_enum_typed() {
     let (expr_type, _types) = type_of_expression_in_context("enum E { A, B }", "E(1)");
     assert!(matches!(expr_type, Type::Enum(_)));
 }
+
+#[test]
+fn cast_library_to_address_is_address_typed() {
+    // `address(L)` for a library `L` yields its address — a library name is the
+    // only type-name castable to `address`.
+    let source = r#"
+        library MyLib {
+            function f() public pure returns (uint) { return 1; }
+        }
+        contract Test {
+            function probe() internal pure {
+                address(MyLib);
+            }
+        }
+    "#;
+    let TypeAnalysis {
+        file,
+        binder,
+        types,
+    } = analyze(LanguageVersion::LATEST, source);
+
+    let contract = find_contract(&file, "Test");
+    let probe = find_function(&contract.members, "probe").expect("probe function");
+    let body = probe.body.as_ref().expect("probe has a body");
+
+    let typings = expression_statement_types(body, &binder, &types);
+    assert!(
+        matches!(typings.as_slice(), [Some(Type::Address(_))]),
+        "expected `address(MyLib)` to be typed as address, got {typings:?}",
+    );
+}

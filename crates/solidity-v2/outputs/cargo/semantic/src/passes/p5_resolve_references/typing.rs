@@ -320,6 +320,20 @@ impl Pass<'_> {
                 };
                 Typing::Resolved(type_id)
             }
+            Typing::UserMetaType(definition_id) => {
+                // `address(L)` for a library `L` yields its address — a library name
+                // is the only type-name castable to `address` (contract names are not).
+                if matches!(target_type, Type::Address(_))
+                    && matches!(
+                        self.binder.find_definition_by_id(*definition_id),
+                        Some(Definition::Library(_))
+                    )
+                {
+                    Typing::Resolved(self.types.register_type(target_type))
+                } else {
+                    Typing::Unresolved
+                }
+            }
             _ => Typing::Unresolved,
         }
     }
