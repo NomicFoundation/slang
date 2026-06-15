@@ -3,6 +3,7 @@ mod array_length_negative;
 mod array_length_not_constant;
 mod array_length_too_large;
 mod array_length_zero;
+mod cannot_call_via_contract_type_name;
 mod constant_arithmetic_error;
 mod fallback_function_mutability;
 mod fallback_function_signature;
@@ -18,6 +19,7 @@ pub use array_length_negative::ArrayLengthNegative;
 pub use array_length_not_constant::ArrayLengthNotConstant;
 pub use array_length_too_large::ArrayLengthTooLarge;
 pub use array_length_zero::ArrayLengthZero;
+pub use cannot_call_via_contract_type_name::CannotCallViaContractTypeName;
 pub use constant_arithmetic_error::ConstantArithmeticError;
 pub use fallback_function_mutability::FallbackFunctionMutability;
 pub use fallback_function_signature::FallbackFunctionSignature;
@@ -42,6 +44,8 @@ define_diagnostic_kind! {
     pub enum TypeSystemDiagnosticKind {
         /// A base in an inheritance list is not a contract or interface.
         InvalidBase(InvalidBase),
+<<<<<<< conflict 3 of 3
++++++++ vvuuqlty a36ab304 "Added selector and declaration call tests" (rebased revision)
 
         /// A fallback function is declared `pure` or `view`.
         FallbackFunctionMutability(FallbackFunctionMutability),
@@ -74,5 +78,8 @@ define_diagnostic_kind! {
         /// A storage layout base slot expression evaluates to a value outside
         /// the range of `uint256`.
         StorageLayoutBaseOutOfRange(StorageLayoutBaseOutOfRange),
+        /// A function is called through a contract/interface type name (eg.
+        /// `C.f()`) rather than through an instance.
+        CannotCallViaContractTypeName(CannotCallViaContractTypeName),
     }
 }
