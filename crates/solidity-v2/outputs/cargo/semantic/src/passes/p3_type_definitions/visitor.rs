@@ -269,7 +269,10 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_constant_definition(&mut self, node: &ir::ConstantDefinition) {
-        let type_id = self.resolve_type_name(&node.type_name, None);
+        // A `bytes`/`string constant` carries no location keyword but references a
+        // memory value (the inlined literal); resolving with `None` leaves it
+        // `Unresolved`. Value-type constants ignore the location.
+        let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
         self.binder.set_node_type(node.id(), type_id);
     }
 
