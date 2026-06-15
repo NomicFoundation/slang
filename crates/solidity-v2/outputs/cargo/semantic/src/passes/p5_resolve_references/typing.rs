@@ -1,10 +1,12 @@
 use ruint::aliases::{U160, U256};
+use slang_solidity_v2_common::diagnostics::kinds::type_system::CannotCallViaContractTypeName;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
 
 use super::Pass;
 use crate::binder::{Definition, Resolution, Typing};
+use crate::passes::common::node_location;
 use crate::types::{
     literals, AddressType, ContractType, DataLocation, FixedSizeArrayType, FunctionType,
     IntegerType, LiteralKind, MetaType, Number, StringType, Type, TypeId, UserMetaType,
@@ -267,6 +269,20 @@ impl Pass<'_> {
         typing
     }
 
+    /// Whether `contract_id` is accessed from a scope that neither is it nor
+    /// derives from it (solc's "Foreign" access). The linearisation includes
+    /// the contract itself, so containment means local/deriving access.
+    pub(crate) fn is_foreign_contract(&self, contract_id: NodeId) -> bool {
+        let Some(scope_id) = self.current_contract_scope_id() else {
+            return true;
+        };
+        let current_contract_id = self.binder.get_scope_by_id(scope_id).node_id();
+        !self
+            .binder
+            .get_linearised_bases(current_contract_id)
+            .is_some_and(|bases| bases.contains(&contract_id))
+    }
+
     fn type_id_of_value_receiver(&self, operand: &ir::Expression) -> Option<TypeId> {
         if let ir::Expression::MemberAccessExpression(member_access_expression) = operand {
             let type_id = self
@@ -364,6 +380,17 @@ impl Pass<'_> {
                                 .expect("definition kind is handled by type_of_definition");
                             Typing::Resolved(self.types.register_type(type_))
                         }
+                        Some(Definition::Function(_)) => {
+                            // Calling a function referenced through a contract/interface
+                            // type name (eg. `C.f()`) is invalid: it's a non-callable
+                            // declaration.
+                            let (file_id, range) = node_location(node, self.file_node_mapper);
+
+                            self.diagnostics
+                                .push(file_id, range, CannotCallViaContractTypeName);
+                            Typing::Unresolved
+                        }
+
                         _ => Typing::Unresolved,
                     }
                 }
@@ -467,6 +494,16 @@ impl Pass<'_> {
                             // this is an event called as a function, which is valid in <0.5.0
                             (Typing::Resolved(self.types.void()), Some(definition_id))
                         }
+                        Some(Definition::Function(_)) => {
+                            // Calling a function via a contract/interface type name is
+                            // invalid.
+                            let (file_id, range) = node_location(node, self.file_node_mapper);
+
+                            self.diagnostics
+                                .push(file_id, range, CannotCallViaContractTypeName);
+                            (Typing::Unresolved, None)
+                        }
+
                         _ => (Typing::Unresolved, None),
                     }
                 }

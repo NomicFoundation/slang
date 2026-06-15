@@ -1916,3 +1916,110 @@ fn test_tuple_of_type_names_is_a_tuple_of_meta_types() {
         Type::MetaType(_)
     ));
 }
+
+#[test]
+fn test_function_declaration_via_type_name_has_no_mobile_type() {
+    // A function reached through a contract/interface *type name* (`C.g`) is a
+    // non-value declaration with no mobile type — only good for `.selector` —
+    // not a function value. This mirrors solc's `FunctionType::Kind::Declaration`.
+    // `external` functions are always declarations via the type name; `public`
+    // ones only from a non-deriving ("foreign") scope; `internal` and local
+    // `public` stay callable function values.
+    let source = r#"
+        interface I {
+            function h() external;
+        }
+        contract C {
+            function g() external {}
+            function pub() public {}
+            function intl() internal pure {}
+        }
+        contract D is C {
+            function tD() internal {
+                C.g;
+                C.g.selector;
+                C.pub;
+                C.intl;
+                I.h;
+            }
+        }
+        contract E {
+            function tE() internal {
+                C.pub;
+            }
+        }
+    "#;
+
+    let TypeAnalysis {
+        file,
+        binder,
+        types,
+        ..
+    } = analyze(LanguageVersion::LATEST, source);
+
+    let statement_typings = |contract: &str, function: &str| -> Vec<Typing> {
+        let c = find_contract(&file, contract);
+        let f = find_function(&c.members, function).expect("function not found");
+        let body = f.body.as_ref().expect("function has a body");
+        body.statements
+            .iter()
+            .filter_map(|stmt| match stmt {
+                ir::Statement::ExpressionStatement(s) => {
+                    let node_id = s.expression.node_id().expect("expression has a node id");
+                    Some(binder.node_typing(node_id))
+                }
+                _ => None,
+            })
+            .collect()
+    };
+
+    let is_function_value = |typing: &Typing| {
+        matches!(
+            typing.as_type_id().map(|id| types.get_type_by_id(id)),
+            Some(Type::Function(_))
+        )
+    };
+
+    let d = statement_typings("D", "tD");
+    // `C.g` (external) is a declaration with no mobile type.
+    assert!(
+        matches!(d[0], Typing::UserMetaType(_)),
+        "C.g should be a function declaration, got {:?}",
+        d[0]
+    );
+    // `C.g.selector` still resolves to `bytes4`.
+    assert!(
+        matches!(
+            d[1].as_type_id().map(|id| types.get_type_by_id(id)),
+            Some(Type::ByteArray(ByteArrayType { width: 4 }))
+        ),
+        "C.g.selector should be bytes4, got {:?}",
+        d[1]
+    );
+    // `C.pub` (public) accessed from a deriving contract stays a callable value.
+    assert!(
+        is_function_value(&d[2]),
+        "local C.pub should be a callable function value, got {:?}",
+        d[2]
+    );
+    // `C.intl` (internal) accessed locally stays a callable value.
+    assert!(
+        is_function_value(&d[3]),
+        "local C.intl should be a callable function value, got {:?}",
+        d[3]
+    );
+    // `I.h` (interface, external) is a declaration.
+    assert!(
+        matches!(d[4], Typing::UserMetaType(_)),
+        "I.h should be a function declaration, got {:?}",
+        d[4]
+    );
+
+    // `C.pub` accessed from an unrelated contract (foreign) is a declaration.
+    let e = statement_typings("E", "tE");
+    assert!(
+        matches!(e[0], Typing::UserMetaType(_)),
+        "foreign C.pub should be a function declaration, got {:?}",
+        e[0]
+    );
+}

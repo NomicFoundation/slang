@@ -44,8 +44,6 @@ define_diagnostic_kind! {
     pub enum TypeSystemDiagnosticKind {
         /// A base in an inheritance list is not a contract or interface.
         InvalidBase(InvalidBase),
-<<<<<<< conflict 3 of 3
-+++++++ vvuuqlty a36ab304 "Added selector and declaration call tests" (rebased revision)
 
         /// A fallback function is declared `pure` or `view`.
         FallbackFunctionMutability(FallbackFunctionMutability),
