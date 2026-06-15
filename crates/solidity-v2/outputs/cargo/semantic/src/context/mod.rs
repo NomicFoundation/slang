@@ -80,8 +80,7 @@ impl SemanticContext {
         p3_type_definitions::run(files, &mut binder, &mut types, diagnostics);
 
         let contract_data = p4_compute_linearisations::run(&binder, &types);
-
-        p5_resolve_references::run(files, &mut binder, &mut types);
+        p5_resolve_references::run(files, &mut binder, &mut types, diagnostics);
 
         let file_node_mapper = FileNodeMapper::build_from(files);
 

@@ -1,4 +1,5 @@
 use ruint::aliases::U160;
+use slang_solidity_v2_common::diagnostics::kinds::type_system::CannotCallViaContractTypeName;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -296,6 +297,20 @@ impl Pass<'_> {
         typing
     }
 
+    /// Whether `contract_id` is accessed from a scope that neither is it nor
+    /// derives from it (solc's "Foreign" access). The linearisation includes
+    /// the contract itself, so containment means local/deriving access.
+    pub(crate) fn is_foreign_contract(&self, contract_id: NodeId) -> bool {
+        let Some(scope_id) = self.current_contract_scope_id() else {
+            return true;
+        };
+        let current_contract_id = self.binder.get_scope_by_id(scope_id).node_id();
+        !self
+            .binder
+            .get_linearised_bases(current_contract_id)
+            .is_some_and(|bases| bases.contains(&contract_id))
+    }
+
     fn type_id_of_receiver(&self, operand: &ir::Expression) -> Option<TypeId> {
         if let ir::Expression::MemberAccessExpression(member_access_expression) = operand {
             self.typing_of_expression(&member_access_expression.operand)
@@ -432,6 +447,17 @@ impl Pass<'_> {
                         }));
                         Typing::Resolved(type_id)
                     }
+                    Some(Definition::Function(_)) => {
+                        // Calling a function referenced through a contract/interface
+                        // type name (eg. `C.f()`) is invalid: it's a non-callable
+                        // declaration.
+                        self.diagnostics.push(
+                            self.file_id.clone(),
+                            node.range.clone(),
+                            CannotCallViaContractTypeName,
+                        );
+                        Typing::Unresolved
+                    }
                     _ => Typing::Unresolved,
                 }
             }
@@ -564,6 +590,16 @@ impl Pass<'_> {
                     Some(Definition::Event(_)) => {
                         // this is an event called as a function, which is valid in <0.5.0
                         (Typing::Resolved(self.types.void()), Some(node_id))
+                    }
+                    Some(Definition::Function(_)) => {
+                        // Calling a function via a contract/interface type name is
+                        // invalid.
+                        self.diagnostics.push(
+                            self.file_id.clone(),
+                            node.range.clone(),
+                            CannotCallViaContractTypeName,
+                        );
+                        (Typing::Unresolved, None)
                     }
                     _ => (Typing::Unresolved, None),
                 }

@@ -4,11 +4,12 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
 use super::Pass;
-use crate::binder::{Reference, Resolution, Typing};
+use crate::binder::{Definition, Reference, Resolution, Typing};
 use crate::built_ins::InternalBuiltIn;
 use crate::passes::common::node_id_for_string_expression_typing;
 use crate::types::{
-    ArrayType, DataLocation, FixedSizeArrayType, MappingType, Number, TupleType, Type,
+    ArrayType, DataLocation, FixedSizeArrayType, FunctionTypeVisibility, MappingType, Number,
+    TupleType, Type,
 };
 
 impl Visitor for Pass<'_> {
@@ -374,6 +375,32 @@ impl Visitor for Pass<'_> {
                         typing = Typing::Resolved(
                             self.types.partially_apply_function_type(function_type),
                         );
+                    }
+                } else if let Typing::UserMetaType(container_id) = operand_typing {
+                    // A function reached through a contract/interface *type name* (eg.
+                    // `C.g`) is a non-callable declaration with no mobile type, not a
+                    // function value.
+                    if matches!(
+                        // Only contract/interface type names — not libraries (`L.f` stays a
+                        // normal callable) nor enums/structs (members aren't functions).
+                        self.binder.find_definition_by_id(container_id),
+                        Some(Definition::Contract(_) | Definition::Interface(_))
+                    ) {
+                        let is_foreign_and_visible = match function_type.visibility {
+                            FunctionTypeVisibility::External => true,
+                            FunctionTypeVisibility::Public => {
+                                self.is_foreign_contract(container_id)
+                            }
+                            FunctionTypeVisibility::Internal | FunctionTypeVisibility::Private => {
+                                false
+                            }
+                        };
+
+                        if let Some(definition_id) = function_type.definition_id {
+                            if is_foreign_and_visible {
+                                typing = Typing::UserMetaType(definition_id);
+                            }
+                        }
                     }
                 }
             }

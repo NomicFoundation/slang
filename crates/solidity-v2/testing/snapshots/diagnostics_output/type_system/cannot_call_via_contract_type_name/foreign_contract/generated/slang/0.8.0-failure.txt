@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+Error: Cannot call function via contract type name.
+    ╭─[input.sol:17:9]
+    │
+ 17 │         A.f();
+    │         ──┬──  
+    │           ╰──── Error occurred here.
+────╯
+
+Error: Cannot call function via contract type name.
+    ╭─[input.sol:18:9]
+    │
+ 18 │         A.g();
+    │         ──┬──  
+    │           ╰──── Error occurred here.
+────╯
+
+Error: Cannot call function via contract type name.
+    ╭─[input.sol:19:9]
+    │
+ 19 │         A.h(); // might be allowed in the future
+    │         ──┬──  
+    │           ╰──── Error occurred here.
+────╯
