@@ -32,11 +32,28 @@ impl Pass<'_> {
             self.types,
             self.binder.resolve_in_scope(scope_id, symbol),
         );
-        if resolution == Resolution::Unresolved {
-            BuiltInsResolver::lookup_yul_global(symbol).into()
-        } else {
-            resolution
+
+        // A Solidity function is not callable by name in inline assembly, so a
+        // built-in name that lexically resolved to one is the opcode. A Yul-local
+        // function or a value (variable / state variable / constant) is kept.
+        let is_function = |node_id| {
+            self.binder
+                .find_definition_by_id(node_id)
+                .is_some_and(|definition| definition.is_function())
+        };
+        let shadows_built_in = match &resolution {
+            Resolution::Definition(node_id) => is_function(*node_id),
+            Resolution::Ambiguous(node_ids) => node_ids.iter().copied().all(is_function),
+            _ => false,
+        };
+
+        if resolution == Resolution::Unresolved || shadows_built_in {
+            let built_in: Resolution = BuiltInsResolver::lookup_yul_global(symbol).into();
+            if built_in != Resolution::Unresolved {
+                return built_in;
+            }
         }
+        resolution
     }
 
     pub(super) fn resolve_yul_suffix(

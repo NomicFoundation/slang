@@ -255,6 +255,10 @@ impl Definition {
         )
     }
 
+    pub(crate) fn is_function(&self) -> bool {
+        matches!(self, Self::Function(_))
+    }
+
     pub(crate) fn is_private_or_internally_visible(&self) -> bool {
         if let Self::Function(function_definition) = self {
             !matches!(
