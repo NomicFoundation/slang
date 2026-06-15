@@ -152,6 +152,24 @@ impl Scope {
         }
     }
 
+    /// The lexically-enclosing scope, for scopes that nest inside another;
+    /// `None` for type-level / parameters / using scopes that have no single one.
+    pub(crate) fn parent_scope_id(&self) -> Option<ScopeId> {
+        match self {
+            Self::Block(block_scope) => Some(block_scope.parent_scope_id),
+            Self::Function(function_scope) => Some(function_scope.parent_scope_id),
+            Self::Modifier(modifier_scope) => Some(modifier_scope.parent_scope_id),
+            Self::YulBlock(yul_block_scope) => Some(yul_block_scope.parent_scope_id),
+            Self::YulFunction(yul_function_scope) => Some(yul_function_scope.parent_scope_id),
+            Self::Contract(_)
+            | Self::Enum(_)
+            | Self::File(_)
+            | Self::Parameters(_)
+            | Self::Struct(_)
+            | Self::Using(_) => None,
+        }
+    }
+
     pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
         match self {
             Self::Block(block_scope) => block_scope.insert_definition(symbol, node_id),
