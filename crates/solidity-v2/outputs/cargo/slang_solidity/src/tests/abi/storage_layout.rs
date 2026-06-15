@@ -58,6 +58,21 @@ contract F layout at erc7201("example.main") {
 "#,
 );
 
+define_fixture!(
+    ExactFillStorage,
+    file: "main.sol", r#"
+struct ExactFill {
+    int96 a;
+    address b;
+}
+
+contract Test {
+    ExactFill packed;
+    uint256 next;
+}
+"#,
+);
+
 macro_rules! assert_layout_item_eq {
     ($item:expr, $name:expr, $slot:expr, $offset:expr, $type:expr) => {
         assert_eq!($item.label(), $name);
@@ -147,4 +162,20 @@ fn test_erc7201_storage_layout() {
     assert_eq!(f_layout.len(), 2);
     assert_layout_item_eq!(f_layout[0], "u", base_slot, 0, "uint256");
     assert_layout_item_eq!(f_layout[1], "v", base_slot + uint!(1_U256), 0, "uint256");
+}
+
+#[test]
+fn test_struct_member_exactly_fills_slot() {
+    // int96 (12) + address (20) = 32 bytes fills one slot; `next` follows at slot 1.
+    let unit = ExactFillStorage::build_compilation_unit();
+    let contract = unit
+        .find_contract_by_name("Test")
+        .next()
+        .expect("contract can be found");
+    let abi = contract.compute_abi().expect("can compute ABI");
+    let layout = abi.storage_layout();
+
+    assert_eq!(layout.len(), 2);
+    assert_layout_item_eq!(layout[0], "packed", uint!(0_U256), 0, "ExactFill");
+    assert_layout_item_eq!(layout[1], "next", uint!(1_U256), 0, "uint256");
 }
