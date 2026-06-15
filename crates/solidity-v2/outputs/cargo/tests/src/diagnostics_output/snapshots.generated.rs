@@ -29,6 +29,342 @@ mod resolution {
             run("resolution/identifier_not_found", "unresolved_base")
         }
     }
+
+    mod identifier_redeclaration {
+        use super::*;
+
+        #[test]
+        fn constant_redefinition() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "constant_redefinition",
+            )
+        }
+
+        #[test]
+        fn constant_vs_function() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "constant_vs_function",
+            )
+        }
+
+        #[test]
+        fn cross_file_constant() -> Result<()> {
+            run("resolution/identifier_redeclaration", "cross_file_constant")
+        }
+
+        #[test]
+        fn default_import_struct_vs_contract() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "default_import_struct_vs_contract",
+            )
+        }
+
+        #[test]
+        fn default_import_vs_contract() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "default_import_vs_contract",
+            )
+        }
+
+        #[test]
+        fn duplicate_imported_symbol() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "duplicate_imported_symbol",
+            )
+        }
+
+        #[test]
+        fn duplicate_symbol_via_default_import() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "duplicate_symbol_via_default_import",
+            )
+        }
+
+        #[test]
+        fn enum_member() -> Result<()> {
+            run("resolution/identifier_redeclaration", "enum_member")
+        }
+
+        #[test]
+        fn error_no_overloading() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "error_no_overloading",
+            )
+        }
+
+        #[test]
+        fn error_vs_function() -> Result<()> {
+            run("resolution/identifier_redeclaration", "error_vs_function")
+        }
+
+        #[test]
+        fn free_function_vs_contract() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "free_function_vs_contract",
+            )
+        }
+
+        #[test]
+        fn function_event_clash() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "function_event_clash",
+            )
+        }
+
+        #[test]
+        fn function_parameter() -> Result<()> {
+            run("resolution/identifier_redeclaration", "function_parameter")
+        }
+
+        #[test]
+        fn imported_symbol_alias() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "imported_symbol_alias",
+            )
+        }
+
+        #[test]
+        fn local_variable() -> Result<()> {
+            run("resolution/identifier_redeclaration", "local_variable")
+        }
+
+        #[test]
+        fn local_variable_disjoint_scope() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "local_variable_disjoint_scope",
+            )
+        }
+
+        #[test]
+        fn parameter_vs_return_parameter() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "parameter_vs_return_parameter",
+            )
+        }
+
+        #[test]
+        fn path_import_alias_vs_contract() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "path_import_alias_vs_contract",
+            )
+        }
+
+        #[test]
+        fn path_import_alias_vs_default_import() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "path_import_alias_vs_default_import",
+            )
+        }
+
+        #[test]
+        fn return_parameter() -> Result<()> {
+            run("resolution/identifier_redeclaration", "return_parameter")
+        }
+
+        #[test]
+        fn state_variable() -> Result<()> {
+            run("resolution/identifier_redeclaration", "state_variable")
+        }
+
+        #[test]
+        fn struct_member() -> Result<()> {
+            run("resolution/identifier_redeclaration", "struct_member")
+        }
+
+        #[test]
+        fn top_level() -> Result<()> {
+            run("resolution/identifier_redeclaration", "top_level")
+        }
+
+        #[test]
+        fn transient_state_variable() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "transient_state_variable",
+            )
+        }
+
+        #[test]
+        fn transitive_default_import() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "transitive_default_import",
+            )
+        }
+
+        #[test]
+        fn user_defined_value_type() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "user_defined_value_type",
+            )
+        }
+
+        #[test]
+        fn variable_vs_function() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "variable_vs_function",
+            )
+        }
+
+        #[test]
+        fn yul_for_loop_variable() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_for_loop_variable",
+            )
+        }
+
+        #[test]
+        fn yul_function() -> Result<()> {
+            run("resolution/identifier_redeclaration", "yul_function")
+        }
+
+        #[test]
+        fn yul_function_parameter() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_parameter",
+            )
+        }
+
+        #[test]
+        fn yul_function_parameter_vs_return() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_parameter_vs_return",
+            )
+        }
+
+        #[test]
+        fn yul_function_return_vs_outer_variable() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_return_vs_outer_variable",
+            )
+        }
+
+        #[test]
+        fn yul_function_vs_subscope_function() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_vs_subscope_function",
+            )
+        }
+
+        #[test]
+        fn yul_function_vs_subscope_variable() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_vs_subscope_variable",
+            )
+        }
+
+        #[test]
+        fn yul_multi_variable_declaration() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_multi_variable_declaration",
+            )
+        }
+
+        #[test]
+        fn yul_nested_function_redefinition() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_nested_function_redefinition",
+            )
+        }
+
+        #[test]
+        fn yul_shadow_constant() -> Result<()> {
+            run("resolution/identifier_redeclaration", "yul_shadow_constant")
+        }
+
+        #[test]
+        fn yul_shadow_contract_name() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_shadow_contract_name",
+            )
+        }
+
+        #[test]
+        fn yul_shadow_function_name() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_shadow_function_name",
+            )
+        }
+
+        #[test]
+        fn yul_shadow_function_parameter() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_shadow_function_parameter",
+            )
+        }
+
+        #[test]
+        fn yul_shadow_import_alias() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_shadow_import_alias",
+            )
+        }
+
+        #[test]
+        fn yul_variable() -> Result<()> {
+            run("resolution/identifier_redeclaration", "yul_variable")
+        }
+
+        #[test]
+        fn yul_variable_nested_block() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_variable_nested_block",
+            )
+        }
+
+        #[test]
+        fn yul_variable_vs_enclosing_yul_function() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_variable_vs_enclosing_yul_function",
+            )
+        }
+
+        #[test]
+        fn yul_variable_vs_solidity_local() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_variable_vs_solidity_local",
+            )
+        }
+
+        #[test]
+        fn yul_variable_vs_yul_function() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_variable_vs_yul_function",
+            )
+        }
+    }
 }
 
 mod structure {

@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 1395] Error: Variable name x already taken in this scope.
+    ╭─[input.sol:8:13]
+    │
+  8 │ ╭─▶             function g() -> x {
+    ┆ ┆   
+ 10 │ ├─▶             }
+    │ │                   
+    │ ╰─────────────────── Error occurred here.
+────╯

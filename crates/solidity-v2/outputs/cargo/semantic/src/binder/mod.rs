@@ -332,7 +332,7 @@ impl Binder {
 
     // File scope resolution context
 
-    fn get_file_scope(&self, file_id: &str) -> &FileScope {
+    pub(crate) fn get_file_scope(&self, file_id: &str) -> &FileScope {
         self.scopes_by_file_id
             .get(file_id)
             .and_then(|scope_id| self.scopes.get(scope_id.0))
@@ -350,16 +350,21 @@ impl Binder {
         let mut found_definitions = Vec::new();
         let mut visited_files = Set::default();
         let mut files_to_search = VecDeque::new();
-        files_to_search.push_back(file_id.to_owned());
+        files_to_search.push_back(file_id);
 
         while let Some(file_id) = files_to_search.pop_front() {
-            let file_scope = self.get_file_scope(&file_id);
+            let file_scope = self.get_file_scope(file_id);
             if !visited_files.insert(file_id) {
                 continue;
             }
 
             found_definitions.extend(file_scope.lookup_symbol(symbol));
-            files_to_search.extend(file_scope.imported_files.iter().cloned());
+            files_to_search.extend(
+                file_scope
+                    .default_imports
+                    .iter()
+                    .map(|import| import.file_id.as_str()),
+            );
         }
 
         Resolution::from(found_definitions)
@@ -449,6 +454,12 @@ impl Binder {
                 || self.resolve_in_scope(block_scope.parent_scope_id, symbol),
                 Resolution::Definition,
             ),
+            Scope::Chained(chained_scope) => {
+                chained_scope.definitions.get(symbol).copied().map_or_else(
+                    || self.resolve_in_scope(chained_scope.parent_scope_id, symbol),
+                    Resolution::Definition,
+                )
+            }
             Scope::Contract(contract_scope) => {
                 self.resolve_in_contract_scope_internal(
                     contract_scope,
@@ -588,6 +599,7 @@ impl Binder {
             }
 
             Scope::Block(_)
+            | Scope::Chained(_)
             | Scope::File(_)
             | Scope::Function(_)
             | Scope::Modifier(_)

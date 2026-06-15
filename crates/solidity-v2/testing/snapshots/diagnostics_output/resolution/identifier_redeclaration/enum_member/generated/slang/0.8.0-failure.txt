@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Identifier already declared.
+   ╭─[input.sol:7:9]
+   │
+ 7 │         A
+   │         ┬  
+   │         ╰── Error occurred here.
+───╯

@@ -1,3 +1,4 @@
+use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     FunctionNameMatchesContainer, InvalidUsingDirectiveContainer, MultipleConstructors,
 };
@@ -8,6 +9,8 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 
 use crate::binder::{Binder, Definition, FileScope, ParametersScope, Scope, ScopeId};
 use crate::context::SemanticFile;
+
+mod conflicts;
 
 /// In this pass all definitions are collected with their naming identifiers.
 /// Also lexical (and other kinds of) scopes are identified and linked together,
@@ -22,6 +25,15 @@ pub fn run(
 ) {
     for file in files {
         Pass::visit_file(file, binder, diagnostics);
+    }
+
+    // Once every file scope is populated, detect clashes involving the
+    // symbols brought into each file's scope through default imports (which,
+    // unlike aliased/deconstructed imports, don't register a local definition
+    // and so can't be caught while visiting a single file).
+    let file_ids = files.iter().map(|file| file.id());
+    for (file_id, range) in conflicts::find_default_import_conflicts(binder, file_ids) {
+        diagnostics.push(file_id, range, IdentifierRedeclaration);
     }
 }
 
@@ -123,8 +135,26 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     }
 
     fn insert_definition_in_current_scope(&mut self, definition: Definition) {
-        self.binder
-            .insert_definition_in_scope(definition, self.current_scope_id());
+        self.insert_definition_in_scope(definition, self.current_scope_id());
+    }
+
+    // Registers `definition` under the given scope, first checking whether its
+    // identifier collides with a pre-existing definition in that scope. If so,
+    // an `IdentifierRedeclaration` diagnostic is emitted; the definition is
+    // registered regardless, so later passes can still type this definition and
+    // resolve references to it.
+    fn insert_definition_in_scope(&mut self, definition: Definition, scope_id: ScopeId) {
+        let symbol = definition.identifier().unparse();
+        if conflicts::find_conflicting_definition(self.binder, scope_id, symbol, &definition)
+            .is_some()
+        {
+            self.diagnostics.push(
+                self.current_file.id().to_owned(),
+                definition.identifier().range.clone(),
+                IdentifierRedeclaration,
+            );
+        }
+        self.binder.insert_definition_in_scope(definition, scope_id);
     }
 
     fn resolve_import_path(&self, import_node_id: NodeId) -> Option<String> {
@@ -141,11 +171,20 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     fn collect_parameters(&mut self, parameters: &ir::Parameters) -> ScopeId {
         let mut scope = ParametersScope::new();
         for parameter in parameters {
-            scope.add_parameter(parameter.name.as_ref().map(|id| &id.text), parameter.id());
-            if parameter.name.is_some() {
+            if let Some(name) = &parameter.name {
+                // Parameters cannot overload, so any earlier parameter with
+                // the same name is a redeclaration.
+                if scope.lookup_definition(&name.text).is_some() {
+                    self.diagnostics.push(
+                        self.current_file.id().to_owned(),
+                        name.range.clone(),
+                        IdentifierRedeclaration,
+                    );
+                }
                 let definition = Definition::new_parameter(parameter);
                 self.binder.insert_definition_no_scope(definition);
             }
+            scope.add_parameter(parameter.name.as_ref().map(|id| &id.text), parameter.id());
         }
         self.binder.insert_scope(Scope::Parameters(scope))
     }
@@ -161,7 +200,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         for parameter in parameters {
             if parameter.name.is_some() {
                 let definition = Definition::new_parameter(parameter);
-                self.binder.insert_definition_in_scope(definition, scope_id);
+                self.insert_definition_in_scope(definition, scope_id);
             }
         }
     }
@@ -278,7 +317,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
             self.insert_definition_in_current_scope(definition);
         } else if let Some(imported_file_id) = imported_file_id {
             self.current_file_scope()
-                .add_imported_file(imported_file_id);
+                .add_default_import(imported_file_id, node.range.clone());
         }
 
         false
@@ -383,8 +422,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         let enum_scope_id = self.binder.insert_scope(enum_scope);
         for member in &node.members {
             let definition = Definition::new_enum_member(member);
-            self.binder
-                .insert_definition_in_scope(definition, enum_scope_id);
+            self.insert_definition_in_scope(definition, enum_scope_id);
         }
 
         false
@@ -398,8 +436,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         let struct_scope_id = self.binder.insert_scope(struct_scope);
         for member in &node.members {
             let definition = Definition::new_struct_member(member);
-            self.binder
-                .insert_definition_in_scope(definition, struct_scope_id);
+            self.insert_definition_in_scope(definition, struct_scope_id);
         }
 
         true
@@ -450,8 +487,9 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     fn leave_variable_declaration_statement(&mut self, node: &ir::VariableDeclarationStatement) {
         // Open a new scope that replaces but is linked to the current one so
         // definitions declared here are only available for statements after
-        // this one.
-        let scope = Scope::new_block(node.id(), self.current_scope_id());
+        // this one. This is a "chained" scope that continues the parent's
+        // lexical scope, not a new lexical scope of its own.
+        let scope = Scope::new_chained(node.id(), self.current_scope_id());
         self.replace_scope(scope);
 
         match &node.target {
@@ -482,7 +520,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
 
     fn enter_for_statement(&mut self, node: &ir::ForStatement) -> bool {
         // Open a new block here to hold declarations in the initialization
-        // clause.
+        // clause. This is a new lexical scope.
         let scope = Scope::new_block(node.id(), self.current_scope_id());
         self.enter_scope(scope);
         true
@@ -546,6 +584,15 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         let scope = Scope::new_yul_block(node.id(), self.current_scope_id());
         self.enter_scope(scope);
 
+        // Yul function definitions are hoisted: their names are visible in
+        // the entire enclosing block, even before their definition statement.
+        for statement in &node.statements {
+            if let ir::YulStatement::YulFunctionDefinition(function) = statement {
+                let definition = Definition::new_yul_function(function);
+                self.insert_definition_in_current_scope(definition);
+            }
+        }
+
         true
     }
 
@@ -554,20 +601,19 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn enter_yul_function_definition(&mut self, node: &ir::YulFunctionDefinition) -> bool {
-        let definition = Definition::new_yul_function(node);
-        self.insert_definition_in_current_scope(definition);
-
+        // The function name definition was already inserted (hoisted) when
+        // entering the enclosing Yul block.
         let scope = Scope::new_yul_function(node.id(), self.current_scope_id());
         let scope_id = self.enter_scope(scope);
 
         for parameter in &node.parameters {
             let definition = Definition::new_yul_parameter(parameter);
-            self.binder.insert_definition_in_scope(definition, scope_id);
+            self.insert_definition_in_scope(definition, scope_id);
         }
         if let Some(returns) = &node.returns {
             for parameter in returns {
                 let definition = Definition::new_yul_variable(parameter);
-                self.binder.insert_definition_in_scope(definition, scope_id);
+                self.insert_definition_in_scope(definition, scope_id);
             }
         }
 

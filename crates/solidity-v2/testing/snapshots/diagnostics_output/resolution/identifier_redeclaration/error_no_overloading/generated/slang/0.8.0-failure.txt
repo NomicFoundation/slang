@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+Error: This syntax was introduced in version '0.8.4'.
+   ╭─[input.sol:4:1]
+   │
+ 4 │ error Err(uint);
+   │ ────────┬───────  
+   │         ╰───────── Error occurred here.
+───╯
+
+Error: This syntax was introduced in version '0.8.4'.
+   ╭─[input.sol:5:1]
+   │
+ 5 │ error Err(bytes32);
+   │ ─────────┬─────────  
+   │          ╰─────────── Error occurred here.
+───╯
+
+Error: Identifier already declared.
+   ╭─[input.sol:5:7]
+   │
+ 5 │ error Err(bytes32);
+   │       ─┬─  
+   │        ╰─── Error occurred here.
+───╯
