@@ -73,6 +73,19 @@ contract Test {
 "#,
 );
 
+define_fixture!(
+    ImmutableAfterMultiSlot,
+    file: "main.sol", r#"
+contract Test {
+    uint256 x;
+    uint256[3] arr;
+    uint256 immutable i0 = 1;
+    uint128 immutable i1 = 2;
+    uint128 immutable i2 = 3;
+}
+"#,
+);
+
 macro_rules! assert_layout_item_eq {
     ($item:expr, $name:expr, $slot:expr, $offset:expr, $type:expr) => {
         assert_eq!($item.label(), $name);
@@ -178,4 +191,48 @@ fn test_struct_member_exactly_fills_slot() {
     assert_eq!(layout.len(), 2);
     assert_layout_item_eq!(layout[0], "packed", uint!(0_U256), 0, "ExactFill");
     assert_layout_item_eq!(layout[1], "next", uint!(1_U256), 0, "uint256");
+}
+
+#[test]
+fn test_immutable_storage_layout() {
+    let unit = StorageLayout::build_compilation_unit();
+
+    // Contract `A`: `a` persists at slot 0, the `constant` is inlined (no slot),
+    // and the `immutable` is appended at the next free slot.
+    let a = unit
+        .find_contract_by_name("A")
+        .next()
+        .expect("contract can be found");
+    let a_abi = a.compute_abi().expect("can compute ABI");
+
+    let a_layout = a_abi.storage_layout();
+    assert_eq!(a_layout.len(), 1);
+    assert_layout_item_eq!(a_layout[0], "a", uint!(0_U256), 0, "uint256");
+
+    let a_immutable = a_abi.immutable_storage_layout();
+    assert_eq!(a_immutable.len(), 1);
+    assert_layout_item_eq!(a_immutable[0], "d", uint!(1_U256), 0, "uint256");
+}
+
+#[test]
+fn test_immutable_layout_clears_a_multi_slot_tail() {
+    // `arr` occupies slots 1..=3, so the immutables must begin at slot 4 — not at
+    // `(max start slot) + 1 = 2`, which would alias the array's tail.
+    let unit = ImmutableAfterMultiSlot::build_compilation_unit();
+    let contract = unit
+        .find_contract_by_name("Test")
+        .next()
+        .expect("contract can be found");
+    let abi = contract.compute_abi().expect("can compute ABI");
+
+    let layout = abi.storage_layout();
+    assert_eq!(layout.len(), 2);
+    assert_layout_item_eq!(layout[0], "x", uint!(0_U256), 0, "uint256");
+    assert_layout_item_eq!(layout[1], "arr", uint!(1_U256), 0, "uint256[3]");
+
+    let immutable = abi.immutable_storage_layout();
+    assert_eq!(immutable.len(), 3);
+    assert_layout_item_eq!(immutable[0], "i0", uint!(4_U256), 0, "uint256");
+    assert_layout_item_eq!(immutable[1], "i1", uint!(5_U256), 0, "uint128");
+    assert_layout_item_eq!(immutable[2], "i2", uint!(5_U256), 16, "uint128");
 }

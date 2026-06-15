@@ -20,6 +20,7 @@ pub struct ContractAbi {
     entries: Vec<AbiEntry>,
     storage_layout: Vec<StorageItem>,
     transient_storage_layout: Vec<StorageItem>,
+    immutable_storage_layout: Vec<StorageItem>,
 }
 
 impl ContractAbi {
@@ -45,6 +46,12 @@ impl ContractAbi {
 
     pub fn transient_storage_layout(&self) -> &[StorageItem] {
         &self.transient_storage_layout
+    }
+
+    /// Layout of the `immutable` state variables, lowered as storage slots
+    /// appended after the persistent layout (see `compute_storage_layout`).
+    pub fn immutable_storage_layout(&self) -> &[StorageItem] {
+        &self.immutable_storage_layout
     }
 }
 
