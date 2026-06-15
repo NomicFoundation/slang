@@ -1378,3 +1378,36 @@ fn abi_decode_tuple_of_type_names_types_by_elements() {
     );
     assert_eq!(types.get_type_by_id(elements[1]), &Type::Boolean);
 }
+
+#[test]
+fn open_ended_slice_is_a_range_access() {
+    // `data[a:]` (open-ended slice) is a range access like `data[a:b]`; keying on
+    // the upper bound alone would mis-type it as an element index.
+    let source = r#"
+        contract Test {
+            function probe(bytes calldata data) external pure {
+                data[1:];
+                data[1];
+            }
+        }
+    "#;
+    let TypeAnalysis {
+        file,
+        binder,
+        types,
+    } = analyze(LanguageVersion::LATEST, source);
+
+    let contract = find_contract(&file, "Test");
+    let probe = find_function(&contract.members, "probe").expect("probe function");
+    let body = probe.body.as_ref().expect("probe has a body");
+
+    let typings = expression_statement_types(body, &binder, &types);
+    let [slice, element] = typings.as_slice() else {
+        panic!("expected two expression statements, got {typings:?}");
+    };
+    assert!(
+        matches!(slice, Some(Type::Bytes(_))),
+        "expected `data[1:]` to be a bytes slice, got {slice:?}",
+    );
+    assert_eq!(element, &Some(Type::ByteArray(ByteArrayType { width: 1 })));
+}

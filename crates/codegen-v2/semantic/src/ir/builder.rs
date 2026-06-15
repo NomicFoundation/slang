@@ -289,8 +289,12 @@ fn collapse_redundant_node_types(mutator: &mut IrModelMutator) {
 
     // Collapse IndexAccessEnd manually (requires code in the transformer
     // implementation) because it's an optional containing an optional, and that
-    // complicates automatic code generation in the transformer.
+    // complicates automatic code generation in the transformer. Its colon
+    // distinguishes a slice (`x[a:]`) from an index (`x[a]`) — both of which leave
+    // `end` empty — so the transformer records that as the `kind`.
     mutator.remove_type("IndexAccessEnd");
+    mutator.add_enum_type("IndexAccessKind", &["Index", "Slice"]);
+    mutator.add_sequence_field("IndexAccessExpression", "kind", "IndexAccessKind", false);
     mutator.add_sequence_field("IndexAccessExpression", "end", "Expression", true);
 
     // Collapse the middle node in ArgumentsDeclaration
