@@ -7,9 +7,13 @@ use crate::diagnostics_output::runner::run;
 mod compilation {
     use super::*;
 
-    #[test]
-    fn missing_file() -> Result<()> {
-        run("compilation", "missing_file")
+    mod missing_imported_file {
+        use super::*;
+
+        #[test]
+        fn simple() -> Result<()> {
+            run("compilation/missing_imported_file", "simple")
+        }
     }
 
     #[test]

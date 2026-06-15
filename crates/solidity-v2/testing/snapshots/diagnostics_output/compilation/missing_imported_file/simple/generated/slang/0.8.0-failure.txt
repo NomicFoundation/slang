@@ -1,0 +1,14 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+Error: File not found.
+   ─[lib/missing.sol:0:0]
+
+Error: Imported file is missing: lib/missing.sol
+   ╭─[main.sol:4:8]
+   │
+ 4 │ import "lib/missing.sol";
+   │        ────────┬────────  
+   │                ╰────────── Error occurred here.
+───╯

@@ -21,6 +21,6 @@ impl DiagnosticExtensions for MissingFile {
     }
 
     fn message(&self) -> String {
-        format!("Missing file: {}", self.reason)
+        self.reason.clone()
     }
 }

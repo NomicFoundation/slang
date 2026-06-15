@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use crate::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
+use crate::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
 use crate::utils::LanguageVersion;
 
 mod counter;
@@ -47,19 +48,21 @@ struct FixtureBuildConfig<'a> {
 }
 
 impl CompilationBuilderConfig for FixtureBuildConfig<'_> {
-    fn read_file(&mut self, file_id: &str) -> Result<String, String> {
+    fn read_file(&mut self, file_id: &str) -> Result<String, MissingFile> {
         self.files
             .iter()
             .find(|file| file.id == file_id)
             .map(|file| file.contents.to_owned())
-            .ok_or_else(|| format!("fixture file not found: {file_id}"))
+            .ok_or_else(|| MissingFile {
+                reason: "Fixture file not found".to_string(),
+            })
     }
 
     fn resolve_import(
         &mut self,
         _source_file_id: &str,
         import_path: &str,
-    ) -> Result<String, String> {
+    ) -> Result<String, UnresolvedImport> {
         Ok(import_path.to_owned())
     }
 }

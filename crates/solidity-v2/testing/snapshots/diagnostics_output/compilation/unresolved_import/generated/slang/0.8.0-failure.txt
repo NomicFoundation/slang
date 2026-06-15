@@ -2,10 +2,10 @@
 
 Diagnostics: 1
 
-Error: Unresolved import: unresolved import: ../../oops.sol (from input.sol)
-   ╭─[input.sol:1:1]
+Error: Unresolved import.
+   ╭─[input.sol:5:8]
    │
- 1 │ // SPDX-License-Identifier: MIT
-   │ │ 
-   │ ╰─ Error occurred here.
+ 5 │ import "../../oops.sol";
+   │        ────────┬───────  
+   │                ╰───────── Error occurred here.
 ───╯
