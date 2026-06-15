@@ -1,3 +1,4 @@
+use slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility;
 use slang_solidity_v2_ir::ir;
 
 use super::evaluator::{
@@ -72,6 +73,19 @@ impl Pass<'_> {
                 })
             }
             ir::TypeName::FunctionType(function_type) => {
+                // Function types can only be internal or external, so emit a
+                // diagnostic if the visibility is not one of those.
+                if !matches!(
+                    function_type.visibility,
+                    ir::FunctionVisibility::Internal | ir::FunctionVisibility::External
+                ) {
+                    self.diagnostics.push(
+                        self.file_id.clone(),
+                        function_type.range.clone(),
+                        InvalidFunctionTypeVisibility,
+                    );
+                }
+
                 // NOTE: Keep in sync with `type_of_function_definition`
                 let parameter_types = self.resolve_parameter_types(&function_type.parameters)?;
                 let return_type = if let Some(returns) = &function_type.returns {
@@ -91,7 +105,6 @@ impl Pass<'_> {
                     implicit_receiver_type: None,
                     parameter_types,
                     return_type,
-                    // TODO(validation) SDR[26]: function types can only be internal or external
                     visibility: (&function_type.visibility).into(),
                     mutability: (&function_type.mutability).into(),
                 })))

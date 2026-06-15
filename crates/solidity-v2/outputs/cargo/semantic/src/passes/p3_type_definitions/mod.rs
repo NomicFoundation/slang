@@ -1,3 +1,4 @@
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
@@ -26,12 +27,13 @@ pub fn run(
     binder: &mut Binder,
     types: &mut TypeRegistry,
     language_version: LanguageVersion,
+    diagnostics: &mut DiagnosticCollection,
 ) {
     for file in files {
-        Pass::visit_file(file, binder, types, language_version);
+        Pass::visit_file(file, binder, types, language_version, diagnostics);
     }
     for file in files {
-        Pass::visit_file_type_getters(file, binder, types, language_version);
+        Pass::visit_file_type_getters(file, binder, types, language_version, diagnostics);
     }
 }
 
@@ -40,6 +42,8 @@ struct Pass<'a> {
     scope_stack: Vec<ScopeId>,
     binder: &'a mut Binder,
     types: &'a mut TypeRegistry,
+    diagnostics: &'a mut DiagnosticCollection,
+    file_id: String,
     current_receiver_type: Option<TypeId>,
 }
 
@@ -49,12 +53,15 @@ impl<'a> Pass<'a> {
         binder: &'a mut Binder,
         types: &'a mut TypeRegistry,
         language_version: LanguageVersion,
+        diagnostics: &'a mut DiagnosticCollection,
     ) {
         let mut pass = Self {
             language_version,
             scope_stack: Vec::new(),
             binder,
             types,
+            diagnostics,
+            file_id: file.id().to_owned(),
             current_receiver_type: None,
         };
         ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
@@ -72,12 +79,15 @@ impl<'a> Pass<'a> {
         binder: &'a mut Binder,
         types: &'a mut TypeRegistry,
         language_version: LanguageVersion,
+        diagnostics: &'a mut DiagnosticCollection,
     ) {
         let mut pass = Self {
             language_version,
             scope_stack: Vec::new(),
             binder,
             types,
+            diagnostics,
+            file_id: file.id().to_owned(),
             current_receiver_type: None,
         };
         pass.type_getters_from(file.ir_root());

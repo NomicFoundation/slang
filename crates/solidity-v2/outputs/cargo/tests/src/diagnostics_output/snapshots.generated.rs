@@ -231,4 +231,58 @@ mod type_system {
             run("type_system/invalid_base", "library")
         }
     }
+
+    mod invalid_function_type_visibility {
+        use super::*;
+
+        #[test]
+        fn local_variable() -> Result<()> {
+            run(
+                "type_system/invalid_function_type_visibility",
+                "local_variable",
+            )
+        }
+
+        #[test]
+        fn nested() -> Result<()> {
+            run("type_system/invalid_function_type_visibility", "nested")
+        }
+
+        #[test]
+        fn parameter() -> Result<()> {
+            run("type_system/invalid_function_type_visibility", "parameter")
+        }
+
+        #[test]
+        fn return_type() -> Result<()> {
+            run(
+                "type_system/invalid_function_type_visibility",
+                "return_type",
+            )
+        }
+
+        #[test]
+        fn state_variable() -> Result<()> {
+            run(
+                "type_system/invalid_function_type_visibility",
+                "state_variable",
+            )
+        }
+
+        #[test]
+        fn struct_field() -> Result<()> {
+            run(
+                "type_system/invalid_function_type_visibility",
+                "struct_field",
+            )
+        }
+
+        #[test]
+        fn valid_visibilities() -> Result<()> {
+            run(
+                "type_system/invalid_function_type_visibility",
+                "valid_visibilities",
+            )
+        }
+    }
 }

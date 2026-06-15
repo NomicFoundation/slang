@@ -75,7 +75,13 @@ impl SemanticContext {
 
         p1_collect_definitions::run(files, &mut binder, diagnostics);
         p2_linearise_contracts::run(files, &mut binder, diagnostics);
-        p3_type_definitions::run(files, &mut binder, &mut types, language_version);
+        p3_type_definitions::run(
+            files,
+            &mut binder,
+            &mut types,
+            language_version,
+            diagnostics,
+        );
         let contract_data = p4_compute_linearisations::run(&binder, &types);
         p5_resolve_references::run(files, &mut binder, &mut types, language_version);
 
