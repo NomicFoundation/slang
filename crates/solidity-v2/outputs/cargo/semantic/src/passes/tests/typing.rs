@@ -1321,3 +1321,10 @@ fn reference_type_constant_is_indexable() {
         type_of_expression_in_context(r#"bytes constant B = hex"1234";"#, "B[0]");
     assert_eq!(element_type, Type::ByteArray(ByteArrayType { width: 1 }));
 }
+
+#[test]
+fn int_to_enum_conversion_is_enum_typed() {
+    // `E(x)` casts an integer to the enum type.
+    let (expr_type, _types) = type_of_expression_in_context("enum E { A, B }", "E(1)");
+    assert!(matches!(expr_type, Type::Enum(_)));
+}

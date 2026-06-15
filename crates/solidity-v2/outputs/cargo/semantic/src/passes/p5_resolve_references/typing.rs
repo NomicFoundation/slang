@@ -432,6 +432,13 @@ impl Pass<'_> {
                         }));
                         Typing::Resolved(type_id)
                     }
+                    Some(Definition::Enum(_)) => {
+                        // `E(x)` casts an integer to the enum
+                        let type_id = self.types.register_type(Type::Enum(EnumType {
+                            definition_id: node_id,
+                        }));
+                        Typing::Resolved(type_id)
+                    }
                     _ => Typing::Unresolved,
                 }
             }
