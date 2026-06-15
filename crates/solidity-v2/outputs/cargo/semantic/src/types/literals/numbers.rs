@@ -15,15 +15,23 @@ pub enum Number {
     Rational(BigRational),
 }
 
+/// The integer value of a hexadecimal literal token (`0x…`).
+/// `BigInt::from_str_radix` tolerates `_` separators.
+pub fn value_of_hex_literal(literal: &ir::HexLiteral) -> Option<BigInt> {
+    let hex = literal.unparse();
+    BigInt::from_str_radix(&hex[2..], 16).ok()
+}
+
+/// The integer value of a decimal literal token.
+pub fn value_of_decimal_literal(literal: &ir::DecimalLiteral) -> Option<BigInt> {
+    BigInt::from_str(literal.unparse()).ok()
+}
+
 impl Number {
     pub(crate) fn from_hex_number_expression(
         hex_number_expression: &ir::HexNumberExpression,
     ) -> Option<Self> {
-        let hex = hex_number_expression.literal.unparse();
-        // Skip `0x` prefix and parse the hexadecimal number.
-        // `BigInt::from_str_radix` can handle `_` separators.
-        let value = BigInt::from_str_radix(&hex[2..], 16).ok()?;
-        Some(Self::Integer(value))
+        value_of_hex_literal(&hex_number_expression.literal).map(Self::Integer)
     }
 
     pub(crate) fn from_decimal_number_expression(
