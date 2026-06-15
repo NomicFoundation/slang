@@ -1444,3 +1444,36 @@ fn string_slice_is_a_string() {
     );
     assert_eq!(element, &None);
 }
+
+#[test]
+fn fixed_size_array_meta_type_from_indexed_type_name() {
+    // `abi.decode(d, (uint256[2][3]))` decodes a fixed nested array, not a
+    // dynamic `uint256[][]`.
+    let (decoded, types) =
+        type_of_expression_in_context("bytes data;", "abi.decode(data, (uint256[2][3]))");
+
+    let Type::FixedSizeArray(FixedSizeArrayType {
+        element_type, size, ..
+    }) = decoded
+    else {
+        panic!("expected a fixed-size array, got {decoded:?}");
+    };
+    assert_eq!(size, 3);
+
+    let Type::FixedSizeArray(FixedSizeArrayType {
+        element_type: inner,
+        size: inner_size,
+        ..
+    }) = types.get_type_by_id(element_type).clone()
+    else {
+        panic!("expected a nested fixed-size array");
+    };
+    assert_eq!(inner_size, 2);
+    assert_eq!(
+        types.get_type_by_id(inner),
+        &Type::Integer(IntegerType {
+            signed: false,
+            bits: 256,
+        })
+    );
+}

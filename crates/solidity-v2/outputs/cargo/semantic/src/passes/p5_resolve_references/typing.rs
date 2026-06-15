@@ -7,9 +7,9 @@ use crate::binder::{Definition, Resolution, Typing};
 use crate::built_ins::InternalBuiltIn;
 use crate::passes::common::node_id_for_expression_typing;
 use crate::types::{
-    literals, AddressType, ContractType, DataLocation, EnumType, FixedSizeArrayType, FunctionType,
-    IntegerType, InterfaceType, LibraryType, LiteralKind, Number, StringType, StructType, Type,
-    TypeId, UserDefinedValueType,
+    literals, AddressType, ArrayType, ContractType, DataLocation, EnumType, FixedSizeArrayType,
+    FunctionType, IntegerType, InterfaceType, LibraryType, LiteralKind, Number, StringType,
+    StructType, Type, TypeId, UserDefinedValueType,
 };
 
 impl Pass<'_> {
@@ -86,6 +86,35 @@ impl Pass<'_> {
                 }))
             }
             _ => None,
+        }
+    }
+
+    /// The array meta-type produced by indexing a type name: `T[n]` with a
+    /// constant size (not a slice) is a fixed-size array; `T[]` is a dynamic one.
+    pub(super) fn meta_array_type(
+        &self,
+        element_type: TypeId,
+        node: &ir::IndexAccessExpression,
+    ) -> Type {
+        let size = if matches!(node.kind, ir::IndexAccessKind::Slice) {
+            None
+        } else {
+            node.start
+                .as_ref()
+                .and_then(|expr| self.typing_of_expression(expr).as_type_id())
+                .and_then(|type_id| self.types.number_value_of_type_id(type_id))
+                .and_then(|number| number.as_usize())
+        };
+        match size {
+            Some(size) => Type::FixedSizeArray(FixedSizeArrayType {
+                element_type,
+                size,
+                location: DataLocation::Memory,
+            }),
+            None => Type::Array(ArrayType {
+                element_type,
+                location: DataLocation::Memory,
+            }),
         }
     }
 
