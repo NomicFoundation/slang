@@ -82,7 +82,7 @@ jobs:
       publishNeeded: "${{ steps.checkVersion.outputs.publishNeeded || 'false' }}"
     steps:
       - name: "Checkout Repository"
-        uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
+        uses: "actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10" # v6.0.3
         with:
           persist-credentials: false
           fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
@@ -115,7 +115,7 @@ jobs:
 
       - name: "Create/Update Changesets Pull Request"
         id: "runChangesets"
-        uses: "changesets/action@63a615b9cd06ba9a3e6d13796c7fbcb080a60a0b" # v1.8.0
+        uses: "changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d" # v1.9.0
         with:
           title: "Bump Slang Version"
           commit: "Bump Slang Version"
@@ -167,7 +167,7 @@ jobs:
       tarball-name: "${{ steps.prepare.outputs.tarball-name }}"
     steps:
       - name: "Checkout Repository"
-        uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
+        uses: "actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10" # v6.0.3
         with:
           persist-credentials: false
           fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
@@ -235,7 +235,7 @@ jobs:
       contents: "read"
     steps:
       - name: "Checkout Repository"
-        uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
+        uses: "actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10" # v6.0.3
         with:
           persist-credentials: false
           fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
@@ -410,7 +410,7 @@ jobs:
             }
 
       - name: "Checkout Repository"
-        uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
+        uses: "actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10" # v6.0.3
         with:
           persist-credentials: false
 
