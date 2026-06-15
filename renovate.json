@@ -120,6 +120,12 @@
       "groupName": "node"
     },
     {
+      "description": "pnpm: keep the npm-side pins (packageManager + engines.pnpm) and the Hermit pnpm pin in lockstep, so a bump always lands in one PR. Must come after per-manager grouping rules so this groupName takes precedence.",
+      "matchManagers": ["hermit", "npm"],
+      "matchPackageNames": ["pnpm"],
+      "groupName": "pnpm"
+    },
+    {
       "description": "node: engines.node is a major-range guard; the exact runtime version is owned by Hermit. Don't let the npm manager bump engines.node, since its datasource (nodejs.org) leads the Hermit package index — an npm-only bump breaks engine-strict because Hermit can't install the new version yet. Node minor/patch flows through Hermit only; majors are bumped manually (see @types/node rule).",
       "matchManagers": ["npm"],
       "matchPackageNames": ["node"],
