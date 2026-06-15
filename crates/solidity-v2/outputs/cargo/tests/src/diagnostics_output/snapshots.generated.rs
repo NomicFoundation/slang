@@ -163,6 +163,14 @@ mod resolution {
         }
 
         #[test]
+        fn path_import_alias_vs_default_import() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "path_import_alias_vs_default_import",
+            )
+        }
+
+        #[test]
         fn return_parameter() -> Result<()> {
             run("resolution/identifier_redeclaration", "return_parameter")
         }

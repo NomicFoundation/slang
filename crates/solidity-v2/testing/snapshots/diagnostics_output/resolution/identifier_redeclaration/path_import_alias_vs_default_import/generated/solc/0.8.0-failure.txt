@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 2333] Error: Identifier already declared.
+   ╭─[main.sol:5:1]
+   │
+ 5 │ import "./another.sol";
+   │ ───────────┬───────────  
+   │            ╰───────────── Error occurred here.
+───╯
