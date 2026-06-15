@@ -12,8 +12,9 @@ use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p5_resolve_references,
 };
 use crate::types::{
-    ByteArrayType, BytesType, ContractType, DataLocation, FixedSizeArrayType, IntegerType,
-    LibraryType, LiteralKind, MappingType, StringType, TupleType, Type, TypeId, TypeRegistry,
+    ByteArrayType, BytesType, ContractType, DataLocation, FixedSizeArrayType, FunctionType,
+    FunctionTypeMutability, FunctionTypeVisibility, IntegerType, LibraryType, LiteralKind,
+    MappingType, StringType, TupleType, Type, TypeId, TypeRegistry,
 };
 
 struct TypeAnalysis {
@@ -1188,5 +1189,96 @@ fn test_this_inside_contract() {
 
     assert!(
         matches!(typings.as_slice(), [Some(Type::Contract(ContractType { definition_id }))] if definition_id == &contract.id())
+    );
+}
+
+#[test]
+fn test_partially_applied_function_not_convertible_to_plain_pointer() {
+    // A partially applied function (bound first argument or pre-applied call
+    // options) is not
+    // implicitly convertible to its plain function pointer counterpart, even
+    // though they share the same signature.
+    let mut types = TypeRegistry::new(LanguageVersion::LATEST);
+    let uint = register_uint_type(&mut types, 256);
+
+    let pointer = FunctionType {
+        definition_id: None,
+        implicit_receiver_type: None,
+        parameter_types: vec![uint],
+        return_type: uint,
+        visibility: FunctionTypeVisibility::Internal,
+        mutability: FunctionTypeMutability::Pure,
+        partially_applied: false,
+    };
+    let pointer_id = types.register_type(Type::Function(pointer.clone()));
+    let applied_id = types.partially_apply_function_type(pointer);
+
+    // They are distinct interned types...
+    assert_ne!(pointer_id, applied_id);
+    // ...and neither is implicitly convertible to the other.
+    assert!(!types.implicitly_convertible_to(applied_id, pointer_id));
+    assert!(!types.implicitly_convertible_to(pointer_id, applied_id));
+}
+
+#[test]
+fn test_partially_applied_function_does_not_unify_into_array() {
+    // `L.inc` is attached to `uint` via `using for`, so `t.inc` binds the
+    // receiver and becomes a partially applied function with no mobile type.
+    let source = r#"
+        library L {
+            function inc(uint x) internal pure returns (uint) { return x + 1; }
+        }
+        contract Test {
+            using L for uint;
+            function inc_method(uint x) internal pure returns (uint) { return x; }
+            function foo() external {}
+            function __test() internal {
+                uint t = 1;
+                [inc_method, inc_method];
+                [inc_method, t.inc];
+                [this.foo, this.foo];
+                [this.foo, this.foo{ gas: 4 }];
+            }
+        }
+        "#;
+
+    let TypeAnalysis {
+        file,
+        binder,
+        types,
+    } = analyze(LanguageVersion::LATEST, source);
+
+    let contract = find_contract(&file, "Test");
+    let function = find_function(&contract.members, "__test").expect("__test function");
+    let body = function.body.as_ref().expect("__test has a body");
+
+    let mut typings = expression_statement_types(body, &binder, &types).into_iter();
+
+    // Control: plain function pointers of the same signature still unify into a
+    // fixed-size array.
+    assert!(
+        matches!(typings.next(), Some(Some(Type::FixedSizeArray(_)))),
+        "plain function pointers should unify into an array",
+    );
+
+    // The bound element has no mobile type, so the array does not type.
+    assert_eq!(
+        typings.next(),
+        Some(None::<Type>),
+        "an array with a partially applied element should not type",
+    );
+
+    // Control: plain function pointers of the same signature still unify into a
+    // fixed-size array.
+    assert!(
+        matches!(typings.next(), Some(Some(Type::FixedSizeArray(_)))),
+        "plain function pointers should unify into an array",
+    );
+
+    // The bound element has no mobile type, so the array does not type.
+    assert_eq!(
+        typings.next(),
+        Some(None::<Type>),
+        "an array with a partially applied element should not type",
     );
 }

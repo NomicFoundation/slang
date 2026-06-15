@@ -304,10 +304,12 @@ impl TypeRegistry {
 
             (Type::Function(from_function_type), Type::Function(to_function_type)) => {
                 // This is full equality except for visibility and mutability
-                // which can be converted to, and definition_id which can differ
-                from_function_type
-                    .visibility
-                    .implicitly_convertible_to(to_function_type.visibility)
+                // which can be converted to, and definition_id and
+                // implicit_receiver_type which can differ.
+                from_function_type.partially_applied == to_function_type.partially_applied
+                    && from_function_type
+                        .visibility
+                        .implicitly_convertible_to(to_function_type.visibility)
                     && from_function_type
                         .mutability
                         .implicitly_convertible_to(to_function_type.mutability)
