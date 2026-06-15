@@ -161,3 +161,29 @@ fn test_abi_entries_with_tuples() {
     assert_eq!(outputs[2].type_name(), "uint256");
     assert!(outputs[2].components().is_empty());
 }
+
+#[test]
+fn test_abi_entries_struct_getter() {
+    let unit = super::AbiStructGetter::build_compilation_unit();
+
+    // The auto-generated getter of a public multi-field struct returns a tuple of
+    // its members. That tuple must be expanded into one ABI output per member;
+    // otherwise the output fails to type and nulls the whole contract ABI.
+    let contracts_abi = unit.compute_contracts_abi();
+    assert_eq!(contracts_abi.len(), 1);
+
+    let entries = contracts_abi[0].entries();
+    let getter = entries
+        .iter()
+        .find_map(|entry| match entry {
+            AbiEntry::Function(function) if function.name() == "origin" => Some(function),
+            _ => None,
+        })
+        .expect("the `origin` getter should be present in the ABI");
+
+    assert!(getter.inputs().is_empty());
+    let outputs = getter.outputs();
+    assert_eq!(outputs.len(), 2);
+    assert_eq!(outputs[0].type_name(), "uint256");
+    assert_eq!(outputs[1].type_name(), "uint256");
+}
