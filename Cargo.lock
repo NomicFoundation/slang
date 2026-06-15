@@ -2193,6 +2193,7 @@ dependencies = [
  "semver 1.0.28",
  "serde",
  "serde_json",
+ "sha3 0.12.0",
  "similar-asserts 2.0.0",
  "strum 0.28.0",
  "tera",
