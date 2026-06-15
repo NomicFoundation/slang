@@ -297,7 +297,10 @@ impl Visitor for Pass<'_> {
                 let type_id = item
                     .expression
                     .as_ref()
-                    .and_then(|expression| self.typing_of_expression(expression).as_type_id())
+                    .and_then(|expression| {
+                        let typing = self.typing_of_expression(expression);
+                        self.concrete_type_id(&typing)
+                    })
                     .unwrap_or(self.types.void());
                 types.push(type_id);
             }

@@ -1359,3 +1359,22 @@ fn cast_library_to_address_is_address_typed() {
         "expected `address(MyLib)` to be typed as address, got {typings:?}",
     );
 }
+
+#[test]
+fn abi_decode_tuple_of_type_names_types_by_elements() {
+    // The element types must be recovered, not collapsed to voids.
+    let (decoded, types) =
+        type_of_expression_in_context("bytes data;", "abi.decode(data, (uint256, bool))");
+    let Type::Tuple(TupleType { types: elements }) = decoded else {
+        panic!("expected a tuple type, got {decoded:?}");
+    };
+    assert_eq!(elements.len(), 2);
+    assert_eq!(
+        types.get_type_by_id(elements[0]),
+        &Type::Integer(IntegerType {
+            signed: false,
+            bits: 256,
+        })
+    );
+    assert_eq!(types.get_type_by_id(elements[1]), &Type::Boolean);
+}

@@ -468,25 +468,27 @@ impl Pass<'_> {
         }
     }
 
+    /// The concrete `TypeId` a typing denotes — a value's own type, or a
+    /// type-name's underlying type registered into the registry. `None` for a
+    /// typing that denotes no type (void, unresolved).
+    pub(super) fn concrete_type_id(&mut self, typing: &Typing) -> Option<TypeId> {
+        match typing {
+            Typing::Resolved(type_id) => Some(*type_id),
+            Typing::MetaType(type_) => Some(self.types.register_type(type_.clone())),
+            Typing::UserMetaType(definition_id) => self
+                .type_of_definition(*definition_id)
+                .map(|type_| self.types.register_type(type_)),
+            _ => None,
+        }
+    }
+
     fn typing_of_abi_decode(&mut self, argument_typings: &[Typing]) -> Typing {
         if argument_typings.len() != 2 {
             return Typing::Unresolved;
         }
-        match &argument_typings[1] {
-            Typing::Resolved(type_id) => {
-                // TODO(validation) SDR[42]: this only makes sense if type_id is a tuple
-                Typing::Resolved(*type_id)
-            }
-            Typing::UserMetaType(definition_id) => {
-                if let Some(type_) = self.type_of_definition(*definition_id) {
-                    Typing::Resolved(self.types.register_type(type_))
-                } else {
-                    Typing::Unresolved
-                }
-            }
-            Typing::MetaType(type_) => Typing::Resolved(self.types.register_type(type_.clone())),
-            _ => Typing::Unresolved,
-        }
+        // TODO(validation) SDR[42]: the second argument should be a tuple type
+        self.concrete_type_id(&argument_typings[1])
+            .map_or(Typing::Unresolved, Typing::Resolved)
     }
 
     pub(super) fn collect_named_argument_typings(
