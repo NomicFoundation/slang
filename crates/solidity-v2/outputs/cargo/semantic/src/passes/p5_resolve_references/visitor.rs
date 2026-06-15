@@ -410,6 +410,15 @@ impl Visitor for Pass<'_> {
                             Typing::Resolved(self.types.bytes1())
                         }
                     }
+                    Type::String(_) => {
+                        // A string slice is a string; `s[i]` is invalid Solidity
+                        // (use `bytes(s)[i]`), so a non-range index has no element.
+                        if range_access {
+                            Typing::Resolved(operand_type_id)
+                        } else {
+                            Typing::Unresolved
+                        }
+                    }
                     Type::Mapping(MappingType { value_type_id, .. }) => {
                         if range_access {
                             Typing::Unresolved

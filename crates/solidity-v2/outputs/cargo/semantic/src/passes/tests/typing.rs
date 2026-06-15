@@ -1411,3 +1411,36 @@ fn open_ended_slice_is_a_range_access() {
     );
     assert_eq!(element, &Some(Type::ByteArray(ByteArrayType { width: 1 })));
 }
+
+#[test]
+fn string_slice_is_a_string() {
+    // A slice of a string is a string; `s[i]` is invalid Solidity, so a
+    // non-range index has no element type.
+    let source = r#"
+        contract Test {
+            function probe(string calldata s) external pure {
+                s[1:];
+                s[0];
+            }
+        }
+    "#;
+    let TypeAnalysis {
+        file,
+        binder,
+        types,
+    } = analyze(LanguageVersion::LATEST, source);
+
+    let contract = find_contract(&file, "Test");
+    let probe = find_function(&contract.members, "probe").expect("probe function");
+    let body = probe.body.as_ref().expect("probe has a body");
+
+    let typings = expression_statement_types(body, &binder, &types);
+    let [slice, element] = typings.as_slice() else {
+        panic!("expected two expression statements, got {typings:?}");
+    };
+    assert!(
+        matches!(slice, Some(Type::String(_))),
+        "expected `s[1:]` to be a string, got {slice:?}",
+    );
+    assert_eq!(element, &None);
+}
