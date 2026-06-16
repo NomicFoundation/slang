@@ -10,7 +10,7 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 use crate::binder::{Binder, Definition, FileScope, ParametersScope, Scope, ScopeId};
 use crate::context::SemanticFile;
 
-mod conflicts;
+pub(crate) mod conflicts;
 
 /// In this pass all definitions are collected with their naming identifiers.
 /// Also lexical (and other kinds of) scopes are identified and linked together,
@@ -88,14 +88,6 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
             lexical_scope_id: scope_id,
         });
         scope_id
-    }
-
-    fn enter_scope_for_node_id(&mut self, node_id: NodeId) {
-        let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
-        self.scope_stack.push(ScopeFrame {
-            structural_scope_id: scope_id,
-            lexical_scope_id: scope_id,
-        });
     }
 
     fn leave_scope_for_node_id(&mut self, node_id: NodeId) {
@@ -577,84 +569,6 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
             }
         }
 
-        false
-    }
-
-    fn enter_yul_block(&mut self, node: &ir::YulBlock) -> bool {
-        let scope = Scope::new_yul_block(node.id(), self.current_scope_id());
-        self.enter_scope(scope);
-
-        // Yul function definitions are hoisted: their names are visible in
-        // the entire enclosing block, even before their definition statement.
-        for statement in &node.statements {
-            if let ir::YulStatement::YulFunctionDefinition(function) = statement {
-                let definition = Definition::new_yul_function(function);
-                self.insert_definition_in_current_scope(definition);
-            }
-        }
-
-        true
-    }
-
-    fn leave_yul_block(&mut self, node: &ir::YulBlock) {
-        self.leave_scope_for_node_id(node.id());
-    }
-
-    fn enter_yul_function_definition(&mut self, node: &ir::YulFunctionDefinition) -> bool {
-        // The function name definition was already inserted (hoisted) when
-        // entering the enclosing Yul block.
-        let scope = Scope::new_yul_function(node.id(), self.current_scope_id());
-        let scope_id = self.enter_scope(scope);
-
-        for parameter in &node.parameters {
-            let definition = Definition::new_yul_parameter(parameter);
-            self.insert_definition_in_scope(definition, scope_id);
-        }
-        if let Some(returns) = &node.returns {
-            for parameter in returns {
-                let definition = Definition::new_yul_variable(parameter);
-                self.insert_definition_in_scope(definition, scope_id);
-            }
-        }
-
-        true
-    }
-
-    fn leave_yul_function_definition(&mut self, node: &ir::YulFunctionDefinition) {
-        self.leave_scope_for_node_id(node.id());
-    }
-
-    fn enter_yul_variable_declaration_statement(
-        &mut self,
-        node: &ir::YulVariableDeclarationStatement,
-    ) -> bool {
-        for variable in &node.variables {
-            let definition = Definition::new_yul_variable(variable);
-            self.insert_definition_in_current_scope(definition);
-        }
-
-        // TODO: we maybe want to enter a new scope here, but that should be
-        // only relevant for validation (ie. to avoid referencing a variable
-        // before declaring it). If we do that, we need to take special care of
-        // where we insert label and function definitions, since those are
-        // hoisted in the block.
-
-        false
-    }
-
-    fn enter_yul_for_statement(&mut self, node: &ir::YulForStatement) -> bool {
-        // Visit the initialization block first
-        ir::visitor::accept_yul_block(&node.initialization, self);
-
-        // Visit the rest of the children, but in the scope of the
-        // initialization block such that iterator and body blocks link to it
-        self.enter_scope_for_node_id(node.initialization.id());
-        ir::visitor::accept_yul_expression(&node.condition, self);
-        ir::visitor::accept_yul_block(&node.iterator, self);
-        ir::visitor::accept_yul_block(&node.body, self);
-        self.leave_scope_for_node_id(node.initialization.id());
-
-        // We already visited our children
         false
     }
 }

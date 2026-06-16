@@ -41,7 +41,7 @@ use crate::binder::{Binder, Definition, FileScope, Scope, ScopeId};
 // search continues through all enclosing Yul scopes and, past the assembly
 // block, through everything visible at the assembly site (see
 // `find_shadowed_solidity_definition`).
-pub(super) fn find_conflicting_definition(
+pub(crate) fn find_conflicting_definition(
     binder: &Binder,
     scope_id: ScopeId,
     symbol: &str,

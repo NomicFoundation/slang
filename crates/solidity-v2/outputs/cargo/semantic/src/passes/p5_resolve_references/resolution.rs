@@ -415,38 +415,4 @@ impl Pass<'_> {
             self.binder.insert_reference(reference);
         }
     }
-
-    // This is a "top-level" resolution method for symbols in a Yul context
-    pub(super) fn resolve_symbol_in_yul_scope(
-        &self,
-        scope_id: ScopeId,
-        symbol: &str,
-    ) -> Resolution {
-        let resolution =
-            self.filter_overriden_definitions(self.binder.resolve_in_scope(scope_id, symbol));
-        if resolution == Resolution::Unresolved {
-            BuiltInsResolver::lookup_yul_global(symbol).into()
-        } else {
-            resolution
-        }
-    }
-
-    pub(super) fn resolve_yul_suffix(
-        &self,
-        symbol: &str,
-        parent_resolution: &Resolution,
-    ) -> Resolution {
-        match parent_resolution {
-            Resolution::Definition(node_id) => {
-                if let Some(definition) = self.binder.find_definition_by_id(*node_id) {
-                    BuiltInsResolver::lookup_yul_suffix(definition, symbol).into()
-                } else {
-                    Resolution::Unresolved
-                }
-            }
-            Resolution::Unresolved | Resolution::Ambiguous(_) | Resolution::BuiltIn(_) => {
-                Resolution::Unresolved
-            }
-        }
-    }
 }

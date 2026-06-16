@@ -97,24 +97,6 @@ impl Visitor for Pass<'_> {
         self.leave_scope_for_node_id(node.id());
     }
 
-    fn enter_yul_block(&mut self, node: &ir::YulBlock) -> bool {
-        self.enter_scope_for_node_id(node.id());
-        true
-    }
-
-    fn leave_yul_block(&mut self, node: &ir::YulBlock) {
-        self.leave_scope_for_node_id(node.id());
-    }
-
-    fn enter_yul_function_definition(&mut self, node: &ir::YulFunctionDefinition) -> bool {
-        self.enter_scope_for_node_id(node.id());
-        true
-    }
-
-    fn leave_yul_function_definition(&mut self, node: &ir::YulFunctionDefinition) {
-        self.leave_scope_for_node_id(node.id());
-    }
-
     fn enter_expression(&mut self, node: &ir::Expression) -> bool {
         if let ir::Expression::Identifier(identifier) = node {
             let symbol = identifier.unparse();
@@ -515,38 +497,6 @@ impl Visitor for Pass<'_> {
         self.binder.set_node_typing(node.id(), typing);
     }
 
-    fn enter_yul_path(&mut self, items: &ir::YulPath) -> bool {
-        if items.is_empty() {
-            return false;
-        }
-
-        let scope_id = self.current_scope_id();
-        let identifier = &items[0];
-        let resolution = self.resolve_symbol_in_yul_scope(scope_id, identifier.unparse());
-        let reference = Reference::new(Arc::clone(identifier), resolution.clone());
-        self.binder.insert_reference(reference);
-
-        if items.len() > 1 {
-            let suffix = &items[1];
-            let resolution = self.resolve_yul_suffix(suffix.unparse(), &resolution);
-            let reference = Reference::new(Arc::clone(suffix), resolution);
-            self.binder.insert_reference(reference);
-        }
-
-        let consumed_identifiers = 2;
-
-        // any remaining identifiers cannot be resolved, but we still want to
-        // emit a reference for each of them
-        for identifier in items.iter().skip(consumed_identifiers) {
-            self.binder.insert_reference(Reference::new(
-                Arc::clone(identifier),
-                Resolution::Unresolved,
-            ));
-        }
-
-        false
-    }
-
     fn visit_this_keyword(&mut self, node: &ir::ThisKeyword) {
         // `this` is a special keyword that resolves to the current contract or library type
         if let Some(scope_id) = self.current_contract_scope_id() {
@@ -564,24 +514,6 @@ impl Visitor for Pass<'_> {
             // The error 1473 doesn't directly match to this, but because of how we resolve
             // `this` it flows through here.
         }
-    }
-
-    fn enter_yul_for_statement(&mut self, node: &ir::YulForStatement) -> bool {
-        // Visit the initialization block first
-        ir::visitor::accept_yul_block(&node.initialization, self);
-
-        // Visit the rest of the children, but in the scope of the
-        // initialization block. This is mainly so references in the condition
-        // can resolve against the initialization block. The iterator and body
-        // should be already properly linked from construction.
-        self.enter_scope_for_node_id(node.initialization.id());
-        ir::visitor::accept_yul_expression(&node.condition, self);
-        ir::visitor::accept_yul_block(&node.iterator, self);
-        ir::visitor::accept_yul_block(&node.body, self);
-        self.leave_scope_for_node_id(node.initialization.id());
-
-        // We already visited our children
-        false
     }
 
     fn leave_emit_statement(&mut self, node: &ir::EmitStatement) {
