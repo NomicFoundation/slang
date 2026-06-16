@@ -41,6 +41,7 @@ jobs:
     permissions:
       contents: "read"
       pull-requests: "write"
+      checks: "write"
 
     # Skip fork PRs (can't access BENCHER_API_TOKEN). For non-PR events, only run on the main repo.
     if: >-
