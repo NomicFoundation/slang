@@ -798,6 +798,14 @@ mod type_system {
                 "free_function",
             )
         }
+
+        #[test]
+        fn overloaded() -> Result<()> {
+            run(
+                "type_system/cannot_call_via_contract_type_name",
+                "overloaded",
+            )
+        }
     }
 
     mod invalid_base {
