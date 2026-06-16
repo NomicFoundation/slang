@@ -404,7 +404,7 @@ impl Visitor for Pass<'_> {
             }
         };
 
-        if node.global_keyword.is_some() {
+        if node.is_global {
             self.binder.insert_global_using_directive(directive);
         } else {
             let current_scope_id = self.current_contract_or_file_scope_id();

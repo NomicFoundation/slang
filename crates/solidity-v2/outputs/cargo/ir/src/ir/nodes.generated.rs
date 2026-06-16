@@ -48,7 +48,7 @@ pub type AddressType = Arc<AddressTypeStruct>;
 pub struct AddressTypeStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
-    pub payable_keyword: Option<PayableKeyword>,
+    pub is_payable: bool,
 }
 
 impl AddressTypeStruct {
@@ -318,7 +318,7 @@ pub type ContractDefinition = Arc<ContractDefinitionStruct>;
 pub struct ContractDefinitionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
-    pub abstract_keyword: Option<AbstractKeyword>,
+    pub is_abstract: bool,
     pub name: Identifier,
     pub inheritance_types: InheritanceTypes,
     pub storage_layout: Option<Expression>,
@@ -435,7 +435,7 @@ pub struct EventDefinitionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub name: Identifier,
-    pub anonymous_keyword: Option<AnonymousKeyword>,
+    pub is_anonymous: bool,
     pub parameters: Parameters,
 }
 
@@ -536,7 +536,7 @@ pub struct FunctionDefinitionStruct {
     pub parameters: Parameters,
     pub visibility: FunctionVisibility,
     pub mutability: FunctionMutability,
-    pub virtual_keyword: Option<VirtualKeyword>,
+    pub is_virtual: bool,
     pub override_specifier: Option<OverridePaths>,
     pub modifier_invocations: ModifierInvocations,
     pub returns: Option<Parameters>,
@@ -866,7 +866,7 @@ pub struct ParameterStruct {
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
     pub name: Option<Identifier>,
-    pub indexed: Option<IndexedKeyword>,
+    pub is_indexed: bool,
 }
 
 impl ParameterStruct {
@@ -1202,7 +1202,7 @@ pub struct UsingDirectiveStruct {
     pub range: Range<usize>,
     pub clause: UsingClause,
     pub target: UsingTarget,
-    pub global_keyword: Option<GlobalKeyword>,
+    pub is_global: bool,
 }
 
 impl UsingDirectiveStruct {
@@ -2225,23 +2225,6 @@ impl AbicoderV2KeywordStruct {
     }
 }
 
-pub type AbstractKeyword = Arc<AbstractKeywordStruct>;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct AbstractKeywordStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-}
-
-impl AbstractKeywordStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-    pub fn unparse(&self) -> &'static str {
-        "abstract"
-    }
-}
-
 pub type Ampersand = Arc<AmpersandStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -2273,23 +2256,6 @@ impl AmpersandEqualStruct {
     }
     pub fn unparse(&self) -> &'static str {
         "&="
-    }
-}
-
-pub type AnonymousKeyword = Arc<AnonymousKeywordStruct>;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct AnonymousKeywordStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-}
-
-impl AnonymousKeywordStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-    pub fn unparse(&self) -> &'static str {
-        "anonymous"
     }
 }
 
@@ -2619,23 +2585,6 @@ impl FixedKeywordStruct {
     }
 }
 
-pub type GlobalKeyword = Arc<GlobalKeywordStruct>;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct GlobalKeywordStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-}
-
-impl GlobalKeywordStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-    pub fn unparse(&self) -> &'static str {
-        "global"
-    }
-}
-
 pub type GreaterThan = Arc<GreaterThanStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -2823,23 +2772,6 @@ impl IdentifierStruct {
     }
     pub fn unparse(&self) -> &str {
         &self.text
-    }
-}
-
-pub type IndexedKeyword = Arc<IndexedKeywordStruct>;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct IndexedKeywordStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-}
-
-impl IndexedKeywordStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-    pub fn unparse(&self) -> &'static str {
-        "indexed"
     }
 }
 
@@ -3509,23 +3441,6 @@ impl VersionSpecifierStruct {
     }
     pub fn unparse(&self) -> &str {
         &self.text
-    }
-}
-
-pub type VirtualKeyword = Arc<VirtualKeywordStruct>;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct VirtualKeywordStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-}
-
-impl VirtualKeywordStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-    pub fn unparse(&self) -> &'static str {
-        "virtual"
     }
 }
 

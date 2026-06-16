@@ -296,15 +296,15 @@ pub(crate) fn integer_literal_fits(value: &BigInt, signed: bool, bits: u32) -> b
 }
 
 pub(crate) fn smallest_integer_type_to_fit(value: &BigInt) -> Option<Type> {
-    let signed = value.is_negative();
-    let bits = integer_bits_required(value, signed);
+    let is_signed = value.is_negative();
+    let bits = integer_bits_required(value, is_signed);
 
     if bits > 256 {
         // TODO(validation) SDR[1740]: the integers don't fit in the EVM
         return None;
     }
     let bits = bits.next_multiple_of(8).max(8);
-    Some(Type::Integer(IntegerType { signed, bits }))
+    Some(Type::Integer(IntegerType { is_signed, bits }))
 }
 
 /// Returns the smallest fixed-point type that holds `value`.
@@ -326,7 +326,7 @@ pub(crate) fn smallest_integer_type_to_fit(value: &BigInt) -> Option<Type> {
 pub(crate) fn smallest_fixed_point_type_to_fit(value: &BigRational) -> Option<Type> {
     const MAX_DECIMAL_PLACES: u32 = 80;
 
-    let signed = value.is_negative();
+    let is_signed = value.is_negative();
     let numerator_magnitude = value.numer().abs();
     // `BigRational` normalises to a positive denominator, so `denom()` is
     // always > 0 and carries no sign information.
@@ -335,7 +335,7 @@ pub(crate) fn smallest_fixed_point_type_to_fit(value: &BigRational) -> Option<Ty
     // Maximum scaled magnitude that fits in 256 bits with the chosen
     // signedness: `2^255` for signed (reachable by `INT256_MIN`), and
     // `2^256 - 1` for unsigned.
-    let max_magnitude = if signed {
+    let max_magnitude = if is_signed {
         BigInt::from(1u32) << 255
     } else {
         (BigInt::from(1u32) << 256) - BigInt::from(1u32)
@@ -370,16 +370,16 @@ pub(crate) fn smallest_fixed_point_type_to_fit(value: &BigRational) -> Option<Ty
     let threshold = (max_magnitude + BigInt::from(1u32)) * denominator;
 
     let build_result = |scaled_magnitude: BigInt, decimal_places: u32| -> Type {
-        let scaled = if signed {
+        let scaled = if is_signed {
             -scaled_magnitude
         } else {
             scaled_magnitude
         };
-        let bits = integer_bits_required(&scaled, signed);
+        let bits = integer_bits_required(&scaled, is_signed);
         debug_assert!(bits <= 256, "scaled value must fit 256 bits at this point");
         let bits = bits.next_multiple_of(8).max(8);
         Type::FixedPointNumber(FixedPointNumberType {
-            signed,
+            is_signed,
             bits,
             decimal_places,
         })
@@ -438,7 +438,7 @@ mod tests {
 
     fn unsigned_fixed(bits: u32, decimal_places: u32) -> FixedPointNumberType {
         FixedPointNumberType {
-            signed: false,
+            is_signed: false,
             bits,
             decimal_places,
         }
@@ -446,7 +446,7 @@ mod tests {
 
     fn signed_fixed(bits: u32, decimal_places: u32) -> FixedPointNumberType {
         FixedPointNumberType {
-            signed: true,
+            is_signed: true,
             bits,
             decimal_places,
         }

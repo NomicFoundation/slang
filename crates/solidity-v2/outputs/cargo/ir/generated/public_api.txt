@@ -345,10 +345,8 @@ pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_variable_names(&mut
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_abi_encoder_v2_keyword(&mut self, _node: &slang_solidity_v2_ir::ir::ABIEncoderV2Keyword)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_abicoder_v1_keyword(&mut self, _node: &slang_solidity_v2_ir::ir::AbicoderV1Keyword)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_abicoder_v2_keyword(&mut self, _node: &slang_solidity_v2_ir::ir::AbicoderV2Keyword)
-pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_abstract_keyword(&mut self, _node: &slang_solidity_v2_ir::ir::AbstractKeyword)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_ampersand(&mut self, _node: &slang_solidity_v2_ir::ir::Ampersand)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_ampersand_equal(&mut self, _node: &slang_solidity_v2_ir::ir::AmpersandEqual)
-pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_anonymous_keyword(&mut self, _node: &slang_solidity_v2_ir::ir::AnonymousKeyword)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_asterisk(&mut self, _node: &slang_solidity_v2_ir::ir::Asterisk)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_asterisk_equal(&mut self, _node: &slang_solidity_v2_ir::ir::AsteriskEqual)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_bang(&mut self, _node: &slang_solidity_v2_ir::ir::Bang)
@@ -368,7 +366,6 @@ pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_equal_equal(&mut self, 
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_ether_keyword(&mut self, _node: &slang_solidity_v2_ir::ir::EtherKeyword)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_false_keyword(&mut self, _node: &slang_solidity_v2_ir::ir::FalseKeyword)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_fixed_keyword(&mut self, _node: &slang_solidity_v2_ir::ir::FixedKeyword)
-pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_global_keyword(&mut self, _node: &slang_solidity_v2_ir::ir::GlobalKeyword)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_greater_than(&mut self, _node: &slang_solidity_v2_ir::ir::GreaterThan)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_greater_than_equal(&mut self, _node: &slang_solidity_v2_ir::ir::GreaterThanEqual)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_greater_than_greater_than(&mut self, _node: &slang_solidity_v2_ir::ir::GreaterThanGreaterThan)
@@ -380,7 +377,6 @@ pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_hex_literal(&mut self, 
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_hex_string_literal(&mut self, _node: &slang_solidity_v2_ir::ir::HexStringLiteral)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_hours_keyword(&mut self, _node: &slang_solidity_v2_ir::ir::HoursKeyword)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_identifier(&mut self, _node: &slang_solidity_v2_ir::ir::Identifier)
-pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_indexed_keyword(&mut self, _node: &slang_solidity_v2_ir::ir::IndexedKeyword)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_int_keyword(&mut self, _node: &slang_solidity_v2_ir::ir::IntKeyword)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_less_than(&mut self, _node: &slang_solidity_v2_ir::ir::LessThan)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_less_than_equal(&mut self, _node: &slang_solidity_v2_ir::ir::LessThanEqual)
@@ -420,7 +416,6 @@ pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_ufixed_keyword(&mut sel
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_uint_keyword(&mut self, _node: &slang_solidity_v2_ir::ir::UintKeyword)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_unicode_string_literal(&mut self, _node: &slang_solidity_v2_ir::ir::UnicodeStringLiteral)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_version_specifier(&mut self, _node: &slang_solidity_v2_ir::ir::VersionSpecifier)
-pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_virtual_keyword(&mut self, _node: &slang_solidity_v2_ir::ir::VirtualKeyword)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_weeks_keyword(&mut self, _node: &slang_solidity_v2_ir::ir::WeeksKeyword)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_wei_keyword(&mut self, _node: &slang_solidity_v2_ir::ir::WeiKeyword)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_abicoder_pragma(node: &slang_solidity_v2_ir::ir::AbicoderPragma, visitor: &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
@@ -1196,21 +1191,6 @@ pub fn slang_solidity_v2_ir::ir::AbicoderV2KeywordStruct::fmt(&self, f: &mut cor
 impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::AbicoderV2KeywordStruct
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AbicoderV2KeywordStruct
 pub fn slang_solidity_v2_ir::ir::AbicoderV2KeywordStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-pub struct slang_solidity_v2_ir::ir::AbstractKeywordStruct
-pub slang_solidity_v2_ir::ir::AbstractKeywordStruct::range: core::ops::range::Range<usize>
-impl slang_solidity_v2_ir::ir::AbstractKeywordStruct
-pub fn slang_solidity_v2_ir::ir::AbstractKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ir::ir::AbstractKeywordStruct::unparse(&self) -> &'static str
-impl core::clone::Clone for slang_solidity_v2_ir::ir::AbstractKeywordStruct
-pub fn slang_solidity_v2_ir::ir::AbstractKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::AbstractKeywordStruct
-impl core::cmp::Eq for slang_solidity_v2_ir::ir::AbstractKeywordStruct
-impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::AbstractKeywordStruct
-pub fn slang_solidity_v2_ir::ir::AbstractKeywordStruct::eq(&self, other: &slang_solidity_v2_ir::ir::AbstractKeywordStruct) -> bool
-impl core::fmt::Debug for slang_solidity_v2_ir::ir::AbstractKeywordStruct
-pub fn slang_solidity_v2_ir::ir::AbstractKeywordStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::AbstractKeywordStruct
-impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AbstractKeywordStruct
-pub fn slang_solidity_v2_ir::ir::AbstractKeywordStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::AdditiveExpressionStruct
 pub slang_solidity_v2_ir::ir::AdditiveExpressionStruct::left_operand: slang_solidity_v2_ir::ir::Expression
 pub slang_solidity_v2_ir::ir::AdditiveExpressionStruct::operator: slang_solidity_v2_ir::ir::AdditiveExpressionOperator
@@ -1223,7 +1203,7 @@ pub fn slang_solidity_v2_ir::ir::AdditiveExpressionStruct::fmt(&self, f: &mut co
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AdditiveExpressionStruct
 pub fn slang_solidity_v2_ir::ir::AdditiveExpressionStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::AddressTypeStruct
-pub slang_solidity_v2_ir::ir::AddressTypeStruct::payable_keyword: core::option::Option<slang_solidity_v2_ir::ir::PayableKeyword>
+pub slang_solidity_v2_ir::ir::AddressTypeStruct::is_payable: bool
 pub slang_solidity_v2_ir::ir::AddressTypeStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::AddressTypeStruct
 pub fn slang_solidity_v2_ir::ir::AddressTypeStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
@@ -1271,21 +1251,6 @@ impl core::fmt::Debug for slang_solidity_v2_ir::ir::AndExpressionStruct
 pub fn slang_solidity_v2_ir::ir::AndExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AndExpressionStruct
 pub fn slang_solidity_v2_ir::ir::AndExpressionStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-pub struct slang_solidity_v2_ir::ir::AnonymousKeywordStruct
-pub slang_solidity_v2_ir::ir::AnonymousKeywordStruct::range: core::ops::range::Range<usize>
-impl slang_solidity_v2_ir::ir::AnonymousKeywordStruct
-pub fn slang_solidity_v2_ir::ir::AnonymousKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ir::ir::AnonymousKeywordStruct::unparse(&self) -> &'static str
-impl core::clone::Clone for slang_solidity_v2_ir::ir::AnonymousKeywordStruct
-pub fn slang_solidity_v2_ir::ir::AnonymousKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::AnonymousKeywordStruct
-impl core::cmp::Eq for slang_solidity_v2_ir::ir::AnonymousKeywordStruct
-impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::AnonymousKeywordStruct
-pub fn slang_solidity_v2_ir::ir::AnonymousKeywordStruct::eq(&self, other: &slang_solidity_v2_ir::ir::AnonymousKeywordStruct) -> bool
-impl core::fmt::Debug for slang_solidity_v2_ir::ir::AnonymousKeywordStruct
-pub fn slang_solidity_v2_ir::ir::AnonymousKeywordStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::AnonymousKeywordStruct
-impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AnonymousKeywordStruct
-pub fn slang_solidity_v2_ir::ir::AnonymousKeywordStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::ArrayExpressionStruct
 pub slang_solidity_v2_ir::ir::ArrayExpressionStruct::items: slang_solidity_v2_ir::ir::ArrayValues
 pub slang_solidity_v2_ir::ir::ArrayExpressionStruct::range: core::ops::range::Range<usize>
@@ -1605,8 +1570,8 @@ pub fn slang_solidity_v2_ir::ir::ContinueStatementStruct::fmt(&self, f: &mut cor
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ContinueStatementStruct
 pub fn slang_solidity_v2_ir::ir::ContinueStatementStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::ContractDefinitionStruct
-pub slang_solidity_v2_ir::ir::ContractDefinitionStruct::abstract_keyword: core::option::Option<slang_solidity_v2_ir::ir::AbstractKeyword>
 pub slang_solidity_v2_ir::ir::ContractDefinitionStruct::inheritance_types: slang_solidity_v2_ir::ir::InheritanceTypes
+pub slang_solidity_v2_ir::ir::ContractDefinitionStruct::is_abstract: bool
 pub slang_solidity_v2_ir::ir::ContractDefinitionStruct::members: slang_solidity_v2_ir::ir::ContractMembers
 pub slang_solidity_v2_ir::ir::ContractDefinitionStruct::name: slang_solidity_v2_ir::ir::Identifier
 pub slang_solidity_v2_ir::ir::ContractDefinitionStruct::range: core::ops::range::Range<usize>
@@ -1770,7 +1735,7 @@ impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::EtherKeywor
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::EtherKeywordStruct
 pub fn slang_solidity_v2_ir::ir::EtherKeywordStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::EventDefinitionStruct
-pub slang_solidity_v2_ir::ir::EventDefinitionStruct::anonymous_keyword: core::option::Option<slang_solidity_v2_ir::ir::AnonymousKeyword>
+pub slang_solidity_v2_ir::ir::EventDefinitionStruct::is_anonymous: bool
 pub slang_solidity_v2_ir::ir::EventDefinitionStruct::name: slang_solidity_v2_ir::ir::Identifier
 pub slang_solidity_v2_ir::ir::EventDefinitionStruct::parameters: slang_solidity_v2_ir::ir::Parameters
 pub slang_solidity_v2_ir::ir::EventDefinitionStruct::range: core::ops::range::Range<usize>
@@ -1863,6 +1828,7 @@ impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::FunctionC
 pub fn slang_solidity_v2_ir::ir::FunctionCallExpressionStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::FunctionDefinitionStruct
 pub slang_solidity_v2_ir::ir::FunctionDefinitionStruct::body: core::option::Option<slang_solidity_v2_ir::ir::Block>
+pub slang_solidity_v2_ir::ir::FunctionDefinitionStruct::is_virtual: bool
 pub slang_solidity_v2_ir::ir::FunctionDefinitionStruct::kind: slang_solidity_v2_ir::ir::FunctionKind
 pub slang_solidity_v2_ir::ir::FunctionDefinitionStruct::modifier_invocations: slang_solidity_v2_ir::ir::ModifierInvocations
 pub slang_solidity_v2_ir::ir::FunctionDefinitionStruct::mutability: slang_solidity_v2_ir::ir::FunctionMutability
@@ -1871,7 +1837,6 @@ pub slang_solidity_v2_ir::ir::FunctionDefinitionStruct::override_specifier: core
 pub slang_solidity_v2_ir::ir::FunctionDefinitionStruct::parameters: slang_solidity_v2_ir::ir::Parameters
 pub slang_solidity_v2_ir::ir::FunctionDefinitionStruct::range: core::ops::range::Range<usize>
 pub slang_solidity_v2_ir::ir::FunctionDefinitionStruct::returns: core::option::Option<slang_solidity_v2_ir::ir::Parameters>
-pub slang_solidity_v2_ir::ir::FunctionDefinitionStruct::virtual_keyword: core::option::Option<slang_solidity_v2_ir::ir::VirtualKeyword>
 pub slang_solidity_v2_ir::ir::FunctionDefinitionStruct::visibility: slang_solidity_v2_ir::ir::FunctionVisibility
 impl slang_solidity_v2_ir::ir::FunctionDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::FunctionDefinitionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
@@ -1891,21 +1856,6 @@ impl core::fmt::Debug for slang_solidity_v2_ir::ir::FunctionTypeStruct
 pub fn slang_solidity_v2_ir::ir::FunctionTypeStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::FunctionTypeStruct
 pub fn slang_solidity_v2_ir::ir::FunctionTypeStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-pub struct slang_solidity_v2_ir::ir::GlobalKeywordStruct
-pub slang_solidity_v2_ir::ir::GlobalKeywordStruct::range: core::ops::range::Range<usize>
-impl slang_solidity_v2_ir::ir::GlobalKeywordStruct
-pub fn slang_solidity_v2_ir::ir::GlobalKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ir::ir::GlobalKeywordStruct::unparse(&self) -> &'static str
-impl core::clone::Clone for slang_solidity_v2_ir::ir::GlobalKeywordStruct
-pub fn slang_solidity_v2_ir::ir::GlobalKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::GlobalKeywordStruct
-impl core::cmp::Eq for slang_solidity_v2_ir::ir::GlobalKeywordStruct
-impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::GlobalKeywordStruct
-pub fn slang_solidity_v2_ir::ir::GlobalKeywordStruct::eq(&self, other: &slang_solidity_v2_ir::ir::GlobalKeywordStruct) -> bool
-impl core::fmt::Debug for slang_solidity_v2_ir::ir::GlobalKeywordStruct
-pub fn slang_solidity_v2_ir::ir::GlobalKeywordStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::GlobalKeywordStruct
-impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::GlobalKeywordStruct
-pub fn slang_solidity_v2_ir::ir::GlobalKeywordStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::GreaterThanEqualStruct
 pub slang_solidity_v2_ir::ir::GreaterThanEqualStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::GreaterThanEqualStruct
@@ -2125,21 +2075,6 @@ impl core::fmt::Debug for slang_solidity_v2_ir::ir::IndexAccessExpressionStruct
 pub fn slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::IndexAccessExpressionStruct
 pub fn slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-pub struct slang_solidity_v2_ir::ir::IndexedKeywordStruct
-pub slang_solidity_v2_ir::ir::IndexedKeywordStruct::range: core::ops::range::Range<usize>
-impl slang_solidity_v2_ir::ir::IndexedKeywordStruct
-pub fn slang_solidity_v2_ir::ir::IndexedKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ir::ir::IndexedKeywordStruct::unparse(&self) -> &'static str
-impl core::clone::Clone for slang_solidity_v2_ir::ir::IndexedKeywordStruct
-pub fn slang_solidity_v2_ir::ir::IndexedKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::IndexedKeywordStruct
-impl core::cmp::Eq for slang_solidity_v2_ir::ir::IndexedKeywordStruct
-impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::IndexedKeywordStruct
-pub fn slang_solidity_v2_ir::ir::IndexedKeywordStruct::eq(&self, other: &slang_solidity_v2_ir::ir::IndexedKeywordStruct) -> bool
-impl core::fmt::Debug for slang_solidity_v2_ir::ir::IndexedKeywordStruct
-pub fn slang_solidity_v2_ir::ir::IndexedKeywordStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::IndexedKeywordStruct
-impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::IndexedKeywordStruct
-pub fn slang_solidity_v2_ir::ir::IndexedKeywordStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::InequalityExpressionStruct
 pub slang_solidity_v2_ir::ir::InequalityExpressionStruct::left_operand: slang_solidity_v2_ir::ir::Expression
 pub slang_solidity_v2_ir::ir::InequalityExpressionStruct::operator: slang_solidity_v2_ir::ir::InequalityExpressionOperator
@@ -2428,7 +2363,7 @@ pub fn slang_solidity_v2_ir::ir::OrExpressionStruct::fmt(&self, f: &mut core::fm
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::OrExpressionStruct
 pub fn slang_solidity_v2_ir::ir::OrExpressionStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::ParameterStruct
-pub slang_solidity_v2_ir::ir::ParameterStruct::indexed: core::option::Option<slang_solidity_v2_ir::ir::IndexedKeyword>
+pub slang_solidity_v2_ir::ir::ParameterStruct::is_indexed: bool
 pub slang_solidity_v2_ir::ir::ParameterStruct::name: core::option::Option<slang_solidity_v2_ir::ir::Identifier>
 pub slang_solidity_v2_ir::ir::ParameterStruct::range: core::ops::range::Range<usize>
 pub slang_solidity_v2_ir::ir::ParameterStruct::storage_location: core::option::Option<slang_solidity_v2_ir::ir::StorageLocation>
@@ -3064,7 +2999,7 @@ impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::UsingDeco
 pub fn slang_solidity_v2_ir::ir::UsingDeconstructionSymbolStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::UsingDirectiveStruct
 pub slang_solidity_v2_ir::ir::UsingDirectiveStruct::clause: slang_solidity_v2_ir::ir::UsingClause
-pub slang_solidity_v2_ir::ir::UsingDirectiveStruct::global_keyword: core::option::Option<slang_solidity_v2_ir::ir::GlobalKeyword>
+pub slang_solidity_v2_ir::ir::UsingDirectiveStruct::is_global: bool
 pub slang_solidity_v2_ir::ir::UsingDirectiveStruct::range: core::ops::range::Range<usize>
 pub slang_solidity_v2_ir::ir::UsingDirectiveStruct::target: slang_solidity_v2_ir::ir::UsingTarget
 impl slang_solidity_v2_ir::ir::UsingDirectiveStruct
@@ -3138,21 +3073,6 @@ impl core::fmt::Debug for slang_solidity_v2_ir::ir::VersionTermStruct
 pub fn slang_solidity_v2_ir::ir::VersionTermStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::VersionTermStruct
 pub fn slang_solidity_v2_ir::ir::VersionTermStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-pub struct slang_solidity_v2_ir::ir::VirtualKeywordStruct
-pub slang_solidity_v2_ir::ir::VirtualKeywordStruct::range: core::ops::range::Range<usize>
-impl slang_solidity_v2_ir::ir::VirtualKeywordStruct
-pub fn slang_solidity_v2_ir::ir::VirtualKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ir::ir::VirtualKeywordStruct::unparse(&self) -> &'static str
-impl core::clone::Clone for slang_solidity_v2_ir::ir::VirtualKeywordStruct
-pub fn slang_solidity_v2_ir::ir::VirtualKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::VirtualKeywordStruct
-impl core::cmp::Eq for slang_solidity_v2_ir::ir::VirtualKeywordStruct
-impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::VirtualKeywordStruct
-pub fn slang_solidity_v2_ir::ir::VirtualKeywordStruct::eq(&self, other: &slang_solidity_v2_ir::ir::VirtualKeywordStruct) -> bool
-impl core::fmt::Debug for slang_solidity_v2_ir::ir::VirtualKeywordStruct
-pub fn slang_solidity_v2_ir::ir::VirtualKeywordStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::VirtualKeywordStruct
-impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::VirtualKeywordStruct
-pub fn slang_solidity_v2_ir::ir::VirtualKeywordStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::WeeksKeywordStruct
 pub slang_solidity_v2_ir::ir::WeeksKeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::WeeksKeywordStruct
@@ -3348,8 +3268,6 @@ impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AbicoderV
 pub fn slang_solidity_v2_ir::ir::AbicoderV2KeywordStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AbicoderVersion
 pub fn slang_solidity_v2_ir::ir::AbicoderVersion::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AbstractKeywordStruct
-pub fn slang_solidity_v2_ir::ir::AbstractKeywordStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AdditiveExpressionOperator
 pub fn slang_solidity_v2_ir::ir::AdditiveExpressionOperator::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AdditiveExpressionStruct
@@ -3362,8 +3280,6 @@ impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::Ampersand
 pub fn slang_solidity_v2_ir::ir::AmpersandStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AndExpressionStruct
 pub fn slang_solidity_v2_ir::ir::AndExpressionStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AnonymousKeywordStruct
-pub fn slang_solidity_v2_ir::ir::AnonymousKeywordStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ArgumentsDeclaration
 pub fn slang_solidity_v2_ir::ir::ArgumentsDeclaration::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ArrayExpressionStruct
@@ -3486,8 +3402,6 @@ impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::FunctionT
 pub fn slang_solidity_v2_ir::ir::FunctionTypeStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::FunctionVisibility
 pub fn slang_solidity_v2_ir::ir::FunctionVisibility::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::GlobalKeywordStruct
-pub fn slang_solidity_v2_ir::ir::GlobalKeywordStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::GreaterThanEqualStruct
 pub fn slang_solidity_v2_ir::ir::GreaterThanEqualStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::GreaterThanGreaterThanEqualStruct
@@ -3522,8 +3436,6 @@ impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ImportDec
 pub fn slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::IndexAccessExpressionStruct
 pub fn slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::IndexedKeywordStruct
-pub fn slang_solidity_v2_ir::ir::IndexedKeywordStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::InequalityExpressionOperator
 pub fn slang_solidity_v2_ir::ir::InequalityExpressionOperator::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::InequalityExpressionStruct
@@ -3724,8 +3636,6 @@ impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::VersionSp
 pub fn slang_solidity_v2_ir::ir::VersionSpecifierStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::VersionTermStruct
 pub fn slang_solidity_v2_ir::ir::VersionTermStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::VirtualKeywordStruct
-pub fn slang_solidity_v2_ir::ir::VirtualKeywordStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::WeeksKeywordStruct
 pub fn slang_solidity_v2_ir::ir::WeeksKeywordStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::WeiKeywordStruct
@@ -3779,13 +3689,11 @@ pub type slang_solidity_v2_ir::ir::ABIEncoderV2Keyword = alloc::sync::Arc<slang_
 pub type slang_solidity_v2_ir::ir::AbicoderPragma = alloc::sync::Arc<slang_solidity_v2_ir::ir::AbicoderPragmaStruct>
 pub type slang_solidity_v2_ir::ir::AbicoderV1Keyword = alloc::sync::Arc<slang_solidity_v2_ir::ir::AbicoderV1KeywordStruct>
 pub type slang_solidity_v2_ir::ir::AbicoderV2Keyword = alloc::sync::Arc<slang_solidity_v2_ir::ir::AbicoderV2KeywordStruct>
-pub type slang_solidity_v2_ir::ir::AbstractKeyword = alloc::sync::Arc<slang_solidity_v2_ir::ir::AbstractKeywordStruct>
 pub type slang_solidity_v2_ir::ir::AdditiveExpression = alloc::sync::Arc<slang_solidity_v2_ir::ir::AdditiveExpressionStruct>
 pub type slang_solidity_v2_ir::ir::AddressType = alloc::sync::Arc<slang_solidity_v2_ir::ir::AddressTypeStruct>
 pub type slang_solidity_v2_ir::ir::Ampersand = alloc::sync::Arc<slang_solidity_v2_ir::ir::AmpersandStruct>
 pub type slang_solidity_v2_ir::ir::AmpersandEqual = alloc::sync::Arc<slang_solidity_v2_ir::ir::AmpersandEqualStruct>
 pub type slang_solidity_v2_ir::ir::AndExpression = alloc::sync::Arc<slang_solidity_v2_ir::ir::AndExpressionStruct>
-pub type slang_solidity_v2_ir::ir::AnonymousKeyword = alloc::sync::Arc<slang_solidity_v2_ir::ir::AnonymousKeywordStruct>
 pub type slang_solidity_v2_ir::ir::ArrayExpression = alloc::sync::Arc<slang_solidity_v2_ir::ir::ArrayExpressionStruct>
 pub type slang_solidity_v2_ir::ir::ArrayTypeName = alloc::sync::Arc<slang_solidity_v2_ir::ir::ArrayTypeNameStruct>
 pub type slang_solidity_v2_ir::ir::ArrayValues = alloc::vec::Vec<slang_solidity_v2_ir::ir::Expression>
@@ -3840,7 +3748,6 @@ pub type slang_solidity_v2_ir::ir::ForStatement = alloc::sync::Arc<slang_solidit
 pub type slang_solidity_v2_ir::ir::FunctionCallExpression = alloc::sync::Arc<slang_solidity_v2_ir::ir::FunctionCallExpressionStruct>
 pub type slang_solidity_v2_ir::ir::FunctionDefinition = alloc::sync::Arc<slang_solidity_v2_ir::ir::FunctionDefinitionStruct>
 pub type slang_solidity_v2_ir::ir::FunctionType = alloc::sync::Arc<slang_solidity_v2_ir::ir::FunctionTypeStruct>
-pub type slang_solidity_v2_ir::ir::GlobalKeyword = alloc::sync::Arc<slang_solidity_v2_ir::ir::GlobalKeywordStruct>
 pub type slang_solidity_v2_ir::ir::GreaterThan = alloc::sync::Arc<slang_solidity_v2_ir::ir::GreaterThanStruct>
 pub type slang_solidity_v2_ir::ir::GreaterThanEqual = alloc::sync::Arc<slang_solidity_v2_ir::ir::GreaterThanEqualStruct>
 pub type slang_solidity_v2_ir::ir::GreaterThanGreaterThan = alloc::sync::Arc<slang_solidity_v2_ir::ir::GreaterThanGreaterThanStruct>
@@ -3860,7 +3767,6 @@ pub type slang_solidity_v2_ir::ir::ImportDeconstruction = alloc::sync::Arc<slang
 pub type slang_solidity_v2_ir::ir::ImportDeconstructionSymbol = alloc::sync::Arc<slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct>
 pub type slang_solidity_v2_ir::ir::ImportDeconstructionSymbols = alloc::vec::Vec<slang_solidity_v2_ir::ir::ImportDeconstructionSymbol>
 pub type slang_solidity_v2_ir::ir::IndexAccessExpression = alloc::sync::Arc<slang_solidity_v2_ir::ir::IndexAccessExpressionStruct>
-pub type slang_solidity_v2_ir::ir::IndexedKeyword = alloc::sync::Arc<slang_solidity_v2_ir::ir::IndexedKeywordStruct>
 pub type slang_solidity_v2_ir::ir::InequalityExpression = alloc::sync::Arc<slang_solidity_v2_ir::ir::InequalityExpressionStruct>
 pub type slang_solidity_v2_ir::ir::InheritanceType = alloc::sync::Arc<slang_solidity_v2_ir::ir::InheritanceTypeStruct>
 pub type slang_solidity_v2_ir::ir::InheritanceTypes = alloc::vec::Vec<slang_solidity_v2_ir::ir::InheritanceType>
@@ -3959,7 +3865,6 @@ pub type slang_solidity_v2_ir::ir::VersionPragma = alloc::sync::Arc<slang_solidi
 pub type slang_solidity_v2_ir::ir::VersionRange = alloc::sync::Arc<slang_solidity_v2_ir::ir::VersionRangeStruct>
 pub type slang_solidity_v2_ir::ir::VersionSpecifier = alloc::sync::Arc<slang_solidity_v2_ir::ir::VersionSpecifierStruct>
 pub type slang_solidity_v2_ir::ir::VersionTerm = alloc::sync::Arc<slang_solidity_v2_ir::ir::VersionTermStruct>
-pub type slang_solidity_v2_ir::ir::VirtualKeyword = alloc::sync::Arc<slang_solidity_v2_ir::ir::VirtualKeywordStruct>
 pub type slang_solidity_v2_ir::ir::WeeksKeyword = alloc::sync::Arc<slang_solidity_v2_ir::ir::WeeksKeywordStruct>
 pub type slang_solidity_v2_ir::ir::WeiKeyword = alloc::sync::Arc<slang_solidity_v2_ir::ir::WeiKeywordStruct>
 pub type slang_solidity_v2_ir::ir::WhileStatement = alloc::sync::Arc<slang_solidity_v2_ir::ir::WhileStatementStruct>

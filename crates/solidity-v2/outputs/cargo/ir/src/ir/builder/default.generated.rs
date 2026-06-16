@@ -55,15 +55,12 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     ) -> output::AddressType {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
-        let payable_keyword = source
-            .payable_keyword
-            .as_ref()
-            .map(|value| self.build_payable_keyword(value));
+        let is_payable = source.payable_keyword.is_some();
 
         Arc::new(output::AddressTypeStruct {
             id,
             range,
-            payable_keyword,
+            is_payable,
         })
     }
 
@@ -1100,17 +1097,14 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let clause = self.build_using_clause(&source.clause);
         let target = self.build_using_target(&source.target);
-        let global_keyword = source
-            .global_keyword
-            .as_ref()
-            .map(|value| self.build_global_keyword(value));
+        let is_global = source.global_keyword.is_some();
 
         Arc::new(output::UsingDirectiveStruct {
             id,
             range,
             clause,
             target,
-            global_keyword,
+            is_global,
         })
     }
 
@@ -3088,16 +3082,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         })
     }
 
-    pub(super) fn build_abstract_keyword(
-        &mut self,
-        source: &input::AbstractKeyword,
-    ) -> output::AbstractKeyword {
-        Arc::new(output::AbstractKeywordStruct {
-            id: self.next_id(),
-            range: source.range.clone(),
-        })
-    }
-
     pub(super) fn build_ampersand(&mut self, source: &input::Ampersand) -> output::Ampersand {
         Arc::new(output::AmpersandStruct {
             id: self.next_id(),
@@ -3110,16 +3094,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::AmpersandEqual,
     ) -> output::AmpersandEqual {
         Arc::new(output::AmpersandEqualStruct {
-            id: self.next_id(),
-            range: source.range.clone(),
-        })
-    }
-
-    pub(super) fn build_anonymous_keyword(
-        &mut self,
-        source: &input::AnonymousKeyword,
-    ) -> output::AnonymousKeyword {
-        Arc::new(output::AnonymousKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3291,16 +3265,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         })
     }
 
-    pub(super) fn build_global_keyword(
-        &mut self,
-        source: &input::GlobalKeyword,
-    ) -> output::GlobalKeyword {
-        Arc::new(output::GlobalKeywordStruct {
-            id: self.next_id(),
-            range: source.range.clone(),
-        })
-    }
-
     pub(super) fn build_greater_than(
         &mut self,
         source: &input::GreaterThan,
@@ -3405,16 +3369,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
-        })
-    }
-
-    pub(super) fn build_indexed_keyword(
-        &mut self,
-        source: &input::IndexedKeyword,
-    ) -> output::IndexedKeyword {
-        Arc::new(output::IndexedKeywordStruct {
-            id: self.next_id(),
-            range: source.range.clone(),
         })
     }
 
@@ -3772,16 +3726,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
-        })
-    }
-
-    pub(super) fn build_virtual_keyword(
-        &mut self,
-        source: &input::VirtualKeyword,
-    ) -> output::VirtualKeyword {
-        Arc::new(output::VirtualKeywordStruct {
-            id: self.next_id(),
-            range: source.range.clone(),
         })
     }
 

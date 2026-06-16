@@ -30,7 +30,7 @@ impl Pass<'_> {
 
             // Other special cases
             ir::Expression::PayableKeyword(_) => {
-                Typing::MetaType(Type::Address(AddressType { payable: true }))
+                Typing::MetaType(Type::Address(AddressType { is_payable: true }))
             }
             ir::Expression::SuperKeyword(_) => Typing::Super,
 
@@ -47,7 +47,7 @@ impl Pass<'_> {
     fn type_of_elementary_type(elementary_type: &ir::ElementaryType) -> Type {
         match elementary_type {
             ir::ElementaryType::AddressType(address_type) => Type::Address(AddressType {
-                payable: address_type.payable_keyword.is_some(),
+                is_payable: address_type.is_payable,
             }),
             ir::ElementaryType::BytesKeyword(terminal) => {
                 Type::from_bytes_keyword(terminal.unparse(), Some(DataLocation::Memory)).unwrap()
@@ -217,7 +217,7 @@ impl Pass<'_> {
             // sign of `left_operand`.
             if left_value.is_negative() {
                 Some(self.types.register_type(Type::Integer(IntegerType {
-                    signed: true,
+                    is_signed: true,
                     bits: 256,
                 })))
             } else {

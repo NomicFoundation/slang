@@ -690,4 +690,42 @@ impl IrModelMutator {
             .unwrap_or_else(|| panic!("Field {old_label} not found in sequence {sequence_id}"));
         field.label = new_label_id;
     }
+
+    // Converts an optional, unique-terminal sequence field into a boolean
+    // field, rendered via a shared synthetic `External` "Boolean" type. The
+    // original terminal type is preserved in `field_type` and `source_label`.
+    pub fn convert_optional_to_boolean(
+        &mut self,
+        sequence_id: &str,
+        field_label: &str,
+        new_label: &str,
+    ) {
+        let sequence_id: model::Identifier = sequence_id.into();
+        let field_label: model::Identifier = field_label.into();
+        let new_label: model::Identifier = new_label.into();
+
+        let Some(sequence) = self.sequences.get_mut(&sequence_id) else {
+            panic!("Sequence {sequence_id} not found in IR model");
+        };
+        let field = sequence
+            .fields
+            .iter_mut()
+            .find(|field| field.label == field_label)
+            .unwrap_or_else(|| panic!("Field {field_label} not found in sequence {sequence_id}"));
+
+        assert!(
+            field.is_optional,
+            "Cannot convert non-optional field {field_label} in {sequence_id} to a boolean"
+        );
+        assert!(
+            matches!(field.target_type, NodeType::UniqueTerminal(_)),
+            "Cannot convert field {field_label} in {sequence_id} to a boolean: \
+                 expected an optional unique terminal"
+        );
+
+        field.target_type = NodeType::External("Boolean".into());
+        field.label = new_label;
+
+        self.external_types.insert("Boolean".into());
+    }
 }

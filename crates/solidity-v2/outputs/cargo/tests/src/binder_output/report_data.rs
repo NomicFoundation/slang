@@ -381,7 +381,7 @@ fn type_or_unresolved(type_: Option<Type>) -> String {
 fn type_display(type_: &Type) -> String {
     match type_ {
         Type::Address(address) => {
-            if address.payable() {
+            if address.is_payable() {
                 "address payable".to_string()
             } else {
                 "address".to_string()
@@ -405,7 +405,7 @@ fn type_display(type_: &Type) -> String {
         Type::FixedPointNumber(fixed) => {
             format!(
                 "{signed}fixed{bits}x{precision_bits}",
-                signed = if fixed.signed() { "" } else { "u" },
+                signed = if fixed.is_signed() { "" } else { "u" },
                 bits = fixed.bits(),
                 precision_bits = fixed.decimal_places(),
             )
@@ -431,7 +431,7 @@ fn type_display(type_: &Type) -> String {
         Type::Integer(integer) => {
             format!(
                 "{signed}int{bits}",
-                signed = if integer.signed() { "" } else { "u" },
+                signed = if integer.is_signed() { "" } else { "u" },
                 bits = integer.bits(),
             )
         }
