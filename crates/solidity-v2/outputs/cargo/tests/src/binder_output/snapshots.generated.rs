@@ -132,6 +132,11 @@ mod built_ins {
     }
 
     #[test]
+    fn function_declaration() -> Result<()> {
+        run("built_ins", "function_declaration")
+    }
+
+    #[test]
     fn function_type() -> Result<()> {
         run("built_ins", "function_type")
     }
