@@ -764,6 +764,42 @@ mod syntax {
 mod type_system {
     use super::*;
 
+    mod cannot_call_via_contract_type_name {
+        use super::*;
+
+        #[test]
+        fn base_contract() -> Result<()> {
+            run(
+                "type_system/cannot_call_via_contract_type_name",
+                "base_contract",
+            )
+        }
+
+        #[test]
+        fn external_base() -> Result<()> {
+            run(
+                "type_system/cannot_call_via_contract_type_name",
+                "external_base",
+            )
+        }
+
+        #[test]
+        fn foreign_contract() -> Result<()> {
+            run(
+                "type_system/cannot_call_via_contract_type_name",
+                "foreign_contract",
+            )
+        }
+
+        #[test]
+        fn free_function() -> Result<()> {
+            run(
+                "type_system/cannot_call_via_contract_type_name",
+                "free_function",
+            )
+        }
+    }
+
     mod invalid_base {
         use super::*;
 
