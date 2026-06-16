@@ -470,4 +470,10 @@ impl Visitor for Pass<'_> {
         });
         self.binder.set_node_typing(node.id(), typing);
     }
+
+    fn enter_yul_block(&mut self, _node: &ir::YulBlock) -> bool {
+        // All Yul is collected and resolved in `p6_resolve_yul`; this pass does
+        // not type Yul nodes, so skip the assembly body entirely.
+        false
+    }
 }

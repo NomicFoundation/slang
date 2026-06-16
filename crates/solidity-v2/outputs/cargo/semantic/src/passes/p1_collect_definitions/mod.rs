@@ -571,4 +571,12 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
 
         false
     }
+
+    fn enter_yul_block(&mut self, _node: &ir::YulBlock) -> bool {
+        // All Yul is collected and resolved in `p6_resolve_yul`, so there's
+        // nothing to do here. Skip the assembly body entirely. (The enclosing
+        // `AssemblyStatement`'s flags/label are still visited, since we don't
+        // skip from `enter_assembly_statement`.)
+        false
+    }
 }

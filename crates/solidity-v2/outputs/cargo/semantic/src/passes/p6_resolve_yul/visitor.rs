@@ -92,6 +92,48 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     // -------------------------------------------------------------------------
+    // Pruned subtrees
+    //
+    // Assembly blocks only ever appear inside statement bodies, so whole
+    // categories of nodes can never contain Yul. Skipping them avoids walking
+    // large irrelevant subtrees. (Statements, blocks and loops are NOT skipped,
+    // since they can contain assembly.)
+
+    fn enter_expression(&mut self, _node: &ir::Expression) -> bool {
+        // Expressions never contain statements, hence no assembly blocks. This
+        // also prunes state-variable initializers, call arguments, modifier
+        // invocation arguments, etc.
+        false
+    }
+
+    fn enter_parameters(&mut self, _node: &ir::Parameters) -> bool {
+        false
+    }
+
+    fn enter_struct_definition(&mut self, _node: &ir::StructDefinition) -> bool {
+        false
+    }
+
+    fn enter_enum_definition(&mut self, _node: &ir::EnumDefinition) -> bool {
+        false
+    }
+
+    fn enter_error_definition(&mut self, _node: &ir::ErrorDefinition) -> bool {
+        false
+    }
+
+    fn enter_event_definition(&mut self, _node: &ir::EventDefinition) -> bool {
+        false
+    }
+
+    fn enter_user_defined_value_type_definition(
+        &mut self,
+        _node: &ir::UserDefinedValueTypeDefinition,
+    ) -> bool {
+        false
+    }
+
+    // -------------------------------------------------------------------------
     // Yul handling: collection + resolution in a single traversal.
 
     fn enter_yul_block(&mut self, node: &ir::YulBlock) -> bool {
