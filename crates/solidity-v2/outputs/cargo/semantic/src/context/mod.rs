@@ -91,6 +91,11 @@ impl SemanticContext {
             diagnostics,
         );
 
+        // Now that all references have been collected and resolved across every
+        // pass, finalize the binder by building the definition->references
+        // reverse index.
+        binder.update_definitions_to_references_index();
+
         Self {
             binder,
             types,

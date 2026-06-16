@@ -35,10 +35,6 @@ pub fn run(
     for file in files {
         Pass::visit_file(file, binder, types, diagnostics);
     }
-    // Yul references may resolve to Solidity definitions, so rebuild the
-    // definition->references reverse index to include them. This pass runs
-    // after p5, whose own rebuild ran before any Yul reference existed.
-    binder.update_definitions_to_references_index();
 }
 
 struct ScopeFrame {
