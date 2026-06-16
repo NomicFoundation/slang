@@ -21,7 +21,7 @@ impl EventDefinitionStruct {
             node_id: self.ir_node.id(),
             name: self.ir_node.name.unparse().to_string(),
             inputs,
-            is_anonymous: self.ir_node.is_anonymous,
+            anonymous: self.ir_node.is_anonymous,
         }))
     }
 

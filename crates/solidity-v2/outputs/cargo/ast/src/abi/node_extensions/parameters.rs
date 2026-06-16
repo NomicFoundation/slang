@@ -12,7 +12,7 @@ impl ParametersStruct {
                 .name
                 .as_ref()
                 .map(|name| name.unparse().to_string());
-            let is_indexed = parameter.is_indexed;
+            let indexed = parameter.is_indexed;
             // Bail out with `None` if any of the parameters fails typing
             let type_id = self.semantic.binder().node_typing(node_id).as_type_id()?;
             let (type_name, components) = type_as_abi_parameter(&self.semantic, type_id)?;
@@ -21,7 +21,7 @@ impl ParametersStruct {
                 name,
                 type_name,
                 components,
-                is_indexed,
+                indexed,
             });
         }
         Some(result)

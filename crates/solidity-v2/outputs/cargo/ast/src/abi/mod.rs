@@ -97,7 +97,7 @@ pub struct AbiEvent {
     node_id: NodeId,
     name: String,
     inputs: Vec<AbiParameter>,
-    is_anonymous: bool,
+    anonymous: bool,
 }
 
 impl AbiEvent {
@@ -113,8 +113,8 @@ impl AbiEvent {
         &self.inputs
     }
 
-    pub fn is_anonymous(&self) -> bool {
-        self.is_anonymous
+    pub fn anonymous(&self) -> bool {
+        self.anonymous
     }
 }
 
@@ -287,7 +287,7 @@ pub struct AbiParameter {
     name: Option<String>,
     type_name: String,
     components: Vec<ParameterComponent>,
-    is_indexed: bool,
+    indexed: bool,
 }
 
 impl AbiParameter {
@@ -307,8 +307,8 @@ impl AbiParameter {
         &self.components
     }
 
-    pub fn is_indexed(&self) -> bool {
-        self.is_indexed
+    pub fn indexed(&self) -> bool {
+        self.indexed
     }
 }
 
@@ -367,7 +367,7 @@ pub(crate) fn extract_function_type_parameters_abi(
             name: None,
             type_name,
             components,
-            is_indexed: false,
+            indexed: false,
         });
     }
     let (type_name, components) = type_as_abi_parameter(semantic, function_type.return_type)?;
@@ -376,7 +376,7 @@ pub(crate) fn extract_function_type_parameters_abi(
         name: None,
         type_name,
         components,
-        is_indexed: false,
+        indexed: false,
     }];
     Some((inputs, outputs))
 }

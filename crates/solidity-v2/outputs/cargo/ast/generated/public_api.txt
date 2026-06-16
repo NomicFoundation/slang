@@ -42,8 +42,8 @@ impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiError
 pub fn slang_solidity_v2_ast::abi::AbiError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity_v2_ast::abi::AbiEvent
 impl slang_solidity_v2_ast::abi::AbiEvent
+pub fn slang_solidity_v2_ast::abi::AbiEvent::anonymous(&self) -> bool
 pub fn slang_solidity_v2_ast::abi::AbiEvent::inputs(&self) -> &[slang_solidity_v2_ast::abi::AbiParameter]
-pub fn slang_solidity_v2_ast::abi::AbiEvent::is_anonymous(&self) -> bool
 pub fn slang_solidity_v2_ast::abi::AbiEvent::name(&self) -> &str
 pub fn slang_solidity_v2_ast::abi::AbiEvent::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl core::clone::Clone for slang_solidity_v2_ast::abi::AbiEvent
@@ -72,7 +72,7 @@ pub fn slang_solidity_v2_ast::abi::AbiFunction::fmt(&self, f: &mut core::fmt::Fo
 pub struct slang_solidity_v2_ast::abi::AbiParameter
 impl slang_solidity_v2_ast::abi::AbiParameter
 pub fn slang_solidity_v2_ast::abi::AbiParameter::components(&self) -> &[slang_solidity_v2_ast::abi::ParameterComponent]
-pub fn slang_solidity_v2_ast::abi::AbiParameter::is_indexed(&self) -> bool
+pub fn slang_solidity_v2_ast::abi::AbiParameter::indexed(&self) -> bool
 pub fn slang_solidity_v2_ast::abi::AbiParameter::name(&self) -> core::option::Option<&str>
 pub fn slang_solidity_v2_ast::abi::AbiParameter::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 pub fn slang_solidity_v2_ast::abi::AbiParameter::type_name(&self) -> &str
