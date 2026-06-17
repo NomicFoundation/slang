@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 2449] Error: Definition of base has to precede definition of derived contract
+   ╭─[input.sol:4:15]
+   │
+ 4 │ contract A is B {}
+   │               ┬  
+   │               ╰── Error occurred here.
+───╯

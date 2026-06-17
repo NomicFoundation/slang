@@ -120,6 +120,45 @@ interface A is C {}
 }
 
 #[test]
+fn test_linearise_with_forward_reference() {
+    // A base is referenced before it is defined. solc emits an error here
+    // (`TypeError 2449: Definition of base has to precede definition of derived
+    // contract`), but slang does not, as its linearisation pass is
+    // order-independent, so it accepts the forward reference and computes the
+    // linearisation `[D, B]`.
+    const CONTENTS: &str = r#"
+contract D is B {}
+contract B {}
+"#;
+
+    let mut id_generator = NodeIdGenerator::default();
+    let file = build_file(
+        "test.sol",
+        CONTENTS,
+        &mut id_generator,
+        LanguageVersion::LATEST,
+    );
+
+    let files = [file];
+    let mut binder = Binder::default();
+    let mut diagnostics = DiagnosticCollection::default();
+    p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
+    assert!(
+        diagnostics.is_empty(),
+        "Semantic diagnostics: {diagnostics:?}"
+    );
+
+    let contract_to_bases = get_contract_to_bases_map(&binder);
+
+    let mut expected = Map::default();
+    expected.insert("D".to_string(), vec!["D".to_string(), "B".to_string()]);
+    expected.insert("B".to_string(), vec!["B".to_string()]);
+
+    assert_eq!(contract_to_bases, expected);
+}
+
+#[test]
 fn test_linearise_with_invalid_input() {
     const CONTENTS: &str = r#"
 contract Base {}

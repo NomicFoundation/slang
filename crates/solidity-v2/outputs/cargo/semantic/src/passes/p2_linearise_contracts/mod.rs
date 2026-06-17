@@ -1,5 +1,8 @@
 use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound;
+use slang_solidity_v2_common::diagnostics::kinds::semantic::{
+    CyclicInheritance, LinearisationImpossible,
+};
 use slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -140,21 +143,31 @@ impl<'a> Pass<'a> {
 
     fn linearise_contracts_from(&mut self, source_unit: &ir::SourceUnit) {
         for member in &source_unit.members {
-            let node_id = match member {
+            let (node_id, range) = match member {
                 ir::SourceUnitMember::ContractDefinition(contract_definition) => {
-                    contract_definition.id()
+                    (contract_definition.id(), contract_definition.range.clone())
                 }
-                ir::SourceUnitMember::InterfaceDefinition(interface_definition) => {
-                    interface_definition.id()
-                }
+                ir::SourceUnitMember::InterfaceDefinition(interface_definition) => (
+                    interface_definition.id(),
+                    interface_definition.range.clone(),
+                ),
                 _ => continue,
             };
             let parents = self.find_contract_bases_recursively(node_id);
-            if let Some(linearisation) = c3::linearise(&node_id, &parents) {
-                self.binder.insert_linearised_bases(node_id, linearisation);
-            } else {
-                // TODO(validation) SDR[24]: linearisation failed, so emit an error
-                self.binder.insert_linearised_bases(node_id, Vec::new());
+            match c3::linearise(&node_id, &parents) {
+                Ok(linearisation) => {
+                    self.binder.insert_linearised_bases(node_id, linearisation);
+                }
+                Err(c3::LinearisationFailure::Cycle) => {
+                    self.diagnostics
+                        .push(self.file_id.clone(), range, CyclicInheritance);
+                    self.binder.insert_linearised_bases(node_id, Vec::new());
+                }
+                Err(c3::LinearisationFailure::Inconsistent) => {
+                    self.diagnostics
+                        .push(self.file_id.clone(), range, LinearisationImpossible);
+                    self.binder.insert_linearised_bases(node_id, Vec::new());
+                }
             }
         }
     }
