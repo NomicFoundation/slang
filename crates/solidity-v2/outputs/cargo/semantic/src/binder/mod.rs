@@ -293,6 +293,16 @@ impl Binder {
         &self.assembly_blocks
     }
 
+    /// The Solidity definitions referenced from within the `assembly` block
+    /// keyed by `node_id` (the `AssemblyStatement`'s `NodeId`). Empty if there
+    /// is no such block.
+    pub fn assembly_block_referenced_definitions(&self, node_id: NodeId) -> &[NodeId] {
+        self.assembly_blocks
+            .get(&node_id)
+            .map(|block| block.solidity_references.as_slice())
+            .unwrap_or_default()
+    }
+
     pub(crate) fn set_assembly_block_solidity_references(
         &mut self,
         node_id: NodeId,
