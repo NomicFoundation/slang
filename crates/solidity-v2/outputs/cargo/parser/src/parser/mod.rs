@@ -70,23 +70,7 @@ impl Parser {
             file_id,
             diagnostics: DiagnosticCollection::default(),
         };
-        let mut result = parser.parse(&mut ctx, lexer);
-        println!("Parser result: {:#?}", result.is_ok());
-
-        // double parse to trigger the benchmark failures
-        {
-            let lexer = Lexer::new(source, language_version);
-            let parser = grammar::SourceUnitParser::new();
-
-            let mut ctx = GrammarCtx {
-                source,
-                file_id,
-                diagnostics: DiagnosticCollection::default(),
-            };
-
-            result = parser.parse(&mut ctx, lexer);
-        }
-
+        let result = parser.parse(&mut ctx, lexer);
         match result {
             Ok(source_unit) => {
                 // TODO(v2): these tests should really go through 'CompilationUnit' once it is ready.
