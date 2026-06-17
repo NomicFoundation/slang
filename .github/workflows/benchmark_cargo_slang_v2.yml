@@ -57,25 +57,10 @@ jobs:
           persist-credentials: false
           fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
-      - name: "Free up disk space"
-        uses: "./.github/actions/free-disk-space"
-
-      - name: "Restore file mtimes from git"
-        uses: "./.github/actions/git/restore-mtime"
-
-      - name: "Restore Dependencies Cache"
-        uses: "./.github/actions/cache/dependencies/restore"
-
-      - name: "Restore Cargo Target Cache"
-        uses: "./.github/actions/cache/cargo-target/restore"
-
-      - name: "Setup SFW (optional)"
-        uses: "./.github/actions/setup-sfw"
+      - name: "Benchmark Setup"
+        uses: "./.github/actions/benchmark-setup"
         with:
-          optional: "true"
-
-      - name: "infra setup cargo pipenv"
-        run: "${SFW_PREFIX:-} ./scripts/bin/infra setup cargo pipenv"
+          tools: "cargo pipenv"
 
       - name: "Smoke Test > infra perf cargo --smoke slang-v2"
         if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
