@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: This syntax was introduced in version '0.8.29'.
+   ╭─[input.sol:5:12]
+   │
+ 5 │ contract C layout at 0x1000 {}
+   │            ────────┬───────  
+   │                    ╰───────── Error occurred here.
+───╯

@@ -764,6 +764,55 @@ mod syntax {
 mod type_system {
     use super::*;
 
+    mod array_length {
+        use super::*;
+
+        #[test]
+        fn division_by_zero() -> Result<()> {
+            run("type_system/array_length", "division_by_zero")
+        }
+
+        #[test]
+        fn exceeds_usize() -> Result<()> {
+            run("type_system/array_length", "exceeds_usize")
+        }
+
+        #[test]
+        fn fractional() -> Result<()> {
+            run("type_system/array_length", "fractional")
+        }
+
+        #[test]
+        fn negative() -> Result<()> {
+            run("type_system/array_length", "negative")
+        }
+
+        #[test]
+        fn negative_exponent() -> Result<()> {
+            run("type_system/array_length", "negative_exponent")
+        }
+
+        #[test]
+        fn not_constant() -> Result<()> {
+            run("type_system/array_length", "not_constant")
+        }
+
+        #[test]
+        fn too_large() -> Result<()> {
+            run("type_system/array_length", "too_large")
+        }
+
+        #[test]
+        fn valid() -> Result<()> {
+            run("type_system/array_length", "valid")
+        }
+
+        #[test]
+        fn zero() -> Result<()> {
+            run("type_system/array_length", "zero")
+        }
+    }
+
     mod invalid_base {
         use super::*;
 
@@ -829,6 +878,43 @@ mod type_system {
                 "type_system/invalid_function_type_visibility",
                 "valid_visibilities",
             )
+        }
+    }
+
+    mod storage_layout_base_slot {
+        use super::*;
+
+        #[test]
+        fn constant_member_access() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "constant_member_access",
+            )
+        }
+
+        #[test]
+        fn fractional() -> Result<()> {
+            run("type_system/storage_layout_base_slot", "fractional")
+        }
+
+        #[test]
+        fn negative() -> Result<()> {
+            run("type_system/storage_layout_base_slot", "negative")
+        }
+
+        #[test]
+        fn not_constant() -> Result<()> {
+            run("type_system/storage_layout_base_slot", "not_constant")
+        }
+
+        #[test]
+        fn out_of_range() -> Result<()> {
+            run("type_system/storage_layout_base_slot", "out_of_range")
+        }
+
+        #[test]
+        fn valid() -> Result<()> {
+            run("type_system/storage_layout_base_slot", "valid")
         }
     }
 }

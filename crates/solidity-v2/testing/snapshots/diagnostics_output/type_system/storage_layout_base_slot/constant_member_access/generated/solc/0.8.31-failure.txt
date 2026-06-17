@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 1505] Error: The base slot expression contains elements that are not yet supported by the internal constant evaluator and therefore cannot be evaluated at compilation time.
+    ╭─[input.sol:10:27]
+    │
+ 10 │ contract C is A layout at A.X {}
+    │                           ─┬─  
+    │                            ╰─── Error occurred here.
+────╯

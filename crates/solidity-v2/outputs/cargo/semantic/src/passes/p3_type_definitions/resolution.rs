@@ -1,10 +1,16 @@
-use slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility;
+use num_traits::{Signed, ToPrimitive};
+use ruint::aliases::U256;
+use slang_solidity_v2_common::diagnostics::kinds::type_system::{
+    ArrayLengthNegative, ArrayLengthNonInteger, ArrayLengthNotConstant, ArrayLengthTooLarge,
+    ArrayLengthZero, InvalidFunctionTypeVisibility, StorageLayoutBaseNonInteger,
+    StorageLayoutBaseNotConstant, StorageLayoutBaseOutOfRange,
+};
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::TextRange;
 
 use super::evaluator::{
-    evaluate_compile_time_usize_constant, ComptimeResolution, ConstantIdentifierResolver,
-    EvaluationError,
+    evaluate_compile_time_constant, ComptimeResolution, ConstantIdentifierResolver, EvaluationError,
 };
 use super::Pass;
 use crate::binder::{Definition, Resolution, Scope, ScopeId};
@@ -40,6 +46,102 @@ impl Pass<'_> {
         Some(parameter_types)
     }
 
+    /// Evaluates a fixed-size array length expression, and emits diagnostics
+    /// if errors are found. On error, returns `usize::default()` so type
+    /// construction can proceed.
+    /// TODO: Change return to u256, when `FixedSizeArrayType` size field
+    /// is changed to u256.
+    fn evaluate_array_length(&mut self, size_expression: &ir::Expression) -> usize {
+        let value = match evaluate_compile_time_constant(
+            size_expression,
+            self.current_contract_or_file_scope_id(),
+            self,
+        ) {
+            Ok(value) => value,
+            Err(EvaluationError::Diagnostic(kind)) => {
+                self.push_expression_diagnostic(size_expression, kind);
+                return usize::default();
+            }
+            Err(EvaluationError::CouldNotEvaluate) => {
+                self.push_expression_diagnostic(size_expression, ArrayLengthNotConstant);
+                return usize::default();
+            }
+        };
+
+        // Classify the value: zero, then non-integer, then negative and then too large.
+        if value.is_zero() {
+            self.push_expression_diagnostic(size_expression, ArrayLengthZero);
+            return usize::default();
+        }
+        let Some(integer) = value.as_integer() else {
+            self.push_expression_diagnostic(size_expression, ArrayLengthNonInteger);
+            return usize::default();
+        };
+        if integer.is_negative() {
+            self.push_expression_diagnostic(size_expression, ArrayLengthNegative);
+            return usize::default();
+        }
+        // TODO: Accept u256, when `FixedSizeArrayType` size field is changed to u256.
+        let Some(size) = integer.to_usize() else {
+            self.push_expression_diagnostic(size_expression, ArrayLengthTooLarge);
+            return usize::default();
+        };
+        size
+    }
+
+    /// Evaluates a contract's storage-layout base slot expression, and emits
+    /// diagnostics if errors are found. Returns `None` on any error.
+    pub(super) fn evaluate_storage_layout_base_slot(
+        &mut self,
+        base_slot_expression: &ir::Expression,
+    ) -> Option<U256> {
+        let value = match evaluate_compile_time_constant(
+            base_slot_expression,
+            self.current_contract_or_file_scope_id(),
+            self,
+        ) {
+            Ok(value) => value,
+            Err(EvaluationError::Diagnostic(kind)) => {
+                self.push_expression_diagnostic(base_slot_expression, kind);
+                return None;
+            }
+            Err(EvaluationError::CouldNotEvaluate) => {
+                self.push_expression_diagnostic(base_slot_expression, StorageLayoutBaseNotConstant);
+                return None;
+            }
+        };
+
+        // Classify the value: non-integer, then out of range (negative or too large).
+        let Some(integer) = value.into_integer() else {
+            self.push_expression_diagnostic(base_slot_expression, StorageLayoutBaseNonInteger);
+            return None;
+        };
+        let Ok(base_slot) = U256::try_from(&integer) else {
+            self.push_expression_diagnostic(
+                base_slot_expression,
+                StorageLayoutBaseOutOfRange {
+                    value: integer.to_string(),
+                },
+            );
+            return None;
+        };
+        Some(base_slot)
+    }
+
+    fn push_expression_diagnostic(
+        &mut self,
+        expression: &ir::Expression,
+        kind: impl Into<DiagnosticKind>,
+    ) {
+        self.diagnostics.push(
+            self.file_id.clone(),
+            expression
+                .calculate_text_range()
+                .expect("expression has a text range"),
+            kind,
+        );
+    }
+
     pub(super) fn resolve_type_name(
         &mut self,
         type_name: &ir::TypeName,
@@ -51,28 +153,7 @@ impl Pass<'_> {
                     self.resolve_type_name(&array_type_name.operand, Some(data_location))
                         .map(|element_type| {
                             if let Some(size_expression) = &array_type_name.index {
-                                // TODO(validation) SDR[27]: if the size of the array
-                                // cannot be evaluated it's not a compile-time
-                                // constant, or it doesn't fit in `usize`.
-                                let size = match evaluate_compile_time_usize_constant(
-                                    size_expression,
-                                    self.current_contract_or_file_scope_id(),
-                                    self,
-                                ) {
-                                    Ok(size) => size,
-                                    Err(error) => {
-                                        if let EvaluationError::Diagnostic(kind) = error {
-                                            self.diagnostics.push(
-                                                self.file_id.clone(),
-                                                size_expression
-                                                    .calculate_text_range()
-                                                    .expect("expression has a text range"),
-                                                kind,
-                                            );
-                                        }
-                                        usize::default()
-                                    }
-                                };
+                                let size = self.evaluate_array_length(size_expression);
                                 self.types
                                     .register_type(Type::FixedSizeArray(FixedSizeArrayType {
                                         element_type,
