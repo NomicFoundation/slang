@@ -2,6 +2,7 @@ mod utils;
 
 pub mod compilation;
 pub mod resolution;
+pub mod semantic;
 pub mod structure;
 pub mod syntax;
 pub mod type_system;
@@ -10,6 +11,7 @@ use std::cmp::Ordering;
 
 use compilation::CompilationDiagnosticKind;
 use resolution::ResolutionDiagnosticKind;
+use semantic::SemanticDiagnosticKind;
 use serde::Serialize;
 use structure::StructureDiagnosticKind;
 use syntax::SyntaxDiagnosticKind;
@@ -36,6 +38,8 @@ define_diagnostic_kind! {
         Resolution(ResolutionDiagnosticKind),
         /// A diagnostic about the type system.
         TypeSystem(TypeSystemDiagnosticKind),
+        /// A diagnostic about a semantic constraint.
+        Semantic(SemanticDiagnosticKind),
     }
 }
 

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 6161] Error: The value of the constant A has a cyclic dependency via A.
+   ╭─[input.sol:5:5]
+   │
+ 5 │     uint256 internal constant A = B.A;
+   │     ────────────────┬────────────────  
+   │                     ╰────────────────── Error occurred here.
+───╯

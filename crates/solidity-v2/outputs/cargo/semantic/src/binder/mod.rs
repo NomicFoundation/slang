@@ -11,7 +11,9 @@ mod references;
 mod scopes;
 
 pub use definitions::Definition;
-pub(crate) use definitions::{ContractDefinition, ImportDefinition, InterfaceDefinition};
+pub(crate) use definitions::{
+    ConstantDefinition, ContractDefinition, ImportDefinition, InterfaceDefinition,
+};
 pub use references::{Reference, Resolution};
 use scopes::ContractScope;
 pub(crate) use scopes::{FileScope, ParameterDefinition, ParametersScope, Scope, UsingDirective};
