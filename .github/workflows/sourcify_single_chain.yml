@@ -52,6 +52,7 @@ jobs:
     permissions:
       contents: "read"
 
+    # Not common-setup: builds the sourcify binary directly instead of running 'infra setup'.
     steps:
       - name: "Checkout Repository"
         uses: "actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10" # v6.0.3
