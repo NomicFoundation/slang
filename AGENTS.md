@@ -152,13 +152,25 @@ The config has a single `matrix` field with two shapes. Pin the target,
 iterate every language version:
 
 ```json
-{ "matrix": { "type": "SingleTargetAllVersions", "target": "Istanbul" } }
+{
+    "matrix": {
+        "type": "SingleTargetAllVersions",
+        "target": "Istanbul",
+        "reason": "Explain why this target was pinned..."
+    }
+}
 ```
 
 Or pin the version, iterate every EVM target:
 
 ```json
-{ "matrix": { "type": "SingleVersionAllTargets", "version": "0.8.35" } }
+{
+    "matrix": {
+        "type": "SingleVersionAllTargets",
+        "version": "0.8.35",
+        "reason": "Explain why this version was pinned..."
+    }
+}
 ```
 
 ## Important Gotchas

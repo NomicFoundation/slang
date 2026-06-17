@@ -74,19 +74,29 @@ struct RawConfigFile {
 #[serde(deny_unknown_fields)]
 #[serde(tag = "type")]
 enum RawTestMatrix {
-    SingleVersionAllTargets { version: Version },
-    SingleTargetAllVersions { target: String },
+    SingleVersionAllTargets {
+        version: Version,
+        /// Reason for pinning this version (for documentation purposes).
+        reason: String,
+    },
+    SingleTargetAllVersions {
+        target: String,
+        /// Reason for pinning this target (for documentation purposes).
+        reason: String,
+    },
 }
 
 impl From<RawConfigFile> for TestConfig {
     fn from(raw: RawConfigFile) -> Self {
         let matrix = match raw.matrix {
-            RawTestMatrix::SingleVersionAllTargets { version } => {
+            RawTestMatrix::SingleVersionAllTargets { version, reason } => {
+                assert!(!reason.trim().is_empty(), "Reason must be non-empty");
                 TestMatrix::SingleVersionAllTargets {
                     version: version.try_into().unwrap(),
                 }
             }
-            RawTestMatrix::SingleTargetAllVersions { target } => {
+            RawTestMatrix::SingleTargetAllVersions { target, reason } => {
+                assert!(!reason.trim().is_empty(), "Reason must be non-empty");
                 TestMatrix::SingleTargetAllVersions {
                     target: target.as_str().try_into().unwrap(),
                 }
