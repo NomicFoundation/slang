@@ -1,7 +1,4 @@
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
-use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Scope, ScopeId};
@@ -12,8 +9,6 @@ use crate::types::TypeRegistry;
 mod disambiguation;
 mod resolution;
 mod typing;
-#[path = "validate_built_ins.generated.rs"]
-mod validate_built_ins;
 mod visitor;
 
 /// This pass will find identifiers used as references, resolve them to the
@@ -21,23 +16,9 @@ mod visitor;
 /// containing expressions and statements. Both these actions are co-dependant
 /// and happen concurrently for each node, and their results are store in the
 /// `Binder` instance.
-pub fn run(
-    files: &[impl SemanticFile],
-    binder: &mut Binder,
-    types: &mut TypeRegistry,
-    language_version: LanguageVersion,
-    evm_target: EvmTarget,
-    diagnostics: &mut DiagnosticCollection,
-) {
+pub fn run(files: &[impl SemanticFile], binder: &mut Binder, types: &mut TypeRegistry) {
     for file in files {
-        Pass::visit_file(
-            file,
-            binder,
-            types,
-            language_version,
-            evm_target,
-            diagnostics,
-        );
+        Pass::visit_file(file, binder, types);
     }
     // update definition->references reverse mapping
     binder.update_definitions_to_references_index();
@@ -52,32 +33,17 @@ struct ScopeFrame {
 }
 
 struct Pass<'a> {
-    language_version: LanguageVersion,
-    evm_target: EvmTarget,
-    file_id: &'a str,
     scope_stack: Vec<ScopeFrame>,
     binder: &'a mut Binder,
     types: &'a mut TypeRegistry,
-    diagnostics: &'a mut DiagnosticCollection,
 }
 
 impl<'a> Pass<'a> {
-    fn visit_file(
-        file: &'a impl SemanticFile,
-        binder: &'a mut Binder,
-        types: &'a mut TypeRegistry,
-        language_version: LanguageVersion,
-        evm_target: EvmTarget,
-        diagnostics: &'a mut DiagnosticCollection,
-    ) {
+    fn visit_file(file: &impl SemanticFile, binder: &'a mut Binder, types: &'a mut TypeRegistry) {
         let mut pass = Self {
-            language_version,
-            evm_target,
-            file_id: file.id(),
             scope_stack: Vec::new(),
             binder,
             types,
-            diagnostics,
         };
         ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
         assert!(pass.scope_stack.is_empty());

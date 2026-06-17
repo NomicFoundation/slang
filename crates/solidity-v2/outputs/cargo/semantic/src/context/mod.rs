@@ -1,5 +1,5 @@
 pub(crate) use contract_data::{ContractData, ContractLinearisations};
-use file_node_mapper::FileNodeMapper;
+pub(crate) use file_node_mapper::FileNodeMapper;
 use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
@@ -78,18 +78,20 @@ impl SemanticContext {
         p1_collect_definitions::run(files, &mut binder, diagnostics);
         p2_linearise_contracts::run(files, &mut binder, diagnostics);
         p3_type_definitions::run(files, &mut binder, &mut types, diagnostics);
+
         let contract_data = p4_compute_linearisations::run(&binder, &types);
-        p5_resolve_references::run(
-            files,
-            &mut binder,
-            &mut types,
-            language_version,
-            evm_target,
-            diagnostics,
-        );
-        p6_code_analysis::run(&binder, diagnostics);
+
+        p5_resolve_references::run(files, &mut binder, &mut types);
 
         let file_node_mapper = FileNodeMapper::build_from(files);
+
+        p6_code_analysis::run(
+            &binder,
+            language_version,
+            evm_target,
+            &file_node_mapper,
+            diagnostics,
+        );
 
         Self {
             binder,

@@ -6,26 +6,41 @@ use std::ops::Range;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     IncompatibleBuiltInTarget, IncompatibleBuiltInVersion,
 };
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::{EvmTarget, EvmTargetSpecifier};
+use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::{LanguageVersion, LanguageVersionSpecifier};
 
 use crate::built_ins::InternalBuiltIn;
+use crate::context::FileNodeMapper;
 
-use super::Pass;
+pub(super) struct BuiltInValidator<'a> {
+    language_version: LanguageVersion,
+    evm_target: EvmTarget,
+    file_node_mapper: &'a FileNodeMapper,
+    diagnostics: &'a mut DiagnosticCollection,
+}
 
-impl Pass<'_> {
-    /// Emits diagnostics if `built_in` is not compatible with the pass's
-    /// configured language version and/or EVM target. `range` locates the
-    /// diagnostic at the referencing identifier.
-    {#-
-        TODO(v2): API needs to be redesigned:
-        Calling validation after individual resolution operations is error-prone, and can break in the future.
-        See the discussion for more context: https://github.com/NomicFoundation/slang/pull/1869
-    #}
+impl<'a> BuiltInValidator<'a> {
+    pub(super) fn new(
+        language_version: LanguageVersion,
+        evm_target: EvmTarget,
+        file_node_mapper: &'a FileNodeMapper,
+        diagnostics: &'a mut DiagnosticCollection,
+    ) -> Self {
+        Self {
+            language_version,
+            evm_target,
+            file_node_mapper,
+            diagnostics,
+        }
+    }
+
     #[allow(clippy::too_many_lines)]
-    pub(super) fn validate_built_in(
+    pub(super) fn validate(
         &mut self,
         built_in: InternalBuiltIn,
+        node_id: NodeId,
         range: &Range<usize>,
     ) {
         match built_in {
@@ -35,10 +50,10 @@ impl Pass<'_> {
                         {%- if definition.enabled.type != "Always" or definition.evm_enabled.type != "Always" %}
                             InternalBuiltIn::{{ definition.name }}{% if definition.internal_parameter %}(_){% endif %} => {
                                 {%- if definition.enabled.type != "Always" %}
-                                    self.check_version(range, {{ _versions::specifier(s=definition.enabled) }});
+                                    self.check_version(node_id, range, {{ _versions::specifier(s=definition.enabled) }});
                                 {%- endif %}
                                 {%- if definition.evm_enabled.type != "Always" %}
-                                    self.check_target(range, {{ _evm_targets::specifier(s=definition.evm_enabled) }});
+                                    self.check_target(node_id, range, {{ _evm_targets::specifier(s=definition.evm_enabled) }});
                                 {%- endif %}
                             }
                         {%- endif %}
@@ -50,20 +65,32 @@ impl Pass<'_> {
         }
     }
 
-    fn check_version(&mut self, range: &Range<usize>, compatible_in: LanguageVersionSpecifier) {
+    fn check_version(
+        &mut self,
+        node_id: NodeId,
+        range: &Range<usize>,
+        compatible_in: LanguageVersionSpecifier,
+    ) {
         if !compatible_in.contains(self.language_version) {
+            let file_id = self.file_node_mapper.file_id_from_node_id(node_id);
             self.diagnostics.push(
-                self.file_id.to_owned(),
+                file_id.to_owned(),
                 range.clone(),
                 IncompatibleBuiltInVersion { compatible_in },
             );
         }
     }
 
-    fn check_target(&mut self, range: &Range<usize>, compatible_in: EvmTargetSpecifier) {
+    fn check_target(
+        &mut self,
+        node_id: NodeId,
+        range: &Range<usize>,
+        compatible_in: EvmTargetSpecifier,
+    ) {
         if !compatible_in.contains(self.evm_target) {
+            let file_id = self.file_node_mapper.file_id_from_node_id(node_id);
             self.diagnostics.push(
-                self.file_id.to_owned(),
+                file_id.to_owned(),
                 range.clone(),
                 IncompatibleBuiltInTarget { compatible_in },
             );
