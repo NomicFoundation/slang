@@ -38,36 +38,19 @@ jobs:
           persist-credentials: false
           fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
-      - name: "Free up disk space"
-        uses: "./.github/actions/free-disk-space"
-
-      - name: "Restore file mtimes from git"
-        uses: "./.github/actions/git/restore-mtime"
-
-      # Cache is updated in this workflow, and reused in subsequent workflows.
-      # Always start with a fresh cache when running on the main branch.
-      - name: "Restore Dependencies Cache"
-        if: "${{ github.ref_name != 'main' }}"
-        uses: "./.github/actions/cache/dependencies/restore"
-
-      # Restore compiled Rust artifacts from a previous build on main for non-main runs,
-      # but intentionally skip this restore for merge-queue validation so merge_group
-      # runs compile without the target cache.
-      - name: "Restore Cargo Target Cache"
-        if: "${{ github.ref_name != 'main' && github.event_name != 'merge_group' }}"
-        uses: "./.github/actions/cache/cargo-target/restore"
-
-      - name: "Setup SFW (optional)"
-        uses: "./.github/actions/setup-sfw"
+      # Cache is updated in this workflow and reused in subsequent ones, so always
+      # start fresh on main (skip the dependency cache). Skip the target cache on
+      # main and for merge-queue validation (merge_group compiles without it).
+      - name: "Setup"
+        uses: "./.github/actions/common-setup"
         with:
-          optional: "true"
+          sfw-optional: "true"
+          restore-deps-cache: "${{ github.ref_name != 'main' }}"
+          restore-target-cache: "${{ github.ref_name != 'main' && github.event_name != 'merge_group' }}"
 
       #
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
       #
-
-      - name: "infra setup"
-        run: "${SFW_PREFIX:-} ./scripts/bin/infra setup"
 
       - name: "infra check"
         run: "${SFW_PREFIX:-} ./scripts/bin/infra check"

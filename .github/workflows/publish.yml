@@ -87,25 +87,10 @@ jobs:
           persist-credentials: false
           fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
-      - name: "Free up disk space"
-        uses: "./.github/actions/free-disk-space"
-
-      - name: "Restore file mtimes from git"
-        uses: "./.github/actions/git/restore-mtime"
-
-      - name: "Restore Dependencies Cache"
-        uses: "./.github/actions/cache/dependencies/restore"
-
-      - name: "Restore Cargo Target Cache"
-        uses: "./.github/actions/cache/cargo-target/restore"
-
-      # Release path: SFW is required (the action's default) — fail rather than
-      # install deps unprotected.
-      - name: "Setup SFW"
-        uses: "./.github/actions/setup-sfw"
-
-      - name: "infra setup"
-        run: "${SFW_PREFIX:-} ./scripts/bin/infra setup"
+      # SFW is required here (the action's default) — fail rather than install
+      # deps unprotected on the release path.
+      - name: "Setup"
+        uses: "./.github/actions/common-setup"
 
       # Consume the changesets, and create a git stash, to be popped by the next step:
       - name: "infra publish changesets"
@@ -172,33 +157,17 @@ jobs:
           persist-credentials: false
           fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
-      - name: "Free up disk space"
-        uses: "./.github/actions/free-disk-space"
-
-      # Skip cache + mtime restore on a real release so the published artifact
-      # comes from a clean build with no side inputs.
-      - name: "Restore file mtimes from git"
-        if: "${{ needs.changesets.outputs.publishNeeded != 'true' }}"
-        uses: "./.github/actions/git/restore-mtime"
-
-      - name: "Restore Dependencies Cache"
-        if: "${{ needs.changesets.outputs.publishNeeded != 'true' }}"
-        uses: "./.github/actions/cache/dependencies/restore"
-
-      - name: "Restore Cargo Target Cache"
-        if: "${{ needs.changesets.outputs.publishNeeded != 'true' }}"
-        uses: "./.github/actions/cache/cargo-target/restore"
-
-      # On a real release this job builds the published npm tarball, so SFW is
-      # required and a failed install stops the job. On PRs/pending pushes the
-      # build is best-effort (same condition the cache-restore steps above gate on).
-      - name: "Setup SFW"
-        uses: "./.github/actions/setup-sfw"
+      # On a real release, build from a clean tree: skip the mtime and cache restores
+      # so the published artifact has no side inputs. SFW is required on a release (a
+      # failed install stops the job) and best-effort otherwise — all gated on the
+      # same publishNeeded condition. (free-disk always runs, as before.)
+      - name: "Setup"
+        uses: "./.github/actions/common-setup"
         with:
-          optional: "${{ needs.changesets.outputs.publishNeeded != 'true' }}"
-
-      - name: "infra setup"
-        run: "${SFW_PREFIX:-} ./scripts/bin/infra setup"
+          restore-mtime: "${{ needs.changesets.outputs.publishNeeded != 'true' }}"
+          restore-deps-cache: "${{ needs.changesets.outputs.publishNeeded != 'true' }}"
+          restore-target-cache: "${{ needs.changesets.outputs.publishNeeded != 'true' }}"
+          sfw-optional: "${{ needs.changesets.outputs.publishNeeded != 'true' }}"
 
       - name: "Prepare publish artifacts"
         id: "prepare"
@@ -240,28 +209,13 @@ jobs:
           persist-credentials: false
           fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
-      - name: "Free up disk space"
-        uses: "./.github/actions/free-disk-space"
-
       # Review only validates the prepared artifact; the publishable bytes come from
       # `prepare`, not from this job's `target/`. Cache restore here is purely a
       # speedup for `cargo publish --dry-run`'s verify-build and has no provenance impact.
-      - name: "Restore file mtimes from git"
-        uses: "./.github/actions/git/restore-mtime"
-
-      - name: "Restore Dependencies Cache"
-        uses: "./.github/actions/cache/dependencies/restore"
-
-      - name: "Restore Cargo Target Cache"
-        uses: "./.github/actions/cache/cargo-target/restore"
-
-      - name: "Setup SFW (optional)"
-        uses: "./.github/actions/setup-sfw"
+      - name: "Setup"
+        uses: "./.github/actions/common-setup"
         with:
-          optional: "true"
-
-      - name: "infra setup"
-        run: "${SFW_PREFIX:-} ./scripts/bin/infra setup"
+          sfw-optional: "true"
 
       - name: "Download publish artifacts"
         uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c" # v8.0.1

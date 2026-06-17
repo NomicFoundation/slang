@@ -58,10 +58,11 @@ jobs:
           persist-credentials: false
           fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
-      - name: "Benchmark Setup"
-        uses: "./.github/actions/benchmark-setup"
+      - name: "Setup"
+        uses: "./.github/actions/common-setup"
         with:
-          tools: "cargo npm"
+          setup-tools: "cargo npm"
+          sfw-optional: "true"
 
       - name: "infra check npm"
         run: "${SFW_PREFIX:-} ./scripts/bin/infra check npm"
