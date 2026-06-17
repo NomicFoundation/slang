@@ -22,6 +22,6 @@ impl DiagnosticExtensions for UnresolvedImport {
     }
 
     fn message(&self) -> String {
-        format!("Unresolved import: {}", self.reason)
+        self.reason.clone()
     }
 }

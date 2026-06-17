@@ -1,7 +1,9 @@
 mod missing_file;
+mod missing_imported_file;
 mod unresolved_import;
 
 pub use missing_file::MissingFile;
+pub use missing_imported_file::MissingImportedFile;
 use serde::Serialize;
 pub use unresolved_import::UnresolvedImport;
 
@@ -19,5 +21,7 @@ define_diagnostic_kind! {
         UnresolvedImport(UnresolvedImport),
         /// The configured `read_file` callback could not provide a file's source.
         MissingFile(MissingFile),
+        /// An `import` directive resolved to a file that could not be read.
+        MissingImportedFile(MissingImportedFile),
     }
 }

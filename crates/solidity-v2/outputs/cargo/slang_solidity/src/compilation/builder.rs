@@ -1,5 +1,9 @@
-use slang_solidity_v2_common::collections::{Set, SortedMap, SortedSet};
-use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
+use std::ops::Range;
+
+use slang_solidity_v2_common::collections::{Set, SortedMap};
+use slang_solidity_v2_common::diagnostics::kinds::compilation::{
+    MissingFile, MissingImportedFile, UnresolvedImport,
+};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::utils::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
@@ -17,9 +21,10 @@ use super::unit::CompilationUnit;
 pub trait CompilationBuilderConfig {
     /// Callback used by this builder to load the contents of a file.
     ///
-    /// The user is responsible for fetching the file from the filesystem. Any
-    /// error returned is surfaced as a compilation diagnostic on the [`CompilationUnit`].
-    fn read_file(&mut self, file_id: &str) -> Result<String, String>;
+    /// The user is responsible for fetching the file from the filesystem. The
+    /// returned [`MissingFile`] is surfaced as a compilation diagnostic on the
+    /// [`CompilationUnit`].
+    fn read_file(&mut self, file_id: &str) -> Result<String, MissingFile>;
 
     /// Callback used by this builder to resolve an import path.
     /// For example, if a source file contains the following statement:
@@ -32,10 +37,13 @@ pub trait CompilationBuilderConfig {
     /// contents of the string literal, with the surrounding quotes stripped).
     ///
     /// The user is responsible for resolving it to a file in the compilation,
-    /// and returning its ID. Any error returned is surfaced as a compilation
-    /// diagnostic on the [`CompilationUnit`].
-    fn resolve_import(&mut self, source_file_id: &str, import_path: &str)
-        -> Result<String, String>;
+    /// and returning its ID. The returned [`UnresolvedImport`] is surfaced as a
+    /// compilation diagnostic on the [`CompilationUnit`].
+    fn resolve_import(
+        &mut self,
+        source_file_id: &str,
+        import_path: &str,
+    ) -> Result<String, UnresolvedImport>;
 }
 
 struct BuilderFile {
@@ -55,6 +63,7 @@ pub struct CompilationBuilder<C: CompilationBuilderConfig> {
 
     files: SortedMap<String, BuilderFile>,
     seen_files: Set<String>,
+    missing_files: Set<String>,
 }
 
 impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
@@ -66,8 +75,9 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
             language_version,
             diagnostics: DiagnosticCollection::default(),
 
-            files: SortedMap::new(),
+            files: SortedMap::default(),
             seen_files: Set::default(),
+            missing_files: Set::default(),
         }
     }
 
@@ -92,10 +102,9 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
 
         let source = match self.config.read_file(&file_id) {
             Ok(source) => source,
-            Err(reason) => {
-                // TODO(validation) SDR[1742]: instead of `file_id`, these errors should be placed
-                // on all imports that need it, with the import path text range.
-                self.diagnostics.push(file_id, 0..0, MissingFile { reason });
+            Err(missing_file) => {
+                self.missing_files.insert(file_id.clone());
+                self.diagnostics.push(file_id, 0..0, missing_file);
                 return;
             }
         };
@@ -109,19 +118,23 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
         let import_paths = extract_import_paths_from_cst(&source_unit, &source);
 
         let mut resolved_imports = SortedMap::new();
-        for import_path in import_paths {
+        for (import_path, path_range) in import_paths {
             match self.config.resolve_import(&file_id, &import_path) {
-                Ok(resolved_id) => {
-                    resolved_imports.insert(import_path, resolved_id.clone());
-                    self.add_file(resolved_id);
+                Ok(imported_file_id) => {
+                    resolved_imports.insert(import_path, imported_file_id.clone());
+                    self.add_file(imported_file_id.clone());
+
+                    if self.missing_files.contains(&imported_file_id) {
+                        self.diagnostics.push(
+                            file_id.clone(),
+                            path_range,
+                            MissingImportedFile { imported_file_id },
+                        );
+                    }
                 }
-                Err(reason) => {
-                    self.diagnostics.push(
-                        file_id.clone(),
-                        // TODO(validation) SDR[1743]: surface import path range
-                        0..0,
-                        UnresolvedImport { reason },
-                    );
+                Err(unresolved_import) => {
+                    self.diagnostics
+                        .push(file_id.clone(), path_range, unresolved_import);
                 }
             }
         }
@@ -177,8 +190,8 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
 fn extract_import_paths_from_cst(
     source_unit: &cst::SourceUnit,
     contents: &str,
-) -> SortedSet<String> {
-    let mut import_paths = SortedSet::new();
+) -> Vec<(String, Range<usize>)> {
+    let mut import_paths = Vec::new();
 
     for member in &source_unit.members.elements {
         let cst::SourceUnitMember::ImportDirective(import_directive) = member else {
@@ -192,7 +205,10 @@ fn extract_import_paths_from_cst(
             }
         };
         let literal = &contents[range.clone()];
-        import_paths.insert(strip_string_literal_quotes(literal).to_owned());
+        import_paths.push((
+            strip_string_literal_quotes(literal).to_owned(),
+            range.clone(),
+        ));
     }
     import_paths
 }
