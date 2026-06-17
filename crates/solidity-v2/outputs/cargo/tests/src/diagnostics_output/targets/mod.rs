@@ -2,9 +2,10 @@ mod slang;
 mod solc;
 
 use anyhow::Result;
-use semver::Version;
 pub(crate) use slang::SlangTarget;
 use slang_solidity_v2_common::collections::SortedMap;
+use slang_solidity_v2_common::evm_targets::EvmTarget;
+use slang_solidity_v2_common::versions::LanguageVersion;
 pub(crate) use solc::SolcTarget;
 
 pub(crate) trait TestTarget {
@@ -13,6 +14,7 @@ pub(crate) trait TestTarget {
     fn collect_diagnostics(
         &self,
         files: &SortedMap<String, String>,
-        version: &Version,
+        version: LanguageVersion,
+        evm_target: EvmTarget,
     ) -> Result<Vec<String>>;
 }

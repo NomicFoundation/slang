@@ -1,19 +1,19 @@
 mod expected_array_length_expression;
+mod incompatible_syntax_version;
 mod multiple_mutability_specifiers;
 mod multiple_override_specifiers;
 mod multiple_virtual_specifiers;
 mod unexpected_eof;
 mod unexpected_terminal;
-mod unsupported_syntax;
 
 pub use expected_array_length_expression::ExpectedArrayLengthExpression;
+pub use incompatible_syntax_version::IncompatibleSyntaxVersion;
 pub use multiple_mutability_specifiers::MultipleMutabilitySpecifiers;
 pub use multiple_override_specifiers::MultipleOverrideSpecifiers;
 pub use multiple_virtual_specifiers::MultipleVirtualSpecifiers;
 use serde::Serialize;
 pub use unexpected_eof::UnexpectedEof;
 pub use unexpected_terminal::UnexpectedTerminal;
-pub use unsupported_syntax::UnsupportedSyntax;
 
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
 use crate::diagnostics::kinds::DiagnosticKind;
@@ -29,8 +29,8 @@ define_diagnostic_kind! {
         /// The parser encountered a terminal not valid at the current position.
         UnexpectedTerminal(UnexpectedTerminal),
 
-        /// A piece of syntax is not supported by the currently selected version.
-        UnsupportedSyntax(UnsupportedSyntax),
+        /// A piece of syntax is not compatible with the currently selected language version.
+        IncompatibleSyntaxVersion(IncompatibleSyntaxVersion),
 
         /// More than one mutability specifier was provided on a definition.
         MultipleMutabilitySpecifiers(MultipleMutabilitySpecifiers),

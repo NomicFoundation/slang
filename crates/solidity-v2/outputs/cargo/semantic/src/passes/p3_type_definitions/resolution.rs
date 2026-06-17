@@ -8,6 +8,7 @@ use super::evaluator::{
 };
 use super::Pass;
 use crate::binder::{Definition, Resolution, Scope, ScopeId};
+use crate::built_ins::BuiltInsResolver;
 use crate::passes::common::resolve_identifier_path_in_scope;
 use crate::types::{
     ArrayType, DataLocation, FixedSizeArrayType, FunctionType, MappingType, TupleType, Type, TypeId,
@@ -208,21 +209,20 @@ impl ConstantIdentifierResolver<ScopeId> for Pass<'_> {
 
             Resolution::Unresolved => {
                 // Try to resolve a built-in using the scope as context
-                let resolver = self.built_ins_resolver();
                 let built_in = match self.binder.get_scope_by_id(*scope_id) {
                     Scope::Block(_)
                     | Scope::Chained(_)
                     | Scope::Contract(_)
                     | Scope::File(_)
                     | Scope::Function(_)
-                    | Scope::Modifier(_) => resolver.lookup_global(identifier),
+                    | Scope::Modifier(_) => BuiltInsResolver::lookup_global(identifier),
 
                     Scope::Enum(_) | Scope::Parameters(_) | Scope::Struct(_) | Scope::Using(_) => {
                         None
                     }
 
                     Scope::YulBlock(_) | Scope::YulFunction(_) => {
-                        resolver.lookup_yul_global(identifier)
+                        BuiltInsResolver::lookup_yul_global(identifier)
                     }
                 };
                 built_in.map_or(ComptimeResolution::Unresolved, ComptimeResolution::BuiltIn)

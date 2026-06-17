@@ -1,5 +1,3 @@
-use slang_solidity_v2_common::versions::LanguageVersion;
-
 use super::binder::{Binder, Definition, Typing};
 use super::types::{
     AddressType, ArrayType, BytesType, DataLocation, LiteralKind, Type, TypeId, TypeRegistry,
@@ -12,38 +10,25 @@ mod internal;
 pub use internal::InternalBuiltIn;
 
 pub(crate) struct BuiltInsResolver<'a> {
-    language_version: LanguageVersion,
     binder: &'a Binder,
     types: &'a TypeRegistry,
 }
 
 impl<'a> BuiltInsResolver<'a> {
-    pub(crate) fn new(
-        language_version: LanguageVersion,
-        binder: &'a Binder,
-        types: &'a TypeRegistry,
-    ) -> Self {
-        Self {
-            language_version,
-            binder,
-            types,
-        }
+    pub(crate) fn new(binder: &'a Binder, types: &'a TypeRegistry) -> Self {
+        Self { binder, types }
     }
 
-    pub(crate) fn lookup_global(&self, symbol: &str) -> Option<InternalBuiltIn> {
+    pub(crate) fn lookup_global(symbol: &str) -> Option<InternalBuiltIn> {
         match symbol {
             "abi" => Some(InternalBuiltIn::Abi),
             "addmod" => Some(InternalBuiltIn::Addmod),
             "assert" => Some(InternalBuiltIn::Assert),
-            "blobhash" if InternalBuiltIn::BLOBHASH_VERSIONS.contains(self.language_version) => {
-                Some(InternalBuiltIn::Blobhash)
-            }
+            "blobhash" => Some(InternalBuiltIn::Blobhash),
             "block" => Some(InternalBuiltIn::Block),
             "blockhash" => Some(InternalBuiltIn::Blockhash),
             "ecrecover" => Some(InternalBuiltIn::Ecrecover),
-            "erc7201" if InternalBuiltIn::ERC_7201_VERSIONS.contains(self.language_version) => {
-                Some(InternalBuiltIn::Erc7201)
-            }
+            "erc7201" => Some(InternalBuiltIn::Erc7201),
             "gasleft" => Some(InternalBuiltIn::Gasleft),
             "keccak256" => Some(InternalBuiltIn::Keccak256),
             "msg" => Some(InternalBuiltIn::Msg),
@@ -58,8 +43,7 @@ impl<'a> BuiltInsResolver<'a> {
         }
     }
 
-    #[allow(clippy::too_many_lines)]
-    pub(crate) fn lookup_yul_global(&self, symbol: &str) -> Option<InternalBuiltIn> {
+    pub(crate) fn lookup_yul_global(symbol: &str) -> Option<InternalBuiltIn> {
         // TODO(validation) SDR[18]: Yul built-in function names should be considered reserved words.
         // They're currently parsed as Identifiers to facilitate their manipulation.
         match symbol {
@@ -68,19 +52,9 @@ impl<'a> BuiltInsResolver<'a> {
             "address" => Some(InternalBuiltIn::YulAddress),
             "and" => Some(InternalBuiltIn::YulAnd),
             "balance" => Some(InternalBuiltIn::YulBalance),
-            "basefee" if InternalBuiltIn::YUL_BASEFEE_VERSIONS.contains(self.language_version) => {
-                Some(InternalBuiltIn::YulBasefee)
-            }
-            "blobbasefee"
-                if InternalBuiltIn::YUL_BLOBBASEFEE_VERSIONS.contains(self.language_version) =>
-            {
-                Some(InternalBuiltIn::YulBlobbasefee)
-            }
-            "blobhash"
-                if InternalBuiltIn::YUL_BLOBHASH_VERSIONS.contains(self.language_version) =>
-            {
-                Some(InternalBuiltIn::YulBlobhash)
-            }
+            "basefee" => Some(InternalBuiltIn::YulBasefee),
+            "blobbasefee" => Some(InternalBuiltIn::YulBlobbasefee),
+            "blobhash" => Some(InternalBuiltIn::YulBlobhash),
             "blockhash" => Some(InternalBuiltIn::YulBlockhash),
             "byte" => Some(InternalBuiltIn::YulByte),
             "callcode" => Some(InternalBuiltIn::YulCallcode),
@@ -91,20 +65,14 @@ impl<'a> BuiltInsResolver<'a> {
             "call" => Some(InternalBuiltIn::YulCall),
             "callvalue" => Some(InternalBuiltIn::YulCallvalue),
             "chainid" => Some(InternalBuiltIn::YulChainid),
-            "clz" if InternalBuiltIn::YUL_CLZ_VERSIONS.contains(self.language_version) => {
-                Some(InternalBuiltIn::YulClz)
-            }
+            "clz" => Some(InternalBuiltIn::YulClz),
             "codecopy" => Some(InternalBuiltIn::YulCodecopy),
             "codesize" => Some(InternalBuiltIn::YulCodesize),
             "coinbase" => Some(InternalBuiltIn::YulCoinbase),
             "create" => Some(InternalBuiltIn::YulCreate),
             "create2" => Some(InternalBuiltIn::YulCreate2),
             "delegatecall" => Some(InternalBuiltIn::YulDelegatecall),
-            "difficulty"
-                if InternalBuiltIn::YUL_DIFFICULTY_VERSIONS.contains(self.language_version) =>
-            {
-                Some(InternalBuiltIn::YulDifficulty)
-            }
+            "difficulty" => Some(InternalBuiltIn::YulDifficulty),
             "div" => Some(InternalBuiltIn::YulDiv),
             "eq" => Some(InternalBuiltIn::YulEq),
             "exp" => Some(InternalBuiltIn::YulExp),
@@ -123,9 +91,7 @@ impl<'a> BuiltInsResolver<'a> {
                 Some(InternalBuiltIn::YulLog(arity))
             }
             "lt" => Some(InternalBuiltIn::YulLt),
-            "mcopy" if InternalBuiltIn::YUL_MCOPY_VERSIONS.contains(self.language_version) => {
-                Some(InternalBuiltIn::YulMcopy)
-            }
+            "mcopy" => Some(InternalBuiltIn::YulMcopy),
             "mload" => Some(InternalBuiltIn::YulMload),
             "mod" => Some(InternalBuiltIn::YulMod),
             "msize" => Some(InternalBuiltIn::YulMsize),
@@ -138,11 +104,7 @@ impl<'a> BuiltInsResolver<'a> {
             "or" => Some(InternalBuiltIn::YulOr),
             "origin" => Some(InternalBuiltIn::YulOrigin),
             "pop" => Some(InternalBuiltIn::YulPop),
-            "prevrandao"
-                if InternalBuiltIn::YUL_PREVRANDAO_VERSIONS.contains(self.language_version) =>
-            {
-                Some(InternalBuiltIn::YulPrevrandao)
-            }
+            "prevrandao" => Some(InternalBuiltIn::YulPrevrandao),
             "return" => Some(InternalBuiltIn::YulReturn),
             "returndatacopy" => Some(InternalBuiltIn::YulReturndatacopy),
             "returndatasize" => Some(InternalBuiltIn::YulReturndatasize),
@@ -163,12 +125,8 @@ impl<'a> BuiltInsResolver<'a> {
             "stop" => Some(InternalBuiltIn::YulStop),
             "sub" => Some(InternalBuiltIn::YulSub),
             "timestamp" => Some(InternalBuiltIn::YulTimestamp),
-            "tload" if InternalBuiltIn::YUL_TLOAD_VERSIONS.contains(self.language_version) => {
-                Some(InternalBuiltIn::YulTload)
-            }
-            "tstore" if InternalBuiltIn::YUL_TSTORE_VERSIONS.contains(self.language_version) => {
-                Some(InternalBuiltIn::YulTstore)
-            }
+            "tload" => Some(InternalBuiltIn::YulTload),
+            "tstore" => Some(InternalBuiltIn::YulTstore),
             "xor" => Some(InternalBuiltIn::YulXor),
 
             _ => None,
@@ -184,40 +142,21 @@ impl<'a> BuiltInsResolver<'a> {
             InternalBuiltIn::Abi => match symbol {
                 "decode" => Some(InternalBuiltIn::AbiDecode),
                 "encode" => Some(InternalBuiltIn::AbiEncode),
-                "encodeCall"
-                    if InternalBuiltIn::ABI_ENCODE_CALL_VERSIONS
-                        .contains(self.language_version) =>
-                {
-                    Some(InternalBuiltIn::AbiEncodeCall)
-                }
+                "encodeCall" => Some(InternalBuiltIn::AbiEncodeCall),
                 "encodePacked" => Some(InternalBuiltIn::AbiEncodePacked),
                 "encodeWithSelector" => Some(InternalBuiltIn::AbiEncodeWithSelector),
                 "encodeWithSignature" => Some(InternalBuiltIn::AbiEncodeWithSignature),
                 _ => None,
             },
             InternalBuiltIn::Block => match symbol {
-                "basefee"
-                    if InternalBuiltIn::BLOCK_BASEFEE_VERSIONS.contains(self.language_version) =>
-                {
-                    Some(InternalBuiltIn::BlockBasefee)
-                }
-                "blobbasefee"
-                    if InternalBuiltIn::BLOCK_BLOBBASEFEE_VERSIONS
-                        .contains(self.language_version) =>
-                {
-                    Some(InternalBuiltIn::BlockBlobbasefee)
-                }
+                "basefee" => Some(InternalBuiltIn::BlockBasefee),
+                "blobbasefee" => Some(InternalBuiltIn::BlockBlobbasefee),
                 "chainid" => Some(InternalBuiltIn::BlockChainid),
                 "coinbase" => Some(InternalBuiltIn::BlockCoinbase),
                 "difficulty" => Some(InternalBuiltIn::BlockDifficulty),
                 "gaslimit" => Some(InternalBuiltIn::BlockGaslimit),
                 "number" => Some(InternalBuiltIn::BlockNumber),
-                "prevrandao"
-                    if InternalBuiltIn::BLOCK_PREVRANDAO_VERSIONS
-                        .contains(self.language_version) =>
-                {
-                    Some(InternalBuiltIn::BlockPrevrandao)
-                }
+                "prevrandao" => Some(InternalBuiltIn::BlockPrevrandao),
                 "timestamp" => Some(InternalBuiltIn::BlockTimestamp),
                 _ => None,
             },
@@ -239,18 +178,8 @@ impl<'a> BuiltInsResolver<'a> {
                     _ => None,
                 },
                 Type::Enum(_) => match symbol {
-                    "min"
-                        if InternalBuiltIn::TYPE_ENUM_MIN_VERSIONS
-                            .contains(self.language_version) =>
-                    {
-                        Some(InternalBuiltIn::TypeEnumMin(*type_id))
-                    }
-                    "max"
-                        if InternalBuiltIn::TYPE_ENUM_MAX_VERSIONS
-                            .contains(self.language_version) =>
-                    {
-                        Some(InternalBuiltIn::TypeEnumMax(*type_id))
-                    }
+                    "min" => Some(InternalBuiltIn::TypeEnumMin(*type_id)),
+                    "max" => Some(InternalBuiltIn::TypeEnumMax(*type_id)),
                     _ => None,
                 },
                 Type::Integer(_) => match symbol {
@@ -272,43 +201,28 @@ impl<'a> BuiltInsResolver<'a> {
     }
 
     pub(crate) fn lookup_member_of_user_definition(
-        &self,
         definition: &Definition,
         symbol: &str,
     ) -> Option<InternalBuiltIn> {
         match definition {
             Definition::Error(_) => match symbol {
-                "selector"
-                    if InternalBuiltIn::ERROR_SELECTOR_VERSIONS.contains(self.language_version) =>
-                {
-                    Some(InternalBuiltIn::ErrorSelector)
-                }
+                "selector" => Some(InternalBuiltIn::ErrorSelector),
                 _ => None,
             },
             Definition::Event(_) => match symbol {
-                "selector"
-                    if InternalBuiltIn::EVENT_SELECTOR_VERSIONS.contains(self.language_version) =>
-                {
-                    Some(InternalBuiltIn::EventSelector)
-                }
+                "selector" => Some(InternalBuiltIn::EventSelector),
                 _ => None,
             },
             Definition::UserDefinedValueType(_) => match symbol {
-                "wrap" if InternalBuiltIn::WRAP_VERSIONS.contains(self.language_version) => {
-                    Some(InternalBuiltIn::Wrap(definition.node_id()))
-                }
-                "unwrap" if InternalBuiltIn::UNWRAP_VERSIONS.contains(self.language_version) => {
-                    Some(InternalBuiltIn::Unwrap(definition.node_id()))
-                }
+                "wrap" => Some(InternalBuiltIn::Wrap(definition.node_id())),
+                "unwrap" => Some(InternalBuiltIn::Unwrap(definition.node_id())),
                 _ => None,
             },
             _ => None,
         }
     }
 
-    #[allow(clippy::unused_self)]
     pub(crate) fn lookup_member_of_meta_type(
-        &self,
         parent_type: &Type,
         symbol: &str,
     ) -> Option<InternalBuiltIn> {
@@ -404,9 +318,7 @@ impl<'a> BuiltInsResolver<'a> {
         }
     }
 
-    #[allow(clippy::unused_self)]
     pub(crate) fn lookup_yul_suffix(
-        &self,
         definition: &Definition,
         symbol: &str,
     ) -> Option<InternalBuiltIn> {

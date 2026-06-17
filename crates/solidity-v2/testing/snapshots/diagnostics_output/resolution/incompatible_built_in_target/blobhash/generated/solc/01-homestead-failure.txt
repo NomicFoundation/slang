@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[Warning <no-code>] Warning: Support for EVM versions older than constantinople is deprecated and will be removed in the future.
+
+[DeclarationError 7576] Error: Undeclared identifier. Did you mean "blockhash"?
+   ╭─[input.sol:6:16]
+   │
+ 6 │         return blobhash(0);
+   │                ────┬───  
+   │                    ╰───── Error occurred here.
+───╯

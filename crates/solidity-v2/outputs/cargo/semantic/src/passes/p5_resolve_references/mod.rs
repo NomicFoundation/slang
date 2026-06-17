@@ -1,3 +1,5 @@
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
@@ -10,6 +12,8 @@ use crate::types::TypeRegistry;
 mod disambiguation;
 mod resolution;
 mod typing;
+#[path = "validate_built_ins.generated.rs"]
+mod validate_built_ins;
 mod visitor;
 
 /// This pass will find identifiers used as references, resolve them to the
@@ -22,9 +26,18 @@ pub fn run(
     binder: &mut Binder,
     types: &mut TypeRegistry,
     language_version: LanguageVersion,
+    evm_target: EvmTarget,
+    diagnostics: &mut DiagnosticCollection,
 ) {
     for file in files {
-        Pass::visit_file(file, binder, types, language_version);
+        Pass::visit_file(
+            file,
+            binder,
+            types,
+            language_version,
+            evm_target,
+            diagnostics,
+        );
     }
     // update definition->references reverse mapping
     binder.update_definitions_to_references_index();
@@ -40,30 +53,38 @@ struct ScopeFrame {
 
 struct Pass<'a> {
     language_version: LanguageVersion,
+    evm_target: EvmTarget,
+    file_id: &'a str,
     scope_stack: Vec<ScopeFrame>,
     binder: &'a mut Binder,
     types: &'a mut TypeRegistry,
+    diagnostics: &'a mut DiagnosticCollection,
 }
 
 impl<'a> Pass<'a> {
     fn visit_file(
-        file: &impl SemanticFile,
+        file: &'a impl SemanticFile,
         binder: &'a mut Binder,
         types: &'a mut TypeRegistry,
         language_version: LanguageVersion,
+        evm_target: EvmTarget,
+        diagnostics: &'a mut DiagnosticCollection,
     ) {
         let mut pass = Self {
             language_version,
+            evm_target,
+            file_id: file.id(),
             scope_stack: Vec::new(),
             binder,
             types,
+            diagnostics,
         };
         ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
         assert!(pass.scope_stack.is_empty());
     }
 
     fn built_ins_resolver(&self) -> BuiltInsResolver<'_> {
-        BuiltInsResolver::new(self.language_version, self.binder, self.types)
+        BuiltInsResolver::new(self.binder, self.types)
     }
 
     fn enter_scope_for_node_id(&mut self, node_id: NodeId) {

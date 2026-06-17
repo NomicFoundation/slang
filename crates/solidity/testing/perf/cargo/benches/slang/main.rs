@@ -14,6 +14,7 @@ use solidity_testing_perf_cargo::tests::slang::bindings_build::BuiltBindingGraph
 
 mod __dependencies_used_in_lib__ {
     use anyhow as _;
+    use inflector as _;
     use infra_utils as _;
     use semver as _;
     use serde as _;

@@ -13,15 +13,19 @@ pub fn render_solc_error(error: &Error, sources: &BTreeMap<String, String>) -> R
     let code = format!(
         "{error_type} {error_code}",
         error_type = error.r#type,
-        error_code = error.error_code
+        error_code = error.error_code.as_deref().unwrap_or("<no-code>")
     );
 
-    let source_id = error.location.file.unwrap_string();
+    let Some(source_location) = error.source_location.as_ref() else {
+        return Ok(format!("[{code}] {kind}: {message}"));
+    };
+
+    let source_id = source_location.file.unwrap_string();
     let source = sources.get(&source_id).unwrap();
 
     let range = {
-        let start = error.location.start;
-        let end = error.location.end;
+        let start = source_location.start;
+        let end = source_location.end;
 
         let start_chars = source[..start].chars().count();
         let end_chars = start_chars + source[start..end].chars().count();

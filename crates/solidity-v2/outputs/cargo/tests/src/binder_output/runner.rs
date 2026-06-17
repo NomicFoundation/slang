@@ -5,10 +5,10 @@ use infra_utils::paths::PathExtensions;
 use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig};
 use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
-use slang_solidity_v2_common::versions::LanguageVersion;
 
 use super::report::binder_report;
 use super::report_data::ReportData;
+use crate::snapshots::{self, SnapshotOutcome, SnapshotStatus};
 use crate::utils::multi_part_file::split_multi_file;
 use crate::utils::path_resolver;
 
@@ -52,13 +52,11 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         .map(|part| (part.name.to_string(), part.contents.to_string()))
         .collect();
 
-    let mut last_report = None;
-
-    for &version in LanguageVersion::ALL {
+    snapshots::generate_snapshots(&test_dir, &mut fs, "generated", |version, target| {
         let config = TestConfig {
             files: files.clone(),
         };
-        let mut builder = CompilationBuilder::create(version, config);
+        let mut builder = CompilationBuilder::create(version, target, config);
 
         // While `builder.add_file()` recursively adds dependencies, so adding
         // the root file would be enough, we don't want to depend on the
@@ -72,24 +70,20 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         let report_data = ReportData::prepare(&compilation, &files);
 
         let status = if report_data.all_resolved() {
-            "success"
+            SnapshotStatus::Success
         } else {
-            "failure"
+            SnapshotStatus::Failure
         };
 
-        let report = binder_report(&report_data)?;
-
-        match last_report {
-            Some(ref last) if last == &report => (),
-            _ => {
-                let snapshot_path = test_dir
-                    .join("generated")
-                    .join(format!("{version}-{status}.txt"));
-                fs.write_file_raw(snapshot_path, &report)?;
-                last_report = Some(report);
-            }
-        }
-    }
+        let contents = binder_report(&report_data)?;
+        Ok(SnapshotOutcome {
+            version,
+            target,
+            status,
+            contents,
+            extension: "txt",
+        })
+    })?;
 
     Ok(())
 }

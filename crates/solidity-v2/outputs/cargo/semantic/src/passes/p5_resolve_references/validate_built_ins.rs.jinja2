@@ -1,0 +1,72 @@
+{%- import "crates/solidity-v2/outputs/cargo/common/src/versions/_macros.rs.jinja2" as _versions -%}
+{%- import "crates/solidity-v2/outputs/cargo/common/src/evm_targets/_macros.rs.jinja2" as _evm_targets -%}
+
+use std::ops::Range;
+
+use slang_solidity_v2_common::diagnostics::kinds::resolution::{
+    IncompatibleBuiltInTarget, IncompatibleBuiltInVersion,
+};
+use slang_solidity_v2_common::evm_targets::{EvmTarget, EvmTargetSpecifier};
+use slang_solidity_v2_common::versions::{LanguageVersion, LanguageVersionSpecifier};
+
+use crate::built_ins::InternalBuiltIn;
+
+use super::Pass;
+
+impl Pass<'_> {
+    /// Emits diagnostics if `built_in` is not compatible with the pass's
+    /// configured language version and/or EVM target. `range` locates the
+    /// diagnostic at the referencing identifier.
+    {#-
+        TODO(v2): API needs to be redesigned:
+        Calling validation after individual resolution operations is error-prone, and can break in the future.
+        See the discussion for more context: https://github.com/NomicFoundation/slang/pull/1869
+    #}
+    #[allow(clippy::too_many_lines)]
+    pub(super) fn validate_built_in(
+        &mut self,
+        built_in: InternalBuiltIn,
+        range: &Range<usize>,
+    ) {
+        match built_in {
+            {%- for context in model.language.built_ins %}
+                {%- for scope in context.scopes %}
+                    {%- for definition in scope.definitions %}
+                        {%- if definition.enabled.type != "Always" or definition.evm_enabled.type != "Always" %}
+                            InternalBuiltIn::{{ definition.name }}{% if definition.internal_parameter %}(_){% endif %} => {
+                                {%- if definition.enabled.type != "Always" %}
+                                    self.check_version(range, {{ _versions::specifier(s=definition.enabled) }});
+                                {%- endif %}
+                                {%- if definition.evm_enabled.type != "Always" %}
+                                    self.check_target(range, {{ _evm_targets::specifier(s=definition.evm_enabled) }});
+                                {%- endif %}
+                            }
+                        {%- endif %}
+                    {%- endfor %}
+                {%- endfor %}
+            {%- endfor %}
+
+            _ => {}
+        }
+    }
+
+    fn check_version(&mut self, range: &Range<usize>, compatible_in: LanguageVersionSpecifier) {
+        if !compatible_in.contains(self.language_version) {
+            self.diagnostics.push(
+                self.file_id.to_owned(),
+                range.clone(),
+                IncompatibleBuiltInVersion { compatible_in },
+            );
+        }
+    }
+
+    fn check_target(&mut self, range: &Range<usize>, compatible_in: EvmTargetSpecifier) {
+        if !compatible_in.contains(self.evm_target) {
+            self.diagnostics.push(
+                self.file_id.to_owned(),
+                range.clone(),
+                IncompatibleBuiltInTarget { compatible_in },
+            );
+        }
+    }
+}

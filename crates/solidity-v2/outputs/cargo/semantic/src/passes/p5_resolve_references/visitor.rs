@@ -119,10 +119,13 @@ impl Visitor for Pass<'_> {
         if let ir::Expression::Identifier(identifier) = node {
             let symbol = identifier.unparse();
             let resolution = if symbol == "_" && self.is_in_modifier_scope() {
-                Resolution::BuiltIn(InternalBuiltIn::ModifierUnderscore)
+                let built_in = InternalBuiltIn::ModifierUnderscore;
+                self.validate_built_in(built_in, &identifier.range);
+                Resolution::BuiltIn(built_in)
             } else {
                 let scope_id = self.current_scope_id();
-                self.filter_overriden_definitions(self.resolve_symbol_in_scope(scope_id, symbol))
+                let resolution = self.resolve_symbol_in_scope(scope_id, symbol, &identifier.range);
+                self.filter_overriden_definitions(resolution)
             };
 
             // Set the typing for the `Identifier` node.
@@ -328,9 +331,12 @@ impl Visitor for Pass<'_> {
         // we need to resolve the identifier at this point that we already have
         // typing information of the operand expression
         let operand_typing = self.typing_of_expression(&node.operand);
-        let resolution = self.filter_overriden_definitions(
-            self.resolve_symbol_in_typing(&operand_typing, node.member.unparse()),
+        let resolution = self.resolve_symbol_in_typing(
+            &operand_typing,
+            node.member.unparse(),
+            &node.member.range,
         );
+        let resolution = self.filter_overriden_definitions(resolution);
 
         // If the operand is either `this` or a contract/interface reference
         // type, then resolve the member typing as a contract member. This
@@ -491,6 +497,9 @@ impl Visitor for Pass<'_> {
             let identifier = &option.name;
             let resolution =
                 crate::built_ins::BuiltInsResolver::lookup_call_option(identifier.unparse()).into();
+            if let Resolution::BuiltIn(built_in) = &resolution {
+                self.validate_built_in(*built_in, &identifier.range);
+            }
             let reference = Reference::new(Arc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
         }
@@ -522,13 +531,15 @@ impl Visitor for Pass<'_> {
 
         let scope_id = self.current_scope_id();
         let identifier = &items[0];
-        let resolution = self.resolve_symbol_in_yul_scope(scope_id, identifier.unparse());
+        let resolution =
+            self.resolve_symbol_in_yul_scope(scope_id, identifier.unparse(), &identifier.range);
+
         let reference = Reference::new(Arc::clone(identifier), resolution.clone());
         self.binder.insert_reference(reference);
 
         if items.len() > 1 {
             let suffix = &items[1];
-            let resolution = self.resolve_yul_suffix(suffix.unparse(), &resolution);
+            let resolution = self.resolve_yul_suffix(suffix.unparse(), &resolution, &suffix.range);
             let reference = Reference::new(Arc::clone(suffix), resolution);
             self.binder.insert_reference(reference);
         }

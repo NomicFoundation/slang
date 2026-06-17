@@ -1,5 +1,4 @@
 use std::fmt::Write;
-use std::path::Path;
 
 use anyhow::{bail, Result};
 use infra_utils::cargo::CargoWorkspace;
@@ -10,13 +9,8 @@ use slang_solidity_v2_common::collections::{SortedMap, SortedSet};
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::diagnostics_output::targets::{SlangTarget, SolcTarget, TestTarget};
+use crate::snapshots::{self, SnapshotOutcome, SnapshotStatus, TestConfig, TestMatrix};
 use crate::utils::multi_part_file::split_multi_file;
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-enum CompilationStatus {
-    Success,
-    Failure,
-}
 
 pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
     let test_dir = CargoWorkspace::locate_source_crate("solidity_v2_testing_snapshots")?
@@ -37,82 +31,80 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         .map(|part| (part.name.to_string(), part.contents.to_string()))
         .collect();
 
-    let versions = LanguageVersion::ALL
-        .iter()
-        .map(|v| (*v).into())
-        .collect::<SortedSet<Version>>();
+    let config = TestConfig::resolve(&test_dir)?;
+    let solc_versions: SortedSet<Version> = match config.matrix {
+        TestMatrix::SingleTargetAllVersions { .. } => {
+            LanguageVersion::ALL.iter().map(|v| (*v).into()).collect()
+        }
+        TestMatrix::SingleVersionAllTargets { version } => SortedSet::from_iter([version.into()]),
+    };
 
     let slang_target = SlangTarget;
-    let solc_target = SolcTarget::new(versions.clone())?;
+    let solc_target = SolcTarget::new(solc_versions)?;
+    let slang_subdir = format!("generated/{}", slang_target.name());
+    let solc_subdir = format!("generated/{}", solc_target.name());
 
-    let slang_statuses = run_target(&slang_target, &test_dir, &mut fs, &files, &versions)?;
-    let solc_statuses = run_target(&solc_target, &test_dir, &mut fs, &files, &versions)?;
+    let slang_outcomes =
+        snapshots::generate_snapshots(&test_dir, &mut fs, &slang_subdir, |version, target| {
+            let errors = slang_target.collect_diagnostics(&files, version, target)?;
+            Ok(make_outcome(version, target, &errors))
+        })?;
+    let solc_outcomes =
+        snapshots::generate_snapshots(&test_dir, &mut fs, &solc_subdir, |version, target| {
+            let errors = solc_target.collect_diagnostics(&files, version, target)?;
+            Ok(make_outcome(version, target, &errors))
+        })?;
 
-    compare_statuses(
+    compare_outcomes(
         group_name,
         test_name,
-        &versions,
-        &slang_statuses,
-        &solc_statuses,
+        config,
+        &slang_outcomes,
+        &solc_outcomes,
     )
 }
 
-fn run_target(
-    target: &dyn TestTarget,
-    test_dir: &Path,
-    fs: &mut CodegenFileSystem,
-    files: &SortedMap<String, String>,
-    versions: &SortedSet<Version>,
-) -> Result<Vec<CompilationStatus>> {
-    let mut last_report = None;
-    let mut statuses = Vec::with_capacity(versions.len());
+fn make_outcome(
+    version: LanguageVersion,
+    target: slang_solidity_v2_common::evm_targets::EvmTarget,
+    errors: &[String],
+) -> SnapshotOutcome {
+    let status = if errors.is_empty() {
+        SnapshotStatus::Success
+    } else {
+        SnapshotStatus::Failure
+    };
 
-    for version in versions {
-        let errors = target.collect_diagnostics(files, version)?;
-
-        let status = if errors.is_empty() {
-            CompilationStatus::Success
-        } else {
-            CompilationStatus::Failure
-        };
-        statuses.push(status);
-
-        let mut report = String::new();
-        writeln!(report, "Diagnostics: {count}", count = errors.len())?;
-        for rendered in &errors {
-            writeln!(report)?;
-            writeln!(report, "{rendered}")?;
-        }
-
-        match last_report {
-            Some(ref last) if last == &report => (),
-            _ => {
-                let snapshot_path = test_dir
-                    .join("generated")
-                    .join(target.name())
-                    .join(format!("{version}-{status:?}.txt").to_lowercase());
-
-                fs.write_file_raw(snapshot_path, &report)?;
-                last_report = Some(report);
-            }
-        }
+    let mut contents = String::new();
+    writeln!(contents, "Diagnostics: {count}", count = errors.len()).unwrap();
+    for rendered in errors {
+        writeln!(contents).unwrap();
+        writeln!(contents, "{rendered}").unwrap();
     }
 
-    Ok(statuses)
+    SnapshotOutcome {
+        version,
+        target,
+        status,
+        contents,
+        extension: "txt",
+    }
 }
 
-fn compare_statuses(
+fn compare_outcomes(
     group_name: &str,
     test_name: &str,
-    versions: &SortedSet<Version>,
-    slang_statuses: &[CompilationStatus],
-    solc_statuses: &[CompilationStatus],
+    config: TestConfig,
+    slang_outcomes: &[SnapshotOutcome],
+    solc_outcomes: &[SnapshotOutcome],
 ) -> Result<()> {
-    // Both targets run over the same versions, in the same (sorted) order.
-    assert_eq!(versions.len(), slang_statuses.len());
-    assert_eq!(versions.len(), solc_statuses.len());
-
-    if slang_statuses == solc_statuses {
+    // Both runs iterate the same axis in the same order.
+    assert_eq!(slang_outcomes.len(), solc_outcomes.len());
+    let statuses_match = slang_outcomes
+        .iter()
+        .zip(solc_outcomes)
+        .all(|(slang, solc)| slang.status == solc.status);
+    if statuses_match {
         return Ok(());
     }
 
@@ -123,14 +115,26 @@ fn compare_statuses(
     )?;
     writeln!(message)?;
 
-    for (index, version) in versions.iter().enumerate() {
-        let slang = slang_statuses[index];
-        let solc = solc_statuses[index];
-        let outcome = if slang == solc { "match" } else { "differ" };
+    for (slang, solc) in slang_outcomes.iter().zip(solc_outcomes) {
+        debug_assert_eq!(slang.version, solc.version);
+        debug_assert_eq!(slang.target, solc.target);
+
+        let label = match config.matrix {
+            TestMatrix::SingleTargetAllVersions { .. } => slang.version.to_string(),
+            TestMatrix::SingleVersionAllTargets { .. } => slang.target.to_string(),
+        };
+
+        let slang_status = slang.status;
+        let solc_status = solc.status;
+        let outcome = if slang_status == solc_status {
+            "match"
+        } else {
+            "differ"
+        };
 
         writeln!(
             message,
-            "  {version}: slang={slang:?}, solc={solc:?} ({outcome})"
+            "  {label}: slang={slang_status:?}, solc={solc_status:?} ({outcome})"
         )?;
     }
 

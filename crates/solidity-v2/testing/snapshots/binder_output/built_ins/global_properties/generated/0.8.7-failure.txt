@@ -1,5 +1,44 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: This built-in was introduced in EVM target 'London'.
+   ╭─[input.sol:8:25]
+   │
+ 8 │         uint v1 = block.basefee;
+   │                         ───┬───  
+   │                            ╰───── Error occurred here.
+───╯
+Error: This built-in was introduced in EVM target 'Cancun'.
+   ╭─[input.sol:9:25]
+   │
+ 9 │         uint v2 = block.blobbasefee;
+   │                         ─────┬─────  
+   │                              ╰─────── Error occurred here.
+───╯
+Error: This built-in was introduced in version '0.8.24'.
+   ╭─[input.sol:9:25]
+   │
+ 9 │         uint v2 = block.blobbasefee;
+   │                         ─────┬─────  
+   │                              ╰─────── Error occurred here.
+───╯
+Error: This built-in was introduced in EVM target 'Paris'.
+    ╭─[input.sol:15:25]
+    │
+ 15 │         uint v8 = block.prevrandao;
+    │                         ─────┬────  
+    │                              ╰────── Error occurred here.
+────╯
+Error: This built-in was introduced in version '0.8.18'.
+    ╭─[input.sol:15:25]
+    │
+ 15 │         uint v8 = block.prevrandao;
+    │                         ─────┬────  
+    │                              ╰────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
 Definitions (19):
 - Def: #1 ["Test" @ input.sol:1:10] (contract)
 - Def: #2 ["testTx" @ input.sol:2:14] (function, type: function () returns void)
@@ -31,7 +70,7 @@ References (30):
 - Ref: ["block" @ input.sol:8:19] -> built-in
 - Ref: ["basefee" @ input.sol:8:25] -> built-in
 - Ref: ["block" @ input.sol:9:19] -> built-in
-- Ref: ["blobbasefee" @ input.sol:9:25] -> unresolved
+- Ref: ["blobbasefee" @ input.sol:9:25] -> built-in
 - Ref: ["block" @ input.sol:10:19] -> built-in
 - Ref: ["chainid" @ input.sol:10:25] -> built-in
 - Ref: ["block" @ input.sol:11:22] -> built-in
@@ -43,7 +82,7 @@ References (30):
 - Ref: ["block" @ input.sol:14:19] -> built-in
 - Ref: ["number" @ input.sol:14:25] -> built-in
 - Ref: ["block" @ input.sol:15:19] -> built-in
-- Ref: ["prevrandao" @ input.sol:15:25] -> unresolved
+- Ref: ["prevrandao" @ input.sol:15:25] -> built-in
 - Ref: ["block" @ input.sol:16:19] -> built-in
 - Ref: ["timestamp" @ input.sol:16:25] -> built-in
 - Ref: ["msg" @ input.sol:20:20] -> built-in
@@ -101,7 +140,7 @@ Bindings:
     │                     │        │       
     │                     ╰──────────────── built-in
     │                              │       
-    │                              ╰─────── unresolved
+    │                              ╰─────── built-in
  10 │         uint v3 = block.chainid;
     │              ─┬   ──┬── ───┬───  
     │               ╰────────────────── name: 8
@@ -143,7 +182,7 @@ Bindings:
     │                     │        │      
     │                     ╰─────────────── built-in
     │                              │      
-    │                              ╰────── unresolved
+    │                              ╰────── built-in
  16 │         uint v9 = block.timestamp;
     │              ─┬   ──┬── ────┬────  
     │               ╰──────────────────── name: 14

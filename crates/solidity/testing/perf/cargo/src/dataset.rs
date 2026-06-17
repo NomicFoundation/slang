@@ -4,7 +4,8 @@ use std::path::Path;
 use std::sync::OnceLock;
 
 use anyhow::{anyhow, bail, Result};
-use semver::{BuildMetadata, Prerelease};
+use infra_utils::solc::default_evm_version;
+use semver::{BuildMetadata, Prerelease, Version};
 use serde::Deserialize;
 use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
 use solidity_testing_utils::import_resolver::{ImportRemap, ImportResolver, SourceMap};
@@ -73,6 +74,8 @@ struct Compilation {
 #[serde(rename_all = "camelCase")]
 struct CompilerSettings {
     pub remappings: Vec<String>,
+    #[serde(default)]
+    pub evm_version: Option<String>,
 }
 
 pub struct SolidityProject {
@@ -80,6 +83,7 @@ pub struct SolidityProject {
     pub sources: BTreeMap<String, String>,
     pub entrypoint: String,
     pub compiler_version: String,
+    pub evm_version: String,
     pub import_resolver: ImportResolver,
 }
 
@@ -93,8 +97,15 @@ impl TryFrom<Metadata> for SolidityProject {
             .map(|(k, v)| (k, v.content))
             .collect();
         let import_resolver =
-            import_resolver_from(value.compilation.compiler_settings, sources.keys());
-        let compiler_version = value.compilation.compiler_version;
+            import_resolver_from(&value.compilation.compiler_settings, sources.keys());
+
+        let compiler_version = value.compilation.compiler_version.clone();
+
+        let evm_version = match value.compilation.compiler_settings.evm_version {
+            Some(evm_version) => evm_version,
+            None => default_evm_version(&Version::parse(&compiler_version).unwrap()).to_owned(),
+        };
+
         let idx = value
             .compilation
             .fully_qualified_name
@@ -111,13 +122,14 @@ impl TryFrom<Metadata> for SolidityProject {
             sources,
             entrypoint,
             compiler_version,
+            evm_version,
             import_resolver,
         })
     }
 }
 
 fn import_resolver_from<'a, T: Iterator<Item = &'a String>>(
-    compiler_settings: CompilerSettings,
+    compiler_settings: &CompilerSettings,
     sources: T,
 ) -> ImportResolver {
     let import_remaps: Vec<ImportRemap> = compiler_settings

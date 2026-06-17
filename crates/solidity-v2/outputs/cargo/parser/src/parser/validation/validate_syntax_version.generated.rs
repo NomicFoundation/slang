@@ -3,7 +3,7 @@
 #![allow(clippy::needless_return)]
 #![allow(clippy::wildcard_imports)]
 
-use slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax;
+use slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleSyntaxVersion;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::versions::{LanguageVersion, LanguageVersionSpecifier};
 use slang_solidity_v2_cst::structured_cst::nodes::*;
@@ -31,13 +31,19 @@ struct SyntaxVersionValidator<'a> {
 }
 
 impl SyntaxVersionValidator<'_> {
-    fn report(&mut self, node: &impl TextRange, supported_in: LanguageVersionSpecifier) {
+    fn check(&mut self, node: &impl TextRange, compatible_in: LanguageVersionSpecifier) -> bool {
+        if compatible_in.contains(self.version) {
+            return true;
+        }
+
         self.diagnostics.push(
             self.file_id.to_owned(),
             node.calculate_text_range()
                 .expect("Structured CST node should have a range"),
-            UnsupportedSyntax { supported_in },
+            IncompatibleSyntaxVersion { compatible_in },
         );
+
+        false
     }
 
     //
@@ -45,30 +51,22 @@ impl SyntaxVersionValidator<'_> {
     //
 
     fn check_additive_expression(&mut self, node: &AdditiveExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.left_operand);
 
         self.check_expression(&node.right_operand);
     }
 
     fn check_and_expression(&mut self, node: &AndExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.left_operand);
 
         self.check_expression(&node.right_operand);
     }
 
     fn check_array_expression(&mut self, node: &ArrayExpression) {
-        let node = node.as_ref();
-
         self.check_array_values(&node.items);
     }
 
     fn check_array_type_name(&mut self, node: &ArrayTypeName) {
-        let node = node.as_ref();
-
         self.check_type_name(&node.operand);
 
         if let Some(ref child) = node.index {
@@ -77,71 +75,51 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_assembly_statement(&mut self, node: &AssemblyStatement) {
-        let node = node.as_ref();
-
         if let Some(ref child) = node.flags {
-            if self.version < LanguageVersion::V0_8_13 {
-                self.report(
-                    child,
-                    LanguageVersionSpecifier::From {
-                        from: LanguageVersion::V0_8_13,
-                    },
-                );
-            } else {
+            if self.check(
+                child,
+                LanguageVersionSpecifier::from(LanguageVersion::V0_8_13),
+            ) {
                 self.check_yul_flags_declaration(child);
             }
         }
     }
 
     fn check_assignment_expression(&mut self, node: &AssignmentExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.left_operand);
 
         self.check_expression(&node.right_operand);
     }
 
     fn check_bitwise_and_expression(&mut self, node: &BitwiseAndExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.left_operand);
 
         self.check_expression(&node.right_operand);
     }
 
     fn check_bitwise_or_expression(&mut self, node: &BitwiseOrExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.left_operand);
 
         self.check_expression(&node.right_operand);
     }
 
     fn check_bitwise_xor_expression(&mut self, node: &BitwiseXorExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.left_operand);
 
         self.check_expression(&node.right_operand);
     }
 
     fn check_block(&mut self, node: &Block) {
-        let node = node.as_ref();
-
         self.check_statements(&node.statements);
     }
 
     fn check_call_options_expression(&mut self, node: &CallOptionsExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.operand);
 
         self.check_call_options(&node.options);
     }
 
     fn check_catch_clause(&mut self, node: &CatchClause) {
-        let node = node.as_ref();
-
         if let Some(ref child) = node.error {
             self.check_catch_clause_error(child);
         }
@@ -150,14 +128,10 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_catch_clause_error(&mut self, node: &CatchClauseError) {
-        let node = node.as_ref();
-
         self.check_parameters_declaration(&node.parameters);
     }
 
     fn check_conditional_expression(&mut self, node: &ConditionalExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.operand);
 
         self.check_expression(&node.true_expression);
@@ -166,16 +140,12 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_constant_definition(&mut self, node: &ConstantDefinition) {
-        let node = node.as_ref();
-
         self.check_type_name(&node.type_name);
 
         self.check_expression(&node.value);
     }
 
     fn check_constructor_definition(&mut self, node: &ConstructorDefinition) {
-        let node = node.as_ref();
-
         self.check_parameters_declaration(&node.parameters);
 
         self.check_constructor_attributes(&node.attributes);
@@ -184,51 +154,36 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_contract_definition(&mut self, node: &ContractDefinition) {
-        let node = node.as_ref();
-
         self.check_contract_specifiers(&node.specifiers);
 
         self.check_contract_members(&node.members);
     }
 
     fn check_do_while_statement(&mut self, node: &DoWhileStatement) {
-        let node = node.as_ref();
-
         self.check_statement(&node.body);
 
         self.check_expression(&node.condition);
     }
 
     fn check_else_branch(&mut self, node: &ElseBranch) {
-        let node = node.as_ref();
-
         self.check_statement(&node.body);
     }
 
     fn check_emit_statement(&mut self, node: &EmitStatement) {
-        let node = node.as_ref();
-
         self.check_arguments_declaration(&node.arguments);
     }
 
     fn check_equality_expression(&mut self, node: &EqualityExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.left_operand);
 
         self.check_expression(&node.right_operand);
     }
 
     fn check_error_definition(&mut self, node: &ErrorDefinition) {
-        let node = node.as_ref();
-
-        if self.version < LanguageVersion::V0_8_4 {
-            self.report(
-                node,
-                LanguageVersionSpecifier::From {
-                    from: LanguageVersion::V0_8_4,
-                },
-            );
+        if !self.check(
+            node,
+            LanguageVersionSpecifier::from(LanguageVersion::V0_8_4),
+        ) {
             return;
         }
 
@@ -236,15 +191,10 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_error_parameter(&mut self, node: &ErrorParameter) {
-        let node = node.as_ref();
-
-        if self.version < LanguageVersion::V0_8_4 {
-            self.report(
-                node,
-                LanguageVersionSpecifier::From {
-                    from: LanguageVersion::V0_8_4,
-                },
-            );
+        if !self.check(
+            node,
+            LanguageVersionSpecifier::from(LanguageVersion::V0_8_4),
+        ) {
             return;
         }
 
@@ -252,15 +202,10 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_error_parameters_declaration(&mut self, node: &ErrorParametersDeclaration) {
-        let node = node.as_ref();
-
-        if self.version < LanguageVersion::V0_8_4 {
-            self.report(
-                node,
-                LanguageVersionSpecifier::From {
-                    from: LanguageVersion::V0_8_4,
-                },
-            );
+        if !self.check(
+            node,
+            LanguageVersionSpecifier::from(LanguageVersion::V0_8_4),
+        ) {
             return;
         }
 
@@ -268,40 +213,28 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_event_definition(&mut self, node: &EventDefinition) {
-        let node = node.as_ref();
-
         self.check_event_parameters_declaration(&node.parameters);
     }
 
     fn check_event_parameter(&mut self, node: &EventParameter) {
-        let node = node.as_ref();
-
         self.check_type_name(&node.type_name);
     }
 
     fn check_event_parameters_declaration(&mut self, node: &EventParametersDeclaration) {
-        let node = node.as_ref();
-
         self.check_event_parameters(&node.parameters);
     }
 
     fn check_exponentiation_expression(&mut self, node: &ExponentiationExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.left_operand);
 
         self.check_expression(&node.right_operand);
     }
 
     fn check_expression_statement(&mut self, node: &ExpressionStatement) {
-        let node = node.as_ref();
-
         self.check_expression(&node.expression);
     }
 
     fn check_fallback_function_definition(&mut self, node: &FallbackFunctionDefinition) {
-        let node = node.as_ref();
-
         self.check_parameters_declaration(&node.parameters);
 
         self.check_fallback_function_attributes(&node.attributes);
@@ -313,8 +246,6 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_for_statement(&mut self, node: &ForStatement) {
-        let node = node.as_ref();
-
         self.check_for_statement_initialization(&node.initialization);
 
         self.check_for_statement_condition(&node.condition);
@@ -326,16 +257,12 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_function_call_expression(&mut self, node: &FunctionCallExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.operand);
 
         self.check_arguments_declaration(&node.arguments);
     }
 
     fn check_function_definition(&mut self, node: &FunctionDefinition) {
-        let node = node.as_ref();
-
         self.check_parameters_declaration(&node.parameters);
 
         self.check_function_attributes(&node.attributes);
@@ -347,8 +274,6 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_function_type(&mut self, node: &FunctionType) {
-        let node = node.as_ref();
-
         self.check_parameters_declaration(&node.parameters);
 
         if let Some(ref child) = node.returns {
@@ -357,8 +282,6 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_if_statement(&mut self, node: &IfStatement) {
-        let node = node.as_ref();
-
         self.check_expression(&node.condition);
 
         self.check_statement(&node.body);
@@ -368,16 +291,12 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_index_access_end(&mut self, node: &IndexAccessEnd) {
-        let node = node.as_ref();
-
         if let Some(ref child) = node.end {
             self.check_expression(child);
         }
     }
 
     fn check_index_access_expression(&mut self, node: &IndexAccessExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.operand);
 
         if let Some(ref child) = node.start {
@@ -389,30 +308,22 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_inequality_expression(&mut self, node: &InequalityExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.left_operand);
 
         self.check_expression(&node.right_operand);
     }
 
     fn check_inheritance_specifier(&mut self, node: &InheritanceSpecifier) {
-        let node = node.as_ref();
-
         self.check_inheritance_types(&node.types);
     }
 
     fn check_inheritance_type(&mut self, node: &InheritanceType) {
-        let node = node.as_ref();
-
         if let Some(ref child) = node.arguments {
             self.check_arguments_declaration(child);
         }
     }
 
     fn check_interface_definition(&mut self, node: &InterfaceDefinition) {
-        let node = node.as_ref();
-
         if let Some(ref child) = node.inheritance {
             self.check_inheritance_specifier(child);
         }
@@ -421,59 +332,39 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_library_definition(&mut self, node: &LibraryDefinition) {
-        let node = node.as_ref();
-
         self.check_library_members(&node.members);
     }
 
     fn check_mapping_key(&mut self, node: &MappingKey) {
-        let node = node.as_ref();
-
         if let Some(ref child) = node.name {
-            if self.version < LanguageVersion::V0_8_18 {
-                self.report(
-                    child,
-                    LanguageVersionSpecifier::From {
-                        from: LanguageVersion::V0_8_18,
-                    },
-                );
-            }
+            self.check(
+                child,
+                LanguageVersionSpecifier::from(LanguageVersion::V0_8_18),
+            );
         }
     }
 
     fn check_mapping_type(&mut self, node: &MappingType) {
-        let node = node.as_ref();
-
         self.check_mapping_key(&node.key_type);
 
         self.check_mapping_value(&node.value_type);
     }
 
     fn check_mapping_value(&mut self, node: &MappingValue) {
-        let node = node.as_ref();
-
         self.check_type_name(&node.type_name);
         if let Some(ref child) = node.name {
-            if self.version < LanguageVersion::V0_8_18 {
-                self.report(
-                    child,
-                    LanguageVersionSpecifier::From {
-                        from: LanguageVersion::V0_8_18,
-                    },
-                );
-            }
+            self.check(
+                child,
+                LanguageVersionSpecifier::from(LanguageVersion::V0_8_18),
+            );
         }
     }
 
     fn check_member_access_expression(&mut self, node: &MemberAccessExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.operand);
     }
 
     fn check_modifier_definition(&mut self, node: &ModifierDefinition) {
-        let node = node.as_ref();
-
         if let Some(ref child) = node.parameters {
             self.check_parameters_declaration(child);
         }
@@ -482,102 +373,72 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_modifier_invocation(&mut self, node: &ModifierInvocation) {
-        let node = node.as_ref();
-
         if let Some(ref child) = node.arguments {
             self.check_arguments_declaration(child);
         }
     }
 
     fn check_multi_typed_declaration(&mut self, node: &MultiTypedDeclaration) {
-        let node = node.as_ref();
-
         self.check_multi_typed_declaration_elements(&node.elements);
 
         self.check_variable_declaration_value(&node.value);
     }
 
     fn check_multi_typed_declaration_element(&mut self, node: &MultiTypedDeclarationElement) {
-        let node = node.as_ref();
-
         if let Some(ref child) = node.member {
             self.check_variable_declaration(child);
         }
     }
 
     fn check_multiplicative_expression(&mut self, node: &MultiplicativeExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.left_operand);
 
         self.check_expression(&node.right_operand);
     }
 
     fn check_named_argument(&mut self, node: &NamedArgument) {
-        let node = node.as_ref();
-
         self.check_expression(&node.value);
     }
 
     fn check_named_argument_group(&mut self, node: &NamedArgumentGroup) {
-        let node = node.as_ref();
-
         self.check_named_arguments(&node.arguments);
     }
 
     fn check_named_arguments_declaration(&mut self, node: &NamedArgumentsDeclaration) {
-        let node = node.as_ref();
-
         self.check_named_argument_group(&node.arguments);
     }
 
     fn check_new_expression(&mut self, node: &NewExpression) {
-        let node = node.as_ref();
-
         self.check_type_name(&node.type_name);
     }
 
     fn check_or_expression(&mut self, node: &OrExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.left_operand);
 
         self.check_expression(&node.right_operand);
     }
 
     fn check_parameter(&mut self, node: &Parameter) {
-        let node = node.as_ref();
-
         self.check_type_name(&node.type_name);
     }
 
     fn check_parameters_declaration(&mut self, node: &ParametersDeclaration) {
-        let node = node.as_ref();
-
         self.check_parameters(&node.parameters);
     }
 
     fn check_positional_arguments_declaration(&mut self, node: &PositionalArgumentsDeclaration) {
-        let node = node.as_ref();
-
         self.check_positional_arguments(&node.arguments);
     }
 
     fn check_postfix_expression(&mut self, node: &PostfixExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.operand);
     }
 
     fn check_prefix_expression(&mut self, node: &PrefixExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.operand);
     }
 
     fn check_receive_function_definition(&mut self, node: &ReceiveFunctionDefinition) {
-        let node = node.as_ref();
-
         self.check_parameters_declaration(&node.parameters);
 
         self.check_receive_function_attributes(&node.attributes);
@@ -586,29 +447,20 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_return_statement(&mut self, node: &ReturnStatement) {
-        let node = node.as_ref();
-
         if let Some(ref child) = node.expression {
             self.check_expression(child);
         }
     }
 
     fn check_returns_declaration(&mut self, node: &ReturnsDeclaration) {
-        let node = node.as_ref();
-
         self.check_parameters_declaration(&node.variables);
     }
 
     fn check_revert_statement(&mut self, node: &RevertStatement) {
-        let node = node.as_ref();
-
-        if self.version < LanguageVersion::V0_8_4 {
-            self.report(
-                node,
-                LanguageVersionSpecifier::From {
-                    from: LanguageVersion::V0_8_4,
-                },
-            );
+        if !self.check(
+            node,
+            LanguageVersionSpecifier::from(LanguageVersion::V0_8_4),
+        ) {
             return;
         }
 
@@ -616,16 +468,12 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_shift_expression(&mut self, node: &ShiftExpression) {
-        let node = node.as_ref();
-
         self.check_expression(&node.left_operand);
 
         self.check_expression(&node.right_operand);
     }
 
     fn check_single_typed_declaration(&mut self, node: &SingleTypedDeclaration) {
-        let node = node.as_ref();
-
         self.check_variable_declaration(&node.declaration);
         if let Some(ref child) = node.value {
             self.check_variable_declaration_value(child);
@@ -633,14 +481,10 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_source_unit(&mut self, node: &SourceUnit) {
-        let node = node.as_ref();
-
         self.check_source_unit_members(&node.members);
     }
 
     fn check_state_variable_definition(&mut self, node: &StateVariableDefinition) {
-        let node = node.as_ref();
-
         self.check_type_name(&node.type_name);
 
         self.check_state_variable_attributes(&node.attributes);
@@ -651,21 +495,14 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_state_variable_definition_value(&mut self, node: &StateVariableDefinitionValue) {
-        let node = node.as_ref();
-
         self.check_expression(&node.value);
     }
 
     fn check_storage_layout_specifier(&mut self, node: &StorageLayoutSpecifier) {
-        let node = node.as_ref();
-
-        if self.version < LanguageVersion::V0_8_29 {
-            self.report(
-                node,
-                LanguageVersionSpecifier::From {
-                    from: LanguageVersion::V0_8_29,
-                },
-            );
+        if !self.check(
+            node,
+            LanguageVersionSpecifier::from(LanguageVersion::V0_8_29),
+        ) {
             return;
         }
 
@@ -673,20 +510,14 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_struct_definition(&mut self, node: &StructDefinition) {
-        let node = node.as_ref();
-
         self.check_struct_members(&node.members);
     }
 
     fn check_struct_member(&mut self, node: &StructMember) {
-        let node = node.as_ref();
-
         self.check_type_name(&node.type_name);
     }
 
     fn check_try_statement(&mut self, node: &TryStatement) {
-        let node = node.as_ref();
-
         self.check_expression(&node.expression);
         if let Some(ref child) = node.returns {
             self.check_returns_declaration(child);
@@ -698,55 +529,37 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_tuple_expression(&mut self, node: &TupleExpression) {
-        let node = node.as_ref();
-
         self.check_tuple_values(&node.items);
     }
 
     fn check_tuple_value(&mut self, node: &TupleValue) {
-        let node = node.as_ref();
-
         if let Some(ref child) = node.expression {
             self.check_expression(child);
         }
     }
 
     fn check_type_expression(&mut self, node: &TypeExpression) {
-        let node = node.as_ref();
-
         self.check_type_name(&node.type_name);
     }
 
     fn check_unchecked_block(&mut self, node: &UncheckedBlock) {
-        let node = node.as_ref();
-
         self.check_block(&node.block);
     }
 
     fn check_user_defined_value_type_definition(&mut self, node: &UserDefinedValueTypeDefinition) {
-        let node = node.as_ref();
-
-        if self.version < LanguageVersion::V0_8_8 {
-            self.report(
-                node,
-                LanguageVersionSpecifier::From {
-                    from: LanguageVersion::V0_8_8,
-                },
-            );
+        if !self.check(
+            node,
+            LanguageVersionSpecifier::from(LanguageVersion::V0_8_8),
+        ) {
             return;
         }
     }
 
     fn check_using_alias(&mut self, node: &UsingAlias) {
-        let node = node.as_ref();
-
-        if self.version < LanguageVersion::V0_8_19 {
-            self.report(
-                node,
-                LanguageVersionSpecifier::From {
-                    from: LanguageVersion::V0_8_19,
-                },
-            );
+        if !self.check(
+            node,
+            LanguageVersionSpecifier::from(LanguageVersion::V0_8_19),
+        ) {
             return;
         }
 
@@ -754,15 +567,10 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_using_deconstruction(&mut self, node: &UsingDeconstruction) {
-        let node = node.as_ref();
-
-        if self.version < LanguageVersion::V0_8_13 {
-            self.report(
-                node,
-                LanguageVersionSpecifier::From {
-                    from: LanguageVersion::V0_8_13,
-                },
-            );
+        if !self.check(
+            node,
+            LanguageVersionSpecifier::from(LanguageVersion::V0_8_13),
+        ) {
             return;
         }
 
@@ -770,86 +578,58 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_using_deconstruction_symbol(&mut self, node: &UsingDeconstructionSymbol) {
-        let node = node.as_ref();
-
-        if self.version < LanguageVersion::V0_8_13 {
-            self.report(
-                node,
-                LanguageVersionSpecifier::From {
-                    from: LanguageVersion::V0_8_13,
-                },
-            );
+        if !self.check(
+            node,
+            LanguageVersionSpecifier::from(LanguageVersion::V0_8_13),
+        ) {
             return;
         }
 
         if let Some(ref child) = node.alias {
-            if self.version < LanguageVersion::V0_8_19 {
-                self.report(
-                    child,
-                    LanguageVersionSpecifier::From {
-                        from: LanguageVersion::V0_8_19,
-                    },
-                );
-            } else {
+            if self.check(
+                child,
+                LanguageVersionSpecifier::from(LanguageVersion::V0_8_19),
+            ) {
                 self.check_using_alias(child);
             }
         }
     }
 
     fn check_using_directive(&mut self, node: &UsingDirective) {
-        let node = node.as_ref();
-
         self.check_using_clause(&node.clause);
 
         self.check_using_target(&node.target);
         if let Some(ref child) = node.global_keyword {
-            if self.version < LanguageVersion::V0_8_13 {
-                self.report(
-                    child,
-                    LanguageVersionSpecifier::From {
-                        from: LanguageVersion::V0_8_13,
-                    },
-                );
-            }
+            self.check(
+                child,
+                LanguageVersionSpecifier::from(LanguageVersion::V0_8_13),
+            );
         }
     }
 
     fn check_variable_declaration(&mut self, node: &VariableDeclaration) {
-        let node = node.as_ref();
-
         self.check_type_name(&node.type_name);
     }
 
     fn check_variable_declaration_statement(&mut self, node: &VariableDeclarationStatement) {
-        let node = node.as_ref();
-
         self.check_variable_declaration_target(&node.target);
     }
 
     fn check_variable_declaration_value(&mut self, node: &VariableDeclarationValue) {
-        let node = node.as_ref();
-
         self.check_expression(&node.expression);
     }
 
     fn check_while_statement(&mut self, node: &WhileStatement) {
-        let node = node.as_ref();
-
         self.check_expression(&node.condition);
 
         self.check_statement(&node.body);
     }
 
     fn check_yul_flags_declaration(&mut self, node: &YulFlagsDeclaration) {
-        let node = node.as_ref();
-
-        if self.version < LanguageVersion::V0_8_13 {
-            self.report(
-                node,
-                LanguageVersionSpecifier::From {
-                    from: LanguageVersion::V0_8_13,
-                },
-            );
+        if !self.check(
+            node,
+            LanguageVersionSpecifier::from(LanguageVersion::V0_8_13),
+        ) {
             return;
         }
 
@@ -910,25 +690,19 @@ impl SyntaxVersionValidator<'_> {
                 self.check_event_definition(child);
             }
             ContractMember::ErrorDefinition(child) => {
-                if self.version < LanguageVersion::V0_8_4 {
-                    self.report(
-                        child,
-                        LanguageVersionSpecifier::From {
-                            from: LanguageVersion::V0_8_4,
-                        },
-                    );
+                if !self.check(
+                    child,
+                    LanguageVersionSpecifier::from(LanguageVersion::V0_8_4),
+                ) {
                     return;
                 }
                 self.check_error_definition(child);
             }
             ContractMember::UserDefinedValueTypeDefinition(child) => {
-                if self.version < LanguageVersion::V0_8_8 {
-                    self.report(
-                        child,
-                        LanguageVersionSpecifier::From {
-                            from: LanguageVersion::V0_8_8,
-                        },
-                    );
+                if !self.check(
+                    child,
+                    LanguageVersionSpecifier::from(LanguageVersion::V0_8_8),
+                ) {
                     return;
                 }
                 self.check_user_defined_value_type_definition(child);
@@ -945,13 +719,10 @@ impl SyntaxVersionValidator<'_> {
                 self.check_inheritance_specifier(child);
             }
             ContractSpecifier::StorageLayoutSpecifier(child) => {
-                if self.version < LanguageVersion::V0_8_29 {
-                    self.report(
-                        child,
-                        LanguageVersionSpecifier::From {
-                            from: LanguageVersion::V0_8_29,
-                        },
-                    );
+                if !self.check(
+                    child,
+                    LanguageVersionSpecifier::from(LanguageVersion::V0_8_29),
+                ) {
                     return;
                 }
                 self.check_storage_layout_specifier(child);
@@ -1137,49 +908,37 @@ impl SyntaxVersionValidator<'_> {
                 self.check_function_definition(child);
             }
             SourceUnitMember::ErrorDefinition(child) => {
-                if self.version < LanguageVersion::V0_8_4 {
-                    self.report(
-                        child,
-                        LanguageVersionSpecifier::From {
-                            from: LanguageVersion::V0_8_4,
-                        },
-                    );
+                if !self.check(
+                    child,
+                    LanguageVersionSpecifier::from(LanguageVersion::V0_8_4),
+                ) {
                     return;
                 }
                 self.check_error_definition(child);
             }
             SourceUnitMember::UserDefinedValueTypeDefinition(child) => {
-                if self.version < LanguageVersion::V0_8_8 {
-                    self.report(
-                        child,
-                        LanguageVersionSpecifier::From {
-                            from: LanguageVersion::V0_8_8,
-                        },
-                    );
+                if !self.check(
+                    child,
+                    LanguageVersionSpecifier::from(LanguageVersion::V0_8_8),
+                ) {
                     return;
                 }
                 self.check_user_defined_value_type_definition(child);
             }
             SourceUnitMember::UsingDirective(child) => {
-                if self.version < LanguageVersion::V0_8_13 {
-                    self.report(
-                        child,
-                        LanguageVersionSpecifier::From {
-                            from: LanguageVersion::V0_8_13,
-                        },
-                    );
+                if !self.check(
+                    child,
+                    LanguageVersionSpecifier::from(LanguageVersion::V0_8_13),
+                ) {
                     return;
                 }
                 self.check_using_directive(child);
             }
             SourceUnitMember::EventDefinition(child) => {
-                if self.version < LanguageVersion::V0_8_22 {
-                    self.report(
-                        child,
-                        LanguageVersionSpecifier::From {
-                            from: LanguageVersion::V0_8_22,
-                        },
-                    );
+                if !self.check(
+                    child,
+                    LanguageVersionSpecifier::from(LanguageVersion::V0_8_22),
+                ) {
                     return;
                 }
                 self.check_event_definition(child);
@@ -1199,13 +958,10 @@ impl SyntaxVersionValidator<'_> {
             StateVariableAttribute::PublicKeyword(_) => {}
             StateVariableAttribute::ImmutableKeyword(_) => {}
             StateVariableAttribute::TransientKeyword(child) => {
-                if self.version < LanguageVersion::V0_8_27 {
-                    self.report(
-                        child,
-                        LanguageVersionSpecifier::From {
-                            from: LanguageVersion::V0_8_27,
-                        },
-                    );
+                if !self.check(
+                    child,
+                    LanguageVersionSpecifier::from(LanguageVersion::V0_8_27),
+                ) {
                     return;
                 }
             }
@@ -1238,13 +994,10 @@ impl SyntaxVersionValidator<'_> {
                 self.check_try_statement(child);
             }
             Statement::RevertStatement(child) => {
-                if self.version < LanguageVersion::V0_8_4 {
-                    self.report(
-                        child,
-                        LanguageVersionSpecifier::From {
-                            from: LanguageVersion::V0_8_4,
-                        },
-                    );
+                if !self.check(
+                    child,
+                    LanguageVersionSpecifier::from(LanguageVersion::V0_8_4),
+                ) {
                     return;
                 }
                 self.check_revert_statement(child);
@@ -1287,13 +1040,10 @@ impl SyntaxVersionValidator<'_> {
         match node {
             UsingClause::IdentifierPath(_) => {}
             UsingClause::UsingDeconstruction(child) => {
-                if self.version < LanguageVersion::V0_8_13 {
-                    self.report(
-                        child,
-                        LanguageVersionSpecifier::From {
-                            from: LanguageVersion::V0_8_13,
-                        },
-                    );
+                if !self.check(
+                    child,
+                    LanguageVersionSpecifier::from(LanguageVersion::V0_8_13),
+                ) {
                     return;
                 }
                 self.check_using_deconstruction(child);
@@ -1302,13 +1052,10 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_using_operator(&mut self, node: &UsingOperator) {
-        if self.version < LanguageVersion::V0_8_19 {
-            self.report(
-                node,
-                LanguageVersionSpecifier::From {
-                    from: LanguageVersion::V0_8_19,
-                },
-            );
+        if !self.check(
+            node,
+            LanguageVersionSpecifier::from(LanguageVersion::V0_8_19),
+        ) {
             return;
         }
 
@@ -1392,13 +1139,10 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_error_parameters(&mut self, node: &ErrorParameters) {
-        if self.version < LanguageVersion::V0_8_4 {
-            self.report(
-                node,
-                LanguageVersionSpecifier::From {
-                    from: LanguageVersion::V0_8_4,
-                },
-            );
+        if !self.check(
+            node,
+            LanguageVersionSpecifier::from(LanguageVersion::V0_8_4),
+        ) {
             return;
         }
         for child in &node.elements {
@@ -1503,13 +1247,10 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_using_deconstruction_symbols(&mut self, node: &UsingDeconstructionSymbols) {
-        if self.version < LanguageVersion::V0_8_13 {
-            self.report(
-                node,
-                LanguageVersionSpecifier::From {
-                    from: LanguageVersion::V0_8_13,
-                },
-            );
+        if !self.check(
+            node,
+            LanguageVersionSpecifier::from(LanguageVersion::V0_8_13),
+        ) {
             return;
         }
         for child in &node.elements {
@@ -1518,13 +1259,10 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_yul_flags(&mut self, node: &YulFlags) {
-        if self.version < LanguageVersion::V0_8_13 {
-            self.report(
-                node,
-                LanguageVersionSpecifier::From {
-                    from: LanguageVersion::V0_8_13,
-                },
-            );
+        if !self.check(
+            node,
+            LanguageVersionSpecifier::from(LanguageVersion::V0_8_13),
+        ) {
             return;
         }
     }

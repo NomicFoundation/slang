@@ -1,5 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: This built-in was introduced in version '0.8.8'.
+    ╭─[input.sol:18:40]
+    │
+ 18 │         Direction v6 = type(Direction).min;
+    │                                        ─┬─  
+    │                                         ╰─── Error occurred here.
+────╯
+Error: This built-in was introduced in version '0.8.8'.
+    ╭─[input.sol:19:40]
+    │
+ 19 │         Direction v7 = type(Direction).max;
+    │                                        ─┬─  
+    │                                         ╰─── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
 Definitions (22):
 - Def: #1 ["Sample" @ input.sol:1:10] (contract)
 - Def: #2 ["ISample" @ input.sol:3:11] (interface)
@@ -39,10 +57,10 @@ References (24):
 - Ref: ["interfaceId" @ input.sol:16:35] -> built-in
 - Ref: ["Direction" @ input.sol:18:9] -> #5
 - Ref: ["Direction" @ input.sol:18:29] -> #5
-- Ref: ["min" @ input.sol:18:40] -> unresolved
+- Ref: ["min" @ input.sol:18:40] -> built-in
 - Ref: ["Direction" @ input.sol:19:9] -> #5
 - Ref: ["Direction" @ input.sol:19:29] -> #5
-- Ref: ["max" @ input.sol:19:40] -> unresolved
+- Ref: ["max" @ input.sol:19:40] -> built-in
 - Ref: ["min" @ input.sol:21:30] -> built-in
 - Ref: ["max" @ input.sol:22:30] -> built-in
 - Ref: ["Utils" @ input.sol:24:34] -> #3
@@ -136,7 +154,7 @@ Bindings:
     │                                 │       │   
     │                                 ╰─────────── ref: 5
     │                                         │   
-    │                                         ╰─── unresolved
+    │                                         ╰─── built-in
  19 │         Direction v7 = type(Direction).max;
     │         ────┬──── ─┬        ────┬────  ─┬─  
     │             ╰─────────────────────────────── ref: 5
@@ -145,7 +163,7 @@ Bindings:
     │                                 │       │   
     │                                 ╰─────────── ref: 5
     │                                         │   
-    │                                         ╰─── unresolved
+    │                                         ╰─── built-in
     │ 
  21 │         uint v8 = type(uint).min;
     │              ─┬              ─┬─  

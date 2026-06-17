@@ -8,6 +8,20 @@ Error: This syntax was introduced in version '0.8.8'.
    │ ──────────────┬─────────────  
    │               ╰─────────────── Error occurred here.
 ───╯
+Error: This built-in was introduced in version '0.8.8'.
+   ╭─[input.sol:5:37]
+   │
+ 5 │         ShortString s = ShortString.wrap(data);
+   │                                     ──┬─  
+   │                                       ╰─── Error occurred here.
+───╯
+Error: This built-in was introduced in version '0.8.8'.
+   ╭─[input.sol:6:21]
+   │
+ 6 │         ShortString.unwrap(s);
+   │                     ───┬──  
+   │                        ╰──── Error occurred here.
+───╯
 
 ------------------------------------------------------------------------
 
@@ -23,10 +37,10 @@ Definitions (5):
 References (7):
 - Ref: ["ShortString" @ input.sol:5:9] -> #1
 - Ref: ["ShortString" @ input.sol:5:25] -> #1
-- Ref: ["wrap" @ input.sol:5:37] -> unresolved
+- Ref: ["wrap" @ input.sol:5:37] -> built-in
 - Ref: ["data" @ input.sol:5:42] -> #4
 - Ref: ["ShortString" @ input.sol:6:9] -> #1
-- Ref: ["unwrap" @ input.sol:6:21] -> unresolved
+- Ref: ["unwrap" @ input.sol:6:21] -> built-in
 - Ref: ["s" @ input.sol:6:28] -> #5
 
 ------------------------------------------------------------------------
@@ -58,14 +72,14 @@ Bindings:
    │                              │        │    │   
    │                              ╰───────────────── ref: 1
    │                                       │    │   
-   │                                       ╰──────── unresolved
+   │                                       ╰──────── built-in
    │                                            │   
    │                                            ╰─── ref: 4
  6 │         ShortString.unwrap(s);
    │         ─────┬───── ───┬── ┬  
    │              ╰──────────────── ref: 1
    │                        │   │  
-   │                        ╰────── unresolved
+   │                        ╰────── built-in
    │                            │  
    │                            ╰── ref: 5
 ───╯

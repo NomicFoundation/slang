@@ -8,6 +8,7 @@ use slang_solidity_v2_semantic::context::{
 };
 
 use crate::dataset::SolidityProject;
+use crate::tests::slang_v2::common::{parse_evm_target, parse_version};
 
 #[derive(Clone)]
 pub struct File {
@@ -79,9 +80,11 @@ pub fn run(project: &'static SolidityProject, files: Vec<File>) -> SemanticConte
 pub fn test(
     (project, files): (&'static SolidityProject, Vec<impl SemanticFile>),
 ) -> SemanticContext {
-    let language_version = super::parser::parse_version(project);
+    let language_version = parse_version(project);
+    let evm_target = parse_evm_target(project);
     let mut diagnostics = DiagnosticCollection::default();
-    let semantic = SemanticContext::build_from(language_version, &files, &mut diagnostics);
+    let semantic =
+        SemanticContext::build_from(language_version, evm_target, &files, &mut diagnostics);
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"

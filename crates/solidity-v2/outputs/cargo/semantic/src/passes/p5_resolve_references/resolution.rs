@@ -1,3 +1,4 @@
+use std::ops::Range;
 use std::sync::Arc;
 
 use slang_solidity_v2_common::collections::Set;
@@ -8,15 +9,21 @@ use super::{Pass, ScopeFrame};
 use crate::binder::{
     Definition, Reference, Resolution, ResolveOptions, ScopeId, Typing, UsingDirective,
 };
+use crate::built_ins::BuiltInsResolver;
 use crate::types::{ContractType, FunctionType, InterfaceType, StructType, Type, TypeId};
 
 /// Lexical style resolution of symbols
 impl Pass<'_> {
     // This is a "top-level" (ie. not a member access) resolution method
-    pub(super) fn resolve_symbol_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
+    pub(super) fn resolve_symbol_in_scope(
+        &mut self,
+        scope_id: ScopeId,
+        symbol: &str,
+        range: &Range<usize>,
+    ) -> Resolution {
         let resolution = self.binder.resolve_in_scope(scope_id, symbol);
-        match &resolution {
-            Resolution::Unresolved => self.built_ins_resolver().lookup_global(symbol).into(),
+        let resolution = match &resolution {
+            Resolution::Unresolved => BuiltInsResolver::lookup_global(symbol).into(),
             Resolution::Ambiguous(definition_ids) => {
                 // Try to disambiguate known cases
                 let first_id = definition_ids.first().copied().unwrap();
@@ -45,7 +52,11 @@ impl Pass<'_> {
                 }
             }
             Resolution::Definition(_) | Resolution::BuiltIn(_) => resolution,
+        };
+        if let Resolution::BuiltIn(built_in) = &resolution {
+            self.validate_built_in(*built_in, range);
         }
+        resolution
     }
 
     fn active_using_directives_for_type(
@@ -124,8 +135,13 @@ impl Pass<'_> {
         Resolution::from(filtered_definitions)
     }
 
-    pub(super) fn resolve_symbol_in_typing(&self, typing: &Typing, symbol: &str) -> Resolution {
-        match typing {
+    pub(super) fn resolve_symbol_in_typing(
+        &mut self,
+        typing: &Typing,
+        symbol: &str,
+        range: &Range<usize>,
+    ) -> Resolution {
+        let resolution = match typing {
             Typing::Unresolved => Resolution::Unresolved,
             Typing::Undetermined(type_ids) => {
                 // We cannot use argument-type disambiguation here, so we will
@@ -183,9 +199,7 @@ impl Pass<'_> {
                 Resolution::Unresolved
             }
             Typing::MetaType(type_) => {
-                if let Some(built_in) = self
-                    .built_ins_resolver()
-                    .lookup_member_of_meta_type(type_, symbol)
+                if let Some(built_in) = BuiltInsResolver::lookup_member_of_meta_type(type_, symbol)
                 {
                     Resolution::BuiltIn(built_in)
                 } else {
@@ -221,9 +235,7 @@ impl Pass<'_> {
                             Resolution::Unresolved
                         }
                     }
-                    _ => self
-                        .built_ins_resolver()
-                        .lookup_member_of_user_definition(definition, symbol)
+                    _ => BuiltInsResolver::lookup_member_of_user_definition(definition, symbol)
                         .into(),
                 }
             }
@@ -231,7 +243,11 @@ impl Pass<'_> {
                 .built_ins_resolver()
                 .lookup_member_of(built_in, symbol)
                 .into(),
+        };
+        if let Resolution::BuiltIn(built_in) = &resolution {
+            self.validate_built_in(*built_in, range);
         }
+        resolution
     }
 
     fn resolve_symbol_in_type(&self, type_id: TypeId, symbol: &str) -> Resolution {
@@ -364,7 +380,7 @@ impl Pass<'_> {
                 let symbol = identifier.unparse();
                 if use_contract_lookup {
                     use_contract_lookup = false;
-                    self.resolve_symbol_in_scope(scope_id, symbol)
+                    self.resolve_symbol_in_scope(scope_id, symbol, &identifier.range)
                 } else {
                     self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
                 }
@@ -421,30 +437,34 @@ impl Pass<'_> {
 
     // This is a "top-level" resolution method for symbols in a Yul context
     pub(super) fn resolve_symbol_in_yul_scope(
-        &self,
+        &mut self,
         scope_id: ScopeId,
         symbol: &str,
+        range: &Range<usize>,
     ) -> Resolution {
         let resolution =
             self.filter_overriden_definitions(self.binder.resolve_in_scope(scope_id, symbol));
-        if resolution == Resolution::Unresolved {
-            self.built_ins_resolver().lookup_yul_global(symbol).into()
+        let resolution = if resolution == Resolution::Unresolved {
+            BuiltInsResolver::lookup_yul_global(symbol).into()
         } else {
             resolution
+        };
+        if let Resolution::BuiltIn(built_in) = &resolution {
+            self.validate_built_in(*built_in, range);
         }
+        resolution
     }
 
     pub(super) fn resolve_yul_suffix(
-        &self,
+        &mut self,
         symbol: &str,
         parent_resolution: &Resolution,
+        range: &Range<usize>,
     ) -> Resolution {
-        match parent_resolution {
+        let resolution = match parent_resolution {
             Resolution::Definition(node_id) => {
                 if let Some(definition) = self.binder.find_definition_by_id(*node_id) {
-                    self.built_ins_resolver()
-                        .lookup_yul_suffix(definition, symbol)
-                        .into()
+                    BuiltInsResolver::lookup_yul_suffix(definition, symbol).into()
                 } else {
                     Resolution::Unresolved
                 }
@@ -452,6 +472,10 @@ impl Pass<'_> {
             Resolution::Unresolved | Resolution::Ambiguous(_) | Resolution::BuiltIn(_) => {
                 Resolution::Unresolved
             }
+        };
+        if let Resolution::BuiltIn(built_in) = &resolution {
+            self.validate_built_in(*built_in, range);
         }
+        resolution
     }
 }

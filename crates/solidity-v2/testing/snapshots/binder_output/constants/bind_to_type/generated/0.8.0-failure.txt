@@ -15,6 +15,13 @@ Error: This syntax was introduced in version '0.8.13'.
    │ ───────────────────┬──────────────────  
    │                    ╰──────────────────── Error occurred here.
 ───╯
+Error: This built-in was introduced in version '0.8.8'.
+   ╭─[input.sol:8:55]
+   │
+ 8 │ MemoryPointer constant FreeMemoryPPtr = MemoryPointer.wrap(0x40);
+   │                                                       ──┬─  
+   │                                                         ╰─── Error occurred here.
+───╯
 
 ------------------------------------------------------------------------
 
@@ -35,7 +42,7 @@ References (11):
 - Ref: ["MemoryPointer" @ input.sol:6:25] -> #1
 - Ref: ["MemoryPointer" @ input.sol:8:1] -> #1
 - Ref: ["MemoryPointer" @ input.sol:8:41] -> #1
-- Ref: ["wrap" @ input.sol:8:55] -> unresolved
+- Ref: ["wrap" @ input.sol:8:55] -> built-in
 - Ref: ["MemoryPointer" @ input.sol:10:47] -> #1
 - Ref: ["mPtr" @ input.sol:12:5] -> #4
 - Ref: ["FreeMemoryPPtr" @ input.sol:12:12] -> #2
@@ -70,7 +77,7 @@ Bindings:
     │                                               │         │   
     │                                               ╰───────────── ref: 1
     │                                                         │   
-    │                                                         ╰─── unresolved
+    │                                                         ╰─── built-in
     │ 
  10 │ function getFreeMemoryPointer() pure returns (MemoryPointer mPtr) {
     │          ──────────┬─────────                 ──────┬────── ──┬─  

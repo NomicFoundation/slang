@@ -277,7 +277,7 @@ pub fn slang_solidity_v2_semantic::context::SemanticContext::all_contracts(&self
 pub fn slang_solidity_v2_semantic::context::SemanticContext::all_definitions(&self) -> impl core::iter::traits::iterator::Iterator<Item = &slang_solidity_v2_semantic::binder::Definition> + use<'_>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::all_references(&self) -> impl core::iter::traits::iterator::Iterator<Item = &slang_solidity_v2_semantic::binder::Reference> + use<'_>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::binder(&self) -> &slang_solidity_v2_semantic::binder::Binder
-pub fn slang_solidity_v2_semantic::context::SemanticContext::build_from(language_version: slang_solidity_v2_common::versions::version::LanguageVersion, files: &[impl slang_solidity_v2_semantic::context::SemanticFile], diagnostics: &mut slang_solidity_v2_common::diagnostics::collection::DiagnosticCollection) -> Self
+pub fn slang_solidity_v2_semantic::context::SemanticContext::build_from(language_version: slang_solidity_v2_common::versions::version::LanguageVersion, evm_target: slang_solidity_v2_common::evm_targets::target::EvmTarget, files: &[impl slang_solidity_v2_semantic::context::SemanticFile], diagnostics: &mut slang_solidity_v2_common::diagnostics::collection::DiagnosticCollection) -> Self
 pub fn slang_solidity_v2_semantic::context::SemanticContext::find_contract_by_name<'a, 'b>(&'a self, name: &'b str) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ir::ir::nodes::ContractDefinition> + use<'a> where 'b: 'a
 pub fn slang_solidity_v2_semantic::context::SemanticContext::types(&self) -> &slang_solidity_v2_semantic::types::TypeRegistry
 pub trait slang_solidity_v2_semantic::context::SemanticFile

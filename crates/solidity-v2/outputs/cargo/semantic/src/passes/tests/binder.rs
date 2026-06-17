@@ -2,6 +2,7 @@ use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::NodeIdGenerator;
 
@@ -254,13 +255,7 @@ contract Test is Base {
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
 
     let types_before = types.iter_types().count();
-    p3_type_definitions::run(
-        &files,
-        &mut binder,
-        &mut types,
-        language_version,
-        &mut diagnostics,
-    );
+    p3_type_definitions::run(&files, &mut binder, &mut types, &mut diagnostics);
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
@@ -306,8 +301,10 @@ contract Test is Base {
 }
     "###;
 
-    let mut id_generator = NodeIdGenerator::default();
     let language_version = LanguageVersion::LATEST;
+    let evm_target = EvmTarget::LATEST;
+
+    let mut id_generator = NodeIdGenerator::default();
     let file = build_file("test.sol", CONTENTS, &mut id_generator, language_version);
 
     let files = [file];
@@ -317,18 +314,19 @@ contract Test is Base {
     let mut diagnostics = DiagnosticCollection::default();
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
-    p3_type_definitions::run(
+    p3_type_definitions::run(&files, &mut binder, &mut types, &mut diagnostics);
+    p5_resolve_references::run(
         &files,
         &mut binder,
         &mut types,
         language_version,
+        evm_target,
         &mut diagnostics,
     );
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
     );
-    p5_resolve_references::run(&files, &mut binder, &mut types, language_version);
 
     // Verify that references were created and most are resolved
     let references = binder.references();

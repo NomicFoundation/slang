@@ -1,3 +1,5 @@
+{%- import "crates/solidity-v2/outputs/cargo/common/src/versions/_macros.rs.jinja2" as _versions -%}
+
 use logos::{FilterResult, Lexer, Logos};
 use slang_solidity_v2_common::versions::LanguageVersion;
 
@@ -104,14 +106,15 @@ impl<'source> ContextWrapper<'source> {
                         |_| { LexemeKind::{{ lexeme.kind }}_Reserved }
                     {%- elif lexeme.reserved.type == "Never" -%}
                         |_| { LexemeKind::{{ lexeme.kind }}_Unreserved }
-                    {%- elif lexeme.reserved.type == "From" -%}
-                        |lexer| { if LanguageVersion::V{{ lexeme.reserved.from | split(pat=".") | join(sep="_") }} <= lexer.extras.language_version { LexemeKind::{{ lexeme.kind }}_Reserved } else { LexemeKind::{{ lexeme.kind }}_Unreserved } }
-                    {%- elif lexeme.reserved.type == "Till" -%}
-                        |lexer| { if lexer.extras.language_version < LanguageVersion::V{{ lexeme.reserved.till | split(pat=".") | join(sep="_") }} { LexemeKind::{{ lexeme.kind }}_Reserved } else { LexemeKind::{{ lexeme.kind }}_Unreserved } }
-                    {%- elif lexeme.reserved.type == "Range" -%}
-                        |lexer| { if LanguageVersion::V{{ lexeme.reserved.from | split(pat=".") | join(sep="_") }} <= lexer.extras.language_version && lexer.extras.language_version < LanguageVersion::V{{ lexeme.reserved.till | split(pat=".") | join(sep="_") }} { LexemeKind::{{ lexeme.kind }}_Reserved } else { LexemeKind::{{ lexeme.kind }}_Unreserved } }
                     {%- else -%}
-                        {{ throw(message = "Unrecognized lexeme.reserved type: " ~ lexeme.reserved.type) }}
+                        |lexer| {
+                            if {{ _versions::specifier(s=lexeme.reserved) }}.contains(lexer.extras.language_version) {
+                                LexemeKind::{{ lexeme.kind }}_Reserved
+                            }
+                            else {
+                                LexemeKind::{{ lexeme.kind }}_Unreserved
+                            }
+                        }
                     {%- endif -%}
                 , priority = {{ 3000000 + loop.index }})]
             {%- else -%}

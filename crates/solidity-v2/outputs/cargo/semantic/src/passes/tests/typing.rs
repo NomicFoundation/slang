@@ -1,6 +1,7 @@
 use num_bigint::{BigInt, BigUint};
 use num_rational::BigRational;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
 
@@ -23,7 +24,7 @@ struct TypeAnalysis {
 }
 
 /// Builds and runs every semantic pass over an arbitrary Solidity `source`,
-fn analyze(language_version: LanguageVersion, source: &str) -> TypeAnalysis {
+fn analyze(language_version: LanguageVersion, evm_target: EvmTarget, source: &str) -> TypeAnalysis {
     let mut id_generator = NodeIdGenerator::default();
     let file = build_file("test.sol", source, &mut id_generator, language_version);
     let files = vec![file];
@@ -33,18 +34,20 @@ fn analyze(language_version: LanguageVersion, source: &str) -> TypeAnalysis {
     let mut diagnostics = DiagnosticCollection::default();
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
-    p3_type_definitions::run(
+    p3_type_definitions::run(&files, &mut binder, &mut types, &mut diagnostics);
+    p5_resolve_references::run(
         &files,
         &mut binder,
         &mut types,
         language_version,
+        evm_target,
         &mut diagnostics,
     );
+
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
     );
-    p5_resolve_references::run(&files, &mut binder, &mut types, language_version);
 
     TypeAnalysis {
         file: files.into_iter().next().unwrap(),
@@ -135,6 +138,7 @@ fn expression_statement_types(
 /// before the `__test()` definition.
 fn type_of_expressions(
     language_version: LanguageVersion,
+    evm_target: EvmTarget,
     contract_name: Option<&str>,
     contract_context: Option<&str>,
     expressions: &[&str],
@@ -161,7 +165,7 @@ fn type_of_expressions(
         file,
         binder,
         types,
-    } = analyze(language_version, &source);
+    } = analyze(language_version, evm_target, &source);
 
     let contract = find_contract(&file, contract_name);
     let function = find_function(&contract.members, "__test").expect("__test function not found");
@@ -185,7 +189,13 @@ fn type_of_expression(expr: &str) -> (Type, TypeRegistry) {
 /// Convenience wrapper for `type_of_expressions` with a single expression and
 /// no contract context. Returns `None` if the typing didn't resolve.
 fn try_type_of_expression(expr: &str) -> (Option<Type>, TypeRegistry) {
-    let (typings, types) = type_of_expressions(LanguageVersion::LATEST, None, None, &[expr]);
+    let (typings, types) = type_of_expressions(
+        LanguageVersion::LATEST,
+        EvmTarget::LATEST,
+        None,
+        None,
+        &[expr],
+    );
     let typing = typings.into_iter().next().expect("at least one expression");
     (typing, types)
 }
@@ -201,8 +211,13 @@ fn type_of_expression_in_context(context: &str, expr: &str) -> (Type, TypeRegist
 }
 
 fn try_type_of_expression_in_context(context: &str, expr: &str) -> (Option<Type>, TypeRegistry) {
-    let (typings, types) =
-        type_of_expressions(LanguageVersion::LATEST, None, Some(context), &[expr]);
+    let (typings, types) = type_of_expressions(
+        LanguageVersion::LATEST,
+        EvmTarget::LATEST,
+        None,
+        Some(context),
+        &[expr],
+    );
     let typing = typings.into_iter().next().expect("at least one expression");
     (typing, types)
 }
@@ -531,8 +546,13 @@ fn test_overload_resolution_unsigned_to_signed_argument_is_version_gated() {
     ";
 
     // 0.8.0: `uint8` -> `int16` is allowed, so the `int16` overload matches.
-    let (typings, _) =
-        type_of_expressions(LanguageVersion::V0_8_0, None, Some(setup), &["pick(u)"]);
+    let (typings, _) = type_of_expressions(
+        LanguageVersion::V0_8_0,
+        EvmTarget::LATEST,
+        None,
+        Some(setup),
+        &["pick(u)"],
+    );
     assert_eq!(
         typings.into_iter().next().unwrap(),
         Some(Type::Integer(IntegerType {
@@ -542,8 +562,13 @@ fn test_overload_resolution_unsigned_to_signed_argument_is_version_gated() {
     );
 
     // 0.8.1: `uint8` -> `int16` is rejected, so neither overload matches.
-    let (typings, _) =
-        type_of_expressions(LanguageVersion::V0_8_1, None, Some(setup), &["pick(u)"]);
+    let (typings, _) = type_of_expressions(
+        LanguageVersion::V0_8_1,
+        EvmTarget::LATEST,
+        None,
+        Some(setup),
+        &["pick(u)"],
+    );
     assert_eq!(typings.into_iter().next().unwrap(), None);
 }
 
@@ -990,6 +1015,7 @@ fn test_data_locations_of_state_variable_and_getter_accesses() {
     //    returns just `bytes`, again in memory.
     let (typings, _) = type_of_expressions(
         LanguageVersion::LATEST,
+        EvmTarget::LATEST,
         None,
         Some(
             r#"
@@ -1038,7 +1064,7 @@ fn test_cast_address_to_library_is_library_typed() {
         file,
         binder,
         types,
-    } = analyze(LanguageVersion::LATEST, source);
+    } = analyze(LanguageVersion::LATEST, EvmTarget::LATEST, source);
 
     let contract = find_contract(&file, "Test");
     let probe = find_function(&contract.members, "probe").expect("probe function");
@@ -1150,7 +1176,7 @@ fn test_this_in_library_is_library_typed() {
         file,
         binder,
         types,
-    } = analyze(LanguageVersion::LATEST, source);
+    } = analyze(LanguageVersion::LATEST, EvmTarget::LATEST, source);
 
     let library = find_library(&file, "MyLib");
     let probe = find_function(&library.members, "probe").expect("probe function");
@@ -1178,7 +1204,7 @@ fn test_this_inside_contract() {
         file,
         binder,
         types,
-    } = analyze(LanguageVersion::LATEST, source);
+    } = analyze(LanguageVersion::LATEST, EvmTarget::LATEST, source);
 
     let contract = find_contract(&file, "MyContract");
     let probe = find_function(&contract.members, "probe").expect("probe function");

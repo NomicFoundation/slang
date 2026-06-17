@@ -5,6 +5,7 @@ use slang_solidity_v2_common::diagnostics::kinds::compilation::{
     MissingFile, MissingImportedFile, UnresolvedImport,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::utils::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes as cst;
@@ -55,10 +56,10 @@ struct BuilderFile {
 /// A builder for creating compilation units.
 /// Allows incrementally building a list of all files and their imports.
 pub struct CompilationBuilder<C: CompilationBuilderConfig> {
-    /// The user-supplied configuration.
-    pub config: C,
-
     language_version: LanguageVersion,
+    evm_target: EvmTarget,
+    config: C,
+
     diagnostics: DiagnosticCollection,
 
     files: SortedMap<String, BuilderFile>,
@@ -67,12 +68,18 @@ pub struct CompilationBuilder<C: CompilationBuilderConfig> {
 }
 
 impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
-    /// Creates a new compilation builder for the specified language version and callbacks.
-    pub fn create(language_version: LanguageVersion, config: C) -> CompilationBuilder<C> {
+    /// Creates a new compilation builder for the specified language version,
+    /// EVM target, and resolver callbacks.
+    pub fn create(
+        language_version: LanguageVersion,
+        evm_target: EvmTarget,
+        config: C,
+    ) -> CompilationBuilder<C> {
         CompilationBuilder {
+            language_version,
+            evm_target,
             config,
 
-            language_version,
             diagnostics: DiagnosticCollection::default(),
 
             files: SortedMap::default(),
@@ -151,12 +158,20 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
 
     /// Builds and returns the final compilation unit.
     pub fn build(self) -> CompilationUnit {
-        let language_version = self.language_version;
-        let mut diagnostics = self.diagnostics;
+        let CompilationBuilder {
+            language_version,
+            evm_target,
+            config: _,
+
+            mut diagnostics,
+
+            files,
+            seen_files: _,
+            missing_files: _,
+        } = self;
 
         let mut id_generator = ir::NodeIdGenerator::default();
-        let files: Vec<InternalFile> = self
-            .files
+        let files: Vec<InternalFile> = files
             .into_iter()
             .map(|(file_id, internal_file)| {
                 let BuildOutput {
@@ -181,9 +196,10 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
             })
             .collect();
 
-        let semantic = SemanticContext::build_from(language_version, &files, &mut diagnostics);
+        let semantic =
+            SemanticContext::build_from(language_version, evm_target, &files, &mut diagnostics);
 
-        CompilationUnit::create(language_version, files, semantic, diagnostics)
+        CompilationUnit::create(language_version, evm_target, files, semantic, diagnostics)
     }
 }
 

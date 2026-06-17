@@ -8,6 +8,13 @@ Error: This syntax was introduced in version '0.8.4'.
    │     ─────────┬────────  
    │              ╰────────── Error occurred here.
 ───╯
+Error: This built-in was introduced in version '0.8.4'.
+   ╭─[input.sol:5:19]
+   │
+ 5 │         TestError.selector;
+   │                   ────┬───  
+   │                       ╰───── Error occurred here.
+───╯
 
 ------------------------------------------------------------------------
 
@@ -20,7 +27,7 @@ Definitions (3):
 
 References (2):
 - Ref: ["TestError" @ input.sol:5:9] -> #2
-- Ref: ["selector" @ input.sol:5:19] -> unresolved
+- Ref: ["selector" @ input.sol:5:19] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -45,5 +52,5 @@ Bindings:
    │         ────┬──── ────┬───  
    │             ╰─────────────── ref: 2
    │                       │     
-   │                       ╰───── unresolved
+   │                       ╰───── built-in
 ───╯

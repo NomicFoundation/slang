@@ -3,6 +3,7 @@ use std::sync::Arc;
 use slang_solidity_v2_ast::{abi, ast};
 use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
 
@@ -11,6 +12,7 @@ use super::{File, FileStruct};
 
 pub struct CompilationUnit {
     language_version: LanguageVersion,
+    evm_target: EvmTarget,
     files: SortedMap<String, Arc<InternalFile>>,
     semantic: Arc<SemanticContext>,
     diagnostics: DiagnosticCollection,
@@ -19,6 +21,7 @@ pub struct CompilationUnit {
 impl CompilationUnit {
     pub(super) fn create(
         language_version: LanguageVersion,
+        evm_target: EvmTarget,
         files: Vec<InternalFile>,
         semantic: SemanticContext,
         diagnostics: DiagnosticCollection,
@@ -29,6 +32,7 @@ impl CompilationUnit {
             .collect();
         Self {
             language_version,
+            evm_target,
             files,
             semantic: Arc::new(semantic),
             diagnostics,
@@ -43,6 +47,11 @@ impl CompilationUnit {
     /// Returns the language version this compilation unit is configured for.
     pub fn language_version(&self) -> LanguageVersion {
         self.language_version
+    }
+
+    /// Returns the EVM target this compilation unit is configured for.
+    pub fn evm_target(&self) -> EvmTarget {
+        self.evm_target
     }
 
     /// Returns a list of all file IDs in the compilation unit.

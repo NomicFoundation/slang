@@ -8,6 +8,20 @@ Error: This syntax was introduced in version '0.8.8'.
    │     ───────────┬──────────  
    │                ╰──────────── Error occurred here.
 ───╯
+Error: This built-in was introduced in version '0.8.8'.
+   ╭─[input.sol:5:35]
+   │
+ 5 │         Internal inter = Internal.wrap(10);
+   │                                   ──┬─  
+   │                                     ╰─── Error occurred here.
+───╯
+Error: This built-in was introduced in version '0.8.8'.
+   ╭─[input.sol:6:25]
+   │
+ 6 │         return Internal.unwrap(inter);
+   │                         ───┬──  
+   │                            ╰──── Error occurred here.
+───╯
 
 ------------------------------------------------------------------------
 
@@ -22,9 +36,9 @@ Definitions (4):
 References (6):
 - Ref: ["Internal" @ input.sol:5:9] -> #2
 - Ref: ["Internal" @ input.sol:5:26] -> #2
-- Ref: ["wrap" @ input.sol:5:35] -> unresolved
+- Ref: ["wrap" @ input.sol:5:35] -> built-in
 - Ref: ["Internal" @ input.sol:6:16] -> #2
-- Ref: ["unwrap" @ input.sol:6:25] -> unresolved
+- Ref: ["unwrap" @ input.sol:6:25] -> built-in
 - Ref: ["inter" @ input.sol:6:32] -> #4
 
 ------------------------------------------------------------------------
@@ -54,12 +68,12 @@ Bindings:
    │                              │      │   
    │                              ╰────────── ref: 2
    │                                     │   
-   │                                     ╰─── unresolved
+   │                                     ╰─── built-in
  6 │         return Internal.unwrap(inter);
    │                ────┬─── ───┬── ──┬──  
    │                    ╰────────────────── ref: 2
    │                            │     │    
-   │                            ╰────────── unresolved
+   │                            ╰────────── built-in
    │                                  │    
    │                                  ╰──── ref: 4
 ───╯

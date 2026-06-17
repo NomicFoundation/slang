@@ -8,6 +8,20 @@ Error: This syntax was introduced in version '0.8.8'.
    │ ──────────────┬─────────────  
    │               ╰─────────────── Error occurred here.
 ───╯
+Error: This built-in was introduced in version '0.8.8'.
+    ╭─[input.sol:10:21]
+    │
+ 10 │         ShortString.wrap(data).nop();
+    │                     ──┬─  
+    │                       ╰─── Error occurred here.
+────╯
+Error: This built-in was introduced in version '0.8.8'.
+    ╭─[input.sol:11:21]
+    │
+ 11 │         ShortString.unwrap(s).pon();
+    │                     ───┬──  
+    │                        ╰──── Error occurred here.
+────╯
 
 ------------------------------------------------------------------------
 
@@ -32,13 +46,13 @@ References (13):
 - Ref: ["BytesLib" @ input.sol:5:11] -> #9
 - Ref: ["ShortString" @ input.sol:8:9] -> #1
 - Ref: ["ShortString" @ input.sol:10:9] -> #1
-- Ref: ["wrap" @ input.sol:10:21] -> unresolved
+- Ref: ["wrap" @ input.sol:10:21] -> built-in
 - Ref: ["data" @ input.sol:10:26] -> #4
-- Ref: ["nop" @ input.sol:10:32] -> unresolved
+- Ref: ["nop" @ input.sol:10:32] -> #7
 - Ref: ["ShortString" @ input.sol:11:9] -> #1
-- Ref: ["unwrap" @ input.sol:11:21] -> unresolved
+- Ref: ["unwrap" @ input.sol:11:21] -> built-in
 - Ref: ["s" @ input.sol:11:28] -> #5
-- Ref: ["pon" @ input.sol:11:31] -> unresolved
+- Ref: ["pon" @ input.sol:11:31] -> #10
 - Ref: ["ShortString" @ input.sol:16:18] -> #1
 
 ------------------------------------------------------------------------
@@ -81,20 +95,20 @@ Bindings:
     │         ─────┬───── ──┬─ ──┬─  ─┬─  
     │              ╰────────────────────── ref: 1
     │                       │    │    │   
-    │                       ╰───────────── unresolved
+    │                       ╰───────────── built-in
     │                            │    │   
     │                            ╰──────── ref: 4
     │                                 │   
-    │                                 ╰─── unresolved
+    │                                 ╰─── ref: 7
  11 │         ShortString.unwrap(s).pon();
     │         ─────┬───── ───┬── ┬  ─┬─  
     │              ╰───────────────────── ref: 1
     │                        │   │   │   
-    │                        ╰─────────── unresolved
+    │                        ╰─────────── built-in
     │                            │   │   
     │                            ╰─────── ref: 5
     │                                │   
-    │                                ╰─── unresolved
+    │                                ╰─── ref: 10
     │ 
  15 │ library ShortStringLib {
     │         ───────┬──────  

@@ -369,6 +369,24 @@ mod resolution {
             )
         }
     }
+
+    mod incompatible_built_in_target {
+        use super::*;
+
+        #[test]
+        fn blobhash() -> Result<()> {
+            run("resolution/incompatible_built_in_target", "blobhash")
+        }
+    }
+
+    mod incompatible_built_in_version {
+        use super::*;
+
+        #[test]
+        fn event_selector() -> Result<()> {
+            run("resolution/incompatible_built_in_version", "event_selector")
+        }
+    }
 }
 
 mod semantic {
@@ -616,6 +634,23 @@ mod syntax {
         }
     }
 
+    mod incompatible_syntax_version {
+        use super::*;
+
+        #[test]
+        fn error_definition() -> Result<()> {
+            run("syntax/incompatible_syntax_version", "error_definition")
+        }
+
+        #[test]
+        fn storage_layout_specifier() -> Result<()> {
+            run(
+                "syntax/incompatible_syntax_version",
+                "storage_layout_specifier",
+            )
+        }
+    }
+
     mod multiple_mutability_specifiers {
         use super::*;
 
@@ -723,11 +758,6 @@ mod syntax {
         fn trailing_token() -> Result<()> {
             run("syntax/unexpected_terminal", "trailing_token")
         }
-    }
-
-    #[test]
-    fn unsupported_syntax() -> Result<()> {
-        run("syntax", "unsupported_syntax")
     }
 }
 
