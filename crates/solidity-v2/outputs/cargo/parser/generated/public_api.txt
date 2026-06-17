@@ -5,12 +5,12 @@ pub struct slang_solidity_v2_parser::ParseOutput
 pub slang_solidity_v2_parser::ParseOutput::diagnostics: slang_solidity_v2_common::diagnostics::collection::DiagnosticCollection
 pub slang_solidity_v2_parser::ParseOutput::source_unit: slang_solidity_v2_cst::structured_cst::nodes::SourceUnit
 impl core::cmp::PartialEq for slang_solidity_v2_parser::ParseOutput
-pub fn slang_solidity_v2_parser::ParseOutput::eq(&self, other: &slang_solidity_v2_parser::ParseOutput) -> bool
+pub fn slang_solidity_v2_parser::ParseOutput::eq(&self, &slang_solidity_v2_parser::ParseOutput) -> bool
 impl core::fmt::Debug for slang_solidity_v2_parser::ParseOutput
-pub fn slang_solidity_v2_parser::ParseOutput::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub fn slang_solidity_v2_parser::ParseOutput::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity_v2_parser::ParseOutput
 pub struct slang_solidity_v2_parser::Parser
 impl slang_solidity_v2_parser::Parser
-pub fn slang_solidity_v2_parser::Parser::parse(file_id: &str, source: &str, language_version: slang_solidity_v2_common::versions::version::LanguageVersion) -> slang_solidity_v2_parser::ParseOutput
+pub fn slang_solidity_v2_parser::Parser::parse(&str, &str, slang_solidity_v2_common::versions::version::LanguageVersion) -> slang_solidity_v2_parser::ParseOutput
 impl core::default::Default for slang_solidity_v2_parser::Parser
 pub fn slang_solidity_v2_parser::Parser::default() -> slang_solidity_v2_parser::Parser
