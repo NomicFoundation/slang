@@ -9,8 +9,9 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 
 use crate::binder::{Binder, Definition, FileScope, ParametersScope, Scope, ScopeId};
 use crate::context::SemanticFile;
+use crate::passes::common::conflicts::find_conflicting_definition;
 
-pub(crate) mod conflicts;
+mod conflicts;
 
 /// In this pass all definitions are collected with their naming identifiers.
 /// Also lexical (and other kinds of) scopes are identified and linked together,
@@ -137,9 +138,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     // resolve references to it.
     fn insert_definition_in_scope(&mut self, definition: Definition, scope_id: ScopeId) {
         let symbol = definition.identifier().unparse();
-        if conflicts::find_conflicting_definition(self.binder, scope_id, symbol, &definition)
-            .is_some()
-        {
+        if find_conflicting_definition(self.binder, scope_id, symbol, &definition).is_some() {
             self.diagnostics.push(
                 self.current_file.id().to_owned(),
                 definition.identifier().range.clone(),

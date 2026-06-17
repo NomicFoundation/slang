@@ -5,7 +5,7 @@ use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, Scope, ScopeId};
 use crate::context::SemanticFile;
-use crate::passes::p1_collect_definitions::conflicts;
+use crate::passes::common::conflicts;
 use crate::types::TypeRegistry;
 
 mod resolution;
