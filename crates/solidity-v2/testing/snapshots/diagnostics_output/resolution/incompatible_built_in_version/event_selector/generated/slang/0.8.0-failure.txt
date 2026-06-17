@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: This built-in was introduced in version '0.8.15'.
+   ╭─[input.sol:8:24]
+   │
+ 8 │         return MyEvent.selector;
+   │                        ────┬───  
+   │                            ╰───── Error occurred here.
+───╯

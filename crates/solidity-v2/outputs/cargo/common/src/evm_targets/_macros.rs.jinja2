@@ -1,0 +1,19 @@
+{#- Renders a `EvmTargetSpecifier::<variant>(..)` constructor call from a `EvmTargetSpecifier`-shaped object. -#}
+{%- macro specifier(s) -%}
+    {%- if s.type == "From" -%}
+        EvmTargetSpecifier::from(
+            EvmTarget::{{ s.from }}
+        )
+    {%- elif s.type == "Till" -%}
+        EvmTargetSpecifier::till(
+            EvmTarget::{{ s.till }}
+        )
+    {%- elif s.type == "Range" -%}
+        EvmTargetSpecifier::range(
+            EvmTarget::{{ s.from }},
+            EvmTarget::{{ s.till }},
+        )
+    {%- else -%}
+        {{ throw(message="Unexpected EVM target specifier type: " ~ s.type) }}
+    {%- endif -%}
+{%- endmacro specifier -%}

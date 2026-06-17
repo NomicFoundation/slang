@@ -1,8 +1,8 @@
 use anyhow::Result;
-use semver::Version;
 use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig};
 use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
+use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use solidity_v2_testing_utils::reporting::diagnostic;
 
@@ -19,15 +19,13 @@ impl TestTarget for SlangTarget {
     fn collect_diagnostics(
         &self,
         files: &SortedMap<String, String>,
-        version: &Version,
+        version: LanguageVersion,
+        evm_target: EvmTarget,
     ) -> Result<Vec<String>> {
-        let language_version = LanguageVersion::try_from(version.clone())
-            .expect("filtered to v2-supported versions above");
-
         let config = TestConfig {
             files: files.clone(),
         };
-        let mut builder = CompilationBuilder::create(language_version, config);
+        let mut builder = CompilationBuilder::create(version, evm_target, config);
 
         for file in files.keys() {
             builder.add_file(file.clone());

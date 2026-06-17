@@ -1,9 +1,11 @@
+{%- import "crates/solidity-v2/outputs/cargo/common/src/versions/_macros.rs.jinja2" as _versions -%}
+
 {%- set model = model.structured_cst_model -%}
 
 #![allow(clippy::needless_return)]
 #![allow(clippy::wildcard_imports)]
 
-use slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax;
+use slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleSyntaxVersion;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::versions::{LanguageVersion, LanguageVersionSpecifier};
 use slang_solidity_v2_cst::structured_cst::nodes::*;
@@ -27,12 +29,18 @@ struct SyntaxVersionValidator<'a> {
 }
 
 impl SyntaxVersionValidator<'_> {
-    fn report(&mut self, node: &impl TextRange, supported_in: LanguageVersionSpecifier) {
+    fn check(&mut self, node: &impl TextRange, compatible_in: LanguageVersionSpecifier) -> bool {
+        if compatible_in.contains(self.version) {
+            return true;
+        }
+
         self.diagnostics.push(
             self.file_id.to_owned(),
             node.calculate_text_range().expect("Structured CST node should have a range"),
-            UnsupportedSyntax { supported_in },
+            IncompatibleSyntaxVersion { compatible_in },
         );
+
+        false
     }
 
     //
@@ -41,44 +49,13 @@ impl SyntaxVersionValidator<'_> {
     {% for parent_type, sequence in model.sequences %}
         {%- if model.has_versioned_descendant[parent_type] %}
             fn check_{{ parent_type | snake_case }}(&mut self, node: &{{ parent_type }}) {
-                let node = node.as_ref();
-
                 {# Check struct-level enabled #}
                 {%- if sequence.enabled.type == "Always" %}
                     {# No version constraint on the node itself. #}
-                {%- elif sequence.enabled.type == "From" %}
-                    {%- set v = sequence.enabled.from | split(pat=".") | join(sep="_") %}
-                    if self.version < LanguageVersion::V{{ v }} {
-                        self.report(
-                            node,
-                            LanguageVersionSpecifier::From { from: LanguageVersion::V{{ v }} },
-                        );
-                        return;
-                    }
-                {%- elif sequence.enabled.type == "Till" %}
-                    {%- set v = sequence.enabled.till | split(pat=".") | join(sep="_") %}
-                    if self.version >= LanguageVersion::V{{ v }} {
-                        self.report(
-                            node,
-                            LanguageVersionSpecifier::Till { till: LanguageVersion::V{{ v }} },
-                        );
-                        return;
-                    }
-                {%- elif sequence.enabled.type == "Range" %}
-                    {%- set vf = sequence.enabled.from | split(pat=".") | join(sep="_") %}
-                    {%- set vt = sequence.enabled.till | split(pat=".") | join(sep="_") %}
-                    if self.version < LanguageVersion::V{{ vf }} || self.version >= LanguageVersion::V{{ vt }} {
-                        self.report(
-                            node,
-                            LanguageVersionSpecifier::Range {
-                                from: LanguageVersion::V{{ vf }},
-                                till: LanguageVersion::V{{ vt }},
-                            },
-                        );
-                        return;
-                    }
                 {%- else %}
-                    {{ panic(message="Unexpected enabled type '" ~ sequence.enabled.type ~ "' for sequence '" ~ parent_type ~ "'") }}
+                    if !self.check(node, {{ _versions::specifier(s=sequence.enabled) }}) {
+                        return;
+                    }
                 {%- endif %}
 
                 {# Check and recurse into each field #}
@@ -91,57 +68,16 @@ impl SyntaxVersionValidator<'_> {
                                     self.check_{{ field.field_type.name | snake_case }}(child);
                                 }
                             {%- endif %}
-                        {%- elif field.enabled.type == "From" %}
-                            {%- set v = field.enabled.from | split(pat=".") | join(sep="_") %}
-                            if let Some(ref child) = node.{{ field.label | snake_case }} {
-                                if self.version < LanguageVersion::V{{ v }} {
-                                    self.report(
-                                        child,
-                                        LanguageVersionSpecifier::From { from: LanguageVersion::V{{ v }} },
-                                    );
-                                }
-                                {%- if recurse %}
-                                    else {
-                                        self.check_{{ field.field_type.name | snake_case }}(child);
-                                    }
-                                {%- endif %}
-                            }
-                        {%- elif field.enabled.type == "Till" %}
-                            {%- set v = field.enabled.till | split(pat=".") | join(sep="_") %}
-                            if let Some(ref child) = node.{{ field.label | snake_case }} {
-                                if self.version >= LanguageVersion::V{{ v }} {
-                                    self.report(
-                                        child,
-                                        LanguageVersionSpecifier::Till { till: LanguageVersion::V{{ v }} },
-                                    );
-                                }
-                                {%- if recurse %}
-                                    else {
-                                        self.check_{{ field.field_type.name | snake_case }}(child);
-                                    }
-                                {%- endif %}
-                            }
-                        {%- elif field.enabled.type == "Range" %}
-                            {%- set vf = field.enabled.from | split(pat=".") | join(sep="_") %}
-                            {%- set vt = field.enabled.till | split(pat=".") | join(sep="_") %}
-                            if let Some(ref child) = node.{{ field.label | snake_case }} {
-                                if self.version < LanguageVersion::V{{ vf }} || self.version >= LanguageVersion::V{{ vt }} {
-                                    self.report(
-                                        child,
-                                        LanguageVersionSpecifier::Range {
-                                            from: LanguageVersion::V{{ vf }},
-                                            till: LanguageVersion::V{{ vt }},
-                                        },
-                                    );
-                                }
-                                {%- if recurse %}
-                                    else {
-                                        self.check_{{ field.field_type.name | snake_case }}(child);
-                                    }
-                                {%- endif %}
-                            }
                         {%- else %}
-                            {{ panic(message="Unexpected enabled type '" ~ field.enabled.type ~ "' for field '" ~ field.label ~ "' in '" ~ parent_type ~ "'") }}
+                            if let Some(ref child) = node.{{ field.label | snake_case }} {
+                                {%- if recurse %}
+                                    if self.check(child, {{ _versions::specifier(s=field.enabled) }}) {
+                                        self.check_{{ field.field_type.name | snake_case }}(child);
+                                    }
+                                {%- else %}
+                                    self.check(child, {{ _versions::specifier(s=field.enabled) }});
+                                {%- endif %}
+                            }
                         {%- endif %}
                     {%- else %}
                         {# Required field — always present, just recurse if child has versioned descendants #}
@@ -163,39 +99,10 @@ impl SyntaxVersionValidator<'_> {
                 {# Check choice-level enabled #}
                 {%- if choice.enabled.type == "Always" %}
                     {# No version constraint on the node itself. #}
-                {%- elif choice.enabled.type == "From" %}
-                    {%- set v = choice.enabled.from | split(pat=".") | join(sep="_") %}
-                    if self.version < LanguageVersion::V{{ v }} {
-                        self.report(
-                            node,
-                            LanguageVersionSpecifier::From { from: LanguageVersion::V{{ v }} },
-                        );
-                        return;
-                    }
-                {%- elif choice.enabled.type == "Till" %}
-                    {%- set v = choice.enabled.till | split(pat=".") | join(sep="_") %}
-                    if self.version >= LanguageVersion::V{{ v }} {
-                        self.report(
-                            node,
-                            LanguageVersionSpecifier::Till { till: LanguageVersion::V{{ v }} },
-                        );
-                        return;
-                    }
-                {%- elif choice.enabled.type == "Range" %}
-                    {%- set vf = choice.enabled.from | split(pat=".") | join(sep="_") %}
-                    {%- set vt = choice.enabled.till | split(pat=".") | join(sep="_") %}
-                    if self.version < LanguageVersion::V{{ vf }} || self.version >= LanguageVersion::V{{ vt }} {
-                        self.report(
-                            node,
-                            LanguageVersionSpecifier::Range {
-                                from: LanguageVersion::V{{ vf }},
-                                till: LanguageVersion::V{{ vt }},
-                            },
-                        );
-                        return;
-                    }
                 {%- else %}
-                    {{ panic(message="Unexpected enabled type '" ~ choice.enabled.type ~ "' for choice '" ~ parent_type ~ "'") }}
+                    if !self.check(node, {{ _versions::specifier(s=choice.enabled) }}) {
+                        return;
+                    }
                 {%- endif %}
 
                 match node {
@@ -207,39 +114,10 @@ impl SyntaxVersionValidator<'_> {
                             {% if variant_needs_check %}child{% else %}_{% endif %}) => {
                             {%- if variant.enabled.type == "Always" %}
                                 {# No version constraint on the variant itself. #}
-                            {%- elif variant.enabled.type == "From" %}
-                                {%- set v = variant.enabled.from | split(pat=".") | join(sep="_") %}
-                                if self.version < LanguageVersion::V{{ v }} {
-                                    self.report(
-                                        child,
-                                        LanguageVersionSpecifier::From { from: LanguageVersion::V{{ v }} },
-                                    );
-                                    return;
-                                }
-                            {%- elif variant.enabled.type == "Till" %}
-                                {%- set v = variant.enabled.till | split(pat=".") | join(sep="_") %}
-                                if self.version >= LanguageVersion::V{{ v }} {
-                                    self.report(
-                                        child,
-                                        LanguageVersionSpecifier::Till { till: LanguageVersion::V{{ v }} },
-                                    );
-                                    return;
-                                }
-                            {%- elif variant.enabled.type == "Range" %}
-                                {%- set vf = variant.enabled.from | split(pat=".") | join(sep="_") %}
-                                {%- set vt = variant.enabled.till | split(pat=".") | join(sep="_") %}
-                                if self.version < LanguageVersion::V{{ vf }} || self.version >= LanguageVersion::V{{ vt }} {
-                                    self.report(
-                                        child,
-                                        LanguageVersionSpecifier::Range {
-                                            from: LanguageVersion::V{{ vf }},
-                                            till: LanguageVersion::V{{ vt }},
-                                        },
-                                    );
-                                    return;
-                                }
                             {%- else %}
-                                {{ panic(message="Unexpected enabled type '" ~ variant.enabled.type ~ "' for variant '" ~ variant.variant_type.name ~ "' in '" ~ parent_type ~ "'") }}
+                                if !self.check(child, {{ _versions::specifier(s=variant.enabled) }}) {
+                                    return;
+                                }
                             {%- endif %}
 
                             {%- if variant_recurse %}
@@ -261,39 +139,10 @@ impl SyntaxVersionValidator<'_> {
                 {# Check collection-level enabled #}
                 {%- if collection.enabled.type == "Always" %}
                     {# No version constraint on the node itself. #}
-                {%- elif collection.enabled.type == "From" %}
-                    {%- set v = collection.enabled.from | split(pat=".") | join(sep="_") %}
-                    if self.version < LanguageVersion::V{{ v }} {
-                        self.report(
-                            node,
-                            LanguageVersionSpecifier::From { from: LanguageVersion::V{{ v }} },
-                        );
-                        return;
-                    }
-                {%- elif collection.enabled.type == "Till" %}
-                    {%- set v = collection.enabled.till | split(pat=".") | join(sep="_") %}
-                    if self.version >= LanguageVersion::V{{ v }} {
-                        self.report(
-                            node,
-                            LanguageVersionSpecifier::Till { till: LanguageVersion::V{{ v }} },
-                        );
-                        return;
-                    }
-                {%- elif collection.enabled.type == "Range" %}
-                    {%- set vf = collection.enabled.from | split(pat=".") | join(sep="_") %}
-                    {%- set vt = collection.enabled.till | split(pat=".") | join(sep="_") %}
-                    if self.version < LanguageVersion::V{{ vf }} || self.version >= LanguageVersion::V{{ vt }} {
-                        self.report(
-                            node,
-                            LanguageVersionSpecifier::Range {
-                                from: LanguageVersion::V{{ vf }},
-                                till: LanguageVersion::V{{ vt }},
-                            },
-                        );
-                        return;
-                    }
                 {%- else %}
-                    {{ panic(message="Unexpected enabled type '" ~ collection.enabled.type ~ "' for collection '" ~ parent_type ~ "'") }}
+                    if !self.check(node, {{ _versions::specifier(s=collection.enabled) }}) {
+                        return;
+                    }
                 {%- endif %}
 
                 {%- if model.has_versioned_descendant[collection.item_type.name] %}

@@ -8,6 +8,7 @@ use super::{Pass, ScopeFrame};
 use crate::binder::{
     Definition, Reference, Resolution, ResolveOptions, ScopeId, Typing, UsingDirective,
 };
+use crate::built_ins::BuiltInsResolver;
 use crate::types::{ContractType, FunctionType, InterfaceType, StructType, Type, TypeId};
 
 /// Lexical style resolution of symbols
@@ -16,7 +17,7 @@ impl Pass<'_> {
     pub(super) fn resolve_symbol_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
         let resolution = self.binder.resolve_in_scope(scope_id, symbol);
         match &resolution {
-            Resolution::Unresolved => self.built_ins_resolver().lookup_global(symbol).into(),
+            Resolution::Unresolved => BuiltInsResolver::lookup_global(symbol).into(),
             Resolution::Ambiguous(definition_ids) => {
                 // Try to disambiguate known cases
                 let first_id = definition_ids.first().copied().unwrap();
@@ -183,9 +184,7 @@ impl Pass<'_> {
                 Resolution::Unresolved
             }
             Typing::MetaType(type_) => {
-                if let Some(built_in) = self
-                    .built_ins_resolver()
-                    .lookup_member_of_meta_type(type_, symbol)
+                if let Some(built_in) = BuiltInsResolver::lookup_member_of_meta_type(type_, symbol)
                 {
                     Resolution::BuiltIn(built_in)
                 } else {
@@ -221,9 +220,7 @@ impl Pass<'_> {
                             Resolution::Unresolved
                         }
                     }
-                    _ => self
-                        .built_ins_resolver()
-                        .lookup_member_of_user_definition(definition, symbol)
+                    _ => BuiltInsResolver::lookup_member_of_user_definition(definition, symbol)
                         .into(),
                 }
             }
@@ -428,7 +425,7 @@ impl Pass<'_> {
         let resolution =
             self.filter_overriden_definitions(self.binder.resolve_in_scope(scope_id, symbol));
         if resolution == Resolution::Unresolved {
-            self.built_ins_resolver().lookup_yul_global(symbol).into()
+            BuiltInsResolver::lookup_yul_global(symbol).into()
         } else {
             resolution
         }
@@ -442,9 +439,7 @@ impl Pass<'_> {
         match parent_resolution {
             Resolution::Definition(node_id) => {
                 if let Some(definition) = self.binder.find_definition_by_id(*node_id) {
-                    self.built_ins_resolver()
-                        .lookup_yul_suffix(definition, symbol)
-                        .into()
+                    BuiltInsResolver::lookup_yul_suffix(definition, symbol).into()
                 } else {
                     Resolution::Unresolved
                 }

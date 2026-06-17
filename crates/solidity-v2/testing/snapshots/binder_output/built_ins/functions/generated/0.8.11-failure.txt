@@ -1,5 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: This built-in was introduced in EVM target 'Cancun'.
+    ╭─[input.sol:19:22]
+    │
+ 19 │         bytes32 v3 = blobhash(2);
+    │                      ────┬───  
+    │                          ╰───── Error occurred here.
+────╯
+Error: This built-in was introduced in version '0.8.24'.
+    ╭─[input.sol:19:22]
+    │
+ 19 │         bytes32 v3 = blobhash(2);
+    │                      ────┬───  
+    │                          ╰───── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
 Definitions (25):
 - Def: #1 ["BuiltInsTest" @ input.sol:1:10] (contract)
 - Def: #2 ["testRequire" @ input.sol:2:14] (function, type: function () returns void)
@@ -35,7 +53,7 @@ References (37):
 - Ref: ["assert" @ input.sol:11:9] -> built-in
 - Ref: ["addmod" @ input.sol:17:19] -> built-in
 - Ref: ["blockhash" @ input.sol:18:22] -> built-in
-- Ref: ["blobhash" @ input.sol:19:22] -> unresolved
+- Ref: ["blobhash" @ input.sol:19:22] -> built-in
 - Ref: ["ecrecover" @ input.sol:20:22] -> built-in
 - Ref: ["v2" @ input.sol:20:32] -> #8
 - Ref: ["v2" @ input.sol:20:39] -> #8
@@ -122,7 +140,7 @@ Bindings:
     │                 ─┬   ────┬───  
     │                  ╰───────────── name: 9
     │                          │     
-    │                          ╰───── unresolved
+    │                          ╰───── built-in
  20 │         address v4 = ecrecover(v2, 1, v2, v2);
     │                 ─┬   ────┬──── ─┬     ─┬  ─┬  
     │                  ╰──────────────────────────── name: 10

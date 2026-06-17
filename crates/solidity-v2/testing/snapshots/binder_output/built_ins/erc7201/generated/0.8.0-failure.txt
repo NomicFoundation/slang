@@ -8,6 +8,13 @@ Error: This syntax was introduced in version '0.8.29'.
    │                     ──────────────────────────┬─────────────────────────  
    │                                               ╰─────────────────────────── Error occurred here.
 ───╯
+Error: This built-in was introduced in version '0.8.35'.
+   ╭─[input.sol:1:31]
+   │
+ 1 │ contract MyContract layout at erc7201("openzeppelin.storage.MyContract") { // added in 0.8.35
+   │                               ───┬───  
+   │                                  ╰───── Error occurred here.
+───╯
 
 ------------------------------------------------------------------------
 
@@ -19,7 +26,7 @@ Definitions (3):
 ------------------------------------------------------------------------
 
 References (1):
-- Ref: ["erc7201" @ input.sol:1:31] -> unresolved
+- Ref: ["erc7201" @ input.sol:1:31] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -34,7 +41,7 @@ Bindings:
    │          ─────┬────           ───┬───  
    │               ╰──────────────────────── name: 1
    │                                  │     
-   │                                  ╰───── unresolved
+   │                                  ╰───── built-in
  2 │     uint256 x;
    │             ┬  
    │             ╰── name: 2

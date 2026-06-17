@@ -1,0 +1,99 @@
+{%- import "crates/solidity-v2/outputs/cargo/common/src/versions/_macros.rs.jinja2" as _versions -%}
+{%- import "crates/solidity-v2/outputs/cargo/common/src/evm_targets/_macros.rs.jinja2" as _evm_targets -%}
+
+use std::ops::Range;
+
+use slang_solidity_v2_common::diagnostics::kinds::resolution::{
+    IncompatibleBuiltInTarget, IncompatibleBuiltInVersion,
+};
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::evm_targets::{EvmTarget, EvmTargetSpecifier};
+use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_common::versions::{LanguageVersion, LanguageVersionSpecifier};
+
+use crate::built_ins::InternalBuiltIn;
+use crate::context::FileNodeMapper;
+
+pub(super) struct BuiltInValidator<'a> {
+    language_version: LanguageVersion,
+    evm_target: EvmTarget,
+    file_node_mapper: &'a FileNodeMapper,
+    diagnostics: &'a mut DiagnosticCollection,
+}
+
+impl<'a> BuiltInValidator<'a> {
+    pub(super) fn new(
+        language_version: LanguageVersion,
+        evm_target: EvmTarget,
+        file_node_mapper: &'a FileNodeMapper,
+        diagnostics: &'a mut DiagnosticCollection,
+    ) -> Self {
+        Self {
+            language_version,
+            evm_target,
+            file_node_mapper,
+            diagnostics,
+        }
+    }
+
+    #[allow(clippy::too_many_lines)]
+    pub(super) fn validate(
+        &mut self,
+        built_in: InternalBuiltIn,
+        node_id: NodeId,
+        range: &Range<usize>,
+    ) {
+        match built_in {
+            {%- for context in model.language.built_ins %}
+                {%- for scope in context.scopes %}
+                    {%- for definition in scope.definitions %}
+                        {%- if definition.enabled.type != "Always" or definition.evm_enabled.type != "Always" %}
+                            InternalBuiltIn::{{ definition.name }}{% if definition.internal_parameter %}(_){% endif %} => {
+                                {%- if definition.enabled.type != "Always" %}
+                                    self.check_version(node_id, range, {{ _versions::specifier(s=definition.enabled) }});
+                                {%- endif %}
+                                {%- if definition.evm_enabled.type != "Always" %}
+                                    self.check_target(node_id, range, {{ _evm_targets::specifier(s=definition.evm_enabled) }});
+                                {%- endif %}
+                            }
+                        {%- endif %}
+                    {%- endfor %}
+                {%- endfor %}
+            {%- endfor %}
+
+            _ => {}
+        }
+    }
+
+    fn check_version(
+        &mut self,
+        node_id: NodeId,
+        range: &Range<usize>,
+        compatible_in: LanguageVersionSpecifier,
+    ) {
+        if !compatible_in.contains(self.language_version) {
+            let file_id = self.file_node_mapper.file_id_from_node_id(node_id);
+            self.diagnostics.push(
+                file_id.to_owned(),
+                range.clone(),
+                IncompatibleBuiltInVersion { compatible_in },
+            );
+        }
+    }
+
+    fn check_target(
+        &mut self,
+        node_id: NodeId,
+        range: &Range<usize>,
+        compatible_in: EvmTargetSpecifier,
+    ) {
+        if !compatible_in.contains(self.evm_target) {
+            let file_id = self.file_node_mapper.file_id_from_node_id(node_id);
+            self.diagnostics.push(
+                file_id.to_owned(),
+                range.clone(),
+                IncompatibleBuiltInTarget { compatible_in },
+            );
+        }
+    }
+}

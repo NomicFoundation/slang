@@ -1,0 +1,24 @@
+{#- Renders `LanguageVersion::V0_8_X` from a dotted version string like "0.8.13". -#}
+{%- macro version(v) -%}
+    LanguageVersion::V{{ v | split(pat=".") | join(sep="_") }}
+{%- endmacro version -%}
+
+{#- Renders a `LanguageVersionSpecifier::<variant>(..)` constructor call from a `VersionSpecifier`-shaped object. -#}
+{%- macro specifier(s) -%}
+    {%- if s.type == "From" -%}
+        LanguageVersionSpecifier::from(
+            {{ self::version(v=s.from) }}
+        )
+    {%- elif s.type == "Till" -%}
+        LanguageVersionSpecifier::till(
+            {{ self::version(v=s.till) }}
+        )
+    {%- elif s.type == "Range" -%}
+        LanguageVersionSpecifier::range(
+            {{ self::version(v=s.from) }},
+            {{ self::version(v=s.till) }},
+        )
+    {%- else -%}
+        {{ throw(message="Unexpected version specifier type: " ~ s.type) }}
+    {%- endif -%}
+{%- endmacro specifier -%}

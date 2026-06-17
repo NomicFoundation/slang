@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use slang_solidity_v2_common::evm_targets::EvmTarget;
+
 use crate::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
 use crate::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
 use crate::utils::LanguageVersion;
@@ -71,7 +73,8 @@ pub(super) fn build_compilation_unit_from_fixture(
     files: &[FixtureFile<'_>],
 ) -> Arc<CompilationUnit> {
     let version = LanguageVersion::LATEST;
-    let mut builder = CompilationBuilder::create(version, FixtureBuildConfig { files });
+    let target = EvmTarget::LATEST;
+    let mut builder = CompilationBuilder::create(version, target, FixtureBuildConfig { files });
 
     for file in files {
         builder.add_file(file.id.to_owned());

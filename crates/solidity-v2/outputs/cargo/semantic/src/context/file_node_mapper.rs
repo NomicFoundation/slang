@@ -15,7 +15,7 @@ struct FileNodeInfo {
 /// which allows us to efficiently determine which file a node belongs to. This
 /// is by construction of the IR trees and the use of a monotonic
 /// `NodeIdGenerator`.
-pub(super) struct FileNodeMapper {
+pub(crate) struct FileNodeMapper {
     files: Vec<FileNodeInfo>,
 }
 
@@ -36,7 +36,7 @@ impl FileNodeMapper {
         Self { files }
     }
 
-    pub(super) fn file_id_from_node_id(&self, node_id: NodeId) -> &str {
+    pub(crate) fn file_id_from_node_id(&self, node_id: NodeId) -> &str {
         let index = match self
             .files
             .binary_search_by_key(&node_id, |file| file.first_node_id)

@@ -4,26 +4,26 @@ use crate::diagnostics::extensions::DiagnosticExtensions;
 use crate::diagnostics::severity::DiagnosticSeverity;
 use crate::versions::LanguageVersionSpecifier;
 
-/// Diagnostic emitted when a piece of syntax is not available for the
+/// Diagnostic emitted when a piece of syntax is not compatible with the
 /// currently selected language version (either introduced later or
 /// deprecated earlier).
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
-pub struct UnsupportedSyntax {
-    /// The range of language versions in which this syntax is valid.
-    pub supported_in: LanguageVersionSpecifier,
+pub struct IncompatibleSyntaxVersion {
+    /// The range of language versions in which this syntax is compatible.
+    pub compatible_in: LanguageVersionSpecifier,
 }
 
-impl DiagnosticExtensions for UnsupportedSyntax {
+impl DiagnosticExtensions for IncompatibleSyntaxVersion {
     fn severity(&self) -> DiagnosticSeverity {
         DiagnosticSeverity::Error
     }
 
     fn code(&self) -> &'static str {
-        "syntax/unsupported-syntax"
+        "syntax/incompatible-syntax-version"
     }
 
     fn message(&self) -> String {
-        match &self.supported_in {
+        match &self.compatible_in {
             LanguageVersionSpecifier::From { from } => {
                 format!("This syntax was introduced in version '{from}'.")
             }

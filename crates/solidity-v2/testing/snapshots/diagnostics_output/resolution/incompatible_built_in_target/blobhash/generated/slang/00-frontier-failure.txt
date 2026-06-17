@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: This built-in was introduced in EVM target 'Cancun'.
+   ╭─[input.sol:6:16]
+   │
+ 6 │         return blobhash(0);
+   │                ────┬───  
+   │                    ╰───── Error occurred here.
+───╯

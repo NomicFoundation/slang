@@ -55,6 +55,9 @@ fn walk(parent_dir: &Path) -> Option<SnapshotEntry> {
                 ".gitattributes" => {
                     // Some tests have special line endings (CRLF/CR) stored as binary.
                 }
+                ".tests.config.json" => {
+                    // Per-suite/per-test configuration consumed at runtime.
+                }
                 _ => {
                     panic!("Unexpected file in snapshot directory: {child_path:?}");
                 }

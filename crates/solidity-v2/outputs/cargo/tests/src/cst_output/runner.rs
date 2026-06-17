@@ -2,8 +2,10 @@ use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
-use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_parser::Parser as V2Parser;
+use solidity_v2_testing_utils::cst_renderer::render;
+
+use crate::snapshots::{self, SnapshotOutcome, SnapshotStatus};
 
 pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     let test_dir = CargoWorkspace::locate_source_crate("solidity_v2_testing_snapshots")?
@@ -17,31 +19,22 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
 
     let mut fs = CodegenFileSystem::default();
 
-    let mut last_output = None;
-
-    for &lang_version in LanguageVersion::ALL {
-        let v2_output = V2Parser::parse(&source_id, &source, lang_version);
-
-        match last_output {
-            // Skip this version if it produces the same output.
-            // Note: comparing objects cheaply before expensive serialization.
-            Some(ref last) if last == &v2_output => continue,
-            _ => {
-                let (status, content) = solidity_v2_testing_utils::cst_renderer::render(
-                    &source, &source_id, &v2_output,
-                );
-
-                let status = if status { "success" } else { "failure" };
-
-                let snapshot_path = test_dir
-                    .join("generated")
-                    .join(format!("{lang_version}-{status}.yml"));
-
-                fs.write_file_raw(&snapshot_path, content)?;
-                last_output = Some(v2_output);
-            }
-        }
-    }
+    snapshots::generate_snapshots(&test_dir, &mut fs, "generated", |version, target| {
+        let output = V2Parser::parse(&source_id, &source, version);
+        let (ok, contents) = render(&source, &source_id, &output);
+        let status = if ok {
+            SnapshotStatus::Success
+        } else {
+            SnapshotStatus::Failure
+        };
+        Ok(SnapshotOutcome {
+            version,
+            target,
+            status,
+            contents,
+            extension: "yml",
+        })
+    })?;
 
     Ok(())
 }

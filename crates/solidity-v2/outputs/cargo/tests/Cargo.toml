@@ -6,12 +6,15 @@ edition.workspace = true
 publish = false
 
 [dev-dependencies]
+Inflector = { workspace = true }
 anyhow = { workspace = true }
 ariadne = { workspace = true }
 indoc = { workspace = true }
 infra_utils = { workspace = true }
 regex = { workspace = true }
 semver = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
 slang_solidity_v2 = { workspace = true }
 slang_solidity_v2_common = { workspace = true }
 slang_solidity_v2_parser = { workspace = true }

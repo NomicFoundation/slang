@@ -254,13 +254,7 @@ contract Test is Base {
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
 
     let types_before = types.iter_types().count();
-    p3_type_definitions::run(
-        &files,
-        &mut binder,
-        &mut types,
-        language_version,
-        &mut diagnostics,
-    );
+    p3_type_definitions::run(&files, &mut binder, &mut types, &mut diagnostics);
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
@@ -306,8 +300,9 @@ contract Test is Base {
 }
     "###;
 
-    let mut id_generator = NodeIdGenerator::default();
     let language_version = LanguageVersion::LATEST;
+
+    let mut id_generator = NodeIdGenerator::default();
     let file = build_file("test.sol", CONTENTS, &mut id_generator, language_version);
 
     let files = [file];
@@ -317,18 +312,12 @@ contract Test is Base {
     let mut diagnostics = DiagnosticCollection::default();
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
-    p3_type_definitions::run(
-        &files,
-        &mut binder,
-        &mut types,
-        language_version,
-        &mut diagnostics,
-    );
+    p3_type_definitions::run(&files, &mut binder, &mut types, &mut diagnostics);
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
     );
-    p5_resolve_references::run(&files, &mut binder, &mut types, language_version);
+    p5_resolve_references::run(&files, &mut binder, &mut types);
 
     // Verify that references were created and most are resolved
     let references = binder.references();

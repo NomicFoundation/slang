@@ -133,10 +133,45 @@ For testing, we maintain snapshots checked into the repo:
     - Binder: `crates/solidity/testing/snapshots/bindings_output/`
 - V2 Snapshots:
     - Parser: `crates/solidity-v2/testing/snapshots/cst_output/`
+    - Binder: `crates/solidity-v2/testing/snapshots/binder_output/`
+    - Diagnostics: `crates/solidity-v2/testing/snapshots/diagnostics_output/`
 
 When source changes cause snapshot mismatches, the test output shows the diff.
 Simply re-run the tests, and they will update the snapshot files on disk automatically.
 Then commit the updated snapshots alongside your code change.
+
+### V2 Snapshot `.tests.config.json`
+
+V2 test runner resolves a per-test `.tests.config.json` to pick which
+`(LanguageVersion, EvmTarget)` matrix axis to vary; the other axis is
+pinned. Resolution searches next to the test's `input.sol` and then each
+parent directory up to the owning crate root, erroring if none is found —
+so each suite defines one at its root.
+
+The config has a single `matrix` field with two shapes. Pin the target,
+iterate every language version:
+
+```json
+{
+    "matrix": {
+        "type": "SingleTargetAllVersions",
+        "target": "Istanbul",
+        "reason": "Explain why this target was pinned..."
+    }
+}
+```
+
+Or pin the version, iterate every EVM target:
+
+```json
+{
+    "matrix": {
+        "type": "SingleVersionAllTargets",
+        "version": "0.8.35",
+        "reason": "Explain why this version was pinned..."
+    }
+}
+```
 
 ## Important Gotchas
 

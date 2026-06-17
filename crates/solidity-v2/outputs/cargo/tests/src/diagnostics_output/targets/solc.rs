@@ -1,7 +1,12 @@
 use anyhow::{anyhow, Result};
-use infra_utils::solc::{render_solc_error, Binary, CliInput, InputSource, LanguageSelector};
+use inflector::Inflector;
+use infra_utils::solc::{
+    render_solc_error, Binary, CliInput, CliSettings, InputSource, LanguageSelector,
+};
 use semver::Version;
 use slang_solidity_v2_common::collections::SortedMap;
+use slang_solidity_v2_common::evm_targets::EvmTarget;
+use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::diagnostics_output::targets::TestTarget;
 
@@ -25,12 +30,14 @@ impl TestTarget for SolcTarget {
     fn collect_diagnostics(
         &self,
         files: &SortedMap<String, String>,
-        version: &Version,
+        version: LanguageVersion,
+        evm_target: EvmTarget,
     ) -> Result<Vec<String>> {
+        let semver_version: Version = version.into();
         let binary = self
             .binaries
-            .get(version)
-            .ok_or_else(|| anyhow!("no solc binary fetched for version {version}"))?;
+            .get(&semver_version)
+            .ok_or_else(|| anyhow!("no solc binary fetched for version {semver_version}"))?;
 
         let input = CliInput {
             language: LanguageSelector::Solidity,
@@ -45,6 +52,9 @@ impl TestTarget for SolcTarget {
                     )
                 })
                 .collect(),
+            settings: CliSettings {
+                evm_version: Some(evm_target.to_string().to_camel_case()),
+            },
         };
 
         let output = binary.run(&input)?;

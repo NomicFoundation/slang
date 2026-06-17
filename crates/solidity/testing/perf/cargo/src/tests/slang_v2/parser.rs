@@ -1,9 +1,8 @@
-use semver::{BuildMetadata, Prerelease};
-use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::{SourceUnit, SourceUnitMember};
 use slang_solidity_v2_parser::{ParseOutput, Parser};
 
 use crate::dataset::SolidityProject;
+use crate::tests::slang_v2::common::parse_version;
 
 pub fn setup(project: &str) -> &'static SolidityProject {
     crate::tests::setup::setup(project)
@@ -43,11 +42,4 @@ pub fn count_contracts(source_units: &Vec<(String, SourceUnit)>) -> usize {
         }
     }
     contract_count
-}
-
-pub fn parse_version(project: &SolidityProject) -> LanguageVersion {
-    let mut version = semver::Version::parse(&project.compiler_version).unwrap();
-    version.pre = Prerelease::EMPTY;
-    version.build = BuildMetadata::EMPTY;
-    LanguageVersion::try_from(version).unwrap()
 }

@@ -1,10 +1,8 @@
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, Scope, ScopeId};
-use crate::built_ins::BuiltInsResolver;
 use crate::context::SemanticFile;
 use crate::types::{ContractType, Type, TypeId, TypeRegistry};
 
@@ -26,19 +24,17 @@ pub fn run(
     files: &[impl SemanticFile],
     binder: &mut Binder,
     types: &mut TypeRegistry,
-    language_version: LanguageVersion,
     diagnostics: &mut DiagnosticCollection,
 ) {
     for file in files {
-        Pass::visit_file(file, binder, types, language_version, diagnostics);
+        Pass::visit_file(file, binder, types, diagnostics);
     }
     for file in files {
-        Pass::visit_file_type_getters(file, binder, types, language_version, diagnostics);
+        Pass::visit_file_type_getters(file, binder, types, diagnostics);
     }
 }
 
 struct Pass<'a> {
-    language_version: LanguageVersion,
     scope_stack: Vec<ScopeId>,
     binder: &'a mut Binder,
     types: &'a mut TypeRegistry,
@@ -52,11 +48,9 @@ impl<'a> Pass<'a> {
         file: &impl SemanticFile,
         binder: &'a mut Binder,
         types: &'a mut TypeRegistry,
-        language_version: LanguageVersion,
         diagnostics: &'a mut DiagnosticCollection,
     ) {
         let mut pass = Self {
-            language_version,
             scope_stack: Vec::new(),
             binder,
             types,
@@ -78,11 +72,9 @@ impl<'a> Pass<'a> {
         file: &impl SemanticFile,
         binder: &'a mut Binder,
         types: &'a mut TypeRegistry,
-        language_version: LanguageVersion,
         diagnostics: &'a mut DiagnosticCollection,
     ) {
         let mut pass = Self {
-            language_version,
             scope_stack: Vec::new(),
             binder,
             types,
@@ -91,10 +83,6 @@ impl<'a> Pass<'a> {
             current_receiver_type: None,
         };
         pass.type_getters_from(file.ir_root());
-    }
-
-    fn built_ins_resolver(&self) -> BuiltInsResolver<'_> {
-        BuiltInsResolver::new(self.language_version, self.binder, self.types)
     }
 
     fn type_getters_from(&mut self, source_unit: &ir::SourceUnit) {

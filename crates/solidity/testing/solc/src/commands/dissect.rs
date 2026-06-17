@@ -11,15 +11,13 @@ use clap::Parser;
 use console::{style, Color};
 use infra_utils::paths::PathExtensions;
 use infra_utils::solc::{
-    render_solc_error, Binary, CliInput, Error, InputSource, LanguageSelector, Severity,
-    SourceLocation,
+    is_solc_segfault, render_solc_error, Binary, CliInput, CliSettings, Error, InputSource,
+    LanguageSelector, Severity,
 };
 use infra_utils::terminal::Terminal;
 use itertools::Itertools;
 use semver::Version;
 use solidity_language::SolidityDefinition;
-
-use crate::utils::is_solc_segfault;
 
 /// Compiles a Solidity file with all versions of `solc`, listing which versions succeeded/failed.
 #[derive(Debug, Parser)]
@@ -109,6 +107,7 @@ impl Dissector {
                 },
             )]
             .into(),
+            settings: CliSettings::default(),
         };
 
         let errors = match binary.run(&input) {
@@ -117,11 +116,11 @@ impl Dissector {
 
             // Normalize any process/execution errors into the same compiler error types:
             Err(error) => vec![Error {
-                r#type: "Error".to_string(),
-                error_code: "<none>".to_string(),
                 message: format!("{error}"),
                 severity: Severity::Error,
-                location: SourceLocation::default(),
+                r#type: "Error".to_string(),
+                error_code: None,
+                source_location: None,
             }],
         };
 

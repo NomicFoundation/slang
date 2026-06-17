@@ -1,3 +1,5 @@
+mod common;
+
 pub mod compute_contracts_abi;
 pub mod ir_builder;
 pub mod parser;

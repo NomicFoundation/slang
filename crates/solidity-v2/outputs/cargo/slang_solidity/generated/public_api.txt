@@ -13,11 +13,10 @@ pub use slang_solidity_v2::ast::NodeId
 pub use slang_solidity_v2::ast::TypeId
 pub mod slang_solidity_v2::compilation
 pub struct slang_solidity_v2::compilation::CompilationBuilder<C: slang_solidity_v2::compilation::CompilationBuilderConfig>
-pub slang_solidity_v2::compilation::CompilationBuilder::config: C
 impl<C: slang_solidity_v2::compilation::CompilationBuilderConfig> slang_solidity_v2::compilation::CompilationBuilder<C>
 pub fn slang_solidity_v2::compilation::CompilationBuilder<C>::add_file(&mut self, file_id: alloc::string::String)
 pub fn slang_solidity_v2::compilation::CompilationBuilder<C>::build(self) -> slang_solidity_v2::compilation::CompilationUnit
-pub fn slang_solidity_v2::compilation::CompilationBuilder<C>::create(language_version: slang_solidity_v2_common::versions::version::LanguageVersion, config: C) -> slang_solidity_v2::compilation::CompilationBuilder<C>
+pub fn slang_solidity_v2::compilation::CompilationBuilder<C>::create(language_version: slang_solidity_v2_common::versions::version::LanguageVersion, evm_target: slang_solidity_v2_common::evm_targets::target::EvmTarget, config: C) -> slang_solidity_v2::compilation::CompilationBuilder<C>
 pub struct slang_solidity_v2::compilation::CompilationUnit
 impl slang_solidity_v2::compilation::CompilationUnit
 pub fn slang_solidity_v2::compilation::CompilationUnit::all_contracts(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::nodes::ContractDefinition> + use<'_>
@@ -25,6 +24,7 @@ pub fn slang_solidity_v2::compilation::CompilationUnit::all_definitions(&self) -
 pub fn slang_solidity_v2::compilation::CompilationUnit::all_references(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::references::Reference> + use<'_>
 pub fn slang_solidity_v2::compilation::CompilationUnit::compute_contracts_abi(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::abi::ContractAbi>
 pub fn slang_solidity_v2::compilation::CompilationUnit::diagnostics(&self) -> &slang_solidity_v2_common::diagnostics::collection::DiagnosticCollection
+pub fn slang_solidity_v2::compilation::CompilationUnit::evm_target(&self) -> slang_solidity_v2_common::evm_targets::target::EvmTarget
 pub fn slang_solidity_v2::compilation::CompilationUnit::file(&self, id: &str) -> core::option::Option<slang_solidity_v2::compilation::File>
 pub fn slang_solidity_v2::compilation::CompilationUnit::file_ids(&self) -> alloc::vec::Vec<alloc::string::String>
 pub fn slang_solidity_v2::compilation::CompilationUnit::files(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2::compilation::File> + use<'_>

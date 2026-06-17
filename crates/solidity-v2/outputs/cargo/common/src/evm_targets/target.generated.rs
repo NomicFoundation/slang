@@ -1,7 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use std::fmt::{Display, Formatter};
-use std::str::FromStr;
 
 use serde::Serialize;
 use thiserror::Error;
@@ -81,10 +80,10 @@ pub enum FromStrError {
     UnrecognizedEvmTarget,
 }
 
-impl FromStr for EvmTarget {
-    type Err = FromStrError;
+impl TryFrom<&str> for EvmTarget {
+    type Error = FromStrError;
 
-    fn from_str(value: &str) -> Result<Self, Self::Err> {
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
         match value {
             "Frontier" => Ok(EvmTarget::Frontier),
             "Homestead" => Ok(EvmTarget::Homestead),

@@ -1,5 +1,4 @@
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Scope, ScopeId};
@@ -17,14 +16,9 @@ mod visitor;
 /// containing expressions and statements. Both these actions are co-dependant
 /// and happen concurrently for each node, and their results are store in the
 /// `Binder` instance.
-pub fn run(
-    files: &[impl SemanticFile],
-    binder: &mut Binder,
-    types: &mut TypeRegistry,
-    language_version: LanguageVersion,
-) {
+pub fn run(files: &[impl SemanticFile], binder: &mut Binder, types: &mut TypeRegistry) {
     for file in files {
-        Pass::visit_file(file, binder, types, language_version);
+        Pass::visit_file(file, binder, types);
     }
     // update definition->references reverse mapping
     binder.update_definitions_to_references_index();
@@ -39,21 +33,14 @@ struct ScopeFrame {
 }
 
 struct Pass<'a> {
-    language_version: LanguageVersion,
     scope_stack: Vec<ScopeFrame>,
     binder: &'a mut Binder,
     types: &'a mut TypeRegistry,
 }
 
 impl<'a> Pass<'a> {
-    fn visit_file(
-        file: &impl SemanticFile,
-        binder: &'a mut Binder,
-        types: &'a mut TypeRegistry,
-        language_version: LanguageVersion,
-    ) {
+    fn visit_file(file: &impl SemanticFile, binder: &'a mut Binder, types: &'a mut TypeRegistry) {
         let mut pass = Self {
-            language_version,
             scope_stack: Vec::new(),
             binder,
             types,
@@ -63,7 +50,7 @@ impl<'a> Pass<'a> {
     }
 
     fn built_ins_resolver(&self) -> BuiltInsResolver<'_> {
-        BuiltInsResolver::new(self.language_version, self.binder, self.types)
+        BuiltInsResolver::new(self.binder, self.types)
     }
 
     fn enter_scope_for_node_id(&mut self, node_id: NodeId) {

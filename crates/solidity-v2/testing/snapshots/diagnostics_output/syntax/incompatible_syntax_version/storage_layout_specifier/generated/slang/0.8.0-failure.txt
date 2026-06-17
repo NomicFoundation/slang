@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: This syntax was introduced in version '0.8.29'.
+   ╭─[input.sol:4:15]
+   │
+ 4 │ contract Test layout at 0 {}
+   │               ─────┬─────  
+   │                    ╰─────── Error occurred here.
+───╯

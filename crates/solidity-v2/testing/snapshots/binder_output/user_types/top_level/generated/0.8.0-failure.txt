@@ -1,6 +1,20 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Parse errors:
+Error: This built-in was introduced in version '0.8.8'.
+   ╭─[input.sol:3:32]
+   │
+ 3 │         TopLevel tl = TopLevel.wrap(20);
+   │                                ──┬─  
+   │                                  ╰─── Error occurred here.
+───╯
+Error: This built-in was introduced in version '0.8.8'.
+   ╭─[input.sol:4:25]
+   │
+ 4 │         return TopLevel.unwrap(tl);
+   │                         ───┬──  
+   │                            ╰──── Error occurred here.
+───╯
 Error: This syntax was introduced in version '0.8.8'.
    ╭─[input.sol:8:1]
    │
@@ -22,9 +36,9 @@ Definitions (4):
 References (6):
 - Ref: ["TopLevel" @ input.sol:3:9] -> #4
 - Ref: ["TopLevel" @ input.sol:3:23] -> #4
-- Ref: ["wrap" @ input.sol:3:32] -> unresolved
+- Ref: ["wrap" @ input.sol:3:32] -> built-in
 - Ref: ["TopLevel" @ input.sol:4:16] -> #4
-- Ref: ["unwrap" @ input.sol:4:25] -> unresolved
+- Ref: ["unwrap" @ input.sol:4:25] -> built-in
 - Ref: ["tl" @ input.sol:4:32] -> #3
 
 ------------------------------------------------------------------------
@@ -50,12 +64,12 @@ Bindings:
    │                           │      │   
    │                           ╰────────── ref: 4
    │                                  │   
-   │                                  ╰─── unresolved
+   │                                  ╰─── built-in
  4 │         return TopLevel.unwrap(tl);
    │                ────┬─── ───┬── ─┬  
    │                    ╰─────────────── ref: 4
    │                            │    │  
-   │                            ╰─────── unresolved
+   │                            ╰─────── built-in
    │                                 │  
    │                                 ╰── ref: 3
    │ 
