@@ -124,7 +124,7 @@ impl Visitor for Pass<'_> {
                 Resolution::BuiltIn(built_in)
             } else {
                 let scope_id = self.current_scope_id();
-                let resolution = self.resolve_symbol_in_scope(scope_id, symbol, &identifier.range);
+                let resolution = self.resolve_symbol_in_scope(scope_id, identifier);
                 self.filter_overriden_definitions(resolution)
             };
 
@@ -331,11 +331,7 @@ impl Visitor for Pass<'_> {
         // we need to resolve the identifier at this point that we already have
         // typing information of the operand expression
         let operand_typing = self.typing_of_expression(&node.operand);
-        let resolution = self.resolve_symbol_in_typing(
-            &operand_typing,
-            node.member.unparse(),
-            &node.member.range,
-        );
+        let resolution = self.resolve_symbol_in_typing(&operand_typing, &node.member);
         let resolution = self.filter_overriden_definitions(resolution);
 
         // If the operand is either `this` or a contract/interface reference
@@ -531,15 +527,14 @@ impl Visitor for Pass<'_> {
 
         let scope_id = self.current_scope_id();
         let identifier = &items[0];
-        let resolution =
-            self.resolve_symbol_in_yul_scope(scope_id, identifier.unparse(), &identifier.range);
+        let resolution = self.resolve_symbol_in_yul_scope(scope_id, identifier);
 
         let reference = Reference::new(Arc::clone(identifier), resolution.clone());
         self.binder.insert_reference(reference);
 
         if items.len() > 1 {
             let suffix = &items[1];
-            let resolution = self.resolve_yul_suffix(suffix.unparse(), &resolution, &suffix.range);
+            let resolution = self.resolve_yul_suffix(suffix, &resolution);
             let reference = Reference::new(Arc::clone(suffix), resolution);
             self.binder.insert_reference(reference);
         }

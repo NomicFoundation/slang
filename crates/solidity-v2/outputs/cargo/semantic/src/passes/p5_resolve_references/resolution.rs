@@ -1,4 +1,3 @@
-use std::ops::Range;
 use std::sync::Arc;
 
 use slang_solidity_v2_common::collections::Set;
@@ -18,9 +17,9 @@ impl Pass<'_> {
     pub(super) fn resolve_symbol_in_scope(
         &mut self,
         scope_id: ScopeId,
-        symbol: &str,
-        range: &Range<usize>,
+        identifier: &ir::Identifier,
     ) -> Resolution {
+        let symbol = identifier.unparse();
         let resolution = self.binder.resolve_in_scope(scope_id, symbol);
         let resolution = match &resolution {
             Resolution::Unresolved => BuiltInsResolver::lookup_global(symbol).into(),
@@ -54,7 +53,7 @@ impl Pass<'_> {
             Resolution::Definition(_) | Resolution::BuiltIn(_) => resolution,
         };
         if let Resolution::BuiltIn(built_in) = &resolution {
-            self.validate_built_in(*built_in, range);
+            self.validate_built_in(*built_in, &identifier.range);
         }
         resolution
     }
@@ -138,9 +137,9 @@ impl Pass<'_> {
     pub(super) fn resolve_symbol_in_typing(
         &mut self,
         typing: &Typing,
-        symbol: &str,
-        range: &Range<usize>,
+        identifier: &ir::Identifier,
     ) -> Resolution {
+        let symbol = identifier.unparse();
         let resolution = match typing {
             Typing::Unresolved => Resolution::Unresolved,
             Typing::Undetermined(type_ids) => {
@@ -245,7 +244,7 @@ impl Pass<'_> {
                 .into(),
         };
         if let Resolution::BuiltIn(built_in) = &resolution {
-            self.validate_built_in(*built_in, range);
+            self.validate_built_in(*built_in, &identifier.range);
         }
         resolution
     }
@@ -377,12 +376,12 @@ impl Pass<'_> {
         let mut use_contract_lookup = true;
         for (index, identifier) in identifier_path.iter().enumerate() {
             let resolution = if let Some(scope_id) = scope_id {
-                let symbol = identifier.unparse();
                 if use_contract_lookup {
                     use_contract_lookup = false;
-                    self.resolve_symbol_in_scope(scope_id, symbol, &identifier.range)
+                    self.resolve_symbol_in_scope(scope_id, identifier)
                 } else {
-                    self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
+                    self.binder
+                        .resolve_in_scope_as_namespace(scope_id, identifier.unparse())
                 }
             } else {
                 Resolution::Unresolved
@@ -439,9 +438,9 @@ impl Pass<'_> {
     pub(super) fn resolve_symbol_in_yul_scope(
         &mut self,
         scope_id: ScopeId,
-        symbol: &str,
-        range: &Range<usize>,
+        identifier: &ir::Identifier,
     ) -> Resolution {
+        let symbol = identifier.unparse();
         let resolution =
             self.filter_overriden_definitions(self.binder.resolve_in_scope(scope_id, symbol));
         let resolution = if resolution == Resolution::Unresolved {
@@ -450,17 +449,17 @@ impl Pass<'_> {
             resolution
         };
         if let Resolution::BuiltIn(built_in) = &resolution {
-            self.validate_built_in(*built_in, range);
+            self.validate_built_in(*built_in, &identifier.range);
         }
         resolution
     }
 
     pub(super) fn resolve_yul_suffix(
         &mut self,
-        symbol: &str,
+        identifier: &ir::Identifier,
         parent_resolution: &Resolution,
-        range: &Range<usize>,
     ) -> Resolution {
+        let symbol = identifier.unparse();
         let resolution = match parent_resolution {
             Resolution::Definition(node_id) => {
                 if let Some(definition) = self.binder.find_definition_by_id(*node_id) {
@@ -474,7 +473,7 @@ impl Pass<'_> {
             }
         };
         if let Resolution::BuiltIn(built_in) = &resolution {
-            self.validate_built_in(*built_in, range);
+            self.validate_built_in(*built_in, &identifier.range);
         }
         resolution
     }
