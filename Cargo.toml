@@ -127,8 +127,8 @@ solidity_v2_cargo_tests = { path = "crates/solidity-v2/outputs/cargo/tests", ver
 #
 anyhow = { version = "1.0.102", features = ["backtrace", "std"] }
 ariadne = { version = "0.2.0" }
-# __SLANG_BENCHER_CLI_RELEASE__ (keep in sync) https://github.com/bencherdev/bencher/releases/tag/v0.6.5
-bencher_cli = { git = "https://github.com/bencherdev/bencher", rev = "99117a626dc634b8ad817f38abcf4876b3b0668b" } # __SLANG_BENCHER_CLI_RELEASE__
+# __SLANG_BENCHER_CLI_RELEASE__ (keep in sync) https://github.com/bencherdev/bencher/releases/tag/v0.6.7
+bencher_cli = { git = "https://github.com/bencherdev/bencher", rev = "ec56bb69a7f34096002ca3384d10e2f6676b063e" } # __SLANG_BENCHER_CLI_RELEASE__
 bitvec = { version = "1.0.1" }
 cargo-edit = { version = "0.13.0" }
 cargo-nextest = { version = "0.9.72" }
