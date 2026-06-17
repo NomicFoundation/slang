@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/incompatible-constant-operator] Error: Operator / not compatible with types int_const 1 and int_const 0
+   ╭─[input.sol:7:14]
+   │
+ 7 │     uint256[(1 / 0) * 2] x;
+   │              ──┬──  
+   │                ╰──── Error occurred here.
+───╯

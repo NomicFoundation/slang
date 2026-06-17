@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 1847] Error: Array length too large, maximum is 2**256 - 1.
+   ╭─[input.sol:6:13]
+   │
+ 6 │     uint256[2 ** 256] x;
+   │             ────┬───  
+   │                 ╰───── Error occurred here.
+───╯

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 2643] Error: Arithmetic error when computing constant value.
+   ╭─[input.sol:9:13]
+   │
+ 9 │     uint256[B + 1] x;
+   │             ──┬──  
+   │               ╰──── Error occurred here.
+───╯

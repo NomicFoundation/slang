@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.8'.
+   ╭─[input.sol:7:1]
+   │
+ 7 │ type MyType is uint256;
+   │ ───────────┬───────────  
+   │            ╰───────────── Error occurred here.
+───╯
+
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.8'.
+   ╭─[input.sol:8:28]
+   │
+ 8 │ MyType constant x = MyType.wrap(5);
+   │                            ──┬─  
+   │                              ╰─── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
+   ╭─[input.sol:9:12]
+   │
+ 9 │ contract C layout at x {}
+   │            ─────┬─────  
+   │                 ╰─────── Error occurred here.
+───╯
+
+[type-system/storage-layout-base-not-constant] Error: The base slot of the storage layout must be a compile-time constant expression.
+   ╭─[input.sol:9:22]
+   │
+ 9 │ contract C layout at x {}
+   │                      ┬  
+   │                      ╰── Error occurred here.
+───╯

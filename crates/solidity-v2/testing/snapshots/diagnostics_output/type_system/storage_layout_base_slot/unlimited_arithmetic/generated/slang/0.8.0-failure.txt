@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
+   ╭─[input.sol:7:12]
+   │
+ 7 │ contract A layout at 1.23e100 / 2e50 {}
+   │            ────────────┬────────────  
+   │                        ╰────────────── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
+   ╭─[input.sol:8:12]
+   │
+ 8 │ contract B layout at 2 ** 256 * (500e-3) {}
+   │            ──────────────┬──────────────  
+   │                          ╰──────────────── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
+   ╭─[input.sol:9:12]
+   │
+ 9 │ contract D layout at (2 ** 255 * 2) - (2 ** 256 + 1) + 1 {}
+   │            ──────────────────────┬──────────────────────  
+   │                                  ╰──────────────────────── Error occurred here.
+───╯

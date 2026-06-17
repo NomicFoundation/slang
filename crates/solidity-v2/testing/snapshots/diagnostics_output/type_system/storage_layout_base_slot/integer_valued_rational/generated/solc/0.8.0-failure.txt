@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 2314] Error: Expected '{' but got identifier
+   ╭─[input.sol:5:12]
+   │
+ 5 │ contract A layout at 42.0 {}
+   │            ───┬──  
+   │               ╰──── Error occurred here.
+───╯

@@ -8,6 +8,13 @@ Parse errors:
    │             ──────┬─────  
    │                   ╰─────── Error occurred here.
 ───╯
+[type-system/storage-layout-base-not-constant] Error: The base slot of the storage layout must be a compile-time constant expression.
+   ╭─[input.sol:1:23]
+   │
+ 1 │ contract X2 layout at C2 { // should not bind to a constant defined in the contract
+   │                       ─┬  
+   │                        ╰── Error occurred here.
+───╯
 
 ------------------------------------------------------------------------
 

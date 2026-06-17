@@ -1,13 +1,18 @@
-use slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility;
+use num_traits::{Signed, ToPrimitive};
+use slang_solidity_v2_common::diagnostics::kinds::type_system::{
+    ArrayLengthFractional, ArrayLengthNegative, ArrayLengthNotConstant, ArrayLengthTooLarge,
+    ArrayLengthZero, InvalidFunctionTypeVisibility,
+};
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_ir::ir;
-use slang_solidity_v2_ir::ir::TextRange;
+use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
 use super::Pass;
 use crate::binder::{Definition, Resolution, ScopeId};
 use crate::passes::common::constant_evaluator::{
-    evaluate_compile_time_usize_constant, ConstantResolver, EvaluationError,
+    evaluate_compile_time_constant, ConstantResolver, EvaluationError,
 };
-use crate::passes::common::resolve_identifier_path_in_scope;
+use crate::passes::common::{node_location, resolve_identifier_path_in_scope};
 use crate::types::{
     ArrayType, DataLocation, FixedSizeArrayType, FunctionType, MappingType, TupleType, Type, TypeId,
 };
@@ -38,6 +43,66 @@ impl Pass<'_> {
         Some(parameter_types)
     }
 
+    /// Resolves a fixed-size array length expression, and emits diagnostics
+    /// if errors are found. On error, returns `usize::default()` so type
+    /// construction can proceed.
+    /// TODO: Change return to u256, when `FixedSizeArrayType` size field
+    /// is changed to u256.
+    fn resolve_array_length(&mut self, size_expression: &ir::Expression) -> usize {
+        let (file_id, range) = node_location(size_expression, self.file_node_mapper);
+        let value = match evaluate_compile_time_constant(
+            size_expression,
+            self.current_contract_or_file_scope_id(),
+            self.types,
+            &ConstantResolver {
+                binder: self.binder,
+                use_site: Some((&file_id, range.start)),
+            },
+        ) {
+            Ok(value) => value,
+            Err(EvaluationError::Diagnostic { kind, expression }) => {
+                // Report at the failing operation, falling back to the length
+                // expression when the evaluator didn't attach one.
+                self.push_diagnostic(expression.as_ref().unwrap_or(size_expression), kind);
+                return usize::default();
+            }
+            Err(EvaluationError::CouldNotEvaluate) => {
+                self.push_diagnostic(size_expression, ArrayLengthNotConstant);
+                return usize::default();
+            }
+        };
+
+        // Classify the value: zero, then fractional, then negative and then too large.
+        if value.is_zero() {
+            self.push_diagnostic(size_expression, ArrayLengthZero);
+            return usize::default();
+        }
+        let Some(integer) = value.as_integer() else {
+            self.push_diagnostic(size_expression, ArrayLengthFractional);
+            return usize::default();
+        };
+        if integer.is_negative() {
+            self.push_diagnostic(size_expression, ArrayLengthNegative);
+            return usize::default();
+        }
+        // TODO: Accept u256, when `FixedSizeArrayType` size field is changed to u256.
+        let Some(size) = integer.to_usize() else {
+            self.push_diagnostic(size_expression, ArrayLengthTooLarge);
+            return usize::default();
+        };
+        size
+    }
+
+    /// Emits `kind` located at `node`.
+    fn push_diagnostic(
+        &mut self,
+        node: &(impl NodeIdentity + TextRange),
+        kind: impl Into<DiagnosticKind>,
+    ) {
+        let (file_id, range) = node_location(node, self.file_node_mapper);
+        self.diagnostics.push(file_id, range, kind);
+    }
+
     pub(super) fn resolve_type_name(
         &mut self,
         type_name: &ir::TypeName,
@@ -49,33 +114,7 @@ impl Pass<'_> {
                     self.resolve_type_name(&array_type_name.operand, Some(data_location))
                         .map(|element_type| {
                             if let Some(size_expression) = &array_type_name.index {
-                                // TODO(validation) SDR[27]: if the size of the array
-                                // cannot be evaluated it's not a compile-time
-                                // constant, or it doesn't fit in `usize`.
-                                let range = size_expression
-                                    .calculate_text_range()
-                                    .expect("expression has a text range");
-                                let size = match evaluate_compile_time_usize_constant(
-                                    size_expression,
-                                    self.current_contract_or_file_scope_id(),
-                                    self.types,
-                                    &ConstantResolver {
-                                        binder: self.binder,
-                                        use_site: Some((self.file_id, range.start)),
-                                    },
-                                ) {
-                                    Ok(size) => size,
-                                    Err(error) => {
-                                        if let EvaluationError::Diagnostic(kind) = error {
-                                            self.diagnostics.push(
-                                                self.file_id.clone(),
-                                                range,
-                                                kind,
-                                            );
-                                        }
-                                        usize::default()
-                                    }
-                                };
+                                let size = self.resolve_array_length(size_expression);
                                 self.types
                                     .register_type(Type::FixedSizeArray(FixedSizeArrayType {
                                         element_type,
@@ -98,11 +137,7 @@ impl Pass<'_> {
                     function_type.visibility,
                     ir::FunctionVisibility::Internal | ir::FunctionVisibility::External
                 ) {
-                    self.diagnostics.push(
-                        self.file_id.clone(),
-                        function_type.range.clone(),
-                        InvalidFunctionTypeVisibility,
-                    );
+                    self.push_diagnostic(function_type, InvalidFunctionTypeVisibility);
                 }
 
                 // NOTE: Keep in sync with `type_of_function_definition`

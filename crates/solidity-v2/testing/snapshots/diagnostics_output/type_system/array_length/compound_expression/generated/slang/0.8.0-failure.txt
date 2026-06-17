@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[type-system/array-length-not-constant] Error: Invalid array length, expected integer literal or constant expression.
+   ╭─[input.sol:6:13]
+   │
+ 6 │     uint256[[2]] a;
+   │             ─┬─  
+   │              ╰─── Error occurred here.
+───╯
+
+[type-system/array-length-not-constant] Error: Invalid array length, expected integer literal or constant expression.
+   ╭─[input.sol:7:13]
+   │
+ 7 │     uint256[(1, 2)] b;
+   │             ───┬──  
+   │                ╰──── Error occurred here.
+───╯

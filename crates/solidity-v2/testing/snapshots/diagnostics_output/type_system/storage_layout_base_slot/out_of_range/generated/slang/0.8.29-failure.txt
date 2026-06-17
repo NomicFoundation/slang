@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/storage-layout-base-out-of-range] Error: The base slot of the storage layout evaluates to 115792089237316195423570985008687907853269984665640564039457584007913129639936, which is outside the range of type uint256.
+   ╭─[input.sol:5:22]
+   │
+ 5 │ contract C layout at 2 ** 256 {}
+   │                      ────┬───  
+   │                          ╰───── Error occurred here.
+───╯

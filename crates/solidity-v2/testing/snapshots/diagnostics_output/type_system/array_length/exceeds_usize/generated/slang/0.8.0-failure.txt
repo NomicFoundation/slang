@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/array-length-too-large] Error: Array length too large, maximum is 2**64 - 1.
+   ╭─[input.sol:6:13]
+   │
+ 6 │     uint256[2 ** 64] x;
+   │             ───┬───  
+   │                ╰───── Error occurred here.
+───╯

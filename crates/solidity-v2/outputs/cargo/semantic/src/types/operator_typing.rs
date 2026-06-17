@@ -44,6 +44,23 @@ impl BinaryOperator {
     fn is_left_typed(self) -> bool {
         matches!(self, Self::Shl | Self::Shr | Self::Pow)
     }
+
+    /// The operator as written in source (e.g. `/`), used in diagnostics.
+    pub(crate) fn as_str(self) -> &'static str {
+        match self {
+            Self::Add => "+",
+            Self::Sub => "-",
+            Self::Mul => "*",
+            Self::Div => "/",
+            Self::Rem => "%",
+            Self::BitOr => "|",
+            Self::BitXor => "^",
+            Self::BitAnd => "&",
+            Self::Shl => "<<",
+            Self::Shr => ">>",
+            Self::Pow => "**",
+        }
+    }
 }
 
 /// A unary operator on numbers that can be evaluated at compile time.

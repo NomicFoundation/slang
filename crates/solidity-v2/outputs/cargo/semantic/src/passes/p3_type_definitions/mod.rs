@@ -1,10 +1,9 @@
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
-use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, Scope, ScopeId};
-use crate::context::SemanticFile;
+use crate::context::{FileNodeMapper, SemanticFile};
 use crate::types::{ContractType, Type, TypeId, TypeRegistry};
 
 mod resolution;
@@ -24,13 +23,14 @@ pub fn run(
     files: &[impl SemanticFile],
     binder: &mut Binder,
     types: &mut TypeRegistry,
+    file_node_mapper: &FileNodeMapper,
     diagnostics: &mut DiagnosticCollection,
 ) {
     for file in files {
-        Pass::visit_file(file, binder, types, diagnostics);
+        Pass::visit_file(file, binder, types, file_node_mapper, diagnostics);
     }
     for file in files {
-        Pass::visit_file_type_getters(file, binder, types, diagnostics);
+        Pass::visit_file_type_getters(file, binder, types, file_node_mapper, diagnostics);
     }
 }
 
@@ -38,8 +38,8 @@ struct Pass<'a> {
     scope_stack: Vec<ScopeId>,
     binder: &'a mut Binder,
     types: &'a mut TypeRegistry,
+    file_node_mapper: &'a FileNodeMapper,
     diagnostics: &'a mut DiagnosticCollection,
-    file_id: &'a FileId,
     current_receiver_type: Option<TypeId>,
 }
 
@@ -48,14 +48,15 @@ impl<'a> Pass<'a> {
         file: &'a impl SemanticFile,
         binder: &'a mut Binder,
         types: &'a mut TypeRegistry,
+        file_node_mapper: &'a FileNodeMapper,
         diagnostics: &'a mut DiagnosticCollection,
     ) {
         let mut pass = Self {
             scope_stack: Vec::new(),
             binder,
             types,
+            file_node_mapper,
             diagnostics,
-            file_id: file.id(),
             current_receiver_type: None,
         };
         ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
@@ -72,14 +73,15 @@ impl<'a> Pass<'a> {
         file: &'a impl SemanticFile,
         binder: &'a mut Binder,
         types: &'a mut TypeRegistry,
+        file_node_mapper: &'a FileNodeMapper,
         diagnostics: &'a mut DiagnosticCollection,
     ) {
         let mut pass = Self {
             scope_stack: Vec::new(),
             binder,
             types,
+            file_node_mapper,
             diagnostics,
-            file_id: file.id(),
             current_receiver_type: None,
         };
         pass.type_getters_from(file.ir_root());

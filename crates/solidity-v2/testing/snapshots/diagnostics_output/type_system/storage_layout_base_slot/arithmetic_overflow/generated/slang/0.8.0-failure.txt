@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[type-system/constant-arithmetic-error] Error: Arithmetic error when computing constant value.
+   ╭─[constants.sol:7:25]
+   │
+ 7 │ uint256 constant SLOT = ~B;
+   │                         ─┬  
+   │                          ╰── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
+   ╭─[main.sol:9:18]
+   │
+ 9 │ contract Example layout at SLOT {}
+   │                  ───────┬──────  
+   │                         ╰──────── Error occurred here.
+───╯

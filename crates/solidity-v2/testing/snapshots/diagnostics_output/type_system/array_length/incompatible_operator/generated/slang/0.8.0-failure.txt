@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/incompatible-constant-operator] Error: Operator / not compatible with types int_const -7 and uint256
+   ╭─[constants.sol:8:24]
+   │
+ 8 │ uint256 constant LEN = (0 - 7) / B;
+   │                        ─────┬─────  
+   │                             ╰─────── Error occurred here.
+───╯

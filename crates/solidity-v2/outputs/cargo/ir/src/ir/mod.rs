@@ -5,6 +5,10 @@ mod kinds;
 mod nodes;
 pub use nodes::*;
 
+#[path = "node_identity.generated.rs"]
+mod node_identity;
+pub use node_identity::NodeIdentity;
+
 #[path = "text_range.generated.rs"]
 mod text_range;
 pub use text_range::TextRange;

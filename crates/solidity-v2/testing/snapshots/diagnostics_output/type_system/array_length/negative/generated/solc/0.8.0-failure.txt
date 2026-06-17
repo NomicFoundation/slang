@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 3658] Error: Array with negative length specified.
+   ╭─[input.sol:6:13]
+   │
+ 6 │     uint256[-1] x;
+   │             ─┬  
+   │              ╰── Error occurred here.
+───╯

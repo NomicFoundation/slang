@@ -1,11 +1,10 @@
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
-use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Scope, ScopeId};
 use crate::built_ins::BuiltInsResolver;
-use crate::context::SemanticFile;
+use crate::context::{FileNodeMapper, SemanticFile};
 use crate::types::TypeRegistry;
 
 mod disambiguation;
@@ -22,10 +21,11 @@ pub fn run(
     files: &[impl SemanticFile],
     binder: &mut Binder,
     types: &mut TypeRegistry,
+    file_node_mapper: &FileNodeMapper,
     diagnostics: &mut DiagnosticCollection,
 ) {
     for file in files {
-        Pass::visit_file(file, binder, types, diagnostics);
+        Pass::visit_file(file, binder, types, file_node_mapper, diagnostics);
     }
 }
 
@@ -41,8 +41,8 @@ struct Pass<'a> {
     scope_stack: Vec<ScopeFrame>,
     binder: &'a mut Binder,
     types: &'a mut TypeRegistry,
+    file_node_mapper: &'a FileNodeMapper,
     diagnostics: &'a mut DiagnosticCollection,
-    file_id: FileId,
 }
 
 impl<'a> Pass<'a> {
@@ -50,14 +50,15 @@ impl<'a> Pass<'a> {
         file: &impl SemanticFile,
         binder: &'a mut Binder,
         types: &'a mut TypeRegistry,
+        file_node_mapper: &'a FileNodeMapper,
         diagnostics: &'a mut DiagnosticCollection,
     ) {
         let mut pass = Self {
             scope_stack: Vec::new(),
             binder,
             types,
+            file_node_mapper,
             diagnostics,
-            file_id: file.id().to_owned(),
         };
         ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
         assert!(pass.scope_stack.is_empty());

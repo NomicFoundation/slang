@@ -261,7 +261,14 @@ contract Test is Base {
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
 
     let types_before = types.iter_types().count();
-    p3_type_definitions::run(&files, &mut binder, &mut types, &mut diagnostics);
+    let file_node_mapper = FileNodeMapper::build_from(&files);
+    p3_type_definitions::run(
+        &files,
+        &mut binder,
+        &mut types,
+        &file_node_mapper,
+        &mut diagnostics,
+    );
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
@@ -324,8 +331,21 @@ contract Test is Base {
     let mut diagnostics = DiagnosticCollection::default();
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
-    p3_type_definitions::run(&files, &mut binder, &mut types, &mut diagnostics);
-    p5_resolve_references::run(&files, &mut binder, &mut types, &mut diagnostics);
+    let file_node_mapper = FileNodeMapper::build_from(&files);
+    p3_type_definitions::run(
+        &files,
+        &mut binder,
+        &mut types,
+        &file_node_mapper,
+        &mut diagnostics,
+    );
+    p5_resolve_references::run(
+        &files,
+        &mut binder,
+        &mut types,
+        &file_node_mapper,
+        &mut diagnostics,
+    );
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
@@ -377,7 +397,13 @@ contract Test {
 
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
-    p3_type_definitions::run(&files, &mut binder, &mut types, &mut diagnostics);
+    p3_type_definitions::run(
+        &files,
+        &mut binder,
+        &mut types,
+        &file_node_mapper,
+        &mut diagnostics,
+    );
     p6_resolve_yul::run(&mut binder, &types, &file_node_mapper, &mut diagnostics);
     assert!(
         diagnostics.is_empty(),
