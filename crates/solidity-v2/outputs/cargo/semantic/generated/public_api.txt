@@ -536,6 +536,7 @@ pub slang_solidity_v2_semantic::types::FunctionType::definition_id: core::option
 pub slang_solidity_v2_semantic::types::FunctionType::implicit_receiver_type: core::option::Option<slang_solidity_v2_semantic::types::TypeId>
 pub slang_solidity_v2_semantic::types::FunctionType::mutability: slang_solidity_v2_semantic::types::FunctionTypeMutability
 pub slang_solidity_v2_semantic::types::FunctionType::parameter_types: alloc::vec::Vec<slang_solidity_v2_semantic::types::TypeId>
+pub slang_solidity_v2_semantic::types::FunctionType::partially_applied: bool
 pub slang_solidity_v2_semantic::types::FunctionType::return_type: slang_solidity_v2_semantic::types::TypeId
 pub slang_solidity_v2_semantic::types::FunctionType::visibility: slang_solidity_v2_semantic::types::FunctionTypeVisibility
 impl slang_solidity_v2_semantic::types::FunctionType

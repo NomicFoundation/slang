@@ -304,10 +304,19 @@ impl TypeRegistry {
 
             (Type::Function(from_function_type), Type::Function(to_function_type)) => {
                 // This is full equality except for visibility and mutability
-                // which can be converted to, and definition_id which can differ
-                from_function_type
-                    .visibility
-                    .implicitly_convertible_to(to_function_type.visibility)
+                // which can be converted to, partially_applied which must be `false`,
+                // and definition_id and implicit_receiver_type which can differ.
+                //
+                // Note: solc checks that the `from` and `to` function types have
+                // the same call options or bound argument applied in the same way,
+                // but that is not observable from Solidity source code.
+                // Therefore we have a stronger check here that has the same effect
+                // for users.
+                !from_function_type.partially_applied
+                    && !to_function_type.partially_applied
+                    && from_function_type
+                        .visibility
+                        .implicitly_convertible_to(to_function_type.visibility)
                     && from_function_type
                         .mutability
                         .implicitly_convertible_to(to_function_type.mutability)
@@ -434,6 +443,16 @@ impl TypeRegistry {
         }
     }
 
+    // Marks a function type as partially applied:
+    // - a function from a `using` directive applied on a value
+    // - call options have been pre-applied in an external call
+    pub(crate) fn partially_apply_function_type(&mut self, function_type: FunctionType) -> TypeId {
+        self.register_type(Type::Function(FunctionType {
+            partially_applied: true,
+            ..function_type
+        }))
+    }
+
     pub(crate) fn find_canonical_type_id(&self, type_id: TypeId) -> Option<TypeId> {
         let canonical_type = match self.get_type_by_id(type_id) {
             Type::Array(ArrayType { element_type, .. }) => {
@@ -476,6 +495,7 @@ impl TypeRegistry {
                 return_type: *return_type,
                 visibility: *visibility,
                 mutability: *mutability,
+                partially_applied: false,
             }),
 
             Type::Address(_)
@@ -569,6 +589,11 @@ impl TypeRegistry {
                     .collect();
                 Some(self.register_type(Type::Tuple(TupleType { types: mobile_ids? })))
             }
+            // A partially applied function (bound first argument or pre-applied
+            // call options) doesn't have a mobile type.
+            //
+            // Matches solc behaviour
+            Type::Function(function_type) if function_type.partially_applied => None,
             _ => Some(type_id),
         }
     }

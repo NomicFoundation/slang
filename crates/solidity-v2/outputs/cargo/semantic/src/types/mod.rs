@@ -185,11 +185,18 @@ impl LiteralKind {
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct FunctionType {
     pub definition_id: Option<NodeId>, // this may point to a FunctionDefinition
-    pub implicit_receiver_type: Option<TypeId>,
     pub parameter_types: Vec<TypeId>,
     pub return_type: TypeId,
     pub visibility: FunctionTypeVisibility,
     pub mutability: FunctionTypeMutability,
+    /// The type of the implicit receiver in contract or interface
+    /// methods (ie. the type of `this`)
+    pub implicit_receiver_type: Option<TypeId>,
+    /// Whether this function has been partially applied.
+    /// This happens when its first argument is bound, eg. `a.foo`
+    /// where `foo` is from a `using` directive on the type of `a`,
+    /// or when call options are pre-applied (eg. `foo{value: 3}`).
+    pub partially_applied: bool,
 }
 
 impl FunctionType {
