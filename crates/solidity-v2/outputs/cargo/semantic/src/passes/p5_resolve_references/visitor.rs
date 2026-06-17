@@ -6,7 +6,7 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 use super::Pass;
 use crate::binder::{Reference, Resolution, Typing};
 use crate::built_ins::InternalBuiltIn;
-use crate::passes::common::node_id_for_string_expression_typing;
+use crate::passes::common::{filter_overriden_definitions, node_id_for_string_expression_typing};
 use crate::types::{
     ArrayType, DataLocation, FixedSizeArrayType, MappingType, Number, TupleType, Type,
 };
@@ -104,7 +104,8 @@ impl Visitor for Pass<'_> {
                 Resolution::BuiltIn(InternalBuiltIn::ModifierUnderscore)
             } else {
                 let scope_id = self.current_scope_id();
-                self.filter_overriden_definitions(self.resolve_symbol_in_scope(scope_id, symbol))
+                let resolution = self.resolve_symbol_in_scope(scope_id, symbol);
+                filter_overriden_definitions(self.binder, self.types, resolution)
             };
 
             // Set the typing for the `Identifier` node.
@@ -310,9 +311,9 @@ impl Visitor for Pass<'_> {
         // we need to resolve the identifier at this point that we already have
         // typing information of the operand expression
         let operand_typing = self.typing_of_expression(&node.operand);
-        let resolution = self.filter_overriden_definitions(
-            self.resolve_symbol_in_typing(&operand_typing, node.member.unparse()),
-        );
+        let member_resolution =
+            self.resolve_symbol_in_typing(&operand_typing, node.member.unparse());
+        let resolution = filter_overriden_definitions(self.binder, self.types, member_resolution);
 
         // If the operand is either `this` or a contract/interface reference
         // type, then resolve the member typing as a contract member. This

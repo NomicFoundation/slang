@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     FunctionNameMatchesContainer, InvalidUsingDirectiveContainer, MultipleConstructors,
@@ -7,7 +9,9 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
-use crate::binder::{Binder, Definition, FileScope, ParametersScope, Scope, ScopeId};
+use crate::binder::{
+    AssemblyBlock, Binder, Definition, FileScope, ParametersScope, Scope, ScopeId,
+};
 use crate::context::SemanticFile;
 use crate::passes::common::conflicts::find_conflicting_definition;
 
@@ -569,6 +573,22 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         }
 
         false
+    }
+
+    fn enter_assembly_statement(&mut self, node: &ir::AssemblyStatement) -> bool {
+        // Record the assembly block (with the enclosing Solidity scope) so that
+        // `p6_resolve_yul` can process only these branches instead of walking
+        // the full IR tree, and so the backend has a per-block record of the
+        // Solidity definitions it references (filled in by p6).
+        self.binder.insert_assembly_block(AssemblyBlock {
+            ir_node: Arc::clone(node),
+            file_id: self.current_file.id().to_owned(),
+            enclosing_scope_id: self.current_scope_id(),
+            solidity_references: Vec::new(),
+        });
+        // Keep visiting the statement's label/flags; `enter_yul_block` below
+        // still skips the Yul body.
+        true
     }
 
     fn enter_yul_block(&mut self, _node: &ir::YulBlock) -> bool {

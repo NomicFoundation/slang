@@ -6,10 +6,12 @@ use slang_solidity_v2_common::nodes::NodeId;
 use super::built_ins::InternalBuiltIn;
 use super::types::{Type, TypeId};
 
+mod assembly;
 mod definitions;
 mod references;
 mod scopes;
 
+pub(crate) use assembly::AssemblyBlock;
 pub use definitions::Definition;
 pub(crate) use definitions::{
     ConstantDefinition, ContractDefinition, ImportDefinition, InterfaceDefinition,
@@ -111,6 +113,10 @@ pub struct Binder {
     linearisations: Map<NodeId, Vec<NodeId>>,
     /// Reverse mapping from definition `NodeId` to the set of references that bind to it
     definitions_to_references: Map<NodeId, Vec<NodeId>>,
+    /// `assembly` statements collected in `p1_collect_definitions`, indexed by
+    /// the `AssemblyStatement`'s `NodeId`, and processed in `p6_resolve_yul`
+    /// (which also fills in their `solidity_references`)
+    assembly_blocks: Map<NodeId, AssemblyBlock>,
 }
 
 /// This controls visibility filtering and how to use the linearisation when
@@ -274,6 +280,28 @@ impl Binder {
             .get(&node_id)
             .cloned()
             .unwrap_or_default()
+    }
+
+    pub(crate) fn insert_assembly_block(&mut self, block: AssemblyBlock) {
+        let node_id = block.ir_node.id();
+        if self.assembly_blocks.insert(node_id, block).is_some() {
+            unreachable!("attempt to insert duplicate assembly block on node {node_id:?}");
+        }
+    }
+
+    pub(crate) fn assembly_blocks(&self) -> &Map<NodeId, AssemblyBlock> {
+        &self.assembly_blocks
+    }
+
+    pub(crate) fn set_assembly_block_solidity_references(
+        &mut self,
+        node_id: NodeId,
+        references: Vec<NodeId>,
+    ) {
+        self.assembly_blocks
+            .get_mut(&node_id)
+            .unwrap()
+            .solidity_references = references;
     }
 
     pub(crate) fn insert_using_directive_in_scope(

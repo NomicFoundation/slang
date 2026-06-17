@@ -1,18 +1,37 @@
 use super::Pass;
-use crate::binder::{Definition, Resolution, ScopeId, Typing};
+use crate::binder::{Resolution, ScopeId};
 use crate::built_ins::BuiltInsResolver;
-use crate::context::SemanticFile;
-use crate::types::{FunctionType, Type};
+use crate::passes::common::filter_overriden_definitions;
 
-impl<F: SemanticFile> Pass<'_, F> {
+impl Pass<'_> {
+    // Records a Solidity definition referenced from within the assembly block.
+    // Yul definitions (functions/parameters/variables) and non-`Definition`
+    // resolutions (built-ins, ambiguous, unresolved) are ignored, and each
+    // Solidity definition is recorded at most once.
+    pub(super) fn record_solidity_reference(&mut self, resolution: &Resolution) {
+        let Resolution::Definition(node_id) = resolution else {
+            return;
+        };
+        let is_solidity = self
+            .binder
+            .find_definition_by_id(*node_id)
+            .is_some_and(|definition| !definition.is_yul());
+        if is_solidity && !self.solidity_references.contains(node_id) {
+            self.solidity_references.push(*node_id);
+        }
+    }
+
     // This is a "top-level" resolution method for symbols in a Yul context.
     pub(super) fn resolve_symbol_in_yul_scope(
         &self,
         scope_id: ScopeId,
         symbol: &str,
     ) -> Resolution {
-        let resolution =
-            self.filter_overriden_definitions(self.binder.resolve_in_scope(scope_id, symbol));
+        let resolution = filter_overriden_definitions(
+            self.binder,
+            self.types,
+            self.binder.resolve_in_scope(scope_id, symbol),
+        );
         if resolution == Resolution::Unresolved {
             BuiltInsResolver::lookup_yul_global(symbol).into()
         } else {
@@ -37,51 +56,5 @@ impl<F: SemanticFile> Pass<'_, F> {
                 Resolution::Unresolved
             }
         }
-    }
-
-    // When a Yul identifier resolves to an ambiguous set of Solidity functions
-    // (overloads/virtuals), drop the ones overridden by a previously seen
-    // definition. This is the only place the pass reads typing information,
-    // hence the dependency on `p3_type_definitions` having run.
-    fn filter_overriden_definitions(&self, resolution: Resolution) -> Resolution {
-        let Resolution::Ambiguous(definition_ids) = resolution else {
-            return resolution;
-        };
-        let mut seen_function_types: Vec<&FunctionType> = Vec::new();
-        let mut filtered_definitions = Vec::new();
-        for definition_id in definition_ids {
-            match self.binder.find_definition_by_id(definition_id).unwrap() {
-                Definition::Function(_) => {
-                    if let Typing::Resolved(type_id) = self.binder.node_typing(definition_id) {
-                        let Type::Function(function_type) = self.types.get_type_by_id(type_id)
-                        else {
-                            unreachable!("type of function definition is not a function");
-                        };
-                        if seen_function_types.iter().any(|seen_function_type| {
-                            self.types
-                                .function_type_overrides(seen_function_type, function_type)
-                        }) {
-                            // the function type is overriden by some other previously seen definition
-                            continue;
-                        }
-                        seen_function_types.push(function_type);
-                    }
-                }
-                Definition::StateVariable(state_variable) => {
-                    // remember the getter type if present to override functions
-                    // in bases
-                    if let Some(getter_type_id) = state_variable.getter_type_id {
-                        let Type::Function(getter_type) = self.types.get_type_by_id(getter_type_id)
-                        else {
-                            unreachable!("getter function type is not a function")
-                        };
-                        seen_function_types.push(getter_type);
-                    }
-                }
-                _ => {}
-            }
-            filtered_definitions.push(definition_id);
-        }
-        Resolution::from(filtered_definitions)
     }
 }

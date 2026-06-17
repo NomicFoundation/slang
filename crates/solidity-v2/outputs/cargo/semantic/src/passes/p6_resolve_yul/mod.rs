@@ -1,10 +1,11 @@
+use std::sync::Arc;
+
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, Scope, ScopeId};
-use crate::context::SemanticFile;
 use crate::passes::common::conflicts;
 use crate::types::TypeRegistry;
 
@@ -26,112 +27,106 @@ mod visitor;
 /// Solidity scopes (so Yul can reference Solidity declarations), but no Solidity
 /// scope ever points into a Yul scope, and nothing outside an assembly block
 /// references a Yul definition.
-pub fn run(
-    files: &[impl SemanticFile],
-    binder: &mut Binder,
-    types: &TypeRegistry,
-    diagnostics: &mut DiagnosticCollection,
-) {
-    for file in files {
-        Pass::visit_file(file, binder, types, diagnostics);
-    }
-}
+pub fn run(binder: &mut Binder, types: &TypeRegistry, diagnostics: &mut DiagnosticCollection) {
+    // The `assembly` blocks were collected in `p1_collect_definitions` (each
+    // with its enclosing Solidity scope), so we only process those branches
+    // instead of walking every file's full IR tree.
+    //
+    // Snapshot them first: processing a block borrows `binder` mutably
+    // (inserting Yul scopes/definitions/references), so we can't hold a borrow
+    // into `binder.assembly_blocks()` across the loop.
+    let blocks: Vec<_> = binder
+        .assembly_blocks()
+        .values()
+        .map(|block| {
+            (
+                Arc::clone(&block.ir_node),
+                block.file_id.clone(),
+                block.enclosing_scope_id,
+            )
+        })
+        .collect();
 
-struct ScopeFrame {
-    // Scope associated with the node that created the stack frame. This is
-    // solely used for integrity validation when popping the current frame.
-    structural_scope_id: ScopeId,
-    // Scope to use when resolving a symbol.
-    lexical_scope_id: ScopeId,
-}
-
-struct Pass<'a, F: SemanticFile> {
-    current_file: &'a F,
-    scope_stack: Vec<ScopeFrame>,
-    binder: &'a mut Binder,
-    types: &'a TypeRegistry,
-    diagnostics: &'a mut DiagnosticCollection,
-}
-
-impl<'a, F: SemanticFile> Pass<'a, F> {
-    fn visit_file(
-        file: &'a F,
-        binder: &'a mut Binder,
-        types: &'a TypeRegistry,
-        diagnostics: &'a mut DiagnosticCollection,
-    ) {
-        let mut pass = Self {
-            current_file: file,
-            scope_stack: Vec::new(),
+    for (statement, file_id, enclosing_scope_id) in blocks {
+        let solidity_references = Pass::visit_assembly_statement(
             binder,
             types,
             diagnostics,
+            &statement,
+            file_id,
+            enclosing_scope_id,
+        );
+        binder.set_assembly_block_solidity_references(statement.id(), solidity_references);
+    }
+}
+
+struct Pass<'a> {
+    file_id: String,
+    // We don't need to chain Yul scopes, so `ScopeId` is enough to track the scope stack
+    scope_stack: Vec<ScopeId>,
+    binder: &'a mut Binder,
+    types: &'a TypeRegistry,
+    diagnostics: &'a mut DiagnosticCollection,
+    /// Distinct Solidity definitions referenced anywhere in the assembly block
+    /// being processed, accumulated as its Yul paths are resolved.
+    solidity_references: Vec<NodeId>,
+}
+
+impl<'a> Pass<'a> {
+    /// Processes a single `assembly` block, returning the distinct Solidity
+    /// definitions it references.
+    fn visit_assembly_statement(
+        binder: &'a mut Binder,
+        types: &'a TypeRegistry,
+        diagnostics: &'a mut DiagnosticCollection,
+        statement: &ir::AssemblyStatement,
+        file_id: String,
+        enclosing_scope_id: ScopeId,
+    ) -> Vec<NodeId> {
+        let mut pass = Self {
+            file_id,
+            // Seed the stack with the enclosing Solidity scope (created in p1)
+            // so the block's Yul scope parents correctly and Yul identifiers
+            // chain up into the enclosing Solidity definitions.
+            scope_stack: vec![enclosing_scope_id],
+            binder,
+            types,
+            diagnostics,
+            solidity_references: Vec::new(),
         };
-        ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
-        assert!(pass.scope_stack.is_empty());
+        ir::visitor::accept_yul_block(&statement.body, &mut pass);
+        // Only the seeded enclosing scope should remain.
+        assert_eq!(pass.scope_stack.len(), 1);
+        pass.solidity_references
     }
 
     // Creates a brand-new scope (used for the Yul scopes this pass owns) and
     // pushes it onto the stack.
     fn enter_scope(&mut self, scope: Scope) -> ScopeId {
         let scope_id = self.binder.insert_scope(scope);
-        self.scope_stack.push(ScopeFrame {
-            structural_scope_id: scope_id,
-            lexical_scope_id: scope_id,
-        });
+        self.scope_stack.push(scope_id);
         scope_id
     }
 
-    // Re-enters a scope already created in p1 (Solidity scopes, and the Yul
-    // for-loop initialization block when revisited).
+    // Re-enters a scope already created in p1 (the Yul for-loop initialization
+    // block when revisited).
     fn enter_scope_for_node_id(&mut self, node_id: NodeId) {
         let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
-        self.scope_stack.push(ScopeFrame {
-            structural_scope_id: scope_id,
-            lexical_scope_id: scope_id,
-        });
-    }
-
-    // Swaps the lexical scope of the current frame to the (already existing)
-    // chained scope keyed on `node_id`, preserving the structural scope so the
-    // pop-time integrity check still matches the enclosing block.
-    fn replace_scope_for_node_id(&mut self, node_id: NodeId) {
-        let Some(ScopeFrame {
-            structural_scope_id,
-            ..
-        }) = self.scope_stack.pop()
-        else {
-            unreachable!("scope stack cannot be empty");
-        };
-        let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
-        self.scope_stack.push(ScopeFrame {
-            structural_scope_id,
-            lexical_scope_id: scope_id,
-        });
+        self.scope_stack.push(scope_id);
     }
 
     fn leave_scope_for_node_id(&mut self, node_id: NodeId) {
-        let Some(ScopeFrame {
-            structural_scope_id,
-            ..
-        }) = self.scope_stack.pop()
-        else {
+        let Some(scope_id) = self.scope_stack.pop() else {
             unreachable!("attempt to pop an empty scope stack");
         };
-        assert_eq!(
-            structural_scope_id,
-            self.binder.scope_id_for_node_id(node_id).unwrap()
-        );
+        assert_eq!(scope_id, self.binder.scope_id_for_node_id(node_id).unwrap());
     }
 
     fn current_scope_id(&self) -> ScopeId {
-        let Some(ScopeFrame {
-            lexical_scope_id, ..
-        }) = self.scope_stack.last()
-        else {
+        let Some(scope_id) = self.scope_stack.last() else {
             unreachable!("empty scope stack");
         };
-        *lexical_scope_id
+        *scope_id
     }
 
     fn insert_definition_in_current_scope(&mut self, definition: Definition) {
@@ -148,7 +143,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
             .is_some()
         {
             self.diagnostics.push(
-                self.current_file.id().to_owned(),
+                self.file_id.clone(),
                 definition.identifier().range.clone(),
                 IdentifierRedeclaration,
             );

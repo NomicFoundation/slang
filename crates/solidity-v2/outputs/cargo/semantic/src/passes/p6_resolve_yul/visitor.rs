@@ -5,136 +5,14 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 
 use super::Pass;
 use crate::binder::{Definition, Reference, Resolution, Scope};
-use crate::context::SemanticFile;
 
-impl<F: SemanticFile> Visitor for Pass<'_, F> {
-    // -------------------------------------------------------------------------
-    // Solidity scope scaffolding
-    //
-    // These handlers re-establish the enclosing Solidity scope stack (entering
-    // scopes already created by p1) so that a `YulBlock` parents to the correct
-    // Solidity scope and Yul identifiers can chain up into Solidity definitions.
-    // They mirror the scope-management half of p5's visitor; they intentionally
-    // perform none of p5's Solidity reference resolution or typing.
-
-    fn enter_source_unit(&mut self, node: &ir::SourceUnit) -> bool {
-        self.enter_scope_for_node_id(node.id());
-        true
-    }
-
-    fn leave_source_unit(&mut self, node: &ir::SourceUnit) {
-        self.leave_scope_for_node_id(node.id());
-    }
-
-    fn enter_contract_definition(&mut self, node: &ir::ContractDefinition) -> bool {
-        // Unlike p5 we don't need to split out inheritance types / storage
-        // layout into the parent scope: those subtrees contain no Yul, so it's
-        // harmless to walk them in the contract scope (matching p1's structure).
-        self.enter_scope_for_node_id(node.id());
-        true
-    }
-
-    fn leave_contract_definition(&mut self, node: &ir::ContractDefinition) {
-        self.leave_scope_for_node_id(node.id());
-    }
-
-    fn enter_interface_definition(&mut self, node: &ir::InterfaceDefinition) -> bool {
-        self.enter_scope_for_node_id(node.id());
-        true
-    }
-
-    fn leave_interface_definition(&mut self, node: &ir::InterfaceDefinition) {
-        self.leave_scope_for_node_id(node.id());
-    }
-
-    fn enter_library_definition(&mut self, node: &ir::LibraryDefinition) -> bool {
-        self.enter_scope_for_node_id(node.id());
-        true
-    }
-
-    fn leave_library_definition(&mut self, node: &ir::LibraryDefinition) {
-        self.leave_scope_for_node_id(node.id());
-    }
-
-    fn enter_function_definition(&mut self, node: &ir::FunctionDefinition) -> bool {
-        // Covers modifiers too: p1 keys both function and modifier scopes on the
-        // function-definition node id.
-        self.enter_scope_for_node_id(node.id());
-        true
-    }
-
-    fn leave_function_definition(&mut self, node: &ir::FunctionDefinition) {
-        self.leave_scope_for_node_id(node.id());
-    }
-
-    fn enter_block(&mut self, node: &ir::Block) -> bool {
-        self.enter_scope_for_node_id(node.id());
-        true
-    }
-
-    fn leave_block(&mut self, node: &ir::Block) {
-        self.leave_scope_for_node_id(node.id());
-    }
-
-    fn enter_for_statement(&mut self, node: &ir::ForStatement) -> bool {
-        self.enter_scope_for_node_id(node.id());
-        true
-    }
-
-    fn leave_for_statement(&mut self, node: &ir::ForStatement) {
-        self.leave_scope_for_node_id(node.id());
-    }
-
-    fn leave_variable_declaration_statement(&mut self, node: &ir::VariableDeclarationStatement) {
-        // Swap to the chained scope p1 created here, so a later assembly block
-        // in the same Solidity block sees locals declared before it.
-        self.replace_scope_for_node_id(node.id());
-    }
-
-    // -------------------------------------------------------------------------
-    // Pruned subtrees
-    //
-    // Assembly blocks only ever appear inside statement bodies, so whole
-    // categories of nodes can never contain Yul. Skipping them avoids walking
-    // large irrelevant subtrees. (Statements, blocks and loops are NOT skipped,
-    // since they can contain assembly.)
-
-    fn enter_expression(&mut self, _node: &ir::Expression) -> bool {
-        // Expressions never contain statements, hence no assembly blocks. This
-        // also prunes state-variable initializers, call arguments, modifier
-        // invocation arguments, etc.
-        false
-    }
-
-    fn enter_parameters(&mut self, _node: &ir::Parameters) -> bool {
-        false
-    }
-
-    fn enter_struct_definition(&mut self, _node: &ir::StructDefinition) -> bool {
-        false
-    }
-
-    fn enter_enum_definition(&mut self, _node: &ir::EnumDefinition) -> bool {
-        false
-    }
-
-    fn enter_error_definition(&mut self, _node: &ir::ErrorDefinition) -> bool {
-        false
-    }
-
-    fn enter_event_definition(&mut self, _node: &ir::EventDefinition) -> bool {
-        false
-    }
-
-    fn enter_user_defined_value_type_definition(
-        &mut self,
-        _node: &ir::UserDefinedValueTypeDefinition,
-    ) -> bool {
-        false
-    }
-
-    // -------------------------------------------------------------------------
+impl Visitor for Pass<'_> {
     // Yul handling: collection + resolution in a single traversal.
+    //
+    // The pass is entered directly at an assembly block's Yul body (see
+    // `Pass::process`), with the enclosing Solidity scope already seeded on the
+    // stack. Hence only Yul nodes are visited here; there is no Solidity-scope
+    // scaffolding to maintain and no non-Yul subtrees to prune.
 
     fn enter_yul_block(&mut self, node: &ir::YulBlock) -> bool {
         let scope = Scope::new_yul_block(node.id(), self.current_scope_id());
@@ -228,12 +106,14 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         let scope_id = self.current_scope_id();
         let identifier = &items[0];
         let resolution = self.resolve_symbol_in_yul_scope(scope_id, identifier.unparse());
+        self.record_solidity_reference(&resolution);
         let reference = Reference::new(Arc::clone(identifier), resolution.clone());
         self.binder.insert_reference(reference);
 
         if items.len() > 1 {
             let suffix = &items[1];
             let resolution = self.resolve_yul_suffix(suffix.unparse(), &resolution);
+            self.record_solidity_reference(&resolution);
             let reference = Reference::new(Arc::clone(suffix), resolution);
             self.binder.insert_reference(reference);
         }
