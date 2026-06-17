@@ -343,7 +343,7 @@ impl Visitor for Pass<'_> {
 
         // Special cases
         if let Some(type_id) = typing.as_type_id() {
-            let type_ = self.types.get_type_by_id(type_id).clone();
+            let type_ = self.types.get_type_by_id(type_id);
 
             if type_.is_inherited_location() {
                 // If the type is a reference type with location "inherited", we
@@ -357,12 +357,10 @@ impl Visitor for Pass<'_> {
                         .register_type_with_data_location(type_.clone(), operand_location);
                     typing = Typing::Resolved(type_id_with_location);
                 }
-            }
-
-            // If this member is a function attached via `using for`, accessing it
-            // on a value binds the receiver as its first argument, producing a
-            // partially applied function (which has no mobile type).
-            if let Type::Function(function_type) = type_ {
+            } else if let Type::Function(function_type) = type_ {
+                // If this member is a function attached via `using for`, accessing it
+                // on a value binds the receiver as its first argument, producing a
+                // partially applied function (which has no mobile type).
                 if let Some(receiver_type_id) = operand_typing.as_type_id() {
                     if function_type.implicit_receiver_type.is_none()
                         && function_type.parameter_types.first().is_some_and(|first| {

@@ -304,9 +304,16 @@ impl TypeRegistry {
 
             (Type::Function(from_function_type), Type::Function(to_function_type)) => {
                 // This is full equality except for visibility and mutability
-                // which can be converted to, and definition_id and
-                // implicit_receiver_type which can differ.
-                from_function_type.partially_applied == to_function_type.partially_applied
+                // which can be converted to, partially_applied which must be `false`,
+                // and definition_id and implicit_receiver_type which can differ.
+                //
+                // Note: solc checks that the `from` and `to` function types have
+                // the same call options or bound argument applied in the same way,
+                // but that is not observable from Solidity source code.
+                // Therefore we have a stronger check here that has the same effect
+                // for users.
+                !from_function_type.partially_applied
+                    && !to_function_type.partially_applied
                     && from_function_type
                         .visibility
                         .implicitly_convertible_to(to_function_type.visibility)
@@ -436,8 +443,9 @@ impl TypeRegistry {
         }
     }
 
-    // Marks a function type as partially applied (its first argument is bound,
-    // or call options have been pre-applied).
+    // Marks a function type as partially applied:
+    // - a function from a `using` directive applied on a value
+    // - call options have been pre-applied in an external call
     pub(crate) fn partially_apply_function_type(&mut self, function_type: FunctionType) -> TypeId {
         self.register_type(Type::Function(FunctionType {
             partially_applied: true,
