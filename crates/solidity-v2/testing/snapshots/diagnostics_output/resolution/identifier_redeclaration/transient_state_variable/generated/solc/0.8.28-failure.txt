@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[DeclarationError 2333] Error: Identifier already declared.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     uint public transient x;
+   │     ───────────┬───────────  
+   │                ╰───────────── Error occurred here.
+───╯
+
+[DeclarationError 7985] Error: Transient storage is not supported by EVM versions older than cancun.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     uint public transient x;
+   │     ───────────┬───────────  
+   │                ╰───────────── Error occurred here.
+───╯
