@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Array with fractional length specified.
+   ╭─[input.sol:6:13]
+   │
+ 6 │     uint256[1.5] x;
+   │             ─┬─  
+   │              ╰─── Error occurred here.
+───╯

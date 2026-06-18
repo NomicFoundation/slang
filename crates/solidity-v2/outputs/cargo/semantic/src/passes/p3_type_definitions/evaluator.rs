@@ -13,8 +13,13 @@ use crate::types::{literals, Number};
 pub(crate) enum EvaluationError {
     /// The failure has a diagnostic.
     Diagnostic(DiagnosticKind),
-    /// TODO(validation): Add diagnostics for the other cases, and remove this.
-    Other,
+    /// Evaluation did not produce a constant value: the expression is not a
+    /// compile-time constant, uses an unsupported construct, or has no defined
+    /// value (for example division by zero). The diagnostic to emit is
+    /// context-dependent (an array length and a storage-layout base slot report
+    /// different errors for the same failure), so the caller translates this
+    /// into the appropriate diagnostic.
+    CouldNotEvaluate,
 }
 
 impl From<DiagnosticKind> for EvaluationError {
@@ -23,27 +28,7 @@ impl From<DiagnosticKind> for EvaluationError {
     }
 }
 
-pub(crate) fn evaluate_compile_time_usize_constant<Scope>(
-    expression: &ir::Expression,
-    start_scope: Scope,
-    identifier_resolver: &dyn ConstantIdentifierResolver<Scope>,
-) -> Result<usize, EvaluationError> {
-    let value =
-        evaluate_compile_time_number_constant(expression, start_scope, identifier_resolver)?;
-    value.as_usize().ok_or(EvaluationError::Other)
-}
-
-pub(crate) fn evaluate_compile_time_integer_constant<Scope>(
-    expression: &ir::Expression,
-    start_scope: Scope,
-    identifier_resolver: &dyn ConstantIdentifierResolver<Scope>,
-) -> Result<BigInt, EvaluationError> {
-    let value =
-        evaluate_compile_time_number_constant(expression, start_scope, identifier_resolver)?;
-    value.into_integer().ok_or(EvaluationError::Other)
-}
-
-fn evaluate_compile_time_number_constant<Scope>(
+pub(crate) fn evaluate_compile_time_constant<Scope>(
     expression: &ir::Expression,
     start_scope: Scope,
     identifier_resolver: &dyn ConstantIdentifierResolver<Scope>,
@@ -131,11 +116,11 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
             }
             ir::Expression::HexNumberExpression(hex_number_expression) => {
                 Number::from_hex_number_expression(hex_number_expression)
-                    .ok_or(EvaluationError::Other)
+                    .ok_or(EvaluationError::CouldNotEvaluate)
             }
             ir::Expression::DecimalNumberExpression(decimal_number_expression) => {
                 Number::from_decimal_number_expression(decimal_number_expression)
-                    .ok_or(EvaluationError::Other)
+                    .ok_or(EvaluationError::CouldNotEvaluate)
             }
             ir::Expression::Identifier(identifier) => self.evaluate_identifier(identifier),
             ir::Expression::TupleExpression(tuple_expression) => {
@@ -148,7 +133,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
                 // all other variants of expression cannot be evaluated at
                 // compile time, or are not relevant for computing constant
                 // integers (eg. string literals)
-                Err(EvaluationError::Other)
+                Err(EvaluationError::CouldNotEvaluate)
             }
         }
     }
@@ -159,7 +144,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
     ) -> Result<Number, EvaluationError> {
         let lhs = self.evaluate_expression(&bitwise_or_expression.left_operand)?;
         let rhs = self.evaluate_expression(&bitwise_or_expression.right_operand)?;
-        lhs.bit_or(&rhs).ok_or(EvaluationError::Other)
+        lhs.bit_or(&rhs).ok_or(EvaluationError::CouldNotEvaluate)
     }
 
     fn evaluate_bitwise_xor_expression(
@@ -168,7 +153,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
     ) -> Result<Number, EvaluationError> {
         let lhs = self.evaluate_expression(&bitwise_xor_expression.left_operand)?;
         let rhs = self.evaluate_expression(&bitwise_xor_expression.right_operand)?;
-        lhs.bit_xor(&rhs).ok_or(EvaluationError::Other)
+        lhs.bit_xor(&rhs).ok_or(EvaluationError::CouldNotEvaluate)
     }
 
     fn evaluate_bitwise_and_expression(
@@ -177,7 +162,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
     ) -> Result<Number, EvaluationError> {
         let lhs = self.evaluate_expression(&bitwise_and_expression.left_operand)?;
         let rhs = self.evaluate_expression(&bitwise_and_expression.right_operand)?;
-        lhs.bit_and(&rhs).ok_or(EvaluationError::Other)
+        lhs.bit_and(&rhs).ok_or(EvaluationError::CouldNotEvaluate)
     }
 
     fn evaluate_shift_expression(
@@ -188,13 +173,13 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         let rhs = self.evaluate_expression(&shift_expression.right_operand)?;
         match &shift_expression.operator {
             ir::ShiftExpressionOperator::LessThanLessThan(_) => {
-                lhs.shl(&rhs).ok_or(EvaluationError::Other)
+                lhs.shl(&rhs).ok_or(EvaluationError::CouldNotEvaluate)
             }
             ir::ShiftExpressionOperator::GreaterThanGreaterThan(_) => {
-                lhs.shr(&rhs).ok_or(EvaluationError::Other)
+                lhs.shr(&rhs).ok_or(EvaluationError::CouldNotEvaluate)
             }
             ir::ShiftExpressionOperator::GreaterThanGreaterThanGreaterThan(_) => {
-                Err(EvaluationError::Other)
+                Err(EvaluationError::CouldNotEvaluate)
             }
         }
     }
@@ -220,10 +205,10 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         match &multiplicative_expression.operator {
             ir::MultiplicativeExpressionOperator::Asterisk(_) => Ok(lhs.mul(&rhs)),
             ir::MultiplicativeExpressionOperator::Slash(_) => {
-                lhs.div(&rhs).ok_or(EvaluationError::Other)
+                lhs.div(&rhs).ok_or(EvaluationError::CouldNotEvaluate)
             }
             ir::MultiplicativeExpressionOperator::Percent(_) => {
-                lhs.rem(&rhs).ok_or(EvaluationError::Other)
+                lhs.rem(&rhs).ok_or(EvaluationError::CouldNotEvaluate)
             }
         }
     }
@@ -235,7 +220,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         let lhs = self.evaluate_expression(&exponentiation_expression.left_operand)?;
         let rhs = self.evaluate_expression(&exponentiation_expression.right_operand)?;
         // v2 ExponentiationExpression has no explicit operator field (only `**` exists)
-        lhs.pow(&rhs).ok_or(EvaluationError::Other)
+        lhs.pow(&rhs).ok_or(EvaluationError::CouldNotEvaluate)
     }
 
     fn evaluate_prefix_expression(
@@ -246,9 +231,9 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         match &prefix_expression.operator {
             ir::PrefixExpressionOperator::Minus(_) => Ok(operand.negate()),
             ir::PrefixExpressionOperator::Tilde(_) => {
-                operand.bit_not().ok_or(EvaluationError::Other)
+                operand.bit_not().ok_or(EvaluationError::CouldNotEvaluate)
             }
-            _ => Err(EvaluationError::Other),
+            _ => Err(EvaluationError::CouldNotEvaluate),
         }
     }
 
@@ -264,7 +249,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
             .identifier_resolver
             .resolve_identifier_in_scope(identifier.unparse(), current_scope)
         else {
-            return Err(EvaluationError::Other);
+            return Err(EvaluationError::CouldNotEvaluate);
         };
         self.evaluate_expression_in_scope(&target_expression, target_scope)
     }
@@ -277,10 +262,10 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
             let inner_expression = tuple_expression.items[0]
                 .expression
                 .as_ref()
-                .ok_or(EvaluationError::Other)?;
+                .ok_or(EvaluationError::CouldNotEvaluate)?;
             self.evaluate_expression(inner_expression)
         } else {
-            Err(EvaluationError::Other)
+            Err(EvaluationError::CouldNotEvaluate)
         }
     }
 
@@ -291,7 +276,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         call: &ir::FunctionCallExpression,
     ) -> Result<Number, EvaluationError> {
         let ir::Expression::Identifier(operand) = &call.operand else {
-            return Err(EvaluationError::Other);
+            return Err(EvaluationError::CouldNotEvaluate);
         };
         let scope = self.scope_stack.last().expect("scope stack is empty");
         let resolution = self
@@ -301,7 +286,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
             ComptimeResolution::BuiltIn(InternalBuiltIn::Erc7201) => {
                 self.evaluate_erc7201_built_in_call(&call.arguments)
             }
-            _ => Err(EvaluationError::Other),
+            _ => Err(EvaluationError::CouldNotEvaluate),
         }
     }
 
@@ -310,11 +295,11 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         arguments: &ir::ArgumentsDeclaration,
     ) -> Result<Number, EvaluationError> {
         let ir::ArgumentsDeclaration::PositionalArguments(arguments) = arguments else {
-            return Err(EvaluationError::Other);
+            return Err(EvaluationError::CouldNotEvaluate);
         };
         let [argument] = arguments.as_slice() else {
             // Reject other arities
-            return Err(EvaluationError::Other);
+            return Err(EvaluationError::CouldNotEvaluate);
         };
         let value = self.evaluate_expression_as_string(argument)?;
         Ok(Number::Integer(compute_erc7201(&value)))
@@ -342,7 +327,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
             ir::Expression::Identifier(identifier) => {
                 self.evaluate_identifier_as_string(identifier)
             }
-            _ => Err(EvaluationError::Other),
+            _ => Err(EvaluationError::CouldNotEvaluate),
         }
     }
 
@@ -358,7 +343,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
             .identifier_resolver
             .resolve_identifier_in_scope(identifier.unparse(), current_scope)
         else {
-            return Err(EvaluationError::Other);
+            return Err(EvaluationError::CouldNotEvaluate);
         };
         if self.scope_stack.len() >= Self::MAX_SCOPE_DEPTH {
             return Err(DiagnosticKind::from(CyclicConstantDefinition).into());
@@ -502,7 +487,7 @@ mod tests {
         let resolver = MapResolver::with_context(context);
         let expression = parse_expression(input);
 
-        evaluate_compile_time_number_constant(&expression, String::new(), &resolver).ok()
+        evaluate_compile_time_constant(&expression, String::new(), &resolver).ok()
     }
 
     fn eval_string(input: &str) -> Option<Number> {
@@ -695,7 +680,7 @@ mod tests {
     ) -> Option<Number> {
         let expression = parse_expression(input);
         let resolver = MapResolver::recognise_erc7201_with_context(context);
-        evaluate_compile_time_number_constant(&expression, String::new(), &resolver).ok()
+        evaluate_compile_time_constant(&expression, String::new(), &resolver).ok()
     }
 
     fn eval_string_with_erc7201(input: &str) -> Option<Number> {

@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+Error: This syntax was introduced in version '0.8.29'.
+    ╭─[input.sol:10:17]
+    │
+ 10 │ contract C is A layout at A.X {}
+    │                 ──────┬──────  
+    │                       ╰──────── Error occurred here.
+────╯
+
+Error: The base slot of the storage layout must be a compile-time constant expression.
+    ╭─[input.sol:10:27]
+    │
+ 10 │ contract C is A layout at A.X {}
+    │                           ─┬─  
+    │                            ╰─── Error occurred here.
+────╯

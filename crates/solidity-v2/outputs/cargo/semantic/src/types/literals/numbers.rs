@@ -89,10 +89,6 @@ impl Number {
         }
     }
 
-    pub(crate) fn as_usize(&self) -> Option<usize> {
-        self.as_integer()?.to_usize()
-    }
-
     pub(crate) fn to_literal_kind(&self) -> LiteralKind {
         match self {
             Self::Integer(value) => LiteralKind::Integer {
