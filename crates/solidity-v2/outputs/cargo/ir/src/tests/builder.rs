@@ -23,7 +23,7 @@ contract MyContract {
     let ParseOutput {
         source_unit,
         diagnostics,
-    } = Parser::parse("test.sol", CONTENTS, LanguageVersion::LATEST);
+    } = Parser::parse(&"test.sol".into(), CONTENTS, LanguageVersion::LATEST);
 
     assert!(
         diagnostics.is_empty(),
@@ -35,7 +35,12 @@ contract MyContract {
     let ir::BuildOutput {
         ir_root,
         diagnostics,
-    } = ir::build("test.sol", &source_unit, &CONTENTS, &mut id_generator);
+    } = ir::build(
+        &"test.sol".into(),
+        &source_unit,
+        &CONTENTS,
+        &mut id_generator,
+    );
 
     assert!(
         diagnostics.is_empty(),
@@ -105,15 +110,19 @@ contract MyContract {
     let ParseOutput {
         source_unit,
         diagnostics,
-    } = Parser::parse("test.sol", CONTENTS, LanguageVersion::LATEST);
+    } = Parser::parse(&"test.sol".into(), CONTENTS, LanguageVersion::LATEST);
     assert!(
         diagnostics.is_empty(),
         "Parser diagnostics: {diagnostics:?}"
     );
 
     let mut id_generator = ir::NodeIdGenerator::default();
-    let ir::BuildOutput { diagnostics, .. } =
-        ir::build("test.sol", &source_unit, &CONTENTS, &mut id_generator);
+    let ir::BuildOutput { diagnostics, .. } = ir::build(
+        &"test.sol".into(),
+        &source_unit,
+        &CONTENTS,
+        &mut id_generator,
+    );
     assert!(
         diagnostics.is_empty(),
         "IR builder diagnostics: {diagnostics:?}"
@@ -144,7 +153,7 @@ contract Test is Base layout at 0 {}
     let ParseOutput {
         source_unit,
         diagnostics,
-    } = Parser::parse("test.sol", CONTENTS, LanguageVersion::LATEST);
+    } = Parser::parse(&"test.sol".into(), CONTENTS, LanguageVersion::LATEST);
 
     assert!(
         diagnostics.is_empty(),
@@ -156,7 +165,12 @@ contract Test is Base layout at 0 {}
     let ir::BuildOutput {
         ir_root,
         diagnostics,
-    } = ir::build("test.sol", &source_unit, &CONTENTS, &mut id_generator);
+    } = ir::build(
+        &"test.sol".into(),
+        &source_unit,
+        &CONTENTS,
+        &mut id_generator,
+    );
 
     let sentinel_node_id = id_generator.next_id_of(ir::NodeKind::SourceUnit);
 
@@ -214,7 +228,7 @@ contract Test {
     let ParseOutput {
         source_unit,
         diagnostics,
-    } = Parser::parse("test.sol", CONTENTS, LanguageVersion::LATEST);
+    } = Parser::parse(&"test.sol".into(), CONTENTS, LanguageVersion::LATEST);
 
     assert!(
         diagnostics.is_empty(),
@@ -226,7 +240,12 @@ contract Test {
     let ir::BuildOutput {
         ir_root,
         diagnostics,
-    } = ir::build("test.sol", &source_unit, &CONTENTS, &mut id_generator);
+    } = ir::build(
+        &"test.sol".into(),
+        &source_unit,
+        &CONTENTS,
+        &mut id_generator,
+    );
 
     assert!(
         diagnostics.is_empty(),

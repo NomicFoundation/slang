@@ -2,6 +2,7 @@ use lalrpop_util::lalrpop_mod;
 use slang_solidity_v2_common::collections::SortedSet;
 use slang_solidity_v2_common::diagnostics::kinds::syntax::{UnexpectedEof, UnexpectedTerminal};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::terminals::TerminalKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::{
@@ -41,7 +42,7 @@ pub(crate) struct GrammarCtx<'a> {
     /// Source text being parsed (consumed by terminal constructors).
     pub source: &'a str,
     /// Id of the file being parsed, used when reporting diagnostics.
-    pub file_id: &'a str,
+    pub file_id: &'a FileId,
     /// Diagnostics accumulated during parsing.
     pub diagnostics: DiagnosticCollection,
 }
@@ -61,7 +62,7 @@ pub struct ParseOutput {
 pub struct Parser;
 
 impl Parser {
-    pub fn parse(file_id: &str, source: &str, language_version: LanguageVersion) -> ParseOutput {
+    pub fn parse(file_id: &FileId, source: &str, language_version: LanguageVersion) -> ParseOutput {
         let lexer = Lexer::new(source, language_version);
         let parser = grammar::SourceUnitParser::new();
 
@@ -100,7 +101,7 @@ impl Parser {
 
 /// Convert a LALRPOP parse error into a `DiagnosticCollection`.
 fn convert_parse_error(
-    file_id: &str,
+    file_id: &FileId,
     diagnostics: &mut DiagnosticCollection,
     value: lalrpop_util::ParseError<usize, LexemeKind, ()>,
 ) {

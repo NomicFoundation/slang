@@ -264,7 +264,7 @@ pub mod slang_solidity_v2_semantic::context
 pub struct slang_solidity_v2_semantic::context::SemanticContext
 impl slang_solidity_v2_semantic::context::SemanticContext
 pub const slang_solidity_v2_semantic::context::SemanticContext::SLOT_SIZE: usize
-pub fn slang_solidity_v2_semantic::context::SemanticContext::file_id_from_node_id(&self, slang_solidity_v2_common::nodes::NodeId) -> &str
+pub fn slang_solidity_v2_semantic::context::SemanticContext::file_id_from_node_id(&self, slang_solidity_v2_common::nodes::NodeId) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_semantic::context::SemanticContext::linearised_errors(&self, slang_solidity_v2_common::nodes::NodeId) -> &[slang_solidity_v2_ir::ir::nodes::ErrorDefinition]
 pub fn slang_solidity_v2_semantic::context::SemanticContext::linearised_events(&self, slang_solidity_v2_common::nodes::NodeId) -> &[slang_solidity_v2_ir::ir::nodes::EventDefinition]
 pub fn slang_solidity_v2_semantic::context::SemanticContext::linearised_functions(&self, slang_solidity_v2_common::nodes::NodeId) -> &[slang_solidity_v2_ir::ir::nodes::FunctionDefinition]
@@ -283,9 +283,9 @@ pub fn slang_solidity_v2_semantic::context::SemanticContext::build_from(slang_so
 pub fn slang_solidity_v2_semantic::context::SemanticContext::find_contract_by_name<'a, 'b>(&'a self, &'b str) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ir::ir::nodes::ContractDefinition> + use<'a> where 'b: 'a
 pub fn slang_solidity_v2_semantic::context::SemanticContext::types(&self) -> &slang_solidity_v2_semantic::types::TypeRegistry
 pub trait slang_solidity_v2_semantic::context::SemanticFile
-pub fn slang_solidity_v2_semantic::context::SemanticFile::id(&self) -> &str
+pub fn slang_solidity_v2_semantic::context::SemanticFile::id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_semantic::context::SemanticFile::ir_root(&self) -> &slang_solidity_v2_ir::ir::nodes::SourceUnit
-pub fn slang_solidity_v2_semantic::context::SemanticFile::resolved_import_by_node_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&alloc::string::String>
+pub fn slang_solidity_v2_semantic::context::SemanticFile::resolved_import_by_node_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&slang_solidity_v2_common::files::FileId>
 pub fn slang_solidity_v2_semantic::context::extract_import_paths_from_source_unit(&slang_solidity_v2_ir::ir::nodes::SourceUnit) -> alloc::vec::Vec<(slang_solidity_v2_common::nodes::NodeId, alloc::string::String)>
 pub mod slang_solidity_v2_semantic::types
 pub mod slang_solidity_v2_semantic::types::literals

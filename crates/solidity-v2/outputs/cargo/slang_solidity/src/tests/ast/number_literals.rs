@@ -79,7 +79,7 @@ fn rational(numerator: i64, denominator: u64) -> Number {
 #[test]
 fn test_hex_number_expression_value() {
     let unit = NumberLiterals::build_compilation_unit();
-    let ast = unit.file("main.sol").unwrap().ast();
+    let ast = unit.file(&"main.sol".into()).unwrap().ast();
 
     let mut collector = NumberLiteralCollector::default();
     ast::visitor::accept_source_unit(&ast, &mut collector);
@@ -113,7 +113,7 @@ fn test_hex_number_expression_value() {
 #[test]
 fn test_decimal_number_expression_value() {
     let unit = NumberLiterals::build_compilation_unit();
-    let ast = unit.file("main.sol").unwrap().ast();
+    let ast = unit.file(&"main.sol".into()).unwrap().ast();
 
     let mut collector = NumberLiteralCollector::default();
     ast::visitor::accept_source_unit(&ast, &mut collector);

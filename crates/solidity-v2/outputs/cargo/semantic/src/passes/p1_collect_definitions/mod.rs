@@ -6,6 +6,7 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     InvalidUsingDirectiveContainer, MultipleConstructors,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
@@ -159,7 +160,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         self.binder.insert_definition_in_scope(definition, scope_id);
     }
 
-    fn resolve_import_path(&self, import_node_id: NodeId) -> Option<String> {
+    fn resolve_import_path(&self, import_node_id: NodeId) -> Option<FileId> {
         self.current_file
             .resolved_import_by_node_id(import_node_id)
             .cloned()

@@ -26,7 +26,12 @@ struct TypeAnalysis {
 /// Builds and runs every semantic pass over an arbitrary Solidity `source`,
 fn analyze(language_version: LanguageVersion, source: &str) -> TypeAnalysis {
     let mut id_generator = NodeIdGenerator::default();
-    let file = build_file("test.sol", source, &mut id_generator, language_version);
+    let file = build_file(
+        "test.sol".into(),
+        source,
+        &mut id_generator,
+        language_version,
+    );
     let files = vec![file];
 
     let mut binder = Binder::default();

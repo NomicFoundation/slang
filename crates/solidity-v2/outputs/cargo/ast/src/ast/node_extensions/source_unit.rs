@@ -1,7 +1,9 @@
+use slang_solidity_v2_common::files::FileId;
+
 use super::super::{ContractDefinition, SourceUnitMember, SourceUnitStruct};
 
 impl SourceUnitStruct {
-    pub fn file_id(&self) -> &str {
+    pub fn file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 

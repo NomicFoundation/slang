@@ -1,5 +1,5 @@
 use anyhow::Result;
-use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig};
+use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig, FileId};
 use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
 use slang_solidity_v2_common::evm_targets::EvmTarget;
@@ -18,7 +18,7 @@ impl TestTarget for SlangTarget {
 
     fn collect_diagnostics(
         &self,
-        files: &SortedMap<String, String>,
+        files: &SortedMap<FileId, String>,
         version: LanguageVersion,
         evm_target: EvmTarget,
     ) -> Result<Vec<String>> {
@@ -38,7 +38,12 @@ impl TestTarget for SlangTarget {
         for diagnostic in diagnostics {
             let file_id = diagnostic.file_id();
             let source = files.get(file_id).cloned().unwrap_or_default();
-            rendered.push(diagnostic::render(diagnostic, file_id, &source, false));
+            rendered.push(diagnostic::render(
+                diagnostic,
+                &file_id.to_string(),
+                &source,
+                false,
+            ));
         }
 
         Ok(rendered)
@@ -46,11 +51,11 @@ impl TestTarget for SlangTarget {
 }
 
 struct TestConfig {
-    files: SortedMap<String, String>,
+    files: SortedMap<FileId, String>,
 }
 
 impl CompilationBuilderConfig for TestConfig {
-    fn read_file(&mut self, file_id: &str) -> Result<String, MissingFile> {
+    fn read_file(&mut self, file_id: &FileId) -> Result<String, MissingFile> {
         self.files.get(file_id).cloned().ok_or_else(|| MissingFile {
             reason: "File not found.".to_string(),
         })
@@ -58,9 +63,9 @@ impl CompilationBuilderConfig for TestConfig {
 
     fn resolve_import(
         &mut self,
-        source_file_id: &str,
+        source_file_id: &FileId,
         import_path: &str,
-    ) -> Result<String, UnresolvedImport> {
+    ) -> Result<FileId, UnresolvedImport> {
         path_resolver::resolve_import(source_file_id, import_path).ok_or_else(|| UnresolvedImport {
             reason: "Unresolved import.".to_string(),
         })

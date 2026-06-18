@@ -1,6 +1,7 @@
 use std::collections::VecDeque;
 
 use slang_solidity_v2_common::collections::{DefaultWithCapacity, Map, Set};
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 
 use super::built_ins::InternalBuiltIn;
@@ -96,7 +97,7 @@ pub struct Binder {
     /// Scopes (set of definitions contained and relationship to other scopes), indexed by `NodeId`
     scopes_by_node_id: Map<NodeId, ScopeId>,
     /// Index of root `FileScope`s for all files in the `CompilationUnit`
-    scopes_by_file_id: Map<String, ScopeId>,
+    scopes_by_file_id: Map<FileId, ScopeId>,
     /// `UsingDirective` objects registered globally (contract level directives
     /// are stored in the corresponding `ContractScope`)
     global_using_directives: Vec<UsingDirective>,
@@ -170,7 +171,7 @@ impl Binder {
         self.scopes_by_node_id.get(&node_id).copied()
     }
 
-    pub(crate) fn scope_id_for_file_id(&self, file_id: &str) -> Option<ScopeId> {
+    pub(crate) fn scope_id_for_file_id(&self, file_id: &FileId) -> Option<ScopeId> {
         self.scopes_by_file_id.get(file_id).copied()
     }
 
@@ -408,7 +409,7 @@ impl Binder {
 
     // File scope resolution context
 
-    pub(crate) fn get_file_scope(&self, file_id: &str) -> &FileScope {
+    pub(crate) fn get_file_scope(&self, file_id: &FileId) -> &FileScope {
         self.scopes_by_file_id
             .get(file_id)
             .and_then(|scope_id| self.scopes.get(scope_id.0))
@@ -422,7 +423,7 @@ impl Binder {
     // Resolving a symbol in a file scope is special because of default imports.
     // We want to find *all* definitions with the given symbol reachable from
     // the file.
-    fn resolve_in_file_scope(&self, file_id: &str, symbol: &str) -> Resolution {
+    fn resolve_in_file_scope(&self, file_id: &FileId, symbol: &str) -> Resolution {
         let mut found_definitions = Vec::new();
         let mut visited_files = Set::default();
         let mut files_to_search = VecDeque::new();
@@ -439,7 +440,7 @@ impl Binder {
                 file_scope
                     .default_imports
                     .iter()
-                    .map(|import| import.file_id.as_str()),
+                    .map(|import| &import.file_id),
             );
         }
 

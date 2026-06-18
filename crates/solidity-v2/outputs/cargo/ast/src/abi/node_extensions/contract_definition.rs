@@ -8,7 +8,7 @@ use crate::ast::{ContractDefinitionStruct, StateVariableDefinition, StateVariabl
 impl ContractDefinitionStruct {
     pub fn compute_abi(&self) -> Option<ContractAbi> {
         let name = self.ir_node.name.unparse().to_string();
-        let file_id = self.get_file_id().to_string();
+        let file_id = self.get_file_id().clone();
         let entries = self.compute_abi_entries()?;
         let (storage_layout, transient_storage_layout) = self.compute_storage_layout()?;
         Some(ContractAbi {

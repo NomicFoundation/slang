@@ -38,7 +38,7 @@ impl ast::visitor::Visitor for AssemblyCollector {
 #[test]
 fn test_assembly_referenced_definitions() {
     let unit = AssemblyReferences::build_compilation_unit();
-    let main_ast = unit.file("main.sol").unwrap().ast();
+    let main_ast = unit.file(&"main.sol".into()).unwrap().ast();
 
     let mut collector = AssemblyCollector::default();
     ast::visitor::accept_source_unit(&main_ast, &mut collector);

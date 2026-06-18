@@ -1,4 +1,5 @@
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -38,13 +39,13 @@ struct Pass<'a> {
     binder: &'a mut Binder,
     types: &'a mut TypeRegistry,
     diagnostics: &'a mut DiagnosticCollection,
-    file_id: String,
+    file_id: &'a FileId,
     current_receiver_type: Option<TypeId>,
 }
 
 impl<'a> Pass<'a> {
     fn visit_file(
-        file: &impl SemanticFile,
+        file: &'a impl SemanticFile,
         binder: &'a mut Binder,
         types: &'a mut TypeRegistry,
         diagnostics: &'a mut DiagnosticCollection,
@@ -54,7 +55,7 @@ impl<'a> Pass<'a> {
             binder,
             types,
             diagnostics,
-            file_id: file.id().to_owned(),
+            file_id: file.id(),
             current_receiver_type: None,
         };
         ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
@@ -68,7 +69,7 @@ impl<'a> Pass<'a> {
     // cannot happen concurrently with the typing of the definitions in the main
     // pass.
     fn visit_file_type_getters(
-        file: &impl SemanticFile,
+        file: &'a impl SemanticFile,
         binder: &'a mut Binder,
         types: &'a mut TypeRegistry,
         diagnostics: &'a mut DiagnosticCollection,
@@ -78,7 +79,7 @@ impl<'a> Pass<'a> {
             binder,
             types,
             diagnostics,
-            file_id: file.id().to_owned(),
+            file_id: file.id(),
             current_receiver_type: None,
         };
         pass.type_getters_from(file.ir_root());

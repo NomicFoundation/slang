@@ -41,7 +41,7 @@ pub fn test(input: Input) -> Output {
         let ir::BuildOutput {
             ir_root,
             diagnostics,
-        } = ir::build(&name, &source, contents, &mut id_generator);
+        } = ir::build(&name.as_str().into(), &source, contents, &mut id_generator);
 
         assert!(
             diagnostics.is_empty(),

@@ -23,7 +23,7 @@ contract Test is Base layout at 0 {}
 
     let mut id_generator = NodeIdGenerator::default();
     let file = build_file(
-        "test.sol",
+        "test.sol".into(),
         CONTENTS,
         &mut id_generator,
         LanguageVersion::LATEST,
@@ -86,7 +86,7 @@ interface A is C {}
 
     let mut id_generator = NodeIdGenerator::default();
     let file = build_file(
-        "test.sol",
+        "test.sol".into(),
         CONTENTS,
         &mut id_generator,
         LanguageVersion::LATEST,
@@ -135,7 +135,7 @@ contract B {}
 
     let mut id_generator = NodeIdGenerator::default();
     let file = build_file(
-        "test.sol",
+        "test.sol".into(),
         CONTENTS,
         &mut id_generator,
         LanguageVersion::LATEST,
@@ -175,7 +175,7 @@ contract Test is Base, Foo { // Base should resolve to the contract, not the var
 
     let mut id_generator = NodeIdGenerator::default();
     let file = build_file(
-        "test.sol",
+        "test.sol".into(),
         CONTENTS,
         &mut id_generator,
         LanguageVersion::LATEST,
@@ -245,7 +245,12 @@ contract Test is Base {
 
     let mut id_generator = NodeIdGenerator::default();
     let language_version = LanguageVersion::LATEST;
-    let file = build_file("test.sol", CONTENTS, &mut id_generator, language_version);
+    let file = build_file(
+        "test.sol".into(),
+        CONTENTS,
+        &mut id_generator,
+        language_version,
+    );
 
     let files = [file];
     let mut binder = Binder::default();
@@ -305,7 +310,12 @@ contract Test is Base {
     let language_version = LanguageVersion::LATEST;
 
     let mut id_generator = NodeIdGenerator::default();
-    let file = build_file("test.sol", CONTENTS, &mut id_generator, language_version);
+    let file = build_file(
+        "test.sol".into(),
+        CONTENTS,
+        &mut id_generator,
+        language_version,
+    );
 
     let files = [file];
     let mut binder = Binder::default();
@@ -352,7 +362,12 @@ contract Test {
 
     let mut id_generator = NodeIdGenerator::default();
     let language_version = LanguageVersion::LATEST;
-    let file = build_file("test.sol", CONTENTS, &mut id_generator, language_version);
+    let file = build_file(
+        "test.sol".into(),
+        CONTENTS,
+        &mut id_generator,
+        language_version,
+    );
 
     let files = [file];
     let mut binder = Binder::default();

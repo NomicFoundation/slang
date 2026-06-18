@@ -3,6 +3,7 @@ use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
 use slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDefinition;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, ConstantDefinition, Definition, Resolution, Scope, ScopeId};
@@ -523,7 +524,7 @@ pub(crate) struct ConstantResolver<'a> {
     /// same-file constants declared past that offset resolve as `Unresolved`.
     /// This is a hack to match solc behaviour: forward references are
     /// rejected in array lengths, but valid in storage base slots (`None`).
-    pub(crate) use_site: Option<(&'a str, usize)>,
+    pub(crate) use_site: Option<(&'a FileId, usize)>,
 }
 
 impl ConstantResolver<'_> {
@@ -707,7 +708,7 @@ mod tests {
         let ParseOutput {
             source_unit,
             diagnostics,
-        } = Parser::parse("test.sol", &source, version);
+        } = Parser::parse(&"test.sol".into(), &source, version);
 
         assert!(
             diagnostics.is_empty(),
@@ -718,7 +719,7 @@ mod tests {
         let ir::BuildOutput {
             ir_root,
             diagnostics,
-        } = ir::build("test.sol", &source_unit, &source, &mut id_generator);
+        } = ir::build(&"test.sol".into(), &source_unit, &source, &mut id_generator);
 
         assert!(
             diagnostics.is_empty(),
