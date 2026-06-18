@@ -7,6 +7,7 @@ use slang_solidity_v2_ir::ir::NodeIdGenerator;
 
 use super::build_file;
 use crate::binder::{Binder, Resolution};
+use crate::context::FileNodeMapper;
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p5_resolve_references,
     p6_resolve_yul,
@@ -357,11 +358,12 @@ contract Test {
     let mut binder = Binder::default();
     let mut types = TypeRegistry::new(language_version);
     let mut diagnostics = DiagnosticCollection::default();
+    let file_node_mapper = FileNodeMapper::build_from(&files);
 
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
     p3_type_definitions::run(&files, &mut binder, &mut types, &mut diagnostics);
-    p6_resolve_yul::run(&mut binder, &types, &mut diagnostics);
+    p6_resolve_yul::run(&mut binder, &types, &file_node_mapper, &mut diagnostics);
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"

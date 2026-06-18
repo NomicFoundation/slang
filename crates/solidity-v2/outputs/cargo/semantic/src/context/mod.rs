@@ -82,7 +82,7 @@ impl SemanticContext {
 
         let contract_data = p4_compute_linearisations::run(&binder, &types);
         p5_resolve_references::run(files, &mut binder, &mut types);
-        p6_resolve_yul::run(&mut binder, &types, diagnostics);
+        p6_resolve_yul::run(&mut binder, &types, &file_node_mapper, diagnostics);
         p7_code_analysis::run(
             &binder,
             language_version,

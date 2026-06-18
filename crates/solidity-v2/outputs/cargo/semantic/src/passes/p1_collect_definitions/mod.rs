@@ -582,7 +582,6 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         // Solidity definitions it references (filled in by p6).
         self.binder.insert_assembly_block(AssemblyBlock {
             ir_node: Arc::clone(node),
-            file_id: self.current_file.id().to_owned(),
             enclosing_scope_id: self.current_scope_id(),
             solidity_references: Vec::new(),
         });

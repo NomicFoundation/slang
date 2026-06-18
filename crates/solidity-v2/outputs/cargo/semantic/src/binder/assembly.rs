@@ -13,8 +13,6 @@ use super::ScopeId;
 pub(crate) struct AssemblyBlock {
     /// The `assembly { ... }` statement node.
     pub(crate) ir_node: ir::AssemblyStatement,
-    /// File the block lives in.
-    pub(crate) file_id: String,
     /// Enclosing Solidity scope active at the statement. `p6_resolve_yul` uses
     /// it as the parent of the Yul block scope and as the head of the
     /// resolution chain.

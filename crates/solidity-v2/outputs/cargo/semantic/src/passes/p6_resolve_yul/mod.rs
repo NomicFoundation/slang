@@ -6,6 +6,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, Scope, ScopeId};
+use crate::context::FileNodeMapper;
 use crate::passes::common::conflicts;
 use crate::types::TypeRegistry;
 
@@ -27,7 +28,12 @@ mod visitor;
 /// Solidity scopes (so Yul can reference Solidity declarations), but no Solidity
 /// scope ever points into a Yul scope, and nothing outside an assembly block
 /// references a Yul definition.
-pub fn run(binder: &mut Binder, types: &TypeRegistry, diagnostics: &mut DiagnosticCollection) {
+pub fn run(
+    binder: &mut Binder,
+    types: &TypeRegistry,
+    file_node_mapper: &FileNodeMapper,
+    diagnostics: &mut DiagnosticCollection,
+) {
     // The `assembly` blocks were collected in `p1_collect_definitions` (each
     // with its enclosing Solidity scope), so we only process those branches
     // instead of walking every file's full IR tree.
@@ -38,22 +44,16 @@ pub fn run(binder: &mut Binder, types: &TypeRegistry, diagnostics: &mut Diagnost
     let blocks: Vec<_> = binder
         .assembly_blocks()
         .values()
-        .map(|block| {
-            (
-                Arc::clone(&block.ir_node),
-                block.file_id.clone(),
-                block.enclosing_scope_id,
-            )
-        })
+        .map(|block| (Arc::clone(&block.ir_node), block.enclosing_scope_id))
         .collect();
 
-    for (statement, file_id, enclosing_scope_id) in blocks {
+    for (statement, enclosing_scope_id) in blocks {
         let solidity_references = Pass::visit_assembly_statement(
             binder,
             types,
+            file_node_mapper,
             diagnostics,
             &statement,
-            file_id,
             enclosing_scope_id,
         );
         binder.set_assembly_block_solidity_references(statement.id(), solidity_references);
@@ -61,7 +61,7 @@ pub fn run(binder: &mut Binder, types: &TypeRegistry, diagnostics: &mut Diagnost
 }
 
 struct Pass<'a> {
-    file_id: String,
+    file_node_mapper: &'a FileNodeMapper,
     // We don't need to chain Yul scopes, so `ScopeId` is enough to track the scope stack
     scope_stack: Vec<ScopeId>,
     binder: &'a mut Binder,
@@ -78,13 +78,13 @@ impl<'a> Pass<'a> {
     fn visit_assembly_statement(
         binder: &'a mut Binder,
         types: &'a TypeRegistry,
+        file_node_mapper: &'a FileNodeMapper,
         diagnostics: &'a mut DiagnosticCollection,
         statement: &ir::AssemblyStatement,
-        file_id: String,
         enclosing_scope_id: ScopeId,
     ) -> Vec<NodeId> {
         let mut pass = Self {
-            file_id,
+            file_node_mapper,
             // Seed the stack with the enclosing Solidity scope (created in p1)
             // so the block's Yul scope parents correctly and Yul identifiers
             // chain up into the enclosing Solidity definitions.
@@ -142,8 +142,12 @@ impl<'a> Pass<'a> {
         if conflicts::find_conflicting_definition(self.binder, scope_id, symbol, &definition)
             .is_some()
         {
+            let file_id = self
+                .file_node_mapper
+                .file_id_from_node_id(definition.identifier().id())
+                .to_owned();
             self.diagnostics.push(
-                self.file_id.clone(),
+                file_id,
                 definition.identifier().range.clone(),
                 IdentifierRedeclaration,
             );
