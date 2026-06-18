@@ -289,8 +289,22 @@ impl Binder {
         }
     }
 
+    #[cfg(test)]
     pub(crate) fn assembly_blocks(&self) -> &Map<NodeId, AssemblyBlock> {
         &self.assembly_blocks
+    }
+
+    /// Moves the collected `assembly` blocks out of the binder (leaving it
+    /// empty). This lets `p6_resolve_yul` iterate and mutate the blocks in
+    /// place while still holding a mutable borrow of the rest of the binder.
+    /// The blocks must be returned with `restore_assembly_blocks` once
+    /// processed.
+    pub(crate) fn take_assembly_blocks(&mut self) -> Map<NodeId, AssemblyBlock> {
+        std::mem::take(&mut self.assembly_blocks)
+    }
+
+    pub(crate) fn restore_assembly_blocks(&mut self, assembly_blocks: Map<NodeId, AssemblyBlock>) {
+        self.assembly_blocks = assembly_blocks;
     }
 
     /// The Solidity definitions referenced from within the `assembly` block
@@ -301,17 +315,6 @@ impl Binder {
             .get(&node_id)
             .map(|block| block.solidity_references.as_slice())
             .unwrap_or_default()
-    }
-
-    pub(crate) fn set_assembly_block_solidity_references(
-        &mut self,
-        node_id: NodeId,
-        references: Vec<NodeId>,
-    ) {
-        self.assembly_blocks
-            .get_mut(&node_id)
-            .unwrap()
-            .solidity_references = references;
     }
 
     pub(crate) fn insert_using_directive_in_scope(

@@ -1,11 +1,9 @@
-use std::sync::Arc;
-
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
-use crate::binder::{Binder, Definition, Scope, ScopeId};
+use crate::binder::{AssemblyBlock, Binder, Definition, Scope, ScopeId};
 use crate::context::FileNodeMapper;
 use crate::passes::common::conflicts;
 use crate::types::TypeRegistry;
@@ -38,26 +36,14 @@ pub fn run(
     // with its enclosing Solidity scope), so we only process those branches
     // instead of walking every file's full IR tree.
     //
-    // Snapshot them first: processing a block borrows `binder` mutably
-    // (inserting Yul scopes/definitions/references), so we can't hold a borrow
-    // into `binder.assembly_blocks()` across the loop.
-    let blocks: Vec<_> = binder
-        .assembly_blocks()
-        .values()
-        .map(|block| (Arc::clone(&block.ir_node), block.enclosing_scope_id))
-        .collect();
-
-    for (statement, enclosing_scope_id) in blocks {
-        let solidity_references = Pass::visit_assembly_statement(
-            binder,
-            types,
-            file_node_mapper,
-            diagnostics,
-            &statement,
-            enclosing_scope_id,
-        );
-        binder.set_assembly_block_solidity_references(statement.id(), solidity_references);
+    // Take ownership of the blocks out of the binder so we can mutate each one
+    // in place (recording its referenced definitions) while still holding a
+    // mutable borrow of the rest of the binder. They're returned afterwards.
+    let mut assembly_blocks = binder.take_assembly_blocks();
+    for block in assembly_blocks.values_mut() {
+        Pass::visit_assembly_statement(binder, types, file_node_mapper, diagnostics, block);
     }
+    binder.restore_assembly_blocks(assembly_blocks);
 }
 
 struct Pass<'a> {
@@ -68,36 +54,41 @@ struct Pass<'a> {
     types: &'a TypeRegistry,
     diagnostics: &'a mut DiagnosticCollection,
     /// Distinct Solidity definitions referenced anywhere in the assembly block
-    /// being processed, accumulated as its Yul paths are resolved.
-    solidity_references: Vec<NodeId>,
+    /// being processed, recorded in place as its Yul paths are resolved.
+    solidity_references: &'a mut Vec<NodeId>,
 }
 
 impl<'a> Pass<'a> {
-    /// Processes a single `assembly` block, returning the distinct Solidity
-    /// definitions it references.
+    /// Processes a single `assembly` block, recording the distinct Solidity
+    /// definitions it references directly into the block.
     fn visit_assembly_statement(
         binder: &'a mut Binder,
         types: &'a TypeRegistry,
         file_node_mapper: &'a FileNodeMapper,
         diagnostics: &'a mut DiagnosticCollection,
-        statement: &ir::AssemblyStatement,
-        enclosing_scope_id: ScopeId,
-    ) -> Vec<NodeId> {
+        block: &'a mut AssemblyBlock,
+    ) {
+        // Split the borrow of the block: we traverse the (immutable) Yul body
+        // while recording referenced definitions into its `solidity_references`.
+        let AssemblyBlock {
+            ir_node,
+            enclosing_scope_id,
+            solidity_references,
+        } = block;
         let mut pass = Self {
             file_node_mapper,
             // Seed the stack with the enclosing Solidity scope (created in p1)
             // so the block's Yul scope parents correctly and Yul identifiers
             // chain up into the enclosing Solidity definitions.
-            scope_stack: vec![enclosing_scope_id],
+            scope_stack: vec![*enclosing_scope_id],
             binder,
             types,
             diagnostics,
-            solidity_references: Vec::new(),
+            solidity_references,
         };
-        ir::visitor::accept_yul_block(&statement.body, &mut pass);
+        ir::visitor::accept_yul_block(&ir_node.body, &mut pass);
         // Only the seeded enclosing scope should remain.
         assert_eq!(pass.scope_stack.len(), 1);
-        pass.solidity_references
     }
 
     // Creates a brand-new scope (used for the Yul scopes this pass owns) and
