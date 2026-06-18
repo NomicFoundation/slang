@@ -4,12 +4,12 @@ use std::sync::Arc;
 
 use slang_solidity_v2::ast::visitor::{accept_source_unit, Visitor};
 use slang_solidity_v2::ast::{DataLocation, Definition, Identifier, LiteralKind, NodeId, Type};
-use slang_solidity_v2::compilation::CompilationUnit;
+use slang_solidity_v2::compilation::{CompilationUnit, FileId};
 use slang_solidity_v2_common::collections::{Map, SortedMap};
 
 // Types
 
-type FileSourceMap = SortedMap<String, String>;
+type FileSourceMap = SortedMap<FileId, String>;
 
 pub(crate) struct ReportData<'a> {
     pub(crate) compilation: &'a CompilationUnit,
@@ -31,7 +31,7 @@ pub(crate) struct CollectedIdentifier {
 }
 
 impl CollectedIdentifier {
-    pub(crate) fn file_id(&self) -> &str {
+    pub(crate) fn file_id(&self) -> &FileId {
         self.node.get_file_id()
     }
     pub(crate) fn range(&self) -> &Range<usize> {
@@ -95,7 +95,7 @@ impl<'a> ReportData<'a> {
 // Identifier collector trait, to allow reuse in the two collectors
 
 trait IdentifierCollector {
-    fn file_contents(&self, file_id: &str) -> &str;
+    fn file_contents(&self, file_id: &FileId) -> &str;
 
     fn collect_identifier(&self, node: &Identifier) -> CollectedIdentifier {
         let range = node.get_text_range().clone();
@@ -138,7 +138,7 @@ struct DefinitionCollector<'a> {
 impl<'a> DefinitionCollector<'a> {
     fn collect_from(
         compilation: &CompilationUnit,
-        files: &'a SortedMap<String, String>,
+        files: &'a SortedMap<FileId, String>,
     ) -> Vec<CollectedDefinition> {
         let mut collector = Self {
             files,
@@ -167,7 +167,7 @@ impl Visitor for DefinitionCollector<'_> {
 }
 
 impl IdentifierCollector for DefinitionCollector<'_> {
-    fn file_contents(&self, file_id: &str) -> &str {
+    fn file_contents(&self, file_id: &FileId) -> &str {
         &self.files[file_id]
     }
 }
@@ -175,7 +175,7 @@ impl IdentifierCollector for DefinitionCollector<'_> {
 // Identifiers collection and classification
 
 struct ReferenceCollector<'a> {
-    files: &'a SortedMap<String, String>,
+    files: &'a SortedMap<FileId, String>,
     definitions_by_node_id: &'a Map<NodeId, DefinitionId>,
     all_references: Vec<CollectedReference>,
     unbound_identifiers: Vec<CollectedIdentifier>,
@@ -242,7 +242,7 @@ impl Visitor for ReferenceCollector<'_> {
 }
 
 impl IdentifierCollector for ReferenceCollector<'_> {
-    fn file_contents(&self, file_id: &str) -> &str {
+    fn file_contents(&self, file_id: &FileId) -> &str {
         &self.files[file_id]
     }
 }

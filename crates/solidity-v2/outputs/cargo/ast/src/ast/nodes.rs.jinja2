@@ -3,6 +3,7 @@
 use std::ops::Range;
 use std::sync::Arc;
 
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::context::SemanticContext;
@@ -58,7 +59,7 @@ use super::types::Type;
       Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -184,7 +185,7 @@ use super::types::Type;
       Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 

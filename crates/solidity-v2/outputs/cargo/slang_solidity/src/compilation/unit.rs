@@ -4,6 +4,7 @@ use slang_solidity_v2_ast::{abi, ast};
 use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
 
@@ -13,7 +14,7 @@ use super::{File, FileStruct};
 pub struct CompilationUnit {
     language_version: LanguageVersion,
     evm_target: EvmTarget,
-    files: SortedMap<String, Arc<InternalFile>>,
+    files: SortedMap<FileId, Arc<InternalFile>>,
     semantic: Arc<SemanticContext>,
     diagnostics: DiagnosticCollection,
 }
@@ -26,9 +27,9 @@ impl CompilationUnit {
         semantic: SemanticContext,
         diagnostics: DiagnosticCollection,
     ) -> Self {
-        let files: SortedMap<String, Arc<InternalFile>> = files
+        let files: SortedMap<FileId, Arc<InternalFile>> = files
             .into_iter()
-            .map(|file| (file.id().to_string(), Arc::new(file)))
+            .map(|file| (file.id().clone(), Arc::new(file)))
             .collect();
         Self {
             language_version,
@@ -54,18 +55,13 @@ impl CompilationUnit {
         self.evm_target
     }
 
-    /// Returns a list of all file IDs in the compilation unit.
-    pub fn file_ids(&self) -> Vec<String> {
-        self.files.keys().cloned().collect()
-    }
-
-    pub fn files(&self) -> impl Iterator<Item = File> + use<'_> {
+    pub fn files(&self) -> impl Iterator<Item = File> + '_ {
         self.files
             .values()
             .map(|internal_file| FileStruct::create(internal_file, &self.semantic))
     }
 
-    pub fn file(&self, id: &str) -> Option<File> {
+    pub fn file(&self, id: &FileId) -> Option<File> {
         self.files
             .get(id)
             .map(|internal_file| FileStruct::create(internal_file, &self.semantic))

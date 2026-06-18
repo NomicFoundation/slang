@@ -2,6 +2,7 @@ use serde::Serialize;
 
 use crate::diagnostics::extensions::DiagnosticExtensions;
 use crate::diagnostics::severity::DiagnosticSeverity;
+use crate::files::FileId;
 
 /// Diagnostic emitted when an `import` directive resolves to a file that the
 /// configured `read_file` callback could not provide. It is anchored at the
@@ -10,7 +11,7 @@ use crate::diagnostics::severity::DiagnosticSeverity;
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct MissingImportedFile {
     /// The resolved identifier of the imported file that is missing.
-    pub imported_file_id: String,
+    pub imported_file_id: FileId,
 }
 
 impl DiagnosticExtensions for MissingImportedFile {

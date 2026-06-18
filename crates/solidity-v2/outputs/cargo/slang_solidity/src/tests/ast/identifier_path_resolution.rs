@@ -19,7 +19,7 @@ contract B3 {}
 #[test]
 fn test_build_chained_imports_fixture() {
     let unit = ChainedImports::build_compilation_unit();
-    assert_eq!(3, unit.file_ids().len());
+    assert_eq!(3, unit.files().count());
 }
 
 #[test]

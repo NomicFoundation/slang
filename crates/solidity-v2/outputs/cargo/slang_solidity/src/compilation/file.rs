@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use slang_solidity_v2_common::collections::Map;
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
@@ -8,14 +9,13 @@ use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
 use crate::ast;
 
 pub(crate) struct InternalFile {
-    // TODO(v2): abstract this into a `FileId` type
-    id: String,
+    id: FileId,
     ir_root: ir::SourceUnit,
-    resolved_imports: Map<NodeId, String>,
+    resolved_imports: Map<NodeId, FileId>,
 }
 
 impl InternalFile {
-    pub(crate) fn new(id: String, ir_root: ir::SourceUnit) -> Self {
+    pub(crate) fn new(id: FileId, ir_root: ir::SourceUnit) -> Self {
         Self {
             id,
             ir_root,
@@ -23,13 +23,13 @@ impl InternalFile {
         }
     }
 
-    pub(crate) fn add_resolved_import(&mut self, node_id: NodeId, target_file_id: String) {
+    pub(crate) fn add_resolved_import(&mut self, node_id: NodeId, target_file_id: FileId) {
         self.resolved_imports.insert(node_id, target_file_id);
     }
 }
 
 impl SemanticFile for InternalFile {
-    fn id(&self) -> &str {
+    fn id(&self) -> &FileId {
         &self.id
     }
 
@@ -37,7 +37,7 @@ impl SemanticFile for InternalFile {
         &self.ir_root
     }
 
-    fn resolved_import_by_node_id(&self, node_id: NodeId) -> Option<&String> {
+    fn resolved_import_by_node_id(&self, node_id: NodeId) -> Option<&FileId> {
         self.resolved_imports.get(&node_id)
     }
 }
@@ -57,7 +57,7 @@ impl FileStruct {
         })
     }
 
-    pub fn id(&self) -> &str {
+    pub fn id(&self) -> &FileId {
         &self.file.id
     }
 

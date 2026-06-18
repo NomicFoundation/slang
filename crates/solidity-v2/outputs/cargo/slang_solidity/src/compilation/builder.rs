@@ -6,6 +6,7 @@ use slang_solidity_v2_common::diagnostics::kinds::compilation::{
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::utils::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes as cst;
@@ -25,7 +26,7 @@ pub trait CompilationBuilderConfig {
     /// The user is responsible for fetching the file from the filesystem. The
     /// returned [`MissingFile`] is surfaced as a compilation diagnostic on the
     /// [`CompilationUnit`].
-    fn read_file(&mut self, file_id: &str) -> Result<String, MissingFile>;
+    fn read_file(&mut self, file_id: &FileId) -> Result<String, MissingFile>;
 
     /// Callback used by this builder to resolve an import path.
     /// For example, if a source file contains the following statement:
@@ -42,15 +43,15 @@ pub trait CompilationBuilderConfig {
     /// compilation diagnostic on the [`CompilationUnit`].
     fn resolve_import(
         &mut self,
-        source_file_id: &str,
+        source_file_id: &FileId,
         import_path: &str,
-    ) -> Result<String, UnresolvedImport>;
+    ) -> Result<FileId, UnresolvedImport>;
 }
 
 struct BuilderFile {
     source_unit: cst::SourceUnit,
     contents: String,
-    resolved_imports: SortedMap<String, String>,
+    resolved_imports: SortedMap<String, FileId>,
 }
 
 /// A builder for creating compilation units.
@@ -62,9 +63,9 @@ pub struct CompilationBuilder<C: CompilationBuilderConfig> {
 
     diagnostics: DiagnosticCollection,
 
-    files: SortedMap<String, BuilderFile>,
-    seen_files: Set<String>,
-    missing_files: Set<String>,
+    files: SortedMap<FileId, BuilderFile>,
+    seen_files: Set<FileId>,
+    missing_files: Set<FileId>,
 }
 
 impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
@@ -102,7 +103,7 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
     /// Parse errors, unresolvable imports, and missing files are collected as
     /// diagnostics on the resulting [`CompilationUnit`] — see
     /// [`CompilationUnit::diagnostics`].
-    pub fn add_file(&mut self, file_id: String) {
+    pub fn add_file(&mut self, file_id: FileId) {
         if !self.seen_files.insert(file_id.clone()) {
             return;
         }

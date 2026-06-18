@@ -465,7 +465,7 @@ mod tests {
         let ParseOutput {
             source_unit,
             diagnostics,
-        } = Parser::parse("test.sol", &source, version);
+        } = Parser::parse(&"test.sol".into(), &source, version);
 
         assert!(
             diagnostics.is_empty(),
@@ -476,7 +476,7 @@ mod tests {
         let ir::BuildOutput {
             ir_root,
             diagnostics,
-        } = ir::build("test.sol", &source_unit, &source, &mut id_generator);
+        } = ir::build(&"test.sol".into(), &source_unit, &source, &mut id_generator);
 
         assert!(
             diagnostics.is_empty(),

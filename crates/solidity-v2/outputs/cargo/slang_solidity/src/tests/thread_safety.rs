@@ -15,7 +15,7 @@ fn parallel_access_via_arc_consistent_with_serial_baseline() {
     let serial_definitions = unit.all_definitions().count();
     let serial_references = unit.all_references().count();
     let serial_contract_abis = unit.compute_contracts_abi().len();
-    let serial_file_ids: Vec<_> = unit.file_ids();
+    let serial_file_ids: Vec<_> = unit.files().map(|f| f.id().clone()).collect();
 
     assert_eq!(serial_definitions, EXPECTED_DEFINITIONS);
     assert_eq!(serial_references, EXPECTED_REFERENCES);

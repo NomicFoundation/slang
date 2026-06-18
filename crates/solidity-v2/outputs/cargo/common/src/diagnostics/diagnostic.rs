@@ -6,6 +6,7 @@ use serde::Serialize;
 use crate::diagnostics::extensions::DiagnosticExtensions;
 use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::severity::DiagnosticSeverity;
+use crate::files::FileId;
 
 /// A single diagnostic produced while parsing or compiling a source unit.
 ///
@@ -17,7 +18,7 @@ use crate::diagnostics::severity::DiagnosticSeverity;
 /// conversion via the `From` chain in [`crate::diagnostics::kinds`].
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct Diagnostic {
-    file_id: String,
+    file_id: FileId,
     text_range: Range<usize>,
     kind: DiagnosticKind,
 }
@@ -28,7 +29,7 @@ impl Diagnostic {
     /// be passed as `kind` thanks to the `From` chain defined in
     /// [`crate::diagnostics::kinds`].
     pub(super) fn new(
-        file_id: String,
+        file_id: FileId,
         text_range: Range<usize>,
         kind: impl Into<DiagnosticKind>,
     ) -> Self {
@@ -40,7 +41,7 @@ impl Diagnostic {
     }
 
     /// Returns the identifier of the file this diagnostic was emitted for.
-    pub fn file_id(&self) -> &str {
+    pub fn file_id(&self) -> &FileId {
         &self.file_id
     }
 

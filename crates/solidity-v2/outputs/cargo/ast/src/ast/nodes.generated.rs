@@ -4,6 +4,7 @@
 use std::ops::Range;
 use std::sync::Arc;
 
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::context::SemanticContext;
@@ -44,7 +45,7 @@ impl AbicoderPragmaStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -91,7 +92,7 @@ impl AdditiveExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -130,7 +131,7 @@ impl AddressTypeStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -173,7 +174,7 @@ impl AndExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -212,7 +213,7 @@ impl ArrayExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -258,7 +259,7 @@ impl ArrayTypeNameStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -311,7 +312,7 @@ impl AssemblyStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -358,7 +359,7 @@ impl AssignmentExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -401,7 +402,7 @@ impl BitwiseAndExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -444,7 +445,7 @@ impl BitwiseOrExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -487,7 +488,7 @@ impl BitwiseXorExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -523,7 +524,7 @@ impl BlockStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -558,7 +559,7 @@ impl BreakStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -601,7 +602,7 @@ impl CallOptionsExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -647,7 +648,7 @@ impl CatchClauseStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -693,7 +694,7 @@ impl CatchClauseErrorStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -740,7 +741,7 @@ impl ConditionalExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -797,7 +798,7 @@ impl ConstantDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -832,7 +833,7 @@ impl ContinueStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -890,7 +891,7 @@ impl ContractDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -936,7 +937,7 @@ impl DecimalNumberExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -979,7 +980,7 @@ impl DoWhileStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1022,7 +1023,7 @@ impl EmitStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1065,7 +1066,7 @@ impl EnumDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1112,7 +1113,7 @@ impl EqualityExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1155,7 +1156,7 @@ impl ErrorDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1202,7 +1203,7 @@ impl EventDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1241,7 +1242,7 @@ impl ExperimentalPragmaStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1284,7 +1285,7 @@ impl ExponentiationExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1323,7 +1324,7 @@ impl ExpressionStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1377,7 +1378,7 @@ impl ForStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1420,7 +1421,7 @@ impl FunctionCallExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1507,7 +1508,7 @@ impl FunctionDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1561,7 +1562,7 @@ impl FunctionTypeStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1600,7 +1601,7 @@ impl HexNumberExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1650,7 +1651,7 @@ impl IfStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1693,7 +1694,7 @@ impl ImportDeconstructionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1739,7 +1740,7 @@ impl ImportDeconstructionSymbolStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1792,7 +1793,7 @@ impl IndexAccessExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1839,7 +1840,7 @@ impl InequalityExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1885,7 +1886,7 @@ impl InheritanceTypeStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1935,7 +1936,7 @@ impl InterfaceDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -1978,7 +1979,7 @@ impl LibraryDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2021,7 +2022,7 @@ impl MappingTypeStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2064,7 +2065,7 @@ impl MemberAccessExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2110,7 +2111,7 @@ impl ModifierInvocationStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2153,7 +2154,7 @@ impl MultiTypedDeclarationStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2195,7 +2196,7 @@ impl MultiTypedDeclarationElementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2242,7 +2243,7 @@ impl MultiplicativeExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2285,7 +2286,7 @@ impl NamedArgumentStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2324,7 +2325,7 @@ impl NewExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2367,7 +2368,7 @@ impl OrExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2421,7 +2422,7 @@ impl ParameterStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2464,7 +2465,7 @@ impl PathImportStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2507,7 +2508,7 @@ impl PostfixExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2546,7 +2547,7 @@ impl PragmaDirectiveStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2589,7 +2590,7 @@ impl PrefixExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2631,7 +2632,7 @@ impl ReturnStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2674,7 +2675,7 @@ impl RevertStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2721,7 +2722,7 @@ impl ShiftExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2767,7 +2768,7 @@ impl SingleTypedDeclarationStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2803,7 +2804,7 @@ impl SourceUnitStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2868,7 +2869,7 @@ impl StateVariableDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2911,7 +2912,7 @@ impl StructDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -2954,7 +2955,7 @@ impl StructMemberStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3008,7 +3009,7 @@ impl TryStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3047,7 +3048,7 @@ impl TupleExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3086,7 +3087,7 @@ impl TupleValueStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3125,7 +3126,7 @@ impl TypeExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3164,7 +3165,7 @@ impl UncheckedBlockStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3207,7 +3208,7 @@ impl UserDefinedValueTypeDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3246,7 +3247,7 @@ impl UsingDeconstructionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3292,7 +3293,7 @@ impl UsingDeconstructionSymbolStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3339,7 +3340,7 @@ impl UsingDirectiveStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3389,7 +3390,7 @@ impl VariableDeclarationStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3428,7 +3429,7 @@ impl VariableDeclarationStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3467,7 +3468,7 @@ impl VersionPragmaStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3510,7 +3511,7 @@ impl VersionRangeStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3556,7 +3557,7 @@ impl VersionTermStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3599,7 +3600,7 @@ impl WhileStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3635,7 +3636,7 @@ impl YulBlockStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3670,7 +3671,7 @@ impl YulBreakStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3705,7 +3706,7 @@ impl YulContinueStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3744,7 +3745,7 @@ impl YulDefaultCaseStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3795,7 +3796,7 @@ impl YulForStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3838,7 +3839,7 @@ impl YulFunctionCallExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3892,7 +3893,7 @@ impl YulFunctionDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3935,7 +3936,7 @@ impl YulIfStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -3970,7 +3971,7 @@ impl YulLeaveStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -4013,7 +4014,7 @@ impl YulSwitchStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -4056,7 +4057,7 @@ impl YulValueCaseStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -4099,7 +4100,7 @@ impl YulVariableAssignmentStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -4145,7 +4146,7 @@ impl YulVariableDeclarationStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -4184,7 +4185,7 @@ impl YulVariableDeclarationValueStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -6744,7 +6745,7 @@ impl ABIEncoderV2KeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -6783,7 +6784,7 @@ impl AbicoderV1KeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -6822,7 +6823,7 @@ impl AbicoderV2KeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -6861,7 +6862,7 @@ impl AmpersandStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -6900,7 +6901,7 @@ impl AmpersandEqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -6936,7 +6937,7 @@ impl AsteriskStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -6975,7 +6976,7 @@ impl AsteriskEqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7011,7 +7012,7 @@ impl BangStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7050,7 +7051,7 @@ impl BangEqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7086,7 +7087,7 @@ impl BarStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7125,7 +7126,7 @@ impl BarEqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7164,7 +7165,7 @@ impl BoolKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7203,7 +7204,7 @@ impl BytesKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7242,7 +7243,7 @@ impl CallDataKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7278,7 +7279,7 @@ impl CaretStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7317,7 +7318,7 @@ impl CaretEqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7356,7 +7357,7 @@ impl DaysKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7395,7 +7396,7 @@ impl DecimalLiteralStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7434,7 +7435,7 @@ impl DeleteKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7470,7 +7471,7 @@ impl EqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7509,7 +7510,7 @@ impl EqualEqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7548,7 +7549,7 @@ impl EtherKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7587,7 +7588,7 @@ impl FalseKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7626,7 +7627,7 @@ impl FixedKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7665,7 +7666,7 @@ impl GreaterThanStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7704,7 +7705,7 @@ impl GreaterThanEqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7743,7 +7744,7 @@ impl GreaterThanGreaterThanStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7782,7 +7783,7 @@ impl GreaterThanGreaterThanEqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7821,7 +7822,7 @@ impl GreaterThanGreaterThanGreaterThanStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7860,7 +7861,7 @@ impl GreaterThanGreaterThanGreaterThanEqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7899,7 +7900,7 @@ impl GweiKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7938,7 +7939,7 @@ impl HexLiteralStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -7977,7 +7978,7 @@ impl HexStringLiteralStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8016,7 +8017,7 @@ impl HoursKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8055,7 +8056,7 @@ impl IdentifierStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8094,7 +8095,7 @@ impl IntKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8133,7 +8134,7 @@ impl LessThanStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8172,7 +8173,7 @@ impl LessThanEqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8211,7 +8212,7 @@ impl LessThanLessThanStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8250,7 +8251,7 @@ impl LessThanLessThanEqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8289,7 +8290,7 @@ impl MemoryKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8325,7 +8326,7 @@ impl MinusStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8364,7 +8365,7 @@ impl MinusEqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8403,7 +8404,7 @@ impl MinusMinusStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8442,7 +8443,7 @@ impl MinutesKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8481,7 +8482,7 @@ impl PayableKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8517,7 +8518,7 @@ impl PercentStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8556,7 +8557,7 @@ impl PercentEqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8592,7 +8593,7 @@ impl PlusStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8631,7 +8632,7 @@ impl PlusEqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8670,7 +8671,7 @@ impl PlusPlusStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8709,7 +8710,7 @@ impl PragmaCaretStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8748,7 +8749,7 @@ impl PragmaEqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8787,7 +8788,7 @@ impl PragmaGreaterThanStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8826,7 +8827,7 @@ impl PragmaGreaterThanEqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8865,7 +8866,7 @@ impl PragmaLessThanStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8904,7 +8905,7 @@ impl PragmaLessThanEqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8943,7 +8944,7 @@ impl PragmaTildeStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -8982,7 +8983,7 @@ impl SMTCheckerKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -9021,7 +9022,7 @@ impl SecondsKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -9060,7 +9061,7 @@ impl SemicolonStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -9096,7 +9097,7 @@ impl SlashStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -9135,7 +9136,7 @@ impl SlashEqualStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -9174,7 +9175,7 @@ impl StorageKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -9213,7 +9214,7 @@ impl StringKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -9252,7 +9253,7 @@ impl StringLiteralStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -9291,7 +9292,7 @@ impl SuperKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -9330,7 +9331,7 @@ impl ThisKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -9366,7 +9367,7 @@ impl TildeStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -9405,7 +9406,7 @@ impl TrueKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -9444,7 +9445,7 @@ impl UfixedKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -9483,7 +9484,7 @@ impl UintKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -9522,7 +9523,7 @@ impl UnicodeStringLiteralStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -9561,7 +9562,7 @@ impl VersionSpecifierStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -9600,7 +9601,7 @@ impl WeeksKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
@@ -9639,7 +9640,7 @@ impl WeiKeywordStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_file_id(&self) -> &str {
+    pub fn get_file_id(&self) -> &FileId {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 

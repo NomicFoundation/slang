@@ -1,10 +1,11 @@
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 
 use super::SemanticFile;
 
 struct FileNodeInfo {
     /// File ID to map `NodeId`s to
-    file_id: String,
+    file_id: FileId,
     /// `NodeId` of the first node in the file, which should always correspond
     /// to the ID of the root `SourceUnit` (by construction)
     first_node_id: NodeId,
@@ -24,7 +25,7 @@ impl FileNodeMapper {
         let mut files: Vec<FileNodeInfo> = files
             .iter()
             .map(|file| {
-                let file_id = file.id().to_string();
+                let file_id = file.id().clone();
                 let first_node_id = file.ir_root().id();
                 FileNodeInfo {
                     file_id,
@@ -36,7 +37,7 @@ impl FileNodeMapper {
         Self { files }
     }
 
-    pub(crate) fn file_id_from_node_id(&self, node_id: NodeId) -> &str {
+    pub(crate) fn file_id_from_node_id(&self, node_id: NodeId) -> &FileId {
         let index = match self
             .files
             .binary_search_by_key(&node_id, |file| file.first_node_id)
