@@ -103,26 +103,25 @@ impl Visitor for Pass<'_> {
             return false;
         }
 
+        let mut item_iter = items.iter();
+
         let scope_id = self.current_scope_id();
-        let identifier = &items[0];
+        let identifier = item_iter.next().expect("items is not empty");
         let resolution = self.resolve_symbol_in_yul_scope(scope_id, identifier.unparse());
         self.record_solidity_reference(&resolution);
         let reference = Reference::new(Arc::clone(identifier), resolution.clone());
         self.binder.insert_reference(reference);
 
-        if items.len() > 1 {
-            let suffix = &items[1];
+        if let Some(suffix) = item_iter.next() {
             let resolution = self.resolve_yul_suffix(suffix.unparse(), &resolution);
             self.record_solidity_reference(&resolution);
             let reference = Reference::new(Arc::clone(suffix), resolution);
             self.binder.insert_reference(reference);
         }
 
-        let consumed_identifiers = 2;
-
         // any remaining identifiers cannot be resolved, but we still want to
         // emit a reference for each of them
-        for identifier in items.iter().skip(consumed_identifiers) {
+        for identifier in item_iter {
             self.binder.insert_reference(Reference::new(
                 Arc::clone(identifier),
                 Resolution::Unresolved,
