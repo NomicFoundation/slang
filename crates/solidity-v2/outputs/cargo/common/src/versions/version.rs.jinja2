@@ -30,7 +30,7 @@ impl LanguageVersion {
     ];
 }
 
-#[derive(Debug, Error, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Error, Hash)]
 pub enum FromSemverError {
     #[error("provided version is not supported")]
     UnsupportedVersion,

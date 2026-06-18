@@ -74,6 +74,7 @@ use super::types::Type;
 //
 
 {% for parent_type, choice in target.choices %}
+  #[derive(Clone)]
   pub enum {{ parent_type }} {
     {% for variant in choice.variants -%}
       {{ variant.name }}
