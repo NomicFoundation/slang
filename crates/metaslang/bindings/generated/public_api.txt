@@ -6,20 +6,20 @@ pub metaslang_bindings::BindingLocation::BuiltIn(metaslang_bindings::BuiltInLoca
 pub metaslang_bindings::BindingLocation::UserFile(metaslang_bindings::UserFileLocation<KT>)
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::BindingLocation<KT>
 pub fn metaslang_bindings::BindingLocation<KT>::built_in() -> Self
-pub fn metaslang_bindings::BindingLocation<KT>::user_file(file_id: alloc::string::String, cursor: metaslang_cst::cursor::Cursor<KT>) -> Self
+pub fn metaslang_bindings::BindingLocation<KT>::user_file(alloc::string::String, metaslang_cst::cursor::Cursor<KT>) -> Self
 impl<KT: core::clone::Clone + metaslang_cst::kinds::KindTypes + 'static> core::clone::Clone for metaslang_bindings::BindingLocation<KT>
 pub fn metaslang_bindings::BindingLocation<KT>::clone(&self) -> metaslang_bindings::BindingLocation<KT>
 impl<KT: core::fmt::Debug + metaslang_cst::kinds::KindTypes + 'static> core::fmt::Debug for metaslang_bindings::BindingLocation<KT>
-pub fn metaslang_bindings::BindingLocation<KT>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub fn metaslang_bindings::BindingLocation<KT>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct metaslang_bindings::BindingGraph<KT: metaslang_cst::kinds::KindTypes + 'static>
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::BindingGraph<KT>
-pub fn metaslang_bindings::BindingGraph<KT>::definition_at(self: &alloc::rc::Rc<Self>, cursor: &metaslang_cst::cursor::Cursor<KT>) -> core::option::Option<metaslang_bindings::Definition<KT>>
-pub fn metaslang_bindings::BindingGraph<KT>::reference_at(self: &alloc::rc::Rc<Self>, cursor: &metaslang_cst::cursor::Cursor<KT>) -> core::option::Option<metaslang_bindings::Reference<KT>>
+pub fn metaslang_bindings::BindingGraph<KT>::definition_at(&alloc::rc::Rc<Self>, &metaslang_cst::cursor::Cursor<KT>) -> core::option::Option<metaslang_bindings::Definition<KT>>
+pub fn metaslang_bindings::BindingGraph<KT>::reference_at(&alloc::rc::Rc<Self>, &metaslang_cst::cursor::Cursor<KT>) -> core::option::Option<metaslang_bindings::Reference<KT>>
 pub struct metaslang_bindings::BuiltInLocation
 impl core::clone::Clone for metaslang_bindings::BuiltInLocation
 pub fn metaslang_bindings::BuiltInLocation::clone(&self) -> metaslang_bindings::BuiltInLocation
 impl core::fmt::Debug for metaslang_bindings::BuiltInLocation
-pub fn metaslang_bindings::BuiltInLocation::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub fn metaslang_bindings::BuiltInLocation::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct metaslang_bindings::Definition<KT: metaslang_cst::kinds::KindTypes + 'static>
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::Definition<KT>
 pub fn metaslang_bindings::Definition<KT>::definiens_location(&self) -> metaslang_bindings::BindingLocation<KT>
@@ -30,11 +30,11 @@ impl<KT: core::clone::Clone + metaslang_cst::kinds::KindTypes + 'static> core::c
 pub fn metaslang_bindings::Definition<KT>::clone(&self) -> metaslang_bindings::Definition<KT>
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> core::cmp::Eq for metaslang_bindings::Definition<KT>
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> core::cmp::PartialEq for metaslang_bindings::Definition<KT>
-pub fn metaslang_bindings::Definition<KT>::eq(&self, other: &Self) -> bool
+pub fn metaslang_bindings::Definition<KT>::eq(&self, &Self) -> bool
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> core::fmt::Debug for metaslang_bindings::Definition<KT>
-pub fn metaslang_bindings::Definition<KT>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub fn metaslang_bindings::Definition<KT>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> core::fmt::Display for metaslang_bindings::Definition<KT>
-pub fn metaslang_bindings::Definition<KT>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub fn metaslang_bindings::Definition<KT>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct metaslang_bindings::Reference<KT: metaslang_cst::kinds::KindTypes + 'static>
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::Reference<KT>
 pub fn metaslang_bindings::Reference<KT>::definitions(&self) -> alloc::vec::Vec<metaslang_bindings::Definition<KT>>
@@ -43,9 +43,9 @@ pub fn metaslang_bindings::Reference<KT>::location(&self) -> metaslang_bindings:
 impl<KT: core::clone::Clone + metaslang_cst::kinds::KindTypes + 'static> core::clone::Clone for metaslang_bindings::Reference<KT>
 pub fn metaslang_bindings::Reference<KT>::clone(&self) -> metaslang_bindings::Reference<KT>
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> core::cmp::PartialEq for metaslang_bindings::Reference<KT>
-pub fn metaslang_bindings::Reference<KT>::eq(&self, other: &Self) -> bool
+pub fn metaslang_bindings::Reference<KT>::eq(&self, &Self) -> bool
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> core::fmt::Display for metaslang_bindings::Reference<KT>
-pub fn metaslang_bindings::Reference<KT>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub fn metaslang_bindings::Reference<KT>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct metaslang_bindings::UserFileLocation<KT: metaslang_cst::kinds::KindTypes + 'static>
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::UserFileLocation<KT>
 pub fn metaslang_bindings::UserFileLocation<KT>::cursor(&self) -> &metaslang_cst::cursor::Cursor<KT>
@@ -53,4 +53,4 @@ pub fn metaslang_bindings::UserFileLocation<KT>::file_id(&self) -> &str
 impl<KT: core::clone::Clone + metaslang_cst::kinds::KindTypes + 'static> core::clone::Clone for metaslang_bindings::UserFileLocation<KT>
 pub fn metaslang_bindings::UserFileLocation<KT>::clone(&self) -> metaslang_bindings::UserFileLocation<KT>
 impl<KT: core::fmt::Debug + metaslang_cst::kinds::KindTypes + 'static> core::fmt::Debug for metaslang_bindings::UserFileLocation<KT>
-pub fn metaslang_bindings::UserFileLocation<KT>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub fn metaslang_bindings::UserFileLocation<KT>::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
