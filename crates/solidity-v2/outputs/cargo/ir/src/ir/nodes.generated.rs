@@ -6,6 +6,10 @@ use std::vec::Vec;
 
 pub(super) use slang_solidity_v2_common::nodes::NodeId;
 
+// `NodeKind` is defined in a sibling module; re-export it here so it remains
+// reachable as `nodes::NodeKind` (and, via the parent's glob, `ir::NodeKind`).
+pub use super::kinds::NodeKind;
+
 //
 // Sequences
 //

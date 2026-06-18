@@ -19,7 +19,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     {% if not sequence.has_added_fields %}
       pub(super) fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }}
       {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::{{ parent_type }});
         let range = source.calculate_text_range().unwrap_or_default();
         {%- for field in sequence.fields %}
           let {{ field.label | snake_case }} =
@@ -105,7 +105,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
           input::{{ parent_type }}::{{ variant.source.name }}(terminal) => {
             let text = self.unparse_range(terminal.range.clone());
             Arc::new(output::{{ collapsed.target.name }}Struct {
-              id: self.next_id(),
+              id: self.next_id(output::NodeKind::{{ collapsed.target.name }}),
               range: terminal.range.clone(),
               text,
             })
@@ -138,7 +138,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     {% if not terminal.is_new %}
       pub(super) fn build_{{ terminal_type | snake_case }}(&mut self, source: &input::{{ terminal_type }}) -> output::{{ terminal_type }} {
         Arc::new(output::{{ terminal_type }}Struct {
-          id: self.next_id(),
+          id: self.next_id(output::NodeKind::{{ terminal_type }}),
           range: source.range.clone(),
           {%- if not terminal.unique_symbol %}
             text: self.unparse_range(source.range.clone()),
@@ -154,7 +154,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
   {% for source_type, normalized in builder.normalized_terminals %}
     pub(super) fn build_{{ source_type | snake_case }}(&mut self, source: &input::{{ source_type }}) -> output::{{ normalized.target }} {
       Arc::new(output::{{ normalized.target }}Struct {
-        id: self.next_id(),
+        id: self.next_id(output::NodeKind::{{ normalized.target }}),
         range: source.range.clone(),
         {%- if not normalized.is_unique %}
           text: self.unparse_range(source.range.clone()),
