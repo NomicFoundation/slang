@@ -31,17 +31,17 @@ pub fn run(input: Input) -> Output {
 pub fn test(input: Input) -> Output {
     let mut id_generator = NodeIdGenerator::default();
     let mut ir_source_units = Vec::new();
-    for (name, source) in &input.source_units {
+    for (name, source) in input.source_units {
         let contents = input
             .project
             .sources
-            .get(name)
+            .get(&name)
             .expect("Source not found in project");
 
         let ir::BuildOutput {
             ir_root,
             diagnostics,
-        } = ir::build(name, source, contents, &mut id_generator);
+        } = ir::build(&name, &source, contents, &mut id_generator);
 
         assert!(
             diagnostics.is_empty(),
