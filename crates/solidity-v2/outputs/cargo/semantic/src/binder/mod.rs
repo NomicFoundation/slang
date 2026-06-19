@@ -143,6 +143,8 @@ impl Binder {
     /// much smaller or not keyed per-node.
     pub(crate) fn with_capacity(capacities: BinderCapacities) -> Self {
         Self {
+            scopes: Vec::with_capacity(capacities.scopes),
+            scopes_by_node_id: Map::default_with_capacity(capacities.scopes_by_node_id),
             node_typing: Map::default_with_capacity(capacities.node_typing),
             references: Map::default_with_capacity(capacities.references),
             definitions: Map::default_with_capacity(capacities.definitions),
