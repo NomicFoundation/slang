@@ -7,6 +7,7 @@ use slang_solidity_v2_semantic::context::SemanticContext;
 
 use super::{create_identifier, Definition, Identifier};
 
+#[derive(Clone)]
 pub struct Reference {
     identifier: Identifier,
 }

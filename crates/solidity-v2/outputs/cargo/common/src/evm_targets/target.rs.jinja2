@@ -36,7 +36,7 @@ impl Display for EvmTarget {
     }
 }
 
-#[derive(Debug, Error, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Error, Hash)]
 pub enum FromStrError {
     #[error("Provided value is not recognized as a supported EVM target.")]
     UnrecognizedEvmTarget,

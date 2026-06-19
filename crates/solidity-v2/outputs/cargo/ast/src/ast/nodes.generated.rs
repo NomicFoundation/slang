@@ -4197,6 +4197,7 @@ impl YulVariableDeclarationValueStruct {
 // Choices
 //
 
+#[derive(Clone)]
 pub enum AbicoderVersion {
     AbicoderV1Keyword(AbicoderV1Keyword),
     AbicoderV2Keyword(AbicoderV2Keyword),
@@ -4218,6 +4219,7 @@ pub(crate) fn create_abicoder_version(
     }
 }
 
+#[derive(Clone)]
 pub enum AdditiveExpressionOperator {
     Minus(Minus),
     Plus(Plus),
@@ -4239,6 +4241,7 @@ pub(crate) fn create_additive_expression_operator(
     }
 }
 
+#[derive(Clone)]
 pub enum ArgumentsDeclaration {
     PositionalArguments(PositionalArguments),
     NamedArguments(NamedArguments),
@@ -4260,6 +4263,7 @@ pub(crate) fn create_arguments_declaration(
     }
 }
 
+#[derive(Clone)]
 pub enum AssignmentExpressionOperator {
     AmpersandEqual(AmpersandEqual),
     AsteriskEqual(AsteriskEqual),
@@ -4327,6 +4331,7 @@ pub(crate) fn create_assignment_expression_operator(
     }
 }
 
+#[derive(Clone)]
 pub enum ContractMember {
     UsingDirective(UsingDirective),
     FunctionDefinition(FunctionDefinition),
@@ -4380,6 +4385,7 @@ pub(crate) fn create_contract_member(
     }
 }
 
+#[derive(Clone)]
 pub enum ElementaryType {
     BoolKeyword(BoolKeyword),
     StringKeyword(StringKeyword),
@@ -4425,6 +4431,7 @@ pub(crate) fn create_elementary_type(
     }
 }
 
+#[derive(Clone)]
 pub enum EqualityExpressionOperator {
     BangEqual(BangEqual),
     EqualEqual(EqualEqual),
@@ -4446,6 +4453,7 @@ pub(crate) fn create_equality_expression_operator(
     }
 }
 
+#[derive(Clone)]
 pub enum ExperimentalFeature {
     ABIEncoderV2Keyword(ABIEncoderV2Keyword),
     SMTCheckerKeyword(SMTCheckerKeyword),
@@ -4473,6 +4481,7 @@ pub(crate) fn create_experimental_feature(
     }
 }
 
+#[derive(Clone)]
 pub enum Expression {
     AssignmentExpression(AssignmentExpression),
     ConditionalExpression(ConditionalExpression),
@@ -4618,6 +4627,7 @@ pub(crate) fn create_expression(
     }
 }
 
+#[derive(Clone)]
 pub enum ForStatementCondition {
     ExpressionStatement(ExpressionStatement),
     Semicolon(Semicolon),
@@ -4641,6 +4651,7 @@ pub(crate) fn create_for_statement_condition(
     }
 }
 
+#[derive(Clone)]
 pub enum ForStatementInitialization {
     VariableDeclarationStatement(VariableDeclarationStatement),
     ExpressionStatement(ExpressionStatement),
@@ -4670,6 +4681,7 @@ pub(crate) fn create_for_statement_initialization(
     }
 }
 
+#[derive(Clone)]
 pub enum FunctionKind {
     Regular,
     Constructor,
@@ -4693,6 +4705,7 @@ pub(crate) fn create_function_kind(
     }
 }
 
+#[derive(Clone)]
 pub enum FunctionMutability {
     Pure,
     View,
@@ -4714,6 +4727,7 @@ pub(crate) fn create_function_mutability(
     }
 }
 
+#[derive(Clone)]
 pub enum FunctionVisibility {
     Public,
     Private,
@@ -4735,6 +4749,7 @@ pub(crate) fn create_function_visibility(
     }
 }
 
+#[derive(Clone)]
 pub enum ImportClause {
     PathImport(PathImport),
     ImportDeconstruction(ImportDeconstruction),
@@ -4756,6 +4771,7 @@ pub(crate) fn create_import_clause(
     }
 }
 
+#[derive(Clone)]
 pub enum InequalityExpressionOperator {
     GreaterThan(GreaterThan),
     GreaterThanEqual(GreaterThanEqual),
@@ -4787,6 +4803,7 @@ pub(crate) fn create_inequality_expression_operator(
     }
 }
 
+#[derive(Clone)]
 pub enum MultiplicativeExpressionOperator {
     Asterisk(Asterisk),
     Percent(Percent),
@@ -4812,6 +4829,7 @@ pub(crate) fn create_multiplicative_expression_operator(
     }
 }
 
+#[derive(Clone)]
 pub enum NumberUnit {
     WeiKeyword(WeiKeyword),
     GweiKeyword(GweiKeyword),
@@ -4857,6 +4875,7 @@ pub(crate) fn create_number_unit(
     }
 }
 
+#[derive(Clone)]
 pub enum PostfixExpressionOperator {
     MinusMinus(MinusMinus),
     PlusPlus(PlusPlus),
@@ -4878,6 +4897,7 @@ pub(crate) fn create_postfix_expression_operator(
     }
 }
 
+#[derive(Clone)]
 pub enum Pragma {
     VersionPragma(VersionPragma),
     AbicoderPragma(AbicoderPragma),
@@ -4900,6 +4920,7 @@ pub(crate) fn create_pragma(ir_node: &ir::Pragma, semantic: &Arc<SemanticContext
     }
 }
 
+#[derive(Clone)]
 pub enum PrefixExpressionOperator {
     Bang(Bang),
     DeleteKeyword(DeleteKeyword),
@@ -4937,6 +4958,7 @@ pub(crate) fn create_prefix_expression_operator(
     }
 }
 
+#[derive(Clone)]
 pub enum ShiftExpressionOperator {
     GreaterThanGreaterThan(GreaterThanGreaterThan),
     GreaterThanGreaterThanGreaterThan(GreaterThanGreaterThanGreaterThan),
@@ -4966,6 +4988,7 @@ pub(crate) fn create_shift_expression_operator(
     }
 }
 
+#[derive(Clone)]
 pub enum SourceUnitMember {
     PragmaDirective(PragmaDirective),
     ImportClause(ImportClause),
@@ -5033,6 +5056,7 @@ pub(crate) fn create_source_unit_member(
     }
 }
 
+#[derive(Clone)]
 pub enum StateVariableMutability {
     Mutable,
     Constant,
@@ -5054,6 +5078,7 @@ pub(crate) fn create_state_variable_mutability(
     }
 }
 
+#[derive(Clone)]
 pub enum StateVariableVisibility {
     Public,
     Private,
@@ -5073,6 +5098,7 @@ pub(crate) fn create_state_variable_visibility(
     }
 }
 
+#[derive(Clone)]
 pub enum Statement {
     IfStatement(IfStatement),
     ForStatement(ForStatement),
@@ -5146,6 +5172,7 @@ pub(crate) fn create_statement(
     }
 }
 
+#[derive(Clone)]
 pub enum StorageLocation {
     MemoryKeyword(MemoryKeyword),
     StorageKeyword(StorageKeyword),
@@ -5171,6 +5198,7 @@ pub(crate) fn create_storage_location(
     }
 }
 
+#[derive(Clone)]
 pub enum StringExpression {
     StringLiterals(StringLiterals),
     HexStringLiterals(HexStringLiterals),
@@ -5196,6 +5224,7 @@ pub(crate) fn create_string_expression(
     }
 }
 
+#[derive(Clone)]
 pub enum TypeName {
     ArrayTypeName(ArrayTypeName),
     FunctionType(FunctionType),
@@ -5229,6 +5258,7 @@ pub(crate) fn create_type_name(
     }
 }
 
+#[derive(Clone)]
 pub enum UsingClause {
     IdentifierPath(IdentifierPath),
     UsingDeconstruction(UsingDeconstruction),
@@ -5250,6 +5280,7 @@ pub(crate) fn create_using_clause(
     }
 }
 
+#[derive(Clone)]
 pub enum UsingOperator {
     Ampersand(Ampersand),
     Asterisk(Asterisk),
@@ -5311,6 +5342,7 @@ pub(crate) fn create_using_operator(
     }
 }
 
+#[derive(Clone)]
 pub enum UsingTarget {
     TypeName(TypeName),
     Asterisk(Asterisk),
@@ -5332,6 +5364,7 @@ pub(crate) fn create_using_target(
     }
 }
 
+#[derive(Clone)]
 pub enum VariableDeclarationTarget {
     SingleTypedDeclaration(SingleTypedDeclaration),
     MultiTypedDeclaration(MultiTypedDeclaration),
@@ -5357,6 +5390,7 @@ pub(crate) fn create_variable_declaration_target(
     }
 }
 
+#[derive(Clone)]
 pub enum VersionExpression {
     VersionRange(VersionRange),
     VersionTerm(VersionTerm),
@@ -5378,6 +5412,7 @@ pub(crate) fn create_version_expression(
     }
 }
 
+#[derive(Clone)]
 pub enum VersionLiteral {
     SimpleVersionLiteral(SimpleVersionLiteral),
     StringLiteral(StringLiteral),
@@ -5399,6 +5434,7 @@ pub(crate) fn create_version_literal(
     }
 }
 
+#[derive(Clone)]
 pub enum VersionOperator {
     PragmaCaret(PragmaCaret),
     PragmaTilde(PragmaTilde),
@@ -5442,6 +5478,7 @@ pub(crate) fn create_version_operator(
     }
 }
 
+#[derive(Clone)]
 pub enum YulExpression {
     YulFunctionCallExpression(YulFunctionCallExpression),
     YulLiteral(YulLiteral),
@@ -5469,6 +5506,7 @@ pub(crate) fn create_yul_expression(
     }
 }
 
+#[derive(Clone)]
 pub enum YulLiteral {
     TrueKeyword(TrueKeyword),
     FalseKeyword(FalseKeyword),
@@ -5506,6 +5544,7 @@ pub(crate) fn create_yul_literal(
     }
 }
 
+#[derive(Clone)]
 pub enum YulStatement {
     YulBlock(YulBlock),
     YulFunctionDefinition(YulFunctionDefinition),
@@ -5567,6 +5606,7 @@ pub(crate) fn create_yul_statement(
     }
 }
 
+#[derive(Clone)]
 pub enum YulSwitchCase {
     YulDefaultCase(YulDefaultCase),
     YulValueCase(YulValueCase),
