@@ -9,7 +9,8 @@ use crate::binder::{Definition, Resolution, Typing};
 use crate::passes::common::node_location;
 use crate::types::{
     literals, AddressType, ContractType, DataLocation, FixedSizeArrayType, FunctionType,
-    IntegerType, LiteralKind, MetaType, Number, StringType, Type, TypeId, UserMetaType,
+    FunctionTypeVisibility, IntegerType, LiteralKind, MetaType, Number, StringType, Type, TypeId,
+    UserMetaType,
 };
 
 impl Pass<'_> {
@@ -283,20 +284,60 @@ impl Pass<'_> {
             .is_some_and(|bases| bases.contains(&contract_id))
     }
 
-    fn type_id_of_value_receiver(&self, operand: &ir::Expression) -> Option<TypeId> {
+    /// Returns the typing of the *receiver* of a call — the operand of the
+    /// member access being called (eg. for `a.f(...)`, the typing of `a`).
+    /// Returns `None` when the call target is not a member access.
+    fn type_id_of_value_receiver(&self, operand: &ir::Expression) -> Option<Typing> {
         if let ir::Expression::MemberAccessExpression(member_access_expression) = operand {
-            let type_id = self
-                .typing_of_expression(&member_access_expression.operand)
-                .as_type_id()?;
+            let typing = self.typing_of_expression(&member_access_expression.operand);
             // A meta-type operand is a namespace qualifier, not
             // a runtime value, so there is no receiver to bind as an implicit
             // first argument during overload resolution.
-            if self.types.get_type_by_id(type_id).is_meta_type() {
+            if self
+                .types
+                .get_type_by_id(typing.as_type_id()?)
+                .is_meta_type()
+            {
                 return None;
             }
-            Some(type_id)
+            Some(typing)
         } else {
             None
+        }
+    }
+
+    /// Returns `true` when calling `function_type` (the *selected* overload)
+    /// through `operand` is invalid because `operand` reaches it via a
+    /// contract/interface *type name* (eg. `A.f()`) and that overload is itself
+    /// non-callable.
+    ///
+    /// Only externally visible overloads (and public ones of a *foreign*
+    /// contract) are non-callable. Internal/private overloads reached the same
+    /// way are valid qualified base calls (eg. calling a specific base's
+    /// internal function), so the decision is made against the selected
+    /// overload rather than the whole ambiguous set.
+    fn is_non_callable_via_contract_type_name(
+        &self,
+        operand: &ir::Expression,
+        function_type: &FunctionType,
+    ) -> bool {
+        // The call must reach the function through a contract/interface *type
+        // name* (eg. `A.f`) — not a library type name (`L.f` stays a normal
+        // callable) nor a member access on a value.
+        let Some(Typing::UserMetaType(container_id)) = self.type_id_of_value_receiver(operand)
+        else {
+            return false;
+        };
+        if !matches!(
+            self.binder.find_definition_by_id(container_id),
+            Some(Definition::Contract(_) | Definition::Interface(_))
+        ) {
+            return false;
+        }
+        match function_type.visibility {
+            FunctionTypeVisibility::External => true,
+            FunctionTypeVisibility::Public => self.is_foreign_contract(container_id),
+            FunctionTypeVisibility::Internal | FunctionTypeVisibility::Private => false,
         }
     }
 
@@ -330,6 +371,7 @@ impl Pass<'_> {
             .collect::<Vec<_>>()
     }
 
+    #[allow(clippy::too_many_lines)]
     pub(super) fn typing_of_function_call_with_positional_arguments(
         &mut self,
         node: &ir::FunctionCallExpression,
@@ -400,7 +442,9 @@ impl Pass<'_> {
                 }
             },
             Typing::Undetermined(type_ids) => {
-                let receiver_type_id = self.type_id_of_value_receiver(&node.operand);
+                let receiver_type_id = self
+                    .type_id_of_value_receiver(&node.operand)
+                    .and_then(|typing| typing.as_type_id());
                 let candidate = self.lookup_function_matching_positional_arguments(
                     &type_ids,
                     &argument_typings,
@@ -409,9 +453,16 @@ impl Pass<'_> {
 
                 if let Some(candidate) = candidate {
                     let return_type = candidate.return_type;
+                    let definition_id = candidate.definition_id;
+
+                    if self.is_non_callable_via_contract_type_name(&node.operand, candidate) {
+                        let (file_id, range) = node_location(node, self.file_node_mapper);
+                        self.diagnostics
+                            .push(file_id, range, CannotCallViaContractTypeName);
+                        return Typing::Unresolved;
+                    }
 
                     let reference_node_id = reference_node_id_for_expression(&node.operand);
-                    let definition_id = candidate.definition_id;
                     if let (Some(node_id), Some(definition_id)) = (reference_node_id, definition_id)
                     {
                         // TODO: maybe update the typing of the operand as well?
@@ -513,7 +564,9 @@ impl Pass<'_> {
                 }
             },
             Typing::Undetermined(type_ids) => {
-                let receiver_type_id = self.type_id_of_value_receiver(&node.operand);
+                let receiver_type_id = self
+                    .type_id_of_value_receiver(&node.operand)
+                    .and_then(|typing| typing.as_type_id());
                 let argument_typings = self.collect_named_argument_typings(arguments);
                 let candidate = self.lookup_function_matching_named_arguments(
                     &type_ids,
@@ -523,17 +576,29 @@ impl Pass<'_> {
 
                 if let Some(candidate) = candidate {
                     let return_type = candidate.return_type;
-
-                    let reference_node_id = reference_node_id_for_expression(&node.operand);
                     let definition_id = candidate.definition_id;
-                    if let (Some(node_id), Some(definition_id)) = (reference_node_id, definition_id)
-                    {
-                        // TODO: maybe update the typing of the operand as well?
-                        self.binder
-                            .fixup_reference(node_id, Resolution::Definition(definition_id));
-                    }
 
-                    (Typing::Resolved(return_type), definition_id)
+                    // Calling the selected overload through a contract/interface
+                    // type name is only invalid when that overload is itself
+                    // non-callable (eg. external). An internal overload reached
+                    // the same way is a valid qualified base call.
+                    if self.is_non_callable_via_contract_type_name(&node.operand, candidate) {
+                        let (file_id, range) = node_location(node, self.file_node_mapper);
+                        self.diagnostics
+                            .push(file_id, range, CannotCallViaContractTypeName);
+                        (Typing::Unresolved, None)
+                    } else {
+                        let reference_node_id = reference_node_id_for_expression(&node.operand);
+                        if let (Some(node_id), Some(definition_id)) =
+                            (reference_node_id, definition_id)
+                        {
+                            // TODO: maybe update the typing of the operand as well?
+                            self.binder
+                                .fixup_reference(node_id, Resolution::Definition(definition_id));
+                        }
+
+                        (Typing::Resolved(return_type), definition_id)
+                    }
                 } else {
                     (Typing::Unresolved, None)
                 }
