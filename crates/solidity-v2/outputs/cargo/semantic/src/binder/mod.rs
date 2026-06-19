@@ -1,17 +1,19 @@
 use std::collections::VecDeque;
 
-use slang_solidity_v2_common::collections::{Map, Set};
+use slang_solidity_v2_common::collections::{DefaultWithCapacity, Map, Set};
 use slang_solidity_v2_common::nodes::NodeId;
 
 use super::built_ins::InternalBuiltIn;
 use super::types::{Type, TypeId};
 
 mod assembly;
+mod capacities;
 mod definitions;
 mod references;
 mod scopes;
 
 pub(crate) use assembly::AssemblyBlock;
+pub(crate) use capacities::BinderCapacities;
 pub use definitions::Definition;
 pub(crate) use definitions::{ConstantDefinition, ContractDefinition, InterfaceDefinition};
 pub use references::{Reference, Resolution};
@@ -136,6 +138,17 @@ pub(crate) enum ResolveOptions {
 }
 
 impl Binder {
+    /// Creates a binder with its dominant `NodeId`-keyed maps pre-sized per
+    /// `capacities`. All other fields start empty (`Default`); they are either
+    /// much smaller or not keyed per-node.
+    pub(crate) fn with_capacity(capacities: BinderCapacities) -> Self {
+        Self {
+            node_typing: Map::default_with_capacity(capacities.node_typing),
+            references: Map::default_with_capacity(capacities.references),
+            ..Default::default()
+        }
+    }
+
     pub(crate) fn get_scope_by_id(&self, scope_id: ScopeId) -> &Scope {
         self.scopes.get(scope_id.0).unwrap()
     }

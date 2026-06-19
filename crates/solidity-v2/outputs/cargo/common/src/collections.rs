@@ -53,3 +53,24 @@ mod aliases {
 }
 
 pub use aliases::*;
+
+/// Constructs an aliased collection pre-sized for `capacity` entries, using the
+/// collection's default (fixed-seed) hasher.
+///
+/// This lives here because reserving capacity on the hash-based aliases requires
+/// naming the fixed-seed hasher ([`DeterministicState`]), which the rest of the
+/// codebase shouldn't have to reach for. Implemented as a trait (rather than
+/// inherent methods, which a type alias can't have) so it reads as
+/// `Map::default_with_capacity(n)` at the call site once the trait is in scope.
+pub trait DefaultWithCapacity {
+    /// Creates an empty collection that can hold at least `capacity` entries
+    /// without reallocating, using the default hasher.
+    fn default_with_capacity(capacity: usize) -> Self;
+}
+
+#[allow(clippy::implicit_hasher)]
+impl<K, V> DefaultWithCapacity for Map<K, V> {
+    fn default_with_capacity(capacity: usize) -> Self {
+        Map::with_capacity_and_hasher(capacity, DeterministicState::default())
+    }
+}

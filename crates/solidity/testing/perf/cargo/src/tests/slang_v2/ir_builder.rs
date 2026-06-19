@@ -11,6 +11,7 @@ pub struct Input {
 
 pub struct Output {
     pub(crate) ir_source_units: Vec<SourceUnit>,
+    pub(crate) id_generator: NodeIdGenerator,
 }
 
 pub fn setup(project: &str) -> Input {
@@ -31,7 +32,8 @@ pub fn test(input: Input) -> Output {
     let mut id_generator = NodeIdGenerator::default();
     let mut ir_source_units = Vec::new();
     for (name, source) in &input.source_units {
-        let contents = input.project
+        let contents = input
+            .project
             .sources
             .get(name)
             .expect("Source not found in project");
@@ -49,7 +51,10 @@ pub fn test(input: Input) -> Output {
         ir_source_units.push(ir_root);
     }
 
-    Output { ir_source_units }
+    Output {
+        ir_source_units,
+        id_generator,
+    }
 }
 
 pub fn count_contracts(output: &Output) -> usize {
