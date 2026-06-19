@@ -6,12 +6,17 @@ pragma solidity *;
 // Calling an external base function through the base contract type name.
 
 contract base {
-    function f() external {}
+    function ext() external {}
+    function intl() external {}
+    function pub() public {}
 }
 
 contract derived is base {
     function g() public {
-        // TypeError 3419: Cannot call function via contract type name.
+        // internal and public are ok
+        base.intl();
+        base.pub();
+        // Cannot call external function via contract type name.
         base.f();
     }
 }

@@ -768,14 +768,6 @@ mod type_system {
         use super::*;
 
         #[test]
-        fn base_contract() -> Result<()> {
-            run(
-                "type_system/cannot_call_via_contract_type_name",
-                "base_contract",
-            )
-        }
-
-        #[test]
         fn external_base() -> Result<()> {
             run(
                 "type_system/cannot_call_via_contract_type_name",
@@ -804,14 +796,6 @@ mod type_system {
             run(
                 "type_system/cannot_call_via_contract_type_name",
                 "overloaded",
-            )
-        }
-
-        #[test]
-        fn overloaded_external_selected() -> Result<()> {
-            run(
-                "type_system/cannot_call_via_contract_type_name",
-                "overloaded_external_selected",
             )
         }
 

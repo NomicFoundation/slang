@@ -2,10 +2,10 @@
 
 Diagnostics: 1
 
-Error: Cannot call function via contract type name.
-    ╭─[input.sol:16:9]
+[TypeError 3419] Error: Cannot call function via contract type name.
+    ╭─[input.sol:14:9]
     │
- 16 │         A.f(1);
+ 14 │         A.f(1); // an external function can't be called in this way
     │         ───┬──  
     │            ╰──── Error occurred here.
 ────╯
