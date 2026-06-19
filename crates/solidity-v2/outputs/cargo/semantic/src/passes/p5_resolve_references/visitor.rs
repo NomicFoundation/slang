@@ -6,7 +6,7 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 use super::Pass;
 use crate::binder::{Reference, Resolution, Typing};
 use crate::built_ins::InternalBuiltIn;
-use crate::passes::common::node_id_for_string_expression_typing;
+use crate::passes::common::{filter_overriden_definitions, node_id_for_string_expression_typing};
 use crate::types::{
     ArrayType, DataLocation, FixedSizeArrayType, MappingType, Number, TupleType, Type,
 };
@@ -97,24 +97,6 @@ impl Visitor for Pass<'_> {
         self.leave_scope_for_node_id(node.id());
     }
 
-    fn enter_yul_block(&mut self, node: &ir::YulBlock) -> bool {
-        self.enter_scope_for_node_id(node.id());
-        true
-    }
-
-    fn leave_yul_block(&mut self, node: &ir::YulBlock) {
-        self.leave_scope_for_node_id(node.id());
-    }
-
-    fn enter_yul_function_definition(&mut self, node: &ir::YulFunctionDefinition) -> bool {
-        self.enter_scope_for_node_id(node.id());
-        true
-    }
-
-    fn leave_yul_function_definition(&mut self, node: &ir::YulFunctionDefinition) {
-        self.leave_scope_for_node_id(node.id());
-    }
-
     fn enter_expression(&mut self, node: &ir::Expression) -> bool {
         if let ir::Expression::Identifier(identifier) = node {
             let symbol = identifier.unparse();
@@ -122,7 +104,8 @@ impl Visitor for Pass<'_> {
                 Resolution::BuiltIn(InternalBuiltIn::ModifierUnderscore)
             } else {
                 let scope_id = self.current_scope_id();
-                self.filter_overriden_definitions(self.resolve_symbol_in_scope(scope_id, symbol))
+                let resolution = self.resolve_symbol_in_scope(scope_id, symbol);
+                filter_overriden_definitions(self.binder, self.types, resolution)
             };
 
             // Set the typing for the `Identifier` node.
@@ -328,9 +311,9 @@ impl Visitor for Pass<'_> {
         // we need to resolve the identifier at this point that we already have
         // typing information of the operand expression
         let operand_typing = self.typing_of_expression(&node.operand);
-        let resolution = self.filter_overriden_definitions(
-            self.resolve_symbol_in_typing(&operand_typing, node.member.unparse()),
-        );
+        let member_resolution =
+            self.resolve_symbol_in_typing(&operand_typing, node.member.unparse());
+        let resolution = filter_overriden_definitions(self.binder, self.types, member_resolution);
 
         // If the operand is either `this` or a contract/interface reference
         // type, then resolve the member typing as a contract member. This
@@ -515,38 +498,6 @@ impl Visitor for Pass<'_> {
         self.binder.set_node_typing(node.id(), typing);
     }
 
-    fn enter_yul_path(&mut self, items: &ir::YulPath) -> bool {
-        if items.is_empty() {
-            return false;
-        }
-
-        let scope_id = self.current_scope_id();
-        let identifier = &items[0];
-        let resolution = self.resolve_symbol_in_yul_scope(scope_id, identifier.unparse());
-        let reference = Reference::new(Arc::clone(identifier), resolution.clone());
-        self.binder.insert_reference(reference);
-
-        if items.len() > 1 {
-            let suffix = &items[1];
-            let resolution = self.resolve_yul_suffix(suffix.unparse(), &resolution);
-            let reference = Reference::new(Arc::clone(suffix), resolution);
-            self.binder.insert_reference(reference);
-        }
-
-        let consumed_identifiers = 2;
-
-        // any remaining identifiers cannot be resolved, but we still want to
-        // emit a reference for each of them
-        for identifier in items.iter().skip(consumed_identifiers) {
-            self.binder.insert_reference(Reference::new(
-                Arc::clone(identifier),
-                Resolution::Unresolved,
-            ));
-        }
-
-        false
-    }
-
     fn visit_this_keyword(&mut self, node: &ir::ThisKeyword) {
         // `this` is a special keyword that resolves to the current contract or library type
         if let Some(scope_id) = self.current_contract_scope_id() {
@@ -564,24 +515,6 @@ impl Visitor for Pass<'_> {
             // The error 1473 doesn't directly match to this, but because of how we resolve
             // `this` it flows through here.
         }
-    }
-
-    fn enter_yul_for_statement(&mut self, node: &ir::YulForStatement) -> bool {
-        // Visit the initialization block first
-        ir::visitor::accept_yul_block(&node.initialization, self);
-
-        // Visit the rest of the children, but in the scope of the
-        // initialization block. This is mainly so references in the condition
-        // can resolve against the initialization block. The iterator and body
-        // should be already properly linked from construction.
-        self.enter_scope_for_node_id(node.initialization.id());
-        ir::visitor::accept_yul_expression(&node.condition, self);
-        ir::visitor::accept_yul_block(&node.iterator, self);
-        ir::visitor::accept_yul_block(&node.body, self);
-        self.leave_scope_for_node_id(node.initialization.id());
-
-        // We already visited our children
-        false
     }
 
     fn leave_emit_statement(&mut self, node: &ir::EmitStatement) {
@@ -653,5 +586,11 @@ impl Visitor for Pass<'_> {
         // update the scope so further resolutions can access this variable definition
         self.replace_scope_for_node_id(node.id());
         // NOTE: ensure following code does not need to perform resolution
+    }
+
+    fn enter_yul_block(&mut self, _node: &ir::YulBlock) -> bool {
+        // All Yul is collected and resolved in `p6_resolve_yul`; this pass does
+        // not resolve Yul references, so skip the assembly body entirely.
+        false
     }
 }

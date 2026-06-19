@@ -1238,6 +1238,8 @@ pub fn slang_solidity_v2_ast::ast::AssemblyStatementStruct::get_text_range(&self
 pub fn slang_solidity_v2_ast::ast::AssemblyStatementStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub fn slang_solidity_v2_ast::ast::AssemblyStatementStruct::label(&self) -> core::option::Option<slang_solidity_v2_ast::ast::StringLiteral>
 pub fn slang_solidity_v2_ast::ast::AssemblyStatementStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl slang_solidity_v2_ast::ast::AssemblyStatementStruct
+pub fn slang_solidity_v2_ast::ast::AssemblyStatementStruct::referenced_definitions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Definition>
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AssemblyStatementStruct
 pub fn slang_solidity_v2_ast::ast::AssemblyStatementStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::AssignmentExpressionStruct

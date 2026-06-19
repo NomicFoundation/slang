@@ -6,10 +6,12 @@ use slang_solidity_v2_common::nodes::NodeId;
 use super::built_ins::InternalBuiltIn;
 use super::types::{Type, TypeId};
 
+mod assembly;
 mod definitions;
 mod references;
 mod scopes;
 
+pub(crate) use assembly::AssemblyBlock;
 pub use definitions::Definition;
 pub(crate) use definitions::{
     ConstantDefinition, ContractDefinition, ImportDefinition, InterfaceDefinition,
@@ -111,6 +113,10 @@ pub struct Binder {
     linearisations: Map<NodeId, Vec<NodeId>>,
     /// Reverse mapping from definition `NodeId` to the set of references that bind to it
     definitions_to_references: Map<NodeId, Vec<NodeId>>,
+    /// `assembly` statements collected in `p1_collect_definitions`, indexed by
+    /// the `AssemblyStatement`'s `NodeId`, and processed in `p6_resolve_yul`
+    /// (which also fills in their `solidity_references`)
+    assembly_blocks: Map<NodeId, AssemblyBlock>,
 }
 
 /// This controls visibility filtering and how to use the linearisation when
@@ -273,6 +279,41 @@ impl Binder {
         self.definitions_to_references
             .get(&node_id)
             .cloned()
+            .unwrap_or_default()
+    }
+
+    pub(crate) fn insert_assembly_block(&mut self, block: AssemblyBlock) {
+        let node_id = block.ir_node.id();
+        if self.assembly_blocks.insert(node_id, block).is_some() {
+            unreachable!("attempt to insert duplicate assembly block on node {node_id:?}");
+        }
+    }
+
+    #[cfg(test)]
+    pub(crate) fn assembly_blocks(&self) -> &Map<NodeId, AssemblyBlock> {
+        &self.assembly_blocks
+    }
+
+    /// Moves the collected `assembly` blocks out of the binder (leaving it
+    /// empty). This lets `p6_resolve_yul` iterate and mutate the blocks in
+    /// place while still holding a mutable borrow of the rest of the binder.
+    /// The blocks must be returned with `restore_assembly_blocks` once
+    /// processed.
+    pub(crate) fn take_assembly_blocks(&mut self) -> Map<NodeId, AssemblyBlock> {
+        std::mem::take(&mut self.assembly_blocks)
+    }
+
+    pub(crate) fn restore_assembly_blocks(&mut self, assembly_blocks: Map<NodeId, AssemblyBlock>) {
+        self.assembly_blocks = assembly_blocks;
+    }
+
+    /// The Solidity definitions referenced from within the `assembly` block
+    /// keyed by `node_id` (the `AssemblyStatement`'s `NodeId`). Empty if there
+    /// is no such block.
+    pub fn assembly_block_referenced_definitions(&self, node_id: NodeId) -> &[NodeId] {
+        self.assembly_blocks
+            .get(&node_id)
+            .map(|block| block.solidity_references.as_slice())
             .unwrap_or_default()
     }
 

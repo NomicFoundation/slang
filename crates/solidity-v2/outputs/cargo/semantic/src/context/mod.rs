@@ -11,7 +11,7 @@ use slang_solidity_v2_ir::ir;
 use crate::binder::{Binder, Definition, Reference};
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_compute_linearisations,
-    p5_resolve_references, p6_code_analysis,
+    p5_resolve_references, p6_resolve_yul, p7_code_analysis,
 };
 use crate::types::{
     ArrayType, ByteArrayType, ContractType, EnumType, FixedPointNumberType, FixedSizeArrayType,
@@ -74,24 +74,27 @@ impl SemanticContext {
     ) -> Self {
         let mut binder = Binder::default();
         let mut types = TypeRegistry::new(language_version);
+        let file_node_mapper = FileNodeMapper::build_from(files);
 
         p1_collect_definitions::run(files, &mut binder, diagnostics);
         p2_linearise_contracts::run(files, &mut binder, diagnostics);
         p3_type_definitions::run(files, &mut binder, &mut types, diagnostics);
 
         let contract_data = p4_compute_linearisations::run(&binder, &types);
-
         p5_resolve_references::run(files, &mut binder, &mut types);
-
-        let file_node_mapper = FileNodeMapper::build_from(files);
-
-        p6_code_analysis::run(
+        p6_resolve_yul::run(&mut binder, &types, &file_node_mapper, diagnostics);
+        p7_code_analysis::run(
             &binder,
             language_version,
             evm_target,
             &file_node_mapper,
             diagnostics,
         );
+
+        // Now that all references have been collected and resolved across every
+        // pass, finalize the binder by building the definition->references
+        // reverse index.
+        binder.update_definitions_to_references_index();
 
         Self {
             binder,

@@ -1,5 +1,6 @@
 use super::fixtures;
 
+mod assembly_references;
 mod built_in_resolution;
 mod definition_references;
 mod identifier_path_resolution;

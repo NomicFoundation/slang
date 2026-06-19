@@ -1,5 +1,6 @@
 mod common;
 
+mod assembly_statement;
 mod contract_base;
 mod contract_definition;
 mod contract_members;

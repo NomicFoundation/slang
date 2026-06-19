@@ -7,8 +7,10 @@ use slang_solidity_v2_ir::ir::NodeIdGenerator;
 
 use super::build_file;
 use crate::binder::{Binder, Resolution};
+use crate::context::FileNodeMapper;
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p5_resolve_references,
+    p6_resolve_yul,
 };
 use crate::types::TypeRegistry;
 
@@ -330,5 +332,66 @@ contract Test is Base {
     assert_eq!(
         0, unresolved_count,
         "expected all references to be resolved"
+    );
+}
+
+#[test]
+fn test_collect_assembly_references() {
+    const CONTENTS: &str = r###"
+contract Test {
+    uint256 stateVar;
+    function f() public {
+        uint256 localVar = 1;
+        assembly {
+            let x := add(sload(stateVar.slot), localVar)
+            function helper(a) -> b { b := a }
+        }
+    }
+}
+    "###;
+
+    let mut id_generator = NodeIdGenerator::default();
+    let language_version = LanguageVersion::LATEST;
+    let file = build_file("test.sol", CONTENTS, &mut id_generator, language_version);
+
+    let files = [file];
+    let mut binder = Binder::default();
+    let mut types = TypeRegistry::new(language_version);
+    let mut diagnostics = DiagnosticCollection::default();
+    let file_node_mapper = FileNodeMapper::build_from(&files);
+
+    p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
+    p3_type_definitions::run(&files, &mut binder, &mut types, &mut diagnostics);
+    p6_resolve_yul::run(&mut binder, &types, &file_node_mapper, &mut diagnostics);
+    assert!(
+        diagnostics.is_empty(),
+        "Semantic diagnostics: {diagnostics:?}"
+    );
+
+    // The single `assembly` block was collected in p1.
+    let blocks = binder.assembly_blocks();
+    assert_eq!(blocks.len(), 1);
+    let block = blocks.values().next().unwrap();
+
+    // p6 recorded the Solidity definitions the block references (the state
+    // variable and the local), but not the Yul definitions (`x`, `helper`,
+    // `a`, `b`) nor the Yul built-ins (`add`, `sload`, `.slot`).
+    let mut referenced: Vec<String> = block
+        .solidity_references
+        .iter()
+        .map(|node_id| {
+            binder
+                .find_definition_by_id(*node_id)
+                .unwrap()
+                .identifier()
+                .unparse()
+                .to_string()
+        })
+        .collect();
+    referenced.sort();
+    assert_eq!(
+        referenced,
+        vec!["localVar".to_string(), "stateVar".to_string()]
     );
 }

@@ -246,6 +246,15 @@ impl Definition {
         }
     }
 
+    /// Whether this is a Yul definition (function/parameter/variable declared
+    /// inside an `assembly` block) as opposed to a Solidity definition.
+    pub(crate) fn is_yul(&self) -> bool {
+        matches!(
+            self,
+            Self::YulFunction(_) | Self::YulParameter(_) | Self::YulVariable(_)
+        )
+    }
+
     pub(crate) fn is_private_or_internally_visible(&self) -> bool {
         if let Self::Function(function_definition) = self {
             !matches!(

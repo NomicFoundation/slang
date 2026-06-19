@@ -20,8 +20,6 @@ pub fn run(files: &[impl SemanticFile], binder: &mut Binder, types: &mut TypeReg
     for file in files {
         Pass::visit_file(file, binder, types);
     }
-    // update definition->references reverse mapping
-    binder.update_definitions_to_references_index();
 }
 
 struct ScopeFrame {

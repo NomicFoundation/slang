@@ -69,6 +69,7 @@ impl core::fmt::Debug for slang_solidity_v2_semantic::binder::Typing
 pub fn slang_solidity_v2_semantic::binder::Typing::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity_v2_semantic::binder::Binder
 impl slang_solidity_v2_semantic::binder::Binder
+pub fn slang_solidity_v2_semantic::binder::Binder::assembly_block_referenced_definitions(&self, slang_solidity_v2_common::nodes::NodeId) -> &[slang_solidity_v2_common::nodes::NodeId]
 pub fn slang_solidity_v2_semantic::binder::Binder::definitions(&self) -> &slang_solidity_v2_common::collections::aliases::Map<slang_solidity_v2_common::nodes::NodeId, slang_solidity_v2_semantic::binder::Definition>
 pub fn slang_solidity_v2_semantic::binder::Binder::find_definition_by_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&slang_solidity_v2_semantic::binder::Definition>
 pub fn slang_solidity_v2_semantic::binder::Binder::find_definition_by_identifier_node_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&slang_solidity_v2_semantic::binder::Definition>
