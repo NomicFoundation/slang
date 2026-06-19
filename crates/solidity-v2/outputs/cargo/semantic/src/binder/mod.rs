@@ -145,6 +145,8 @@ impl Binder {
         Self {
             node_typing: Map::default_with_capacity(capacities.node_typing),
             references: Map::default_with_capacity(capacities.references),
+            definitions: Map::default_with_capacity(capacities.definitions),
+            definitions_by_identifier: Map::default_with_capacity(capacities.definitions),
             ..Default::default()
         }
     }
