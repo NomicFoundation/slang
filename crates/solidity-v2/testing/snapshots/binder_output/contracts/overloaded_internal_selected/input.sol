@@ -2,13 +2,12 @@
 pragma solidity *;
 
 contract A {
-    function f() external {}
+    function f() internal {}
     function f(uint x) external {}
 }
 
-contract B {
-    function g() external {
-        // Both should be invalid
+contract B is A {
+    function g() public {
         A.f();
         A.f(1);
     }

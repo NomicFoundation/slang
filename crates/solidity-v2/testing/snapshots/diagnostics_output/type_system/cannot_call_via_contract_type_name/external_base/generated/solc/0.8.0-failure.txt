@@ -1,11 +1,19 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Diagnostics: 1
+Diagnostics: 2
 
 [TypeError 3419] Error: Cannot call function via contract type name.
-    ╭─[input.sol:15:9]
+    ╭─[input.sol:17:9]
     │
- 15 │         base.f();
-    │         ────┬───  
-    │             ╰───── Error occurred here.
+ 17 │         base.intl();
+    │         ─────┬─────  
+    │              ╰─────── Error occurred here.
+────╯
+
+[TypeError 9582] Error: Member "f" not found or not visible after argument-dependent lookup in type(contract base).
+    ╭─[input.sol:20:9]
+    │
+ 20 │         base.f();
+    │         ───┬──  
+    │            ╰──── Error occurred here.
 ────╯

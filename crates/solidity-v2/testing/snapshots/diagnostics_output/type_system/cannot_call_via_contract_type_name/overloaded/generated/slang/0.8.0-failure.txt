@@ -3,17 +3,17 @@
 Diagnostics: 2
 
 Error: Cannot call function via contract type name.
-    ╭─[input.sol:16:9]
+    ╭─[input.sol:12:9]
     │
- 16 │         A.f();
+ 12 │         A.f();
     │         ──┬──  
     │           ╰──── Error occurred here.
 ────╯
 
 Error: Cannot call function via contract type name.
-    ╭─[input.sol:17:9]
+    ╭─[input.sol:13:9]
     │
- 17 │         A.f(1);
+ 13 │         A.f(1);
     │         ───┬──  
     │            ╰──── Error occurred here.
 ────╯

@@ -310,6 +310,11 @@ mod contracts {
     }
 
     #[test]
+    fn overloaded_internal_selected() -> Result<()> {
+        run("contracts", "overloaded_internal_selected")
+    }
+
+    #[test]
     fn private_member_not_visible() -> Result<()> {
         run("contracts", "private_member_not_visible")
     }
