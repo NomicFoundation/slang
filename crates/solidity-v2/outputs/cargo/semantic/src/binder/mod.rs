@@ -149,6 +149,8 @@ impl Binder {
             references: Map::default_with_capacity(capacities.references),
             definitions: Map::default_with_capacity(capacities.definitions),
             definitions_by_identifier: Map::default_with_capacity(capacities.definitions),
+            linearisations: Map::default_with_capacity(capacities.linearisations),
+            assembly_blocks: Map::default_with_capacity(capacities.assembly_blocks),
             ..Default::default()
         }
     }
