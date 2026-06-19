@@ -806,6 +806,22 @@ mod type_system {
                 "overloaded",
             )
         }
+
+        #[test]
+        fn overloaded_external_selected() -> Result<()> {
+            run(
+                "type_system/cannot_call_via_contract_type_name",
+                "overloaded_external_selected",
+            )
+        }
+
+        #[test]
+        fn overloaded_internal_selected() -> Result<()> {
+            run(
+                "type_system/cannot_call_via_contract_type_name",
+                "overloaded_internal_selected",
+            )
+        }
     }
 
     mod invalid_base {
