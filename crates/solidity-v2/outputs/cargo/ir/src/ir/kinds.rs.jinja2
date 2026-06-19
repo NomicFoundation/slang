@@ -25,4 +25,18 @@ impl NodeKind {
     /// The number of distinct node kinds; valid `NodeKind` discriminants are
     /// `0..COUNT`, making it the length of any per-kind lookup array.
     pub const COUNT: usize = {{ kind_index }};
+
+    /// The concrete node kinds that are variants of the `Expression` IR choice.
+    /// Summing their histogram counts gives a close estimate of how many nodes
+    /// carry typing information, used to pre-size the binder's `node_typing`
+    /// map. (Nested-choice variants such as `ElementaryType` are omitted: they
+    /// own no `NodeId`, so their concrete children are counted under their own
+    /// kinds instead.)
+    pub(crate) const EXPRESSION_KINDS: &'static [NodeKind] = &[
+      {%- for variant in target.choices["Expression"].variants %}
+        {%- if variant.kind == "Sequence" or variant.kind == "Terminal" or variant.kind == "UniqueTerminal" %}
+        NodeKind::{{ variant.name }},
+        {%- endif %}
+      {%- endfor %}
+    ];
 }

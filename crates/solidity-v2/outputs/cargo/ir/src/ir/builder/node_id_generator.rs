@@ -6,7 +6,7 @@ use crate::ir::nodes::{NodeId, NodeKind};
 /// recording a node is a single array increment. It is populated for free as
 /// the IR is built and lets downstream consumers (e.g. the binder) pre-size
 /// their per-node collections instead of growing and rehashing them.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct NodeKindHistogram {
     counts: [u32; NodeKind::COUNT],
 }
@@ -24,6 +24,22 @@ impl NodeKindHistogram {
     /// The total number of nodes recorded across all kinds.
     pub fn total(&self) -> u32 {
         self.counts.iter().sum()
+    }
+
+    /// The number of `Identifier` nodes. Every reference is an identifier, so
+    /// this is a tight upper bound on the size of the binder's `references` map.
+    pub fn identifier_count(&self) -> usize {
+        self.count(NodeKind::Identifier) as usize
+    }
+
+    /// The number of expression nodes (those whose kind is in
+    /// `NodeKind::EXPRESSION_KINDS`). Used to estimate the size of the binder's
+    /// `node_typing` map.
+    pub fn expression_count(&self) -> usize {
+        NodeKind::EXPRESSION_KINDS
+            .iter()
+            .map(|kind| self.count(*kind) as usize)
+            .sum()
     }
 }
 

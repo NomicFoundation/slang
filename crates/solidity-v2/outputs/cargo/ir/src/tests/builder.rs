@@ -130,6 +130,16 @@ contract MyContract {
     assert_eq!(1, histogram.count(ir::NodeKind::StateVariableDefinition));
     // The constructor and `test()` both lower to a `FunctionDefinition`.
     assert_eq!(2, histogram.count(ir::NodeKind::FunctionDefinition));
+
+    // Sizing helpers: `Identifier` is one of the expression kinds, so the
+    // expression count is at least the identifier count, and both are non-zero
+    // for this snippet (e.g. `owner`, `msg`, `sender`).
+    assert_eq!(
+        histogram.identifier_count(),
+        histogram.count(ir::NodeKind::Identifier) as usize
+    );
+    assert!(histogram.identifier_count() > 0);
+    assert!(histogram.expression_count() >= histogram.identifier_count());
 }
 
 #[test]

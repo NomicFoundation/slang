@@ -11,6 +11,7 @@ pub struct Input {
 
 pub struct Output {
     pub(crate) ir_source_units: Vec<SourceUnit>,
+    pub(crate) id_generator: NodeIdGenerator,
 }
 
 pub fn setup(project: &str) -> Input {
@@ -50,7 +51,10 @@ pub fn test(input: Input) -> Output {
         ir_source_units.push(ir_root);
     }
 
-    Output { ir_source_units }
+    Output {
+        ir_source_units,
+        id_generator,
+    }
 }
 
 pub fn count_contracts(output: &Output) -> usize {
