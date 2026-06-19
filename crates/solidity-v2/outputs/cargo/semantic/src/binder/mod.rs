@@ -285,7 +285,8 @@ impl Binder {
 
     pub(crate) fn update_definitions_to_references_index(&mut self) {
         // Build reverse mapping from definitions to references
-        let mut definitions: Map<NodeId, Vec<NodeId>> = Map::default();
+        let mut definitions: Map<NodeId, Vec<NodeId>> =
+            Map::default_with_capacity(self.definitions.len());
         for (reference_id, reference) in &self.references {
             match &reference.resolution {
                 Resolution::Definition(node_id) => {
