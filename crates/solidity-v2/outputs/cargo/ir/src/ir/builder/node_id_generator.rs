@@ -25,22 +25,6 @@ impl NodeKindHistogram {
     pub fn total(&self) -> u32 {
         self.counts.iter().sum()
     }
-
-    /// The number of `Identifier` nodes. Every reference is an identifier, so
-    /// this is a tight upper bound on the size of the binder's `references` map.
-    pub fn identifier_count(&self) -> usize {
-        self.count(NodeKind::Identifier) as usize
-    }
-
-    /// The number of expression nodes (those whose kind is in
-    /// `NodeKind::EXPRESSION_KINDS`). Used to estimate the size of the binder's
-    /// `node_typing` map.
-    pub fn expression_count(&self) -> usize {
-        NodeKind::EXPRESSION_KINDS
-            .iter()
-            .map(|kind| self.count(*kind) as usize)
-            .sum()
-    }
 }
 
 impl Default for NodeKindHistogram {

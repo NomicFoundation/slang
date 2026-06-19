@@ -2544,8 +2544,6 @@ pub fn slang_solidity_v2_ir::ir::NodeIdGenerator::default() -> Self
 pub struct slang_solidity_v2_ir::ir::NodeKindHistogram
 impl slang_solidity_v2_ir::ir::NodeKindHistogram
 pub fn slang_solidity_v2_ir::ir::NodeKindHistogram::count(&self, slang_solidity_v2_ir::ir::NodeKind) -> u32
-pub fn slang_solidity_v2_ir::ir::NodeKindHistogram::expression_count(&self) -> usize
-pub fn slang_solidity_v2_ir::ir::NodeKindHistogram::identifier_count(&self) -> usize
 pub fn slang_solidity_v2_ir::ir::NodeKindHistogram::total(&self) -> u32
 impl core::clone::Clone for slang_solidity_v2_ir::ir::NodeKindHistogram
 pub fn slang_solidity_v2_ir::ir::NodeKindHistogram::clone(&self) -> slang_solidity_v2_ir::ir::NodeKindHistogram

@@ -186,44 +186,4 @@ impl NodeKind {
     /// The number of distinct node kinds; valid `NodeKind` discriminants are
     /// `0..COUNT`, making it the length of any per-kind lookup array.
     pub const COUNT: usize = 170;
-
-    /// The concrete node kinds that are variants of the `Expression` IR choice.
-    /// Summing their histogram counts gives a close estimate of how many nodes
-    /// carry typing information, used to pre-size the binder's `node_typing`
-    /// map. (Nested-choice variants such as `ElementaryType` are omitted: they
-    /// own no `NodeId`, so their concrete children are counted under their own
-    /// kinds instead.)
-    pub(crate) const EXPRESSION_KINDS: &'static [NodeKind] = &[
-        NodeKind::AssignmentExpression,
-        NodeKind::ConditionalExpression,
-        NodeKind::OrExpression,
-        NodeKind::AndExpression,
-        NodeKind::EqualityExpression,
-        NodeKind::InequalityExpression,
-        NodeKind::BitwiseOrExpression,
-        NodeKind::BitwiseXorExpression,
-        NodeKind::BitwiseAndExpression,
-        NodeKind::ShiftExpression,
-        NodeKind::AdditiveExpression,
-        NodeKind::MultiplicativeExpression,
-        NodeKind::ExponentiationExpression,
-        NodeKind::PostfixExpression,
-        NodeKind::PrefixExpression,
-        NodeKind::FunctionCallExpression,
-        NodeKind::CallOptionsExpression,
-        NodeKind::MemberAccessExpression,
-        NodeKind::IndexAccessExpression,
-        NodeKind::NewExpression,
-        NodeKind::TupleExpression,
-        NodeKind::TypeExpression,
-        NodeKind::ArrayExpression,
-        NodeKind::HexNumberExpression,
-        NodeKind::DecimalNumberExpression,
-        NodeKind::PayableKeyword,
-        NodeKind::ThisKeyword,
-        NodeKind::SuperKeyword,
-        NodeKind::TrueKeyword,
-        NodeKind::FalseKeyword,
-        NodeKind::Identifier,
-    ];
 }
