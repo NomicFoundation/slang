@@ -4,6 +4,7 @@ use infra_utils::solc::{
     render_solc_error, Binary, CliInput, CliSettings, InputSource, LanguageSelector,
 };
 use semver::Version;
+use slang_solidity_v2::compilation::FileId;
 use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
@@ -29,7 +30,7 @@ impl TestTarget for SolcTarget {
 
     fn collect_diagnostics(
         &self,
-        files: &SortedMap<String, String>,
+        files: &SortedMap<FileId, String>,
         version: LanguageVersion,
         evm_target: EvmTarget,
     ) -> Result<Vec<String>> {
@@ -39,9 +40,15 @@ impl TestTarget for SolcTarget {
             .get(&semver_version)
             .ok_or_else(|| anyhow!("no solc binary fetched for version {semver_version}"))?;
 
+        // `solc` works with string file names, so convert from `FileId` keys.
+        let sources: SortedMap<String, String> = files
+            .iter()
+            .map(|(file_id, content)| (file_id.to_string(), content.clone()))
+            .collect();
+
         let input = CliInput {
             language: LanguageSelector::Solidity,
-            sources: files
+            sources: sources
                 .iter()
                 .map(|(name, content)| {
                     (
@@ -62,7 +69,7 @@ impl TestTarget for SolcTarget {
 
         let rendered = errors
             .into_iter()
-            .map(|error| render_solc_error(&error, files).unwrap())
+            .map(|error| render_solc_error(&error, &sources).unwrap())
             .collect();
 
         Ok(rendered)

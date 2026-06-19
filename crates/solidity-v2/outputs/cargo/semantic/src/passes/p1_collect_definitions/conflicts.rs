@@ -20,6 +20,7 @@ use std::collections::VecDeque;
 use std::ops::Range;
 
 use slang_solidity_v2_common::collections::{Map, Set};
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 
 use crate::binder::{Binder, Definition, FileScope, Scope, ScopeId};
@@ -317,9 +318,9 @@ fn first_conflicting_definition(
 // then symbol name).
 pub(super) fn find_default_import_conflicts<'a>(
     binder: &Binder,
-    file_ids: impl Iterator<Item = &'a str>,
-) -> Vec<(String, Range<usize>)> {
-    let mut conflicts: Vec<(String, Range<usize>)> = Vec::new();
+    file_ids: impl Iterator<Item = &'a FileId>,
+) -> Vec<(FileId, Range<usize>)> {
+    let mut conflicts: Vec<(FileId, Range<usize>)> = Vec::new();
 
     for file_id in file_ids {
         let file_scope = binder.get_file_scope(file_id);
@@ -347,15 +348,14 @@ pub(super) fn find_default_import_conflicts<'a>(
 fn find_imported_symbol_conflicts<'a>(
     binder: &'a Binder,
     file_scope: &'a FileScope,
-    conflicts: &mut Vec<(String, Range<usize>)>,
+    conflicts: &mut Vec<(FileId, Range<usize>)>,
 ) {
     // All the symbols imported by the directives processed so far.
     let mut seen: Map<&'a str, Vec<NodeId>> = Map::default();
 
     let mut import_iter = file_scope.default_imports.iter().peekable();
     while let Some(import) = import_iter.next() {
-        let imported_scopes =
-            transitive_file_scopes(binder, import.file_id.as_str(), &file_scope.file_id);
+        let imported_scopes = transitive_file_scopes(binder, &import.file_id, &file_scope.file_id);
 
         // Gather the symbols this directive brings in. We don't care about them
         // being sorted because if there's any conflict we will report the
@@ -416,17 +416,14 @@ fn find_imported_symbol_conflicts<'a>(
 fn find_local_definition_conflicts(
     binder: &Binder,
     file_scope: &FileScope,
-    conflicts: &mut Vec<(String, Range<usize>)>,
+    conflicts: &mut Vec<(FileId, Range<usize>)>,
 ) {
     let default_imports_scopes: Vec<_> = file_scope
         .default_imports
         .iter()
         .map(|default_import| {
-            let imported_scopes = transitive_file_scopes(
-                binder,
-                default_import.file_id.as_str(),
-                file_scope.file_id.as_str(),
-            );
+            let imported_scopes =
+                transitive_file_scopes(binder, &default_import.file_id, &file_scope.file_id);
             (default_import, imported_scopes)
         })
         .collect();
@@ -476,14 +473,14 @@ fn find_local_definition_conflicts(
 // reached through a cycle).
 fn transitive_file_scopes<'a>(
     binder: &'a Binder,
-    starting_file_id: &str,
-    excluded_file_id: &str,
+    starting_file_id: &FileId,
+    excluded_file_id: &FileId,
 ) -> Vec<&'a FileScope> {
     let mut found = Vec::new();
     let mut visited = Set::default();
     visited.insert(excluded_file_id);
 
-    let mut queue: VecDeque<&str> = [starting_file_id].into_iter().collect();
+    let mut queue: VecDeque<&FileId> = [starting_file_id].into_iter().collect();
 
     while let Some(imported_file_id) = queue.pop_front() {
         if !visited.insert(imported_file_id) {
@@ -500,7 +497,7 @@ fn transitive_file_scopes<'a>(
             imported_scope
                 .default_imports
                 .iter()
-                .map(|import| import.file_id.as_str()),
+                .map(|import| &import.file_id),
         );
     }
 

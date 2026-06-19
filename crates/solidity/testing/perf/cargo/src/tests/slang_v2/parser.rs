@@ -15,7 +15,7 @@ pub fn run(project: &SolidityProject) -> Vec<(String, SourceUnit)> {
         let ParseOutput {
             source_unit,
             diagnostics,
-        } = Parser::parse(key, source, lang_version);
+        } = Parser::parse(&key.as_str().into(), source, lang_version);
         assert!(diagnostics.is_empty());
 
         source_units.push((key.clone(), source_unit));

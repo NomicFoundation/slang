@@ -7,7 +7,7 @@ fn test_resolve_to_built_in() {
 
     // Collect all identifiers that resolve to built-ins from the ownable.sol file,
     // which contains `msg.sender` and `require`.
-    let ownable_ast = unit.file("ownable.sol").unwrap().ast();
+    let ownable_ast = unit.file(&"ownable.sol".into()).unwrap().ast();
 
     let mut built_in_collector = BuiltInCollector::default();
     ast::visitor::accept_source_unit(&ownable_ast, &mut built_in_collector);

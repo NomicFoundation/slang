@@ -51,7 +51,7 @@ pub fn compare_with_v1_cursor(
     let ParseOutput {
         source_unit,
         diagnostics,
-    } = V2Parser::parse("v1_comparison", source, lang_version);
+    } = V2Parser::parse(&"v1_comparison".into(), source, lang_version);
 
     if !diagnostics.is_empty() {
         return diagnostics

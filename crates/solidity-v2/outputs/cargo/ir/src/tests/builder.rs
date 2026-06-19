@@ -23,7 +23,7 @@ contract MyContract {
     let ParseOutput {
         source_unit,
         diagnostics,
-    } = Parser::parse("test.sol", CONTENTS, LanguageVersion::LATEST);
+    } = Parser::parse(&"test.sol".into(), CONTENTS, LanguageVersion::LATEST);
 
     assert!(
         diagnostics.is_empty(),
@@ -35,7 +35,12 @@ contract MyContract {
     let ir::BuildOutput {
         ir_root,
         diagnostics,
-    } = ir::build("test.sol", &source_unit, &CONTENTS, &mut id_generator);
+    } = ir::build(
+        &"test.sol".into(),
+        &source_unit,
+        &CONTENTS,
+        &mut id_generator,
+    );
 
     assert!(
         diagnostics.is_empty(),
@@ -101,7 +106,7 @@ contract Test is Base layout at 0 {}
     let ParseOutput {
         source_unit,
         diagnostics,
-    } = Parser::parse("test.sol", CONTENTS, LanguageVersion::LATEST);
+    } = Parser::parse(&"test.sol".into(), CONTENTS, LanguageVersion::LATEST);
 
     assert!(
         diagnostics.is_empty(),
@@ -113,7 +118,12 @@ contract Test is Base layout at 0 {}
     let ir::BuildOutput {
         ir_root,
         diagnostics,
-    } = ir::build("test.sol", &source_unit, &CONTENTS, &mut id_generator);
+    } = ir::build(
+        &"test.sol".into(),
+        &source_unit,
+        &CONTENTS,
+        &mut id_generator,
+    );
 
     let sentinel_node_id = id_generator.next_id();
 

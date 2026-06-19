@@ -6,6 +6,7 @@ use std::sync::Arc;
 use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
 use slang_solidity_v2_common::collections::Set;
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::binder::Definition;
 use slang_solidity_v2_semantic::context::SemanticContext;
@@ -16,7 +17,7 @@ use slang_solidity_v2_semantic::types::{
 pub struct ContractAbi {
     node_id: NodeId,
     name: String,
-    file_id: String,
+    file_id: FileId,
     entries: Vec<AbiEntry>,
     storage_layout: Vec<StorageItem>,
     transient_storage_layout: Vec<StorageItem>,
@@ -31,7 +32,7 @@ impl ContractAbi {
         &self.name
     }
 
-    pub fn file_id(&self) -> &str {
+    pub fn file_id(&self) -> &FileId {
         &self.file_id
     }
 

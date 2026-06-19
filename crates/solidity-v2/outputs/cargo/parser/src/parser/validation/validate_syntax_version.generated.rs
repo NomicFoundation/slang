@@ -5,6 +5,7 @@
 
 use slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleSyntaxVersion;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::versions::{LanguageVersion, LanguageVersionSpecifier};
 use slang_solidity_v2_cst::structured_cst::nodes::*;
 use slang_solidity_v2_cst::structured_cst::TextRange;
@@ -13,7 +14,7 @@ use slang_solidity_v2_cst::structured_cst::TextRange;
 pub fn validate_syntax_version(
     root: &SourceUnit,
     version: LanguageVersion,
-    file_id: &str,
+    file_id: &FileId,
     diagnostics: &mut DiagnosticCollection,
 ) {
     let mut validator = SyntaxVersionValidator {
@@ -26,7 +27,7 @@ pub fn validate_syntax_version(
 
 struct SyntaxVersionValidator<'a> {
     version: LanguageVersion,
-    file_id: &'a str,
+    file_id: &'a FileId,
     diagnostics: &'a mut DiagnosticCollection,
 }
 
