@@ -1,6 +1,8 @@
+mod cannot_call_via_contract_type_name;
 mod invalid_base;
 mod invalid_function_type_visibility;
 
+pub use cannot_call_via_contract_type_name::CannotCallViaContractTypeName;
 pub use invalid_base::InvalidBase;
 pub use invalid_function_type_visibility::InvalidFunctionTypeVisibility;
 use serde::Serialize;
@@ -20,5 +22,8 @@ define_diagnostic_kind! {
         InvalidBase(InvalidBase),
         /// A function type has a visibility other than `internal` or `external`.
         InvalidFunctionTypeVisibility(InvalidFunctionTypeVisibility),
+        /// A function is called through a contract/interface type name (eg.
+        /// `C.f()`) rather than through an instance.
+        CannotCallViaContractTypeName(CannotCallViaContractTypeName),
     }
 }

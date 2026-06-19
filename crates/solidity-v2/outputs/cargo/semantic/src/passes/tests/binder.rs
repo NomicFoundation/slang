@@ -313,11 +313,11 @@ contract Test is Base {
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
     p3_type_definitions::run(&files, &mut binder, &mut types, &mut diagnostics);
+    p5_resolve_references::run(&files, &mut binder, &mut types, &mut diagnostics);
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
     );
-    p5_resolve_references::run(&files, &mut binder, &mut types);
 
     // Verify that references were created and most are resolved
     let references = binder.references();

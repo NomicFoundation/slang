@@ -218,6 +218,10 @@ impl<'a> BuiltInsResolver<'a> {
                 "unwrap" => Some(InternalBuiltIn::Unwrap(definition.node_id())),
                 _ => None,
             },
+            Definition::Function(_) => match symbol {
+                "selector" => Some(InternalBuiltIn::FunctionSelector),
+                _ => None,
+            },
             _ => None,
         }
     }

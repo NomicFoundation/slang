@@ -97,6 +97,11 @@ mod built_ins {
     }
 
     #[test]
+    fn function_declaration() -> Result<()> {
+        run("built_ins", "function_declaration")
+    }
+
+    #[test]
     fn function_type() -> Result<()> {
         run("built_ins", "function_type")
     }
@@ -267,6 +272,11 @@ mod contracts {
     #[test]
     fn overload_disambiguation_with_this() -> Result<()> {
         run("contracts", "overload_disambiguation_with_this")
+    }
+
+    #[test]
+    fn overloaded_internal_selected() -> Result<()> {
+        run("contracts", "overloaded_internal_selected")
     }
 
     #[test]

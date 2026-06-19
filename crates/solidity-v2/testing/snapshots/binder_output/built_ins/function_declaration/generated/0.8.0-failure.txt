@@ -1,0 +1,121 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (9):
+- Def: #1 ["I" @ input.sol:1:11] (interface)
+- Def: #2 ["i" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["C" @ input.sol:5:10] (contract)
+- Def: #4 ["ext" @ input.sol:6:14] (function, type: function () returns void)
+- Def: #5 ["pub" @ input.sol:7:14] (function, type: function () returns void)
+- Def: #6 ["D" @ input.sol:9:10] (contract)
+- Def: #7 ["tD" @ input.sol:10:14] (function, type: function () returns void)
+- Def: #8 ["E" @ input.sol:15:10] (contract)
+- Def: #9 ["test" @ input.sol:16:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (19):
+- Ref: ["C" @ input.sol:9:15] -> #3
+- Ref: ["C" @ input.sol:11:9] -> #3
+- Ref: ["ext" @ input.sol:11:11] -> #4
+- Ref: ["selector" @ input.sol:11:15] -> built-in
+- Ref: ["C" @ input.sol:12:9] -> #3
+- Ref: ["ext" @ input.sol:12:11] -> #4
+- Ref: ["address" @ input.sol:12:15] -> unresolved
+- Ref: ["I" @ input.sol:17:9] -> #1
+- Ref: ["i" @ input.sol:17:11] -> #2
+- Ref: ["selector" @ input.sol:17:13] -> built-in
+- Ref: ["I" @ input.sol:18:9] -> #1
+- Ref: ["i" @ input.sol:18:11] -> #2
+- Ref: ["address" @ input.sol:18:13] -> unresolved
+- Ref: ["C" @ input.sol:20:9] -> #3
+- Ref: ["pub" @ input.sol:20:11] -> #5
+- Ref: ["selector" @ input.sol:20:15] -> built-in
+- Ref: ["C" @ input.sol:21:9] -> #3
+- Ref: ["pub" @ input.sol:21:11] -> #5
+- Ref: ["address" @ input.sol:21:15] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface I {
+    │           ┬  
+    │           ╰── name: 1
+  2 │     function i() external;
+    │              ┬  
+    │              ╰── name: 2
+    │ 
+  5 │ contract C {
+    │          ┬  
+    │          ╰── name: 3
+  6 │     function ext() external {}
+    │              ─┬─  
+    │               ╰─── name: 4
+  7 │     function pub() public {}
+    │              ─┬─  
+    │               ╰─── name: 5
+    │ 
+  9 │ contract D is C {
+    │          ┬    ┬  
+    │          ╰─────── name: 6
+    │               │  
+    │               ╰── ref: 3
+ 10 │     function tD() internal {
+    │              ─┬  
+    │               ╰── name: 7
+ 11 │         C.ext.selector; // ok
+    │         ┬ ─┬─ ────┬───  
+    │         ╰─────────────── ref: 3
+    │            │      │     
+    │            ╰──────────── ref: 4
+    │                   │     
+    │                   ╰───── built-in
+ 12 │         C.ext.address; // not ok
+    │         ┬ ─┬─ ───┬───  
+    │         ╰────────────── ref: 3
+    │            │     │     
+    │            ╰─────────── ref: 4
+    │                  │     
+    │                  ╰───── unresolved
+    │ 
+ 15 │ contract E {
+    │          ┬  
+    │          ╰── name: 8
+ 16 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 9
+ 17 │         I.i.selector; // ok
+    │         ┬ ┬ ────┬───  
+    │         ╰───────────── ref: 1
+    │           │     │     
+    │           ╰─────────── ref: 2
+    │                 │     
+    │                 ╰───── built-in
+ 18 │         I.i.address; // not ok
+    │         ┬ ┬ ───┬───  
+    │         ╰──────────── ref: 1
+    │           │    │     
+    │           ╰────────── ref: 2
+    │                │     
+    │                ╰───── unresolved
+    │ 
+ 20 │         C.pub.selector; // ok
+    │         ┬ ─┬─ ────┬───  
+    │         ╰─────────────── ref: 3
+    │            │      │     
+    │            ╰──────────── ref: 5
+    │                   │     
+    │                   ╰───── built-in
+ 21 │         C.pub.address; // not ok
+    │         ┬ ─┬─ ───┬───  
+    │         ╰────────────── ref: 3
+    │            │     │     
+    │            ╰─────────── ref: 5
+    │                  │     
+    │                  ╰───── unresolved
+────╯
