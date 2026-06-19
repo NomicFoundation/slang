@@ -111,6 +111,11 @@ const PARAMETER_SCOPE_NODE_KINDS: &[NodeKind] = &[
     NodeKind::EventDefinition,
 ];
 
+/// IR node kinds that get linearised (one `linearisations` entry each).
+/// Libraries are not inheritable and so are not linearised.
+const LINEARISATION_KINDS: &[NodeKind] =
+    &[NodeKind::ContractDefinition, NodeKind::InterfaceDefinition];
+
 /// Up-front sizes for the binder's dominant per-node collections, derived from
 /// the IR node-kind histogram (see `Binder::with_capacity`). These are keyed by
 /// (or indexed alongside) `NodeId` and end up roughly as large as the source,
@@ -130,6 +135,10 @@ pub(crate) struct BinderCapacities {
     /// Total number of scopes, including the parameter scopes that have no
     /// `NodeId` (the `scopes` vec).
     pub scopes: usize,
+    /// Exact number of linearised contracts/interfaces (`linearisations`).
+    pub linearisations: usize,
+    /// Exact number of `assembly` statements (`assembly_blocks`).
+    pub assembly_blocks: usize,
 }
 
 impl From<&NodeKindHistogram> for BinderCapacities {
@@ -147,6 +156,8 @@ impl From<&NodeKindHistogram> for BinderCapacities {
             definitions: count_kinds(DEFINITION_KINDS, histogram),
             scopes_by_node_id,
             scopes: scopes_by_node_id + count_kinds(PARAMETER_SCOPE_NODE_KINDS, histogram),
+            linearisations: count_kinds(LINEARISATION_KINDS, histogram),
+            assembly_blocks: histogram.count(NodeKind::AssemblyStatement) as usize,
         }
     }
 }
