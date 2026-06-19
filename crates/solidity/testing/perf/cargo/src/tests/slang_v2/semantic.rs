@@ -37,12 +37,19 @@ impl SemanticFile for File {
     }
 }
 
-pub fn setup(project: &str) -> (&'static SolidityProject, Vec<File>) {
+pub struct Input {
+    pub(crate) project: &'static SolidityProject,
+    pub(crate) files: Vec<File>,
+}
+
+pub type Output = SemanticContext;
+
+pub fn setup(project: &str) -> Input {
     let payload = super::ir_builder::setup(project);
-    let project = payload.0;
-    let ir_source_units = super::ir_builder::test(payload);
-    let files = build_files(project, ir_source_units);
-    (project, files)
+    let project = payload.project;
+    let ir_builder_output = super::ir_builder::test(payload);
+    let files = build_files(project, ir_builder_output.ir_source_units);
+    Input { project, files }
 }
 
 pub fn build_files(
@@ -73,18 +80,16 @@ pub fn build_files(
         .collect()
 }
 
-pub fn run(project: &'static SolidityProject, files: Vec<File>) -> SemanticContext {
-    test((project, files))
+pub fn run(input: Input) -> Output {
+    test(input)
 }
 
-pub fn test(
-    (project, files): (&'static SolidityProject, Vec<impl SemanticFile>),
-) -> SemanticContext {
-    let language_version = parse_version(project);
-    let evm_target = parse_evm_target(project);
+pub fn test(input: Input) -> Output {
+    let language_version = parse_version(input.project);
+    let evm_target = parse_evm_target(input.project);
     let mut diagnostics = DiagnosticCollection::default();
     let semantic =
-        SemanticContext::build_from(language_version, evm_target, &files, &mut diagnostics);
+        SemanticContext::build_from(language_version, evm_target, &input.files, &mut diagnostics);
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
@@ -92,8 +97,8 @@ pub fn test(
     semantic
 }
 
-pub fn count_contracts(semantic: &SemanticContext) -> usize {
-    semantic
+pub fn count_contracts(output: &Output) -> usize {
+    output
         .binder()
         .definitions()
         .values()
@@ -108,8 +113,8 @@ pub fn count_contracts(semantic: &SemanticContext) -> usize {
         .count()
 }
 
-pub fn count_resolved_references(semantic: &SemanticContext) -> usize {
-    let references = semantic.binder().references();
+pub fn count_resolved_references(output: &Output) -> usize {
+    let references = output.binder().references();
     // This is a bit stronger than just counting, but it's good to check that these
     // projects are fully resolved
     for reference in references.values() {

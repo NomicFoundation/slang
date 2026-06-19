@@ -4,28 +4,35 @@ use slang_solidity_v2_ast::{abi, ast};
 use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
 
 use super::semantic::File;
-use crate::dataset::SolidityProject;
 
-pub fn setup(project: &str) -> (&'static SolidityProject, Vec<File>, Arc<SemanticContext>) {
-    let (project, files) = super::semantic::setup(project);
-    let semantic = super::semantic::test((project, files.clone()));
-    (project, files, Arc::new(semantic))
+pub struct Input {
+    pub(crate) files: Vec<File>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub fn run(
-    project: &'static SolidityProject,
-    files: Vec<File>,
-    semantic: Arc<SemanticContext>,
-) -> Vec<abi::ContractAbi> {
-    test((project, files, semantic))
+pub type Output = Vec<abi::ContractAbi>;
+
+pub fn setup(project: &str) -> Input {
+    let semantic_input = super::semantic::setup(project);
+    let files = semantic_input.files.clone();
+    let semantic_output = super::semantic::test(semantic_input);
+    Input {
+        files,
+        semantic: Arc::new(semantic_output),
+    }
 }
 
-pub fn test(
-    (_project, files, semantic): (&'static SolidityProject, Vec<File>, Arc<SemanticContext>),
-) -> Vec<abi::ContractAbi> {
-    files
+pub fn run(input: Input) -> Output {
+    test(input)
+}
+
+pub fn test(input: Input) -> Output {
+    input
+        .files
         .iter()
-        .flat_map(|file| ast::create_source_unit(file.ir_root(), &semantic).compute_contracts_abi())
+        .flat_map(|file| {
+            ast::create_source_unit(file.ir_root(), &input.semantic).compute_contracts_abi()
+        })
         .collect()
 }
 
@@ -33,6 +40,6 @@ pub fn test(
 // interfaces/libraries are not in `SourceUnit::contracts()` at all), so the
 // length of its output is exactly the number of concrete contracts whose ABI
 // could be computed.
-pub fn count_concrete_contracts(contracts: &[abi::ContractAbi]) -> usize {
-    contracts.len()
+pub fn count_concrete_contracts(output: &Output) -> usize {
+    output.len()
 }
