@@ -10,7 +10,12 @@ pub struct Input {
     pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub type Output = Vec<abi::ContractAbi>;
+#[allow(unused)]
+pub struct Output {
+    pub(crate) files: Vec<File>,
+    pub(crate) semantic: Arc<SemanticContext>,
+    pub(crate) abi: Vec<abi::ContractAbi>,
+}
 
 pub fn setup(project: &str) -> Input {
     let semantic_input = super::semantic::setup(project);
@@ -27,13 +32,18 @@ pub fn run(input: Input) -> Output {
 }
 
 pub fn test(input: Input) -> Output {
-    input
+    let abi = input
         .files
         .iter()
         .flat_map(|file| {
             ast::create_source_unit(file.ir_root(), &input.semantic).compute_contracts_abi()
         })
-        .collect()
+        .collect();
+    Output {
+        files: input.files,
+        semantic: input.semantic,
+        abi,
+    }
 }
 
 // `compute_contracts_abi` already filters out abstract contracts (and
@@ -41,5 +51,5 @@ pub fn test(input: Input) -> Output {
 // length of its output is exactly the number of concrete contracts whose ABI
 // could be computed.
 pub fn count_concrete_contracts(output: &Output) -> usize {
-    output.len()
+    output.abi.len()
 }
