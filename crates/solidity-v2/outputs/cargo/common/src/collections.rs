@@ -9,12 +9,11 @@
 //! | [`OrderedMap`] / [`OrderedSet`] | `IndexMap` / `IndexSet` | insertion order | order is observable (API results, snapshots), or entries need stable indices (interning) |
 //! | [`SortedMap`] / [`SortedSet`]   | `BTreeMap` / `BTreeSet` | sorted by key   | output should be sorted by key, or you need range queries |
 //!
-//! The hash-based aliases use the same `SipHash` algorithm as the `std`
-//! default, but with a fixed seed instead of a random per-process one, so
-//! hashing is fully deterministic from run to run (required by the
-//! instruction-counting benchmarks).
+//! The hash-based aliases use the `FxHash` algorithm (`rustc`'s hasher), which
+//! is seedless and therefore fully deterministic from run to run (required by
+//! the instruction-counting benchmarks).
 //!
-//! The fixed seed forfeits `std`'s `HashDoS` protection; that trade-off is fine for
+//! Being seedless forfeits `std`'s `HashDoS` protection; that trade-off is fine for
 //! certain compiler workloads (like `NodeId`s), but may be unsafe for external keys
 //! (like string interning). If this becomes a problem we should consider another Map/Set
 //! pair that guarantees `HashDoS` protection.
@@ -32,12 +31,13 @@
 // The only place in the v2 crates allowed to name the underlying types:
 #[allow(clippy::disallowed_types)]
 mod aliases {
-    use std::collections::hash_map::DefaultHasher;
     use std::hash::BuildHasherDefault;
 
-    /// `std`'s default `SipHash`, seeded with a fixed key instead of
-    /// `RandomState`'s random per-process one.
-    pub type DeterministicState = BuildHasherDefault<DefaultHasher>;
+    use fxhash::FxHasher;
+
+    /// `FxHash` (`rustc`'s hasher). Seedless, so hashing is fully deterministic
+    /// from run to run, unlike `RandomState`'s random per-process seed.
+    pub type DeterministicState = BuildHasherDefault<FxHasher>;
 
     pub type Map<K, V> = std::collections::HashMap<K, V, DeterministicState>;
 
