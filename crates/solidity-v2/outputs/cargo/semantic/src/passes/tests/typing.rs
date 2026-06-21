@@ -1372,7 +1372,7 @@ fn abi_decode_tuple_of_type_names_types_by_elements() {
     assert_eq!(
         types.get_type_by_id(elements[0]),
         &Type::Integer(IntegerType {
-            signed: false,
+            is_signed: false,
             bits: 256,
         })
     );
@@ -1472,7 +1472,7 @@ fn fixed_size_array_meta_type_from_indexed_type_name() {
     assert_eq!(
         types.get_type_by_id(inner),
         &Type::Integer(IntegerType {
-            signed: false,
+            is_signed: false,
             bits: 256,
         })
     );

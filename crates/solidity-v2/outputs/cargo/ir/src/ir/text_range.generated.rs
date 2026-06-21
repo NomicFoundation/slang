@@ -887,6 +887,16 @@ impl TextRange for ImportClause {
     }
 }
 
+impl TextRange for IndexAccessKind {
+    fn calculate_text_range(&self) -> Option<Range<usize>> {
+        match self {
+            IndexAccessKind::Index => None,
+
+            IndexAccessKind::Slice => None,
+        }
+    }
+}
+
 impl TextRange for InequalityExpressionOperator {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         match self {
