@@ -66,6 +66,7 @@ pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_import_deconstruction(&
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_import_deconstruction_symbol(&mut self, &slang_solidity_v2_ir::ir::ImportDeconstructionSymbol) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_import_deconstruction_symbols(&mut self, &slang_solidity_v2_ir::ir::ImportDeconstructionSymbols) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_index_access_expression(&mut self, &slang_solidity_v2_ir::ir::IndexAccessExpression) -> bool
+pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_index_access_kind(&mut self, &slang_solidity_v2_ir::ir::IndexAccessKind) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_inequality_expression(&mut self, &slang_solidity_v2_ir::ir::InequalityExpression) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_inequality_expression_operator(&mut self, &slang_solidity_v2_ir::ir::InequalityExpressionOperator) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_inheritance_type(&mut self, &slang_solidity_v2_ir::ir::InheritanceType) -> bool
@@ -235,6 +236,7 @@ pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_import_deconstruction(&
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_import_deconstruction_symbol(&mut self, &slang_solidity_v2_ir::ir::ImportDeconstructionSymbol)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_import_deconstruction_symbols(&mut self, &slang_solidity_v2_ir::ir::ImportDeconstructionSymbols)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_index_access_expression(&mut self, &slang_solidity_v2_ir::ir::IndexAccessExpression)
+pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_index_access_kind(&mut self, &slang_solidity_v2_ir::ir::IndexAccessKind)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_inequality_expression(&mut self, &slang_solidity_v2_ir::ir::InequalityExpression)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_inequality_expression_operator(&mut self, &slang_solidity_v2_ir::ir::InequalityExpressionOperator)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_inheritance_type(&mut self, &slang_solidity_v2_ir::ir::InheritanceType)
@@ -472,6 +474,7 @@ pub fn slang_solidity_v2_ir::ir::visitor::accept_import_clause(&slang_solidity_v
 pub fn slang_solidity_v2_ir::ir::visitor::accept_import_deconstruction(&slang_solidity_v2_ir::ir::ImportDeconstruction, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_import_deconstruction_symbol(&slang_solidity_v2_ir::ir::ImportDeconstructionSymbol, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_index_access_expression(&slang_solidity_v2_ir::ir::IndexAccessExpression, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
+pub fn slang_solidity_v2_ir::ir::visitor::accept_index_access_kind(&slang_solidity_v2_ir::ir::IndexAccessKind, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_inequality_expression(&slang_solidity_v2_ir::ir::InequalityExpression, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_inequality_expression_operator(&slang_solidity_v2_ir::ir::InequalityExpressionOperator, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_inheritance_type(&slang_solidity_v2_ir::ir::InheritanceType, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
@@ -796,6 +799,22 @@ impl core::fmt::Debug for slang_solidity_v2_ir::ir::ImportClause
 pub fn slang_solidity_v2_ir::ir::ImportClause::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ImportClause
 pub fn slang_solidity_v2_ir::ir::ImportClause::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+pub enum slang_solidity_v2_ir::ir::IndexAccessKind
+pub slang_solidity_v2_ir::ir::IndexAccessKind::Index
+pub slang_solidity_v2_ir::ir::IndexAccessKind::Slice
+impl core::clone::Clone for slang_solidity_v2_ir::ir::IndexAccessKind
+pub fn slang_solidity_v2_ir::ir::IndexAccessKind::clone(&self) -> slang_solidity_v2_ir::ir::IndexAccessKind
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::IndexAccessKind
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::IndexAccessKind
+pub fn slang_solidity_v2_ir::ir::IndexAccessKind::eq(&self, &slang_solidity_v2_ir::ir::IndexAccessKind) -> bool
+impl core::fmt::Debug for slang_solidity_v2_ir::ir::IndexAccessKind
+pub fn slang_solidity_v2_ir::ir::IndexAccessKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for slang_solidity_v2_ir::ir::IndexAccessKind
+pub fn slang_solidity_v2_ir::ir::IndexAccessKind::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for slang_solidity_v2_ir::ir::IndexAccessKind
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::IndexAccessKind
+impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::IndexAccessKind
+pub fn slang_solidity_v2_ir::ir::IndexAccessKind::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub enum slang_solidity_v2_ir::ir::InequalityExpressionOperator
 pub slang_solidity_v2_ir::ir::InequalityExpressionOperator::GreaterThan(slang_solidity_v2_ir::ir::GreaterThan)
 pub slang_solidity_v2_ir::ir::InequalityExpressionOperator::GreaterThanEqual(slang_solidity_v2_ir::ir::GreaterThanEqual)
@@ -2066,6 +2085,7 @@ impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ImportDec
 pub fn slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::IndexAccessExpressionStruct
 pub slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::end: core::option::Option<slang_solidity_v2_ir::ir::Expression>
+pub slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::kind: slang_solidity_v2_ir::ir::IndexAccessKind
 pub slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::operand: slang_solidity_v2_ir::ir::Expression
 pub slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::range: core::ops::range::Range<usize>
 pub slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::start: core::option::Option<slang_solidity_v2_ir::ir::Expression>
@@ -3436,6 +3456,8 @@ impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ImportDec
 pub fn slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::IndexAccessExpressionStruct
 pub fn slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::IndexAccessKind
+pub fn slang_solidity_v2_ir::ir::IndexAccessKind::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::InequalityExpressionOperator
 pub fn slang_solidity_v2_ir::ir::InequalityExpressionOperator::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::InequalityExpressionStruct
