@@ -417,7 +417,7 @@ impl SemanticContext {
                     let member_size =
                         self.storage_size_of_type_id_impl(member_type_id, visited_structs)?;
                     let remaining_bytes = Self::SLOT_SIZE - (ptr % Self::SLOT_SIZE);
-                    if remaining_bytes < Self::SLOT_SIZE && member_size >= remaining_bytes {
+                    if remaining_bytes < Self::SLOT_SIZE && member_size > remaining_bytes {
                         ptr += remaining_bytes;
                     }
                     ptr += member_size;
