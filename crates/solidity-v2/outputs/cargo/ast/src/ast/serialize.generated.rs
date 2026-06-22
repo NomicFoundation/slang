@@ -532,13 +532,14 @@ impl Serialize for ImportDeconstructionSymbolStruct {
 
 impl Serialize for IndexAccessExpressionStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(7))?;
+        let mut map = serializer.serialize_map(Some(8))?;
         map.serialize_entry("id", &self.node_id())?;
         map.serialize_entry("type", "IndexAccessExpression")?;
         map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
         map.serialize_entry("file", self.get_file_id())?;
         map.serialize_entry("operand", &self.operand())?;
         map.serialize_entry("start", &self.start())?;
+        map.serialize_entry("kind", &self.kind())?;
         map.serialize_entry("end", &self.end())?;
         map.end()
     }
@@ -1514,6 +1515,23 @@ impl Serialize for ImportClause {
         match self {
             ImportClause::PathImport(inner) => inner.serialize(serializer),
             ImportClause::ImportDeconstruction(inner) => inner.serialize(serializer),
+        }
+    }
+}
+
+impl Serialize for IndexAccessKind {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        match self {
+            IndexAccessKind::Index => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "IndexAccessKind::Index")?;
+                map.end()
+            }
+            IndexAccessKind::Slice => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "IndexAccessKind::Slice")?;
+                map.end()
+            }
         }
     }
 }
