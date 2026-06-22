@@ -511,16 +511,14 @@ impl Binder {
     pub(crate) fn resolve_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
         let scope = self.get_scope_by_id(scope_id);
         match scope {
-            Scope::Block(block_scope) => block_scope.definitions.get(symbol).copied().map_or_else(
+            Scope::Block(block_scope) => block_scope.lookup_definition(symbol).map_or_else(
                 || self.resolve_in_scope(block_scope.parent_scope_id, symbol),
                 Resolution::Definition,
             ),
-            Scope::Chained(chained_scope) => {
-                chained_scope.definitions.get(symbol).copied().map_or_else(
-                    || self.resolve_in_scope(chained_scope.parent_scope_id, symbol),
-                    Resolution::Definition,
-                )
-            }
+            Scope::Chained(chained_scope) => chained_scope.lookup_definition(symbol).map_or_else(
+                || self.resolve_in_scope(chained_scope.parent_scope_id, symbol),
+                Resolution::Definition,
+            ),
             Scope::Contract(contract_scope) => {
                 self.resolve_in_contract_scope_internal(
                     contract_scope,
