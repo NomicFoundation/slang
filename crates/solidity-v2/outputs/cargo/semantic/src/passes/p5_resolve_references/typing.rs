@@ -7,9 +7,9 @@ use crate::binder::{Definition, Resolution, Typing};
 use crate::built_ins::InternalBuiltIn;
 use crate::passes::common::node_id_for_expression_typing;
 use crate::types::{
-    literals, AddressType, ContractType, DataLocation, EnumType, FixedSizeArrayType, FunctionType,
-    IntegerType, InterfaceType, LibraryType, LiteralKind, Number, StringType, StructType, Type,
-    TypeId, UserDefinedValueType,
+    literals, AddressType, ArrayType, ContractType, DataLocation, EnumType, FixedSizeArrayType,
+    FunctionType, IntegerType, InterfaceType, LibraryType, LiteralKind, Number, StringType,
+    StructType, Type, TypeId, UserDefinedValueType,
 };
 
 impl Pass<'_> {
@@ -86,6 +86,35 @@ impl Pass<'_> {
                 }))
             }
             _ => None,
+        }
+    }
+
+    /// The array meta-type produced by indexing a type name: `T[n]` with a
+    /// constant size (not a slice) is a fixed-size array; `T[]` is a dynamic one.
+    pub(super) fn meta_array_type(
+        &self,
+        element_type: TypeId,
+        node: &ir::IndexAccessExpression,
+    ) -> Type {
+        let size = if matches!(node.kind, ir::IndexAccessKind::Slice) {
+            None
+        } else {
+            node.start
+                .as_ref()
+                .and_then(|expr| self.typing_of_expression(expr).as_type_id())
+                .and_then(|type_id| self.types.number_value_of_type_id(type_id))
+                .and_then(|number| number.as_usize())
+        };
+        match size {
+            Some(size) => Type::FixedSizeArray(FixedSizeArrayType {
+                element_type,
+                size,
+                location: DataLocation::Memory,
+            }),
+            None => Type::Array(ArrayType {
+                element_type,
+                location: DataLocation::Memory,
+            }),
         }
     }
 
@@ -320,6 +349,20 @@ impl Pass<'_> {
                 };
                 Typing::Resolved(type_id)
             }
+            Typing::UserMetaType(definition_id) => {
+                // `address(L)` for a library `L` yields its address — a library name
+                // is the only type-name castable to `address` (contract names are not).
+                if matches!(target_type, Type::Address(_))
+                    && matches!(
+                        self.binder.find_definition_by_id(*definition_id),
+                        Some(Definition::Library(_))
+                    )
+                {
+                    Typing::Resolved(self.types.register_type(target_type))
+                } else {
+                    Typing::Unresolved
+                }
+            }
             _ => Typing::Unresolved,
         }
     }
@@ -432,6 +475,13 @@ impl Pass<'_> {
                         }));
                         Typing::Resolved(type_id)
                     }
+                    Some(Definition::Enum(_)) => {
+                        // `E(x)` casts an integer to the enum
+                        let type_id = self.types.register_type(Type::Enum(EnumType {
+                            definition_id: node_id,
+                        }));
+                        Typing::Resolved(type_id)
+                    }
                     _ => Typing::Unresolved,
                 }
             }
@@ -447,25 +497,27 @@ impl Pass<'_> {
         }
     }
 
+    /// The concrete `TypeId` a typing denotes — a value's own type, or a
+    /// type-name's underlying type registered into the registry. `None` for a
+    /// typing that denotes no type (void, unresolved).
+    pub(super) fn concrete_type_id(&mut self, typing: &Typing) -> Option<TypeId> {
+        match typing {
+            Typing::Resolved(type_id) => Some(*type_id),
+            Typing::MetaType(type_) => Some(self.types.register_type(type_.clone())),
+            Typing::UserMetaType(definition_id) => self
+                .type_of_definition(*definition_id)
+                .map(|type_| self.types.register_type(type_)),
+            _ => None,
+        }
+    }
+
     fn typing_of_abi_decode(&mut self, argument_typings: &[Typing]) -> Typing {
         if argument_typings.len() != 2 {
             return Typing::Unresolved;
         }
-        match &argument_typings[1] {
-            Typing::Resolved(type_id) => {
-                // TODO(validation) SDR[42]: this only makes sense if type_id is a tuple
-                Typing::Resolved(*type_id)
-            }
-            Typing::UserMetaType(definition_id) => {
-                if let Some(type_) = self.type_of_definition(*definition_id) {
-                    Typing::Resolved(self.types.register_type(type_))
-                } else {
-                    Typing::Unresolved
-                }
-            }
-            Typing::MetaType(type_) => Typing::Resolved(self.types.register_type(type_.clone())),
-            _ => Typing::Unresolved,
-        }
+        // TODO(validation) SDR[42]: the second argument should be a tuple type
+        self.concrete_type_id(&argument_typings[1])
+            .map_or(Typing::Unresolved, Typing::Resolved)
     }
 
     pub(super) fn collect_named_argument_typings(
