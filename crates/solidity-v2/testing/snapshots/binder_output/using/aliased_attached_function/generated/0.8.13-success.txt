@@ -1,0 +1,63 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["f" @ main.sol:1:14] (imported symbol)
+- Def: #2 ["Test" @ main.sol:5:10] (contract)
+- Def: #3 ["test" @ main.sol:6:14] (function, type: function (uint256) returns void)
+- Def: #4 ["a" @ main.sol:6:24] (parameter, type: uint256)
+- Def: #5 ["g" @ other.sol:1:10] (function, type: function (uint256) returns void)
+- Def: #6 ["a" @ other.sol:1:17] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["g" @ main.sol:1:9] -> #5
+- Ref: ["f" @ main.sol:3:8] -> #1
+- Ref: ["a" @ main.sol:7:9] -> #4
+- Ref: ["f" @ main.sol:7:11] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ import {g as f} from "other.sol";
+   │         ┬    ┬  
+   │         ╰─────── ref: 5
+   │              │  
+   │              ╰── name: 1
+   │ 
+ 3 │ using {f} for uint;
+   │        ┬  
+   │        ╰── ref: 1
+   │ 
+ 5 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 2
+ 6 │     function test(uint a) public {
+   │              ──┬─      ┬  
+   │                ╰────────── name: 3
+   │                        │  
+   │                        ╰── name: 4
+ 7 │         a.f();
+   │         ┬ ┬  
+   │         ╰──── ref: 4
+   │           │  
+   │           ╰── ref: 5
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[other.sol:1:1]
+   │
+ 1 │ function g(uint a) {}
+   │          ┬      ┬  
+   │          ╰───────── name: 5
+   │                 │  
+   │                 ╰── name: 6
+───╯

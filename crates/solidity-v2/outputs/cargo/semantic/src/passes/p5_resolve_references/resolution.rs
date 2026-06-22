@@ -156,12 +156,8 @@ impl Pass<'_> {
                     return Resolution::Unresolved;
                 };
                 match definition {
-                    Definition::Import(import_definition) => {
-                        if let Some(scope_id) = import_definition
-                            .resolved_file_id
-                            .as_ref()
-                            .and_then(|file_id| self.binder.scope_id_for_file_id(file_id))
-                        {
+                    Definition::Import(_) => {
+                        if let Some(scope_id) = self.binder.namespace_scope_of(*node_id) {
                             self.binder.resolve_in_scope(scope_id, symbol)
                         } else {
                             Resolution::Unresolved
@@ -236,9 +232,13 @@ impl Pass<'_> {
         let mut seen_ids = Set::default();
         for directive in active_directives {
             let scope_id = directive.get_scope_id();
+            // A `using` attachment may name an import alias
+            // (`import {g as f} from "…"; using {f} for T`); follow it to the
+            // underlying function so `x.f` resolves like a direct attachment.
+            let resolution = self.binder.resolve_in_scope_as_namespace(scope_id, symbol);
             let ids = self
                 .binder
-                .resolve_in_scope_as_namespace(scope_id, symbol)
+                .follow_symbol_aliases(&resolution)
                 .get_definition_ids();
             for id in &ids {
                 // Avoid returning duplicate definition IDs. That may happen
@@ -345,7 +345,7 @@ impl Pass<'_> {
                 .binder
                 .follow_symbol_aliases(&resolution)
                 .as_definition_id()
-                .and_then(|definition_id| self.binder.scope_id_for_node_id(definition_id));
+                .and_then(|definition_id| self.binder.namespace_scope_of(definition_id));
 
             let reference = Reference::new(Arc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
