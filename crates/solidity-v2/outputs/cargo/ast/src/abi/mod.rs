@@ -10,7 +10,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::binder::Definition;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{
-    ArrayType, FunctionTypeMutability, StructType, Type, TypeId,
+    ArrayType, FunctionTypeMutability, StructType, TupleType, Type, TypeId,
 };
 
 pub struct ContractAbi {
@@ -20,6 +20,7 @@ pub struct ContractAbi {
     entries: Vec<AbiEntry>,
     storage_layout: Vec<StorageItem>,
     transient_storage_layout: Vec<StorageItem>,
+    next_free_slot: U256,
 }
 
 impl ContractAbi {
@@ -45,6 +46,13 @@ impl ContractAbi {
 
     pub fn transient_storage_layout(&self) -> &[StorageItem] {
         &self.transient_storage_layout
+    }
+
+    /// The first storage slot left free after the persistent (mutable) layout.
+    /// A region appended at this slot cannot alias the tail of a multi-slot
+    /// variable, so a consumer can lay out further state starting here.
+    pub fn next_free_slot(&self) -> U256 {
+        self.next_free_slot
     }
 }
 
@@ -370,14 +378,33 @@ pub(crate) fn extract_function_type_parameters_abi(
             indexed: false,
         });
     }
-    let (type_name, components) = type_as_abi_parameter(semantic, function_type.return_type)?;
-    let outputs = vec![AbiParameter {
-        node_id: None,
-        name: None,
-        type_name,
-        components,
-        indexed: false,
-    }];
+    // A multi-value getter (e.g. a public struct's accessor) has a tuple return type.
+    let outputs = if let Type::Tuple(TupleType { types }) =
+        semantic.types().get_type_by_id(function_type.return_type)
+    {
+        types
+            .iter()
+            .map(|element_type_id| {
+                let (type_name, components) = type_as_abi_parameter(semantic, *element_type_id)?;
+                Some(AbiParameter {
+                    node_id: None,
+                    name: None,
+                    type_name,
+                    components,
+                    indexed: false,
+                })
+            })
+            .collect::<Option<Vec<_>>>()?
+    } else {
+        let (type_name, components) = type_as_abi_parameter(semantic, function_type.return_type)?;
+        vec![AbiParameter {
+            node_id: None,
+            name: None,
+            type_name,
+            components,
+            indexed: false,
+        }]
+    };
     Some((inputs, outputs))
 }
 
