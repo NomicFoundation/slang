@@ -30,7 +30,7 @@ pub(crate) enum Scope {
 pub(crate) struct BlockScope {
     pub(crate) node_id: NodeId,
     pub(crate) parent_scope_id: ScopeId,
-    pub(crate) definitions: Map<String, NodeId>,
+    pub(crate) definitions: Vec<(String, NodeId)>,
 }
 
 /// A "chained" continuation of the parent's lexical scope, as opposed to a
@@ -40,7 +40,7 @@ pub(crate) struct BlockScope {
 pub(crate) struct ChainedScope {
     pub(crate) node_id: NodeId,
     pub(crate) parent_scope_id: ScopeId,
-    pub(crate) definitions: Map<String, NodeId>,
+    pub(crate) definitions: Vec<(String, NodeId)>,
 }
 
 pub(crate) struct ContractScope {
@@ -239,12 +239,16 @@ impl BlockScope {
         Self {
             node_id,
             parent_scope_id,
-            definitions: Map::default(),
+            definitions: Vec::new(),
         }
     }
 
     pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
-        self.definitions.insert(symbol, node_id);
+        self.definitions.push((symbol, node_id));
+    }
+
+    pub(crate) fn lookup_definition(&self, symbol: &str) -> Option<NodeId> {
+        lookup_definition(&self.definitions, symbol)
     }
 }
 
@@ -253,13 +257,28 @@ impl ChainedScope {
         Self {
             node_id,
             parent_scope_id,
-            definitions: Map::default(),
+            definitions: Vec::new(),
         }
     }
 
     pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
-        self.definitions.insert(symbol, node_id);
+        self.definitions.push((symbol, node_id));
     }
+
+    pub(crate) fn lookup_definition(&self, symbol: &str) -> Option<NodeId> {
+        lookup_definition(&self.definitions, symbol)
+    }
+}
+
+/// Looks up a symbol in a `Vec`-backed definitions list, returning the most
+/// recently inserted match to mirror the previous map-based semantics where a
+/// later insertion overwrote an earlier one.
+fn lookup_definition(definitions: &[(String, NodeId)], symbol: &str) -> Option<NodeId> {
+    definitions
+        .iter()
+        .rev()
+        .find(|(name, _)| name == symbol)
+        .map(|(_, node_id)| *node_id)
 }
 
 impl ContractScope {
