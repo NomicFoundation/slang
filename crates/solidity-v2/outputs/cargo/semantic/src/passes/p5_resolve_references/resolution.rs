@@ -9,6 +9,7 @@ use crate::binder::{
     Definition, Reference, Resolution, ResolveOptions, ScopeId, Typing, UsingDirective,
 };
 use crate::built_ins::BuiltInsResolver;
+use crate::passes::common::find_definition_namespace_scope_id;
 use crate::types::{ContractType, InterfaceType, StructType, Type, TypeId};
 
 /// Lexical style resolution of symbols
@@ -155,31 +156,10 @@ impl Pass<'_> {
                 let Some(definition) = self.binder.find_definition_by_id(*node_id) else {
                     return Resolution::Unresolved;
                 };
-                match definition {
-                    Definition::Import(import_definition) => {
-                        if let Some(scope_id) = import_definition
-                            .resolved_file_id
-                            .as_ref()
-                            .and_then(|file_id| self.binder.scope_id_for_file_id(file_id))
-                        {
-                            self.binder.resolve_in_scope(scope_id, symbol)
-                        } else {
-                            Resolution::Unresolved
-                        }
-                    }
-                    Definition::Contract(_)
-                    | Definition::Enum(_)
-                    | Definition::Interface(_)
-                    | Definition::Library(_) => {
-                        // this is a "namespace" lookup
-                        if let Some(scope_id) = self.binder.scope_id_for_node_id(*node_id) {
-                            self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
-                        } else {
-                            Resolution::Unresolved
-                        }
-                    }
-                    _ => BuiltInsResolver::lookup_member_of_user_definition(definition, symbol)
-                        .into(),
+                if let Some(scope_id) = find_definition_namespace_scope_id(self.binder, *node_id) {
+                    self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
+                } else {
+                    BuiltInsResolver::lookup_member_of_user_definition(definition, symbol).into()
                 }
             }
             Typing::BuiltIn(built_in) => self
@@ -236,9 +216,10 @@ impl Pass<'_> {
         let mut seen_ids = Set::default();
         for directive in active_directives {
             let scope_id = directive.get_scope_id();
+            let resolution = self.binder.resolve_in_scope_as_namespace(scope_id, symbol);
             let ids = self
                 .binder
-                .resolve_in_scope_as_namespace(scope_id, symbol)
+                .follow_symbol_aliases(&resolution)
                 .get_definition_ids();
             for id in &ids {
                 // Avoid returning duplicate definition IDs. That may happen
@@ -313,12 +294,11 @@ impl Pass<'_> {
     ) {
         let identifier_path = &modifier_invocation.name;
         let mut scope_id = self.current_contract_scope_id();
-        let mut use_contract_lookup = true;
         for (index, identifier) in identifier_path.iter().enumerate() {
             let resolution = if let Some(scope_id) = scope_id {
                 let symbol = identifier.unparse();
-                if use_contract_lookup {
-                    use_contract_lookup = false;
+                if index == 0 {
+                    // we use lexical/contract resolution only for the first segment in the path
                     self.resolve_symbol_in_scope(scope_id, symbol)
                 } else {
                     self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
@@ -340,15 +320,17 @@ impl Pass<'_> {
                 resolution
             };
 
+            let reference = Reference::new(Arc::clone(identifier), resolution.clone());
+            self.binder.insert_reference(reference);
+
             // NOTE: we need to follow symbol aliases to resolve the next scope to use
             scope_id = self
                 .binder
                 .follow_symbol_aliases(&resolution)
                 .as_definition_id()
-                .and_then(|definition_id| self.binder.scope_id_for_node_id(definition_id));
-
-            let reference = Reference::new(Arc::clone(identifier), resolution);
-            self.binder.insert_reference(reference);
+                .and_then(|definition_id| {
+                    find_definition_namespace_scope_id(self.binder, definition_id)
+                });
         }
     }
 

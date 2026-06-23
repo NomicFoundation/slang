@@ -13,9 +13,7 @@ mod scopes;
 
 pub(crate) use assembly::AssemblyBlock;
 pub use definitions::Definition;
-pub(crate) use definitions::{
-    ConstantDefinition, ContractDefinition, ImportDefinition, InterfaceDefinition,
-};
+pub(crate) use definitions::{ConstantDefinition, ContractDefinition, InterfaceDefinition};
 pub use references::{Reference, Resolution};
 use scopes::ContractScope;
 pub(crate) use scopes::{FileScope, ParameterDefinition, ParametersScope, Scope, UsingDirective};
@@ -631,6 +629,10 @@ impl Binder {
                 ResolveOptions::Qualified,
             ),
             Scope::Enum(enum_scope) => enum_scope.definitions.get(symbol).into(),
+            Scope::File(file_scope) => {
+                // We can get here by a file named file import
+                self.resolve_in_file_scope(&file_scope.file_id, symbol)
+            }
             Scope::Struct(struct_scope) => struct_scope.definitions.get(symbol).into(),
             Scope::Using(using_scope) => using_scope
                 .symbols
@@ -643,7 +645,6 @@ impl Binder {
 
             Scope::Block(_)
             | Scope::Chained(_)
-            | Scope::File(_)
             | Scope::Function(_)
             | Scope::Modifier(_)
             | Scope::YulBlock(_)
