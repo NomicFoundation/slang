@@ -50,6 +50,10 @@ enum LintCommand {
     Tsc,
     /// Check for violations issues in Yaml files.
     Yamllint,
+    /// Lint GitHub Actions workflow files (runs shellcheck on `run:` scripts).
+    Actionlint,
+    /// Audit GitHub Actions workflows/actions for security issues.
+    Zizmor,
     /// Check for violations in TypeScript documentation files.
     Typedoc,
 }
@@ -71,6 +75,8 @@ impl OrderedCommand for LintCommand {
             LintCommand::Shellcheck => run_shellcheck()?,
             LintCommand::Tsc => run_tsc(),
             LintCommand::Yamllint => run_yamllint()?,
+            LintCommand::Actionlint => run_actionlint(),
+            LintCommand::Zizmor => run_zizmor(),
             LintCommand::Typedoc => run_typedoc()?,
         }
 
@@ -205,6 +211,23 @@ fn run_yamllint() -> Result<()> {
         .run_xargs(yaml_files);
 
     Ok(())
+}
+
+fn run_actionlint() {
+    Command::new("actionlint").run();
+}
+
+fn run_zizmor() {
+    let github_dir = Path::repo_path(".github");
+
+    let mut command = Command::new("zizmor").flag("--offline");
+
+    if GitHub::is_running_in_ci() {
+        // Emit GitHub annotations so findings surface inline on the PR diff.
+        command = command.property("--format", "github");
+    }
+
+    command.arg(github_dir.unwrap_str()).run();
 }
 
 fn run_typedoc() -> Result<()> {

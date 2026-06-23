@@ -1,4 +1,5 @@
 name: "cache/cargo-cooldown/save"
+description: "Save the cargo-cooldown-check cache."
 
 runs:
   using: "composite"

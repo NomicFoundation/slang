@@ -34,4 +34,5 @@ jobs:
         continue-on-error: true
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
-        run: "./scripts/bin/infra perf archive --branch ${{ github.head_ref }}"
+          HEAD_REF: "${{ github.head_ref }}"
+        run: './scripts/bin/infra perf archive --branch "${HEAD_REF}"'

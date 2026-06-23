@@ -1,4 +1,5 @@
 name: "cache/cargo-cooldown/restore"
+description: "Restore the cargo-cooldown-check cache."
 
 runs:
   using: "composite"

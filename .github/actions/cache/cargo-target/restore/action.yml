@@ -1,4 +1,5 @@
 name: "cache/cargo-target/restore"
+description: "Restore the Cargo build-artifact (target/) cache."
 
 runs:
   using: "composite"

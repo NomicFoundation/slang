@@ -1,4 +1,5 @@
 name: "cache/cargo-target/save"
+description: "Save the Cargo build-artifact (target/) cache."
 
 runs:
   using: "composite"

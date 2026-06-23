@@ -1,4 +1,5 @@
 name: "git/restore-mtime"
+description: "Restore file mtimes to their last-commit time so cargo fingerprints stay valid after checkout."
 
 runs:
   using: "composite"
