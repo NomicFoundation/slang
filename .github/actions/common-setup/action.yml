@@ -1,11 +1,16 @@
 name: "common-setup"
 description: >
   Shared CI setup: frees disk space, restores file mtimes and (optionally) the
-  dependency/cargo-target caches, sets up SFW, and runs 'infra setup' for the
-  requested tools. The caller must check out the repository before using this
-  action (local actions are only resolvable post-checkout).
+  dependency/cargo-target caches, sets up SFW, and optionally runs 'infra setup'
+  for the requested tools. The caller must check out the repository before using
+  this action (local actions are only resolvable post-checkout).
 
 inputs:
+  infra-setup:
+    description: >
+      Whether to run 'infra setup' (true/false). Defaults to "true" (run setup).
+    required: false
+    default: "true"
   setup-tools:
     description: >
       Tools to pass to 'infra setup' (e.g. "cargo", "cargo pipenv", "cargo npm").
@@ -35,6 +40,13 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: "Validate inputs"
+      if: "${{ inputs.infra-setup == 'false' && inputs.setup-tools != '' }}"
+      shell: "bash"
+      run: |
+        echo "Error: 'setup-tools' is set but 'infra-setup' is false — tools would be ignored."
+        exit 1
+
     - name: "Free up disk space"
       uses: "./.github/actions/free-disk-space"
 
@@ -56,5 +68,8 @@ runs:
         optional: "${{ inputs.sfw-optional }}"
 
     - name: "infra setup ${{ inputs.setup-tools }}"
+      if: "${{ inputs.infra-setup == 'true' }}"
       shell: "bash"
-      run: "${SFW_PREFIX:-} ./scripts/bin/infra setup ${{ inputs.setup-tools }}"
+      env:
+        SETUP_TOOLS: "${{ inputs.setup-tools }}"
+      run: "${SFW_PREFIX:-} ./scripts/bin/infra setup ${SETUP_TOOLS}"

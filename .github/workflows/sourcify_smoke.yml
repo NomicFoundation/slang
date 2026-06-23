@@ -19,7 +19,6 @@ jobs:
     permissions:
       contents: "read"
 
-    # Not common-setup: builds the sourcify binary directly (no 'infra setup'); needs no SFW.
     steps:
       - name: "Checkout Repository"
         uses: "actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10" # v6.0.3
@@ -27,17 +26,11 @@ jobs:
           persist-credentials: false
           fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
-      - name: "Free up disk space"
-        uses: "./.github/actions/free-disk-space"
-
-      - name: "Restore file mtimes from git"
-        uses: "./.github/actions/git/restore-mtime"
-
-      - name: "Restore Dependencies Cache"
-        uses: "./.github/actions/cache/dependencies/restore"
-
-      - name: "Restore Cargo Target Cache"
-        uses: "./.github/actions/cache/cargo-target/restore"
+      - name: "Common Setup"
+        uses: "./.github/actions/common-setup"
+        with:
+          infra-setup: "false"
+          sfw-optional: "true"
 
       - name: "Smoke Test > Build sourcify binary"
-        run: "./scripts/bin/with-hermit cargo build --locked --bin solidity_testing_sourcify"
+        run: "${SFW_PREFIX:-} ./scripts/bin/with-hermit cargo build --locked --bin solidity_testing_sourcify"
