@@ -1781,6 +1781,10 @@ impl IndexAccessExpressionStruct {
             .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
 
+    pub fn kind(&self) -> IndexAccessKind {
+        create_index_access_kind(&self.ir_node.kind, &self.semantic)
+    }
+
     pub fn end(&self) -> Option<Expression> {
         self.ir_node
             .end
@@ -4768,6 +4772,24 @@ pub(crate) fn create_import_clause(
         ir::ImportClause::ImportDeconstruction(variant) => {
             ImportClause::ImportDeconstruction(create_import_deconstruction(variant, semantic))
         }
+    }
+}
+
+#[derive(Clone)]
+pub enum IndexAccessKind {
+    Index,
+    Slice,
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_index_access_kind(
+    ir_node: &ir::IndexAccessKind,
+    semantic: &Arc<SemanticContext>,
+) -> IndexAccessKind {
+    match ir_node {
+        ir::IndexAccessKind::Index => IndexAccessKind::Index,
+        ir::IndexAccessKind::Slice => IndexAccessKind::Slice,
     }
 }
 

@@ -197,6 +197,7 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_import_deconstruction
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_import_deconstruction_symbol(&mut self, &slang_solidity_v2_ast::ast::ImportDeconstructionSymbol) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_import_deconstruction_symbols(&mut self, &slang_solidity_v2_ast::ast::ImportDeconstructionSymbols) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_index_access_expression(&mut self, &slang_solidity_v2_ast::ast::IndexAccessExpression) -> bool
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_index_access_kind(&mut self, &slang_solidity_v2_ast::ast::IndexAccessKind) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_inequality_expression(&mut self, &slang_solidity_v2_ast::ast::InequalityExpression) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_inequality_expression_operator(&mut self, &slang_solidity_v2_ast::ast::InequalityExpressionOperator) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_inheritance_type(&mut self, &slang_solidity_v2_ast::ast::InheritanceType) -> bool
@@ -366,6 +367,7 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_import_deconstruction
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_import_deconstruction_symbol(&mut self, &slang_solidity_v2_ast::ast::ImportDeconstructionSymbol)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_import_deconstruction_symbols(&mut self, &slang_solidity_v2_ast::ast::ImportDeconstructionSymbols)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_index_access_expression(&mut self, &slang_solidity_v2_ast::ast::IndexAccessExpression)
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_index_access_kind(&mut self, &slang_solidity_v2_ast::ast::IndexAccessKind)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_inequality_expression(&mut self, &slang_solidity_v2_ast::ast::InequalityExpression)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_inequality_expression_operator(&mut self, &slang_solidity_v2_ast::ast::InequalityExpressionOperator)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_inheritance_type(&mut self, &slang_solidity_v2_ast::ast::InheritanceType)
@@ -539,6 +541,7 @@ pub fn slang_solidity_v2_ast::ast::visitor::accept_import_clause(&slang_solidity
 pub fn slang_solidity_v2_ast::ast::visitor::accept_import_deconstruction(&slang_solidity_v2_ast::ast::ImportDeconstruction, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_import_deconstruction_symbol(&slang_solidity_v2_ast::ast::ImportDeconstructionSymbol, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_index_access_expression(&slang_solidity_v2_ast::ast::IndexAccessExpression, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
+pub fn slang_solidity_v2_ast::ast::visitor::accept_index_access_kind(&slang_solidity_v2_ast::ast::IndexAccessKind, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_inequality_expression(&slang_solidity_v2_ast::ast::InequalityExpression, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_inequality_expression_operator(&slang_solidity_v2_ast::ast::InequalityExpressionOperator, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_inheritance_type(&slang_solidity_v2_ast::ast::InheritanceType, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
@@ -824,6 +827,13 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::ImportClause
 pub fn slang_solidity_v2_ast::ast::ImportClause::clone(&self) -> slang_solidity_v2_ast::ast::ImportClause
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::ImportClause
 pub fn slang_solidity_v2_ast::ast::ImportClause::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub enum slang_solidity_v2_ast::ast::IndexAccessKind
+pub slang_solidity_v2_ast::ast::IndexAccessKind::Index
+pub slang_solidity_v2_ast::ast::IndexAccessKind::Slice
+impl core::clone::Clone for slang_solidity_v2_ast::ast::IndexAccessKind
+pub fn slang_solidity_v2_ast::ast::IndexAccessKind::clone(&self) -> slang_solidity_v2_ast::ast::IndexAccessKind
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::IndexAccessKind
+pub fn slang_solidity_v2_ast::ast::IndexAccessKind::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub enum slang_solidity_v2_ast::ast::InequalityExpressionOperator
 pub slang_solidity_v2_ast::ast::InequalityExpressionOperator::GreaterThan(slang_solidity_v2_ast::ast::GreaterThan)
 pub slang_solidity_v2_ast::ast::InequalityExpressionOperator::GreaterThanEqual(slang_solidity_v2_ast::ast::GreaterThanEqual)
@@ -2017,6 +2027,7 @@ pub fn slang_solidity_v2_ast::ast::IndexAccessExpressionStruct::end(&self) -> co
 pub fn slang_solidity_v2_ast::ast::IndexAccessExpressionStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::IndexAccessExpressionStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::IndexAccessExpressionStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+pub fn slang_solidity_v2_ast::ast::IndexAccessExpressionStruct::kind(&self) -> slang_solidity_v2_ast::ast::IndexAccessKind
 pub fn slang_solidity_v2_ast::ast::IndexAccessExpressionStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::IndexAccessExpressionStruct::operand(&self) -> slang_solidity_v2_ast::ast::Expression
 pub fn slang_solidity_v2_ast::ast::IndexAccessExpressionStruct::start(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Expression>

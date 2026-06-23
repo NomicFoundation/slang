@@ -278,6 +278,13 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .start
             .as_ref()
             .map(|start| self.build_expression(start));
+        // `source.end` is the `[ … : … ]` clause, present iff the source had a
+        // colon, so it marks a slice (`x[a:]`) apart from an index (`x[a]`).
+        let kind = if source.end.is_some() {
+            output::IndexAccessKind::Slice
+        } else {
+            output::IndexAccessKind::Index
+        };
         let end = source
             .end
             .as_ref()
@@ -288,6 +295,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             range,
             operand,
             start,
+            kind,
             end,
         })
     }

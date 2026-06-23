@@ -639,6 +639,7 @@ pub struct IndexAccessExpressionStruct {
     pub range: Range<usize>,
     pub operand: Expression,
     pub start: Option<Expression>,
+    pub kind: IndexAccessKind,
     pub end: Option<Expression>,
 }
 
@@ -1738,6 +1739,12 @@ pub enum FunctionVisibility {
 pub enum ImportClause {
     PathImport(PathImport),
     ImportDeconstruction(ImportDeconstruction),
+}
+
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+pub enum IndexAccessKind {
+    Index,
+    Slice,
 }
 
 #[derive(Clone, Debug)]

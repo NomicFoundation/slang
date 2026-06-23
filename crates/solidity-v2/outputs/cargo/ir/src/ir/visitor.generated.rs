@@ -577,6 +577,11 @@ pub trait Visitor {
     }
     fn leave_import_clause(&mut self, _node: &ImportClause) {}
 
+    fn enter_index_access_kind(&mut self, _node: &IndexAccessKind) -> bool {
+        true
+    }
+    fn leave_index_access_kind(&mut self, _node: &IndexAccessKind) {}
+
     fn enter_inequality_expression_operator(
         &mut self,
         _node: &InequalityExpressionOperator,
@@ -1461,6 +1466,7 @@ pub fn accept_index_access_expression(node: &IndexAccessExpression, visitor: &mu
     if let Some(start) = &node.start {
         accept_expression(start, visitor);
     }
+    accept_index_access_kind(&node.kind, visitor);
     if let Some(end) = &node.end {
         accept_expression(end, visitor);
     }
@@ -2433,6 +2439,17 @@ pub fn accept_import_clause(node: &ImportClause, visitor: &mut impl Visitor) {
         }
     }
     visitor.leave_import_clause(node);
+}
+
+pub fn accept_index_access_kind(node: &IndexAccessKind, visitor: &mut impl Visitor) {
+    if !visitor.enter_index_access_kind(node) {
+        return;
+    }
+    match &node {
+        IndexAccessKind::Index => {}
+        IndexAccessKind::Slice => {}
+    }
+    visitor.leave_index_access_kind(node);
 }
 
 pub fn accept_inequality_expression_operator(
