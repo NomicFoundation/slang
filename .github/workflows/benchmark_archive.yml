@@ -24,25 +24,11 @@ jobs:
           persist-credentials: false
           fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
-      - name: "Free up disk space"
-        uses: "./.github/actions/free-disk-space"
-
-      - name: "Restore file mtimes from git"
-        uses: "./.github/actions/git/restore-mtime"
-
-      - name: "Restore Dependencies Cache"
-        uses: "./.github/actions/cache/dependencies/restore"
-
-      - name: "Restore Cargo Target Cache"
-        uses: "./.github/actions/cache/cargo-target/restore"
-
-      - name: "Setup SFW (optional)"
-        uses: "./.github/actions/setup-sfw"
+      - name: "Setup"
+        uses: "./.github/actions/common-setup"
         with:
-          optional: "true"
-
-      - name: "infra setup cargo"
-        run: "${SFW_PREFIX:-} ./scripts/bin/infra setup cargo"
+          setup-tools: "cargo"
+          sfw-optional: "true"
 
       - name: "infra perf archive"
         continue-on-error: true
