@@ -1311,3 +1311,169 @@ fn test_partially_applied_function_is_not_convertible() {
         "partially applied function pointers should not be convertible",
     );
 }
+
+#[test]
+fn reference_type_constant_is_indexable() {
+    // A `bytes constant` resolves to a memory value, so it can be indexed. Without
+    // a data location the constant stayed `Unresolved` and `B[0]` had no operand
+    // type to index.
+    let (element_type, _types) =
+        type_of_expression_in_context(r#"bytes constant B = hex"1234";"#, "B[0]");
+    assert_eq!(element_type, Type::ByteArray(ByteArrayType { width: 1 }));
+}
+
+#[test]
+fn int_to_enum_conversion_is_enum_typed() {
+    // `E(x)` casts an integer to the enum type.
+    let (expr_type, _types) = type_of_expression_in_context("enum E { A, B }", "E(1)");
+    assert!(matches!(expr_type, Type::Enum(_)));
+}
+
+#[test]
+fn cast_library_to_address_is_address_typed() {
+    // `address(L)` for a library `L` yields its address — a library name is the
+    // only type-name castable to `address`.
+    let source = r#"
+        library MyLib {
+            function f() public pure returns (uint) { return 1; }
+        }
+        contract Test {
+            function probe() internal pure {
+                address(MyLib);
+            }
+        }
+    "#;
+    let TypeAnalysis {
+        file,
+        binder,
+        types,
+    } = analyze(LanguageVersion::LATEST, source);
+
+    let contract = find_contract(&file, "Test");
+    let probe = find_function(&contract.members, "probe").expect("probe function");
+    let body = probe.body.as_ref().expect("probe has a body");
+
+    let typings = expression_statement_types(body, &binder, &types);
+    assert!(
+        matches!(typings.as_slice(), [Some(Type::Address(_))]),
+        "expected `address(MyLib)` to be typed as address, got {typings:?}",
+    );
+}
+
+#[test]
+fn abi_decode_tuple_of_type_names_types_by_elements() {
+    // The element types must be recovered, not collapsed to voids.
+    let (decoded, types) =
+        type_of_expression_in_context("bytes data;", "abi.decode(data, (uint256, bool))");
+    let Type::Tuple(TupleType { types: elements }) = decoded else {
+        panic!("expected a tuple type, got {decoded:?}");
+    };
+    assert_eq!(elements.len(), 2);
+    assert_eq!(
+        types.get_type_by_id(elements[0]),
+        &Type::Integer(IntegerType {
+            is_signed: false,
+            bits: 256,
+        })
+    );
+    assert_eq!(types.get_type_by_id(elements[1]), &Type::Boolean);
+}
+
+#[test]
+fn open_ended_slice_is_a_range_access() {
+    // `data[a:]` (open-ended slice) is a range access like `data[a:b]`; keying on
+    // the upper bound alone would mis-type it as an element index.
+    let source = r#"
+        contract Test {
+            function probe(bytes calldata data) external pure {
+                data[1:];
+                data[1];
+            }
+        }
+    "#;
+    let TypeAnalysis {
+        file,
+        binder,
+        types,
+    } = analyze(LanguageVersion::LATEST, source);
+
+    let contract = find_contract(&file, "Test");
+    let probe = find_function(&contract.members, "probe").expect("probe function");
+    let body = probe.body.as_ref().expect("probe has a body");
+
+    let typings = expression_statement_types(body, &binder, &types);
+    let [slice, element] = typings.as_slice() else {
+        panic!("expected two expression statements, got {typings:?}");
+    };
+    assert!(
+        matches!(slice, Some(Type::Bytes(_))),
+        "expected `data[1:]` to be a bytes slice, got {slice:?}",
+    );
+    assert_eq!(element, &Some(Type::ByteArray(ByteArrayType { width: 1 })));
+}
+
+#[test]
+fn string_slice_is_a_string() {
+    // A slice of a string is a string; `s[i]` is invalid Solidity, so a
+    // non-range index has no element type.
+    let source = r#"
+        contract Test {
+            function probe(string calldata s) external pure {
+                s[1:];
+                s[0];
+            }
+        }
+    "#;
+    let TypeAnalysis {
+        file,
+        binder,
+        types,
+    } = analyze(LanguageVersion::LATEST, source);
+
+    let contract = find_contract(&file, "Test");
+    let probe = find_function(&contract.members, "probe").expect("probe function");
+    let body = probe.body.as_ref().expect("probe has a body");
+
+    let typings = expression_statement_types(body, &binder, &types);
+    let [slice, element] = typings.as_slice() else {
+        panic!("expected two expression statements, got {typings:?}");
+    };
+    assert!(
+        matches!(slice, Some(Type::String(_))),
+        "expected `s[1:]` to be a string, got {slice:?}",
+    );
+    assert_eq!(element, &None);
+}
+
+#[test]
+fn fixed_size_array_meta_type_from_indexed_type_name() {
+    // `abi.decode(d, (uint256[2][3]))` decodes a fixed nested array, not a
+    // dynamic `uint256[][]`.
+    let (decoded, types) =
+        type_of_expression_in_context("bytes data;", "abi.decode(data, (uint256[2][3]))");
+
+    let Type::FixedSizeArray(FixedSizeArrayType {
+        element_type, size, ..
+    }) = decoded
+    else {
+        panic!("expected a fixed-size array, got {decoded:?}");
+    };
+    assert_eq!(size, 3);
+
+    let Type::FixedSizeArray(FixedSizeArrayType {
+        element_type: inner,
+        size: inner_size,
+        ..
+    }) = types.get_type_by_id(element_type).clone()
+    else {
+        panic!("expected a nested fixed-size array");
+    };
+    assert_eq!(inner_size, 2);
+    assert_eq!(
+        types.get_type_by_id(inner),
+        &Type::Integer(IntegerType {
+            is_signed: false,
+            bits: 256,
+        })
+    );
+}
