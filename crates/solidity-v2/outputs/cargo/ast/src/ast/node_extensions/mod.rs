@@ -1,3 +1,4 @@
+mod arguments_declaration;
 mod common;
 
 mod assembly_statement;
@@ -12,5 +13,7 @@ mod expression;
 mod function_call_expression;
 mod identifier;
 mod identifier_path;
+mod named_arguments;
 mod source_unit;
 mod string_expression;
+mod yul_literal;
