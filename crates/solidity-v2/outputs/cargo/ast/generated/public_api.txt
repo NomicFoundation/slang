@@ -639,6 +639,8 @@ pub fn slang_solidity_v2_ast::ast::AdditiveExpressionOperator::serialize<S: serd
 pub enum slang_solidity_v2_ast::ast::ArgumentsDeclaration
 pub slang_solidity_v2_ast::ast::ArgumentsDeclaration::NamedArguments(slang_solidity_v2_ast::ast::NamedArguments)
 pub slang_solidity_v2_ast::ast::ArgumentsDeclaration::PositionalArguments(slang_solidity_v2_ast::ast::PositionalArguments)
+impl slang_solidity_v2_ast::ast::ArgumentsDeclaration
+pub fn slang_solidity_v2_ast::ast::ArgumentsDeclaration::ordered_by(&self, &[slang_solidity_v2_common::nodes::NodeId]) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Expression>
 impl core::clone::Clone for slang_solidity_v2_ast::ast::ArgumentsDeclaration
 pub fn slang_solidity_v2_ast::ast::ArgumentsDeclaration::clone(&self) -> slang_solidity_v2_ast::ast::ArgumentsDeclaration
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::ArgumentsDeclaration
@@ -773,6 +775,8 @@ pub slang_solidity_v2_ast::ast::Expression::TupleExpression(slang_solidity_v2_as
 pub slang_solidity_v2_ast::ast::Expression::TypeExpression(slang_solidity_v2_ast::ast::TypeExpression)
 impl slang_solidity_v2_ast::ast::Expression
 pub fn slang_solidity_v2_ast::ast::Expression::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+pub fn slang_solidity_v2_ast::ast::Expression::integer_value(&self) -> core::option::Option<num_bigint::bigint::BigInt>
+pub fn slang_solidity_v2_ast::ast::Expression::unwrap_parentheses(self) -> Self
 impl core::clone::Clone for slang_solidity_v2_ast::ast::Expression
 pub fn slang_solidity_v2_ast::ast::Expression::clone(&self) -> slang_solidity_v2_ast::ast::Expression
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::Expression
@@ -1091,6 +1095,8 @@ pub slang_solidity_v2_ast::ast::YulLiteral::HexLiteral(slang_solidity_v2_ast::as
 pub slang_solidity_v2_ast::ast::YulLiteral::HexStringLiteral(slang_solidity_v2_ast::ast::HexStringLiteral)
 pub slang_solidity_v2_ast::ast::YulLiteral::StringLiteral(slang_solidity_v2_ast::ast::StringLiteral)
 pub slang_solidity_v2_ast::ast::YulLiteral::TrueKeyword(slang_solidity_v2_ast::ast::TrueKeyword)
+impl slang_solidity_v2_ast::ast::YulLiteral
+pub fn slang_solidity_v2_ast::ast::YulLiteral::value(&self) -> num_bigint::bigint::BigInt
 impl core::clone::Clone for slang_solidity_v2_ast::ast::YulLiteral
 pub fn slang_solidity_v2_ast::ast::YulLiteral::clone(&self) -> slang_solidity_v2_ast::ast::YulLiteral
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::YulLiteral
@@ -1512,6 +1518,7 @@ pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::direct_bases(&self)
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::errors(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ErrorDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::events(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::EventDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::is_payable(&self) -> bool
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::linearised_bases(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ContractBase>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::linearised_errors(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ErrorDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::linearised_events(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::EventDefinition>
@@ -1813,6 +1820,8 @@ pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::compute_canonical_s
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::compute_internal_signature(&self) -> core::option::Option<alloc::string::String>
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::compute_selector(&self) -> core::option::Option<u32>
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::is_externally_visible(&self) -> bool
+impl slang_solidity_v2_ast::ast::FunctionDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::enclosing_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::FunctionDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::FunctionType
@@ -2304,6 +2313,8 @@ impl slang_solidity_v2_ast::ast::NamedArgumentsStruct
 pub fn slang_solidity_v2_ast::ast::NamedArgumentsStruct::is_empty(&self) -> bool
 pub fn slang_solidity_v2_ast::ast::NamedArgumentsStruct::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::NamedArgument> + use<'_>
 pub fn slang_solidity_v2_ast::ast::NamedArgumentsStruct::len(&self) -> usize
+impl slang_solidity_v2_ast::ast::NamedArgumentsStruct
+pub fn slang_solidity_v2_ast::ast::NamedArgumentsStruct::ordered_by(&self, &[slang_solidity_v2_common::nodes::NodeId]) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Expression>
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::NamedArgumentsStruct
 pub fn slang_solidity_v2_ast::ast::NamedArgumentsStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::NewExpressionStruct

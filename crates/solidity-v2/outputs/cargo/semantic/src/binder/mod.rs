@@ -166,6 +166,15 @@ impl Binder {
         }
     }
 
+    /// The node id owning the scope that lexically encloses `node_id` — for a
+    /// function, its contract / library / interface (or the file's source unit
+    /// for a free function). `None` when the scope has no single lexical parent.
+    pub fn enclosing_scope_node_id(&self, node_id: NodeId) -> Option<NodeId> {
+        let scope_id = self.scope_id_for_node_id(node_id)?;
+        let parent_scope_id = self.get_scope_by_id(scope_id).parent_scope_id()?;
+        Some(self.get_scope_by_id(parent_scope_id).node_id())
+    }
+
     pub(crate) fn insert_scope(&mut self, scope: Scope) -> ScopeId {
         let scope_id = ScopeId(self.scopes.len());
 
