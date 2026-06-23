@@ -2066,6 +2066,7 @@ impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ImportDec
 pub fn slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::IndexAccessExpressionStruct
 pub slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::end: core::option::Option<slang_solidity_v2_ir::ir::Expression>
+pub slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::is_slice: bool
 pub slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::operand: slang_solidity_v2_ir::ir::Expression
 pub slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::range: core::ops::range::Range<usize>
 pub slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::start: core::option::Option<slang_solidity_v2_ir::ir::Expression>
