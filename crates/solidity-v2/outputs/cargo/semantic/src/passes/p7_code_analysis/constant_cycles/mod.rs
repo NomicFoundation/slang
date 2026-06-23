@@ -202,7 +202,10 @@ impl Visitor for DependencyCollector<'_> {
         if let Some(definition_id) = self
             .binder
             .find_reference_by_identifier_node_id(node.id())
-            .map(|reference| self.binder.follow_symbol_aliases(&reference.resolution))
+            .map(|reference| {
+                self.binder
+                    .follow_symbol_aliases(reference.resolution.clone())
+            })
             .and_then(|resolution| resolution.as_definition_id())
             .filter(|&id| {
                 matches!(

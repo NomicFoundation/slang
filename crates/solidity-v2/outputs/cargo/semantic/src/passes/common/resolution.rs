@@ -34,7 +34,7 @@ pub(crate) fn resolve_identifier_path_in_scope(
         let reference = Reference::new(Arc::clone(identifier), resolution.clone());
         binder.insert_reference(reference);
 
-        resolution = binder.follow_symbol_aliases(&resolution);
+        resolution = binder.follow_symbol_aliases(resolution);
 
         // Change the resolution scope to be that of the last resolved
         // definition, so we can resolve the next identifier in the path.

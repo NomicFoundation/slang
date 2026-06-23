@@ -219,7 +219,7 @@ impl Pass<'_> {
             let resolution = self.binder.resolve_in_scope_as_namespace(scope_id, symbol);
             let ids = self
                 .binder
-                .follow_symbol_aliases(&resolution)
+                .follow_symbol_aliases(resolution)
                 .get_definition_ids();
             for id in &ids {
                 // Avoid returning duplicate definition IDs. That may happen
@@ -326,7 +326,7 @@ impl Pass<'_> {
             // NOTE: we need to follow symbol aliases to resolve the next scope to use
             scope_id = self
                 .binder
-                .follow_symbol_aliases(&resolution)
+                .follow_symbol_aliases(resolution)
                 .as_definition_id()
                 .and_then(|definition_id| {
                     find_definition_namespace_scope_id(self.binder, definition_id)
