@@ -1,0 +1,34 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["Test" @ input.sol:5:10] (contract)
+- Def: #2 ["power" @ input.sol:6:36] (state var, type: uint256[1024] storage)
+- Def: #3 ["scientific" @ input.sol:7:30] (state var, type: uint256[10] storage)
+- Def: #4 ["shifted" @ input.sol:8:34] (state var, type: uint256[32] storage)
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 5 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 6 │     uint256[2 ** 5000 / 2 ** 4990] power;
+   │                                    ──┬──  
+   │                                      ╰──── name: 2
+ 7 │     uint256[1e2000 / 1e1999] scientific;
+   │                              ─────┬────  
+   │                                   ╰────── name: 3
+ 8 │     uint256[(1 << 5000) >> 4995] shifted;
+   │                                  ───┬───  
+   │                                     ╰───── name: 4
+───╯

@@ -33,8 +33,33 @@ mod arrays {
     }
 
     #[test]
+    fn fixed_size_with_cyclic_imported_constants() -> Result<()> {
+        run("arrays", "fixed_size_with_cyclic_imported_constants")
+    }
+
+    #[test]
+    fn fixed_size_with_forward_constants() -> Result<()> {
+        run("arrays", "fixed_size_with_forward_constants")
+    }
+
+    #[test]
+    fn fixed_size_with_forward_imported_constants() -> Result<()> {
+        run("arrays", "fixed_size_with_forward_imported_constants")
+    }
+
+    #[test]
+    fn fixed_size_with_imported_constants() -> Result<()> {
+        run("arrays", "fixed_size_with_imported_constants")
+    }
+
+    #[test]
     fn fixed_size_with_shadowed_constants() -> Result<()> {
         run("arrays", "fixed_size_with_shadowed_constants")
+    }
+
+    #[test]
+    fn fixed_size_with_unbounded_precision_literals() -> Result<()> {
+        run("arrays", "fixed_size_with_unbounded_precision_literals")
     }
 
     #[test]
