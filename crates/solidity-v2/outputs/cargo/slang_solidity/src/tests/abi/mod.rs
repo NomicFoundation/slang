@@ -19,6 +19,16 @@ contract Test {
 );
 
 define_fixture!(
+    AbiStructGetter,
+    file: "main.sol", r#"
+contract Test {
+    struct Point { uint256 x; uint256 y; }
+    Point public origin;
+}
+"#,
+);
+
+define_fixture!(
     FullAbi,
     file: "main.sol", r#"
 // SPDX-License-Identifier: UNLICENSED
