@@ -21,6 +21,7 @@ pub struct ContractAbi {
     entries: Vec<AbiEntry>,
     storage_layout: Vec<StorageItem>,
     transient_storage_layout: Vec<StorageItem>,
+    next_free_slot: U256,
 }
 
 impl ContractAbi {
@@ -46,6 +47,10 @@ impl ContractAbi {
 
     pub fn transient_storage_layout(&self) -> &[StorageItem] {
         &self.transient_storage_layout
+    }
+
+    pub fn next_free_slot(&self) -> U256 {
+        self.next_free_slot
     }
 }
 

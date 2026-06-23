@@ -58,6 +58,19 @@ contract F layout at erc7201("example.main") {
 "#,
 );
 
+define_fixture!(
+    ImmutableAfterMultiSlot,
+    file: "main.sol", r#"
+contract Test {
+    uint256 x;
+    uint256[3] arr;
+    uint256 immutable i0 = 1;
+    uint128 immutable i1 = 2;
+    uint128 immutable i2 = 3;
+}
+"#,
+);
+
 macro_rules! assert_layout_item_eq {
     ($item:expr, $name:expr, $slot:expr, $offset:expr, $type:expr) => {
         assert_eq!($item.label(), $name);
@@ -185,4 +198,42 @@ fn test_erc7201_storage_layout() {
     assert_eq!(f_layout.len(), 2);
     assert_layout_item_eq!(f_layout[0], "u", base_slot, 0, "uint256");
     assert_layout_item_eq!(f_layout[1], "v", base_slot + uint!(1_U256), 0, "uint256");
+}
+
+#[test]
+fn test_next_free_slot() {
+    let unit = StorageLayout::build_compilation_unit();
+
+    // Contract `A`: `a` persists at slot 0 and the `constant` is inlined (no
+    // slot), so the first slot free after the persistent layout is 1.
+    let a = unit
+        .find_contract_by_name("A")
+        .next()
+        .expect("contract can be found");
+    let a_abi = a.compute_abi().expect("can compute ABI");
+
+    let a_layout = a_abi.storage_layout();
+    assert_eq!(a_layout.len(), 1);
+    assert_layout_item_eq!(a_layout[0], "a", uint!(0_U256), 0, "uint256");
+
+    assert_eq!(a_abi.next_free_slot(), uint!(1_U256));
+}
+
+#[test]
+fn test_next_free_slot_clears_a_multi_slot_tail() {
+    // `arr` occupies slots 1..=3, so the next free slot must be 4 — not
+    // `(max start slot) + 1 = 2`, which would alias the array's tail.
+    let unit = ImmutableAfterMultiSlot::build_compilation_unit();
+    let contract = unit
+        .find_contract_by_name("Test")
+        .next()
+        .expect("contract can be found");
+    let abi = contract.compute_abi().expect("can compute ABI");
+
+    let layout = abi.storage_layout();
+    assert_eq!(layout.len(), 2);
+    assert_layout_item_eq!(layout[0], "x", uint!(0_U256), 0, "uint256");
+    assert_layout_item_eq!(layout[1], "arr", uint!(1_U256), 0, "uint256[3]");
+
+    assert_eq!(abi.next_free_slot(), uint!(4_U256));
 }
