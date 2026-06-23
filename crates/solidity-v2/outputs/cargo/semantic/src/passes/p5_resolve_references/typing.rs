@@ -287,20 +287,18 @@ impl Pass<'_> {
     /// Returns the typing of the *receiver* of a call — the operand of the
     /// member access being called (eg. for `a.f(...)`, the typing of `a`).
     /// Returns `None` when the call target is not a member access.
-    fn type_id_of_value_receiver(&self, operand: &ir::Expression) -> Option<Typing> {
+    fn type_id_of_value_receiver(&self, operand: &ir::Expression) -> Option<TypeId> {
         if let ir::Expression::MemberAccessExpression(member_access_expression) = operand {
-            let typing = self.typing_of_expression(&member_access_expression.operand);
+            let type_id = self
+                .typing_of_expression(&member_access_expression.operand)
+                .as_type_id()?;
             // A meta-type operand is a namespace qualifier, not
             // a runtime value, so there is no receiver to bind as an implicit
             // first argument during overload resolution.
-            if self
-                .types
-                .get_type_by_id(typing.as_type_id()?)
-                .is_meta_type()
-            {
+            if self.types.get_type_by_id(type_id).is_meta_type() {
                 return None;
             }
-            Some(typing)
+            Some(type_id)
         } else {
             None
         }
@@ -324,19 +322,22 @@ impl Pass<'_> {
         // The call must reach the function through a contract/interface *type
         // name* (eg. `A.f`) — not a library type name (`L.f` stays a normal
         // callable) nor a member access on a value.
-        let Some(Typing::UserMetaType(container_id)) = self.type_id_of_value_receiver(operand)
+        let Some(type_id) = self.type_id_of_value_receiver(operand) else {
+            return false;
+        };
+        let Type::UserMetaType(UserMetaType { definition_id }) = self.types.get_type_by_id(type_id)
         else {
             return false;
         };
         if !matches!(
-            self.binder.find_definition_by_id(container_id),
+            self.binder.find_definition_by_id(*definition_id),
             Some(Definition::Contract(_) | Definition::Interface(_))
         ) {
             return false;
         }
         match function_type.visibility {
             FunctionTypeVisibility::External => true,
-            FunctionTypeVisibility::Public => self.is_foreign_contract(container_id),
+            FunctionTypeVisibility::Public => self.is_foreign_contract(*definition_id),
             FunctionTypeVisibility::Internal | FunctionTypeVisibility::Private => false,
         }
     }
@@ -442,9 +443,7 @@ impl Pass<'_> {
                 }
             },
             Typing::Undetermined(type_ids) => {
-                let receiver_type_id = self
-                    .type_id_of_value_receiver(&node.operand)
-                    .and_then(|typing| typing.as_type_id());
+                let receiver_type_id = self.type_id_of_value_receiver(&node.operand);
                 let candidate = self.lookup_function_matching_positional_arguments(
                     &type_ids,
                     &argument_typings,
@@ -564,9 +563,7 @@ impl Pass<'_> {
                 }
             },
             Typing::Undetermined(type_ids) => {
-                let receiver_type_id = self
-                    .type_id_of_value_receiver(&node.operand)
-                    .and_then(|typing| typing.as_type_id());
+                let receiver_type_id = self.type_id_of_value_receiver(&node.operand);
                 let argument_typings = self.collect_named_argument_typings(arguments);
                 let candidate = self.lookup_function_matching_named_arguments(
                     &type_ids,

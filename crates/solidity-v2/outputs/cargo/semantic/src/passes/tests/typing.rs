@@ -1980,10 +1980,16 @@ fn test_function_declaration_via_type_name_has_no_mobile_type() {
         )
     };
 
+    let is_meta_type = |typing: &Typing| {
+        typing
+            .as_type_id()
+            .is_some_and(|id| types.get_type_by_id(id).is_meta_type())
+    };
+
     let d = statement_typings("D", "tD");
     // `C.g` (external) is a declaration with no mobile type.
     assert!(
-        matches!(d[0], Typing::UserMetaType(_)),
+        is_meta_type(&d[0]),
         "C.g should be a function declaration, got {:?}",
         d[0]
     );
@@ -2010,7 +2016,7 @@ fn test_function_declaration_via_type_name_has_no_mobile_type() {
     );
     // `I.h` (interface, external) is a declaration.
     assert!(
-        matches!(d[4], Typing::UserMetaType(_)),
+        is_meta_type(&d[4]),
         "I.h should be a function declaration, got {:?}",
         d[4]
     );
@@ -2018,7 +2024,7 @@ fn test_function_declaration_via_type_name_has_no_mobile_type() {
     // `C.pub` accessed from an unrelated contract (foreign) is a declaration.
     let e = statement_typings("E", "tE");
     assert!(
-        matches!(e[0], Typing::UserMetaType(_)),
+        is_meta_type(&e[0]),
         "foreign C.pub should be a function declaration, got {:?}",
         e[0]
     );

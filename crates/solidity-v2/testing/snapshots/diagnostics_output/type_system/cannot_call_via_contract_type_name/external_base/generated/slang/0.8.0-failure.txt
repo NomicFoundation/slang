@@ -3,9 +3,9 @@
 Diagnostics: 1
 
 Error: Cannot call function via contract type name.
-    ╭─[input.sol:17:9]
+    ╭─[input.sol:20:9]
     │
- 17 │         base.intl();
-    │         ─────┬─────  
-    │              ╰─────── Error occurred here.
+ 20 │         base.ext();
+    │         ─────┬────  
+    │              ╰────── Error occurred here.
 ────╯
