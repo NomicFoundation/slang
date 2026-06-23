@@ -532,7 +532,7 @@ impl Serialize for ImportDeconstructionSymbolStruct {
 
 impl Serialize for IndexAccessExpressionStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(7))?;
+        let mut map = serializer.serialize_map(Some(8))?;
         map.serialize_entry("id", &self.node_id())?;
         map.serialize_entry("type", "IndexAccessExpression")?;
         map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
@@ -540,6 +540,7 @@ impl Serialize for IndexAccessExpressionStruct {
         map.serialize_entry("operand", &self.operand())?;
         map.serialize_entry("start", &self.start())?;
         map.serialize_entry("end", &self.end())?;
+        map.serialize_entry("is_slice", &self.is_slice())?;
         map.end()
     }
 }

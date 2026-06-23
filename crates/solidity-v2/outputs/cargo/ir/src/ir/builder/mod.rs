@@ -278,6 +278,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .start
             .as_ref()
             .map(|start| self.build_expression(start));
+        let is_slice = source.end.is_some();
         let end = source
             .end
             .as_ref()
@@ -289,6 +290,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             operand,
             start,
             end,
+            is_slice,
         })
     }
 

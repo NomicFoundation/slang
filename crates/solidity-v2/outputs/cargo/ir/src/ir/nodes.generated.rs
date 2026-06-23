@@ -640,6 +640,7 @@ pub struct IndexAccessExpressionStruct {
     pub operand: Expression,
     pub start: Option<Expression>,
     pub end: Option<Expression>,
+    pub is_slice: bool,
 }
 
 impl IndexAccessExpressionStruct {

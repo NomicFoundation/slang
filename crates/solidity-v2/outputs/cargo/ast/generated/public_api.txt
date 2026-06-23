@@ -2017,6 +2017,7 @@ pub fn slang_solidity_v2_ast::ast::IndexAccessExpressionStruct::end(&self) -> co
 pub fn slang_solidity_v2_ast::ast::IndexAccessExpressionStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::IndexAccessExpressionStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::IndexAccessExpressionStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+pub fn slang_solidity_v2_ast::ast::IndexAccessExpressionStruct::is_slice(&self) -> bool
 pub fn slang_solidity_v2_ast::ast::IndexAccessExpressionStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::IndexAccessExpressionStruct::operand(&self) -> slang_solidity_v2_ast::ast::Expression
 pub fn slang_solidity_v2_ast::ast::IndexAccessExpressionStruct::start(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Expression>
