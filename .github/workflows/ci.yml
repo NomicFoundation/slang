@@ -59,6 +59,10 @@ jobs:
         run: "./scripts/bin/infra test"
 
       - name: "infra lint"
+        # GH_TOKEN lets zizmor run its online audits (known-vulnerabilities,
+        # tag→SHA resolution); without it zizmor falls back to offline.
+        env:
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         run: "./scripts/bin/infra lint"
 
       # On main pushes, warm the dependency and cargo-target caches with the perf
