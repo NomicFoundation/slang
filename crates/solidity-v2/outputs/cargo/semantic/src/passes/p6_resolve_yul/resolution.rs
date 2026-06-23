@@ -1,5 +1,5 @@
 use super::Pass;
-use crate::binder::{Resolution, ScopeId};
+use crate::binder::{Definition, Resolution, ScopeId};
 use crate::built_ins::BuiltInsResolver;
 use crate::passes::common::filter_overriden_definitions;
 
@@ -32,11 +32,28 @@ impl Pass<'_> {
             self.types,
             self.binder.resolve_in_scope(scope_id, symbol),
         );
-        if resolution == Resolution::Unresolved {
-            BuiltInsResolver::lookup_yul_global(symbol).into()
-        } else {
-            resolution
+
+        let is_solidity_function = |node_id| {
+            matches!(
+                self.binder.find_definition_by_id(node_id),
+                Some(Definition::Function(_))
+            )
+        };
+        let shadows_built_in = match &resolution {
+            Resolution::Definition(node_id) => is_solidity_function(*node_id),
+            Resolution::Ambiguous(node_ids) => {
+                node_ids.iter().copied().all(is_solidity_function)
+            }
+            _ => false,
+        };
+
+        if resolution == Resolution::Unresolved || shadows_built_in {
+            let built_in: Resolution = BuiltInsResolver::lookup_yul_global(symbol).into();
+            if built_in != Resolution::Unresolved {
+                return built_in;
+            }
         }
+        resolution
     }
 
     pub(super) fn resolve_yul_suffix(
