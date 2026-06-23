@@ -7,9 +7,7 @@ use super::Pass;
 use crate::binder::{Reference, Resolution, Typing};
 use crate::built_ins::InternalBuiltIn;
 use crate::passes::common::{filter_overriden_definitions, node_id_for_string_expression_typing};
-use crate::types::{
-    ArrayType, DataLocation, FixedSizeArrayType, MappingType, Number, TupleType, Type,
-};
+use crate::types::{ArrayType, FixedSizeArrayType, MappingType, Number, TupleType, Type};
 
 impl Visitor for Pass<'_> {
     fn enter_source_unit(&mut self, node: &ir::SourceUnit) -> bool {
@@ -297,7 +295,10 @@ impl Visitor for Pass<'_> {
                 let type_id = item
                     .expression
                     .as_ref()
-                    .and_then(|expression| self.typing_of_expression(expression).as_type_id())
+                    .and_then(|expression| {
+                        let typing = self.typing_of_expression(expression);
+                        self.concrete_type_id(&typing)
+                    })
                     .unwrap_or(self.types.void());
                 types.push(type_id);
             }
@@ -373,7 +374,7 @@ impl Visitor for Pass<'_> {
     fn leave_index_access_expression(&mut self, node: &ir::IndexAccessExpression) {
         let typing = match self.typing_of_expression(&node.operand) {
             Typing::Resolved(operand_type_id) => {
-                let range_access = node.end.is_some();
+                let range_access = node.is_slice;
                 let operand_type = self.types.get_type_by_id(operand_type_id);
                 match operand_type {
                     Type::Array(ArrayType { element_type, .. })
@@ -405,6 +406,13 @@ impl Visitor for Pass<'_> {
                             Typing::Resolved(self.types.bytes1())
                         }
                     }
+                    Type::String(_) => {
+                        if range_access {
+                            Typing::Resolved(operand_type_id)
+                        } else {
+                            Typing::Unresolved
+                        }
+                    }
                     Type::Mapping(MappingType { value_type_id, .. }) => {
                         if range_access {
                             Typing::Unresolved
@@ -419,21 +427,15 @@ impl Visitor for Pass<'_> {
                 }
             }
             Typing::MetaType(operand_type) => {
-                // indexing a meta-type creates a new meta-type of the array
-                let operand_type_id = self.types.register_type(operand_type);
-                Typing::MetaType(Type::Array(ArrayType {
-                    element_type: operand_type_id,
-                    location: DataLocation::Memory,
-                }))
+                // indexing a type name yields the array meta-type, fixed-size when
+                // the index carries a constant size (`T[n]`)
+                let element_type = self.types.register_type(operand_type);
+                Typing::MetaType(self.meta_array_type(element_type, node))
             }
             Typing::UserMetaType(definition_id) => {
-                // indexing a user meta-type creates a new meta-type of the array
                 if let Some(operand_type) = self.type_of_definition(definition_id) {
-                    let operand_type_id = self.types.register_type(operand_type);
-                    Typing::MetaType(Type::Array(ArrayType {
-                        element_type: operand_type_id,
-                        location: DataLocation::Memory,
-                    }))
+                    let element_type = self.types.register_type(operand_type);
+                    Typing::MetaType(self.meta_array_type(element_type, node))
                 } else {
                     Typing::Unresolved
                 }

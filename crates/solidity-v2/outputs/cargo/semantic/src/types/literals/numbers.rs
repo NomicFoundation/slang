@@ -183,8 +183,9 @@ impl Number {
         }
         match (self, other) {
             (Self::Integer(lhs), Self::Integer(rhs)) => Some(Self::Integer(lhs % rhs)),
-            // TODO(validation) SDR[1739]: Modulo on rationals is not supported.
-            _ => None,
+            _ => Some(Self::from_rational(
+                self.to_rational() % other.to_rational(),
+            )),
         }
     }
 
@@ -426,7 +427,7 @@ mod tests {
     use num_bigint::BigInt;
     use num_rational::BigRational;
 
-    use super::{smallest_fixed_point_type_to_fit, Type};
+    use super::{smallest_fixed_point_type_to_fit, Number, Type};
     use crate::types::FixedPointNumberType;
 
     fn fit(numerator: BigInt, denominator: BigInt) -> Option<FixedPointNumberType> {
@@ -566,5 +567,16 @@ mod tests {
     #[test]
     fn signed_integer_part_overflows() {
         assert_eq!(fit(-pow2(257), BigInt::from(3u32)), None);
+    }
+
+    #[test]
+    fn rational_modulo_truncates_toward_zero() {
+        // Solidity folds `%` on rational literals as `a - trunc(a / b) * b`,
+        // truncating toward zero: `-5.2 % 3 == -2.2` and `5.2 % 3 == 2.2`.
+        let rational =
+            |n: i64, d: i64| Number::Rational(BigRational::new(BigInt::from(n), BigInt::from(d)));
+        let three = Number::Integer(BigInt::from(3));
+        assert_eq!(rational(-26, 5).rem(&three), Some(rational(-11, 5)));
+        assert_eq!(rational(26, 5).rem(&three), Some(rational(11, 5)));
     }
 }
