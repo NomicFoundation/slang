@@ -6,6 +6,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 pub mod literals;
+mod operator_typing;
 mod parsing;
 mod registry;
 

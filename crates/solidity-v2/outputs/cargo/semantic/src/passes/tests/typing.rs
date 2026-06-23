@@ -1,11 +1,12 @@
 use num_bigint::{BigInt, BigUint};
 use num_rational::BigRational;
+use ruint::aliases::U256;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
 
 use super::{build_file, TestFile};
-use crate::binder::Binder;
+use crate::binder::{Binder, Definition};
 use crate::context::SemanticFile;
 use crate::passes::common::node_id_for_expression_typing;
 use crate::passes::{
@@ -34,11 +35,11 @@ fn analyze(language_version: LanguageVersion, source: &str) -> TypeAnalysis {
     p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
     p3_type_definitions::run(&files, &mut binder, &mut types, &mut diagnostics);
+    p5_resolve_references::run(&files, &mut binder, &mut types, &mut diagnostics);
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
     );
-    p5_resolve_references::run(&files, &mut binder, &mut types);
 
     TypeAnalysis {
         file: files.into_iter().next().unwrap(),
@@ -206,6 +207,65 @@ fn register_uint_type(types: &mut TypeRegistry, bits: u32) -> TypeId {
         is_signed: false,
         bits,
     }))
+}
+
+/// Runs the full pipeline over `source` and returns contract `name`'s folded
+/// storage base slot.
+fn contract_base_slot(source: &str, name: &str) -> Option<U256> {
+    let TypeAnalysis { file, binder, .. } = analyze(LanguageVersion::LATEST, source);
+    let contract = find_contract(&file, name);
+    match binder
+        .find_definition_by_id(contract.id())
+        .expect("contract definition is registered")
+    {
+        Definition::Contract(contract_definition) => contract_definition.base_slot,
+        _ => panic!("expected a contract definition"),
+    }
+}
+
+/// Folds a fixed-size-array length through the real pipeline, returning the
+/// computed `FixedSizeArrayType.size`. `context` holds any contract-level
+/// constants the length references; `array_type` is the variable type (e.g.
+/// `"uint256[10 / B]"`). A rejected length reads back as `0`, same as a length
+/// that genuinely folds to `0`.
+fn folded_array_length(context: &str, array_type: &str) -> usize {
+    let source = format!(
+        r#"
+        contract Test {{
+            {context}
+            {array_type} sized_array;
+        }}
+        "#
+    );
+
+    let TypeAnalysis {
+        file,
+        binder,
+        types,
+    } = analyze(LanguageVersion::LATEST, &source);
+
+    let contract = find_contract(&file, "Test");
+    let state_variable = contract
+        .members
+        .iter()
+        .find_map(|member| match member {
+            ir::ContractMember::StateVariableDefinition(state_variable)
+                if state_variable.name.unparse() == "sized_array" =>
+            {
+                Some(state_variable)
+            }
+            _ => None,
+        })
+        .expect("`sized_array` state variable not found");
+
+    let type_id = binder
+        .node_typing(state_variable.id())
+        .as_type_id()
+        .expect("state variable has a resolved type");
+    match types.get_type_by_id(type_id) {
+        Type::FixedSizeArray(FixedSizeArrayType { size, .. }) => *size,
+        other => panic!("expected a FixedSizeArray type, got {other:?}"),
+    }
 }
 
 #[test]
@@ -1317,4 +1377,104 @@ fn reference_type_constant_is_indexable() {
     let (element_type, _types) =
         type_of_expression_in_context(r#"bytes constant B = hex"1234";"#, "B[0]");
     assert_eq!(element_type, Type::ByteArray(ByteArrayType { width: 1 }));
+}
+
+#[test]
+fn test_array_length_folds_with_typed_constants() {
+    let uint256_b = |value: &str| format!("uint256 constant B = {value};");
+
+    // Division by a typed integer constant truncates toward zero (`10 / 3 = 3`).
+    assert_eq!(folded_array_length(&uint256_b("3"), "uint256[10 / B]"), 3);
+    // `7 / 3` truncates to `2`.
+    assert_eq!(folded_array_length(&uint256_b("3"), "uint256[7 / B]"), 2);
+    // The fractional intermediate of `(1 / B) * B` is discarded at the typed
+    // division, folding to `0` rather than `1`.
+    assert_eq!(
+        folded_array_length(&uint256_b("2"), "uint256[(1 / B) * B]"),
+        0
+    );
+    // Whole literals combine with a typed integer fine: `2 * 7 / 2 = 7`.
+    assert_eq!(
+        folded_array_length(&uint256_b("2"), "uint256[(B * 7) / 2]"),
+        7
+    );
+    // Exponentiation with a typed base: `3 ** 2 = 9`.
+    assert_eq!(folded_array_length(&uint256_b("3"), "uint256[B ** 2]"), 9);
+
+    // A small integer type widens the result to the literal's mobile type, so
+    // `300 / B` (`B: uint8`) is `uint16` and folds to `100` instead of
+    // overflowing `uint8`.
+    assert_eq!(
+        folded_array_length("uint8 constant B = 3;", "uint256[300 / B]"),
+        100,
+    );
+
+    // But when no widening applies, an overflow of the result type is rejected:
+    // `A + 255` (`A: uint8`) has common type `uint8` (255 fits `uint8`), and
+    // `1 + 255 = 256` does not fit `uint8`, so the length folds to `0`.
+    assert_eq!(
+        folded_array_length("uint8 constant A = 1;", "uint256[A + 255]"),
+        0,
+    );
+}
+
+#[test]
+fn test_array_length_folds_all_literal_arithmetic() {
+    // No typed constant: exact rational arithmetic, then the whole result feeds
+    // the length. `100 / 8 * 2 = 25` (`100 / 8` is the exact `25/2`).
+    assert_eq!(folded_array_length("", "uint256[(100 / 8) * 2]"), 25);
+    assert_eq!(folded_array_length("", "uint256[2 ** 8]"), 256);
+}
+
+#[test]
+fn test_array_length_rejected_inputs_default_to_zero() {
+    let uint256_b = |value: &str| format!("uint256 constant B = {value};");
+
+    // A negative literal has no common type with an unsigned integer, so the
+    // operator has no result type.
+    assert_eq!(
+        folded_array_length(&uint256_b("2"), "uint256[(0 - 7) / B]"),
+        0
+    );
+    // `~B` over `uint256` is negative and out of range for the unsigned type.
+    assert_eq!(folded_array_length(&uint256_b("3"), "uint256[~B]"), 0);
+    // Unary negation of an unsigned integer has no result type.
+    assert_eq!(folded_array_length(&uint256_b("3"), "uint256[-B]"), 0);
+    // A literal exceeding 256 bits cannot meet a typed integer.
+    assert_eq!(
+        folded_array_length(&uint256_b("3"), "uint256[(2 ** 256) / B]"),
+        0
+    );
+    // All-literal division stays an exact rational, which is not a valid
+    // (integer) length.
+    assert_eq!(folded_array_length("", "uint256[10 / 4]"), 0);
+}
+
+#[test]
+fn test_storage_base_slot_evaluation() {
+    // A base slot referencing a constant declared *after* the contract resolves,
+    // because base slots are evaluated in `p5_resolve_references` once every
+    // constant is typed.
+    assert_eq!(
+        contract_base_slot("contract C layout at N {} uint256 constant N = 42;", "C"),
+        Some(U256::from(42u64)),
+    );
+    // Backward reference and a plain literal still resolve.
+    assert_eq!(
+        contract_base_slot("uint256 constant N = 42; contract C layout at N {}", "C"),
+        Some(U256::from(42u64)),
+    );
+    assert_eq!(
+        contract_base_slot("contract C layout at 7 {}", "C"),
+        Some(U256::from(7u64)),
+    );
+    // A non-integer constant (here `address`) is not a valid base slot, even
+    // when forward-referenced.
+    assert_eq!(
+        contract_base_slot(
+            "contract C layout at N {} address constant N = address(0);",
+            "C",
+        ),
+        None,
+    );
 }

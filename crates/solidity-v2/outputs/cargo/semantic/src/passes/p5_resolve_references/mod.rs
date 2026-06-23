@@ -1,3 +1,4 @@
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -16,9 +17,14 @@ mod visitor;
 /// containing expressions and statements. Both these actions are co-dependant
 /// and happen concurrently for each node, and their results are store in the
 /// `Binder` instance.
-pub fn run(files: &[impl SemanticFile], binder: &mut Binder, types: &mut TypeRegistry) {
+pub fn run(
+    files: &[impl SemanticFile],
+    binder: &mut Binder,
+    types: &mut TypeRegistry,
+    diagnostics: &mut DiagnosticCollection,
+) {
     for file in files {
-        Pass::visit_file(file, binder, types);
+        Pass::visit_file(file, binder, types, diagnostics);
     }
 }
 
@@ -34,14 +40,23 @@ struct Pass<'a> {
     scope_stack: Vec<ScopeFrame>,
     binder: &'a mut Binder,
     types: &'a mut TypeRegistry,
+    diagnostics: &'a mut DiagnosticCollection,
+    file_id: String,
 }
 
 impl<'a> Pass<'a> {
-    fn visit_file(file: &impl SemanticFile, binder: &'a mut Binder, types: &'a mut TypeRegistry) {
+    fn visit_file(
+        file: &impl SemanticFile,
+        binder: &'a mut Binder,
+        types: &'a mut TypeRegistry,
+        diagnostics: &'a mut DiagnosticCollection,
+    ) {
         let mut pass = Self {
             scope_stack: Vec::new(),
             binder,
             types,
+            diagnostics,
+            file_id: file.id().to_owned(),
         };
         ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
         assert!(pass.scope_stack.is_empty());

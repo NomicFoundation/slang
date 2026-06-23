@@ -2,13 +2,11 @@ use slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTy
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::TextRange;
 
-use super::evaluator::{
-    evaluate_compile_time_usize_constant, ComptimeResolution, ConstantIdentifierResolver,
-    EvaluationError,
-};
 use super::Pass;
-use crate::binder::{Definition, Resolution, Scope, ScopeId};
-use crate::built_ins::BuiltInsResolver;
+use crate::binder::{Definition, Resolution, ScopeId};
+use crate::passes::common::constant_evaluator::{
+    evaluate_compile_time_usize_constant, ConstantResolver, EvaluationError,
+};
 use crate::passes::common::resolve_identifier_path_in_scope;
 use crate::types::{
     ArrayType, DataLocation, FixedSizeArrayType, FunctionType, MappingType, TupleType, Type, TypeId,
@@ -57,7 +55,10 @@ impl Pass<'_> {
                                 let size = match evaluate_compile_time_usize_constant(
                                     size_expression,
                                     self.current_contract_or_file_scope_id(),
-                                    self,
+                                    self.types,
+                                    &ConstantResolver {
+                                        binder: self.binder,
+                                    },
                                 ) {
                                     Ok(size) => size,
                                     Err(error) => {
@@ -169,64 +170,5 @@ impl Pass<'_> {
             return None;
         };
         self.binder.scope_id_for_node_id(definition_id)
-    }
-}
-
-impl ConstantIdentifierResolver<ScopeId> for Pass<'_> {
-    fn resolve_identifier_in_scope(
-        &self,
-        identifier: &str,
-        scope_id: &ScopeId,
-    ) -> ComptimeResolution<ScopeId> {
-        match self.binder.resolve_in_scope(*scope_id, identifier) {
-            Resolution::Definition(definition_id) => {
-                match self
-                    .binder
-                    .find_definition_by_id(definition_id)
-                    .expect("resolved definition is found")
-                {
-                    Definition::Constant(constant_definition) => {
-                        if let Some(value) = &constant_definition.ir_node.value {
-                            ComptimeResolution::Constant {
-                                value: value.clone(),
-                                target_scope: constant_definition.enclosing_scope_id,
-                            }
-                        } else {
-                            // TODO(validation) SDR[1732]: this is a constant state
-                            // variable for which the grammar allows an absent
-                            // value expression but it's a semantic error
-                            ComptimeResolution::Unresolved
-                        }
-                    }
-                    _ => ComptimeResolution::Unresolved,
-                }
-            }
-            Resolution::Ambiguous(_) => {
-                // TODO(validation) SDR[1731]: multiple definitions found which is an error
-                ComptimeResolution::Unresolved
-            }
-            Resolution::BuiltIn(_) => unreachable!("the binder doesn't resolve to built-ins"),
-
-            Resolution::Unresolved => {
-                // Try to resolve a built-in using the scope as context
-                let built_in = match self.binder.get_scope_by_id(*scope_id) {
-                    Scope::Block(_)
-                    | Scope::Chained(_)
-                    | Scope::Contract(_)
-                    | Scope::File(_)
-                    | Scope::Function(_)
-                    | Scope::Modifier(_) => BuiltInsResolver::lookup_global(identifier),
-
-                    Scope::Enum(_) | Scope::Parameters(_) | Scope::Struct(_) | Scope::Using(_) => {
-                        None
-                    }
-
-                    Scope::YulBlock(_) | Scope::YulFunction(_) => {
-                        BuiltInsResolver::lookup_yul_global(identifier)
-                    }
-                };
-                built_in.map_or(ComptimeResolution::Unresolved, ComptimeResolution::BuiltIn)
-            }
-        }
     }
 }

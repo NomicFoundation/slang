@@ -6,7 +6,6 @@ use crate::binder::{Binder, Definition, Scope, ScopeId};
 use crate::context::SemanticFile;
 use crate::types::{ContractType, Type, TypeId, TypeRegistry};
 
-mod evaluator;
 mod resolution;
 mod typing;
 mod visitor;
