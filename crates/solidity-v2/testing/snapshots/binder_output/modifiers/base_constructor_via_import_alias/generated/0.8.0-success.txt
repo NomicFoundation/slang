@@ -1,0 +1,55 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["Base" @ base.sol:1:10] (contract)
+- Def: #2 ["x" @ base.sol:2:25] (parameter, type: uint256)
+- Def: #3 ["M" @ main.sol:1:22] (import)
+- Def: #4 ["Derived" @ main.sol:3:10] (contract)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["M" @ main.sol:3:21] -> #3
+- Ref: ["Base" @ main.sol:3:23] -> #1
+- Ref: ["M" @ main.sol:4:19] -> #3
+- Ref: ["Base" @ main.sol:4:21] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[base.sol:1:1]
+   │
+ 1 │ contract Base {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     constructor(uint256 x) {}
+   │                         ┬  
+   │                         ╰── name: 2
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ import "base.sol" as M;
+   │                      ┬  
+   │                      ╰── name: 3
+   │ 
+ 3 │ contract Derived is M.Base {
+   │          ───┬───    ┬ ──┬─  
+   │             ╰─────────────── name: 4
+   │                     │   │   
+   │                     ╰─────── ref: 3
+   │                         │   
+   │                         ╰─── ref: 1
+ 4 │     constructor() M.Base(1) {}
+   │                   ┬ ──┬─  
+   │                   ╰─────── ref: 3
+   │                       │   
+   │                       ╰─── ref: 1
+───╯

@@ -154,6 +154,18 @@ impl Binder {
         self.scopes_by_file_id.get(file_id).copied()
     }
 
+    /// The scope a qualified path continues into after a segment resolves to
+    /// `definition_id`: an import alias into the imported file, else the node's scope.
+    pub(crate) fn namespace_scope_of(&self, definition_id: NodeId) -> Option<ScopeId> {
+        match self.find_definition_by_id(definition_id) {
+            Some(Definition::Import(import)) => import
+                .resolved_file_id
+                .as_ref()
+                .and_then(|file_id| self.scope_id_for_file_id(file_id)),
+            _ => self.scope_id_for_node_id(definition_id),
+        }
+    }
+
     pub(crate) fn insert_scope(&mut self, scope: Scope) -> ScopeId {
         let scope_id = ScopeId(self.scopes.len());
 
@@ -615,9 +627,9 @@ impl Binder {
         Resolution::from(found_ids)
     }
 
-    // Resolution in this function is strictly limited to the given scope, and
-    // will only work in scope types that can work as a namespace only (eg.
-    // block scopes and other lexical scopes don't)
+    // Namespace resolution: only scopes that act as a namespace resolve here
+    // (block and other purely-lexical scopes don't). A file scope resolves among
+    // the file's top-level definitions.
     pub(crate) fn resolve_in_scope_as_namespace(
         &self,
         scope_id: ScopeId,
@@ -640,10 +652,10 @@ impl Binder {
             Scope::Parameters(parameters_scope) => {
                 parameters_scope.lookup_definition(symbol).into()
             }
+            Scope::File(file_scope) => self.resolve_in_file_scope(&file_scope.file_id, symbol),
 
             Scope::Block(_)
             | Scope::Chained(_)
-            | Scope::File(_)
             | Scope::Function(_)
             | Scope::Modifier(_)
             | Scope::YulBlock(_)
