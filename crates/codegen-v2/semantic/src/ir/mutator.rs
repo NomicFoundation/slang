@@ -728,4 +728,33 @@ impl IrModelMutator {
 
         self.external_types.insert("Boolean".into());
     }
+
+    // Adds a new boolean field to a sequence by using the synthetic `External`
+    // "Boolean" type.
+    pub fn add_sequence_boolean(&mut self, sequence_id: &str, field_label: &str) {
+        let sequence_id: model::Identifier = sequence_id.into();
+        let field_label: model::Identifier = field_label.into();
+
+        let Some(sequence) = self.sequences.get_mut(&sequence_id) else {
+            panic!("Sequence {sequence_id} not found in IR model");
+        };
+        assert!(
+            sequence
+                .fields
+                .iter()
+                .find(|field| field.label == field_label)
+                .is_none(),
+            "The sequence {sequence_id} already has a {field_label} field",
+        );
+        let target_type = NodeType::External("Boolean".into());
+        sequence.fields.push(MutatedField {
+            label: field_label.clone(),
+            source_label: field_label,
+            field_type: target_type.clone(),
+            is_optional: true,
+            target_type,
+        });
+
+        self.external_types.insert("Boolean".into());
+    }
 }

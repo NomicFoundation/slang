@@ -154,3 +154,76 @@ contract Test is Base layout at 0 {}
     assert!(test_contract.id() < sentinel_node_id);
     assert!(test_contract.name.id() < sentinel_node_id);
 }
+
+#[test]
+fn test_build_ir_distinguishes_index_access_and_slice() {
+    const CONTENTS: &str = r###"
+contract Test {
+    function test(bytes calldata a) public pure {
+        a[1];
+        a[1:];
+    }
+}
+    "###;
+
+    let ParseOutput {
+        source_unit,
+        diagnostics,
+    } = Parser::parse("test.sol", CONTENTS, LanguageVersion::LATEST);
+
+    assert!(
+        diagnostics.is_empty(),
+        "Parser diagnostics: {diagnostics:?}"
+    );
+
+    let mut id_generator = ir::NodeIdGenerator::default();
+
+    let ir::BuildOutput {
+        ir_root,
+        diagnostics,
+    } = ir::build("test.sol", &source_unit, &CONTENTS, &mut id_generator);
+
+    assert!(
+        diagnostics.is_empty(),
+        "IR builder diagnostics: {diagnostics:?}"
+    );
+
+    let ir::SourceUnitMember::ContractDefinition(ref contract) = ir_root.members[0] else {
+        panic!("Expected ContractDefinition");
+    };
+
+    let ir::ContractMember::FunctionDefinition(ref function) = contract.members[0] else {
+        panic!("Expected FunctionDefinition");
+    };
+    let body = function.body.as_ref().expect("function has a body");
+    assert_eq!(2, body.statements.len());
+
+    // `a[1]` is a plain index access, not a slice.
+    let index_access = expect_index_access(&body.statements[0]);
+    assert!(
+        !index_access.is_slice,
+        "`a[1]` should not be a slice expression"
+    );
+    assert!(index_access.start.is_some());
+    assert!(index_access.end.is_none());
+
+    // `a[1:]` is a slice expression.
+    let slice_access = expect_index_access(&body.statements[1]);
+    assert!(
+        slice_access.is_slice,
+        "`a[1:]` should be a slice expression"
+    );
+    assert!(slice_access.start.is_some());
+    assert!(slice_access.end.is_none());
+}
+
+fn expect_index_access(statement: &ir::Statement) -> &ir::IndexAccessExpression {
+    let ir::Statement::ExpressionStatement(ref expression_statement) = statement else {
+        panic!("Expected ExpressionStatement");
+    };
+    let ir::Expression::IndexAccessExpression(ref index_access) = expression_statement.expression
+    else {
+        panic!("Expected IndexAccessExpression");
+    };
+    index_access
+}

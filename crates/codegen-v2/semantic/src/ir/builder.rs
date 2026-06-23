@@ -292,6 +292,7 @@ fn collapse_redundant_node_types(mutator: &mut IrModelMutator) {
     // complicates automatic code generation in the transformer.
     mutator.remove_type("IndexAccessEnd");
     mutator.add_sequence_field("IndexAccessExpression", "end", "Expression", true);
+    mutator.add_sequence_boolean("IndexAccessExpression", "is_slice");
 
     // Collapse the middle node in ArgumentsDeclaration
     mutator.remove_type("PositionalArgumentsDeclaration");
