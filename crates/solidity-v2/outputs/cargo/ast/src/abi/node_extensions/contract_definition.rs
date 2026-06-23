@@ -10,7 +10,8 @@ impl ContractDefinitionStruct {
         let name = self.ir_node.name.unparse().to_string();
         let file_id = self.get_file_id().to_string();
         let entries = self.compute_abi_entries()?;
-        let (storage_layout, transient_storage_layout) = self.compute_storage_layout()?;
+        let (storage_layout, transient_storage_layout, next_free_slot) =
+            self.compute_storage_layout()?;
         Some(ContractAbi {
             node_id: self.ir_node.id(),
             name,
@@ -18,6 +19,7 @@ impl ContractDefinitionStruct {
             entries,
             storage_layout,
             transient_storage_layout,
+            next_free_slot,
         })
     }
 
@@ -61,13 +63,15 @@ impl ContractDefinitionStruct {
         definition.base_slot
     }
 
-    /// Computes the layouts of both permanent and transient state variables
-    fn compute_storage_layout(&self) -> Option<(Vec<StorageItem>, Vec<StorageItem>)> {
+    /// Computes the permanent and transient storage layouts, plus the first slot
+    /// left free after the persistent layout (`next_free_slot`) so a consumer can
+    /// append further state there without aliasing a multi-slot variable.
+    fn compute_storage_layout(&self) -> Option<(Vec<StorageItem>, Vec<StorageItem>, U256)> {
         let all_state_variables = self.linearised_state_variables();
 
         // TODO(validation) SDR[2]: it is an error if any contract in the hierarchy
         // other than the leaf has a custom offset layout
-        let storage_layout = self.lay_out_state_variables(
+        let (storage_layout, next_free_slot) = self.lay_out_state_variables(
             self.base_slot().unwrap_or(U256::ZERO),
             all_state_variables.iter().filter(|state_variable| {
                 matches!(
@@ -76,7 +80,7 @@ impl ContractDefinitionStruct {
                 )
             }),
         )?;
-        let transient_storage_layout = self.lay_out_state_variables(
+        let (transient_storage_layout, _) = self.lay_out_state_variables(
             U256::ZERO,
             all_state_variables.iter().filter(|state_variable| {
                 matches!(
@@ -85,14 +89,17 @@ impl ContractDefinitionStruct {
                 )
             }),
         )?;
-        Some((storage_layout, transient_storage_layout))
+        Some((storage_layout, transient_storage_layout, next_free_slot))
     }
 
+    /// Lays out `variables` starting at `base_slot`, returning the items and the
+    /// first slot left free after them (rounded up past a partially filled slot,
+    /// so a region appended at that slot cannot alias the last variable).
     fn lay_out_state_variables<'a>(
         &self,
         base_slot: U256,
         variables: impl Iterator<Item = &'a StateVariableDefinition>,
-    ) -> Option<Vec<StorageItem>> {
+    ) -> Option<(Vec<StorageItem>, U256)> {
         let mut storage_layout = Vec::new();
         let mut current_slot: U256 = base_slot;
         let mut byte_offset_in_slot: usize = 0;
@@ -124,6 +131,11 @@ impl ContractDefinitionStruct {
             current_slot += U256::from(byte_offset_in_slot / SemanticContext::SLOT_SIZE);
             byte_offset_in_slot %= SemanticContext::SLOT_SIZE;
         }
-        Some(storage_layout)
+        let next_free_slot = if byte_offset_in_slot > 0 {
+            current_slot.saturating_add(U256::from(1u64))
+        } else {
+            current_slot
+        };
+        Some((storage_layout, next_free_slot))
     }
 }

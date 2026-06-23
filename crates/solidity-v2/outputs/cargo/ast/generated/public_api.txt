@@ -97,6 +97,7 @@ impl slang_solidity_v2_ast::abi::ContractAbi
 pub fn slang_solidity_v2_ast::abi::ContractAbi::entries(&self) -> &[slang_solidity_v2_ast::abi::AbiEntry]
 pub fn slang_solidity_v2_ast::abi::ContractAbi::file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::abi::ContractAbi::name(&self) -> &str
+pub fn slang_solidity_v2_ast::abi::ContractAbi::next_free_slot(&self) -> ruint::aliases::U256
 pub fn slang_solidity_v2_ast::abi::ContractAbi::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::abi::ContractAbi::storage_layout(&self) -> &[slang_solidity_v2_ast::abi::StorageItem]
 pub fn slang_solidity_v2_ast::abi::ContractAbi::transient_storage_layout(&self) -> &[slang_solidity_v2_ast::abi::StorageItem]
