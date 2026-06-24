@@ -2,10 +2,10 @@
 
 Diagnostics: 1
 
-[ParserError 9680] Error: State mutability already specified as "pure".
-   ╭─[input.sol:5:28]
+[ParserError 9680] Error: State mutability already specified as "payable".
+   ╭─[input.sol:5:31]
    │
- 5 │   fallback() external pure view {}
-   │                            ──┬─  
-   │                              ╰─── Error occurred here.
+ 5 │   fallback() external payable view {}
+   │                               ──┬─  
+   │                                 ╰─── Error occurred here.
 ───╯

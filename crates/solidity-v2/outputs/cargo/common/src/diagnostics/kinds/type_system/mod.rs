@@ -1,6 +1,10 @@
+mod fallback_function_mutability;
+mod fallback_function_signature;
 mod invalid_base;
 mod invalid_function_type_visibility;
 
+pub use fallback_function_mutability::FallbackFunctionMutability;
+pub use fallback_function_signature::FallbackFunctionSignature;
 pub use invalid_base::InvalidBase;
 pub use invalid_function_type_visibility::InvalidFunctionTypeVisibility;
 use serde::Serialize;
@@ -20,5 +24,10 @@ define_diagnostic_kind! {
         InvalidBase(InvalidBase),
         /// A function type has a visibility other than `internal` or `external`.
         InvalidFunctionTypeVisibility(InvalidFunctionTypeVisibility),
+
+        /// A fallback function is declared `pure` or `view`.
+        FallbackFunctionMutability(FallbackFunctionMutability),
+        /// A fallback function has a signature other than the two accepted forms.
+        FallbackFunctionSignature(FallbackFunctionSignature),
     }
 }

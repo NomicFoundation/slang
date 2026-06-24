@@ -612,6 +612,11 @@ mod structure {
     }
 
     #[test]
+    fn library_fallback_function() -> Result<()> {
+        run("structure", "library_fallback_function")
+    }
+
+    #[test]
     fn multiple_constructors() -> Result<()> {
         run("structure", "multiple_constructors")
     }
@@ -763,6 +768,16 @@ mod syntax {
 
 mod type_system {
     use super::*;
+
+    #[test]
+    fn fallback_function_mutability() -> Result<()> {
+        run("type_system", "fallback_function_mutability")
+    }
+
+    #[test]
+    fn fallback_function_signature() -> Result<()> {
+        run("type_system", "fallback_function_signature")
+    }
 
     mod invalid_base {
         use super::*;
