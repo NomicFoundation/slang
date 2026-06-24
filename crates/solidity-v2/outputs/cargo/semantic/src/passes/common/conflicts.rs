@@ -102,6 +102,7 @@ pub(crate) fn find_conflicting_definition(
                     yul_block_scope.parent_scope_id,
                     symbol,
                     new_definition,
+                    false,
                 )
             }),
         Scope::YulFunction(yul_function_scope) => yul_function_scope
@@ -115,6 +116,7 @@ pub(crate) fn find_conflicting_definition(
                     yul_function_scope.parent_scope_id,
                     symbol,
                     new_definition,
+                    true,
                 )
             }),
         // Namespace scopes are only checked against their own definitions;
@@ -153,11 +155,38 @@ fn find_conflict_in_yul_parent(
     parent_scope_id: ScopeId,
     symbol: &str,
     new_definition: &Definition,
+    inside_function: bool,
 ) -> Option<NodeId> {
     match binder.get_scope_by_id(parent_scope_id) {
-        Scope::YulBlock(_) | Scope::YulFunction(_) => {
-            find_conflicting_definition(binder, parent_scope_id, symbol, new_definition)
-        }
+        Scope::YulBlock(yul_block_scope) => yul_block_scope
+            .definitions
+            .get(symbol)
+            .copied()
+            .and_then(|existing| conflicting_definition(binder, existing, new_definition))
+            .or_else(|| {
+                find_conflict_in_yul_parent(
+                    binder,
+                    yul_block_scope.parent_scope_id,
+                    symbol,
+                    new_definition,
+                    inside_function,
+                )
+            }),
+        Scope::YulFunction(yul_function_scope) => yul_function_scope
+            .definitions
+            .get(symbol)
+            .copied()
+            .and_then(|existing| conflicting_definition(binder, existing, new_definition))
+            .or_else(|| {
+                find_conflict_in_yul_parent(
+                    binder,
+                    yul_function_scope.parent_scope_id,
+                    symbol,
+                    new_definition,
+                    true,
+                )
+            }),
+        _ if inside_function => None,
         _ => find_shadowed_solidity_definition(binder, parent_scope_id, symbol, new_definition),
     }
 }
