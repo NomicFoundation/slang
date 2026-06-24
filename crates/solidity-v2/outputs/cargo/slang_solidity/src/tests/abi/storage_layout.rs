@@ -129,6 +129,44 @@ fn test_transient_and_custom_storage_layout() {
     assert_layout_item_eq!(e_transient_layout[1], "rt", 0, 1, "bytes5");
 }
 
+// A struct whose members fill a slot exactly must occupy a single slot. The
+// two `uint128` members (16 bytes each) pack into one 32-byte slot, so the
+// following `tail` variable lands at slot 1.
+//
+// Regression: a member that fits perfectly in the remaining bytes used to be
+// pushed to the next slot, inflating `PerfectFit` to two slots and shifting
+// `tail` to slot 2.
+define_fixture!(
+    PerfectlyPackedStruct,
+    file: "main.sol", r#"
+struct PerfectFit {
+    uint128 a;
+    uint128 b;
+}
+
+contract G {
+    PerfectFit s;
+    uint256 tail;
+}
+"#,
+);
+
+#[test]
+fn test_struct_members_packing_into_a_full_slot_occupy_one_slot() {
+    let unit = PerfectlyPackedStruct::build_compilation_unit();
+
+    let g_contract = unit
+        .find_contract_by_name("G")
+        .next()
+        .expect("contract can be found");
+    let g_abi = g_contract.compute_abi().expect("can compute ABI");
+    let layout = g_abi.storage_layout();
+
+    assert_eq!(layout.len(), 2);
+    assert_layout_item_eq!(layout[0], "s", uint!(0_U256), 0, "PerfectFit");
+    assert_layout_item_eq!(layout[1], "tail", uint!(1_U256), 0, "uint256");
+}
+
 #[test]
 fn test_erc7201_storage_layout() {
     let unit = StorageLayout::build_compilation_unit();
