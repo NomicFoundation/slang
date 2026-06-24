@@ -51,6 +51,7 @@ impl NpmController {
             DEFAULT_BENCHER_PROJECT,
             "json",
             &[BencherThreshold::new("duration", "0.15")],
+            &[],
             &test_runner,
         );
     }
