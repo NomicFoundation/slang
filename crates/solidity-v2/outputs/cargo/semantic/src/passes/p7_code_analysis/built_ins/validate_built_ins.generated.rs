@@ -88,9 +88,7 @@ impl<'a> BuiltInValidator<'a> {
                     EvmTargetSpecifier::from(EvmTarget::Istanbul),
                 );
             }
-            InternalBuiltIn::BlockDifficulty => {
-                self.check_target(node_id, range, EvmTargetSpecifier::till(EvmTarget::Paris));
-            }
+            InternalBuiltIn::BlockDifficulty => {}
             InternalBuiltIn::BlockPrevrandao => {
                 self.check_version(
                     node_id,
