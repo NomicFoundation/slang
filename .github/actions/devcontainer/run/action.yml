@@ -1,12 +1,13 @@
 name: "devcontainer/run"
+description: "Run a command inside the project's devcontainer."
 
 inputs:
   runCmd:
-    type: "string"
+    description: "Command to run inside the devcontainer."
     required: true
 
   env:
-    type: "string"
+    description: "Newline-separated NAME=value pairs to set inside the devcontainer."
     default: ""
 
 runs:

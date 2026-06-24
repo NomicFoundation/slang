@@ -50,6 +50,10 @@ enum LintCommand {
     Tsc,
     /// Check for violations issues in Yaml files.
     Yamllint,
+    /// Lint GitHub Actions workflow files.
+    Actionlint,
+    /// Audit GitHub Actions workflows/actions for security issues.
+    Zizmor,
     /// Check for violations in TypeScript documentation files.
     Typedoc,
 }
@@ -71,6 +75,8 @@ impl OrderedCommand for LintCommand {
             LintCommand::Shellcheck => run_shellcheck()?,
             LintCommand::Tsc => run_tsc(),
             LintCommand::Yamllint => run_yamllint()?,
+            LintCommand::Actionlint => run_actionlint(),
+            LintCommand::Zizmor => run_zizmor(),
             LintCommand::Typedoc => run_typedoc()?,
         }
 
@@ -205,6 +211,29 @@ fn run_yamllint() -> Result<()> {
         .run_xargs(yaml_files);
 
     Ok(())
+}
+
+fn run_actionlint() {
+    Command::new("actionlint").run();
+}
+
+fn run_zizmor() {
+    let github_dir = Path::repo_path(".github");
+
+    let mut command = Command::new("zizmor");
+
+    if GitHub::is_running_in_ci() {
+        // Online in CI (GH_TOKEN is wired in) so the audits that need the GitHub
+        // API run — `known-vulnerabilities` and tag→SHA resolution for
+        // `unpinned-uses`. Emit GitHub annotations so findings surface inline.
+        command = command.property("--format", "github");
+    } else {
+        // Local runs have no token and may be offline; skip the online audits
+        // rather than emit a token warning on every `infra lint`.
+        command = command.flag("--offline");
+    }
+
+    command.arg(github_dir.unwrap_str()).run();
 }
 
 fn run_typedoc() -> Result<()> {

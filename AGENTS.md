@@ -78,7 +78,7 @@ The project uses a custom `infra` CLI that orchestrates all build operations. Us
 ./scripts/bin/infra test         # Run all tests (cargo nextest + jest)
 ./scripts/bin/infra test --help  # See test subcommands (cargo, npm) and passthrough args
 ./scripts/bin/infra lint         # Run all linters
-./scripts/bin/infra lint --help  # See lint subcommands (markdownlint, rustfmt, yamllint, prettier, etc.)
+./scripts/bin/infra lint --help  # See lint subcommands (markdownlint, rustfmt, yamllint, actionlint, zizmor, prettier, etc.)
 ./scripts/bin/infra ci           # Full CI run: setup + check + test + lint
 ```
 

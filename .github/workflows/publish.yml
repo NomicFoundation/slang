@@ -226,15 +226,18 @@ jobs:
       - name: "infra publish npm --dry-run"
         # No tarball means prepare packed nothing (version already on npm) — nothing to validate.
         if: "${{ needs.prepare.outputs.tarball-name != '' }}"
-        run: "./scripts/bin/infra publish npm --dry-run --tarball target/publish-artifacts/${{ needs.prepare.outputs.tarball-name }}"
+        env:
+          TARBALL_NAME: "${{ needs.prepare.outputs.tarball-name }}"
+        run: './scripts/bin/infra publish npm --dry-run --tarball "target/publish-artifacts/${TARBALL_NAME}"'
 
       - name: "infra publish cargo --dry-run"
         run: "./scripts/bin/infra publish cargo --dry-run"
 
       - name: "Publish review summary"
+        env:
+          ARTIFACT_NAME: "${{ needs.prepare.outputs.artifact-name }}"
         run: |
           VERSION=$(grep '^version = ' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
-          ARTIFACT_NAME='${{ needs.prepare.outputs.artifact-name }}'
           {
             echo "## Publish Review Summary"
             echo ""
@@ -389,7 +392,9 @@ jobs:
       - name: "infra publish npm"
         # No tarball means prepare packed nothing (version already on npm) — nothing to publish.
         if: "${{ needs.prepare.outputs.tarball-name != '' }}"
-        run: "./scripts/bin/infra publish npm --tarball target/publish-artifacts/${{ needs.prepare.outputs.tarball-name }}"
+        env:
+          TARBALL_NAME: "${{ needs.prepare.outputs.tarball-name }}"
+        run: './scripts/bin/infra publish npm --tarball "target/publish-artifacts/${TARBALL_NAME}"'
 
       - name: "Exchange Cargo Token"
         id: "exchangeCargoToken"

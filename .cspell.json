@@ -41,6 +41,7 @@
     "ufixed",
     "unshift",
     "unparse",
-    "usize"
+    "usize",
+    "zizmor"
   ]
 }

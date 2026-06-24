@@ -31,7 +31,6 @@ on:
         description: "ID of the chain to run against: https://docs.sourcify.dev/docs/chains/"
         type: "number"
         required: true
-        default: 1
       check_infer_version:
         description: "Check that we can infer the correct language version based on the available version pragmas."
         type: "boolean"

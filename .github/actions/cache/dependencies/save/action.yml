@@ -1,4 +1,5 @@
 name: "cache/dependencies/save"
+description: "Save the dependencies cache (Hermit, cargo registry/git, pnpm store, Python virtualenvs)."
 
 runs:
   using: "composite"

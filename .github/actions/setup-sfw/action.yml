@@ -36,7 +36,7 @@ runs:
       shell: "bash"
       env:
         SFW_OPTIONAL: "${{ inputs.optional }}"
-      run: |
+      run: | # zizmor: ignore[github-env] wrapper is a RUNNER_TEMP path we generate, not external input
         if ! command -v sfw &>/dev/null; then
           if [ "${SFW_OPTIONAL}" = "true" ]; then
             echo "::warning::sfw not found after install — dependency installs will run UNPROTECTED."
