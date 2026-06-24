@@ -3,6 +3,7 @@ mod node_extensions;
 use std::cmp::Ordering;
 use std::sync::Arc;
 
+use itertools::Either;
 use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
 use slang_solidity_v2_common::collections::Set;
@@ -10,7 +11,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::binder::Definition;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{
-    ArrayType, FunctionTypeMutability, StructType, Type, TypeId,
+    ArrayType, FunctionTypeMutability, StructType, TupleType, Type, TypeId,
 };
 
 pub struct ContractAbi {
@@ -359,6 +360,11 @@ pub(crate) fn extract_function_type_parameters_abi(
     let Type::Function(function_type) = semantic.types().get_type_by_id(type_id) else {
         return None;
     };
+    // TODO: our type system doesn't track parameter names for function types,
+    // so we can't convey that information in the ABI. This is important for
+    // getters where we should transfer that information from mapping or struct
+    // types (eg. a getter that returns a struct should name its output
+    // parameters from the struct members).
     let mut inputs = Vec::new();
     for parameter_type_id in &function_type.parameter_types {
         let (type_name, components) = type_as_abi_parameter(semantic, *parameter_type_id)?;
@@ -370,14 +376,24 @@ pub(crate) fn extract_function_type_parameters_abi(
             indexed: false,
         });
     }
-    let (type_name, components) = type_as_abi_parameter(semantic, function_type.return_type)?;
-    let outputs = vec![AbiParameter {
-        node_id: None,
-        name: None,
-        type_name,
-        components,
-        indexed: false,
-    }];
+    // A tuple as a return type from a function represents multiple return
+    // values, so we need to flatten it
+    let output_types = match semantic.types().get_type_by_id(function_type.return_type) {
+        Type::Tuple(TupleType { types }) => Either::Left(types.iter()),
+        _ => Either::Right(std::iter::once(&function_type.return_type)),
+    };
+    let outputs = output_types
+        .map(|output_type_id| {
+            let (type_name, components) = type_as_abi_parameter(semantic, *output_type_id)?;
+            Some(AbiParameter {
+                node_id: None,
+                name: None,
+                type_name,
+                components,
+                indexed: false,
+            })
+        })
+        .collect::<Option<Vec<_>>>()?;
     Some((inputs, outputs))
 }
 

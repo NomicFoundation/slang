@@ -4062,6 +4062,7 @@ dependencies = [
 name = "slang_solidity_v2_ast"
 version = "1.3.6"
 dependencies = [
+ "itertools 0.14.0",
  "num-bigint",
  "num-rational",
  "paste",
