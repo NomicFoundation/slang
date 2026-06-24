@@ -18,7 +18,7 @@
 
 use slang_solidity_v2_common::nodes::NodeId;
 
-use crate::binder::{Binder, Definition, Scope, ScopeId};
+use crate::binder::{Binder, Definition, Resolution, Scope, ScopeId};
 
 // Looks for a previously-registered definition that conflicts with
 // `new_definition` being declared under `symbol` in `scope_id`, returning
@@ -280,11 +280,43 @@ fn conflicting_definition(
     {
         return None;
     }
+    if (matches!(new_definition, Definition::ImportedSymbol(_))
+        || matches!(existing, Definition::ImportedSymbol(_)))
+        && imported_targets_compatible(binder, existing_id, new_definition.node_id())
+    {
+        return None;
+    }
     if new_definition.overloads_with(existing) {
         None
     } else {
         Some(existing_id)
     }
+}
+
+fn imported_targets_compatible(binder: &Binder, existing_id: NodeId, new_id: NodeId) -> bool {
+    let existing_targets = binder
+        .follow_symbol_aliases(Resolution::Definition(existing_id))
+        .get_definition_ids();
+    let new_targets = binder
+        .follow_symbol_aliases(Resolution::Definition(new_id))
+        .get_definition_ids();
+    if existing_targets.is_empty() || new_targets.is_empty() {
+        return false;
+    }
+    if existing_targets.iter().any(|id| new_targets.contains(id)) {
+        return true;
+    }
+    let all_of_kind = |want_function: bool| {
+        existing_targets
+            .iter()
+            .chain(&new_targets)
+            .all(|&id| match binder.find_definition_by_id(id) {
+                Some(Definition::Function(_)) => want_function,
+                Some(Definition::Event(_)) => !want_function,
+                _ => false,
+            })
+    };
+    all_of_kind(true) || all_of_kind(false)
 }
 
 // Returns the first of `existing_ids` that conflicts with `new_definition`.
