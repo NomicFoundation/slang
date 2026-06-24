@@ -269,7 +269,10 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_constant_definition(&mut self, node: &ir::ConstantDefinition) {
-        let type_id = self.resolve_type_name(&node.type_name, None);
+        // TODO: the data location is not strictly correct, but a constant has no
+        // storage slot and reference types (strings, bytes) won't type if we pass
+        // None here.
+        let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
         self.binder.set_node_type(node.id(), type_id);
     }
 
