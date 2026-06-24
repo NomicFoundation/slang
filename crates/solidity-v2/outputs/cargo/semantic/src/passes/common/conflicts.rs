@@ -275,6 +275,11 @@ fn conflicting_definition(
     new_definition: &Definition,
 ) -> Option<NodeId> {
     let existing = binder.find_definition_by_id(existing_id)?;
+    if matches!(new_definition, Definition::YulFunction(_))
+        && matches!(existing, Definition::Function(_))
+    {
+        return None;
+    }
     if new_definition.overloads_with(existing) {
         None
     } else {
