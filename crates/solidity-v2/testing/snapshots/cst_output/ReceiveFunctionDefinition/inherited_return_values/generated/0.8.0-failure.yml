@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                     │ 0..12
+  2  │     receive() external payable virtual returns (uint256) {}                      │ 13..72
+  3  │ }                                                                                │ 73..74
+  4  │ contract D is C {                                                                │ 75..92
+  5  │     receive() external payable override {}                                       │ 93..135
+  6  │ }                                                                                │ 136..137
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected ReturnsKeyword. One of AtKeyword, ErrorKeyword, ExternalKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, OpenBrace, OverrideKeyword, PayableKeyword, RevertKeyword, Semicolon, TransientKeyword, VirtualKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ReceiveFunctionDefinition/inherited_return_values/input.sol:2:40]
+       │
+     2 │     receive() external payable virtual returns (uint256) {}
+       │                                        ───┬───  
+       │                                           ╰───── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

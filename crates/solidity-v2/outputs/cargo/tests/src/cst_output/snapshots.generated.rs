@@ -1321,6 +1321,16 @@ mod receive_function_definition {
     use super::*;
 
     #[test]
+    fn inherited_return_values() -> Result<()> {
+        run("ReceiveFunctionDefinition", "inherited_return_values")
+    }
+
+    #[test]
+    fn return_values() -> Result<()> {
+        run("ReceiveFunctionDefinition", "return_values")
+    }
+
+    #[test]
     fn simple() -> Result<()> {
         run("ReceiveFunctionDefinition", "simple")
     }
