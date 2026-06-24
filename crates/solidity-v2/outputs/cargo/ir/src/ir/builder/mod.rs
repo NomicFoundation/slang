@@ -494,25 +494,25 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     fn function_type_visibility(
         attributes: &input::FunctionTypeAttributes,
     ) -> output::FunctionVisibility {
-        // TODO(validation) SDR[13]: only a single visibility keyword can be provided
-        attributes.elements.iter().fold(
-            output::FunctionVisibility::Internal,
-            |visibility, attribute| match attribute {
+        attributes
+            .elements
+            .iter()
+            .find_map(|attribute| match attribute {
                 input::FunctionTypeAttribute::ExternalKeyword(_) => {
-                    output::FunctionVisibility::External
+                    Some(output::FunctionVisibility::External)
                 }
                 input::FunctionTypeAttribute::InternalKeyword(_) => {
-                    output::FunctionVisibility::Internal
+                    Some(output::FunctionVisibility::Internal)
                 }
                 input::FunctionTypeAttribute::PrivateKeyword(_) => {
-                    output::FunctionVisibility::Private
+                    Some(output::FunctionVisibility::Private)
                 }
                 input::FunctionTypeAttribute::PublicKeyword(_) => {
-                    output::FunctionVisibility::Public
+                    Some(output::FunctionVisibility::Public)
                 }
-                _ => visibility,
-            },
-        )
+                _ => None,
+            })
+            .unwrap_or(output::FunctionVisibility::Internal)
     }
 
     //
