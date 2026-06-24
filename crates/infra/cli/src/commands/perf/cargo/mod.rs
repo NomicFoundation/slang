@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use anyhow::Result;
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, ValueEnum};
 use infra_utils::commands::Command;
 use infra_utils::paths::{FileWalker, PathExtensions};
 
@@ -22,8 +22,18 @@ pub struct CargoController {
     #[command(flatten)]
     dry_run: DryRun,
     /// Run as a PR benchmark with regression detection via bencher start points.
-    #[arg(long)]
-    pr_benchmark: bool,
+    ///
+    /// Defaults to "standard" mode (DHAT skipped, Callgrind only). Pass
+    /// "--pr-benchmark=full" to also run DHAT.
+    #[arg(
+        long,
+        value_name = "MODE",
+        num_args = 0..=1,
+        require_equals = true,
+        default_missing_value = "standard",
+        conflicts_with = "dry_run"
+    )]
+    pr_benchmark: Option<PrBenchmarkMode>,
     #[arg(long)]
     no_deps: bool,
     /// Skip installing apt-managed deps (valgrind, graphviz).
@@ -42,6 +52,15 @@ enum Benches {
     Comparison,
     /// Performs the slang v2 benchmarks
     SlangV2,
+}
+
+#[derive(Clone, Debug, Default, PartialEq, Eq, ValueEnum)]
+enum PrBenchmarkMode {
+    /// Skip DHAT (run Callgrind only) to keep PRs fast.
+    #[default]
+    Standard,
+    /// Run DHAT too, matching what `main` measures.
+    Full,
 }
 
 impl CargoController {
@@ -101,9 +120,19 @@ impl CargoController {
             BencherThreshold::new(measure, upper_boundary).with_max_sample_size("1")
         };
 
+        // DHAT is much slower than Callgrind, so standard PR benchmarks skip it and
+        // run Callgrind only.
+        // __SLANG_PERF_SKIP_DHAT_ENV__ (keep in sync)
+        let skip_dhat = matches!(self.pr_benchmark, Some(PrBenchmarkMode::Standard));
+        let bench_env: &[(&str, &str)] = if skip_dhat {
+            &[("SLANG_PERF_SKIP_DHAT", "1")]
+        } else {
+            &[]
+        };
+
         run_bench(
             self.dry_run.get(),
-            self.pr_benchmark,
+            self.pr_benchmark.is_some(),
             bencher_project,
             "rust_iai_callgrind",
             &[
@@ -127,6 +156,7 @@ impl CargoController {
                 threshold("l2-hits", "1"),
                 threshold("ram-hits", "1"),
             ],
+            bench_env,
             &test_runner,
         );
 

@@ -65,12 +65,12 @@ jobs:
           sfw-optional: "true"
 
       - name: "Smoke Test > infra perf cargo --smoke comparison"
-        if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
+        if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') && !contains(github.event.pull_request.labels.*.name, 'ci:perf:full') }}"
         run: "./scripts/bin/infra perf cargo --smoke comparison"
 
       - name: "Benchmark > infra perf cargo comparison"
-        if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
-        run: "./scripts/bin/infra perf cargo ${{ github.event_name == 'pull_request' && '--pr-benchmark' || (inputs.dryRun == true && '--dry-run' || '') }} comparison"
+        if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') || contains(github.event.pull_request.labels.*.name, 'ci:perf:full') }}"
+        run: "./scripts/bin/infra perf cargo ${{ github.event_name == 'pull_request' && (contains(github.event.pull_request.labels.*.name, 'ci:perf:full') && '--pr-benchmark=full' || '--pr-benchmark') || (inputs.dryRun == true && '--dry-run' || '') }} comparison"
         env:
           SLANG_BENCHER_PROJECT: "${{ inputs.bencherProject }}"
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
@@ -78,7 +78,7 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "Benchmark > Upload Benchmarking Data"
-        if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
+        if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') || contains(github.event.pull_request.labels.*.name, 'ci:perf:full') }}"
         uses: "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a" # v7.0.1
         with:
           name: "benchmarking-data"
