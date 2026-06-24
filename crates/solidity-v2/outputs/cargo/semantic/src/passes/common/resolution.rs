@@ -1,8 +1,9 @@
 use std::sync::Arc;
 
+use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
-use crate::binder::{Binder, Definition, ImportDefinition, Reference, Resolution, ScopeId, Typing};
+use crate::binder::{Binder, Definition, Reference, Resolution, ScopeId, Typing};
 use crate::types::{FunctionType, Type, TypeRegistry};
 
 /// Resolves an `IdentifierPath` starting from the given scope, creating
@@ -15,13 +16,13 @@ pub(crate) fn resolve_identifier_path_in_scope(
     starting_scope_id: ScopeId,
 ) -> Resolution {
     let mut scope_id = Some(starting_scope_id);
-    let mut use_lexical_resolution = true;
-    let mut last_resolution: Resolution = Resolution::Unresolved;
+    let mut resolution = Resolution::Unresolved;
 
-    for identifier in identifier_path {
+    for (index, identifier) in identifier_path.iter().enumerate() {
         let symbol = identifier.unparse();
-        let resolution = if let Some(scope_id) = scope_id {
-            if use_lexical_resolution {
+        resolution = if let Some(scope_id) = scope_id {
+            if index == 0 {
+                // we use lexical resolution only in the first segment of the identifier path
                 binder.resolve_in_scope(scope_id, symbol)
             } else {
                 binder.resolve_in_scope_as_namespace(scope_id, symbol)
@@ -33,39 +34,15 @@ pub(crate) fn resolve_identifier_path_in_scope(
         let reference = Reference::new(Arc::clone(identifier), resolution.clone());
         binder.insert_reference(reference);
 
-        // Unless we used namespace resolution and in order to continue
-        // resolving the identifier path, we should ensure we've followed
-        // through any symbol alias (ie. import deconstruction symbol). This
-        // is not needed for namespaced resolution because there cannot be
-        // import directives inside contracts, interfaces or libraries which
-        // changes the lookup mode (see below).
-        let resolution = if use_lexical_resolution {
-            binder.follow_symbol_aliases(&resolution)
-        } else {
-            resolution
-        };
+        resolution = binder.follow_symbol_aliases(resolution);
 
-        // recurse into file scopes pointed by the resolved definition
-        // to resolve the next identifier in the path
+        // Change the resolution scope to be that of the last resolved
+        // definition, so we can resolve the next identifier in the path.
         scope_id = resolution
             .as_definition_id()
-            .and_then(|node_id| binder.find_definition_by_id(node_id))
-            .and_then(|definition| match definition {
-                Definition::Import(ImportDefinition {
-                    resolved_file_id, ..
-                }) => resolved_file_id
-                    .as_ref()
-                    .and_then(|resolved_file_id| binder.scope_id_for_file_id(resolved_file_id)),
-                Definition::Contract(_) | Definition::Interface(_) | Definition::Library(_) => {
-                    use_lexical_resolution = false;
-                    binder.scope_id_for_node_id(definition.node_id())
-                }
-                _ => None,
-            });
-
-        last_resolution = resolution;
+            .and_then(|definition_id| find_definition_namespace_scope_id(binder, definition_id));
     }
-    last_resolution
+    resolution
 }
 
 /// When a symbol resolves to an ambiguous set of Solidity functions
@@ -115,4 +92,28 @@ pub(crate) fn filter_overriden_definitions(
         filtered_definitions.push(definition_id);
     }
     Resolution::from(filtered_definitions)
+}
+
+/// Given a `Definition`'s `NodeId`, find the scope where we should resolve
+/// symbols if the definition acts as a namespace. This is typically used when
+/// resolving `MemberAccessExpression`s with a `UserMetatype` operand. Returns
+/// `None` if the definition cannot be used as a namespace.
+pub(crate) fn find_definition_namespace_scope_id(
+    binder: &Binder,
+    node_id: NodeId,
+) -> Option<ScopeId> {
+    match binder.find_definition_by_id(node_id)? {
+        Definition::Import(import_definition) => import_definition
+            .resolved_file_id
+            .as_ref()
+            .and_then(|file_id| binder.scope_id_for_file_id(file_id)),
+        Definition::Contract(_)
+        | Definition::Enum(_)
+        | Definition::Interface(_)
+        | Definition::Library(_) => {
+            // this is a "namespace" lookup
+            binder.scope_id_for_node_id(node_id)
+        }
+        _ => None,
+    }
 }

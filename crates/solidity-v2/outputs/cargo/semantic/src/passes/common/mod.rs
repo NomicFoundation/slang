@@ -13,4 +13,7 @@ mod resolution;
 pub(crate) use node_extensions::{
     node_id_for_expression_typing, node_id_for_string_expression_typing,
 };
-pub(crate) use resolution::{filter_overriden_definitions, resolve_identifier_path_in_scope};
+pub(crate) use resolution::{
+    filter_overriden_definitions, find_definition_namespace_scope_id,
+    resolve_identifier_path_in_scope,
+};

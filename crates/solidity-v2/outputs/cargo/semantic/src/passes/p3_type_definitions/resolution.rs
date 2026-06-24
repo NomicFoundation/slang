@@ -160,7 +160,7 @@ impl Pass<'_> {
                 // reference may resolve to an imported library, so we need to
                 // follow aliases
                 self.binder
-                    .follow_symbol_aliases(&reference.resolution)
+                    .follow_symbol_aliases(reference.resolution.clone())
                     .as_definition_id()
             })?;
 

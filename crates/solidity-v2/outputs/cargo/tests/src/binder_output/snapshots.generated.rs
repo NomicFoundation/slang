@@ -928,6 +928,11 @@ mod modifiers {
     use super::*;
 
     #[test]
+    fn base_constructor_via_import_alias() -> Result<()> {
+        run("modifiers", "base_constructor_via_import_alias")
+    }
+
+    #[test]
     fn diamond() -> Result<()> {
         run("modifiers", "diamond")
     }
@@ -1081,6 +1086,11 @@ mod using {
     #[test]
     fn address() -> Result<()> {
         run("using", "address")
+    }
+
+    #[test]
+    fn aliased_attached_function() -> Result<()> {
+        run("using", "aliased_attached_function")
     }
 
     #[test]

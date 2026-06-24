@@ -111,7 +111,7 @@ impl Visitor for Pass<'_> {
             // Set the typing for the `Identifier` node.
             // The resolution may point to an imported symbol, so we need to
             // follow through in order to get to the actual typing.
-            let followed_resolution = self.binder.follow_symbol_aliases(&resolution);
+            let followed_resolution = self.binder.follow_symbol_aliases(resolution.clone());
             let typing = self.typing_of_resolution(&followed_resolution);
             self.binder.set_node_typing(identifier.id(), typing);
 
@@ -575,7 +575,7 @@ impl Visitor for Pass<'_> {
                     // Follow symbol aliases as the error type argument to
                     // revert could be an imported symbol
                     self.binder
-                        .follow_symbol_aliases(&reference.resolution)
+                        .follow_symbol_aliases(reference.resolution.clone())
                         .as_definition_id()
                 });
             self.resolve_named_arguments(named_arguments, definition_id);

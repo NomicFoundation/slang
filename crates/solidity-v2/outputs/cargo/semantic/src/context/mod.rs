@@ -182,7 +182,7 @@ impl SemanticContext {
             .binder()
             .find_reference_by_identifier_node_id(node_id)?;
         self.binder()
-            .follow_symbol_aliases(&reference.resolution)
+            .follow_symbol_aliases(reference.resolution.clone())
             .as_definition_id()
     }
 

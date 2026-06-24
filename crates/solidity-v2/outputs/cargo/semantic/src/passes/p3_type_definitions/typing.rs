@@ -26,7 +26,7 @@ impl Pass<'_> {
                 // if the path has a single element, as in other cases symbols
                 // cannot be aliased.
                 self.binder
-                    .follow_symbol_aliases(&reference.resolution)
+                    .follow_symbol_aliases(reference.resolution.clone())
                     .as_definition_id()
             })
             .and_then(|node_id| self.type_of_definition(node_id, data_location))

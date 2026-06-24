@@ -13,9 +13,7 @@ mod scopes;
 
 pub(crate) use assembly::AssemblyBlock;
 pub use definitions::Definition;
-pub(crate) use definitions::{
-    ConstantDefinition, ContractDefinition, ImportDefinition, InterfaceDefinition,
-};
+pub(crate) use definitions::{ConstantDefinition, ContractDefinition, InterfaceDefinition};
 pub use references::{Reference, Resolution};
 use scopes::ContractScope;
 pub(crate) use scopes::{FileScope, ParameterDefinition, ParametersScope, Scope, UsingDirective};
@@ -569,11 +567,22 @@ impl Binder {
     // definitions can occur along the followed aliases, so there is no
     // guarantee that a `Resolved` resolution will yield another `Resolved`
     // resolution.
-    pub(crate) fn follow_symbol_aliases(&self, resolution: &Resolution) -> Resolution {
-        match resolution {
-            Resolution::Unresolved | Resolution::BuiltIn(_) => return resolution.clone(),
-            _ => {}
-        }
+    pub(crate) fn follow_symbol_aliases(&self, resolution: Resolution) -> Resolution {
+        let is_imported_symbol = |id| {
+            matches!(
+                self.find_definition_by_id(id),
+                Some(Definition::ImportedSymbol(_))
+            )
+        };
+        let mut working_set = match resolution {
+            Resolution::Definition(id) if is_imported_symbol(id) => vec![id],
+            Resolution::Ambiguous(ids) if ids.iter().copied().any(is_imported_symbol) => ids,
+            _ => {
+                // Short-circuit if there are no aliases to follow and avoid
+                // unnecessary allocations
+                return resolution;
+            }
+        };
 
         // TODO: since this function uses the results from other resolution
         // functions, we making more allocations than necessary; it may be worth
@@ -581,7 +590,6 @@ impl Binder {
         // resolution functions
         let mut found_ids = Vec::new();
         let mut seen_ids = Set::default();
-        let mut working_set = resolution.get_definition_ids();
 
         while let Some(definition_id) = working_set.pop() {
             if !seen_ids.insert(definition_id) {
@@ -631,6 +639,10 @@ impl Binder {
                 ResolveOptions::Qualified,
             ),
             Scope::Enum(enum_scope) => enum_scope.definitions.get(symbol).into(),
+            Scope::File(file_scope) => {
+                // We can get here by a file named file import
+                self.resolve_in_file_scope(&file_scope.file_id, symbol)
+            }
             Scope::Struct(struct_scope) => struct_scope.definitions.get(symbol).into(),
             Scope::Using(using_scope) => using_scope
                 .symbols
@@ -643,7 +655,6 @@ impl Binder {
 
             Scope::Block(_)
             | Scope::Chained(_)
-            | Scope::File(_)
             | Scope::Function(_)
             | Scope::Modifier(_)
             | Scope::YulBlock(_)
