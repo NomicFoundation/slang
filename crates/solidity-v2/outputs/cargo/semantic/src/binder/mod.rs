@@ -115,6 +115,9 @@ pub struct Binder {
     /// the `AssemblyStatement`'s `NodeId`, and processed in `p6_resolve_yul`
     /// (which also fills in their `solidity_references`)
     assembly_blocks: Map<NodeId, AssemblyBlock>,
+    /// Maps a definition's `NodeId` to the `NodeId` of the definition whose scope it was declared in,
+    /// populated in `p1_collect_definitions`. A file-level definition has no entry.
+    enclosing_definitions: Map<NodeId, NodeId>,
 }
 
 /// This controls visibility filtering and how to use the linearisation when
@@ -150,6 +153,12 @@ impl Binder {
 
     pub(crate) fn scope_id_for_file_id(&self, file_id: &str) -> Option<ScopeId> {
         self.scopes_by_file_id.get(file_id).copied()
+    }
+
+    /// The `NodeId` of the nearest enclosing definition `node_id` is declared in, or `None` for a
+    /// file-level definition.
+    pub fn enclosing_definition_node_id(&self, node_id: NodeId) -> Option<NodeId> {
+        self.enclosing_definitions.get(&node_id).copied()
     }
 
     pub(crate) fn insert_scope(&mut self, scope: Scope) -> ScopeId {
@@ -190,9 +199,14 @@ impl Binder {
     }
 
     pub(crate) fn insert_definition_in_scope(&mut self, definition: Definition, scope_id: ScopeId) {
-        let scope = self.get_scope_mut(scope_id);
+        let node_id = definition.node_id();
         let symbol = definition.identifier().unparse().to_string();
-        scope.insert_definition(symbol, definition.node_id());
+        let scope = self.get_scope_mut(scope_id);
+        scope.insert_definition(symbol, node_id);
+        // Record the scope's owner as this definition's enclosing definition.
+        let enclosing_node_id = scope.node_id();
+        self.enclosing_definitions
+            .insert(node_id, enclosing_node_id);
         self.insert_definition_no_scope(definition);
     }
 

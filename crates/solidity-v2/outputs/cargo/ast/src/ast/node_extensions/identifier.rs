@@ -64,6 +64,17 @@ impl IdentifierStruct {
         Definition::try_create(self.ir_node.id(), &self.semantic)
     }
 
+    /// Returns the enclosing definition for an identifier that is itself a
+    /// definition (eg. an enum member), or `None` if it is not a definition or
+    /// is declared at file level.
+    pub fn enclosing_definition(&self) -> Option<Definition> {
+        let enclosing = self
+            .semantic
+            .binder()
+            .enclosing_definition_node_id(self.ir_node.id())?;
+        Definition::try_create(enclosing, &self.semantic)
+    }
+
     /// Returns `true` if the identifier is a definition itself, or is the name
     /// identifier of a definition
     pub fn is_name_of_definition(&self) -> bool {

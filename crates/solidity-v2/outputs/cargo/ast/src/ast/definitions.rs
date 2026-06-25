@@ -257,6 +257,46 @@ impl Definition {
             Definition::YulVariable(identifier) => identifier.references(),
         }
     }
+
+    /// Returns the definition this one is declared in, or `None` if it is declared at file level.
+    pub fn enclosing_definition(&self) -> Option<Definition> {
+        match self {
+            Definition::Constant(constant_definition) => constant_definition.enclosing_definition(),
+            Definition::Contract(contract_definition) => contract_definition.enclosing_definition(),
+            Definition::Enum(enum_definition) => enum_definition.enclosing_definition(),
+            Definition::EnumMember(identifier) => identifier.enclosing_definition(),
+            Definition::Error(error_definition) => error_definition.enclosing_definition(),
+            Definition::Event(event_definition) => event_definition.enclosing_definition(),
+            Definition::Function(function_definition) => function_definition.enclosing_definition(),
+            Definition::Import(path_import) => path_import.enclosing_definition(),
+            Definition::ImportedSymbol(import_deconstruction_symbol) => {
+                import_deconstruction_symbol.enclosing_definition()
+            }
+            Definition::Interface(interface_definition) => {
+                interface_definition.enclosing_definition()
+            }
+            Definition::Library(library_definition) => library_definition.enclosing_definition(),
+            Definition::Modifier(function_definition) => function_definition.enclosing_definition(),
+            Definition::Parameter(parameter) => parameter.enclosing_definition(),
+            Definition::StateVariable(state_variable_definition) => {
+                state_variable_definition.enclosing_definition()
+            }
+            Definition::Struct(struct_definition) => struct_definition.enclosing_definition(),
+            Definition::StructMember(struct_member) => struct_member.enclosing_definition(),
+            Definition::TypeParameter(parameter) => parameter.enclosing_definition(),
+            Definition::UserDefinedValueType(user_defined_value_type_definition) => {
+                user_defined_value_type_definition.enclosing_definition()
+            }
+            Definition::Variable(variable_declaration) => {
+                variable_declaration.enclosing_definition()
+            }
+            Definition::YulFunction(yul_function_definition) => {
+                yul_function_definition.enclosing_definition()
+            }
+            Definition::YulParameter(identifier) => identifier.enclosing_definition(),
+            Definition::YulVariable(identifier) => identifier.enclosing_definition(),
+        }
+    }
 }
 
 macro_rules! define_references_method {
@@ -268,6 +308,14 @@ macro_rules! define_references_method {
                 }
                 pub fn as_definition(&self) -> Option<Definition> {
                     Definition::try_create(self.ir_node.id(), &self.semantic)
+                }
+                /// Returns the definition this one is declared in, or `None` if it is declared at file level.
+                pub fn enclosing_definition(&self) -> Option<Definition> {
+                    let enclosing = self
+                        .semantic
+                        .binder()
+                        .enclosing_definition_node_id(self.ir_node.id())?;
+                    Definition::try_create(enclosing, &self.semantic)
                 }
             }
         }
