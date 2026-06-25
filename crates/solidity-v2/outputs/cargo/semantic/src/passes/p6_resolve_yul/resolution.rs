@@ -39,6 +39,15 @@ impl Pass<'_> {
         })
     }
 
+    pub(super) fn resolve_symbol_in_enclosing_solidity_scope(&self, symbol: &str) -> Resolution {
+        filter_overriden_definitions(
+            self.binder,
+            self.types,
+            self.binder
+                .resolve_in_scope(self.current_solidity_scope_id(), symbol),
+        )
+    }
+
     pub(super) fn resolve_yul_suffix(
         &self,
         symbol: &str,

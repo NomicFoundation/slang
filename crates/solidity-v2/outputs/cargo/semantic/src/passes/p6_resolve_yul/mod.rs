@@ -120,6 +120,16 @@ impl<'a> Pass<'a> {
         *scope_id
     }
 
+    // This is always the bottom of the stack (ie. the initial scope) by
+    // construction, since it's the enclosing scope of the assembly block being
+    // processed
+    fn current_solidity_scope_id(&self) -> ScopeId {
+        self.scope_stack
+            .first()
+            .copied()
+            .expect("empty scope stack")
+    }
+
     fn insert_definition_in_current_scope(&mut self, definition: Definition) {
         self.insert_definition_in_scope(definition, self.current_scope_id());
     }

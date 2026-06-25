@@ -1337,6 +1337,11 @@ mod yul {
     }
 
     #[test]
+    fn calldata_access_resolves_to_solidity() -> Result<()> {
+        run("yul", "calldata_access_resolves_to_solidity")
+    }
+
+    #[test]
     fn catch_params() -> Result<()> {
         run("yul", "catch_params")
     }
@@ -1419,6 +1424,11 @@ mod yul {
     #[test]
     fn non_functional_notation() -> Result<()> {
         run("yul", "non_functional_notation")
+    }
+
+    #[test]
+    fn slot_access_resolves_to_solidity() -> Result<()> {
+        run("yul", "slot_access_resolves_to_solidity")
     }
 
     #[test]

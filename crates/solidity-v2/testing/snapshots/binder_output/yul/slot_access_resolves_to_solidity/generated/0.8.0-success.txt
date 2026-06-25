@@ -1,0 +1,48 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["add" @ input.sol:2:13] (state var, type: uint256)
+- Def: #3 ["test" @ input.sol:4:14] (function, type: function () returns uint256)
+- Def: #4 ["result" @ input.sol:4:50] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["result" @ input.sol:7:13] -> #4
+- Ref: ["sload" @ input.sol:7:23] -> built-in
+- Ref: ["add" @ input.sol:7:29] -> #2
+- Ref: ["slot" @ input.sol:7:33] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     uint256 add;
+   │             ─┬─  
+   │              ╰─── name: 2
+   │ 
+ 4 │     function test() public view returns (uint256 result) {
+   │              ──┬─                                ───┬──  
+   │                ╰───────────────────────────────────────── name: 3
+   │                                                     │    
+   │                                                     ╰──── name: 4
+   │ 
+ 7 │             result := sload(add.slot)
+   │             ───┬──    ──┬── ─┬─ ──┬─  
+   │                ╰────────────────────── ref: 4
+   │                         │    │    │   
+   │                         ╰───────────── built-in
+   │                              │    │   
+   │                              ╰──────── ref: 2
+   │                                   │   
+   │                                   ╰─── built-in
+───╯
