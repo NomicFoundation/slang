@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Parse errors:
-Error: Unexpected CloseBrace. One of AddressKeyword, AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
+[syntax/unexpected-terminal] Error: Unexpected CloseBrace. One of AddressKeyword, AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
     ╭─[input.sol:14:5]
     │
  14 │     }

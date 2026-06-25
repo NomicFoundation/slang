@@ -1,14 +1,14 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Parse errors:
-Error: This syntax was introduced in version '0.8.29'.
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
    ╭─[input.sol:1:21]
    │
  1 │ contract MyContract layout at erc7201("openzeppelin.storage.MyContract") { // added in 0.8.35
    │                     ──────────────────────────┬─────────────────────────  
    │                                               ╰─────────────────────────── Error occurred here.
 ───╯
-Error: This built-in was introduced in version '0.8.35'.
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.35'.
    ╭─[input.sol:1:31]
    │
  1 │ contract MyContract layout at erc7201("openzeppelin.storage.MyContract") { // added in 0.8.35

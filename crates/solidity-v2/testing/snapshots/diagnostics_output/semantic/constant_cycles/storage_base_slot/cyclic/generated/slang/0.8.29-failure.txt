@@ -2,7 +2,7 @@
 
 Diagnostics: 3
 
-Error: The value of the constant A has a cyclic dependency via B.
+[semantic/cyclic-constant-dependency] Error: The value of the constant A has a cyclic dependency via B.
    ╭─[input.sol:4:1]
    │
  4 │ uint256 constant A = B;
@@ -10,7 +10,7 @@ Error: The value of the constant A has a cyclic dependency via B.
    │            ╰───────────── Error occurred here.
 ───╯
 
-Error: The value of the constant B has a cyclic dependency via A.
+[semantic/cyclic-constant-dependency] Error: The value of the constant B has a cyclic dependency via A.
    ╭─[input.sol:5:1]
    │
  5 │ uint256 constant B = A;
@@ -18,7 +18,7 @@ Error: The value of the constant B has a cyclic dependency via A.
    │            ╰───────────── Error occurred here.
 ───╯
 
-Error: Cyclic constant definition (or maximum recursion depth exhausted).
+[semantic/cyclic-constant-definition] Error: Cyclic constant definition (or maximum recursion depth exhausted).
    ╭─[input.sol:7:22]
    │
  7 │ contract C layout at A {}

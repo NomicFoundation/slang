@@ -2,7 +2,7 @@
 
 Diagnostics: 4
 
-Error: The value of the constant C has a cyclic dependency via D.
+[semantic/cyclic-constant-dependency] Error: The value of the constant C has a cyclic dependency via D.
    ╭─[input.sol:8:5]
    │
  8 │     uint256 constant C = D;
@@ -10,7 +10,7 @@ Error: The value of the constant C has a cyclic dependency via D.
    │                ╰───────────── Error occurred here.
 ───╯
 
-Error: The value of the constant D has a cyclic dependency via C.
+[semantic/cyclic-constant-dependency] Error: The value of the constant D has a cyclic dependency via C.
    ╭─[input.sol:9:5]
    │
  9 │     uint256 constant D = C;
@@ -18,7 +18,7 @@ Error: The value of the constant D has a cyclic dependency via C.
    │                ╰───────────── Error occurred here.
 ───╯
 
-Error: The value of the constant A has a cyclic dependency via C.
+[semantic/cyclic-constant-dependency] Error: The value of the constant A has a cyclic dependency via C.
     ╭─[input.sol:10:5]
     │
  10 │     uint256 constant A = C + 1;
@@ -26,7 +26,7 @@ Error: The value of the constant A has a cyclic dependency via C.
     │                  ╰─────────────── Error occurred here.
 ────╯
 
-Error: Cyclic constant definition (or maximum recursion depth exhausted).
+[semantic/cyclic-constant-definition] Error: Cyclic constant definition (or maximum recursion depth exhausted).
     ╭─[input.sol:11:13]
     │
  11 │     uint256[A] data;

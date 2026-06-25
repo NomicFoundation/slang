@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Parse errors:
-Error: This built-in was introduced in version '0.8.8'.
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.8'.
    ╭─[input.sol:5:37]
    │
  5 │         Answer first = type(Answer).min;

@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Identifier already declared.
+[resolution/identifier-redeclaration] Error: Identifier already declared.
    ╭─[input.sol:7:9]
    │
  7 │         A

@@ -2,7 +2,7 @@
 
 Diagnostics: 2
 
-Error: Invalid visibility, can only be "external" or "internal".
+[type-system/invalid-function-type-visibility] Error: Invalid visibility, can only be "external" or "internal".
    ╭─[input.sol:7:5]
    │
  7 │     function (uint256) private x;
@@ -10,7 +10,7 @@ Error: Invalid visibility, can only be "external" or "internal".
    │                  ╰────────────── Error occurred here.
 ───╯
 
-Error: Invalid visibility, can only be "external" or "internal".
+[type-system/invalid-function-type-visibility] Error: Invalid visibility, can only be "external" or "internal".
    ╭─[input.sol:8:5]
    │
  8 │     function (uint256) public y;

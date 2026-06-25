@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Only a single override specifier can be provided.
+[syntax/multiple-override-specifiers] Error: Only a single override specifier can be provided.
    ╭─[input.sol:5:34]
    │
  5 │     fallback() external override override {}

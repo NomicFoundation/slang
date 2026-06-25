@@ -32,7 +32,7 @@ Source: >
 
 Errors: # 3 total
   - >
-    Error: This syntax was introduced in version '0.8.13'.
+    [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/everything/input.sol:6:1]
        │
      6 │ using A for B;
@@ -40,7 +40,7 @@ Errors: # 3 total
        │        ╰──────── Error occurred here.
     ───╯
   - >
-    Error: This syntax was introduced in version '0.8.8'.
+    [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.8'.
         ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/everything/input.sol:24:1]
         │
      24 │ type T is bool;
@@ -48,7 +48,7 @@ Errors: # 3 total
         │        ╰───────── Error occurred here.
     ────╯
   - >
-    Error: This syntax was introduced in version '0.8.22'.
+    [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.22'.
         ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/everything/input.sol:26:1]
         │
      26 │ event E1(uint256 value);

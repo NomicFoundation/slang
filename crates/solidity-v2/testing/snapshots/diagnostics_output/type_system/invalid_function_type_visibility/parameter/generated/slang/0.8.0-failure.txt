@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Invalid visibility, can only be "external" or "internal".
+[type-system/invalid-function-type-visibility] Error: Invalid visibility, can only be "external" or "internal".
    ╭─[input.sol:5:16]
    │
  5 │     function f(function (uint256) public g) external {}

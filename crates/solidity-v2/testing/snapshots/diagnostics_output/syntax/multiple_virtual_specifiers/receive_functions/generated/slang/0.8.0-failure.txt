@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Only a single virtual specifier can be provided.
+[syntax/multiple-virtual-specifiers] Error: Only a single virtual specifier can be provided.
    ╭─[input.sol:5:40]
    │
  5 │     receive() external payable virtual virtual {}

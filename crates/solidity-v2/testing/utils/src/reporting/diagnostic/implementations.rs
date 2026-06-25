@@ -16,4 +16,8 @@ impl RenderDiagnostic for Diagnostic {
     fn message(&self) -> String {
         DiagnosticExtensions::message(self)
     }
+
+    fn code(&self) -> Option<&'static str> {
+        Some(DiagnosticExtensions::code(self))
+    }
 }

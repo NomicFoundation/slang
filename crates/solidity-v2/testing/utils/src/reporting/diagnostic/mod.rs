@@ -17,6 +17,12 @@ pub trait RenderDiagnostic {
     fn severity(&self) -> DiagnosticSeverity;
     /// The primary message associated with this diagnostic.
     fn message(&self) -> String;
+    /// A stable machine-readable code identifying this diagnostic, rendered as
+    /// a `[code]` prefix (mirroring solc's `[ParserError 6275]`). Returns
+    /// `None` for diagnostic types that don't carry a code.
+    fn code(&self) -> Option<&'static str> {
+        None
+    }
 }
 
 pub fn render<D: RenderDiagnostic>(
@@ -32,9 +38,13 @@ pub fn render<D: RenderDiagnostic>(
     };
 
     let message = error.message();
+    let code = error.code();
 
     if source.is_empty() {
-        return format!("{kind}: {message}\n   ─[{source_id}:0:0]");
+        return match code {
+            Some(code) => format!("[{code}] {kind}: {message}\n   ─[{source_id}:0:0]"),
+            None => format!("{kind}: {message}\n   ─[{source_id}:0:0]"),
+        };
     }
 
     // TODO(v2): Once https://github.com/zesterer/ariadne/pull/159 is released we should be able to
@@ -49,15 +59,18 @@ pub fn render<D: RenderDiagnostic>(
         start..end
     };
 
-    let report = Report::build(kind, source_id, range.start)
+    let mut report = Report::build(kind, source_id, range.start)
         .with_config(Config::default().with_color(with_color))
         .with_message(message)
         .with_label(
             Label::new((source_id, range))
                 .with_color(color)
                 .with_message("Error occurred here."),
-        )
-        .finish();
+        );
+    if let Some(code) = code {
+        report = report.with_code(code);
+    }
+    let report = report.finish();
 
     let mut result = vec![];
     report

@@ -11,7 +11,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected MemoryKeyword. One of AddressKeyword, AtKeyword, Bang, BoolKeyword, BytesKeyword, CloseParen, Comma, DecimalLiteral, DeleteKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, Minus, MinusMinus, NewKeyword, OpenBracket, OpenParen, PayableKeyword, PlusPlus, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UnicodeStringLiteral was expected
+    [syntax/unexpected-terminal] Error: Unexpected MemoryKeyword. One of AddressKeyword, AtKeyword, Bang, BoolKeyword, BytesKeyword, CloseParen, Comma, DecimalLiteral, DeleteKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, Minus, MinusMinus, NewKeyword, OpenBracket, OpenParen, PayableKeyword, PlusPlus, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UnicodeStringLiteral was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/TupleDeconstructionStatement/with_location/input.sol:4:2]
        │
      4 │ (memory with_location, without_location) = rhs;

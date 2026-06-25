@@ -2,10 +2,10 @@
 
 Diagnostics: 2
 
-Error: File not found.
+[compilation/missing-file] Error: File not found.
    ─[lib/missing.sol:0:0]
 
-Error: Imported file is missing: lib/missing.sol
+[compilation/missing-imported-file] Error: Imported file is missing: lib/missing.sol
    ╭─[main.sol:4:8]
    │
  4 │ import "lib/missing.sol";

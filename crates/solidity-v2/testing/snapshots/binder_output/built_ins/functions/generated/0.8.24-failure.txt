@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Parse errors:
-Error: This built-in was introduced in EVM target 'Cancun'.
+[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Cancun'.
     ╭─[input.sol:19:22]
     │
  19 │         bytes32 v3 = blobhash(2);

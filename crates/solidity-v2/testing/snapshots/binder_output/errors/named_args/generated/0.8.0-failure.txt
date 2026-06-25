@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Parse errors:
-Error: This syntax was introduced in version '0.8.4'.
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
    ╭─[input.sol:3:5]
    │
  3 │ ╭─▶     error Failure (
@@ -10,7 +10,7 @@ Error: This syntax was introduced in version '0.8.4'.
    │ │            
    │ ╰──────────── Error occurred here.
 ───╯
-Error: This syntax was introduced in version '0.8.4'.
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
    ╭─[input.sol:8:9]
    │
  8 │         revert Failure({cause: Cause.NotAuthorized, details: "not owner"});

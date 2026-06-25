@@ -14,7 +14,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected Semicolon. One of CloseParen, Comma was expected
+    [syntax/unexpected-terminal] Error: Unexpected Semicolon. One of CloseParen, Comma was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractMembers/mismatched_delimiter/input.sol:5:29]
        │
      5 │         uint256 arg = (1 + 2;

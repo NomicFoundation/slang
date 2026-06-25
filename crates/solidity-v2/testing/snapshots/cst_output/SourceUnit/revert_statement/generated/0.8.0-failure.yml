@@ -20,7 +20,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: This syntax was introduced in version '0.8.4'.
+    [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/revert_statement/input.sol:7:5]
        │
      7 │     revert MyError(1, 2);

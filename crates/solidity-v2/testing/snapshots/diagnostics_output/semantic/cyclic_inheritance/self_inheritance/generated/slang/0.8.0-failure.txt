@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Circular inheritance is not allowed.
+[semantic/cyclic-inheritance] Error: Circular inheritance is not allowed.
    ╭─[input.sol:4:1]
    │
  4 │ contract A is A {}

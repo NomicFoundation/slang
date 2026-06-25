@@ -1,63 +1,63 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Parse errors:
-Error: This built-in was introduced in EVM target 'London'.
+[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'London'.
    ╭─[input.sol:9:13]
    │
  9 │             basefee()
    │             ───┬───  
    │                ╰───── Error occurred here.
 ───╯
-Error: This built-in was introduced in EVM target 'Cancun'.
+[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Cancun'.
     ╭─[input.sol:10:13]
     │
  10 │             blobbasefee()
     │             ─────┬─────  
     │                  ╰─────── Error occurred here.
 ────╯
-Error: This built-in was introduced in EVM target 'Cancun'.
+[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Cancun'.
     ╭─[input.sol:11:13]
     │
  11 │             blobhash()
     │             ────┬───  
     │                 ╰───── Error occurred here.
 ────╯
-Error: This built-in was introduced in EVM target 'Cancun'.
+[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Cancun'.
     ╭─[input.sol:47:13]
     │
  47 │             mcopy()
     │             ──┬──  
     │               ╰──── Error occurred here.
 ────╯
-Error: This built-in was introduced in EVM target 'Paris'.
+[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Paris'.
     ╭─[input.sol:60:13]
     │
  60 │             prevrandao()
     │             ─────┬────  
     │                  ╰────── Error occurred here.
 ────╯
-Error: This built-in was introduced in EVM target 'Cancun'.
+[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Cancun'.
     ╭─[input.sol:81:13]
     │
  81 │             tload()
     │             ──┬──  
     │               ╰──── Error occurred here.
 ────╯
-Error: This built-in was introduced in EVM target 'Cancun'.
+[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Cancun'.
     ╭─[input.sol:82:13]
     │
  82 │             tstore()
     │             ───┬──  
     │                ╰──── Error occurred here.
 ────╯
-Error: This built-in was introduced in EVM target 'Osaka'.
+[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Osaka'.
     ╭─[input.sol:84:13]
     │
  84 │             clz()
     │             ─┬─  
     │              ╰─── Error occurred here.
 ────╯
-Error: This built-in was introduced in version '0.8.31'.
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.31'.
     ╭─[input.sol:84:13]
     │
  84 │             clz()

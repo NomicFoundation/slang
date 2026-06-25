@@ -1,21 +1,21 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Parse errors:
-Error: This syntax was introduced in version '0.8.18'.
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.18'.
    ╭─[input.sol:3:25]
    │
  3 │         mapping(bytes32 value => uint256) positions;
    │                         ──┬──  
    │                           ╰──── Error occurred here.
 ───╯
-Error: This syntax was introduced in version '0.8.18'.
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.18'.
    ╭─[input.sol:6:21]
    │
  6 │     mapping(address asset0 => mapping(address asset1 => address)) map;
    │                     ───┬──  
    │                        ╰──── Error occurred here.
 ───╯
-Error: This syntax was introduced in version '0.8.18'.
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.18'.
    ╭─[input.sol:6:47]
    │
  6 │     mapping(address asset0 => mapping(address asset1 => address)) map;

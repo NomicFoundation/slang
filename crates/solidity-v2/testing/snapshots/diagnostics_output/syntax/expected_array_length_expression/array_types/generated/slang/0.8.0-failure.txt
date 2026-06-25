@@ -2,7 +2,7 @@
 
 Diagnostics: 6
 
-Error: Expected array length expression.
+[syntax/expected-array-length-expression] Error: Expected array length expression.
    ╭─[input.sol:6:9]
    │
  6 │         uint[][1:] memory a;
@@ -10,7 +10,7 @@ Error: Expected array length expression.
    │              ╰────── Error occurred here.
 ───╯
 
-Error: Expected array length expression.
+[syntax/expected-array-length-expression] Error: Expected array length expression.
    ╭─[input.sol:7:9]
    │
  7 │         uint[][1:2] memory b;
@@ -18,7 +18,7 @@ Error: Expected array length expression.
    │              ╰─────── Error occurred here.
 ───╯
 
-Error: Expected array length expression.
+[syntax/expected-array-length-expression] Error: Expected array length expression.
    ╭─[input.sol:8:9]
    │
  8 │         uint[1:] memory c;
@@ -26,7 +26,7 @@ Error: Expected array length expression.
    │             ╰───── Error occurred here.
 ───╯
 
-Error: Expected array length expression.
+[syntax/expected-array-length-expression] Error: Expected array length expression.
    ╭─[input.sol:9:9]
    │
  9 │         uint[1:2] memory d;
@@ -34,7 +34,7 @@ Error: Expected array length expression.
    │             ╰────── Error occurred here.
 ───╯
 
-Error: Expected array length expression.
+[syntax/expected-array-length-expression] Error: Expected array length expression.
     ╭─[input.sol:10:9]
     │
  10 │         uint[1:][] memory e;
@@ -42,7 +42,7 @@ Error: Expected array length expression.
     │             ╰───── Error occurred here.
 ────╯
 
-Error: Expected array length expression.
+[syntax/expected-array-length-expression] Error: Expected array length expression.
     ╭─[input.sol:11:9]
     │
  11 │         uint[1:2][] memory f;

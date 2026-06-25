@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Unresolved import.
+[compilation/unresolved-import] Error: Unresolved import.
    ╭─[input.sol:5:8]
    │
  5 │ import "../../oops.sol";

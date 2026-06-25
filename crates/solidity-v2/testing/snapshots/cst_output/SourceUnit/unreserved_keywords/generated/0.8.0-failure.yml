@@ -11,7 +11,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: This syntax was introduced in version '0.8.27'.
+    [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.27'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/unreserved_keywords/input.sol:3:7]
        │
      3 │     uint transient foo;

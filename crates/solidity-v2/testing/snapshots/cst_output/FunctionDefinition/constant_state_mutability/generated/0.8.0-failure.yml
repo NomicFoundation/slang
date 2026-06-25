@@ -7,7 +7,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected ConstantKeyword. One of AtKeyword, ErrorKeyword, ExternalKeyword, FromKeyword, GlobalKeyword, Identifier, InternalKeyword, LayoutKeyword, OpenBrace, OverrideKeyword, PayableKeyword, PrivateKeyword, PublicKeyword, PureKeyword, ReturnsKeyword, RevertKeyword, Semicolon, TransientKeyword, ViewKeyword, VirtualKeyword was expected
+    [syntax/unexpected-terminal] Error: Unexpected ConstantKeyword. One of AtKeyword, ErrorKeyword, ExternalKeyword, FromKeyword, GlobalKeyword, Identifier, InternalKeyword, LayoutKeyword, OpenBrace, OverrideKeyword, PayableKeyword, PrivateKeyword, PublicKeyword, PureKeyword, ReturnsKeyword, RevertKeyword, Semicolon, TransientKeyword, ViewKeyword, VirtualKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionDefinition/constant_state_mutability/input.sol:2:14]
        │
      2 │ function a() constant {}

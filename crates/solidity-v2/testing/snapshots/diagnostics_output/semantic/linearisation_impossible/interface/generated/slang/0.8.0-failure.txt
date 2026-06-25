@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Linearization of inheritance graph is impossible.
+[semantic/linearisation-impossible] Error: Linearization of inheritance graph is impossible.
    ╭─[input.sol:8:1]
    │
  8 │ interface ListsA is Sub, ParentA {}

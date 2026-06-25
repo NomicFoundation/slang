@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Identifier not found.
+[resolution/identifier-not-found] Error: Identifier not found.
    ╭─[input.sol:4:15]
    │
  4 │ contract C is Missing {}

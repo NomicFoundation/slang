@@ -1,35 +1,35 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Parse errors:
-Error: This built-in was introduced in EVM target 'London'.
+[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'London'.
    ╭─[input.sol:8:25]
    │
  8 │         uint v1 = block.basefee;
    │                         ───┬───  
    │                            ╰───── Error occurred here.
 ───╯
-Error: This built-in was introduced in EVM target 'Cancun'.
+[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Cancun'.
    ╭─[input.sol:9:25]
    │
  9 │         uint v2 = block.blobbasefee;
    │                         ─────┬─────  
    │                              ╰─────── Error occurred here.
 ───╯
-Error: This built-in was introduced in version '0.8.24'.
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.24'.
    ╭─[input.sol:9:25]
    │
  9 │         uint v2 = block.blobbasefee;
    │                         ─────┬─────  
    │                              ╰─────── Error occurred here.
 ───╯
-Error: This built-in was introduced in EVM target 'Paris'.
+[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Paris'.
     ╭─[input.sol:15:25]
     │
  15 │         uint v8 = block.prevrandao;
     │                         ─────┬────  
     │                              ╰────── Error occurred here.
 ────╯
-Error: This built-in was introduced in version '0.8.18'.
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.18'.
     ╭─[input.sol:15:25]
     │
  15 │         uint v8 = block.prevrandao;

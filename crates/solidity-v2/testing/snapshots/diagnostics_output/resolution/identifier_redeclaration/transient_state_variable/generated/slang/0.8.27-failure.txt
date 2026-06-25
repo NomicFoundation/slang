@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Identifier already declared.
+[resolution/identifier-redeclaration] Error: Identifier already declared.
    ╭─[input.sol:6:27]
    │
  6 │     uint public transient x;

@@ -9,7 +9,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected YulCloseParen. One of YulStringLiteral was expected
+    [syntax/unexpected-terminal] Error: Unexpected YulCloseParen. One of YulStringLiteral was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/AssemblyStatement/empty_flags/input.sol:3:19]
        │
      3 │         assembly () {}
