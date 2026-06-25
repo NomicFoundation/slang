@@ -698,6 +698,7 @@ pub slang_solidity_v2_ast::ast::Definition::YulFunction(slang_solidity_v2_ast::a
 pub slang_solidity_v2_ast::ast::Definition::YulParameter(slang_solidity_v2_ast::ast::Identifier)
 pub slang_solidity_v2_ast::ast::Definition::YulVariable(slang_solidity_v2_ast::ast::Identifier)
 impl slang_solidity_v2_ast::ast::Definition
+pub fn slang_solidity_v2_ast::ast::Definition::enclosing_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::Definition::identifier(&self) -> slang_solidity_v2_ast::ast::Identifier
 pub fn slang_solidity_v2_ast::ast::Definition::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::Definition::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
@@ -1474,6 +1475,8 @@ impl slang_solidity_v2_ast::ast::ConstantDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ConstantDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::ConstantDefinitionStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
 impl slang_solidity_v2_ast::ast::ConstantDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::ConstantDefinitionStruct::enclosing_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
+impl slang_solidity_v2_ast::ast::ConstantDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ConstantDefinitionStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::ConstantDefinitionStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::ConstantDefinitionStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
@@ -1602,6 +1605,8 @@ impl slang_solidity_v2_ast::ast::EnumDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::EnumDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::EnumDefinitionStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
 impl slang_solidity_v2_ast::ast::EnumDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::EnumDefinitionStruct::enclosing_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
+impl slang_solidity_v2_ast::ast::EnumDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::EnumDefinitionStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::EnumDefinitionStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::EnumDefinitionStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
@@ -1661,6 +1666,8 @@ pub fn slang_solidity_v2_ast::ast::ErrorDefinitionStruct::compute_canonical_sign
 pub fn slang_solidity_v2_ast::ast::ErrorDefinitionStruct::compute_internal_signature(&self) -> core::option::Option<alloc::string::String>
 pub fn slang_solidity_v2_ast::ast::ErrorDefinitionStruct::compute_selector(&self) -> core::option::Option<u32>
 impl slang_solidity_v2_ast::ast::ErrorDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::ErrorDefinitionStruct::enclosing_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
+impl slang_solidity_v2_ast::ast::ErrorDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ErrorDefinitionStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::ErrorDefinitionStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::ErrorDefinitionStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
@@ -1687,6 +1694,8 @@ pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::compute_abi_entry(&sel
 pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::compute_canonical_signature(&self) -> core::option::Option<alloc::string::String>
 pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::compute_internal_signature(&self) -> core::option::Option<alloc::string::String>
 pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::compute_selector(&self) -> core::option::Option<u32>
+impl slang_solidity_v2_ast::ast::EventDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::enclosing_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 impl slang_solidity_v2_ast::ast::EventDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
@@ -1806,6 +1815,8 @@ pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::compute_canonical_s
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::compute_internal_signature(&self) -> core::option::Option<alloc::string::String>
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::compute_selector(&self) -> core::option::Option<u32>
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::is_externally_visible(&self) -> bool
+impl slang_solidity_v2_ast::ast::FunctionDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::enclosing_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::FunctionDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::FunctionType
@@ -1956,6 +1967,7 @@ pub fn slang_solidity_v2_ast::ast::IdentifierPathStruct::serialize<S: serde_core
 pub struct slang_solidity_v2_ast::ast::IdentifierStruct
 impl slang_solidity_v2_ast::ast::IdentifierStruct
 pub fn slang_solidity_v2_ast::ast::IdentifierStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
+pub fn slang_solidity_v2_ast::ast::IdentifierStruct::enclosing_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::IdentifierStruct::is_definition(&self) -> bool
 pub fn slang_solidity_v2_ast::ast::IdentifierStruct::is_name_of_definition(&self) -> bool
 pub fn slang_solidity_v2_ast::ast::IdentifierStruct::is_reference(&self) -> bool
@@ -2646,6 +2658,8 @@ pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::compute_intern
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::compute_selector(&self) -> core::option::Option<u32>
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::is_externally_visible(&self) -> bool
 impl slang_solidity_v2_ast::ast::StateVariableDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::enclosing_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
+impl slang_solidity_v2_ast::ast::StateVariableDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
@@ -2711,6 +2725,8 @@ impl slang_solidity_v2_ast::ast::StructDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::StructDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::StructDefinitionStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
 impl slang_solidity_v2_ast::ast::StructDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::StructDefinitionStruct::enclosing_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
+impl slang_solidity_v2_ast::ast::StructDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::StructDefinitionStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::StructDefinitionStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::StructDefinitionStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
@@ -2723,6 +2739,8 @@ pub struct slang_solidity_v2_ast::ast::StructMemberStruct
 impl slang_solidity_v2_ast::ast::StructMemberStruct
 pub fn slang_solidity_v2_ast::ast::StructMemberStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::StructMemberStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
+impl slang_solidity_v2_ast::ast::StructMemberStruct
+pub fn slang_solidity_v2_ast::ast::StructMemberStruct::enclosing_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 impl slang_solidity_v2_ast::ast::StructMemberStruct
 pub fn slang_solidity_v2_ast::ast::StructMemberStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::StructMemberStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
