@@ -1,4 +1,4 @@
-sources = ["env:///bin/manifests", "https://github.com/NomicFoundation/cargo-cooldown-check.git", "https://github.com/cashapp/hermit-packages.git"]
+sources = ["https://github.com/NomicFoundation/cargo-cooldown-check.git", "https://github.com/cashapp/hermit-packages.git"]
 
 env = {
   // Infra:
