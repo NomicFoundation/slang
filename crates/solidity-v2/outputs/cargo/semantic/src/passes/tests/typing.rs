@@ -1311,3 +1311,10 @@ fn test_partially_applied_function_is_not_convertible() {
         "partially applied function pointers should not be convertible",
     );
 }
+
+#[test]
+fn reference_type_constant_is_indexable() {
+    let (element_type, _types) =
+        type_of_expression_in_context(r#"bytes constant B = hex"1234";"#, "B[0]");
+    assert_eq!(element_type, Type::ByteArray(ByteArrayType { width: 1 }));
+}
