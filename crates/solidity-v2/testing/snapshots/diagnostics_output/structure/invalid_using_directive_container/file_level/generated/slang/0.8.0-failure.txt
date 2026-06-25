@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: This syntax was introduced in version '0.8.13'.
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
    ╭─[input.sol:6:1]
    │
  6 │ using L for uint256;

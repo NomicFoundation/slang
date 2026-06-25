@@ -1,14 +1,14 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Parse errors:
-Error: Imported file is missing: slots.sol
+[compilation/missing-imported-file] Error: Imported file is missing: slots.sol
    ╭─[input.sol:1:22]
    │
  1 │ import { slot } from "./slots.sol";  // even if undefined, the local def should have 2 references
    │                      ──────┬──────  
    │                            ╰──────── Error occurred here.
 ───╯
-Error: File not found
+[compilation/missing-file] Error: File not found
    ─[slots.sol:0:0]
 
 ------------------------------------------------------------------------

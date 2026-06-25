@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Only a single mutability specifier can be provided.
+[syntax/multiple-mutability-specifiers] Error: Only a single mutability specifier can be provided.
    ╭─[input.sol:5:32]
    │
  5 │   function foo(function() pure view returns (uint) callback) {}

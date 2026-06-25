@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Parse errors:
-Error: This syntax was introduced in version '0.8.29'.
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
    ╭─[input.sol:3:13]
    │
  3 │ contract X1 layout at C1 {

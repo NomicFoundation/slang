@@ -1,28 +1,28 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Parse errors:
-Error: Identifier already declared.
+[resolution/identifier-redeclaration] Error: Identifier already declared.
    ╭─[input.sol:5:8]
    │
  5 │ struct S {
    │        ┬  
    │        ╰── Error occurred here.
 ───╯
-Error: This syntax was introduced in version '0.8.4'.
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
     ╭─[input.sol:10:5]
     │
  10 │     error dup(uint code);
     │     ──────────┬──────────  
     │               ╰──────────── Error occurred here.
 ────╯
-Error: Identifier already declared.
+[resolution/identifier-redeclaration] Error: Identifier already declared.
     ╭─[input.sol:12:14]
     │
  12 │     function dup(bool flag) public {}
     │              ─┬─  
     │               ╰─── Error occurred here.
 ────╯
-Error: This syntax was introduced in version '0.8.4'.
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
     ╭─[input.sol:18:9]
     │
  18 │         revert dup(1);

@@ -2,7 +2,7 @@
 
 Diagnostics: 3
 
-Error: This syntax was introduced in version '0.8.4'.
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
    ╭─[input.sol:4:1]
    │
  4 │ error Err(uint);
@@ -10,7 +10,7 @@ Error: This syntax was introduced in version '0.8.4'.
    │         ╰───────── Error occurred here.
 ───╯
 
-Error: This syntax was introduced in version '0.8.4'.
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
    ╭─[input.sol:5:1]
    │
  5 │ error Err(bytes32);
@@ -18,7 +18,7 @@ Error: This syntax was introduced in version '0.8.4'.
    │          ╰─────────── Error occurred here.
 ───╯
 
-Error: Identifier already declared.
+[resolution/identifier-redeclaration] Error: Identifier already declared.
    ╭─[input.sol:5:7]
    │
  5 │ error Err(bytes32);

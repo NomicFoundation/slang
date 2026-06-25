@@ -2,7 +2,7 @@
 
 Diagnostics: 3
 
-Error: Circular inheritance is not allowed.
+[semantic/cyclic-inheritance] Error: Circular inheritance is not allowed.
    ╭─[input.sol:4:1]
    │
  4 │ contract X is Y {}
@@ -10,7 +10,7 @@ Error: Circular inheritance is not allowed.
    │          ╰────────── Error occurred here.
 ───╯
 
-Error: Circular inheritance is not allowed.
+[semantic/cyclic-inheritance] Error: Circular inheritance is not allowed.
    ╭─[input.sol:5:1]
    │
  5 │ contract Y is Z {}
@@ -18,7 +18,7 @@ Error: Circular inheritance is not allowed.
    │          ╰────────── Error occurred here.
 ───╯
 
-Error: Circular inheritance is not allowed.
+[semantic/cyclic-inheritance] Error: Circular inheritance is not allowed.
    ╭─[input.sol:6:1]
    │
  6 │ contract Z is X {}

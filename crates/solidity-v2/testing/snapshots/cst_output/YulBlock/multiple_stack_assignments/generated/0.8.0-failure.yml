@@ -20,7 +20,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected UNRECOGNIZED. One of YulBreakKeyword, YulCloseBrace, YulContinueKeyword, YulDecimalLiteral, YulFalseKeyword, YulForKeyword, YulFunctionKeyword, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulIfKeyword, YulLeaveKeyword, YulLetKeyword, YulOpenBrace, YulOpenParen, YulStringLiteral, YulSwitchKeyword, YulTrueKeyword was expected
+    [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of YulBreakKeyword, YulCloseBrace, YulContinueKeyword, YulDecimalLiteral, YulFalseKeyword, YulForKeyword, YulFunctionKeyword, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulIfKeyword, YulLeaveKeyword, YulLetKeyword, YulOpenBrace, YulOpenParen, YulStringLiteral, YulSwitchKeyword, YulTrueKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulBlock/multiple_stack_assignments/input.sol:9:3]
        │
      9 │   =: success

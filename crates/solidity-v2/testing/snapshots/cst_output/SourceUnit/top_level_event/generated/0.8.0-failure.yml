@@ -8,7 +8,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: This syntax was introduced in version '0.8.22'.
+    [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.22'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/top_level_event/input.sol:2:1]
        │
      2 │ event E1(uint256 value);

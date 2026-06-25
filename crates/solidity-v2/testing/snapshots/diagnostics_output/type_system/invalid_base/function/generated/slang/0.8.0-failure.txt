@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Only a contract or interface can be used as a base.
+[type-system/invalid-base] Error: Only a contract or interface can be used as a base.
    ╭─[input.sol:6:15]
    │
  6 │ contract C is someFreeFunction {}

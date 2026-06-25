@@ -1,14 +1,14 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Parse errors:
-Error: This built-in was introduced in version '0.8.8'.
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.8'.
     ╭─[input.sol:26:36]
     │
  26 │         return type(ActionChoices).max;
     │                                    ─┬─  
     │                                     ╰─── Error occurred here.
 ────╯
-Error: This built-in was introduced in version '0.8.8'.
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.8'.
     ╭─[input.sol:30:36]
     │
  30 │         return type(ActionChoices).min;

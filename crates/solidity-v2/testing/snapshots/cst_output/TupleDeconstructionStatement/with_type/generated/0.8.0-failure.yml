@@ -11,7 +11,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected CloseParen. One of AtKeyword, CallDataKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, MemoryKeyword, RevertKeyword, StorageKeyword, TransientKeyword was expected
+    [syntax/unexpected-terminal] Error: Unexpected CloseParen. One of AtKeyword, CallDataKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, MemoryKeyword, RevertKeyword, StorageKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/TupleDeconstructionStatement/with_type/input.sol:4:30]
        │
      4 │ (bool with_type, without_type) = rhs;

@@ -2,7 +2,7 @@
 
 Diagnostics: 2
 
-Error: This syntax was introduced in version '0.8.27'.
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.27'.
    ╭─[input.sol:6:17]
    │
  6 │     uint public transient x;
@@ -10,7 +10,7 @@ Error: This syntax was introduced in version '0.8.27'.
    │                     ╰────── Error occurred here.
 ───╯
 
-Error: Identifier already declared.
+[resolution/identifier-redeclaration] Error: Identifier already declared.
    ╭─[input.sol:6:27]
    │
  6 │     uint public transient x;

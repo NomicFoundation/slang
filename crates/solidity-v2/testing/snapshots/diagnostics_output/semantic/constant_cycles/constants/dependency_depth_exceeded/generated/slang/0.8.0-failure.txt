@@ -2,7 +2,7 @@
 
 Diagnostics: 6
 
-Error: Variable definition exhausting cyclic dependency validator.
+[semantic/cyclic-dependency-validator-exhausted] Error: Variable definition exhausting cyclic dependency validator.
      ╭─[input.sol:259:1]
      │
  259 │ uint256 constant C255 = C256 + 1;
@@ -10,7 +10,7 @@ Error: Variable definition exhausting cyclic dependency validator.
      │                 ╰────────────────── Error occurred here.
 ─────╯
 
-Error: Variable definition exhausting cyclic dependency validator.
+[semantic/cyclic-dependency-validator-exhausted] Error: Variable definition exhausting cyclic dependency validator.
      ╭─[input.sol:260:1]
      │
  260 │ uint256 constant C256 = C257 + 1;
@@ -18,7 +18,7 @@ Error: Variable definition exhausting cyclic dependency validator.
      │                 ╰────────────────── Error occurred here.
 ─────╯
 
-Error: Variable definition exhausting cyclic dependency validator.
+[semantic/cyclic-dependency-validator-exhausted] Error: Variable definition exhausting cyclic dependency validator.
      ╭─[input.sol:261:1]
      │
  261 │ uint256 constant C257 = C258 + 1;
@@ -26,7 +26,7 @@ Error: Variable definition exhausting cyclic dependency validator.
      │                 ╰────────────────── Error occurred here.
 ─────╯
 
-Error: Variable definition exhausting cyclic dependency validator.
+[semantic/cyclic-dependency-validator-exhausted] Error: Variable definition exhausting cyclic dependency validator.
      ╭─[input.sol:262:1]
      │
  262 │ uint256 constant C258 = C259 + 1;
@@ -34,7 +34,7 @@ Error: Variable definition exhausting cyclic dependency validator.
      │                 ╰────────────────── Error occurred here.
 ─────╯
 
-Error: Variable definition exhausting cyclic dependency validator.
+[semantic/cyclic-dependency-validator-exhausted] Error: Variable definition exhausting cyclic dependency validator.
      ╭─[input.sol:263:1]
      │
  263 │ uint256 constant C259 = C260 + 1;
@@ -42,7 +42,7 @@ Error: Variable definition exhausting cyclic dependency validator.
      │                 ╰────────────────── Error occurred here.
 ─────╯
 
-Error: Variable definition exhausting cyclic dependency validator.
+[semantic/cyclic-dependency-validator-exhausted] Error: Variable definition exhausting cyclic dependency validator.
      ╭─[input.sol:264:1]
      │
  264 │ uint256 constant C260 = 1;

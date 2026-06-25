@@ -1,21 +1,21 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Parse errors:
-Error: This built-in was introduced in version '0.8.8'.
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.8'.
    ╭─[input.sol:3:32]
    │
  3 │         TopLevel tl = TopLevel.wrap(20);
    │                                ──┬─  
    │                                  ╰─── Error occurred here.
 ───╯
-Error: This built-in was introduced in version '0.8.8'.
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.8'.
    ╭─[input.sol:4:25]
    │
  4 │         return TopLevel.unwrap(tl);
    │                         ───┬──  
    │                            ╰──── Error occurred here.
 ───╯
-Error: This syntax was introduced in version '0.8.8'.
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.8'.
    ╭─[input.sol:8:1]
    │
  8 │ type TopLevel is uint256;

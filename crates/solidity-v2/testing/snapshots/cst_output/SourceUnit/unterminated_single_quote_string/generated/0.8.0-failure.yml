@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected UNRECOGNIZED. One of AbstractKeyword, AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, ContractKeyword, EnumKeyword, ErrorKeyword, EventKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, ImportKeyword, IntKeyword, InterfaceKeyword, LayoutKeyword, LibraryKeyword, MappingKeyword, PragmaKeyword, RevertKeyword, StringKeyword, StructKeyword, TransientKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UsingKeyword was expected
+    [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of AbstractKeyword, AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, ContractKeyword, EnumKeyword, ErrorKeyword, EventKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, ImportKeyword, IntKeyword, InterfaceKeyword, LayoutKeyword, LibraryKeyword, MappingKeyword, PragmaKeyword, RevertKeyword, StringKeyword, StructKeyword, TransientKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UsingKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/unterminated_single_quote_string/input.sol:1:1]
        │
      1 │ '

@@ -12,7 +12,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected CloseParen. One of Semicolon was expected
+    [syntax/unexpected-terminal] Error: Unexpected CloseParen. One of Semicolon was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/Statements/recovery_ignore_multiple_empty_matches/input.sol:4:8]
        │
      4 │ for(int)

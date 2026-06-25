@@ -2,7 +2,7 @@
 
 Diagnostics: 3
 
-Error: This syntax was introduced in version '0.8.8'.
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.8'.
    ╭─[input.sol:4:1]
    │
  4 │ type MyInt is int;
@@ -10,7 +10,7 @@ Error: This syntax was introduced in version '0.8.8'.
    │          ╰────────── Error occurred here.
 ───╯
 
-Error: This syntax was introduced in version '0.8.8'.
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.8'.
    ╭─[input.sol:5:1]
    │
  5 │ type MyInt is int;
@@ -18,7 +18,7 @@ Error: This syntax was introduced in version '0.8.8'.
    │          ╰────────── Error occurred here.
 ───╯
 
-Error: Identifier already declared.
+[resolution/identifier-redeclaration] Error: Identifier already declared.
    ╭─[input.sol:5:6]
    │
  5 │ type MyInt is int;

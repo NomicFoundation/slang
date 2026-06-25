@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: This built-in was introduced in version '0.8.15'.
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.15'.
    ╭─[input.sol:8:24]
    │
  8 │         return MyEvent.selector;

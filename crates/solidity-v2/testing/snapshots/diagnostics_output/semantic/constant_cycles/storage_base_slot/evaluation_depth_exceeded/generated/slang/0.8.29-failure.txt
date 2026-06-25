@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Cyclic constant definition (or maximum recursion depth exhausted).
+[semantic/cyclic-constant-definition] Error: Cyclic constant definition (or maximum recursion depth exhausted).
     ╭─[input.sol:45:22]
     │
  45 │ contract C layout at C0 {}

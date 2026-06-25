@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Identifier already declared.
+[resolution/identifier-redeclaration] Error: Identifier already declared.
    ╭─[main.sol:9:17]
    │
  9 │             let b := 3

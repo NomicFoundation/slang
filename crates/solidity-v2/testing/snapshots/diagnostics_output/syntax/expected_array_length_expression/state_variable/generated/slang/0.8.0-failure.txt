@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Expected array length expression.
+[syntax/expected-array-length-expression] Error: Expected array length expression.
    ╭─[input.sol:5:5]
    │
  5 │     uint[1:2] x;

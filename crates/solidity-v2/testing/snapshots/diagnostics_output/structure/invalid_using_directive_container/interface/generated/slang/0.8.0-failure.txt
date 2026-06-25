@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Using directives are only allowed at the file level, or inside contracts and libraries.
+[structure/invalid-using-directive-container] Error: Using directives are only allowed at the file level, or inside contracts and libraries.
    ╭─[input.sol:7:5]
    │
  7 │     using L for uint256;

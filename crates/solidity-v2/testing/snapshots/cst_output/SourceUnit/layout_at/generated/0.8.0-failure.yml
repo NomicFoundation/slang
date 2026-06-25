@@ -18,7 +18,7 @@ Source: >
 
 Errors: # 4 total
   - >
-    Error: This syntax was introduced in version '0.8.29'.
+    [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/layout_at/input.sol:2:19]
        │
      2 │ contract SafeMath layout at 123  {
@@ -26,7 +26,7 @@ Errors: # 4 total
        │                         ╰──────── Error occurred here.
     ───╯
   - >
-    Error: This syntax was introduced in version '0.8.29'.
+    [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/layout_at/input.sol:5:19]
        │
      5 │ contract SafeMath layout at foo{gas:123}  {
@@ -34,7 +34,7 @@ Errors: # 4 total
        │                              ╰──────────── Error occurred here.
     ───╯
   - >
-    Error: This syntax was introduced in version '0.8.29'.
+    [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/layout_at/input.sol:8:19]
        │
      8 │ contract SafeMath layout at foo()  {
@@ -42,7 +42,7 @@ Errors: # 4 total
        │                          ╰───────── Error occurred here.
     ───╯
   - >
-    Error: This syntax was introduced in version '0.8.29'.
+    [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
         ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/layout_at/input.sol:11:19]
         │
      11 │ contract SafeMath layout at 123 + foo  {
