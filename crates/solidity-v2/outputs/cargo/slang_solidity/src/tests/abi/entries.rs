@@ -37,6 +37,52 @@ macro_rules! assert_components_eq {
     };
 }
 
+/// Like [`assert_components_eq!`], but for top-level input/output parameters,
+/// whose names are optional. For each parameter, the name is `None` to assert
+/// it is unnamed, a string expression to assert its equality, or `_` to skip
+/// the name check.
+macro_rules! assert_params_eq {
+    ($params:expr, [ $(($name:tt, $type_name:expr, [$($sub:tt)*])),* $(,)? ]) => {
+        {
+            let params = $params;
+            let expected: &[&str] = &[$($type_name),*];
+            assert_eq!(
+                params.len(),
+                expected.len(),
+                "expected {} parameters, got {}",
+                expected.len(),
+                params.len()
+            );
+            assert_params_eq!(@step params, 0, $(($name, $type_name, [$($sub)*]),)*);
+        }
+    };
+    (@step $params:ident, $index:expr, ) => {};
+    (@step $params:ident, $index:expr, ($name:tt, $type_name:expr, [$($sub:tt)*]), $($rest:tt)*) => {
+        assert_params_eq!(@name $params[$index], $name);
+        assert_eq!($params[$index].type_name(), $type_name);
+        assert_components_eq!($params[$index].components(), [$($sub)*]);
+        assert_params_eq!(@step $params, $index + 1, $($rest)*);
+    };
+    (@name $param:expr, _) => {};
+    (@name $param:expr, None) => { assert!($param.name().is_none()); };
+    (@name $param:expr, $name:expr) => { assert!($param.name().is_some_and(|name| name == $name)); };
+}
+
+/// Asserts that an [`AbiEntry`] is a function with the given name, inputs and
+/// outputs (each described as for [`assert_params_eq!`]).
+macro_rules! assert_function_eq {
+    ($entry:expr, $name:expr, inputs: [$($inputs:tt)*], outputs: [$($outputs:tt)*] $(,)?) => {
+        {
+            let AbiEntry::Function(function) = $entry else {
+                panic!("expected ABI for function");
+            };
+            assert_eq!(function.name(), $name);
+            assert_params_eq!(function.inputs(), [$($inputs)*]);
+            assert_params_eq!(function.outputs(), [$($outputs)*]);
+        }
+    };
+}
+
 #[test]
 fn test_get_contracts_abi() {
     let unit = fixtures::Counter::build_compilation_unit();
@@ -94,70 +140,61 @@ fn test_abi_entries_with_tuples() {
     assert_eq!(contracts_abi[0].name(), "Test");
 
     let entries = contracts_abi[0].entries();
+    assert_eq!(entries.len(), 5);
 
-    let AbiEntry::Function(function) = &entries[0] else {
-        panic!("expected ABI for function");
-    };
-    assert_eq!(function.name(), "f");
-    let inputs = function.inputs();
-    let outputs = function.outputs();
-    assert_eq!(inputs.len(), 3);
-    assert!(inputs[0].name().is_none());
-    assert_eq!(inputs[0].type_name(), "tuple");
-    assert_components_eq!(
-        inputs[0].components(),
-        [
-            ("a", "uint256", []),
-            ("b", "uint256[]", []),
-            (
-                "c",
-                "tuple[]",
-                [("x", "uint256", []), ("y", "uint256", []),]
-            ),
-        ]
+    // f(S memory, T memory, uint x) returns ()
+    assert_function_eq!(
+        &entries[0],
+        "f",
+        inputs: [
+            (None, "tuple", [
+                ("a", "uint256", []),
+                ("b", "uint256[]", []),
+                ("c", "tuple[]", [("x", "uint256", []), ("y", "uint256", [])]),
+            ]),
+            (None, "tuple", [("x", "uint256", []), ("y", "uint256", [])]),
+            ("x", "uint256", []),
+        ],
+        outputs: [],
     );
 
-    assert!(inputs[1].name().is_none());
-    assert_eq!(inputs[1].type_name(), "tuple");
-    assert_components_eq!(
-        inputs[1].components(),
-        [("x", "uint256", []), ("y", "uint256", []),]
+    // g() returns (S memory s, T memory t, uint)
+    assert_function_eq!(
+        &entries[1],
+        "g",
+        inputs: [],
+        outputs: [
+            ("s", "tuple", [
+                ("a", "uint256", []),
+                ("b", "uint256[]", []),
+                ("c", "tuple[]", [("x", "uint256", []), ("y", "uint256", [])]),
+            ]),
+            ("t", "tuple", [("x", "uint256", []), ("y", "uint256", [])]),
+            (None, "uint256", []),
+        ],
     );
 
-    assert!(inputs[2].name().is_none());
-    assert_eq!(inputs[2].type_name(), "uint256");
-    assert!(inputs[2].components().is_empty());
-    assert!(outputs.is_empty());
+    // T public (getter) -> t() returns (uint256 x, uint256 y)
+    assert_function_eq!(
+        &entries[2],
+        "t",
+        inputs: [],
+        outputs: [(_, "uint256", []), (_, "uint256", [])],
+    );
 
-    let AbiEntry::Function(function) = &entries[1] else {
-        panic!("expected ABI for function");
-    };
-    assert_eq!(function.name(), "g");
-    let inputs = function.inputs();
-    let outputs = function.outputs();
-    assert!(inputs.is_empty());
-    assert_eq!(outputs.len(), 3);
-    assert!(outputs[0].name().is_none());
-    assert_eq!(outputs[0].type_name(), "tuple");
-    assert_components_eq!(
-        outputs[0].components(),
-        [
-            ("a", "uint256", []),
-            ("b", "uint256[]", []),
-            (
-                "c",
-                "tuple[]",
-                [("x", "uint256", []), ("y", "uint256", []),]
-            ),
-        ]
+    // t_components() returns (uint, uint)
+    assert_function_eq!(
+        &entries[3],
+        "t_components",
+        inputs: [],
+        outputs: [(None, "uint256", []), (None, "uint256", [])],
     );
-    assert!(outputs[1].name().is_none());
-    assert_eq!(outputs[1].type_name(), "tuple");
-    assert_components_eq!(
-        outputs[1].components(),
-        [("x", "uint256", []), ("y", "uint256", []),]
+
+    // t_struct() returns (T memory)
+    assert_function_eq!(
+        &entries[4],
+        "t_struct",
+        inputs: [],
+        outputs: [(None, "tuple", [("x", "uint256", []), ("y", "uint256", [])])],
     );
-    assert!(outputs[2].name().is_none());
-    assert_eq!(outputs[2].type_name(), "uint256");
-    assert!(outputs[2].components().is_empty());
 }

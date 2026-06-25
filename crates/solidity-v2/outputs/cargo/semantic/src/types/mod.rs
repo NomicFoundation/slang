@@ -186,6 +186,7 @@ impl LiteralKind {
 pub struct FunctionType {
     pub definition_id: Option<NodeId>, // this may point to a FunctionDefinition
     pub parameter_types: Vec<TypeId>,
+    // Multiple return values are modeled by returning a tuple
     pub return_type: TypeId,
     pub visibility: FunctionTypeVisibility,
     pub mutability: FunctionTypeMutability,

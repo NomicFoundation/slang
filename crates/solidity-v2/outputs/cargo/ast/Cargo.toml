@@ -19,6 +19,7 @@ keywords = ["utilities"]
 categories = ["compilers", "utilities"]
 
 [dependencies]
+itertools = { workspace = true }
 num-bigint = { workspace = true }
 num-rational = { workspace = true }
 paste = { workspace = true }
