@@ -39,7 +39,8 @@ macro_rules! assert_components_eq {
 
 /// Like [`assert_components_eq!`], but for top-level input/output parameters,
 /// whose names are optional. For each parameter, the name is `None` to assert
-/// it is unnamed, or `_` to skip the name check.
+/// it is unnamed, a string expression to assert its equality, or `_` to skip
+/// the name check.
 macro_rules! assert_params_eq {
     ($params:expr, [ $(($name:tt, $type_name:expr, [$($sub:tt)*])),* $(,)? ]) => {
         {
@@ -64,6 +65,7 @@ macro_rules! assert_params_eq {
     };
     (@name $param:expr, _) => {};
     (@name $param:expr, None) => { assert!($param.name().is_none()); };
+    (@name $param:expr, $name:expr) => { assert!($param.name().is_some_and(|name| name == $name)); };
 }
 
 /// Asserts that an [`AbiEntry`] is a function with the given name, inputs and
@@ -140,7 +142,7 @@ fn test_abi_entries_with_tuples() {
     let entries = contracts_abi[0].entries();
     assert_eq!(entries.len(), 5);
 
-    // f(S memory, T memory, uint) returns ()
+    // f(S memory, T memory, uint x) returns ()
     assert_function_eq!(
         &entries[0],
         "f",
@@ -151,23 +153,23 @@ fn test_abi_entries_with_tuples() {
                 ("c", "tuple[]", [("x", "uint256", []), ("y", "uint256", [])]),
             ]),
             (None, "tuple", [("x", "uint256", []), ("y", "uint256", [])]),
-            (None, "uint256", []),
+            ("x", "uint256", []),
         ],
         outputs: [],
     );
 
-    // g() returns (S memory, T memory, uint)
+    // g() returns (S memory s, T memory t, uint)
     assert_function_eq!(
         &entries[1],
         "g",
         inputs: [],
         outputs: [
-            (None, "tuple", [
+            ("s", "tuple", [
                 ("a", "uint256", []),
                 ("b", "uint256[]", []),
                 ("c", "tuple[]", [("x", "uint256", []), ("y", "uint256", [])]),
             ]),
-            (None, "tuple", [("x", "uint256", []), ("y", "uint256", [])]),
+            ("t", "tuple", [("x", "uint256", []), ("y", "uint256", [])]),
             (None, "uint256", []),
         ],
     );
