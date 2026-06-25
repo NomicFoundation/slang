@@ -12,3 +12,19 @@ runs:
       with:
         # Use commit time rather than author time, since we share caches across branches
         args: "--commit-time"
+
+    # The caches are built on 'main', whose commits usually post-date the PR's.
+    # A file the PR changed would therefore get a commit-time mtime OLDER than the cached
+    # artifact built from main's version of it.
+    # Bump each PR-changed file's mtime to "now" to force a rebuild.
+    #
+    # --diff-filter=d drops deletions (nothing on disk to touch); -z/-0 keeps
+    # paths with spaces or other special characters intact.
+    - name: "Touch PR-changed files"
+      if: "${{ github.event_name == 'pull_request' }}"
+      shell: "bash"
+      env:
+        BASE_SHA: "${{ github.event.pull_request.base.sha }}"
+      run: |
+        git diff --name-only --diff-filter=d -z "${BASE_SHA}" HEAD \
+          | xargs -0 --no-run-if-empty touch -c -m --
