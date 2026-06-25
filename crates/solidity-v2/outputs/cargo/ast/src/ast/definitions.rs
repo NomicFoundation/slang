@@ -257,6 +257,28 @@ impl Definition {
             Definition::YulVariable(identifier) => identifier.references(),
         }
     }
+
+    /// Returns the definition this one is declared immediately in. Returns
+    /// `None` for top-level definitions or those not direct members of another
+    /// definition.
+    pub fn enclosing_definition(&self) -> Option<Definition> {
+        match self {
+            Definition::Constant(constant_definition) => constant_definition.enclosing_definition(),
+            Definition::Enum(enum_definition) => enum_definition.enclosing_definition(),
+            Definition::EnumMember(identifier) => identifier.enclosing_definition(),
+            Definition::Error(error_definition) => error_definition.enclosing_definition(),
+            Definition::Event(event_definition) => event_definition.enclosing_definition(),
+            Definition::Function(function_definition) => function_definition.enclosing_definition(),
+            Definition::Modifier(function_definition) => function_definition.enclosing_definition(),
+            Definition::StateVariable(state_variable_definition) => {
+                state_variable_definition.enclosing_definition()
+            }
+            Definition::Struct(struct_definition) => struct_definition.enclosing_definition(),
+            Definition::StructMember(struct_member) => struct_member.enclosing_definition(),
+
+            _ => None,
+        }
+    }
 }
 
 macro_rules! define_references_method {
@@ -268,6 +290,23 @@ macro_rules! define_references_method {
                 }
                 pub fn as_definition(&self) -> Option<Definition> {
                     Definition::try_create(self.ir_node.id(), &self.semantic)
+                }
+            }
+        }
+    };
+}
+
+macro_rules! define_enclosing_definition_method {
+    ($type:ident) => {
+        paste! {
+            impl [<$type Struct>] {
+                /// Returns the definition this one is declared in, or `None` if it is declared at file level.
+                pub fn enclosing_definition(&self) -> Option<Definition> {
+                    let enclosing = self
+                        .semantic
+                        .binder()
+                        .enclosing_definition_node_id(self.ir_node.id())?;
+                    Definition::try_create(enclosing, &self.semantic)
                 }
             }
         }
@@ -291,3 +330,12 @@ define_references_method!(StructMember);
 define_references_method!(UserDefinedValueTypeDefinition);
 define_references_method!(VariableDeclaration);
 define_references_method!(YulFunctionDefinition);
+
+define_enclosing_definition_method!(ConstantDefinition);
+define_enclosing_definition_method!(EnumDefinition);
+define_enclosing_definition_method!(ErrorDefinition);
+define_enclosing_definition_method!(EventDefinition);
+define_enclosing_definition_method!(FunctionDefinition);
+define_enclosing_definition_method!(StateVariableDefinition);
+define_enclosing_definition_method!(StructDefinition);
+define_enclosing_definition_method!(StructMember);
