@@ -1322,6 +1322,16 @@ mod yul {
     }
 
     #[test]
+    fn built_in_shadows_function() -> Result<()> {
+        run("yul", "built_in_shadows_function")
+    }
+
+    #[test]
+    fn built_in_shadows_variable() -> Result<()> {
+        run("yul", "built_in_shadows_variable")
+    }
+
+    #[test]
     fn built_ins() -> Result<()> {
         run("yul", "built_ins")
     }
