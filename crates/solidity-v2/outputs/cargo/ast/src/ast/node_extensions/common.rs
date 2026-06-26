@@ -12,10 +12,7 @@ pub(crate) fn number_value_of_node(semantic: &SemanticContext, node_id: NodeId) 
 }
 
 pub(crate) fn integer_value_of_node(semantic: &SemanticContext, node_id: NodeId) -> Option<BigInt> {
-    match number_value_of_node(semantic, node_id)? {
-        Number::Integer(value) => Some(value),
-        Number::Rational(_) => None,
-    }
+    number_value_of_node(semantic, node_id)?.into_integer()
 }
 
 pub(crate) fn rational_value_of_node(

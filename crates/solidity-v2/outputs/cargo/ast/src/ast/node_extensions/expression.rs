@@ -1,3 +1,6 @@
+use num_bigint::BigInt;
+use slang_solidity_v2_semantic::types::Number;
+
 use super::super::{ElementaryType, Expression, Type};
 
 impl Expression {
@@ -39,6 +42,15 @@ impl Expression {
             Expression::FalseKeyword(expression) => expression.get_type(),
             Expression::Identifier(expression) => expression.get_type(),
         }
+    }
+
+    /// The integer value this expression folds to when it is a compile-time
+    /// constant of integer type, or `None` otherwise.
+    pub fn integer_value(&self) -> Option<BigInt> {
+        let Type::Literal(literal_type) = self.get_type()? else {
+            return None;
+        };
+        Number::from_literal_kind(&literal_type.kind())?.into_integer()
     }
 }
 

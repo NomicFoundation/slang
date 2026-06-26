@@ -5,6 +5,7 @@ mod built_in_resolution;
 mod common_operand;
 mod definition_references;
 mod enclosing_definition;
+mod expression_integer_value;
 mod identifier_path_resolution;
 mod is_payable;
 mod json;
