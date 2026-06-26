@@ -1081,6 +1081,8 @@ pub slang_solidity_v2_ast::ast::YulLiteral::HexLiteral(slang_solidity_v2_ast::as
 pub slang_solidity_v2_ast::ast::YulLiteral::HexStringLiteral(slang_solidity_v2_ast::ast::HexStringLiteral)
 pub slang_solidity_v2_ast::ast::YulLiteral::StringLiteral(slang_solidity_v2_ast::ast::StringLiteral)
 pub slang_solidity_v2_ast::ast::YulLiteral::TrueKeyword(slang_solidity_v2_ast::ast::TrueKeyword)
+impl slang_solidity_v2_ast::ast::YulLiteral
+pub fn slang_solidity_v2_ast::ast::YulLiteral::integer_value(&self) -> num_bigint::bigint::BigInt
 impl core::clone::Clone for slang_solidity_v2_ast::ast::YulLiteral
 pub fn slang_solidity_v2_ast::ast::YulLiteral::clone(&self) -> slang_solidity_v2_ast::ast::YulLiteral
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::YulLiteral
