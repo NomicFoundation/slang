@@ -106,6 +106,11 @@ mod constructor_definition {
     fn virtual_attribute() -> Result<()> {
         run("ConstructorDefinition", "virtual_attribute")
     }
+
+    #[test]
+    fn with_returns() -> Result<()> {
+        run("ConstructorDefinition", "with_returns")
+    }
 }
 
 mod contract_definition {
@@ -1319,6 +1324,16 @@ mod pragma_directive {
 
 mod receive_function_definition {
     use super::*;
+
+    #[test]
+    fn inherited_return_values() -> Result<()> {
+        run("ReceiveFunctionDefinition", "inherited_return_values")
+    }
+
+    #[test]
+    fn return_values() -> Result<()> {
+        run("ReceiveFunctionDefinition", "return_values")
+    }
 
     #[test]
     fn simple() -> Result<()> {
