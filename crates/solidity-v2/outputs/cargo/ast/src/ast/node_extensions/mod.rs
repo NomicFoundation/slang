@@ -16,3 +16,4 @@ mod identifier_path;
 mod named_arguments;
 mod source_unit;
 mod string_expression;
+mod yul_literal;
