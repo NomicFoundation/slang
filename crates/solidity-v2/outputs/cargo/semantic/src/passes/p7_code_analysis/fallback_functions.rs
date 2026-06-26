@@ -1,9 +1,9 @@
 //! Shape checks for the special `fallback` function.
 //!
-//! A fallback's accepted state mutabilities and its accepted signatures are
-//! properties of its resolved type, and whether a library may declare one is a
-//! structural rule. The checks run here, in the code-analysis pass, over the
-//! fully resolved program.
+//! A fallback's accepted state mutability and its accepted signatures are
+//! properties of its resolved type, and a library may not declare one.
+//! The checks run here, in the code-analysis pass, over the fully
+//! resolved program.
 //!
 //! Note that the v2 grammar already rejects most malformed special functions
 //! as syntax errors (eg. `internal`/`public` visibility, or `view`/`pure`
@@ -72,7 +72,19 @@ fn check_fallback_function(
     file_node_mapper: &FileNodeMapper,
     diagnostics: &mut DiagnosticCollection,
 ) {
-    // The mutability and signature rules are properties of the function's type,
+    let file_id = file_node_mapper.file_id_from_node_id(node.id()).to_owned();
+    let signature_range = node.signature_text_range();
+
+    // Libraries cannot declare a fallback function.
+    if enclosing_is_library {
+        diagnostics.push(
+            file_id.clone(),
+            signature_range.clone(),
+            LibraryFallbackFunction,
+        );
+    }
+
+    // The mutability and signature can be extracted from the function's type,
     // computed during type definition. A function definition always types to a
     // function type.
     let Typing::Resolved(type_id) = binder.node_typing(node.id()) else {
@@ -82,35 +94,25 @@ fn check_fallback_function(
         unreachable!("type of function definition is not a function");
     };
 
-    let invalid_mutability = match function_type.mutability {
+    // A fallback must be `payable` or non-payable, not `pure`/`view`.
+    if let Some(mutability) = match function_type.mutability {
         FunctionTypeMutability::Pure => Some("pure"),
         FunctionTypeMutability::View => Some("view"),
         FunctionTypeMutability::NonPayable | FunctionTypeMutability::Payable => None,
-    };
-    let invalid_signature = !has_valid_signature(function_type, types);
-
-    if !enclosing_is_library && invalid_mutability.is_none() && !invalid_signature {
-        return;
-    }
-
-    // At least one diagnostic will be pushed, so resolve the file id once here
-    // rather than for every fallback (the common, diagnostic-free case).
-    let file_id = file_node_mapper.file_id_from_node_id(node.id()).to_owned();
-
-    if enclosing_is_library {
-        diagnostics.push(file_id.clone(), node.range.clone(), LibraryFallbackFunction);
-    }
-    if let Some(mutability) = invalid_mutability {
+    } {
         diagnostics.push(
             file_id.clone(),
-            node.range.clone(),
+            signature_range.clone(),
             FallbackFunctionMutability {
                 mutability: mutability.to_owned(),
             },
         );
     }
-    if invalid_signature {
-        diagnostics.push(file_id, node.range.clone(), FallbackFunctionSignature);
+
+    // Its signature must be exactly `fallback()` or
+    // `fallback(bytes calldata) returns (bytes memory)`.
+    if !has_valid_signature(function_type, types) {
+        diagnostics.push(file_id, signature_range, FallbackFunctionSignature);
     }
 }
 
