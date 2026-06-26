@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/identifier-redeclaration] Error: Identifier already declared.
+    ╭─[input.sol:14:29]
+    │
+ 14 │             function g() -> foo {
+    │                             ─┬─  
+    │                              ╰─── Error occurred here.
+────╯

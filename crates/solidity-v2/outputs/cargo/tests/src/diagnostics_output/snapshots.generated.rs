@@ -248,10 +248,26 @@ mod resolution {
         }
 
         #[test]
+        fn yul_function_parameter_shadows_local() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_parameter_shadows_local",
+            )
+        }
+
+        #[test]
         fn yul_function_parameter_vs_return() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
                 "yul_function_parameter_vs_return",
+            )
+        }
+
+        #[test]
+        fn yul_function_return_shadows_local() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_return_shadows_local",
             )
         }
 
@@ -268,6 +284,14 @@ mod resolution {
             run(
                 "resolution/identifier_redeclaration",
                 "yul_function_shadows_solidity",
+            )
+        }
+
+        #[test]
+        fn yul_function_signature_shadows_state_var() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_signature_shadows_state_var",
             )
         }
 

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 6578] Error: Cannot access local Solidity variables from inside an inline assembly function.
+    ╭─[input.sol:15:17]
+    │
+ 15 │                 foo := 1
+    │                 ─┬─  
+    │                  ╰─── Error occurred here.
+────╯
