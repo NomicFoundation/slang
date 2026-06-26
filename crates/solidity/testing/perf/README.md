@@ -24,7 +24,7 @@ Every cargo benchmark always runs [`callgrind`](https://kcachegrind.github.io/ht
 
 DHAT accuracy depends on its `num-callers` argument (see [`config.rs`](./cargo/src/config.rs)): `comparison` and `slang_v2` use the maximum (`500`) for accurate attribution, while `slang` (v1) is slow enough that it intentionally uses a smaller value (`12`) and accepts less accurate measurements.
 
-Whether DHAT runs on a given PR is therefore a per-suite CI decision: each workflow picks `--pr-benchmark` (standard, Callgrind only) or `--pr-benchmark=full`. `infra perf cargo` just maps the mode to DHAT on/off by setting the `SLANG_PERF_SKIP_DHAT` environment variable on the benchmark process (a CLI flag on the bench binary isn't possible, since `iai-callgrind`'s `main!` owns argument parsing).
+Whether DHAT runs on a given PR is therefore a per-suite CI decision: each workflow picks `--pr-benchmark` (fast, Callgrind only) or `--pr-benchmark=full`. `infra perf cargo` just maps the mode to DHAT on/off by setting the `SLANG_PERF_SKIP_DHAT` environment variable on the benchmark process (a CLI flag on the bench binary isn't possible, since `iai-callgrind`'s `main!` owns argument parsing).
 
 ## [`npm`](./npm/)
 

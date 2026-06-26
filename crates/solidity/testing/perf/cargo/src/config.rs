@@ -1,7 +1,8 @@
 use iai_callgrind::{Direction, FlamegraphConfig, LibraryBenchmarkConfig, Tool, ValgrindTool};
 
-/// Env var that, when set (to any value), makes [`benchmark_config`] skip the
-/// DHAT tool and run Callgrind only.
+/// Env var that, when set (to any value), makes
+/// [`benchmark_config_with_num_callers`] skip the DHAT tool and run Callgrind
+/// only.
 ///
 /// DHAT is expensive (especially at high `num_callers`), so in certain
 /// cases we want to skip it.
@@ -10,7 +11,16 @@ pub const SKIP_DHAT_ENV: &str = "SLANG_PERF_SKIP_DHAT";
 
 /// Shared `LibraryBenchmarkConfig` used by every perf benchmark in this crate.
 /// Centralised so the bench `main!` calls can't drift apart.
-pub fn benchmark_config(num_callers: usize) -> LibraryBenchmarkConfig {
+///
+/// `num_callers` sets Valgrind's `--num-callers`: the maximum depth of the call
+/// stack Valgrind records (and unwinds) at each allocation. Allocations are
+/// attributed to a stack trace truncated to this depth, so a larger value
+/// distinguishes allocation sites that share their top frames (e.g. a `malloc`
+/// reached through several layers of generic/`Vec` code) and gives more
+/// precise per-site attribution — at the cost of slower runs, since DHAT
+/// unwinds that many frames on every allocation. Smaller values are coarser
+/// but cheaper. Must be between 1 and 500 (DHAT's maximum).
+pub fn benchmark_config_with_num_callers(num_callers: usize) -> LibraryBenchmarkConfig {
     assert!(
         0 < num_callers && num_callers <= 500,
         "num_callers must be between 1 and 500"

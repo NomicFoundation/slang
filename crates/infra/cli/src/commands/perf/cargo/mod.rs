@@ -23,14 +23,14 @@ pub struct CargoController {
     dry_run: DryRun,
     /// Run as a PR benchmark with regression detection via bencher start points.
     ///
-    /// Defaults to "standard" mode (DHAT skipped, Callgrind only). Pass
+    /// Defaults to "fast" mode (DHAT skipped, Callgrind only). Pass
     /// "--pr-benchmark=full" to also run DHAT.
     #[arg(
         long,
         value_name = "MODE",
         num_args = 0..=1,
         require_equals = true,
-        default_missing_value = "standard",
+        default_missing_value = "fast",
         conflicts_with = "dry_run"
     )]
     pr_benchmark: Option<PrBenchmarkMode>,
@@ -58,7 +58,7 @@ enum Benches {
 enum PrBenchmarkMode {
     /// Skip DHAT (run Callgrind only) to keep PRs fast.
     #[default]
-    Standard,
+    Fast,
     /// Run DHAT too, matching what `main` measures.
     Full,
 }
@@ -120,10 +120,10 @@ impl CargoController {
             BencherThreshold::new(measure, upper_boundary).with_max_sample_size("1")
         };
 
-        // DHAT is much slower than Callgrind, so standard PR benchmarks skip it and
+        // DHAT is much slower than Callgrind, so fast PR benchmarks skip it and
         // run Callgrind only.
         // __SLANG_PERF_SKIP_DHAT_ENV__ (keep in sync)
-        let skip_dhat = matches!(self.pr_benchmark, Some(PrBenchmarkMode::Standard));
+        let skip_dhat = matches!(self.pr_benchmark, Some(PrBenchmarkMode::Fast));
         let bench_env: &[(&str, &str)] = if skip_dhat {
             &[("SLANG_PERF_SKIP_DHAT", "1")]
         } else {

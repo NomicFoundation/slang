@@ -8,7 +8,7 @@ use slang_solidity_v2_ast::abi;
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::context::SemanticContext;
-use solidity_testing_perf_cargo::config::benchmark_config;
+use solidity_testing_perf_cargo::config::benchmark_config_with_num_callers;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
 use solidity_testing_perf_cargo::tests;
 
@@ -110,7 +110,7 @@ slang_v2_define_tests!(merkle_proof);
 main!(
     // We use the maximum possible value of `num-callers` to ensure DHAT values
     // are sensible
-    config = benchmark_config(500);
+    config = benchmark_config_with_num_callers(500);
 
     // NOTE: the trailing comma is required: without it, it won't test the last one
     // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
