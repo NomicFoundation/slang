@@ -4,7 +4,7 @@ use super::super::nodes::{
 };
 use super::super::{
     ContractDefinitionStruct, Definition, ErrorDefinition, EventDefinition, FunctionDefinition,
-    FunctionKind, StateVariableDefinition,
+    FunctionKind, FunctionMutability, StateVariableDefinition,
 };
 use super::ContractBase;
 
@@ -67,6 +67,17 @@ impl ContractDefinitionStruct {
                 )
             })
             .collect()
+    }
+
+    /// Whether the contract accepts a plain ETH transfer: it, or any base in
+    /// its linearisation, declares a `receive()` function or a `payable`
+    /// `fallback()` (solc's `ContractType::isPayable`).
+    pub fn is_payable(&self) -> bool {
+        self.linearised_functions().iter().any(|function| {
+            matches!(function.kind(), FunctionKind::Receive)
+                || (matches!(function.kind(), FunctionKind::Fallback)
+                    && matches!(function.mutability(), FunctionMutability::Payable))
+        })
     }
 
     pub fn modifiers(&self) -> Vec<FunctionDefinition> {
