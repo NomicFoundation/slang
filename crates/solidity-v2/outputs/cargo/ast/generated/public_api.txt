@@ -636,6 +636,8 @@ pub fn slang_solidity_v2_ast::ast::AdditiveExpressionOperator::serialize<S: serd
 pub enum slang_solidity_v2_ast::ast::ArgumentsDeclaration
 pub slang_solidity_v2_ast::ast::ArgumentsDeclaration::NamedArguments(slang_solidity_v2_ast::ast::NamedArguments)
 pub slang_solidity_v2_ast::ast::ArgumentsDeclaration::PositionalArguments(slang_solidity_v2_ast::ast::PositionalArguments)
+impl slang_solidity_v2_ast::ast::ArgumentsDeclaration
+pub fn slang_solidity_v2_ast::ast::ArgumentsDeclaration::ordered_by(&self, &[slang_solidity_v2_common::nodes::NodeId]) -> core::option::Option<alloc::vec::Vec<slang_solidity_v2_ast::ast::Expression>>
 impl core::clone::Clone for slang_solidity_v2_ast::ast::ArgumentsDeclaration
 pub fn slang_solidity_v2_ast::ast::ArgumentsDeclaration::clone(&self) -> slang_solidity_v2_ast::ast::ArgumentsDeclaration
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::ArgumentsDeclaration
@@ -2294,6 +2296,8 @@ impl slang_solidity_v2_ast::ast::NamedArgumentsStruct
 pub fn slang_solidity_v2_ast::ast::NamedArgumentsStruct::is_empty(&self) -> bool
 pub fn slang_solidity_v2_ast::ast::NamedArgumentsStruct::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::NamedArgument> + use<'_>
 pub fn slang_solidity_v2_ast::ast::NamedArgumentsStruct::len(&self) -> usize
+impl slang_solidity_v2_ast::ast::NamedArgumentsStruct
+pub fn slang_solidity_v2_ast::ast::NamedArgumentsStruct::ordered_by(&self, &[slang_solidity_v2_common::nodes::NodeId]) -> core::option::Option<alloc::vec::Vec<slang_solidity_v2_ast::ast::Expression>>
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::NamedArgumentsStruct
 pub fn slang_solidity_v2_ast::ast::NamedArgumentsStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::NewExpressionStruct
