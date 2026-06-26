@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[structure/empty-enum] Error: Enum with no members is not allowed.
+   ╭─[input.sol:8:1]
+   │
+ 8 │ enum FileLevel {}
+   │ ────────┬────────  
+   │         ╰────────── Error occurred here.
+───╯
+
+[structure/empty-enum] Error: Enum with no members is not allowed.
+   ╭─[input.sol:9:14]
+   │
+ 9 │ contract C { enum Inner {} }
+   │              ──────┬──────  
+   │                    ╰──────── Error occurred here.
+───╯
+
+[structure/empty-enum] Error: Enum with no members is not allowed.
+    ╭─[input.sol:10:13]
+    │
+ 10 │ library L { enum Inner {} }
+    │             ──────┬──────  
+    │                   ╰──────── Error occurred here.
+────╯
+
+[structure/empty-enum] Error: Enum with no members is not allowed.
+    ╭─[input.sol:11:15]
+    │
+ 11 │ interface I { enum Inner {} }
+    │               ──────┬──────  
+    │                     ╰──────── Error occurred here.
+────╯

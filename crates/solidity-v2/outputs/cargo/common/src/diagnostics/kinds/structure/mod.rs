@@ -1,7 +1,11 @@
+mod empty_enum;
+mod enum_with_too_many_members;
 mod function_name_matches_container;
 mod invalid_using_directive_container;
 mod multiple_constructors;
 
+pub use empty_enum::EmptyEnum;
+pub use enum_with_too_many_members::EnumWithTooManyMembers;
 pub use function_name_matches_container::FunctionNameMatchesContainer;
 pub use invalid_using_directive_container::InvalidUsingDirectiveContainer;
 pub use multiple_constructors::MultipleConstructors;
@@ -23,5 +27,9 @@ define_diagnostic_kind! {
         FunctionNameMatchesContainer(FunctionNameMatchesContainer),
         /// A contract defines more than one constructor.
         MultipleConstructors(MultipleConstructors),
+        /// An enum declares more than 256 members.
+        EnumWithTooManyMembers(EnumWithTooManyMembers),
+        /// An enum declares no members.
+        EmptyEnum(EmptyEnum),
     }
 }
