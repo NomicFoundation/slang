@@ -106,6 +106,11 @@ mod constructor_definition {
     fn virtual_attribute() -> Result<()> {
         run("ConstructorDefinition", "virtual_attribute")
     }
+
+    #[test]
+    fn with_returns() -> Result<()> {
+        run("ConstructorDefinition", "with_returns")
+    }
 }
 
 mod contract_definition {
