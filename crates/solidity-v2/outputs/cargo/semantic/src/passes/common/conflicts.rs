@@ -9,8 +9,8 @@
 //! that share a name actually conflict, or may legally coexist as overloads
 //! (see [`Definition::overloads_with`]).
 //!
-//! [`p1_collect_definitions::conflicts`]: crate::passes::p1_collect_definitions
-//! [`p6_resolve_yul::conflicts`]: crate::passes::p6_resolve_yul
+//! [`p1_collect_definitions::conflicts`]: crate::passes::p1_collect_definitions::conflicts
+//! [`p6_resolve_yul::conflicts`]: crate::passes::p6_resolve_yul::conflicts
 
 use slang_solidity_v2_common::nodes::NodeId;
 

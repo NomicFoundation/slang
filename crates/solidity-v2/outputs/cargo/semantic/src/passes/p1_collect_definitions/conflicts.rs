@@ -16,7 +16,7 @@
 //! step once every file scope is populated, and it needs provenance (which
 //! import directive brought a symbol in) that `Resolution` discards.
 //!
-//! [`p6_resolve_yul::conflicts::find_conflicting_yul_definition`]: crate::passes::p6_resolve_yul
+//! [`p6_resolve_yul::conflicts::find_conflicting_yul_definition`]: crate::passes::p6_resolve_yul::conflicts::find_conflicting_yul_definition
 
 use std::collections::VecDeque;
 use std::ops::Range;

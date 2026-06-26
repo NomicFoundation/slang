@@ -8,7 +8,7 @@ contract C {
 
     // A Yul function `f` may shadow the Solidity function `f`, and still access
     // state variables by suffix from inside its body (state variables, unlike
-    // local variables, are reachable from a Yul function). Mirrors solx-solidity:
+    // local variables, are reachable from a Yul function). Mirrors ethereum/solidity:
     // test/libsolidity/semanticTests/inlineAssembly/inline_assembly_storage_access_inside_function.sol
     function f() public returns (bool) {
         uint256 off2;

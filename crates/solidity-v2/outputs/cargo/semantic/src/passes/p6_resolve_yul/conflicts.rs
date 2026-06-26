@@ -24,7 +24,7 @@
 //! with which it shares only the pairwise comparison leaves in
 //! [`crate::passes::common::conflicts`].
 //!
-//! [`p1_collect_definitions::conflicts::find_conflicting_solidity_definition`]: crate::passes::p1_collect_definitions
+//! [`p1_collect_definitions::conflicts::find_conflicting_solidity_definition`]: crate::passes::p1_collect_definitions::conflicts::find_conflicting_solidity_definition
 
 use slang_solidity_v2_common::nodes::NodeId;
 
