@@ -72,6 +72,12 @@ pub(super) fn find_conflicting_yul_definition(
 // Solidity scope enclosing the assembly block, the search switches to the
 // unbounded variant below, since assembly-local names may not shadow *any*
 // Solidity declaration visible at the assembly site.
+//
+// Yul functions are the exception: solc lets a Yul function shadow any
+// enclosing Solidity declaration, so for those the walk stops at the assembly
+// boundary and never reaches the Solidity scopes. The Yul-internal checks above
+// still apply (a Yul function can't be redeclared, and shares a namespace with
+// Yul variables).
 fn find_conflict_in_yul_parent(
     binder: &Binder,
     parent_scope_id: ScopeId,
@@ -82,6 +88,7 @@ fn find_conflict_in_yul_parent(
         Scope::YulBlock(_) | Scope::YulFunction(_) => {
             find_conflicting_yul_definition(binder, parent_scope_id, symbol, new_definition)
         }
+        _ if new_definition.is_yul_function() => None,
         _ => find_shadowed_solidity_definition(binder, parent_scope_id, symbol, new_definition),
     }
 }

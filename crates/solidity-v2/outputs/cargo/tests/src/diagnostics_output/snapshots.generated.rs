@@ -264,6 +264,14 @@ mod resolution {
         }
 
         #[test]
+        fn yul_function_shadows_solidity() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_shadows_solidity",
+            )
+        }
+
+        #[test]
         fn yul_function_vs_subscope_function() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",

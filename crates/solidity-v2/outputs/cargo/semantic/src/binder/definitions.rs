@@ -255,6 +255,12 @@ impl Definition {
         )
     }
 
+    /// Whether this is a Yul function definition. Unlike other Yul definitions,
+    /// a Yul function may shadow any enclosing Solidity declaration.
+    pub(crate) fn is_yul_function(&self) -> bool {
+        matches!(self, Self::YulFunction(_))
+    }
+
     pub(crate) fn is_private_or_internally_visible(&self) -> bool {
         if let Self::Function(function_definition) = self {
             !matches!(
