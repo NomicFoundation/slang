@@ -772,6 +772,8 @@ pub slang_solidity_v2_ast::ast::Expression::TupleExpression(slang_solidity_v2_as
 pub slang_solidity_v2_ast::ast::Expression::TypeExpression(slang_solidity_v2_ast::ast::TypeExpression)
 impl slang_solidity_v2_ast::ast::Expression
 pub fn slang_solidity_v2_ast::ast::Expression::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+pub fn slang_solidity_v2_ast::ast::Expression::integer_value(&self) -> core::option::Option<num_bigint::bigint::BigInt>
+pub fn slang_solidity_v2_ast::ast::Expression::unwrap_parentheses(self) -> Self
 impl core::clone::Clone for slang_solidity_v2_ast::ast::Expression
 pub fn slang_solidity_v2_ast::ast::Expression::clone(&self) -> slang_solidity_v2_ast::ast::Expression
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::Expression

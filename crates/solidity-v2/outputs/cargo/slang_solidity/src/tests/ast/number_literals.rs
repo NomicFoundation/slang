@@ -169,3 +169,42 @@ fn test_decimal_number_expression_value() {
         );
     }
 }
+
+define_fixture!(
+    ConstantExpressions,
+    file: "main.sol", r#"
+contract Test {
+    uint256 SUM = ((1 + 2));
+    address ADDR = 0x000000000000000000000000000000000000beef;
+}
+"#,
+);
+
+#[test]
+fn test_expression_integer_value_and_unwrap_parentheses() {
+    let unit = ConstantExpressions::build_compilation_unit();
+    let test = unit
+        .find_contract_by_name("Test")
+        .next()
+        .expect("can find Test contract");
+    let state_variables = test.state_variables();
+    let value_of = |name: &str| {
+        state_variables
+            .iter()
+            .find(|variable| variable.name().name() == name)
+            .and_then(|variable| variable.value())
+            .unwrap_or_else(|| panic!("`{name}` should have an initializer"))
+    };
+
+    // `((1 + 2))` peels to `1 + 2`, a computed constant that folds to 3.
+    assert_eq!(
+        value_of("SUM").unwrap_parentheses().integer_value(),
+        Some(BigInt::from(3)),
+    );
+
+    // A 40-digit hex literal is typed as an address; its integer value is surfaced.
+    assert_eq!(
+        value_of("ADDR").integer_value(),
+        Some(BigInt::from(0xbeef_u32))
+    );
+}

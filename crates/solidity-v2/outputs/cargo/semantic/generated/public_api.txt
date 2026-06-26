@@ -378,6 +378,7 @@ pub slang_solidity_v2_semantic::types::Number::Integer(num_bigint::bigint::BigIn
 pub slang_solidity_v2_semantic::types::Number::Rational(num_rational::BigRational)
 impl slang_solidity_v2_semantic::types::Number
 pub fn slang_solidity_v2_semantic::types::Number::from_literal_kind(&slang_solidity_v2_semantic::types::LiteralKind) -> core::option::Option<Self>
+pub fn slang_solidity_v2_semantic::types::Number::into_integer(self) -> core::option::Option<num_bigint::bigint::BigInt>
 pub fn slang_solidity_v2_semantic::types::Number::is_negative(&self) -> bool
 pub fn slang_solidity_v2_semantic::types::Number::is_zero(&self) -> bool
 impl core::clone::Clone for slang_solidity_v2_semantic::types::Number
