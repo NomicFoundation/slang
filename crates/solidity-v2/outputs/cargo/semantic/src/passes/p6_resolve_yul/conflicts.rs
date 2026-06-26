@@ -28,8 +28,8 @@
 
 use slang_solidity_v2_common::nodes::NodeId;
 
-use crate::binder::{Binder, Definition, Scope, ScopeId};
-use crate::passes::common::conflicts::{conflicting_definition, first_conflicting_definition};
+use crate::binder::{Binder, Definition, Resolution, Scope, ScopeId};
+use crate::passes::common::conflicts::conflicting_definition;
 
 // Looks for a previously-registered definition that conflicts with a Yul
 // `new_definition` being declared under `symbol` in `scope_id`, returning the
@@ -117,140 +117,56 @@ fn find_conflict_from_scope(
         // differ only in where the shadow search stops (see
         // `find_shadowed_solidity_definition`).
         _ if new_definition.is_yul_function() => None,
-        _ => find_shadowed_solidity_definition(
-            binder,
-            scope_id,
-            symbol,
-            new_definition,
-            from_function_signature,
-        ),
+        _ => find_shadowed_solidity_definition(binder, scope_id, symbol, from_function_signature),
     }
 }
 
-// Looks for a Solidity definition that would be illegally shadowed by an
-// assembly-local name. Unlike `find_conflicting_solidity_definition` (from p1),
-// this walk does not stop at lexical boundaries: it continues through every
-// enclosing block into the function (and its parameters) and modifier scopes,
-// since an assembly-local name may not shadow any of those local declarations.
+// Looks for a Solidity definition that an assembly-local name would illegally
+// shadow, by resolving the name in the enclosing Solidity scope `scope_id`. A
+// Yul definition never overloads with a Solidity one, so any resolved Solidity
+// definition is a shadow. Resolving (rather than walking scopes by hand) also
+// picks up inherited base-contract members, which an assembly-local name may
+// likewise not shadow.
 //
-// `from_function_signature` controls the *namespace* boundary, and is the only
-// difference between the two callers (see the module docs): a Yul `let`
-// variable (flag unset) may shadow nothing, so the walk also descends into the
-// contract and file scopes; a Yul function parameter or return variable (flag
-// set) may shadow non-local declarations, so it stops at that boundary and only
-// reports local variables and parameters.
+// `from_function_signature` narrows what counts as a conflict (see the module
+// docs): a Yul `let` variable (flag unset) may shadow nothing, so any resolved
+// declaration conflicts; a Yul function parameter or return variable (flag set)
+// may shadow non-local declarations (state variables, constants, functions,
+// ...) and only conflicts with a local Solidity variable or parameter.
 fn find_shadowed_solidity_definition(
     binder: &Binder,
     scope_id: ScopeId,
     symbol: &str,
-    new_definition: &Definition,
     from_function_signature: bool,
 ) -> Option<NodeId> {
-    let scope = binder.get_scope_by_id(scope_id);
-    match scope {
-        Scope::Block(block_scope) => block_scope
-            .definitions
-            .get(symbol)
-            .copied()
-            .and_then(|existing| conflicting_definition(binder, existing, new_definition))
-            .or_else(|| {
-                find_shadowed_solidity_definition(
-                    binder,
-                    block_scope.parent_scope_id,
-                    symbol,
-                    new_definition,
-                    from_function_signature,
-                )
-            }),
-        Scope::Chained(chained_scope) => chained_scope
-            .definitions
-            .get(symbol)
-            .copied()
-            .and_then(|existing| conflicting_definition(binder, existing, new_definition))
-            .or_else(|| {
-                find_shadowed_solidity_definition(
-                    binder,
-                    chained_scope.parent_scope_id,
-                    symbol,
-                    new_definition,
-                    from_function_signature,
-                )
-            }),
-        Scope::Function(function_scope) => function_scope
-            .definitions
-            .get(symbol)
-            .copied()
-            .and_then(|existing| conflicting_definition(binder, existing, new_definition))
-            .or_else(|| {
-                find_shadowed_solidity_definition(
-                    binder,
-                    function_scope.parameters_scope_id,
-                    symbol,
-                    new_definition,
-                    from_function_signature,
-                )
-            })
-            // For a `let` variable, continue past the function into the
-            // enclosing contract/file; for a function signature, those scopes
-            // are shadowable and the recursion stops there (see below).
-            .or_else(|| {
-                find_shadowed_solidity_definition(
-                    binder,
-                    function_scope.parent_scope_id,
-                    symbol,
-                    new_definition,
-                    from_function_signature,
-                )
-            }),
-        Scope::Modifier(modifier_scope) => modifier_scope
-            .definitions
-            .get(symbol)
-            .copied()
-            .and_then(|existing| conflicting_definition(binder, existing, new_definition))
-            .or_else(|| {
-                find_shadowed_solidity_definition(
-                    binder,
-                    modifier_scope.parent_scope_id,
-                    symbol,
-                    new_definition,
-                    from_function_signature,
-                )
-            }),
-        Scope::Parameters(parameters_scope) => parameters_scope
-            .lookup_definition(symbol)
-            .and_then(|existing| conflicting_definition(binder, existing, new_definition)),
-        // The contract and file scopes hold non-local declarations (state
-        // variables, constants, functions, imports), which a function signature
-        // may shadow — so the walk only descends here for a `let` variable.
-        // TODO: members of base contracts are also shadowed, but bases are
-        // not resolved yet in this pass. We probably will need to run conflict
-        // checks for all Yul identifiers in a separate pass after p2.
-        // Alternatively, we may process assembly blocks entirely after p2.
-        Scope::Contract(contract_scope) if !from_function_signature => contract_scope
-            .definitions
-            .get(symbol)
-            .and_then(|existing| first_conflicting_definition(binder, existing, new_definition))
-            .or_else(|| {
-                find_shadowed_solidity_definition(
-                    binder,
-                    contract_scope.file_scope_id,
-                    symbol,
-                    new_definition,
-                    from_function_signature,
-                )
-            }),
-        Scope::File(file_scope) if !from_function_signature => file_scope
-            .definitions
-            .get(symbol)
-            .and_then(|existing| first_conflicting_definition(binder, existing, new_definition)),
-        // Stop: either the namespace boundary for a function signature, or a
-        // scope kind that cannot enclose an inline assembly block.
-        Scope::Contract(_)
-        | Scope::File(_)
-        | Scope::Enum(_)
-        | Scope::Struct(_)
-        | Scope::Using(_)
-        | Scope::YulBlock(_)
-        | Scope::YulFunction(_) => None,
+    let resolution = binder.resolve_in_scope(scope_id, symbol);
+    if from_function_signature {
+        // Only a local variable or parameter is a conflict; non-local
+        // declarations (state variables, functions, ...) are shadowable.
+        match resolution {
+            Resolution::Definition(id) if is_local_variable_or_parameter(binder, id) => Some(id),
+            Resolution::Ambiguous(ids) => ids
+                .into_iter()
+                .find(|&id| is_local_variable_or_parameter(binder, id)),
+            _ => None,
+        }
+    } else {
+        // Any resolved Solidity declaration is shadowed; built-in and unresolved
+        // names are not.
+        match resolution {
+            Resolution::Definition(id) => Some(id),
+            Resolution::Ambiguous(ids) => ids.into_iter().next(),
+            Resolution::BuiltIn(_) | Resolution::Unresolved => None,
+        }
     }
+}
+
+// Whether the definition is a local Solidity variable or parameter — the only
+// kind of declaration a Yul function parameter or return variable may not
+// shadow (state variables, constants, functions, etc. are all shadowable).
+fn is_local_variable_or_parameter(binder: &Binder, definition_id: NodeId) -> bool {
+    matches!(
+        binder.find_definition_by_id(definition_id),
+        Some(Definition::Variable(_) | Definition::Parameter(_))
+    )
 }

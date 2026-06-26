@@ -378,6 +378,14 @@ mod resolution {
         }
 
         #[test]
+        fn yul_variable_shadows_inherited_member() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_variable_shadows_inherited_member",
+            )
+        }
+
+        #[test]
         fn yul_variable_vs_enclosing_yul_function() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
