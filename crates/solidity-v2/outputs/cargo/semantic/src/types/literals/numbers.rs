@@ -76,7 +76,7 @@ impl Number {
         }
     }
 
-    pub(crate) fn into_integer(self) -> Option<BigInt> {
+    pub fn into_integer(self) -> Option<BigInt> {
         match self {
             Self::Integer(value) => Some(value),
             Self::Rational(_) => None,
