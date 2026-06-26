@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use anyhow::Result;
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, ValueEnum};
 use infra_utils::commands::Command;
 use infra_utils::paths::{FileWalker, PathExtensions};
 
@@ -22,8 +22,18 @@ pub struct CargoController {
     #[command(flatten)]
     dry_run: DryRun,
     /// Run as a PR benchmark with regression detection via bencher start points.
-    #[arg(long)]
-    pr_benchmark: bool,
+    ///
+    /// Defaults to "fast" mode (DHAT skipped, Callgrind only). Pass
+    /// "--pr-benchmark=full" to also run DHAT.
+    #[arg(
+        long,
+        value_name = "MODE",
+        num_args = 0..=1,
+        require_equals = true,
+        default_missing_value = "fast",
+        conflicts_with = "dry_run"
+    )]
+    pr_benchmark: Option<PrBenchmarkMode>,
     #[arg(long)]
     no_deps: bool,
     /// Skip installing apt-managed deps (valgrind, graphviz).
@@ -42,6 +52,15 @@ enum Benches {
     Comparison,
     /// Performs the slang v2 benchmarks
     SlangV2,
+}
+
+#[derive(Clone, Debug, Default, PartialEq, Eq, ValueEnum)]
+enum PrBenchmarkMode {
+    /// Skip DHAT (run Callgrind only) to keep PRs fast.
+    #[default]
+    Fast,
+    /// Run DHAT too, matching what `main` measures.
+    Full,
 }
 
 impl CargoController {
@@ -94,16 +113,26 @@ impl CargoController {
     fn run_iai_bench(&self, package_name: &str, bench_name: &str, bencher_project: &str) {
         let test_runner = format!("cargo bench --package {package_name} --bench {bench_name}");
 
-        // iai-callgrind uses deterministic hardware counters (not wall clock),
-        // so any change reflects a real code change, not noise.
+        // iai-callgrind's metrics come from valgrind's simulation, so they're deterministic: any change reflects a
+        // real code change, not noise.
         // We also keep the window small (only 1 measurement), for the same reason.
         let threshold = |measure, upper_boundary| {
             BencherThreshold::new(measure, upper_boundary).with_max_sample_size("1")
         };
 
+        // DHAT is much slower than Callgrind, so fast PR benchmarks skip it and
+        // run Callgrind only.
+        // __SLANG_PERF_SKIP_DHAT_ENV__ (keep in sync)
+        let skip_dhat = matches!(self.pr_benchmark, Some(PrBenchmarkMode::Fast));
+        let bench_env: &[(&str, &str)] = if skip_dhat {
+            &[("SLANG_PERF_SKIP_DHAT", "1")]
+        } else {
+            &[]
+        };
+
         run_bench(
             self.dry_run.get(),
-            self.pr_benchmark,
+            self.pr_benchmark.is_some(),
             bencher_project,
             "rust_iai_callgrind",
             &[
@@ -113,20 +142,30 @@ impl CargoController {
                 threshold("total-read-write", "0.01"),
                 threshold("total-bytes", "0.01"),
                 threshold("total-blocks", "0.01"),
-                threshold("at-t-gmax-bytes", "0.01"),
-                threshold("at-t-gmax-blocks", "0.01"),
                 threshold("at-t-end-bytes", "0.01"),
                 threshold("at-t-end-blocks", "0.01"),
-                threshold("reads-bytes", "0.01"),
-                threshold("writes-bytes", "0.01"),
-                // l1-hits, l2-hits, and ram-hits instead use 100%, since there's not a simple
-                // rule that could catch all cases  (ie more l1-hits is better if total bytes read remains the same,
-                // but less l1-hits is  also better if it decreases total bytes read).
-                // We still track them, but only alert on drastic (2x) regressions.
+                // The following metrics are alerted at 100% rather than 1%,
+                // we still track them, but only alert on drastic (2x) regressions.
+                //
+                // These metrics are not particularly meaningful to us:
+                //  - `t-gmax` is a whole-process instant; if the global heap peak happens outside our
+                //    benchmarking function (e.g. during `setup`), none of our blocks are alive then and
+                //    the filtered value is 0.
+                //  - `reads-bytes` and `writes-bytes` are attributed by allocation site, not access site,
+                //    so they miss reads/writes to memory allocated outside the benchmark and include those
+                //    done in `setup`/`teardown` to memory the benchmark allocated.
+                threshold("at-t-gmax-bytes", "1"),
+                threshold("at-t-gmax-blocks", "1"),
+                threshold("reads-bytes", "1"),
+                threshold("writes-bytes", "1"),
+                // l1-hits, l2-hits, and ram-hits have no simple
+                // rule that could catch all cases (ie more l1-hits is better if total bytes read remains the same,
+                // but less l1-hits is also better if it decreases total bytes read).
                 threshold("l1-hits", "1"),
                 threshold("l2-hits", "1"),
                 threshold("ram-hits", "1"),
             ],
+            bench_env,
             &test_runner,
         );
 

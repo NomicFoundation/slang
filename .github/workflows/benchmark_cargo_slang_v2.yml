@@ -68,7 +68,7 @@ jobs:
         run: "./scripts/bin/infra perf cargo --smoke slang-v2"
 
       - name: "Benchmark > infra perf cargo slang-v2"
-        run: "./scripts/bin/infra perf cargo ${{ github.event_name == 'pull_request' && '--pr-benchmark' || (inputs.dryRun == true && '--dry-run' || '') }} slang-v2"
+        run: "./scripts/bin/infra perf cargo ${{ github.event_name == 'pull_request' && '--pr-benchmark=full' || (inputs.dryRun == true && '--dry-run' || '') }} slang-v2"
         env:
           SLANG_BENCHER_PROJECT: "${{ inputs.bencherProject }}"
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
