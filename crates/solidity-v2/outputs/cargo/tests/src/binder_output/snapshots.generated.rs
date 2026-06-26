@@ -1322,8 +1322,23 @@ mod yul {
     }
 
     #[test]
+    fn built_in_shadows_function() -> Result<()> {
+        run("yul", "built_in_shadows_function")
+    }
+
+    #[test]
+    fn built_in_shadows_variable() -> Result<()> {
+        run("yul", "built_in_shadows_variable")
+    }
+
+    #[test]
     fn built_ins() -> Result<()> {
         run("yul", "built_ins")
+    }
+
+    #[test]
+    fn calldata_access_resolves_to_solidity() -> Result<()> {
+        run("yul", "calldata_access_resolves_to_solidity")
     }
 
     #[test]
@@ -1409,6 +1424,11 @@ mod yul {
     #[test]
     fn non_functional_notation() -> Result<()> {
         run("yul", "non_functional_notation")
+    }
+
+    #[test]
+    fn slot_access_resolves_to_solidity() -> Result<()> {
+        run("yul", "slot_access_resolves_to_solidity")
     }
 
     #[test]

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/library-fallback-function] Error: Libraries cannot have fallback functions.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     fallback() external {}
+   │     ──────────┬─────────  
+   │               ╰─────────── Error occurred here.
+───╯

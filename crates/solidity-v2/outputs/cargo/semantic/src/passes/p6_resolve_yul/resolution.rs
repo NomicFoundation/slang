@@ -27,16 +27,25 @@ impl Pass<'_> {
         scope_id: ScopeId,
         symbol: &str,
     ) -> Resolution {
-        let resolution = filter_overriden_definitions(
+        // Resolve Yul built-ins first, since strictly speaking they are
+        // reserved keywords. If that fails, lookup the symbol in the scope.
+        let resolution: Resolution = BuiltInsResolver::lookup_yul_global(symbol).into();
+        resolution.or_else(|| {
+            filter_overriden_definitions(
+                self.binder,
+                self.types,
+                self.binder.resolve_in_scope(scope_id, symbol),
+            )
+        })
+    }
+
+    pub(super) fn resolve_symbol_in_enclosing_solidity_scope(&self, symbol: &str) -> Resolution {
+        filter_overriden_definitions(
             self.binder,
             self.types,
-            self.binder.resolve_in_scope(scope_id, symbol),
-        );
-        if resolution == Resolution::Unresolved {
-            BuiltInsResolver::lookup_yul_global(symbol).into()
-        } else {
-            resolution
-        }
+            self.binder
+                .resolve_in_scope(self.current_solidity_scope_id(), symbol),
+        )
     }
 
     pub(super) fn resolve_yul_suffix(

@@ -1,0 +1,52 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["add" @ input.sol:1:10] (function, type: function (uint256, uint256) returns uint256)
+- Def: #2 ["a" @ input.sol:1:22] (parameter, type: uint256)
+- Def: #3 ["b" @ input.sol:1:33] (parameter, type: uint256)
+- Def: #4 ["Test" @ input.sol:5:10] (contract)
+- Def: #5 ["test" @ input.sol:6:14] (function, type: function () returns void)
+- Def: #6 ["result" @ input.sol:10:17] (yul variable)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["a" @ input.sol:2:12] -> #2
+- Ref: ["b" @ input.sol:2:16] -> #3
+- Ref: ["add" @ input.sol:10:27] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ function add(uint256 a, uint256 b) pure returns (uint256) {
+    │          ─┬─         ┬          ┬  
+    │           ╰──────────────────────── name: 1
+    │                      │          │  
+    │                      ╰───────────── name: 2
+    │                                 │  
+    │                                 ╰── name: 3
+  2 │     return a + b;
+    │            ┬   ┬  
+    │            ╰────── ref: 2
+    │                │  
+    │                ╰── ref: 3
+    │ 
+  5 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 4
+  6 │     function test() public pure {
+    │              ──┬─  
+    │                ╰─── name: 5
+    │ 
+ 10 │             let result := add(1, 2)
+    │                 ───┬──    ─┬─  
+    │                    ╰─────────── name: 6
+    │                            │   
+    │                            ╰─── built-in
+────╯

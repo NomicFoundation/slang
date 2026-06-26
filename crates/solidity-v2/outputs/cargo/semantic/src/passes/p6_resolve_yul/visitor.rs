@@ -105,14 +105,25 @@ impl Visitor for Pass<'_> {
 
         let mut item_iter = items.iter();
 
-        let scope_id = self.current_scope_id();
         let identifier = item_iter.next().expect("items is not empty");
-        let resolution = self.resolve_symbol_in_yul_scope(scope_id, identifier.unparse());
+        let suffix = item_iter.next();
+
+        let resolution = if suffix.is_none() {
+            let scope_id = self.current_scope_id();
+            self.resolve_symbol_in_yul_scope(scope_id, identifier.unparse())
+        } else {
+            // If there is a suffix, we're looking for Solidity definitions
+            // (state variables or functions) and we can skip the Yul scopes
+            // entirely.
+            // NOTE: this is the only case where we can reference a Solidity
+            // identifier named after a Yul built-in.
+            self.resolve_symbol_in_enclosing_solidity_scope(identifier.unparse())
+        };
         self.record_solidity_reference(&resolution);
         let reference = Reference::new(Arc::clone(identifier), resolution.clone());
         self.binder.insert_reference(reference);
 
-        if let Some(suffix) = item_iter.next() {
+        if let Some(suffix) = suffix {
             let resolution = self.resolve_yul_suffix(suffix.unparse(), &resolution);
             self.record_solidity_reference(&resolution);
             let reference = Reference::new(Arc::clone(suffix), resolution);

@@ -40,6 +40,9 @@ pub(crate) fn run_bench(
     project: &str,
     adapter: &str,
     thresholds: &[BencherThreshold],
+    // Extra environment variables to set on the benchmark command. These
+    // propagate through `bencher run` to the spawned `cargo bench` process.
+    bench_env: &[(&str, &str)],
     test_runner: &str,
 ) {
     assert!(
@@ -73,6 +76,10 @@ pub(crate) fn run_bench(
         .property("--adapter", adapter)
         .property("--testbed", testbed)
         .secret("BENCHER_API_TOKEN", token);
+
+    for (key, value) in bench_env {
+        command = command.env(*key, *value);
+    }
 
     if dry_run {
         command = command.flag("--dry-run");
