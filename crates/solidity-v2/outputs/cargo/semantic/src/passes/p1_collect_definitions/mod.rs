@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
-    EmptyEnum, EnumWithTooManyMembers, FunctionNameMatchesContainer,
+    EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FunctionNameMatchesContainer,
     InvalidUsingDirectiveContainer, MultipleConstructors,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -443,6 +443,15 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     fn enter_struct_definition(&mut self, node: &ir::StructDefinition) -> bool {
         let definition = Definition::new_struct(node);
         self.insert_definition_in_current_scope(definition);
+
+        // A struct must declare at least one member.
+        if node.members.is_empty() {
+            self.diagnostics.push(
+                self.current_file.id().to_owned(),
+                node.range.clone(),
+                EmptyStruct,
+            );
+        }
 
         let struct_scope = Scope::new_struct(node.id());
         let struct_scope_id = self.binder.insert_scope(struct_scope);
