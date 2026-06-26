@@ -3,9 +3,9 @@
 Diagnostics: 1
 
 [syntax/multiple-mutability-specifiers] Error: Only a single mutability specifier can be provided.
-   ╭─[input.sol:5:28]
+   ╭─[input.sol:5:31]
    │
- 5 │   fallback() external pure view {}
-   │                            ──┬─  
-   │                              ╰─── Error occurred here.
+ 5 │   fallback() external payable view {}
+   │                               ──┬─  
+   │                                 ╰─── Error occurred here.
 ───╯

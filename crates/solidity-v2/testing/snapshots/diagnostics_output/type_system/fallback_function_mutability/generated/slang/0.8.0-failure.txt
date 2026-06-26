@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[type-system/fallback-function-mutability] Error: Fallback function must be payable or non-payable, but is "pure".
+   ╭─[input.sol:6:5]
+   │
+ 6 │     fallback() external pure {}
+   │     ────────────┬────────────  
+   │                 ╰────────────── Error occurred here.
+───╯
+
+[type-system/fallback-function-mutability] Error: Fallback function must be payable or non-payable, but is "view".
+    ╭─[input.sol:11:5]
+    │
+ 11 │     fallback() external view {}
+    │     ────────────┬────────────  
+    │                 ╰────────────── Error occurred here.
+────╯

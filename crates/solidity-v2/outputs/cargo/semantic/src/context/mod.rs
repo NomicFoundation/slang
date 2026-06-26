@@ -88,6 +88,7 @@ impl SemanticContext {
             language_version,
             evm_target,
             &file_node_mapper,
+            &types,
             diagnostics,
         );
 

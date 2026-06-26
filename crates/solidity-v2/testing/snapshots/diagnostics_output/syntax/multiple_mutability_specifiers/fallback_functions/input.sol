@@ -2,5 +2,5 @@
 pragma solidity *;
 
 contract Test {
-  fallback() external pure view {}
+  fallback() external payable view {}
 }
