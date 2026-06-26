@@ -378,6 +378,14 @@ mod resolution {
         }
 
         #[test]
+        fn yul_variable_shadows_default_import() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_variable_shadows_default_import",
+            )
+        }
+
+        #[test]
         fn yul_variable_shadows_inherited_member() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
