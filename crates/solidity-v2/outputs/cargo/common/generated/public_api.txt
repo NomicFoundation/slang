@@ -513,6 +513,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnostic
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::FunctionNameMatchesContainer(slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::InvalidUsingDirectiveContainer(slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::LibraryFallbackFunction(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::LibraryReceiveFunction(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::MultipleConstructors(slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors)
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -529,6 +530,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -637,6 +640,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors
@@ -838,6 +860,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnos
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::FallbackFunctionSignature(slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionSignature)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::InvalidBase(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::InvalidFunctionTypeVisibility(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility)
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ReceiveFunctionParameters(slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters)
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
@@ -851,6 +874,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind) -> Self
 impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
@@ -939,6 +964,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub enum slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::Compilation(slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind)
 pub slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::Resolution(slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind)
@@ -995,6 +1039,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -1023,6 +1069,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind) -> Self
 impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -1193,6 +1241,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors::message(&self) -> alloc::string::String
@@ -1249,6 +1301,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::message(&self) -> alloc::string::String

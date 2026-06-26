@@ -1,6 +1,7 @@
 mod built_ins;
 mod constant_cycles;
 mod fallback_functions;
+mod receive_functions;
 
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
@@ -32,4 +33,5 @@ pub fn run(
     );
 
     fallback_functions::check_fallback_functions(binder, types, file_node_mapper, diagnostics);
+    receive_functions::check_receive_functions(binder, types, file_node_mapper, diagnostics);
 }

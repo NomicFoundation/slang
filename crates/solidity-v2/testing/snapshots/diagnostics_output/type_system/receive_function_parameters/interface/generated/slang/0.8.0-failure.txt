@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/receive-function-parameters] Error: Receive ether function cannot take parameters.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     receive(uint256) external payable;
+   │     ─────────────────┬────────────────  
+   │                      ╰────────────────── Error occurred here.
+───╯

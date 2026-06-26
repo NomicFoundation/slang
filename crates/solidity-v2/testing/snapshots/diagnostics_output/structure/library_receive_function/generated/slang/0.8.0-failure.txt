@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/library-receive-function] Error: Libraries cannot have receive ether functions.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     receive() external payable {}
+   │     ─────────────┬─────────────  
+   │                  ╰─────────────── Error occurred here.
+───╯

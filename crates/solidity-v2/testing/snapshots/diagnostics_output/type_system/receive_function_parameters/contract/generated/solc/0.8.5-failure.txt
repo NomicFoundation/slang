@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 6857] Error: Receive ether function cannot take parameters.
+   ╭─[input.sol:6:12]
+   │
+ 6 │     receive(uint256) external payable {}
+   │            ────┬────  
+   │                ╰────── Error occurred here.
+───╯
