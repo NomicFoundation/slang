@@ -1,0 +1,56 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function (bytes calldata) returns (uint256, uint256))
+- Def: #3 ["add" @ input.sol:2:34] (parameter, type: bytes calldata)
+- Def: #4 ["len" @ input.sol:2:68] (parameter, type: uint256)
+- Def: #5 ["off" @ input.sol:2:81] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["len" @ input.sol:5:13] -> #4
+- Ref: ["add" @ input.sol:5:20] -> #3
+- Ref: ["length" @ input.sol:5:24] -> built-in
+- Ref: ["off" @ input.sol:6:13] -> #5
+- Ref: ["add" @ input.sol:6:20] -> #3
+- Ref: ["offset" @ input.sol:6:24] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test(bytes calldata add) public pure returns (uint256 len, uint256 off) {
+   │              ──┬─                ─┬─                               ─┬─          ─┬─  
+   │                ╰───────────────────────────────────────────────────────────────────── name: 2
+   │                                   │                                 │            │   
+   │                                   ╰────────────────────────────────────────────────── name: 3
+   │                                                                     │            │   
+   │                                                                     ╰──────────────── name: 4
+   │                                                                                  │   
+   │                                                                                  ╰─── name: 5
+   │ 
+ 5 │             len := add.length
+   │             ─┬─    ─┬─ ───┬──  
+   │              ╰───────────────── ref: 4
+   │                     │     │    
+   │                     ╰────────── ref: 3
+   │                           │    
+   │                           ╰──── built-in
+ 6 │             off := add.offset
+   │             ─┬─    ─┬─ ───┬──  
+   │              ╰───────────────── ref: 5
+   │                     │     │    
+   │                     ╰────────── ref: 3
+   │                           │    
+   │                           ╰──── built-in
+───╯
