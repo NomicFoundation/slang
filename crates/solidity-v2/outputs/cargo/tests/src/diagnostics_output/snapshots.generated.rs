@@ -280,10 +280,26 @@ mod resolution {
         }
 
         #[test]
+        fn yul_function_shadows_function_with_state_access() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_shadows_function_with_state_access",
+            )
+        }
+
+        #[test]
         fn yul_function_shadows_solidity() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
                 "yul_function_shadows_solidity",
+            )
+        }
+
+        #[test]
+        fn yul_function_signature_shadows_function() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_signature_shadows_function",
             )
         }
 
