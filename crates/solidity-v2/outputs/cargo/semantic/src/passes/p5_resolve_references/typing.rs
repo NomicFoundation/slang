@@ -606,9 +606,8 @@ impl Pass<'_> {
                 }
             }
             Typing::UserMetaType(node_id) => {
-                // Function call with named arguments are only valid in user
-                // types of the struct kind, which results in the construction
-                // of such struct in memory
+                // Named arguments are valid when constructing a struct (in memory),
+                // an event (called as a function, pre-0.5.0), or an error.
                 match self.binder.find_definition_by_id(node_id) {
                     Some(Definition::Struct(_)) => {
                         // struct construction
@@ -620,6 +619,10 @@ impl Pass<'_> {
                     }
                     Some(Definition::Event(_)) => {
                         // this is an event called as a function, which is valid in <0.5.0
+                        (Typing::Resolved(self.types.void()), Some(node_id))
+                    }
+                    Some(Definition::Error(_)) => {
+                        // an error built with named arguments, e.g. `require(c, E({a: 1}))`
                         (Typing::Resolved(self.types.void()), Some(node_id))
                     }
                     _ => (Typing::Unresolved, None),
