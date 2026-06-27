@@ -1,3 +1,4 @@
+use slang_solidity_v2_ir::ir::StorageLocation;
 use slang_solidity_v2_semantic::types::TypeId;
 
 use crate::abi::{type_as_abi_parameter, AbiParameter};
@@ -40,6 +41,26 @@ impl ParametersStruct {
         let mut result = Vec::new();
         for type_id in self.parameter_types_iter() {
             result.push(self.semantic.type_canonical_name(type_id?)?);
+        }
+        Some(result.join(","))
+    }
+
+    pub(crate) fn compute_library_signature(&self) -> Option<String> {
+        let mut result = Vec::new();
+        for parameter in &self.ir_nodes {
+            let type_id = self
+                .semantic
+                .binder()
+                .node_typing(parameter.id())
+                .as_type_id()?;
+            let mut name = self.semantic.type_internal_name(type_id);
+            if matches!(
+                parameter.storage_location,
+                Some(StorageLocation::StorageKeyword(_))
+            ) {
+                name.push_str(" storage");
+            }
+            result.push(name);
         }
         Some(result.join(","))
     }
