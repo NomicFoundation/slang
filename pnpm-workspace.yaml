@@ -43,6 +43,8 @@ minimumReleaseAgeExclude:
   # (GHSA-gv7w-rqvm-qjhr, GHSA-g7r4-m6w7-qqqr)
   - "esbuild"
   - "@esbuild/*"
+  # Renovate security update: pnpm@11.8.0
+  - pnpm@11.8.0
 
 # Store Settings
 storeDir: ".hermit/.pnpm-store"
