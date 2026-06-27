@@ -223,12 +223,19 @@ impl SemanticContext {
     }
 
     pub(crate) fn definition_canonical_name(&self, definition_id: NodeId) -> String {
-        self.binder
+        let name = self
+            .binder
             .find_definition_by_id(definition_id)
             .unwrap()
             .identifier()
             .unparse()
-            .to_string()
+            .to_string();
+        match self.binder.enclosing_definition_node_id(definition_id) {
+            Some(enclosing) if self.binder.find_definition_by_id(enclosing).is_some() => {
+                format!("{}.{name}", self.definition_canonical_name(enclosing))
+            }
+            _ => name,
+        }
     }
 
     pub fn type_internal_name(&self, type_id: TypeId) -> String {
