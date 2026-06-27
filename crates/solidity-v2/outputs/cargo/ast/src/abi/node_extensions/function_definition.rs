@@ -4,7 +4,7 @@ use crate::abi::{
     selector_from_signature, AbiConstructor, AbiEntry, AbiFallback, AbiFunction, AbiMutability,
     AbiReceive,
 };
-use crate::ast::{FunctionDefinitionStruct, FunctionVisibility};
+use crate::ast::{Definition, FunctionDefinitionStruct, FunctionVisibility};
 
 impl FunctionDefinitionStruct {
     pub fn is_externally_visible(&self) -> bool {
@@ -69,6 +69,16 @@ impl FunctionDefinitionStruct {
         Some(format!("{name}({parameters})"))
     }
 
+    /// Returns the signature solc selects on for a library external function:
+    /// internal (scope-qualified) type names, with a trailing ` storage` on
+    /// storage-reference parameters. Unlike [`Self::compute_canonical_signature`],
+    /// it is well-defined for storage references to non-ABI-encodable types.
+    pub fn compute_library_signature(&self) -> Option<String> {
+        let name = self.ir_node.name.as_ref()?.unparse();
+        let parameters = self.parameters().compute_library_signature()?;
+        Some(format!("{name}({parameters})"))
+    }
+
     /// Returns the signature for this function using internal type names for
     /// parameters. Unlike [`Self::compute_canonical_signature`], this form is
     /// well-defined for any function, including internal ones with parameter
@@ -93,7 +103,10 @@ impl FunctionDefinitionStruct {
         if !self.is_externally_visible() {
             return None;
         }
-        self.compute_canonical_signature()
-            .map(|sig| selector_from_signature(&sig))
+        let signature = match self.enclosing_definition() {
+            Some(Definition::Library(_)) => self.compute_library_signature()?,
+            _ => self.compute_canonical_signature()?,
+        };
+        Some(selector_from_signature(&signature))
     }
 }
