@@ -2009,6 +2009,7 @@ impl slang_solidity_v2_ast::ast::FunctionDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::compute_abi_entry(&self) -> core::option::Option<slang_solidity_v2_ast::abi::AbiEntry>
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::compute_canonical_signature(&self) -> core::option::Option<alloc::string::String>
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::compute_internal_signature(&self) -> core::option::Option<alloc::string::String>
+pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::compute_library_signature(&self) -> core::option::Option<alloc::string::String>
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::compute_selector(&self) -> core::option::Option<u32>
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::is_externally_visible(&self) -> bool
 impl slang_solidity_v2_ast::ast::FunctionDefinitionStruct
