@@ -44,10 +44,6 @@ overrides:
 # Dependency Resolution
 minimumReleaseAge: 10080 # 1 week
 minimumReleaseAgeExclude:
-  # Security: pull esbuild 0.28.1 (+ its platform packages) before cooldown matures
-  # (GHSA-gv7w-rqvm-qjhr, GHSA-g7r4-m6w7-qqqr)
-  - "esbuild"
-  - "@esbuild/*"
   # Security: pull js-yaml 4.2.0 (GHSA-h67p-54hq-rp68) before cooldown matures.
   # Published 2026-06-26 — remove this entry after 2026-07-03 (7-day cooldown).
   - "js-yaml"
