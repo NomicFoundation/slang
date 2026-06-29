@@ -1,8 +1,10 @@
+mod built_in_redeclaration;
 mod identifier_not_found;
 mod identifier_redeclaration;
 mod incompatible_built_in_target;
 mod incompatible_built_in_version;
 
+pub use built_in_redeclaration::BuiltInRedeclaration;
 pub use identifier_not_found::IdentifierNotFound;
 pub use identifier_redeclaration::IdentifierRedeclaration;
 pub use incompatible_built_in_target::IncompatibleBuiltInTarget;
@@ -24,6 +26,8 @@ define_diagnostic_kind! {
         IdentifierNotFound(IdentifierNotFound),
         /// An identifier was declared more than once in the same scope.
         IdentifierRedeclaration(IdentifierRedeclaration),
+        /// A Yul declaration reused the reserved name of a Yul built-in.
+        BuiltInRedeclaration(BuiltInRedeclaration),
 
         /// A built-in is not compatible with the currently selected language version.
         IncompatibleBuiltInVersion(IncompatibleBuiltInVersion),

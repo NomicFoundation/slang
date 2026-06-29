@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[ParserError 5568] Error: Cannot use builtin function name "add" as identifier name.
+   ╭─[input.sol:7:29]
+   │
+ 7 │             function g() -> add {
+   │                             ─┬─  
+   │                              ╰─── Error occurred here.
+───╯
+
+[ParserError 6272] Error: Cannot assign to builtin function "add".
+   ╭─[input.sol:8:21]
+   │
+ 8 │                 add := 1
+   │                     ─┬  
+   │                      ╰── Error occurred here.
+───╯

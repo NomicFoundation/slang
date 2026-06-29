@@ -1,9 +1,13 @@
-use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
+use slang_solidity_v2_common::diagnostics::kinds::resolution::{
+    BuiltInRedeclaration, IdentifierRedeclaration,
+};
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{AssemblyBlock, Binder, Definition, Scope, ScopeId};
+use crate::built_ins::BuiltInsResolver;
 use crate::context::FileNodeMapper;
 use crate::types::TypeRegistry;
 
@@ -135,14 +139,40 @@ impl<'a> Pass<'a> {
     }
 
     // Registers `definition` under the given scope, first checking whether its
-    // identifier collides with a pre-existing definition in that scope. If so,
-    // an `IdentifierRedeclaration` diagnostic is emitted; the definition is
-    // registered regardless, so references to it can still be resolved.
+    // identifier is valid as a Yul declaration. Two errors are possible:
+    //
+    // - the name reuses a reserved Yul built-in (e.g. `let add := 1`), or
+    // - it collides with a pre-existing definition in scope.
+    //
+    // The built-in check takes precedence. Either way the definition is
+    // registered, so references to it can still be resolved.
     fn insert_definition_in_scope(&mut self, definition: Definition, scope_id: ScopeId) {
         let symbol = definition.identifier().unparse();
-        if conflicts::find_conflicting_yul_definition(self.binder, scope_id, symbol, &definition)
+
+        // TODO: this checks against built-ins across all versions/targets, but
+        // we should restrict it to the current version/target
+        let conflict_kind: Option<DiagnosticKind> =
+            if BuiltInsResolver::lookup_yul_global(symbol).is_some() {
+                Some(
+                    BuiltInRedeclaration {
+                        name: symbol.to_owned(),
+                    }
+                    .into(),
+                )
+            } else if conflicts::find_conflicting_yul_definition(
+                self.binder,
+                scope_id,
+                symbol,
+                &definition,
+            )
             .is_some()
-        {
+            {
+                Some(IdentifierRedeclaration.into())
+            } else {
+                None
+            };
+
+        if let Some(conflict_kind) = conflict_kind {
             let file_id = self
                 .file_node_mapper
                 .file_id_from_node_id(definition.identifier().id())
@@ -150,9 +180,10 @@ impl<'a> Pass<'a> {
             self.diagnostics.push(
                 file_id,
                 definition.identifier().range.clone(),
-                IdentifierRedeclaration,
+                conflict_kind,
             );
         }
+
         self.binder.insert_definition_in_scope(definition, scope_id);
     }
 }

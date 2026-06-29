@@ -34,6 +34,33 @@ mod passing {
 mod resolution {
     use super::*;
 
+    mod built_in_redeclaration {
+        use super::*;
+
+        #[test]
+        fn yul_function() -> Result<()> {
+            run("resolution/built_in_redeclaration", "yul_function")
+        }
+
+        #[test]
+        fn yul_function_parameter() -> Result<()> {
+            run(
+                "resolution/built_in_redeclaration",
+                "yul_function_parameter",
+            )
+        }
+
+        #[test]
+        fn yul_function_return() -> Result<()> {
+            run("resolution/built_in_redeclaration", "yul_function_return")
+        }
+
+        #[test]
+        fn yul_variable() -> Result<()> {
+            run("resolution/built_in_redeclaration", "yul_variable")
+        }
+    }
+
     mod identifier_not_found {
         use super::*;
 
