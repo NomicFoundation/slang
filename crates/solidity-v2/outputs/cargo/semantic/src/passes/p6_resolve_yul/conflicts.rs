@@ -151,12 +151,11 @@ fn find_shadowed_solidity_definition(
             _ => None,
         }
     } else {
-        // Any resolved Solidity declaration is shadowed; built-in and unresolved
-        // names are not.
+        // Any resolved Solidity declaration is shadowed.
         match resolution {
             Resolution::Definition(id) => Some(id),
             Resolution::Ambiguous(ids) => ids.into_iter().next(),
-            Resolution::BuiltIn(_) | Resolution::Unresolved => None,
+            _ => None,
         }
     }
 }
