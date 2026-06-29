@@ -20,7 +20,7 @@ catalog:
   "cspell": "^10.0.1"
   "jest": "^30.4.2"
   "markdown-link-check": "^3.14.2"
-  "markdownlint-cli": "^0.48.0"
+  "markdownlint-cli": "^0.49.0"
   "prettier-plugin-sh": "^0.18.1"
   "prettier": "^3.8.3"
   "solc": "^0.8.35"
