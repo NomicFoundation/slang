@@ -18,13 +18,6 @@
 //!   function"); we reject the declaration outright as a simpler, conservative
 //!   approximation (so we diverge from solc only when the name is never used).
 //! - A Yul **variable** (`let`) may not shadow any visible Solidity declaration.
-//!
-//! This is the Yul counterpart to
-//! [`p1_collect_definitions::conflicts::find_conflicting_solidity_definition`],
-//! with which it shares only the pairwise comparison leaves in
-//! [`crate::passes::common::conflicts`].
-//!
-//! [`p1_collect_definitions::conflicts::find_conflicting_solidity_definition`]: crate::passes::p1_collect_definitions::conflicts::find_conflicting_solidity_definition
 
 use slang_solidity_v2_common::nodes::NodeId;
 

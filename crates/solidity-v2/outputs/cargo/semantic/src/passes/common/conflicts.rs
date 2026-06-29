@@ -1,16 +1,9 @@
 //! Pairwise definition-conflict comparison shared between the per-pass conflict
-//! detectors ([`p1_collect_definitions::conflicts`] and
-//! [`p6_resolve_yul::conflicts`]).
+//! detectors.
 //!
-//! The scope-walk algorithms differ per pass — declaring a Solidity name and
+//! The scope-walk algorithms differ per pass. Declaring a Solidity name and
 //! declaring a Yul name obey different rules and traverse the scope tree
-//! differently — so each lives with its pass. Only these overload-aware
-//! comparison leaves are genuinely shared: deciding whether two definitions
-//! that share a name actually conflict, or may legally coexist as overloads
-//! (see [`Definition::overloads_with`]).
-//!
-//! [`p1_collect_definitions::conflicts`]: crate::passes::p1_collect_definitions::conflicts
-//! [`p6_resolve_yul::conflicts`]: crate::passes::p6_resolve_yul::conflicts
+//! differently, so each lives with its pass.
 
 use slang_solidity_v2_common::nodes::NodeId;
 

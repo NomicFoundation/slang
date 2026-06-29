@@ -5,18 +5,13 @@
 //! here?". The search is bounded to the *local lexical chain* — it stops at
 //! lexical and namespace boundaries (block/contract/file/struct/enum), since
 //! shadowing an outer Solidity scope is legal, and continues *past*
-//! non-conflicting hits (overloads). This is the Solidity counterpart to
-//! [`p6_resolve_yul::conflicts::find_conflicting_yul_definition`], with which
-//! it shares only the pairwise comparison leaves in
-//! [`crate::passes::common::conflicts`].
+//! non-conflicting hits (overloads).
 //!
 //! The rest of this module handles file-level clashes specific to *default
 //! imports* — symbols brought into a file's scope through unqualified
 //! `import "file";` directives. That is separate because it runs as a second
 //! step once every file scope is populated, and it needs provenance (which
 //! import directive brought a symbol in) that `Resolution` discards.
-//!
-//! [`p6_resolve_yul::conflicts::find_conflicting_yul_definition`]: crate::passes::p6_resolve_yul::conflicts::find_conflicting_yul_definition
 
 use std::collections::VecDeque;
 use std::ops::Range;
