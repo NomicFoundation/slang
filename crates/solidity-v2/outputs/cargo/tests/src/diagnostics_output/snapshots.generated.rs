@@ -256,6 +256,14 @@ mod resolution {
         }
 
         #[test]
+        fn yul_function_parameter_shadows_parameter() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_parameter_shadows_parameter",
+            )
+        }
+
+        #[test]
         fn yul_function_parameter_vs_return() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
@@ -398,6 +406,14 @@ mod resolution {
             run(
                 "resolution/identifier_redeclaration",
                 "yul_variable_shadows_default_import",
+            )
+        }
+
+        #[test]
+        fn yul_variable_shadows_external_function() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_variable_shadows_external_function",
             )
         }
 
