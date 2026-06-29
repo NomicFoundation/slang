@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/external-declaration-shadowing] Error: This declaration shadows a declaration outside the inline assembly block.
+   ╭─[input.sol:7:23]
+   │
+ 7 │             for { let block := 0 } lt(block, 10) { block := add(block, 1) } {}
+   │                       ──┬──  
+   │                         ╰──── Error occurred here.
+───╯

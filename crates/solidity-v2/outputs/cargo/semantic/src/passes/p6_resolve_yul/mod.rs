@@ -1,5 +1,5 @@
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
-    BuiltInRedeclaration, IdentifierRedeclaration,
+    BuiltInRedeclaration, ExternalDeclarationShadowing, IdentifierRedeclaration,
 };
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -7,13 +7,14 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{AssemblyBlock, Binder, Definition, Scope, ScopeId};
-use crate::built_ins::BuiltInsResolver;
 use crate::context::FileNodeMapper;
 use crate::types::TypeRegistry;
 
 mod conflicts;
 mod resolution;
 mod visitor;
+
+use conflicts::YulConflict;
 
 /// This pass processes all Yul/`assembly` code. In a single traversal it both
 /// collects Yul definitions and scopes (creating `YulBlockScope`/
@@ -138,39 +139,40 @@ impl<'a> Pass<'a> {
         self.insert_definition_in_scope(definition, self.current_scope_id());
     }
 
-    // Registers `definition` under the given scope, first checking whether its
-    // identifier is valid as a Yul declaration. Two errors are possible:
+    // Registers `definition` under the given scope, reporting a diagnostic if
+    // its identifier is not a valid Yul declaration. `find_conflicting_yul_definition`
+    // determines the kind of conflict (see its docs); here we just map it to the
+    // matching diagnostic. Three errors are possible:
     //
-    // - the name reuses a reserved Yul built-in (e.g. `let add := 1`), or
-    // - it collides with a pre-existing definition in scope.
+    // - the name reuses a reserved Yul built-in (e.g. `let add := 1`),
+    // - it redeclares another definition in the same assembly block, or
+    // - a Yul variable shadows a declaration visible from outside the block —
+    //   a Solidity declaration or a built-in (e.g. `let msg := 1`).
     //
-    // The built-in check takes precedence. Either way the definition is
-    // registered, so references to it can still be resolved.
+    // Either way the definition is still registered, so references to it can
+    // still be resolved (except Yul built-ins which are always resolved to
+    // built-ins anyways).
     fn insert_definition_in_scope(&mut self, definition: Definition, scope_id: ScopeId) {
         let symbol = definition.identifier().unparse();
 
-        // TODO: this checks against built-ins across all versions/targets, but
-        // we should restrict it to the current version/target
-        let conflict_kind: Option<DiagnosticKind> =
-            if BuiltInsResolver::lookup_yul_global(symbol).is_some() {
-                Some(
-                    BuiltInRedeclaration {
-                        name: symbol.to_owned(),
-                    }
-                    .into(),
-                )
-            } else if conflicts::find_conflicting_yul_definition(
-                self.binder,
-                scope_id,
-                symbol,
-                &definition,
-            )
-            .is_some()
-            {
-                Some(IdentifierRedeclaration.into())
-            } else {
-                None
-            };
+        let conflict_kind: Option<DiagnosticKind> = match conflicts::find_conflicting_yul_definition(
+            self.binder,
+            scope_id,
+            symbol,
+            &definition,
+        ) {
+            Some(YulConflict::BuiltInRedeclaration) => Some(
+                BuiltInRedeclaration {
+                    name: symbol.to_owned(),
+                }
+                .into(),
+            ),
+            Some(YulConflict::Redeclaration) => Some(IdentifierRedeclaration.into()),
+            Some(YulConflict::ExternalDeclarationShadowing) => {
+                Some(ExternalDeclarationShadowing.into())
+            }
+            None => None,
+        };
 
         if let Some(conflict_kind) = conflict_kind {
             let file_id = self
