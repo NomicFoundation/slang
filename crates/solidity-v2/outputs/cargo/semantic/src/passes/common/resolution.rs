@@ -94,6 +94,34 @@ pub(crate) fn filter_overriden_definitions(
     Resolution::from(filtered_definitions)
 }
 
+/// Returns whether `function` overrides `other`: a matching name (or, for the
+/// nameless functions, a matching kind) and an overriding signature. This reads
+/// function typing information, so it requires `p3_type_definitions` to have run.
+pub(crate) fn function_overrides(
+    binder: &Binder,
+    types: &TypeRegistry,
+    function: &ir::FunctionDefinition,
+    other: &ir::FunctionDefinition,
+) -> bool {
+    let name_matches = match (&function.name, &other.name) {
+        (None, None) => function.kind == other.kind,
+        (Some(name), Some(other_name)) => name.unparse() == other_name.unparse(),
+        _ => false,
+    };
+    if !name_matches {
+        return false;
+    }
+    let type_id = binder.node_typing(function.id()).as_type_id();
+    let other_type_id = binder.node_typing(other.id()).as_type_id();
+    match (type_id, other_type_id) {
+        (Some(type_id), Some(other_type_id)) => {
+            types.type_id_is_function_and_overrides(type_id, other_type_id)
+        }
+        _ => false,
+    }
+    // TODO(validation) SDR[6]: check also that the function mutability is stricter than other's
+}
+
 /// Given a `Definition`'s `NodeId`, find the scope where we should resolve
 /// symbols if the definition acts as a namespace. This is typically used when
 /// resolving `MemberAccessExpression`s with a `UserMetatype` operand. Returns

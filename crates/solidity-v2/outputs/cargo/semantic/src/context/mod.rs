@@ -10,8 +10,8 @@ use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, Reference};
 use crate::passes::{
-    p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_compute_linearisations,
-    p5_resolve_references, p6_resolve_yul, p7_code_analysis,
+    common, p1_collect_definitions, p2_linearise_contracts, p3_type_definitions,
+    p4_compute_linearisations, p5_resolve_references, p6_resolve_yul, p7_code_analysis,
 };
 use crate::types::{
     ArrayType, ByteArrayType, ContractType, EnumType, FixedPointNumberType, FixedSizeArrayType,
@@ -176,6 +176,20 @@ impl SemanticContext {
     /// definition.
     pub fn linearised_events(&self, contract_id: NodeId) -> &[ir::EventDefinition] {
         self.contract_data.linearised_events(contract_id)
+    }
+
+    /// Whether `function_id` overrides `base_id`: the binder's override relation,
+    /// matching the name (or kind, for the nameless functions) and an overriding
+    /// signature. This is the relation `super` and virtual dispatch resolve on.
+    /// Returns `false` unless both ids are function definitions.
+    pub fn function_overrides(&self, function_id: NodeId, base_id: NodeId) -> bool {
+        let (Some(Definition::Function(function)), Some(Definition::Function(base))) = (
+            self.binder.find_definition_by_id(function_id),
+            self.binder.find_definition_by_id(base_id),
+        ) else {
+            return false;
+        };
+        common::function_overrides(&self.binder, &self.types, &function.ir_node, &base.ir_node)
     }
 
     pub fn resolve_reference_identifier_to_definition_id(&self, node_id: NodeId) -> Option<NodeId> {

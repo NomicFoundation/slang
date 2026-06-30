@@ -7,6 +7,7 @@ use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition};
 use crate::context::{ContractData, ContractLinearisations};
+use crate::passes::common::function_overrides;
 use crate::types::TypeRegistry;
 
 /// In this pass we walk every contract's linearised bases and pre-compute the
@@ -104,31 +105,6 @@ fn collect_linearised_functions(
         (Some(a), Some(b)) => a.unparse().cmp(b.unparse()),
     });
     functions
-}
-
-fn function_overrides(
-    binder: &Binder,
-    types: &TypeRegistry,
-    function: &ir::FunctionDefinition,
-    other: &ir::FunctionDefinition,
-) -> bool {
-    let name_matches = match (&function.name, &other.name) {
-        (None, None) => function.kind == other.kind,
-        (Some(name), Some(other_name)) => name.unparse() == other_name.unparse(),
-        _ => false,
-    };
-    if !name_matches {
-        return false;
-    }
-    let type_id = binder.node_typing(function.id()).as_type_id();
-    let other_type_id = binder.node_typing(other.id()).as_type_id();
-    match (type_id, other_type_id) {
-        (Some(type_id), Some(other_type_id)) => {
-            types.type_id_is_function_and_overrides(type_id, other_type_id)
-        }
-        _ => false,
-    }
-    // TODO(validation) SDR[6]: check also that the function mutability is stricter than other's
 }
 
 /// Walks the linearised bases in reverse (most-base first) and concatenates
