@@ -627,6 +627,11 @@ mod structure {
     }
 
     #[test]
+    fn library_receive_function() -> Result<()> {
+        run("structure", "library_receive_function")
+    }
+
+    #[test]
     fn multiple_constructors() -> Result<()> {
         run("structure", "multiple_constructors")
     }
@@ -854,6 +859,20 @@ mod type_system {
                 "type_system/invalid_function_type_visibility",
                 "valid_visibilities",
             )
+        }
+    }
+
+    mod receive_function_parameters {
+        use super::*;
+
+        #[test]
+        fn contract() -> Result<()> {
+            run("type_system/receive_function_parameters", "contract")
+        }
+
+        #[test]
+        fn interface() -> Result<()> {
+            run("type_system/receive_function_parameters", "interface")
         }
     }
 }

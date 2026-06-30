@@ -2,11 +2,13 @@ mod fallback_function_mutability;
 mod fallback_function_signature;
 mod invalid_base;
 mod invalid_function_type_visibility;
+mod receive_function_parameters;
 
 pub use fallback_function_mutability::FallbackFunctionMutability;
 pub use fallback_function_signature::FallbackFunctionSignature;
 pub use invalid_base::InvalidBase;
 pub use invalid_function_type_visibility::InvalidFunctionTypeVisibility;
+pub use receive_function_parameters::ReceiveFunctionParameters;
 use serde::Serialize;
 
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
@@ -29,5 +31,7 @@ define_diagnostic_kind! {
         FallbackFunctionMutability(FallbackFunctionMutability),
         /// A fallback function has a signature other than the two accepted forms.
         FallbackFunctionSignature(FallbackFunctionSignature),
+        /// A receive function declares parameters.
+        ReceiveFunctionParameters(ReceiveFunctionParameters),
     }
 }
