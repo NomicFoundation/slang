@@ -1,4 +1,4 @@
-use crate::abi::{selector_from_signature, AbiEntry, AbiEvent};
+use crate::abi::{selector_from_signature, signature_hash, AbiEntry, AbiEvent};
 use crate::ast::EventDefinitionStruct;
 
 impl EventDefinitionStruct {
@@ -28,5 +28,10 @@ impl EventDefinitionStruct {
     pub fn compute_selector(&self) -> Option<u32> {
         self.compute_canonical_signature()
             .map(|sig| selector_from_signature(&sig))
+    }
+
+    pub fn compute_event_topic(&self) -> Option<[u8; 32]> {
+        self.compute_canonical_signature()
+            .map(|sig| signature_hash(&sig))
     }
 }
