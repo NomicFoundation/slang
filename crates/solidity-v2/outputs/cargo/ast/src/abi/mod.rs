@@ -330,12 +330,15 @@ impl StorageItem {
     }
 }
 
-pub fn selector_from_signature(signature: &str) -> u32 {
+pub(crate) fn signature_hash(signature: &str) -> [u8; 32] {
     let mut hasher = Keccak256::new();
     hasher.update(signature.as_bytes());
     let result = hasher.finalize();
+    result[..].try_into().unwrap()
+}
 
-    let selector_bytes: [u8; 4] = result[0..4].try_into().unwrap();
+pub fn selector_from_signature(signature: &str) -> u32 {
+    let selector_bytes: [u8; 4] = signature_hash(signature)[0..4].try_into().unwrap();
     u32::from_be_bytes(selector_bytes)
 }
 
