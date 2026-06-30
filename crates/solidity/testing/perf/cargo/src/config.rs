@@ -1,4 +1,4 @@
-use iai_callgrind::{Direction, FlamegraphConfig, LibraryBenchmarkConfig, Tool, ValgrindTool};
+use gungraun::{Callgrind, Dhat, Direction, FlamegraphConfig, LibraryBenchmarkConfig};
 
 /// Env var that, when set (to any value), makes
 /// [`benchmark_config_with_num_callers`] skip the DHAT tool and run Callgrind
@@ -28,19 +28,22 @@ pub fn benchmark_config_with_num_callers(num_callers: usize) -> LibraryBenchmark
 
     let mut config = LibraryBenchmarkConfig::default();
     config
-        // 'valgrind' supports many tools. By default, it runs 'callgrind', which reports these metrics:
+        // 'valgrind' supports many tools. We run 'callgrind', which reports these metrics:
         // https://kcachegrind.github.io/html/Home.html
         //
         // Instructions:            Total CPU instructions executed.
-        // L1 Hits:                 Total (simulated) number of times the L1 cache was hit.
+        // LL Hits:                 Total (simulated) number of times the LL cache was hit.
         // L2 Hits:                 Total (simulated) number of times the L2 cache was hit.
         // RAM Hits:                Total (simulated) number of times the RAM was hit.
         // Total read+write:        Total memory reads/writes during the entire execution.
         // Estimated Cycles:        Number of CPU cycles (estimated) that went by during the entire execution.
         //
-        // This enables generating flame graphs into Cargo's 'target' directory.
+        // We also enable flame graphs into Cargo's 'target' directory.
         // They will be listed by 'infra perf' at the end of the run:
-        .flamegraph(FlamegraphConfig::default().direction(Direction::BottomToTop))
+        .tool(
+            Callgrind::default()
+                .flamegraph(FlamegraphConfig::default().direction(Direction::BottomToTop)),
+        )
         // 'valgrind' executes tests without any environment variables set by default.
         // Let's disable this behavior to be able to execute our infra utilities:
         .env_clear(false);
@@ -60,7 +63,7 @@ pub fn benchmark_config_with_num_callers(num_callers: usize) -> LibraryBenchmark
     if std::env::var_os(SKIP_DHAT_ENV).is_none() {
         // We set the DHAT arguments to whatever the user provided.
         let dhat_args = [format!("--num-callers={num_callers}")];
-        config.tool(Tool::new(ValgrindTool::DHAT).args(dhat_args));
+        config.tool(Dhat::with_args(dhat_args));
     }
 
     config

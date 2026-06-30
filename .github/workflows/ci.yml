@@ -66,7 +66,7 @@ jobs:
         run: "./scripts/bin/infra lint"
 
       # On main pushes, warm the dependency and cargo-target caches with the perf
-      # toolchain (bencher_cli, iai-callgrind-runner, and the bench binaries) so
+      # toolchain (bencher_cli, gungraun-runner, and the bench binaries) so
       # subsequent PR perf runs don't compile them from scratch. Wrapped: these
       # cargo-install from crates.io (no bencher upload, so no MITM concern).
       - name: "infra perf cargo --smoke slang-v2"

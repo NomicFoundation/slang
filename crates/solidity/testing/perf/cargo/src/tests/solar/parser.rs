@@ -7,8 +7,8 @@ use solar::parse::Parser;
 
 use crate::dataset::SolidityProject;
 
-pub fn run(project: &SolidityProject) {
-    go(project, false);
+pub fn run(project: &SolidityProject) -> usize {
+    go(project, false)
 }
 
 pub fn test(project: &SolidityProject) -> usize {
