@@ -11,7 +11,7 @@
 use slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
-use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_ir::ir::{self, TextRange};
 
 use crate::binder::{Binder, Definition, Typing};
 use crate::context::FileNodeMapper;
@@ -86,7 +86,13 @@ fn check_receive_function(
     };
 
     // A receive function cannot take parameters.
+    //
+    // Note: It also cannot return values, but that is already rejected by the grammar.
     if !function_type.parameter_types.is_empty() {
-        diagnostics.push(file_id, signature_range, ReceiveFunctionParameters);
+        let parameters_range = node
+            .parameters
+            .calculate_text_range()
+            .expect("Parameters are not empty");
+        diagnostics.push(file_id, parameters_range, ReceiveFunctionParameters);
     }
 }
