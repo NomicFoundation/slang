@@ -1,2 +1,7 @@
 # Allowlist for cargo-cooldown-check.
 # Add `[[allow.exact]]` entries to skip cooldown for a freshly published crate version.
+
+[[allow.exact]]
+crate = "anyhow"
+version = "1.0.103"
+# RUSTSEC-2026-0190: downcast_mut unsoundness. Security fix; bypass 7-day cooldown. See PR #1911.
