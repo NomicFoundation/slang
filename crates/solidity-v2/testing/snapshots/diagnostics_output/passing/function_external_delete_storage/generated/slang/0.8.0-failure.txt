@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/invalid-function-type-visibility] Error: Invalid visibility, can only be "external" or "internal".
+   ╭─[input.sol:7:5]
+   │
+ 7 │     function() external public x;
+   │     ─────────────┬────────────  
+   │                  ╰────────────── Error occurred here.
+───╯
