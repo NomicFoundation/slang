@@ -12,7 +12,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TupleType, Type, TypeId};
 
-pub use self::types::{AbiType, TupleComponent};
+pub use self::types::{AbiType, NotAnAbiType, TupleComponent};
 use crate::abi::types::type_as_abi_type;
 
 pub struct ContractAbi {

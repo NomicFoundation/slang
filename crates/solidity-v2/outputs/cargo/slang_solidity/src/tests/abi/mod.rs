@@ -2,6 +2,7 @@ mod entries;
 mod internal_signature;
 mod selectors;
 mod storage_layout;
+mod type_conversion;
 
 use super::fixtures;
 use crate::define_fixture;

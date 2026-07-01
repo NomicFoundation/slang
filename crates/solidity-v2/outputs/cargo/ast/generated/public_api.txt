@@ -52,6 +52,9 @@ impl core::cmp::PartialEq for slang_solidity_v2_ast::abi::AbiType
 pub fn slang_solidity_v2_ast::abi::AbiType::eq(&self, &slang_solidity_v2_ast::abi::AbiType) -> bool
 impl core::cmp::PartialOrd for slang_solidity_v2_ast::abi::AbiType
 pub fn slang_solidity_v2_ast::abi::AbiType::partial_cmp(&self, &slang_solidity_v2_ast::abi::AbiType) -> core::option::Option<core::cmp::Ordering>
+impl core::convert::TryFrom<&slang_solidity_v2_ast::ast::Type> for slang_solidity_v2_ast::abi::AbiType
+pub type slang_solidity_v2_ast::abi::AbiType::Error = slang_solidity_v2_ast::abi::NotAnAbiType
+pub fn slang_solidity_v2_ast::abi::AbiType::try_from(&slang_solidity_v2_ast::ast::Type) -> core::result::Result<Self, Self::Error>
 impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiType
 pub fn slang_solidity_v2_ast::abi::AbiType::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::fmt::Display for slang_solidity_v2_ast::abi::AbiType
@@ -137,6 +140,19 @@ pub fn slang_solidity_v2_ast::abi::ContractAbi::name(&self) -> &str
 pub fn slang_solidity_v2_ast::abi::ContractAbi::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::abi::ContractAbi::storage_layout(&self) -> &[slang_solidity_v2_ast::abi::StorageItem]
 pub fn slang_solidity_v2_ast::abi::ContractAbi::transient_storage_layout(&self) -> &[slang_solidity_v2_ast::abi::StorageItem]
+#[non_exhaustive] pub struct slang_solidity_v2_ast::abi::NotAnAbiType
+impl core::clone::Clone for slang_solidity_v2_ast::abi::NotAnAbiType
+pub fn slang_solidity_v2_ast::abi::NotAnAbiType::clone(&self) -> slang_solidity_v2_ast::abi::NotAnAbiType
+impl core::cmp::Eq for slang_solidity_v2_ast::abi::NotAnAbiType
+impl core::cmp::PartialEq for slang_solidity_v2_ast::abi::NotAnAbiType
+pub fn slang_solidity_v2_ast::abi::NotAnAbiType::eq(&self, &slang_solidity_v2_ast::abi::NotAnAbiType) -> bool
+impl core::error::Error for slang_solidity_v2_ast::abi::NotAnAbiType
+impl core::fmt::Debug for slang_solidity_v2_ast::abi::NotAnAbiType
+pub fn slang_solidity_v2_ast::abi::NotAnAbiType::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity_v2_ast::abi::NotAnAbiType
+pub fn slang_solidity_v2_ast::abi::NotAnAbiType::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for slang_solidity_v2_ast::abi::NotAnAbiType
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::NotAnAbiType
 pub struct slang_solidity_v2_ast::abi::StorageItem
 impl slang_solidity_v2_ast::abi::StorageItem
 pub fn slang_solidity_v2_ast::abi::StorageItem::label(&self) -> &str
@@ -1042,6 +1058,9 @@ pub fn slang_solidity_v2_ast::ast::Type::is_reference_type(&self) -> bool
 pub fn slang_solidity_v2_ast::ast::Type::try_create_for_node_id(slang_solidity_v2_common::nodes::NodeId, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> core::option::Option<Self>
 impl core::clone::Clone for slang_solidity_v2_ast::ast::Type
 pub fn slang_solidity_v2_ast::ast::Type::clone(&self) -> slang_solidity_v2_ast::ast::Type
+impl core::convert::TryFrom<&slang_solidity_v2_ast::ast::Type> for slang_solidity_v2_ast::abi::AbiType
+pub type slang_solidity_v2_ast::abi::AbiType::Error = slang_solidity_v2_ast::abi::NotAnAbiType
+pub fn slang_solidity_v2_ast::abi::AbiType::try_from(&slang_solidity_v2_ast::ast::Type) -> core::result::Result<Self, Self::Error>
 pub enum slang_solidity_v2_ast::ast::TypeName
 pub slang_solidity_v2_ast::ast::TypeName::ArrayTypeName(slang_solidity_v2_ast::ast::ArrayTypeName)
 pub slang_solidity_v2_ast::ast::TypeName::ElementaryType(slang_solidity_v2_ast::ast::ElementaryType)

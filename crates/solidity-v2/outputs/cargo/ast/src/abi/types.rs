@@ -119,7 +119,32 @@ pub(crate) fn type_as_abi_type(
     abi_type_from_ast_type(&AstType::create(type_id, semantic), &mut Set::default())
 }
 
+/// Error returned by `TryFrom<&Type>` for [`AbiType`] when the given
+/// [`Type`](crate::ast::Type) has no ABI representation — e.g. a mapping, an
+/// internal tuple, a library, or a malformed recursive struct.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[non_exhaustive]
+pub struct NotAnAbiType;
+
+impl fmt::Display for NotAnAbiType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "type has no ABI representation")
+    }
+}
+
+impl std::error::Error for NotAnAbiType {}
+
+impl TryFrom<&AstType> for AbiType {
+    type Error = NotAnAbiType;
+
+    fn try_from(value: &AstType) -> Result<Self, Self::Error> {
+        abi_type_from_ast_type(value, &mut Set::default()).ok_or(NotAnAbiType)
+    }
+}
+
 /// The single source of truth for converting a Solidity type to its [`AbiType`].
+/// Both the public `TryFrom<&AstType>` and the semantic-`TypeId` entry point
+/// ([`type_as_abi_type`]) funnel through here.
 fn abi_type_from_ast_type(value: &AstType, visited_structs: &mut Set<NodeId>) -> Option<AbiType> {
     match value {
         AstType::Address(_) | AstType::Contract(_) | AstType::Interface(_) => {
