@@ -1,4 +1,5 @@
 mod entries;
+mod interface_id;
 mod internal_signature;
 mod selectors;
 mod storage_layout;
