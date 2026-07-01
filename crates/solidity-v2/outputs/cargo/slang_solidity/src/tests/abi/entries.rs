@@ -1,87 +1,5 @@
 use super::fixtures;
-use crate::abi::AbiEntry;
-
-/// Convenience macro to test equality of tuple components for input/output parameters.
-///
-/// Usage:
-/// ```
-/// assert_components_eq!(inputs[0].components(), [
-///     ("a", "uint256", []),
-///     ("c", "tuple[]", [
-///         ("x", "uint256", []),
-///         ("y", "uint256", []),
-///     ]),
-/// ]);
-/// ```
-macro_rules! assert_components_eq {
-    ($components:expr, [ $(($name:expr, $type_name:expr, [$($sub:tt)*])),* $(,)? ]) => {
-        {
-            let components = $components;
-            let expected: &[(&str, &str)] = &[$(($name, $type_name)),*];
-            assert_eq!(
-                components.len(),
-                expected.len(),
-                "expected {} components, got {}",
-                expected.len(),
-                components.len()
-            );
-            assert_components_eq!(@step components, 0, $(($name, $type_name, [$($sub)*]),)*);
-        }
-    };
-    (@step $components:ident, $index:expr, ) => {};
-    (@step $components:ident, $index:expr, ($name:expr, $type_name:expr, [$($sub:tt)*]), $($rest:tt)*) => {
-        assert_eq!($components[$index].name(), $name);
-        assert_eq!($components[$index].type_name(), $type_name);
-        assert_components_eq!($components[$index].components(), [$($sub)*]);
-        assert_components_eq!(@step $components, $index + 1, $($rest)*);
-    };
-}
-
-/// Like [`assert_components_eq!`], but for top-level input/output parameters,
-/// whose names are optional. For each parameter, the name is `None` to assert
-/// it is unnamed, a string expression to assert its equality, or `_` to skip
-/// the name check.
-macro_rules! assert_params_eq {
-    ($params:expr, [ $(($name:tt, $type_name:expr, [$($sub:tt)*])),* $(,)? ]) => {
-        {
-            let params = $params;
-            let expected: &[&str] = &[$($type_name),*];
-            assert_eq!(
-                params.len(),
-                expected.len(),
-                "expected {} parameters, got {}",
-                expected.len(),
-                params.len()
-            );
-            assert_params_eq!(@step params, 0, $(($name, $type_name, [$($sub)*]),)*);
-        }
-    };
-    (@step $params:ident, $index:expr, ) => {};
-    (@step $params:ident, $index:expr, ($name:tt, $type_name:expr, [$($sub:tt)*]), $($rest:tt)*) => {
-        assert_params_eq!(@name $params[$index], $name);
-        assert_eq!($params[$index].type_name(), $type_name);
-        assert_components_eq!($params[$index].components(), [$($sub)*]);
-        assert_params_eq!(@step $params, $index + 1, $($rest)*);
-    };
-    (@name $param:expr, _) => {};
-    (@name $param:expr, None) => { assert!($param.name().is_none()); };
-    (@name $param:expr, $name:expr) => { assert!($param.name().is_some_and(|name| name == $name)); };
-}
-
-/// Asserts that an [`AbiEntry`] is a function with the given name, inputs and
-/// outputs (each described as for [`assert_params_eq!`]).
-macro_rules! assert_function_eq {
-    ($entry:expr, $name:expr, inputs: [$($inputs:tt)*], outputs: [$($outputs:tt)*] $(,)?) => {
-        {
-            let AbiEntry::Function(function) = $entry else {
-                panic!("expected ABI for function");
-            };
-            assert_eq!(function.name(), $name);
-            assert_params_eq!(function.inputs(), [$($inputs)*]);
-            assert_params_eq!(function.outputs(), [$($outputs)*]);
-        }
-    };
-}
+use crate::abi::{AbiEntry, AbiType, TupleComponent};
 
 #[test]
 fn test_get_contracts_abi() {
@@ -142,59 +60,97 @@ fn test_abi_entries_with_tuples() {
     let entries = contracts_abi[0].entries();
     assert_eq!(entries.len(), 5);
 
+    let uint256 = AbiType::Integer {
+        is_signed: false,
+        bits: 256,
+    };
+
+    // The two structs used throughout, expanded to their ABI tuple types:
+    //   struct S { uint a; uint[] b; T[] c; }
+    //   struct T { uint x; uint y; }
+    let t = AbiType::Tuple(vec![
+        TupleComponent::new("x", uint256.clone()),
+        TupleComponent::new("y", uint256.clone()),
+    ]);
+    let s = AbiType::Tuple(vec![
+        TupleComponent::new("a", uint256.clone()),
+        TupleComponent::new(
+            "b",
+            AbiType::Array {
+                element: Box::new(uint256.clone()),
+            },
+        ),
+        TupleComponent::new(
+            "c",
+            AbiType::Array {
+                element: Box::new(t.clone()),
+            },
+        ),
+    ]);
+
     // f(S memory, T memory, uint x) returns ()
-    assert_function_eq!(
-        &entries[0],
-        "f",
-        inputs: [
-            (None, "tuple", [
-                ("a", "uint256", []),
-                ("b", "uint256[]", []),
-                ("c", "tuple[]", [("x", "uint256", []), ("y", "uint256", [])]),
-            ]),
-            (None, "tuple", [("x", "uint256", []), ("y", "uint256", [])]),
-            ("x", "uint256", []),
-        ],
-        outputs: [],
-    );
+    let AbiEntry::Function(f) = &entries[0] else {
+        panic!("expected ABI for function");
+    };
+    assert_eq!(f.name(), "f");
+    let inputs = f.inputs();
+    assert_eq!(inputs.len(), 3);
+    assert_eq!(inputs[0].name(), None);
+    assert_eq!(inputs[0].abi_type(), &s);
+    assert_eq!(inputs[1].name(), None);
+    assert_eq!(inputs[1].abi_type(), &t);
+    assert_eq!(inputs[2].name(), Some("x"));
+    assert_eq!(inputs[2].abi_type(), &uint256);
+    assert!(f.outputs().is_empty());
 
     // g() returns (S memory s, T memory t, uint)
-    assert_function_eq!(
-        &entries[1],
-        "g",
-        inputs: [],
-        outputs: [
-            ("s", "tuple", [
-                ("a", "uint256", []),
-                ("b", "uint256[]", []),
-                ("c", "tuple[]", [("x", "uint256", []), ("y", "uint256", [])]),
-            ]),
-            ("t", "tuple", [("x", "uint256", []), ("y", "uint256", [])]),
-            (None, "uint256", []),
-        ],
-    );
+    let AbiEntry::Function(g) = &entries[1] else {
+        panic!("expected ABI for function");
+    };
+    assert_eq!(g.name(), "g");
+    assert!(g.inputs().is_empty());
+    let outputs = g.outputs();
+    assert_eq!(outputs.len(), 3);
+    assert_eq!(outputs[0].name(), Some("s"));
+    assert_eq!(outputs[0].abi_type(), &s);
+    assert_eq!(outputs[1].name(), Some("t"));
+    assert_eq!(outputs[1].abi_type(), &t);
+    assert_eq!(outputs[2].name(), None);
+    assert_eq!(outputs[2].abi_type(), &uint256);
 
-    // T public (getter) -> t() returns (uint256 x, uint256 y)
-    assert_function_eq!(
-        &entries[2],
-        "t",
-        inputs: [],
-        outputs: [(_, "uint256", []), (_, "uint256", [])],
-    );
+    // T public (getter) -> t() returns (uint256 x, uint256 y).
+    // The getter flattens the struct into its members; their names aren't tracked.
+    let AbiEntry::Function(getter) = &entries[2] else {
+        panic!("expected ABI for function");
+    };
+    assert_eq!(getter.name(), "t");
+    assert!(getter.inputs().is_empty());
+    let outputs = getter.outputs();
+    assert_eq!(outputs.len(), 2);
+    assert_eq!(outputs[0].abi_type(), &uint256);
+    assert_eq!(outputs[1].abi_type(), &uint256);
 
     // t_components() returns (uint, uint)
-    assert_function_eq!(
-        &entries[3],
-        "t_components",
-        inputs: [],
-        outputs: [(None, "uint256", []), (None, "uint256", [])],
-    );
+    let AbiEntry::Function(t_components) = &entries[3] else {
+        panic!("expected ABI for function");
+    };
+    assert_eq!(t_components.name(), "t_components");
+    assert!(t_components.inputs().is_empty());
+    let outputs = t_components.outputs();
+    assert_eq!(outputs.len(), 2);
+    assert_eq!(outputs[0].name(), None);
+    assert_eq!(outputs[0].abi_type(), &uint256);
+    assert_eq!(outputs[1].name(), None);
+    assert_eq!(outputs[1].abi_type(), &uint256);
 
     // t_struct() returns (T memory)
-    assert_function_eq!(
-        &entries[4],
-        "t_struct",
-        inputs: [],
-        outputs: [(None, "tuple", [("x", "uint256", []), ("y", "uint256", [])])],
-    );
+    let AbiEntry::Function(t_struct) = &entries[4] else {
+        panic!("expected ABI for function");
+    };
+    assert_eq!(t_struct.name(), "t_struct");
+    assert!(t_struct.inputs().is_empty());
+    let outputs = t_struct.outputs();
+    assert_eq!(outputs.len(), 1);
+    assert_eq!(outputs[0].name(), None);
+    assert_eq!(outputs[0].abi_type(), &t);
 }

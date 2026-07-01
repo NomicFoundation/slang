@@ -39,20 +39,6 @@ pub enum AbiType {
     Tuple(Vec<TupleComponent>),
 }
 
-impl AbiType {
-    /// Returns the tuple components for this type, descending through array
-    /// wrappers (e.g. `tuple[]` and `tuple[N]` both expose the underlying
-    /// tuple's components). Returns an empty slice for non-tuple types.
-    pub fn components(&self) -> &[TupleComponent] {
-        match self {
-            AbiType::Tuple(components) => components,
-            AbiType::Array { element } => element.components(),
-            AbiType::FixedSizeArray { element, .. } => element.components(),
-            _ => &[],
-        }
-    }
-}
-
 impl fmt::Display for AbiType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -103,12 +89,8 @@ impl TupleComponent {
         &self.name
     }
 
-    pub fn type_name(&self) -> String {
-        self.ty.to_string()
-    }
-
-    pub fn components(&self) -> &[TupleComponent] {
-        self.ty.components()
+    pub fn abi_type(&self) -> &AbiType {
+        &self.ty
     }
 }
 
