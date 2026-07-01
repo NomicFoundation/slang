@@ -271,7 +271,6 @@ pub fn slang_solidity_v2_semantic::context::SemanticContext::linearised_state_va
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_reference_identifier_to_definition_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_reference_identifier_to_immediate_definition_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::storage_size_of_type_id(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<usize>
-pub fn slang_solidity_v2_semantic::context::SemanticContext::type_canonical_name(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<alloc::string::String>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_internal_name(&self, slang_solidity_v2_semantic::types::TypeId) -> alloc::string::String
 impl slang_solidity_v2_semantic::context::SemanticContext
 pub fn slang_solidity_v2_semantic::context::SemanticContext::all_contracts(&self) -> impl core::iter::traits::iterator::Iterator<Item = &slang_solidity_v2_ir::ir::nodes::ContractDefinition> + use<'_>

@@ -65,8 +65,20 @@ impl fmt::Display for AbiType {
             }
             AbiType::Array { element } => write!(f, "{element}[]"),
             AbiType::FixedSizeArray { element, size } => write!(f, "{element}[{size}]"),
-            // The JSON-ABI spelling of a struct parameter's `type` field.
-            AbiType::Tuple(_) => write!(f, "tuple"),
+            AbiType::Tuple(components) => {
+                // A struct is always rendered as the canonical-signature form
+                // `(T1,T2,...)` used for selector/signature hashing. The JSON-ABI
+                // `tuple`/`tuple[]` spelling is intentionally not produced here; it
+                // is left to a (future) `Serialize` implementation.
+                write!(f, "(")?;
+                for (i, component) in components.iter().enumerate() {
+                    if i > 0 {
+                        write!(f, ",")?;
+                    }
+                    write!(f, "{}", component.ty)?;
+                }
+                write!(f, ")")
+            }
         }
     }
 }

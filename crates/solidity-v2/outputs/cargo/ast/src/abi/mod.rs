@@ -282,6 +282,13 @@ impl AbiParameter {
         &self.abi_type
     }
 
+    /// The parameter's type rendered as its canonical-signature spelling — e.g.
+    /// `uint256`, `uint256[]`, or `(uint256,uint256)` for a struct. This is the
+    /// form used for selector/signature hashing, **not** the JSON-ABI `"type"`
+    /// field (which spells structs as `tuple`/`tuple[]`).
+    ///
+    /// Allocates a fresh `String` on each call; prefer [`AbiParameter::abi_type`]
+    /// for allocation-free, structured access.
     pub fn type_name(&self) -> String {
         self.abi_type.to_string()
     }
