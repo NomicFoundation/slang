@@ -12,8 +12,8 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TupleType, Type, TypeId};
 
-pub use self::types::TupleComponent;
-use crate::abi::types::{type_as_abi_type, AbiType};
+pub use self::types::{AbiType, TupleComponent};
+use crate::abi::types::type_as_abi_type;
 
 pub struct ContractAbi {
     node_id: NodeId,
@@ -279,12 +279,12 @@ impl AbiParameter {
         self.name.as_deref()
     }
 
-    pub fn type_name(&self) -> String {
-        self.abi_type.to_string()
+    pub fn abi_type(&self) -> &AbiType {
+        &self.abi_type
     }
 
-    pub fn components(&self) -> &[TupleComponent] {
-        self.abi_type.components()
+    pub fn type_name(&self) -> String {
+        self.abi_type.to_string()
     }
 
     pub fn indexed(&self) -> bool {
