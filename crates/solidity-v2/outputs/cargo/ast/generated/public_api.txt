@@ -2342,6 +2342,8 @@ impl slang_solidity_v2_ast::ast::ParameterStruct
 pub fn slang_solidity_v2_ast::ast::ParameterStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::ParameterStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
 impl slang_solidity_v2_ast::ast::ParameterStruct
+pub fn slang_solidity_v2_ast::ast::ParameterStruct::enclosing_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
+impl slang_solidity_v2_ast::ast::ParameterStruct
 pub fn slang_solidity_v2_ast::ast::ParameterStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::ParameterStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::ParameterStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
@@ -2964,6 +2966,8 @@ pub struct slang_solidity_v2_ast::ast::VariableDeclarationStruct
 impl slang_solidity_v2_ast::ast::VariableDeclarationStruct
 pub fn slang_solidity_v2_ast::ast::VariableDeclarationStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::VariableDeclarationStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
+impl slang_solidity_v2_ast::ast::VariableDeclarationStruct
+pub fn slang_solidity_v2_ast::ast::VariableDeclarationStruct::enclosing_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 impl slang_solidity_v2_ast::ast::VariableDeclarationStruct
 pub fn slang_solidity_v2_ast::ast::VariableDeclarationStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::VariableDeclarationStruct::get_text_range(&self) -> &core::ops::range::Range<usize>

@@ -5,14 +5,11 @@ use super::super::YulLiteral;
 
 impl YulLiteral {
     /// The 256-bit word this Yul literal denotes: booleans as 0 / 1, decimal and
-    /// hex numbers by their integer value, and string / `hex"…"` literals packed
-    /// left-aligned (most-significant end) into the word, zero-padded on the right.
-    ///
-    /// Numeric literals are returned verbatim, without enforcing the 2^256-1 range
-    /// (an out-of-range literal yields a `BigInt` wider than a word). String /
-    /// `hex"…"` literals longer than 32 bytes are truncated to the first 32.
+    /// hex numbers reduced modulo 2^256, and string / `hex"…"` literals packed
+    /// left-aligned (most-significant end) into the word, keeping only the first
+    /// 32 bytes.
     pub fn integer_value(&self) -> BigInt {
-        match self {
+        let value = match self {
             YulLiteral::TrueKeyword(_) => BigInt::from(1u8),
             YulLiteral::FalseKeyword(_) => BigInt::from(0u8),
             YulLiteral::DecimalLiteral(decimal) => {
@@ -31,7 +28,8 @@ impl YulLiteral {
             YulLiteral::HexStringLiteral(hex_string) => Self::pack_word(
                 &literals::value_of_hex_string_literals(std::slice::from_ref(&hex_string.ir_node)),
             ),
-        }
+        };
+        value & ((BigInt::from(1u32) << 256) - BigInt::from(1u32))
     }
 
     /// Packs up to 32 bytes left-aligned into a big-endian 256-bit word,
