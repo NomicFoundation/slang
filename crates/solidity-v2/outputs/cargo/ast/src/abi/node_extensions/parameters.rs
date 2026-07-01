@@ -39,7 +39,8 @@ impl ParametersStruct {
     pub(crate) fn compute_canonical_signature(&self) -> Option<String> {
         let mut result = Vec::new();
         for type_id in self.parameter_types_iter() {
-            result.push(self.semantic.type_canonical_name(type_id?)?);
+            let abi_type = type_as_abi_type(&self.semantic, type_id?)?;
+            result.push(abi_type.to_string());
         }
         Some(result.join(","))
     }

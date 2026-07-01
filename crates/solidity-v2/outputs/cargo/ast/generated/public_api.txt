@@ -36,7 +36,7 @@ pub slang_solidity_v2_ast::abi::AbiType::FixedPointNumber::decimal_places: u32
 pub slang_solidity_v2_ast::abi::AbiType::FixedPointNumber::is_signed: bool
 pub slang_solidity_v2_ast::abi::AbiType::FixedSizeArray
 pub slang_solidity_v2_ast::abi::AbiType::FixedSizeArray::element: alloc::boxed::Box<slang_solidity_v2_ast::abi::AbiType>
-pub slang_solidity_v2_ast::abi::AbiType::FixedSizeArray::size: usize
+pub slang_solidity_v2_ast::abi::AbiType::FixedSizeArray::size: ruint::aliases::U256
 pub slang_solidity_v2_ast::abi::AbiType::Function
 pub slang_solidity_v2_ast::abi::AbiType::Integer
 pub slang_solidity_v2_ast::abi::AbiType::Integer::bits: u32
