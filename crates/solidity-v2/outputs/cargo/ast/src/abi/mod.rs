@@ -1,4 +1,5 @@
 mod node_extensions;
+mod types;
 
 use std::cmp::Ordering;
 use std::sync::Arc;
@@ -6,13 +7,12 @@ use std::sync::Arc;
 use itertools::Either;
 use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
-use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_semantic::binder::Definition;
 use slang_solidity_v2_semantic::context::SemanticContext;
-use slang_solidity_v2_semantic::types::{
-    ArrayType, FunctionTypeMutability, StructType, TupleType, Type, TypeId,
-};
+use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TupleType, Type, TypeId};
+
+pub use self::types::TupleComponent;
+use crate::abi::types::{type_as_abi_type, AbiType};
 
 pub struct ContractAbi {
     node_id: NodeId,
@@ -262,32 +262,10 @@ impl PartialOrd for AbiEntry {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct ParameterComponent {
-    name: String,
-    type_name: String,
-    components: Vec<ParameterComponent>,
-}
-
-impl ParameterComponent {
-    pub fn name(&self) -> &str {
-        &self.name
-    }
-
-    pub fn type_name(&self) -> &str {
-        &self.type_name
-    }
-
-    pub fn components(&self) -> &[ParameterComponent] {
-        &self.components
-    }
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AbiParameter {
     node_id: Option<NodeId>, // will be `None` if the function is a generated getter
     name: Option<String>,
-    type_name: String,
-    components: Vec<ParameterComponent>,
+    abi_type: AbiType,
     indexed: bool,
 }
 
@@ -300,12 +278,12 @@ impl AbiParameter {
         self.name.as_deref()
     }
 
-    pub fn type_name(&self) -> &str {
-        &self.type_name
+    pub fn type_name(&self) -> String {
+        self.abi_type.to_string()
     }
 
-    pub fn components(&self) -> &[ParameterComponent] {
-        &self.components
+    pub fn components(&self) -> &[TupleComponent] {
+        self.abi_type.components()
     }
 
     pub fn indexed(&self) -> bool {
@@ -367,12 +345,11 @@ pub(crate) fn extract_function_type_parameters_abi(
     // parameters from the struct members).
     let mut inputs = Vec::new();
     for parameter_type_id in &function_type.parameter_types {
-        let (type_name, components) = type_as_abi_parameter(semantic, *parameter_type_id)?;
+        let abi_type = type_as_abi_type(semantic, *parameter_type_id)?;
         inputs.push(AbiParameter {
             node_id: None,
             name: None,
-            type_name,
-            components,
+            abi_type,
             indexed: false,
         });
     }
@@ -384,68 +361,14 @@ pub(crate) fn extract_function_type_parameters_abi(
     };
     let outputs = output_types
         .map(|output_type_id| {
-            let (type_name, components) = type_as_abi_parameter(semantic, *output_type_id)?;
+            let abi_type = type_as_abi_type(semantic, *output_type_id)?;
             Some(AbiParameter {
                 node_id: None,
                 name: None,
-                type_name,
-                components,
+                abi_type,
                 indexed: false,
             })
         })
         .collect::<Option<Vec<_>>>()?;
     Some((inputs, outputs))
-}
-
-pub(crate) fn type_as_abi_parameter(
-    semantic: &Arc<SemanticContext>,
-    type_id: TypeId,
-) -> Option<(String, Vec<ParameterComponent>)> {
-    type_as_abi_parameter_impl(semantic, type_id, &mut Set::default())
-}
-
-fn type_as_abi_parameter_impl(
-    semantic: &Arc<SemanticContext>,
-    type_id: TypeId,
-    visited_structs: &mut Set<NodeId>,
-) -> Option<(String, Vec<ParameterComponent>)> {
-    match semantic.types().get_type_by_id(type_id) {
-        Type::Array(ArrayType { element_type, .. }) => {
-            let (element_type_name, element_components) =
-                type_as_abi_parameter_impl(semantic, *element_type, visited_structs)?;
-            Some((format!("{element_type_name}[]"), element_components))
-        }
-        Type::Struct(StructType { definition_id, .. }) => {
-            // Recursive structs are not valid Solidity, but guard against cycles
-            // to avoid unbounded recursion if malformed types reach this point.
-            // TODO(validation) SDR[1]: The recursion should be detected in the
-            // `type_definition` pass.
-            if !visited_structs.insert(*definition_id) {
-                return None;
-            }
-            // We need to recursively expand the struct fields as components
-            let Definition::Struct(definition) = semantic
-                .binder()
-                .find_definition_by_id(*definition_id)
-                .expect("the definition of a type exists")
-            else {
-                unreachable!("the definition of a struct type is a struct");
-            };
-            let mut components = Vec::new();
-            for member in &definition.ir_node.members {
-                let name = member.name.unparse().to_string();
-                let member_type_id = semantic.binder().node_typing(member.id()).as_type_id()?;
-                let (type_name, subcomponents) =
-                    type_as_abi_parameter_impl(semantic, member_type_id, visited_structs)?;
-                components.push(ParameterComponent {
-                    name,
-                    type_name,
-                    components: subcomponents,
-                });
-            }
-            visited_structs.remove(definition_id);
-            Some(("tuple".to_string(), components))
-        }
-        _ => Some((semantic.type_canonical_name(type_id)?, Vec::new())),
-    }
 }
