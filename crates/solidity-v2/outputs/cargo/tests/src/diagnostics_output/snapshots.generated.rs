@@ -426,6 +426,14 @@ mod resolution {
         }
 
         #[test]
+        fn yul_variable_shadows_state_variable() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_variable_shadows_state_variable",
+            )
+        }
+
+        #[test]
         fn yul_variable_vs_enclosing_yul_function() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
