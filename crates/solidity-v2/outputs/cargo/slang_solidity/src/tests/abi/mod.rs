@@ -1,3 +1,4 @@
+mod eip712;
 mod entries;
 mod internal_signature;
 mod selectors;
