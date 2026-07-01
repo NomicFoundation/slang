@@ -1,6 +1,7 @@
 use slang_solidity_v2_semantic::types::TypeId;
 
-use crate::abi::{type_as_abi_parameter, AbiParameter};
+use crate::abi::types::type_as_abi_type;
+use crate::abi::AbiParameter;
 use crate::ast::ParametersStruct;
 
 impl ParametersStruct {
@@ -15,12 +16,11 @@ impl ParametersStruct {
             let indexed = parameter.is_indexed;
             // Bail out with `None` if any of the parameters fails typing
             let type_id = self.semantic.binder().node_typing(node_id).as_type_id()?;
-            let (type_name, components) = type_as_abi_parameter(&self.semantic, type_id)?;
+            let abi_type = type_as_abi_type(&self.semantic, type_id)?;
             result.push(AbiParameter {
                 node_id: Some(node_id),
                 name,
-                type_name,
-                components,
+                abi_type,
                 indexed,
             });
         }
