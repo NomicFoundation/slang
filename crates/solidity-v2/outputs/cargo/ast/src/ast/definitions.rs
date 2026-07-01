@@ -270,11 +270,15 @@ impl Definition {
             Definition::Event(event_definition) => event_definition.enclosing_definition(),
             Definition::Function(function_definition) => function_definition.enclosing_definition(),
             Definition::Modifier(function_definition) => function_definition.enclosing_definition(),
+            Definition::Parameter(parameter) => parameter.enclosing_definition(),
             Definition::StateVariable(state_variable_definition) => {
                 state_variable_definition.enclosing_definition()
             }
             Definition::Struct(struct_definition) => struct_definition.enclosing_definition(),
             Definition::StructMember(struct_member) => struct_member.enclosing_definition(),
+            Definition::Variable(variable_declaration) => {
+                variable_declaration.enclosing_definition()
+            }
 
             _ => None,
         }
@@ -336,6 +340,8 @@ define_enclosing_definition_method!(EnumDefinition);
 define_enclosing_definition_method!(ErrorDefinition);
 define_enclosing_definition_method!(EventDefinition);
 define_enclosing_definition_method!(FunctionDefinition);
+define_enclosing_definition_method!(Parameter);
 define_enclosing_definition_method!(StateVariableDefinition);
 define_enclosing_definition_method!(StructDefinition);
 define_enclosing_definition_method!(StructMember);
+define_enclosing_definition_method!(VariableDeclaration);

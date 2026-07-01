@@ -164,7 +164,11 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     // Collects *all* the sequential parameters making and registering
     // definitions for named ones and return the constructed parameters scope ID
     // to link with the enclosing function definition
-    fn collect_parameters(&mut self, parameters: &ir::Parameters) -> ScopeId {
+    fn collect_parameters(
+        &mut self,
+        parameters: &ir::Parameters,
+        owner_node_id: NodeId,
+    ) -> ScopeId {
         let mut scope = ParametersScope::new();
         for parameter in parameters {
             if let Some(name) = &parameter.name {
@@ -179,6 +183,8 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
                 }
                 let definition = Definition::new_parameter(parameter);
                 self.binder.insert_definition_no_scope(definition);
+                self.binder
+                    .record_enclosing_definition(parameter.id(), owner_node_id);
             }
             scope.add_parameter(parameter.name.as_ref().map(|id| &id.text), parameter.id());
         }
@@ -340,7 +346,12 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
             | ir::FunctionKind::Constructor
             | ir::FunctionKind::Fallback
             | ir::FunctionKind::Receive => {
-                let parameters_scope_id = self.collect_parameters(&node.parameters);
+                let owner_node_id = if node.name.is_some() {
+                    node.id()
+                } else {
+                    self.current_scope().node_id()
+                };
+                let parameters_scope_id = self.collect_parameters(&node.parameters, owner_node_id);
 
                 if let Some(name) = &node.name {
                     let definition = Definition::new_function(node, parameters_scope_id);
@@ -455,7 +466,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn enter_error_definition(&mut self, node: &ir::ErrorDefinition) -> bool {
-        let parameters_scope_id = self.collect_parameters(&node.parameters);
+        let parameters_scope_id = self.collect_parameters(&node.parameters, node.id());
         let definition = Definition::new_error(node, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
 
@@ -463,7 +474,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn enter_event_definition(&mut self, node: &ir::EventDefinition) -> bool {
-        let parameters_scope_id = self.collect_parameters(&node.parameters);
+        let parameters_scope_id = self.collect_parameters(&node.parameters, node.id());
         let definition = Definition::new_event(node, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
 

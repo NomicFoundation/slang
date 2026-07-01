@@ -115,8 +115,9 @@ pub struct Binder {
     /// the `AssemblyStatement`'s `NodeId`, and processed in `p6_resolve_yul`
     /// (which also fills in their `solidity_references`)
     assembly_blocks: Map<NodeId, AssemblyBlock>,
-    /// Maps a definition's `NodeId` to the `NodeId` of the definition it was
-    /// declared in. Valid if the immediate enclosing node is a definition.
+    /// Maps a definition's `NodeId` to the `NodeId` of the nearest enclosing
+    /// definition: the owner of the closest enclosing scope that is itself a
+    /// definition, or the owning function/error/event for a parameter.
     enclosing_definitions: Map<NodeId, NodeId>,
 }
 
@@ -160,6 +161,15 @@ impl Binder {
         self.enclosing_definitions.get(&node_id).copied()
     }
 
+    pub(crate) fn record_enclosing_definition(
+        &mut self,
+        node_id: NodeId,
+        enclosing_node_id: NodeId,
+    ) {
+        self.enclosing_definitions
+            .insert(node_id, enclosing_node_id);
+    }
+
     pub(crate) fn insert_scope(&mut self, scope: Scope) -> ScopeId {
         let scope_id = ScopeId(self.scopes.len());
 
@@ -200,13 +210,19 @@ impl Binder {
     pub(crate) fn insert_definition_in_scope(&mut self, definition: Definition, scope_id: ScopeId) {
         let node_id = definition.node_id();
         let symbol = definition.identifier().unparse().to_string();
-        let scope = self.get_scope_mut(scope_id);
-        scope.insert_definition(symbol, node_id);
-        // Record the scope's owner as this definition's enclosing definition, if any.
-        let enclosing_node_id = scope.node_id();
-        if self.definitions.contains_key(&enclosing_node_id) {
-            self.enclosing_definitions
-                .insert(node_id, enclosing_node_id);
+        self.get_scope_mut(scope_id)
+            .insert_definition(symbol, node_id);
+
+        let mut current = Some(scope_id);
+        while let Some(id) = current {
+            let scope = self.get_scope_by_id(id);
+            let scope_node_id = scope.node_id();
+            let parent = scope.parent_scope_id();
+            if self.definitions.contains_key(&scope_node_id) {
+                self.enclosing_definitions.insert(node_id, scope_node_id);
+                break;
+            }
+            current = parent;
         }
         self.insert_definition_no_scope(definition);
     }
