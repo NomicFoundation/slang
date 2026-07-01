@@ -179,9 +179,7 @@ pub(crate) fn extract_extra_attributes(
     fun_type: FunctionType,
 ) -> (FunctionType, Vec<StateVariableAttribute>) {
     // Move all matching attributes to extra_attributes if duplicate_found, else only the first occurrence
-    let mut seen_internal = false;
-    let mut seen_private = false;
-    let mut seen_public = false;
+    let mut seen_visibility = false;
     let mut duplicate_found = false;
 
     let FunctionTypeStruct {
@@ -197,21 +195,22 @@ pub(crate) fn extract_extra_attributes(
             // After the first duplicate is found, all matching attributes are extracted
             true
         } else {
-            let seen = match attr {
-                FunctionTypeAttribute::InternalKeyword(_) => &mut seen_internal,
-                FunctionTypeAttribute::PrivateKeyword(_) => &mut seen_private,
-                FunctionTypeAttribute::PublicKeyword(_) => &mut seen_public,
-                _ => return false,
-            };
-
-            if *seen {
-                // If a given attribute has already been seen, mark duplicate_found and extract it
-                duplicate_found = true;
-                true
-            } else {
-                // If it's the first time we see this attribute, mark it as seen and don't extract it
-                *seen = true;
-                false
+            match attr {
+                FunctionTypeAttribute::ExternalKeyword(_)
+                | FunctionTypeAttribute::InternalKeyword(_)
+                | FunctionTypeAttribute::PrivateKeyword(_)
+                | FunctionTypeAttribute::PublicKeyword(_) => {
+                    if seen_visibility {
+                        // If a visibility attribute has already been seen, mark duplicate_found and extract it
+                        duplicate_found = true;
+                        true
+                    } else {
+                        // If it's the first time we see a visibility attribute, mark it as seen and don't extract it
+                        seen_visibility = true;
+                        false
+                    }
+                }
+                _ => false,
             }
         }
     });

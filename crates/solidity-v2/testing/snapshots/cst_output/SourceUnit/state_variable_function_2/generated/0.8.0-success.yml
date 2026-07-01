@@ -1,0 +1,191 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                     │ 0..12
+  2  │     // external works!                                                           │ 13..35
+  3  │     function () external public x;                                               │ 36..70
+  4  │     function () external internal y;                                             │ 71..107
+  5  │     function () external private z;                                              │ 108..143
+  6  │                                                                                  │ 144..144
+  7  │     // internal fails for another reason on public, but should parse             │ 145..213
+  8  │     function () internal public xx;                                              │ 214..249
+  9  │     function () internal internal yy;                                            │ 250..287
+  10 │     function () internal private zz;                                             │ 288..324
+  11 │                                                                                  │ 325..325
+  12 │     // public doesn't parse on solc, but we should parse and later validate      │ 326..401
+  13 │     function () public public xxx;                                               │ 402..436
+  14 │     function () public internal yyy;                                             │ 437..473
+  15 │     function () public private zzz;                                              │ 474..509
+  16 │                                                                                  │ 510..510
+  17 │     // private doesn't parse on solc, but we should parse and later validate     │ 511..587
+  18 │     function () private public xxxx;                                             │ 588..624
+  19 │     function () private internal yyyy;                                           │ 625..663
+  20 │     function () private private zzzz;                                            │ 664..701
+  21 │ }                                                                                │ 702..703
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    // external works!\n    function (..." (0..703)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    // external works!\n    function (..." (0..703)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    // external works!\n    function (..." (0..703)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function () external public x;\n    function () ext..." (40..701)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function () external public x;" (40..70)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function () external" (40..60)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (40..48)
+                          - (parameters꞉ ParametersDeclaration): # "()" (49..51)
+                              - (open_paren꞉ OpenParen): "(" # (49..50)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (50..51)
+                          - (attributes꞉ FunctionTypeAttributes): # "external" (52..60)
+                              - (item꞉ FunctionTypeAttribute) ► (external_keyword꞉ ExternalKeyword): "external" # (52..60)
+                      - (attributes꞉ StateVariableAttributes): # "public" (61..67)
+                          - (item꞉ StateVariableAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (61..67)
+                      - (name꞉ Identifier): "x" # (68..69)
+                      - (semicolon꞉ Semicolon): ";" # (69..70)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function () external internal y;" (75..107)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function () external" (75..95)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (75..83)
+                          - (parameters꞉ ParametersDeclaration): # "()" (84..86)
+                              - (open_paren꞉ OpenParen): "(" # (84..85)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (85..86)
+                          - (attributes꞉ FunctionTypeAttributes): # "external" (87..95)
+                              - (item꞉ FunctionTypeAttribute) ► (external_keyword꞉ ExternalKeyword): "external" # (87..95)
+                      - (attributes꞉ StateVariableAttributes): # "internal" (96..104)
+                          - (item꞉ StateVariableAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (96..104)
+                      - (name꞉ Identifier): "y" # (105..106)
+                      - (semicolon꞉ Semicolon): ";" # (106..107)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function () external private z;" (112..143)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function () external" (112..132)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (112..120)
+                          - (parameters꞉ ParametersDeclaration): # "()" (121..123)
+                              - (open_paren꞉ OpenParen): "(" # (121..122)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (122..123)
+                          - (attributes꞉ FunctionTypeAttributes): # "external" (124..132)
+                              - (item꞉ FunctionTypeAttribute) ► (external_keyword꞉ ExternalKeyword): "external" # (124..132)
+                      - (attributes꞉ StateVariableAttributes): # "private" (133..140)
+                          - (item꞉ StateVariableAttribute) ► (private_keyword꞉ PrivateKeyword): "private" # (133..140)
+                      - (name꞉ Identifier): "z" # (141..142)
+                      - (semicolon꞉ Semicolon): ";" # (142..143)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function () internal public xx;" (218..249)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function () internal" (218..238)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (218..226)
+                          - (parameters꞉ ParametersDeclaration): # "()" (227..229)
+                              - (open_paren꞉ OpenParen): "(" # (227..228)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (228..229)
+                          - (attributes꞉ FunctionTypeAttributes): # "internal" (230..238)
+                              - (item꞉ FunctionTypeAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (230..238)
+                      - (attributes꞉ StateVariableAttributes): # "public" (239..245)
+                          - (item꞉ StateVariableAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (239..245)
+                      - (name꞉ Identifier): "xx" # (246..248)
+                      - (semicolon꞉ Semicolon): ";" # (248..249)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function () internal internal yy;" (254..287)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function () internal" (254..274)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (254..262)
+                          - (parameters꞉ ParametersDeclaration): # "()" (263..265)
+                              - (open_paren꞉ OpenParen): "(" # (263..264)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (264..265)
+                          - (attributes꞉ FunctionTypeAttributes): # "internal" (266..274)
+                              - (item꞉ FunctionTypeAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (266..274)
+                      - (attributes꞉ StateVariableAttributes): # "internal" (275..283)
+                          - (item꞉ StateVariableAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (275..283)
+                      - (name꞉ Identifier): "yy" # (284..286)
+                      - (semicolon꞉ Semicolon): ";" # (286..287)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function () internal private zz;" (292..324)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function () internal" (292..312)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (292..300)
+                          - (parameters꞉ ParametersDeclaration): # "()" (301..303)
+                              - (open_paren꞉ OpenParen): "(" # (301..302)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (302..303)
+                          - (attributes꞉ FunctionTypeAttributes): # "internal" (304..312)
+                              - (item꞉ FunctionTypeAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (304..312)
+                      - (attributes꞉ StateVariableAttributes): # "private" (313..320)
+                          - (item꞉ StateVariableAttribute) ► (private_keyword꞉ PrivateKeyword): "private" # (313..320)
+                      - (name꞉ Identifier): "zz" # (321..323)
+                      - (semicolon꞉ Semicolon): ";" # (323..324)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function () public public xxx;" (406..436)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function () public" (406..424)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (406..414)
+                          - (parameters꞉ ParametersDeclaration): # "()" (415..417)
+                              - (open_paren꞉ OpenParen): "(" # (415..416)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (416..417)
+                          - (attributes꞉ FunctionTypeAttributes): # "public" (418..424)
+                              - (item꞉ FunctionTypeAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (418..424)
+                      - (attributes꞉ StateVariableAttributes): # "public" (425..431)
+                          - (item꞉ StateVariableAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (425..431)
+                      - (name꞉ Identifier): "xxx" # (432..435)
+                      - (semicolon꞉ Semicolon): ";" # (435..436)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function () public internal yyy;" (441..473)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function () public" (441..459)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (441..449)
+                          - (parameters꞉ ParametersDeclaration): # "()" (450..452)
+                              - (open_paren꞉ OpenParen): "(" # (450..451)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (451..452)
+                          - (attributes꞉ FunctionTypeAttributes): # "public" (453..459)
+                              - (item꞉ FunctionTypeAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (453..459)
+                      - (attributes꞉ StateVariableAttributes): # "internal" (460..468)
+                          - (item꞉ StateVariableAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (460..468)
+                      - (name꞉ Identifier): "yyy" # (469..472)
+                      - (semicolon꞉ Semicolon): ";" # (472..473)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function () public private zzz;" (478..509)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function () public" (478..496)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (478..486)
+                          - (parameters꞉ ParametersDeclaration): # "()" (487..489)
+                              - (open_paren꞉ OpenParen): "(" # (487..488)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (488..489)
+                          - (attributes꞉ FunctionTypeAttributes): # "public" (490..496)
+                              - (item꞉ FunctionTypeAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (490..496)
+                      - (attributes꞉ StateVariableAttributes): # "private" (497..504)
+                          - (item꞉ StateVariableAttribute) ► (private_keyword꞉ PrivateKeyword): "private" # (497..504)
+                      - (name꞉ Identifier): "zzz" # (505..508)
+                      - (semicolon꞉ Semicolon): ";" # (508..509)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function () private public xxxx;" (592..624)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function () private" (592..611)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (592..600)
+                          - (parameters꞉ ParametersDeclaration): # "()" (601..603)
+                              - (open_paren꞉ OpenParen): "(" # (601..602)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (602..603)
+                          - (attributes꞉ FunctionTypeAttributes): # "private" (604..611)
+                              - (item꞉ FunctionTypeAttribute) ► (private_keyword꞉ PrivateKeyword): "private" # (604..611)
+                      - (attributes꞉ StateVariableAttributes): # "public" (612..618)
+                          - (item꞉ StateVariableAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (612..618)
+                      - (name꞉ Identifier): "xxxx" # (619..623)
+                      - (semicolon꞉ Semicolon): ";" # (623..624)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function () private internal yyyy;" (629..663)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function () private" (629..648)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (629..637)
+                          - (parameters꞉ ParametersDeclaration): # "()" (638..640)
+                              - (open_paren꞉ OpenParen): "(" # (638..639)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (639..640)
+                          - (attributes꞉ FunctionTypeAttributes): # "private" (641..648)
+                              - (item꞉ FunctionTypeAttribute) ► (private_keyword꞉ PrivateKeyword): "private" # (641..648)
+                      - (attributes꞉ StateVariableAttributes): # "internal" (649..657)
+                          - (item꞉ StateVariableAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (649..657)
+                      - (name꞉ Identifier): "yyyy" # (658..662)
+                      - (semicolon꞉ Semicolon): ";" # (662..663)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function () private private zzzz;" (668..701)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function () private" (668..687)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (668..676)
+                          - (parameters꞉ ParametersDeclaration): # "()" (677..679)
+                              - (open_paren꞉ OpenParen): "(" # (677..678)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (678..679)
+                          - (attributes꞉ FunctionTypeAttributes): # "private" (680..687)
+                              - (item꞉ FunctionTypeAttribute) ► (private_keyword꞉ PrivateKeyword): "private" # (680..687)
+                      - (attributes꞉ StateVariableAttributes): # "private" (688..695)
+                          - (item꞉ StateVariableAttribute) ► (private_keyword꞉ PrivateKeyword): "private" # (688..695)
+                      - (name꞉ Identifier): "zzzz" # (696..700)
+                      - (semicolon꞉ Semicolon): ";" # (700..701)
+              - (close_brace꞉ CloseBrace): "}" # (702..703)

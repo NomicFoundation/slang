@@ -1515,6 +1515,11 @@ mod source_unit {
     }
 
     #[test]
+    fn state_variable_function_2() -> Result<()> {
+        run("SourceUnit", "state_variable_function_2")
+    }
+
+    #[test]
     fn top_level_event() -> Result<()> {
         run("SourceUnit", "top_level_event")
     }
