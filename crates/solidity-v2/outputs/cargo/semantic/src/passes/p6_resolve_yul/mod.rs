@@ -5,9 +5,9 @@ use slang_solidity_v2_ir::ir;
 
 use crate::binder::{AssemblyBlock, Binder, Definition, Scope, ScopeId};
 use crate::context::FileNodeMapper;
-use crate::passes::common::conflicts;
 use crate::types::TypeRegistry;
 
+mod conflicts;
 mod resolution;
 mod visitor;
 
@@ -140,7 +140,7 @@ impl<'a> Pass<'a> {
     // registered regardless, so references to it can still be resolved.
     fn insert_definition_in_scope(&mut self, definition: Definition, scope_id: ScopeId) {
         let symbol = definition.identifier().unparse();
-        if conflicts::find_conflicting_definition(self.binder, scope_id, symbol, &definition)
+        if conflicts::find_conflicting_yul_definition(self.binder, scope_id, symbol, &definition)
             .is_some()
         {
             let file_id = self

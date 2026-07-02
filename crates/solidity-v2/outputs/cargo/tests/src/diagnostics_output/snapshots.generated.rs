@@ -248,6 +248,22 @@ mod resolution {
         }
 
         #[test]
+        fn yul_function_parameter_shadows_local() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_parameter_shadows_local",
+            )
+        }
+
+        #[test]
+        fn yul_function_parameter_shadows_parameter() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_parameter_shadows_parameter",
+            )
+        }
+
+        #[test]
         fn yul_function_parameter_vs_return() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
@@ -256,10 +272,50 @@ mod resolution {
         }
 
         #[test]
+        fn yul_function_return_shadows_local() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_return_shadows_local",
+            )
+        }
+
+        #[test]
         fn yul_function_return_vs_outer_variable() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
                 "yul_function_return_vs_outer_variable",
+            )
+        }
+
+        #[test]
+        fn yul_function_shadows_function_with_state_access() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_shadows_function_with_state_access",
+            )
+        }
+
+        #[test]
+        fn yul_function_shadows_solidity() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_shadows_solidity",
+            )
+        }
+
+        #[test]
+        fn yul_function_signature_shadows_function() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_signature_shadows_function",
+            )
+        }
+
+        #[test]
+        fn yul_function_signature_shadows_state_var() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_function_signature_shadows_state_var",
             )
         }
 
@@ -342,6 +398,38 @@ mod resolution {
             run(
                 "resolution/identifier_redeclaration",
                 "yul_variable_nested_block",
+            )
+        }
+
+        #[test]
+        fn yul_variable_shadows_default_import() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_variable_shadows_default_import",
+            )
+        }
+
+        #[test]
+        fn yul_variable_shadows_external_function() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_variable_shadows_external_function",
+            )
+        }
+
+        #[test]
+        fn yul_variable_shadows_inherited_member() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_variable_shadows_inherited_member",
+            )
+        }
+
+        #[test]
+        fn yul_variable_shadows_state_variable() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "yul_variable_shadows_state_variable",
             )
         }
 

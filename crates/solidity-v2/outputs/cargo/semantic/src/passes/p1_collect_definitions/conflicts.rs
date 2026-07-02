@@ -1,13 +1,17 @@
-//! File-level symbol conflict detection specific to the definition collection
-//! pass: clashes involving symbols brought into a file's scope through
-//! (unqualified) default imports.
+//! Symbol conflict detection for the definition collection pass.
 //!
-//! This is separate from the shared scope-walk conflict detection in
-//! [`crate::passes::common::conflicts`] because only this pass needs it: it
-//! runs as a second step once every file scope is populated, and it needs
-//! provenance (which import directive brought a symbol in) that `Resolution`
-//! discards. It reuses [`first_conflicting_definition`] for the actual
-//! overload-aware comparison.
+//! [`find_conflicting_solidity_definition`] is the scope-walk used when
+//! registering each Solidity definition: it answers "may I declare this name
+//! here?". The search is bounded to the *local lexical chain* — it stops at
+//! lexical and namespace boundaries (block/contract/file/struct/enum), since
+//! shadowing an outer Solidity scope is legal, and continues *past*
+//! non-conflicting hits (overloads).
+//!
+//! The rest of this module handles file-level clashes specific to *default
+//! imports* — symbols brought into a file's scope through unqualified
+//! `import "file";` directives. That is separate because it runs as a second
+//! step once every file scope is populated, and it needs provenance (which
+//! import directive brought a symbol in) that `Resolution` discards.
 
 use std::collections::VecDeque;
 use std::ops::Range;
@@ -15,8 +19,102 @@ use std::ops::Range;
 use slang_solidity_v2_common::collections::{Map, Set};
 use slang_solidity_v2_common::nodes::NodeId;
 
-use crate::binder::{Binder, FileScope, Scope};
-use crate::passes::common::conflicts::first_conflicting_definition;
+use crate::binder::{Binder, Definition, FileScope, Scope, ScopeId};
+use crate::passes::common::conflicts::{conflicting_definition, first_conflicting_definition};
+
+// Looks for a previously-registered definition that conflicts with a Solidity
+// `new_definition` being declared under `symbol` in `scope_id`, returning the
+// conflicting definition's `NodeId` (or `None` if the declaration is allowed).
+//
+// The search is bounded to the local lexical chain: chained, function, modifier
+// and parameter scopes delegate to their enclosing local scope, but the walk
+// stops at lexical and namespace boundaries (block/contract/file/struct/enum).
+// This means shadowing a declaration from an inner lexical scope, or a
+// contract- or file-level member from a local scope, is permitted, matching
+// Solidity. Function and event overloads are also permitted (see
+// `Definition::overloads_with`).
+pub(super) fn find_conflicting_solidity_definition(
+    binder: &Binder,
+    scope_id: ScopeId,
+    symbol: &str,
+    new_definition: &Definition,
+) -> Option<NodeId> {
+    let scope = binder.get_scope_by_id(scope_id);
+    match scope {
+        // A block opens a new lexical scope (a real `{ }` block or for-init
+        // clause), which may legally shadow declarations in its enclosing
+        // scopes, so the walk stops here.
+        Scope::Block(block_scope) => block_scope
+            .definitions
+            .get(symbol)
+            .copied()
+            .and_then(|existing| conflicting_definition(binder, existing, new_definition)),
+        // A chained scope is a continuation of the parent's lexical scope, so
+        // continue the search into the parent.
+        Scope::Chained(chained_scope) => chained_scope
+            .definitions
+            .get(symbol)
+            .copied()
+            .and_then(|existing| conflicting_definition(binder, existing, new_definition))
+            .or_else(|| {
+                find_conflicting_solidity_definition(
+                    binder,
+                    chained_scope.parent_scope_id,
+                    symbol,
+                    new_definition,
+                )
+            }),
+        Scope::Function(function_scope) => function_scope
+            .definitions
+            .get(symbol)
+            .copied()
+            .and_then(|existing| conflicting_definition(binder, existing, new_definition))
+            .or_else(|| {
+                // Continue into the parameters scope, but *not* the
+                // enclosing contract/file scope (shadowing is allowed there).
+                find_conflicting_solidity_definition(
+                    binder,
+                    function_scope.parameters_scope_id,
+                    symbol,
+                    new_definition,
+                )
+            }),
+        Scope::Modifier(modifier_scope) => modifier_scope
+            .definitions
+            .get(symbol)
+            .copied()
+            .and_then(|existing| conflicting_definition(binder, existing, new_definition)),
+        Scope::Parameters(parameters_scope) => parameters_scope
+            .lookup_definition(symbol)
+            .and_then(|existing| conflicting_definition(binder, existing, new_definition)),
+        // Namespace scopes are only checked against their own definitions;
+        // the `Vec`-based ones may hold several entries for a symbol (eg.
+        // function/event overloads).
+        Scope::Contract(contract_scope) => contract_scope
+            .definitions
+            .get(symbol)
+            .and_then(|existing| first_conflicting_definition(binder, existing, new_definition)),
+        Scope::File(file_scope) => file_scope
+            .definitions
+            .get(symbol)
+            .and_then(|existing| first_conflicting_definition(binder, existing, new_definition)),
+        Scope::Enum(enum_scope) => enum_scope
+            .definitions
+            .get(symbol)
+            .copied()
+            .and_then(|existing| conflicting_definition(binder, existing, new_definition)),
+        Scope::Struct(struct_scope) => struct_scope
+            .definitions
+            .get(symbol)
+            .copied()
+            .and_then(|existing| conflicting_definition(binder, existing, new_definition)),
+        Scope::Using(_) => None,
+        // A Solidity definition is never declared inside a Yul scope.
+        Scope::YulBlock(_) | Scope::YulFunction(_) => {
+            unreachable!("Solidity definitions are not declared in Yul scopes")
+        }
+    }
+}
 
 // Detects clashes involving the symbols brought into a file's scope through
 // (unqualified) default imports.
