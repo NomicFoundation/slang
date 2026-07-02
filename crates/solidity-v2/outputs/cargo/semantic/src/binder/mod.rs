@@ -219,7 +219,7 @@ impl Binder {
             let scope_node_id = scope.node_id();
             let parent = scope.parent_scope_id();
             if self.definitions.contains_key(&scope_node_id) {
-                self.enclosing_definitions.insert(node_id, scope_node_id);
+                self.record_enclosing_definition(node_id, scope_node_id);
                 break;
             }
             current = parent;

@@ -1,4 +1,5 @@
-use num_bigint::BigInt;
+use ruint::aliases::U256;
+use ruint::uint;
 
 use crate::{ast, define_fixture};
 
@@ -20,7 +21,7 @@ contract Test {
 
 #[derive(Default)]
 struct YulLiteralValues {
-    values: Vec<BigInt>,
+    values: Vec<U256>,
 }
 
 impl ast::visitor::Visitor for YulLiteralValues {
@@ -40,13 +41,9 @@ fn test_yul_literal_value() {
 
     // `0x1234` / `42` by integer value, `true` as 1, and `"abc"` packed
     // left-aligned into the 256-bit word.
-    let abc = BigInt::parse_bytes(
-        b"6162630000000000000000000000000000000000000000000000000000000000",
-        16,
-    )
-    .unwrap();
+    let abc = uint!(0x6162630000000000000000000000000000000000000000000000000000000000_U256);
     assert_eq!(
         visitor.values,
-        vec![BigInt::from(0x1234), BigInt::from(42), BigInt::from(1), abc],
+        vec![uint!(0x1234_U256), uint!(42_U256), uint!(1_U256), abc],
     );
 }
