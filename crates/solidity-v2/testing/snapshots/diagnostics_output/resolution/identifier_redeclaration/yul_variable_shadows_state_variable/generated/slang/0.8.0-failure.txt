@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[resolution/identifier-redeclaration] Error: Identifier already declared.
+[resolution/external-declaration-shadowing] Error: This declaration shadows a declaration outside the inline assembly block.
     ╭─[input.sol:13:21]
     │
  13 │                 let x := 1
