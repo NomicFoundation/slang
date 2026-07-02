@@ -258,9 +258,8 @@ impl Definition {
         }
     }
 
-    /// Returns the definition this one is declared immediately in. Returns
-    /// `None` for top-level definitions or those not direct members of another
-    /// definition.
+    /// Returns the nearest enclosing definition, or `None` if this is a
+    /// top-level definition.
     pub fn enclosing_definition(&self) -> Option<Definition> {
         match self {
             Definition::Constant(constant_definition) => constant_definition.enclosing_definition(),
