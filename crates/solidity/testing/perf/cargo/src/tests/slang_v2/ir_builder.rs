@@ -16,11 +16,11 @@ pub struct Output {
 
 pub fn setup(project: &str) -> Input {
     let project = super::parser::setup(project);
-    let parsed = super::parser::test(project);
+    let source_units = super::parser::test(project);
 
     Input {
         project,
-        source_units: parsed.source_units,
+        source_units,
     }
 }
 

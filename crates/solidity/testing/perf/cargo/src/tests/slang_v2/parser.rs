@@ -5,10 +5,7 @@ use crate::dataset::SolidityProject;
 use crate::tests::slang_v2::common::parse_version;
 
 pub type Input = &'static SolidityProject;
-
-pub struct Output {
-    pub(crate) source_units: Vec<(String, SourceUnit)>,
-}
+pub type Output = Vec<(String, SourceUnit)>;
 
 pub fn setup(project: &str) -> Input {
     crate::tests::setup::setup(project)
@@ -28,7 +25,7 @@ pub fn run(project: Input) -> Output {
     }
     assert!(!source_units.is_empty());
 
-    Output { source_units }
+    source_units
 }
 
 pub fn test(project: Input) -> Output {
@@ -37,7 +34,7 @@ pub fn test(project: Input) -> Output {
 
 pub fn count_contracts(output: &Output) -> usize {
     let mut contract_count = 0;
-    for (_, source_unit) in &output.source_units {
+    for (_, source_unit) in output {
         for member in &source_unit.members.elements {
             match member {
                 SourceUnitMember::ContractDefinition(_)
