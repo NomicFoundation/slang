@@ -46,18 +46,13 @@ pub struct NodeIdGenerator {
 
 impl NodeIdGenerator {
     /// Returns a `NodeId` greater than any previously returned by this
-    /// generator.
+    /// generator and records a new `kind` in the histogram.
     /// The returned ID is unique and suitable for use as a total-order key.
-    pub fn next_id(&mut self) -> NodeId {
+    pub fn next_id_of(&mut self, kind: NodeKind) -> NodeId {
+        self.histogram.record(kind);
         let id = self.next_id;
         self.next_id += 1;
         id.into()
-    }
-
-    /// Like [`Self::next_id`], but also records `kind` in the histogram.
-    pub(super) fn next_id_of(&mut self, kind: NodeKind) -> NodeId {
-        self.histogram.record(kind);
-        self.next_id()
     }
 
     /// The total number of `NodeId`s allocated by this generator so far.

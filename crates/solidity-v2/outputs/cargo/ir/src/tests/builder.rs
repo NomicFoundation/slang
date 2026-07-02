@@ -131,7 +131,7 @@ contract MyContract {
     // The constructor and `test()` both lower to a `FunctionDefinition`.
     assert_eq!(2, histogram.count(ir::NodeKind::FunctionDefinition));
     // Several identifiers appear (e.g. `owner`, `msg`, `sender`).
-    assert!(histogram.count(ir::NodeKind::Identifier) > 0);
+    assert_eq!(9, histogram.count(ir::NodeKind::Identifier));
 }
 
 #[test]
@@ -158,7 +158,7 @@ contract Test is Base layout at 0 {}
         diagnostics,
     } = ir::build("test.sol", &source_unit, &CONTENTS, &mut id_generator);
 
-    let sentinel_node_id = id_generator.next_id();
+    let sentinel_node_id = id_generator.next_id_of(ir::NodeKind::SourceUnit);
 
     assert_eq!(2, ir_root.members.len());
     assert!(ir_root.id() < sentinel_node_id);

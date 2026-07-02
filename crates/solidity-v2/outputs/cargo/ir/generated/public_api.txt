@@ -2538,7 +2538,7 @@ pub struct slang_solidity_v2_ir::ir::NodeIdGenerator
 impl slang_solidity_v2_ir::ir::NodeIdGenerator
 pub fn slang_solidity_v2_ir::ir::NodeIdGenerator::allocated_count(&self) -> usize
 pub fn slang_solidity_v2_ir::ir::NodeIdGenerator::histogram(&self) -> &slang_solidity_v2_ir::ir::NodeKindHistogram
-pub fn slang_solidity_v2_ir::ir::NodeIdGenerator::next_id(&mut self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::NodeIdGenerator::next_id_of(&mut self, slang_solidity_v2_ir::ir::NodeKind) -> slang_solidity_v2_common::nodes::NodeId
 impl core::default::Default for slang_solidity_v2_ir::ir::NodeIdGenerator
 pub fn slang_solidity_v2_ir::ir::NodeIdGenerator::default() -> Self
 pub struct slang_solidity_v2_ir::ir::NodeKindHistogram
