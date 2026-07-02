@@ -45,16 +45,12 @@ pub(super) fn find_conflicting_solidity_definition(
         // clause), which may legally shadow declarations in its enclosing
         // scopes, so the walk stops here.
         Scope::Block(block_scope) => block_scope
-            .definitions
-            .get(symbol)
-            .copied()
+            .lookup_definition(symbol)
             .and_then(|existing| conflicting_definition(binder, existing, new_definition)),
         // A chained scope is a continuation of the parent's lexical scope, so
         // continue the search into the parent.
         Scope::Chained(chained_scope) => chained_scope
-            .definitions
-            .get(symbol)
-            .copied()
+            .lookup_definition(symbol)
             .and_then(|existing| conflicting_definition(binder, existing, new_definition))
             .or_else(|| {
                 find_conflicting_solidity_definition(

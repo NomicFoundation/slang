@@ -87,6 +87,54 @@ contract MyContract {
 }
 
 #[test]
+fn test_build_ir_node_kind_histogram() {
+    const CONTENTS: &str = r###"
+pragma solidity >= 0.8.17;
+
+contract MyContract {
+    address owner;
+    constructor() {
+         owner = msg.sender;
+    }
+    function test() view public returns (bool) {
+         return owner == msg.sender;
+    }
+}
+    "###;
+
+    let ParseOutput {
+        source_unit,
+        diagnostics,
+    } = Parser::parse("test.sol", CONTENTS, LanguageVersion::LATEST);
+    assert!(
+        diagnostics.is_empty(),
+        "Parser diagnostics: {diagnostics:?}"
+    );
+
+    let mut id_generator = ir::NodeIdGenerator::default();
+    let ir::BuildOutput { diagnostics, .. } =
+        ir::build("test.sol", &source_unit, &CONTENTS, &mut id_generator);
+    assert!(
+        diagnostics.is_empty(),
+        "IR builder diagnostics: {diagnostics:?}"
+    );
+
+    let histogram = id_generator.histogram();
+
+    // Every allocated node is recorded exactly once, so the histogram total
+    // must match the number of IDs handed out.
+    assert_eq!(histogram.total() as usize, id_generator.allocated_count());
+
+    // Spot-check a few known kinds in the snippet above.
+    assert_eq!(1, histogram.count(ir::NodeKind::ContractDefinition));
+    assert_eq!(1, histogram.count(ir::NodeKind::StateVariableDefinition));
+    // The constructor and `test()` both lower to a `FunctionDefinition`.
+    assert_eq!(2, histogram.count(ir::NodeKind::FunctionDefinition));
+    // Several identifiers appear (e.g. `owner`, `msg`, `sender`).
+    assert!(histogram.count(ir::NodeKind::Identifier) > 0);
+}
+
+#[test]
 fn test_build_ir_contract_inheritance_and_storage_layout() {
     const CONTENTS: &str = r###"
 contract Base {}

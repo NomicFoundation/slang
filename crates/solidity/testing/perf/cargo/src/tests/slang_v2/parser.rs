@@ -4,11 +4,17 @@ use slang_solidity_v2_parser::{ParseOutput, Parser};
 use crate::dataset::SolidityProject;
 use crate::tests::slang_v2::common::parse_version;
 
-pub fn setup(project: &str) -> &'static SolidityProject {
+pub type Input = &'static SolidityProject;
+
+pub struct Output {
+    pub(crate) source_units: Vec<(String, SourceUnit)>,
+}
+
+pub fn setup(project: &str) -> Input {
     crate::tests::setup::setup(project)
 }
 
-pub fn run(project: &SolidityProject) -> Vec<(String, SourceUnit)> {
+pub fn run(project: Input) -> Output {
     let lang_version = parse_version(project);
     let mut source_units = Vec::new();
     for (key, source) in &project.sources {
@@ -22,16 +28,16 @@ pub fn run(project: &SolidityProject) -> Vec<(String, SourceUnit)> {
     }
     assert!(!source_units.is_empty());
 
-    source_units
+    Output { source_units }
 }
 
-pub fn test(project: &SolidityProject) -> Vec<(String, SourceUnit)> {
+pub fn test(project: Input) -> Output {
     run(project)
 }
 
-pub fn count_contracts(source_units: &Vec<(String, SourceUnit)>) -> usize {
+pub fn count_contracts(output: &Output) -> usize {
     let mut contract_count = 0;
-    for (_, source_unit) in source_units {
+    for (_, source_unit) in &output.source_units {
         for member in &source_unit.members.elements {
             match member {
                 SourceUnitMember::ContractDefinition(_)

@@ -196,8 +196,13 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
             })
             .collect();
 
-        let semantic =
-            SemanticContext::build_from(language_version, evm_target, &files, &mut diagnostics);
+        let semantic = SemanticContext::build_from(
+            language_version,
+            evm_target,
+            &files,
+            Some(id_generator.histogram()),
+            &mut diagnostics,
+        );
 
         CompilationUnit::create(language_version, evm_target, files, semantic, diagnostics)
     }

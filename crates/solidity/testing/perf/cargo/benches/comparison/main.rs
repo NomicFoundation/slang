@@ -6,7 +6,6 @@ use std::rc::Rc;
 use iai_callgrind::{library_benchmark, library_benchmark_group, main};
 use paste::paste;
 use slang_solidity::compilation::CompilationUnit;
-use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
 use solidity_testing_perf_cargo::config::benchmark_config_with_num_callers;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
 use solidity_testing_perf_cargo::tests;
@@ -73,8 +72,10 @@ macro_rules! slang_v2_test {
         paste! {
             #[library_benchmark(setup = tests::setup::setup)]
             #[bench::test(stringify!($prj))]
-            pub fn [<slang_v2_ $prj>](project: &SolidityProject) -> Vec<(String, SourceUnit)> {
-                black_box(tests::slang_v2::parser::run(black_box(project)))
+            pub fn [<slang_v2_ $prj>](
+                input: tests::slang_v2::parser::Input,
+            ) -> tests::slang_v2::parser::Output {
+                black_box(tests::slang_v2::parser::run(black_box(input)))
             }
         }
     };

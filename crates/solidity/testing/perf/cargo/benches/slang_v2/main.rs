@@ -4,12 +4,7 @@ use std::hint::black_box;
 
 use iai_callgrind::{library_benchmark, library_benchmark_group, main};
 use paste::paste;
-use slang_solidity_v2_ast::abi;
-use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
-use slang_solidity_v2_ir::ir;
-use slang_solidity_v2_semantic::context::SemanticContext;
 use solidity_testing_perf_cargo::config::benchmark_config_with_num_callers;
-use solidity_testing_perf_cargo::dataset::SolidityProject;
 use solidity_testing_perf_cargo::tests;
 
 mod __dependencies_used_in_lib__ {
@@ -20,7 +15,9 @@ mod __dependencies_used_in_lib__ {
     use serde as _;
     use serde_json as _;
     use slang_solidity as _;
+    use slang_solidity_v2_ast as _;
     use slang_solidity_v2_common as _;
+    use slang_solidity_v2_cst as _;
     use slang_solidity_v2_ir as _;
     use slang_solidity_v2_parser as _;
     use slang_solidity_v2_semantic as _;
@@ -44,43 +41,37 @@ macro_rules! slang_v2_define_tests {
         paste! {
             #[library_benchmark(setup = tests::slang_v2::parser::setup)]
             #[bench::test(stringify!($prj))]
-            pub fn [< $prj _parser >](project: &SolidityProject) -> Vec<(String, SourceUnit)> {
-                black_box(tests::slang_v2::parser::run(black_box(project)))
+            pub fn [< $prj _parser >](
+                input: tests::slang_v2::parser::Input,
+            ) -> tests::slang_v2::parser::Output {
+                black_box(tests::slang_v2::parser::run(black_box(input)))
             }
 
             #[library_benchmark(setup = tests::slang_v2::ir_builder::setup)]
             #[bench::test(stringify!($prj))]
             // Note: the input CST source units are consumed (dropped) during IR building.
             // This is the intended use case: the CST is replaced by the IR representation.
-            pub fn [< $prj _ir_builder >]((project, source_units): (&'static SolidityProject, Vec<(String, SourceUnit)>)) -> Vec<ir::SourceUnit> {
-                black_box(tests::slang_v2::ir_builder::run(black_box(project), black_box(source_units)))
+            pub fn [< $prj _ir_builder >](
+                input: tests::slang_v2::ir_builder::Input,
+            ) -> tests::slang_v2::ir_builder::Output {
+                black_box(tests::slang_v2::ir_builder::run(black_box(input)))
             }
 
             #[library_benchmark(setup = tests::slang_v2::semantic::setup)]
             #[bench::test(stringify!($prj))]
             pub fn [< $prj _semantic >](
-                (project, input_files): (&'static SolidityProject, Vec<tests::slang_v2::semantic::File>),
-            ) -> SemanticContext {
-                black_box(tests::slang_v2::semantic::run(black_box(project), black_box(input_files)))
+                input: tests::slang_v2::semantic::Input,
+            ) -> tests::slang_v2::semantic::Output {
+                black_box(tests::slang_v2::semantic::run(input))
             }
 
             #[library_benchmark(setup = tests::slang_v2::compute_contracts_abi::setup)]
             #[bench::test(stringify!($prj))]
             pub fn [< $prj _compute_contracts_abi >](
-                (project, files, semantic): (
-                    &'static SolidityProject,
-                    Vec<tests::slang_v2::semantic::File>,
-                    std::sync::Arc<SemanticContext>,
-                ),
-            ) -> Vec<abi::ContractAbi> {
-                black_box(tests::slang_v2::compute_contracts_abi::run(
-                    black_box(project),
-                    black_box(files),
-                    black_box(semantic),
-                ))
+                input: tests::slang_v2::compute_contracts_abi::Input,
+            ) -> tests::slang_v2::compute_contracts_abi::Output {
+                black_box(tests::slang_v2::compute_contracts_abi::run(black_box(input)))
             }
-
-
 
             library_benchmark_group!(
                 name = [< $prj _full_v2 >];
