@@ -1,12 +1,9 @@
 use std::sync::Arc;
 
-use ruint::aliases::U256;
 use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
-use slang_solidity_v2_ir::ir::TextRange;
 
-use super::evaluator::{evaluate_compile_time_integer_constant, EvaluationError};
 use super::Pass;
 use crate::binder::{Definition, Reference, Resolution, Scope, Typing, UsingDirective};
 use crate::built_ins::InternalBuiltIn;
@@ -44,42 +41,6 @@ impl Visitor for Pass<'_> {
 
         self.current_receiver_type = None;
         self.binder.mark_user_meta_type_node(node.id());
-
-        if let Some(base_slot_expression) = &node.storage_layout {
-            // TODO(validation) SDR[30]: if the base slot expression cannot be computed
-            // at this time, it's not a compile time constant and hence it's an
-            // error
-            let base_slot = match evaluate_compile_time_integer_constant(
-                base_slot_expression,
-                self.current_contract_or_file_scope_id(),
-                self,
-            ) {
-                // TODO(validation) SDR[1733]: if conversion fails the constant is
-                // negative or exceeds the 256 bit range
-                Ok(base_slot) => U256::try_from(base_slot).ok(),
-                Err(error) => {
-                    if let EvaluationError::Diagnostic(kind) = error {
-                        self.diagnostics.push(
-                            self.file_id.clone(),
-                            base_slot_expression
-                                .calculate_text_range()
-                                .expect("expression has a text range"),
-                            kind,
-                        );
-                    }
-                    None
-                }
-            };
-
-            if base_slot.is_some() {
-                let Definition::Contract(contract_definition) =
-                    self.binder.get_definition_mut(node.id())
-                else {
-                    unreachable!("the definition is not a contract");
-                };
-                contract_definition.base_slot = base_slot;
-            }
-        }
     }
 
     fn enter_interface_definition(&mut self, node: &ir::InterfaceDefinition) -> bool {

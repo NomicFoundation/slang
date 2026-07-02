@@ -1,14 +1,19 @@
 use std::sync::Arc;
 
+use ruint::aliases::U256;
 use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_ir::ir::TextRange;
 
 use super::{Pass, ScopeFrame};
 use crate::binder::{
     Definition, Reference, Resolution, ResolveOptions, ScopeId, Typing, UsingDirective,
 };
 use crate::built_ins::BuiltInsResolver;
+use crate::passes::common::constant_evaluator::{
+    evaluate_compile_time_integer_constant, ConstantResolver, EvaluationError,
+};
 use crate::passes::common::find_definition_namespace_scope_id;
 use crate::types::{ContractType, InterfaceType, StructType, Type, TypeId};
 
@@ -353,6 +358,51 @@ impl Pass<'_> {
                 });
             let reference = Reference::new(Arc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
+        }
+    }
+
+    /// Resolves a contract's `layout at <expr>` storage base slot via the
+    /// constant evaluator.
+    pub(super) fn resolve_storage_base_slot(
+        &mut self,
+        node: &ir::ContractDefinition,
+        base_slot_expression: &ir::Expression,
+    ) {
+        // TODO(validation) SDR[30]: if the base slot expression cannot be computed
+        // at this time, it's not a compile time constant and hence it's an
+        // error
+        let base_slot = match evaluate_compile_time_integer_constant(
+            base_slot_expression,
+            self.current_scope_id(),
+            self.types,
+            &ConstantResolver {
+                binder: self.binder,
+            },
+        ) {
+            // TODO(validation) SDR[1733]: if conversion fails the constant is
+            // negative or exceeds the 256 bit range
+            Ok(value) => U256::try_from(value).ok(),
+            Err(error) => {
+                if let EvaluationError::Diagnostic(kind) = error {
+                    self.diagnostics.push(
+                        self.file_id.clone(),
+                        base_slot_expression
+                            .calculate_text_range()
+                            .expect("expression has a text range"),
+                        kind,
+                    );
+                }
+                None
+            }
+        };
+
+        if let Some(base_slot) = base_slot {
+            let Definition::Contract(contract_definition) =
+                self.binder.get_definition_mut(node.id())
+            else {
+                unreachable!("the definition is not a contract");
+            };
+            contract_definition.base_slot = Some(base_slot);
         }
     }
 }

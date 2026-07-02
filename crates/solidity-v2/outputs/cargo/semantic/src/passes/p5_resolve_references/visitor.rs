@@ -37,6 +37,10 @@ impl Visitor for Pass<'_> {
         if let Some(ref storage_layout) = node.storage_layout {
             // TODO(validation) SDR[56]: check that the expression is not binding constant variables up until 0.8.31
             // https://www.soliditylang.org/blog/2025/12/03/solidity-0.8.31-release-announcement
+
+            // TODO: call `resolve_storage_base_slot` first for now, because the
+            // constant evaluator handles type casts.
+            self.resolve_storage_base_slot(node, storage_layout);
             ir::visitor::accept_expression(storage_layout, self);
         }
 
@@ -161,9 +165,19 @@ impl Visitor for Pass<'_> {
 
         // TODO(validation) SDR[47]: both true_expression and false_expression should
         // have the compatible types
+        //
+        // The ternary takes the mobile type of both branches before computing
+        // their common type.
         let type_id = match (true_type_id, false_type_id) {
             (Some(true_type_id), Some(false_type_id)) => {
-                self.types.common_mobile_type(true_type_id, false_type_id)
+                let true_mobile = self.types.compute_mobile_type(true_type_id);
+                let false_mobile = self.types.compute_mobile_type(false_type_id);
+                match (true_mobile, false_mobile) {
+                    (Some(true_mobile), Some(false_mobile)) => {
+                        self.types.common_type(true_mobile, false_mobile)
+                    }
+                    _ => None,
+                }
             }
             _ => None,
         };
