@@ -18,4 +18,10 @@ contract C {
     function () private public xxxx;
     function () private internal yyyy;
     function () private private zzzz;
+
+    // Mixing with other attributes
+    function() external payable public x;
+    function() payable external public x;
+    function() external view public x;
+    function() external constant public x;
 }

@@ -21,17 +21,23 @@ Source: >
   18 │     function () private public xxxx;                                             │ 588..624
   19 │     function () private internal yyyy;                                           │ 625..663
   20 │     function () private private zzzz;                                            │ 664..701
-  21 │ }                                                                                │ 702..703
+  21 │                                                                                  │ 702..702
+  22 │     // Mixing with other attributes                                              │ 703..738
+  23 │     function() external payable public x;                                        │ 739..780
+  24 │     function() payable external public x;                                        │ 781..822
+  25 │     function() external view public x;                                           │ 823..861
+  26 │     function() external constant public x;                                       │ 862..904
+  27 │ }                                                                                │ 905..906
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    // external works!\n    function (..." (0..703)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    // external works!\n    function (..." (0..703)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    // external works!\n    function (..." (0..703)
+  - (root꞉ SourceUnit): # "contract C {\n    // external works!\n    function (..." (0..906)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    // external works!\n    function (..." (0..906)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    // external works!\n    function (..." (0..906)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function () external public x;\n    function () ext..." (40..701)
+              - (members꞉ ContractMembers): # "function () external public x;\n    function () ext..." (40..904)
                   - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function () external public x;" (40..70)
                       - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function () external" (40..60)
                           - (function_keyword꞉ FunctionKeyword): "function" # (40..48)
@@ -188,4 +194,60 @@ Tree:
                           - (item꞉ StateVariableAttribute) ► (private_keyword꞉ PrivateKeyword): "private" # (688..695)
                       - (name꞉ Identifier): "zzzz" # (696..700)
                       - (semicolon꞉ Semicolon): ";" # (700..701)
-              - (close_brace꞉ CloseBrace): "}" # (702..703)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function() external payable public x;" (743..780)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function() external payable" (743..770)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (743..751)
+                          - (parameters꞉ ParametersDeclaration): # "()" (751..753)
+                              - (open_paren꞉ OpenParen): "(" # (751..752)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (752..753)
+                          - (attributes꞉ FunctionTypeAttributes): # "external payable" (754..770)
+                              - (item꞉ FunctionTypeAttribute) ► (external_keyword꞉ ExternalKeyword): "external" # (754..762)
+                              - (item꞉ FunctionTypeAttribute) ► (payable_keyword꞉ PayableKeyword): "payable" # (763..770)
+                      - (attributes꞉ StateVariableAttributes): # "public" (771..777)
+                          - (item꞉ StateVariableAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (771..777)
+                      - (name꞉ Identifier): "x" # (778..779)
+                      - (semicolon꞉ Semicolon): ";" # (779..780)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function() payable external public x;" (785..822)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function() payable external" (785..812)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (785..793)
+                          - (parameters꞉ ParametersDeclaration): # "()" (793..795)
+                              - (open_paren꞉ OpenParen): "(" # (793..794)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (794..795)
+                          - (attributes꞉ FunctionTypeAttributes): # "payable external" (796..812)
+                              - (item꞉ FunctionTypeAttribute) ► (payable_keyword꞉ PayableKeyword): "payable" # (796..803)
+                              - (item꞉ FunctionTypeAttribute) ► (external_keyword꞉ ExternalKeyword): "external" # (804..812)
+                      - (attributes꞉ StateVariableAttributes): # "public" (813..819)
+                          - (item꞉ StateVariableAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (813..819)
+                      - (name꞉ Identifier): "x" # (820..821)
+                      - (semicolon꞉ Semicolon): ";" # (821..822)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function() external view public x;" (827..861)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function() external view" (827..851)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (827..835)
+                          - (parameters꞉ ParametersDeclaration): # "()" (835..837)
+                              - (open_paren꞉ OpenParen): "(" # (835..836)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (836..837)
+                          - (attributes꞉ FunctionTypeAttributes): # "external view" (838..851)
+                              - (item꞉ FunctionTypeAttribute) ► (external_keyword꞉ ExternalKeyword): "external" # (838..846)
+                              - (item꞉ FunctionTypeAttribute) ► (view_keyword꞉ ViewKeyword): "view" # (847..851)
+                      - (attributes꞉ StateVariableAttributes): # "public" (852..858)
+                          - (item꞉ StateVariableAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (852..858)
+                      - (name꞉ Identifier): "x" # (859..860)
+                      - (semicolon꞉ Semicolon): ";" # (860..861)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function() external constant public x;" (866..904)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function() external" (866..885)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (866..874)
+                          - (parameters꞉ ParametersDeclaration): # "()" (874..876)
+                              - (open_paren꞉ OpenParen): "(" # (874..875)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (875..876)
+                          - (attributes꞉ FunctionTypeAttributes): # "external" (877..885)
+                              - (item꞉ FunctionTypeAttribute) ► (external_keyword꞉ ExternalKeyword): "external" # (877..885)
+                      - (attributes꞉ StateVariableAttributes): # "constant public" (886..901)
+                          - (item꞉ StateVariableAttribute) ► (constant_keyword꞉ ConstantKeyword): "constant" # (886..894)
+                          - (item꞉ StateVariableAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (895..901)
+                      - (name꞉ Identifier): "x" # (902..903)
+                      - (semicolon꞉ Semicolon): ";" # (903..904)
+              - (close_brace꞉ CloseBrace): "}" # (905..906)
