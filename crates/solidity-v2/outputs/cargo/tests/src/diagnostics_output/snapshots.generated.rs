@@ -22,6 +22,15 @@ mod compilation {
     }
 }
 
+mod passing {
+    use super::*;
+
+    #[test]
+    fn function_external_delete_storage() -> Result<()> {
+        run("passing", "function_external_delete_storage")
+    }
+}
+
 mod resolution {
     use super::*;
 
