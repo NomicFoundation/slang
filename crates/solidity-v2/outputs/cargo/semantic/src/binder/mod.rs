@@ -207,22 +207,27 @@ impl Binder {
         self.definitions.insert(node_id, definition);
     }
 
+    pub(crate) fn nearest_enclosing_definition(&self, scope_id: ScopeId) -> Option<NodeId> {
+        let mut current = Some(scope_id);
+        while let Some(id) = current {
+            let scope = self.get_scope_by_id(id);
+            let node_id = scope.node_id();
+            if self.definitions.contains_key(&node_id) {
+                return Some(node_id);
+            }
+            current = scope.parent_scope_id();
+        }
+        None
+    }
+
     pub(crate) fn insert_definition_in_scope(&mut self, definition: Definition, scope_id: ScopeId) {
         let node_id = definition.node_id();
         let symbol = definition.identifier().unparse().to_string();
         self.get_scope_mut(scope_id)
             .insert_definition(symbol, node_id);
 
-        let mut current = Some(scope_id);
-        while let Some(id) = current {
-            let scope = self.get_scope_by_id(id);
-            let scope_node_id = scope.node_id();
-            let parent = scope.parent_scope_id();
-            if self.definitions.contains_key(&scope_node_id) {
-                self.record_enclosing_definition(node_id, scope_node_id);
-                break;
-            }
-            current = parent;
+        if let Some(enclosing) = self.nearest_enclosing_definition(scope_id) {
+            self.record_enclosing_definition(node_id, enclosing);
         }
         self.insert_definition_no_scope(definition);
     }

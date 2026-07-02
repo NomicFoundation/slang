@@ -164,11 +164,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     // Collects *all* the sequential parameters making and registering
     // definitions for named ones and return the constructed parameters scope ID
     // to link with the enclosing function definition
-    fn collect_parameters(
-        &mut self,
-        parameters: &ir::Parameters,
-        owner_node_id: NodeId,
-    ) -> ScopeId {
+    fn collect_parameters(&mut self, parameters: &ir::Parameters) -> ScopeId {
         let mut scope = ParametersScope::new();
         for parameter in parameters {
             if let Some(name) = &parameter.name {
@@ -181,14 +177,27 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
                         IdentifierRedeclaration,
                     );
                 }
-                let definition = Definition::new_parameter(parameter);
-                self.binder.insert_definition_no_scope(definition);
                 self.binder
-                    .record_enclosing_definition(parameter.id(), owner_node_id);
+                    .insert_definition_no_scope(Definition::new_parameter(parameter));
             }
             scope.add_parameter(parameter.name.as_ref().map(|id| &id.text), parameter.id());
         }
         self.binder.insert_scope(Scope::Parameters(scope))
+    }
+
+    // Positional parameters live in their own scope, so they bypass the
+    // enclosing-definition recording done by `insert_definition_in_scope`.
+    fn record_enclosing_definition_for_parameters(
+        &mut self,
+        parameters: &ir::Parameters,
+        owner_node_id: NodeId,
+    ) {
+        for parameter in parameters {
+            if parameter.name.is_some() {
+                self.binder
+                    .record_enclosing_definition(parameter.id(), owner_node_id);
+            }
+        }
     }
 
     // This is used to collect only named parameters and insert their
@@ -346,12 +355,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
             | ir::FunctionKind::Constructor
             | ir::FunctionKind::Fallback
             | ir::FunctionKind::Receive => {
-                let owner_node_id = if node.name.is_some() {
-                    node.id()
-                } else {
-                    self.current_scope().node_id()
-                };
-                let parameters_scope_id = self.collect_parameters(&node.parameters, owner_node_id);
+                let parameters_scope_id = self.collect_parameters(&node.parameters);
 
                 if let Some(name) = &node.name {
                     let definition = Definition::new_function(node, parameters_scope_id);
@@ -399,6 +403,10 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                 let function_scope =
                     Scope::new_function(node.id(), self.current_scope_id(), parameters_scope_id);
                 let function_scope_id = self.enter_scope(function_scope);
+
+                if let Some(owner) = self.binder.nearest_enclosing_definition(function_scope_id) {
+                    self.record_enclosing_definition_for_parameters(&node.parameters, owner);
+                }
 
                 if let Some(returns) = &node.returns {
                     self.collect_named_parameters_into_scope(returns, function_scope_id);
@@ -466,17 +474,19 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn enter_error_definition(&mut self, node: &ir::ErrorDefinition) -> bool {
-        let parameters_scope_id = self.collect_parameters(&node.parameters, node.id());
+        let parameters_scope_id = self.collect_parameters(&node.parameters);
         let definition = Definition::new_error(node, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
+        self.record_enclosing_definition_for_parameters(&node.parameters, node.id());
 
         false
     }
 
     fn enter_event_definition(&mut self, node: &ir::EventDefinition) -> bool {
-        let parameters_scope_id = self.collect_parameters(&node.parameters, node.id());
+        let parameters_scope_id = self.collect_parameters(&node.parameters);
         let definition = Definition::new_event(node, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
+        self.record_enclosing_definition_for_parameters(&node.parameters, node.id());
 
         false
     }
