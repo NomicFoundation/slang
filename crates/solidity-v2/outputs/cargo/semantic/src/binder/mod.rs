@@ -115,6 +115,10 @@ pub struct Binder {
     /// the `AssemblyStatement`'s `NodeId`, and processed in `p6_resolve_yul`
     /// (which also fills in their `solidity_references`)
     assembly_blocks: Map<NodeId, AssemblyBlock>,
+    /// Maps a definition's `NodeId` to the `NodeId` of the nearest enclosing
+    /// definition: the owner of the closest enclosing scope that is itself a
+    /// definition, or the owning function/error/event for a parameter.
+    enclosing_definitions: Map<NodeId, NodeId>,
 }
 
 /// This controls visibility filtering and how to use the linearisation when
@@ -150,6 +154,20 @@ impl Binder {
 
     pub(crate) fn scope_id_for_file_id(&self, file_id: &str) -> Option<ScopeId> {
         self.scopes_by_file_id.get(file_id).copied()
+    }
+
+    /// The `NodeId` of the immediately enclosing definition `node_id` is declared in.
+    pub fn enclosing_definition_node_id(&self, node_id: NodeId) -> Option<NodeId> {
+        self.enclosing_definitions.get(&node_id).copied()
+    }
+
+    pub(crate) fn record_enclosing_definition(
+        &mut self,
+        node_id: NodeId,
+        enclosing_node_id: NodeId,
+    ) {
+        self.enclosing_definitions
+            .insert(node_id, enclosing_node_id);
     }
 
     pub(crate) fn insert_scope(&mut self, scope: Scope) -> ScopeId {
@@ -190,9 +208,22 @@ impl Binder {
     }
 
     pub(crate) fn insert_definition_in_scope(&mut self, definition: Definition, scope_id: ScopeId) {
-        let scope = self.get_scope_mut(scope_id);
+        let node_id = definition.node_id();
         let symbol = definition.identifier().unparse().to_string();
-        scope.insert_definition(symbol, definition.node_id());
+        self.get_scope_mut(scope_id)
+            .insert_definition(symbol, node_id);
+
+        let mut current = Some(scope_id);
+        while let Some(id) = current {
+            let scope = self.get_scope_by_id(id);
+            let scope_node_id = scope.node_id();
+            let parent = scope.parent_scope_id();
+            if self.definitions.contains_key(&scope_node_id) {
+                self.record_enclosing_definition(node_id, scope_node_id);
+                break;
+            }
+            current = parent;
+        }
         self.insert_definition_no_scope(definition);
     }
 
