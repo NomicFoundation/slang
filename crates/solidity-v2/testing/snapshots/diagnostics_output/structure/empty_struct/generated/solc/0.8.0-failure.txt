@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[SyntaxError 5306] Error: Defining empty structs is disallowed.
+   ╭─[input.sol:8:1]
+   │
+ 8 │ struct FileLevel {}
+   │ ─────────┬─────────  
+   │          ╰─────────── Error occurred here.
+───╯
+
+[SyntaxError 5306] Error: Defining empty structs is disallowed.
+   ╭─[input.sol:9:14]
+   │
+ 9 │ contract C { struct Inner {} }
+   │              ───────┬───────  
+   │                     ╰───────── Error occurred here.
+───╯
+
+[SyntaxError 5306] Error: Defining empty structs is disallowed.
+    ╭─[input.sol:10:13]
+    │
+ 10 │ library L { struct Inner {} }
+    │             ───────┬───────  
+    │                    ╰───────── Error occurred here.
+────╯
+
+[SyntaxError 5306] Error: Defining empty structs is disallowed.
+    ╭─[input.sol:11:15]
+    │
+ 11 │ interface I { struct Inner {} }
+    │               ───────┬───────  
+    │                      ╰───────── Error occurred here.
+────╯

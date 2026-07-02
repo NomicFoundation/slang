@@ -1,4 +1,5 @@
 mod empty_enum;
+mod empty_struct;
 mod enum_with_too_many_members;
 mod function_name_matches_container;
 mod invalid_using_directive_container;
@@ -7,6 +8,7 @@ mod library_receive_function;
 mod multiple_constructors;
 
 pub use empty_enum::EmptyEnum;
+pub use empty_struct::EmptyStruct;
 pub use enum_with_too_many_members::EnumWithTooManyMembers;
 pub use function_name_matches_container::FunctionNameMatchesContainer;
 pub use invalid_using_directive_container::InvalidUsingDirectiveContainer;
@@ -36,6 +38,9 @@ define_diagnostic_kind! {
         EnumWithTooManyMembers(EnumWithTooManyMembers),
         /// An enum declares no members.
         EmptyEnum(EmptyEnum),
+
+        /// A struct declares no members.
+        EmptyStruct(EmptyStruct),
 
         /// A library declares a fallback function.
         LibraryFallbackFunction(LibraryFallbackFunction),
