@@ -3,67 +3,120 @@ use num_traits::Signed;
 use super::literals::numbers::within_integer_range;
 use super::{IntegerType, LiteralKind, Number, Type, TypeId, TypeRegistry};
 
+/// A binary operator on numbers that can be evaluated at compile time.
+#[derive(Clone, Copy, Debug)]
+pub(crate) enum BinaryOperator {
+    Add,
+    Sub,
+    Mul,
+    Div,
+    Rem,
+    BitOr,
+    BitXor,
+    BitAnd,
+    Shl,
+    Shr,
+    Pow,
+}
+
+impl BinaryOperator {
+    /// Applies the operator to two literal numbers. Returns `None` when the
+    /// operation is not defined for the values (eg. division by zero, or a
+    /// bitwise operator on a fractional rational).
+    pub(crate) fn fold(self, lhs: &Number, rhs: &Number) -> Option<Number> {
+        match self {
+            Self::Add => Some(lhs.add(rhs)),
+            Self::Sub => Some(lhs.sub(rhs)),
+            Self::Mul => Some(lhs.mul(rhs)),
+            Self::Div => lhs.div(rhs),
+            Self::Rem => lhs.rem(rhs),
+            Self::BitOr => lhs.bit_or(rhs),
+            Self::BitXor => lhs.bit_xor(rhs),
+            Self::BitAnd => lhs.bit_and(rhs),
+            Self::Shl => lhs.shl(rhs),
+            Self::Shr => lhs.shr(rhs),
+            Self::Pow => lhs.pow(rhs),
+        }
+    }
+
+    /// Shifts and exponentiation type by the left operand alone. The other
+    /// operators take the common type of both operands.
+    fn is_left_typed(self) -> bool {
+        matches!(self, Self::Shl | Self::Shr | Self::Pow)
+    }
+}
+
+/// A unary operator on numbers that can be evaluated at compile time.
+#[derive(Clone, Copy, Debug)]
+pub(crate) enum UnaryOperator {
+    Negate,
+    BitNot,
+}
+
+impl UnaryOperator {
+    /// Applies the operator to a literal number. Returns `None` when the
+    /// operation is not defined for the value (bitwise not of a fractional
+    /// rational).
+    pub(crate) fn fold(self, value: &Number) -> Option<Number> {
+        match self {
+            Self::Negate => Some(value.negate()),
+            Self::BitNot => value.bit_not(),
+        }
+    }
+}
+
 impl TypeRegistry {
-    /// Result type of an arithmetic or bitwise binary operator, dispatched on
-    /// the left operand. `op` combines the two values when both are literals.
+    /// Result type of a binary operator, dispatched on the left operand. For
+    /// shifts and exponentiation the result follows the left operand, and the
+    /// right operand must be a nonnegative unsigned integer amount or
+    /// exponent. The other operators result in the common type of the two
+    /// operands. When both operands are literals, the operator is folded and
+    /// the result is the literal type holding the folded value.
     pub(crate) fn type_of_binary_operator(
         &mut self,
         left: TypeId,
         right: TypeId,
-        op: fn(&Number, &Number) -> Option<Number>,
-    ) -> Option<TypeId> {
-        match self.get_type_by_id(left).clone() {
-            Type::Integer(integer) => self.integer_type_of_binary_operator(&integer, right),
-            Type::Literal(
-                literal @ (LiteralKind::Integer { .. } | LiteralKind::Rational { .. }),
-            ) => self.literal_type_of_binary_operator(&literal, right, op),
-            _ => None,
-        }
-    }
-
-    /// Result type of a shift or exponentiation operator, dispatched on the left
-    /// operand. The result follows the left operand, and the right operand must
-    /// be a nonnegative unsigned integer amount or exponent.
-    pub(crate) fn type_of_left_typed_binary_operator(
-        &mut self,
-        left: TypeId,
-        right: TypeId,
-        op: fn(&Number, &Number) -> Option<Number>,
+        op: BinaryOperator,
     ) -> Option<TypeId> {
         match self.get_type_by_id(left).clone() {
             Type::Integer(integer) => {
-                self.integer_type_of_left_typed_binary_operator(&integer, right)
+                if op.is_left_typed() {
+                    self.integer_type_of_left_typed_binary_operator(&integer, right)
+                } else {
+                    self.integer_type_of_binary_operator(&integer, right)
+                }
             }
             Type::Literal(
                 literal @ (LiteralKind::Integer { .. } | LiteralKind::Rational { .. }),
-            ) => self.literal_type_of_left_typed_binary_operator(&literal, right, op),
-            _ => None,
-        }
-    }
-
-    /// Result type of unary minus. Signed integers and literals keep their own
-    /// type, and unary minus on an unsigned integer has no result type.
-    pub(crate) fn type_of_negation(&mut self, operand: TypeId) -> Option<TypeId> {
-        match self.get_type_by_id(operand).clone() {
-            // Only signed integers can be negated.
-            Type::Integer(IntegerType { is_signed, .. }) => is_signed.then_some(operand),
-            // A literal negates to its own type.
-            Type::Literal(kind @ (LiteralKind::Integer { .. } | LiteralKind::Rational { .. })) => {
-                let negated = Number::from_literal_kind(&kind)?.negate();
-                Some(self.register_type(Type::Literal(negated.to_literal_kind())))
+            ) => {
+                if op.is_left_typed() {
+                    self.literal_type_of_left_typed_binary_operator(&literal, right, op)
+                } else {
+                    self.literal_type_of_binary_operator(&literal, right, op)
+                }
             }
             _ => None,
         }
     }
 
-    /// Result type of bitwise not. Integers keep their type, and a literal folds.
-    /// A fractional rational has no result, since bitwise not is integer only.
-    pub(crate) fn type_of_bitwise_not(&mut self, operand: TypeId) -> Option<TypeId> {
+    /// Result type of a unary operator, dispatched on the operand. An integer
+    /// operand keeps its type, except that negating an unsigned integer has no
+    /// result type. When the operand is a literal, the operator is folded and
+    /// the result is the literal type holding the folded value.
+    pub(crate) fn type_of_unary_operator(
+        &mut self,
+        operand: TypeId,
+        op: UnaryOperator,
+    ) -> Option<TypeId> {
         match self.get_type_by_id(operand).clone() {
-            Type::Integer(_) => Some(operand),
+            Type::Integer(IntegerType { is_signed, .. }) => match op {
+                // Only signed integers can be negated.
+                UnaryOperator::Negate => is_signed.then_some(operand),
+                UnaryOperator::BitNot => Some(operand),
+            },
             Type::Literal(kind @ (LiteralKind::Integer { .. } | LiteralKind::Rational { .. })) => {
-                let complement = Number::from_literal_kind(&kind)?.bit_not()?;
-                Some(self.register_type(Type::Literal(complement.to_literal_kind())))
+                let result = op.fold(&Number::from_literal_kind(&kind)?)?;
+                Some(self.register_type(Type::Literal(result.to_literal_kind())))
             }
             _ => None,
         }
@@ -108,7 +161,7 @@ impl TypeRegistry {
         &mut self,
         left: &LiteralKind,
         right: TypeId,
-        op: fn(&Number, &Number) -> Option<Number>,
+        op: BinaryOperator,
     ) -> Option<TypeId> {
         let value = Number::from_literal_kind(left)?;
         match self.get_type_by_id(right).clone() {
@@ -126,7 +179,7 @@ impl TypeRegistry {
             // Both operands are literals, so fold the value.
             Type::Literal(kind @ (LiteralKind::Integer { .. } | LiteralKind::Rational { .. })) => {
                 let right_value = Number::from_literal_kind(&kind)?;
-                let result = op(&value, &right_value)?;
+                let result = op.fold(&value, &right_value)?;
                 Some(self.register_type(Type::Literal(result.to_literal_kind())))
             }
             _ => None,
@@ -138,7 +191,7 @@ impl TypeRegistry {
         &mut self,
         left: &LiteralKind,
         right: TypeId,
-        op: fn(&Number, &Number) -> Option<Number>,
+        op: BinaryOperator,
     ) -> Option<TypeId> {
         let value = Number::from_literal_kind(left)?;
         match self.get_type_by_id(right).clone() {
@@ -161,7 +214,7 @@ impl TypeRegistry {
             // Both operands are literals, so fold the value.
             Type::Literal(kind @ (LiteralKind::Integer { .. } | LiteralKind::Rational { .. })) => {
                 let right_value = Number::from_literal_kind(&kind)?;
-                let result = op(&value, &right_value)?;
+                let result = op.fold(&value, &right_value)?;
                 Some(self.register_type(Type::Literal(result.to_literal_kind())))
             }
             _ => None,

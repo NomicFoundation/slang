@@ -11,6 +11,7 @@ mod parsing;
 mod registry;
 
 pub use literals::numbers::Number;
+pub(crate) use operator_typing::{BinaryOperator, UnaryOperator};
 pub use registry::TypeRegistry;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]

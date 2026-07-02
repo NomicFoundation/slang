@@ -8,7 +8,10 @@ use slang_solidity_v2_ir::ir;
 use crate::binder::{Binder, Definition, Resolution, Scope, ScopeId};
 use crate::built_ins::{BuiltInsResolver, InternalBuiltIn};
 use crate::types::literals::numbers::{integer_literal_fits, rational_literal_fits};
-use crate::types::{literals, IntegerType, LiteralKind, Number, Type, TypeId, TypeRegistry};
+use crate::types::{
+    literals, BinaryOperator, IntegerType, LiteralKind, Number, Type, TypeId, TypeRegistry,
+    UnaryOperator,
+};
 
 /// Reason why a constant expression could not be evaluated.
 #[derive(Debug)]
@@ -85,180 +88,59 @@ impl TypedValue {
         }
     }
 
-    fn add(&self, rhs: &Self, types: &mut TypeRegistry) -> Result<Self, EvaluationError> {
-        self.binary(rhs, types, TypeRegistry::type_of_binary_operator, |a, b| {
-            Some(a.add(b))
-        })
-    }
-
-    fn sub(&self, rhs: &Self, types: &mut TypeRegistry) -> Result<Self, EvaluationError> {
-        self.binary(rhs, types, TypeRegistry::type_of_binary_operator, |a, b| {
-            Some(a.sub(b))
-        })
-    }
-
-    fn mul(&self, rhs: &Self, types: &mut TypeRegistry) -> Result<Self, EvaluationError> {
-        self.binary(rhs, types, TypeRegistry::type_of_binary_operator, |a, b| {
-            Some(a.mul(b))
-        })
-    }
-
-    fn div(&self, rhs: &Self, types: &mut TypeRegistry) -> Result<Self, EvaluationError> {
-        self.binary(
-            rhs,
-            types,
-            TypeRegistry::type_of_binary_operator,
-            Number::div,
-        )
-    }
-
-    fn rem(&self, rhs: &Self, types: &mut TypeRegistry) -> Result<Self, EvaluationError> {
-        self.binary(
-            rhs,
-            types,
-            TypeRegistry::type_of_binary_operator,
-            Number::rem,
-        )
-    }
-
-    fn bit_or(&self, rhs: &Self, types: &mut TypeRegistry) -> Result<Self, EvaluationError> {
-        self.binary(
-            rhs,
-            types,
-            TypeRegistry::type_of_binary_operator,
-            Number::bit_or,
-        )
-    }
-
-    fn bit_xor(&self, rhs: &Self, types: &mut TypeRegistry) -> Result<Self, EvaluationError> {
-        self.binary(
-            rhs,
-            types,
-            TypeRegistry::type_of_binary_operator,
-            Number::bit_xor,
-        )
-    }
-
-    fn bit_and(&self, rhs: &Self, types: &mut TypeRegistry) -> Result<Self, EvaluationError> {
-        self.binary(
-            rhs,
-            types,
-            TypeRegistry::type_of_binary_operator,
-            Number::bit_and,
-        )
-    }
-
-    fn shl(&self, rhs: &Self, types: &mut TypeRegistry) -> Result<Self, EvaluationError> {
-        self.binary(
-            rhs,
-            types,
-            TypeRegistry::type_of_left_typed_binary_operator,
-            Number::shl,
-        )
-    }
-
-    fn shr(&self, rhs: &Self, types: &mut TypeRegistry) -> Result<Self, EvaluationError> {
-        self.binary(
-            rhs,
-            types,
-            TypeRegistry::type_of_left_typed_binary_operator,
-            Number::shr,
-        )
-    }
-
-    fn pow(&self, rhs: &Self, types: &mut TypeRegistry) -> Result<Self, EvaluationError> {
-        self.binary(
-            rhs,
-            types,
-            TypeRegistry::type_of_left_typed_binary_operator,
-            Number::pow,
-        )
-    }
-
-    fn negate(&self, types: &mut TypeRegistry) -> Result<Self, EvaluationError> {
-        self.unary(types, TypeRegistry::type_of_negation, |value| {
-            Some(value.negate())
-        })
-    }
-
-    fn bit_not(&self, types: &mut TypeRegistry) -> Result<Self, EvaluationError> {
-        self.unary(types, TypeRegistry::type_of_bitwise_not, Number::bit_not)
-    }
-
     /// Evaluates an arithmetic, bitwise, shift or exponentiation operator.
-    #[allow(clippy::type_complexity)]
     fn binary(
         &self,
+        op: BinaryOperator,
         rhs: &Self,
         types: &mut TypeRegistry,
-        result_type: fn(
-            &mut TypeRegistry,
-            TypeId,
-            TypeId,
-            fn(&Number, &Number) -> Option<Number>,
-        ) -> Option<TypeId>,
-        op: fn(&Number, &Number) -> Option<Number>,
     ) -> Result<Self, EvaluationError> {
         let left = types.register_type(self.to_type());
         let right = types.register_type(rhs.to_type());
-        let result_id = result_type(types, left, right, op).ok_or(EvaluationError::Other)?;
-        let ty = types.get_type_by_id(result_id).clone();
-        match ty {
-            // Both operands were literals, so the result value is already folded into `kind`.
-            Type::Literal(kind) => match kind {
-                LiteralKind::Integer { .. } | LiteralKind::Rational { .. } => {
-                    Number::from_literal_kind(&kind)
-                        .map(Self::Literal)
-                        .ok_or(EvaluationError::Other)
-                }
-                _ => unreachable!("literal operator result is always integer or rational"),
-            },
-            Type::Integer(integer) => {
-                let left = self
-                    .value()
-                    .coerce_to_integer(&integer)
-                    .ok_or(EvaluationError::Other)?;
-                let right = rhs
-                    .value()
-                    .coerce_to_integer(&integer)
-                    .ok_or(EvaluationError::Other)?;
-                let result = op(left.value(), right.value()).ok_or(EvaluationError::Other)?;
-                result
-                    .coerce_to_integer(&integer)
-                    .ok_or(EvaluationError::Other)
-            }
-            _ => Err(EvaluationError::Other),
-        }
+        let result_id = types
+            .type_of_binary_operator(left, right, op)
+            .ok_or(EvaluationError::Other)?;
+        Self::from_result_type(result_id, types, |integer| {
+            let left = self.value().coerce_to_integer(integer)?;
+            let right = rhs.value().coerce_to_integer(integer)?;
+            op.fold(left.value(), right.value())
+        })
     }
 
     /// Evaluates a negation or bitwise not operator.
-    fn unary(
-        &self,
-        types: &mut TypeRegistry,
-        result_type: fn(&mut TypeRegistry, TypeId) -> Option<TypeId>,
-        op: fn(&Number) -> Option<Number>,
-    ) -> Result<Self, EvaluationError> {
+    fn unary(&self, op: UnaryOperator, types: &mut TypeRegistry) -> Result<Self, EvaluationError> {
         let operand = types.register_type(self.to_type());
-        let result_id = result_type(types, operand).ok_or(EvaluationError::Other)?;
-        let ty = types.get_type_by_id(result_id).clone();
-        match ty {
-            // Both operands were literals, so the result value is already folded into `kind`.
+        let result_id = types
+            .type_of_unary_operator(operand, op)
+            .ok_or(EvaluationError::Other)?;
+        Self::from_result_type(result_id, types, |integer| {
+            let operand = self.value().coerce_to_integer(integer)?;
+            op.fold(operand.value())
+        })
+    }
+
+    /// Materializes an operator result from its computed result type. A
+    /// literal result type already carries the folded value. For an integer
+    /// result type, `fold_at` coerces the operands to that type and applies
+    /// the operator, and the folded result is range-checked against it.
+    fn from_result_type(
+        result_id: TypeId,
+        types: &TypeRegistry,
+        fold_at: impl FnOnce(&IntegerType) -> Option<Number>,
+    ) -> Result<Self, EvaluationError> {
+        match types.get_type_by_id(result_id) {
             Type::Literal(kind) => match kind {
                 LiteralKind::Integer { .. } | LiteralKind::Rational { .. } => {
-                    Number::from_literal_kind(&kind)
+                    Number::from_literal_kind(kind)
                         .map(Self::Literal)
                         .ok_or(EvaluationError::Other)
                 }
                 _ => unreachable!("literal operator result is always integer or rational"),
             },
             Type::Integer(integer) => {
-                let operand = self
-                    .value()
-                    .coerce_to_integer(&integer)
-                    .ok_or(EvaluationError::Other)?;
-                let result = op(operand.value()).ok_or(EvaluationError::Other)?;
+                let result = fold_at(integer).ok_or(EvaluationError::Other)?;
                 result
-                    .coerce_to_integer(&integer)
+                    .coerce_to_integer(integer)
                     .ok_or(EvaluationError::Other)
             }
             _ => Err(EvaluationError::Other),
@@ -341,29 +223,86 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         expression: &ir::Expression,
     ) -> Result<TypedValue, EvaluationError> {
         match expression {
-            ir::Expression::BitwiseOrExpression(bitwise_or_expression) => {
-                self.evaluate_bitwise_or_expression(bitwise_or_expression)
-            }
-            ir::Expression::BitwiseXorExpression(bitwise_xor_expression) => {
-                self.evaluate_bitwise_xor_expression(bitwise_xor_expression)
-            }
-            ir::Expression::BitwiseAndExpression(bitwise_and_expression) => {
-                self.evaluate_bitwise_and_expression(bitwise_and_expression)
-            }
-            ir::Expression::ShiftExpression(shift_expression) => {
-                self.evaluate_shift_expression(shift_expression)
-            }
+            ir::Expression::BitwiseOrExpression(bitwise_or_expression) => self.evaluate_binary(
+                &bitwise_or_expression.left_operand,
+                &bitwise_or_expression.right_operand,
+                BinaryOperator::BitOr,
+            ),
+            ir::Expression::BitwiseXorExpression(bitwise_xor_expression) => self.evaluate_binary(
+                &bitwise_xor_expression.left_operand,
+                &bitwise_xor_expression.right_operand,
+                BinaryOperator::BitXor,
+            ),
+            ir::Expression::BitwiseAndExpression(bitwise_and_expression) => self.evaluate_binary(
+                &bitwise_and_expression.left_operand,
+                &bitwise_and_expression.right_operand,
+                BinaryOperator::BitAnd,
+            ),
+            ir::Expression::ShiftExpression(shift_expression) => match &shift_expression.operator {
+                ir::ShiftExpressionOperator::LessThanLessThan(_) => self.evaluate_binary(
+                    &shift_expression.left_operand,
+                    &shift_expression.right_operand,
+                    BinaryOperator::Shl,
+                ),
+                ir::ShiftExpressionOperator::GreaterThanGreaterThan(_) => self.evaluate_binary(
+                    &shift_expression.left_operand,
+                    &shift_expression.right_operand,
+                    BinaryOperator::Shr,
+                ),
+                ir::ShiftExpressionOperator::GreaterThanGreaterThanGreaterThan(_) => {
+                    Err(EvaluationError::Other)
+                }
+            },
             ir::Expression::AdditiveExpression(additive_expression) => {
-                self.evaluate_additive_expression(additive_expression)
+                match &additive_expression.operator {
+                    ir::AdditiveExpressionOperator::Plus(_) => self.evaluate_binary(
+                        &additive_expression.left_operand,
+                        &additive_expression.right_operand,
+                        BinaryOperator::Add,
+                    ),
+                    ir::AdditiveExpressionOperator::Minus(_) => self.evaluate_binary(
+                        &additive_expression.left_operand,
+                        &additive_expression.right_operand,
+                        BinaryOperator::Sub,
+                    ),
+                }
             }
             ir::Expression::MultiplicativeExpression(multiplicative_expression) => {
-                self.evaluate_multiplicative_expression(multiplicative_expression)
+                match &multiplicative_expression.operator {
+                    ir::MultiplicativeExpressionOperator::Asterisk(_) => self.evaluate_binary(
+                        &multiplicative_expression.left_operand,
+                        &multiplicative_expression.right_operand,
+                        BinaryOperator::Mul,
+                    ),
+                    ir::MultiplicativeExpressionOperator::Slash(_) => self.evaluate_binary(
+                        &multiplicative_expression.left_operand,
+                        &multiplicative_expression.right_operand,
+                        BinaryOperator::Div,
+                    ),
+                    ir::MultiplicativeExpressionOperator::Percent(_) => self.evaluate_binary(
+                        &multiplicative_expression.left_operand,
+                        &multiplicative_expression.right_operand,
+                        BinaryOperator::Rem,
+                    ),
+                }
             }
-            ir::Expression::ExponentiationExpression(exponentiation_expression) => {
-                self.evaluate_exponentiation_expression(exponentiation_expression)
-            }
+            // v2 ExponentiationExpression has no explicit operator field (only `**` exists)
+            ir::Expression::ExponentiationExpression(exponentiation_expression) => self
+                .evaluate_binary(
+                    &exponentiation_expression.left_operand,
+                    &exponentiation_expression.right_operand,
+                    BinaryOperator::Pow,
+                ),
             ir::Expression::PrefixExpression(prefix_expression) => {
-                self.evaluate_prefix_expression(prefix_expression)
+                match &prefix_expression.operator {
+                    ir::PrefixExpressionOperator::Minus(_) => {
+                        self.evaluate_unary(&prefix_expression.operand, UnaryOperator::Negate)
+                    }
+                    ir::PrefixExpressionOperator::Tilde(_) => {
+                        self.evaluate_unary(&prefix_expression.operand, UnaryOperator::BitNot)
+                    }
+                    _ => Err(EvaluationError::Other),
+                }
             }
             ir::Expression::HexNumberExpression(hex_number_expression) => {
                 Number::from_hex_number_expression(hex_number_expression)
@@ -391,93 +330,24 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         }
     }
 
-    fn evaluate_bitwise_or_expression(
+    fn evaluate_binary(
         &mut self,
-        bitwise_or_expression: &ir::BitwiseOrExpression,
+        left: &ir::Expression,
+        right: &ir::Expression,
+        op: BinaryOperator,
     ) -> Result<TypedValue, EvaluationError> {
-        let lhs = self.evaluate_expression(&bitwise_or_expression.left_operand)?;
-        let rhs = self.evaluate_expression(&bitwise_or_expression.right_operand)?;
-        lhs.bit_or(&rhs, self.types)
+        let lhs = self.evaluate_expression(left)?;
+        let rhs = self.evaluate_expression(right)?;
+        lhs.binary(op, &rhs, self.types)
     }
 
-    fn evaluate_bitwise_xor_expression(
+    fn evaluate_unary(
         &mut self,
-        bitwise_xor_expression: &ir::BitwiseXorExpression,
+        operand: &ir::Expression,
+        op: UnaryOperator,
     ) -> Result<TypedValue, EvaluationError> {
-        let lhs = self.evaluate_expression(&bitwise_xor_expression.left_operand)?;
-        let rhs = self.evaluate_expression(&bitwise_xor_expression.right_operand)?;
-        lhs.bit_xor(&rhs, self.types)
-    }
-
-    fn evaluate_bitwise_and_expression(
-        &mut self,
-        bitwise_and_expression: &ir::BitwiseAndExpression,
-    ) -> Result<TypedValue, EvaluationError> {
-        let lhs = self.evaluate_expression(&bitwise_and_expression.left_operand)?;
-        let rhs = self.evaluate_expression(&bitwise_and_expression.right_operand)?;
-        lhs.bit_and(&rhs, self.types)
-    }
-
-    fn evaluate_shift_expression(
-        &mut self,
-        shift_expression: &ir::ShiftExpression,
-    ) -> Result<TypedValue, EvaluationError> {
-        let lhs = self.evaluate_expression(&shift_expression.left_operand)?;
-        let rhs = self.evaluate_expression(&shift_expression.right_operand)?;
-        match &shift_expression.operator {
-            ir::ShiftExpressionOperator::LessThanLessThan(_) => lhs.shl(&rhs, self.types),
-            ir::ShiftExpressionOperator::GreaterThanGreaterThan(_) => lhs.shr(&rhs, self.types),
-            ir::ShiftExpressionOperator::GreaterThanGreaterThanGreaterThan(_) => {
-                Err(EvaluationError::Other)
-            }
-        }
-    }
-
-    fn evaluate_additive_expression(
-        &mut self,
-        additive_expression: &ir::AdditiveExpression,
-    ) -> Result<TypedValue, EvaluationError> {
-        let lhs = self.evaluate_expression(&additive_expression.left_operand)?;
-        let rhs = self.evaluate_expression(&additive_expression.right_operand)?;
-        match &additive_expression.operator {
-            ir::AdditiveExpressionOperator::Plus(_) => lhs.add(&rhs, self.types),
-            ir::AdditiveExpressionOperator::Minus(_) => lhs.sub(&rhs, self.types),
-        }
-    }
-
-    fn evaluate_multiplicative_expression(
-        &mut self,
-        multiplicative_expression: &ir::MultiplicativeExpression,
-    ) -> Result<TypedValue, EvaluationError> {
-        let lhs = self.evaluate_expression(&multiplicative_expression.left_operand)?;
-        let rhs = self.evaluate_expression(&multiplicative_expression.right_operand)?;
-        match &multiplicative_expression.operator {
-            ir::MultiplicativeExpressionOperator::Asterisk(_) => lhs.mul(&rhs, self.types),
-            ir::MultiplicativeExpressionOperator::Slash(_) => lhs.div(&rhs, self.types),
-            ir::MultiplicativeExpressionOperator::Percent(_) => lhs.rem(&rhs, self.types),
-        }
-    }
-
-    fn evaluate_exponentiation_expression(
-        &mut self,
-        exponentiation_expression: &ir::ExponentiationExpression,
-    ) -> Result<TypedValue, EvaluationError> {
-        let lhs = self.evaluate_expression(&exponentiation_expression.left_operand)?;
-        let rhs = self.evaluate_expression(&exponentiation_expression.right_operand)?;
-        // v2 ExponentiationExpression has no explicit operator field (only `**` exists)
-        lhs.pow(&rhs, self.types)
-    }
-
-    fn evaluate_prefix_expression(
-        &mut self,
-        prefix_expression: &ir::PrefixExpression,
-    ) -> Result<TypedValue, EvaluationError> {
-        let operand = self.evaluate_expression(&prefix_expression.operand)?;
-        match &prefix_expression.operator {
-            ir::PrefixExpressionOperator::Minus(_) => operand.negate(self.types),
-            ir::PrefixExpressionOperator::Tilde(_) => operand.bit_not(self.types),
-            _ => Err(EvaluationError::Other),
-        }
+        let value = self.evaluate_expression(operand)?;
+        value.unary(op, self.types)
     }
 
     fn evaluate_identifier(
