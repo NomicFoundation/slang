@@ -3,9 +3,9 @@
 Diagnostics: 1
 
 [resolution/external-declaration-shadowing] Error: This declaration shadows a declaration outside the inline assembly block.
-    ╭─[input.sol:13:21]
-    │
- 13 │                 let x := 1
-    │                     ┬  
-    │                     ╰── Error occurred here.
-────╯
+   ╭─[input.sol:9:17]
+   │
+ 9 │             let a := 1
+   │                 ┬  
+   │                 ╰── Error occurred here.
+───╯
