@@ -3,9 +3,9 @@
 Diagnostics: 1
 
 [resolution/built-in-redeclaration] Error: Cannot use the built-in name 'add' as a declaration.
-   ╭─[input.sol:7:29]
+   ╭─[input.sol:9:17]
    │
- 7 │             function g() -> add {}
-   │                             ─┬─  
-   │                              ╰─── Error occurred here.
+ 9 │             let add := 1
+   │                 ─┬─  
+   │                  ╰─── Error occurred here.
 ───╯

@@ -38,6 +38,14 @@ mod resolution {
         use super::*;
 
         #[test]
+        fn supersedes_external_shadowing() -> Result<()> {
+            run(
+                "resolution/built_in_redeclaration",
+                "supersedes_external_shadowing",
+            )
+        }
+
+        #[test]
         fn yul_function() -> Result<()> {
             run("resolution/built_in_redeclaration", "yul_function")
         }
