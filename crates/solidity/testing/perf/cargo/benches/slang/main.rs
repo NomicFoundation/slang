@@ -10,6 +10,15 @@ use solidity_testing_perf_cargo::dataset::SolidityProject;
 use solidity_testing_perf_cargo::tests;
 use solidity_testing_perf_cargo::tests::slang::binder_v2_run::BuiltSemanticAnalysis;
 use solidity_testing_perf_cargo::tests::slang::bindings_build::BuiltBindingGraph;
+// Local aliases for the setup functions, so the generated benchmark ID reads
+// `parser_setup("weighted_pool")` instead of `tests :: slang :: parser :: setup("weighted_pool")`.
+use tests::slang::binder_v2_cleanup::setup as binder_v2_cleanup_setup;
+use tests::slang::binder_v2_run::setup as binder_v2_run_setup;
+use tests::slang::bindings_build::setup as bindings_build_setup;
+use tests::slang::bindings_resolve::setup as bindings_resolve_setup;
+use tests::slang::cursor::setup as cursor_setup;
+use tests::slang::parser::setup as parser_setup;
+use tests::slang::query::setup as query_setup;
 
 mod __dependencies_used_in_lib__ {
     use anyhow as _;
@@ -60,26 +69,26 @@ macro_rules! bench_projects {
 
 mod cst_group {
     use super::{
-        black_box, library_benchmark, library_benchmark_group, tests, CompilationUnit, Rc,
-        SolidityProject,
+        black_box, cursor_setup, library_benchmark, library_benchmark_group, parser_setup,
+        query_setup, tests, CompilationUnit, Rc, SolidityProject,
     };
 
     bench_projects! {
-        #[library_benchmark(setup = tests::slang::parser::setup)]
+        #[library_benchmark(setup = parser_setup)]
         pub fn parser(project: &SolidityProject) -> Rc<CompilationUnit> {
             black_box(tests::slang::parser::run(black_box(project)))
         }
     }
 
     bench_projects! {
-        #[library_benchmark(setup = tests::slang::cursor::setup)]
+        #[library_benchmark(setup = cursor_setup)]
         pub fn cursor(unit: Rc<CompilationUnit>) -> Rc<CompilationUnit> {
             black_box(tests::slang::cursor::run(black_box(unit)))
         }
     }
 
     bench_projects! {
-        #[library_benchmark(setup = tests::slang::query::setup)]
+        #[library_benchmark(setup = query_setup)]
         pub fn query(unit: Rc<CompilationUnit>) -> Rc<CompilationUnit> {
             black_box(tests::slang::query::run(black_box(unit)))
         }
@@ -95,26 +104,26 @@ use cst_group::cst;
 
 mod bindings_group {
     use super::{
-        black_box, library_benchmark, library_benchmark_group, tests, BuiltBindingGraph,
-        CompilationUnit, Rc,
+        bindings_build_setup, bindings_resolve_setup, black_box, library_benchmark,
+        library_benchmark_group, tests, BuiltBindingGraph, CompilationUnit, Rc,
     };
 
     bench_projects! {
-        #[library_benchmark(setup = tests::slang::bindings_build::setup)]
+        #[library_benchmark(setup = bindings_build_setup)]
         pub fn build(unit: Rc<CompilationUnit>) -> BuiltBindingGraph {
             black_box(tests::slang::bindings_build::run(black_box(unit)))
         }
     }
 
     bench_projects! {
-        #[library_benchmark(setup = tests::slang::bindings_resolve::setup)]
+        #[library_benchmark(setup = bindings_resolve_setup)]
         pub fn resolve(unit: BuiltBindingGraph) -> BuiltBindingGraph {
             black_box(tests::slang::bindings_resolve::run(black_box(unit)))
         }
     }
 
     bench_projects! {
-        #[library_benchmark(setup = tests::slang::bindings_resolve::setup)]
+        #[library_benchmark(setup = bindings_resolve_setup)]
         pub fn cleanup(unit: BuiltBindingGraph) {
             black_box(unit);
         }
@@ -130,19 +139,19 @@ use bindings_group::bindings;
 
 mod v2_binder_group {
     use super::{
-        black_box, library_benchmark, library_benchmark_group, tests, BuiltSemanticAnalysis,
-        CompilationUnit, Rc,
+        binder_v2_cleanup_setup, binder_v2_run_setup, black_box, library_benchmark,
+        library_benchmark_group, tests, BuiltSemanticAnalysis, CompilationUnit, Rc,
     };
 
     bench_projects! {
-        #[library_benchmark(setup = tests::slang::binder_v2_run::setup)]
+        #[library_benchmark(setup = binder_v2_run_setup)]
         pub fn run(unit: Rc<CompilationUnit>) -> BuiltSemanticAnalysis {
             black_box(tests::slang::binder_v2_run::run(black_box(unit)))
         }
     }
 
     bench_projects! {
-        #[library_benchmark(setup = tests::slang::binder_v2_cleanup::setup)]
+        #[library_benchmark(setup = binder_v2_cleanup_setup)]
         pub fn cleanup(unit: BuiltSemanticAnalysis) {
             black_box(unit);
         }

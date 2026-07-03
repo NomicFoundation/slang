@@ -12,6 +12,9 @@ use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
 use solidity_testing_perf_cargo::config::benchmark_config_with_num_callers;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
 use solidity_testing_perf_cargo::tests;
+// Import the shared setup function directly, so the generated benchmark ID reads
+// `setup("uniswap")` instead of `tests :: setup :: setup("uniswap")`.
+use tests::setup::setup;
 
 mod __dependencies_used_in_lib__ {
     use anyhow as _;
@@ -48,7 +51,7 @@ mod __dependencies_used_in_lib__ {
  */
 
 // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-#[library_benchmark(setup = tests::setup::setup)]
+#[library_benchmark(setup = setup)]
 #[bench::mooniswap("mooniswap")]
 #[bench::weighted_pool("weighted_pool")]
 #[bench::uniswap("uniswap")]
@@ -64,7 +67,7 @@ fn slang(project: &SolidityProject) -> Rc<CompilationUnit> {
 }
 
 // slang_v2 cannot parse mooniswap or weighted_pool (Solidity 0.7.1).
-#[library_benchmark(setup = tests::setup::setup)]
+#[library_benchmark(setup = setup)]
 #[bench::uniswap("uniswap")]
 #[bench::multicall3("multicall3")]
 #[bench::create_x("create_x")]
@@ -78,7 +81,7 @@ fn slang_v2(project: &SolidityProject) -> Vec<(String, SourceUnit)> {
 }
 
 // solar cannot parse mooniswap.
-#[library_benchmark(setup = tests::setup::setup)]
+#[library_benchmark(setup = setup)]
 #[bench::weighted_pool("weighted_pool")]
 #[bench::uniswap("uniswap")]
 #[bench::multicall3("multicall3")]
@@ -93,7 +96,7 @@ fn solar(project: &SolidityProject) -> usize {
 }
 
 // tree_sitter cannot parse uniswap, create_x, or pointer_libraries.
-#[library_benchmark(setup = tests::setup::setup)]
+#[library_benchmark(setup = setup)]
 #[bench::mooniswap("mooniswap")]
 #[bench::weighted_pool("weighted_pool")]
 #[bench::multicall3("multicall3")]
