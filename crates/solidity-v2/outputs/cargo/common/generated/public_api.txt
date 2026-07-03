@@ -509,6 +509,7 @@ pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpo
 pub mod slang_solidity_v2_common::diagnostics::kinds::structure
 pub enum slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EmptyEnum(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EmptyStruct(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EnumWithTooManyMembers(slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::FunctionNameMatchesContainer(slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::InvalidUsingDirectiveContainer(slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer)
@@ -522,6 +523,8 @@ impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::stru
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind) -> bool
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -564,6 +567,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers
@@ -1031,6 +1053,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic:
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -1225,6 +1249,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers::message(&self) -> alloc::string::String

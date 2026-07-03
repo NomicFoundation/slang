@@ -671,6 +671,11 @@ mod structure {
     }
 
     #[test]
+    fn empty_struct() -> Result<()> {
+        run("structure", "empty_struct")
+    }
+
+    #[test]
     fn enum_with_too_many_members() -> Result<()> {
         run("structure", "enum_with_too_many_members")
     }
