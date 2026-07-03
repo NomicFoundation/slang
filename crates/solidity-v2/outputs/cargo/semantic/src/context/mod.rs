@@ -8,7 +8,7 @@ use slang_solidity_v2_common::utils::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
-use crate::binder::{Binder, Definition, Reference};
+use crate::binder::{Binder, BinderCapacities, Definition, Reference};
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_compute_linearisations,
     p5_resolve_references, p6_resolve_yul, p7_code_analysis,
@@ -70,9 +70,15 @@ impl SemanticContext {
         language_version: LanguageVersion,
         evm_target: EvmTarget,
         files: &[impl SemanticFile],
+        node_kinds: Option<&ir::NodeKindHistogram>,
         diagnostics: &mut DiagnosticCollection,
     ) -> Self {
-        let mut binder = Binder::default();
+        // When the IR node-kind histogram is available, pre-size the dominant
+        // binder maps from it to avoid grow/rehash churn while populating them.
+        let mut binder = match node_kinds {
+            Some(node_kinds) => Binder::with_capacity(BinderCapacities::from(node_kinds)),
+            None => Binder::default(),
+        };
         let mut types = TypeRegistry::new(language_version);
         let file_node_mapper = FileNodeMapper::build_from(files);
 

@@ -1,17 +1,19 @@
 use std::collections::VecDeque;
 
-use slang_solidity_v2_common::collections::{Map, Set};
+use slang_solidity_v2_common::collections::{DefaultWithCapacity, Map, Set};
 use slang_solidity_v2_common::nodes::NodeId;
 
 use super::built_ins::InternalBuiltIn;
 use super::types::{Type, TypeId};
 
 mod assembly;
+mod capacities;
 mod definitions;
 mod references;
 mod scopes;
 
 pub(crate) use assembly::AssemblyBlock;
+pub(crate) use capacities::BinderCapacities;
 pub use definitions::Definition;
 pub(crate) use definitions::{ConstantDefinition, ContractDefinition, InterfaceDefinition};
 pub use references::{Reference, Resolution};
@@ -139,6 +141,23 @@ pub(crate) enum ResolveOptions {
 }
 
 impl Binder {
+    /// Creates a binder with its dominant `NodeId`-keyed maps pre-sized per
+    /// `capacities`. All other fields start empty (`Default`); they are either
+    /// much smaller or not keyed per-node.
+    pub(crate) fn with_capacity(capacities: BinderCapacities) -> Self {
+        Self {
+            scopes: Vec::with_capacity(capacities.scopes),
+            scopes_by_node_id: Map::default_with_capacity(capacities.scopes_by_node_id),
+            node_typing: Map::default_with_capacity(capacities.node_typing),
+            references: Map::default_with_capacity(capacities.references),
+            definitions: Map::default_with_capacity(capacities.definitions),
+            definitions_by_identifier: Map::default_with_capacity(capacities.definitions),
+            linearisations: Map::default_with_capacity(capacities.linearisations),
+            assembly_blocks: Map::default_with_capacity(capacities.assembly_blocks),
+            ..Default::default()
+        }
+    }
+
     pub(crate) fn get_scope_by_id(&self, scope_id: ScopeId) -> &Scope {
         self.scopes.get(scope_id.0).unwrap()
     }
@@ -272,7 +291,8 @@ impl Binder {
 
     pub(crate) fn update_definitions_to_references_index(&mut self) {
         // Build reverse mapping from definitions to references
-        let mut definitions: Map<NodeId, Vec<NodeId>> = Map::default();
+        let mut definitions: Map<NodeId, Vec<NodeId>> =
+            Map::default_with_capacity(self.definitions.len());
         for (reference_id, reference) in &self.references {
             match &reference.resolution {
                 Resolution::Definition(node_id) => {
@@ -506,16 +526,14 @@ impl Binder {
     pub(crate) fn resolve_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
         let scope = self.get_scope_by_id(scope_id);
         match scope {
-            Scope::Block(block_scope) => block_scope.definitions.get(symbol).copied().map_or_else(
+            Scope::Block(block_scope) => block_scope.lookup_definition(symbol).map_or_else(
                 || self.resolve_in_scope(block_scope.parent_scope_id, symbol),
                 Resolution::Definition,
             ),
-            Scope::Chained(chained_scope) => {
-                chained_scope.definitions.get(symbol).copied().map_or_else(
-                    || self.resolve_in_scope(chained_scope.parent_scope_id, symbol),
-                    Resolution::Definition,
-                )
-            }
+            Scope::Chained(chained_scope) => chained_scope.lookup_definition(symbol).map_or_else(
+                || self.resolve_in_scope(chained_scope.parent_scope_id, symbol),
+                Resolution::Definition,
+            ),
             Scope::Contract(contract_scope) => {
                 self.resolve_in_contract_scope_internal(
                     contract_scope,

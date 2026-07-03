@@ -10,30 +10,14 @@ use slang_solidity_v2_cst::structured_cst::text_range::TextRange;
 #[path = "default.generated.rs"]
 mod default;
 
+mod node_id_generator;
+
+// Re-exported so these remain reachable as `builder::{NodeIdGenerator,
+// NodeKindHistogram}` (and, via the parent, at the crate's `ir` module).
+pub use node_id_generator::{NodeIdGenerator, NodeKindHistogram};
+
 use super::Source;
 use crate::ir::nodes as output;
-
-/// A strictly monotonically increasing `NodeId` generator.
-pub struct NodeIdGenerator {
-    next_id: usize,
-}
-
-impl NodeIdGenerator {
-    /// Returns a `NodeId` greater than any previously returned by this
-    /// generator.
-    /// The returned ID is unique and suitable for use as a total-order key.
-    pub fn next_id(&mut self) -> output::NodeId {
-        let id = self.next_id;
-        self.next_id += 1;
-        id.into()
-    }
-}
-
-impl Default for NodeIdGenerator {
-    fn default() -> Self {
-        Self { next_id: 1usize }
-    }
-}
 
 /// The output of a CST → IR build operation, containing both the built IR
 /// source unit and any diagnostics emitted during the build.
@@ -71,8 +55,8 @@ pub(crate) struct CstToIrBuilder<'a, S: Source> {
 }
 
 impl<S: Source> CstToIrBuilder<'_, S> {
-    fn next_id(&mut self) -> output::NodeId {
-        self.id_generator.next_id()
+    fn next_id(&mut self, kind: output::NodeKind) -> output::NodeId {
+        self.id_generator.next_id_of(kind)
     }
 
     fn unparse_range(&self, range: std::ops::Range<usize>) -> String {
@@ -87,7 +71,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::ConstantDefinition,
     ) -> output::ConstantDefinition {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::ConstantDefinition);
         let range = source.calculate_text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
         let name = self.build_identifier(&source.name);
@@ -108,7 +92,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::ContractDefinition,
     ) -> output::ContractDefinition {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::ContractDefinition);
         let range = source.calculate_text_range().unwrap_or_default();
         let is_abstract = source.abstract_keyword.is_some();
         let name = self.build_identifier(&source.name);
@@ -148,7 +132,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::ErrorDefinition,
     ) -> output::ErrorDefinition {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::ErrorDefinition);
         let range = source.calculate_text_range().unwrap_or_default();
         let name = self.build_identifier(&source.name);
         let parameters = source
@@ -171,7 +155,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::EventDefinition,
     ) -> output::EventDefinition {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::EventDefinition);
         let range = source.calculate_text_range().unwrap_or_default();
         let name = self.build_identifier(&source.name);
         let is_anonymous = source.anonymous_keyword.is_some();
@@ -196,7 +180,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::FunctionDefinition,
     ) -> output::FunctionDefinition {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::FunctionDefinition);
         let range = source.calculate_text_range().unwrap_or_default();
         let (kind, name) = match &source.name {
             input::FunctionName::Identifier(identifier) => (
@@ -245,7 +229,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     fn build_function_type(&mut self, source: &input::FunctionType) -> output::FunctionType {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::FunctionType);
         let range = source.calculate_text_range().unwrap_or_default();
         let parameters = self.build_parameters_declaration(&source.parameters);
         let visibility = Self::function_type_visibility(&source.attributes);
@@ -271,7 +255,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::IndexAccessExpression,
     ) -> output::IndexAccessExpression {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::IndexAccessExpression);
         let range = source.calculate_text_range().unwrap_or_default();
         let operand = self.build_expression(&source.operand);
         let start = source
@@ -295,7 +279,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     fn build_mapping_type(&mut self, source: &input::MappingType) -> output::MappingType {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::MappingType);
         let range = source.calculate_text_range().unwrap_or_default();
         let key_type = self.build_mapping_key_as_parameter(&source.key_type);
         let value_type = self.build_mapping_value_as_parameter(&source.value_type);
@@ -309,7 +293,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     fn build_parameter(&mut self, source: &input::Parameter) -> output::Parameter {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::Parameter);
         let range = source.calculate_text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
         let storage_location = source
@@ -332,7 +316,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::StateVariableDefinition,
     ) -> output::StateVariableDefinition {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::StateVariableDefinition);
         let range = source.calculate_text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
         let name = self.build_identifier(&source.name);
@@ -523,7 +507,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::ConstructorDefinition,
     ) -> output::FunctionDefinition {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::FunctionDefinition);
         let range = source.calculate_text_range().unwrap_or_default();
         let kind = output::FunctionKind::Constructor;
         let name = None;
@@ -593,7 +577,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::FallbackFunctionDefinition,
     ) -> output::FunctionDefinition {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::FunctionDefinition);
         let range = source.calculate_text_range().unwrap_or_default();
         let kind = output::FunctionKind::Fallback;
         let name = None;
@@ -671,7 +655,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::ReceiveFunctionDefinition,
     ) -> output::FunctionDefinition {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::FunctionDefinition);
         let range = source.calculate_text_range().unwrap_or_default();
         let kind = output::FunctionKind::Receive;
         let name = None;
@@ -746,7 +730,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::ModifierDefinition,
     ) -> output::FunctionDefinition {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::FunctionDefinition);
         let range = source.calculate_text_range().unwrap_or_default();
         let kind = output::FunctionKind::Modifier;
         let name = Some(self.build_identifier(&source.name));
@@ -870,7 +854,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     //
 
     fn build_mapping_key_as_parameter(&mut self, source: &input::MappingKey) -> output::Parameter {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::Parameter);
         let range = source.calculate_text_range().unwrap_or_default();
         let type_name = self.build_mapping_key_type(&source.key_type);
         let name = source.name.as_ref().map(|name| self.build_identifier(name));
@@ -900,7 +884,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::MappingValue,
     ) -> output::Parameter {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::Parameter);
         let range = source.calculate_text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
         let name = source.name.as_ref().map(|name| self.build_identifier(name));
@@ -923,7 +907,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::NamedImport,
     ) -> output::PathImport {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::PathImport);
         let range = source.calculate_text_range().unwrap_or_default();
         let path = self.build_string_literal(&source.path);
         let alias = Some(self.build_import_alias(&source.alias));
@@ -941,7 +925,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     //
 
     fn build_event_parameter(&mut self, source: &input::EventParameter) -> output::Parameter {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::Parameter);
         let range = source.calculate_text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
         let is_indexed = source.indexed_keyword.is_some();
@@ -958,7 +942,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     fn build_error_parameter(&mut self, source: &input::ErrorParameter) -> output::Parameter {
-        let id = self.next_id();
+        let id = self.next_id(output::NodeKind::Parameter);
         let range = source.calculate_text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
         let name = source.name.as_ref().map(|name| self.build_identifier(name));

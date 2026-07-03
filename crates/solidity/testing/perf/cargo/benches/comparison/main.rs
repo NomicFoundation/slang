@@ -8,7 +8,6 @@ use std::rc::Rc;
 use ::tree_sitter::Tree as TreeSitterTree;
 use gungraun::{library_benchmark, library_benchmark_group, main};
 use slang_solidity::compilation::CompilationUnit;
-use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
 use solidity_testing_perf_cargo::config::benchmark_config_with_num_callers;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
 use solidity_testing_perf_cargo::tests;
@@ -76,8 +75,8 @@ fn slang(project: &SolidityProject) -> Rc<CompilationUnit> {
 #[bench::one_step_leverage_f("one_step_leverage_f")]
 #[bench::pointer_libraries("pointer_libraries")]
 #[bench::merkle_proof("merkle_proof")]
-fn slang_v2(project: &SolidityProject) -> Vec<(String, SourceUnit)> {
-    black_box(tests::slang_v2::parser::run(black_box(project)))
+fn slang_v2(input: tests::slang_v2::parser::Input) -> tests::slang_v2::parser::Output {
+    black_box(tests::slang_v2::parser::run(black_box(input)))
 }
 
 // solar cannot parse mooniswap.

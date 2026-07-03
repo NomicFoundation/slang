@@ -4,26 +4,36 @@ use slang_solidity_v2_ir::ir::{self, NodeIdGenerator, SourceUnit, SourceUnitMemb
 
 use crate::dataset::SolidityProject;
 
-pub fn setup(project: &str) -> (&'static SolidityProject, Vec<(String, InputSourceUnit)>) {
+pub struct Input {
+    pub(crate) project: &'static SolidityProject,
+    pub(crate) source_units: Vec<(String, InputSourceUnit)>,
+}
+
+pub struct Output {
+    pub(crate) ir_source_units: Vec<SourceUnit>,
+    pub(crate) id_generator: NodeIdGenerator,
+}
+
+pub fn setup(project: &str) -> Input {
     let project = super::parser::setup(project);
-    let parsed = super::parser::test(project);
-    (project, parsed)
+    let source_units = super::parser::test(project);
+
+    Input {
+        project,
+        source_units,
+    }
 }
 
-pub fn run(
-    project: &'static SolidityProject,
-    sources: Vec<(String, InputSourceUnit)>,
-) -> Vec<SourceUnit> {
-    test((project, sources))
+pub fn run(input: Input) -> Output {
+    test(input)
 }
 
-pub fn test(
-    (project, sources): (&'static SolidityProject, Vec<(String, InputSourceUnit)>),
-) -> Vec<SourceUnit> {
+pub fn test(input: Input) -> Output {
     let mut id_generator = NodeIdGenerator::default();
     let mut ir_source_units = Vec::new();
-    for (name, source) in sources {
-        let contents = project
+    for (name, source) in input.source_units {
+        let contents = input
+            .project
             .sources
             .get(&name)
             .expect("Source not found in project");
@@ -40,12 +50,16 @@ pub fn test(
 
         ir_source_units.push(ir_root);
     }
-    ir_source_units
+
+    Output {
+        ir_source_units,
+        id_generator,
+    }
 }
 
-pub fn count_contracts(source_units: &Vec<SourceUnit>) -> usize {
+pub fn count_contracts(output: &Output) -> usize {
     let mut contract_count = 0;
-    for source_unit in source_units {
+    for source_unit in &output.ir_source_units {
         for member in &source_unit.members {
             match member {
                 SourceUnitMember::ContractDefinition(_)
@@ -62,9 +76,9 @@ pub fn count_contracts(source_units: &Vec<SourceUnit>) -> usize {
 // `SourceUnit::compute_contracts_abi` operates on. Used as the IR-level
 // ground truth to detect whether ABI computation silently drops any
 // concrete contract.
-pub fn count_concrete_contracts(source_units: &Vec<SourceUnit>) -> usize {
+pub fn count_concrete_contracts(output: &Output) -> usize {
     let mut count = 0;
-    for source_unit in source_units {
+    for source_unit in &output.ir_source_units {
         for member in &source_unit.members {
             if let SourceUnitMember::ContractDefinition(contract) = member {
                 if !contract.is_abstract {
@@ -76,7 +90,7 @@ pub fn count_concrete_contracts(source_units: &Vec<SourceUnit>) -> usize {
     count
 }
 
-pub fn count_identifiers(source_units: &Vec<SourceUnit>) -> usize {
+pub fn count_identifiers(output: &Output) -> usize {
     struct Checker {
         total: usize,
     }
@@ -88,7 +102,7 @@ pub fn count_identifiers(source_units: &Vec<SourceUnit>) -> usize {
     }
 
     let mut checker = Checker { total: 0 };
-    for source_unit in source_units {
+    for source_unit in &output.ir_source_units {
         accept_source_unit(source_unit, &mut checker);
     }
     checker.total

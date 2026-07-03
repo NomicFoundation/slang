@@ -1,0 +1,28 @@
+{%- set target = model.ir_language_model.target -%}
+
+//
+// Node kinds
+//
+
+// A flat discriminant for every kind of node that owns a `NodeId`, i.e. every
+// generated sequence and terminal struct. Used to index per-kind histograms
+// collected while building the IR (see the `builder` module).
+{%- set_global kind_index = 0 %}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[repr(u16)]
+pub enum NodeKind {
+  {%- for parent_type, sequence in target.sequences %}
+    {{ parent_type }} = {{ kind_index }},
+    {%- set_global kind_index = kind_index + 1 %}
+  {%- endfor %}
+  {%- for terminal_type, terminal in target.terminals %}
+    {{ terminal_type }} = {{ kind_index }},
+    {%- set_global kind_index = kind_index + 1 %}
+  {%- endfor %}
+}
+
+impl NodeKind {
+    /// The number of distinct node kinds; valid `NodeKind` discriminants are
+    /// `0..COUNT`, making it the length of any per-kind lookup array.
+    pub const COUNT: usize = {{ kind_index }};
+}
