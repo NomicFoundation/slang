@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/built-in-redeclaration] Error: Cannot use the built-in name 'add' as a declaration.
+   ╭─[input.sol:9:17]
+   │
+ 9 │             let add := 1
+   │                 ─┬─  
+   │                  ╰─── Error occurred here.
+───╯
