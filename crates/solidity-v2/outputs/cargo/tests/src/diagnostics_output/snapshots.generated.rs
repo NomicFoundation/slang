@@ -265,6 +265,133 @@ mod resolution {
         }
 
         #[test]
+        fn inherited_constant() -> Result<()> {
+            run("resolution/identifier_redeclaration", "inherited_constant")
+        }
+
+        #[test]
+        fn inherited_cross_kind() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "inherited_cross_kind",
+            )
+        }
+
+        #[test]
+        fn inherited_diamond_redeclared() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "inherited_diamond_redeclared",
+            )
+        }
+
+        #[test]
+        fn inherited_diamond_sibling() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "inherited_diamond_sibling",
+            )
+        }
+
+        #[test]
+        fn inherited_error() -> Result<()> {
+            run("resolution/identifier_redeclaration", "inherited_error")
+        }
+
+        #[test]
+        fn inherited_event_function_clash() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "inherited_event_function_clash",
+            )
+        }
+
+        #[test]
+        fn inherited_event_overload() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "inherited_event_overload",
+            )
+        }
+
+        #[test]
+        fn inherited_function_error_clash() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "inherited_function_error_clash",
+            )
+        }
+
+        #[test]
+        fn inherited_function_modifier_clash() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "inherited_function_modifier_clash",
+            )
+        }
+
+        #[test]
+        fn inherited_function_overload() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "inherited_function_overload",
+            )
+        }
+
+        #[test]
+        fn inherited_function_override() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "inherited_function_override",
+            )
+        }
+
+        #[test]
+        fn inherited_grandparent() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "inherited_grandparent",
+            )
+        }
+
+        #[test]
+        fn inherited_modifier_variable_clash() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "inherited_modifier_variable_clash",
+            )
+        }
+
+        #[test]
+        fn inherited_private_member() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "inherited_private_member",
+            )
+        }
+
+        #[test]
+        fn inherited_state_variable() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "inherited_state_variable",
+            )
+        }
+
+        #[test]
+        fn inherited_struct() -> Result<()> {
+            run("resolution/identifier_redeclaration", "inherited_struct")
+        }
+
+        #[test]
+        fn inherited_via_interface() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "inherited_via_interface",
+            )
+        }
+
+        #[test]
         fn local_variable() -> Result<()> {
             run("resolution/identifier_redeclaration", "local_variable")
         }

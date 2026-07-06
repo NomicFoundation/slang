@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[DeclarationError 9097] Error: Identifier already declared.
+    ╭─[input.sol:9:5]
+    │
+  9 │ ╭─▶     modifier m(uint a) {
+    ┆ ┆   
+ 11 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
+
+[TypeError 5631] Error: Override changes function or public state variable to modifier.
+    ╭─[input.sol:9:5]
+    │
+  9 │ ╭─▶     modifier m(uint a) {
+    ┆ ┆   
+ 11 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯

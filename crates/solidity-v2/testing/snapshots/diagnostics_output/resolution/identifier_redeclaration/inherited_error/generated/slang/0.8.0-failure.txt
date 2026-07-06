@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
+   ╭─[input.sol:5:5]
+   │
+ 5 │     error Err(uint);
+   │     ────────┬───────  
+   │             ╰───────── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
+   ╭─[input.sol:9:5]
+   │
+ 9 │     error Err(bytes32);
+   │     ─────────┬─────────  
+   │              ╰─────────── Error occurred here.
+───╯
+
+[resolution/identifier-redeclaration] Error: Identifier already declared.
+   ╭─[input.sol:9:11]
+   │
+ 9 │     error Err(bytes32);
+   │           ─┬─  
+   │            ╰─── Error occurred here.
+───╯

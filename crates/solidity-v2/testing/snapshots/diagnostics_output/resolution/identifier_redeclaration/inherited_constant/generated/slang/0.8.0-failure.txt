@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/identifier-redeclaration] Error: Identifier already declared.
+   ╭─[input.sol:9:19]
+   │
+ 9 │     uint constant X = 2;
+   │                   ┬  
+   │                   ╰── Error occurred here.
+───╯

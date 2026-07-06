@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
+   ╭─[input.sol:9:5]
+   │
+ 9 │     error Err();
+   │     ──────┬─────  
+   │           ╰─────── Error occurred here.
+───╯
+
+[resolution/identifier-redeclaration] Error: Identifier already declared.
+   ╭─[input.sol:9:11]
+   │
+ 9 │     error Err();
+   │           ─┬─  
+   │            ╰─── Error occurred here.
+───╯

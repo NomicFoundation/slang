@@ -285,6 +285,13 @@ impl Definition {
                 variable_definition.ir_node.attributes.visibility,
                 ir::StateVariableVisibility::Private
             ),
+            // A `private` constant isn't visible to derived contracts; one
+            // without an explicit visibility (or a file-level constant, which
+            // can't specify one) defaults to internally visible.
+            Self::Constant(constant_definition) => !matches!(
+                constant_definition.ir_node.visibility,
+                Some(ir::StateVariableVisibility::Private)
+            ),
             _ => true,
         }
     }
@@ -315,6 +322,39 @@ impl Definition {
             (self, other),
             (Self::Function(_), Self::Function(_)) | (Self::Event(_), Self::Event(_))
         )
+    }
+
+    /// Whether `self`, declared in a derived contract/interface, may legally
+    /// share a name with `inherited`, a member visible through one of its base
+    /// contracts/interfaces, rather than being an illegal redeclaration
+    /// ("Identifier already declared").
+    ///
+    /// Unlike [`Self::overloads_with`], the relation is *directional* (the
+    /// receiver is the derived declaration) and accounts for overriding as
+    /// well as overloading, mirroring Solidity's rules:
+    ///
+    /// - functions overload *and* override base functions;
+    /// - modifiers override base modifiers;
+    /// - events overload base events;
+    /// - a public state variable's getter may override a base function (but
+    ///   not the other way around: a function cannot override a public state
+    ///   variable, so that pair *is* a redeclaration).
+    ///
+    /// The actual *correctness* of an override/overload (presence of
+    /// `virtual`/`override` specifiers, signature compatibility, mutability,
+    /// duplicate event signatures, ...) is reported by separate diagnostics
+    /// and is intentionally not considered here.
+    pub(crate) fn may_coexist_with_inherited(&self, inherited: &Definition) -> bool {
+        match (self, inherited) {
+            (Self::Function(_), Self::Function(_))
+            | (Self::Modifier(_), Self::Modifier(_))
+            | (Self::Event(_), Self::Event(_)) => true,
+            (Self::StateVariable(state_variable), Self::Function(_)) => matches!(
+                state_variable.ir_node.attributes.visibility,
+                ir::StateVariableVisibility::Public
+            ),
+            _ => false,
+        }
     }
 
     pub(crate) fn new_constant(

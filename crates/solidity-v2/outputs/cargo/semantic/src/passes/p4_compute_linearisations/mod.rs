@@ -1,102 +1,230 @@
 use std::cmp::Ordering;
 use std::sync::Arc;
 
-use slang_solidity_v2_common::collections::Map;
+use slang_solidity_v2_common::collections::{Map, Set};
+use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition};
-use crate::context::{ContractData, ContractLinearisations};
+use crate::context::{ContractData, ContractLinearisations, FileNodeMapper};
 use crate::types::TypeRegistry;
 
-/// In this pass we walk every contract's linearised bases and pre-compute the
-/// collections of functions, state variables, errors and events visible in the
-/// contract's hierarchy, storing them in a `ContractData`.
+/// In this pass we walk every contract's and interface's linearised bases once,
+/// accumulating the members visible across the hierarchy. From that single walk
+/// we both:
 ///
-/// This pass depends on all definitions being fully typed, which is
-/// accomplished in the previous pass. The next pass is not strictly dependant
-/// on the result of this pass. Eventually we could use the linearisation
-/// information produced by this pass to aid in expressions/statements
-/// resolution and typing, but it's fully independent for now.
-pub fn run(binder: &Binder, types: &TypeRegistry) -> ContractData {
+/// - report `IdentifierRedeclaration` for a member that illegally redeclares a
+///   same-named member inherited from a base (Solidity allows overloading
+///   functions/events and overriding functions/modifiers; see
+///   [`Definition::may_coexist_with_inherited`]); and
+/// - pre-compute, for each contract, the collections of functions, state
+///   variables, errors and events visible in its hierarchy, storing them in a
+///   `ContractData`.
+///
+/// This pass depends on all definitions being fully typed, which is accomplished
+/// in the previous pass. The next pass is not strictly dependant on the result
+/// of this pass. Eventually we could use the linearisation information produced
+/// here to aid in expressions/statements resolution and typing, but it's fully
+/// independent for now.
+pub fn run(
+    binder: &Binder,
+    types: &TypeRegistry,
+    file_node_mapper: &FileNodeMapper,
+    diagnostics: &mut DiagnosticCollection,
+) -> ContractData {
     let mut contracts = Vec::new();
-    let mut data = Map::default();
+    let mut linearisations_by_id = Map::default();
+    // A redeclaration in a shared base is visited once per descendant, so we
+    // dedup by the redeclaring member's node to report each clash only once.
+    // The emitted diagnostic is fully determined by that node, so the result is
+    // independent of the order in which we visit contracts.
+    let mut reported = Set::default();
 
-    for (contract_id, definition) in binder.definitions() {
-        let Definition::Contract(contract) = definition else {
-            continue;
-        };
-        let contract_id = *contract_id;
-
-        let ir_node = Arc::clone(&contract.ir_node);
-        contracts.push(ir_node);
-
-        let linearisations = compute_linearised_members(binder, types, contract_id);
-        data.insert(contract_id, linearisations);
+    for (definition_id, definition) in binder.definitions() {
+        match definition {
+            Definition::Contract(contract) => {
+                contracts.push(Arc::clone(&contract.ir_node));
+                let linearisations = compute_linearised_members(
+                    binder,
+                    types,
+                    *definition_id,
+                    file_node_mapper,
+                    diagnostics,
+                    &mut reported,
+                );
+                linearisations_by_id.insert(*definition_id, linearisations);
+            }
+            // Interfaces don't get a `ContractData` entry, but their members
+            // still take part in redeclaration checks, so we walk them too and
+            // discard the (mostly empty) collections they produce.
+            Definition::Interface(_) => {
+                compute_linearised_members(
+                    binder,
+                    types,
+                    *definition_id,
+                    file_node_mapper,
+                    diagnostics,
+                    &mut reported,
+                );
+            }
+            _ => {}
+        }
     }
 
-    ContractData::new(contracts, data)
+    ContractData::new(contracts, linearisations_by_id)
 }
 
+/// Walks `definition_id`'s linearised bases once, both reporting inherited
+/// redeclarations and building the contract's linearised member collections.
+///
+/// The bases are visited most-base-first, so that a redeclaration is reported
+/// on the more-derived member (matching solc) and state variables, errors and
+/// events come out in base-to-derived source order.
 fn compute_linearised_members(
     binder: &Binder,
     types: &TypeRegistry,
-    contract_id: NodeId,
+    definition_id: NodeId,
+    file_node_mapper: &FileNodeMapper,
+    diagnostics: &mut DiagnosticCollection,
+    reported: &mut Set<NodeId>,
 ) -> ContractLinearisations {
-    let functions = collect_linearised_functions(binder, types, contract_id);
-    let state_variables = collect_linearised_state_variables(binder, contract_id);
-    let errors = collect_linearised_errors(binder, contract_id);
-    let events = collect_linearised_events(binder, contract_id);
+    let Some(linearised_bases) = binder.get_linearised_bases(definition_id) else {
+        return ContractLinearisations::default();
+    };
 
-    // TODO(validation): check that there is no redefinition of identifiers among all contracts in the hierarchy
+    // The members visible so far, keyed by name; a base contributes only its
+    // members that derived types inherit. A member redeclares an inherited one
+    // when it can't coexist with any member already recorded under its name.
+    let mut visible_members_by_name: Map<String, Vec<NodeId>> = Map::default();
+
+    let mut state_variables = Vec::new();
+    let mut errors = Vec::new();
+    let mut events = Vec::new();
+    // Functions are gathered per base so `linearise_functions` can later flatten
+    // them most-derived-first.
+    let mut functions_per_base: Vec<Vec<ir::FunctionDefinition>> = Vec::new();
+
+    for base_id in linearised_bases.iter().rev() {
+        let (members, from_interface) = match binder.find_definition_by_id(*base_id) {
+            Some(Definition::Contract(contract)) => (&contract.ir_node.members, false),
+            Some(Definition::Interface(interface)) => (&interface.ir_node.members, true),
+            _ => continue,
+        };
+        // The head of the linearisation is the type we're computing for; every
+        // other entry is one of its proper bases.
+        let declared_here = *base_id == definition_id;
+
+        let mut base_functions = Vec::new();
+        // The definitions of this base's named members, gathered in a single
+        // pass and reused below to both check for and record redeclarations.
+        let mut member_definitions = Vec::new();
+
+        for member in members {
+            match member {
+                // Interfaces don't contribute functions to the linearisation:
+                // they must be implemented by inheriting contracts (enforced
+                // elsewhere).
+                ir::ContractMember::FunctionDefinition(function)
+                    if !from_interface
+                        && matches!(
+                            function.kind,
+                            ir::FunctionKind::Regular
+                                | ir::FunctionKind::Fallback
+                                | ir::FunctionKind::Receive
+                        ) =>
+                {
+                    base_functions.push(Arc::clone(function));
+                }
+                // Interfaces don't have state variables in Solidity.
+                ir::ContractMember::StateVariableDefinition(state_variable) if !from_interface => {
+                    state_variables.push(Arc::clone(state_variable));
+                }
+                ir::ContractMember::ErrorDefinition(error) => errors.push(Arc::clone(error)),
+                ir::ContractMember::EventDefinition(event) => events.push(Arc::clone(event)),
+                _ => {}
+            }
+
+            if let Some(definition) = member_definition(binder, member) {
+                member_definitions.push(definition);
+            }
+        }
+
+        // Check this base's members against everything inherited from
+        // less-derived bases. Only members in this type's namespace can clash:
+        // its own declarations (even `private` ones, which still shadow a
+        // visible inherited member), plus a proper base's members that are
+        // visible to it. A proper base's own private member isn't inherited, so
+        // it never clashes.
+        for definition in &member_definitions {
+            if !declared_here && !definition.is_internally_visible() {
+                continue;
+            }
+            let name = definition.identifier().unparse();
+            let Some(inherited) = visible_members_by_name.get(name) else {
+                continue;
+            };
+            let redeclares = inherited.iter().any(|inherited_id| {
+                let inherited_definition = binder.find_definition_by_id(*inherited_id).unwrap();
+                !definition.may_coexist_with_inherited(inherited_definition)
+            });
+            if redeclares && reported.insert(definition.node_id()) {
+                let file_id = file_node_mapper.file_id_from_node_id(definition.node_id());
+                diagnostics.push(
+                    file_id.to_owned(),
+                    definition.identifier().range.clone(),
+                    IdentifierRedeclaration,
+                );
+            }
+        }
+
+        // Record this base's inheritable members so more-derived bases are
+        // checked against them. Private members (and external functions) aren't
+        // inherited, so reusing their name is allowed. Recording only after the
+        // checks above keeps members declared together in the same base from
+        // clashing with each other (a same-scope concern handled in `p1`).
+        for definition in member_definitions {
+            if definition.is_internally_visible() {
+                visible_members_by_name
+                    .entry(definition.identifier().unparse().to_owned())
+                    .or_default()
+                    .push(definition.node_id());
+            }
+        }
+
+        functions_per_base.push(base_functions);
+    }
 
     ContractLinearisations {
-        functions,
+        functions: linearise_functions(binder, types, &functions_per_base),
         state_variables,
         errors,
         events,
     }
 }
 
-fn collect_linearised_functions(
+/// Flattens the per-base function lists (gathered most-base-first) into the
+/// hierarchy's function list: most-derived-first, dropping a function once a
+/// more-derived one overrides it, then sorted by name.
+fn linearise_functions(
     binder: &Binder,
     types: &TypeRegistry,
-    contract_id: NodeId,
+    functions_per_base: &[Vec<ir::FunctionDefinition>],
 ) -> Vec<ir::FunctionDefinition> {
-    let Some(linearised_bases) = binder.get_linearised_bases(contract_id) else {
-        return Vec::new();
-    };
-
     let mut functions: Vec<ir::FunctionDefinition> = Vec::new();
-    for base_id in linearised_bases {
-        // TODO(validation) SDR[3]: we don't pick up functions defined in
-        // interfaces because they should be implemented in inheriting contracts,
-        // but this is not yet enforced anywhere.
-        let Some(Definition::Contract(base)) = binder.find_definition_by_id(*base_id) else {
-            continue;
-        };
-
-        for member in &base.ir_node.members {
-            let ir::ContractMember::FunctionDefinition(function) = member else {
-                continue;
-            };
-            if !matches!(
-                function.kind,
-                ir::FunctionKind::Regular | ir::FunctionKind::Fallback | ir::FunctionKind::Receive
-            ) {
-                continue;
-            }
-            let overridden = functions
+    for base_functions in functions_per_base.iter().rev() {
+        for function in base_functions {
+            let already_overridden = functions
                 .iter()
-                .any(|existing| function_overrides(binder, types, existing, function));
-            if !overridden {
+                .any(|kept| function_overrides(binder, types, kept, function));
+            if !already_overridden {
                 functions.push(Arc::clone(function));
             }
             // TODO(validation): if overriding, function must have the `override` specifier and the overriden functions must be marked `virtual`
             // TODO(validation): if overriding multiple ancestors, the function needs to specify the bases in a specifier
         }
     }
-
     functions.sort_by(|a, b| match (&a.name, &b.name) {
         (None, None) => Ordering::Equal,
         (None, Some(_)) => Ordering::Less,
@@ -106,102 +234,51 @@ fn collect_linearised_functions(
     functions
 }
 
+/// Returns the `Definition` naming `member`, or `None` for members that don't
+/// introduce a name into the contract namespace (using directives, and unnamed
+/// functions such as constructors, fallback and receive).
+fn member_definition<'a>(
+    binder: &'a Binder,
+    member: &ir::ContractMember,
+) -> Option<&'a Definition> {
+    let node_id = match member {
+        ir::ContractMember::UsingDirective(_) => return None,
+        ir::ContractMember::FunctionDefinition(function) => function.id(),
+        ir::ContractMember::StructDefinition(struct_) => struct_.id(),
+        ir::ContractMember::EnumDefinition(enum_) => enum_.id(),
+        ir::ContractMember::EventDefinition(event) => event.id(),
+        ir::ContractMember::ErrorDefinition(error) => error.id(),
+        ir::ContractMember::UserDefinedValueTypeDefinition(udvt) => udvt.id(),
+        ir::ContractMember::StateVariableDefinition(variable) => variable.id(),
+        ir::ContractMember::ConstantDefinition(constant) => constant.id(),
+    };
+    binder.find_definition_by_id(node_id)
+}
+
+/// Whether `overriding` overrides `overridden`: they share a name (or are the
+/// same kind of unnamed function) and their signatures are in an override
+/// relationship.
 fn function_overrides(
     binder: &Binder,
     types: &TypeRegistry,
-    function: &ir::FunctionDefinition,
-    other: &ir::FunctionDefinition,
+    overriding: &ir::FunctionDefinition,
+    overridden: &ir::FunctionDefinition,
 ) -> bool {
-    let name_matches = match (&function.name, &other.name) {
-        (None, None) => function.kind == other.kind,
+    let name_matches = match (&overriding.name, &overridden.name) {
+        (None, None) => overriding.kind == overridden.kind,
         (Some(name), Some(other_name)) => name.unparse() == other_name.unparse(),
         _ => false,
     };
     if !name_matches {
         return false;
     }
-    let type_id = binder.node_typing(function.id()).as_type_id();
-    let other_type_id = binder.node_typing(other.id()).as_type_id();
-    match (type_id, other_type_id) {
-        (Some(type_id), Some(other_type_id)) => {
-            types.type_id_is_function_and_overrides(type_id, other_type_id)
+    let overriding_type_id = binder.node_typing(overriding.id()).as_type_id();
+    let overridden_type_id = binder.node_typing(overridden.id()).as_type_id();
+    match (overriding_type_id, overridden_type_id) {
+        (Some(overriding_type_id), Some(overridden_type_id)) => {
+            types.type_id_is_function_and_overrides(overriding_type_id, overridden_type_id)
         }
         _ => false,
     }
-    // TODO(validation) SDR[6]: check also that the function mutability is stricter than other's
-}
-
-/// Walks the linearised bases in reverse (most-base first) and concatenates
-/// every contract's state-variable members in source order. Interfaces don't
-/// contribute state variables in Solidity.
-fn collect_linearised_state_variables(
-    binder: &Binder,
-    contract_id: NodeId,
-) -> Vec<ir::StateVariableDefinition> {
-    let mut state_variables = Vec::new();
-    let Some(linearised_bases) = binder.get_linearised_bases(contract_id) else {
-        return state_variables;
-    };
-    for base_id in linearised_bases.iter().rev() {
-        let Some(Definition::Contract(base)) = binder.find_definition_by_id(*base_id) else {
-            continue;
-        };
-        for member in &base.ir_node.members {
-            if let ir::ContractMember::StateVariableDefinition(state_variable) = member {
-                state_variables.push(Arc::clone(state_variable));
-            }
-            // TODO(validation): check for duplicate declarations
-            // TODO(validation): if the state variable is `public`, check if it
-            // overrides a function and validate the presence of `override` (in
-            // the variable) and `virtual` (in the function) modifiers
-        }
-    }
-    state_variables
-}
-
-/// Walks the linearised bases in reverse and concatenates every contract /
-/// interface error definition.
-fn collect_linearised_errors(binder: &Binder, contract_id: NodeId) -> Vec<ir::ErrorDefinition> {
-    let mut errors = Vec::new();
-    let Some(linearised_bases) = binder.get_linearised_bases(contract_id) else {
-        return errors;
-    };
-    for base_id in linearised_bases.iter().rev() {
-        let members = match binder.find_definition_by_id(*base_id) {
-            Some(Definition::Contract(base)) => &base.ir_node.members,
-            Some(Definition::Interface(base)) => &base.ir_node.members,
-            _ => continue,
-        };
-        for member in members {
-            if let ir::ContractMember::ErrorDefinition(error) = member {
-                errors.push(Arc::clone(error));
-            }
-            // TODO(validation): check for duplicate declarations
-        }
-    }
-    errors
-}
-
-/// Walks the linearised bases in reverse and concatenates every contract /
-/// interface event definition.
-fn collect_linearised_events(binder: &Binder, contract_id: NodeId) -> Vec<ir::EventDefinition> {
-    let mut events = Vec::new();
-    let Some(linearised_bases) = binder.get_linearised_bases(contract_id) else {
-        return events;
-    };
-    for base_id in linearised_bases.iter().rev() {
-        let members = match binder.find_definition_by_id(*base_id) {
-            Some(Definition::Contract(base)) => &base.ir_node.members,
-            Some(Definition::Interface(base)) => &base.ir_node.members,
-            _ => continue,
-        };
-        for member in members {
-            if let ir::ContractMember::EventDefinition(event) = member {
-                events.push(Arc::clone(event));
-            }
-            // TODO(validation): check for duplicate declarations, considering
-            // the full signature since events can be overloaded
-        }
-    }
-    events
+    // TODO(validation) SDR[6]: check also that the function mutability is stricter than the overridden one's
 }
