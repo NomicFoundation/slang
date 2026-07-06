@@ -1,0 +1,72 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (9):
+- Def: #1 ["P" @ input.sol:5:18] (constant, type: uint256)
+- Def: #2 ["E" @ input.sol:6:18] (constant, type: uint256)
+- Def: #3 ["Test" @ input.sol:8:10] (contract)
+- Def: #4 ["backward" @ input.sol:9:16] (state var, type: uint256[7] storage)
+- Def: #5 ["chained" @ input.sol:10:16] (state var, type: uint256[0] storage)
+- Def: #6 ["file_level" @ input.sol:11:16] (state var, type: uint256[0] storage)
+- Def: #7 ["contract_level" @ input.sol:12:16] (state var, type: uint256[0] storage)
+- Def: #8 ["M" @ input.sol:14:22] (constant, type: uint256)
+- Def: #9 ["N" @ input.sol:17:18] (constant, type: uint256)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["N" @ input.sol:6:22] -> #9
+- Ref: ["P" @ input.sol:9:13] -> #1
+- Ref: ["E" @ input.sol:10:13] -> #2
+- Ref: ["N" @ input.sol:11:13] -> #9
+- Ref: ["M" @ input.sol:12:13] -> #8
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  5 │ uint256 constant P = 7;
+    │                  ┬  
+    │                  ╰── name: 1
+  6 │ uint256 constant E = N;
+    │                  ┬   ┬  
+    │                  ╰────── name: 2
+    │                      │  
+    │                      ╰── ref: 9
+    │ 
+  8 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 3
+  9 │     uint256[P] backward;
+    │             ┬  ────┬───  
+    │             ╰──────────── ref: 1
+    │                    │     
+    │                    ╰───── name: 4
+ 10 │     uint256[E] chained;
+    │             ┬  ───┬───  
+    │             ╰─────────── ref: 2
+    │                   │     
+    │                   ╰───── name: 5
+ 11 │     uint256[N] file_level;
+    │             ┬  ─────┬────  
+    │             ╰────────────── ref: 9
+    │                     │      
+    │                     ╰────── name: 6
+ 12 │     uint256[M] contract_level;
+    │             ┬  ───────┬──────  
+    │             ╰────────────────── ref: 8
+    │                       │        
+    │                       ╰──────── name: 7
+    │ 
+ 14 │     uint256 constant M = 4;
+    │                      ┬  
+    │                      ╰── name: 8
+    │ 
+ 17 │ uint256 constant N = 3;
+    │                  ┬  
+    │                  ╰── name: 9
+────╯

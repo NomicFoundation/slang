@@ -1,0 +1,76 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["A" @ lib.sol:1:18] (constant, type: uint256)
+- Def: #2 ["B" @ lib.sol:2:18] (constant, type: uint256)
+- Def: #3 ["A" @ main.sol:1:9] (imported symbol)
+- Def: #4 ["C" @ main.sol:2:14] (imported symbol)
+- Def: #5 ["Test" @ main.sol:4:10] (contract)
+- Def: #6 ["direct_import" @ main.sol:5:16] (state var, type: uint256[3] storage)
+- Def: #7 ["aliased_import" @ main.sol:6:16] (state var, type: uint256[5] storage)
+- Def: #8 ["combined" @ main.sol:7:20] (state var, type: uint256[8] storage)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["A" @ main.sol:1:9] -> #1
+- Ref: ["B" @ main.sol:2:9] -> #2
+- Ref: ["A" @ main.sol:5:13] -> #3
+- Ref: ["C" @ main.sol:6:13] -> #4
+- Ref: ["A" @ main.sol:7:13] -> #3
+- Ref: ["C" @ main.sol:7:17] -> #4
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[lib.sol:1:1]
+   │
+ 1 │ uint256 constant A = 3;
+   │                  ┬  
+   │                  ╰── name: 1
+ 2 │ uint256 constant B = 5;
+   │                  ┬  
+   │                  ╰── name: 2
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ import {A} from "lib.sol";
+   │         ┬  
+   │         ╰── name: 3
+   │         │  
+   │         ╰── ref: 1
+ 2 │ import {B as C} from "lib.sol";
+   │         ┬    ┬  
+   │         ╰─────── ref: 2
+   │              │  
+   │              ╰── name: 4
+   │ 
+ 4 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 5
+ 5 │     uint256[A] direct_import;
+   │             ┬  ──────┬──────  
+   │             ╰───────────────── ref: 3
+   │                      │        
+   │                      ╰──────── name: 6
+ 6 │     uint256[C] aliased_import;
+   │             ┬  ───────┬──────  
+   │             ╰────────────────── ref: 4
+   │                       │        
+   │                       ╰──────── name: 7
+ 7 │     uint256[A + C] combined;
+   │             ┬   ┬  ────┬───  
+   │             ╰──────────────── ref: 3
+   │                 │      │     
+   │                 ╰──────────── ref: 4
+   │                        │     
+   │                        ╰───── name: 8
+───╯

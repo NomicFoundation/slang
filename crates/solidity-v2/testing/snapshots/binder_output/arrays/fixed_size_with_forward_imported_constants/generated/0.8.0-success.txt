@@ -1,0 +1,66 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["A" @ main.sol:3:9] (imported symbol)
+- Def: #2 ["C" @ main.sol:4:14] (imported symbol)
+- Def: #3 ["Test" @ main.sol:6:10] (contract)
+- Def: #4 ["direct_import" @ main.sol:7:16] (state var, type: uint256[3] storage)
+- Def: #5 ["aliased_import" @ main.sol:8:16] (state var, type: uint256[5] storage)
+- Def: #6 ["A" @ z_lib.sol:1:18] (constant, type: uint256)
+- Def: #7 ["B" @ z_lib.sol:2:18] (constant, type: uint256)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["A" @ main.sol:3:9] -> #6
+- Ref: ["B" @ main.sol:4:9] -> #7
+- Ref: ["A" @ main.sol:7:13] -> #1
+- Ref: ["C" @ main.sol:8:13] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 3 │ import {A} from "z_lib.sol";
+   │         ┬  
+   │         ╰── name: 1
+   │         │  
+   │         ╰── ref: 6
+ 4 │ import {B as C} from "z_lib.sol";
+   │         ┬    ┬  
+   │         ╰─────── ref: 7
+   │              │  
+   │              ╰── name: 2
+   │ 
+ 6 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 3
+ 7 │     uint256[A] direct_import;
+   │             ┬  ──────┬──────  
+   │             ╰───────────────── ref: 1
+   │                      │        
+   │                      ╰──────── name: 4
+ 8 │     uint256[C] aliased_import;
+   │             ┬  ───────┬──────  
+   │             ╰────────────────── ref: 2
+   │                       │        
+   │                       ╰──────── name: 5
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[z_lib.sol:1:1]
+   │
+ 1 │ uint256 constant A = 3;
+   │                  ┬  
+   │                  ╰── name: 6
+ 2 │ uint256 constant B = 5;
+   │                  ┬  
+   │                  ╰── name: 7
+───╯

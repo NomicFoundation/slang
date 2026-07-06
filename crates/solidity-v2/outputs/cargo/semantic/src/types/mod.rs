@@ -6,10 +6,12 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 pub mod literals;
+mod operator_typing;
 mod parsing;
 mod registry;
 
 pub use literals::numbers::Number;
+pub(crate) use operator_typing::{BinaryOperator, UnaryOperator};
 pub use registry::TypeRegistry;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]

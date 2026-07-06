@@ -1,0 +1,73 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["K" @ a.sol:5:9] (imported symbol)
+- Def: #2 ["N" @ a.sol:7:18] (constant, type: uint256)
+- Def: #3 ["A" @ a.sol:9:10] (contract)
+- Def: #4 ["x" @ a.sol:10:16] (state var, type: uint256[5] storage)
+- Def: #5 ["N" @ b.sol:1:9] (imported symbol)
+- Def: #6 ["K" @ b.sol:3:18] (constant, type: uint256)
+- Def: #7 ["B" @ b.sol:5:10] (contract)
+- Def: #8 ["y" @ b.sol:6:16] (state var, type: uint256[3] storage)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["K" @ a.sol:5:9] -> #6
+- Ref: ["K" @ a.sol:10:13] -> #1
+- Ref: ["N" @ b.sol:1:9] -> #2
+- Ref: ["N" @ b.sol:6:13] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[a.sol:1:1]
+    │
+  5 │ import {K} from "b.sol";
+    │         ┬  
+    │         ╰── name: 1
+    │         │  
+    │         ╰── ref: 6
+    │ 
+  7 │ uint256 constant N = 3;
+    │                  ┬  
+    │                  ╰── name: 2
+    │ 
+  9 │ contract A {
+    │          ┬  
+    │          ╰── name: 3
+ 10 │     uint256[K] x;
+    │             ┬  ┬  
+    │             ╰───── ref: 1
+    │                │  
+    │                ╰── name: 4
+────╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[b.sol:1:1]
+   │
+ 1 │ import {N} from "a.sol";
+   │         ┬  
+   │         ╰── name: 5
+   │         │  
+   │         ╰── ref: 2
+   │ 
+ 3 │ uint256 constant K = 5;
+   │                  ┬  
+   │                  ╰── name: 6
+   │ 
+ 5 │ contract B {
+   │          ┬  
+   │          ╰── name: 7
+ 6 │     uint256[N] y;
+   │             ┬  ┬  
+   │             ╰───── ref: 5
+   │                │  
+   │                ╰── name: 8
+───╯

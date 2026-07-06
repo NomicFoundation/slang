@@ -181,11 +181,9 @@ impl Number {
             // TODO(validation) SDR[1737]: division by zero
             return None;
         }
-        match (self, other) {
-            (Self::Integer(lhs), Self::Integer(rhs)) => Some(Self::Integer(lhs % rhs)),
-            // TODO(validation) SDR[1739]: Modulo on rationals is not supported.
-            _ => None,
-        }
+        Some(Self::from_rational(
+            self.to_rational() % other.to_rational(),
+        ))
     }
 
     pub(crate) fn pow(&self, exponent: &Self) -> Option<Self> {
@@ -293,6 +291,19 @@ pub(crate) fn integer_literal_fits(value: &BigInt, signed: bool, bits: u32) -> b
         return false;
     }
     integer_bits_required(value, signed) <= bits
+}
+
+/// Whether `value` is within the range a Solidity integer type can hold. Those
+/// are at most 256 bits wide, so a larger value is out of range.
+pub(crate) fn within_integer_range(value: &BigInt) -> bool {
+    integer_bits_required(value, value.is_negative()) <= 256
+}
+
+/// Returns true if the rational `value` lies within the range of the integer
+/// type described by `signed` and `bits`.
+pub(crate) fn rational_literal_fits(value: &BigRational, signed: bool, bits: u32) -> bool {
+    integer_literal_fits(&value.floor().to_integer(), signed, bits)
+        && integer_literal_fits(&value.ceil().to_integer(), signed, bits)
 }
 
 pub(crate) fn smallest_integer_type_to_fit(value: &BigInt) -> Option<Type> {
@@ -426,8 +437,64 @@ mod tests {
     use num_bigint::BigInt;
     use num_rational::BigRational;
 
-    use super::{smallest_fixed_point_type_to_fit, Type};
+    use super::{rational_literal_fits, smallest_fixed_point_type_to_fit, Number, Type};
     use crate::types::FixedPointNumberType;
+
+    fn integer(value: i64) -> Number {
+        Number::Integer(BigInt::from(value))
+    }
+
+    fn rational(numerator: i64, denominator: i64) -> Number {
+        Number::Rational(BigRational::new(
+            BigInt::from(numerator),
+            BigInt::from(denominator),
+        ))
+    }
+
+    #[test]
+    fn rem_on_rationals() {
+        assert_eq!(integer(5).rem(&integer(3)), Some(integer(2)));
+        // Integer modulo follows the dividend's sign.
+        assert_eq!(integer(-7).rem(&integer(3)), Some(integer(-1)));
+        // 5.5 % 2 = 1.5
+        assert_eq!(rational(11, 2).rem(&integer(2)), Some(rational(3, 2)));
+        // 7 % 2.5 = 2 (integer-valued, collapses to Integer)
+        assert_eq!(integer(7).rem(&rational(5, 2)), Some(integer(2)));
+        // 8.5 % 1.5 = 1
+        assert_eq!(rational(17, 2).rem(&rational(3, 2)), Some(integer(1)));
+        // Sign follows the dividend, not the divisor.
+        assert_eq!(rational(-11, 2).rem(&integer(2)), Some(rational(-3, 2)));
+        assert_eq!(rational(11, 2).rem(&integer(-2)), Some(rational(3, 2)));
+        // (1/3) % (1/10) = 1/30
+        assert_eq!(rational(1, 3).rem(&rational(1, 10)), Some(rational(1, 30)));
+        // Division by zero is rejected for both integer and rational divisors.
+        assert_eq!(integer(5).rem(&integer(0)), None);
+        assert_eq!(rational(11, 2).rem(&integer(0)), None);
+    }
+
+    #[test]
+    fn rational_literal_fits_rejects_out_of_range_before_truncation() {
+        // 255.9 truncates toward zero to the in-range 255, but the rational
+        // exceeds uint8's max, so it must be rejected — the range check happens
+        // before truncation.
+        let over_max = BigRational::new(BigInt::from(2559), BigInt::from(10));
+        assert!(!rational_literal_fits(&over_max, false, 8));
+
+        // An in-range fraction is accepted (it truncates toward zero afterwards).
+        let in_range = BigRational::new(BigInt::from(1), BigInt::from(2));
+        assert!(rational_literal_fits(&in_range, false, 8));
+
+        // Below uint8's min (negative): rejected even though its ceil is 0.
+        let below_zero = BigRational::new(BigInt::from(-1), BigInt::from(2));
+        assert!(!rational_literal_fits(&below_zero, false, 8));
+        // But -0.5 is within int8's range, so signed accepts it.
+        assert!(rational_literal_fits(&below_zero, true, 8));
+
+        // Signed lower bound: -128.5 truncates toward zero to the in-range -128,
+        // but the rational is below int8's min, so it is rejected.
+        let under_min = BigRational::new(BigInt::from(-1285), BigInt::from(10));
+        assert!(!rational_literal_fits(&under_min, true, 8));
+    }
 
     fn fit(numerator: BigInt, denominator: BigInt) -> Option<FixedPointNumberType> {
         match smallest_fixed_point_type_to_fit(&BigRational::new(numerator, denominator))? {
