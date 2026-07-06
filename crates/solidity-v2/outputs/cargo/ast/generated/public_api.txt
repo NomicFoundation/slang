@@ -1772,7 +1772,7 @@ pub struct slang_solidity_v2_ast::ast::FixedSizeArrayType
 impl slang_solidity_v2_ast::ast::FixedSizeArrayType
 pub fn slang_solidity_v2_ast::ast::FixedSizeArrayType::element_type(&self) -> slang_solidity_v2_ast::ast::Type
 pub fn slang_solidity_v2_ast::ast::FixedSizeArrayType::location(&self) -> slang_solidity_v2_semantic::types::DataLocation
-pub fn slang_solidity_v2_ast::ast::FixedSizeArrayType::size(&self) -> usize
+pub fn slang_solidity_v2_ast::ast::FixedSizeArrayType::size(&self) -> ruint::aliases::U256
 impl core::clone::Clone for slang_solidity_v2_ast::ast::FixedSizeArrayType
 pub fn slang_solidity_v2_ast::ast::FixedSizeArrayType::clone(&self) -> slang_solidity_v2_ast::ast::FixedSizeArrayType
 pub struct slang_solidity_v2_ast::ast::ForStatementStruct

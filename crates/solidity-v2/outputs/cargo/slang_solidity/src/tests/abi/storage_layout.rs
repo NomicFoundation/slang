@@ -186,3 +186,140 @@ fn test_erc7201_storage_layout() {
     assert_layout_item_eq!(f_layout[0], "u", base_slot, 0, "uint256");
     assert_layout_item_eq!(f_layout[1], "v", base_slot + uint!(1_U256), 0, "uint256");
 }
+
+// A fixed-size array can occupy far more than a machine word of slots. `b`
+// takes `2**64` slots, so `c` lands at slot `2**64 + 1`.
+define_fixture!(
+    HugeArray,
+    file: "main.sol", r#"
+contract C {
+    uint256 a;
+    uint256[2 ** 64] b;
+    uint8 c;
+}
+"#,
+);
+
+#[test]
+fn test_huge_array_shifts_following_slot() {
+    let unit = HugeArray::build_compilation_unit();
+    let contract = unit
+        .find_contract_by_name("C")
+        .next()
+        .expect("contract can be found");
+    let abi = contract.compute_abi().expect("can compute ABI");
+    let layout = abi.storage_layout();
+
+    assert_eq!(layout.len(), 3);
+    assert_layout_item_eq!(layout[0], "a", uint!(0_U256), 0, "uint256");
+    assert_layout_item_eq!(
+        layout[1],
+        "b",
+        uint!(1_U256),
+        0,
+        "uint256[18446744073709551616]"
+    );
+    assert_layout_item_eq!(layout[2], "c", uint!(18446744073709551617_U256), 0, "uint8");
+}
+
+// The maximum legal length is `2**256 - 1` slots, which lays out at slot 0.
+define_fixture!(
+    MaxLegalArray,
+    file: "main.sol", r#"
+contract C {
+    uint256[2 ** 256 - 1] x;
+}
+"#,
+);
+
+#[test]
+fn test_max_length_array_lays_out() {
+    let unit = MaxLegalArray::build_compilation_unit();
+    let contract = unit
+        .find_contract_by_name("C")
+        .next()
+        .expect("contract can be found");
+    let abi = contract.compute_abi().expect("can compute ABI");
+    let layout = abi.storage_layout();
+
+    assert_eq!(layout.len(), 1);
+    assert_layout_item_eq!(
+        layout[0],
+        "x",
+        uint!(0_U256),
+        0,
+        "uint256[115792089237316195423570985008687907853269984665640564039457584007913129639935]"
+    );
+}
+
+// A struct whose members overflow storage has no computable size. `a` spans
+// `2**256 - 1` slots, so rounding up past `b` reaches `2**256`.
+define_fixture!(
+    OversizedStruct,
+    file: "main.sol", r#"
+struct Oversized {
+    uint256[2 ** 256 - 1] a;
+    uint256 b;
+}
+
+contract C {
+    Oversized s;
+}
+"#,
+);
+
+#[test]
+fn test_oversized_struct_has_no_layout() {
+    let unit = OversizedStruct::build_compilation_unit();
+    let contract = unit
+        .find_contract_by_name("C")
+        .next()
+        .expect("contract can be found");
+    assert!(contract.compute_abi().is_none());
+}
+
+// `Big` occupies `2**255` slots, so `Big[2]` would need `2**256`. That
+// overflows storage, so no layout can be computed.
+define_fixture!(
+    OversizedArrayOfStruct,
+    file: "main.sol", r#"
+struct Big {
+    uint256[2 ** 255] x;
+}
+
+contract C {
+    Big[2] arr;
+}
+"#,
+);
+
+#[test]
+fn test_oversized_array_of_struct_has_no_layout() {
+    let unit = OversizedArrayOfStruct::build_compilation_unit();
+    let contract = unit
+        .find_contract_by_name("C")
+        .next()
+        .expect("contract can be found");
+    assert!(contract.compute_abi().is_none());
+}
+
+// A custom base slot pushes the layout past the end of storage. `x` spans
+// `2**256 - 1` slots from base slot 1, reaching `2**256`, so no layout exists.
+define_fixture!(
+    OversizedBaseSlot,
+    file: "main.sol", r#"
+contract C layout at 1 {
+    uint256[2 ** 256 - 1] x;
+}
+"#,
+);
+
+#[test]
+fn test_oversized_base_slot_has_no_layout() {
+    let unit = OversizedBaseSlot::build_compilation_unit();
+    let contract = unit
+        .find_contract_by_name("C")
+        .next()
+        .expect("contract can be found");
+    assert!(contract.compute_abi().is_none());
+}

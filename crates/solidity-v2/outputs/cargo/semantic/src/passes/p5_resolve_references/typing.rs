@@ -1,4 +1,4 @@
-use ruint::aliases::U160;
+use ruint::aliases::{U160, U256};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -184,7 +184,7 @@ impl Pass<'_> {
             self.types
                 .register_type(Type::FixedSizeArray(FixedSizeArrayType {
                     element_type,
-                    size: array.items.len(),
+                    size: U256::from(array.items.len()),
                     location: DataLocation::Memory,
                 })),
         )

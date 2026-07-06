@@ -1,4 +1,5 @@
-use num_traits::{Signed, ToPrimitive};
+use num_traits::Signed;
+use ruint::aliases::U256;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     ArrayLengthFractional, ArrayLengthNegative, ArrayLengthNotConstant, ArrayLengthTooLarge,
     ArrayLengthZero,
@@ -44,11 +45,9 @@ impl Pass<'_> {
     }
 
     /// Resolves a fixed-size array length expression, and emits diagnostics
-    /// if errors are found. On error, returns `usize::default()` so type
+    /// if errors are found. On error, returns `U256::ZERO` so type
     /// construction can proceed.
-    /// TODO: Change return to u256, when `FixedSizeArrayType` size field
-    /// is changed to u256.
-    fn resolve_array_length(&mut self, size_expression: &ir::Expression) -> usize {
+    fn resolve_array_length(&mut self, size_expression: &ir::Expression) -> U256 {
         let (file_id, range) = node_location(size_expression, self.file_node_mapper);
         let value = match evaluate_compile_time_constant(
             size_expression,
@@ -64,31 +63,30 @@ impl Pass<'_> {
                 // Report at the failing operation, falling back to the length
                 // expression when the evaluator didn't attach one.
                 self.push_diagnostic(expression.as_ref().unwrap_or(size_expression), kind);
-                return usize::default();
+                return U256::ZERO;
             }
             Err(EvaluationError::CouldNotEvaluate) => {
                 self.push_diagnostic(size_expression, ArrayLengthNotConstant);
-                return usize::default();
+                return U256::ZERO;
             }
         };
 
         // Classify the value: zero, then fractional, then negative and then too large.
         if value.is_zero() {
             self.push_diagnostic(size_expression, ArrayLengthZero);
-            return usize::default();
+            return U256::ZERO;
         }
         let Some(integer) = value.as_integer() else {
             self.push_diagnostic(size_expression, ArrayLengthFractional);
-            return usize::default();
+            return U256::ZERO;
         };
         if integer.is_negative() {
             self.push_diagnostic(size_expression, ArrayLengthNegative);
-            return usize::default();
+            return U256::ZERO;
         }
-        // TODO: Accept u256, when `FixedSizeArrayType` size field is changed to u256.
-        let Some(size) = integer.to_usize() else {
+        let Ok(size) = U256::try_from(integer) else {
             self.push_diagnostic(size_expression, ArrayLengthTooLarge);
-            return usize::default();
+            return U256::ZERO;
         };
         size
     }

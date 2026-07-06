@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[type-system/array-length-too-large] Error: Array length too large, maximum is 2**64 - 1.
+[type-system/array-length-too-large] Error: Array length too large, maximum is 2**256 - 1.
    ╭─[input.sol:6:13]
    │
  6 │     uint256[2 ** 256] x;
