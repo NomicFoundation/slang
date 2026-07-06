@@ -2,7 +2,7 @@ use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
-use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig};
+use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig, FileId};
 use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
 
@@ -13,11 +13,11 @@ use crate::utils::multi_part_file::split_multi_file;
 use crate::utils::path_resolver;
 
 struct TestConfig {
-    files: SortedMap<String, String>,
+    files: SortedMap<FileId, String>,
 }
 
 impl CompilationBuilderConfig for TestConfig {
-    fn read_file(&mut self, file_id: &str) -> Result<String, MissingFile> {
+    fn read_file(&mut self, file_id: &FileId) -> Result<String, MissingFile> {
         self.files.get(file_id).cloned().ok_or_else(|| MissingFile {
             reason: "File not found".to_string(),
         })
@@ -25,9 +25,9 @@ impl CompilationBuilderConfig for TestConfig {
 
     fn resolve_import(
         &mut self,
-        source_file_id: &str,
+        source_file_id: &FileId,
         import_path: &str,
-    ) -> Result<String, UnresolvedImport> {
+    ) -> Result<FileId, UnresolvedImport> {
         path_resolver::resolve_import(source_file_id, import_path).ok_or_else(|| UnresolvedImport {
             reason: "Unresolved import".to_string(),
         })
@@ -46,10 +46,10 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
 
     let multi_part = split_multi_file(&contents);
 
-    let files: SortedMap<String, String> = multi_part
+    let files: SortedMap<FileId, String> = multi_part
         .parts
         .iter()
-        .map(|part| (part.name.to_string(), part.contents.to_string()))
+        .map(|part| (part.name.into(), part.contents.to_string()))
         .collect();
 
     snapshots::generate_snapshots(&test_dir, &mut fs, "generated", |version, target| {

@@ -3,6 +3,7 @@ pub(crate) use file_node_mapper::FileNodeMapper;
 use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::utils::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
@@ -25,13 +26,13 @@ mod file_node_mapper;
 /// Trait for files that can be used as input to the semantic analysis passes.
 pub trait SemanticFile {
     /// Returns the file identifier.
-    fn id(&self) -> &str;
+    fn id(&self) -> &FileId;
 
     /// Returns the root IR node of the file.
     fn ir_root(&self) -> &ir::SourceUnit;
 
     /// Returns the resolved import target file ID for the given import node, if resolved.
-    fn resolved_import_by_node_id(&self, node_id: NodeId) -> Option<&String>;
+    fn resolved_import_by_node_id(&self, node_id: NodeId) -> Option<&FileId>;
 }
 
 pub fn extract_import_paths_from_source_unit(
@@ -146,7 +147,7 @@ impl SemanticContext {
 }
 
 impl SemanticContext {
-    pub fn file_id_from_node_id(&self, node_id: NodeId) -> &str {
+    pub fn file_id_from_node_id(&self, node_id: NodeId) -> &FileId {
         self.file_node_mapper.file_id_from_node_id(node_id)
     }
 

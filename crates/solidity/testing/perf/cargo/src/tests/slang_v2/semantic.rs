@@ -1,5 +1,6 @@
 use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
 use slang_solidity_v2_semantic::binder::{self, Resolution};
@@ -12,19 +13,19 @@ use crate::tests::slang_v2::common::{parse_evm_target, parse_version};
 
 #[derive(Clone)]
 pub struct File {
-    id: String,
+    id: FileId,
     ir_root: ir::SourceUnit,
-    resolved_imports: Map<NodeId, String>,
+    resolved_imports: Map<NodeId, FileId>,
 }
 
 impl File {
-    pub fn add_resolved_import(&mut self, node_id: NodeId, target_file_id: String) {
+    pub fn add_resolved_import(&mut self, node_id: NodeId, target_file_id: FileId) {
         self.resolved_imports.insert(node_id, target_file_id);
     }
 }
 
 impl SemanticFile for File {
-    fn id(&self) -> &str {
+    fn id(&self) -> &FileId {
         &self.id
     }
 
@@ -32,7 +33,7 @@ impl SemanticFile for File {
         &self.ir_root
     }
 
-    fn resolved_import_by_node_id(&self, node_id: NodeId) -> Option<&String> {
+    fn resolved_import_by_node_id(&self, node_id: NodeId) -> Option<&FileId> {
         self.resolved_imports.get(&node_id)
     }
 }
@@ -74,11 +75,11 @@ pub fn build_files(
                         .import_resolver
                         .resolve_import(file_id, import_path)
                         .expect("files to be resolved");
-                    (*node_id, resolved_file_id)
+                    (*node_id, resolved_file_id.into())
                 })
                 .collect();
             File {
-                id: file_id.to_owned(),
+                id: file_id.as_str().into(),
                 ir_root,
                 resolved_imports,
             }

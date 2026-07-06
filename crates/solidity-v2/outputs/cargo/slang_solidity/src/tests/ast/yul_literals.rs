@@ -34,7 +34,7 @@ impl ast::visitor::Visitor for YulLiteralValues {
 #[test]
 fn test_yul_literal_value() {
     let unit = YulLiterals::build_compilation_unit();
-    let main_ast = unit.file("main.sol").unwrap().ast();
+    let main_ast = unit.file(&"main.sol".into()).unwrap().ast();
 
     let mut visitor = YulLiteralValues::default();
     ast::visitor::accept_source_unit(&main_ast, &mut visitor);

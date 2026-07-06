@@ -3,6 +3,7 @@ use slang_solidity_v2_common::diagnostics::kinds::semantic::{
     CyclicConstantDependency, CyclicDependencyValidatorExhausted,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
@@ -161,7 +162,7 @@ fn constant_definition(binder: &Binder, constant_id: NodeId) -> &ConstantDefinit
     }
 }
 
-fn file_id(binder: &Binder, constant: &ConstantDefinition) -> String {
+fn file_id(binder: &Binder, constant: &ConstantDefinition) -> FileId {
     match binder.get_scope_by_id(constant.enclosing_scope_id) {
         Scope::File(file_scope) => file_scope.file_id.clone(),
         Scope::Contract(contract_scope) => {
@@ -171,7 +172,9 @@ fn file_id(binder: &Binder, constant: &ConstantDefinition) -> String {
             };
             file_scope.file_id.clone()
         }
-        _ => String::new(),
+        _ => {
+            unreachable!("constant definitions can only be declared in a file or a contract scope")
+        }
     }
 }
 

@@ -61,7 +61,7 @@ impl Pass<'_> {
                                     self.types,
                                     &ConstantResolver {
                                         binder: self.binder,
-                                        use_site: Some((&self.file_id, range.start)),
+                                        use_site: Some((self.file_id, range.start)),
                                     },
                                 ) {
                                     Ok(size) => size,

@@ -4,6 +4,7 @@ use slang_solidity_v2_common::diagnostics::kinds::syntax::{
     MultipleMutabilitySpecifiers, MultipleOverrideSpecifiers, MultipleVirtualSpecifiers,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 use slang_solidity_v2_cst::structured_cst::text_range::TextRange;
 
@@ -27,7 +28,7 @@ pub struct BuildOutput {
 }
 
 pub fn build_source_unit(
-    file_id: &str,
+    file_id: &FileId,
     source_unit: &input::SourceUnit,
     source: &impl Source,
     id_generator: &mut NodeIdGenerator,
@@ -49,7 +50,7 @@ pub fn build_source_unit(
 
 pub(crate) struct CstToIrBuilder<'a, S: Source> {
     source: &'a S,
-    file_id: &'a str,
+    file_id: &'a FileId,
     id_generator: &'a mut NodeIdGenerator,
     diagnostics: DiagnosticCollection,
 }

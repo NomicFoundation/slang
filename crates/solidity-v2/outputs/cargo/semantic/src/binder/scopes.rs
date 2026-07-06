@@ -1,6 +1,7 @@
 use std::ops::Range;
 
 use slang_solidity_v2_common::collections::Map;
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -57,7 +58,7 @@ pub(crate) struct EnumScope {
 
 pub(crate) struct FileScope {
     pub(crate) node_id: NodeId,
-    pub(crate) file_id: String,
+    pub(crate) file_id: FileId,
     pub(crate) definitions: Map<String, Vec<NodeId>>,
     /// Files brought into scope through (unqualified) default imports, in
     /// source order. The same file may appear more than once if imported by
@@ -70,7 +71,7 @@ pub(crate) struct FileScope {
 /// The directive's text range is kept so that symbol clashes introduced by the
 /// import can be reported on the directive itself.
 pub(crate) struct DefaultImport {
-    pub(crate) file_id: String,
+    pub(crate) file_id: FileId,
     pub(crate) range: Range<usize>,
 }
 
@@ -197,7 +198,7 @@ impl Scope {
         Self::Enum(EnumScope::new(node_id))
     }
 
-    pub(crate) fn new_file(node_id: NodeId, file_id: &str) -> Self {
+    pub(crate) fn new_file(node_id: NodeId, file_id: &FileId) -> Self {
         Self::File(FileScope::new(node_id, file_id))
     }
 
@@ -314,10 +315,10 @@ impl EnumScope {
 }
 
 impl FileScope {
-    fn new(node_id: NodeId, file_id: &str) -> Self {
+    fn new(node_id: NodeId, file_id: &FileId) -> Self {
         Self {
             node_id,
-            file_id: file_id.to_string(),
+            file_id: file_id.clone(),
             definitions: Map::default(),
             default_imports: Vec::new(),
             using_directives: Vec::new(),
@@ -332,7 +333,7 @@ impl FileScope {
         }
     }
 
-    pub(crate) fn add_default_import(&mut self, file_id: String, range: Range<usize>) {
+    pub(crate) fn add_default_import(&mut self, file_id: FileId, range: Range<usize>) {
         self.default_imports.push(DefaultImport { file_id, range });
     }
 

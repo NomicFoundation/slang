@@ -4,6 +4,7 @@ use itertools::Itertools;
 
 use crate::diagnostics::diagnostic::Diagnostic;
 use crate::diagnostics::kinds::DiagnosticKind;
+use crate::files::FileId;
 
 /// An ordered collection of [`Diagnostic`] values produced during a single
 /// parse or compilation run.
@@ -16,7 +17,7 @@ impl DiagnosticCollection {
     /// Constructs a new diagnostic from its parts and appends it to the collection.
     pub fn push(
         &mut self,
-        file_id: String,
+        file_id: FileId,
         text_range: Range<usize>,
         kind: impl Into<DiagnosticKind>,
     ) {

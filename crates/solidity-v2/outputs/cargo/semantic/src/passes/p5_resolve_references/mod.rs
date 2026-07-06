@@ -1,4 +1,5 @@
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -41,7 +42,7 @@ struct Pass<'a> {
     binder: &'a mut Binder,
     types: &'a mut TypeRegistry,
     diagnostics: &'a mut DiagnosticCollection,
-    file_id: String,
+    file_id: FileId,
 }
 
 impl<'a> Pass<'a> {

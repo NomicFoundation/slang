@@ -3,6 +3,7 @@ use std::ops::Range;
 
 use anyhow::Result;
 use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
+use slang_solidity_v2::compilation::FileId;
 use slang_solidity_v2::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::collections::SortedMap;
 use solidity_v2_testing_utils::reporting::diagnostic;
@@ -43,13 +44,13 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
 
     report_unbound_identifiers(&mut report, unbound_identifiers)?;
 
-    for file_id in &compilation.file_ids() {
+    for file in compilation.files() {
         writeln!(report, "{SEPARATOR}")?;
 
-        if let Some(contents) = files.get(file_id) {
+        if let Some(contents) = files.get(file.id()) {
             render_bindings_for_file(
                 &mut report,
-                file_id,
+                file.id(),
                 contents,
                 all_definitions,
                 all_references,
@@ -106,13 +107,13 @@ fn report_unbound_identifiers(
 fn report_diagnostics(
     report: &mut String,
     diagnostics: &DiagnosticCollection,
-    file_contents: &SortedMap<String, String>,
+    file_contents: &SortedMap<FileId, String>,
 ) -> Result<()> {
     writeln!(report, "Parse errors:")?;
     for diagnostic in diagnostics {
         let file_id = diagnostic.file_id();
         let source = file_contents.get(file_id).cloned().unwrap_or_default();
-        let rendered = diagnostic::render(diagnostic, file_id, &source, false);
+        let rendered = diagnostic::render(diagnostic, &file_id.to_string(), &source, false);
         writeln!(report, "{rendered}")?;
     }
     Ok(())
@@ -120,14 +121,16 @@ fn report_diagnostics(
 
 fn render_bindings_for_file(
     report: &mut String,
-    file_id: &str,
+    file_id: &FileId,
     contents: &str,
     all_definitions: &[CollectedDefinition],
     all_references: &[CollectedReference],
     unbound_identifiers: &[CollectedIdentifier],
 ) -> Result<()> {
+    let file_id_str = file_id.to_string();
+    let file_id_str = file_id_str.as_str();
     let mut builder: BuilderType<'_> =
-        Report::build(ReportKind::Custom("Bindings", Color::Unset), file_id, 0)
+        Report::build(ReportKind::Custom("Bindings", Color::Unset), file_id_str, 0)
             .with_config(Config::default().with_color(false));
 
     let new_label = |range: &Range<usize>, message: &str| -> Label<Span<'_>> {
@@ -140,7 +143,7 @@ fn render_bindings_for_file(
             let end = contents[..range.end].chars().count();
             start..end
         };
-        Label::new((file_id, char_range)).with_message(message)
+        Label::new((file_id_str, char_range)).with_message(message)
     };
 
     for definition in all_definitions {
@@ -181,7 +184,7 @@ fn render_bindings_for_file(
     let mut buffer = Vec::<u8>::new();
     builder
         .finish()
-        .write((file_id, Source::from(contents)), &mut buffer)?;
+        .write((file_id_str, Source::from(contents)), &mut buffer)?;
     report.extend(String::from_utf8(buffer));
 
     Ok(())

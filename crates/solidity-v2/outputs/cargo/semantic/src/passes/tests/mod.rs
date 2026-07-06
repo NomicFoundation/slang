@@ -1,6 +1,7 @@
 mod binder;
 mod typing;
 
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
@@ -9,12 +10,12 @@ use slang_solidity_v2_parser::{ParseOutput, Parser};
 use crate::context::SemanticFile;
 
 struct TestFile {
-    id: String,
+    id: FileId,
     ir_root: ir::SourceUnit,
 }
 
 impl SemanticFile for TestFile {
-    fn id(&self) -> &str {
+    fn id(&self) -> &FileId {
         &self.id
     }
 
@@ -22,13 +23,13 @@ impl SemanticFile for TestFile {
         &self.ir_root
     }
 
-    fn resolved_import_by_node_id(&self, _node_id: NodeId) -> Option<&String> {
+    fn resolved_import_by_node_id(&self, _node_id: NodeId) -> Option<&FileId> {
         None
     }
 }
 
 fn build_file(
-    name: &str,
+    file_id: FileId,
     contents: &str,
     id_generator: &mut NodeIdGenerator,
     language_version: LanguageVersion,
@@ -36,7 +37,7 @@ fn build_file(
     let ParseOutput {
         source_unit,
         diagnostics,
-    } = Parser::parse(name, contents, language_version);
+    } = Parser::parse(&file_id, contents, language_version);
 
     assert!(
         diagnostics.is_empty(),
@@ -46,7 +47,7 @@ fn build_file(
     let ir::BuildOutput {
         ir_root,
         diagnostics,
-    } = ir::build(name, &source_unit, &contents, id_generator);
+    } = ir::build(&file_id, &source_unit, &contents, id_generator);
 
     assert!(
         diagnostics.is_empty(),
@@ -54,7 +55,7 @@ fn build_file(
     );
 
     TestFile {
-        id: name.to_string(),
+        id: file_id,
         ir_root,
     }
 }

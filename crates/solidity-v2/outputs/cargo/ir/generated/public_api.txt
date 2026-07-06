@@ -3883,7 +3883,7 @@ impl<T: slang_solidity_v2_ir::ir::TextRange> slang_solidity_v2_ir::ir::TextRange
 pub fn alloc::vec::Vec<T>::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl<T: slang_solidity_v2_ir::ir::TextRange> slang_solidity_v2_ir::ir::TextRange for core::option::Option<T>
 pub fn core::option::Option<T>::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-pub fn slang_solidity_v2_ir::ir::build(&str, &slang_solidity_v2_cst::structured_cst::nodes::SourceUnit, &impl slang_solidity_v2_ir::ir::Source, &mut slang_solidity_v2_ir::ir::NodeIdGenerator) -> slang_solidity_v2_ir::ir::BuildOutput
+pub fn slang_solidity_v2_ir::ir::build(&slang_solidity_v2_common::files::FileId, &slang_solidity_v2_cst::structured_cst::nodes::SourceUnit, &impl slang_solidity_v2_ir::ir::Source, &mut slang_solidity_v2_ir::ir::NodeIdGenerator) -> slang_solidity_v2_ir::ir::BuildOutput
 pub type slang_solidity_v2_ir::ir::ABIEncoderV2Keyword = alloc::sync::Arc<slang_solidity_v2_ir::ir::ABIEncoderV2KeywordStruct>
 pub type slang_solidity_v2_ir::ir::AbicoderPragma = alloc::sync::Arc<slang_solidity_v2_ir::ir::AbicoderPragmaStruct>
 pub type slang_solidity_v2_ir::ir::AbicoderV1Keyword = alloc::sync::Arc<slang_solidity_v2_ir::ir::AbicoderV1KeywordStruct>

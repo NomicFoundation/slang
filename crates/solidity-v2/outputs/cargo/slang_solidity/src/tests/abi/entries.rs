@@ -90,7 +90,7 @@ fn test_get_contracts_abi() {
     let contracts = unit.compute_contracts_abi();
     assert_eq!(1, contracts.len());
     assert_eq!("Counter", contracts[0].name());
-    assert_eq!("main.sol", contracts[0].file_id());
+    assert_eq!("main.sol", contracts[0].file_id().to_string());
     assert_eq!(7, contracts[0].entries().len());
 
     let entries = contracts[0].entries();

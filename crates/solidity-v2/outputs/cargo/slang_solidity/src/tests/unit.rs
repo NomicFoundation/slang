@@ -5,24 +5,24 @@ use crate::ast::Definition;
 fn test_get_file_ast_root() {
     let unit = fixtures::Counter::build_compilation_unit();
 
-    assert_eq!(unit.file_ids().len(), 3);
+    assert_eq!(unit.files().count(), 3);
 
     let main_ast = unit
-        .file("main.sol")
+        .file(&"main.sol".into())
         .expect("main.sol is a file of the compilation unit")
         .ast();
     let ownable_ast = unit
-        .file("ownable.sol")
+        .file(&"ownable.sol".into())
         .expect("ownable.sol is a file in the compilation unit")
         .ast();
     let activatable_ast = unit
-        .file("activatable.sol")
+        .file(&"activatable.sol".into())
         .expect("activatable.sol is a file in the compilation unit")
         .ast();
 
-    assert_eq!(main_ast.file_id(), "main.sol");
-    assert_eq!(ownable_ast.file_id(), "ownable.sol");
-    assert_eq!(activatable_ast.file_id(), "activatable.sol");
+    assert_eq!(main_ast.file_id().to_string(), "main.sol");
+    assert_eq!(ownable_ast.file_id().to_string(), "ownable.sol");
+    assert_eq!(activatable_ast.file_id().to_string(), "activatable.sol");
 
     assert_eq!(main_ast.contracts().len(), 1);
     assert_eq!(ownable_ast.contracts().len(), 1);

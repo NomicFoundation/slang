@@ -5,6 +5,7 @@ use slang_solidity_v2_common::diagnostics::kinds::semantic::{
 };
 use slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -32,32 +33,32 @@ pub fn run(
 struct Pass<'a> {
     binder: &'a mut Binder,
     diagnostics: &'a mut DiagnosticCollection,
-    file_id: String,
+    file_id: &'a FileId,
 }
 
 impl<'a> Pass<'a> {
     fn visit_file_collect_bases(
-        file: &impl SemanticFile,
+        file: &'a impl SemanticFile,
         binder: &'a mut Binder,
         diagnostics: &'a mut DiagnosticCollection,
     ) {
         let mut pass = Self {
             binder,
             diagnostics,
-            file_id: file.id().to_owned(),
+            file_id: file.id(),
         };
         pass.collect_bases_from(file.ir_root());
     }
 
     fn visit_file_linearise_contracts(
-        file: &impl SemanticFile,
+        file: &'a impl SemanticFile,
         binder: &'a mut Binder,
         diagnostics: &'a mut DiagnosticCollection,
     ) {
         let mut pass = Self {
             binder,
             diagnostics,
-            file_id: file.id().to_owned(),
+            file_id: file.id(),
         };
         pass.linearise_contracts_from(file.ir_root());
     }

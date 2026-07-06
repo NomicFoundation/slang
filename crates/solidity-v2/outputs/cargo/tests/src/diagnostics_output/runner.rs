@@ -5,6 +5,7 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use semver::Version;
+use slang_solidity_v2::compilation::FileId;
 use slang_solidity_v2_common::collections::{SortedMap, SortedSet};
 use slang_solidity_v2_common::versions::LanguageVersion;
 
@@ -25,10 +26,10 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
     let multi_part = split_multi_file(&contents);
 
     // Use a sorted map so file iteration order is deterministic across runs.
-    let files: SortedMap<String, String> = multi_part
+    let files: SortedMap<FileId, String> = multi_part
         .parts
         .iter()
-        .map(|part| (part.name.to_string(), part.contents.to_string()))
+        .map(|part| (part.name.into(), part.contents.to_string()))
         .collect();
 
     let config = TestConfig::resolve(&test_dir)?;
