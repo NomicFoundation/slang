@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 4726] Error: Functions in interfaces cannot have an implementation.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     constructor() {}
+   │     ────────┬───────  
+   │             ╰───────── Error occurred here.
+───╯
+
+[TypeError 6482] Error: Constructor cannot be defined in interfaces.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     constructor() {}
+   │     ────────┬───────  
+   │             ╰───────── Error occurred here.
+───╯
