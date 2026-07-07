@@ -11,6 +11,7 @@ mod library_virtual_function;
 mod library_virtual_modifier;
 mod multiple_constructors;
 mod unimplemented_modifier_must_be_virtual;
+mod uninitialized_constant;
 mod virtual_free_function;
 mod virtual_private_function;
 
@@ -28,6 +29,7 @@ pub use library_virtual_modifier::LibraryVirtualModifier;
 pub use multiple_constructors::MultipleConstructors;
 use serde::Serialize;
 pub use unimplemented_modifier_must_be_virtual::UnimplementedModifierMustBeVirtual;
+pub use uninitialized_constant::UninitializedConstant;
 pub use virtual_free_function::VirtualFreeFunction;
 pub use virtual_private_function::VirtualPrivateFunction;
 
@@ -65,6 +67,7 @@ define_diagnostic_kind! {
         LibraryFallbackFunction(LibraryFallbackFunction),
         /// A library declares a receive function.
         LibraryReceiveFunction(LibraryReceiveFunction),
+
         /// A function declared in a library is marked `virtual`.
         LibraryVirtualFunction(LibraryVirtualFunction),
         /// A modifier declared in a library is marked `virtual`.
@@ -77,5 +80,8 @@ define_diagnostic_kind! {
         VirtualFreeFunction(VirtualFreeFunction),
         /// A function is marked both `virtual` and `private`.
         VirtualPrivateFunction(VirtualPrivateFunction),
+
+        /// A `constant` is declared without an initializer value.
+        UninitializedConstant(UninitializedConstant),
     }
 }

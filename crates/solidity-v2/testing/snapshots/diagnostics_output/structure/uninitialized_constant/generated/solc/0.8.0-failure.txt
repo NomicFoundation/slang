@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[TypeError 4266] Error: Uninitialized "constant" variable.
+    ╭─[input.sol:10:5]
+    │
+ 10 │     uint256 constant A;
+    │     ─────────┬────────  
+    │              ╰────────── Error occurred here.
+────╯
+
+[TypeError 4266] Error: Uninitialized "constant" variable.
+    ╭─[input.sol:11:5]
+    │
+ 11 │     uint256 public constant B;
+    │     ────────────┬────────────  
+    │                 ╰────────────── Error occurred here.
+────╯
+
+[TypeError 4266] Error: Uninitialized "constant" variable.
+    ╭─[input.sol:12:5]
+    │
+ 12 │     uint256 internal constant D;
+    │     ─────────────┬─────────────  
+    │                  ╰─────────────── Error occurred here.
+────╯
