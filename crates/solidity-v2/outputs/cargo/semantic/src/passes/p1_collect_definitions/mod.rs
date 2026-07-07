@@ -2,8 +2,8 @@ use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
-    EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FunctionNameMatchesContainer,
-    InvalidUsingDirectiveContainer, MultipleConstructors,
+    BreakOutsideLoop, ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers,
+    FunctionNameMatchesContainer, InvalidUsingDirectiveContainer, MultipleConstructors,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
@@ -54,6 +54,10 @@ struct ScopeFrame {
 struct Pass<'a, F: SemanticFile> {
     current_file: &'a F,
     scope_stack: Vec<ScopeFrame>,
+    // Number of enclosing loops (`for`, `while`, `do-while`) at the current
+    // traversal point. Used to flag `break` statements that appear outside any
+    // loop.
+    loop_depth: usize,
     binder: &'a mut Binder,
     diagnostics: &'a mut DiagnosticCollection,
 }
@@ -63,11 +67,13 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         let mut pass = Self {
             current_file: file,
             scope_stack: Vec::new(),
+            loop_depth: 0,
             binder,
             diagnostics,
         };
         ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
         assert!(pass.scope_stack.is_empty());
+        assert_eq!(pass.loop_depth, 0);
     }
 
     fn enter_scope(&mut self, scope: Scope) -> ScopeId {
@@ -551,11 +557,57 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         // clause. This is a new lexical scope.
         let scope = Scope::new_block(node.id(), self.current_scope_id());
         self.enter_scope(scope);
+        self.loop_depth += 1;
         true
     }
 
     fn leave_for_statement(&mut self, node: &ir::ForStatement) {
+        self.loop_depth -= 1;
         self.leave_scope_for_node_id(node.id());
+    }
+
+    fn enter_while_statement(&mut self, _node: &ir::WhileStatement) -> bool {
+        self.loop_depth += 1;
+        true
+    }
+
+    fn leave_while_statement(&mut self, _node: &ir::WhileStatement) {
+        self.loop_depth -= 1;
+    }
+
+    fn enter_do_while_statement(&mut self, _node: &ir::DoWhileStatement) -> bool {
+        self.loop_depth += 1;
+        true
+    }
+
+    fn leave_do_while_statement(&mut self, _node: &ir::DoWhileStatement) {
+        self.loop_depth -= 1;
+    }
+
+    fn enter_break_statement(&mut self, node: &ir::BreakStatement) -> bool {
+        // A `break` statement is only valid inside a `for`, `while` or
+        // `do-while` loop.
+        if self.loop_depth == 0 {
+            self.diagnostics.push(
+                self.current_file.id().to_owned(),
+                node.range.clone(),
+                BreakOutsideLoop,
+            );
+        }
+        true
+    }
+
+    fn enter_continue_statement(&mut self, node: &ir::ContinueStatement) -> bool {
+        // A `continue` statement is only valid inside a `for`, `while` or
+        // `do-while` loop.
+        if self.loop_depth == 0 {
+            self.diagnostics.push(
+                self.current_file.id().to_owned(),
+                node.range.clone(),
+                ContinueOutsideLoop,
+            );
+        }
+        true
     }
 
     fn leave_try_statement(&mut self, node: &ir::TryStatement) {

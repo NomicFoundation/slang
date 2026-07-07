@@ -748,6 +748,16 @@ mod structure {
     use super::*;
 
     #[test]
+    fn break_outside_loop() -> Result<()> {
+        run("structure", "break_outside_loop")
+    }
+
+    #[test]
+    fn continue_outside_loop() -> Result<()> {
+        run("structure", "continue_outside_loop")
+    }
+
+    #[test]
     fn empty_enum() -> Result<()> {
         run("structure", "empty_enum")
     }
