@@ -43,7 +43,7 @@ Bindings:
    │                                         │     
    │                                         ╰───── ref: 6
    │ 
- 5 │     function divide(int dividend, int divisor) public returns (int);
+ 5 │     function divide(int dividend, int divisor) public returns (int) {}
    │              ───┬──     ────┬───      ───┬───  
    │                 ╰────────────────────────────── name: 4
    │                             │            │     

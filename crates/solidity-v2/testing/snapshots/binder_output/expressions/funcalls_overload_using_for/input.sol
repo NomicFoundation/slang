@@ -6,7 +6,7 @@ contract Test {
     int lib = x.add(3);
   }
 
-  function add(int, int32) public returns (int);
+  function add(int, int32) public returns (int) {}
 }
 
 library Lib {

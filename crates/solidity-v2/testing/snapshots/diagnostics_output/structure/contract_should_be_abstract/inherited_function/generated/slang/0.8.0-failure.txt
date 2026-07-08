@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/contract-should-be-abstract] Error: Contract "B" should be marked as abstract.
+   ╭─[input.sol:9:1]
+   │
+ 9 │ contract B is A {}
+   │ ─────────┬────────  
+   │          ╰────────── Error occurred here.
+───╯

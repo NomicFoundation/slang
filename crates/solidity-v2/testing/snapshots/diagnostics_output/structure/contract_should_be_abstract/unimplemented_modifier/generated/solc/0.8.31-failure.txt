@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[Warning 8429] Warning: Virtual modifiers are deprecated and scheduled for removal.
+   ╭─[input.sol:7:5]
+   │
+ 7 │     modifier m virtual;
+   │     ─────────┬─────────  
+   │              ╰─────────── Error occurred here.
+───╯
+
+[TypeError 3656] Error: Contract "A" should be marked as abstract.
+   ╭─[input.sol:6:1]
+   │
+ 6 │ ╭─▶ contract A {
+   ┆ ┆   
+ 8 │ ├─▶ }
+   │ │       
+   │ ╰─────── Error occurred here.
+───╯

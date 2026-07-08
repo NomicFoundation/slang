@@ -3,13 +3,14 @@ use std::sync::Arc;
 
 use slang_solidity_v2_common::collections::{Map, Set};
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
+use slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition};
 use crate::context::{ContractData, ContractLinearisations, FileNodeMapper};
-use crate::types::TypeRegistry;
+use crate::types::{TypeId, TypeRegistry};
 
 /// In this pass we walk every contract's and interface's linearised bases once,
 /// accumulating the members visible across the hierarchy. From that single walk
@@ -18,7 +19,10 @@ use crate::types::TypeRegistry;
 /// - report `IdentifierRedeclaration` for a member that illegally redeclares a
 ///   same-named member inherited from a base (Solidity allows overloading
 ///   functions/events and overriding functions/modifiers; see
-///   [`MemberKind`]); and
+///   [`MemberKind`]);
+/// - report `ContractShouldBeAbstract` for a non-`abstract` contract that
+///   leaves a function or modifier (declared in it or inherited from a base
+///   contract or interface) unimplemented; and
 /// - pre-compute, for each contract, the collections of functions, state
 ///   variables, errors and events visible in its hierarchy, storing them in a
 ///   `ContractData`.
@@ -82,6 +86,7 @@ pub fn run(
 /// The bases are visited most-base-first, so that a redeclaration is reported
 /// on the more-derived member (matching solc) and state variables, errors and
 /// events come out in base-to-derived source order.
+#[allow(clippy::too_many_lines)]
 fn compute_linearised_members(
     binder: &Binder,
     types: &TypeRegistry,
@@ -93,6 +98,16 @@ fn compute_linearised_members(
     let Some(linearised_bases) = binder.get_linearised_bases(definition_id) else {
         return ContractLinearisations::default();
     };
+
+    // The abstract-completeness check only applies to contracts: interfaces and
+    // libraries are allowed to leave members unimplemented. When computing for a
+    // contract, `abstract_slots` tracks every function/modifier visible in its
+    // hierarchy together with whether it has an implementation.
+    let contract = match binder.find_definition_by_id(definition_id) {
+        Some(Definition::Contract(contract)) => Some(contract),
+        _ => None,
+    };
+    let mut abstract_slots: Vec<AbstractSlot> = Vec::new();
 
     // The kind of member occupying each name so far; a base contributes only
     // the members that derived types inherit. A member redeclares an inherited
@@ -178,12 +193,23 @@ fn compute_linearised_members(
             }
         }
 
-        // Record this base's inheritable members so more-derived bases are
-        // checked against them. Private members (and external functions) aren't
-        // inherited, so reusing their name is allowed. Recording only after the
-        // checks above keeps members declared together in the same base from
-        // clashing with each other (a same-scope concern handled in `p1`).
         for definition in member_definitions {
+            // Fold this base's functions and modifiers into the abstract-slot set.
+            // Since bases are visited most-base-first, a member declared here is
+            // more-derived than anything already recorded, so it overrides (and
+            // updates the implementation status of) the matching slot, mirroring
+            // solc's base-to-derived overwrite of its unimplemented-declaration map.
+            if contract.is_some() {
+                if let Some(candidate) = abstract_slot(binder, definition) {
+                    merge_abstract_slot(types, &mut abstract_slots, candidate);
+                }
+            }
+
+            // Record this base's inheritable members so more-derived bases are
+            // checked against them. Private members (and external functions) aren't
+            // inherited, so reusing their name is allowed. Recording only after the
+            // checks above keeps members declared together in the same base from
+            // clashing with each other (a same-scope concern handled in `p1`).
             if definition.is_internally_visible() {
                 let kind = MemberKind::of(definition);
                 visible_members_by_name
@@ -194,6 +220,21 @@ fn compute_linearised_members(
         }
 
         functions_per_base.push(base_functions);
+    }
+
+    // A non-`abstract` contract that still has an unimplemented function or
+    // modifier cannot be deployed and must be marked `abstract`.
+    if let Some(contract) = contract {
+        if !contract.ir_node.is_abstract && abstract_slots.iter().any(|slot| !slot.implemented) {
+            let file_id = file_node_mapper.file_id_from_node_id(definition_id);
+            diagnostics.push(
+                file_id.to_owned(),
+                contract.ir_node.range.clone(),
+                ContractShouldBeAbstract {
+                    name: contract.ir_node.name.unparse().to_owned(),
+                },
+            );
+        }
     }
 
     ContractLinearisations {
@@ -321,6 +362,102 @@ impl MemberKind {
             Self::Event => derived != Self::Event,
             Self::StateVarPublic | Self::Other => true,
         }
+    }
+}
+
+/// A member of a contract's hierarchy that requires an implementation for the
+/// contract to be concrete: a function or a modifier, together with whether it
+/// is currently implemented.
+struct AbstractSlot {
+    kind: AbstractSlotKind,
+    /// The member's name, used to match declarations across bases.
+    name: String,
+    /// The member's (function) type, used to distinguish overloads and detect
+    /// overrides. `None` for modifiers, which cannot be overloaded and so match
+    /// on name alone.
+    type_id: Option<TypeId>,
+    implemented: bool,
+}
+
+#[derive(PartialEq, Eq)]
+enum AbstractSlotKind {
+    Function,
+    Modifier,
+}
+
+/// Builds the [`AbstractSlot`] for a member that requires an implementation, or
+/// `None` for members that don't participate in the check.
+///
+/// A `public` state variable contributes its (always-implemented) getter, which
+/// can satisfy a function declared in a base contract or interface.
+fn abstract_slot(binder: &Binder, definition: &Definition) -> Option<AbstractSlot> {
+    let (kind, type_id, implemented) = match definition {
+        Definition::Function(function) => (
+            AbstractSlotKind::Function,
+            binder.node_typing(function.ir_node.id()).as_type_id(),
+            function.ir_node.body.is_some(),
+        ),
+        Definition::Modifier(modifier) => (
+            AbstractSlotKind::Modifier,
+            None,
+            modifier.ir_node.body.is_some(),
+        ),
+        Definition::StateVariable(state_variable)
+            if matches!(
+                state_variable.ir_node.attributes.visibility,
+                ir::StateVariableVisibility::Public
+            ) =>
+        {
+            (
+                AbstractSlotKind::Function,
+                state_variable.getter_type_id,
+                true,
+            )
+        }
+        _ => return None,
+    };
+    Some(AbstractSlot {
+        kind,
+        name: definition.identifier().unparse().to_owned(),
+        type_id,
+        implemented,
+    })
+}
+
+/// Merges `candidate` into `slots`. `candidate` is always more-derived than the
+/// existing slots, so when it overrides one it takes over that slot's identity
+/// and implementation status; otherwise it introduces a new slot.
+fn merge_abstract_slot(
+    types: &TypeRegistry,
+    slots: &mut Vec<AbstractSlot>,
+    candidate: AbstractSlot,
+) {
+    for slot in slots.iter_mut() {
+        if slot_overridden_by(types, slot, &candidate) {
+            slot.type_id = candidate.type_id;
+            slot.implemented = candidate.implemented;
+            return;
+        }
+    }
+    slots.push(candidate);
+}
+
+/// Whether the more-derived `candidate` overrides the already-recorded `slot`:
+/// they are the same kind of member with the same name, and (for functions)
+/// their signatures are in an override relationship. Modifiers match on name
+/// alone since they cannot be overloaded.
+fn slot_overridden_by(types: &TypeRegistry, slot: &AbstractSlot, candidate: &AbstractSlot) -> bool {
+    if slot.kind != candidate.kind || slot.name != candidate.name {
+        return false;
+    }
+    match candidate.kind {
+        AbstractSlotKind::Modifier => true,
+        AbstractSlotKind::Function => match (candidate.type_id, slot.type_id) {
+            (Some(candidate_type_id), Some(slot_type_id)) => {
+                types.type_id_is_function_and_overrides(candidate_type_id, slot_type_id)
+            }
+            _ => false,
+        },
     }
 }
 

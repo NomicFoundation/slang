@@ -42,7 +42,7 @@ Bindings:
    │                       │  
    │                       ╰── ref: 2
    │ 
- 6 │     function add(int, int) public returns (int);
+ 6 │     function add(int, int) public returns (int) {}
    │              ─┬─  
    │               ╰─── name: 5
 ───╯

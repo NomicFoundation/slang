@@ -6,7 +6,7 @@ contract Test {
     int literal = add(3);
   }
 
-  function add(int) public returns (int);
+  function add(int) public returns (int) {}
 
-  function add(int) public returns (int);
+  function add(int) public returns (int) {}
 }

@@ -605,6 +605,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnostic
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::BreakOutsideLoop(slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::ConstructorNotInContract(slang_solidity_v2_common::diagnostics::kinds::structure::ConstructorNotInContract)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::ContinueOutsideLoop(slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::ContractShouldBeAbstract(slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EmptyEnum(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EmptyStruct(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EnumWithTooManyMembers(slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers)
@@ -642,6 +643,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ConstructorNotInContract) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -777,6 +780,26 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract
+pub slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::name: alloc::string::String
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum
@@ -1915,6 +1938,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ConstructorNotInContract) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -2201,6 +2226,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum::message(&self) -> alloc::string::String

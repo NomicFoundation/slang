@@ -3,7 +3,7 @@ contract Test {
     return add(add(x), add(3));
   }
 
-  function add(int64, int64) public returns (int256);
+  function add(int64, int64) public returns (int256) {}
 
-  function add(int64) public returns (int64);
+  function add(int64) public returns (int64) {}
 }

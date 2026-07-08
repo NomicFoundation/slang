@@ -999,6 +999,63 @@ mod structure {
         run("structure", "continue_outside_loop")
     }
 
+    mod contract_should_be_abstract {
+        use super::*;
+
+        #[test]
+        fn fully_implemented() -> Result<()> {
+            run("structure/contract_should_be_abstract", "fully_implemented")
+        }
+
+        #[test]
+        fn function_and_modifier() -> Result<()> {
+            run(
+                "structure/contract_should_be_abstract",
+                "function_and_modifier",
+            )
+        }
+
+        #[test]
+        fn getter_implements_interface() -> Result<()> {
+            run(
+                "structure/contract_should_be_abstract",
+                "getter_implements_interface",
+            )
+        }
+
+        #[test]
+        fn inherited_function() -> Result<()> {
+            run(
+                "structure/contract_should_be_abstract",
+                "inherited_function",
+            )
+        }
+
+        #[test]
+        fn unimplemented_function() -> Result<()> {
+            run(
+                "structure/contract_should_be_abstract",
+                "unimplemented_function",
+            )
+        }
+
+        #[test]
+        fn unimplemented_interface() -> Result<()> {
+            run(
+                "structure/contract_should_be_abstract",
+                "unimplemented_interface",
+            )
+        }
+
+        #[test]
+        fn unimplemented_modifier() -> Result<()> {
+            run(
+                "structure/contract_should_be_abstract",
+                "unimplemented_modifier",
+            )
+        }
+    }
+
     #[test]
     fn empty_enum() -> Result<()> {
         run("structure", "empty_enum")

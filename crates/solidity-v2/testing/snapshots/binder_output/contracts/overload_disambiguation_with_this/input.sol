@@ -3,11 +3,11 @@ library SafeMath {
 }
 
 contract ERC20Basic {
-    function balanceOf(address) public returns (uint);
+    function balanceOf(address) public returns (uint) {}
 }
 
 contract Token is ERC20Basic {
-    function balanceOf(address) public returns (uint);
+    function balanceOf(address) public returns (uint) {}
 }
 
 contract Test {
