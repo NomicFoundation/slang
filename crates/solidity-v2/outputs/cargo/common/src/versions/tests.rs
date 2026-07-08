@@ -1,4 +1,4 @@
-use crate::versions::version::{FromSemverError, LanguageVersion};
+use crate::versions::version::{LanguageVersion, LanguageVersionConversionError};
 
 #[test]
 fn test_correct_version() {
@@ -10,24 +10,36 @@ fn test_correct_version() {
 fn test_older_version() {
     let unsupported_version = semver::Version::new(0, 7, 6);
     let version = LanguageVersion::try_from(unsupported_version.clone());
-    assert_eq!(version, Err(FromSemverError::UnsupportedVersion));
+    assert_eq!(
+        version,
+        Err(LanguageVersionConversionError::UnsupportedVersion)
+    );
 }
 
 #[test]
 fn test_newer_version() {
     let unsupported_version = semver::Version::new(0, 9, 0);
     let version = LanguageVersion::try_from(unsupported_version.clone());
-    assert_eq!(version, Err(FromSemverError::UnsupportedVersion));
+    assert_eq!(
+        version,
+        Err(LanguageVersionConversionError::UnsupportedVersion)
+    );
 }
 
 #[test]
 fn test_pre_release_metadata() {
     let version = LanguageVersion::try_from(semver::Version::parse("0.8.0-alpha").unwrap());
-    assert_eq!(version, Err(FromSemverError::UnexpectedMetadata));
+    assert_eq!(
+        version,
+        Err(LanguageVersionConversionError::UnexpectedMetadata)
+    );
 }
 
 #[test]
 fn test_build_metadata() {
     let version = LanguageVersion::try_from(semver::Version::parse("0.8.0+alpha").unwrap());
-    assert_eq!(version, Err(FromSemverError::UnexpectedMetadata));
+    assert_eq!(
+        version,
+        Err(LanguageVersionConversionError::UnexpectedMetadata)
+    );
 }

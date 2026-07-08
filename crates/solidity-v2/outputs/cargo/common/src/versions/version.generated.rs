@@ -97,7 +97,7 @@ impl LanguageVersion {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Error, Hash)]
-pub enum FromSemverError {
+pub enum LanguageVersionConversionError {
     #[error("provided version is not supported")]
     UnsupportedVersion,
     #[error("versions with pre-release or build metadata are not supported")]
@@ -105,7 +105,7 @@ pub enum FromSemverError {
 }
 
 impl TryFrom<Version> for LanguageVersion {
-    type Error = FromSemverError;
+    type Error = LanguageVersionConversionError;
 
     #[allow(clippy::too_many_lines)]
     fn try_from(version: Version) -> Result<Self, Self::Error> {
@@ -118,7 +118,7 @@ impl TryFrom<Version> for LanguageVersion {
         } = &version;
 
         if !pre.is_empty() || !build.is_empty() {
-            return Err(FromSemverError::UnexpectedMetadata);
+            return Err(LanguageVersionConversionError::UnexpectedMetadata);
         }
 
         Ok(match (major, minor, patch) {
@@ -158,7 +158,7 @@ impl TryFrom<Version> for LanguageVersion {
             (0, 8, 33) => LanguageVersion::V0_8_33,
             (0, 8, 34) => LanguageVersion::V0_8_34,
             (0, 8, 35) => LanguageVersion::V0_8_35,
-            _ => return Err(FromSemverError::UnsupportedVersion),
+            _ => return Err(LanguageVersionConversionError::UnsupportedVersion),
         })
     }
 }

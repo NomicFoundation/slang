@@ -3,4 +3,4 @@ mod specifier;
 mod target;
 
 pub use specifier::EvmTargetSpecifier;
-pub use target::{EvmTarget, FromStrError};
+pub use target::{EvmTarget, EvmTargetConversionError};
