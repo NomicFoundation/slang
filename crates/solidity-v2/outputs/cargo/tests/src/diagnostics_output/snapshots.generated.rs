@@ -953,6 +953,16 @@ mod syntax {
         }
     }
 
+    #[test]
+    fn more_than_one_inheritance_list() -> Result<()> {
+        run("syntax", "more_than_one_inheritance_list")
+    }
+
+    #[test]
+    fn more_than_one_storage_layout() -> Result<()> {
+        run("syntax", "more_than_one_storage_layout")
+    }
+
     mod multiple_mutability_specifiers {
         use super::*;
 

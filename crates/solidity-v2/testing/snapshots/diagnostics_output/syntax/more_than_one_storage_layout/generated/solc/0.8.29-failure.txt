@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[ParserError 8714] Error: More than one storage layout definition.
+   ╭─[input.sol:8:38]
+   │
+ 8 │ contract Duplicated layout at 0x1234 layout at 0xABC {}
+   │                                      ───┬──  
+   │                                         ╰──── Error occurred here.
+───╯
+
+[ParserError 8714] Error: More than one storage layout definition.
+    ╭─[input.sol:11:36]
+    │
+ 11 │ contract Repeated layout at 0x1234 layout at 0xABC layout at 0x4321 layout at 0xCBA {}
+    │                                    ───┬──  
+    │                                       ╰──── Error occurred here.
+────╯
+
+[ParserError 8714] Error: More than one storage layout definition.
+    ╭─[input.sol:11:52]
+    │
+ 11 │ contract Repeated layout at 0x1234 layout at 0xABC layout at 0x4321 layout at 0xCBA {}
+    │                                                    ───┬──  
+    │                                                       ╰──── Error occurred here.
+────╯
+
+[ParserError 8714] Error: More than one storage layout definition.
+    ╭─[input.sol:11:69]
+    │
+ 11 │ contract Repeated layout at 0x1234 layout at 0xABC layout at 0x4321 layout at 0xCBA {}
+    │                                                                     ───┬──  
+    │                                                                        ╰──── Error occurred here.
+────╯

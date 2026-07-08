@@ -2,6 +2,8 @@ mod expected_array_length_expression;
 mod incompatible_syntax_version;
 mod invalid_mutability;
 mod invalid_visibility;
+mod more_than_one_inheritance_list;
+mod more_than_one_storage_layout;
 mod multiple_mutability_specifiers;
 mod multiple_override_specifiers;
 mod multiple_virtual_specifiers;
@@ -13,6 +15,8 @@ pub use expected_array_length_expression::ExpectedArrayLengthExpression;
 pub use incompatible_syntax_version::IncompatibleSyntaxVersion;
 pub use invalid_mutability::InvalidMutability;
 pub use invalid_visibility::InvalidVisibility;
+pub use more_than_one_inheritance_list::MoreThanOneInheritanceList;
+pub use more_than_one_storage_layout::MoreThanOneStorageLayout;
 pub use multiple_mutability_specifiers::MultipleMutabilitySpecifiers;
 pub use multiple_override_specifiers::MultipleOverrideSpecifiers;
 pub use multiple_virtual_specifiers::MultipleVirtualSpecifiers;
@@ -52,12 +56,16 @@ define_diagnostic_kind! {
 
         /// More than one `virtual` specifier was provided on a definition.
         MultipleVirtualSpecifiers(MultipleVirtualSpecifiers),
-
         /// More than one `override` specifier was provided on a definition.
         MultipleOverrideSpecifiers(MultipleOverrideSpecifiers),
 
         /// A range/slice index access was used where an array length
         /// expression is expected
         ExpectedArrayLengthExpression(ExpectedArrayLengthExpression),
+
+        /// A contract declared more than one inheritance (`is`) list.
+        MoreThanOneInheritanceList(MoreThanOneInheritanceList),
+        /// A contract declared more than one storage layout (`layout at`) specifier.
+        MoreThanOneStorageLayout(MoreThanOneStorageLayout),
     }
 }

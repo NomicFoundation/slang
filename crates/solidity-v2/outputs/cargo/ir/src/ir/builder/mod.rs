@@ -6,6 +6,9 @@ pub(crate) mod node_id_generator;
 use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant;
+use slang_solidity_v2_common::diagnostics::kinds::syntax::{
+    MoreThanOneInheritanceList, MoreThanOneStorageLayout,
+};
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
@@ -102,25 +105,51 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let is_abstract = source.abstract_keyword.is_some();
         let name = self.build_identifier(&source.name);
         let members = self.build_contract_members(&source.members);
-        let inheritance_types = source
-            .specifiers
-            .elements
-            .iter()
-            .find_map(|specifier| {
+        let mut inheritance_specifiers =
+            source.specifiers.elements.iter().filter_map(|specifier| {
                 if let input::ContractSpecifier::InheritanceSpecifier(inheritance) = specifier {
-                    Some(self.build_inheritance_specifier(inheritance))
+                    Some(inheritance)
                 } else {
                     None
                 }
-            })
+            });
+        let inheritance_types = inheritance_specifiers
+            .next()
+            .map(|inheritance| self.build_inheritance_specifier(inheritance))
             .unwrap_or_default();
-        let storage_layout = source.specifiers.elements.iter().find_map(|specifier| {
-            if let input::ContractSpecifier::StorageLayoutSpecifier(storage_layout) = specifier {
-                Some(self.build_storage_layout_specifier(storage_layout))
-            } else {
-                None
-            }
-        });
+        // The grammar allows more than one inheritance list; solc only accepts
+        // the first and rejects any subsequent ones.
+        for inheritance in inheritance_specifiers {
+            self.diagnostics.push(
+                self.file_id.to_owned(),
+                inheritance.is_keyword.calculate_text_range().unwrap(),
+                MoreThanOneInheritanceList,
+            );
+        }
+        let mut storage_layout_specifiers =
+            source.specifiers.elements.iter().filter_map(|specifier| {
+                if let input::ContractSpecifier::StorageLayoutSpecifier(storage_layout) = specifier
+                {
+                    Some(storage_layout)
+                } else {
+                    None
+                }
+            });
+        let storage_layout = storage_layout_specifiers
+            .next()
+            .map(|storage_layout| self.build_storage_layout_specifier(storage_layout));
+        // The grammar allows more than one storage layout specifier; solc only
+        // accepts the first and rejects any subsequent ones.
+        for storage_layout in storage_layout_specifiers {
+            self.diagnostics.push(
+                self.file_id.to_owned(),
+                storage_layout
+                    .layout_keyword
+                    .calculate_text_range()
+                    .unwrap(),
+                MoreThanOneStorageLayout,
+            );
+        }
 
         Arc::new(output::ContractDefinitionStruct {
             id,
