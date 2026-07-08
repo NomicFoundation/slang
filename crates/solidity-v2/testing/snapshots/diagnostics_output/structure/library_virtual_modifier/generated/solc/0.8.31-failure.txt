@@ -1,0 +1,33 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[Warning 8429] Warning: Virtual modifiers are deprecated and scheduled for removal.
+   ╭─[input.sol:6:5]
+   │
+ 6 │ ╭─▶     modifier m1() virtual {
+   ┆ ┆   
+ 8 │ ├─▶     }
+   │ │           
+   │ ╰─────────── Error occurred here.
+───╯
+
+[Warning 8429] Warning: Virtual modifiers are deprecated and scheduled for removal.
+    ╭─[input.sol:18:5]
+    │
+ 18 │ ╭─▶     modifier m3() virtual {
+    ┆ ┆   
+ 20 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
+
+[TypeError 3275] Error: Modifiers in a library cannot be virtual.
+   ╭─[input.sol:6:5]
+   │
+ 6 │ ╭─▶     modifier m1() virtual {
+   ┆ ┆   
+ 8 │ ├─▶     }
+   │ │           
+   │ ╰─────────── Error occurred here.
+───╯

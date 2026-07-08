@@ -3,8 +3,8 @@ use std::sync::Arc;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     BreakOutsideLoop, ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers,
-    FunctionNameMatchesContainer, InvalidUsingDirectiveContainer, MultipleConstructors,
-    UnimplementedModifierMustBeVirtual,
+    FunctionNameMatchesContainer, InvalidUsingDirectiveContainer, LibraryVirtualModifier,
+    MultipleConstructors, UnimplementedModifierMustBeVirtual,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
@@ -130,6 +130,15 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     fn current_scope(&mut self) -> &mut Scope {
         let scope_id = self.current_scope_id();
         self.binder.get_scope_mut(scope_id)
+    }
+
+    /// Whether the current (enclosing) scope belongs to a library definition.
+    fn enclosing_container_is_library(&mut self) -> bool {
+        let node_id = self.current_scope().node_id();
+        matches!(
+            self.binder.find_definition_by_id(node_id),
+            Some(Definition::Library(_))
+        )
     }
 
     fn current_file_scope(&mut self) -> &mut FileScope {
@@ -415,6 +424,15 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                         self.current_file.id().to_owned(),
                         node.range.clone(),
                         UnimplementedModifierMustBeVirtual,
+                    );
+                }
+
+                // A modifier declared in a library cannot be marked `virtual`.
+                if node.attributes.is_virtual && self.enclosing_container_is_library() {
+                    self.diagnostics.push(
+                        self.current_file.id().to_owned(),
+                        node.range.clone(),
+                        LibraryVirtualModifier,
                     );
                 }
 
