@@ -753,9 +753,12 @@ pub mod slang_solidity_v2_common::diagnostics::kinds::syntax
 pub enum slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::ExpectedArrayLengthExpression(slang_solidity_v2_common::diagnostics::kinds::syntax::ExpectedArrayLengthExpression)
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::IncompatibleSyntaxVersion(slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleSyntaxVersion)
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::InvalidMutability(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability)
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::InvalidVisibility(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility)
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::MultipleMutabilitySpecifiers(slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers)
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::MultipleOverrideSpecifiers(slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleOverrideSpecifiers)
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::MultipleVirtualSpecifiers(slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVirtualSpecifiers)
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::MultipleVisibilitySpecifiers(slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers)
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::UnexpectedEof(slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof)
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::UnexpectedTerminal(slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal)
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
@@ -767,12 +770,18 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::E
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::ExpectedArrayLengthExpression) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleSyntaxVersion> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleSyntaxVersion) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleOverrideSpecifiers> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleOverrideSpecifiers) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVirtualSpecifiers> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVirtualSpecifiers) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
@@ -827,6 +836,46 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleSyntaxVersion::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleSyntaxVersion::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleSyntaxVersion::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability::valid: alloc::vec::Vec<slang_solidity_v2_common::terminals::TerminalKind>
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility::valid: alloc::vec::Vec<slang_solidity_v2_common::terminals::TerminalKind>
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers
@@ -884,6 +933,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVirtualSpecifiers::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVirtualSpecifiers::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVirtualSpecifiers::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof::expected: slang_solidity_v2_common::collections::SortedSet<slang_solidity_v2_common::terminals::TerminalKind>
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof
@@ -937,7 +1005,6 @@ pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnos
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::FallbackFunctionSignature(slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionSignature)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::IncompatibleConstantOperator(slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::InvalidBase(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase)
-pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::InvalidFunctionTypeVisibility(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ReceiveFunctionParameters(slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::StorageLayoutBaseNonInteger(slang_solidity_v2_common::diagnostics::kinds::type_system::StorageLayoutBaseNonInteger)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::StorageLayoutBaseNotConstant(slang_solidity_v2_common::diagnostics::kinds::type_system::StorageLayoutBaseNotConstant)
@@ -967,8 +1034,6 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase) -> Self
-impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
-pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::StorageLayoutBaseNonInteger> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
@@ -1182,25 +1247,6 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
-pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility
-impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility
-pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility
-impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility
-impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility
-pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility) -> bool
-impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
-pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility) -> Self
-impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
-pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility) -> Self
-impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility
-pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility
-impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility
-pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
-impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility
-pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility::code(&self) -> &'static str
-pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility::message(&self) -> alloc::string::String
-pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters
@@ -1350,12 +1396,18 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::E
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::ExpectedArrayLengthExpression) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleSyntaxVersion> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleSyntaxVersion) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleOverrideSpecifiers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleOverrideSpecifiers) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVirtualSpecifiers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVirtualSpecifiers) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -1382,8 +1434,6 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::IncompatibleConstantOperator) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase) -> Self
-impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
-pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::StorageLayoutBaseNonInteger> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -1594,6 +1644,14 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleSyntaxVersion::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleSyntaxVersion::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleSyntaxVersion::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidMutability::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidVisibility::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers::message(&self) -> alloc::string::String
@@ -1606,6 +1664,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVirtualSpecifiers::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVirtualSpecifiers::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVirtualSpecifiers::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::message(&self) -> alloc::string::String
@@ -1658,10 +1720,6 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
-impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility
-pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility::code(&self) -> &'static str
-pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility::message(&self) -> alloc::string::String
-pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidFunctionTypeVisibility::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters::message(&self) -> alloc::string::String

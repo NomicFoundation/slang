@@ -161,6 +161,11 @@ pub trait Visitor {
     }
     fn leave_for_statement(&mut self, _node: &ForStatement) {}
 
+    fn enter_function_attributes(&mut self, _node: &FunctionAttributes) -> bool {
+        true
+    }
+    fn leave_function_attributes(&mut self, _node: &FunctionAttributes) {}
+
     fn enter_function_call_expression(&mut self, _node: &FunctionCallExpression) -> bool {
         true
     }
@@ -175,6 +180,11 @@ pub trait Visitor {
         true
     }
     fn leave_function_type(&mut self, _node: &FunctionType) {}
+
+    fn enter_function_type_attributes(&mut self, _node: &FunctionTypeAttributes) -> bool {
+        true
+    }
+    fn leave_function_type_attributes(&mut self, _node: &FunctionTypeAttributes) {}
 
     fn enter_hex_number_expression(&mut self, _node: &HexNumberExpression) -> bool {
         true
@@ -318,6 +328,11 @@ pub trait Visitor {
         true
     }
     fn leave_source_unit(&mut self, _node: &SourceUnit) {}
+
+    fn enter_state_variable_attributes(&mut self, _node: &StateVariableAttributes) -> bool {
+        true
+    }
+    fn leave_state_variable_attributes(&mut self, _node: &StateVariableAttributes) {}
 
     fn enter_state_variable_definition(&mut self, _node: &StateVariableDefinition) -> bool {
         true
@@ -1364,6 +1379,19 @@ pub fn accept_for_statement(node: &ForStatement, visitor: &mut impl Visitor) {
     visitor.leave_for_statement(node);
 }
 
+pub fn accept_function_attributes(node: &FunctionAttributes, visitor: &mut impl Visitor) {
+    if !visitor.enter_function_attributes(node) {
+        return;
+    }
+    accept_function_visibility(&node.visibility, visitor);
+    accept_function_mutability(&node.mutability, visitor);
+    if let Some(override_specifier) = &node.override_specifier {
+        accept_override_paths(override_specifier, visitor);
+    }
+    accept_modifier_invocations(&node.modifier_invocations, visitor);
+    visitor.leave_function_attributes(node);
+}
+
 pub fn accept_function_call_expression(node: &FunctionCallExpression, visitor: &mut impl Visitor) {
     if !visitor.enter_function_call_expression(node) {
         return;
@@ -1382,12 +1410,7 @@ pub fn accept_function_definition(node: &FunctionDefinition, visitor: &mut impl 
         visitor.visit_identifier(name);
     }
     accept_parameters(&node.parameters, visitor);
-    accept_function_visibility(&node.visibility, visitor);
-    accept_function_mutability(&node.mutability, visitor);
-    if let Some(override_specifier) = &node.override_specifier {
-        accept_override_paths(override_specifier, visitor);
-    }
-    accept_modifier_invocations(&node.modifier_invocations, visitor);
+    accept_function_attributes(&node.attributes, visitor);
     if let Some(returns) = &node.returns {
         accept_parameters(returns, visitor);
     }
@@ -1402,12 +1425,20 @@ pub fn accept_function_type(node: &FunctionType, visitor: &mut impl Visitor) {
         return;
     }
     accept_parameters(&node.parameters, visitor);
-    accept_function_visibility(&node.visibility, visitor);
-    accept_function_mutability(&node.mutability, visitor);
+    accept_function_type_attributes(&node.attributes, visitor);
     if let Some(returns) = &node.returns {
         accept_parameters(returns, visitor);
     }
     visitor.leave_function_type(node);
+}
+
+pub fn accept_function_type_attributes(node: &FunctionTypeAttributes, visitor: &mut impl Visitor) {
+    if !visitor.enter_function_type_attributes(node) {
+        return;
+    }
+    accept_function_visibility(&node.visibility, visitor);
+    accept_function_mutability(&node.mutability, visitor);
+    visitor.leave_function_type_attributes(node);
 }
 
 pub fn accept_hex_number_expression(node: &HexNumberExpression, visitor: &mut impl Visitor) {
@@ -1698,6 +1729,21 @@ pub fn accept_source_unit(node: &SourceUnit, visitor: &mut impl Visitor) {
     visitor.leave_source_unit(node);
 }
 
+pub fn accept_state_variable_attributes(
+    node: &StateVariableAttributes,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_state_variable_attributes(node) {
+        return;
+    }
+    accept_state_variable_visibility(&node.visibility, visitor);
+    accept_state_variable_mutability(&node.mutability, visitor);
+    if let Some(override_specifier) = &node.override_specifier {
+        accept_override_paths(override_specifier, visitor);
+    }
+    visitor.leave_state_variable_attributes(node);
+}
+
 pub fn accept_state_variable_definition(
     node: &StateVariableDefinition,
     visitor: &mut impl Visitor,
@@ -1710,11 +1756,7 @@ pub fn accept_state_variable_definition(
     if let Some(value) = &node.value {
         accept_expression(value, visitor);
     }
-    accept_state_variable_visibility(&node.visibility, visitor);
-    accept_state_variable_mutability(&node.mutability, visitor);
-    if let Some(override_specifier) = &node.override_specifier {
-        accept_override_paths(override_specifier, visitor);
-    }
+    accept_state_variable_attributes(&node.attributes, visitor);
     visitor.leave_state_variable_definition(node);
 }
 

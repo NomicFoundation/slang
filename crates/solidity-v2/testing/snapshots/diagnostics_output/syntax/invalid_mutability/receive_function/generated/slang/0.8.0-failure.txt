@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/invalid-mutability] Error: Invalid mutability for this definition. Expected 'PayableKeyword'.
+   ╭─[input.sol:5:5]
+   │
+ 5 │     receive() external {}
+   │     ──────────┬──────────  
+   │               ╰──────────── Error occurred here.
+───╯

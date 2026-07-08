@@ -265,7 +265,7 @@ impl Definition {
     pub(crate) fn is_private_or_internally_visible(&self) -> bool {
         if let Self::Function(function_definition) = self {
             !matches!(
-                function_definition.ir_node.visibility,
+                function_definition.ir_node.attributes.visibility,
                 ir::FunctionVisibility::External
             )
         } else {
@@ -277,12 +277,12 @@ impl Definition {
         match self {
             Self::Function(function_definition) => {
                 matches!(
-                    function_definition.ir_node.visibility,
+                    function_definition.ir_node.attributes.visibility,
                     ir::FunctionVisibility::Internal | ir::FunctionVisibility::Public
                 )
             }
             Self::StateVariable(variable_definition) => !matches!(
-                variable_definition.ir_node.visibility,
+                variable_definition.ir_node.attributes.visibility,
                 ir::StateVariableVisibility::Private
             ),
             _ => true,
@@ -293,13 +293,13 @@ impl Definition {
         match self {
             Self::Function(function_definition) => {
                 matches!(
-                    function_definition.ir_node.visibility,
+                    function_definition.ir_node.attributes.visibility,
                     ir::FunctionVisibility::External | ir::FunctionVisibility::Public
                 )
             }
             Self::StateVariable(variable_definition) => {
                 matches!(
-                    variable_definition.ir_node.visibility,
+                    variable_definition.ir_node.attributes.visibility,
                     ir::StateVariableVisibility::Public
                 )
             }

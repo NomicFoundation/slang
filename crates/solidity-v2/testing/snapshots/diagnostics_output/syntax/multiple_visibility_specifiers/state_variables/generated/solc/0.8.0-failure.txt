@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 4110] Error: Visibility already specified as "public".
+   ╭─[input.sol:5:20]
+   │
+ 5 │     uint256 public private value;
+   │                    ───┬───  
+   │                       ╰───── Error occurred here.
+───╯

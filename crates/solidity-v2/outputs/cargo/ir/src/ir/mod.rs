@@ -16,11 +16,11 @@ pub use text_range::TextRange;
 mod node_extensions;
 
 mod builder;
+pub use builder::node_id_generator::{NodeIdGenerator, NodeKindHistogram};
+pub use builder::{build_source_unit as build, BuildOutput};
 
 mod source;
 pub use source::Source;
 
 #[path = "visitor.generated.rs"]
 pub mod visitor;
-
-pub use builder::{build_source_unit as build, BuildOutput, NodeIdGenerator, NodeKindHistogram};

@@ -591,6 +591,27 @@ impl IrModelMutator {
         );
     }
 
+    pub fn add_sequence_type(&mut self, name: &str) {
+        let name_id: model::Identifier = name.into();
+
+        assert!(
+            !self.sequences.contains_key(&name_id)
+                && !self.choices.contains_key(&name_id)
+                && !self.collections.contains_key(&name_id)
+                && !self.terminals.contains_key(&name_id)
+                && !self.external_types.contains(&name_id),
+            "Cannot add sequence {name}: name already in use"
+        );
+
+        self.sequences.insert(
+            name_id,
+            MutatedSequence {
+                fields: Vec::new(),
+                has_added_fields: true,
+            },
+        );
+    }
+
     pub fn add_collection_type(&mut self, name: &str, item_type: &str) {
         let item_type = self.find_node_type(&item_type.into());
         assert!(

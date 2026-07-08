@@ -9,7 +9,7 @@ use crate::ast::{FunctionDefinitionStruct, FunctionVisibility};
 impl FunctionDefinitionStruct {
     pub fn is_externally_visible(&self) -> bool {
         matches!(
-            self.visibility(),
+            self.attributes().visibility(),
             FunctionVisibility::Public | FunctionVisibility::External
         )
     }
@@ -31,7 +31,7 @@ impl FunctionDefinitionStruct {
             .name
             .as_ref()
             .map(|name| name.unparse().to_string());
-        let state_mutability: AbiMutability = (&self.ir_node.mutability).into();
+        let state_mutability: AbiMutability = (&self.ir_node.attributes.mutability).into();
 
         match self.ir_node.kind {
             ir::FunctionKind::Regular => Some(AbiEntry::Function(AbiFunction {

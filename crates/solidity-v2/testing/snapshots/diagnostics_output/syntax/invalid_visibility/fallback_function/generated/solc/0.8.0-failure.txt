@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[SyntaxError 4937] Error: No visibility specified. Did you intend to add "external"?
+   ╭─[input.sol:5:5]
+   │
+ 5 │     fallback() {}
+   │     ──────┬──────  
+   │           ╰──────── Error occurred here.
+───╯
+
+[TypeError 1159] Error: Fallback function must be defined as "external".
+   ╭─[input.sol:5:5]
+   │
+ 5 │     fallback() {}
+   │     ──────┬──────  
+   │           ╰──────── Error occurred here.
+───╯

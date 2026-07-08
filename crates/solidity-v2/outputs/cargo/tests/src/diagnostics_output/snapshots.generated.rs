@@ -22,15 +22,6 @@ mod compilation {
     }
 }
 
-mod passing {
-    use super::*;
-
-    #[test]
-    fn function_external_delete_storage() -> Result<()> {
-        run("passing", "function_external_delete_storage")
-    }
-}
-
 mod resolution {
     use super::*;
 
@@ -855,6 +846,68 @@ mod syntax {
         }
     }
 
+    mod invalid_mutability {
+        use super::*;
+
+        #[test]
+        fn receive_function() -> Result<()> {
+            run("syntax/invalid_mutability", "receive_function")
+        }
+    }
+
+    mod invalid_visibility {
+        use super::*;
+
+        #[test]
+        fn fallback_function() -> Result<()> {
+            run("syntax/invalid_visibility", "fallback_function")
+        }
+
+        mod function_type {
+            use super::*;
+
+            #[test]
+            fn external() -> Result<()> {
+                run("syntax/invalid_visibility/function_type", "external")
+            }
+
+            #[test]
+            fn local_variable() -> Result<()> {
+                run("syntax/invalid_visibility/function_type", "local_variable")
+            }
+
+            #[test]
+            fn nested() -> Result<()> {
+                run("syntax/invalid_visibility/function_type", "nested")
+            }
+
+            #[test]
+            fn parameter() -> Result<()> {
+                run("syntax/invalid_visibility/function_type", "parameter")
+            }
+
+            #[test]
+            fn return_type() -> Result<()> {
+                run("syntax/invalid_visibility/function_type", "return_type")
+            }
+
+            #[test]
+            fn state_variable() -> Result<()> {
+                run("syntax/invalid_visibility/function_type", "state_variable")
+            }
+
+            #[test]
+            fn struct_field() -> Result<()> {
+                run("syntax/invalid_visibility/function_type", "struct_field")
+            }
+        }
+
+        #[test]
+        fn receive_function() -> Result<()> {
+            run("syntax/invalid_visibility", "receive_function")
+        }
+    }
+
     mod multiple_mutability_specifiers {
         use super::*;
 
@@ -942,6 +995,43 @@ mod syntax {
         #[test]
         fn receive_functions() -> Result<()> {
             run("syntax/multiple_virtual_specifiers", "receive_functions")
+        }
+    }
+
+    mod multiple_visibility_specifiers {
+        use super::*;
+
+        #[test]
+        fn constructors() -> Result<()> {
+            run("syntax/multiple_visibility_specifiers", "constructors")
+        }
+
+        #[test]
+        fn fallback_functions() -> Result<()> {
+            run(
+                "syntax/multiple_visibility_specifiers",
+                "fallback_functions",
+            )
+        }
+
+        #[test]
+        fn function_types() -> Result<()> {
+            run("syntax/multiple_visibility_specifiers", "function_types")
+        }
+
+        #[test]
+        fn functions() -> Result<()> {
+            run("syntax/multiple_visibility_specifiers", "functions")
+        }
+
+        #[test]
+        fn receive_functions() -> Result<()> {
+            run("syntax/multiple_visibility_specifiers", "receive_functions")
+        }
+
+        #[test]
+        fn state_variables() -> Result<()> {
+            run("syntax/multiple_visibility_specifiers", "state_variables")
         }
     }
 
@@ -1108,60 +1198,6 @@ mod type_system {
         #[test]
         fn library() -> Result<()> {
             run("type_system/invalid_base", "library")
-        }
-    }
-
-    mod invalid_function_type_visibility {
-        use super::*;
-
-        #[test]
-        fn local_variable() -> Result<()> {
-            run(
-                "type_system/invalid_function_type_visibility",
-                "local_variable",
-            )
-        }
-
-        #[test]
-        fn nested() -> Result<()> {
-            run("type_system/invalid_function_type_visibility", "nested")
-        }
-
-        #[test]
-        fn parameter() -> Result<()> {
-            run("type_system/invalid_function_type_visibility", "parameter")
-        }
-
-        #[test]
-        fn return_type() -> Result<()> {
-            run(
-                "type_system/invalid_function_type_visibility",
-                "return_type",
-            )
-        }
-
-        #[test]
-        fn state_variable() -> Result<()> {
-            run(
-                "type_system/invalid_function_type_visibility",
-                "state_variable",
-            )
-        }
-
-        #[test]
-        fn struct_field() -> Result<()> {
-            run(
-                "type_system/invalid_function_type_visibility",
-                "struct_field",
-            )
-        }
-
-        #[test]
-        fn valid_visibilities() -> Result<()> {
-            run(
-                "type_system/invalid_function_type_visibility",
-                "valid_visibilities",
-            )
         }
     }
 

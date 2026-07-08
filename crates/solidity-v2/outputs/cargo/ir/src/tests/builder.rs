@@ -81,8 +81,11 @@ contract MyContract {
     assert_eq!(function.kind, ir::FunctionKind::Regular);
     let function_name = function.name.as_ref().expect("function has a name");
     assert_eq!("test", function_name.unparse());
-    assert_eq!(function.visibility, ir::FunctionVisibility::Public);
-    assert_eq!(function.mutability, ir::FunctionMutability::View);
+    assert_eq!(
+        function.attributes.visibility,
+        ir::FunctionVisibility::Public
+    );
+    assert_eq!(function.attributes.mutability, ir::FunctionMutability::View);
     assert_eq!(0, function.parameters.len());
     assert!(function.returns.is_some());
     assert_eq!(1, function.returns.as_ref().unwrap().len());

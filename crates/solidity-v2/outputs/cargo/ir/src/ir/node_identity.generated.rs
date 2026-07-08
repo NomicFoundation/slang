@@ -224,6 +224,12 @@ impl NodeIdentity for ForStatementStruct {
     }
 }
 
+impl NodeIdentity for FunctionAttributesStruct {
+    fn node_id(&self) -> Option<NodeId> {
+        Some(self.id)
+    }
+}
+
 impl NodeIdentity for FunctionCallExpressionStruct {
     fn node_id(&self) -> Option<NodeId> {
         Some(self.id)
@@ -237,6 +243,12 @@ impl NodeIdentity for FunctionDefinitionStruct {
 }
 
 impl NodeIdentity for FunctionTypeStruct {
+    fn node_id(&self) -> Option<NodeId> {
+        Some(self.id)
+    }
+}
+
+impl NodeIdentity for FunctionTypeAttributesStruct {
     fn node_id(&self) -> Option<NodeId> {
         Some(self.id)
     }
@@ -405,6 +417,12 @@ impl NodeIdentity for SingleTypedDeclarationStruct {
 }
 
 impl NodeIdentity for SourceUnitStruct {
+    fn node_id(&self) -> Option<NodeId> {
+        Some(self.id)
+    }
+}
+
+impl NodeIdentity for StateVariableAttributesStruct {
     fn node_id(&self) -> Option<NodeId> {
         Some(self.id)
     }

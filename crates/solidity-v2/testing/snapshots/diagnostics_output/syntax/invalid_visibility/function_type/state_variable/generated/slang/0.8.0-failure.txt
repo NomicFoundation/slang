@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[syntax/invalid-visibility] Error: Invalid visibility for this definition. Expected 'InternalKeyword' or 'ExternalKeyword'.
+   ╭─[input.sol:7:24]
+   │
+ 7 │     function (uint256) private x;
+   │                        ───┬───  
+   │                           ╰───── Error occurred here.
+───╯
+
+[syntax/invalid-visibility] Error: Invalid visibility for this definition. Expected 'InternalKeyword' or 'ExternalKeyword'.
+   ╭─[input.sol:8:24]
+   │
+ 8 │     function (uint256) public y;
+   │                        ───┬──  
+   │                           ╰──── Error occurred here.
+───╯

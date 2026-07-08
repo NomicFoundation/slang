@@ -157,8 +157,8 @@ impl Pass<'_> {
             implicit_receiver_type,
             parameter_types,
             return_type,
-            visibility: (&function_definition.visibility).into(),
-            mutability: (&function_definition.mutability).into(),
+            visibility: (&function_definition.attributes.visibility).into(),
+            mutability: (&function_definition.attributes.mutability).into(),
             partially_applied: false,
         })))
     }
