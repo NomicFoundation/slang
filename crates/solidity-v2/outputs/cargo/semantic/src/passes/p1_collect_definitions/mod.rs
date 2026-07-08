@@ -3,8 +3,8 @@ use std::sync::Arc;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     BreakOutsideLoop, ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers,
-    FunctionNameMatchesContainer, InvalidUsingDirectiveContainer, LibraryVirtualModifier,
-    MultipleConstructors, UnimplementedModifierMustBeVirtual,
+    FunctionNameMatchesContainer, InvalidUsingDirectiveContainer, LibraryVirtualFunction,
+    LibraryVirtualModifier, MultipleConstructors, UnimplementedModifierMustBeVirtual,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
@@ -363,6 +363,15 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
             | ir::FunctionKind::Constructor
             | ir::FunctionKind::Fallback
             | ir::FunctionKind::Receive => {
+                // A function declared in a library cannot be marked `virtual`.
+                if node.attributes.is_virtual && self.enclosing_container_is_library() {
+                    self.diagnostics.push(
+                        self.current_file.id().to_owned(),
+                        node.range.clone(),
+                        LibraryVirtualFunction,
+                    );
+                }
+
                 let parameters_scope_id = self.collect_parameters(&node.parameters);
 
                 if let Some(name) = &node.name {

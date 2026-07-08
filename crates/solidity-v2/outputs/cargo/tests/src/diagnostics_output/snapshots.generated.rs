@@ -817,6 +817,11 @@ mod structure {
     }
 
     #[test]
+    fn library_virtual_function() -> Result<()> {
+        run("structure", "library_virtual_function")
+    }
+
+    #[test]
     fn library_virtual_modifier() -> Result<()> {
         run("structure", "library_virtual_modifier")
     }

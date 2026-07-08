@@ -7,6 +7,7 @@ mod function_name_matches_container;
 mod invalid_using_directive_container;
 mod library_fallback_function;
 mod library_receive_function;
+mod library_virtual_function;
 mod library_virtual_modifier;
 mod multiple_constructors;
 mod unimplemented_modifier_must_be_virtual;
@@ -20,6 +21,7 @@ pub use function_name_matches_container::FunctionNameMatchesContainer;
 pub use invalid_using_directive_container::InvalidUsingDirectiveContainer;
 pub use library_fallback_function::LibraryFallbackFunction;
 pub use library_receive_function::LibraryReceiveFunction;
+pub use library_virtual_function::LibraryVirtualFunction;
 pub use library_virtual_modifier::LibraryVirtualModifier;
 pub use multiple_constructors::MultipleConstructors;
 use serde::Serialize;
@@ -59,6 +61,8 @@ define_diagnostic_kind! {
         LibraryFallbackFunction(LibraryFallbackFunction),
         /// A library declares a receive function.
         LibraryReceiveFunction(LibraryReceiveFunction),
+        /// A function declared in a library is marked `virtual`.
+        LibraryVirtualFunction(LibraryVirtualFunction),
         /// A modifier declared in a library is marked `virtual`.
         LibraryVirtualModifier(LibraryVirtualModifier),
 
