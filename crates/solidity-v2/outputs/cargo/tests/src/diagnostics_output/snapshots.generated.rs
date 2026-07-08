@@ -820,6 +820,11 @@ mod structure {
     fn multiple_constructors() -> Result<()> {
         run("structure", "multiple_constructors")
     }
+
+    #[test]
+    fn unimplemented_modifier_must_be_virtual() -> Result<()> {
+        run("structure", "unimplemented_modifier_must_be_virtual")
+    }
 }
 
 mod syntax {

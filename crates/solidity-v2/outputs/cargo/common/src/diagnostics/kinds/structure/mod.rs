@@ -8,6 +8,7 @@ mod invalid_using_directive_container;
 mod library_fallback_function;
 mod library_receive_function;
 mod multiple_constructors;
+mod unimplemented_modifier_must_be_virtual;
 
 pub use break_outside_loop::BreakOutsideLoop;
 pub use continue_outside_loop::ContinueOutsideLoop;
@@ -20,6 +21,7 @@ pub use library_fallback_function::LibraryFallbackFunction;
 pub use library_receive_function::LibraryReceiveFunction;
 pub use multiple_constructors::MultipleConstructors;
 use serde::Serialize;
+pub use unimplemented_modifier_must_be_virtual::UnimplementedModifierMustBeVirtual;
 
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
 use crate::diagnostics::kinds::DiagnosticKind;
@@ -55,5 +57,8 @@ define_diagnostic_kind! {
         LibraryFallbackFunction(LibraryFallbackFunction),
         /// A library declares a receive function.
         LibraryReceiveFunction(LibraryReceiveFunction),
+
+        /// A modifier without an implementation body is not marked `virtual`.
+        UnimplementedModifierMustBeVirtual(UnimplementedModifierMustBeVirtual),
     }
 }

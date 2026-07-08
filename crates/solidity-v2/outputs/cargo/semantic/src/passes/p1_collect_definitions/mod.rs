@@ -4,6 +4,7 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclar
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     BreakOutsideLoop, ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers,
     FunctionNameMatchesContainer, InvalidUsingDirectiveContainer, MultipleConstructors,
+    UnimplementedModifierMustBeVirtual,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
@@ -408,6 +409,15 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
             }
 
             ir::FunctionKind::Modifier => {
+                // A modifier without an implementation body must be marked `virtual`.
+                if node.body.is_none() && !node.attributes.is_virtual {
+                    self.diagnostics.push(
+                        self.current_file.id().to_owned(),
+                        node.range.clone(),
+                        UnimplementedModifierMustBeVirtual,
+                    );
+                }
+
                 let definition = Definition::new_modifier(node);
                 self.insert_definition_in_current_scope(definition);
 
