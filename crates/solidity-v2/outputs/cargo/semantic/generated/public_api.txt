@@ -387,6 +387,8 @@ impl core::cmp::PartialEq for slang_solidity_v2_semantic::types::Number
 pub fn slang_solidity_v2_semantic::types::Number::eq(&self, &slang_solidity_v2_semantic::types::Number) -> bool
 impl core::fmt::Debug for slang_solidity_v2_semantic::types::Number
 pub fn slang_solidity_v2_semantic::types::Number::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity_v2_semantic::types::Number
+pub fn slang_solidity_v2_semantic::types::Number::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::Number
 pub enum slang_solidity_v2_semantic::types::Type
 pub slang_solidity_v2_semantic::types::Type::Address(slang_solidity_v2_semantic::types::AddressType)

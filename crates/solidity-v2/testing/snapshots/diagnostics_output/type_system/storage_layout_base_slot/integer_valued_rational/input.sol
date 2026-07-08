@@ -1,0 +1,7 @@
+// SPDX-License-Identifier: MIT
+pragma solidity *;
+
+// Rational expressions whose value has no fractional part are valid base slots.
+contract A layout at 42.0 {}
+contract B layout at 2.5e10 {}
+contract C layout at 12 / 3 {}

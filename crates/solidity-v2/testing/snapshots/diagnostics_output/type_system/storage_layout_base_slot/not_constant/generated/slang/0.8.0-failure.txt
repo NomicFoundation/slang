@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
+   ╭─[input.sol:6:12]
+   │
+ 6 │ contract C layout at block.timestamp {}
+   │            ────────────┬────────────  
+   │                        ╰────────────── Error occurred here.
+───╯
+
+[type-system/storage-layout-base-not-constant] Error: The base slot of the storage layout must be a compile-time constant expression.
+   ╭─[input.sol:6:22]
+   │
+ 6 │ contract C layout at block.timestamp {}
+   │                      ───────┬───────  
+   │                             ╰───────── Error occurred here.
+───╯

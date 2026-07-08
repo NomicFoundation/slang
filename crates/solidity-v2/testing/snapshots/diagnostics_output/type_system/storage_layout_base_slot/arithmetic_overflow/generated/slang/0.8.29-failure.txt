@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/constant-arithmetic-error] Error: Arithmetic error when computing constant value.
+   ╭─[constants.sol:7:25]
+   │
+ 7 │ uint256 constant SLOT = ~B;
+   │                         ─┬  
+   │                          ╰── Error occurred here.
+───╯

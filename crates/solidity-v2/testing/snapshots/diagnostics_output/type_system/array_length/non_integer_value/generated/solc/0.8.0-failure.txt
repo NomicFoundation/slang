@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[TypeError 5462] Error: Invalid array length, expected integer literal or constant expression.
+   ╭─[input.sol:8:13]
+   │
+ 8 │     uint256[true] a;
+   │             ──┬─  
+   │               ╰─── Error occurred here.
+───╯
+
+[TypeError 5462] Error: Invalid array length, expected integer literal or constant expression.
+   ╭─[input.sol:9:13]
+   │
+ 9 │     uint256["x"] b;
+   │             ─┬─  
+   │              ╰─── Error occurred here.
+───╯
+
+[TypeError 5462] Error: Invalid array length, expected integer literal or constant expression.
+    ╭─[input.sol:10:13]
+    │
+ 10 │     uint256[B] c;
+    │             ┬  
+    │             ╰── Error occurred here.
+────╯
+
+[TypeError 5462] Error: Invalid array length, expected integer literal or constant expression.
+    ╭─[input.sol:11:13]
+    │
+ 11 │     uint256[S] d;
+    │             ┬  
+    │             ╰── Error occurred here.
+────╯

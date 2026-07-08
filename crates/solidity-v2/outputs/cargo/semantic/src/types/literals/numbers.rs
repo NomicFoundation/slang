@@ -1,3 +1,4 @@
+use std::fmt;
 use std::str::FromStr;
 
 use num_bigint::BigInt;
@@ -87,10 +88,6 @@ impl Number {
             Self::Integer(value) => Some(value),
             Self::Rational(_) => None,
         }
-    }
-
-    pub(crate) fn as_usize(&self) -> Option<usize> {
-        self.as_integer()?.to_usize()
     }
 
     pub(crate) fn to_literal_kind(&self) -> LiteralKind {
@@ -249,6 +246,37 @@ impl Number {
         match (self, other) {
             (Self::Integer(lhs), Self::Integer(rhs)) => Some(Self::Integer(lhs >> rhs.to_u32()?)),
             _ => None,
+        }
+    }
+}
+
+/// Human-readable form used in diagnostics: `int_const N` for an integer and
+/// `rational_const N / D` for a rational. A value whose decimal form exceeds
+/// 32 digits is abbreviated to its first and last four digits.
+impl fmt::Display for Number {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fn readable_digits(value: &BigInt) -> String {
+            let digits = value.to_string();
+            if digits.len() > 32 {
+                let omitted = digits.len() - 8;
+                format!(
+                    "{}...({omitted} digits omitted)...{}",
+                    &digits[..4],
+                    &digits[digits.len() - 4..],
+                )
+            } else {
+                digits
+            }
+        }
+
+        match self {
+            Self::Integer(value) => write!(f, "int_const {}", readable_digits(value)),
+            Self::Rational(value) => write!(
+                f,
+                "rational_const {} / {}",
+                readable_digits(value.numer()),
+                readable_digits(value.denom()),
+            ),
         }
     }
 }
@@ -494,6 +522,30 @@ mod tests {
         // but the rational is below int8's min, so it is rejected.
         let under_min = BigRational::new(BigInt::from(-1285), BigInt::from(10));
         assert!(!rational_literal_fits(&under_min, true, 8));
+    }
+
+    #[test]
+    fn display_abbreviates_long_integers() {
+        assert_eq!(integer(-7).to_string(), "int_const -7");
+        // 10^40 has 41 digits, over the 32-digit limit.
+        assert_eq!(
+            Number::Integer(pow10(40)).to_string(),
+            "int_const 1000...(33 digits omitted)...0000"
+        );
+    }
+
+    #[test]
+    fn display_renders_rationals_as_fractions() {
+        assert_eq!(rational(5, 2).to_string(), "rational_const 5 / 2");
+        // The sign lives on the numerator.
+        assert_eq!(rational(-1, 3).to_string(), "rational_const -1 / 3");
+        // The fraction is normalised.
+        assert_eq!(rational(2, 6).to_string(), "rational_const 1 / 3");
+        // A huge numerator is abbreviated like an integer.
+        assert_eq!(
+            Number::Rational(BigRational::new(pow10(40) + 1, BigInt::from(2))).to_string(),
+            "rational_const 1000...(33 digits omitted)...0001 / 2"
+        );
     }
 
     fn fit(numerator: BigInt, denominator: BigInt) -> Option<FixedPointNumberType> {

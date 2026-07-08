@@ -1,5 +1,30 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+[type-system/array-length-not-constant] Error: Invalid array length, expected integer literal or constant expression.
+    ╭─[input.sol:10:13]
+    │
+ 10 │     uint256[E] chained;
+    │             ┬  
+    │             ╰── Error occurred here.
+────╯
+[type-system/array-length-not-constant] Error: Invalid array length, expected integer literal or constant expression.
+    ╭─[input.sol:11:13]
+    │
+ 11 │     uint256[N] file_level;
+    │             ┬  
+    │             ╰── Error occurred here.
+────╯
+[type-system/array-length-not-constant] Error: Invalid array length, expected integer literal or constant expression.
+    ╭─[input.sol:12:13]
+    │
+ 12 │     uint256[M] contract_level;
+    │             ┬  
+    │             ╰── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
 Definitions (9):
 - Def: #1 ["P" @ input.sol:5:18] (constant, type: uint256)
 - Def: #2 ["E" @ input.sol:6:18] (constant, type: uint256)

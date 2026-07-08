@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[type-system/storage-layout-base-not-constant] Error: The base slot of the storage layout must be a compile-time constant expression.
+   ╭─[input.sol:5:22]
+   │
+ 5 │ contract A layout at true {}
+   │                      ──┬─  
+   │                        ╰─── Error occurred here.
+───╯
+
+[type-system/storage-layout-base-not-constant] Error: The base slot of the storage layout must be a compile-time constant expression.
+   ╭─[input.sol:6:22]
+   │
+ 6 │ contract B layout at "abc" {}
+   │                      ──┬──  
+   │                        ╰──── Error occurred here.
+───╯

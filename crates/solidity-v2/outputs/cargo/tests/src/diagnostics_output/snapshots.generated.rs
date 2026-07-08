@@ -968,6 +968,125 @@ mod syntax {
 mod type_system {
     use super::*;
 
+    mod array_length {
+        use super::*;
+
+        #[test]
+        fn address_constant_length() -> Result<()> {
+            run("type_system/array_length", "address_constant_length")
+        }
+
+        #[test]
+        fn arithmetic_overflow() -> Result<()> {
+            run("type_system/array_length", "arithmetic_overflow")
+        }
+
+        #[test]
+        fn arithmetic_overflow_binary() -> Result<()> {
+            run("type_system/array_length", "arithmetic_overflow_binary")
+        }
+
+        #[test]
+        fn cast() -> Result<()> {
+            run("type_system/array_length", "cast")
+        }
+
+        #[test]
+        fn compound_expression() -> Result<()> {
+            run("type_system/array_length", "compound_expression")
+        }
+
+        #[test]
+        fn division_by_zero() -> Result<()> {
+            run("type_system/array_length", "division_by_zero")
+        }
+
+        #[test]
+        fn exceeds_usize() -> Result<()> {
+            run("type_system/array_length", "exceeds_usize")
+        }
+
+        #[test]
+        fn forward_reference() -> Result<()> {
+            run("type_system/array_length", "forward_reference")
+        }
+
+        #[test]
+        fn fractional() -> Result<()> {
+            run("type_system/array_length", "fractional")
+        }
+
+        #[test]
+        fn function_call_constant() -> Result<()> {
+            run("type_system/array_length", "function_call_constant")
+        }
+
+        #[test]
+        fn function_value() -> Result<()> {
+            run("type_system/array_length", "function_value")
+        }
+
+        #[test]
+        fn huge_scientific_literal() -> Result<()> {
+            run("type_system/array_length", "huge_scientific_literal")
+        }
+
+        #[test]
+        fn incompatible_operator() -> Result<()> {
+            run("type_system/array_length", "incompatible_operator")
+        }
+
+        #[test]
+        fn incompatible_operator_rational() -> Result<()> {
+            run("type_system/array_length", "incompatible_operator_rational")
+        }
+
+        #[test]
+        fn innermost_operation() -> Result<()> {
+            run("type_system/array_length", "innermost_operation")
+        }
+
+        #[test]
+        fn literal_fractional_division() -> Result<()> {
+            run("type_system/array_length", "literal_fractional_division")
+        }
+
+        #[test]
+        fn negative() -> Result<()> {
+            run("type_system/array_length", "negative")
+        }
+
+        #[test]
+        fn negative_exponent() -> Result<()> {
+            run("type_system/array_length", "negative_exponent")
+        }
+
+        #[test]
+        fn non_integer_value() -> Result<()> {
+            run("type_system/array_length", "non_integer_value")
+        }
+
+        #[test]
+        fn not_constant() -> Result<()> {
+            run("type_system/array_length", "not_constant")
+        }
+
+        #[test]
+        fn too_large() -> Result<()> {
+            run("type_system/array_length", "too_large")
+        }
+
+        #[test]
+        fn valid() -> Result<()> {
+            run("type_system/array_length", "valid")
+        }
+
+        #[test]
+        fn zero() -> Result<()> {
+            run("type_system/array_length", "zero")
+        }
+    }
+
     #[test]
     fn fallback_function_mutability() -> Result<()> {
         run("type_system", "fallback_function_mutability")
@@ -1057,6 +1176,145 @@ mod type_system {
         #[test]
         fn interface() -> Result<()> {
             run("type_system/receive_function_parameters", "interface")
+        }
+    }
+
+    mod storage_layout_base_slot {
+        use super::*;
+
+        #[test]
+        fn address_constant() -> Result<()> {
+            run("type_system/storage_layout_base_slot", "address_constant")
+        }
+
+        #[test]
+        fn arithmetic_overflow() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "arithmetic_overflow",
+            )
+        }
+
+        #[test]
+        fn bitwise_negation_after_cast() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "bitwise_negation_after_cast",
+            )
+        }
+
+        #[test]
+        fn bitwise_negation_literal() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "bitwise_negation_literal",
+            )
+        }
+
+        #[test]
+        fn bytes_constant() -> Result<()> {
+            run("type_system/storage_layout_base_slot", "bytes_constant")
+        }
+
+        #[test]
+        fn cast() -> Result<()> {
+            run("type_system/storage_layout_base_slot", "cast")
+        }
+
+        #[test]
+        fn constant_initialized_from_cast() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "constant_initialized_from_cast",
+            )
+        }
+
+        #[test]
+        fn constant_member_access() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "constant_member_access",
+            )
+        }
+
+        #[test]
+        fn fractional() -> Result<()> {
+            run("type_system/storage_layout_base_slot", "fractional")
+        }
+
+        #[test]
+        fn int_constant_negative() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "int_constant_negative",
+            )
+        }
+
+        #[test]
+        fn integer_valued_rational() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "integer_valued_rational",
+            )
+        }
+
+        #[test]
+        fn negative() -> Result<()> {
+            run("type_system/storage_layout_base_slot", "negative")
+        }
+
+        #[test]
+        fn non_integer_type() -> Result<()> {
+            run("type_system/storage_layout_base_slot", "non_integer_type")
+        }
+
+        #[test]
+        fn not_constant() -> Result<()> {
+            run("type_system/storage_layout_base_slot", "not_constant")
+        }
+
+        #[test]
+        fn out_of_range() -> Result<()> {
+            run("type_system/storage_layout_base_slot", "out_of_range")
+        }
+
+        #[test]
+        fn out_of_range_expressions() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "out_of_range_expressions",
+            )
+        }
+
+        #[test]
+        fn type_max() -> Result<()> {
+            run("type_system/storage_layout_base_slot", "type_max")
+        }
+
+        #[test]
+        fn units() -> Result<()> {
+            run("type_system/storage_layout_base_slot", "units")
+        }
+
+        #[test]
+        fn unlimited_arithmetic() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "unlimited_arithmetic",
+            )
+        }
+
+        #[test]
+        fn user_defined_value_type() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "user_defined_value_type",
+            )
+        }
+
+        #[test]
+        fn valid() -> Result<()> {
+            run("type_system/storage_layout_base_slot", "valid")
         }
     }
 }

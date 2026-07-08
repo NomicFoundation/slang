@@ -2,9 +2,13 @@ use std::sync::Arc;
 
 use ruint::aliases::U256;
 use slang_solidity_v2_common::collections::Set;
+use slang_solidity_v2_common::diagnostics::kinds::type_system::{
+    StorageLayoutBaseNonInteger, StorageLayoutBaseNotConstant, StorageLayoutBaseOutOfRange,
+};
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
-use slang_solidity_v2_ir::ir::TextRange;
+use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
 use super::{Pass, ScopeFrame};
 use crate::binder::{
@@ -12,9 +16,9 @@ use crate::binder::{
 };
 use crate::built_ins::BuiltInsResolver;
 use crate::passes::common::constant_evaluator::{
-    evaluate_compile_time_integer_constant, ConstantResolver, EvaluationError,
+    evaluate_compile_time_constant, ConstantResolver, EvaluationError,
 };
-use crate::passes::common::find_definition_namespace_scope_id;
+use crate::passes::common::{find_definition_namespace_scope_id, node_location};
 use crate::types::{ContractType, InterfaceType, StructType, Type, TypeId};
 
 /// Lexical style resolution of symbols
@@ -361,17 +365,14 @@ impl Pass<'_> {
         }
     }
 
-    /// Resolves a contract's `layout at <expr>` storage base slot via the
-    /// constant evaluator.
+    /// Resolves and validates a contract's `layout at <expr>` storage base
+    /// slot via the constant evaluator, emitting diagnostics on failure.
     pub(super) fn resolve_storage_base_slot(
         &mut self,
         node: &ir::ContractDefinition,
         base_slot_expression: &ir::Expression,
     ) {
-        // TODO(validation) SDR[30]: if the base slot expression cannot be computed
-        // at this time, it's not a compile time constant and hence it's an
-        // error
-        let base_slot = match evaluate_compile_time_integer_constant(
+        let value = match evaluate_compile_time_constant(
             base_slot_expression,
             self.current_scope_id(),
             self.types,
@@ -381,30 +382,51 @@ impl Pass<'_> {
                 use_site: None,
             },
         ) {
-            // TODO(validation) SDR[1733]: if conversion fails the constant is
-            // negative or exceeds the 256 bit range
-            Ok(value) => U256::try_from(value).ok(),
-            Err(error) => {
-                if let EvaluationError::Diagnostic(kind) = error {
-                    self.diagnostics.push(
-                        self.file_id.clone(),
-                        base_slot_expression
-                            .calculate_text_range()
-                            .expect("expression has a text range"),
-                        kind,
-                    );
-                }
-                None
+            Ok(value) => value,
+            Err(EvaluationError::Diagnostic { kind, expression }) => {
+                // Report at the failing operation, falling back to the base
+                // slot expression when the evaluator didn't attach one.
+                self.push_diagnostic(expression.as_ref().unwrap_or(base_slot_expression), kind);
+                return;
+            }
+            Err(EvaluationError::CouldNotEvaluate) => {
+                self.push_diagnostic(base_slot_expression, StorageLayoutBaseNotConstant);
+                return;
             }
         };
 
-        if let Some(base_slot) = base_slot {
-            let Definition::Contract(contract_definition) =
-                self.binder.get_definition_mut(node.id())
-            else {
-                unreachable!("the definition is not a contract");
-            };
-            contract_definition.base_slot = Some(base_slot);
-        }
+        // Classify the value: non-integer, then out of range (negative or too large).
+        let Some(integer) = value.into_integer() else {
+            self.push_diagnostic(base_slot_expression, StorageLayoutBaseNonInteger);
+            return;
+        };
+        let Ok(base_slot) = U256::try_from(&integer) else {
+            self.push_diagnostic(
+                base_slot_expression,
+                StorageLayoutBaseOutOfRange {
+                    value: integer.to_string(),
+                },
+            );
+            return;
+        };
+
+        // TODO(validation) SDR[743]: When this function is called after `ir::visitor::accept_expression`
+        // check if type is implicitly convertable to uint256.
+
+        let Definition::Contract(contract_definition) = self.binder.get_definition_mut(node.id())
+        else {
+            unreachable!("the definition is not a contract");
+        };
+        contract_definition.base_slot = Some(base_slot);
+    }
+
+    /// Emits `kind` located at `node`.
+    fn push_diagnostic(
+        &mut self,
+        node: &(impl NodeIdentity + TextRange),
+        kind: impl Into<DiagnosticKind>,
+    ) {
+        let (file_id, range) = node_location(node, self.file_node_mapper);
+        self.diagnostics.push(file_id, range, kind);
     }
 }
