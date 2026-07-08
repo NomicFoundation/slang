@@ -835,6 +835,11 @@ mod structure {
     fn unimplemented_modifier_must_be_virtual() -> Result<()> {
         run("structure", "unimplemented_modifier_must_be_virtual")
     }
+
+    #[test]
+    fn virtual_private_function() -> Result<()> {
+        run("structure", "virtual_private_function")
+    }
 }
 
 mod syntax {

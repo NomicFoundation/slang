@@ -5,6 +5,7 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     BreakOutsideLoop, ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers,
     FunctionNameMatchesContainer, InvalidUsingDirectiveContainer, LibraryVirtualFunction,
     LibraryVirtualModifier, MultipleConstructors, UnimplementedModifierMustBeVirtual,
+    VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
@@ -369,6 +370,17 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                         self.current_file.id().to_owned(),
                         node.range.clone(),
                         LibraryVirtualFunction,
+                    );
+                }
+
+                // A `private` function cannot also be marked `virtual`.
+                if node.attributes.is_virtual
+                    && node.attributes.visibility == ir::FunctionVisibility::Private
+                {
+                    self.diagnostics.push(
+                        self.current_file.id().to_owned(),
+                        node.range.clone(),
+                        VirtualPrivateFunction,
                     );
                 }
 
