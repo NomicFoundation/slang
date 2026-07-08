@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/invalid-visibility] Error: Invalid visibility for this definition. Expected 'InternalKeyword' or 'ExternalKeyword'.
+   ╭─[input.sol:6:28]
+   │
+ 6 │         function (uint256) public f;
+   │                            ───┬──  
+   │                               ╰──── Error occurred here.
+───╯

@@ -1,7 +1,7 @@
 use num_traits::{Signed, ToPrimitive};
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     ArrayLengthFractional, ArrayLengthNegative, ArrayLengthNotConstant, ArrayLengthTooLarge,
-    ArrayLengthZero, InvalidFunctionTypeVisibility,
+    ArrayLengthZero,
 };
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_ir::ir;
@@ -131,15 +131,6 @@ impl Pass<'_> {
                 })
             }
             ir::TypeName::FunctionType(function_type) => {
-                // Function types can only be internal or external, so emit a
-                // diagnostic if the visibility is not one of those.
-                if !matches!(
-                    function_type.visibility,
-                    ir::FunctionVisibility::Internal | ir::FunctionVisibility::External
-                ) {
-                    self.push_diagnostic(function_type, InvalidFunctionTypeVisibility);
-                }
-
                 // NOTE: Keep in sync with `type_of_function_definition`
                 let parameter_types = self.resolve_parameter_types(&function_type.parameters)?;
                 let return_type = if let Some(returns) = &function_type.returns {
@@ -159,8 +150,8 @@ impl Pass<'_> {
                     implicit_receiver_type: None,
                     parameter_types,
                     return_type,
-                    visibility: (&function_type.visibility).into(),
-                    mutability: (&function_type.mutability).into(),
+                    visibility: (&function_type.attributes.visibility).into(),
+                    mutability: (&function_type.attributes.mutability).into(),
                     partially_applied: false,
                 })))
             }

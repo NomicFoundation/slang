@@ -146,67 +146,70 @@ fn flatten_function_attributes(mutator: &mut IrModelMutator) {
         &["Pure", "View", "NonPayable", "Payable"],
     );
 
-    mutator.insert_sequence_field_before(
-        "FunctionDefinition",
-        "visibility",
-        "FunctionVisibility",
-        false,
-        "returns",
-    );
-    mutator.insert_sequence_field_before(
-        "FunctionDefinition",
-        "mutability",
-        "FunctionMutability",
-        false,
-        "returns",
-    );
-    // We use an optional unique terminal to effectively have a boolean
-    mutator.insert_sequence_field_before(
-        "FunctionDefinition",
-        "virtual_keyword",
-        "VirtualKeyword",
-        true,
-        "returns",
-    );
-
-    // Flatten list of override specifiers and modifier invocations
-    mutator.insert_sequence_field_before(
-        "FunctionDefinition",
-        "override_specifier",
-        "OverridePaths",
-        true,
-        "returns",
-    );
     mutator.add_collection_type("ModifierInvocations", "ModifierInvocation");
-    mutator.insert_sequence_field_before(
-        "FunctionDefinition",
-        "modifier_invocations",
-        "ModifierInvocations",
-        false,
-        "returns",
-    );
 
-    // And remove the list of attributes
     mutator.remove_type("FunctionAttributes");
     mutator.remove_type("FunctionAttribute");
 
-    // For `FunctionType` we need visibility and mutability
-    mutator.insert_sequence_field_before(
-        "FunctionType",
+    mutator.add_sequence_type("FunctionAttributes");
+    mutator.add_sequence_field(
+        "FunctionAttributes",
         "visibility",
         "FunctionVisibility",
         false,
-        "returns",
     );
-    mutator.insert_sequence_field_before(
-        "FunctionType",
+    mutator.add_sequence_field(
+        "FunctionAttributes",
         "mutability",
         "FunctionMutability",
         false,
+    );
+    mutator.add_sequence_boolean("FunctionAttributes", "is_virtual");
+    mutator.add_sequence_field(
+        "FunctionAttributes",
+        "override_specifier",
+        "OverridePaths",
+        true,
+    );
+    mutator.add_sequence_field(
+        "FunctionAttributes",
+        "modifier_invocations",
+        "ModifierInvocations",
+        false,
+    );
+
+    mutator.insert_sequence_field_before(
+        "FunctionDefinition",
+        "attributes",
+        "FunctionAttributes",
+        false,
         "returns",
     );
+
     mutator.remove_type("FunctionTypeAttributes");
     mutator.remove_type("FunctionTypeAttribute");
+
+    mutator.add_sequence_type("FunctionTypeAttributes");
+    mutator.add_sequence_field(
+        "FunctionTypeAttributes",
+        "visibility",
+        "FunctionVisibility",
+        false,
+    );
+    mutator.add_sequence_field(
+        "FunctionTypeAttributes",
+        "mutability",
+        "FunctionMutability",
+        false,
+    );
+
+    mutator.insert_sequence_field_before(
+        "FunctionType",
+        "attributes",
+        "FunctionTypeAttributes",
+        false,
+        "returns",
+    );
 }
 
 fn flatten_state_variable_attributes(mutator: &mut IrModelMutator) {
@@ -226,28 +229,35 @@ fn flatten_state_variable_attributes(mutator: &mut IrModelMutator) {
         &["Mutable", "Constant", "Immutable", "Transient"],
     );
 
+    mutator.remove_type("StateVariableAttributes");
+    mutator.remove_type("StateVariableAttribute");
+
+    mutator.add_sequence_type("StateVariableAttributes");
     mutator.add_sequence_field(
-        "StateVariableDefinition",
+        "StateVariableAttributes",
         "visibility",
         "StateVariableVisibility",
         false,
     );
     mutator.add_sequence_field(
-        "StateVariableDefinition",
+        "StateVariableAttributes",
         "mutability",
         "StateVariableMutability",
         false,
     );
     mutator.add_sequence_field(
-        "StateVariableDefinition",
+        "StateVariableAttributes",
         "override_specifier",
         "OverridePaths",
         true,
     );
 
-    // And remove the list of attributes
-    mutator.remove_type("StateVariableAttributes");
-    mutator.remove_type("StateVariableAttribute");
+    mutator.add_sequence_field(
+        "StateVariableDefinition",
+        "attributes",
+        "StateVariableAttributes",
+        false,
+    );
 }
 
 fn transmute_constant_state_variables(mutator: &mut IrModelMutator) {
@@ -353,7 +363,6 @@ fn simplify_booleans(mutator: &mut IrModelMutator) {
     mutator.convert_optional_to_boolean("AddressType", "payable_keyword", "is_payable");
     mutator.convert_optional_to_boolean("ContractDefinition", "abstract_keyword", "is_abstract");
     mutator.convert_optional_to_boolean("EventDefinition", "anonymous_keyword", "is_anonymous");
-    mutator.convert_optional_to_boolean("FunctionDefinition", "virtual_keyword", "is_virtual");
     mutator.convert_optional_to_boolean("Parameter", "indexed_keyword", "is_indexed");
     mutator.convert_optional_to_boolean("UsingDirective", "global_keyword", "is_global");
 }

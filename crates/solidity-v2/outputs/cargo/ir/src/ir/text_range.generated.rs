@@ -225,6 +225,12 @@ impl TextRange for ForStatementStruct {
     }
 }
 
+impl TextRange for FunctionAttributesStruct {
+    fn calculate_text_range(&self) -> Option<Range<usize>> {
+        Some(self.range.clone())
+    }
+}
+
 impl TextRange for FunctionCallExpressionStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.range.clone())
@@ -238,6 +244,12 @@ impl TextRange for FunctionDefinitionStruct {
 }
 
 impl TextRange for FunctionTypeStruct {
+    fn calculate_text_range(&self) -> Option<Range<usize>> {
+        Some(self.range.clone())
+    }
+}
+
+impl TextRange for FunctionTypeAttributesStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.range.clone())
     }
@@ -406,6 +418,12 @@ impl TextRange for SingleTypedDeclarationStruct {
 }
 
 impl TextRange for SourceUnitStruct {
+    fn calculate_text_range(&self) -> Option<Range<usize>> {
+        Some(self.range.clone())
+    }
+}
+
+impl TextRange for StateVariableAttributesStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.range.clone())
     }

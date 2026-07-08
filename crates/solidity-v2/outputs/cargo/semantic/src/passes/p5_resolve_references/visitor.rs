@@ -71,7 +71,7 @@ impl Visitor for Pass<'_> {
         // TODO(validation) SDR[51]: for modifier kind, they are not allowed inside
         // interfaces since 0.8.8
 
-        for modifier_invocation in &node.modifier_invocations {
+        for modifier_invocation in &node.attributes.modifier_invocations {
             self.resolve_modifier_invocation(modifier_invocation);
         }
 

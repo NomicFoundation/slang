@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[SyntaxError 4937] Error: No visibility specified. Did you intend to add "external"?
+   ╭─[input.sol:5:5]
+   │
+ 5 │     receive() payable {}
+   │     ──────────┬─────────  
+   │               ╰─────────── Error occurred here.
+───╯
+
+[DeclarationError 4095] Error: Receive ether function must be defined as "external".
+   ╭─[input.sol:5:5]
+   │
+ 5 │     receive() payable {}
+   │     ──────────┬─────────  
+   │               ╰─────────── Error occurred here.
+───╯

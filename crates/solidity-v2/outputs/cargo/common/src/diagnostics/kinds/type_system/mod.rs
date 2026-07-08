@@ -8,7 +8,6 @@ mod fallback_function_mutability;
 mod fallback_function_signature;
 mod incompatible_constant_operator;
 mod invalid_base;
-mod invalid_function_type_visibility;
 mod receive_function_parameters;
 mod storage_layout_base_non_integer;
 mod storage_layout_base_not_constant;
@@ -24,7 +23,6 @@ pub use fallback_function_mutability::FallbackFunctionMutability;
 pub use fallback_function_signature::FallbackFunctionSignature;
 pub use incompatible_constant_operator::IncompatibleConstantOperator;
 pub use invalid_base::InvalidBase;
-pub use invalid_function_type_visibility::InvalidFunctionTypeVisibility;
 pub use receive_function_parameters::ReceiveFunctionParameters;
 use serde::Serialize;
 pub use storage_layout_base_non_integer::StorageLayoutBaseNonInteger;
@@ -44,8 +42,6 @@ define_diagnostic_kind! {
     pub enum TypeSystemDiagnosticKind {
         /// A base in an inheritance list is not a contract or interface.
         InvalidBase(InvalidBase),
-        /// A function type has a visibility other than `internal` or `external`.
-        InvalidFunctionTypeVisibility(InvalidFunctionTypeVisibility),
 
         /// A fallback function is declared `pure` or `view`.
         FallbackFunctionMutability(FallbackFunctionMutability),

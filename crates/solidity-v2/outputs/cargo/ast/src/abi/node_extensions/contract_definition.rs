@@ -71,7 +71,7 @@ impl ContractDefinitionStruct {
             self.base_slot().unwrap_or(U256::ZERO),
             all_state_variables.iter().filter(|state_variable| {
                 matches!(
-                    state_variable.mutability(),
+                    state_variable.attributes().mutability(),
                     StateVariableMutability::Mutable
                 )
             }),
@@ -80,7 +80,7 @@ impl ContractDefinitionStruct {
             U256::ZERO,
             all_state_variables.iter().filter(|state_variable| {
                 matches!(
-                    state_variable.mutability(),
+                    state_variable.attributes().mutability(),
                     StateVariableMutability::Transient
                 )
             }),

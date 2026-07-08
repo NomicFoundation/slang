@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/invalid-visibility] Error: Invalid visibility for this definition. Expected 'ExternalKeyword'.
+   ╭─[input.sol:5:5]
+   │
+ 5 │     fallback() {}
+   │     ──────┬──────  
+   │           ╰──────── Error occurred here.
+───╯

@@ -429,6 +429,22 @@ impl Serialize for ForStatementStruct {
     }
 }
 
+impl Serialize for FunctionAttributesStruct {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let mut map = serializer.serialize_map(Some(9))?;
+        map.serialize_entry("id", &self.node_id())?;
+        map.serialize_entry("type", "FunctionAttributes")?;
+        map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
+        map.serialize_entry("file", self.get_file_id())?;
+        map.serialize_entry("visibility", &self.visibility())?;
+        map.serialize_entry("mutability", &self.mutability())?;
+        map.serialize_entry("is_virtual", &self.is_virtual())?;
+        map.serialize_entry("override_specifier", &self.override_specifier())?;
+        map.serialize_entry("modifier_invocations", &self.modifier_invocations())?;
+        map.end()
+    }
+}
+
 impl Serialize for FunctionCallExpressionStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut map = serializer.serialize_map(Some(6))?;
@@ -444,7 +460,7 @@ impl Serialize for FunctionCallExpressionStruct {
 
 impl Serialize for FunctionDefinitionStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(14))?;
+        let mut map = serializer.serialize_map(Some(10))?;
         map.serialize_entry("id", &self.node_id())?;
         map.serialize_entry("type", "FunctionDefinition")?;
         map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
@@ -452,11 +468,7 @@ impl Serialize for FunctionDefinitionStruct {
         map.serialize_entry("kind", &self.kind())?;
         map.serialize_entry("name", &self.name())?;
         map.serialize_entry("parameters", &self.parameters())?;
-        map.serialize_entry("visibility", &self.visibility())?;
-        map.serialize_entry("mutability", &self.mutability())?;
-        map.serialize_entry("is_virtual", &self.is_virtual())?;
-        map.serialize_entry("override_specifier", &self.override_specifier())?;
-        map.serialize_entry("modifier_invocations", &self.modifier_invocations())?;
+        map.serialize_entry("attributes", &self.attributes())?;
         map.serialize_entry("returns", &self.returns())?;
         map.serialize_entry("body", &self.body())?;
         map.end()
@@ -465,15 +477,27 @@ impl Serialize for FunctionDefinitionStruct {
 
 impl Serialize for FunctionTypeStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(8))?;
+        let mut map = serializer.serialize_map(Some(7))?;
         map.serialize_entry("id", &self.node_id())?;
         map.serialize_entry("type", "FunctionType")?;
         map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
         map.serialize_entry("file", self.get_file_id())?;
         map.serialize_entry("parameters", &self.parameters())?;
+        map.serialize_entry("attributes", &self.attributes())?;
+        map.serialize_entry("returns", &self.returns())?;
+        map.end()
+    }
+}
+
+impl Serialize for FunctionTypeAttributesStruct {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let mut map = serializer.serialize_map(Some(6))?;
+        map.serialize_entry("id", &self.node_id())?;
+        map.serialize_entry("type", "FunctionTypeAttributes")?;
+        map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
+        map.serialize_entry("file", self.get_file_id())?;
         map.serialize_entry("visibility", &self.visibility())?;
         map.serialize_entry("mutability", &self.mutability())?;
-        map.serialize_entry("returns", &self.returns())?;
         map.end()
     }
 }
@@ -845,9 +869,23 @@ impl Serialize for SourceUnitStruct {
     }
 }
 
+impl Serialize for StateVariableAttributesStruct {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let mut map = serializer.serialize_map(Some(7))?;
+        map.serialize_entry("id", &self.node_id())?;
+        map.serialize_entry("type", "StateVariableAttributes")?;
+        map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
+        map.serialize_entry("file", self.get_file_id())?;
+        map.serialize_entry("visibility", &self.visibility())?;
+        map.serialize_entry("mutability", &self.mutability())?;
+        map.serialize_entry("override_specifier", &self.override_specifier())?;
+        map.end()
+    }
+}
+
 impl Serialize for StateVariableDefinitionStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(10))?;
+        let mut map = serializer.serialize_map(Some(8))?;
         map.serialize_entry("id", &self.node_id())?;
         map.serialize_entry("type", "StateVariableDefinition")?;
         map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
@@ -855,9 +893,7 @@ impl Serialize for StateVariableDefinitionStruct {
         map.serialize_entry("type_name", &self.type_name())?;
         map.serialize_entry("name", &self.name())?;
         map.serialize_entry("value", &self.value())?;
-        map.serialize_entry("visibility", &self.visibility())?;
-        map.serialize_entry("mutability", &self.mutability())?;
-        map.serialize_entry("override_specifier", &self.override_specifier())?;
+        map.serialize_entry("attributes", &self.attributes())?;
         map.end()
     }
 }

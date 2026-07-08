@@ -9,7 +9,10 @@ use crate::ast::{StateVariableDefinitionStruct, StateVariableVisibility};
 
 impl StateVariableDefinitionStruct {
     pub fn is_externally_visible(&self) -> bool {
-        matches!(self.visibility(), StateVariableVisibility::Public)
+        matches!(
+            self.attributes().visibility(),
+            StateVariableVisibility::Public
+        )
     }
 
     fn extract_getter_type_parameters_abi(&self) -> Option<(Vec<AbiParameter>, Vec<AbiParameter>)> {

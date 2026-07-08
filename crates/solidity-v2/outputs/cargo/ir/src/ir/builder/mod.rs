@@ -1,24 +1,18 @@
+mod attributes;
+#[path = "default.generated.rs"]
+mod default;
+pub(crate) mod node_id_generator;
+
 use std::sync::Arc;
 
-use slang_solidity_v2_common::diagnostics::kinds::syntax::{
-    MultipleMutabilitySpecifiers, MultipleOverrideSpecifiers, MultipleVirtualSpecifiers,
-};
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 use slang_solidity_v2_cst::structured_cst::text_range::TextRange;
 
-#[path = "default.generated.rs"]
-mod default;
-
-mod node_id_generator;
-
-// Re-exported so these remain reachable as `builder::{NodeIdGenerator,
-// NodeKindHistogram}` (and, via the parent, at the crate's `ir` module).
-pub use node_id_generator::{NodeIdGenerator, NodeKindHistogram};
-
-use super::Source;
-use crate::ir::nodes as output;
+use crate::ir::builder::node_id_generator::NodeIdGenerator;
+use crate::ir::{nodes as output, Source};
 
 /// The output of a CST → IR build operation, containing both the built IR
 /// source unit and any diagnostics emitted during the build.
@@ -62,6 +56,15 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
     fn unparse_range(&self, range: std::ops::Range<usize>) -> String {
         self.source.text(range).to_owned()
+    }
+
+    fn report(&mut self, node: &dyn TextRange, kind: impl Into<DiagnosticKind>) {
+        self.diagnostics.push(
+            self.file_id.to_owned(),
+            node.calculate_text_range()
+                .expect("CST node is expected to have a range."),
+            kind,
+        );
     }
 
     //
@@ -192,21 +195,11 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             input::FunctionName::ReceiveKeyword(_) => (output::FunctionKind::Receive, None),
         };
         let parameters = self.build_parameters_declaration(&source.parameters);
-        let visibility = Self::function_visibility(&source.attributes);
-        let mutability = self
-            .extract_mutability_specifier(&source.attributes.elements)
-            .unwrap_or(output::FunctionMutability::NonPayable);
 
-        let is_virtual =
-            self.extract_first_virtual(source.attributes.elements.iter().filter_map(|attribute| {
-                if let input::FunctionAttribute::VirtualKeyword(virtual_keyword) = attribute {
-                    Some(virtual_keyword)
-                } else {
-                    None
-                }
-            }));
-        let override_specifier = self.function_override_specifier(&source.attributes);
-        let modifier_invocations = self.function_modifier_invocations(&source.attributes);
+        // TODO(validation) SDR[16]: free functions are always internal, but
+        // otherwise a visibility *must* be set explicitly (>= 0.8.0)
+
+        let attributes = self.build_function_attributes(&source.attributes);
         let returns = source
             .returns
             .as_ref()
@@ -219,11 +212,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             kind,
             name,
             parameters,
-            visibility,
-            mutability,
-            is_virtual,
-            override_specifier,
-            modifier_invocations,
+            attributes,
             returns,
             body,
         })
@@ -233,10 +222,8 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let id = self.next_id(output::NodeKind::FunctionType);
         let range = source.calculate_text_range().unwrap_or_default();
         let parameters = self.build_parameters_declaration(&source.parameters);
-        let visibility = Self::function_type_visibility(&source.attributes);
-        let mutability = self
-            .extract_mutability_specifier(&source.attributes.elements)
-            .unwrap_or(output::FunctionMutability::NonPayable);
+
+        let attributes = self.build_function_type_attributes(&source.attributes);
         let returns = source
             .returns
             .as_ref()
@@ -246,8 +233,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             id,
             range,
             parameters,
-            visibility,
-            mutability,
+            attributes,
             returns,
         })
     }
@@ -325,11 +311,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .value
             .as_ref()
             .map(|value| self.build_state_variable_definition_value(value));
-        let visibility = Self::state_variable_visibility(&source.attributes);
-        let mutability = self
-            .extract_mutability_specifier(&source.attributes.elements)
-            .unwrap_or(output::StateVariableMutability::Mutable);
-        let override_specifier = self.state_variable_override_specifier(&source.attributes);
+        let attributes = self.build_state_variable_attributes(&source.attributes);
 
         Arc::new(output::StateVariableDefinitionStruct {
             id,
@@ -337,9 +319,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             type_name,
             name,
             value,
-            visibility,
-            mutability,
-            override_specifier,
+            attributes,
         })
     }
 
@@ -378,9 +358,13 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             }
             input::ContractMember::StateVariableDefinition(state_variable_definition) => {
                 let output = self.build_state_variable_definition(state_variable_definition);
-                if matches!(output.mutability, output::StateVariableMutability::Constant)
-                    && !matches!(output.visibility, output::StateVariableVisibility::Public)
-                {
+                if matches!(
+                    output.attributes.mutability,
+                    output::StateVariableMutability::Constant
+                ) && !matches!(
+                    output.attributes.visibility,
+                    output::StateVariableVisibility::Public
+                ) {
                     output::ContractMember::ConstantDefinition(
                         Self::state_variable_as_constant_definition(
                             Arc::into_inner(output).expect("Created node is not yet shared"),
@@ -425,81 +409,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         }
     }
 
-    fn function_visibility(attributes: &input::FunctionAttributes) -> output::FunctionVisibility {
-        // TODO(validation) SDR[13]: only a single visibility keyword can be provided
-        // TODO(validation) SDR[16]: free functions are always internal, but
-        // otherwise a visibility *must* be set explicitly (>= 0.8.0)
-        attributes.elements.iter().fold(
-            // For >= 0.8.0, default for free functions is internal
-            output::FunctionVisibility::Internal,
-            |visibility, attribute| match attribute {
-                input::FunctionAttribute::ExternalKeyword(_) => {
-                    output::FunctionVisibility::External
-                }
-                input::FunctionAttribute::InternalKeyword(_) => {
-                    output::FunctionVisibility::Internal
-                }
-                input::FunctionAttribute::PrivateKeyword(_) => output::FunctionVisibility::Private,
-                input::FunctionAttribute::PublicKeyword(_) => output::FunctionVisibility::Public,
-                _ => visibility,
-            },
-        )
-    }
-
-    fn function_override_specifier(
-        &mut self,
-        attributes: &input::FunctionAttributes,
-    ) -> Option<output::OverridePaths> {
-        self.extract_single_override(attributes.elements.iter().filter_map(|attribute| {
-            if let input::FunctionAttribute::OverrideSpecifier(specifier) = attribute {
-                Some(specifier)
-            } else {
-                None
-            }
-        }))
-    }
-
-    fn function_modifier_invocations(
-        &mut self,
-        attributes: &input::FunctionAttributes,
-    ) -> output::ModifierInvocations {
-        attributes
-            .elements
-            .iter()
-            .filter_map(|attribute| {
-                if let input::FunctionAttribute::ModifierInvocation(mi) = attribute {
-                    Some(self.build_modifier_invocation(mi))
-                } else {
-                    None
-                }
-            })
-            .collect()
-    }
-
-    fn function_type_visibility(
-        attributes: &input::FunctionTypeAttributes,
-    ) -> output::FunctionVisibility {
-        // TODO(validation) SDR[13]: only a single visibility keyword can be provided
-        attributes.elements.iter().fold(
-            output::FunctionVisibility::Internal,
-            |visibility, attribute| match attribute {
-                input::FunctionTypeAttribute::ExternalKeyword(_) => {
-                    output::FunctionVisibility::External
-                }
-                input::FunctionTypeAttribute::InternalKeyword(_) => {
-                    output::FunctionVisibility::Internal
-                }
-                input::FunctionTypeAttribute::PrivateKeyword(_) => {
-                    output::FunctionVisibility::Private
-                }
-                input::FunctionTypeAttribute::PublicKeyword(_) => {
-                    output::FunctionVisibility::Public
-                }
-                _ => visibility,
-            },
-        )
-    }
-
     //
     // Constructor / Fallback / Receive / Modifier → FunctionDefinition
     //
@@ -513,15 +422,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let kind = output::FunctionKind::Constructor;
         let name = None;
         let parameters = self.build_parameters_declaration(&source.parameters);
-        let visibility = Self::constructor_visibility(&source.attributes);
-        let mutability = self
-            .extract_mutability_specifier(&source.attributes.elements)
-            .unwrap_or(output::FunctionMutability::NonPayable);
-        // v2 ConstructorAttribute has no VirtualKeyword
-        let is_virtual = false;
-        // v2 ConstructorAttribute has no OverrideSpecifier
-        let override_specifier = None;
-        let modifier_invocations = self.constructor_modifier_invocations(&source.attributes);
+        let attributes = self.build_constructor_attributes(&source.attributes);
         let returns = None;
         let body = Some(self.build_block(&source.body));
 
@@ -531,47 +432,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             kind,
             name,
             parameters,
-            visibility,
-            mutability,
-            is_virtual,
-            override_specifier,
-            modifier_invocations,
+            attributes,
             returns,
             body,
         })
-    }
-
-    fn constructor_visibility(
-        attributes: &input::ConstructorAttributes,
-    ) -> output::FunctionVisibility {
-        // TODO(validation) SDR[13]: only a single visibility keyword can be provided
-        attributes.elements.iter().fold(
-            output::FunctionVisibility::Public,
-            |visibility, attribute| match attribute {
-                input::ConstructorAttribute::InternalKeyword(_) => {
-                    output::FunctionVisibility::Internal
-                }
-                input::ConstructorAttribute::PublicKeyword(_) => output::FunctionVisibility::Public,
-                _ => visibility,
-            },
-        )
-    }
-
-    fn constructor_modifier_invocations(
-        &mut self,
-        attributes: &input::ConstructorAttributes,
-    ) -> output::ModifierInvocations {
-        attributes
-            .elements
-            .iter()
-            .filter_map(|attribute| {
-                if let input::ConstructorAttribute::ModifierInvocation(mi) = attribute {
-                    Some(self.build_modifier_invocation(mi))
-                } else {
-                    None
-                }
-            })
-            .collect()
     }
 
     fn build_fallback_as_function(
@@ -583,23 +447,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let kind = output::FunctionKind::Fallback;
         let name = None;
         let parameters = self.build_parameters_declaration(&source.parameters);
-        // TODO(validation) SDR[14]: fallback functions *must* have external visibility
-        let visibility = output::FunctionVisibility::External;
-        let mutability = self
-            .extract_mutability_specifier(&source.attributes.elements)
-            .unwrap_or(output::FunctionMutability::NonPayable);
-        let is_virtual =
-            self.extract_first_virtual(source.attributes.elements.iter().filter_map(|attribute| {
-                if let input::FallbackFunctionAttribute::VirtualKeyword(virtual_keyword) = attribute
-                {
-                    Some(virtual_keyword)
-                } else {
-                    None
-                }
-            }));
-
-        let override_specifier = self.fallback_function_override_specifier(&source.attributes);
-        let modifier_invocations = self.fallback_function_modifier_invocations(&source.attributes);
+        let attributes = self.build_fallback_function_attributes(source, &source.attributes);
         let returns = source
             .returns
             .as_ref()
@@ -612,44 +460,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             kind,
             name,
             parameters,
-            visibility,
-            mutability,
-            is_virtual,
-            override_specifier,
-            modifier_invocations,
+            attributes,
             returns,
             body,
         })
-    }
-
-    fn fallback_function_override_specifier(
-        &mut self,
-        attributes: &input::FallbackFunctionAttributes,
-    ) -> Option<output::OverridePaths> {
-        self.extract_single_override(attributes.elements.iter().filter_map(|attribute| {
-            if let input::FallbackFunctionAttribute::OverrideSpecifier(specifier) = attribute {
-                Some(specifier)
-            } else {
-                None
-            }
-        }))
-    }
-
-    fn fallback_function_modifier_invocations(
-        &mut self,
-        attributes: &input::FallbackFunctionAttributes,
-    ) -> output::ModifierInvocations {
-        attributes
-            .elements
-            .iter()
-            .filter_map(|attribute| {
-                if let input::FallbackFunctionAttribute::ModifierInvocation(mi) = attribute {
-                    Some(self.build_modifier_invocation(mi))
-                } else {
-                    None
-                }
-            })
-            .collect()
     }
 
     fn build_receive_as_function(
@@ -661,23 +475,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let kind = output::FunctionKind::Receive;
         let name = None;
         let parameters = self.build_parameters_declaration(&source.parameters);
-        // TODO(validation) SDR[8]: receive functions *must* have external visibility
-        let visibility = output::FunctionVisibility::External;
-        // TODO(validation) SDR[7]: receive functions *must* have a 'payable' specifier
-        let mutability = self
-            .extract_mutability_specifier(&source.attributes.elements)
-            .unwrap_or(output::FunctionMutability::Payable);
-        let is_virtual =
-            self.extract_first_virtual(source.attributes.elements.iter().filter_map(|attribute| {
-                if let input::ReceiveFunctionAttribute::VirtualKeyword(virtual_keyword) = attribute
-                {
-                    Some(virtual_keyword)
-                } else {
-                    None
-                }
-            }));
-        let override_specifier = self.receive_function_override_specifier(&source.attributes);
-        let modifier_invocations = self.receive_function_modifier_invocations(&source.attributes);
+        let attributes = self.build_receive_function_attributes(source, &source.attributes);
         let returns = None;
         let body = self.build_function_body(&source.body);
 
@@ -687,44 +485,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             kind,
             name,
             parameters,
-            visibility,
-            mutability,
-            is_virtual,
-            override_specifier,
-            modifier_invocations,
+            attributes,
             returns,
             body,
         })
-    }
-
-    fn receive_function_override_specifier(
-        &mut self,
-        attributes: &input::ReceiveFunctionAttributes,
-    ) -> Option<output::OverridePaths> {
-        self.extract_single_override(attributes.elements.iter().filter_map(|attribute| {
-            if let input::ReceiveFunctionAttribute::OverrideSpecifier(specifier) = attribute {
-                Some(specifier)
-            } else {
-                None
-            }
-        }))
-    }
-
-    fn receive_function_modifier_invocations(
-        &mut self,
-        attributes: &input::ReceiveFunctionAttributes,
-    ) -> output::ModifierInvocations {
-        attributes
-            .elements
-            .iter()
-            .filter_map(|attribute| {
-                if let input::ReceiveFunctionAttribute::ModifierInvocation(invocation) = attribute {
-                    Some(self.build_modifier_invocation(invocation))
-                } else {
-                    None
-                }
-            })
-            .collect()
     }
 
     fn build_modifier_as_function(
@@ -738,19 +502,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let parameters = source.parameters.as_ref().map_or(Vec::new(), |parameter| {
             self.build_parameters_declaration(parameter)
         });
-        let visibility = output::FunctionVisibility::Internal;
-        // mutability is irrelevant for modifiers
-        let mutability = output::FunctionMutability::NonPayable;
-        let is_virtual =
-            self.extract_first_virtual(source.attributes.elements.iter().filter_map(|attribute| {
-                if let input::ModifierAttribute::VirtualKeyword(virtual_keyword) = attribute {
-                    Some(virtual_keyword)
-                } else {
-                    None
-                }
-            }));
-        let override_specifier = self.modifier_override_specifier(&source.attributes);
-        let modifier_invocations = Vec::new();
+        let attributes = self.build_modifier_attributes(&source.attributes);
         let returns = None;
         let body = self.build_function_body(&source.body);
 
@@ -760,65 +512,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             kind,
             name,
             parameters,
-            visibility,
-            mutability,
-            is_virtual,
-            override_specifier,
-            modifier_invocations,
+            attributes,
             returns,
             body,
         })
-    }
-
-    fn modifier_override_specifier(
-        &mut self,
-        attributes: &input::ModifierAttributes,
-    ) -> Option<output::OverridePaths> {
-        self.extract_single_override(attributes.elements.iter().filter_map(|attribute| {
-            if let input::ModifierAttribute::OverrideSpecifier(specifier) = attribute {
-                Some(specifier)
-            } else {
-                None
-            }
-        }))
-    }
-
-    //
-    // State variable helpers
-    //
-
-    fn state_variable_visibility(
-        attributes: &input::StateVariableAttributes,
-    ) -> output::StateVariableVisibility {
-        // TODO(validation) SDR[10]: only one visibility keyword is allowed
-        attributes.elements.iter().fold(
-            output::StateVariableVisibility::Internal,
-            |visibility, attribute| match attribute {
-                input::StateVariableAttribute::InternalKeyword(_) => {
-                    output::StateVariableVisibility::Internal
-                }
-                input::StateVariableAttribute::PrivateKeyword(_) => {
-                    output::StateVariableVisibility::Private
-                }
-                input::StateVariableAttribute::PublicKeyword(_) => {
-                    output::StateVariableVisibility::Public
-                }
-                _ => visibility,
-            },
-        )
-    }
-
-    fn state_variable_override_specifier(
-        &mut self,
-        attributes: &input::StateVariableAttributes,
-    ) -> Option<output::OverridePaths> {
-        self.extract_single_override(attributes.elements.iter().filter_map(|attribute| {
-            if let input::StateVariableAttribute::OverrideSpecifier(specifier) = attribute {
-                Some(specifier)
-            } else {
-                None
-            }
-        }))
     }
 
     fn state_variable_as_constant_definition(
@@ -829,25 +526,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             range: state_variable_definition.range,
             type_name: state_variable_definition.type_name,
             name: state_variable_definition.name,
-            visibility: Some(state_variable_definition.visibility),
+            visibility: Some(state_variable_definition.attributes.visibility),
             value: state_variable_definition.value,
         })
-    }
-
-    //
-    // Override specifier helper
-    //
-
-    fn build_override_specifier_as_paths(
-        &mut self,
-        source: &input::OverrideSpecifier,
-    ) -> output::OverridePaths {
-        source
-            .overridden
-            .as_ref()
-            .map_or(Vec::new(), |declaration| {
-                self.build_override_paths_declaration(declaration)
-            })
     }
 
     //
@@ -956,74 +637,5 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             name,
             is_indexed: false,
         })
-    }
-
-    fn extract_mutability_specifier<'a, Input, Output>(
-        &mut self,
-        attributes: impl IntoIterator<Item = &'a Input>,
-    ) -> Option<Output>
-    where
-        Input: TextRange + 'a,
-        &'a Input: TryInto<Output>,
-    {
-        let mut result: Option<Output> = None;
-
-        for attribute in attributes {
-            if let Ok(current) = attribute.try_into() {
-                if result.is_some() {
-                    self.diagnostics.push(
-                        self.file_id.to_owned(),
-                        attribute.calculate_text_range().unwrap(),
-                        MultipleMutabilitySpecifiers,
-                    );
-                } else {
-                    result = Some(current);
-                }
-            }
-        }
-
-        result
-    }
-
-    /// Returns whether a `virtual` specifier is present, emitting an error for
-    /// any subsequent ones.
-    fn extract_first_virtual<'a>(
-        &mut self,
-        virtual_kws: impl IntoIterator<Item = &'a input::VirtualKeyword>,
-    ) -> bool {
-        let mut virtual_kws = virtual_kws.into_iter();
-        let Some(_first) = virtual_kws.next() else {
-            return false;
-        };
-
-        for keyword in virtual_kws {
-            self.diagnostics.push(
-                self.file_id.to_owned(),
-                keyword.calculate_text_range().unwrap(),
-                MultipleVirtualSpecifiers,
-            );
-        }
-
-        true
-    }
-
-    /// Extracts and transforms the first `override` specifier, emitting an
-    /// error for any subsequent ones.
-    fn extract_single_override<'a>(
-        &mut self,
-        specifiers: impl IntoIterator<Item = &'a input::OverrideSpecifier>,
-    ) -> Option<output::OverridePaths> {
-        let mut specifiers = specifiers.into_iter();
-        let first = self.build_override_specifier_as_paths(specifiers.next()?);
-
-        for specifier in specifiers {
-            self.diagnostics.push(
-                self.file_id.to_owned(),
-                specifier.calculate_text_range().unwrap(),
-                MultipleOverrideSpecifiers,
-            );
-        }
-
-        Some(first)
     }
 }

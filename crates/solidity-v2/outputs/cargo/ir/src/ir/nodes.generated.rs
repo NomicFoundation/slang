@@ -513,6 +513,25 @@ impl ForStatementStruct {
     }
 }
 
+pub type FunctionAttributes = Arc<FunctionAttributesStruct>;
+
+#[derive(Debug)]
+pub struct FunctionAttributesStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+    pub visibility: FunctionVisibility,
+    pub mutability: FunctionMutability,
+    pub is_virtual: bool,
+    pub override_specifier: Option<OverridePaths>,
+    pub modifier_invocations: ModifierInvocations,
+}
+
+impl FunctionAttributesStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
 pub type FunctionCallExpression = Arc<FunctionCallExpressionStruct>;
 
 #[derive(Debug)]
@@ -538,11 +557,7 @@ pub struct FunctionDefinitionStruct {
     pub kind: FunctionKind,
     pub name: Option<Identifier>,
     pub parameters: Parameters,
-    pub visibility: FunctionVisibility,
-    pub mutability: FunctionMutability,
-    pub is_virtual: bool,
-    pub override_specifier: Option<OverridePaths>,
-    pub modifier_invocations: ModifierInvocations,
+    pub attributes: FunctionAttributes,
     pub returns: Option<Parameters>,
     pub body: Option<Block>,
 }
@@ -560,12 +575,27 @@ pub struct FunctionTypeStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub parameters: Parameters,
-    pub visibility: FunctionVisibility,
-    pub mutability: FunctionMutability,
+    pub attributes: FunctionTypeAttributes,
     pub returns: Option<Parameters>,
 }
 
 impl FunctionTypeStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type FunctionTypeAttributes = Arc<FunctionTypeAttributesStruct>;
+
+#[derive(Debug)]
+pub struct FunctionTypeAttributesStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+    pub visibility: FunctionVisibility,
+    pub mutability: FunctionMutability,
+}
+
+impl FunctionTypeAttributesStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
@@ -1022,6 +1052,23 @@ impl SourceUnitStruct {
     }
 }
 
+pub type StateVariableAttributes = Arc<StateVariableAttributesStruct>;
+
+#[derive(Debug)]
+pub struct StateVariableAttributesStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+    pub visibility: StateVariableVisibility,
+    pub mutability: StateVariableMutability,
+    pub override_specifier: Option<OverridePaths>,
+}
+
+impl StateVariableAttributesStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
 pub type StateVariableDefinition = Arc<StateVariableDefinitionStruct>;
 
 #[derive(Debug)]
@@ -1031,9 +1078,7 @@ pub struct StateVariableDefinitionStruct {
     pub type_name: TypeName,
     pub name: Identifier,
     pub value: Option<Expression>,
-    pub visibility: StateVariableVisibility,
-    pub mutability: StateVariableMutability,
-    pub override_specifier: Option<OverridePaths>,
+    pub attributes: StateVariableAttributes,
 }
 
 impl StateVariableDefinitionStruct {

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 9439] Error: Visibility already specified as "public".
+   ╭─[input.sol:5:28]
+   │
+ 5 │     function test() public external {}
+   │                            ────┬───  
+   │                                ╰───── Error occurred here.
+───╯

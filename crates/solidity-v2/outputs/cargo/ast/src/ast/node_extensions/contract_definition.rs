@@ -76,7 +76,10 @@ impl ContractDefinitionStruct {
         self.linearised_functions().iter().any(|function| {
             matches!(function.kind(), FunctionKind::Receive)
                 || (matches!(function.kind(), FunctionKind::Fallback)
-                    && matches!(function.mutability(), FunctionMutability::Payable))
+                    && matches!(
+                        function.attributes().mutability(),
+                        FunctionMutability::Payable
+                    ))
         })
     }
 

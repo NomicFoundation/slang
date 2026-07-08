@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 7793] Error: Receive ether function must be payable, but is "nonpayable".
+   ╭─[input.sol:5:5]
+   │
+ 5 │     receive() external {}
+   │     ──────────┬──────────  
+   │               ╰──────────── Error occurred here.
+───╯

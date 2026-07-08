@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 9439] Error: Visibility already specified as "external".
+   ╭─[input.sol:5:22]
+   │
+ 5 │   receive() external external payable {}
+   │                      ────┬───  
+   │                          ╰───── Error occurred here.
+───╯

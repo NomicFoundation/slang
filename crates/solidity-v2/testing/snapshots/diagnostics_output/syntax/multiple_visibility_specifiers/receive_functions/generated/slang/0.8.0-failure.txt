@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/multiple-visibility-specifiers] Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:5:22]
+   │
+ 5 │   receive() external external payable {}
+   │                      ────┬───  
+   │                          ╰───── Error occurred here.
+───╯

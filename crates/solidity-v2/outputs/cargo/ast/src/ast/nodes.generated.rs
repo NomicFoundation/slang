@@ -1387,6 +1387,64 @@ impl ForStatementStruct {
     }
 }
 
+pub type FunctionAttributes = Arc<FunctionAttributesStruct>;
+
+pub struct FunctionAttributesStruct {
+    pub(crate) ir_node: ir::FunctionAttributes,
+    pub(crate) semantic: Arc<SemanticContext>,
+}
+
+pub fn create_function_attributes(
+    ir_node: &ir::FunctionAttributes,
+    semantic: &Arc<SemanticContext>,
+) -> FunctionAttributes {
+    Arc::new(FunctionAttributesStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
+    })
+}
+
+impl FunctionAttributesStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn visibility(&self) -> FunctionVisibility {
+        create_function_visibility(&self.ir_node.visibility, &self.semantic)
+    }
+
+    pub fn mutability(&self) -> FunctionMutability {
+        create_function_mutability(&self.ir_node.mutability, &self.semantic)
+    }
+
+    pub fn is_virtual(&self) -> bool {
+        self.ir_node.is_virtual
+    }
+
+    pub fn override_specifier(&self) -> Option<OverridePaths> {
+        self.ir_node
+            .override_specifier
+            .as_ref()
+            .map(|ir_node| create_override_paths(ir_node, &self.semantic))
+    }
+
+    pub fn modifier_invocations(&self) -> ModifierInvocations {
+        create_modifier_invocations(&self.ir_node.modifier_invocations, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &FileId {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
 pub type FunctionCallExpression = Arc<FunctionCallExpressionStruct>;
 
 pub struct FunctionCallExpressionStruct {
@@ -1467,27 +1525,8 @@ impl FunctionDefinitionStruct {
         create_parameters(&self.ir_node.parameters, &self.semantic)
     }
 
-    pub fn visibility(&self) -> FunctionVisibility {
-        create_function_visibility(&self.ir_node.visibility, &self.semantic)
-    }
-
-    pub fn mutability(&self) -> FunctionMutability {
-        create_function_mutability(&self.ir_node.mutability, &self.semantic)
-    }
-
-    pub fn is_virtual(&self) -> bool {
-        self.ir_node.is_virtual
-    }
-
-    pub fn override_specifier(&self) -> Option<OverridePaths> {
-        self.ir_node
-            .override_specifier
-            .as_ref()
-            .map(|ir_node| create_override_paths(ir_node, &self.semantic))
-    }
-
-    pub fn modifier_invocations(&self) -> ModifierInvocations {
-        create_modifier_invocations(&self.ir_node.modifier_invocations, &self.semantic)
+    pub fn attributes(&self) -> FunctionAttributes {
+        create_function_attributes(&self.ir_node.attributes, &self.semantic)
     }
 
     pub fn returns(&self) -> Option<Parameters> {
@@ -1543,12 +1582,8 @@ impl FunctionTypeStruct {
         create_parameters(&self.ir_node.parameters, &self.semantic)
     }
 
-    pub fn visibility(&self) -> FunctionVisibility {
-        create_function_visibility(&self.ir_node.visibility, &self.semantic)
-    }
-
-    pub fn mutability(&self) -> FunctionMutability {
-        create_function_mutability(&self.ir_node.mutability, &self.semantic)
+    pub fn attributes(&self) -> FunctionTypeAttributes {
+        create_function_type_attributes(&self.ir_node.attributes, &self.semantic)
     }
 
     pub fn returns(&self) -> Option<Parameters> {
@@ -1556,6 +1591,49 @@ impl FunctionTypeStruct {
             .returns
             .as_ref()
             .map(|ir_node| create_parameters(ir_node, &self.semantic))
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &FileId {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type FunctionTypeAttributes = Arc<FunctionTypeAttributesStruct>;
+
+pub struct FunctionTypeAttributesStruct {
+    pub(crate) ir_node: ir::FunctionTypeAttributes,
+    pub(crate) semantic: Arc<SemanticContext>,
+}
+
+pub fn create_function_type_attributes(
+    ir_node: &ir::FunctionTypeAttributes,
+    semantic: &Arc<SemanticContext>,
+) -> FunctionTypeAttributes {
+    Arc::new(FunctionTypeAttributesStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
+    })
+}
+
+impl FunctionTypeAttributesStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn visibility(&self) -> FunctionVisibility {
+        create_function_visibility(&self.ir_node.visibility, &self.semantic)
+    }
+
+    pub fn mutability(&self) -> FunctionMutability {
+        create_function_mutability(&self.ir_node.mutability, &self.semantic)
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -2817,6 +2895,56 @@ impl SourceUnitStruct {
     }
 }
 
+pub type StateVariableAttributes = Arc<StateVariableAttributesStruct>;
+
+pub struct StateVariableAttributesStruct {
+    pub(crate) ir_node: ir::StateVariableAttributes,
+    pub(crate) semantic: Arc<SemanticContext>,
+}
+
+pub fn create_state_variable_attributes(
+    ir_node: &ir::StateVariableAttributes,
+    semantic: &Arc<SemanticContext>,
+) -> StateVariableAttributes {
+    Arc::new(StateVariableAttributesStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
+    })
+}
+
+impl StateVariableAttributesStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn visibility(&self) -> StateVariableVisibility {
+        create_state_variable_visibility(&self.ir_node.visibility, &self.semantic)
+    }
+
+    pub fn mutability(&self) -> StateVariableMutability {
+        create_state_variable_mutability(&self.ir_node.mutability, &self.semantic)
+    }
+
+    pub fn override_specifier(&self) -> Option<OverridePaths> {
+        self.ir_node
+            .override_specifier
+            .as_ref()
+            .map(|ir_node| create_override_paths(ir_node, &self.semantic))
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &FileId {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
 pub type StateVariableDefinition = Arc<StateVariableDefinitionStruct>;
 
 pub struct StateVariableDefinitionStruct {
@@ -2854,19 +2982,8 @@ impl StateVariableDefinitionStruct {
             .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
 
-    pub fn visibility(&self) -> StateVariableVisibility {
-        create_state_variable_visibility(&self.ir_node.visibility, &self.semantic)
-    }
-
-    pub fn mutability(&self) -> StateVariableMutability {
-        create_state_variable_mutability(&self.ir_node.mutability, &self.semantic)
-    }
-
-    pub fn override_specifier(&self) -> Option<OverridePaths> {
-        self.ir_node
-            .override_specifier
-            .as_ref()
-            .map(|ir_node| create_override_paths(ir_node, &self.semantic))
+    pub fn attributes(&self) -> StateVariableAttributes {
+        create_state_variable_attributes(&self.ir_node.attributes, &self.semantic)
     }
 
     pub fn get_type(&self) -> Option<Type> {

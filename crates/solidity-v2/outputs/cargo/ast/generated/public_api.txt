@@ -182,11 +182,13 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_expression_statement(
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_for_statement(&mut self, &slang_solidity_v2_ast::ast::ForStatement) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_for_statement_condition(&mut self, &slang_solidity_v2_ast::ast::ForStatementCondition) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_for_statement_initialization(&mut self, &slang_solidity_v2_ast::ast::ForStatementInitialization) -> bool
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_function_attributes(&mut self, &slang_solidity_v2_ast::ast::FunctionAttributes) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_function_call_expression(&mut self, &slang_solidity_v2_ast::ast::FunctionCallExpression) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_function_definition(&mut self, &slang_solidity_v2_ast::ast::FunctionDefinition) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_function_kind(&mut self, &slang_solidity_v2_ast::ast::FunctionKind) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_function_mutability(&mut self, &slang_solidity_v2_ast::ast::FunctionMutability) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_function_type(&mut self, &alloc::sync::Arc<slang_solidity_v2_ast::ast::FunctionTypeStruct>) -> bool
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_function_type_attributes(&mut self, &slang_solidity_v2_ast::ast::FunctionTypeAttributes) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_function_visibility(&mut self, &slang_solidity_v2_ast::ast::FunctionVisibility) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_hex_number_expression(&mut self, &slang_solidity_v2_ast::ast::HexNumberExpression) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_hex_string_literals(&mut self, &slang_solidity_v2_ast::ast::HexStringLiterals) -> bool
@@ -239,6 +241,7 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_single_typed_declarat
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_source_unit(&mut self, &slang_solidity_v2_ast::ast::SourceUnit) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_source_unit_member(&mut self, &slang_solidity_v2_ast::ast::SourceUnitMember) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_source_unit_members(&mut self, &slang_solidity_v2_ast::ast::SourceUnitMembers) -> bool
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_state_variable_attributes(&mut self, &slang_solidity_v2_ast::ast::StateVariableAttributes) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_state_variable_definition(&mut self, &slang_solidity_v2_ast::ast::StateVariableDefinition) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_state_variable_mutability(&mut self, &slang_solidity_v2_ast::ast::StateVariableMutability) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_state_variable_visibility(&mut self, &slang_solidity_v2_ast::ast::StateVariableVisibility) -> bool
@@ -351,11 +354,13 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_expression_statement(
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_for_statement(&mut self, &slang_solidity_v2_ast::ast::ForStatement)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_for_statement_condition(&mut self, &slang_solidity_v2_ast::ast::ForStatementCondition)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_for_statement_initialization(&mut self, &slang_solidity_v2_ast::ast::ForStatementInitialization)
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_function_attributes(&mut self, &slang_solidity_v2_ast::ast::FunctionAttributes)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_function_call_expression(&mut self, &slang_solidity_v2_ast::ast::FunctionCallExpression)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_function_definition(&mut self, &slang_solidity_v2_ast::ast::FunctionDefinition)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_function_kind(&mut self, &slang_solidity_v2_ast::ast::FunctionKind)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_function_mutability(&mut self, &slang_solidity_v2_ast::ast::FunctionMutability)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_function_type(&mut self, &alloc::sync::Arc<slang_solidity_v2_ast::ast::FunctionTypeStruct>)
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_function_type_attributes(&mut self, &slang_solidity_v2_ast::ast::FunctionTypeAttributes)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_function_visibility(&mut self, &slang_solidity_v2_ast::ast::FunctionVisibility)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_hex_number_expression(&mut self, &slang_solidity_v2_ast::ast::HexNumberExpression)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_hex_string_literals(&mut self, &slang_solidity_v2_ast::ast::HexStringLiterals)
@@ -408,6 +413,7 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_single_typed_declarat
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_source_unit(&mut self, &slang_solidity_v2_ast::ast::SourceUnit)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_source_unit_member(&mut self, &slang_solidity_v2_ast::ast::SourceUnitMember)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_source_unit_members(&mut self, &slang_solidity_v2_ast::ast::SourceUnitMembers)
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_state_variable_attributes(&mut self, &slang_solidity_v2_ast::ast::StateVariableAttributes)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_state_variable_definition(&mut self, &slang_solidity_v2_ast::ast::StateVariableDefinition)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_state_variable_mutability(&mut self, &slang_solidity_v2_ast::ast::StateVariableMutability)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_state_variable_visibility(&mut self, &slang_solidity_v2_ast::ast::StateVariableVisibility)
@@ -527,11 +533,13 @@ pub fn slang_solidity_v2_ast::ast::visitor::accept_expression_statement(&slang_s
 pub fn slang_solidity_v2_ast::ast::visitor::accept_for_statement(&slang_solidity_v2_ast::ast::ForStatement, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_for_statement_condition(&slang_solidity_v2_ast::ast::ForStatementCondition, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_for_statement_initialization(&slang_solidity_v2_ast::ast::ForStatementInitialization, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
+pub fn slang_solidity_v2_ast::ast::visitor::accept_function_attributes(&slang_solidity_v2_ast::ast::FunctionAttributes, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_function_call_expression(&slang_solidity_v2_ast::ast::FunctionCallExpression, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_function_definition(&slang_solidity_v2_ast::ast::FunctionDefinition, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_function_kind(&slang_solidity_v2_ast::ast::FunctionKind, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_function_mutability(&slang_solidity_v2_ast::ast::FunctionMutability, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_function_type(&alloc::sync::Arc<slang_solidity_v2_ast::ast::FunctionTypeStruct>, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
+pub fn slang_solidity_v2_ast::ast::visitor::accept_function_type_attributes(&slang_solidity_v2_ast::ast::FunctionTypeAttributes, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_function_visibility(&slang_solidity_v2_ast::ast::FunctionVisibility, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_hex_number_expression(&slang_solidity_v2_ast::ast::HexNumberExpression, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_if_statement(&slang_solidity_v2_ast::ast::IfStatement, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
@@ -570,6 +578,7 @@ pub fn slang_solidity_v2_ast::ast::visitor::accept_shift_expression_operator(&sl
 pub fn slang_solidity_v2_ast::ast::visitor::accept_single_typed_declaration(&slang_solidity_v2_ast::ast::SingleTypedDeclaration, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_source_unit(&slang_solidity_v2_ast::ast::SourceUnit, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_source_unit_member(&slang_solidity_v2_ast::ast::SourceUnitMember, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
+pub fn slang_solidity_v2_ast::ast::visitor::accept_state_variable_attributes(&slang_solidity_v2_ast::ast::StateVariableAttributes, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_state_variable_definition(&slang_solidity_v2_ast::ast::StateVariableDefinition, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_state_variable_mutability(&slang_solidity_v2_ast::ast::StateVariableMutability, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_state_variable_visibility(&slang_solidity_v2_ast::ast::StateVariableVisibility, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
@@ -1778,6 +1787,19 @@ pub fn slang_solidity_v2_ast::ast::ForStatementStruct::iterator(&self) -> core::
 pub fn slang_solidity_v2_ast::ast::ForStatementStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::ForStatementStruct
 pub fn slang_solidity_v2_ast::ast::ForStatementStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub struct slang_solidity_v2_ast::ast::FunctionAttributesStruct
+impl slang_solidity_v2_ast::ast::FunctionAttributesStruct
+pub fn slang_solidity_v2_ast::ast::FunctionAttributesStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
+pub fn slang_solidity_v2_ast::ast::FunctionAttributesStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
+pub fn slang_solidity_v2_ast::ast::FunctionAttributesStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+pub fn slang_solidity_v2_ast::ast::FunctionAttributesStruct::is_virtual(&self) -> bool
+pub fn slang_solidity_v2_ast::ast::FunctionAttributesStruct::modifier_invocations(&self) -> slang_solidity_v2_ast::ast::ModifierInvocations
+pub fn slang_solidity_v2_ast::ast::FunctionAttributesStruct::mutability(&self) -> slang_solidity_v2_ast::ast::FunctionMutability
+pub fn slang_solidity_v2_ast::ast::FunctionAttributesStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::FunctionAttributesStruct::override_specifier(&self) -> core::option::Option<slang_solidity_v2_ast::ast::OverridePaths>
+pub fn slang_solidity_v2_ast::ast::FunctionAttributesStruct::visibility(&self) -> slang_solidity_v2_ast::ast::FunctionVisibility
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::FunctionAttributesStruct
+pub fn slang_solidity_v2_ast::ast::FunctionAttributesStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::FunctionCallExpressionStruct
 impl slang_solidity_v2_ast::ast::FunctionCallExpressionStruct
 pub fn slang_solidity_v2_ast::ast::FunctionCallExpressionStruct::arguments(&self) -> slang_solidity_v2_ast::ast::ArgumentsDeclaration
@@ -1795,20 +1817,16 @@ impl slang_solidity_v2_ast::ast::FunctionDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
 impl slang_solidity_v2_ast::ast::FunctionDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::attributes(&self) -> slang_solidity_v2_ast::ast::FunctionAttributes
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::body(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Block>
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::is_virtual(&self) -> bool
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::kind(&self) -> slang_solidity_v2_ast::ast::FunctionKind
-pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::modifier_invocations(&self) -> slang_solidity_v2_ast::ast::ModifierInvocations
-pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::mutability(&self) -> slang_solidity_v2_ast::ast::FunctionMutability
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::name(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Identifier>
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::override_specifier(&self) -> core::option::Option<slang_solidity_v2_ast::ast::OverridePaths>
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::parameters(&self) -> slang_solidity_v2_ast::ast::Parameters
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::returns(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Parameters>
-pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::visibility(&self) -> slang_solidity_v2_ast::ast::FunctionVisibility
 impl slang_solidity_v2_ast::ast::FunctionDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::compute_abi_entry(&self) -> core::option::Option<slang_solidity_v2_ast::abi::AbiEntry>
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::compute_canonical_signature(&self) -> core::option::Option<alloc::string::String>
@@ -1830,16 +1848,25 @@ pub fn slang_solidity_v2_ast::ast::FunctionType::return_type(&self) -> slang_sol
 pub fn slang_solidity_v2_ast::ast::FunctionType::visibility(&self) -> slang_solidity_v2_semantic::types::FunctionTypeVisibility
 impl core::clone::Clone for slang_solidity_v2_ast::ast::FunctionType
 pub fn slang_solidity_v2_ast::ast::FunctionType::clone(&self) -> slang_solidity_v2_ast::ast::FunctionType
+pub struct slang_solidity_v2_ast::ast::FunctionTypeAttributesStruct
+impl slang_solidity_v2_ast::ast::FunctionTypeAttributesStruct
+pub fn slang_solidity_v2_ast::ast::FunctionTypeAttributesStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
+pub fn slang_solidity_v2_ast::ast::FunctionTypeAttributesStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
+pub fn slang_solidity_v2_ast::ast::FunctionTypeAttributesStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+pub fn slang_solidity_v2_ast::ast::FunctionTypeAttributesStruct::mutability(&self) -> slang_solidity_v2_ast::ast::FunctionMutability
+pub fn slang_solidity_v2_ast::ast::FunctionTypeAttributesStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::FunctionTypeAttributesStruct::visibility(&self) -> slang_solidity_v2_ast::ast::FunctionVisibility
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::FunctionTypeAttributesStruct
+pub fn slang_solidity_v2_ast::ast::FunctionTypeAttributesStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::FunctionTypeStruct
 impl slang_solidity_v2_ast::ast::FunctionTypeStruct
+pub fn slang_solidity_v2_ast::ast::FunctionTypeStruct::attributes(&self) -> slang_solidity_v2_ast::ast::FunctionTypeAttributes
 pub fn slang_solidity_v2_ast::ast::FunctionTypeStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::ast::FunctionTypeStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::FunctionTypeStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::FunctionTypeStruct::mutability(&self) -> slang_solidity_v2_ast::ast::FunctionMutability
 pub fn slang_solidity_v2_ast::ast::FunctionTypeStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::FunctionTypeStruct::parameters(&self) -> slang_solidity_v2_ast::ast::Parameters
 pub fn slang_solidity_v2_ast::ast::FunctionTypeStruct::returns(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Parameters>
-pub fn slang_solidity_v2_ast::ast::FunctionTypeStruct::visibility(&self) -> slang_solidity_v2_ast::ast::FunctionVisibility
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::FunctionTypeStruct
 pub fn slang_solidity_v2_ast::ast::FunctionTypeStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::GreaterThanEqualStruct
@@ -2647,10 +2674,30 @@ pub fn slang_solidity_v2_ast::ast::SourceUnitStruct::members(&self) -> slang_sol
 pub fn slang_solidity_v2_ast::ast::SourceUnitStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::SourceUnitStruct
 pub fn slang_solidity_v2_ast::ast::SourceUnitStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub struct slang_solidity_v2_ast::ast::StateVariableAttributesStruct
+impl slang_solidity_v2_ast::ast::StateVariableAttributesStruct
+pub fn slang_solidity_v2_ast::ast::StateVariableAttributesStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
+pub fn slang_solidity_v2_ast::ast::StateVariableAttributesStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
+pub fn slang_solidity_v2_ast::ast::StateVariableAttributesStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+pub fn slang_solidity_v2_ast::ast::StateVariableAttributesStruct::mutability(&self) -> slang_solidity_v2_ast::ast::StateVariableMutability
+pub fn slang_solidity_v2_ast::ast::StateVariableAttributesStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::StateVariableAttributesStruct::override_specifier(&self) -> core::option::Option<slang_solidity_v2_ast::ast::OverridePaths>
+pub fn slang_solidity_v2_ast::ast::StateVariableAttributesStruct::visibility(&self) -> slang_solidity_v2_ast::ast::StateVariableVisibility
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::StateVariableAttributesStruct
+pub fn slang_solidity_v2_ast::ast::StateVariableAttributesStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::StateVariableDefinitionStruct
 impl slang_solidity_v2_ast::ast::StateVariableDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
+impl slang_solidity_v2_ast::ast::StateVariableDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::attributes(&self) -> slang_solidity_v2_ast::ast::StateVariableAttributes
+pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
+pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
+pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::name(&self) -> slang_solidity_v2_ast::ast::Identifier
+pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::type_name(&self) -> slang_solidity_v2_ast::ast::TypeName
+pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::value(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Expression>
 impl slang_solidity_v2_ast::ast::StateVariableDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::compute_abi_entry(&self) -> core::option::Option<slang_solidity_v2_ast::abi::AbiEntry>
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::compute_canonical_signature(&self) -> core::option::Option<alloc::string::String>
@@ -2659,17 +2706,6 @@ pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::compute_select
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::is_externally_visible(&self) -> bool
 impl slang_solidity_v2_ast::ast::StateVariableDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::enclosing_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
-impl slang_solidity_v2_ast::ast::StateVariableDefinitionStruct
-pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
-pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
-pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::mutability(&self) -> slang_solidity_v2_ast::ast::StateVariableMutability
-pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::name(&self) -> slang_solidity_v2_ast::ast::Identifier
-pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::override_specifier(&self) -> core::option::Option<slang_solidity_v2_ast::ast::OverridePaths>
-pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::type_name(&self) -> slang_solidity_v2_ast::ast::TypeName
-pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::value(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Expression>
-pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::visibility(&self) -> slang_solidity_v2_ast::ast::StateVariableVisibility
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::StateVariableDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::StatementsStruct
@@ -3282,9 +3318,11 @@ pub fn slang_solidity_v2_ast::ast::create_experimental_pragma(&slang_solidity_v2
 pub fn slang_solidity_v2_ast::ast::create_exponentiation_expression(&slang_solidity_v2_ir::ir::nodes::ExponentiationExpression, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ExponentiationExpression
 pub fn slang_solidity_v2_ast::ast::create_expression_statement(&slang_solidity_v2_ir::ir::nodes::ExpressionStatement, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ExpressionStatement
 pub fn slang_solidity_v2_ast::ast::create_for_statement(&slang_solidity_v2_ir::ir::nodes::ForStatement, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ForStatement
+pub fn slang_solidity_v2_ast::ast::create_function_attributes(&slang_solidity_v2_ir::ir::nodes::FunctionAttributes, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::FunctionAttributes
 pub fn slang_solidity_v2_ast::ast::create_function_call_expression(&slang_solidity_v2_ir::ir::nodes::FunctionCallExpression, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::FunctionCallExpression
 pub fn slang_solidity_v2_ast::ast::create_function_definition(&slang_solidity_v2_ir::ir::nodes::FunctionDefinition, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::FunctionDefinition
 pub fn slang_solidity_v2_ast::ast::create_function_type(&slang_solidity_v2_ir::ir::nodes::FunctionType, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> alloc::sync::Arc<slang_solidity_v2_ast::ast::FunctionTypeStruct>
+pub fn slang_solidity_v2_ast::ast::create_function_type_attributes(&slang_solidity_v2_ir::ir::nodes::FunctionTypeAttributes, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::FunctionTypeAttributes
 pub fn slang_solidity_v2_ast::ast::create_hex_number_expression(&slang_solidity_v2_ir::ir::nodes::HexNumberExpression, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::HexNumberExpression
 pub fn slang_solidity_v2_ast::ast::create_if_statement(&slang_solidity_v2_ir::ir::nodes::IfStatement, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::IfStatement
 pub fn slang_solidity_v2_ast::ast::create_import_deconstruction(&slang_solidity_v2_ir::ir::nodes::ImportDeconstruction, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ImportDeconstruction
@@ -3313,6 +3351,7 @@ pub fn slang_solidity_v2_ast::ast::create_revert_statement(&slang_solidity_v2_ir
 pub fn slang_solidity_v2_ast::ast::create_shift_expression(&slang_solidity_v2_ir::ir::nodes::ShiftExpression, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ShiftExpression
 pub fn slang_solidity_v2_ast::ast::create_single_typed_declaration(&slang_solidity_v2_ir::ir::nodes::SingleTypedDeclaration, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::SingleTypedDeclaration
 pub fn slang_solidity_v2_ast::ast::create_source_unit(&slang_solidity_v2_ir::ir::nodes::SourceUnit, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::SourceUnit
+pub fn slang_solidity_v2_ast::ast::create_state_variable_attributes(&slang_solidity_v2_ir::ir::nodes::StateVariableAttributes, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::StateVariableAttributes
 pub fn slang_solidity_v2_ast::ast::create_state_variable_definition(&slang_solidity_v2_ir::ir::nodes::StateVariableDefinition, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::StateVariableDefinition
 pub fn slang_solidity_v2_ast::ast::create_struct_definition(&slang_solidity_v2_ir::ir::nodes::StructDefinition, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::StructDefinition
 pub fn slang_solidity_v2_ast::ast::create_struct_member(&slang_solidity_v2_ir::ir::nodes::StructMember, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::StructMember
@@ -3404,8 +3443,10 @@ pub type slang_solidity_v2_ast::ast::ExpressionStatement = alloc::sync::Arc<slan
 pub type slang_solidity_v2_ast::ast::FalseKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::FalseKeywordStruct>
 pub type slang_solidity_v2_ast::ast::FixedKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::FixedKeywordStruct>
 pub type slang_solidity_v2_ast::ast::ForStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::ForStatementStruct>
+pub type slang_solidity_v2_ast::ast::FunctionAttributes = alloc::sync::Arc<slang_solidity_v2_ast::ast::FunctionAttributesStruct>
 pub type slang_solidity_v2_ast::ast::FunctionCallExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::FunctionCallExpressionStruct>
 pub type slang_solidity_v2_ast::ast::FunctionDefinition = alloc::sync::Arc<slang_solidity_v2_ast::ast::FunctionDefinitionStruct>
+pub type slang_solidity_v2_ast::ast::FunctionTypeAttributes = alloc::sync::Arc<slang_solidity_v2_ast::ast::FunctionTypeAttributesStruct>
 pub type slang_solidity_v2_ast::ast::GreaterThan = alloc::sync::Arc<slang_solidity_v2_ast::ast::GreaterThanStruct>
 pub type slang_solidity_v2_ast::ast::GreaterThanEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::GreaterThanEqualStruct>
 pub type slang_solidity_v2_ast::ast::GreaterThanGreaterThan = alloc::sync::Arc<slang_solidity_v2_ast::ast::GreaterThanGreaterThanStruct>
@@ -3486,6 +3527,7 @@ pub type slang_solidity_v2_ast::ast::Slash = alloc::sync::Arc<slang_solidity_v2_
 pub type slang_solidity_v2_ast::ast::SlashEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::SlashEqualStruct>
 pub type slang_solidity_v2_ast::ast::SourceUnit = alloc::sync::Arc<slang_solidity_v2_ast::ast::SourceUnitStruct>
 pub type slang_solidity_v2_ast::ast::SourceUnitMembers = alloc::sync::Arc<slang_solidity_v2_ast::ast::SourceUnitMembersStruct>
+pub type slang_solidity_v2_ast::ast::StateVariableAttributes = alloc::sync::Arc<slang_solidity_v2_ast::ast::StateVariableAttributesStruct>
 pub type slang_solidity_v2_ast::ast::StateVariableDefinition = alloc::sync::Arc<slang_solidity_v2_ast::ast::StateVariableDefinitionStruct>
 pub type slang_solidity_v2_ast::ast::Statements = alloc::sync::Arc<slang_solidity_v2_ast::ast::StatementsStruct>
 pub type slang_solidity_v2_ast::ast::StorageKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::StorageKeywordStruct>

@@ -103,7 +103,7 @@ impl<'a> Pass<'a> {
                     continue;
                 };
                 if !matches!(
-                    state_var_definition.visibility,
+                    state_var_definition.attributes.visibility,
                     ir::StateVariableVisibility::Public
                 ) {
                     continue;
