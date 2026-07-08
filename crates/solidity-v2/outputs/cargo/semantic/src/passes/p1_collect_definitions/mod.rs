@@ -5,7 +5,7 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     BreakOutsideLoop, ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers,
     FunctionNameMatchesContainer, InvalidUsingDirectiveContainer, LibraryVirtualFunction,
     LibraryVirtualModifier, MultipleConstructors, UnimplementedModifierMustBeVirtual,
-    VirtualPrivateFunction,
+    VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
@@ -134,12 +134,18 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     }
 
     /// Whether the current (enclosing) scope belongs to a library definition.
-    fn enclosing_container_is_library(&mut self) -> bool {
+    fn current_scope_is_library(&mut self) -> bool {
         let node_id = self.current_scope().node_id();
         matches!(
             self.binder.find_definition_by_id(node_id),
             Some(Definition::Library(_))
         )
+    }
+
+    /// Whether the current (enclosing) scope is the file scope, i.e. the
+    /// definition is a free (file-level) one.
+    fn current_scope_is_file(&mut self) -> bool {
+        matches!(self.current_scope(), Scope::File(_))
     }
 
     fn current_file_scope(&mut self) -> &mut FileScope {
@@ -364,24 +370,32 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
             | ir::FunctionKind::Constructor
             | ir::FunctionKind::Fallback
             | ir::FunctionKind::Receive => {
-                // A function declared in a library cannot be marked `virtual`.
-                if node.attributes.is_virtual && self.enclosing_container_is_library() {
-                    self.diagnostics.push(
-                        self.current_file.id().to_owned(),
-                        node.range.clone(),
-                        LibraryVirtualFunction,
-                    );
-                }
+                if node.attributes.is_virtual {
+                    // A function declared in a library cannot be marked `virtual`.
+                    if self.current_scope_is_library() {
+                        self.diagnostics.push(
+                            self.current_file.id().to_owned(),
+                            node.range.clone(),
+                            LibraryVirtualFunction,
+                        );
 
-                // A `private` function cannot also be marked `virtual`.
-                if node.attributes.is_virtual
-                    && node.attributes.visibility == ir::FunctionVisibility::Private
-                {
-                    self.diagnostics.push(
-                        self.current_file.id().to_owned(),
-                        node.range.clone(),
-                        VirtualPrivateFunction,
-                    );
+                    // A free (file-level) function cannot be marked `virtual`.
+                    } else if self.current_scope_is_file() {
+                        self.diagnostics.push(
+                            self.current_file.id().to_owned(),
+                            node.range.clone(),
+                            VirtualFreeFunction,
+                        );
+                    }
+
+                    // A `virtual` function cannot also be marked `private`.
+                    if node.attributes.visibility == ir::FunctionVisibility::Private {
+                        self.diagnostics.push(
+                            self.current_file.id().to_owned(),
+                            node.range.clone(),
+                            VirtualPrivateFunction,
+                        );
+                    }
                 }
 
                 let parameters_scope_id = self.collect_parameters(&node.parameters);
@@ -449,7 +463,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                 }
 
                 // A modifier declared in a library cannot be marked `virtual`.
-                if node.attributes.is_virtual && self.enclosing_container_is_library() {
+                if node.attributes.is_virtual && self.current_scope_is_library() {
                     self.diagnostics.push(
                         self.current_file.id().to_owned(),
                         node.range.clone(),

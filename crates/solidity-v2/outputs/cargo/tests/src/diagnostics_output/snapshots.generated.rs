@@ -837,6 +837,11 @@ mod structure {
     }
 
     #[test]
+    fn virtual_free_function() -> Result<()> {
+        run("structure", "virtual_free_function")
+    }
+
+    #[test]
     fn virtual_private_function() -> Result<()> {
         run("structure", "virtual_private_function")
     }
