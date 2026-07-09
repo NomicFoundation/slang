@@ -15,6 +15,12 @@ use serde::Serialize;
 #[serde(transparent)]
 pub struct FileId(Arc<str>);
 
+impl FileId {
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+
 impl From<String> for FileId {
     fn from(value: String) -> Self {
         Self(value.into())

@@ -1823,6 +1823,8 @@ impl serde_core::ser::Serialize for slang_solidity_v2_common::evm_targets::EvmTa
 pub fn slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
 pub mod slang_solidity_v2_common::files
 pub struct slang_solidity_v2_common::files::FileId(_)
+impl slang_solidity_v2_common::files::FileId
+pub fn slang_solidity_v2_common::files::FileId::as_str(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_common::files::FileId::clone(&self) -> slang_solidity_v2_common::files::FileId
 impl core::cmp::Eq for slang_solidity_v2_common::files::FileId
