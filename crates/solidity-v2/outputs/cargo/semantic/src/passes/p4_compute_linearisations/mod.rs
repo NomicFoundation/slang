@@ -107,7 +107,7 @@ fn compute_linearised_members(
         Some(Definition::Contract(contract)) => Some(contract),
         _ => None,
     };
-    let mut abstract_slots: Vec<AbstractSlot> = Vec::new();
+    let mut abstract_slots: Vec<AbstractSlot<'_>> = Vec::new();
 
     // The kind of member occupying each name so far; a base contributes only
     // the members that derived types inherit. A member redeclares an inherited
@@ -368,10 +368,11 @@ impl MemberKind {
 /// A member of a contract's hierarchy that requires an implementation for the
 /// contract to be concrete: a function or a modifier, together with whether it
 /// is currently implemented.
-struct AbstractSlot {
+struct AbstractSlot<'a> {
     kind: AbstractSlotKind,
-    /// The member's name, used to match declarations across bases.
-    name: String,
+    /// The member's name, used to match declarations across bases. Borrowed from
+    /// the owning definition, which lives in the binder for the whole walk.
+    name: &'a str,
     /// The member's (function) type, used to distinguish overloads and detect
     /// overrides. `None` for modifiers, which cannot be overloaded and so match
     /// on name alone.
@@ -390,7 +391,7 @@ enum AbstractSlotKind {
 ///
 /// A `public` state variable contributes its (always-implemented) getter, which
 /// can satisfy a function declared in a base contract or interface.
-fn abstract_slot(binder: &Binder, definition: &Definition) -> Option<AbstractSlot> {
+fn abstract_slot<'a>(binder: &Binder, definition: &'a Definition) -> Option<AbstractSlot<'a>> {
     let (kind, type_id, implemented) = match definition {
         Definition::Function(function) => (
             AbstractSlotKind::Function,
@@ -418,7 +419,7 @@ fn abstract_slot(binder: &Binder, definition: &Definition) -> Option<AbstractSlo
     };
     Some(AbstractSlot {
         kind,
-        name: definition.identifier().unparse().to_owned(),
+        name: definition.identifier().unparse(),
         type_id,
         implemented,
     })
@@ -427,10 +428,10 @@ fn abstract_slot(binder: &Binder, definition: &Definition) -> Option<AbstractSlo
 /// Merges `candidate` into `slots`. `candidate` is always more-derived than the
 /// existing slots, so when it overrides one it takes over that slot's identity
 /// and implementation status; otherwise it introduces a new slot.
-fn merge_abstract_slot(
+fn merge_abstract_slot<'a>(
     types: &TypeRegistry,
-    slots: &mut Vec<AbstractSlot>,
-    candidate: AbstractSlot,
+    slots: &mut Vec<AbstractSlot<'a>>,
+    candidate: AbstractSlot<'a>,
 ) {
     for slot in slots.iter_mut() {
         if slot_overridden_by(types, slot, &candidate) {
@@ -446,7 +447,11 @@ fn merge_abstract_slot(
 /// they are the same kind of member with the same name, and (for functions)
 /// their signatures are in an override relationship. Modifiers match on name
 /// alone since they cannot be overloaded.
-fn slot_overridden_by(types: &TypeRegistry, slot: &AbstractSlot, candidate: &AbstractSlot) -> bool {
+fn slot_overridden_by(
+    types: &TypeRegistry,
+    slot: &AbstractSlot<'_>,
+    candidate: &AbstractSlot<'_>,
+) -> bool {
     if slot.kind != candidate.kind || slot.name != candidate.name {
         return false;
     }
