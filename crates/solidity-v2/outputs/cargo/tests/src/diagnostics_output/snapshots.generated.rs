@@ -405,6 +405,11 @@ mod resolution {
         }
 
         #[test]
+        fn modifier_overload() -> Result<()> {
+            run("resolution/identifier_redeclaration", "modifier_overload")
+        }
+
+        #[test]
         fn parameter_vs_return_parameter() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",

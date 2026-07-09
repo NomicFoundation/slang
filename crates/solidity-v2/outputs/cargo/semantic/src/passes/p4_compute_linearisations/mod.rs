@@ -18,7 +18,7 @@ use crate::types::TypeRegistry;
 /// - report `IdentifierRedeclaration` for a member that illegally redeclares a
 ///   same-named member inherited from a base (Solidity allows overloading
 ///   functions/events and overriding functions/modifiers; see
-///   [`Definition::may_coexist_with_inherited`]); and
+///   [`MemberKind`]); and
 /// - pre-compute, for each contract, the collections of functions, state
 ///   variables, errors and events visible in its hierarchy, storing them in a
 ///   `ContractData`.
@@ -94,12 +94,13 @@ fn compute_linearised_members(
         return ContractLinearisations::default();
     };
 
-    // The members visible so far, keyed by name; a base contributes only its
-    // members that derived types inherit. A member redeclares an inherited one
-    // when it can't coexist with any member already recorded under its name.
+    // The kind of member occupying each name so far; a base contributes only
+    // the members that derived types inherit. A member redeclares an inherited
+    // one when its kind can't coexist with the name's slot (see [`MemberKind`]).
     // Names are borrowed from the definitions (which live in the binder for the
-    // whole walk), so recording a member costs no allocation.
-    let mut visible_members_by_name: Map<&str, Vec<NodeId>> = Map::default();
+    // whole walk), and the values are `Copy`, so tracking a member costs no
+    // allocation.
+    let mut visible_members_by_name: Map<&str, MemberKind> = Map::default();
 
     let mut state_variables = Vec::new();
     let mut errors = Vec::new();
@@ -167,11 +168,7 @@ fn compute_linearised_members(
             let Some(inherited) = visible_members_by_name.get(name) else {
                 continue;
             };
-            let redeclares = inherited.iter().any(|inherited_id| {
-                let inherited_definition = binder.find_definition_by_id(*inherited_id).unwrap();
-                !definition.may_coexist_with_inherited(inherited_definition)
-            });
-            if redeclares && reported.insert(definition.node_id()) {
+            if inherited.clashes_with(definition) && reported.insert(definition.node_id()) {
                 let file_id = file_node_mapper.file_id_from_node_id(definition.node_id());
                 diagnostics.push(
                     file_id.to_owned(),
@@ -188,10 +185,11 @@ fn compute_linearised_members(
         // clashing with each other (a same-scope concern handled in `p1`).
         for definition in member_definitions {
             if definition.is_internally_visible() {
+                let kind = MemberKind::of(definition);
                 visible_members_by_name
                     .entry(definition.identifier().unparse())
-                    .or_default()
-                    .push(definition.node_id());
+                    .and_modify(|slot| *slot = slot.merge(kind))
+                    .or_insert(kind);
             }
         }
 
@@ -255,6 +253,75 @@ fn member_definition<'a>(
         ir::ContractMember::ConstantDefinition(constant) => constant.id(),
     };
     binder.find_definition_by_id(node_id)
+}
+
+/// The kind of a named member, for redeclaration purposes. Used both to
+/// classify a member and to summarise the members occupying a name across a
+/// hierarchy.
+///
+/// Same-named members coexist only when they're all the same overloadable kind
+/// (all functions, all modifiers, or all events); Solidity allows overloading
+/// functions/events and overriding functions/modifiers. Once members of
+/// differing kinds share a name the slot collapses to [`Self::Other`], under
+/// which any further same-named member is a redeclaration — so accumulating
+/// members only ever moves a name's slot towards `Other`, never back.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum MemberKind {
+    Function,
+    Modifier,
+    Event,
+    /// A `public` state variable. As a *derived* member its getter may override
+    /// an inherited function; as an inherited member (or name slot) it never
+    /// lets a same-named member coexist, behaving like [`Self::Other`].
+    StateVarPublic,
+    /// Any other named member (non-public state variables, structs, enums,
+    /// errors, ...), or a name slot occupied by members of differing kinds:
+    /// never coexists with a same-named member.
+    Other,
+}
+
+impl MemberKind {
+    /// Classifies `definition`.
+    fn of(definition: &Definition) -> Self {
+        match definition {
+            Definition::Function(_) => Self::Function,
+            Definition::Modifier(_) => Self::Modifier,
+            Definition::Event(_) => Self::Event,
+            Definition::StateVariable(state_variable)
+                if matches!(
+                    state_variable.ir_node.attributes.visibility,
+                    ir::StateVariableVisibility::Public
+                ) =>
+            {
+                Self::StateVarPublic
+            }
+            _ => Self::Other,
+        }
+    }
+
+    /// Folds another same-named member into a name's slot; differing kinds
+    /// collapse to [`Self::Other`].
+    fn merge(self, other: Self) -> Self {
+        if self == other {
+            self
+        } else {
+            Self::Other
+        }
+    }
+
+    /// Whether a `derived` member redeclares the members occupying this slot. A
+    /// function — or a public state variable's getter — may share its name only
+    /// with functions; a modifier only with modifiers; an event only with
+    /// events; anything else with nothing.
+    fn clashes_with(self, derived: &Definition) -> bool {
+        let derived = Self::of(derived);
+        match self {
+            Self::Function => !matches!(derived, Self::Function | Self::StateVarPublic),
+            Self::Modifier => derived != Self::Modifier,
+            Self::Event => derived != Self::Event,
+            Self::StateVarPublic | Self::Other => true,
+        }
+    }
 }
 
 /// Whether `overriding` overrides `overridden`: they share a name (or are the

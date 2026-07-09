@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/identifier-redeclaration] Error: Identifier already declared.
+    ╭─[input.sol:11:14]
+    │
+ 11 │     modifier m(uint256 x) {
+    │              ┬  
+    │              ╰── Error occurred here.
+────╯
