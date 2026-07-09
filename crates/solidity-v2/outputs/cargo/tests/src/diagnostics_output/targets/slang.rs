@@ -40,7 +40,7 @@ impl TestTarget for SlangTarget {
             let source = files.get(file_id).cloned().unwrap_or_default();
             rendered.push(diagnostic::render(
                 diagnostic,
-                &file_id.to_string(),
+                file_id.as_str(),
                 &source,
                 false,
             ));

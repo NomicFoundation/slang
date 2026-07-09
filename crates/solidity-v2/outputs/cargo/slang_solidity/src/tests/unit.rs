@@ -20,9 +20,9 @@ fn test_get_file_ast_root() {
         .expect("activatable.sol is a file in the compilation unit")
         .ast();
 
-    assert_eq!(main_ast.file_id().to_string(), "main.sol");
-    assert_eq!(ownable_ast.file_id().to_string(), "ownable.sol");
-    assert_eq!(activatable_ast.file_id().to_string(), "activatable.sol");
+    assert_eq!(main_ast.file_id().as_str(), "main.sol");
+    assert_eq!(ownable_ast.file_id().as_str(), "ownable.sol");
+    assert_eq!(activatable_ast.file_id().as_str(), "activatable.sol");
 
     assert_eq!(main_ast.contracts().len(), 1);
     assert_eq!(ownable_ast.contracts().len(), 1);

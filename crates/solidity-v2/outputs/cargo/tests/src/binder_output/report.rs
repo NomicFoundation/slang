@@ -113,7 +113,7 @@ fn report_diagnostics(
     for diagnostic in diagnostics {
         let file_id = diagnostic.file_id();
         let source = file_contents.get(file_id).cloned().unwrap_or_default();
-        let rendered = diagnostic::render(diagnostic, &file_id.to_string(), &source, false);
+        let rendered = diagnostic::render(diagnostic, file_id.as_str(), &source, false);
         writeln!(report, "{rendered}")?;
     }
     Ok(())
@@ -127,8 +127,7 @@ fn render_bindings_for_file(
     all_references: &[CollectedReference],
     unbound_identifiers: &[CollectedIdentifier],
 ) -> Result<()> {
-    let file_id_str = file_id.to_string();
-    let file_id_str = file_id_str.as_str();
+    let file_id_str = file_id.as_str();
     let mut builder: BuilderType<'_> =
         Report::build(ReportKind::Custom("Bindings", Color::Unset), file_id_str, 0)
             .with_config(Config::default().with_color(false));

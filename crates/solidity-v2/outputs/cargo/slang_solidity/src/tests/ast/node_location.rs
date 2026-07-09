@@ -9,7 +9,7 @@ fn test_get_file_id_and_text_range() {
         .find_contract_by_name("Ownable")
         .next()
         .expect("contract is found");
-    assert_eq!(ownable.get_file_id().to_string(), "ownable.sol");
+    assert_eq!(ownable.get_file_id().as_str(), "ownable.sol");
 
     let owner = ownable
         .members()
@@ -23,7 +23,7 @@ fn test_get_file_id_and_text_range() {
         })
         .expect("_owner state variable is found");
     assert_eq!(owner.name().name(), "_owner");
-    assert_eq!(owner.get_file_id().to_string(), "ownable.sol");
+    assert_eq!(owner.get_file_id().as_str(), "ownable.sol");
 
     // The state variable's range must sit within the enclosing contract's range.
     assert!(ownable.get_text_range().start <= owner.get_text_range().start);
@@ -33,11 +33,11 @@ fn test_get_file_id_and_text_range() {
         .find_contract_by_name("Activatable")
         .next()
         .expect("contract is found");
-    assert_eq!(activatable.get_file_id().to_string(), "activatable.sol");
+    assert_eq!(activatable.get_file_id().as_str(), "activatable.sol");
 
     let counter = unit
         .find_contract_by_name("Counter")
         .next()
         .expect("contract is found");
-    assert_eq!(counter.get_file_id().to_string(), "main.sol");
+    assert_eq!(counter.get_file_id().as_str(), "main.sol");
 }
