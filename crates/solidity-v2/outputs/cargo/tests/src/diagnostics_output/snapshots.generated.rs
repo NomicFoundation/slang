@@ -832,6 +832,11 @@ mod structure {
     }
 
     #[test]
+    fn storage_layout_for_abstract_contract() -> Result<()> {
+        run("structure", "storage_layout_for_abstract_contract")
+    }
+
+    #[test]
     fn unimplemented_modifier_must_be_virtual() -> Result<()> {
         run("structure", "unimplemented_modifier_must_be_virtual")
     }

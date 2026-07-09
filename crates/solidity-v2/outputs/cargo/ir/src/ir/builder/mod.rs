@@ -5,7 +5,9 @@ pub(crate) mod node_id_generator;
 
 use std::sync::Arc;
 
-use slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant;
+use slang_solidity_v2_common::diagnostics::kinds::structure::{
+    StorageLayoutForAbstractContract, UninitializedConstant,
+};
 use slang_solidity_v2_common::diagnostics::kinds::syntax::{
     MoreThanOneInheritanceList, MoreThanOneStorageLayout,
 };
@@ -135,8 +137,21 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                     None
                 }
             });
-        let storage_layout = storage_layout_specifiers
-            .next()
+        let first_storage_layout_specifier = storage_layout_specifiers.next();
+        // Abstract contracts cannot specify a storage layout.
+        if is_abstract {
+            if let Some(storage_layout) = first_storage_layout_specifier {
+                self.diagnostics.push(
+                    self.file_id.to_owned(),
+                    storage_layout
+                        .layout_keyword
+                        .calculate_text_range()
+                        .unwrap(),
+                    StorageLayoutForAbstractContract,
+                );
+            }
+        }
+        let storage_layout = first_storage_layout_specifier
             .map(|storage_layout| self.build_storage_layout_specifier(storage_layout));
         // The grammar allows more than one storage layout specifier; solc only
         // accepts the first and rejects any subsequent ones.
