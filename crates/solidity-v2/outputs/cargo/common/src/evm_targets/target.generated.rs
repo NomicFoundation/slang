@@ -75,13 +75,13 @@ impl Display for EvmTarget {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Error, Hash)]
-pub enum FromStrError {
+pub enum EvmTargetConversionError {
     #[error("Provided value is not recognized as a supported EVM target.")]
     UnrecognizedEvmTarget,
 }
 
 impl TryFrom<&str> for EvmTarget {
-    type Error = FromStrError;
+    type Error = EvmTargetConversionError;
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         match value {
@@ -100,7 +100,7 @@ impl TryFrom<&str> for EvmTarget {
             "Cancun" => Ok(EvmTarget::Cancun),
             "Prague" => Ok(EvmTarget::Prague),
             "Osaka" => Ok(EvmTarget::Osaka),
-            _ => Err(FromStrError::UnrecognizedEvmTarget),
+            _ => Err(EvmTargetConversionError::UnrecognizedEvmTarget),
         }
     }
 }

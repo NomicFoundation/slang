@@ -37,20 +37,20 @@ impl Display for EvmTarget {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Error, Hash)]
-pub enum FromStrError {
+pub enum EvmTargetConversionError {
     #[error("Provided value is not recognized as a supported EVM target.")]
     UnrecognizedEvmTarget,
 }
 
 impl TryFrom<&str> for EvmTarget {
-    type Error = FromStrError;
+    type Error = EvmTargetConversionError;
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         match value {
             {%- for evm_target in model.language.evm_targets %}
                 "{{ evm_target }}" => Ok(EvmTarget::{{ evm_target }}),
             {%- endfor %}
-            _ => Err(FromStrError::UnrecognizedEvmTarget),
+            _ => Err(EvmTargetConversionError::UnrecognizedEvmTarget),
         }
     }
 }

@@ -46,6 +46,9 @@ pub use slang_solidity_v2::diagnostics::DiagnosticKind
 pub use slang_solidity_v2::diagnostics::DiagnosticSeverity
 pub use slang_solidity_v2::diagnostics::kinds
 pub mod slang_solidity_v2::utils
-pub use slang_solidity_v2::utils::FromSemverError
+pub use slang_solidity_v2::utils::EvmTarget
+pub use slang_solidity_v2::utils::EvmTargetConversionError
+pub use slang_solidity_v2::utils::EvmTargetSpecifier
 pub use slang_solidity_v2::utils::LanguageVersion
+pub use slang_solidity_v2::utils::LanguageVersionConversionError
 pub use slang_solidity_v2::utils::LanguageVersionSpecifier

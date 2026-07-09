@@ -3,7 +3,7 @@ mod specifier;
 mod version;
 
 pub use specifier::LanguageVersionSpecifier;
-pub use version::{FromSemverError, LanguageVersion};
+pub use version::{LanguageVersion, LanguageVersionConversionError};
 
 #[cfg(test)]
 mod tests;
