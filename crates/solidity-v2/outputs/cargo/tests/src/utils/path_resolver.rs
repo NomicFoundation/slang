@@ -6,7 +6,7 @@ use slang_solidity_v2::compilation::FileId;
 /// `CompilationBuilderConfig::resolve_import` callback.
 pub(crate) fn resolve_import(source_file_id: &FileId, import_path: &str) -> Option<FileId> {
     if is_relative_path(import_path) {
-        normalize_path(import_path, get_parent_path(&source_file_id.to_string())).map(FileId::from)
+        normalize_path(import_path, get_parent_path(source_file_id.as_str())).map(FileId::from)
     } else {
         Some(import_path.into())
     }
