@@ -97,7 +97,9 @@ fn compute_linearised_members(
     // The members visible so far, keyed by name; a base contributes only its
     // members that derived types inherit. A member redeclares an inherited one
     // when it can't coexist with any member already recorded under its name.
-    let mut visible_members_by_name: Map<String, Vec<NodeId>> = Map::default();
+    // Names are borrowed from the definitions (which live in the binder for the
+    // whole walk), so recording a member costs no allocation.
+    let mut visible_members_by_name: Map<&str, Vec<NodeId>> = Map::default();
 
     let mut state_variables = Vec::new();
     let mut errors = Vec::new();
@@ -187,7 +189,7 @@ fn compute_linearised_members(
         for definition in member_definitions {
             if definition.is_internally_visible() {
                 visible_members_by_name
-                    .entry(definition.identifier().unparse().to_owned())
+                    .entry(definition.identifier().unparse())
                     .or_default()
                     .push(definition.node_id());
             }
