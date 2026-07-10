@@ -9,6 +9,10 @@ build-override = { debug = true }
 debug = true
 incremental = true
 strip = false
+# Bake the toolchain libdir into binaries 'RUNPATH' so that 'proc-macro' crate test
+# harnesses (which dynamically links 'libstd') can load it under 'cargo nextest',
+# which (unlike 'cargo test') does not add the target 'libdir' to 'LD_LIBRARY_PATH'.
+rpath = true
 
 [profile.release]
 lto = true

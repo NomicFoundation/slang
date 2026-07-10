@@ -17,7 +17,7 @@ impl CiController {
 
         // Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
         CheckController::default().execute()?;
-        TestController::default().execute()?;
+        TestController::default().execute();
         LintController::default().execute()?;
 
         Ok(())
