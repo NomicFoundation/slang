@@ -1966,6 +1966,7 @@ pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiag
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub mod slang_solidity_v2_common::evm_targets
 pub enum slang_solidity_v2_common::evm_targets::EvmTarget
+pub slang_solidity_v2_common::evm_targets::EvmTarget::Amsterdam = 15
 pub slang_solidity_v2_common::evm_targets::EvmTarget::Berlin = 8
 pub slang_solidity_v2_common::evm_targets::EvmTarget::Byzantium = 4
 pub slang_solidity_v2_common::evm_targets::EvmTarget::Cancun = 12
@@ -1982,7 +1983,7 @@ pub slang_solidity_v2_common::evm_targets::EvmTarget::Shanghai = 11
 pub slang_solidity_v2_common::evm_targets::EvmTarget::SpuriousDragon = 3
 pub slang_solidity_v2_common::evm_targets::EvmTarget::TangerineWhistle = 2
 impl slang_solidity_v2_common::evm_targets::EvmTarget
-pub const slang_solidity_v2_common::evm_targets::EvmTarget::ALL: &'static [slang_solidity_v2_common::evm_targets::EvmTarget; 15]
+pub const slang_solidity_v2_common::evm_targets::EvmTarget::ALL: &'static [slang_solidity_v2_common::evm_targets::EvmTarget; 16]
 pub const slang_solidity_v2_common::evm_targets::EvmTarget::EARLIEST: Self
 pub const slang_solidity_v2_common::evm_targets::EvmTarget::LATEST: Self
 impl core::clone::Clone for slang_solidity_v2_common::evm_targets::EvmTarget
@@ -2365,6 +2366,7 @@ pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_32
 pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_33
 pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_34
 pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_35
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_36
 pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_4
 pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_5
 pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_6
@@ -2372,7 +2374,7 @@ pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_7
 pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_8
 pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_9
 impl slang_solidity_v2_common::versions::LanguageVersion
-pub const slang_solidity_v2_common::versions::LanguageVersion::ALL: &'static [slang_solidity_v2_common::versions::LanguageVersion; 36]
+pub const slang_solidity_v2_common::versions::LanguageVersion::ALL: &'static [slang_solidity_v2_common::versions::LanguageVersion; 37]
 pub const slang_solidity_v2_common::versions::LanguageVersion::EARLIEST: Self
 pub const slang_solidity_v2_common::versions::LanguageVersion::LATEST: Self
 impl core::clone::Clone for slang_solidity_v2_common::versions::LanguageVersion

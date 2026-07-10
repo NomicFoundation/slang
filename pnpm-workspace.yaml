@@ -23,7 +23,7 @@ catalog:
   "markdownlint-cli": "^0.49.0"
   "prettier-plugin-sh": "^0.18.1"
   "prettier": "^3.8.3"
-  "solc": "^0.8.35"
+  "solc": "^0.8.36"
   "ts-jest-resolver": "^2.0.1"
   "ts-jest": "^29.4.11"
   "tsx": "^4.22.4"
@@ -47,6 +47,7 @@ minimumReleaseAgeExclude:
   # Security: pull js-yaml 4.2.0 (GHSA-h67p-54hq-rp68) before cooldown matures.
   # Published 2026-06-26 — remove this entry after 2026-07-03 (7-day cooldown).
   - "js-yaml"
+  - "solc" # Need to add support for/test against new language versions as they are released:
 
 # Store Settings
 storeDir: ".hermit/.pnpm-store"

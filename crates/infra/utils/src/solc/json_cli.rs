@@ -20,6 +20,9 @@ pub struct CliInput {
 pub struct CliSettings {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub evm_version: Option<String>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub experimental: Option<bool>,
 }
 
 #[derive(Debug, Serialize)]

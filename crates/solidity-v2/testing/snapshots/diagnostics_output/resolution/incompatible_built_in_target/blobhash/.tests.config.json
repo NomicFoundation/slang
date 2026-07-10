@@ -1,7 +1,7 @@
 {
   "matrix": {
     "type": "SingleVersionAllTargets",
-    "version": "0.8.35",
+    "version": "0.8.36",
     "reason": "Blobhash was enabled in 'Cancun', so this verifies incompatibility diagnostics before/after this target."
   }
 }
