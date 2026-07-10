@@ -23,6 +23,7 @@ pub enum EvmTarget {
     Cancun = 12,
     Prague = 13,
     Osaka = 14,
+    Amsterdam = 15,
 }
 
 impl EvmTarget {
@@ -30,10 +31,10 @@ impl EvmTarget {
     pub const EARLIEST: Self = Self::Frontier;
 
     /// The latest supported EVM target of `Solidity`.
-    pub const LATEST: Self = Self::Osaka;
+    pub const LATEST: Self = Self::Amsterdam;
 
     /// All supported EVM targets of `Solidity`, in order.
-    pub const ALL: &'static [EvmTarget; 15] = &[
+    pub const ALL: &'static [EvmTarget; 16] = &[
         EvmTarget::Frontier,
         EvmTarget::Homestead,
         EvmTarget::TangerineWhistle,
@@ -49,6 +50,7 @@ impl EvmTarget {
         EvmTarget::Cancun,
         EvmTarget::Prague,
         EvmTarget::Osaka,
+        EvmTarget::Amsterdam,
     ];
 }
 
@@ -70,6 +72,7 @@ impl Display for EvmTarget {
             EvmTarget::Cancun => write!(f, "Cancun"),
             EvmTarget::Prague => write!(f, "Prague"),
             EvmTarget::Osaka => write!(f, "Osaka"),
+            EvmTarget::Amsterdam => write!(f, "Amsterdam"),
         }
     }
 }
@@ -100,6 +103,7 @@ impl TryFrom<&str> for EvmTarget {
             "Cancun" => Ok(EvmTarget::Cancun),
             "Prague" => Ok(EvmTarget::Prague),
             "Osaka" => Ok(EvmTarget::Osaka),
+            "Amsterdam" => Ok(EvmTarget::Amsterdam),
             _ => Err(EvmTargetConversionError::UnrecognizedEvmTarget),
         }
     }

@@ -61,6 +61,13 @@ impl TestTarget for SolcTarget {
                 .collect(),
             settings: CliSettings {
                 evm_version: Some(evm_target.to_string().to_camel_case()),
+                experimental: if version < LanguageVersion::V0_8_35 {
+                    // 'experimental' flag was introduced in '0.8.35'
+                    None
+                } else {
+                    // Allow experimental features, like 'Amsterdam' hardfork on '0.8.36'
+                    Some(true)
+                },
             },
         };
 

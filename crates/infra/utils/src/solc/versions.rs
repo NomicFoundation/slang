@@ -43,7 +43,7 @@ pub fn default_evm_version(version: &Version) -> &'static str {
         (0, 8, 20..=24) => "shanghai",
         (0, 8, 25..=29) => "cancun",
         (0, 8, 30) => "prague",
-        (0, 8, 31..=35) => "osaka",
+        (0, 8, 31..=36) => "osaka",
 
         _ => panic!(
             "Unrecognized solc version '{version}'. Please add it to `default_evm_version()`."
