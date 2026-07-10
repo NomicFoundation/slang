@@ -5,7 +5,7 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     BreakOutsideLoop, ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers,
     FunctionNameMatchesContainer, InvalidUsingDirectiveContainer, LibraryVirtualFunction,
     LibraryVirtualModifier, MultipleConstructors, UnimplementedModifierMustBeVirtual,
-    UninitializedConstant, VirtualFreeFunction, VirtualPrivateFunction,
+    VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
@@ -559,21 +559,6 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         let definition = Definition::new_state_variable(node);
         self.insert_definition_in_current_scope(definition);
 
-        // A `constant` must be initialized with a value at its declaration site.
-        // Public constants keep the `StateVariableDefinition` shape; non-public
-        // ones are lowered to `ConstantDefinition` (see `enter_constant_definition`).
-        if matches!(
-            node.attributes.mutability,
-            ir::StateVariableMutability::Constant
-        ) && node.value.is_none()
-        {
-            self.diagnostics.push(
-                self.current_file.id().to_owned(),
-                node.range.clone(),
-                UninitializedConstant,
-            );
-        }
-
         // there may be more definitions in the type of the state variable (eg.
         // key/value names in mappings)
         true
@@ -582,15 +567,6 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     fn enter_constant_definition(&mut self, node: &ir::ConstantDefinition) -> bool {
         let definition = Definition::new_constant(node, self.current_scope_id());
         self.insert_definition_in_current_scope(definition);
-
-        // A `constant` must be initialized with a value at its declaration site.
-        if node.value.is_none() {
-            self.diagnostics.push(
-                self.current_file.id().to_owned(),
-                node.range.clone(),
-                UninitializedConstant,
-            );
-        }
 
         false
     }
