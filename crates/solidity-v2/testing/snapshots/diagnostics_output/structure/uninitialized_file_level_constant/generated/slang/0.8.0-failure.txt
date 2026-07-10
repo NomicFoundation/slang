@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/unexpected-terminal] Error: Unexpected Semicolon. One of Equal was expected
+    ╭─[input.sol:10:19]
+    │
+ 10 │ uint256 constant A;
+    │                   ┬  
+    │                   ╰── Error occurred here.
+────╯

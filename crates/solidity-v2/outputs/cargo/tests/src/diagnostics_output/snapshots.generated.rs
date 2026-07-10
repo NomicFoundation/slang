@@ -837,6 +837,16 @@ mod structure {
     }
 
     #[test]
+    fn uninitialized_constant() -> Result<()> {
+        run("structure", "uninitialized_constant")
+    }
+
+    #[test]
+    fn uninitialized_file_level_constant() -> Result<()> {
+        run("structure", "uninitialized_file_level_constant")
+    }
+
+    #[test]
     fn virtual_free_function() -> Result<()> {
         run("structure", "virtual_free_function")
     }

@@ -5,6 +5,7 @@ pub(crate) mod node_id_generator;
 
 use std::sync::Arc;
 
+use slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
@@ -312,6 +313,19 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|value| self.build_state_variable_definition_value(value));
         let attributes = self.build_state_variable_attributes(&source.attributes);
+
+        // A `constant` must be initialized with a value at its declaration site.
+        // This is the only shape an uninitialized constant can take: free
+        // constants (`ConstantDefinition`) always carry a value in the grammar,
+        // and non-public state variable constants are lowered from this same
+        // node (see `build_contract_member`).
+        if matches!(
+            attributes.mutability,
+            output::StateVariableMutability::Constant
+        ) && value.is_none()
+        {
+            self.report(source, UninitializedConstant);
+        }
 
         Arc::new(output::StateVariableDefinitionStruct {
             id,

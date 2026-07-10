@@ -616,9 +616,10 @@ impl ConstantIdentifierResolver<ScopeId> for ConstantResolver<'_> {
                                 integer_type,
                             }
                         } else {
-                            // TODO(validation) SDR[1732]: this is a constant state
-                            // variable for which the grammar allows an absent
-                            // value expression but it's a semantic error
+                            // This is a `constant` state variable for which the
+                            // grammar allows an absent value expression but
+                            // it's a semantic/syntactic error which should be
+                            // already reported.
                             ComptimeResolution::Unresolved
                         }
                     }
