@@ -18,8 +18,6 @@ impl DiagnosticExtensions for ArrayLengthTooLarge {
     }
 
     fn message(&self) -> String {
-        // TODO: Change message to `2**256 - 1`, when `FixedSizeArrayType`
-        // size field is changed to u256.
-        "Array length too large, maximum is 2**64 - 1.".to_owned()
+        "Array length too large, maximum is 2**256 - 1.".to_owned()
     }
 }

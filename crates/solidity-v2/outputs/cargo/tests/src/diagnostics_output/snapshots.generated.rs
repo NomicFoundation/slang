@@ -1102,11 +1102,6 @@ mod type_system {
         }
 
         #[test]
-        fn exceeds_usize() -> Result<()> {
-            run("type_system/array_length", "exceeds_usize")
-        }
-
-        #[test]
         fn forward_reference() -> Result<()> {
             run("type_system/array_length", "forward_reference")
         }

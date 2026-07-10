@@ -280,7 +280,7 @@ fn contract_base_slot(source: &str, name: &str) -> (Option<U256>, Option<Diagnos
 /// `context` holds any contract-level constants the length references;
 /// `array_type` is the variable type (e.g. `"uint256[10 / B]"`). A rejected
 /// length reads back as `0`, same as a length that genuinely folds to `0`.
-fn folded_array_length(context: &str, array_type: &str) -> (usize, Option<DiagnosticKind>) {
+fn folded_array_length(context: &str, array_type: &str) -> (U256, Option<DiagnosticKind>) {
     let source = format!(
         r#"
         contract Test {{
@@ -779,7 +779,7 @@ fn test_array_literal_unifies_element_types() {
     else {
         panic!("expected FixedSizeArray, got {expr_type:?}");
     };
-    assert_eq!(size, 3);
+    assert_eq!(size, U256::from(3));
     assert_eq!(location, DataLocation::Memory);
     assert_eq!(element_type, types.uint8());
 
@@ -791,7 +791,7 @@ fn test_array_literal_unifies_element_types() {
     else {
         panic!("expected FixedSizeArray, got {expr_type:?}");
     };
-    assert_eq!(size, 3);
+    assert_eq!(size, U256::from(3));
     assert_eq!(element_type, register_uint_type(&mut types, 16));
 
     // Negative values force the result to a signed type.
@@ -815,7 +815,7 @@ fn test_array_literal_unifies_element_types() {
     else {
         panic!("expected FixedSizeArray, got {expr_type:?}");
     };
-    assert_eq!(size, 2);
+    assert_eq!(size, U256::from(2));
     assert_eq!(element_type, types.string_memory());
 }
 
@@ -856,7 +856,7 @@ fn test_array_literal_unifies_byte_array_elements() {
     else {
         panic!("expected FixedSizeArray, got {expr_type:?}");
     };
-    assert_eq!(size, 2);
+    assert_eq!(size, U256::from(2));
     assert_eq!(location, DataLocation::Memory);
     assert_eq!(element_type, types.bytes32());
 }
@@ -872,7 +872,7 @@ fn test_array_literal_unifies_byte_array_and_literal_zero() {
     else {
         panic!("expected FixedSizeArray, got {expr_type:?}");
     };
-    assert_eq!(size, 2);
+    assert_eq!(size, U256::from(2));
     assert_eq!(location, DataLocation::Memory);
     assert_eq!(element_type, types.bytes32());
 }
@@ -900,7 +900,7 @@ fn test_array_literal_widens_past_first_element_integer_type() {
     else {
         panic!("expected FixedSizeArray, got {expr_type:?}");
     };
-    assert_eq!(size, 2);
+    assert_eq!(size, U256::from(2));
     assert_eq!(element_type, register_uint_type(&mut types, 16));
 }
 
@@ -913,7 +913,7 @@ fn test_array_literal_unifies_byte_array_and_matching_hex_literal() {
     else {
         panic!("expected FixedSizeArray, got {expr_type:?}");
     };
-    assert_eq!(size, 2);
+    assert_eq!(size, U256::from(2));
     assert_eq!(element_type, types.bytes1());
 }
 
@@ -1445,28 +1445,28 @@ fn test_array_length_folds_with_typed_constants() {
     // Division by a typed integer constant truncates toward zero (`10 / 3 = 3`).
     assert_eq!(
         folded_array_length(&uint256_b("3"), "uint256[10 / B]"),
-        (3, None)
+        (U256::from(3), None)
     );
     // `7 / 3` truncates to `2`.
     assert_eq!(
         folded_array_length(&uint256_b("3"), "uint256[7 / B]"),
-        (2, None)
+        (U256::from(2), None)
     );
     // The fractional intermediate of `(1 / B) * B` is discarded at the typed
     // division, folding to `0` rather than `1`, which is then a zero length.
     assert_eq!(
         folded_array_length(&uint256_b("2"), "uint256[(1 / B) * B]"),
-        (0, Some(ArrayLengthZero.into())),
+        (U256::ZERO, Some(ArrayLengthZero.into())),
     );
     // Whole literals combine with a typed integer fine: `2 * 7 / 2 = 7`.
     assert_eq!(
         folded_array_length(&uint256_b("2"), "uint256[(B * 7) / 2]"),
-        (7, None)
+        (U256::from(7), None)
     );
     // Exponentiation with a typed base: `3 ** 2 = 9`.
     assert_eq!(
         folded_array_length(&uint256_b("3"), "uint256[B ** 2]"),
-        (9, None)
+        (U256::from(9), None)
     );
 
     // A small integer type widens the result to the literal's mobile type, so
@@ -1474,7 +1474,7 @@ fn test_array_length_folds_with_typed_constants() {
     // overflowing `uint8`.
     assert_eq!(
         folded_array_length("uint8 constant B = 3;", "uint256[300 / B]"),
-        (100, None),
+        (U256::from(100), None),
     );
 
     // But when no widening applies, an overflow of the result type is rejected:
@@ -1482,7 +1482,7 @@ fn test_array_length_folds_with_typed_constants() {
     // `1 + 255 = 256` does not fit `uint8`, so it is an arithmetic overflow.
     assert_eq!(
         folded_array_length("uint8 constant A = 1;", "uint256[A + 255]"),
-        (0, Some(ConstantArithmeticError.into())),
+        (U256::ZERO, Some(ConstantArithmeticError.into())),
     );
 }
 
@@ -1492,9 +1492,17 @@ fn test_array_length_folds_all_literal_arithmetic() {
     // the length. `100 / 8 * 2 = 25` (`100 / 8` is the exact `25/2`).
     assert_eq!(
         folded_array_length("", "uint256[(100 / 8) * 2]"),
-        (25, None)
+        (U256::from(25), None)
     );
-    assert_eq!(folded_array_length("", "uint256[2 ** 8]"), (256, None));
+    assert_eq!(
+        folded_array_length("", "uint256[2 ** 8]"),
+        (U256::from(256), None)
+    );
+    // Lengths above the machine word are valid. The maximum is `2**256 - 1`.
+    assert_eq!(
+        folded_array_length("", "uint256[2 ** 64]"),
+        (U256::from(1) << 64, None)
+    );
 }
 
 #[test]
@@ -1506,7 +1514,7 @@ fn test_array_length_rejected_inputs_default_to_zero() {
     assert_eq!(
         folded_array_length(&uint256_b("2"), "uint256[(0 - 7) / B]"),
         (
-            0,
+            U256::ZERO,
             Some(
                 IncompatibleConstantOperator {
                     operator: "/".to_owned(),
@@ -1522,19 +1530,19 @@ fn test_array_length_rejected_inputs_default_to_zero() {
     // length.
     assert_eq!(
         folded_array_length(&uint256_b("3"), "uint256[~B]"),
-        (0, Some(ConstantArithmeticError.into())),
+        (U256::ZERO, Some(ConstantArithmeticError.into())),
     );
     // Unary negation of an unsigned integer has no result type.
     assert_eq!(
         folded_array_length(&uint256_b("3"), "uint256[-B]"),
-        (0, Some(ArrayLengthNotConstant.into())),
+        (U256::ZERO, Some(ArrayLengthNotConstant.into())),
     );
     // A literal exceeding 256 bits cannot meet a typed integer, so the
     // operator has no result type and is reported as incompatible.
     assert_eq!(
         folded_array_length(&uint256_b("3"), "uint256[(2 ** 256) / B]"),
         (
-            0,
+            U256::ZERO,
             Some(
                 IncompatibleConstantOperator {
                     operator: "/".to_owned(),
@@ -1549,7 +1557,7 @@ fn test_array_length_rejected_inputs_default_to_zero() {
     // (integer) length.
     assert_eq!(
         folded_array_length("", "uint256[10 / 4]"),
-        (0, Some(ArrayLengthFractional.into())),
+        (U256::ZERO, Some(ArrayLengthFractional.into())),
     );
 }
 
@@ -1560,16 +1568,16 @@ fn test_storage_base_slot_evaluation() {
     // constant is typed.
     assert_eq!(
         contract_base_slot("contract C layout at N {} uint256 constant N = 42;", "C"),
-        (Some(U256::from(42u64)), None),
+        (Some(U256::from(42)), None),
     );
     // Backward reference and a plain literal still resolve.
     assert_eq!(
         contract_base_slot("uint256 constant N = 42; contract C layout at N {}", "C"),
-        (Some(U256::from(42u64)), None),
+        (Some(U256::from(42)), None),
     );
     assert_eq!(
         contract_base_slot("contract C layout at 7 {}", "C"),
-        (Some(U256::from(7u64)), None),
+        (Some(U256::from(7)), None),
     );
     // A non-integer constant (here `address`) is not foldable to an integer, so
     // it is rejected as a non-constant base slot, even when forward-referenced.

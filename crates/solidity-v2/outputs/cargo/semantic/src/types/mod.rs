@@ -1,7 +1,7 @@
 use literals::numbers;
 use num_bigint::{BigInt, BigUint};
 use num_rational::BigRational;
-use ruint::aliases::U160;
+use ruint::aliases::{U160, U256};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -84,8 +84,7 @@ pub struct FixedPointNumberType {
 pub struct FixedSizeArrayType {
     pub element_type: TypeId,
     pub location: DataLocation,
-    // TODO: this should be u256, although in practice usize should suffice
-    pub size: usize,
+    pub size: U256,
 }
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]

@@ -1,6 +1,6 @@
 use ruint::aliases::U256;
 use slang_solidity_v2_semantic::binder;
-use slang_solidity_v2_semantic::context::SemanticContext;
+use slang_solidity_v2_semantic::context::StorageLayoutBuilder;
 
 use crate::abi::{AbiEntry, ContractAbi, StorageItem};
 use crate::ast::{ContractDefinitionStruct, StateVariableDefinition, StateVariableMutability};
@@ -94,35 +94,22 @@ impl ContractDefinitionStruct {
         variables: impl Iterator<Item = &'a StateVariableDefinition>,
     ) -> Option<Vec<StorageItem>> {
         let mut storage_layout = Vec::new();
-        let mut current_slot: U256 = base_slot;
-        let mut byte_offset_in_slot: usize = 0;
+        let mut builder = StorageLayoutBuilder::new(base_slot);
         for state_variable in variables {
             let node_id = state_variable.ir_node.id();
             let variable_type_id = self.semantic.binder().node_typing(node_id).as_type_id()?;
             let variable_size = self.semantic.storage_size_of_type_id(variable_type_id)?;
-
-            // Check if we can pack the variable in the current slot, otherwise
-            // we start at the beginning of the next slot.
-            let remaining_bytes = SemanticContext::SLOT_SIZE - byte_offset_in_slot;
-            if byte_offset_in_slot > 0 && variable_size > remaining_bytes {
-                current_slot += U256::from(1u64);
-                byte_offset_in_slot = 0;
-            }
+            let position = builder.allocate(variable_size)?;
 
             let label = state_variable.ir_node.name.unparse().to_string();
             let type_name = self.semantic.type_internal_name(variable_type_id);
             storage_layout.push(StorageItem {
                 node_id,
                 label,
-                slot: current_slot,
-                offset: byte_offset_in_slot,
+                slot: position.slot,
+                offset: position.offset,
                 type_name,
             });
-
-            // Ready slot and offset for the next variable
-            byte_offset_in_slot += variable_size;
-            current_slot += U256::from(byte_offset_in_slot / SemanticContext::SLOT_SIZE);
-            byte_offset_in_slot %= SemanticContext::SLOT_SIZE;
         }
         Some(storage_layout)
     }

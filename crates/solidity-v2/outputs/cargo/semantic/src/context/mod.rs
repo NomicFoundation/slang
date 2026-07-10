@@ -1,5 +1,6 @@
 pub(crate) use contract_data::{ContractData, ContractLinearisations};
 pub(crate) use file_node_mapper::FileNodeMapper;
+use ruint::aliases::U256;
 use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
@@ -8,6 +9,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::utils::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
+pub use storage_layout::{StorageLayoutBuilder, StoragePosition, StorageSize};
 
 use crate::binder::{Binder, BinderCapacities, Definition, Reference};
 use crate::passes::{
@@ -22,6 +24,7 @@ use crate::types::{
 
 mod contract_data;
 mod file_node_mapper;
+mod storage_layout;
 
 /// Trait for files that can be used as input to the semantic analysis passes.
 pub trait SemanticFile {
@@ -366,11 +369,10 @@ impl SemanticContext {
         }
     }
 
-    pub const SLOT_SIZE: usize = 32;
     pub(crate) const ADDRESS_BYTE_SIZE: usize = 20;
     pub(crate) const SELECTOR_SIZE: usize = 4;
 
-    pub fn storage_size_of_type_id(&self, type_id: TypeId) -> Option<usize> {
+    pub fn storage_size_of_type_id(&self, type_id: TypeId) -> Option<StorageSize> {
         self.storage_size_of_type_id_impl(type_id, &mut Set::default())
     }
 
@@ -378,44 +380,42 @@ impl SemanticContext {
         &self,
         type_id: TypeId,
         visited_structs: &mut Set<NodeId>,
-    ) -> Option<usize> {
+    ) -> Option<StorageSize> {
+        use StorageSize::{Bytes, Slots};
         match self.types.get_type_by_id(type_id) {
             Type::Address(_) | Type::Contract(_) | Type::Interface(_) => {
-                Some(Self::ADDRESS_BYTE_SIZE)
+                Some(Bytes(Self::ADDRESS_BYTE_SIZE))
             }
-            Type::Boolean => Some(1),
+            Type::Boolean => Some(Bytes(1)),
             Type::FixedPointNumber(FixedPointNumberType { bits, .. })
             | Type::Integer(IntegerType { bits, .. }) => {
-                Some((bits.div_ceil(8)).try_into().unwrap())
+                Some(Bytes((bits.div_ceil(8)).try_into().unwrap()))
             }
-            Type::ByteArray(ByteArrayType { width }) => Some((*width).try_into().unwrap()),
-            Type::Enum(_) => Some(1),
-            Type::Bytes(_) | Type::String(_) => Some(Self::SLOT_SIZE),
-            Type::Mapping(_) => Some(Self::SLOT_SIZE),
+            Type::ByteArray(ByteArrayType { width }) => Some(Bytes((*width).try_into().unwrap())),
+            Type::Enum(_) => Some(Bytes(1)),
+            Type::Bytes(_) | Type::String(_) => Some(Slots(U256::from(1))),
+            Type::Mapping(_) => Some(Slots(U256::from(1))),
 
-            Type::Array(_) => Some(Self::SLOT_SIZE),
+            Type::Array(_) => Some(Slots(U256::from(1))),
             Type::FixedSizeArray(FixedSizeArrayType {
                 element_type, size, ..
-            }) => {
-                let element_size =
-                    self.storage_size_of_type_id_impl(*element_type, visited_structs)?;
-                if element_size > Self::SLOT_SIZE {
-                    let slots_per_element = element_size.div_ceil(Self::SLOT_SIZE);
-                    Some(slots_per_element * size * Self::SLOT_SIZE)
-                } else {
-                    let elements_per_slot = Self::SLOT_SIZE / element_size;
-                    let num_slots = size.div_ceil(elements_per_slot);
-                    Some(num_slots * Self::SLOT_SIZE)
-                }
-            }
+            }) => Some(Slots(
+                match self.storage_size_of_type_id_impl(*element_type, visited_structs)? {
+                    Slots(slots_per_element) => size.checked_mul(slots_per_element)?,
+                    Bytes(bytes) => {
+                        let elements_per_slot = U256::from(storage_layout::SLOT_SIZE / bytes);
+                        size.div_ceil(elements_per_slot)
+                    }
+                },
+            )),
 
             Type::Function(function_type) => {
                 if function_type.is_externally_visible() {
-                    Some(Self::ADDRESS_BYTE_SIZE + Self::SELECTOR_SIZE)
+                    Some(Bytes(Self::ADDRESS_BYTE_SIZE + Self::SELECTOR_SIZE))
                 } else {
                     // NOTE: an internal function ref type is 8 bytes long, it's
                     // opaque and its meaning not documented
-                    Some(8)
+                    Some(Bytes(8))
                 }
             }
             Type::Struct(StructType { definition_id, .. }) => {
@@ -431,22 +431,15 @@ impl SemanticContext {
                 else {
                     return None;
                 };
-                let mut ptr: usize = 0;
+                let mut builder = StorageLayoutBuilder::new(U256::ZERO);
                 for member in &struct_definition.ir_node.members {
                     let member_type_id = self.binder.node_typing(member.id()).as_type_id()?;
                     let member_size =
                         self.storage_size_of_type_id_impl(member_type_id, visited_structs)?;
-                    let remaining_bytes = Self::SLOT_SIZE - (ptr % Self::SLOT_SIZE);
-                    if remaining_bytes < Self::SLOT_SIZE && member_size > remaining_bytes {
-                        ptr += remaining_bytes;
-                    }
-                    ptr += member_size;
+                    builder.allocate(member_size)?;
                 }
                 visited_structs.remove(definition_id);
-                // round up the final allocation to a full slot, because the
-                // next variable needs to start at the next slot anyway
-                ptr = ptr.div_ceil(Self::SLOT_SIZE) * Self::SLOT_SIZE;
-                Some(ptr)
+                Some(Slots(builder.slots_used()?))
             }
             Type::UserDefinedValue(UserDefinedValueType { definition_id }) => {
                 let Definition::UserDefinedValueType(user_defined_value) =

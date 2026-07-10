@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use paste::paste;
+use ruint::aliases::U256;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::SemanticContext;
@@ -217,7 +218,7 @@ impl FixedSizeArrayType {
     pub fn location(&self) -> DataLocation {
         self.inner.location
     }
-    pub fn size(&self) -> usize {
+    pub fn size(&self) -> U256 {
         self.inner.size
     }
 }
