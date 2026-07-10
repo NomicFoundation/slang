@@ -61,8 +61,8 @@ catalogs:
       specifier: ^0.18.1
       version: 0.18.1
     solc:
-      specifier: ^0.8.35
-      version: 0.8.35
+      specifier: ^0.8.36
+      version: 0.8.36
     ts-jest:
       specifier: ^29.4.11
       version: 29.4.11
@@ -127,7 +127,7 @@ importers:
         version: 0.18.1(prettier@3.8.3)
       solc:
         specifier: 'catalog:'
-        version: 0.8.35
+        version: 0.8.36
       ts-jest:
         specifier: 'catalog:'
         version: 29.4.11(@babel/core@7.29.7)(@jest/transform@30.4.1)(@jest/types@30.4.1)(babel-jest@30.4.1(@babel/core@7.29.7))(jest-util@30.4.1)(jest@30.4.2(@types/node@24.12.4)(ts-node@10.9.2(@types/node@24.12.4)(typescript@6.0.3)))(typescript@6.0.3)
@@ -3413,8 +3413,8 @@ packages:
     resolution: {integrity: sha512-HLpt+uLy/pxB+bum/9DzAgiKS8CX1EvbWxI4zlmgGCExImLdiad2iCwXT5Z4c9c3Eq8rP2318mPW2c+QbtjK8A==}
     engines: {node: '>= 10.0.0', npm: '>= 3.0.0'}
 
-  solc@0.8.35:
-    resolution: {integrity: sha512-OaP/4zyoKRo2CjqZDxbtkeRlEo6MxP4FLCxntw1Agf9OSoecmwYKoFBSB34UcSKBFBucrTh3Mb0nRoJou62ibw==}
+  solc@0.8.36:
+    resolution: {integrity: sha512-cnDhjWo8dC5FxnEwCrWxUsJS7RPsHf+pVUe9Tr/+b15sQ40WCVn4vX4R+tOvN5gRfEgiquvFzfF4VV0kSnknhw==}
     engines: {node: '>=12.0.0'}
     hasBin: true
 
@@ -6594,7 +6594,7 @@ snapshots:
       jest-message-util: 30.4.1
       jest-util: 30.4.1
       pretty-format: 30.4.1
-      semver: 7.7.4
+      semver: 7.8.1
       synckit: 0.11.12
     transitivePeerDependencies:
       - supports-color
@@ -7423,7 +7423,7 @@ snapshots:
       ip-address: 10.2.0
       smart-buffer: 4.2.0
 
-  solc@0.8.35:
+  solc@0.8.36:
     dependencies:
       command-exists: 1.2.9
       commander: 8.3.0
