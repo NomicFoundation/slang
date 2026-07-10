@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 7634] Error: Constructor cannot be defined in libraries.
+   ╭─[input.sol:9:5]
+   │
+ 9 │     constructor() {}
+   │     ────────┬───────  
+   │             ╰───────── Error occurred here.
+───╯

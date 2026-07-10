@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/constructor-in-interface] Error: Constructor cannot be defined in interfaces.
+   ╭─[input.sol:9:5]
+   │
+ 9 │     constructor() {}
+   │     ────────┬───────  
+   │             ╰───────── Error occurred here.
+───╯

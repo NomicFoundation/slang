@@ -744,6 +744,16 @@ mod structure {
     }
 
     #[test]
+    fn constructor_in_interface() -> Result<()> {
+        run("structure", "constructor_in_interface")
+    }
+
+    #[test]
+    fn constructor_in_library() -> Result<()> {
+        run("structure", "constructor_in_library")
+    }
+
+    #[test]
     fn continue_outside_loop() -> Result<()> {
         run("structure", "continue_outside_loop")
     }

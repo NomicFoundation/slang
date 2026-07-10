@@ -2,10 +2,11 @@ use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
-    BreakOutsideLoop, ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers,
-    FunctionNameMatchesContainer, InvalidUsingDirectiveContainer, LibraryVirtualFunction,
-    LibraryVirtualModifier, MultipleConstructors, UnimplementedModifierMustBeVirtual,
-    VirtualFreeFunction, VirtualPrivateFunction,
+    BreakOutsideLoop, ConstructorInInterface, ConstructorInLibrary, ContinueOutsideLoop, EmptyEnum,
+    EmptyStruct, EnumWithTooManyMembers, FunctionNameMatchesContainer,
+    InvalidUsingDirectiveContainer, LibraryVirtualFunction, LibraryVirtualModifier,
+    MultipleConstructors, UnimplementedModifierMustBeVirtual, VirtualFreeFunction,
+    VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
@@ -237,24 +238,42 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         constructor_parameters_scope_id: ScopeId,
     ) {
         let current_scope_node_id = self.current_scope().node_id();
-        let Definition::Contract(contract_definition) =
-            self.binder.get_definition_mut(current_scope_node_id)
-        else {
-            unreachable!("the current scope is not a contract");
-        };
-
-        if contract_definition
-            .constructor_parameters_scope_id
-            .is_some()
-        {
-            self.diagnostics.push(
-                self.current_file.id().to_owned(),
-                node.range.clone(),
-                MultipleConstructors,
-            );
-        } else {
-            contract_definition.constructor_parameters_scope_id =
-                Some(constructor_parameters_scope_id);
+        match self.binder.get_definition_mut(current_scope_node_id) {
+            Definition::Contract(contract_definition) => {
+                if contract_definition
+                    .constructor_parameters_scope_id
+                    .is_some()
+                {
+                    self.diagnostics.push(
+                        self.current_file.id().to_owned(),
+                        node.range.clone(),
+                        MultipleConstructors,
+                    );
+                } else {
+                    contract_definition.constructor_parameters_scope_id =
+                        Some(constructor_parameters_scope_id);
+                }
+            }
+            // A constructor cannot be defined in an interface or a library. We
+            // don't track its parameters scope in these containers, but still
+            // recurse into the body during resolution.
+            Definition::Interface(_) => {
+                self.diagnostics.push(
+                    self.current_file.id().to_owned(),
+                    node.range.clone(),
+                    ConstructorInInterface,
+                );
+            }
+            Definition::Library(_) => {
+                self.diagnostics.push(
+                    self.current_file.id().to_owned(),
+                    node.range.clone(),
+                    ConstructorInLibrary,
+                );
+            }
+            _ => {
+                unreachable!("a constructor is only allowed in a contract, interface, or library by the grammar");
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
 mod break_outside_loop;
+mod constructor_in_interface;
+mod constructor_in_library;
 mod continue_outside_loop;
 mod empty_enum;
 mod empty_struct;
@@ -16,6 +18,8 @@ mod virtual_free_function;
 mod virtual_private_function;
 
 pub use break_outside_loop::BreakOutsideLoop;
+pub use constructor_in_interface::ConstructorInInterface;
+pub use constructor_in_library::ConstructorInLibrary;
 pub use continue_outside_loop::ContinueOutsideLoop;
 pub use empty_enum::EmptyEnum;
 pub use empty_struct::EmptyStruct;
@@ -54,6 +58,10 @@ define_diagnostic_kind! {
         FunctionNameMatchesContainer(FunctionNameMatchesContainer),
         /// A contract defines more than one constructor.
         MultipleConstructors(MultipleConstructors),
+        /// A constructor is defined in an interface.
+        ConstructorInInterface(ConstructorInInterface),
+        /// A constructor is defined in a library.
+        ConstructorInLibrary(ConstructorInLibrary),
 
         /// An enum declares more than 256 members.
         EnumWithTooManyMembers(EnumWithTooManyMembers),
