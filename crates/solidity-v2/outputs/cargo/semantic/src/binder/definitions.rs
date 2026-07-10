@@ -285,6 +285,12 @@ impl Definition {
                 variable_definition.ir_node.attributes.visibility,
                 ir::StateVariableVisibility::Private
             ),
+            // A `private` constant is not inherited into derived contracts,
+            // mirroring private state variables above.
+            Self::Constant(constant_definition) => !matches!(
+                constant_definition.ir_node.visibility,
+                Some(ir::StateVariableVisibility::Private)
+            ),
             _ => true,
         }
     }
