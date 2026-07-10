@@ -817,8 +817,33 @@ mod structure {
     }
 
     #[test]
+    fn library_virtual_function() -> Result<()> {
+        run("structure", "library_virtual_function")
+    }
+
+    #[test]
+    fn library_virtual_modifier() -> Result<()> {
+        run("structure", "library_virtual_modifier")
+    }
+
+    #[test]
     fn multiple_constructors() -> Result<()> {
         run("structure", "multiple_constructors")
+    }
+
+    #[test]
+    fn unimplemented_modifier_must_be_virtual() -> Result<()> {
+        run("structure", "unimplemented_modifier_must_be_virtual")
+    }
+
+    #[test]
+    fn virtual_free_function() -> Result<()> {
+        run("structure", "virtual_free_function")
+    }
+
+    #[test]
+    fn virtual_private_function() -> Result<()> {
+        run("structure", "virtual_private_function")
     }
 }
 

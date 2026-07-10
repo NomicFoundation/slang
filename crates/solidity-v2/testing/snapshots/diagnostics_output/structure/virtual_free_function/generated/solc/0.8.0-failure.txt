@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[SyntaxError 4493] Error: Free functions cannot be virtual.
+   ╭─[input.sol:5:1]
+   │
+ 5 │ function f1() virtual {}
+   │ ────────────┬───────────  
+   │             ╰───────────── Error occurred here.
+───╯

@@ -3,7 +3,9 @@ use std::sync::Arc;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     BreakOutsideLoop, ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers,
-    FunctionNameMatchesContainer, InvalidUsingDirectiveContainer, MultipleConstructors,
+    FunctionNameMatchesContainer, InvalidUsingDirectiveContainer, LibraryVirtualFunction,
+    LibraryVirtualModifier, MultipleConstructors, UnimplementedModifierMustBeVirtual,
+    VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
@@ -129,6 +131,21 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     fn current_scope(&mut self) -> &mut Scope {
         let scope_id = self.current_scope_id();
         self.binder.get_scope_mut(scope_id)
+    }
+
+    /// Whether the current (enclosing) scope belongs to a library definition.
+    fn current_scope_is_library(&mut self) -> bool {
+        let node_id = self.current_scope().node_id();
+        matches!(
+            self.binder.find_definition_by_id(node_id),
+            Some(Definition::Library(_))
+        )
+    }
+
+    /// Whether the current (enclosing) scope is the file scope, i.e. the
+    /// definition is a free (file-level) one.
+    fn current_scope_is_file(&mut self) -> bool {
+        matches!(self.current_scope(), Scope::File(_))
     }
 
     fn current_file_scope(&mut self) -> &mut FileScope {
@@ -353,6 +370,34 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
             | ir::FunctionKind::Constructor
             | ir::FunctionKind::Fallback
             | ir::FunctionKind::Receive => {
+                if node.attributes.is_virtual {
+                    // A function declared in a library cannot be marked `virtual`.
+                    if self.current_scope_is_library() {
+                        self.diagnostics.push(
+                            self.current_file.id().to_owned(),
+                            node.range.clone(),
+                            LibraryVirtualFunction,
+                        );
+
+                    // A free (file-level) function cannot be marked `virtual`.
+                    } else if self.current_scope_is_file() {
+                        self.diagnostics.push(
+                            self.current_file.id().to_owned(),
+                            node.range.clone(),
+                            VirtualFreeFunction,
+                        );
+                    }
+
+                    // A `virtual` function cannot also be marked `private`.
+                    if node.attributes.visibility == ir::FunctionVisibility::Private {
+                        self.diagnostics.push(
+                            self.current_file.id().to_owned(),
+                            node.range.clone(),
+                            VirtualPrivateFunction,
+                        );
+                    }
+                }
+
                 let parameters_scope_id = self.collect_parameters(&node.parameters);
 
                 if let Some(name) = &node.name {
@@ -408,6 +453,24 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
             }
 
             ir::FunctionKind::Modifier => {
+                // A modifier without an implementation body must be marked `virtual`.
+                if node.body.is_none() && !node.attributes.is_virtual {
+                    self.diagnostics.push(
+                        self.current_file.id().to_owned(),
+                        node.range.clone(),
+                        UnimplementedModifierMustBeVirtual,
+                    );
+                }
+
+                // A modifier declared in a library cannot be marked `virtual`.
+                if node.attributes.is_virtual && self.current_scope_is_library() {
+                    self.diagnostics.push(
+                        self.current_file.id().to_owned(),
+                        node.range.clone(),
+                        LibraryVirtualModifier,
+                    );
+                }
+
                 let definition = Definition::new_modifier(node);
                 self.insert_definition_in_current_scope(definition);
 

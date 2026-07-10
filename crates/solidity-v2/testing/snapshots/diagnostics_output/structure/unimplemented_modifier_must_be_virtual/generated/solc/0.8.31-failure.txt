@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[Warning 8429] Warning: Virtual modifiers are deprecated and scheduled for removal.
+   ╭─[input.sol:9:5]
+   │
+ 9 │     modifier m2 virtual;
+   │     ──────────┬─────────  
+   │               ╰─────────── Error occurred here.
+───╯
+
+[TypeError 8063] Error: Modifiers without implementation must be marked virtual.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     modifier m1;
+   │     ──────┬─────  
+   │           ╰─────── Error occurred here.
+───╯

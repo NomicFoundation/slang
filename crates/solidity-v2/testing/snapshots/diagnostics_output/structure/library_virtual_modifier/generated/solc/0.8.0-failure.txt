@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 3275] Error: Modifiers in a library cannot be virtual.
+   ╭─[input.sol:6:5]
+   │
+ 6 │ ╭─▶     modifier m1() virtual {
+   ┆ ┆   
+ 8 │ ├─▶     }
+   │ │           
+   │ ╰─────────── Error occurred here.
+───╯

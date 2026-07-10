@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/virtual-private-function] Error: Attributes 'virtual' and 'private' cannot be used together.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     function f1() private virtual {}
+   │     ────────────────┬───────────────  
+   │                     ╰───────────────── Error occurred here.
+───╯

@@ -7,7 +7,12 @@ mod function_name_matches_container;
 mod invalid_using_directive_container;
 mod library_fallback_function;
 mod library_receive_function;
+mod library_virtual_function;
+mod library_virtual_modifier;
 mod multiple_constructors;
+mod unimplemented_modifier_must_be_virtual;
+mod virtual_free_function;
+mod virtual_private_function;
 
 pub use break_outside_loop::BreakOutsideLoop;
 pub use continue_outside_loop::ContinueOutsideLoop;
@@ -18,8 +23,13 @@ pub use function_name_matches_container::FunctionNameMatchesContainer;
 pub use invalid_using_directive_container::InvalidUsingDirectiveContainer;
 pub use library_fallback_function::LibraryFallbackFunction;
 pub use library_receive_function::LibraryReceiveFunction;
+pub use library_virtual_function::LibraryVirtualFunction;
+pub use library_virtual_modifier::LibraryVirtualModifier;
 pub use multiple_constructors::MultipleConstructors;
 use serde::Serialize;
+pub use unimplemented_modifier_must_be_virtual::UnimplementedModifierMustBeVirtual;
+pub use virtual_free_function::VirtualFreeFunction;
+pub use virtual_private_function::VirtualPrivateFunction;
 
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
 use crate::diagnostics::kinds::DiagnosticKind;
@@ -55,5 +65,17 @@ define_diagnostic_kind! {
         LibraryFallbackFunction(LibraryFallbackFunction),
         /// A library declares a receive function.
         LibraryReceiveFunction(LibraryReceiveFunction),
+        /// A function declared in a library is marked `virtual`.
+        LibraryVirtualFunction(LibraryVirtualFunction),
+        /// A modifier declared in a library is marked `virtual`.
+        LibraryVirtualModifier(LibraryVirtualModifier),
+
+        /// A modifier without an implementation body is not marked `virtual`.
+        UnimplementedModifierMustBeVirtual(UnimplementedModifierMustBeVirtual),
+
+        /// A free function is marked `virtual`.
+        VirtualFreeFunction(VirtualFreeFunction),
+        /// A function is marked both `virtual` and `private`.
+        VirtualPrivateFunction(VirtualPrivateFunction),
     }
 }

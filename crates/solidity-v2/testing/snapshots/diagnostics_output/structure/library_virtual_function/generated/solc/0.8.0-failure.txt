@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 7801] Error: Library functions cannot be "virtual".
+   ╭─[input.sol:6:5]
+   │
+ 6 │     function f1() internal virtual {}
+   │     ────────────────┬────────────────  
+   │                     ╰────────────────── Error occurred here.
+───╯
