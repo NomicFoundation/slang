@@ -1,16 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Diagnostics: 2
-
-[TypeError 3656] Error: Contract "C" should be marked as abstract.
-    ╭─[input.sol:4:1]
-    │
-  4 │ ╭─▶ contract C {
-    ┆ ┆   
- 15 │ ├─▶ }
-    │ │       
-    │ ╰─────── Error occurred here.
-────╯
+Diagnostics: 1
 
 [TypeError 8063] Error: Modifiers without implementation must be marked virtual.
    ╭─[input.sol:6:5]

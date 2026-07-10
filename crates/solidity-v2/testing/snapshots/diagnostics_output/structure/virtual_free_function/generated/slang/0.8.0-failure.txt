@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[structure/virtual-free-function] Error: Free functions cannot be virtual.
+[structure/virtual-free-function] Error: Free functions cannot be 'virtual'.
    ╭─[input.sol:5:1]
    │
  5 │ function f1() virtual {}

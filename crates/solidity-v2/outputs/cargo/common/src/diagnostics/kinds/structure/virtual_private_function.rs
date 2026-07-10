@@ -17,6 +17,6 @@ impl DiagnosticExtensions for VirtualPrivateFunction {
     }
 
     fn message(&self) -> String {
-        "\"virtual\" and \"private\" cannot be used together.".to_string()
+        "Attributes 'virtual' and 'private' cannot be used together.".to_string()
     }
 }

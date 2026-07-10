@@ -17,6 +17,6 @@ impl DiagnosticExtensions for LibraryVirtualModifier {
     }
 
     fn message(&self) -> String {
-        "Modifiers in a library cannot be virtual.".to_string()
+        "Modifiers in a library cannot be 'virtual'.".to_string()
     }
 }

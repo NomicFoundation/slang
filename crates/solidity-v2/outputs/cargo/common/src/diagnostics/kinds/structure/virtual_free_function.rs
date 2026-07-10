@@ -17,6 +17,6 @@ impl DiagnosticExtensions for VirtualFreeFunction {
     }
 
     fn message(&self) -> String {
-        "Free functions cannot be virtual.".to_string()
+        "Free functions cannot be 'virtual'.".to_string()
     }
 }

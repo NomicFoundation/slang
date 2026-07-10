@@ -18,6 +18,6 @@ impl DiagnosticExtensions for UnimplementedModifierMustBeVirtual {
     }
 
     fn message(&self) -> String {
-        "Modifiers without implementation must be marked virtual.".to_string()
+        "Modifiers without implementation must be 'virtual'.".to_string()
     }
 }

@@ -17,6 +17,6 @@ impl DiagnosticExtensions for LibraryVirtualFunction {
     }
 
     fn message(&self) -> String {
-        "Library functions cannot be \"virtual\".".to_string()
+        "Library functions cannot be 'virtual'.".to_string()
     }
 }

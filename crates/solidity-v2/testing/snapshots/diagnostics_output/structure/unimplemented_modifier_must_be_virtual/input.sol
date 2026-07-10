@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity *;
 
-contract C {
+abstract contract C {
     // An unimplemented modifier must be marked `virtual`.
     modifier m1;
 
