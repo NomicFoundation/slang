@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/unexpected-terminal] Error: Unexpected ImmutableKeyword. One of ConstantKeyword, OpenBracket was expected
+   ╭─[input.sol:7:6]
+   │
+ 7 │ uint immutable x = 7;
+   │      ────┬────  
+   │          ╰────── Error occurred here.
+───╯
