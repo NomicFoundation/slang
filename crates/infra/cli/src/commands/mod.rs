@@ -73,7 +73,7 @@ impl AppCommand {
         match self {
             AppCommand::Setup(controller) => controller.execute()?,
             AppCommand::Check(controller) => controller.execute()?,
-            AppCommand::Test(controller) => controller.execute()?,
+            AppCommand::Test(controller) => controller.execute(),
             AppCommand::Lint(controller) => controller.execute()?,
             AppCommand::Ci(controller) => controller.execute()?,
             AppCommand::Run(controller) => controller.execute(),

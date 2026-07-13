@@ -1,8 +1,7 @@
 use std::iter::empty;
 
-use anyhow::Result;
 use clap::{Parser, Subcommand};
-use infra_utils::cargo::{CargoWorkspace, CargoWorkspaceCommands};
+use infra_utils::cargo::CargoWorkspaceCommands;
 use infra_utils::commands::Command;
 use infra_utils::terminal::Terminal;
 
@@ -13,16 +12,15 @@ pub struct TestController {
 }
 
 impl TestController {
-    pub fn execute(&self) -> Result<()> {
+    pub fn execute(&self) {
         match &self.command {
-            Some(TestCommand::Cargo { passthrough }) => test_cargo(passthrough)?,
+            Some(TestCommand::Cargo { passthrough }) => test_cargo(passthrough),
             Some(TestCommand::Npm { passthrough }) => test_npm(passthrough),
             None => {
-                test_cargo(empty::<String>())?;
+                test_cargo(empty::<String>());
                 test_npm(empty::<String>());
             }
         }
-        Ok(())
     }
 }
 
@@ -43,10 +41,8 @@ enum TestCommand {
     },
 }
 
-fn test_cargo(passthrough: impl IntoIterator<Item = impl Into<String>>) -> Result<()> {
+fn test_cargo(passthrough: impl IntoIterator<Item = impl Into<String>>) {
     Terminal::step("test Cargo");
-
-    CargoWorkspace::install_binary("cargo-nextest")?;
 
     Command::new("cargo")
         .args(["nextest", "run"])
@@ -60,8 +56,6 @@ fn test_cargo(passthrough: impl IntoIterator<Item = impl Into<String>>) -> Resul
         .add_build_rustflags()
         .args(passthrough)
         .run();
-
-    Ok(())
 }
 
 fn test_npm(passthrough: impl IntoIterator<Item = impl Into<String>>) {
