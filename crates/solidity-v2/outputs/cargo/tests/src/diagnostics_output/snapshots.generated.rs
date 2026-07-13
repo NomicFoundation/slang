@@ -877,6 +877,11 @@ mod structure {
         run("structure", "enum_with_too_many_members")
     }
 
+    #[test]
+    fn free_function_visibility() -> Result<()> {
+        run("structure", "free_function_visibility")
+    }
+
     mod function_name_matches_container {
         use super::*;
 

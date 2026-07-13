@@ -1854,6 +1854,7 @@ impl slang_solidity_v2_ast::ast::FunctionAttributesStruct
 pub fn slang_solidity_v2_ast::ast::FunctionAttributesStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::ast::FunctionAttributesStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::FunctionAttributesStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+pub fn slang_solidity_v2_ast::ast::FunctionAttributesStruct::has_explicit_visibility(&self) -> bool
 pub fn slang_solidity_v2_ast::ast::FunctionAttributesStruct::is_virtual(&self) -> bool
 pub fn slang_solidity_v2_ast::ast::FunctionAttributesStruct::modifier_invocations(&self) -> slang_solidity_v2_ast::ast::ModifierInvocations
 pub fn slang_solidity_v2_ast::ast::FunctionAttributesStruct::mutability(&self) -> slang_solidity_v2_ast::ast::FunctionMutability

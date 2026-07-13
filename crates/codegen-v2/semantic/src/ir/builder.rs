@@ -158,6 +158,7 @@ fn flatten_function_attributes(mutator: &mut IrModelMutator) {
         "FunctionVisibility",
         false,
     );
+    mutator.add_sequence_boolean("FunctionAttributes", "has_explicit_visibility");
     mutator.add_sequence_field(
         "FunctionAttributes",
         "mutability",

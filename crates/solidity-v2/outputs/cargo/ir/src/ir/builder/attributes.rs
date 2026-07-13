@@ -67,6 +67,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             id,
             range,
             visibility: visibility.unwrap_or(FunctionVisibility::Internal),
+            has_explicit_visibility: visibility.is_some(),
             mutability: mutability.unwrap_or(FunctionMutability::NonPayable),
             is_virtual,
             override_specifier,
@@ -106,6 +107,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             id,
             range,
             visibility: visibility.unwrap_or(FunctionVisibility::Public),
+            has_explicit_visibility: visibility.is_some(),
             mutability: mutability.unwrap_or(FunctionMutability::NonPayable),
             is_virtual: false,
             override_specifier: None,
@@ -153,6 +155,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             }
         }
 
+        let has_explicit_visibility = visibility.is_some();
         let visibility = visibility.unwrap_or_else(|| {
             self.report(
                 owner,
@@ -167,6 +170,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             id,
             range,
             visibility,
+            has_explicit_visibility,
             mutability: mutability.unwrap_or(FunctionMutability::NonPayable),
             is_virtual,
             override_specifier,
@@ -208,6 +212,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             }
         }
 
+        let has_explicit_visibility = visibility.is_some();
         let visibility = visibility.unwrap_or_else(|| {
             self.report(
                 owner,
@@ -232,6 +237,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             id,
             range,
             visibility,
+            has_explicit_visibility,
             mutability,
             is_virtual,
             override_specifier,
@@ -264,6 +270,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             id,
             range,
             visibility: FunctionVisibility::Internal,
+            has_explicit_visibility: false,
             mutability: FunctionMutability::NonPayable,
             is_virtual,
             override_specifier,

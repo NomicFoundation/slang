@@ -1413,6 +1413,10 @@ impl FunctionAttributesStruct {
         create_function_visibility(&self.ir_node.visibility, &self.semantic)
     }
 
+    pub fn has_explicit_visibility(&self) -> bool {
+        self.ir_node.has_explicit_visibility
+    }
+
     pub fn mutability(&self) -> FunctionMutability {
         create_function_mutability(&self.ir_node.mutability, &self.semantic)
     }

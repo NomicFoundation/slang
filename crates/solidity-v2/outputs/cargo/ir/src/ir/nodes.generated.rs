@@ -520,6 +520,7 @@ pub struct FunctionAttributesStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub visibility: FunctionVisibility,
+    pub has_explicit_visibility: bool,
     pub mutability: FunctionMutability,
     pub is_virtual: bool,
     pub override_specifier: Option<OverridePaths>,

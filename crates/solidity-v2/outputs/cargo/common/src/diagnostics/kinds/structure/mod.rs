@@ -4,6 +4,7 @@ mod continue_outside_loop;
 mod empty_enum;
 mod empty_struct;
 mod enum_with_too_many_members;
+mod free_function_visibility;
 mod function_name_matches_container;
 mod invalid_using_directive_container;
 mod library_fallback_function;
@@ -23,6 +24,7 @@ pub use continue_outside_loop::ContinueOutsideLoop;
 pub use empty_enum::EmptyEnum;
 pub use empty_struct::EmptyStruct;
 pub use enum_with_too_many_members::EnumWithTooManyMembers;
+pub use free_function_visibility::FreeFunctionVisibility;
 pub use function_name_matches_container::FunctionNameMatchesContainer;
 pub use invalid_using_directive_container::InvalidUsingDirectiveContainer;
 pub use library_fallback_function::LibraryFallbackFunction;
@@ -56,6 +58,9 @@ define_diagnostic_kind! {
 
         /// A function has the same name as its enclosing container.
         FunctionNameMatchesContainer(FunctionNameMatchesContainer),
+
+        /// A free function specifies a visibility modifier.
+        FreeFunctionVisibility(FreeFunctionVisibility),
         /// A contract defines more than one constructor.
         MultipleConstructors(MultipleConstructors),
         /// A constructor is declared outside of a contract (i.e. in an interface or library).

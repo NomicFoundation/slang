@@ -3,9 +3,10 @@ use std::sync::Arc;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     BreakOutsideLoop, ConstructorNotInContract, ContinueOutsideLoop, EmptyEnum, EmptyStruct,
-    EnumWithTooManyMembers, FunctionNameMatchesContainer, InvalidUsingDirectiveContainer,
-    LibraryVirtualFunction, LibraryVirtualModifier, MultipleConstructors,
-    UnimplementedModifierMustBeVirtual, VirtualFreeFunction, VirtualPrivateFunction,
+    EnumWithTooManyMembers, FreeFunctionVisibility, FunctionNameMatchesContainer,
+    InvalidUsingDirectiveContainer, LibraryVirtualFunction, LibraryVirtualModifier,
+    MultipleConstructors, UnimplementedModifierMustBeVirtual, VirtualFreeFunction,
+    VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
@@ -407,6 +408,15 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                             VirtualPrivateFunction,
                         );
                     }
+                }
+
+                // A free (file-level) function cannot specify a visibility modifier.
+                if node.attributes.has_explicit_visibility && self.current_scope_is_file() {
+                    self.diagnostics.push(
+                        self.current_file.id().to_owned(),
+                        node.range.clone(),
+                        FreeFunctionVisibility,
+                    );
                 }
 
                 let parameters_scope_id = self.collect_parameters(&node.parameters);
