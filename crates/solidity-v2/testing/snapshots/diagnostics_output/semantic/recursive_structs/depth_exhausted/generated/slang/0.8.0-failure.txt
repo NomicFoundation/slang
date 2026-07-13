@@ -1,0 +1,43 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 5
+
+[semantic/recursive-struct-validator-exhausted] Error: Struct definition exhausts cyclic dependency validator.
+     ╭─[input.sol:263:5]
+     │
+ 263 │     struct S255 { S256 m; }
+     │     ───────────┬───────────  
+     │                ╰───────────── Error occurred here.
+─────╯
+
+[semantic/recursive-struct-validator-exhausted] Error: Struct definition exhausts cyclic dependency validator.
+     ╭─[input.sol:264:5]
+     │
+ 264 │     struct S256 { S257 m; }
+     │     ───────────┬───────────  
+     │                ╰───────────── Error occurred here.
+─────╯
+
+[semantic/recursive-struct-validator-exhausted] Error: Struct definition exhausts cyclic dependency validator.
+     ╭─[input.sol:265:5]
+     │
+ 265 │     struct S257 { S258 m; }
+     │     ───────────┬───────────  
+     │                ╰───────────── Error occurred here.
+─────╯
+
+[semantic/recursive-struct-validator-exhausted] Error: Struct definition exhausts cyclic dependency validator.
+     ╭─[input.sol:266:5]
+     │
+ 266 │     struct S258 { S259 m; }
+     │     ───────────┬───────────  
+     │                ╰───────────── Error occurred here.
+─────╯
+
+[semantic/recursive-struct-validator-exhausted] Error: Struct definition exhausts cyclic dependency validator.
+     ╭─[input.sol:267:5]
+     │
+ 267 │     struct S259 { int m; }
+     │     ───────────┬──────────  
+     │                ╰──────────── Error occurred here.
+─────╯

@@ -1,5 +1,5 @@
 mod built_ins;
-mod constant_cycles;
+mod cycle_detection;
 mod fallback_functions;
 mod receive_functions;
 
@@ -22,7 +22,7 @@ pub fn run(
     types: &TypeRegistry,
     diagnostics: &mut DiagnosticCollection,
 ) {
-    constant_cycles::detect_constant_value_dependency_cycles(binder, diagnostics);
+    cycle_detection::run(binder, types, file_node_mapper, diagnostics);
 
     built_ins::validate_built_in_references(
         binder,

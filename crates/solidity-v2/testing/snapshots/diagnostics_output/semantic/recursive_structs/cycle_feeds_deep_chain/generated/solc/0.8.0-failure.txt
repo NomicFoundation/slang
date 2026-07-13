@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 5651] Error: Struct definition exhausts cyclic dependency validator.
+     ╭─[input.sol:267:5]
+     │
+ 267 │     struct X254 { int i; }
+     │     ───────────┬──────────  
+     │                ╰──────────── Error occurred here.
+─────╯

@@ -432,6 +432,8 @@ pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKi
 pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::CyclicDependencyValidatorExhausted(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicDependencyValidatorExhausted)
 pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::CyclicInheritance(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicInheritance)
 pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::LinearisationImpossible(slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::RecursiveStruct(slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::RecursiveStructValidatorExhausted(slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted)
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
@@ -447,6 +449,10 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic:
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicInheritance) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind) -> Self
 impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
@@ -555,6 +561,44 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub mod slang_solidity_v2_common::diagnostics::kinds::structure
 pub enum slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::BreakOutsideLoop(slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop)
@@ -1570,6 +1614,10 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic:
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicInheritance) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -1812,6 +1860,14 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::message(&self) -> alloc::string::String

@@ -16,7 +16,9 @@ mod scopes;
 pub(crate) use assembly::AssemblyBlock;
 pub(crate) use capacities::BinderCapacities;
 pub use definitions::Definition;
-pub(crate) use definitions::{ConstantDefinition, ContractDefinition, InterfaceDefinition};
+pub(crate) use definitions::{
+    ConstantDefinition, ContractDefinition, InterfaceDefinition, StructDefinition,
+};
 pub use references::{Reference, Resolution};
 use scopes::ContractScope;
 pub(crate) use scopes::{FileScope, ParameterDefinition, ParametersScope, Scope, UsingDirective};

@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 2046] Error: Recursive struct definition.
+   ╭─[input.sol:7:1]
+   │
+ 7 │ ╭─▶ struct S1 {
+   ┆ ┆   
+ 9 │ ├─▶ }
+   │ │       
+   │ ╰─────── Error occurred here.
+───╯

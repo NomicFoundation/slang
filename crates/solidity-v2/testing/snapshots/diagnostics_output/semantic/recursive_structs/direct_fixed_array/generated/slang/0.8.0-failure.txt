@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/recursive-struct] Error: Recursive struct definition.
+    ╭─[input.sol:8:5]
+    │
+  8 │ ╭─▶     struct MyStruct {
+    ┆ ┆   
+ 11 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
