@@ -2238,6 +2238,21 @@ mod yul_expression {
     use super::*;
 
     #[test]
+    fn decimal_exponent() -> Result<()> {
+        run("YulExpression", "decimal_exponent")
+    }
+
+    #[test]
+    fn decimal_fraction() -> Result<()> {
+        run("YulExpression", "decimal_fraction")
+    }
+
+    #[test]
+    fn decimal_leading_dot() -> Result<()> {
+        run("YulExpression", "decimal_leading_dot")
+    }
+
+    #[test]
     fn decimal_literal() -> Result<()> {
         run("YulExpression", "decimal_literal")
     }
