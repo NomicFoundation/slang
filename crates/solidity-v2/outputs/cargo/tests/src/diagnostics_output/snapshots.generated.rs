@@ -843,6 +843,11 @@ mod structure {
     use super::*;
 
     #[test]
+    fn abstract_contract_public_constructor() -> Result<()> {
+        run("structure", "abstract_contract_public_constructor")
+    }
+
+    #[test]
     fn break_outside_loop() -> Result<()> {
         run("structure", "break_outside_loop")
     }
@@ -958,6 +963,11 @@ mod structure {
     #[test]
     fn multiple_constructors() -> Result<()> {
         run("structure", "multiple_constructors")
+    }
+
+    #[test]
+    fn non_abstract_contract_internal_constructor() -> Result<()> {
+        run("structure", "non_abstract_contract_internal_constructor")
     }
 
     #[test]

@@ -1,3 +1,4 @@
+mod abstract_contract_public_constructor;
 mod break_outside_loop;
 mod constructor_not_in_contract;
 mod continue_outside_loop;
@@ -14,12 +15,14 @@ mod library_virtual_function;
 mod library_virtual_modifier;
 mod missing_function_visibility;
 mod multiple_constructors;
+mod non_abstract_contract_internal_constructor;
 mod storage_layout_for_abstract_contract;
 mod unimplemented_modifier_must_be_virtual;
 mod uninitialized_constant;
 mod virtual_free_function;
 mod virtual_private_function;
 
+pub use abstract_contract_public_constructor::AbstractContractPublicConstructor;
 pub use break_outside_loop::BreakOutsideLoop;
 pub use constructor_not_in_contract::ConstructorNotInContract;
 pub use continue_outside_loop::ContinueOutsideLoop;
@@ -36,6 +39,7 @@ pub use library_virtual_function::LibraryVirtualFunction;
 pub use library_virtual_modifier::LibraryVirtualModifier;
 pub use missing_function_visibility::MissingFunctionVisibility;
 pub use multiple_constructors::MultipleConstructors;
+pub use non_abstract_contract_internal_constructor::NonAbstractContractInternalConstructor;
 use serde::Serialize;
 pub use storage_layout_for_abstract_contract::StorageLayoutForAbstractContract;
 pub use unimplemented_modifier_must_be_virtual::UnimplementedModifierMustBeVirtual;
@@ -75,6 +79,11 @@ define_diagnostic_kind! {
         MultipleConstructors(MultipleConstructors),
         /// A constructor is declared outside of a contract (i.e. in an interface or library).
         ConstructorNotInContract(ConstructorNotInContract),
+
+        /// A constructor in an abstract contract is declared `public`.
+        AbstractContractPublicConstructor(AbstractContractPublicConstructor),
+        /// A constructor in a non-abstract contract is declared `internal`.
+        NonAbstractContractInternalConstructor(NonAbstractContractInternalConstructor),
 
         /// An enum declares more than 256 members.
         EnumWithTooManyMembers(EnumWithTooManyMembers),

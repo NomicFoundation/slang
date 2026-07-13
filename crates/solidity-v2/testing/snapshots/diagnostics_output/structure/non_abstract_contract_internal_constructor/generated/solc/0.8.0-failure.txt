@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[DeclarationError 1845] Error: Non-abstract contracts cannot have internal constructors. Remove the "internal" keyword and make the contract abstract to fix this.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     constructor() internal {}
+   │     ────────────┬────────────  
+   │                 ╰────────────── Error occurred here.
+───╯
+
+[Warning 2462] Warning: Visibility for constructor is ignored. If you want the contract to be non-deployable, making it "abstract" is sufficient.
+    ╭─[input.sol:11:5]
+    │
+ 11 │     constructor() internal {}
+    │     ────────────┬────────────  
+    │                 ╰────────────── Error occurred here.
+────╯
+
+[Warning 2462] Warning: Visibility for constructor is ignored. If you want the contract to be non-deployable, making it "abstract" is sufficient.
+    ╭─[input.sol:16:5]
+    │
+ 16 │     constructor() public {}
+    │     ───────────┬───────────  
+    │                ╰───────────── Error occurred here.
+────╯

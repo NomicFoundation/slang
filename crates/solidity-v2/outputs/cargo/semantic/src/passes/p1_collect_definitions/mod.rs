@@ -2,10 +2,11 @@ use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
-    BreakOutsideLoop, ConstructorNotInContract, ContinueOutsideLoop, EmptyEnum, EmptyStruct,
-    EnumWithTooManyMembers, FreeFunctionVisibility, FunctionNameMatchesContainer,
-    InterfaceFunctionNotExternal, InvalidUsingDirectiveContainer, LibraryVirtualFunction,
-    LibraryVirtualModifier, MissingFunctionVisibility, MultipleConstructors,
+    AbstractContractPublicConstructor, BreakOutsideLoop, ConstructorNotInContract,
+    ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FreeFunctionVisibility,
+    FunctionNameMatchesContainer, InterfaceFunctionNotExternal, InvalidUsingDirectiveContainer,
+    LibraryVirtualFunction, LibraryVirtualModifier, MissingFunctionVisibility,
+    MultipleConstructors, NonAbstractContractInternalConstructor,
     UnimplementedModifierMustBeVirtual, VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -134,22 +135,20 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         self.binder.get_scope_mut(scope_id)
     }
 
+    /// Returns the current (enclosing) definition
+    fn enclosing_definition(&self) -> Option<&Definition> {
+        let scope = self.binder.get_scope_by_id(self.current_scope_id());
+        self.binder.find_definition_by_id(scope.node_id())
+    }
+
     /// Whether the current (enclosing) scope belongs to a library definition.
     fn current_scope_is_library(&mut self) -> bool {
-        let node_id = self.current_scope().node_id();
-        matches!(
-            self.binder.find_definition_by_id(node_id),
-            Some(Definition::Library(_))
-        )
+        matches!(self.enclosing_definition(), Some(Definition::Library(_)))
     }
 
     /// Whether the current (enclosing) scope belongs to an interface definition.
     fn current_scope_is_interface(&mut self) -> bool {
-        let node_id = self.current_scope().node_id();
-        matches!(
-            self.binder.find_definition_by_id(node_id),
-            Some(Definition::Interface(_))
-        )
+        matches!(self.enclosing_definition(), Some(Definition::Interface(_)))
     }
 
     /// Whether the current (enclosing) scope is the file scope, i.e. the
@@ -353,6 +352,37 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
                 InterfaceFunctionNotExternal,
             );
         }
+
+        // A constructor's visibility must be consistent with the contract's
+        // abstract-ness. This only applies when an explicit visibility is given
+        // (a constructor with no visibility is always fine). Only `public` and
+        // `internal` are grammatically valid on constructors.
+        if node.kind == ir::FunctionKind::Constructor && node.attributes.has_explicit_visibility {
+            if let Some(Definition::Contract(contract_definition)) = self.enclosing_definition() {
+                match (
+                    node.attributes.visibility,
+                    contract_definition.ir_node.is_abstract,
+                ) {
+                    // An abstract contract cannot expose a `public` constructor.
+                    (ir::FunctionVisibility::Public, true) => {
+                        self.diagnostics.push(
+                            self.current_file.id().to_owned(),
+                            node.range.clone(),
+                            AbstractContractPublicConstructor,
+                        );
+                    }
+                    // A non-abstract contract cannot have an `internal` constructor.
+                    (ir::FunctionVisibility::Internal, false) => {
+                        self.diagnostics.push(
+                            self.current_file.id().to_owned(),
+                            node.range.clone(),
+                            NonAbstractContractInternalConstructor,
+                        );
+                    }
+                    _ => {}
+                }
+            }
+        }
     }
 
     fn check_modifier_attributes(&mut self, node: &ir::FunctionDefinition) {
@@ -494,24 +524,17 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                 if let Some(name) = &node.name {
                     let definition = Definition::new_function(node, parameters_scope_id);
 
-                    let current_scope_node_id = self.current_scope().node_id();
-                    let enclosing_definition =
-                        self.binder.find_definition_by_id(current_scope_node_id);
-                    let enclosing_container_name =
-                        if let Some(enclosing_definition) = enclosing_definition {
-                            if matches!(
+                    let enclosing_definition = self.enclosing_definition();
+                    let enclosing_container_name = enclosing_definition
+                        .filter(|enclosing_definition| {
+                            matches!(
                                 enclosing_definition,
                                 Definition::Contract(_)
                                     | Definition::Interface(_)
                                     | Definition::Library(_)
-                            ) {
-                                Some(enclosing_definition.identifier().unparse())
-                            } else {
-                                None
-                            }
-                        } else {
-                            None
-                        };
+                            )
+                        })
+                        .map(|definition| definition.identifier().unparse());
 
                     if enclosing_container_name
                         .is_some_and(|container_name| container_name == name.unparse())
