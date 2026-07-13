@@ -2365,6 +2365,15 @@ mod yul_function_call_expression {
     }
 }
 
+mod yul_function_definition {
+    use super::*;
+
+    #[test]
+    fn identifier_with_trailing_dot() -> Result<()> {
+        run("YulFunctionDefinition", "identifier_with_trailing_dot")
+    }
+}
+
 mod yul_label {
     use super::*;
 
@@ -2471,6 +2480,14 @@ mod yul_variable_declaration_statement {
     #[test]
     fn identifier_with_dots() -> Result<()> {
         run("YulVariableDeclarationStatement", "identifier_with_dots")
+    }
+
+    #[test]
+    fn identifier_with_trailing_dot() -> Result<()> {
+        run(
+            "YulVariableDeclarationStatement",
+            "identifier_with_trailing_dot",
+        )
     }
 
     #[test]
