@@ -2411,6 +2411,11 @@ mod yul_statement {
     }
 
     #[test]
+    fn switch_no_cases() -> Result<()> {
+        run("YulStatement", "switch_no_cases")
+    }
+
+    #[test]
     fn var_assign_colon_and_equals() -> Result<()> {
         run("YulStatement", "var_assign_colon_and_equals")
     }
