@@ -1021,8 +1021,18 @@ mod function_definition {
     }
 
     #[test]
+    fn parameter_multiple_storage_locations() -> Result<()> {
+        run("FunctionDefinition", "parameter_multiple_storage_locations")
+    }
+
+    #[test]
     fn pure_state_mutability() -> Result<()> {
         run("FunctionDefinition", "pure_state_mutability")
+    }
+
+    #[test]
+    fn return_multiple_storage_locations() -> Result<()> {
+        run("FunctionDefinition", "return_multiple_storage_locations")
     }
 }
 
@@ -1246,6 +1256,11 @@ mod modifier_definition {
     #[test]
     fn override_attr() -> Result<()> {
         run("ModifierDefinition", "override_attr")
+    }
+
+    #[test]
+    fn parameter_multiple_storage_locations() -> Result<()> {
+        run("ModifierDefinition", "parameter_multiple_storage_locations")
     }
 }
 
@@ -1820,6 +1835,11 @@ mod try_statement {
     use super::*;
 
     #[test]
+    fn catch_parameter_multiple_storage_locations() -> Result<()> {
+        run("TryStatement", "catch_parameter_multiple_storage_locations")
+    }
+
+    #[test]
     fn method_call() -> Result<()> {
         run("TryStatement", "method_call")
     }
@@ -1837,6 +1857,11 @@ mod try_statement {
     #[test]
     fn method_call_with_options_and_body() -> Result<()> {
         run("TryStatement", "method_call_with_options_and_body")
+    }
+
+    #[test]
+    fn returns_multiple_storage_locations() -> Result<()> {
+        run("TryStatement", "returns_multiple_storage_locations")
     }
 }
 
@@ -2148,6 +2173,11 @@ mod variable_declaration_statement {
     #[test]
     fn keyword_ufixed8x8() -> Result<()> {
         run("VariableDeclarationStatement", "keyword_ufixed8x8")
+    }
+
+    #[test]
+    fn multiple_storage_locations() -> Result<()> {
+        run("VariableDeclarationStatement", "multiple_storage_locations")
     }
 
     #[test]

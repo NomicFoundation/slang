@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Foo {                                                                                                                        │ 0..14
+  2  │     // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/parsing/location_specifiers_for_params_multi.sol │ 15..148
+  3  │     function f(uint[] storage memory x) internal {}                                                                                   │ 149..200
+  4  │ }                                                                                                                                     │ 201..202
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected MemoryKeyword. One of AtKeyword, CloseParen, Comma, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionDefinition/parameter_multiple_storage_locations/input.sol:3:31]
+       │
+     3 │     function f(uint[] storage memory x) internal {}
+       │                               ───┬──  
+       │                                  ╰──── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

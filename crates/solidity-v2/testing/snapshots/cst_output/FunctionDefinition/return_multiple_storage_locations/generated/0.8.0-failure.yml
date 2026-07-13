@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Foo {                                                                                                                             │ 0..14
+  2  │     // https://github.com/argotorg/solidity/blob/v0.8.18/test/libsolidity/syntaxTests/parsing/location_specifiers_for_fn_returns_multi.sol │ 15..153
+  3  │     function f() returns (string calldata memory) {}                                                                                       │ 154..206
+  4  │ }                                                                                                                                          │ 207..208
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected MemoryKeyword. One of AtKeyword, CloseParen, Comma, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionDefinition/return_multiple_storage_locations/input.sol:3:43]
+       │
+     3 │     function f() returns (string calldata memory) {}
+       │                                           ───┬──  
+       │                                              ╰──── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []
