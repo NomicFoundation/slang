@@ -4,9 +4,9 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclar
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     BreakOutsideLoop, ConstructorNotInContract, ContinueOutsideLoop, EmptyEnum, EmptyStruct,
     EnumWithTooManyMembers, FreeFunctionVisibility, FunctionNameMatchesContainer,
-    InvalidUsingDirectiveContainer, LibraryVirtualFunction, LibraryVirtualModifier,
-    MissingFunctionVisibility, MultipleConstructors, UnimplementedModifierMustBeVirtual,
-    VirtualFreeFunction, VirtualPrivateFunction,
+    InterfaceFunctionNotExternal, InvalidUsingDirectiveContainer, LibraryVirtualFunction,
+    LibraryVirtualModifier, MissingFunctionVisibility, MultipleConstructors,
+    UnimplementedModifierMustBeVirtual, VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
@@ -336,6 +336,21 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
                 MissingFunctionVisibility {
                     suggested_visibility: suggested_visibility.to_owned(),
                 },
+            );
+        }
+
+        // A function declared in an interface must be `external`. This also
+        // fires when no visibility is specified (which defaults to non-external),
+        // matching solc's behavior of reporting it alongside the missing-visibility
+        // diagnostic above.
+        if node.kind == ir::FunctionKind::Regular
+            && self.current_scope_is_interface()
+            && node.attributes.visibility != ir::FunctionVisibility::External
+        {
+            self.diagnostics.push(
+                self.current_file.id().to_owned(),
+                node.range.clone(),
+                InterfaceFunctionNotExternal,
             );
         }
     }

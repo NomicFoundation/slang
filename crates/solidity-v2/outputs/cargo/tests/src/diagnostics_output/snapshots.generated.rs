@@ -901,6 +901,11 @@ mod structure {
         }
     }
 
+    #[test]
+    fn interface_function_not_external() -> Result<()> {
+        run("structure", "interface_function_not_external")
+    }
+
     mod invalid_using_directive_container {
         use super::*;
 

@@ -6,6 +6,7 @@ mod empty_struct;
 mod enum_with_too_many_members;
 mod free_function_visibility;
 mod function_name_matches_container;
+mod interface_function_not_external;
 mod invalid_using_directive_container;
 mod library_fallback_function;
 mod library_receive_function;
@@ -27,6 +28,7 @@ pub use empty_struct::EmptyStruct;
 pub use enum_with_too_many_members::EnumWithTooManyMembers;
 pub use free_function_visibility::FreeFunctionVisibility;
 pub use function_name_matches_container::FunctionNameMatchesContainer;
+pub use interface_function_not_external::InterfaceFunctionNotExternal;
 pub use invalid_using_directive_container::InvalidUsingDirectiveContainer;
 pub use library_fallback_function::LibraryFallbackFunction;
 pub use library_receive_function::LibraryReceiveFunction;
@@ -66,6 +68,9 @@ define_diagnostic_kind! {
 
         /// A non-free, non-constructor function does not specify a visibility modifier.
         MissingFunctionVisibility(MissingFunctionVisibility),
+
+        /// A function declared in an interface is not `external`.
+        InterfaceFunctionNotExternal(InterfaceFunctionNotExternal),
         /// A contract defines more than one constructor.
         MultipleConstructors(MultipleConstructors),
         /// A constructor is declared outside of a contract (i.e. in an interface or library).
