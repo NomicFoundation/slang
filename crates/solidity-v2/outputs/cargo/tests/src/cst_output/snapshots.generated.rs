@@ -499,6 +499,11 @@ mod enum_definition {
     fn no_members() -> Result<()> {
         run("EnumDefinition", "no_members")
     }
+
+    #[test]
+    fn trailing_comma() -> Result<()> {
+        run("EnumDefinition", "trailing_comma")
+    }
 }
 
 mod error_definition {
