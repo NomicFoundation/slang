@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                          │ 0..12
+  2  │     function f() {                                                                                                    │ 13..31
+  3  │         assembly {                                                                                                    │ 32..50
+  4  │             // https://github.com/argotorg/solidity/blob/v0.8.29/test/libyul/yulSyntaxTests/multiple_assignment_2.yul │ 51..168
+  5  │             x, 123 := f()                                                                                             │ 169..194
+  6  │         }                                                                                                             │ 195..204
+  7  │     }                                                                                                                 │ 205..210
+  8  │ }                                                                                                                     │ 211..212
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected YulDecimalLiteral. One of YulIdentifier was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulVariableAssignmentStatement/multiple_var_before_literal/input.sol:5:16]
+       │
+     5 │             x, 123 := f()
+       │                ─┬─  
+       │                 ╰─── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

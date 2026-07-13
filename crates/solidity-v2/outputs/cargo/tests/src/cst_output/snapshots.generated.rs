@@ -2442,6 +2442,22 @@ mod yul_variable_assignment_statement {
     fn identifier_and() -> Result<()> {
         run("YulVariableAssignmentStatement", "identifier_and")
     }
+
+    #[test]
+    fn multiple_literal_before_var() -> Result<()> {
+        run(
+            "YulVariableAssignmentStatement",
+            "multiple_literal_before_var",
+        )
+    }
+
+    #[test]
+    fn multiple_var_before_literal() -> Result<()> {
+        run(
+            "YulVariableAssignmentStatement",
+            "multiple_var_before_literal",
+        )
+    }
 }
 
 mod yul_variable_declaration_statement {
