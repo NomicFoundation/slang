@@ -11,6 +11,7 @@ mod library_fallback_function;
 mod library_receive_function;
 mod library_virtual_function;
 mod library_virtual_modifier;
+mod missing_function_visibility;
 mod multiple_constructors;
 mod storage_layout_for_abstract_contract;
 mod unimplemented_modifier_must_be_virtual;
@@ -31,6 +32,7 @@ pub use library_fallback_function::LibraryFallbackFunction;
 pub use library_receive_function::LibraryReceiveFunction;
 pub use library_virtual_function::LibraryVirtualFunction;
 pub use library_virtual_modifier::LibraryVirtualModifier;
+pub use missing_function_visibility::MissingFunctionVisibility;
 pub use multiple_constructors::MultipleConstructors;
 use serde::Serialize;
 pub use storage_layout_for_abstract_contract::StorageLayoutForAbstractContract;
@@ -61,6 +63,9 @@ define_diagnostic_kind! {
 
         /// A free function specifies a visibility modifier.
         FreeFunctionVisibility(FreeFunctionVisibility),
+
+        /// A non-free, non-constructor function does not specify a visibility modifier.
+        MissingFunctionVisibility(MissingFunctionVisibility),
         /// A contract defines more than one constructor.
         MultipleConstructors(MultipleConstructors),
         /// A constructor is declared outside of a contract (i.e. in an interface or library).

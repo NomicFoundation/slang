@@ -5,8 +5,8 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     BreakOutsideLoop, ConstructorNotInContract, ContinueOutsideLoop, EmptyEnum, EmptyStruct,
     EnumWithTooManyMembers, FreeFunctionVisibility, FunctionNameMatchesContainer,
     InvalidUsingDirectiveContainer, LibraryVirtualFunction, LibraryVirtualModifier,
-    MultipleConstructors, UnimplementedModifierMustBeVirtual, VirtualFreeFunction,
-    VirtualPrivateFunction,
+    MissingFunctionVisibility, MultipleConstructors, UnimplementedModifierMustBeVirtual,
+    VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
@@ -143,6 +143,15 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         )
     }
 
+    /// Whether the current (enclosing) scope belongs to an interface definition.
+    fn current_scope_is_interface(&mut self) -> bool {
+        let node_id = self.current_scope().node_id();
+        matches!(
+            self.binder.find_definition_by_id(node_id),
+            Some(Definition::Interface(_))
+        )
+    }
+
     /// Whether the current (enclosing) scope is the file scope, i.e. the
     /// definition is a free (file-level) one.
     fn current_scope_is_file(&mut self) -> bool {
@@ -269,6 +278,87 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
             ),
         }
     }
+
+    fn check_function_attributes(&mut self, node: &ir::FunctionDefinition) {
+        if node.attributes.is_virtual {
+            // A function declared in a library cannot be marked `virtual`.
+            if self.current_scope_is_library() {
+                self.diagnostics.push(
+                    self.current_file.id().to_owned(),
+                    node.range.clone(),
+                    LibraryVirtualFunction,
+                );
+
+            // A free (file-level) function cannot be marked `virtual`.
+            } else if self.current_scope_is_file() {
+                self.diagnostics.push(
+                    self.current_file.id().to_owned(),
+                    node.range.clone(),
+                    VirtualFreeFunction,
+                );
+            }
+
+            // A `virtual` function cannot also be marked `private`.
+            if node.attributes.visibility == ir::FunctionVisibility::Private {
+                self.diagnostics.push(
+                    self.current_file.id().to_owned(),
+                    node.range.clone(),
+                    VirtualPrivateFunction,
+                );
+            }
+        }
+
+        // A free (file-level) function cannot specify a visibility modifier.
+        if node.attributes.has_explicit_visibility && self.current_scope_is_file() {
+            self.diagnostics.push(
+                self.current_file.id().to_owned(),
+                node.range.clone(),
+                FreeFunctionVisibility,
+            );
+        }
+
+        // Conversely, a regular function inside a contract, interface
+        // or library must specify a visibility. Constructors are exempt,
+        // and fallback/receive functions have their required visibility
+        // enforced during IR construction.
+        if node.kind == ir::FunctionKind::Regular
+            && !node.attributes.has_explicit_visibility
+            && !self.current_scope_is_file()
+        {
+            let suggested_visibility = if self.current_scope_is_interface() {
+                "external"
+            } else {
+                "public"
+            };
+            self.diagnostics.push(
+                self.current_file.id().to_owned(),
+                node.range.clone(),
+                MissingFunctionVisibility {
+                    suggested_visibility: suggested_visibility.to_owned(),
+                },
+            );
+        }
+    }
+
+    fn check_modifier_attributes(&mut self, node: &ir::FunctionDefinition) {
+        // A modifier without an implementation body must be marked `virtual`.
+        if node.body.is_none() && !node.attributes.is_virtual {
+            self.diagnostics.push(
+                self.current_file.id().to_owned(),
+                node.range.clone(),
+                UnimplementedModifierMustBeVirtual,
+            );
+        }
+
+        // A modifier declared in a library cannot be marked `virtual`.
+        if node.attributes.is_virtual && self.current_scope_is_library() {
+            self.diagnostics.push(
+                self.current_file.id().to_owned(),
+                node.range.clone(),
+                LibraryVirtualModifier,
+            );
+        }
+    }
 }
 
 impl<F: SemanticFile> Visitor for Pass<'_, F> {
@@ -382,42 +472,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
             | ir::FunctionKind::Constructor
             | ir::FunctionKind::Fallback
             | ir::FunctionKind::Receive => {
-                if node.attributes.is_virtual {
-                    // A function declared in a library cannot be marked `virtual`.
-                    if self.current_scope_is_library() {
-                        self.diagnostics.push(
-                            self.current_file.id().to_owned(),
-                            node.range.clone(),
-                            LibraryVirtualFunction,
-                        );
-
-                    // A free (file-level) function cannot be marked `virtual`.
-                    } else if self.current_scope_is_file() {
-                        self.diagnostics.push(
-                            self.current_file.id().to_owned(),
-                            node.range.clone(),
-                            VirtualFreeFunction,
-                        );
-                    }
-
-                    // A `virtual` function cannot also be marked `private`.
-                    if node.attributes.visibility == ir::FunctionVisibility::Private {
-                        self.diagnostics.push(
-                            self.current_file.id().to_owned(),
-                            node.range.clone(),
-                            VirtualPrivateFunction,
-                        );
-                    }
-                }
-
-                // A free (file-level) function cannot specify a visibility modifier.
-                if node.attributes.has_explicit_visibility && self.current_scope_is_file() {
-                    self.diagnostics.push(
-                        self.current_file.id().to_owned(),
-                        node.range.clone(),
-                        FreeFunctionVisibility,
-                    );
-                }
+                self.check_function_attributes(node);
 
                 let parameters_scope_id = self.collect_parameters(&node.parameters);
 
@@ -474,23 +529,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
             }
 
             ir::FunctionKind::Modifier => {
-                // A modifier without an implementation body must be marked `virtual`.
-                if node.body.is_none() && !node.attributes.is_virtual {
-                    self.diagnostics.push(
-                        self.current_file.id().to_owned(),
-                        node.range.clone(),
-                        UnimplementedModifierMustBeVirtual,
-                    );
-                }
-
-                // A modifier declared in a library cannot be marked `virtual`.
-                if node.attributes.is_virtual && self.current_scope_is_library() {
-                    self.diagnostics.push(
-                        self.current_file.id().to_owned(),
-                        node.range.clone(),
-                        LibraryVirtualModifier,
-                    );
-                }
+                self.check_modifier_attributes(node);
 
                 let definition = Definition::new_modifier(node);
                 self.insert_definition_in_current_scope(definition);

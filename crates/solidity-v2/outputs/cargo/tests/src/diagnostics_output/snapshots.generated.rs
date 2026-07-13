@@ -946,6 +946,11 @@ mod structure {
     }
 
     #[test]
+    fn missing_function_visibility() -> Result<()> {
+        run("structure", "missing_function_visibility")
+    }
+
+    #[test]
     fn multiple_constructors() -> Result<()> {
         run("structure", "multiple_constructors")
     }
