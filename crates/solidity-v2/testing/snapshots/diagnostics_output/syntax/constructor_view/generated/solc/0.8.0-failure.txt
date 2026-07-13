@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Diagnostics: 2
+Diagnostics: 1
 
 [TypeError 1558] Error: Constructor must be payable or non-payable, but is "view".
    ╭─[input.sol:8:5]
@@ -9,11 +9,3 @@ Diagnostics: 2
    │     ──────────┬──────────  
    │               ╰──────────── Error occurred here.
 ───╯
-
-[TypeError 1558] Error: Constructor must be payable or non-payable, but is "pure".
-    ╭─[input.sol:12:5]
-    │
- 12 │     constructor() pure {}
-    │     ──────────┬──────────  
-    │               ╰──────────── Error occurred here.
-────╯

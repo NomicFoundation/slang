@@ -876,8 +876,13 @@ mod syntax {
     }
 
     #[test]
-    fn constructor_with_state_mutability() -> Result<()> {
-        run("syntax", "constructor_with_state_mutability")
+    fn constructor_pure() -> Result<()> {
+        run("syntax", "constructor_pure")
+    }
+
+    #[test]
+    fn constructor_view() -> Result<()> {
+        run("syntax", "constructor_view")
     }
 
     #[test]
