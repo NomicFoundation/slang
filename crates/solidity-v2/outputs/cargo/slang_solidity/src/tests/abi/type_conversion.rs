@@ -1,3 +1,6 @@
+use ruint::aliases::U256;
+use slang_solidity_v2_ast::ast::ContractDefinition;
+
 use crate::abi::{AbiEntry, AbiType, TupleComponent};
 use crate::ast::{StateVariableDefinition, Type};
 use crate::define_fixture;
@@ -35,14 +38,18 @@ contract C {
 "#,
 );
 
-/// Resolves the named state variable definition in contract `C`.
-fn state_var(name: &str) -> StateVariableDefinition {
+/// Get contract `C` from the fixture compilation unit.
+fn get_contract_c() -> ContractDefinition {
     let unit = TypeConversion::build_compilation_unit();
     let contract = unit
         .find_contract_by_name("C")
         .next()
         .expect("contract C exists");
+    contract
+}
 
+/// Resolves the named state variable definition in `contract`.
+fn state_var(contract: &ContractDefinition, name: &str) -> StateVariableDefinition {
     for state_var in contract.state_variables() {
         if state_var.name().name() == name {
             return state_var;
@@ -51,9 +58,9 @@ fn state_var(name: &str) -> StateVariableDefinition {
     panic!("state variable `{name}` not found");
 }
 
-/// Resolves the AST `Type` of the named state variable in contract `C`.
-fn variable_type(name: &str) -> Type {
-    state_var(name)
+/// Resolves the AST `Type` of the named state variable in `contract`.
+fn state_variable_type(contract: &ContractDefinition, name: &str) -> Type {
+    state_var(contract, name)
         .get_type()
         .expect("state variable has a type")
 }
@@ -61,7 +68,7 @@ fn variable_type(name: &str) -> Type {
 /// The first output type of the named public variable's generated getter,
 /// obtained via the semantic (`TypeId`) conversion path.
 fn getter_output_abi_type(name: &str) -> AbiType {
-    let AbiEntry::Function(getter) = state_var(name)
+    let AbiEntry::Function(getter) = state_var(&get_contract_c(), name)
         .compute_abi_entry()
         .expect("public variable has a getter")
     else {
@@ -79,7 +86,10 @@ fn uint256() -> AbiType {
 
 #[test]
 fn converts_a_leaf_type() {
-    assert_eq!(AbiType::try_from(&variable_type("u")), Ok(uint256()));
+    assert_eq!(
+        AbiType::try_from(&state_variable_type(&get_contract_c(), "u")),
+        Ok(uint256())
+    );
 }
 
 #[test]
@@ -88,7 +98,10 @@ fn converts_a_struct_to_a_tuple() {
         TupleComponent::new("x", uint256()),
         TupleComponent::new("y", uint256()),
     ]);
-    assert_eq!(AbiType::try_from(&variable_type("t")), Ok(expected));
+    assert_eq!(
+        AbiType::try_from(&state_variable_type(&get_contract_c(), "t")),
+        Ok(expected)
+    );
 }
 
 #[test]
@@ -114,14 +127,17 @@ fn converts_nested_structs_and_arrays() {
         ),
     ]);
 
-    assert_eq!(AbiType::try_from(&variable_type("s")), Ok(expected));
+    assert_eq!(
+        AbiType::try_from(&state_variable_type(&get_contract_c(), "s")),
+        Ok(expected)
+    );
 }
 
 #[test]
 fn rejects_a_type_with_no_abi_representation() {
     // A mapping has no ABI type. `NotAnAbiType` is `#[non_exhaustive]`, so we
     // assert on `is_err` rather than constructing it.
-    assert!(AbiType::try_from(&variable_type("m")).is_err());
+    assert!(AbiType::try_from(&state_variable_type(&get_contract_c(), "m")).is_err());
 }
 
 #[test]
@@ -129,7 +145,7 @@ fn rejects_a_recursive_struct() {
     // `struct Node { Node[] children; ... }` recurses through a dynamic array,
     // which is legal Solidity but has no finite ABI representation. The cycle
     // guard makes the conversion fail rather than recurse forever.
-    assert!(AbiType::try_from(&variable_type("n")).is_err());
+    assert!(AbiType::try_from(&state_variable_type(&get_contract_c(), "n")).is_err());
 }
 
 #[test]
@@ -168,7 +184,7 @@ fn converts_non_identity_leaf_types() {
             "fixedArr",
             AbiType::FixedSizeArray {
                 element: Box::new(uint256()),
-                size: 3,
+                size: U256::from(3),
             },
             "uint256[3]",
         ),
@@ -183,8 +199,11 @@ fn converts_non_identity_leaf_types() {
         ),
     ];
 
+    let contract = get_contract_c();
+
     for (name, expected, spelling) in cases {
-        let abi = AbiType::try_from(&variable_type(name)).expect("has an ABI type");
+        let abi =
+            AbiType::try_from(&state_variable_type(&contract, name)).expect("has an ABI type");
         assert_eq!(&abi, expected, "value mismatch for `{name}`");
         assert_eq!(&abi.to_string(), spelling, "spelling mismatch for `{name}`");
     }
@@ -192,10 +211,13 @@ fn converts_non_identity_leaf_types() {
 
 #[test]
 fn semantic_and_ast_paths_agree() {
+    let contract = get_contract_c();
+
     // The semantic-`TypeId` path (via the generated getter) and the public AST
     // `TryFrom` path must produce the same `AbiType` for the same declaration.
     for name in ["u", "u8", "flag", "b8", "color", "id"] {
-        let ast = AbiType::try_from(&variable_type(name)).expect("has an ABI type");
+        let ast =
+            AbiType::try_from(&state_variable_type(&contract, name)).expect("has an ABI type");
         let semantic = getter_output_abi_type(name);
         assert_eq!(ast, semantic, "path mismatch for `{name}`");
     }

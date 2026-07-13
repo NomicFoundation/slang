@@ -20,7 +20,7 @@ use std::sync::Arc;
 use slang_solidity_v2_common::collections::OrderedSet;
 
 use crate::abi::AbiType;
-use crate::ast::{ContractMember, Definition, SourceUnitMember, StructDefinition, Type};
+use crate::ast::{Definition, StructDefinition, Type};
 use crate::compilation::CompilationUnit;
 use crate::define_fixture;
 
@@ -49,23 +49,10 @@ struct Person {
 /// nested in a contract, in any file. Used only to pick the entry point;
 /// dependency resolution never round-trips through a name.
 fn find_struct(unit: &CompilationUnit, name: &str) -> StructDefinition {
-    unit.file_ids()
-        .iter()
-        .flat_map(|file_id| {
-            let ast = unit.file(file_id).expect("file exists").ast();
-            ast.members().iter().collect::<Vec<_>>()
-        })
-        .flat_map(|member| match member {
-            SourceUnitMember::StructDefinition(def) => vec![def],
-            SourceUnitMember::ContractDefinition(contract) => contract
-                .members()
-                .iter()
-                .filter_map(|member| match member {
-                    ContractMember::StructDefinition(def) => Some(def),
-                    _ => None,
-                })
-                .collect(),
-            _ => vec![],
+    unit.all_definitions()
+        .filter_map(|def| match def {
+            Definition::Struct(def) => Some(def),
+            _ => None,
         })
         .find(|def| def.name().name() == name)
         .unwrap_or_else(|| panic!("struct `{name}` is declared"))
