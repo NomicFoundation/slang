@@ -1,0 +1,45 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Base" @ input.sol:5:10] (contract)
+- Def: #2 ["N" @ input.sol:6:30] (constant, type: uint256)
+- Def: #3 ["Derived" @ input.sol:8:10] (contract)
+- Def: #4 ["N" @ input.sol:9:22] (constant, type: uint256)
+- Def: #5 ["a" @ input.sol:10:16] (state var, type: uint256[2] storage)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["Base" @ input.sol:8:21] -> #1
+- Ref: ["N" @ input.sol:10:13] -> #4
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  5 │ contract Base {
+    │          ──┬─  
+    │            ╰─── name: 1
+  6 │     uint256 private constant N = 1;
+    │                              ┬  
+    │                              ╰── name: 2
+    │ 
+  8 │ contract Derived is Base {
+    │          ───┬───    ──┬─  
+    │             ╰───────────── name: 3
+    │                       │   
+    │                       ╰─── ref: 1
+  9 │     uint256 constant N = 2;
+    │                      ┬  
+    │                      ╰── name: 4
+ 10 │     uint256[N] a;
+    │             ┬  ┬  
+    │             ╰───── ref: 4
+    │                │  
+    │                ╰── name: 5
+────╯

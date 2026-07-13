@@ -53,6 +53,16 @@ mod arrays {
     }
 
     #[test]
+    fn fixed_size_with_inherited_constant() -> Result<()> {
+        run("arrays", "fixed_size_with_inherited_constant")
+    }
+
+    #[test]
+    fn fixed_size_with_private_base_constant() -> Result<()> {
+        run("arrays", "fixed_size_with_private_base_constant")
+    }
+
+    #[test]
     fn fixed_size_with_shadowed_constants() -> Result<()> {
         run("arrays", "fixed_size_with_shadowed_constants")
     }

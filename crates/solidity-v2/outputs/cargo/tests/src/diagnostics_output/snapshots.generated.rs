@@ -173,6 +173,14 @@ mod resolution {
         }
 
         #[test]
+        fn constant_shadows_private_base() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "constant_shadows_private_base",
+            )
+        }
+
+        #[test]
         fn constant_vs_function() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
