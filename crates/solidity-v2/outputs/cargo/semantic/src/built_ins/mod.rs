@@ -1,7 +1,7 @@
 use super::binder::{Binder, Definition, Typing};
 use super::types::{
-    AddressType, ArrayType, BytesType, DataLocation, LiteralKind, Type, TypeId, TypeRegistry,
-    UserDefinedValueType,
+    AddressType, ArrayType, BytesType, DataLocation, LiteralKind, MetaType, TupleType, Type,
+    TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
 };
 
 #[path = "internal.generated.rs"]
@@ -200,7 +200,7 @@ impl<'a> BuiltInsResolver<'a> {
         }
     }
 
-    pub(crate) fn lookup_member_of_user_definition(
+    fn lookup_member_of_user_definition(
         definition: &Definition,
         symbol: &str,
     ) -> Option<InternalBuiltIn> {
@@ -216,23 +216,6 @@ impl<'a> BuiltInsResolver<'a> {
             Definition::UserDefinedValueType(_) => match symbol {
                 "wrap" => Some(InternalBuiltIn::Wrap(definition.node_id())),
                 "unwrap" => Some(InternalBuiltIn::Unwrap(definition.node_id())),
-                _ => None,
-            },
-            _ => None,
-        }
-    }
-
-    pub(crate) fn lookup_member_of_meta_type(
-        parent_type: &Type,
-        symbol: &str,
-    ) -> Option<InternalBuiltIn> {
-        match parent_type {
-            Type::Bytes(_) => match symbol {
-                "concat" => Some(InternalBuiltIn::BytesConcat),
-                _ => None,
-            },
-            Type::String(_) => match symbol {
-                "concat" => Some(InternalBuiltIn::StringConcat),
                 _ => None,
             },
             _ => None,
@@ -307,6 +290,27 @@ impl<'a> BuiltInsResolver<'a> {
             }
             Type::Literal(_) => None,
             Type::Mapping(_) => None,
+            // The meta-type of `bytes`/`string` exposes the `concat` built-in.
+            Type::MetaType(MetaType { type_id }) => match self.types.get_type_by_id(*type_id) {
+                Type::Bytes(_) => match symbol {
+                    "concat" => Some(InternalBuiltIn::BytesConcat),
+                    _ => None,
+                },
+                Type::String(_) => match symbol {
+                    "concat" => Some(InternalBuiltIn::StringConcat),
+                    _ => None,
+                },
+                _ => None,
+            },
+            // The meta-type of a named user definition exposes the built-in
+            // members of that definition (eg. `MyError.selector`,
+            // `MyUDVT.wrap`). Its *namespace* members (eg. enum variants,
+            // library functions) are resolved in `resolve_symbol_in_type`,
+            // which has the scope-resolution machinery this resolver lacks.
+            Type::UserMetaType(UserMetaType { definition_id }) => self
+                .binder
+                .find_definition_by_id(*definition_id)
+                .and_then(|definition| Self::lookup_member_of_user_definition(definition, symbol)),
             Type::String(_) => match symbol {
                 "length" => Some(InternalBuiltIn::Length),
                 _ => None,
@@ -443,27 +447,40 @@ impl<'a> BuiltInsResolver<'a> {
                 if argument_typings.len() != 2 {
                     return Typing::Unresolved;
                 }
-                match &argument_typings[1] {
-                    Typing::Resolved(type_id) => {
-                        // TODO(validation) SDR[42]: this only makes sense if type_id is a tuple
-                        Typing::Resolved(*type_id)
-                    }
-                    Typing::UserMetaType(definition_id) => {
-                        let Some(definition) = self.binder.find_definition_by_id(*definition_id)
-                        else {
+                let Typing::Resolved(type_id) = &argument_typings[1] else {
+                    return Typing::Unresolved;
+                };
+
+                // `abi.decode(data, (T))`: a single-element tuple collapses to the
+                // meta-type of `T`, which decodes to `T` itself.
+                if let Some(decoded) = self.type_denoted_by_meta_type(*type_id) {
+                    return Typing::Resolved(decoded);
+                }
+
+                // `abi.decode(data, (T1, T2, ...))`: a tuple of meta-types decodes to
+                // the tuple of the types they denote. Note a *nested* tuple element is
+                // not a type name and does not decode (matching solc, which rejects
+                // eg. `abi.decode(data, (uint, (bool, bool)))`).
+                if let Type::Tuple(TupleType { types }) = self.types.get_type_by_id(*type_id) {
+                    let element_ids = types.clone();
+                    let mut decoded = Vec::with_capacity(element_ids.len());
+                    for element_id in element_ids {
+                        let Some(element) = self.type_denoted_by_meta_type(element_id) else {
+                            // TODO(validation) SDR[42]: report an error when a tuple
+                            // element is not a type name (eg. `abi.decode(b, (uint, 5))`).
                             return Typing::Unresolved;
                         };
-                        if let Ok(type_) = definition.try_into() {
-                            Typing::Resolved(self.types.register_type(type_))
-                        } else {
-                            Typing::Unresolved
-                        }
+                        decoded.push(element);
                     }
-                    Typing::MetaType(type_) => {
-                        Typing::Resolved(self.types.register_type(type_.clone()))
-                    }
-                    _ => Typing::Unresolved,
+                    return Typing::Resolved(
+                        self.types
+                            .register_type(Type::Tuple(TupleType { types: decoded })),
+                    );
                 }
+
+                // TODO(validation) SDR[42]: report an error when the second argument
+                // is not a type or a tuple of types.
+                Typing::Unresolved
             }
             InternalBuiltIn::AbiEncode => Typing::Resolved(self.types.bytes_memory()),
             InternalBuiltIn::AbiEncodeCall => Typing::Resolved(self.types.bytes_memory()),
@@ -530,6 +547,22 @@ impl<'a> BuiltInsResolver<'a> {
                 // other built-ins cannot be called
                 Typing::Unresolved
             }
+        }
+    }
+
+    /// Returns the value type a meta-type denotes: `type(T)` unwraps to `T`,
+    /// and the meta-type of a named definition to the definition's type.
+    /// Returns `None` when `type_id` is not a meta-type.
+    fn type_denoted_by_meta_type(&mut self, type_id: TypeId) -> Option<TypeId> {
+        match self.types.get_type_by_id(type_id) {
+            Type::MetaType(MetaType { type_id }) => Some(*type_id),
+            Type::UserMetaType(UserMetaType { definition_id }) => {
+                let definition_id = *definition_id;
+                let definition = self.binder.find_definition_by_id(definition_id)?;
+                let type_ = definition.try_into().ok()?;
+                Some(self.types.register_type(type_))
+            }
+            _ => None,
         }
     }
 }

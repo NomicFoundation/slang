@@ -263,7 +263,12 @@ impl Pass<'_> {
                 }
 
                 // invalid types
-                Type::Library(_) | Type::Literal(_) | Type::Tuple(_) | Type::Void => {
+                Type::Library(_)
+                | Type::Literal(_)
+                | Type::MetaType(_)
+                | Type::Tuple(_)
+                | Type::UserMetaType(_)
+                | Type::Void => {
                     unreachable!("cannot compute the getter type for {type_id:?}")
                 }
             }

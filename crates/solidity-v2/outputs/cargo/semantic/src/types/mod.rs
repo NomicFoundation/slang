@@ -35,10 +35,17 @@ pub enum Type {
     Library(LibraryType),
     Literal(LiteralKind),
     Mapping(MappingType),
+    /// The meta-type of an (already known) type. This is the type of an
+    /// expression that refers to a type itself rather than to a value, eg. the
+    /// `uint` in `uint(x)` (an explicit cast) or `bytes` in `bytes.concat(...)`.
+    MetaType(MetaType),
     String(StringType),
     Struct(StructType),
     Tuple(TupleType),
     UserDefinedValue(UserDefinedValueType),
+    /// The meta-type of a user defined type referred to by name, eg. the
+    /// identifier of a contract, struct or enum.
+    UserMetaType(UserMetaType),
     Void,
 }
 
@@ -127,6 +134,18 @@ pub struct TupleType {
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct UserDefinedValueType {
+    pub definition_id: NodeId,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct MetaType {
+    /// The `TypeId` of the type this is a meta-type of.
+    pub type_id: TypeId,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct UserMetaType {
+    /// The `NodeId` of the definition this meta-type refers to.
     pub definition_id: NodeId,
 }
 
@@ -397,6 +416,9 @@ impl Type {
             | Type::Literal(_)
             | Type::Library(_)
             | Type::Tuple(_)
+            // Meta-types are not real values and can never be returned.
+            | Type::MetaType(_)
+            | Type::UserMetaType(_)
             | Type::Void => false,
         }
     }
@@ -424,6 +446,13 @@ impl Type {
         matches!(self, Type::Contract(_) | Type::Interface(_))
     }
 
+    /// Whether this is a meta-type, ie. the type of an expression that refers
+    /// to a type rather than a value (see [`Type::MetaType`] and
+    /// [`Type::UserMetaType`]).
+    pub(crate) fn is_meta_type(&self) -> bool {
+        matches!(self, Type::MetaType(_) | Type::UserMetaType(_))
+    }
+
     pub(crate) fn get_definition_id(&self) -> Option<NodeId> {
         match self {
             Type::Contract(ContractType { definition_id })
@@ -442,6 +471,13 @@ impl Type {
     ///
     /// TODO: This probably has a better way to resolve it, looking at the storage location
     pub(crate) fn can_be_array_element(&self) -> bool {
-        !matches!(self, Type::Mapping(_) | Type::Tuple(_) | Type::Void)
+        !matches!(
+            self,
+            Type::Mapping(_)
+                | Type::Tuple(_)
+                | Type::MetaType(_)
+                | Type::UserMetaType(_)
+                | Type::Void
+        )
     }
 }

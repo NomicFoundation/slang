@@ -1047,10 +1047,12 @@ pub slang_solidity_v2_ast::ast::Type::Interface(slang_solidity_v2_ast::ast::Inte
 pub slang_solidity_v2_ast::ast::Type::Library(slang_solidity_v2_ast::ast::types::LibraryType)
 pub slang_solidity_v2_ast::ast::Type::Literal(slang_solidity_v2_ast::ast::LiteralType)
 pub slang_solidity_v2_ast::ast::Type::Mapping(slang_solidity_v2_ast::ast::MappingType)
+pub slang_solidity_v2_ast::ast::Type::MetaType(slang_solidity_v2_ast::ast::MetaType)
 pub slang_solidity_v2_ast::ast::Type::String(slang_solidity_v2_ast::ast::StringType)
 pub slang_solidity_v2_ast::ast::Type::Struct(slang_solidity_v2_ast::ast::StructType)
 pub slang_solidity_v2_ast::ast::Type::Tuple(slang_solidity_v2_ast::ast::TupleType)
 pub slang_solidity_v2_ast::ast::Type::UserDefinedValue(slang_solidity_v2_ast::ast::UserDefinedValueType)
+pub slang_solidity_v2_ast::ast::Type::UserMetaType(slang_solidity_v2_ast::ast::UserMetaType)
 pub slang_solidity_v2_ast::ast::Type::Void(slang_solidity_v2_ast::ast::VoidType)
 impl slang_solidity_v2_ast::ast::Type
 pub fn slang_solidity_v2_ast::ast::Type::data_location(&self) -> core::option::Option<slang_solidity_v2_semantic::types::DataLocation>
@@ -2294,6 +2296,11 @@ pub fn slang_solidity_v2_ast::ast::MemoryKeywordStruct::node_id(&self) -> slang_
 pub fn slang_solidity_v2_ast::ast::MemoryKeywordStruct::unparse(&self) -> &str
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::MemoryKeywordStruct
 pub fn slang_solidity_v2_ast::ast::MemoryKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub struct slang_solidity_v2_ast::ast::MetaType
+impl slang_solidity_v2_ast::ast::MetaType
+pub fn slang_solidity_v2_ast::ast::MetaType::meta_type(&self) -> slang_solidity_v2_ast::ast::Type
+impl core::clone::Clone for slang_solidity_v2_ast::ast::MetaType
+pub fn slang_solidity_v2_ast::ast::MetaType::clone(&self) -> slang_solidity_v2_ast::ast::MetaType
 pub struct slang_solidity_v2_ast::ast::MinusEqualStruct
 impl slang_solidity_v2_ast::ast::MinusEqualStruct
 pub fn slang_solidity_v2_ast::ast::MinusEqualStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
@@ -3013,6 +3020,11 @@ pub fn slang_solidity_v2_ast::ast::UserDefinedValueTypeDefinitionStruct::node_id
 pub fn slang_solidity_v2_ast::ast::UserDefinedValueTypeDefinitionStruct::value_type(&self) -> slang_solidity_v2_ast::ast::ElementaryType
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::UserDefinedValueTypeDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::UserDefinedValueTypeDefinitionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub struct slang_solidity_v2_ast::ast::UserMetaType
+impl slang_solidity_v2_ast::ast::UserMetaType
+pub fn slang_solidity_v2_ast::ast::UserMetaType::definition(&self) -> slang_solidity_v2_ast::ast::Definition
+impl core::clone::Clone for slang_solidity_v2_ast::ast::UserMetaType
+pub fn slang_solidity_v2_ast::ast::UserMetaType::clone(&self) -> slang_solidity_v2_ast::ast::UserMetaType
 pub struct slang_solidity_v2_ast::ast::UsingDeconstructionStruct
 impl slang_solidity_v2_ast::ast::UsingDeconstructionStruct
 pub fn slang_solidity_v2_ast::ast::UsingDeconstructionStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId

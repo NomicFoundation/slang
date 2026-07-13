@@ -4,7 +4,7 @@ use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, Scope, ScopeId};
 use crate::context::{FileNodeMapper, SemanticFile};
-use crate::types::{ContractType, Type, TypeId, TypeRegistry};
+use crate::types::{ContractType, Type, TypeId, TypeRegistry, UserMetaType};
 
 mod resolution;
 mod typing;
@@ -44,6 +44,15 @@ struct Pass<'a> {
 }
 
 impl<'a> Pass<'a> {
+    /// Registers a [`Type::UserMetaType`] for the given definition node and
+    /// records it as the node's typing.
+    fn mark_user_meta_type_node(&mut self, node_id: NodeId) {
+        let type_id = self.types.register_type(Type::UserMetaType(UserMetaType {
+            definition_id: node_id,
+        }));
+        self.binder.set_node_type(node_id, Some(type_id));
+    }
+
     fn visit_file(
         file: &'a impl SemanticFile,
         binder: &'a mut Binder,

@@ -64,11 +64,13 @@ pub(crate) fn node_id_for_expression_typing(node: &ir::Expression) -> Option<Nod
         ir::Expression::StringExpression(s) => Some(node_id_for_string_expression_typing(s)),
         ir::Expression::Identifier(ident) => Some(ident.id()),
         ir::Expression::ThisKeyword(e) => Some(e.id()),
+        ir::Expression::ElementaryType(e) => {
+            Some(e.node_id().expect("ElementaryType should have a node id"))
+        }
+        ir::Expression::PayableKeyword(e) => Some(e.id()),
 
         // Other expression variants don't register typing by `NodeId`
-        ir::Expression::ElementaryType(_)
-        | ir::Expression::PayableKeyword(_)
-        | ir::Expression::SuperKeyword(_)
+        ir::Expression::SuperKeyword(_)
         | ir::Expression::TrueKeyword(_)
         | ir::Expression::FalseKeyword(_) => None,
     }

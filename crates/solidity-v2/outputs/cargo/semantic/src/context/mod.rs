@@ -18,8 +18,8 @@ use crate::passes::{
 };
 use crate::types::{
     ArrayType, ByteArrayType, ContractType, EnumType, FixedPointNumberType, FixedSizeArrayType,
-    IntegerType, InterfaceType, LibraryType, MappingType, StructType, TupleType, Type, TypeId,
-    TypeRegistry, UserDefinedValueType,
+    IntegerType, InterfaceType, LibraryType, MappingType, MetaType, StructType, TupleType, Type,
+    TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
 };
 
 mod contract_data;
@@ -287,6 +287,13 @@ impl SemanticContext {
             | Type::UserDefinedValue(UserDefinedValueType { definition_id }) => {
                 self.definition_canonical_name(*definition_id)
             }
+            // Meta-types print in solc's `type(T)` notation.
+            Type::MetaType(MetaType { type_id }) => {
+                format!("type({})", self.type_internal_name(*type_id))
+            }
+            Type::UserMetaType(UserMetaType { definition_id }) => {
+                format!("type({})", self.definition_canonical_name(*definition_id))
+            }
             Type::Void => "void".to_string(),
         }
     }
@@ -374,7 +381,12 @@ impl SemanticContext {
                 )
             }
 
-            Type::Library(_) | Type::Literal(_) | Type::Tuple(_) | Type::Void => None,
+            Type::Library(_)
+            | Type::Literal(_)
+            | Type::MetaType(_)
+            | Type::Tuple(_)
+            | Type::UserMetaType(_)
+            | Type::Void => None,
         }
     }
 }

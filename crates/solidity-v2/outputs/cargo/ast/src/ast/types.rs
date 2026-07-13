@@ -30,10 +30,12 @@ pub enum Type {
     Library(LibraryType),
     Literal(LiteralType),
     Mapping(MappingType),
+    MetaType(MetaType),
     String(StringType),
     Struct(StructType),
     Tuple(TupleType),
     UserDefinedValue(UserDefinedValueType),
+    UserMetaType(UserMetaType),
     Void(VoidType),
 }
 
@@ -78,9 +80,11 @@ define_type_variant!(Function);
 define_type_variant!(Interface);
 define_type_variant!(Library);
 define_type_variant!(Mapping);
+define_type_variant!(Meta);
 define_type_variant!(Struct);
 define_type_variant!(Tuple);
 define_type_variant!(UserDefinedValue);
+define_type_variant!(UserMeta);
 
 #[derive(Clone)]
 pub struct LiteralType {
@@ -125,11 +129,15 @@ impl Type {
             types::Type::Library(inner) => Self::Library(LibraryType { inner, semantic }),
             types::Type::Literal(inner) => Self::Literal(LiteralType { inner }),
             types::Type::Mapping(inner) => Self::Mapping(MappingType { inner, semantic }),
+            types::Type::MetaType(inner) => Self::MetaType(MetaType { inner, semantic }),
             types::Type::String(inner) => Self::String(StringType { inner }),
             types::Type::Struct(inner) => Self::Struct(StructType { inner, semantic }),
             types::Type::Tuple(inner) => Self::Tuple(TupleType { inner, semantic }),
             types::Type::UserDefinedValue(inner) => {
                 Self::UserDefinedValue(UserDefinedValueType { inner, semantic })
+            }
+            types::Type::UserMetaType(inner) => {
+                Self::UserMetaType(UserMetaType { inner, semantic })
             }
             types::Type::Void => Self::Void(VoidType),
         }
@@ -319,6 +327,23 @@ impl LiteralType {
             types::Type::Address(inner) => Some(Type::Address(AddressType { inner })),
             _ => None,
         })
+    }
+}
+
+impl MetaType {
+    /// Returns the type this is a meta-type of, eg. `uint` for the meta-type of
+    /// the `uint` in `uint(x)`.
+    pub fn meta_type(&self) -> Type {
+        Type::create(self.inner.type_id, &self.semantic)
+    }
+}
+
+impl UserMetaType {
+    /// Returns the user-defined type definition this meta-type refers to, eg.
+    /// the contract, struct or enum named by the expression.
+    pub fn definition(&self) -> Definition {
+        Definition::try_create(self.inner.definition_id, &self.semantic)
+            .expect("invalid user meta-type definition")
     }
 }
 

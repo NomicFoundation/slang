@@ -19,7 +19,7 @@ use crate::passes::common::constant_evaluator::{
     evaluate_compile_time_constant, ConstantResolver, EvaluationError,
 };
 use crate::passes::common::{find_definition_namespace_scope_id, node_location};
-use crate::types::{ContractType, InterfaceType, StructType, Type, TypeId};
+use crate::types::{ContractType, InterfaceType, StructType, Type, TypeId, UserMetaType};
 
 /// Lexical style resolution of symbols
 impl Pass<'_> {
@@ -151,26 +151,6 @@ impl Pass<'_> {
                 // No legacy constructor call options in >= 0.8.0
                 Resolution::Unresolved
             }
-            Typing::MetaType(type_) => {
-                if let Some(built_in) = BuiltInsResolver::lookup_member_of_meta_type(type_, symbol)
-                {
-                    Resolution::BuiltIn(built_in)
-                } else {
-                    Resolution::Unresolved
-                }
-            }
-            Typing::UserMetaType(node_id) => {
-                // We're trying to resolve a member access expression into a
-                // type name, ie. this is a meta-type member access
-                let Some(definition) = self.binder.find_definition_by_id(*node_id) else {
-                    return Resolution::Unresolved;
-                };
-                if let Some(scope_id) = find_definition_namespace_scope_id(self.binder, *node_id) {
-                    self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
-                } else {
-                    BuiltInsResolver::lookup_member_of_user_definition(definition, symbol).into()
-                }
-            }
             Typing::BuiltIn(built_in) => self
                 .built_ins_resolver()
                 .lookup_member_of(built_in, symbol)
@@ -199,6 +179,12 @@ impl Pass<'_> {
             Type::Struct(StructType { definition_id, .. }) => {
                 let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
                 self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
+            }
+            Type::UserMetaType(UserMetaType { definition_id }) => {
+                find_definition_namespace_scope_id(self.binder, *definition_id)
+                    .map_or(Resolution::Unresolved, |scope_id| {
+                        self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
+                    })
             }
             _ => Resolution::Unresolved,
         }

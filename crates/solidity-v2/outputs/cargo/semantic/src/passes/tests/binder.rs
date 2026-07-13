@@ -276,9 +276,10 @@ contract Test is Base {
     let types_after = types.iter_types().count();
 
     // The pass registers new types for: contracts, mappings, structs, enums,
-    // function types, getter types, etc.
+    // function types, getter types, and a `Type::UserMetaType` for each
+    // type-naming definition (the two contracts, the struct, and the enum).
     let registered_types = types_after - types_before;
-    assert_eq!(registered_types, 7);
+    assert_eq!(registered_types, 11);
 }
 
 #[test]
