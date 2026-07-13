@@ -5,7 +5,7 @@ Diagnostics: 1
 [syntax/multiple-visibility-specifiers] Error: Only a single visibility specifier can be provided.
    ╭─[input.sol:5:36]
    │
- 5 │   function foo(function() external internal returns (uint) callback) {}
+ 5 │   function foo(function() external internal returns (uint) callback) public {}
    │                                    ────┬───  
    │                                        ╰───── Error occurred here.
 ───╯

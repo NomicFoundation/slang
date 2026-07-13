@@ -2,7 +2,7 @@ struct Counter {
     uint value;
 }
 
-function increment(Counter memory _counter) public {}
+function increment(Counter memory _counter) {}
 
 using {increment} for Counter;
 

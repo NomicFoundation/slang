@@ -35,7 +35,7 @@ Bindings:
     │         ─┬─  
     │          ╰─── ref: 7
     │ 
-  4 │   function someFunc(int x) returns (int) {
+  4 │   function someFunc(int x) public returns (int) {
     │            ────┬───     ┬  
     │                ╰─────────── name: 2
     │                         │  
@@ -55,14 +55,14 @@ Bindings:
     │                  │   
     │                  ╰─── ref: 8
     │ 
-  9 │   function add(int, int32) returns (int);
+  9 │   function add(int, int32) public returns (int);
     │            ─┬─  
     │             ╰─── name: 6
     │ 
  12 │ library Lib {
     │         ─┬─  
     │          ╰─── name: 7
- 13 │   function add(int, int) returns (int);
+ 13 │   function add(int, int) public returns (int);
     │            ─┬─  
     │             ╰─── name: 8
 ────╯

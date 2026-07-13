@@ -26,7 +26,7 @@ Bindings:
  1 │ contract A {
    │          ┬  
    │          ╰── name: 1
- 2 │     function f(int _x) {}
+ 2 │     function f(int _x) public {}
    │              ┬     ─┬  
    │              ╰───────── name: 2
    │                     │  

@@ -9,7 +9,7 @@ contract Other {
 }
 
 contract Test {
-  function someFunc(Other x, int y) {
+  function someFunc(Other x, int y) public {
     x.overloaded{ value: 10, gas: 1000 }();
     x.overloaded{ value: 10, gas: 1000 }(y);
   }

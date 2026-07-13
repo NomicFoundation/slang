@@ -3,7 +3,7 @@ enum Answer {
 }
 
 library Id {
-    function id(Answer ans) returns (Answer) {
+    function id(Answer ans) public returns (Answer) {
         return ans;
     }
 }
@@ -11,7 +11,7 @@ library Id {
 contract Test {
     using Id for Answer;
 
-    function testFunc() {
+    function testFunc() public {
         // min/max should bind in >= 0.8.8
         type(Answer).min.id();
         type(Answer).max.id();

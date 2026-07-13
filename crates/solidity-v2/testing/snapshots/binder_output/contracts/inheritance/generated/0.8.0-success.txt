@@ -24,7 +24,7 @@ Bindings:
  1 │ contract Base {
    │          ──┬─  
    │            ╰─── name: 1
- 2 │     function base_func() returns (int) {
+ 2 │     function base_func() public returns (int) {
    │              ────┬────  
    │                  ╰────── name: 2
    │ 
@@ -33,7 +33,7 @@ Bindings:
    │             ╰───────────── name: 3
    │                       │   
    │                       ╰─── ref: 1
- 8 │     function some_func() returns (int) {
+ 8 │     function some_func() public returns (int) {
    │              ────┬────  
    │                  ╰────── name: 4
  9 │         return 1 + base_func();

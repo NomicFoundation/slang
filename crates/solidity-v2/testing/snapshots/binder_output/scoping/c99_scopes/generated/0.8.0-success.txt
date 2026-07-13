@@ -31,7 +31,7 @@ Bindings:
    │          ┬  
    │          ╰── name: 2
    │ 
- 4 │     function a_func(uint x) returns (uint) {
+ 4 │     function a_func(uint x) public returns (uint) {
    │              ───┬──      ┬  
    │                 ╰─────────── name: 3
    │                          │  

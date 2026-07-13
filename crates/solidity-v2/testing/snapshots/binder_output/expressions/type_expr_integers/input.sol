@@ -1,7 +1,7 @@
 contract Test {
     using Utils for uint;
 
-    function test() {
+    function test() public {
         type(uint).min.nop();
         type(uint).max.nop();
     }

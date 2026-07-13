@@ -2,5 +2,5 @@
 pragma solidity *;
 
 contract Test {
-  function foo(function() external internal returns (uint) callback) {}
+  function foo(function() external internal returns (uint) callback) public {}
 }

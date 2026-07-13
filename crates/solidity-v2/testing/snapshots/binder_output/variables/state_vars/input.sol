@@ -1,7 +1,7 @@
 contract Foo {
     uint x;
 
-    function bar() returns (uint) {
+    function bar() public returns (uint) {
         return x;
     }
 }

@@ -52,7 +52,7 @@ Bindings:
     │                ───┬───  
     │                   ╰───── name: 7
     │ 
-  9 │     function test() {
+  9 │     function test() public {
     │              ──┬─  
     │                ╰─── name: 8
  10 │         emit Log({message: "testing", level: Severity.Info});
