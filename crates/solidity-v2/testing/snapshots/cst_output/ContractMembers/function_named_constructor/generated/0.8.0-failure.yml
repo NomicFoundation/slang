@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/constructor/function_named_constructor.sol?plain=1#L5 │ 0..134
+  2  │                                                                                                                                        │ 135..135
+  3  │ contract C {                                                                                                                           │ 136..148
+  4  │   function constructor() public {}                                                                                                     │ 149..183
+  5  │ }                                                                                                                                      │ 184..185
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected ConstructorKeyword. One of AtKeyword, ErrorKeyword, FallbackKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, OpenParen, ReceiveKeyword, RevertKeyword, TransientKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractMembers/function_named_constructor/input.sol:4:12]
+       │
+     4 │   function constructor() public {}
+       │            ─────┬─────  
+       │                 ╰─────── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

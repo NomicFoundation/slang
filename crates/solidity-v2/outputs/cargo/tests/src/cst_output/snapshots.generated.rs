@@ -282,6 +282,11 @@ mod contract_members {
     }
 
     #[test]
+    fn function_named_constructor() -> Result<()> {
+        run("ContractMembers", "function_named_constructor")
+    }
+
+    #[test]
     fn local_expression() -> Result<()> {
         run("ContractMembers", "local_expression")
     }
@@ -1600,6 +1605,15 @@ mod source_unit {
     #[test]
     fn using_directive() -> Result<()> {
         run("SourceUnit", "using_directive")
+    }
+}
+
+mod source_unit_members {
+    use super::*;
+
+    #[test]
+    fn function_named_constructor() -> Result<()> {
+        run("SourceUnitMembers", "function_named_constructor")
     }
 }
 
