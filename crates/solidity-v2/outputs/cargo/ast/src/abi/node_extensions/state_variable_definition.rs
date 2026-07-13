@@ -45,7 +45,7 @@ impl StateVariableDefinitionStruct {
         let (inputs, _) = self.extract_getter_type_parameters_abi()?;
         let parameters = inputs
             .into_iter()
-            .map(|parameter| parameter.type_name().to_owned())
+            .map(|parameter| parameter.type_name())
             .collect::<Vec<_>>()
             .join(",");
         Some(format!(
