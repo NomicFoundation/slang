@@ -386,6 +386,11 @@ mod decimal_number_expression {
     }
 
     #[test]
+    fn float_underscore_after_exponent() -> Result<()> {
+        run("DecimalNumberExpression", "float_underscore_after_exponent")
+    }
+
+    #[test]
     fn float_with_exponent() -> Result<()> {
         run("DecimalNumberExpression", "float_with_exponent")
     }
@@ -418,6 +423,14 @@ mod decimal_number_expression {
         run(
             "DecimalNumberExpression",
             "integer_period_ident_negative_exponent_like",
+        )
+    }
+
+    #[test]
+    fn integer_underscore_after_exponent() -> Result<()> {
+        run(
+            "DecimalNumberExpression",
+            "integer_underscore_after_exponent",
         )
     }
 
