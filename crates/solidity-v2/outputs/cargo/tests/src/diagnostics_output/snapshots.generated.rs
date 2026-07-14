@@ -883,6 +883,11 @@ mod structure {
     }
 
     #[test]
+    fn free_function_payable() -> Result<()> {
+        run("structure", "free_function_payable")
+    }
+
+    #[test]
     fn free_function_visibility() -> Result<()> {
         run("structure", "free_function_visibility")
     }

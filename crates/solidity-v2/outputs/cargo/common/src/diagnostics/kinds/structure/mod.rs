@@ -5,6 +5,7 @@ mod continue_outside_loop;
 mod empty_enum;
 mod empty_struct;
 mod enum_with_too_many_members;
+mod free_function_payable;
 mod free_function_visibility;
 mod function_name_matches_container;
 mod interface_function_not_external;
@@ -32,6 +33,7 @@ pub use continue_outside_loop::ContinueOutsideLoop;
 pub use empty_enum::EmptyEnum;
 pub use empty_struct::EmptyStruct;
 pub use enum_with_too_many_members::EnumWithTooManyMembers;
+pub use free_function_payable::FreeFunctionPayable;
 pub use free_function_visibility::FreeFunctionVisibility;
 pub use function_name_matches_container::FunctionNameMatchesContainer;
 pub use interface_function_not_external::InterfaceFunctionNotExternal;
@@ -120,7 +122,8 @@ define_diagnostic_kind! {
 
         /// An `internal` or `private` function is marked `payable`.
         PayableInternalOrPrivateFunction(PayableInternalOrPrivateFunction),
-
+        /// A free function is marked `payable`.
+        FreeFunctionPayable(FreeFunctionPayable),
         /// A function type is marked `payable` but is not `external`.
         PayableFunctionTypeMustBeExternal(PayableFunctionTypeMustBeExternal),
 

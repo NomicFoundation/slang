@@ -3,12 +3,12 @@ use std::sync::Arc;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     AbstractContractPublicConstructor, BreakOutsideLoop, ConstructorNotInContract,
-    ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FreeFunctionVisibility,
-    FunctionNameMatchesContainer, InterfaceFunctionNotExternal, InvalidUsingDirectiveContainer,
-    LibraryPayableFunction, LibraryVirtualFunction, LibraryVirtualModifier,
-    MissingFunctionVisibility, MultipleConstructors, NonAbstractContractInternalConstructor,
-    PayableInternalOrPrivateFunction, UnimplementedModifierMustBeVirtual, VirtualFreeFunction,
-    VirtualPrivateFunction,
+    ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FreeFunctionPayable,
+    FreeFunctionVisibility, FunctionNameMatchesContainer, InterfaceFunctionNotExternal,
+    InvalidUsingDirectiveContainer, LibraryPayableFunction, LibraryVirtualFunction,
+    LibraryVirtualModifier, MissingFunctionVisibility, MultipleConstructors,
+    NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
+    UnimplementedModifierMustBeVirtual, VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -298,9 +298,16 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
             }
         }
 
-        // A free (file-level) function cannot specify a visibility modifier.
-        if node.attributes.has_explicit_visibility && self.current_scope_is_file() {
-            self.report(node, FreeFunctionVisibility);
+        if self.current_scope_is_file() {
+            // A free (file-level) function cannot specify a visibility modifier.
+            if node.attributes.has_explicit_visibility {
+                self.report(node, FreeFunctionVisibility);
+            }
+
+            // A free (file-level) function cannot be `payable`.
+            if node.attributes.mutability == ir::FunctionMutability::Payable {
+                self.report(node, FreeFunctionPayable);
+            }
         }
 
         // The remaining checks only concern regular (named) functions.
