@@ -941,6 +941,11 @@ mod structure {
     }
 
     #[test]
+    fn library_payable_function() -> Result<()> {
+        run("structure", "library_payable_function")
+    }
+
+    #[test]
     fn library_receive_function() -> Result<()> {
         run("structure", "library_receive_function")
     }

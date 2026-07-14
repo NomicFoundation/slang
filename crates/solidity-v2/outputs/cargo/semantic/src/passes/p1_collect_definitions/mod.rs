@@ -5,9 +5,10 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     AbstractContractPublicConstructor, BreakOutsideLoop, ConstructorNotInContract,
     ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FreeFunctionVisibility,
     FunctionNameMatchesContainer, InterfaceFunctionNotExternal, InvalidUsingDirectiveContainer,
-    LibraryVirtualFunction, LibraryVirtualModifier, MissingFunctionVisibility,
-    MultipleConstructors, NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
-    UnimplementedModifierMustBeVirtual, VirtualFreeFunction, VirtualPrivateFunction,
+    LibraryPayableFunction, LibraryVirtualFunction, LibraryVirtualModifier,
+    MissingFunctionVisibility, MultipleConstructors, NonAbstractContractInternalConstructor,
+    PayableInternalOrPrivateFunction, UnimplementedModifierMustBeVirtual, VirtualFreeFunction,
+    VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
@@ -307,6 +308,18 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
             }
         }
 
+        // A function declared in a library cannot be `payable`.
+        if node.kind == ir::FunctionKind::Regular
+            && node.attributes.mutability == ir::FunctionMutability::Payable
+            && self.current_scope_is_library()
+        {
+            self.diagnostics.push(
+                self.current_file.id().to_owned(),
+                node.range.clone(),
+                LibraryPayableFunction,
+            );
+        }
+
         // An `internal` or `private` function cannot be `payable`. This only
         // applies to an explicitly-declared visibility (an unspecified one
         // defaults to `internal` but is reported as a missing-visibility error
@@ -372,35 +385,43 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
             );
         }
 
-        // A constructor's visibility must be consistent with the contract's
-        // abstract-ness. This only applies when an explicit visibility is given
-        // (a constructor with no visibility is always fine). Only `public` and
-        // `internal` are grammatically valid on constructors.
-        if node.kind == ir::FunctionKind::Constructor && node.attributes.has_explicit_visibility {
-            if let Some(Definition::Contract(contract_definition)) = self.enclosing_definition() {
-                match (
-                    node.attributes.visibility,
-                    contract_definition.ir_node.is_abstract,
-                ) {
-                    // An abstract contract cannot expose a `public` constructor.
-                    (ir::FunctionVisibility::Public, true) => {
-                        self.diagnostics.push(
-                            self.current_file.id().to_owned(),
-                            node.range.clone(),
-                            AbstractContractPublicConstructor,
-                        );
-                    }
-                    // A non-abstract contract cannot have an `internal` constructor.
-                    (ir::FunctionVisibility::Internal, false) => {
-                        self.diagnostics.push(
-                            self.current_file.id().to_owned(),
-                            node.range.clone(),
-                            NonAbstractContractInternalConstructor,
-                        );
-                    }
-                    _ => {}
-                }
+        self.check_constructor_visibility(node);
+    }
+
+    /// A constructor's visibility must be consistent with the contract's
+    /// abstract-ness. This only applies when an explicit visibility is given
+    /// (a constructor with no visibility is always fine). Only `public` and
+    /// `internal` are grammatically valid on constructors.
+    fn check_constructor_visibility(&mut self, node: &ir::FunctionDefinition) {
+        if node.kind != ir::FunctionKind::Constructor || !node.attributes.has_explicit_visibility {
+            return;
+        }
+
+        let Some(Definition::Contract(contract_definition)) = self.enclosing_definition() else {
+            return;
+        };
+
+        match (
+            node.attributes.visibility,
+            contract_definition.ir_node.is_abstract,
+        ) {
+            // An abstract contract cannot expose a `public` constructor.
+            (ir::FunctionVisibility::Public, true) => {
+                self.diagnostics.push(
+                    self.current_file.id().to_owned(),
+                    node.range.clone(),
+                    AbstractContractPublicConstructor,
+                );
             }
+            // A non-abstract contract cannot have an `internal` constructor.
+            (ir::FunctionVisibility::Internal, false) => {
+                self.diagnostics.push(
+                    self.current_file.id().to_owned(),
+                    node.range.clone(),
+                    NonAbstractContractInternalConstructor,
+                );
+            }
+            _ => {}
         }
     }
 
