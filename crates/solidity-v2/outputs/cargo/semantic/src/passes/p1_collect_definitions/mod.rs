@@ -10,6 +10,7 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     PayableInternalOrPrivateFunction, UnimplementedModifierMustBeVirtual, VirtualFreeFunction,
     VirtualPrivateFunction,
 };
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -142,20 +143,33 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         self.binder.find_definition_by_id(scope.node_id())
     }
 
+    /// Reports a diagnostic against the text range of the given IR node.
+    fn report(&mut self, node: &dyn ir::TextRange, kind: impl Into<DiagnosticKind>) {
+        self.diagnostics.push(
+            self.current_file.id().to_owned(),
+            node.calculate_text_range()
+                .expect("IR node is expected to have a range."),
+            kind,
+        );
+    }
+
     /// Whether the current (enclosing) scope belongs to a library definition.
-    fn current_scope_is_library(&mut self) -> bool {
+    fn current_scope_is_library(&self) -> bool {
         matches!(self.enclosing_definition(), Some(Definition::Library(_)))
     }
 
     /// Whether the current (enclosing) scope belongs to an interface definition.
-    fn current_scope_is_interface(&mut self) -> bool {
+    fn current_scope_is_interface(&self) -> bool {
         matches!(self.enclosing_definition(), Some(Definition::Interface(_)))
     }
 
     /// Whether the current (enclosing) scope is the file scope, i.e. the
     /// definition is a free (file-level) one.
-    fn current_scope_is_file(&mut self) -> bool {
-        matches!(self.current_scope(), Scope::File(_))
+    fn current_scope_is_file(&self) -> bool {
+        matches!(
+            self.binder.get_scope_by_id(self.current_scope_id()),
+            Scope::File(_)
+        )
     }
 
     fn current_file_scope(&mut self) -> &mut FileScope {
@@ -184,11 +198,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         )
         .is_some()
         {
-            self.diagnostics.push(
-                self.current_file.id().to_owned(),
-                definition.identifier().range.clone(),
-                IdentifierRedeclaration,
-            );
+            self.report(definition.identifier(), IdentifierRedeclaration);
         }
         self.binder.insert_definition_in_scope(definition, scope_id);
     }
@@ -211,11 +221,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
                 // Parameters cannot overload, so any earlier parameter with
                 // the same name is a redeclaration.
                 if scope.lookup_definition(&name.text).is_some() {
-                    self.diagnostics.push(
-                        self.current_file.id().to_owned(),
-                        name.range.clone(),
-                        IdentifierRedeclaration,
-                    );
+                    self.report(name, IdentifierRedeclaration);
                 }
                 let definition = Definition::new_parameter(parameter);
                 self.binder.insert_definition_no_scope(definition);
@@ -256,11 +262,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
                     .constructor_parameters_scope_id
                     .is_some()
                 {
-                    self.diagnostics.push(
-                        self.current_file.id().to_owned(),
-                        node.range.clone(),
-                        MultipleConstructors,
-                    );
+                    self.report(node, MultipleConstructors);
                 } else {
                     contract_definition.constructor_parameters_scope_id =
                         Some(constructor_parameters_scope_id);
@@ -283,106 +285,75 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         if node.attributes.is_virtual {
             // A function declared in a library cannot be marked `virtual`.
             if self.current_scope_is_library() {
-                self.diagnostics.push(
-                    self.current_file.id().to_owned(),
-                    node.range.clone(),
-                    LibraryVirtualFunction,
-                );
+                self.report(node, LibraryVirtualFunction);
 
             // A free (file-level) function cannot be marked `virtual`.
             } else if self.current_scope_is_file() {
-                self.diagnostics.push(
-                    self.current_file.id().to_owned(),
-                    node.range.clone(),
-                    VirtualFreeFunction,
-                );
+                self.report(node, VirtualFreeFunction);
             }
 
             // A `virtual` function cannot also be marked `private`.
             if node.attributes.visibility == ir::FunctionVisibility::Private {
-                self.diagnostics.push(
-                    self.current_file.id().to_owned(),
-                    node.range.clone(),
-                    VirtualPrivateFunction,
-                );
+                self.report(node, VirtualPrivateFunction);
             }
-        }
-
-        // A function declared in a library cannot be `payable`.
-        if node.kind == ir::FunctionKind::Regular
-            && node.attributes.mutability == ir::FunctionMutability::Payable
-            && self.current_scope_is_library()
-        {
-            self.diagnostics.push(
-                self.current_file.id().to_owned(),
-                node.range.clone(),
-                LibraryPayableFunction,
-            );
-        }
-
-        // An `internal` or `private` function cannot be `payable`. This only
-        // applies to an explicitly-declared visibility (an unspecified one
-        // defaults to `internal` but is reported as a missing-visibility error
-        // instead, matching solc which does not additionally flag it here).
-        if node.kind == ir::FunctionKind::Regular
-            && node.attributes.has_explicit_visibility
-            && node.attributes.mutability == ir::FunctionMutability::Payable
-            && matches!(
-                node.attributes.visibility,
-                ir::FunctionVisibility::Internal | ir::FunctionVisibility::Private
-            )
-        {
-            self.diagnostics.push(
-                self.current_file.id().to_owned(),
-                node.range.clone(),
-                PayableInternalOrPrivateFunction,
-            );
         }
 
         // A free (file-level) function cannot specify a visibility modifier.
         if node.attributes.has_explicit_visibility && self.current_scope_is_file() {
-            self.diagnostics.push(
-                self.current_file.id().to_owned(),
-                node.range.clone(),
-                FreeFunctionVisibility,
-            );
+            self.report(node, FreeFunctionVisibility);
         }
 
-        // Conversely, a regular function inside a contract, interface
-        // or library must specify a visibility. Constructors are exempt,
-        // and fallback/receive functions have their required visibility
-        // enforced during IR construction.
-        if node.kind == ir::FunctionKind::Regular
-            && !node.attributes.has_explicit_visibility
-            && !self.current_scope_is_file()
-        {
-            let suggested_visibility = if self.current_scope_is_interface() {
-                "external"
-            } else {
-                "public"
-            };
-            self.diagnostics.push(
-                self.current_file.id().to_owned(),
-                node.range.clone(),
-                MissingFunctionVisibility {
-                    suggested_visibility: suggested_visibility.to_owned(),
-                },
-            );
-        }
+        // The remaining checks only concern regular (named) functions.
+        // Constructors are handled by `check_constructor_visibility`, and
+        // fallback/receive functions have their required attributes enforced
+        // during IR construction.
+        if node.kind == ir::FunctionKind::Regular {
+            // A function declared in a library cannot be `payable`.
+            if node.attributes.mutability == ir::FunctionMutability::Payable
+                && self.current_scope_is_library()
+            {
+                self.report(node, LibraryPayableFunction);
+            }
 
-        // A function declared in an interface must be `external`. This also
-        // fires when no visibility is specified (which defaults to non-external),
-        // matching solc's behavior of reporting it alongside the missing-visibility
-        // diagnostic above.
-        if node.kind == ir::FunctionKind::Regular
-            && self.current_scope_is_interface()
-            && node.attributes.visibility != ir::FunctionVisibility::External
-        {
-            self.diagnostics.push(
-                self.current_file.id().to_owned(),
-                node.range.clone(),
-                InterfaceFunctionNotExternal,
-            );
+            // An `internal` or `private` function cannot be `payable`. This only
+            // applies to an explicitly-declared visibility (an unspecified one
+            // defaults to `internal` but is reported as a missing-visibility error
+            // instead, matching solc which does not additionally flag it here).
+            if node.attributes.has_explicit_visibility
+                && node.attributes.mutability == ir::FunctionMutability::Payable
+                && matches!(
+                    node.attributes.visibility,
+                    ir::FunctionVisibility::Internal | ir::FunctionVisibility::Private
+                )
+            {
+                self.report(node, PayableInternalOrPrivateFunction);
+            }
+
+            // Conversely to a free function, a regular function inside a
+            // contract, interface or library must specify a visibility.
+            if !node.attributes.has_explicit_visibility && !self.current_scope_is_file() {
+                let suggested_visibility = if self.current_scope_is_interface() {
+                    "external"
+                } else {
+                    "public"
+                };
+                self.report(
+                    node,
+                    MissingFunctionVisibility {
+                        suggested_visibility: suggested_visibility.to_owned(),
+                    },
+                );
+            }
+
+            // A function declared in an interface must be `external`. This also
+            // fires when no visibility is specified (which defaults to non-external),
+            // matching solc's behavior of reporting it alongside the missing-visibility
+            // diagnostic above.
+            if self.current_scope_is_interface()
+                && node.attributes.visibility != ir::FunctionVisibility::External
+            {
+                self.report(node, InterfaceFunctionNotExternal);
+            }
         }
 
         self.check_constructor_visibility(node);
@@ -407,19 +378,11 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         ) {
             // An abstract contract cannot expose a `public` constructor.
             (ir::FunctionVisibility::Public, true) => {
-                self.diagnostics.push(
-                    self.current_file.id().to_owned(),
-                    node.range.clone(),
-                    AbstractContractPublicConstructor,
-                );
+                self.report(node, AbstractContractPublicConstructor);
             }
             // A non-abstract contract cannot have an `internal` constructor.
             (ir::FunctionVisibility::Internal, false) => {
-                self.diagnostics.push(
-                    self.current_file.id().to_owned(),
-                    node.range.clone(),
-                    NonAbstractContractInternalConstructor,
-                );
+                self.report(node, NonAbstractContractInternalConstructor);
             }
             _ => {}
         }
@@ -428,20 +391,12 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     fn check_modifier_attributes(&mut self, node: &ir::FunctionDefinition) {
         // A modifier without an implementation body must be marked `virtual`.
         if node.body.is_none() && !node.attributes.is_virtual {
-            self.diagnostics.push(
-                self.current_file.id().to_owned(),
-                node.range.clone(),
-                UnimplementedModifierMustBeVirtual,
-            );
+            self.report(node, UnimplementedModifierMustBeVirtual);
         }
 
         // A modifier declared in a library cannot be marked `virtual`.
         if node.attributes.is_virtual && self.current_scope_is_library() {
-            self.diagnostics.push(
-                self.current_file.id().to_owned(),
-                node.range.clone(),
-                LibraryVirtualModifier,
-            );
+            self.report(node, LibraryVirtualModifier);
         }
     }
 }
@@ -512,11 +467,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         };
 
         if !in_allowed_container {
-            self.diagnostics.push(
-                self.current_file.id().to_owned(),
-                node.range.clone(),
-                InvalidUsingDirectiveContainer,
-            );
+            self.report(node, InvalidUsingDirectiveContainer);
         }
 
         true
@@ -579,11 +530,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                     if enclosing_container_name
                         .is_some_and(|container_name| container_name == name.unparse())
                     {
-                        self.diagnostics.push(
-                            self.current_file.id().to_owned(),
-                            node.range.clone(),
-                            FunctionNameMatchesContainer,
-                        );
+                        self.report(node, FunctionNameMatchesContainer);
 
                         // Skip registering the function symbol in the current scope
                         // to avoid interference with resolution.
@@ -631,17 +578,9 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         // An enum must declare at least one member, and at most 256 (its values
         // must fit in a single byte).
         if node.members.is_empty() {
-            self.diagnostics.push(
-                self.current_file.id().to_owned(),
-                node.range.clone(),
-                EmptyEnum,
-            );
+            self.report(node, EmptyEnum);
         } else if node.members.len() > 256 {
-            self.diagnostics.push(
-                self.current_file.id().to_owned(),
-                node.range.clone(),
-                EnumWithTooManyMembers,
-            );
+            self.report(node, EnumWithTooManyMembers);
         }
 
         let enum_scope = Scope::new_enum(node.id());
@@ -660,11 +599,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
 
         // A struct must declare at least one member.
         if node.members.is_empty() {
-            self.diagnostics.push(
-                self.current_file.id().to_owned(),
-                node.range.clone(),
-                EmptyStruct,
-            );
+            self.report(node, EmptyStruct);
         }
 
         let struct_scope = Scope::new_struct(node.id());
@@ -789,11 +724,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         // A `break` statement is only valid inside a `for`, `while` or
         // `do-while` loop.
         if self.loop_depth == 0 {
-            self.diagnostics.push(
-                self.current_file.id().to_owned(),
-                node.range.clone(),
-                BreakOutsideLoop,
-            );
+            self.report(node, BreakOutsideLoop);
         }
         true
     }
@@ -802,11 +733,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         // A `continue` statement is only valid inside a `for`, `while` or
         // `do-while` loop.
         if self.loop_depth == 0 {
-            self.diagnostics.push(
-                self.current_file.id().to_owned(),
-                node.range.clone(),
-                ContinueOutsideLoop,
-            );
+            self.report(node, ContinueOutsideLoop);
         }
         true
     }
