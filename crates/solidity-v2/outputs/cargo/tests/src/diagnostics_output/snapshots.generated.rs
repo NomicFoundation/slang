@@ -971,6 +971,11 @@ mod structure {
     }
 
     #[test]
+    fn payable_internal_or_private_function() -> Result<()> {
+        run("structure", "payable_internal_or_private_function")
+    }
+
+    #[test]
     fn storage_layout_for_abstract_contract() -> Result<()> {
         run("structure", "storage_layout_for_abstract_contract")
     }

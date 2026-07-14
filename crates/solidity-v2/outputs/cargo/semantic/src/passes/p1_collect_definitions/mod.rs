@@ -6,7 +6,7 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FreeFunctionVisibility,
     FunctionNameMatchesContainer, InterfaceFunctionNotExternal, InvalidUsingDirectiveContainer,
     LibraryVirtualFunction, LibraryVirtualModifier, MissingFunctionVisibility,
-    MultipleConstructors, NonAbstractContractInternalConstructor,
+    MultipleConstructors, NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
     UnimplementedModifierMustBeVirtual, VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -305,6 +305,25 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
                     VirtualPrivateFunction,
                 );
             }
+        }
+
+        // An `internal` or `private` function cannot be `payable`. This only
+        // applies to an explicitly-declared visibility (an unspecified one
+        // defaults to `internal` but is reported as a missing-visibility error
+        // instead, matching solc which does not additionally flag it here).
+        if node.kind == ir::FunctionKind::Regular
+            && node.attributes.has_explicit_visibility
+            && node.attributes.mutability == ir::FunctionMutability::Payable
+            && matches!(
+                node.attributes.visibility,
+                ir::FunctionVisibility::Internal | ir::FunctionVisibility::Private
+            )
+        {
+            self.diagnostics.push(
+                self.current_file.id().to_owned(),
+                node.range.clone(),
+                PayableInternalOrPrivateFunction,
+            );
         }
 
         // A free (file-level) function cannot specify a visibility modifier.

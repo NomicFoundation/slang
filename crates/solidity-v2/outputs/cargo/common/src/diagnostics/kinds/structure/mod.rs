@@ -16,6 +16,7 @@ mod library_virtual_modifier;
 mod missing_function_visibility;
 mod multiple_constructors;
 mod non_abstract_contract_internal_constructor;
+mod payable_internal_or_private_function;
 mod storage_layout_for_abstract_contract;
 mod unimplemented_modifier_must_be_virtual;
 mod uninitialized_constant;
@@ -40,6 +41,7 @@ pub use library_virtual_modifier::LibraryVirtualModifier;
 pub use missing_function_visibility::MissingFunctionVisibility;
 pub use multiple_constructors::MultipleConstructors;
 pub use non_abstract_contract_internal_constructor::NonAbstractContractInternalConstructor;
+pub use payable_internal_or_private_function::PayableInternalOrPrivateFunction;
 use serde::Serialize;
 pub use storage_layout_for_abstract_contract::StorageLayoutForAbstractContract;
 pub use unimplemented_modifier_must_be_virtual::UnimplementedModifierMustBeVirtual;
@@ -110,6 +112,9 @@ define_diagnostic_kind! {
         VirtualFreeFunction(VirtualFreeFunction),
         /// A function is marked both `virtual` and `private`.
         VirtualPrivateFunction(VirtualPrivateFunction),
+
+        /// An `internal` or `private` function is marked `payable`.
+        PayableInternalOrPrivateFunction(PayableInternalOrPrivateFunction),
 
         /// A `constant` is declared without an initializer value.
         UninitializedConstant(UninitializedConstant),
