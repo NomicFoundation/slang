@@ -91,22 +91,12 @@ jobs:
     permissions:
       contents: "read"
 
-    # Not common-setup: uses the cooldown cache (not deps/target) and runs no 'infra setup'.
+    # Not common-setup: needs no build artifacts and runs no 'infra setup'.
     steps:
       - name: "Checkout Repository"
         uses: "actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10" # v6.0.3
         with:
           persist-credentials: false
-          fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
-
-      - name: "Restore file mtimes from git"
-        uses: "./.github/actions/git/restore-mtime"
-
-      # Cache is updated in this workflow, and reused in subsequent workflows.
-      # Always start with a fresh cache when running on the main branch.
-      - name: "Restore Cargo Cooldown Cache"
-        if: "${{ github.ref_name != 'main' }}"
-        uses: "./.github/actions/cache/cargo-cooldown/restore"
 
       - name: "Setup SFW (optional)"
         uses: "./.github/actions/setup-sfw"
@@ -115,10 +105,6 @@ jobs:
 
       - name: "Cargo cooldown check"
         run: "${SFW_PREFIX:-} ./scripts/bin/with-hermit cargo cooldown-check"
-
-      - name: "Save Cargo Cooldown Cache"
-        if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
-        uses: "./.github/actions/cache/cargo-cooldown/save"
 
   renovate-config-check:
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
