@@ -42,6 +42,12 @@
       "allowedVersions": "<1.0.0"
     },
     {
+      "description": "num-bigint: 0.5 is ahead of its ecosystem — num-rational (latest 0.4.2) and ruint's num-bigint feature still bind to num-bigint 0.4, so bumping leaves two incompatible majors in the tree and the Ratio<BigInt>/Uint<->BigInt conversions in solidity-v2 fail to compile. Stay on 0.4.x until num-rational and ruint publish 0.5-compatible releases. See PR #1940.",
+      "matchPackageNames": ["num-bigint"],
+      "matchManagers": ["cargo"],
+      "allowedVersions": "<0.5"
+    },
+    {
       "description": "@types/node: no automatic major bumps — Node majors are upgraded manually and only to even LTS releases (e.g. 24 → 26). Minor/patch within the current major flow through normally.",
       "matchPackageNames": ["@types/node"],
       "matchUpdateTypes": ["major"],
