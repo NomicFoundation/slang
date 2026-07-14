@@ -264,7 +264,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let parameters = self.build_parameters_declaration(&source.parameters);
 
-        let attributes = self.build_function_type_attributes(&source.attributes);
+        let attributes = self.build_function_type_attributes(source, &source.attributes);
         let returns = source
             .returns
             .as_ref()

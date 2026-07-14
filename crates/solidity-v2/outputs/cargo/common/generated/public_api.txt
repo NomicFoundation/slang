@@ -620,6 +620,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnostic
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::MissingFunctionVisibility(slang_solidity_v2_common::diagnostics::kinds::structure::MissingFunctionVisibility)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::MultipleConstructors(slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::NonAbstractContractInternalConstructor(slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::PayableFunctionTypeMustBeExternal(slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::PayableInternalOrPrivateFunction(slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::StorageLayoutForAbstractContract(slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UnimplementedModifierMustBeVirtual(slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual)
@@ -669,6 +670,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -1054,6 +1057,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction
@@ -1879,6 +1901,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -2189,6 +2213,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction::message(&self) -> alloc::string::String

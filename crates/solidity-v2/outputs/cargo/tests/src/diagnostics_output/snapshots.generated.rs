@@ -975,6 +975,42 @@ mod structure {
         run("structure", "non_abstract_contract_internal_constructor")
     }
 
+    mod payable_function_type_must_be_external {
+        use super::*;
+
+        #[test]
+        fn default_visibility() -> Result<()> {
+            run(
+                "structure/payable_function_type_must_be_external",
+                "default_visibility",
+            )
+        }
+
+        #[test]
+        fn explicit_internal() -> Result<()> {
+            run(
+                "structure/payable_function_type_must_be_external",
+                "explicit_internal",
+            )
+        }
+
+        #[test]
+        fn external_allowed() -> Result<()> {
+            run(
+                "structure/payable_function_type_must_be_external",
+                "external_allowed",
+            )
+        }
+
+        #[test]
+        fn non_payable() -> Result<()> {
+            run(
+                "structure/payable_function_type_must_be_external",
+                "non_payable",
+            )
+        }
+    }
+
     #[test]
     fn payable_internal_or_private_function() -> Result<()> {
         run("structure", "payable_internal_or_private_function")
