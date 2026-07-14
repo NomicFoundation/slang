@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/unexpected-terminal] Error: Unexpected LibraryKeyword. One of ContractKeyword was expected
+   ╭─[input.sol:7:10]
+   │
+ 7 │ abstract library L {}
+   │          ───┬───  
+   │             ╰───── Error occurred here.
+───╯

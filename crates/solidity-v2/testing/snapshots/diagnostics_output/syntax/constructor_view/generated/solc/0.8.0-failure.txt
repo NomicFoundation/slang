@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 1558] Error: Constructor must be payable or non-payable, but is "view".
+   ╭─[input.sol:8:5]
+   │
+ 8 │     constructor() view {}
+   │     ──────────┬──────────  
+   │               ╰──────────── Error occurred here.
+───╯
