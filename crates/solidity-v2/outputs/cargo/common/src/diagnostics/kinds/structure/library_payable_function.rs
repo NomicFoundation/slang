@@ -17,6 +17,6 @@ impl DiagnosticExtensions for LibraryPayableFunction {
     }
 
     fn message(&self) -> String {
-        "Library functions cannot be payable.".to_string()
+        "Library functions cannot be \"payable\".".to_string()
     }
 }

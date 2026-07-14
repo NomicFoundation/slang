@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[structure/abstract-contract-public-constructor] Error: Abstract contracts cannot have public constructors. Remove the "public" keyword to fix this.
+[structure/abstract-contract-public-constructor] Error: Abstract contracts cannot have "public" constructors. Remove the "public" keyword to fix this.
    ╭─[input.sol:6:5]
    │
  6 │     constructor() public {}

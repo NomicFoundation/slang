@@ -17,6 +17,6 @@ impl DiagnosticExtensions for PayableFunctionTypeMustBeExternal {
     }
 
     fn message(&self) -> String {
-        "Only external function types can be payable.".to_string()
+        "Only \"external\" function types can be \"payable\".".to_string()
     }
 }

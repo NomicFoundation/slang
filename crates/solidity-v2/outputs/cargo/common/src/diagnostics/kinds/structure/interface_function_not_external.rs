@@ -17,6 +17,6 @@ impl DiagnosticExtensions for InterfaceFunctionNotExternal {
     }
 
     fn message(&self) -> String {
-        "Functions in interfaces must be declared external.".to_string()
+        "Functions in interfaces must be declared \"external\".".to_string()
     }
 }

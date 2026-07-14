@@ -17,6 +17,6 @@ impl DiagnosticExtensions for PayableInternalOrPrivateFunction {
     }
 
     fn message(&self) -> String {
-        "\"internal\" and \"private\" functions cannot be payable.".to_string()
+        "\"internal\" and \"private\" functions cannot be \"payable\".".to_string()
     }
 }

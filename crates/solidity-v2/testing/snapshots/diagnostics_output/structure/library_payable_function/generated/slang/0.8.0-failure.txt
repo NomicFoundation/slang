@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[structure/library-payable-function] Error: Library functions cannot be payable.
+[structure/library-payable-function] Error: Library functions cannot be "payable".
    ╭─[input.sol:6:5]
    │
  6 │     function pay() public payable {}

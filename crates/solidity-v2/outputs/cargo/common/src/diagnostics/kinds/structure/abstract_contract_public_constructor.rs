@@ -17,6 +17,6 @@ impl DiagnosticExtensions for AbstractContractPublicConstructor {
     }
 
     fn message(&self) -> String {
-        "Abstract contracts cannot have public constructors. Remove the \"public\" keyword to fix this.".to_string()
+        "Abstract contracts cannot have \"public\" constructors. Remove the \"public\" keyword to fix this.".to_string()
     }
 }

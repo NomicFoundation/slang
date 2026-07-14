@@ -17,6 +17,6 @@ impl DiagnosticExtensions for NonAbstractContractInternalConstructor {
     }
 
     fn message(&self) -> String {
-        "Non-abstract contracts cannot have internal constructors. Remove the \"internal\" keyword and make the contract abstract to fix this.".to_string()
+        "Non-abstract contracts cannot have \"internal\" constructors. Remove the \"internal\" keyword and make the contract abstract to fix this.".to_string()
     }
 }
