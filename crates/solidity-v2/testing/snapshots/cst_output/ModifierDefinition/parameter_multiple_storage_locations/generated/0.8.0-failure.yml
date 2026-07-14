@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract A {                                                                                                                    │ 0..12
+  2  │     // https://github.com/argotorg/solidity/blob/v0.8.18/test/libsolidity/syntaxTests/modifiers/multiple_parameter_location.sol │ 13..140
+  3  │     modifier mod(string storage memory a) { _; }                                                                                │ 141..189
+  4  │ }                                                                                                                               │ 190..191
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected MemoryKeyword. One of AtKeyword, CloseParen, Comma, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ModifierDefinition/parameter_multiple_storage_locations/input.sol:3:33]
+       │
+     3 │     modifier mod(string storage memory a) { _; }
+       │                                 ───┬──  
+       │                                    ╰──── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

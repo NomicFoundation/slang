@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                              │ 0..12
+  2  │     function f() {                                                                                                        │ 13..31
+  3  │         assembly {                                                                                                        │ 32..50
+  4  │             // https://github.com/argotorg/solidity/blob/v0.8.0/test/libyul/yulSyntaxTests/switch_statement_no_access.yul │ 51..172
+  5  │                                                                                                                           │ 173..173
+  6  │             switch 42                                                                                                     │ 174..195
+  7  │         }                                                                                                                 │ 196..205
+  8  │     }                                                                                                                     │ 206..211
+  9  │ }                                                                                                                         │ 212..213
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected YulCloseBrace. One of YulCaseKeyword, YulDefaultKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulStatement/switch_no_cases/input.sol:7:9]
+       │
+     7 │         }
+       │         ┬  
+       │         ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

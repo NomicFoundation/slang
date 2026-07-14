@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                     │ 0..12
+  2  │     function f() {                                                                                               │ 13..31
+  3  │         assembly {                                                                                               │ 32..50
+  4  │             // https://github.com/argotorg/solidity/blob/v0.8.0/test/libyul/yulSyntaxTests/number_literals_4.yul │ 51..163
+  5  │             let x := 67.235                                                                                      │ 164..191
+  6  │         }                                                                                                        │ 192..201
+  7  │     }                                                                                                            │ 202..207
+  8  │ }                                                                                                                │ 208..209
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected YulPeriod. One of YulBreakKeyword, YulCloseBrace, YulContinueKeyword, YulDecimalLiteral, YulFalseKeyword, YulForKeyword, YulFunctionKeyword, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulIfKeyword, YulLeaveKeyword, YulLetKeyword, YulOpenBrace, YulOpenParen, YulStringLiteral, YulSwitchKeyword, YulTrueKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulExpression/decimal_fraction/input.sol:5:24]
+       │
+     5 │             let x := 67.235
+       │                        ┬  
+       │                        ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

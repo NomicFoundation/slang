@@ -282,6 +282,11 @@ mod contract_members {
     }
 
     #[test]
+    fn function_named_constructor() -> Result<()> {
+        run("ContractMembers", "function_named_constructor")
+    }
+
+    #[test]
     fn local_expression() -> Result<()> {
         run("ContractMembers", "local_expression")
     }
@@ -381,6 +386,11 @@ mod decimal_number_expression {
     }
 
     #[test]
+    fn float_underscore_after_exponent() -> Result<()> {
+        run("DecimalNumberExpression", "float_underscore_after_exponent")
+    }
+
+    #[test]
     fn float_with_exponent() -> Result<()> {
         run("DecimalNumberExpression", "float_with_exponent")
     }
@@ -413,6 +423,14 @@ mod decimal_number_expression {
         run(
             "DecimalNumberExpression",
             "integer_period_ident_negative_exponent_like",
+        )
+    }
+
+    #[test]
+    fn integer_underscore_after_exponent() -> Result<()> {
+        run(
+            "DecimalNumberExpression",
+            "integer_underscore_after_exponent",
         )
     }
 
@@ -493,6 +511,11 @@ mod enum_definition {
     #[test]
     fn no_members() -> Result<()> {
         run("EnumDefinition", "no_members")
+    }
+
+    #[test]
+    fn trailing_comma() -> Result<()> {
+        run("EnumDefinition", "trailing_comma")
     }
 }
 
@@ -1016,8 +1039,18 @@ mod function_definition {
     }
 
     #[test]
+    fn parameter_multiple_storage_locations() -> Result<()> {
+        run("FunctionDefinition", "parameter_multiple_storage_locations")
+    }
+
+    #[test]
     fn pure_state_mutability() -> Result<()> {
         run("FunctionDefinition", "pure_state_mutability")
+    }
+
+    #[test]
+    fn return_multiple_storage_locations() -> Result<()> {
+        run("FunctionDefinition", "return_multiple_storage_locations")
     }
 }
 
@@ -1241,6 +1274,11 @@ mod modifier_definition {
     #[test]
     fn override_attr() -> Result<()> {
         run("ModifierDefinition", "override_attr")
+    }
+
+    #[test]
+    fn parameter_multiple_storage_locations() -> Result<()> {
+        run("ModifierDefinition", "parameter_multiple_storage_locations")
     }
 }
 
@@ -1603,6 +1641,15 @@ mod source_unit {
     }
 }
 
+mod source_unit_members {
+    use super::*;
+
+    #[test]
+    fn function_named_constructor() -> Result<()> {
+        run("SourceUnitMembers", "function_named_constructor")
+    }
+}
+
 mod state_variable_definition {
     use super::*;
 
@@ -1806,6 +1853,11 @@ mod try_statement {
     use super::*;
 
     #[test]
+    fn catch_parameter_multiple_storage_locations() -> Result<()> {
+        run("TryStatement", "catch_parameter_multiple_storage_locations")
+    }
+
+    #[test]
     fn method_call() -> Result<()> {
         run("TryStatement", "method_call")
     }
@@ -1823,6 +1875,11 @@ mod try_statement {
     #[test]
     fn method_call_with_options_and_body() -> Result<()> {
         run("TryStatement", "method_call_with_options_and_body")
+    }
+
+    #[test]
+    fn returns_multiple_storage_locations() -> Result<()> {
+        run("TryStatement", "returns_multiple_storage_locations")
     }
 }
 
@@ -2137,6 +2194,11 @@ mod variable_declaration_statement {
     }
 
     #[test]
+    fn multiple_storage_locations() -> Result<()> {
+        run("VariableDeclarationStatement", "multiple_storage_locations")
+    }
+
+    #[test]
     fn var() -> Result<()> {
         run("VariableDeclarationStatement", "var")
     }
@@ -2224,6 +2286,21 @@ mod yul_expression {
     use super::*;
 
     #[test]
+    fn decimal_exponent() -> Result<()> {
+        run("YulExpression", "decimal_exponent")
+    }
+
+    #[test]
+    fn decimal_fraction() -> Result<()> {
+        run("YulExpression", "decimal_fraction")
+    }
+
+    #[test]
+    fn decimal_leading_dot() -> Result<()> {
+        run("YulExpression", "decimal_leading_dot")
+    }
+
+    #[test]
     fn decimal_literal() -> Result<()> {
         run("YulExpression", "decimal_literal")
     }
@@ -2288,6 +2365,15 @@ mod yul_function_call_expression {
     }
 }
 
+mod yul_function_definition {
+    use super::*;
+
+    #[test]
+    fn identifier_with_trailing_dot() -> Result<()> {
+        run("YulFunctionDefinition", "identifier_with_trailing_dot")
+    }
+}
+
 mod yul_label {
     use super::*;
 
@@ -2334,6 +2420,11 @@ mod yul_statement {
     }
 
     #[test]
+    fn switch_no_cases() -> Result<()> {
+        run("YulStatement", "switch_no_cases")
+    }
+
+    #[test]
     fn var_assign_colon_and_equals() -> Result<()> {
         run("YulStatement", "var_assign_colon_and_equals")
     }
@@ -2360,6 +2451,22 @@ mod yul_variable_assignment_statement {
     fn identifier_and() -> Result<()> {
         run("YulVariableAssignmentStatement", "identifier_and")
     }
+
+    #[test]
+    fn multiple_literal_before_var() -> Result<()> {
+        run(
+            "YulVariableAssignmentStatement",
+            "multiple_literal_before_var",
+        )
+    }
+
+    #[test]
+    fn multiple_var_before_literal() -> Result<()> {
+        run(
+            "YulVariableAssignmentStatement",
+            "multiple_var_before_literal",
+        )
+    }
 }
 
 mod yul_variable_declaration_statement {
@@ -2373,6 +2480,14 @@ mod yul_variable_declaration_statement {
     #[test]
     fn identifier_with_dots() -> Result<()> {
         run("YulVariableDeclarationStatement", "identifier_with_dots")
+    }
+
+    #[test]
+    fn identifier_with_trailing_dot() -> Result<()> {
+        run(
+            "YulVariableDeclarationStatement",
+            "identifier_with_trailing_dot",
+        )
     }
 
     #[test]

@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                                                              │ 0..12
+  2  │     function f() public {                                                                                                                                 │ 13..38
+  3  │         // https://github.com/argotorg/solidity/blob/v0.8.18/test/libsolidity/syntaxTests/tryCatch/multiple_returns_vars_and_catch_parameter_location.sol │ 39..192
+  4  │         try this.f() {} catch (string memory calldata x) {}                                                                                               │ 193..252
+  5  │     }                                                                                                                                                     │ 253..258
+  6  │ }                                                                                                                                                         │ 259..260
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected CallDataKeyword. One of AtKeyword, CloseParen, Comma, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/TryStatement/catch_parameter_multiple_storage_locations/input.sol:4:46]
+       │
+     4 │         try this.f() {} catch (string memory calldata x) {}
+       │                                              ────┬───  
+       │                                                  ╰───── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                                                              │ 0..12
+  2  │     function f() public returns (string memory) {                                                                                                         │ 13..62
+  3  │         // https://github.com/argotorg/solidity/blob/v0.8.18/test/libsolidity/syntaxTests/tryCatch/multiple_returns_vars_and_catch_parameter_location.sol │ 63..216
+  4  │         try this.f() returns (string memory storage a) {} catch {}                                                                                        │ 217..283
+  5  │     }                                                                                                                                                     │ 284..289
+  6  │ }                                                                                                                                                         │ 290..291
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected StorageKeyword. One of AtKeyword, CloseParen, Comma, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/TryStatement/returns_multiple_storage_locations/input.sol:4:45]
+       │
+     4 │         try this.f() returns (string memory storage a) {} catch {}
+       │                                             ───┬───  
+       │                                                ╰───── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

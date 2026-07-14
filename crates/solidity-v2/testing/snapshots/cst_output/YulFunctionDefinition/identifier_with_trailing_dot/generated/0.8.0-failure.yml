@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                          │ 0..12
+  2  │     function f() {                                                                                                    │ 13..31
+  3  │         assembly {                                                                                                    │ 32..50
+  4  │             // https://github.com/argotorg/solidity/blob/v0.8.30/test/libyul/yulSyntaxTests/dot_trailing_function.yul │ 51..168
+  5  │             function x.() {}                                                                                          │ 169..197
+  6  │         }                                                                                                             │ 198..207
+  7  │     }                                                                                                                 │ 208..213
+  8  │ }                                                                                                                     │ 214..215
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected YulPeriod. One of YulOpenParen was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulFunctionDefinition/identifier_with_trailing_dot/input.sol:5:23]
+       │
+     5 │             function x.() {}
+       │                       ┬  
+       │                       ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

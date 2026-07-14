@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/parsing/malformed_enum_declaration.sol │ 0..119
+  2  │                                                                                                                         │ 120..120
+  3  │ enum foo {                                                                                                              │ 121..131
+  4  │     WARNING,                                                                                                            │ 132..144
+  5  │ }                                                                                                                       │ 145..146
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected CloseBrace. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/EnumDefinition/trailing_comma/input.sol:5:1]
+       │
+     5 │ }
+       │ ┬  
+       │ ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []
