@@ -1,0 +1,26 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // SPDX-License-Identifier: MIT                                                  │ 0..31
+  2  │ pragma solidity *;                                                               │ 32..50
+  3  │                                                                                  │ 51..51
+  4  │ // solc reports DeclarationError 1788 ("The \"constant\" keyword can only be     │ 52..128
+  5  │ // used for state variables or variables at file level") during analysis,        │ 129..202
+  6  │ // whereas slang rejects it at the parser: the grammar does not allow            │ 203..272
+  7  │ // `constant` on a function parameter.                                           │ 273..311
+  8  │ contract C {                                                                     │ 312..324
+  9  │     function f(uint constant x) internal pure {}                                 │ 325..373
+  10 │ }                                                                                │ 374..375
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected ConstantKeyword. One of AtKeyword, CallDataKeyword, CloseParen, Comma, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, MemoryKeyword, RevertKeyword, StorageKeyword, TransientKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionDefinition/constant_parameter/input.sol:9:21]
+       │
+     9 │     function f(uint constant x) internal pure {}
+       │                     ────┬───  
+       │                         ╰───── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

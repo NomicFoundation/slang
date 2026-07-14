@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // SPDX-License-Identifier: MIT                                                  │ 0..31
+  2  │ pragma solidity *;                                                               │ 32..50
+  3  │                                                                                  │ 51..51
+  4  │ // solc reports TypeError 1558 ("Constructor must be payable or non-payable...") │ 52..132
+  5  │ // during type checking, whereas slang rejects it at the parser: the grammar's   │ 133..211
+  6  │ // constructor attributes do not include `view`/`pure`.                          │ 212..267
+  7  │ contract View {                                                                  │ 268..283
+  8  │     constructor() view {}                                                        │ 284..309
+  9  │ }                                                                                │ 310..311
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected ViewKeyword. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, InternalKeyword, LayoutKeyword, OpenBrace, PayableKeyword, PublicKeyword, RevertKeyword, TransientKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ConstructorDefinition/view_attribute/input.sol:8:19]
+       │
+     8 │     constructor() view {}
+       │                   ──┬─  
+       │                     ╰─── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

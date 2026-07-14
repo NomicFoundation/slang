@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // SPDX-License-Identifier: MIT                                                  │ 0..31
+  2  │ pragma solidity *;                                                               │ 32..50
+  3  │                                                                                  │ 51..51
+  4  │ // solc reports TypeError 9239 ("Constructor cannot have visibility") during     │ 52..128
+  5  │ // type checking, whereas slang rejects it at the parser: the grammar's          │ 129..200
+  6  │ // constructor attributes do not include visibility keywords.                    │ 201..262
+  7  │ contract C {                                                                     │ 263..275
+  8  │     constructor() external {}                                                    │ 276..305
+  9  │ }                                                                                │ 306..307
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected ExternalKeyword. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, InternalKeyword, LayoutKeyword, OpenBrace, PayableKeyword, PublicKeyword, RevertKeyword, TransientKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ConstructorDefinition/visibility_attribute/input.sol:8:19]
+       │
+     8 │     constructor() external {}
+       │                   ────┬───  
+       │                       ╰───── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []
