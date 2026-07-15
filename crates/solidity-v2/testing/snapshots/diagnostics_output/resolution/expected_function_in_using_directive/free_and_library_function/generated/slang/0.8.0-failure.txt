@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
+    ╭─[input.sol:15:11]
+    │
+ 15 │     using {f, L.g} for uint256;
+    │           ────┬───  
+    │               ╰───── Error occurred here.
+────╯

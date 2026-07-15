@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4357] Error: Library name expected. If you want to attach a function, use '{...}'.
+   ╭─[input.sol:7:11]
+   │
+ 7 │     using Other for *;
+   │           ──┬──  
+   │             ╰──── Error occurred here.
+───╯

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 8187] Error: Expected function name.
+   ╭─[input.sol:7:12]
+   │
+ 7 │     using {x} for uint256;
+   │            ┬  
+   │            ╰── Error occurred here.
+───╯

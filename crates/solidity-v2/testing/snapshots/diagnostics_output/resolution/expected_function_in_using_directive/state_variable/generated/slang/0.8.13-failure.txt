@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/identifier-not-function-or-not-unique] Error: Identifier is not a function name or not unique.
+   ╭─[input.sol:7:12]
+   │
+ 7 │     using {x} for uint256;
+   │            ┬  
+   │            ╰── Error occurred here.
+───╯

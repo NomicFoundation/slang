@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 8187] Error: Expected function name.
+   ╭─[input.sol:8:8]
+   │
+ 8 │ using {E} for T;
+   │        ┬  
+   │        ╰── Error occurred here.
+───╯

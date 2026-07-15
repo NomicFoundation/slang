@@ -1,5 +1,9 @@
 use num_traits::Signed;
 use ruint::aliases::U256;
+use slang_solidity_v2_common::diagnostics::kinds::resolution::{
+    IdentifierNotFunctionOrNotUnique, IdentifierNotLibraryName,
+    NonFreeOrLibraryFunctionInUsingDirective,
+};
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     ArrayLengthFractional, ArrayLengthNegative, ArrayLengthNotConstant, ArrayLengthTooLarge,
     ArrayLengthZero,
@@ -92,7 +96,7 @@ impl Pass<'_> {
     }
 
     /// Emits `kind` located at `node`.
-    fn push_diagnostic(
+    pub(super) fn push_diagnostic(
         &mut self,
         node: &(impl NodeIdentity + TextRange),
         kind: impl Into<DiagnosticKind>,
@@ -173,28 +177,70 @@ impl Pass<'_> {
         }
     }
 
+    /// Resolves the library named in a `using L for ...` directive to its
+    /// scope, or returns the diagnostic to report when it is not a valid
+    /// library.
     pub(super) fn find_library_scope_id_for_identifier_path(
         &self,
         identifier_path: &ir::IdentifierPath,
-    ) -> Option<ScopeId> {
-        let definition_id = identifier_path
+    ) -> Result<ScopeId, DiagnosticKind> {
+        let resolution = identifier_path
             .last()
             .and_then(|identifier| {
                 self.binder
                     .find_reference_by_identifier_node_id(identifier.id())
             })
-            .and_then(|reference| {
+            .map_or(Resolution::Unresolved, |reference| {
                 // reference may resolve to an imported library, so we need to
                 // follow aliases
                 self.binder
                     .follow_symbol_aliases(reference.resolution.clone())
-                    .as_definition_id()
-            })?;
+            });
 
-        let Some(Definition::Library(_)) = self.binder.find_definition_by_id(definition_id) else {
-            // the referenced definition is not a library
-            return None;
-        };
-        self.binder.scope_id_for_node_id(definition_id)
+        // Must resolve to a unique library.
+        match resolution.as_definition_id() {
+            Some(definition_id)
+                if matches!(
+                    self.binder.find_definition_by_id(definition_id),
+                    Some(Definition::Library(_))
+                ) =>
+            {
+                Ok(self.binder.scope_id_for_node_id(definition_id).unwrap())
+            }
+            _ => Err(IdentifierNotLibraryName.into()),
+        }
+    }
+
+    /// Validates a `using {...} for` symbol. Returns the diagnostic for why it is
+    /// rejected, or `None` if it resolves to a single free or library function.
+    pub(super) fn validate_using_directive_symbol(
+        &self,
+        resolution: &Resolution,
+    ) -> Option<DiagnosticKind> {
+        match resolution {
+            Resolution::Definition(id) => match self.binder.find_definition_by_id(*id) {
+                Some(Definition::Function(_)) => {
+                    // A free function has no enclosing definition. A library
+                    // function is enclosed by its library.
+                    let is_free_or_library = self
+                        .binder
+                        .enclosing_definition_node_id(*id)
+                        .is_none_or(|enclosing_id| {
+                            matches!(
+                                self.binder.find_definition_by_id(enclosing_id),
+                                Some(Definition::Library(_))
+                            )
+                        });
+                    (!is_free_or_library).then(|| NonFreeOrLibraryFunctionInUsingDirective.into())
+                }
+                _ => Some(IdentifierNotFunctionOrNotUnique.into()),
+            },
+            // Global built-ins are not visible in the scope where using
+            // directives resolve, so a built-in never reaches here.
+            Resolution::BuiltIn(_) => unreachable!("built-ins do not resolve in a using directive"),
+            Resolution::Unresolved | Resolution::Ambiguous(_) => {
+                Some(IdentifierNotFunctionOrNotUnique.into())
+            }
+        }
     }
 }

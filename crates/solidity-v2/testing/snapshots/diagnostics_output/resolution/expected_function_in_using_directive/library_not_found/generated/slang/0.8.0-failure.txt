@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/identifier-not-library-name] Error: Identifier not found or not a library name.
+   ╭─[input.sol:5:11]
+   │
+ 5 │     using L for uint256;
+   │           ┬  
+   │           ╰── Error occurred here.
+───╯

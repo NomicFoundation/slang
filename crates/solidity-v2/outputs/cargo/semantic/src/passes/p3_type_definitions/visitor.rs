@@ -322,11 +322,14 @@ impl Visitor for Pass<'_> {
                 };
                 match &node.clause {
                     ir::UsingClause::IdentifierPath(identifier_path) => {
-                        let Some(scope_id) =
-                            self.find_library_scope_id_for_identifier_path(identifier_path)
-                        else {
-                            return;
-                        };
+                        let scope_id =
+                            match self.find_library_scope_id_for_identifier_path(identifier_path) {
+                                Ok(scope_id) => scope_id,
+                                Err(kind) => {
+                                    self.push_diagnostic(identifier_path.last().unwrap(), kind);
+                                    return;
+                                }
+                            };
                         UsingDirective::new_single_type(scope_id, type_id)
                     }
                     ir::UsingClause::UsingDeconstruction(using_deconstruction) => {
@@ -335,14 +338,19 @@ impl Visitor for Pass<'_> {
 
                         for symbol in &using_deconstruction.symbols {
                             let symbol_name = symbol.name.last().unwrap();
-                            let definition_ids = self
+                            let resolution = self
                                 .binder
                                 .find_reference_by_identifier_node_id(symbol_name.id())
-                                .map_or(Vec::new(), |reference| {
-                                    reference.resolution.get_definition_ids()
+                                .map_or(Resolution::Unresolved, |reference| {
+                                    self.binder
+                                        .follow_symbol_aliases(reference.resolution.clone())
                                 });
-                            // TODO(validation) SDR[29]: *all* definitions should point to functions
 
+                            if let Some(kind) = self.validate_using_directive_symbol(&resolution) {
+                                self.push_diagnostic(symbol_name, kind);
+                            }
+
+                            let definition_ids = resolution.get_definition_ids();
                             symbols.insert(symbol_name.unparse().to_string(), definition_ids);
 
                             if let Some(operator) = &symbol.alias {
@@ -369,11 +377,13 @@ impl Visitor for Pass<'_> {
                     // only libraries can be attached to all types
                     return;
                 };
-                let Some(scope_id) =
-                    self.find_library_scope_id_for_identifier_path(identifier_path)
-                else {
-                    // the identifier path does not point to a valid library
-                    return;
+                let scope_id = match self.find_library_scope_id_for_identifier_path(identifier_path)
+                {
+                    Ok(scope_id) => scope_id,
+                    Err(kind) => {
+                        self.push_diagnostic(identifier_path.last().unwrap(), kind);
+                        return;
+                    }
                 };
                 UsingDirective::new_all(scope_id)
             }

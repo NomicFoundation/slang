@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 2314] Error: Expected identifier but got '{'
+   ╭─[input.sol:5:11]
+   │
+ 5 │     using {f} for uint256;
+   │           ┬  
+   │           ╰── Error occurred here.
+───╯
