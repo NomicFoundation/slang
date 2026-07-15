@@ -5,10 +5,11 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     AbstractContractPublicConstructor, BreakOutsideLoop, ConstructorNotInContract,
     ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FreeFunctionPayable,
     FreeFunctionVisibility, FreeFunctionWithoutBody, FunctionNameMatchesContainer,
-    InterfaceFunctionNotExternal, InvalidUsingDirectiveContainer, LibraryPayableFunction,
-    LibraryVirtualFunction, LibraryVirtualModifier, MissingFunctionVisibility, MultipleConstructors,
-    NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
-    UnimplementedModifierMustBeVirtual, VirtualFreeFunction, VirtualPrivateFunction,
+    InterfaceFunctionNotExternal, InterfaceFunctionWithBody, InvalidUsingDirectiveContainer,
+    LibraryPayableFunction, LibraryVirtualFunction, LibraryVirtualModifier,
+    MissingFunctionVisibility, MultipleConstructors, NonAbstractContractInternalConstructor,
+    PayableInternalOrPrivateFunction, UnimplementedModifierMustBeVirtual, VirtualFreeFunction,
+    VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -557,6 +558,11 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                 // A free (file-level) function must have an implementation body.
                 if node.body.is_none() && self.current_scope_is_file() {
                     self.report(node, FreeFunctionWithoutBody);
+                }
+
+                // A function declared in an interface cannot have an implementation body.
+                if node.body.is_some() && self.current_scope_is_interface() {
+                    self.report(node, InterfaceFunctionWithBody);
                 }
 
                 let function_scope =

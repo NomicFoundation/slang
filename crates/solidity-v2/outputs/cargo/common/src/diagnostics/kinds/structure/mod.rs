@@ -10,6 +10,7 @@ mod free_function_visibility;
 mod free_function_without_body;
 mod function_name_matches_container;
 mod interface_function_not_external;
+mod interface_function_with_body;
 mod invalid_using_directive_container;
 mod library_fallback_function;
 mod library_payable_function;
@@ -38,6 +39,7 @@ pub use free_function_visibility::FreeFunctionVisibility;
 pub use free_function_without_body::FreeFunctionWithoutBody;
 pub use function_name_matches_container::FunctionNameMatchesContainer;
 pub use interface_function_not_external::InterfaceFunctionNotExternal;
+pub use interface_function_with_body::InterfaceFunctionWithBody;
 pub use invalid_using_directive_container::InvalidUsingDirectiveContainer;
 pub use library_fallback_function::LibraryFallbackFunction;
 pub use library_payable_function::LibraryPayableFunction;
@@ -84,6 +86,8 @@ define_diagnostic_kind! {
         /// A function declared in an interface is not `external`.
         InterfaceFunctionNotExternal(InterfaceFunctionNotExternal),
 
+        /// A function declared in an interface has an implementation body.
+        InterfaceFunctionWithBody(InterfaceFunctionWithBody),
         /// A free (file-level) function has no implementation body.
         FreeFunctionWithoutBody(FreeFunctionWithoutBody),
 
