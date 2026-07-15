@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Diagnostics: 2
+Diagnostics: 1
 
 [structure/constructor-not-in-contract] Error: Constructors can only be defined for contracts.
    ╭─[input.sol:6:5]
@@ -8,12 +8,4 @@ Diagnostics: 2
  6 │     constructor() {}
    │     ───────┬──────  
    │            ╰──────── Error occurred here.
-───╯
-
-[structure/interface-function-cannot-be-implemented] Error: Functions in interfaces cannot have an implementation.
-   ╭─[input.sol:6:5]
-   │
- 6 │     constructor() {}
-   │     ────────┬───────  
-   │             ╰───────── Error occurred here.
 ───╯

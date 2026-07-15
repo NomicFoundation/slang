@@ -563,8 +563,11 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                     }
                 } else {
                     // Conversely, a function declared in an interface cannot
-                    // have an implementation body.
-                    if self.current_scope_is_interface() {
+                    // have an implementation body. Skip constructors explicitly
+                    // as they cannot be in interfaces anyways.
+                    if self.current_scope_is_interface()
+                        && !matches!(node.kind, ir::FunctionKind::Constructor)
+                    {
                         self.report(node, InterfaceFunctionCannotBeImplemented);
                     }
                 }
