@@ -132,9 +132,9 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         *lexical_scope_id
     }
 
-    fn current_scope(&mut self) -> &mut Scope {
+    fn current_scope(&self) -> &Scope {
         let scope_id = self.current_scope_id();
-        self.binder.get_scope_mut(scope_id)
+        self.binder.get_scope_by_id(scope_id)
     }
 
     /// Returns the current (enclosing) definition
@@ -173,7 +173,8 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     }
 
     fn current_file_scope(&mut self) -> &mut FileScope {
-        let Scope::File(file_scope) = self.current_scope() else {
+        let scope_id = self.current_scope_id();
+        let Scope::File(file_scope) = self.binder.get_scope_mut(scope_id) else {
             unreachable!("current scope is not a file scope");
         };
         file_scope
