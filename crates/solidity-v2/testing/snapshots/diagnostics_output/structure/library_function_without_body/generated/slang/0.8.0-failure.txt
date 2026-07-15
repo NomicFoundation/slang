@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[structure/library-function-without-body] Error: Library functions must be implemented if declared.
+[structure/function-must-be-implemented] Error: Function must be implemented
    ╭─[input.sol:6:5]
    │
  6 │     function f1() internal returns (uint);

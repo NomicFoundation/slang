@@ -4,12 +4,12 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclar
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     AbstractContractPublicConstructor, BreakOutsideLoop, ConstructorNotInContract,
     ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FreeFunctionPayable,
-    FreeFunctionVisibility, FreeFunctionWithoutBody, FunctionNameMatchesContainer,
+    FreeFunctionVisibility, FunctionMustBeImplemented, FunctionNameMatchesContainer,
     InterfaceFunctionNotExternal, InterfaceFunctionWithBody, InvalidUsingDirectiveContainer,
-    LibraryFunctionWithoutBody, LibraryPayableFunction, LibraryVirtualFunction,
-    LibraryVirtualModifier, MissingFunctionVisibility, MultipleConstructors,
-    NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
-    UnimplementedModifierMustBeVirtual, VirtualFreeFunction, VirtualPrivateFunction,
+    LibraryPayableFunction, LibraryVirtualFunction, LibraryVirtualModifier,
+    MissingFunctionVisibility, MultipleConstructors, NonAbstractContractInternalConstructor,
+    PayableInternalOrPrivateFunction, UnimplementedModifierMustBeVirtual, VirtualFreeFunction,
+    VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -556,13 +556,10 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                 }
 
                 if node.body.is_none() {
-                    // A free (file-level) function must have an implementation body.
-                    if self.current_scope_is_file() {
-                        self.report(node, FreeFunctionWithoutBody);
-                    }
-                    // A function declared in a library must have an implementation body.
-                    else if self.current_scope_is_library() {
-                        self.report(node, LibraryFunctionWithoutBody);
+                    // A free (file-level) function or a function declared in a
+                    // library must have an implementation body.
+                    if self.current_scope_is_file() || self.current_scope_is_library() {
+                        self.report(node, FunctionMustBeImplemented);
                     }
                 } else {
                     // Conversely, a function declared in an interface cannot

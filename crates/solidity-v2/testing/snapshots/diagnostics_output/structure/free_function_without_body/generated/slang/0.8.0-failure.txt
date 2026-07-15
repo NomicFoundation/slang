@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[structure/free-function-without-body] Error: Free functions must be implemented.
+[structure/function-must-be-implemented] Error: Function must be implemented
    ╭─[input.sol:5:1]
    │
  5 │ function f1() returns (uint);
