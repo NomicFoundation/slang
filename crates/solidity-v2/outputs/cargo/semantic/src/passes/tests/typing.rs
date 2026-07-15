@@ -1589,3 +1589,26 @@ fn test_storage_base_slot_evaluation() {
         (None, Some(StorageLayoutBaseNotConstant.into())),
     );
 }
+
+#[test]
+fn test_user_meta_type_built_in_members() {
+    // Built-in members of a *type name* resolve through its meta-type: errors
+    // expose `selector`, and UDVTs expose `wrap`/`unwrap`.
+    let (type_, _) = type_of_expression_in_context("error Err(uint x);", "Err.selector");
+    assert_eq!(type_, Type::ByteArray(ByteArrayType { width: 4 }));
+
+    let (type_, _) = type_of_expression_in_context("type T is uint256;", "T.wrap(1)");
+    assert!(
+        matches!(type_, Type::UserDefinedValue(_)),
+        "expected `T.wrap(1)` to type as the UDVT, got {type_:?}",
+    );
+
+    let (type_, _) = type_of_expression_in_context("type T is uint256;", "T.unwrap(T.wrap(1))");
+    assert_eq!(
+        type_,
+        Type::Integer(IntegerType {
+            is_signed: false,
+            bits: 256
+        })
+    );
+}
