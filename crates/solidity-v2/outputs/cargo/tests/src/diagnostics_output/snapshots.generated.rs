@@ -974,41 +974,6 @@ mod structure {
 mod syntax {
     use super::*;
 
-    #[test]
-    fn abstract_interface() -> Result<()> {
-        run("syntax", "abstract_interface")
-    }
-
-    #[test]
-    fn abstract_library() -> Result<()> {
-        run("syntax", "abstract_library")
-    }
-
-    #[test]
-    fn constant_non_state_variable() -> Result<()> {
-        run("syntax", "constant_non_state_variable")
-    }
-
-    #[test]
-    fn constructor_pure() -> Result<()> {
-        run("syntax", "constructor_pure")
-    }
-
-    #[test]
-    fn constructor_view() -> Result<()> {
-        run("syntax", "constructor_view")
-    }
-
-    #[test]
-    fn constructor_with_visibility() -> Result<()> {
-        run("syntax", "constructor_with_visibility")
-    }
-
-    #[test]
-    fn constructor_without_body() -> Result<()> {
-        run("syntax", "constructor_without_body")
-    }
-
     mod expected_array_length_expression {
         use super::*;
 
@@ -1020,20 +985,6 @@ mod syntax {
         #[test]
         fn state_variable() -> Result<()> {
             run("syntax/expected_array_length_expression", "state_variable")
-        }
-    }
-
-    mod immutable_non_state_variable {
-        use super::*;
-
-        #[test]
-        fn file_level() -> Result<()> {
-            run("syntax/immutable_non_state_variable", "file_level")
-        }
-
-        #[test]
-        fn parameter() -> Result<()> {
-            run("syntax/immutable_non_state_variable", "parameter")
         }
     }
 
@@ -1244,11 +1195,6 @@ mod syntax {
     }
 
     #[test]
-    fn non_constant_file_level_variable() -> Result<()> {
-        run("syntax", "non_constant_file_level_variable")
-    }
-
-    #[test]
     fn unexpected_eof() -> Result<()> {
         run("syntax", "unexpected_eof")
     }
@@ -1265,11 +1211,6 @@ mod syntax {
         fn trailing_token() -> Result<()> {
             run("syntax/unexpected_terminal", "trailing_token")
         }
-    }
-
-    #[test]
-    fn virtual_constructor() -> Result<()> {
-        run("syntax", "virtual_constructor")
     }
 }
 

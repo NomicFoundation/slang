@@ -79,6 +79,11 @@ mod constant_definition {
     use super::*;
 
     #[test]
+    fn immutable_keyword() -> Result<()> {
+        run("ConstantDefinition", "immutable_keyword")
+    }
+
+    #[test]
     fn int() -> Result<()> {
         run("ConstantDefinition", "int")
     }
@@ -86,6 +91,11 @@ mod constant_definition {
     #[test]
     fn invalid_visibility() -> Result<()> {
         run("ConstantDefinition", "invalid_visibility")
+    }
+
+    #[test]
+    fn non_constant() -> Result<()> {
+        run("ConstantDefinition", "non_constant")
     }
 }
 
@@ -98,8 +108,18 @@ mod constructor_definition {
     }
 
     #[test]
+    fn pure_attribute() -> Result<()> {
+        run("ConstructorDefinition", "pure_attribute")
+    }
+
+    #[test]
     fn simple() -> Result<()> {
         run("ConstructorDefinition", "simple")
+    }
+
+    #[test]
+    fn view_attribute() -> Result<()> {
+        run("ConstructorDefinition", "view_attribute")
     }
 
     #[test]
@@ -108,8 +128,18 @@ mod constructor_definition {
     }
 
     #[test]
+    fn visibility_attribute() -> Result<()> {
+        run("ConstructorDefinition", "visibility_attribute")
+    }
+
+    #[test]
     fn with_returns() -> Result<()> {
         run("ConstructorDefinition", "with_returns")
+    }
+
+    #[test]
+    fn without_body() -> Result<()> {
+        run("ConstructorDefinition", "without_body")
     }
 }
 
@@ -1024,6 +1054,11 @@ mod function_definition {
     use super::*;
 
     #[test]
+    fn constant_parameter() -> Result<()> {
+        run("FunctionDefinition", "constant_parameter")
+    }
+
+    #[test]
     fn constant_state_mutability() -> Result<()> {
         run("FunctionDefinition", "constant_state_mutability")
     }
@@ -1031,6 +1066,11 @@ mod function_definition {
     #[test]
     fn from_contextual_keyword() -> Result<()> {
         run("FunctionDefinition", "from_contextual_keyword")
+    }
+
+    #[test]
+    fn immutable_parameter() -> Result<()> {
+        run("FunctionDefinition", "immutable_parameter")
     }
 
     #[test]
@@ -1234,8 +1274,22 @@ mod interface_definition {
     use super::*;
 
     #[test]
+    fn abstract_keyword() -> Result<()> {
+        run("InterfaceDefinition", "abstract_keyword")
+    }
+
+    #[test]
     fn sample_counter() -> Result<()> {
         run("InterfaceDefinition", "sample_counter")
+    }
+}
+
+mod library_definition {
+    use super::*;
+
+    #[test]
+    fn abstract_keyword() -> Result<()> {
+        run("LibraryDefinition", "abstract_keyword")
     }
 }
 
