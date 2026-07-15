@@ -9,8 +9,8 @@ mod free_function_payable;
 mod free_function_visibility;
 mod function_must_be_implemented;
 mod function_name_matches_container;
+mod interface_function_cannot_be_implemented;
 mod interface_function_not_external;
-mod interface_function_with_body;
 mod invalid_using_directive_container;
 mod library_fallback_function;
 mod library_payable_function;
@@ -38,8 +38,8 @@ pub use free_function_payable::FreeFunctionPayable;
 pub use free_function_visibility::FreeFunctionVisibility;
 pub use function_must_be_implemented::FunctionMustBeImplemented;
 pub use function_name_matches_container::FunctionNameMatchesContainer;
+pub use interface_function_cannot_be_implemented::InterfaceFunctionCannotBeImplemented;
 pub use interface_function_not_external::InterfaceFunctionNotExternal;
-pub use interface_function_with_body::InterfaceFunctionWithBody;
 pub use invalid_using_directive_container::InvalidUsingDirectiveContainer;
 pub use library_fallback_function::LibraryFallbackFunction;
 pub use library_payable_function::LibraryPayableFunction;
@@ -87,7 +87,7 @@ define_diagnostic_kind! {
         InterfaceFunctionNotExternal(InterfaceFunctionNotExternal),
 
         /// A function declared in an interface has an implementation body.
-        InterfaceFunctionWithBody(InterfaceFunctionWithBody),
+        InterfaceFunctionCannotBeImplemented(InterfaceFunctionCannotBeImplemented),
         /// A function that requires an implementation body (a free function or a
         /// library function) has none.
         FunctionMustBeImplemented(FunctionMustBeImplemented),

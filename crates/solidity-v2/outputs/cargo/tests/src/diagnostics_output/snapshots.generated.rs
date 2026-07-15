@@ -917,13 +917,13 @@ mod structure {
     }
 
     #[test]
-    fn interface_function_not_external() -> Result<()> {
-        run("structure", "interface_function_not_external")
+    fn interface_function_cannot_be_implemented() -> Result<()> {
+        run("structure", "interface_function_cannot_be_implemented")
     }
 
     #[test]
-    fn interface_function_with_body() -> Result<()> {
-        run("structure", "interface_function_with_body")
+    fn interface_function_not_external() -> Result<()> {
+        run("structure", "interface_function_not_external")
     }
 
     mod invalid_using_directive_container {

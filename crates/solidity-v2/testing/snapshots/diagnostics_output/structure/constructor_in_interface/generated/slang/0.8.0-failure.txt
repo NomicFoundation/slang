@@ -10,7 +10,7 @@ Diagnostics: 2
    │            ╰──────── Error occurred here.
 ───╯
 
-[structure/interface-function-with-body] Error: Functions in interfaces cannot have an implementation.
+[structure/interface-function-cannot-be-implemented] Error: Functions in interfaces cannot have an implementation.
    ╭─[input.sol:6:5]
    │
  6 │     constructor() {}

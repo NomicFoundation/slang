@@ -5,11 +5,11 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     AbstractContractPublicConstructor, BreakOutsideLoop, ConstructorNotInContract,
     ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FreeFunctionPayable,
     FreeFunctionVisibility, FunctionMustBeImplemented, FunctionNameMatchesContainer,
-    InterfaceFunctionNotExternal, InterfaceFunctionWithBody, InvalidUsingDirectiveContainer,
-    LibraryPayableFunction, LibraryVirtualFunction, LibraryVirtualModifier,
-    MissingFunctionVisibility, MultipleConstructors, NonAbstractContractInternalConstructor,
-    PayableInternalOrPrivateFunction, UnimplementedModifierMustBeVirtual, VirtualFreeFunction,
-    VirtualPrivateFunction,
+    InterfaceFunctionCannotBeImplemented, InterfaceFunctionNotExternal,
+    InvalidUsingDirectiveContainer, LibraryPayableFunction, LibraryVirtualFunction,
+    LibraryVirtualModifier, MissingFunctionVisibility, MultipleConstructors,
+    NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
+    UnimplementedModifierMustBeVirtual, VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -565,7 +565,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                     // Conversely, a function declared in an interface cannot
                     // have an implementation body.
                     if self.current_scope_is_interface() {
-                        self.report(node, InterfaceFunctionWithBody);
+                        self.report(node, InterfaceFunctionCannotBeImplemented);
                     }
                 }
 
