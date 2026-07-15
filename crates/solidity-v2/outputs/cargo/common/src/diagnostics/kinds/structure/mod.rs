@@ -7,6 +7,7 @@ mod empty_struct;
 mod enum_with_too_many_members;
 mod free_function_payable;
 mod free_function_visibility;
+mod free_function_without_body;
 mod function_name_matches_container;
 mod interface_function_not_external;
 mod invalid_using_directive_container;
@@ -34,6 +35,7 @@ pub use empty_struct::EmptyStruct;
 pub use enum_with_too_many_members::EnumWithTooManyMembers;
 pub use free_function_payable::FreeFunctionPayable;
 pub use free_function_visibility::FreeFunctionVisibility;
+pub use free_function_without_body::FreeFunctionWithoutBody;
 pub use function_name_matches_container::FunctionNameMatchesContainer;
 pub use interface_function_not_external::InterfaceFunctionNotExternal;
 pub use invalid_using_directive_container::InvalidUsingDirectiveContainer;
@@ -81,6 +83,10 @@ define_diagnostic_kind! {
 
         /// A function declared in an interface is not `external`.
         InterfaceFunctionNotExternal(InterfaceFunctionNotExternal),
+
+        /// A free (file-level) function has no implementation body.
+        FreeFunctionWithoutBody(FreeFunctionWithoutBody),
+
         /// A contract defines more than one constructor.
         MultipleConstructors(MultipleConstructors),
         /// A constructor is declared outside of a contract (i.e. in an interface or library).

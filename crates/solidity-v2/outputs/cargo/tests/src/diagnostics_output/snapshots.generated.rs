@@ -892,6 +892,11 @@ mod structure {
         run("structure", "free_function_visibility")
     }
 
+    #[test]
+    fn free_function_without_body() -> Result<()> {
+        run("structure", "free_function_without_body")
+    }
+
     mod function_name_matches_container {
         use super::*;
 

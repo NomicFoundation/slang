@@ -4,9 +4,9 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclar
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     AbstractContractPublicConstructor, BreakOutsideLoop, ConstructorNotInContract,
     ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FreeFunctionPayable,
-    FreeFunctionVisibility, FunctionNameMatchesContainer, InterfaceFunctionNotExternal,
-    InvalidUsingDirectiveContainer, LibraryPayableFunction, LibraryVirtualFunction,
-    LibraryVirtualModifier, MissingFunctionVisibility, MultipleConstructors,
+    FreeFunctionVisibility, FreeFunctionWithoutBody, FunctionNameMatchesContainer,
+    InterfaceFunctionNotExternal, InvalidUsingDirectiveContainer, LibraryPayableFunction,
+    LibraryVirtualFunction, LibraryVirtualModifier, MissingFunctionVisibility, MultipleConstructors,
     NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
     UnimplementedModifierMustBeVirtual, VirtualFreeFunction, VirtualPrivateFunction,
 };
@@ -552,6 +552,11 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                     // Register the constructor to resolve named parameters when
                     // constructing this contract
                     self.register_constructor(node, parameters_scope_id);
+                }
+
+                // A free (file-level) function must have an implementation body.
+                if node.body.is_none() && self.current_scope_is_file() {
+                    self.report(node, FreeFunctionWithoutBody);
                 }
 
                 let function_scope =
