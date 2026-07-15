@@ -424,6 +424,15 @@ impl Pass<'_> {
                         }));
                         Typing::Resolved(type_id)
                     }
+                    Some(Definition::Enum(_)) => {
+                        // explicit conversion from an integer to the enum
+                        // TODO(validation) SDR[868]: Only one argument expected
+                        // TODO(validation) SDR[1698]: Check the type of the argument is compatible
+                        let type_id = self.types.register_type(Type::Enum(EnumType {
+                            definition_id: node_id,
+                        }));
+                        Typing::Resolved(type_id)
+                    }
                     Some(Definition::Struct(_)) => {
                         // struct construction
                         let type_id = self.types.register_type(Type::Struct(StructType {

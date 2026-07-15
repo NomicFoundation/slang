@@ -1612,3 +1612,19 @@ fn test_user_meta_type_built_in_members() {
         })
     );
 }
+
+#[test]
+fn test_explicit_enum_cast() {
+    // Explicit conversion from an integer to an enum is valid Solidity and
+    // types as the enum.
+    let (type_, _) = type_of_expression_in_context("enum E { A, B }", "E(1)");
+    assert!(
+        matches!(type_, Type::Enum(_)),
+        "expected `E(1)` to type as the enum, got {type_:?}",
+    );
+
+    // User defined value types are not castable by name: conversion goes
+    // through `wrap`/`unwrap`.
+    let (type_, _) = try_type_of_expression_in_context("type T is uint256;", "T(1)");
+    assert_eq!(type_, None);
+}
