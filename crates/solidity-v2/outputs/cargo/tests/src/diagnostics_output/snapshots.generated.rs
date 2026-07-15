@@ -733,6 +733,110 @@ mod semantic {
             run("semantic/linearisation_impossible", "interface")
         }
     }
+
+    mod recursive_structs {
+        use super::*;
+
+        #[test]
+        fn cycle_feeds_deep_chain() -> Result<()> {
+            run("semantic/recursive_structs", "cycle_feeds_deep_chain")
+        }
+
+        #[test]
+        fn depth_exhausted() -> Result<()> {
+            run("semantic/recursive_structs", "depth_exhausted")
+        }
+
+        #[test]
+        fn direct() -> Result<()> {
+            run("semantic/recursive_structs", "direct")
+        }
+
+        #[test]
+        fn direct_dynamic_array() -> Result<()> {
+            run("semantic/recursive_structs", "direct_dynamic_array")
+        }
+
+        #[test]
+        fn direct_fixed_array() -> Result<()> {
+            run("semantic/recursive_structs", "direct_fixed_array")
+        }
+
+        #[test]
+        fn file_level() -> Result<()> {
+            run("semantic/recursive_structs", "file_level")
+        }
+
+        #[test]
+        fn indirect() -> Result<()> {
+            run("semantic/recursive_structs", "indirect")
+        }
+
+        #[test]
+        fn indirect_complex() -> Result<()> {
+            run("semantic/recursive_structs", "indirect_complex")
+        }
+
+        #[test]
+        fn indirect_dynamic_array1() -> Result<()> {
+            run("semantic/recursive_structs", "indirect_dynamic_array1")
+        }
+
+        #[test]
+        fn indirect_dynamic_array2() -> Result<()> {
+            run("semantic/recursive_structs", "indirect_dynamic_array2")
+        }
+
+        #[test]
+        fn indirect_dynamic_array3() -> Result<()> {
+            run("semantic/recursive_structs", "indirect_dynamic_array3")
+        }
+
+        #[test]
+        fn indirect_dynamic_multi_array() -> Result<()> {
+            run("semantic/recursive_structs", "indirect_dynamic_multi_array")
+        }
+
+        #[test]
+        fn indirect_fixed_array1() -> Result<()> {
+            run("semantic/recursive_structs", "indirect_fixed_array1")
+        }
+
+        #[test]
+        fn indirect_fixed_array2() -> Result<()> {
+            run("semantic/recursive_structs", "indirect_fixed_array2")
+        }
+
+        #[test]
+        fn indirect_fixed_array3() -> Result<()> {
+            run("semantic/recursive_structs", "indirect_fixed_array3")
+        }
+
+        #[test]
+        fn indirect_fixed_multi_array() -> Result<()> {
+            run("semantic/recursive_structs", "indirect_fixed_multi_array")
+        }
+
+        #[test]
+        fn not_really_recursive() -> Result<()> {
+            run("semantic/recursive_structs", "not_really_recursive")
+        }
+
+        #[test]
+        fn not_really_recursive_array() -> Result<()> {
+            run("semantic/recursive_structs", "not_really_recursive_array")
+        }
+
+        #[test]
+        fn tail_struct() -> Result<()> {
+            run("semantic/recursive_structs", "tail_struct")
+        }
+
+        #[test]
+        fn via_mapping() -> Result<()> {
+            run("semantic/recursive_structs", "via_mapping")
+        }
+    }
 }
 
 mod structure {

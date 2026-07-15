@@ -343,7 +343,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
 
         // For operator errors we attach the innermost expression where the
         // error happened. A cyclic constant definition is left for the caller
-        // to locate, as the `constant_cycles` analysis emits a more helpful
+        // to locate, as the constant-cycle analysis emits a more helpful
         // diagnostic for it.
         result.map_err(|error| match error {
             EvaluationError::Diagnostic {
