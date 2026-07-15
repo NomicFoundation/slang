@@ -61,6 +61,7 @@ mod __dependencies_used_in_lib__ {
 #[bench::one_step_leverage_f("one_step_leverage_f")]
 #[bench::pointer_libraries("pointer_libraries")]
 #[bench::merkle_proof("merkle_proof")]
+#[bench::ens_registrar_controller("ens_registrar_controller")]
 fn slang(project: &SolidityProject) -> Rc<CompilationUnit> {
     black_box(tests::slang::parser::run(black_box(project)))
 }
@@ -75,6 +76,7 @@ fn slang(project: &SolidityProject) -> Rc<CompilationUnit> {
 #[bench::one_step_leverage_f("one_step_leverage_f")]
 #[bench::pointer_libraries("pointer_libraries")]
 #[bench::merkle_proof("merkle_proof")]
+#[bench::ens_registrar_controller("ens_registrar_controller")]
 fn slang_v2(input: tests::slang_v2::parser::Input) -> tests::slang_v2::parser::Output {
     black_box(tests::slang_v2::parser::run(black_box(input)))
 }
@@ -90,6 +92,7 @@ fn slang_v2(input: tests::slang_v2::parser::Input) -> tests::slang_v2::parser::O
 #[bench::one_step_leverage_f("one_step_leverage_f")]
 #[bench::pointer_libraries("pointer_libraries")]
 #[bench::merkle_proof("merkle_proof")]
+#[bench::ens_registrar_controller("ens_registrar_controller")]
 fn solar(project: &SolidityProject) -> usize {
     black_box(tests::solar::parser::run(black_box(project)))
 }
@@ -103,6 +106,7 @@ fn solar(project: &SolidityProject) -> usize {
 #[bench::cooldogs("cooldogs")]
 #[bench::one_step_leverage_f("one_step_leverage_f")]
 #[bench::merkle_proof("merkle_proof")]
+#[bench::ens_registrar_controller("ens_registrar_controller")]
 fn tree_sitter(project: &SolidityProject) -> Vec<TreeSitterTree> {
     black_box(tests::tree_sitter::parser::run(black_box(project)))
 }

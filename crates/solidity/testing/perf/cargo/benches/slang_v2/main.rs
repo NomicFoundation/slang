@@ -62,6 +62,7 @@ macro_rules! bench_projects {
         #[bench::one_step_leverage_f("one_step_leverage_f")]
         #[bench::pointer_libraries("pointer_libraries")]
         #[bench::merkle_proof("merkle_proof")]
+        #[bench::ens_registrar_controller("ens_registrar_controller")]
         $($rest)*
     };
 }

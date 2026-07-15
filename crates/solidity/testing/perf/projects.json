@@ -35,6 +35,11 @@
       "hash": "0x56681458E00CafE1206313D2D033946f458FDEfD",
       "name": "cooldogs",
       "comment": "Deep CST structure"
+    },
+    {
+      "hash": "0x253553366Da8546fC250F225fe3d25d0C782303b",
+      "name": "ens_registrar_controller",
+      "comment": "Deep tree of default (unqualified) imports"
     }
   ],
   "files": [
