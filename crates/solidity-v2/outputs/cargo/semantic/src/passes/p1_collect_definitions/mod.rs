@@ -48,6 +48,11 @@ pub fn run(
     for (file_id, range) in conflicts::find_default_import_conflicts(binder, file_ids) {
         diagnostics.push(file_id, range, IdentifierRedeclaration);
     }
+
+    // The default-import graph is now final. Precompute each file's transitive
+    // import closure once, so later passes resolve file-scope symbols with a
+    // flat scan instead of re-walking the graph on every lookup.
+    binder.precompute_default_import_closures();
 }
 
 struct ScopeFrame {

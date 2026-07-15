@@ -422,30 +422,84 @@ impl Binder {
             .unwrap()
     }
 
-    // Resolving a symbol in a file scope is special because of default imports.
-    // We want to find *all* definitions with the given symbol reachable from
-    // the file.
-    fn resolve_in_file_scope(&self, file_id: &FileId, symbol: &str) -> Resolution {
-        let mut found_definitions = Vec::new();
-        let mut visited_files = Set::default();
-        let mut files_to_search = VecDeque::new();
-        files_to_search.push_back(file_id);
+    /// Precompute each [`FileScope::default_import_closure`]: the set of file
+    /// scopes a file-scope symbol lookup must search (the file itself plus
+    /// every file transitively reachable through its default imports).
+    /// This lets [`Self::resolve_in_file_scope`] do a flat scan instead
+    /// of a fresh breadth-first walk on every lookup.
+    pub(crate) fn precompute_default_import_closures(&mut self) {
+        let file_scope_ids: Vec<ScopeId> = self
+            .scopes
+            .iter()
+            .filter_map(|scope| match scope {
+                Scope::File(file_scope) if !file_scope.default_imports.is_empty() => {
+                    self.scope_id_for_file_id(&file_scope.file_id)
+                }
+                _ => None,
+            })
+            .collect();
 
-        while let Some(file_id) = files_to_search.pop_front() {
-            let file_scope = self.get_file_scope(file_id);
-            if !visited_files.insert(file_id) {
+        for file_scope_id in file_scope_ids {
+            let closure = self.compute_file_import_closure(file_scope_id);
+            let Scope::File(file_scope) = self.get_scope_mut(file_scope_id) else {
+                unreachable!("scope id should be a file scope");
+            };
+            file_scope.default_import_closure = closure;
+        }
+    }
+
+    /// Walks the default-import graph breadth-first from `file_scope_id` (a file
+    /// scope), returning the reachable file scope ids in first-visit order and
+    /// starting with `file_scope_id` itself.
+    fn compute_file_import_closure(&self, file_scope_id: ScopeId) -> Vec<ScopeId> {
+        let mut closure = Vec::new();
+        let mut visited = Set::default();
+        let mut queue = VecDeque::from_iter([file_scope_id]);
+
+        while let Some(file_scope_id) = queue.pop_front() {
+            if !visited.insert(file_scope_id) {
                 continue;
             }
 
-            found_definitions.extend(file_scope.lookup_symbol(symbol));
-            files_to_search.extend(
-                file_scope
-                    .default_imports
-                    .iter()
-                    .map(|import| &import.file_id),
-            );
+            let Scope::File(file_scope) = self.get_scope_by_id(file_scope_id) else {
+                unreachable!("default import closure should only reach file scopes");
+            };
+            closure.push(file_scope_id);
+
+            for import in &file_scope.default_imports {
+                if let Some(imported_scope_id) = self.scope_id_for_file_id(&import.file_id) {
+                    queue.push_back(imported_scope_id);
+                }
+            }
         }
 
+        closure
+    }
+
+    // Resolving a symbol in a file scope is special because of default imports.
+    // We want to find *all* definitions with the given symbol reachable from
+    // the file.
+    fn resolve_in_file_scope(&self, file_scope: &FileScope, symbol: &str) -> Resolution {
+        // Fast path: with no default imports the file's own scope is the whole
+        // search set, so resolve with a single map lookup and no traversal:
+        if file_scope.default_imports.is_empty() {
+            return match file_scope.definitions.get(symbol).map(Vec::as_slice) {
+                None => Resolution::Unresolved,
+                Some([/* empty */]) => Resolution::Unresolved,
+                Some([single_def]) => Resolution::Definition(*single_def),
+                Some(multiple_defs) => Resolution::Ambiguous(multiple_defs.to_vec()),
+            };
+        }
+
+        // Otherwise scan the precomputed transitive default-import closure
+        // (which starts with this file's own scope), collecting every match.
+        let mut found_definitions = Vec::new();
+        for scope_id in &file_scope.default_import_closure {
+            let Scope::File(imported_scope) = self.get_scope_by_id(*scope_id) else {
+                unreachable!("default import closure should only contain file scopes");
+            };
+            found_definitions.extend(imported_scope.lookup_symbol(symbol));
+        }
         Resolution::from(found_definitions)
     }
 
@@ -549,7 +603,7 @@ impl Binder {
                 })
             }
             Scope::Enum(enum_scope) => enum_scope.definitions.get(symbol).into(),
-            Scope::File(file_scope) => self.resolve_in_file_scope(&file_scope.file_id, symbol),
+            Scope::File(file_scope) => self.resolve_in_file_scope(file_scope, symbol),
             Scope::Function(function_scope) => function_scope
                 .definitions
                 .get(symbol)
@@ -677,7 +731,7 @@ impl Binder {
             Scope::Enum(enum_scope) => enum_scope.definitions.get(symbol).into(),
             Scope::File(file_scope) => {
                 // We can get here by a file named file import
-                self.resolve_in_file_scope(&file_scope.file_id, symbol)
+                self.resolve_in_file_scope(file_scope, symbol)
             }
             Scope::Struct(struct_scope) => struct_scope.definitions.get(symbol).into(),
             Scope::Using(using_scope) => using_scope
