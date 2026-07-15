@@ -312,9 +312,8 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         }
 
         // The remaining checks only concern regular (named) functions.
-        // Constructors are handled by `check_constructor_visibility`, and
-        // fallback/receive functions have their required attributes enforced
-        // during IR construction.
+        // Constructors are handled separately and fallback/receive functions
+        // have their required attributes enforced during IR construction.
         if node.kind == ir::FunctionKind::Regular {
             // A function declared in a library cannot be `payable`.
             if node.attributes.mutability == ir::FunctionMutability::Payable
@@ -363,15 +362,14 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
                 self.report(node, InterfaceFunctionNotExternal);
             }
         }
-
-        self.check_constructor_visibility(node);
     }
 
-    /// A constructor's visibility must be consistent with the contract's
-    /// abstract-ness. This only applies when an explicit visibility is given
-    /// (a constructor with no visibility is always fine). Only `public` and
+    /// Check constructor attributes, which are already constrained by the
+    /// grammar.  The visibility must be consistent with the contract's
+    /// abstract-ness. This only applies when an explicit visibility is given (a
+    /// constructor with no visibility is always fine). Only `public` and
     /// `internal` are grammatically valid on constructors.
-    fn check_constructor_visibility(&mut self, node: &ir::FunctionDefinition) {
+    fn check_constructor_attributes(&mut self, node: &ir::FunctionDefinition) {
         if node.kind != ir::FunctionKind::Constructor || !node.attributes.has_explicit_visibility {
             return;
         }
@@ -396,6 +394,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         }
     }
 
+    /// Check modifier attributes, also constrained by the grammar.
     fn check_modifier_attributes(&mut self, node: &ir::FunctionDefinition) {
         // A modifier without an implementation body must be marked `virtual`.
         if node.body.is_none() && !node.attributes.is_virtual {
@@ -516,7 +515,11 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
             | ir::FunctionKind::Constructor
             | ir::FunctionKind::Fallback
             | ir::FunctionKind::Receive => {
-                self.check_function_attributes(node);
+                if matches!(node.kind, ir::FunctionKind::Constructor) {
+                    self.check_constructor_attributes(node);
+                } else {
+                    self.check_function_attributes(node);
+                }
 
                 let parameters_scope_id = self.collect_parameters(&node.parameters);
 
