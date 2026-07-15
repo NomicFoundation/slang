@@ -13,6 +13,7 @@ mod interface_function_not_external;
 mod interface_function_with_body;
 mod invalid_using_directive_container;
 mod library_fallback_function;
+mod library_function_without_body;
 mod library_payable_function;
 mod library_receive_function;
 mod library_virtual_function;
@@ -42,6 +43,7 @@ pub use interface_function_not_external::InterfaceFunctionNotExternal;
 pub use interface_function_with_body::InterfaceFunctionWithBody;
 pub use invalid_using_directive_container::InvalidUsingDirectiveContainer;
 pub use library_fallback_function::LibraryFallbackFunction;
+pub use library_function_without_body::LibraryFunctionWithoutBody;
 pub use library_payable_function::LibraryPayableFunction;
 pub use library_receive_function::LibraryReceiveFunction;
 pub use library_virtual_function::LibraryVirtualFunction;
@@ -113,6 +115,8 @@ define_diagnostic_kind! {
         LibraryFallbackFunction(LibraryFallbackFunction),
         /// A library declares a receive function.
         LibraryReceiveFunction(LibraryReceiveFunction),
+        /// A function declared in a library has no implementation body.
+        LibraryFunctionWithoutBody(LibraryFunctionWithoutBody),
         /// A function declared in a library is marked `payable`.
         LibraryPayableFunction(LibraryPayableFunction),
         /// A function declared in a library is marked `virtual`.

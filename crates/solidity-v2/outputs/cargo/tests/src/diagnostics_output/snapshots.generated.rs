@@ -956,6 +956,11 @@ mod structure {
     }
 
     #[test]
+    fn library_function_without_body() -> Result<()> {
+        run("structure", "library_function_without_body")
+    }
+
+    #[test]
     fn library_payable_function() -> Result<()> {
         run("structure", "library_payable_function")
     }

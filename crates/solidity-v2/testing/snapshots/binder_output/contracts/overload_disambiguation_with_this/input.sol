@@ -1,5 +1,5 @@
 library SafeMath {
-    function add(uint, uint) internal returns (uint);
+    function add(uint, uint) internal returns (uint) {}
 }
 
 contract ERC20Basic {

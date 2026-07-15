@@ -33,7 +33,7 @@ Bindings:
   1 │ library SafeMath {
     │         ────┬───  
     │             ╰───── name: 1
-  2 │     function add(uint, uint) internal returns (uint);
+  2 │     function add(uint, uint) internal returns (uint) {}
     │              ─┬─  
     │               ╰─── name: 2
     │ 

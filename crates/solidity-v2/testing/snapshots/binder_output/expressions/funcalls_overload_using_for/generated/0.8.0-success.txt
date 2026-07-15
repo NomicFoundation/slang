@@ -62,7 +62,7 @@ Bindings:
  12 │ library Lib {
     │         ─┬─  
     │          ╰─── name: 7
- 13 │   function add(int, int) public returns (int);
+ 13 │   function add(int, int) public returns (int) {}
     │            ─┬─  
     │             ╰─── name: 8
 ────╯
