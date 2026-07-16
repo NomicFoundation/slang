@@ -139,8 +139,8 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
 
     /// Returns the current (enclosing) definition
     fn enclosing_definition(&self) -> Option<&Definition> {
-        let scope = self.binder.get_scope_by_id(self.current_scope_id());
-        self.binder.find_definition_by_id(scope.node_id())
+        self.binder
+            .find_definition_by_id(self.current_scope().node_id())
     }
 
     /// Reports a diagnostic against the text range of the given IR node.
