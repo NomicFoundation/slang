@@ -4,12 +4,11 @@ use slang_solidity_v2_ir::ir;
 
 use super::Pass;
 use crate::binder::{Definition, Resolution, Typing};
-use crate::built_ins::InternalBuiltIn;
 use crate::passes::common::node_id_for_expression_typing;
 use crate::types::{
     literals, AddressType, ContractType, DataLocation, EnumType, FixedSizeArrayType, FunctionType,
     IntegerType, InterfaceType, LibraryType, LiteralKind, Number, StringType, StructType, Type,
-    TypeId, UserDefinedValueType,
+    TypeId,
 };
 
 impl Pass<'_> {
@@ -71,22 +70,7 @@ impl Pass<'_> {
 
     pub(super) fn type_of_definition(&mut self, definition_id: NodeId) -> Option<Type> {
         let definition = self.binder.find_definition_by_id(definition_id)?;
-        match definition {
-            Definition::Contract(_) => Some(Type::Contract(ContractType { definition_id })),
-            Definition::Enum(_) => Some(Type::Enum(EnumType { definition_id })),
-            Definition::Interface(_) => Some(Type::Interface(InterfaceType { definition_id })),
-            Definition::Library(_) => Some(Type::Library(LibraryType { definition_id })),
-            Definition::Struct(_) => Some(Type::Struct(StructType {
-                definition_id,
-                location: DataLocation::Memory,
-            })),
-            Definition::UserDefinedValueType(_) => {
-                Some(Type::UserDefinedValue(UserDefinedValueType {
-                    definition_id,
-                }))
-            }
-            _ => None,
-        }
+        definition.try_into().ok()
     }
 
     /// Returns the type of an binary operator expression. If both operands are
@@ -230,7 +214,7 @@ impl Pass<'_> {
         }
     }
 
-    pub(super) fn typing_of_resolution(&self, resolution: &Resolution) -> Typing {
+    pub(super) fn typing_of_resolution(&mut self, resolution: &Resolution) -> Typing {
         match resolution {
             Resolution::Unresolved => Typing::Unresolved,
             Resolution::BuiltIn(built_in) => self.built_ins_resolver().typing_of(built_in),
@@ -444,36 +428,9 @@ impl Pass<'_> {
                     _ => Typing::Unresolved,
                 }
             }
-            // Special case: for `abi.decode` we need to register the types
-            // given as the second argument and we need a mutable `TypeRegistry`
-            // for that.
-            Typing::BuiltIn(InternalBuiltIn::AbiDecode) => {
-                self.typing_of_abi_decode(&argument_typings)
-            }
             Typing::BuiltIn(built_in) => self
                 .built_ins_resolver()
                 .typing_of_function_call(&built_in, &argument_typings),
-        }
-    }
-
-    fn typing_of_abi_decode(&mut self, argument_typings: &[Typing]) -> Typing {
-        if argument_typings.len() != 2 {
-            return Typing::Unresolved;
-        }
-        match &argument_typings[1] {
-            Typing::Resolved(type_id) => {
-                // TODO(validation) SDR[42]: this only makes sense if type_id is a tuple
-                Typing::Resolved(*type_id)
-            }
-            Typing::UserMetaType(definition_id) => {
-                if let Some(type_) = self.type_of_definition(*definition_id) {
-                    Typing::Resolved(self.types.register_type(type_))
-                } else {
-                    Typing::Unresolved
-                }
-            }
-            Typing::MetaType(type_) => Typing::Resolved(self.types.register_type(type_.clone())),
-            _ => Typing::Unresolved,
         }
     }
 

@@ -93,7 +93,7 @@ impl Pass<'_> {
             .filter(move |directive| directive.applies_to(type_id))
     }
 
-    pub(super) fn resolve_symbol_in_typing(&self, typing: &Typing, symbol: &str) -> Resolution {
+    pub(super) fn resolve_symbol_in_typing(&mut self, typing: &Typing, symbol: &str) -> Resolution {
         match typing {
             Typing::Unresolved => Resolution::Unresolved,
             Typing::Undetermined(type_ids) => {
@@ -178,7 +178,7 @@ impl Pass<'_> {
         }
     }
 
-    fn resolve_symbol_in_type(&self, type_id: TypeId, symbol: &str) -> Resolution {
+    fn resolve_symbol_in_type(&mut self, type_id: TypeId, symbol: &str) -> Resolution {
         let type_ = self.types.get_type_by_id(type_id);
 
         // Resolve direct members of the type first
