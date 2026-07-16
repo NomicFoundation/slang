@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[structure/payable-function-type-must-be-external] Error: Only "external" function types can be "payable".
+[structure/payable-internal-or-private-function] Error: "internal" or "private" functions cannot be "payable".
    ╭─[input.sol:7:16]
    │
  7 │     function f(function() payable cb) public {}

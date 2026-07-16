@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use slang_solidity_v2_common::diagnostics::kinds::structure::PayableFunctionTypeMustBeExternal;
+use slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction;
 use slang_solidity_v2_common::diagnostics::kinds::syntax::{
     InvalidMutability, InvalidVisibility, MultipleMutabilitySpecifiers, MultipleOverrideSpecifiers,
     MultipleVirtualSpecifiers, MultipleVisibilitySpecifiers,
@@ -401,7 +401,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
         // Only external function types can be payable.
         if mutability == FunctionMutability::Payable && visibility != FunctionVisibility::External {
-            self.report(owner, PayableFunctionTypeMustBeExternal);
+            self.report(owner, PayableInternalOrPrivateFunction);
         }
 
         Arc::new(output::FunctionTypeAttributesStruct {

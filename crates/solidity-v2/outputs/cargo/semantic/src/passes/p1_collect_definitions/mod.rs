@@ -309,17 +309,25 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
             if node.attributes.mutability == ir::FunctionMutability::Payable {
                 self.report(node, FreeFunctionPayable);
             }
-        }
+        } else if node.kind == ir::FunctionKind::Regular {
+            // The remaining checks only concern regular (named) functions.
+            // Constructors are handled separately and fallback/receive functions
+            // have their required attributes enforced during IR construction.
 
-        // The remaining checks only concern regular (named) functions.
-        // Constructors are handled separately and fallback/receive functions
-        // have their required attributes enforced during IR construction.
-        if node.kind == ir::FunctionKind::Regular {
-            // A function declared in a library cannot be `payable`.
-            if node.attributes.mutability == ir::FunctionMutability::Payable
-                && self.current_scope_is_library()
-            {
-                self.report(node, LibraryPayableFunction);
+            // A regular function inside a contract, interface or library must
+            // specify a visibility.
+            if !node.attributes.has_explicit_visibility {
+                let suggested_visibility = if self.current_scope_is_interface() {
+                    "external"
+                } else {
+                    "public"
+                };
+                self.report(
+                    node,
+                    MissingFunctionVisibility {
+                        suggested_visibility: suggested_visibility.to_owned(),
+                    },
+                );
             }
 
             // An `internal` or `private` function cannot be `payable`. This only
@@ -336,22 +344,6 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
                 self.report(node, PayableInternalOrPrivateFunction);
             }
 
-            // Conversely to a free function, a regular function inside a
-            // contract, interface or library must specify a visibility.
-            if !node.attributes.has_explicit_visibility && !self.current_scope_is_file() {
-                let suggested_visibility = if self.current_scope_is_interface() {
-                    "external"
-                } else {
-                    "public"
-                };
-                self.report(
-                    node,
-                    MissingFunctionVisibility {
-                        suggested_visibility: suggested_visibility.to_owned(),
-                    },
-                );
-            }
-
             // A function declared in an interface must be `external`. This also
             // fires when no visibility is specified (which defaults to non-external),
             // matching solc's behavior of reporting it alongside the missing-visibility
@@ -360,6 +352,13 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
                 && node.attributes.visibility != ir::FunctionVisibility::External
             {
                 self.report(node, InterfaceFunctionNotExternal);
+            }
+
+            // A function declared in a library cannot be `payable`.
+            if node.attributes.mutability == ir::FunctionMutability::Payable
+                && self.current_scope_is_library()
+            {
+                self.report(node, LibraryPayableFunction);
             }
         }
     }
