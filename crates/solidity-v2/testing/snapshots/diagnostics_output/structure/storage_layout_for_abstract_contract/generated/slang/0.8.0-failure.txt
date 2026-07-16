@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
+   ╭─[input.sol:5:19]
+   │
+ 5 │ contract Concrete layout at 0x1234 {}
+   │                   ────────┬───────  
+   │                           ╰───────── Error occurred here.
+───╯
+
+[structure/storage-layout-for-abstract-contract] Error: Storage layout cannot be specified for abstract contracts.
+   ╭─[input.sol:8:28]
+   │
+ 8 │ abstract contract Abstract layout at 0x1234 {}
+   │                            ───┬──  
+   │                               ╰──── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
+   ╭─[input.sol:8:28]
+   │
+ 8 │ abstract contract Abstract layout at 0x1234 {}
+   │                            ────────┬───────  
+   │                                    ╰───────── Error occurred here.
+───╯

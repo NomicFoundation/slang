@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[syntax/more-than-one-inheritance-list] Error: More than one inheritance list.
+    ╭─[input.sol:11:29]
+    │
+ 11 │ contract Duplicated is A, B is B {}
+    │                             ─┬  
+    │                              ╰── Error occurred here.
+────╯
+
+[syntax/more-than-one-inheritance-list] Error: More than one inheritance list.
+    ╭─[input.sol:14:24]
+    │
+ 14 │ contract Repeated is A is B is B is A {}
+    │                        ─┬  
+    │                         ╰── Error occurred here.
+────╯
+
+[syntax/more-than-one-inheritance-list] Error: More than one inheritance list.
+    ╭─[input.sol:14:29]
+    │
+ 14 │ contract Repeated is A is B is B is A {}
+    │                             ─┬  
+    │                              ╰── Error occurred here.
+────╯
+
+[syntax/more-than-one-inheritance-list] Error: More than one inheritance list.
+    ╭─[input.sol:14:34]
+    │
+ 14 │ contract Repeated is A is B is B is A {}
+    │                                  ─┬  
+    │                                   ╰── Error occurred here.
+────╯

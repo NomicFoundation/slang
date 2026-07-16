@@ -1,0 +1,91 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 11
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
+   ╭─[input.sol:5:16]
+   │
+ 5 │ contract Valid layout at 0x1234 {}
+   │                ────────┬───────  
+   │                        ╰───────── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
+   ╭─[input.sol:8:21]
+   │
+ 8 │ contract Duplicated layout at 0x1234 layout at 0xABC {}
+   │                     ────────┬───────  
+   │                             ╰───────── Error occurred here.
+───╯
+
+[syntax/more-than-one-storage-layout] Error: More than one storage layout definition.
+   ╭─[input.sol:8:38]
+   │
+ 8 │ contract Duplicated layout at 0x1234 layout at 0xABC {}
+   │                                      ───┬──  
+   │                                         ╰──── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
+   ╭─[input.sol:8:38]
+   │
+ 8 │ contract Duplicated layout at 0x1234 layout at 0xABC {}
+   │                                      ───────┬───────  
+   │                                             ╰───────── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
+    ╭─[input.sol:11:19]
+    │
+ 11 │ contract Repeated layout at 0x1234 layout at 0xABC layout at 0x4321 layout at 0xCBA {}
+    │                   ────────┬───────  
+    │                           ╰───────── Error occurred here.
+────╯
+
+[syntax/more-than-one-storage-layout] Error: More than one storage layout definition.
+    ╭─[input.sol:11:36]
+    │
+ 11 │ contract Repeated layout at 0x1234 layout at 0xABC layout at 0x4321 layout at 0xCBA {}
+    │                                    ───┬──  
+    │                                       ╰──── Error occurred here.
+────╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
+    ╭─[input.sol:11:36]
+    │
+ 11 │ contract Repeated layout at 0x1234 layout at 0xABC layout at 0x4321 layout at 0xCBA {}
+    │                                    ───────┬───────  
+    │                                           ╰───────── Error occurred here.
+────╯
+
+[syntax/more-than-one-storage-layout] Error: More than one storage layout definition.
+    ╭─[input.sol:11:52]
+    │
+ 11 │ contract Repeated layout at 0x1234 layout at 0xABC layout at 0x4321 layout at 0xCBA {}
+    │                                                    ───┬──  
+    │                                                       ╰──── Error occurred here.
+────╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
+    ╭─[input.sol:11:52]
+    │
+ 11 │ contract Repeated layout at 0x1234 layout at 0xABC layout at 0x4321 layout at 0xCBA {}
+    │                                                    ────────┬───────  
+    │                                                            ╰───────── Error occurred here.
+────╯
+
+[syntax/more-than-one-storage-layout] Error: More than one storage layout definition.
+    ╭─[input.sol:11:69]
+    │
+ 11 │ contract Repeated layout at 0x1234 layout at 0xABC layout at 0x4321 layout at 0xCBA {}
+    │                                                                     ───┬──  
+    │                                                                        ╰──── Error occurred here.
+────╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
+    ╭─[input.sol:11:69]
+    │
+ 11 │ contract Repeated layout at 0x1234 layout at 0xABC layout at 0x4321 layout at 0xCBA {}
+    │                                                                     ───────┬───────  
+    │                                                                            ╰───────── Error occurred here.
+────╯

@@ -11,6 +11,7 @@ mod library_receive_function;
 mod library_virtual_function;
 mod library_virtual_modifier;
 mod multiple_constructors;
+mod storage_layout_for_abstract_contract;
 mod unimplemented_modifier_must_be_virtual;
 mod uninitialized_constant;
 mod virtual_free_function;
@@ -30,6 +31,7 @@ pub use library_virtual_function::LibraryVirtualFunction;
 pub use library_virtual_modifier::LibraryVirtualModifier;
 pub use multiple_constructors::MultipleConstructors;
 use serde::Serialize;
+pub use storage_layout_for_abstract_contract::StorageLayoutForAbstractContract;
 pub use unimplemented_modifier_must_be_virtual::UnimplementedModifierMustBeVirtual;
 pub use uninitialized_constant::UninitializedConstant;
 pub use virtual_free_function::VirtualFreeFunction;
@@ -87,5 +89,8 @@ define_diagnostic_kind! {
 
         /// A `constant` is declared without an initializer value.
         UninitializedConstant(UninitializedConstant),
+
+        /// An abstract contract declares a storage layout (`layout at`) specifier.
+        StorageLayoutForAbstractContract(StorageLayoutForAbstractContract),
     }
 }

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 7587] Error: Storage layout cannot be specified for abstract contracts.
+   ╭─[input.sol:8:28]
+   │
+ 8 │ abstract contract Abstract layout at 0x1234 {}
+   │                            ────────┬───────  
+   │                                    ╰───────── Error occurred here.
+───╯

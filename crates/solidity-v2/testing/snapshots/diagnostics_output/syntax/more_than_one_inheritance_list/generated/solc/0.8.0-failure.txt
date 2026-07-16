@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 2314] Error: Expected '{' but got 'is'
+    ╭─[input.sol:11:29]
+    │
+ 11 │ contract Duplicated is A, B is B {}
+    │                             ─┬  
+    │                              ╰── Error occurred here.
+────╯

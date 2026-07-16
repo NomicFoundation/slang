@@ -946,6 +946,11 @@ mod structure {
     }
 
     #[test]
+    fn storage_layout_for_abstract_contract() -> Result<()> {
+        run("structure", "storage_layout_for_abstract_contract")
+    }
+
+    #[test]
     fn unimplemented_modifier_must_be_virtual() -> Result<()> {
         run("structure", "unimplemented_modifier_must_be_virtual")
     }
@@ -1065,6 +1070,16 @@ mod syntax {
         fn receive_function() -> Result<()> {
             run("syntax/invalid_visibility", "receive_function")
         }
+    }
+
+    #[test]
+    fn more_than_one_inheritance_list() -> Result<()> {
+        run("syntax", "more_than_one_inheritance_list")
+    }
+
+    #[test]
+    fn more_than_one_storage_layout() -> Result<()> {
+        run("syntax", "more_than_one_storage_layout")
     }
 
     mod multiple_mutability_specifiers {
