@@ -45,8 +45,8 @@ jobs:
         uses: "./.github/actions/common-setup"
         with:
           sfw-optional: "true"
-          restore-deps-cache: "false"
-          restore-target-cache: "false"
+          restore-deps-cache: "${{ github.ref_name != 'main' }}"
+          restore-target-cache: "${{ github.ref_name != 'main' && github.event_name != 'merge_group' }}"
 
       #
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
