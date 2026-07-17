@@ -8,6 +8,7 @@ use slang_solidity_v2_common::collections::{Map, Set};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_ir::ir::NodeIdentity;
 
 use self::abstractness::AbstractSlot;
 use self::redeclarations::MemberKind;
@@ -180,7 +181,7 @@ impl<'a> Lineariser<'a> {
         let (members, from_interface) = match self.binder.find_definition_by_id(base_id) {
             Some(Definition::Contract(contract)) => (&contract.ir_node.members, false),
             Some(Definition::Interface(interface)) => (&interface.ir_node.members, true),
-            _ => return,
+            _ => unreachable!("base should be a contract or interface"),
         };
         // The head of the linearisation is the type we're computing for; every
         // other entry is one of its proper bases.
@@ -223,6 +224,10 @@ impl<'a> Lineariser<'a> {
 
         self.check_redeclarations(&member_definitions, declared_here);
         if self.contract.is_some() {
+            // NOTE: we could also skip `record_abstract` if
+            // `self.contract.is_abstract`, and *only if* `record_abstract` does
+            // nothing more than building `abstract_slots`. Adding diagnostics
+            // checks there would break this premise.
             self.record_abstract(&member_definitions);
         }
         self.record_members(&member_definitions);
@@ -237,16 +242,7 @@ fn member_definition<'a>(
     binder: &'a Binder,
     member: &ir::ContractMember,
 ) -> Option<&'a Definition> {
-    let node_id = match member {
-        ir::ContractMember::UsingDirective(_) => return None,
-        ir::ContractMember::FunctionDefinition(function) => function.id(),
-        ir::ContractMember::StructDefinition(struct_) => struct_.id(),
-        ir::ContractMember::EnumDefinition(enum_) => enum_.id(),
-        ir::ContractMember::EventDefinition(event) => event.id(),
-        ir::ContractMember::ErrorDefinition(error) => error.id(),
-        ir::ContractMember::UserDefinedValueTypeDefinition(udvt) => udvt.id(),
-        ir::ContractMember::StateVariableDefinition(variable) => variable.id(),
-        ir::ContractMember::ConstantDefinition(constant) => constant.id(),
-    };
-    binder.find_definition_by_id(node_id)
+    member
+        .node_id()
+        .and_then(|node_id| binder.find_definition_by_id(node_id))
 }

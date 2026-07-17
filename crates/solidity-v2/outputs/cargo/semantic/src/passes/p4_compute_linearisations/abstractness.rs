@@ -21,6 +21,7 @@ impl<'a> Lineariser<'a> {
                 continue;
             };
             for slot in &mut self.abstract_slots {
+                // TODO: check for SDR[1122]
                 if slot.overridden_by(types, &candidate) {
                     slot.type_id = candidate.type_id;
                     slot.implemented = candidate.implemented;

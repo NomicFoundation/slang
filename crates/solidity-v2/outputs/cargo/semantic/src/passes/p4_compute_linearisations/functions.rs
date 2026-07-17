@@ -50,7 +50,13 @@ fn function_overrides(
 ) -> bool {
     let name_matches = match (&overriding.name, &overridden.name) {
         (None, None) => overriding.kind == overridden.kind,
-        (Some(name), Some(other_name)) => name.unparse() == other_name.unparse(),
+        (Some(name), Some(other_name)) => {
+            debug_assert!(
+                overriding.kind == overridden.kind && overriding.kind == ir::FunctionKind::Regular,
+                "compared functions are both regular"
+            );
+            name.unparse() == other_name.unparse()
+        }
         _ => false,
     };
     if !name_matches {
