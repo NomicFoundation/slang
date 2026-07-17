@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4726] Error: Functions in interfaces cannot have an implementation.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     function f1() external {}
+   │     ────────────┬────────────  
+   │                 ╰────────────── Error occurred here.
+───╯

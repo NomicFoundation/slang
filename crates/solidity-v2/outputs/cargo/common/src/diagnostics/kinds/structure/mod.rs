@@ -7,7 +7,9 @@ mod empty_struct;
 mod enum_with_too_many_members;
 mod free_function_payable;
 mod free_function_visibility;
+mod function_must_be_implemented;
 mod function_name_matches_container;
+mod interface_function_cannot_be_implemented;
 mod interface_function_not_external;
 mod invalid_using_directive_container;
 mod library_fallback_function;
@@ -34,7 +36,9 @@ pub use empty_struct::EmptyStruct;
 pub use enum_with_too_many_members::EnumWithTooManyMembers;
 pub use free_function_payable::FreeFunctionPayable;
 pub use free_function_visibility::FreeFunctionVisibility;
+pub use function_must_be_implemented::FunctionMustBeImplemented;
 pub use function_name_matches_container::FunctionNameMatchesContainer;
+pub use interface_function_cannot_be_implemented::InterfaceFunctionCannotBeImplemented;
 pub use interface_function_not_external::InterfaceFunctionNotExternal;
 pub use invalid_using_directive_container::InvalidUsingDirectiveContainer;
 pub use library_fallback_function::LibraryFallbackFunction;
@@ -81,6 +85,13 @@ define_diagnostic_kind! {
 
         /// A function declared in an interface is not `external`.
         InterfaceFunctionNotExternal(InterfaceFunctionNotExternal),
+
+        /// A function declared in an interface has an implementation body.
+        InterfaceFunctionCannotBeImplemented(InterfaceFunctionCannotBeImplemented),
+        /// A function that requires an implementation body (a free function or a
+        /// library function) has none.
+        FunctionMustBeImplemented(FunctionMustBeImplemented),
+
         /// A contract defines more than one constructor.
         MultipleConstructors(MultipleConstructors),
         /// A constructor is declared outside of a contract (i.e. in an interface or library).

@@ -10,5 +10,5 @@ contract Test {
 }
 
 library Lib {
-  function add(int, int) public returns (int);
+  function add(int, int) public returns (int) {}
 }

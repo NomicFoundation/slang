@@ -892,6 +892,11 @@ mod structure {
         run("structure", "free_function_visibility")
     }
 
+    #[test]
+    fn free_function_without_body() -> Result<()> {
+        run("structure", "free_function_without_body")
+    }
+
     mod function_name_matches_container {
         use super::*;
 
@@ -909,6 +914,11 @@ mod structure {
         fn library() -> Result<()> {
             run("structure/function_name_matches_container", "library")
         }
+    }
+
+    #[test]
+    fn interface_function_cannot_be_implemented() -> Result<()> {
+        run("structure", "interface_function_cannot_be_implemented")
     }
 
     #[test]
@@ -943,6 +953,11 @@ mod structure {
     #[test]
     fn library_fallback_function() -> Result<()> {
         run("structure", "library_fallback_function")
+    }
+
+    #[test]
+    fn library_function_without_body() -> Result<()> {
+        run("structure", "library_function_without_body")
     }
 
     #[test]
