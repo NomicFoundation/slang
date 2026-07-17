@@ -28,6 +28,9 @@ pub slang_solidity_v2_semantic::binder::Definition::YulVariable(slang_solidity_v
 impl slang_solidity_v2_semantic::binder::Definition
 pub fn slang_solidity_v2_semantic::binder::Definition::identifier(&self) -> &slang_solidity_v2_ir::ir::nodes::Identifier
 pub fn slang_solidity_v2_semantic::binder::Definition::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::convert::TryFrom<&slang_solidity_v2_semantic::binder::Definition> for slang_solidity_v2_semantic::types::Type
+pub type slang_solidity_v2_semantic::types::Type::Error = ()
+pub fn slang_solidity_v2_semantic::types::Type::try_from(&slang_solidity_v2_semantic::binder::Definition) -> core::result::Result<Self, Self::Error>
 impl core::fmt::Debug for slang_solidity_v2_semantic::binder::Definition
 pub fn slang_solidity_v2_semantic::binder::Definition::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity_v2_semantic::binder::Resolution
@@ -455,6 +458,9 @@ pub fn slang_solidity_v2_semantic::types::Type::clone(&self) -> slang_solidity_v
 impl core::cmp::Eq for slang_solidity_v2_semantic::types::Type
 impl core::cmp::PartialEq for slang_solidity_v2_semantic::types::Type
 pub fn slang_solidity_v2_semantic::types::Type::eq(&self, &slang_solidity_v2_semantic::types::Type) -> bool
+impl core::convert::TryFrom<&slang_solidity_v2_semantic::binder::Definition> for slang_solidity_v2_semantic::types::Type
+pub type slang_solidity_v2_semantic::types::Type::Error = ()
+pub fn slang_solidity_v2_semantic::types::Type::try_from(&slang_solidity_v2_semantic::binder::Definition) -> core::result::Result<Self, Self::Error>
 impl core::fmt::Debug for slang_solidity_v2_semantic::types::Type
 pub fn slang_solidity_v2_semantic::types::Type::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::hash::Hash for slang_solidity_v2_semantic::types::Type

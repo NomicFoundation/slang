@@ -6,7 +6,10 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use super::ScopeId;
-use crate::types::TypeId;
+use crate::types::{
+    ContractType, DataLocation, EnumType, InterfaceType, LibraryType, StructType, Type, TypeId,
+    UserDefinedValueType,
+};
 
 //////////////////////////////////////////////////////////////////////////////
 // Definitions
@@ -503,5 +506,29 @@ impl Definition {
         Self::YulVariable(YulVariableDefinition {
             ir_node: Arc::clone(ir_node),
         })
+    }
+}
+
+impl TryFrom<&Definition> for Type {
+    type Error = ();
+
+    fn try_from(definition: &Definition) -> Result<Self, Self::Error> {
+        let definition_id = definition.node_id();
+        match definition {
+            Definition::Contract(_) => Ok(Type::Contract(ContractType { definition_id })),
+            Definition::Enum(_) => Ok(Type::Enum(EnumType { definition_id })),
+            Definition::Interface(_) => Ok(Type::Interface(InterfaceType { definition_id })),
+            Definition::Library(_) => Ok(Type::Library(LibraryType { definition_id })),
+            Definition::Struct(_) => Ok(Type::Struct(StructType {
+                definition_id,
+                location: DataLocation::Memory,
+            })),
+            Definition::UserDefinedValueType(_) => {
+                Ok(Type::UserDefinedValue(UserDefinedValueType {
+                    definition_id,
+                }))
+            }
+            _ => Err(()),
+        }
     }
 }

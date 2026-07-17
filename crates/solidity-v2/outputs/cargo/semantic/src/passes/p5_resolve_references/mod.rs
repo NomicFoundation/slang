@@ -64,7 +64,7 @@ impl<'a> Pass<'a> {
         assert!(pass.scope_stack.is_empty());
     }
 
-    fn built_ins_resolver(&self) -> BuiltInsResolver<'_> {
+    fn built_ins_resolver(&mut self) -> BuiltInsResolver<'_> {
         BuiltInsResolver::new(self.binder, self.types)
     }
 

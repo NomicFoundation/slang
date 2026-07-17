@@ -11,11 +11,11 @@ pub use internal::InternalBuiltIn;
 
 pub(crate) struct BuiltInsResolver<'a> {
     binder: &'a Binder,
-    types: &'a TypeRegistry,
+    types: &'a mut TypeRegistry,
 }
 
 impl<'a> BuiltInsResolver<'a> {
-    pub(crate) fn new(binder: &'a Binder, types: &'a TypeRegistry) -> Self {
+    pub(crate) fn new(binder: &'a Binder, types: &'a mut TypeRegistry) -> Self {
         Self { binder, types }
     }
 
@@ -434,15 +434,36 @@ impl<'a> BuiltInsResolver<'a> {
 
     #[allow(clippy::too_many_lines)]
     pub(crate) fn typing_of_function_call(
-        &self,
+        &mut self,
         built_in: &InternalBuiltIn,
         argument_typings: &[Typing],
     ) -> Typing {
         match built_in {
             InternalBuiltIn::AbiDecode => {
-                // Special case: this is handled in the resolution pass because
-                // we need to register the types given as parameters
-                Typing::Unresolved
+                if argument_typings.len() != 2 {
+                    return Typing::Unresolved;
+                }
+                match &argument_typings[1] {
+                    Typing::Resolved(type_id) => {
+                        // TODO(validation) SDR[42]: this only makes sense if type_id is a tuple
+                        Typing::Resolved(*type_id)
+                    }
+                    Typing::UserMetaType(definition_id) => {
+                        let Some(definition) = self.binder.find_definition_by_id(*definition_id)
+                        else {
+                            return Typing::Unresolved;
+                        };
+                        if let Ok(type_) = definition.try_into() {
+                            Typing::Resolved(self.types.register_type(type_))
+                        } else {
+                            Typing::Unresolved
+                        }
+                    }
+                    Typing::MetaType(type_) => {
+                        Typing::Resolved(self.types.register_type(type_.clone()))
+                    }
+                    _ => Typing::Unresolved,
+                }
             }
             InternalBuiltIn::AbiEncode => Typing::Resolved(self.types.bytes_memory()),
             InternalBuiltIn::AbiEncodeCall => Typing::Resolved(self.types.bytes_memory()),
@@ -499,13 +520,11 @@ impl<'a> BuiltInsResolver<'a> {
                 else {
                     unreachable!("definition bound to wrap built-in is not a UDVT");
                 };
-                Typing::Resolved(
-                    self.types
-                        .find_type(&Type::UserDefinedValue(UserDefinedValueType {
-                            definition_id: *definition_id,
-                        }))
-                        .unwrap(),
-                )
+                Typing::Resolved(self.types.register_type(Type::UserDefinedValue(
+                    UserDefinedValueType {
+                        definition_id: *definition_id,
+                    },
+                )))
             }
             _ => {
                 // other built-ins cannot be called
