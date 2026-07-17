@@ -5,12 +5,12 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 use slang_solidity_v2_ir::ir::NodeIdentity;
 
 use super::Pass;
-use crate::binder::{Definition, Reference, Resolution, Typing};
+use crate::binder::{Reference, Resolution, Typing};
 use crate::built_ins::InternalBuiltIn;
 use crate::passes::common::filter_overriden_definitions;
 use crate::types::{
-    AddressType, ArrayType, DataLocation, FixedSizeArrayType, FunctionTypeVisibility, MappingType,
-    MetaType, Number, TupleType, Type, UserMetaType,
+    AddressType, ArrayType, DataLocation, FixedSizeArrayType, MappingType, MetaType, Number,
+    TupleType, Type, UserMetaType,
 };
 
 impl Visitor for Pass<'_> {
@@ -359,75 +359,30 @@ impl Visitor for Pass<'_> {
         // If the operand is either `this` or a contract/interface reference
         // type, then resolve the member typing as a contract member. This
         // handles public getters and visibility changes for public methods.
-        let mut typing = if self.typing_is_contract_reference(&operand_typing) {
+        let typing = if self.typing_is_contract_reference(&operand_typing) {
             self.typing_of_resolution_as_contract_member(&resolution)
         } else {
             self.typing_of_resolution(&resolution)
         };
 
-        // Special cases
-        if let Some(type_id) = typing.as_type_id() {
-            let type_ = self.types.get_type_by_id(type_id);
-
-            if type_.is_inherited_location() {
-                // If the type is a reference type with location "inherited", we
-                // use the operand's location for the resulting typing
-                if let Some(operand_location) = operand_typing
-                    .as_type_id()
-                    .and_then(|type_id| self.types.get_type_by_id(type_id).data_location())
-                {
-                    let type_id_with_location = self
-                        .types
-                        .register_type_with_data_location(type_.clone(), operand_location);
-                    typing = Typing::Resolved(type_id_with_location);
-                }
-            } else if let Type::Function(function_type) = type_ {
-                // If this member is a function attached via `using for`, accessing it
-                // on a value binds the receiver as its first argument, producing a
-                // partially applied function (which has no mobile type).
-                if let Some(receiver_type_id) = operand_typing.as_type_id() {
-                    if function_type.implicit_receiver_type.is_none()
-                        && function_type.parameter_types.first().is_some_and(|first| {
-                            self.types.implicitly_convertible_to_for_external_call(
-                                receiver_type_id,
-                                *first,
-                            )
-                        })
-                    {
-                        let function_type = function_type.clone();
-                        typing = Typing::Resolved(
-                            self.types.partially_apply_function_type(function_type),
-                        );
-                    }
-                } else if let Typing::UserMetaType(container_id) = operand_typing {
-                    // A function reached through a contract/interface *type name* (eg.
-                    // `C.g`) is a non-callable declaration with no mobile type, not a
-                    // function value.
-                    if matches!(
-                        // Only contract/interface type names — not libraries (`L.f` stays a
-                        // normal callable) nor enums/structs (members aren't functions).
-                        self.binder.find_definition_by_id(container_id),
-                        Some(Definition::Contract(_) | Definition::Interface(_))
-                    ) {
-                        let is_foreign_and_visible = match function_type.visibility {
-                            FunctionTypeVisibility::External => true,
-                            FunctionTypeVisibility::Public => {
-                                self.is_foreign_contract(container_id)
-                            }
-                            FunctionTypeVisibility::Internal | FunctionTypeVisibility::Private => {
-                                false
-                            }
-                        };
-
-                        if let Some(definition_id) = function_type.definition_id {
-                            if is_foreign_and_visible {
-                                typing = Typing::UserMetaType(definition_id);
-                            }
-                        }
-                    }
-                }
+        // Special cases: see `adjusted_member_access_type`
+        let typing = match typing {
+            Typing::Resolved(type_id) => {
+                Typing::Resolved(self.adjusted_member_access_type(&operand_typing, type_id))
             }
-        }
+            Typing::This(type_id) => {
+                Typing::This(self.adjusted_member_access_type(&operand_typing, type_id))
+            }
+            Typing::Undetermined(type_ids) => Typing::Undetermined(
+                type_ids
+                    .into_iter()
+                    .map(|type_id| self.adjusted_member_access_type(&operand_typing, type_id))
+                    .collect(),
+            ),
+            Typing::Unresolved | Typing::BuiltIn(_) | Typing::NewExpression(_) | Typing::Super => {
+                typing
+            }
+        };
 
         // Store the typing
         self.binder.set_node_typing(node.id(), typing);

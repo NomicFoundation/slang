@@ -1812,6 +1812,14 @@ mod type_system {
         }
 
         #[test]
+        fn named_arguments() -> Result<()> {
+            run(
+                "type_system/cannot_call_via_contract_type_name",
+                "named_arguments",
+            )
+        }
+
+        #[test]
         fn overloaded() -> Result<()> {
             run(
                 "type_system/cannot_call_via_contract_type_name",
@@ -1824,6 +1832,14 @@ mod type_system {
             run(
                 "type_system/cannot_call_via_contract_type_name",
                 "overloaded_internal_selected",
+            )
+        }
+
+        #[test]
+        fn overloaded_public_selected() -> Result<()> {
+            run(
+                "type_system/cannot_call_via_contract_type_name",
+                "overloaded_public_selected",
             )
         }
     }

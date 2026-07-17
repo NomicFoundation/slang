@@ -2,9 +2,16 @@
 
 Parse errors:
 [type-system/cannot-call-via-contract-type-name] Error: Cannot call function via contract type name.
-    ╭─[input.sol:12:9]
+    ╭─[input.sol:13:9]
     │
- 12 │         A.f(1);
+ 13 │         A.f();
+    │         ──┬──  
+    │           ╰──── Error occurred here.
+────╯
+[type-system/cannot-call-via-contract-type-name] Error: Cannot call function via contract type name.
+    ╭─[input.sol:14:9]
+    │
+ 14 │         A.f(1);
     │         ───┬──  
     │            ╰──── Error occurred here.
 ────╯
@@ -21,12 +28,11 @@ Definitions (6):
 
 ------------------------------------------------------------------------
 
-References (5):
-- Ref: ["A" @ input.sol:9:15] -> #1
-- Ref: ["A" @ input.sol:11:9] -> #1
-- Ref: ["f" @ input.sol:11:11] -> #2
-- Ref: ["A" @ input.sol:12:9] -> #1
-- Ref: ["f" @ input.sol:12:11] -> #3
+References (4):
+- Ref: ["A" @ input.sol:13:9] -> #1
+- Ref: ["f" @ input.sol:13:11] -> #2
+- Ref: ["A" @ input.sol:14:9] -> #1
+- Ref: ["f" @ input.sol:14:11] -> #3
 
 ------------------------------------------------------------------------
 
@@ -40,7 +46,7 @@ Bindings:
   4 │ contract A {
     │          ┬  
     │          ╰── name: 1
-  5 │     function f() internal {}
+  5 │     function f() external {}
     │              ┬  
     │              ╰── name: 2
   6 │     function f(uint x) external {}
@@ -49,20 +55,19 @@ Bindings:
     │                     │  
     │                     ╰── name: 4
     │ 
-  9 │ contract B is A {
-    │          ┬    ┬  
-    │          ╰─────── name: 5
-    │               │  
-    │               ╰── ref: 1
+  9 │ contract B {
+    │          ┬  
+    │          ╰── name: 5
  10 │     function g() public {
     │              ┬  
     │              ╰── name: 6
- 11 │         A.f();
+    │ 
+ 13 │         A.f();
     │         ┬ ┬  
     │         ╰──── ref: 1
     │           │  
     │           ╰── ref: 2
- 12 │         A.f(1);
+ 14 │         A.f(1);
     │         ┬ ┬  
     │         ╰──── ref: 1
     │           │  

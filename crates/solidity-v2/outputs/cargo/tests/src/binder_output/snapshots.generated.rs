@@ -310,8 +310,18 @@ mod contracts {
     }
 
     #[test]
+    fn overloaded_external_selected() -> Result<()> {
+        run("contracts", "overloaded_external_selected")
+    }
+
+    #[test]
     fn overloaded_internal_selected() -> Result<()> {
         run("contracts", "overloaded_internal_selected")
+    }
+
+    #[test]
+    fn overloaded_named_arguments_selected() -> Result<()> {
+        run("contracts", "overloaded_named_arguments_selected")
     }
 
     #[test]
@@ -912,6 +922,11 @@ mod libraries {
     #[test]
     fn modifiers_scope() -> Result<()> {
         run("libraries", "modifiers_scope")
+    }
+
+    #[test]
+    fn overloaded_via_type_name() -> Result<()> {
+        run("libraries", "overloaded_via_type_name")
     }
 
     #[test]

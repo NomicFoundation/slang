@@ -2,7 +2,7 @@
 
 Diagnostics: 3
 
-Error: Cannot call function via contract type name.
+[type-system/cannot-call-via-contract-type-name] Error: Cannot call function via contract type name.
     ╭─[input.sol:13:9]
     │
  13 │         A.f();
@@ -10,7 +10,7 @@ Error: Cannot call function via contract type name.
     │           ╰──── Error occurred here.
 ────╯
 
-Error: Cannot call function via contract type name.
+[type-system/cannot-call-via-contract-type-name] Error: Cannot call function via contract type name.
     ╭─[input.sol:14:9]
     │
  14 │         A.g();
@@ -18,7 +18,7 @@ Error: Cannot call function via contract type name.
     │           ╰──── Error occurred here.
 ────╯
 
-Error: Cannot call function via contract type name.
+[type-system/cannot-call-via-contract-type-name] Error: Cannot call function via contract type name.
     ╭─[input.sol:15:9]
     │
  15 │         A.h();
