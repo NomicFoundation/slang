@@ -843,6 +843,11 @@ mod structure {
     use super::*;
 
     #[test]
+    fn abstract_contract_public_constructor() -> Result<()> {
+        run("structure", "abstract_contract_public_constructor")
+    }
+
+    #[test]
     fn break_outside_loop() -> Result<()> {
         run("structure", "break_outside_loop")
     }
@@ -877,6 +882,16 @@ mod structure {
         run("structure", "enum_with_too_many_members")
     }
 
+    #[test]
+    fn free_function_payable() -> Result<()> {
+        run("structure", "free_function_payable")
+    }
+
+    #[test]
+    fn free_function_visibility() -> Result<()> {
+        run("structure", "free_function_visibility")
+    }
+
     mod function_name_matches_container {
         use super::*;
 
@@ -894,6 +909,11 @@ mod structure {
         fn library() -> Result<()> {
             run("structure/function_name_matches_container", "library")
         }
+    }
+
+    #[test]
+    fn interface_function_not_external() -> Result<()> {
+        run("structure", "interface_function_not_external")
     }
 
     mod invalid_using_directive_container {
@@ -926,6 +946,11 @@ mod structure {
     }
 
     #[test]
+    fn library_payable_function() -> Result<()> {
+        run("structure", "library_payable_function")
+    }
+
+    #[test]
     fn library_receive_function() -> Result<()> {
         run("structure", "library_receive_function")
     }
@@ -941,8 +966,59 @@ mod structure {
     }
 
     #[test]
+    fn missing_function_visibility() -> Result<()> {
+        run("structure", "missing_function_visibility")
+    }
+
+    #[test]
     fn multiple_constructors() -> Result<()> {
         run("structure", "multiple_constructors")
+    }
+
+    #[test]
+    fn non_abstract_contract_internal_constructor() -> Result<()> {
+        run("structure", "non_abstract_contract_internal_constructor")
+    }
+
+    mod payable_function_type_must_be_external {
+        use super::*;
+
+        #[test]
+        fn default_visibility() -> Result<()> {
+            run(
+                "structure/payable_function_type_must_be_external",
+                "default_visibility",
+            )
+        }
+
+        #[test]
+        fn explicit_internal() -> Result<()> {
+            run(
+                "structure/payable_function_type_must_be_external",
+                "explicit_internal",
+            )
+        }
+
+        #[test]
+        fn external_allowed() -> Result<()> {
+            run(
+                "structure/payable_function_type_must_be_external",
+                "external_allowed",
+            )
+        }
+
+        #[test]
+        fn non_payable() -> Result<()> {
+            run(
+                "structure/payable_function_type_must_be_external",
+                "non_payable",
+            )
+        }
+    }
+
+    #[test]
+    fn payable_internal_or_private_function() -> Result<()> {
+        run("structure", "payable_internal_or_private_function")
     }
 
     #[test]

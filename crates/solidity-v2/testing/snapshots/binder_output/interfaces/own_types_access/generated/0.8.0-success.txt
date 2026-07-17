@@ -31,7 +31,7 @@ Bindings:
    │             ──┬──  
    │               ╰──── name: 3
    │ 
- 5 │     function test(Bar memory bar);
+ 5 │     function test(Bar memory bar) external;
    │              ──┬─ ─┬─        ─┬─  
    │                ╰────────────────── name: 4
    │                    │          │   

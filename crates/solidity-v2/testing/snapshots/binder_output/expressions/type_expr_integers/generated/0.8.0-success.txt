@@ -33,7 +33,7 @@ Bindings:
     │           ──┬──  
     │             ╰──── ref: 3
     │ 
-  4 │     function test() {
+  4 │     function test() public {
     │              ──┬─  
     │                ╰─── name: 2
   5 │         type(uint).min.nop();

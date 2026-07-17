@@ -5,7 +5,7 @@ contract token {
 }
 
 contract Test is token {
-    function merge(address target) {
+    function merge(address target) public {
         token old = token(address(0x7F2176cEB16dcb648dc924eff617c3dC2BEfd30d));
         old.balanceOf(target);
     }

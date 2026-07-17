@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/non-abstract-contract-internal-constructor] Error: Non-abstract contracts cannot have "internal" constructors. Remove the "internal" keyword or make the contract abstract to fix this.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     constructor() internal {}
+   │     ────────────┬────────────  
+   │                 ╰────────────── Error occurred here.
+───╯

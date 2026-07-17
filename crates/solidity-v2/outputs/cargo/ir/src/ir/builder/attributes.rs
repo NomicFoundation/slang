@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction;
 use slang_solidity_v2_common::diagnostics::kinds::syntax::{
     InvalidMutability, InvalidVisibility, MultipleMutabilitySpecifiers, MultipleOverrideSpecifiers,
     MultipleVirtualSpecifiers, MultipleVisibilitySpecifiers,
@@ -67,6 +68,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             id,
             range,
             visibility: visibility.unwrap_or(FunctionVisibility::Internal),
+            has_explicit_visibility: visibility.is_some(),
             mutability: mutability.unwrap_or(FunctionMutability::NonPayable),
             is_virtual,
             override_specifier,
@@ -106,6 +108,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             id,
             range,
             visibility: visibility.unwrap_or(FunctionVisibility::Public),
+            has_explicit_visibility: visibility.is_some(),
             mutability: mutability.unwrap_or(FunctionMutability::NonPayable),
             is_virtual: false,
             override_specifier: None,
@@ -153,6 +156,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             }
         }
 
+        let has_explicit_visibility = visibility.is_some();
         let visibility = visibility.unwrap_or_else(|| {
             self.report(
                 owner,
@@ -167,6 +171,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             id,
             range,
             visibility,
+            has_explicit_visibility,
             mutability: mutability.unwrap_or(FunctionMutability::NonPayable),
             is_virtual,
             override_specifier,
@@ -208,6 +213,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             }
         }
 
+        let has_explicit_visibility = visibility.is_some();
         let visibility = visibility.unwrap_or_else(|| {
             self.report(
                 owner,
@@ -232,6 +238,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             id,
             range,
             visibility,
+            has_explicit_visibility,
             mutability,
             is_virtual,
             override_specifier,
@@ -264,6 +271,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             id,
             range,
             visibility: FunctionVisibility::Internal,
+            has_explicit_visibility: false,
             mutability: FunctionMutability::NonPayable,
             is_virtual,
             override_specifier,
@@ -335,6 +343,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
     pub(super) fn build_function_type_attributes(
         &mut self,
+        owner: &impl TextRange,
         attributes: &input::FunctionTypeAttributes,
     ) -> output::FunctionTypeAttributes {
         let id = self.next_id(output::NodeKind::FunctionTypeAttributes);
@@ -387,11 +396,19 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             }
         }
 
+        let visibility = visibility.unwrap_or(FunctionVisibility::Internal);
+        let mutability = mutability.unwrap_or(FunctionMutability::NonPayable);
+
+        // Only external function types can be payable.
+        if mutability == FunctionMutability::Payable && visibility != FunctionVisibility::External {
+            self.report(owner, PayableInternalOrPrivateFunction);
+        }
+
         Arc::new(output::FunctionTypeAttributesStruct {
             id,
             range,
-            visibility: visibility.unwrap_or(FunctionVisibility::Internal),
-            mutability: mutability.unwrap_or(FunctionMutability::NonPayable),
+            visibility,
+            mutability,
         })
     }
 

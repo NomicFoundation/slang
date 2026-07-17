@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[SyntaxError 4937] Error: No visibility specified. Did you intend to add "public"?
+   ╭─[input.sol:6:5]
+   │
+ 6 │     function noVis() {}
+   │     ─────────┬─────────  
+   │              ╰─────────── Error occurred here.
+───╯
+
+[SyntaxError 4937] Error: No visibility specified. Did you intend to add "public"?
+    ╭─[input.sol:17:5]
+    │
+ 17 │     function noVis() {}
+    │     ─────────┬─────────  
+    │              ╰─────────── Error occurred here.
+────╯
+
+[SyntaxError 4937] Error: No visibility specified. Did you intend to add "external"?
+    ╭─[input.sol:22:5]
+    │
+ 22 │     function noVis();
+    │     ────────┬────────  
+    │             ╰────────── Error occurred here.
+────╯
+
+[TypeError 1560] Error: Functions in interfaces must be declared external.
+    ╭─[input.sol:22:5]
+    │
+ 22 │     function noVis();
+    │     ────────┬────────  
+    │             ╰────────── Error occurred here.
+────╯

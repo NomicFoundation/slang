@@ -2,5 +2,5 @@
 pragma solidity *;
 
 contract Test {
-  function foo(function() pure view returns (uint) callback) {}
+  function foo(function() pure view returns (uint) callback) public {}
 }

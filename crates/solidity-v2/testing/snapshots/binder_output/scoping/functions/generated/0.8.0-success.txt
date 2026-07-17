@@ -28,7 +28,7 @@ Bindings:
   1 │ contract Sample {
     │          ───┬──  
     │             ╰──── name: 1
-  2 │     function test() returns (int) {
+  2 │     function test() public returns (int) {
     │              ──┬─  
     │                ╰─── name: 2
   3 │         return from_sample() + top_level() + MyLib.from_lib();
@@ -41,14 +41,14 @@ Bindings:
     │                                                        │     
     │                                                        ╰───── ref: 5
     │ 
-  5 │     function from_sample() returns (int) {
+  5 │     function from_sample() public returns (int) {
     │              ─────┬─────  
     │                   ╰─────── name: 3
     │ 
  10 │ library MyLib {
     │         ──┬──  
     │           ╰──── name: 4
- 11 │     function from_lib() returns (int) {
+ 11 │     function from_lib() public returns (int) {
     │              ────┬───  
     │                  ╰───── name: 5
     │ 

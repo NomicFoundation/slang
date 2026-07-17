@@ -48,7 +48,7 @@ Bindings:
    │                    ╰─────── name: 3
    │                         │  
    │                         ╰── name: 4
- 3 │     function testFunc() {
+ 3 │     function testFunc() public {
    │              ────┬───  
    │                  ╰───── name: 5
  4 │         string name = type(Test).name;

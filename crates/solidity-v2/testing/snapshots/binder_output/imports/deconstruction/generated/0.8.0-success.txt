@@ -32,7 +32,7 @@ Bindings:
  1 │ library Bar {
    │         ─┬─  
    │          ╰─── name: 1
- 2 │     function bar() returns (int) {
+ 2 │     function bar() public returns (int) {
    │              ─┬─  
    │               ╰─── name: 2
 ───╯
@@ -45,7 +45,7 @@ Bindings:
  1 │ library Foo {
    │         ─┬─  
    │          ╰─── name: 3
- 2 │     function foo() returns (int) {
+ 2 │     function foo() public returns (int) {
    │              ─┬─  
    │               ╰─── name: 4
 ───╯
@@ -69,7 +69,7 @@ Bindings:
  4 │ contract Sample {
    │          ───┬──  
    │             ╰──── name: 7
- 5 │     function test() returns (int) {
+ 5 │     function test() public returns (int) {
    │              ──┬─  
    │                ╰─── name: 8
  6 │         return Foo.foo() + LocalBar.bar();

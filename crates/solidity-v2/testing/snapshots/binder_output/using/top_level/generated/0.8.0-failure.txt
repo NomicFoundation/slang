@@ -46,7 +46,7 @@ Bindings:
     │          ──┬──  
     │            ╰──── name: 2
     │ 
-  5 │ function increment(Counter memory _counter) public {}
+  5 │ function increment(Counter memory _counter) {}
     │          ────┬──── ───┬───        ────┬───  
     │              ╰────────────────────────────── name: 3
     │                       │               │     

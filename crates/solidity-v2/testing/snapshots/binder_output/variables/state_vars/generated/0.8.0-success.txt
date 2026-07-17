@@ -26,7 +26,7 @@ Bindings:
    │          ┬  
    │          ╰── name: 2
    │ 
- 4 │     function bar() returns (uint) {
+ 4 │     function bar() public returns (uint) {
    │              ─┬─  
    │               ╰─── name: 3
  5 │         return x;

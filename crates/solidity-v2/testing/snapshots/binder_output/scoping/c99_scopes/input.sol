@@ -1,7 +1,7 @@
 contract Foo {
     uint x = 10;
 
-    function a_func(uint x) returns (uint) {
+    function a_func(uint x) public returns (uint) {
         // Solidity < 0.5.0 binds the following `x` differently than >= 0.5.0
         uint y = x + 1;
         {

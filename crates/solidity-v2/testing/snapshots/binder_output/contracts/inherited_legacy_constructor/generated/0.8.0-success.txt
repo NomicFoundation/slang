@@ -44,7 +44,7 @@ Bindings:
     │            ╰──────────── name: 4
     │                    │    
     │                    ╰──── ref: 1
-  8 │     function merge(address target) {
+  8 │     function merge(address target) public {
     │              ──┬──         ───┬──  
     │                ╰─────────────────── name: 5
     │                               │    

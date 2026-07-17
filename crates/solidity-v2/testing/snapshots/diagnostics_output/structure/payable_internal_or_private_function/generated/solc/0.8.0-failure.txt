@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[SyntaxError 4937] Error: No visibility specified. Did you intend to add "public"?
+    ╭─[input.sol:19:5]
+    │
+ 19 │     function noVisibilityPayable() payable {}
+    │     ────────────────────┬────────────────────  
+    │                         ╰────────────────────── Error occurred here.
+────╯
+
+[TypeError 5587] Error: "internal" and "private" functions cannot be payable.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     function internalPayable() internal payable {}
+   │     ───────────────────────┬──────────────────────  
+   │                            ╰──────────────────────── Error occurred here.
+───╯
+
+[TypeError 5587] Error: "internal" and "private" functions cannot be payable.
+   ╭─[input.sol:7:5]
+   │
+ 7 │     function privatePayable() private payable {}
+   │     ──────────────────────┬─────────────────────  
+   │                           ╰─────────────────────── Error occurred here.
+───╯

@@ -3,7 +3,7 @@ library Id {
     Yes
   }
 
-  function id(Answer ans) returns (Answer) {
+  function id(Answer ans) public returns (Answer) {
     return ans;
   }
 }
@@ -11,7 +11,7 @@ library Id {
 contract Test {
   using Id for Id.Answer;
 
-  function testFunc() returns (Id.Answer) {
+  function testFunc() public returns (Id.Answer) {
     Id.Answer.Yes.id();
   }
 }

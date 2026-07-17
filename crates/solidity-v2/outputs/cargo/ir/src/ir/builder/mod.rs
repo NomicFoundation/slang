@@ -240,10 +240,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             input::FunctionName::ReceiveKeyword(_) => (output::FunctionKind::Receive, None),
         };
         let parameters = self.build_parameters_declaration(&source.parameters);
-
-        // TODO(validation) SDR[16]: free functions are always internal, but
-        // otherwise a visibility *must* be set explicitly (>= 0.8.0)
-
         let attributes = self.build_function_attributes(&source.attributes);
         let returns = source
             .returns
@@ -268,7 +264,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let parameters = self.build_parameters_declaration(&source.parameters);
 
-        let attributes = self.build_function_type_attributes(&source.attributes);
+        let attributes = self.build_function_type_attributes(source, &source.attributes);
         let returns = source
             .returns
             .as_ref()

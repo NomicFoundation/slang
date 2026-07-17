@@ -28,7 +28,7 @@ Bindings:
  1 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 1
- 2 │     function someFunc(int x) returns (int) {
+ 2 │     function someFunc(int x) public returns (int) {
    │              ────┬───     ┬  
    │                  ╰─────────── name: 2
    │                           │  
@@ -43,7 +43,7 @@ Bindings:
    │                                         │     
    │                                         ╰───── ref: 6
    │ 
- 5 │     function divide(int dividend, int divisor) returns (int);
+ 5 │     function divide(int dividend, int divisor) public returns (int);
    │              ───┬──     ────┬───      ───┬───  
    │                 ╰────────────────────────────── name: 4
    │                             │            │     

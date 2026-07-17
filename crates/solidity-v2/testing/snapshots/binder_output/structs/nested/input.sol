@@ -25,7 +25,7 @@ contract Sample {
     int w;
   }
 
-  function hello() {
+  function hello() public {
     SampleStruct memory s;
     s.iface_struct.lib_struct.base.x = 1;
     s.iface_struct.lib_struct.y = 2;

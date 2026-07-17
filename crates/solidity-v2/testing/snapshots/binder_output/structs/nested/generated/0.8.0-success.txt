@@ -150,7 +150,7 @@ Bindings:
     │         ┬  
     │         ╰── name: 20
     │ 
- 28 │   function hello() {
+ 28 │   function hello() public {
     │            ──┬──  
     │              ╰──── name: 21
  29 │     SampleStruct memory s;

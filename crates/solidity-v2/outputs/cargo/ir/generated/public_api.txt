@@ -2185,6 +2185,7 @@ pub fn slang_solidity_v2_ir::ir::ForStatementStruct::node_id(&self) -> core::opt
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ForStatementStruct
 pub fn slang_solidity_v2_ir::ir::ForStatementStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::FunctionAttributesStruct
+pub slang_solidity_v2_ir::ir::FunctionAttributesStruct::has_explicit_visibility: bool
 pub slang_solidity_v2_ir::ir::FunctionAttributesStruct::is_virtual: bool
 pub slang_solidity_v2_ir::ir::FunctionAttributesStruct::modifier_invocations: slang_solidity_v2_ir::ir::ModifierInvocations
 pub slang_solidity_v2_ir::ir::FunctionAttributesStruct::mutability: slang_solidity_v2_ir::ir::FunctionMutability

@@ -3,9 +3,9 @@
 Diagnostics: 1
 
 [ParserError 9680] Error: State mutability already specified as "pure".
-   ╭─[input.sol:5:23]
+   ╭─[input.sol:5:30]
    │
- 5 │   function foo() pure view returns (uint) {
-   │                       ──┬─  
-   │                         ╰─── Error occurred here.
+ 5 │   function foo() public pure view returns (uint) {
+   │                              ──┬─  
+   │                                ╰─── Error occurred here.
 ───╯

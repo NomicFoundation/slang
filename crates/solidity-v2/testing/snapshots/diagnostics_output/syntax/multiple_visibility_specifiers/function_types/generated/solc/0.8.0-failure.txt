@@ -5,7 +5,7 @@ Diagnostics: 1
 [ParserError 2314] Error: Expected ',' but got 'internal'
    ╭─[input.sol:5:36]
    │
- 5 │   function foo(function() external internal returns (uint) callback) {}
+ 5 │   function foo(function() external internal returns (uint) callback) public {}
    │                                    ────┬───  
    │                                        ╰───── Error occurred here.
 ───╯

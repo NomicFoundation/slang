@@ -431,12 +431,13 @@ impl Serialize for ForStatementStruct {
 
 impl Serialize for FunctionAttributesStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(9))?;
+        let mut map = serializer.serialize_map(Some(10))?;
         map.serialize_entry("id", &self.node_id())?;
         map.serialize_entry("type", "FunctionAttributes")?;
         map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
         map.serialize_entry("file", self.get_file_id())?;
         map.serialize_entry("visibility", &self.visibility())?;
+        map.serialize_entry("has_explicit_visibility", &self.has_explicit_visibility())?;
         map.serialize_entry("mutability", &self.mutability())?;
         map.serialize_entry("is_virtual", &self.is_virtual())?;
         map.serialize_entry("override_specifier", &self.override_specifier())?;

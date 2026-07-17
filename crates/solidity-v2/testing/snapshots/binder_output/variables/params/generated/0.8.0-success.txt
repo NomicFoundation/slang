@@ -10,7 +10,7 @@ Definitions (10):
 - Def: #7 ["quux" @ input.sol:10:14] (function, type: function (int256, int256) returns int256)
 - Def: #8 ["x" @ input.sol:10:23] (parameter, type: int256)
 - Def: #9 ["y" @ input.sol:10:30] (parameter, type: int256)
-- Def: #10 ["z" @ input.sol:10:46] (parameter, type: int256)
+- Def: #10 ["z" @ input.sol:10:53] (parameter, type: int256)
 
 ------------------------------------------------------------------------
 
@@ -34,7 +34,7 @@ Bindings:
   1 │ contract Foo {
     │          ─┬─  
     │           ╰─── name: 1
-  2 │     function bar(uint z) returns (uint) {
+  2 │     function bar(uint z) public returns (uint) {
     │              ─┬─      ┬  
     │               ╰────────── name: 2
     │                       │  
@@ -43,7 +43,7 @@ Bindings:
     │                ┬  
     │                ╰── ref: 3
     │ 
-  6 │     function baz(int x, int y) returns (int) {
+  6 │     function baz(int x, int y) public returns (int) {
     │              ─┬─     ┬      ┬  
     │               ╰──────────────── name: 4
     │                      │      │  
@@ -56,15 +56,15 @@ Bindings:
     │                    │  
     │                    ╰── ref: 6
     │ 
- 10 │     function quux(int x, int y) returns (int z) {
-    │              ──┬─     ┬      ┬               ┬  
-    │                ╰──────────────────────────────── name: 7
-    │                       │      │               │  
-    │                       ╰───────────────────────── name: 8
-    │                              │               │  
-    │                              ╰────────────────── name: 9
-    │                                              │  
-    │                                              ╰── name: 10
+ 10 │     function quux(int x, int y) public returns (int z) {
+    │              ──┬─     ┬      ┬                      ┬  
+    │                ╰─────────────────────────────────────── name: 7
+    │                       │      │                      │  
+    │                       ╰──────────────────────────────── name: 8
+    │                              │                      │  
+    │                              ╰───────────────────────── name: 9
+    │                                                     │  
+    │                                                     ╰── name: 10
  11 │         z = x + y;
     │         ┬   ┬   ┬  
     │         ╰────────── ref: 10

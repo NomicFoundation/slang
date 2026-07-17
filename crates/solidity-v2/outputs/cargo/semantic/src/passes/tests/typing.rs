@@ -634,8 +634,8 @@ fn test_overload_resolution_unsigned_to_signed_argument_is_version_gated() {
     // argument before 0.8.1, where `uint8` still implicitly converts to `int16`.
     let setup = "
         uint8 u;
-        function pick(int16 a) pure returns (uint8) { a; return 1; }
-        function pick(string memory a) pure returns (uint16) { a; return 2; }
+        function pick(int16 a) internal pure returns (uint8) { a; return 1; }
+        function pick(string memory a) internal pure returns (uint16) { a; return 2; }
     ";
 
     // 0.8.0: `uint8` -> `int16` is allowed, so the `int16` overload matches.
@@ -998,8 +998,8 @@ fn test_bitwise_or_widens_byte_arrays() {
 #[test]
 fn test_overload_resolution_widens_byte_array_argument() {
     let setup = "
-        function pick(bytes32 a) pure returns (uint8) { a; return 1; }
-        function pick(string memory a) pure returns (uint16) { a; return 2; }
+        function pick(bytes32 a) internal pure returns (uint8) { a; return 1; }
+        function pick(string memory a) internal pure returns (uint16) { a; return 2; }
     ";
     let (type_, _) = type_of_expression_in_context(setup, "pick(bytes20(0))");
     assert_eq!(
@@ -1014,8 +1014,8 @@ fn test_overload_resolution_widens_byte_array_argument() {
 #[test]
 fn test_overload_resolution_rejects_byte_array_narrowing() {
     let setup = "
-        function pick(bytes20 a) pure returns (uint8) { a; return 1; }
-        function pick(string memory a) pure returns (uint16) { a; return 2; }
+        function pick(bytes20 a) internal pure returns (uint8) { a; return 1; }
+        function pick(string memory a) internal pure returns (uint16) { a; return 2; }
     ";
     let (type_, _) = try_type_of_expression_in_context(setup, "pick(bytes32(0))");
     // Neither overload matches: `bytes32` does not convert to `bytes20` nor

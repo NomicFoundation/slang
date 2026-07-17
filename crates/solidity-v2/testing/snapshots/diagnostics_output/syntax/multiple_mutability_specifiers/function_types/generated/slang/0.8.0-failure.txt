@@ -5,7 +5,7 @@ Diagnostics: 1
 [syntax/multiple-mutability-specifiers] Error: Only a single mutability specifier can be provided.
    ╭─[input.sol:5:32]
    │
- 5 │   function foo(function() pure view returns (uint) callback) {}
+ 5 │   function foo(function() pure view returns (uint) callback) public {}
    │                                ──┬─  
    │                                  ╰─── Error occurred here.
 ───╯

@@ -6,7 +6,7 @@ contract Test {
         string message
     );
 
-    function test() {
+    function test() public {
         emit Log({message: "testing", level: Severity.Info});
     }
 }

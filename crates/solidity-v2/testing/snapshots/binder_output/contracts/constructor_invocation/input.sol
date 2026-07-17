@@ -1,5 +1,5 @@
 contract A {
-    function f(int _x) {}
+    function f(int _x) public {}
 
     constructor(int _x) {}
 }

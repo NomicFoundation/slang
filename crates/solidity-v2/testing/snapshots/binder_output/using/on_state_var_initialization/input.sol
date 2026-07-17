@@ -1,5 +1,5 @@
 library Lib {
-    function nop(uint256 x) returns (uint256) { return x; }
+    function nop(uint256 x) public returns (uint256) { return x; }
 }
 contract Test {
     using Lib for uint256;

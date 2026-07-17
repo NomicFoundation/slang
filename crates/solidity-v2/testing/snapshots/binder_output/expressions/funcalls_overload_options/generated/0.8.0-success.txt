@@ -49,7 +49,7 @@ Bindings:
  11 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 5
- 12 │   function someFunc(Other x, int y) {
+ 12 │   function someFunc(Other x, int y) public {
     │            ────┬─── ──┬── ┬      ┬  
     │                ╰──────────────────── name: 6
     │                       │   │      │  

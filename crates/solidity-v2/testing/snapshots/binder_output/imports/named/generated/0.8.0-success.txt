@@ -30,7 +30,7 @@ Bindings:
  1 │ library Foo {
    │         ─┬─  
    │          ╰─── name: 1
- 2 │     function test(int x) returns (int) {
+ 2 │     function test(int x) public returns (int) {
    │              ──┬─     ┬  
    │                ╰───────── name: 2
    │                       │  
@@ -52,7 +52,7 @@ Bindings:
  3 │ contract Example {
    │          ───┬───  
    │             ╰───── name: 5
- 4 │     function test(int x) returns (int) {
+ 4 │     function test(int x) public returns (int) {
    │              ──┬─     ┬  
    │                ╰───────── name: 6
    │                       │  

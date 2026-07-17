@@ -24,7 +24,7 @@ Bindings:
  1 │ contract Foo {
    │          ─┬─  
    │           ╰─── name: 1
- 2 │     function bar() returns (uint) {
+ 2 │     function bar() public returns (uint) {
    │              ─┬─  
    │               ╰─── name: 2
  3 │         uint x = 10;

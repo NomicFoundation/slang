@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[structure/payable-internal-or-private-function] Error: "internal" or "private" functions cannot be "payable".
+   ╭─[input.sol:6:5]
+   │
+ 6 │     function internalPayable() internal payable {}
+   │     ───────────────────────┬──────────────────────  
+   │                            ╰──────────────────────── Error occurred here.
+───╯
+
+[structure/payable-internal-or-private-function] Error: "internal" or "private" functions cannot be "payable".
+   ╭─[input.sol:7:5]
+   │
+ 7 │     function privatePayable() private payable {}
+   │     ──────────────────────┬─────────────────────  
+   │                           ╰─────────────────────── Error occurred here.
+───╯
+
+[structure/missing-function-visibility] Error: No visibility specified. Did you intend to add "public"?
+    ╭─[input.sol:19:5]
+    │
+ 19 │     function noVisibilityPayable() payable {}
+    │     ────────────────────┬────────────────────  
+    │                         ╰────────────────────── Error occurred here.
+────╯

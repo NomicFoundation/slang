@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/free-function-payable] Error: Free functions cannot be "payable".
+   ╭─[input.sol:5:1]
+   │
+ 5 │ function pay() payable {}
+   │ ────────────┬────────────  
+   │             ╰────────────── Error occurred here.
+───╯
