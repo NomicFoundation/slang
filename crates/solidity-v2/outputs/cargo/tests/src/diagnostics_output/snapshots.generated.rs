@@ -363,6 +363,14 @@ mod resolution {
         }
 
         #[test]
+        fn inherited_in_interfaces() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "inherited_in_interfaces",
+            )
+        }
+
+        #[test]
         fn inherited_modifier_variable_clash() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
