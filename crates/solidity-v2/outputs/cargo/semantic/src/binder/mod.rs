@@ -101,6 +101,10 @@ pub struct Binder {
     references: Map<NodeId, Reference>,
     /// `Typing` information for each relevant `NodeId` of the AST
     node_typing: Map<NodeId, Typing>,
+    /// Common type both operands of a comparison reconcile to, indexed by the
+    /// comparison expression's `NodeId`. Held apart from `node_typing`, which
+    /// carries the comparison's boolean result.
+    comparison_operand_typing: Map<NodeId, Typing>,
     /// Linearisations, as a vector of definitions, indexed by the
     /// contract/interface definition's `NodeId`
     linearisations: Map<NodeId, Vec<NodeId>>,
@@ -142,6 +146,9 @@ impl Binder {
             scopes: Vec::with_capacity(capacities.scopes),
             scopes_by_node_id: Map::default_with_capacity(capacities.scopes_by_node_id),
             node_typing: Map::default_with_capacity(capacities.node_typing),
+            comparison_operand_typing: Map::default_with_capacity(
+                capacities.comparison_operand_typing,
+            ),
             references: Map::default_with_capacity(capacities.references),
             definitions: Map::default_with_capacity(capacities.definitions),
             definitions_by_identifier: Map::default_with_capacity(capacities.definitions),
@@ -378,6 +385,13 @@ impl Binder {
             .unwrap_or(Typing::Unresolved)
     }
 
+    pub fn comparison_operand_typing(&self, node_id: NodeId) -> Typing {
+        self.comparison_operand_typing
+            .get(&node_id)
+            .cloned()
+            .unwrap_or(Typing::Unresolved)
+    }
+
     pub(crate) fn set_node_type(&mut self, node_id: NodeId, type_id: Option<TypeId>) {
         let typing = if let Some(type_id) = type_id {
             Typing::Resolved(type_id)
@@ -404,6 +418,18 @@ impl Binder {
             previous_typing.is_some(),
             "update_node_typing called on node {node_id:?} with no existing typing"
         );
+    }
+
+    pub(crate) fn set_comparison_operand_type(&mut self, node_id: NodeId, type_id: Option<TypeId>) {
+        let typing = if let Some(type_id) = type_id {
+            Typing::Resolved(type_id)
+        } else {
+            Typing::Unresolved
+        };
+        let previous_typing = self.comparison_operand_typing.insert(node_id, typing);
+        if previous_typing.is_some() {
+            unreachable!("comparison operand typing for node {node_id:?} already set");
+        }
     }
 
     // File scope resolution context

@@ -63,6 +63,20 @@ impl Pass<'_> {
         definition.try_into().ok()
     }
 
+    /// The common type both operands of a comparison reconcile to, through the
+    /// shared `TypeRegistry::common_type` the integer-operator and ternary paths
+    /// also use. Recorded apart from the comparison's boolean result type, unlike
+    /// arithmetic where the reconciled type *is* the result.
+    pub(super) fn common_type_of_operands(
+        &mut self,
+        left_operand: &ir::Expression,
+        right_operand: &ir::Expression,
+    ) -> Option<TypeId> {
+        let left = self.typing_of_expression(left_operand).as_type_id()?;
+        let right = self.typing_of_expression(right_operand).as_type_id()?;
+        self.types.common_type(left, right)
+    }
+
     /// Returns the type of an binary operator expression. If both operands are
     /// number literals, applies `op` to fold them into a narrowed literal type;
     /// otherwise falls back to the implicit-convertibility rule between the

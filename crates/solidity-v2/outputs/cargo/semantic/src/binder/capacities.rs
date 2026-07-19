@@ -166,6 +166,11 @@ const PARAMETER_SCOPE_NODE_KINDS: &[NodeKind] = &[
 const LINEARISATION_KINDS: &[NodeKind] =
     &[NodeKind::ContractDefinition, NodeKind::InterfaceDefinition];
 
+/// Comparison operators (one `comparison_operand_typing` entry each). Their
+/// reconciled operand type is recorded apart from their boolean result.
+const COMPARISON_KINDS: &[NodeKind] =
+    &[NodeKind::EqualityExpression, NodeKind::InequalityExpression];
+
 /// Up-front sizes for the binder's dominant per-node collections, derived from
 /// the IR node-kind histogram (see `Binder::with_capacity`). These are keyed
 /// by (or indexed alongside) `NodeId` and end up roughly as large as the source,
@@ -178,6 +183,9 @@ pub(crate) struct BinderCapacities {
     /// names. Tends to **under**-shoot slightly (a few non-expression nodes are
     /// also typed, and the subtraction is conservative) → at worst one rehash.
     pub node_typing: usize,
+    /// Reconciled comparison operand types (`comparison_operand_typing`). One
+    /// entry per comparison expression. **Exact.**
+    pub comparison_operand_typing: usize,
     /// Reference identifiers (`references`). Estimate: identifiers minus
     /// definition names. Tends to **under**-shoot slightly → at worst one
     /// rehash.
@@ -212,6 +220,7 @@ impl From<&NodeKindHistogram> for BinderCapacities {
             // Expression nodes, minus the definition-name identifiers counted
             // under `Identifier` that are never typed.
             node_typing: count_kinds(EXPRESSION_KINDS, histogram).saturating_sub(definitions),
+            comparison_operand_typing: count_kinds(COMPARISON_KINDS, histogram),
             // Identifiers that aren't definition names ≈ resolved references.
             references: identifiers.saturating_sub(definitions),
             definitions,
