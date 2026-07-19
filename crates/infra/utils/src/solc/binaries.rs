@@ -78,7 +78,7 @@ fn fetch_binaries_list(mirror_url: &Url) -> Result<HashMap<Version, String>> {
         releases: HashMap<Version, String>,
     }
 
-    const LIST_MAX_AGE: Duration = Duration::from_secs(60 * 60 * 24);
+    const LIST_MAX_AGE: Duration = Duration::from_hours(24);
 
     let list_path = solc_dir().join("list.json");
 

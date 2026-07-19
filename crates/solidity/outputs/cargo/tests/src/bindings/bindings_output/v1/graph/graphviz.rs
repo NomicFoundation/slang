@@ -61,7 +61,7 @@ impl DotSubGraph<'_> {
             // special case: JUMP_TO_SCOPE_NODE
             "JUMP_TO_SCOPE_NODE".to_string()
         } else {
-            format!("{graph_id}N{index}", graph_id = self.graph_id,)
+            format!("{graph_id}N{index}", graph_id = self.graph_id)
         }
     }
 

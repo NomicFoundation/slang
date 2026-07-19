@@ -68,11 +68,7 @@ impl VersionSet {
         let mut first_iter = self.ranges.iter().cloned().peekable();
         let mut second_iter = other.ranges.iter().peekable();
 
-        loop {
-            let (Some(first), Some(second)) = (first_iter.peek_mut(), second_iter.peek()) else {
-                break;
-            };
-
+        while let (Some(first), Some(second)) = (first_iter.peek_mut(), second_iter.peek()) {
             if first.end <= second.start {
                 // first fully exists before second: take it, and advance first:
                 ranges.push(first_iter.next().unwrap());

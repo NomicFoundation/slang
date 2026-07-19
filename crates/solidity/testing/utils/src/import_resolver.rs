@@ -234,9 +234,7 @@ fn resolve_relative_url_import(source_path: &str, import_path: &str) -> Result<S
 }
 
 fn path_is_url(path: &str) -> bool {
-    Url::parse(path)
-        .map(|url| url.is_special())
-        .unwrap_or(false)
+    Url::parse(path).is_ok_and(|url| url.is_special())
 }
 
 #[cfg(test)]

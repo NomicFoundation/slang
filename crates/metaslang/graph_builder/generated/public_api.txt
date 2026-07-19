@@ -736,7 +736,7 @@ pub struct metaslang_graph_builder::graph::Graph<KT: metaslang_cst::kinds::KindT
 impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::graph::Graph<KT>
 pub fn metaslang_graph_builder::graph::Graph<KT>::add_graph_node(&mut self) -> metaslang_graph_builder::graph::GraphNodeRef
 pub fn metaslang_graph_builder::graph::Graph<KT>::add_syntax_node(&mut self, metaslang_cst::cursor::Cursor<KT>) -> metaslang_graph_builder::graph::SyntaxNodeRef
-pub fn metaslang_graph_builder::graph::Graph<KT>::display_json(&self, core::option::Option<&std::path::Path>) -> std::io::error::Result<()>
+pub fn metaslang_graph_builder::graph::Graph<KT>::display_json(&self, core::option::Option<&std::path::Path>) -> core::io::error::Result<()>
 pub fn metaslang_graph_builder::graph::Graph<KT>::iter_nodes(&self) -> impl core::iter::traits::iterator::Iterator<Item = metaslang_graph_builder::graph::GraphNodeRef>
 pub fn metaslang_graph_builder::graph::Graph<KT>::new() -> metaslang_graph_builder::graph::Graph<KT>
 pub fn metaslang_graph_builder::graph::Graph<KT>::node_count(&self) -> usize

@@ -179,9 +179,9 @@ impl ScannerCodegen for model::Scanner {
                     accum.insert(atom.clone());
                     true
                 }
-                model::Scanner::Choice { scanners } => scanners
-                    .iter()
-                    .fold(true, |result, node| accumulate(node, accum) && result),
+                model::Scanner::Choice { scanners } => {
+                    scanners.iter().all(|node| accumulate(node, accum))
+                }
                 _ => false,
             }
         }

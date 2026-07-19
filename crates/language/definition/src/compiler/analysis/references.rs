@@ -246,19 +246,19 @@ fn check_fields(
 
                 if let Some(target) = analysis.metadata.get_mut(&**reference) {
                     match &target.item {
-                        SpannedItem::Repeated { item: child } => {
-                            if child.allow_empty.as_ref().is_some_and(|b| **b) {
-                                analysis
-                                    .errors
-                                    .add(reference, &Errors::OptionalFieldAllowsEmpty);
-                            }
+                        SpannedItem::Repeated { item: child }
+                            if child.allow_empty.as_ref().is_some_and(|b| **b) =>
+                        {
+                            analysis
+                                .errors
+                                .add(reference, &Errors::OptionalFieldAllowsEmpty);
                         }
-                        SpannedItem::Separated { item: child } => {
-                            if child.allow_empty.as_ref().is_some_and(|b| **b) {
-                                analysis
-                                    .errors
-                                    .add(reference, &Errors::OptionalFieldAllowsEmpty);
-                            }
+                        SpannedItem::Separated { item: child }
+                            if child.allow_empty.as_ref().is_some_and(|b| **b) =>
+                        {
+                            analysis
+                                .errors
+                                .add(reference, &Errors::OptionalFieldAllowsEmpty);
                         }
                         _ => {}
                     }

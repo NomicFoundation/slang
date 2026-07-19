@@ -37,7 +37,7 @@ fn main() -> Result<()> {
 // but for whatever reason clippy can't figure that out
 #[allow(clippy::needless_pass_by_value)]
 fn run_test_command(cmd: command::TestCommand) -> Result<()> {
-    Terminal::step(format!("Initialize chain {chain}", chain = cmd.chain_id,));
+    Terminal::step(format!("Initialize chain {chain}", chain = cmd.chain_id));
 
     let manifest = Manifest::new(cmd.chain_id, &cmd.sharding_options, &cmd.archive_options)
         .inspect_err(|e| eprintln!("Error fetching chain manifest: {e}"))?;
