@@ -577,8 +577,7 @@ impl<T: KindTypes + 'static> Matcher<T> for AlternativesMatcher<T> {
                 // Create the next available child matcher forwarding the
                 // `require_explicit_match` flag, or give up if we have no more
                 let child = self.matcher.children.get(self.next_child_number)?;
-                let child =
-                    child.create_matcher(self.cursor.clone(), self.require_explicit_match);
+                let child = child.create_matcher(self.cursor.clone(), self.require_explicit_match);
                 self.child = Some(child);
                 self.next_child_number += 1;
             }
