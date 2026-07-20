@@ -483,16 +483,16 @@ impl Binder {
         // Fast path: with no default imports the file's own scope is the whole
         // search set, so resolve with a single map lookup and no traversal:
         if file_scope.default_imports.is_empty() {
-            return match file_scope.definitions.get(symbol).map(Vec::as_slice) {
-                None => Resolution::Unresolved,
-                Some([/* empty */]) => Resolution::Unresolved,
-                Some([single_def]) => Resolution::Definition(*single_def),
-                Some(multiple_defs) => Resolution::Ambiguous(multiple_defs.to_vec()),
-            };
+            return file_scope.lookup_symbol(symbol).collect::<Vec<_>>().into();
         }
 
         // Otherwise scan the precomputed transitive default-import closure
         // (which starts with this file's own scope), collecting every match.
+        assert!(
+            !file_scope.default_import_closure.is_empty(),
+            "FileScope::default_import_closure should be precomputed"
+        );
+
         let mut found_definitions = Vec::new();
         for scope_id in &file_scope.default_import_closure {
             let Scope::File(imported_scope) = self.get_scope_by_id(*scope_id) else {
