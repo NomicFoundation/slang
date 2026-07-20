@@ -2518,8 +2518,23 @@ mod yul_function_definition {
     use super::*;
 
     #[test]
+    fn function_name_with_dots() -> Result<()> {
+        run("YulFunctionDefinition", "function_name_with_dots")
+    }
+
+    #[test]
     fn identifier_with_trailing_dot() -> Result<()> {
         run("YulFunctionDefinition", "identifier_with_trailing_dot")
+    }
+
+    #[test]
+    fn parameter_with_dots() -> Result<()> {
+        run("YulFunctionDefinition", "parameter_with_dots")
+    }
+
+    #[test]
+    fn return_variable_with_dots() -> Result<()> {
+        run("YulFunctionDefinition", "return_variable_with_dots")
     }
 }
 
@@ -2685,5 +2700,10 @@ mod yul_variable_declaration_statement {
             "YulVariableDeclarationStatement",
             "multiple_variables_with_value",
         )
+    }
+
+    #[test]
+    fn variable_with_dots() -> Result<()> {
+        run("YulVariableDeclarationStatement", "variable_with_dots")
     }
 }
