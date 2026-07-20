@@ -431,6 +431,11 @@ mod decimal_number_expression {
     }
 
     #[test]
+    fn float_underscore_before_period() -> Result<()> {
+        run("DecimalNumberExpression", "float_underscore_before_period")
+    }
+
+    #[test]
     fn float_with_exponent() -> Result<()> {
         run("DecimalNumberExpression", "float_with_exponent")
     }
