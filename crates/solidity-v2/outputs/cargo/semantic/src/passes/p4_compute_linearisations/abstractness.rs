@@ -3,6 +3,7 @@
 
 use slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract;
 use slang_solidity_v2_ir::ir;
+use smallvec::SmallVec;
 
 use super::Lineariser;
 use crate::binder::{Binder, Definition};
@@ -61,6 +62,11 @@ impl<'a> Lineariser<'a> {
         );
     }
 }
+
+/// The same-named slots occupying one name. Stored inline in the map entry in
+/// the common case of a single slot per name; only overloaded names spill to
+/// the heap.
+pub(super) type AbstractSlots<'a> = SmallVec<[AbstractSlot<'a>; 1]>;
 
 /// A member of a contract's hierarchy that requires an implementation for the
 /// contract to be concrete: a function or a modifier, together with whether it
