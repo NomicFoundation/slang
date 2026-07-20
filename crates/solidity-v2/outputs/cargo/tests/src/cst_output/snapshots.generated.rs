@@ -567,8 +567,18 @@ mod event_definition {
     use super::*;
 
     #[test]
+    fn multiple_parameters_trailing_comma() -> Result<()> {
+        run("EventDefinition", "multiple_parameters_trailing_comma")
+    }
+
+    #[test]
     fn no_parens() -> Result<()> {
         run("EventDefinition", "no_parens")
+    }
+
+    #[test]
+    fn single_parameter_trailing_comma() -> Result<()> {
+        run("EventDefinition", "single_parameter_trailing_comma")
     }
 
     #[test]
@@ -1074,6 +1084,19 @@ mod function_definition {
     }
 
     #[test]
+    fn multiple_parameters_trailing_comma() -> Result<()> {
+        run("FunctionDefinition", "multiple_parameters_trailing_comma")
+    }
+
+    #[test]
+    fn multiple_return_parameters_trailing_comma() -> Result<()> {
+        run(
+            "FunctionDefinition",
+            "multiple_return_parameters_trailing_comma",
+        )
+    }
+
+    #[test]
     fn overridden() -> Result<()> {
         run("FunctionDefinition", "overridden")
     }
@@ -1091,6 +1114,19 @@ mod function_definition {
     #[test]
     fn return_multiple_storage_locations() -> Result<()> {
         run("FunctionDefinition", "return_multiple_storage_locations")
+    }
+
+    #[test]
+    fn single_parameter_trailing_comma() -> Result<()> {
+        run("FunctionDefinition", "single_parameter_trailing_comma")
+    }
+
+    #[test]
+    fn single_return_parameter_trailing_comma() -> Result<()> {
+        run(
+            "FunctionDefinition",
+            "single_return_parameter_trailing_comma",
+        )
     }
 }
 
@@ -1326,6 +1362,11 @@ mod modifier_definition {
     use super::*;
 
     #[test]
+    fn multiple_parameters_trailing_comma() -> Result<()> {
+        run("ModifierDefinition", "multiple_parameters_trailing_comma")
+    }
+
+    #[test]
     fn override_attr() -> Result<()> {
         run("ModifierDefinition", "override_attr")
     }
@@ -1333,6 +1374,11 @@ mod modifier_definition {
     #[test]
     fn parameter_multiple_storage_locations() -> Result<()> {
         run("ModifierDefinition", "parameter_multiple_storage_locations")
+    }
+
+    #[test]
+    fn single_parameter_trailing_comma() -> Result<()> {
+        run("ModifierDefinition", "single_parameter_trailing_comma")
     }
 }
 

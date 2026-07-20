@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                                       │ 0..12
+  2  │     // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/parsing/multiple_event_arg_trailing_comma.sol │ 13..143
+  3  │     event E(uint a, uint b,);                                                                                                      │ 144..173
+  4  │ }                                                                                                                                  │ 174..175
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected CloseParen. One of AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, ErrorKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, RevertKeyword, StringKeyword, TransientKeyword, UfixedKeyword, UintKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/EventDefinition/multiple_parameters_trailing_comma/input.sol:3:28]
+       │
+     3 │     event E(uint a, uint b,);
+       │                            ┬  
+       │                            ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []
