@@ -480,6 +480,14 @@ mod decimal_number_expression {
     }
 
     #[test]
+    fn integer_underscore_end_of_mantissa() -> Result<()> {
+        run(
+            "DecimalNumberExpression",
+            "integer_underscore_end_of_mantissa",
+        )
+    }
+
+    #[test]
     fn integer_with_exponent() -> Result<()> {
         run("DecimalNumberExpression", "integer_with_exponent")
     }
