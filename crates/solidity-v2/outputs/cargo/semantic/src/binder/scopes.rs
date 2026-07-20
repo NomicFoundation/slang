@@ -64,6 +64,12 @@ pub(crate) struct FileScope {
     /// source order. The same file may appear more than once if imported by
     /// several directives.
     pub(crate) default_imports: Vec<DefaultImport>,
+    /// Reflexive-transitive closure of file scopes a file-scope lookup must
+    /// search: this file's own scope followed by every scope reachable through
+    /// [`Self::default_imports`], in breadth-first (first-visit) order.
+    /// This way, [`super::Binder::resolve_in_file_scope`] becomes a flat scan
+    /// rather than a fresh graph walk on every lookup.
+    pub(crate) default_import_closure: Vec<ScopeId>,
     pub(crate) using_directives: Vec<UsingDirective>,
 }
 
@@ -321,6 +327,7 @@ impl FileScope {
             file_id: file_id.clone(),
             definitions: Map::default(),
             default_imports: Vec::new(),
+            default_import_closure: Vec::new(),
             using_directives: Vec::new(),
         }
     }
