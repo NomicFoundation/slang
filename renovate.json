@@ -144,10 +144,12 @@
       "enabled": false
     },
     {
-      "description": "gungraun/gungraun-runner: infra installs the gungraun-runner binary at the version declared in Cargo.toml, and it must match the gungraun library the bench harness links. The default replace strategy leaves the caret range untouched on a patch bump (lockfile-only), so the installed runner stays stale and the bench aborts (runner < lib). Bump the manifest range so the declared version tracks the lockfile.",
+      "description": "gungraun/gungraun-runner: the perf-measurement harness itself (bench-only tooling), not a shipped dep. Give it its own group with a ci:perf label so a bump triggers the full benchmark rather than only the default smoke test — a harness change can shift instruction counts under identical code, and that drift must be caught before it's baked into the main baseline. Also bump the manifest range (not just the lockfile): infra installs the gungraun-runner binary at the Cargo.toml-declared version and it must match the gungraun library the harness links, else the runner stays stale and the bench aborts (runner < lib).",
       "matchManagers": ["cargo"],
       "matchPackageNames": ["gungraun", "gungraun-runner"],
-      "rangeStrategy": "bump"
+      "rangeStrategy": "bump",
+      "groupName": "gungraun",
+      "labels": ["ci:perf"]
     }
   ],
   "customManagers": [
