@@ -5,11 +5,11 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbs
 use slang_solidity_v2_ir::ir;
 use smallvec::SmallVec;
 
-use super::Lineariser;
+use super::HierarchyChecker;
 use crate::binder::{Binder, Definition};
 use crate::types::{TypeId, TypeRegistry};
 
-impl<'a> Lineariser<'a> {
+impl<'a> HierarchyChecker<'a> {
     /// Folds this base's functions and modifiers into the abstract-slot set.
     /// Bases are visited most-base-first, so a member here is more-derived than
     /// anything already recorded and overrides (updating the implementation
@@ -135,7 +135,7 @@ impl<'a> AbstractSlot<'a> {
     /// signatures are in an override relationship. Modifiers match on kind
     /// alone since they cannot be overloaded.
     fn overridden_by(&self, types: &TypeRegistry, candidate: &AbstractSlot<'_>) -> bool {
-        debug_assert_eq!(self.name, candidate.name, "chained slots share a name");
+        debug_assert_eq!(self.name, candidate.name, "grouped slots share a name");
         if self.kind != candidate.kind {
             return false;
         }

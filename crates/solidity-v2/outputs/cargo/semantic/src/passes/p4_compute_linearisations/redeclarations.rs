@@ -4,10 +4,10 @@
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
 use slang_solidity_v2_ir::ir;
 
-use super::Lineariser;
+use super::HierarchyChecker;
 use crate::binder::Definition;
 
-impl<'a> Lineariser<'a> {
+impl<'a> HierarchyChecker<'a> {
     /// Reports members of this base that redeclare a same-named inherited member.
     ///
     /// Only members in this type's namespace can clash: its own declarations
@@ -16,7 +16,7 @@ impl<'a> Lineariser<'a> {
     /// private member isn't inherited, so it never clashes.
     ///
     /// `declared_here` is `true` when the members are those from the
-    /// contract/interface being processed by the `Lineariser`.
+    /// contract/interface being processed by the `HierarchyChecker`.
     pub(super) fn check_redeclarations(&mut self, members: &[&'a Definition], declared_here: bool) {
         if self.members_by_name.is_empty() {
             // Nothing inherited to clash with yet: always true for the first
