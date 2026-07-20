@@ -11,19 +11,31 @@ use crate::binder::Binder;
 use crate::types::TypeRegistry;
 
 impl Lineariser<'_> {
-    /// Flattens the per-base function lists (gathered most-base-first) into the
+    /// Flattens the contract bases' members (gathered most-base-first) into the
     /// hierarchy's function list: most-derived-first, dropping a function once a
-    /// more-derived one overrides it, then sorted by name.
+    /// more-derived one overrides it, then sorted by name. Functions are cloned
+    /// out only once they're known to survive override resolution.
     pub(super) fn linearise_functions(&self) -> Vec<ir::FunctionDefinition> {
         let (binder, types) = (self.binder, self.types);
-        let mut functions: Vec<ir::FunctionDefinition> = Vec::new();
-        for base_functions in self.functions_per_base.iter().rev() {
-            for function in base_functions {
+        let mut functions: Vec<&ir::FunctionDefinition> = Vec::new();
+        for members in self.contract_base_members.iter().rev() {
+            for member in *members {
+                let ir::ContractMember::FunctionDefinition(function) = member else {
+                    continue;
+                };
+                if !matches!(
+                    function.kind,
+                    ir::FunctionKind::Regular
+                        | ir::FunctionKind::Fallback
+                        | ir::FunctionKind::Receive
+                ) {
+                    continue;
+                }
                 let already_overridden = functions
                     .iter()
                     .any(|kept| function_overrides(binder, types, kept, function));
                 if !already_overridden {
-                    functions.push(Arc::clone(function));
+                    functions.push(function);
                 }
                 // TODO(validation): if overriding, function must have the `override` specifier and the overriden functions must be marked `virtual`
                 // TODO(validation): if overriding multiple ancestors, the function needs to specify the bases in a specifier
@@ -35,7 +47,7 @@ impl Lineariser<'_> {
             (Some(_), None) => Ordering::Greater,
             (Some(a), Some(b)) => a.unparse().cmp(b.unparse()),
         });
-        functions
+        functions.into_iter().map(Arc::clone).collect()
     }
 }
 

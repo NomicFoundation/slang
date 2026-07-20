@@ -68,8 +68,8 @@ pub fn run(
                 linearisations_by_id.insert(*definition_id, linearisations);
             }
             // Interfaces don't get a `ContractData` entry, but their members
-            // still take part in redeclaration checks, so we walk them too and
-            // discard the (mostly empty) collections they produce.
+            // still take part in redeclaration checks, so we walk them too
+            // (producing empty collections, which we discard).
             Definition::Interface(_) => {
                 Lineariser::compute(
                     binder,
@@ -114,11 +114,15 @@ struct Lineariser<'a> {
     /// no allocation.
     members_by_name: Map<&'a str, MemberKind>,
     /// Every function/modifier visible in the hierarchy so far together with
-    /// whether it is implemented, for the abstractness check.
-    abstract_slots: Vec<AbstractSlot<'a>>,
+    /// whether it is implemented, for the abstractness check. Grouped by name,
+    /// so recording a member only ever compares it against same-named slots.
+    abstract_slots: Map<&'a str, Vec<AbstractSlot<'a>>>,
 
-    /// Functions gathered per base so they can be flattened most-derived-first.
-    functions_per_base: Vec<Vec<ir::FunctionDefinition>>,
+    /// The members of each *contract* base, gathered most-base-first, so the
+    /// hierarchy's functions can be flattened most-derived-first at the end
+    /// (see [`functions`]). Interface bases are excluded since they don't
+    /// contribute functions to the linearisation.
+    contract_base_members: Vec<&'a [ir::ContractMember]>,
     state_variables: Vec<ir::StateVariableDefinition>,
     errors: Vec<ir::ErrorDefinition>,
     events: Vec<ir::EventDefinition>,
@@ -152,8 +156,12 @@ impl<'a> Lineariser<'a> {
             definition_id,
             contract,
             members_by_name: Map::default(),
-            abstract_slots: Vec::new(),
-            functions_per_base: Vec::new(),
+            abstract_slots: Map::default(),
+            contract_base_members: if contract.is_some() {
+                Vec::with_capacity(linearised_bases.len())
+            } else {
+                Vec::new()
+            },
             state_variables: Vec::new(),
             errors: Vec::new(),
             events: Vec::new(),
@@ -162,6 +170,14 @@ impl<'a> Lineariser<'a> {
         for base_id in linearised_bases.iter().rev() {
             lineariser.fold_base(*base_id);
         }
+
+        // An interface head's walk exists only for the redeclaration check: it
+        // gets no `ContractData` entry (see `run`) and the abstractness check
+        // doesn't apply, so there is nothing to report or collect.
+        if lineariser.contract.is_none() {
+            return ContractLinearisations::default();
+        }
+
         lineariser.report_abstractness();
 
         ContractLinearisations {
@@ -178,60 +194,66 @@ impl<'a> Lineariser<'a> {
     /// together in one base from clashing with each other (a same-scope concern
     /// handled in `p1`), only with inherited ones.
     fn fold_base(&mut self, base_id: NodeId) {
-        let (members, from_interface) = match self.binder.find_definition_by_id(base_id) {
-            Some(Definition::Contract(contract)) => (&contract.ir_node.members, false),
-            Some(Definition::Interface(interface)) => (&interface.ir_node.members, true),
+        let binder = self.binder;
+        let (members, base_is_interface) = match binder.find_definition_by_id(base_id) {
+            Some(Definition::Contract(contract)) => (contract.ir_node.members.as_slice(), false),
+            Some(Definition::Interface(interface)) => (interface.ir_node.members.as_slice(), true),
             _ => unreachable!("base should be a contract or interface"),
         };
         // The head of the linearisation is the type we're computing for; every
         // other entry is one of its proper bases.
         let declared_here = base_id == self.definition_id;
+        // An interface head's collections are discarded (see `compute`), so
+        // only gather members when linearising a contract.
+        let linearising_contract = self.contract.is_some();
 
-        let mut base_functions = Vec::new();
         // The definitions of this base's named members, gathered once and reused
-        // by both checks below.
-        let mut member_definitions = Vec::new();
-
+        // by the checks below.
+        let mut member_definitions = Vec::with_capacity(members.len());
         for member in members {
-            match member {
-                // Interfaces don't contribute functions to the linearisation:
-                // they must be implemented by inheriting contracts (enforced by
-                // the abstractness check).
-                ir::ContractMember::FunctionDefinition(function)
-                    if !from_interface
-                        && matches!(
-                            function.kind,
-                            ir::FunctionKind::Regular
-                                | ir::FunctionKind::Fallback
-                                | ir::FunctionKind::Receive
-                        ) =>
-                {
-                    base_functions.push(Arc::clone(function));
+            if linearising_contract {
+                match member {
+                    // Interfaces don't have state variables in Solidity.
+                    ir::ContractMember::StateVariableDefinition(state_variable)
+                        if !base_is_interface =>
+                    {
+                        self.state_variables.push(Arc::clone(state_variable));
+                    }
+                    ir::ContractMember::ErrorDefinition(error) => {
+                        self.errors.push(Arc::clone(error));
+                    }
+                    ir::ContractMember::EventDefinition(event) => {
+                        self.events.push(Arc::clone(event));
+                    }
+                    _ => {}
                 }
-                // Interfaces don't have state variables in Solidity.
-                ir::ContractMember::StateVariableDefinition(state_variable) if !from_interface => {
-                    self.state_variables.push(Arc::clone(state_variable));
-                }
-                ir::ContractMember::ErrorDefinition(error) => self.errors.push(Arc::clone(error)),
-                ir::ContractMember::EventDefinition(event) => self.events.push(Arc::clone(event)),
-                _ => {}
             }
 
-            if let Some(definition) = member_definition(self.binder, member) {
+            if let Some(definition) = member_definition(binder, member) {
                 member_definitions.push(definition);
             }
         }
 
+        // Interfaces don't contribute functions to the linearisation: they must
+        // be implemented by inheriting contracts (enforced by the abstractness
+        // check).
+        if linearising_contract && !base_is_interface {
+            self.contract_base_members.push(members);
+        }
+
         self.check_redeclarations(&member_definitions, declared_here);
-        if self.contract.is_some() {
-            // NOTE: we could also skip `record_abstract` if
-            // `self.contract.is_abstract`, and *only if* `record_abstract` does
-            // nothing more than building `abstract_slots`. Adding diagnostics
-            // checks there would break this premise.
+        // `report_abstractness` ignores the slots of `abstract` contracts, so
+        // don't bother building them. This holds *only while* `record_abstract`
+        // does nothing more than build `abstract_slots`: if it ever emits
+        // diagnostics, this gate must be lifted.
+        if self.contract.is_some_and(|contract| !contract.is_abstract) {
             self.record_abstract(&member_definitions);
         }
-        self.record_members(&member_definitions);
-        self.functions_per_base.push(base_functions);
+        // The head is folded last, so nothing is ever checked against its
+        // members: recording them would be dead work.
+        if !declared_here {
+            self.record_members(&member_definitions);
+        }
     }
 }
 

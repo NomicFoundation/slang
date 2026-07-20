@@ -18,6 +18,11 @@ impl<'a> Lineariser<'a> {
     /// `declared_here` is `true` when the members are those from the
     /// contract/interface being processed by the `Lineariser`.
     pub(super) fn check_redeclarations(&mut self, members: &[&'a Definition], declared_here: bool) {
+        if self.members_by_name.is_empty() {
+            // Nothing inherited to clash with yet: always true for the first
+            // base folded, and for every base of a type without any.
+            return;
+        }
         for definition in members {
             if !declared_here && !definition.is_internally_visible() {
                 continue;

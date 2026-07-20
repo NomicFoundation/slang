@@ -13,14 +13,18 @@ impl<'a> Lineariser<'a> {
     /// Bases are visited most-base-first, so a member here is more-derived than
     /// anything already recorded and overrides (updating the implementation
     /// status of) the matching slot — mirroring solc's base-to-derived overwrite
-    /// of its unimplemented-declaration map.
+    /// of its unimplemented-declaration map. Slots are grouped by name, so a
+    /// candidate is only ever compared against same-named slots.
     pub(super) fn record_abstract(&mut self, members: &[&'a Definition]) {
-        let (binder, types) = (self.binder, self.types);
+        let binder = self.binder;
+        let types = self.types;
+        let abstract_slots = &mut self.abstract_slots;
         'members: for definition in members {
             let Some(candidate) = AbstractSlot::of(binder, definition) else {
                 continue;
             };
-            for slot in &mut self.abstract_slots {
+            let slots = abstract_slots.entry(candidate.name).or_default();
+            for slot in slots.iter_mut() {
                 // TODO: check for SDR[1122]
                 if slot.overridden_by(types, &candidate) {
                     slot.type_id = candidate.type_id;
@@ -28,7 +32,7 @@ impl<'a> Lineariser<'a> {
                     continue 'members;
                 }
             }
-            self.abstract_slots.push(candidate);
+            slots.push(candidate);
         }
     }
 
@@ -38,7 +42,13 @@ impl<'a> Lineariser<'a> {
         let Some(contract) = self.contract else {
             return;
         };
-        if contract.is_abstract || self.abstract_slots.iter().all(|slot| slot.implemented) {
+        if contract.is_abstract
+            || self
+                .abstract_slots
+                .values()
+                .flatten()
+                .all(|slot| slot.implemented)
+        {
             return;
         }
         let file_id = self.file_node_mapper.file_id_from_node_id(contract.id());
@@ -113,12 +123,14 @@ impl<'a> AbstractSlot<'a> {
         })
     }
 
-    /// Whether the more-derived `candidate` overrides `self`: they are the same
-    /// kind of member with the same name, and (for functions) their signatures
-    /// are in an override relationship. Modifiers match on name alone since they
-    /// cannot be overloaded.
+    /// Whether the more-derived `candidate` overrides `self`. The two slots are
+    /// known to share a name (they live in the same per-name group), so they
+    /// match if they are the same kind of member and (for functions) their
+    /// signatures are in an override relationship. Modifiers match on kind
+    /// alone since they cannot be overloaded.
     fn overridden_by(&self, types: &TypeRegistry, candidate: &AbstractSlot<'_>) -> bool {
-        if self.kind != candidate.kind || self.name != candidate.name {
+        debug_assert_eq!(self.name, candidate.name, "chained slots share a name");
+        if self.kind != candidate.kind {
             return false;
         }
         match candidate.kind {
