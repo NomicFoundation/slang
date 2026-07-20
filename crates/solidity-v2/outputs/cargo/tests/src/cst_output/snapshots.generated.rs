@@ -152,6 +152,16 @@ mod contract_definition {
     }
 
     #[test]
+    fn abstract_only() -> Result<()> {
+        run("ContractDefinition", "abstract_only")
+    }
+
+    #[test]
+    fn abstract_without_contract_keyword() -> Result<()> {
+        run("ContractDefinition", "abstract_without_contract_keyword")
+    }
+
+    #[test]
     fn constructor_contextual() -> Result<()> {
         run("ContractDefinition", "constructor_contextual")
     }
