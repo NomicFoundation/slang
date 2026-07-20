@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // https://github.com/argotorg/solidity/blob/v0.8.22/test/libsolidity/syntaxTests/operators/userDefined/operator_parsing_non_user_definable.sol │ 0..143
+  2  │ using {f as **} for uint;                                                                                                                       │ 144..169
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected AsteriskAsterisk. One of Ampersand, Asterisk, BangEqual, Bar, Caret, EqualEqual, GreaterThan, GreaterThanEqual, LessThan, LessThanEqual, Minus, Percent, Plus, Slash, Tilde was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDeconstructionSymbol/non_user_definable_operator/input.sol:2:13]
+       │
+     2 │ using {f as **} for uint;
+       │             ─┬  
+       │              ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

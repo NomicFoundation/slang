@@ -2181,6 +2181,14 @@ mod using_deconstruction_symbol {
     use super::*;
 
     #[test]
+    fn identifier_instead_of_operator() -> Result<()> {
+        run(
+            "UsingDeconstructionSymbol",
+            "identifier_instead_of_operator",
+        )
+    }
+
+    #[test]
     fn identifier_path() -> Result<()> {
         run("UsingDeconstructionSymbol", "identifier_path")
     }
@@ -2191,6 +2199,16 @@ mod using_deconstruction_symbol {
     }
 
     #[test]
+    fn missing_operator() -> Result<()> {
+        run("UsingDeconstructionSymbol", "missing_operator")
+    }
+
+    #[test]
+    fn non_user_definable_operator() -> Result<()> {
+        run("UsingDeconstructionSymbol", "non_user_definable_operator")
+    }
+
+    #[test]
     fn single_id() -> Result<()> {
         run("UsingDeconstructionSymbol", "single_id")
     }
@@ -2198,6 +2216,14 @@ mod using_deconstruction_symbol {
     #[test]
     fn single_id_as_operator() -> Result<()> {
         run("UsingDeconstructionSymbol", "single_id_as_operator")
+    }
+
+    #[test]
+    fn string_literal_instead_of_operator() -> Result<()> {
+        run(
+            "UsingDeconstructionSymbol",
+            "string_literal_instead_of_operator",
+        )
     }
 }
 
