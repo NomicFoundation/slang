@@ -1,0 +1,26 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                       │ 0..12
+  2  │     function f() {                                                                                                 │ 13..31
+  3  │         assembly {                                                                                                 │ 32..50
+  4  │             // https://github.com/argotorg/solidity/blob/v0.8.0/test/libyul/yulSyntaxTests/switch_invalid_case.yul │ 51..165
+  5  │             switch 42                                                                                              │ 166..187
+  6  │             case mul(1, 2) {}                                                                                      │ 188..217
+  7  │             default {}                                                                                             │ 218..240
+  8  │         }                                                                                                          │ 241..250
+  9  │     }                                                                                                              │ 251..256
+  10 │ }                                                                                                                  │ 257..258
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected YulIdentifier. One of YulDecimalLiteral, YulFalseKeyword, YulHexLiteral, YulHexStringLiteral, YulStringLiteral, YulTrueKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulStatement/switch_case_non_literal/input.sol:6:18]
+       │
+     6 │             case mul(1, 2) {}
+       │                  ─┬─  
+       │                   ╰─── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

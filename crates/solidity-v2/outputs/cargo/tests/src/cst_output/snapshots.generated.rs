@@ -2564,6 +2564,11 @@ mod yul_statement {
     }
 
     #[test]
+    fn switch_case_non_literal() -> Result<()> {
+        run("YulStatement", "switch_case_non_literal")
+    }
+
+    #[test]
     fn switch_decimal_trailing_case() -> Result<()> {
         run("YulStatement", "switch_decimal_trailing_case")
     }
