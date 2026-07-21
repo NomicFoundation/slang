@@ -4,11 +4,11 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclar
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     AbstractContractPublicConstructor, BreakOutsideLoop, ConstructorNotInContract,
     ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FreeFunctionPayable,
-    FreeFunctionVisibility, FunctionMustBeImplemented, FunctionNameMatchesContainer,
-    InterfaceFunctionCannotBeImplemented, InterfaceFunctionNotExternal,
-    InvalidUsingDirectiveContainer, LibraryPayableFunction, LibraryVirtualFunction,
-    LibraryVirtualModifier, MissingFunctionVisibility, ModifierInInterface, MultipleConstructors,
-    NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
+    FreeFunctionVisibility, FunctionDeclarationWithModifiers, FunctionMustBeImplemented,
+    FunctionNameMatchesContainer, InterfaceFunctionCannotBeImplemented,
+    InterfaceFunctionNotExternal, InvalidUsingDirectiveContainer, LibraryPayableFunction,
+    LibraryVirtualFunction, LibraryVirtualModifier, MissingFunctionVisibility, ModifierInInterface,
+    MultipleConstructors, NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
     UnimplementedModifierMustBeVirtual, VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
@@ -367,6 +367,16 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
                 && node.attributes.visibility != ir::FunctionVisibility::External
             {
                 self.report(node, InterfaceFunctionNotExternal);
+            }
+
+            // A function declaration cannot have modifier invocations. This
+            // covers a function in an interface (solc 5842) as well as any
+            // function without an implementation body, e.g. an abstract
+            // function in a contract (solc 2668).
+            if !node.attributes.modifier_invocations.is_empty()
+                && (self.current_scope_is_interface() || node.body.is_none())
+            {
+                self.report(node, FunctionDeclarationWithModifiers);
             }
 
             // A function declared in a library cannot be `payable`.

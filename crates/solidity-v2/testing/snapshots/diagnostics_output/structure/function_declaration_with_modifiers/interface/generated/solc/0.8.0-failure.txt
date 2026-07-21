@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[SyntaxError 5842] Error: Functions in interfaces cannot have modifiers.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     function f() external m pure returns (uint);
+   │     ──────────────────────┬─────────────────────  
+   │                           ╰─────────────────────── Error occurred here.
+───╯

@@ -1102,6 +1102,23 @@ mod structure {
         run("structure", "free_function_without_body")
     }
 
+    mod function_declaration_with_modifiers {
+        use super::*;
+
+        #[test]
+        fn abstract_contract() -> Result<()> {
+            run(
+                "structure/function_declaration_with_modifiers",
+                "abstract_contract",
+            )
+        }
+
+        #[test]
+        fn interface() -> Result<()> {
+            run("structure/function_declaration_with_modifiers", "interface")
+        }
+    }
+
     mod function_name_matches_container {
         use super::*;
 

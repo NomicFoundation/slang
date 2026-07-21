@@ -8,6 +8,7 @@ mod empty_struct;
 mod enum_with_too_many_members;
 mod free_function_payable;
 mod free_function_visibility;
+mod function_declaration_with_modifiers;
 mod function_must_be_implemented;
 mod function_name_matches_container;
 mod interface_function_cannot_be_implemented;
@@ -39,6 +40,7 @@ pub use empty_struct::EmptyStruct;
 pub use enum_with_too_many_members::EnumWithTooManyMembers;
 pub use free_function_payable::FreeFunctionPayable;
 pub use free_function_visibility::FreeFunctionVisibility;
+pub use function_declaration_with_modifiers::FunctionDeclarationWithModifiers;
 pub use function_must_be_implemented::FunctionMustBeImplemented;
 pub use function_name_matches_container::FunctionNameMatchesContainer;
 pub use interface_function_cannot_be_implemented::InterfaceFunctionCannotBeImplemented;
@@ -92,6 +94,9 @@ define_diagnostic_kind! {
 
         /// A function declared in an interface has an implementation body.
         InterfaceFunctionCannotBeImplemented(InterfaceFunctionCannotBeImplemented),
+        /// A function declaration (in an interface, or any function without an
+        /// implementation body) has one or more modifier invocations.
+        FunctionDeclarationWithModifiers(FunctionDeclarationWithModifiers),
         /// A function that requires an implementation body (a free function or a
         /// library function) has none.
         FunctionMustBeImplemented(FunctionMustBeImplemented),
