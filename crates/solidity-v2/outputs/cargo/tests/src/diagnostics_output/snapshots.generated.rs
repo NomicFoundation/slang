@@ -1266,6 +1266,47 @@ mod structure {
         run("structure", "uninitialized_file_level_constant")
     }
 
+    mod variable_declaration_not_in_block {
+        use super::*;
+
+        #[test]
+        fn do_while_statement() -> Result<()> {
+            run(
+                "structure/variable_declaration_not_in_block",
+                "do_while_statement",
+            )
+        }
+
+        #[test]
+        fn else_branch() -> Result<()> {
+            run("structure/variable_declaration_not_in_block", "else_branch")
+        }
+
+        #[test]
+        fn for_statement() -> Result<()> {
+            run(
+                "structure/variable_declaration_not_in_block",
+                "for_statement",
+            )
+        }
+
+        #[test]
+        fn if_statement() -> Result<()> {
+            run(
+                "structure/variable_declaration_not_in_block",
+                "if_statement",
+            )
+        }
+
+        #[test]
+        fn while_statement() -> Result<()> {
+            run(
+                "structure/variable_declaration_not_in_block",
+                "while_statement",
+            )
+        }
+    }
+
     #[test]
     fn variable_in_interface() -> Result<()> {
         run("structure", "variable_in_interface")

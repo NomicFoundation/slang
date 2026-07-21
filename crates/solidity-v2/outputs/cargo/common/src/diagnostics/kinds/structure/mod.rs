@@ -26,6 +26,7 @@ mod payable_internal_or_private_function;
 mod storage_layout_for_abstract_contract;
 mod unimplemented_modifier_must_be_virtual;
 mod uninitialized_constant;
+mod variable_declaration_not_in_block;
 mod variable_in_interface;
 mod virtual_free_function;
 mod virtual_private_function;
@@ -59,6 +60,7 @@ use serde::Serialize;
 pub use storage_layout_for_abstract_contract::StorageLayoutForAbstractContract;
 pub use unimplemented_modifier_must_be_virtual::UnimplementedModifierMustBeVirtual;
 pub use uninitialized_constant::UninitializedConstant;
+pub use variable_declaration_not_in_block::VariableDeclarationNotInBlock;
 pub use variable_in_interface::VariableInInterface;
 pub use virtual_free_function::VirtualFreeFunction;
 pub use virtual_private_function::VirtualPrivateFunction;
@@ -146,6 +148,10 @@ define_diagnostic_kind! {
 
         /// A `constant` is declared without an initializer value.
         UninitializedConstant(UninitializedConstant),
+
+        /// A variable declaration is used as the un-braced body of a control-flow
+        /// statement, rather than inside a block.
+        VariableDeclarationNotInBlock(VariableDeclarationNotInBlock),
 
         /// A variable is declared in an interface.
         VariableInInterface(VariableInInterface),

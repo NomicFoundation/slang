@@ -9,8 +9,8 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     InvalidUsingDirectiveContainer, LibraryNonConstantStateVariable, LibraryPayableFunction,
     LibraryVirtualFunction, LibraryVirtualModifier, MissingFunctionVisibility,
     MultipleConstructors, NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
-    UnimplementedModifierMustBeVirtual, VariableInInterface, VirtualFreeFunction,
-    VirtualPrivateFunction,
+    UnimplementedModifierMustBeVirtual, VariableDeclarationNotInBlock, VariableInInterface,
+    VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -158,6 +158,15 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
                 .expect("IR node is expected to have a range."),
             kind,
         );
+    }
+
+    /// Reports a diagnostic if the given statement, used as the un-braced body
+    /// of a control-flow statement, is a variable declaration. Variable
+    /// declarations are only allowed inside blocks.
+    fn check_body_is_not_variable_declaration(&mut self, body: &ir::Statement) {
+        if let ir::Statement::VariableDeclarationStatement(declaration) = body {
+            self.report(declaration, VariableDeclarationNotInBlock);
+        }
     }
 
     /// Whether the current (enclosing) scope belongs to a library definition.
@@ -742,7 +751,17 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         self.leave_scope_for_node_id(node.id());
     }
 
+    fn enter_if_statement(&mut self, node: &ir::IfStatement) -> bool {
+        self.check_body_is_not_variable_declaration(&node.body);
+        if let Some(else_branch) = &node.else_branch {
+            self.check_body_is_not_variable_declaration(else_branch);
+        }
+        true
+    }
+
     fn enter_for_statement(&mut self, node: &ir::ForStatement) -> bool {
+        self.check_body_is_not_variable_declaration(&node.body);
+
         // Open a new block here to hold declarations in the initialization
         // clause. This is a new lexical scope.
         let scope = Scope::new_block(node.id(), self.current_scope_id());
@@ -756,7 +775,8 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         self.leave_scope_for_node_id(node.id());
     }
 
-    fn enter_while_statement(&mut self, _node: &ir::WhileStatement) -> bool {
+    fn enter_while_statement(&mut self, node: &ir::WhileStatement) -> bool {
+        self.check_body_is_not_variable_declaration(&node.body);
         self.loop_depth += 1;
         true
     }
@@ -765,7 +785,8 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         self.loop_depth -= 1;
     }
 
-    fn enter_do_while_statement(&mut self, _node: &ir::DoWhileStatement) -> bool {
+    fn enter_do_while_statement(&mut self, node: &ir::DoWhileStatement) -> bool {
+        self.check_body_is_not_variable_declaration(&node.body);
         self.loop_depth += 1;
         true
     }
