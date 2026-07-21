@@ -1323,6 +1323,11 @@ mod structure {
     }
 
     #[test]
+    fn library_non_constant_state_variable() -> Result<()> {
+        run("structure", "library_non_constant_state_variable")
+    }
+
+    #[test]
     fn library_payable_function() -> Result<()> {
         run("structure", "library_payable_function")
     }
@@ -1436,6 +1441,11 @@ mod structure {
     #[test]
     fn uninitialized_file_level_constant() -> Result<()> {
         run("structure", "uninitialized_file_level_constant")
+    }
+
+    #[test]
+    fn variable_in_interface() -> Result<()> {
+        run("structure", "variable_in_interface")
     }
 
     #[test]

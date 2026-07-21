@@ -9,11 +9,11 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     FreeFunctionVisibility, FreeFunctionWithModifiers, FreeFunctionWithOverride,
     FunctionMustBeImplemented, FunctionNameMatchesContainer, InterfaceFunctionCannotBeImplemented,
     InterfaceFunctionNotExternal, InterfaceFunctionWithModifiers, InvalidUsingDirectiveContainer,
-    LibraryPayableFunction, LibraryVirtualFunction, LibraryVirtualModifier,
-    MissingFunctionVisibility, ModifierInInterface, MultipleConstructors,
+    LibraryNonConstantStateVariable, LibraryPayableFunction, LibraryVirtualFunction,
+    LibraryVirtualModifier, MissingFunctionVisibility, ModifierInInterface, MultipleConstructors,
     NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
-    UnimplementedFunctionWithModifiers, UnimplementedModifierMustBeVirtual, VirtualFreeFunction,
-    VirtualPrivateFunction,
+    UnimplementedFunctionWithModifiers, UnimplementedModifierMustBeVirtual, VariableInInterface,
+    VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -706,6 +706,17 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         let definition = Definition::new_state_variable(node);
         self.insert_definition_in_current_scope(definition);
 
+        // Interfaces cannot declare any variables.
+        if self.current_scope_is_interface() {
+            self.report(node, VariableInInterface);
+        }
+        // Libraries can only declare `constant` state variables.
+        else if self.current_scope_is_library()
+            && node.attributes.mutability != ir::StateVariableMutability::Constant
+        {
+            self.report(node, LibraryNonConstantStateVariable);
+        }
+
         // there may be more definitions in the type of the state variable (eg.
         // key/value names in mappings)
         true
@@ -714,6 +725,15 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     fn enter_constant_definition(&mut self, node: &ir::ConstantDefinition) -> bool {
         let definition = Definition::new_constant(node, self.current_scope_id());
         self.insert_definition_in_current_scope(definition);
+
+        // Interfaces cannot declare any variables, including `constant`s. Note
+        // that a non-`public` `constant` state variable is lowered to a
+        // `ConstantDefinition` in the IR, so this complements the check in
+        // `enter_state_variable_definition` (which catches `public constant`s
+        // and non-`constant` state variables).
+        if self.current_scope_is_interface() {
+            self.report(node, VariableInInterface);
+        }
 
         false
     }

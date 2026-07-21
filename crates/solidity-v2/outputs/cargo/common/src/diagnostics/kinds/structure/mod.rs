@@ -17,6 +17,7 @@ mod interface_function_not_external;
 mod interface_function_with_modifiers;
 mod invalid_using_directive_container;
 mod library_fallback_function;
+mod library_non_constant_state_variable;
 mod library_payable_function;
 mod library_receive_function;
 mod library_virtual_function;
@@ -32,6 +33,7 @@ mod storage_layout_for_abstract_contract;
 mod unimplemented_function_with_modifiers;
 mod unimplemented_modifier_must_be_virtual;
 mod uninitialized_constant;
+mod variable_in_interface;
 mod virtual_free_function;
 mod virtual_private_function;
 
@@ -54,6 +56,7 @@ pub use interface_function_not_external::InterfaceFunctionNotExternal;
 pub use interface_function_with_modifiers::InterfaceFunctionWithModifiers;
 pub use invalid_using_directive_container::InvalidUsingDirectiveContainer;
 pub use library_fallback_function::LibraryFallbackFunction;
+pub use library_non_constant_state_variable::LibraryNonConstantStateVariable;
 pub use library_payable_function::LibraryPayableFunction;
 pub use library_receive_function::LibraryReceiveFunction;
 pub use library_virtual_function::LibraryVirtualFunction;
@@ -70,6 +73,7 @@ pub use storage_layout_for_abstract_contract::StorageLayoutForAbstractContract;
 pub use unimplemented_function_with_modifiers::UnimplementedFunctionWithModifiers;
 pub use unimplemented_modifier_must_be_virtual::UnimplementedModifierMustBeVirtual;
 pub use uninitialized_constant::UninitializedConstant;
+pub use variable_in_interface::VariableInInterface;
 pub use virtual_free_function::VirtualFreeFunction;
 pub use virtual_private_function::VirtualPrivateFunction;
 
@@ -148,6 +152,8 @@ define_diagnostic_kind! {
         LibraryReceiveFunction(LibraryReceiveFunction),
         /// A function declared in a library is marked `payable`.
         LibraryPayableFunction(LibraryPayableFunction),
+        /// A library declares a state variable that is not `constant`.
+        LibraryNonConstantStateVariable(LibraryNonConstantStateVariable),
         /// A function declared in a library is marked `virtual`.
         LibraryVirtualFunction(LibraryVirtualFunction),
         /// A modifier declared in a library is marked `virtual`.
@@ -170,6 +176,9 @@ define_diagnostic_kind! {
 
         /// A `constant` is declared without an initializer value.
         UninitializedConstant(UninitializedConstant),
+
+        /// A variable is declared in an interface.
+        VariableInInterface(VariableInInterface),
 
         /// An abstract contract declares a storage layout (`layout at`) specifier.
         StorageLayoutForAbstractContract(StorageLayoutForAbstractContract),
