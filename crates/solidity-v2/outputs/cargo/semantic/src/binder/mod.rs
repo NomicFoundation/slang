@@ -5,7 +5,7 @@ use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 
 use super::built_ins::InternalBuiltIn;
-use super::types::{Type, TypeId};
+use super::types::TypeId;
 
 mod assembly;
 mod capacities;
@@ -50,17 +50,6 @@ pub enum Typing {
     /// the appropriate type by matching the types of the arguments and work
     /// backwards to the reference (if any) and fixup the selected definition.
     Undetermined(Vec<TypeId>),
-    /// A node which refers to a user defined type by name, eg. the identifier
-    /// of a contract. This is not a type that can be translated to the EVM, and
-    /// as such is a way to suspend the typing until more information on how
-    /// it's used is gathered. Eg. to create a new contract via the new
-    /// operator, or construct a struct by using the struct's name in a function
-    /// call.
-    UserMetaType(NodeId),
-    /// Similar to `UserMetaType` above, but refers to the meta type of an
-    /// elementary type. A typical use case is explicit casting, which parses as
-    /// a function call.
-    MetaType(Type),
     /// Used to type the `BuiltIn` resolution when the result is not yet an
     /// actual type representable in the EVM. Eg. the built-in function `addmod`
     /// resolves to `Resolution::BuiltIn(Addmod)` and will type to
@@ -80,6 +69,7 @@ pub enum Typing {
 }
 
 impl Typing {
+    /// Returns the resolved `TypeId`, if any.
     pub fn as_type_id(&self) -> Option<TypeId> {
         match self {
             Self::Resolved(type_id) => Some(*type_id),
@@ -386,11 +376,6 @@ impl Binder {
             .get(&node_id)
             .cloned()
             .unwrap_or(Typing::Unresolved)
-    }
-
-    pub(crate) fn mark_user_meta_type_node(&mut self, node_id: NodeId) {
-        self.node_typing
-            .insert(node_id, Typing::UserMetaType(node_id));
     }
 
     pub(crate) fn set_node_type(&mut self, node_id: NodeId, type_id: Option<TypeId>) {

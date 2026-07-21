@@ -9,6 +9,7 @@ mod is_payable;
 mod json;
 mod linearisations;
 mod members;
+mod meta_type;
 mod node_location;
 mod number_literals;
 mod typing;

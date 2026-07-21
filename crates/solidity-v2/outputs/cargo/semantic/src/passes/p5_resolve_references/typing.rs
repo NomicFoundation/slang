@@ -6,12 +6,21 @@ use super::Pass;
 use crate::binder::{Definition, Resolution, Typing};
 use crate::passes::common::node_id_for_expression_typing;
 use crate::types::{
-    literals, AddressType, ContractType, DataLocation, EnumType, FixedSizeArrayType, FunctionType,
-    IntegerType, InterfaceType, LibraryType, LiteralKind, Number, StringType, StructType, Type,
-    TypeId,
+    literals, AddressType, ContractType, DataLocation, FixedSizeArrayType, FunctionType,
+    IntegerType, LiteralKind, MetaType, Number, StringType, Type, TypeId, UserMetaType,
 };
 
 impl Pass<'_> {
+    /// Registers `inner` and the [`Type::MetaType`] wrapping it, returning the
+    /// meta-type as a `Typing::Resolved`.
+    pub(super) fn meta_typing_of(&mut self, inner: Type) -> Typing {
+        let type_id = self.types.register_type(inner);
+        Typing::Resolved(
+            self.types
+                .register_type(Type::MetaType(MetaType { type_id })),
+        )
+    }
+
     pub(super) fn typing_of_expression(&self, node: &ir::Expression) -> Typing {
         match node {
             // These are always typed as boolean
@@ -22,15 +31,7 @@ impl Pass<'_> {
             | ir::Expression::TrueKeyword(_)
             | ir::Expression::FalseKeyword(_) => Typing::Resolved(self.types.boolean()),
 
-            // Special case for elementary types: it's always a meta-type
-            ir::Expression::ElementaryType(elementary_type) => {
-                Typing::MetaType(Self::type_of_elementary_type(elementary_type))
-            }
-
             // Other special cases
-            ir::Expression::PayableKeyword(_) => {
-                Typing::MetaType(Type::Address(AddressType { is_payable: true }))
-            }
             ir::Expression::SuperKeyword(_) => Typing::Super,
 
             // By default, query the binder for registered typing information
@@ -43,7 +44,7 @@ impl Pass<'_> {
         }
     }
 
-    fn type_of_elementary_type(elementary_type: &ir::ElementaryType) -> Type {
+    pub(super) fn type_of_elementary_type(elementary_type: &ir::ElementaryType) -> Type {
         match elementary_type {
             ir::ElementaryType::AddressType(address_type) => Type::Address(AddressType {
                 is_payable: address_type.is_payable,
@@ -68,7 +69,7 @@ impl Pass<'_> {
         }
     }
 
-    pub(super) fn type_of_definition(&mut self, definition_id: NodeId) -> Option<Type> {
+    pub(super) fn type_of_definition(&self, definition_id: NodeId) -> Option<Type> {
         let definition = self.binder.find_definition_by_id(definition_id)?;
         definition.try_into().ok()
     }
@@ -280,31 +281,40 @@ impl Pass<'_> {
         typing
     }
 
-    fn type_id_of_receiver(&self, operand: &ir::Expression) -> Option<TypeId> {
+    fn type_id_of_value_receiver(&self, operand: &ir::Expression) -> Option<TypeId> {
         if let ir::Expression::MemberAccessExpression(member_access_expression) = operand {
-            self.typing_of_expression(&member_access_expression.operand)
-                .as_type_id()
+            let type_id = self
+                .typing_of_expression(&member_access_expression.operand)
+                .as_type_id()?;
+            // A meta-type operand is a namespace qualifier, not
+            // a runtime value, so there is no receiver to bind as an implicit
+            // first argument during overload resolution.
+            if self.types.get_type_by_id(type_id).is_meta_type() {
+                return None;
+            }
+            Some(type_id)
         } else {
             None
         }
     }
 
-    fn typing_of_cast(&mut self, argument_typing: &Typing, target_type: Type) -> Typing {
+    fn typing_of_cast(&mut self, argument_typing: &Typing, target_type_id: TypeId) -> Typing {
         // TODO(validation) SDR[40]: this is a cast to the given type, but we
         // need to verify that the (single) argument is convertible
-        match argument_typing {
-            Typing::Resolved(argument_type_id) | Typing::This(argument_type_id) => {
+        match argument_typing.as_type_id() {
+            Some(argument_type_id) => {
                 // the resulting cast type inherits the data location of the argument
-                let argument_type = self.types.get_type_by_id(*argument_type_id);
+                let argument_type = self.types.get_type_by_id(argument_type_id);
                 let type_id = if let Some(data_location) = argument_type.data_location() {
+                    let target_type = self.types.get_type_by_id(target_type_id).clone();
                     self.types
                         .register_type_with_data_location(target_type, data_location)
                 } else {
-                    self.types.register_type(target_type)
+                    target_type_id
                 };
                 Typing::Resolved(type_id)
             }
-            _ => Typing::Unresolved,
+            None => Typing::Unresolved,
         }
     }
 
@@ -331,18 +341,53 @@ impl Pass<'_> {
                 // `this` and `super` are not callable
                 Typing::Unresolved
             }
-            Typing::Resolved(type_id) => {
-                if let Type::Function(FunctionType { return_type, .. }) =
-                    self.types.get_type_by_id(type_id)
-                {
-                    Typing::Resolved(*return_type)
-                } else {
+            Typing::Resolved(type_id) => match self.types.get_type_by_id(type_id) {
+                Type::Function(FunctionType { return_type, .. }) => Typing::Resolved(*return_type),
+                Type::MetaType(MetaType {
+                    type_id: target_type_id,
+                }) => {
+                    // This is an explicit cast to the (meta-)type, eg. `uint(x)`.
+                    let target_type_id = *target_type_id;
+                    if argument_typings.len() == 1 {
+                        self.typing_of_cast(&argument_typings[0], target_type_id)
+                    } else {
+                        Typing::Unresolved
+                    }
+                }
+                Type::UserMetaType(UserMetaType { definition_id }) => {
+                    // A cast to the underlying type of the definition (eg.
+                    // `MyEnum(1)`), or a struct construction. UDVTs are not
+                    // castable by name (they convert via `wrap`/`unwrap`).
+                    let definition_id = *definition_id;
+                    match self.binder.find_definition_by_id(definition_id) {
+                        Some(
+                            Definition::Contract(_)
+                            | Definition::Interface(_)
+                            | Definition::Library(_)
+                            | Definition::Enum(_)
+                            | Definition::Struct(_),
+                        ) => {
+                            // TODO(validation) SDR[39]: for contract, interface
+                            // and library targets the type of the (single)
+                            // argument should be an address
+                            // TODO(validation) SDR[868]: For enums, only one argument expected
+                            // TODO(validation) SDR[1698]: For enums, check the type of the argument is compatible
+
+                            let type_ = self
+                                .type_of_definition(definition_id)
+                                .expect("definition kind is handled by type_of_definition");
+                            Typing::Resolved(self.types.register_type(type_))
+                        }
+                        _ => Typing::Unresolved,
+                    }
+                }
+                _ => {
                     // TODO(validation) SDR[41]: the operand did not resolve to a function
                     Typing::Unresolved
                 }
-            }
+            },
             Typing::Undetermined(type_ids) => {
-                let receiver_type_id = self.type_id_of_receiver(&node.operand);
+                let receiver_type_id = self.type_id_of_value_receiver(&node.operand);
                 let candidate = self.lookup_function_matching_positional_arguments(
                     &type_ids,
                     &argument_typings,
@@ -366,13 +411,6 @@ impl Pass<'_> {
                     Typing::Unresolved
                 }
             }
-            Typing::MetaType(type_) => {
-                if argument_typings.len() == 1 {
-                    self.typing_of_cast(&argument_typings[0], type_)
-                } else {
-                    Typing::Unresolved
-                }
-            }
             Typing::NewExpression(type_id) => {
                 match self.types.get_type_by_id(type_id) {
                     Type::Array(_) | Type::Contract(_) => Typing::Resolved(type_id),
@@ -380,52 +418,6 @@ impl Pass<'_> {
                         // only contracts can be created with `new`
                         Typing::Unresolved
                     }
-                }
-            }
-            Typing::UserMetaType(node_id) => {
-                // Generally this is a cast to the underlying type of the given
-                // definition, except for structs for which we need to construct
-                // the value in memory
-                match self.binder.find_definition_by_id(node_id) {
-                    Some(Definition::Contract(_)) => {
-                        // TODO(validation) SDR[39]: the type of the first argument should be an address
-                        let type_id = self.types.register_type(Type::Contract(ContractType {
-                            definition_id: node_id,
-                        }));
-                        Typing::Resolved(type_id)
-                    }
-                    Some(Definition::Interface(_)) => {
-                        // TODO(validation) SDR[39]: the type of the first argument should be an address
-                        let type_id = self.types.register_type(Type::Interface(InterfaceType {
-                            definition_id: node_id,
-                        }));
-                        Typing::Resolved(type_id)
-                    }
-                    Some(Definition::Library(_)) => {
-                        // TODO(validation) SDR[39]: the type of the first argument should be an address
-                        let type_id = self.types.register_type(Type::Library(LibraryType {
-                            definition_id: node_id,
-                        }));
-                        Typing::Resolved(type_id)
-                    }
-                    Some(Definition::Enum(_)) => {
-                        // explicit conversion from an integer to the enum
-                        // TODO(validation) SDR[868]: Only one argument expected
-                        // TODO(validation) SDR[1698]: Check the type of the argument is compatible
-                        let type_id = self.types.register_type(Type::Enum(EnumType {
-                            definition_id: node_id,
-                        }));
-                        Typing::Resolved(type_id)
-                    }
-                    Some(Definition::Struct(_)) => {
-                        // struct construction
-                        let type_id = self.types.register_type(Type::Struct(StructType {
-                            definition_id: node_id,
-                            location: DataLocation::Memory,
-                        }));
-                        Typing::Resolved(type_id)
-                    }
-                    _ => Typing::Unresolved,
                 }
             }
             Typing::BuiltIn(built_in) => self
@@ -461,21 +453,44 @@ impl Pass<'_> {
                 // `this` and `super` are not callable
                 (Typing::Unresolved, None)
             }
-            Typing::Resolved(type_id) => {
-                if let Type::Function(FunctionType {
+            Typing::Resolved(type_id) => match self.types.get_type_by_id(type_id) {
+                Type::Function(FunctionType {
                     definition_id,
                     return_type,
                     ..
-                }) = self.types.get_type_by_id(type_id)
-                {
-                    (Typing::Resolved(*return_type), *definition_id)
-                } else {
+                }) => (Typing::Resolved(*return_type), *definition_id),
+                Type::MetaType(_) => {
+                    // This is a cast to the given type and is not valid with named arguments
+                    (Typing::Unresolved, None)
+                }
+                Type::UserMetaType(UserMetaType { definition_id }) => {
+                    // Function call with named arguments are only valid in user
+                    // types of the struct kind, which results in the construction
+                    // of such struct in memory
+                    let definition_id = *definition_id;
+                    match self.binder.find_definition_by_id(definition_id) {
+                        Some(Definition::Struct(_)) => {
+                            // struct construction
+                            let type_ = self
+                                .type_of_definition(definition_id)
+                                .expect("struct definitions are handled by type_of_definition");
+                            let type_id = self.types.register_type(type_);
+                            (Typing::Resolved(type_id), Some(definition_id))
+                        }
+                        Some(Definition::Event(_)) => {
+                            // this is an event called as a function, which is valid in <0.5.0
+                            (Typing::Resolved(self.types.void()), Some(definition_id))
+                        }
+                        _ => (Typing::Unresolved, None),
+                    }
+                }
+                _ => {
                     // TODO(validation) SDR[41]: the operand did not resolve to a function
                     (Typing::Unresolved, None)
                 }
-            }
+            },
             Typing::Undetermined(type_ids) => {
-                let receiver_type_id = self.type_id_of_receiver(&node.operand);
+                let receiver_type_id = self.type_id_of_value_receiver(&node.operand);
                 let argument_typings = self.collect_named_argument_typings(arguments);
                 let candidate = self.lookup_function_matching_named_arguments(
                     &type_ids,
@@ -500,10 +515,6 @@ impl Pass<'_> {
                     (Typing::Unresolved, None)
                 }
             }
-            Typing::MetaType(_) => {
-                // This is a cast to the given type and is not valid with named arguments
-                (Typing::Unresolved, None)
-            }
             Typing::NewExpression(type_id) => {
                 if let Type::Contract(ContractType { definition_id }) =
                     self.types.get_type_by_id(type_id)
@@ -512,26 +523,6 @@ impl Pass<'_> {
                 } else {
                     // only contracts can be created with `new`
                     (Typing::Unresolved, None)
-                }
-            }
-            Typing::UserMetaType(node_id) => {
-                // Function call with named arguments are only valid in user
-                // types of the struct kind, which results in the construction
-                // of such struct in memory
-                match self.binder.find_definition_by_id(node_id) {
-                    Some(Definition::Struct(_)) => {
-                        // struct construction
-                        let type_id = self.types.register_type(Type::Struct(StructType {
-                            definition_id: node_id,
-                            location: DataLocation::Memory,
-                        }));
-                        (Typing::Resolved(type_id), Some(node_id))
-                    }
-                    Some(Definition::Event(_)) => {
-                        // this is an event called as a function, which is valid in <0.5.0
-                        (Typing::Resolved(self.types.void()), Some(node_id))
-                    }
-                    _ => (Typing::Unresolved, None),
                 }
             }
             Typing::BuiltIn(_) => {

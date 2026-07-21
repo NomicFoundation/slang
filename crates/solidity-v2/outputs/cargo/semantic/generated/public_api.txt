@@ -56,14 +56,12 @@ pub fn slang_solidity_v2_semantic::binder::Resolution::fmt(&self, &mut core::fmt
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::binder::Resolution
 pub enum slang_solidity_v2_semantic::binder::Typing
 pub slang_solidity_v2_semantic::binder::Typing::BuiltIn(slang_solidity_v2_semantic::built_ins::InternalBuiltIn)
-pub slang_solidity_v2_semantic::binder::Typing::MetaType(slang_solidity_v2_semantic::types::Type)
 pub slang_solidity_v2_semantic::binder::Typing::NewExpression(slang_solidity_v2_semantic::types::TypeId)
 pub slang_solidity_v2_semantic::binder::Typing::Resolved(slang_solidity_v2_semantic::types::TypeId)
 pub slang_solidity_v2_semantic::binder::Typing::Super
 pub slang_solidity_v2_semantic::binder::Typing::This(slang_solidity_v2_semantic::types::TypeId)
 pub slang_solidity_v2_semantic::binder::Typing::Undetermined(alloc::vec::Vec<slang_solidity_v2_semantic::types::TypeId>)
 pub slang_solidity_v2_semantic::binder::Typing::Unresolved
-pub slang_solidity_v2_semantic::binder::Typing::UserMetaType(slang_solidity_v2_common::nodes::NodeId)
 impl slang_solidity_v2_semantic::binder::Typing
 pub fn slang_solidity_v2_semantic::binder::Typing::as_type_id(&self) -> core::option::Option<slang_solidity_v2_semantic::types::TypeId>
 impl core::clone::Clone for slang_solidity_v2_semantic::binder::Typing
@@ -435,10 +433,12 @@ pub slang_solidity_v2_semantic::types::Type::Interface(slang_solidity_v2_semanti
 pub slang_solidity_v2_semantic::types::Type::Library(slang_solidity_v2_semantic::types::LibraryType)
 pub slang_solidity_v2_semantic::types::Type::Literal(slang_solidity_v2_semantic::types::LiteralKind)
 pub slang_solidity_v2_semantic::types::Type::Mapping(slang_solidity_v2_semantic::types::MappingType)
+pub slang_solidity_v2_semantic::types::Type::MetaType(slang_solidity_v2_semantic::types::MetaType)
 pub slang_solidity_v2_semantic::types::Type::String(slang_solidity_v2_semantic::types::StringType)
 pub slang_solidity_v2_semantic::types::Type::Struct(slang_solidity_v2_semantic::types::StructType)
 pub slang_solidity_v2_semantic::types::Type::Tuple(slang_solidity_v2_semantic::types::TupleType)
 pub slang_solidity_v2_semantic::types::Type::UserDefinedValue(slang_solidity_v2_semantic::types::UserDefinedValueType)
+pub slang_solidity_v2_semantic::types::Type::UserMetaType(slang_solidity_v2_semantic::types::UserMetaType)
 pub slang_solidity_v2_semantic::types::Type::Void
 impl slang_solidity_v2_semantic::types::Type
 pub fn slang_solidity_v2_semantic::types::Type::can_return_from_getter_directly(&self) -> bool
@@ -637,6 +637,18 @@ pub fn slang_solidity_v2_semantic::types::MappingType::fmt(&self, &mut core::fmt
 impl core::hash::Hash for slang_solidity_v2_semantic::types::MappingType
 pub fn slang_solidity_v2_semantic::types::MappingType::hash<__H: core::hash::Hasher>(&self, &mut __H)
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::MappingType
+pub struct slang_solidity_v2_semantic::types::MetaType
+pub slang_solidity_v2_semantic::types::MetaType::type_id: slang_solidity_v2_semantic::types::TypeId
+impl core::clone::Clone for slang_solidity_v2_semantic::types::MetaType
+pub fn slang_solidity_v2_semantic::types::MetaType::clone(&self) -> slang_solidity_v2_semantic::types::MetaType
+impl core::cmp::Eq for slang_solidity_v2_semantic::types::MetaType
+impl core::cmp::PartialEq for slang_solidity_v2_semantic::types::MetaType
+pub fn slang_solidity_v2_semantic::types::MetaType::eq(&self, &slang_solidity_v2_semantic::types::MetaType) -> bool
+impl core::fmt::Debug for slang_solidity_v2_semantic::types::MetaType
+pub fn slang_solidity_v2_semantic::types::MetaType::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for slang_solidity_v2_semantic::types::MetaType
+pub fn slang_solidity_v2_semantic::types::MetaType::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::MetaType
 pub struct slang_solidity_v2_semantic::types::StringType
 pub slang_solidity_v2_semantic::types::StringType::location: slang_solidity_v2_semantic::types::DataLocation
 impl core::clone::Clone for slang_solidity_v2_semantic::types::StringType
@@ -703,3 +715,15 @@ pub fn slang_solidity_v2_semantic::types::UserDefinedValueType::fmt(&self, &mut 
 impl core::hash::Hash for slang_solidity_v2_semantic::types::UserDefinedValueType
 pub fn slang_solidity_v2_semantic::types::UserDefinedValueType::hash<__H: core::hash::Hasher>(&self, &mut __H)
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::UserDefinedValueType
+pub struct slang_solidity_v2_semantic::types::UserMetaType
+pub slang_solidity_v2_semantic::types::UserMetaType::definition_id: slang_solidity_v2_common::nodes::NodeId
+impl core::clone::Clone for slang_solidity_v2_semantic::types::UserMetaType
+pub fn slang_solidity_v2_semantic::types::UserMetaType::clone(&self) -> slang_solidity_v2_semantic::types::UserMetaType
+impl core::cmp::Eq for slang_solidity_v2_semantic::types::UserMetaType
+impl core::cmp::PartialEq for slang_solidity_v2_semantic::types::UserMetaType
+pub fn slang_solidity_v2_semantic::types::UserMetaType::eq(&self, &slang_solidity_v2_semantic::types::UserMetaType) -> bool
+impl core::fmt::Debug for slang_solidity_v2_semantic::types::UserMetaType
+pub fn slang_solidity_v2_semantic::types::UserMetaType::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for slang_solidity_v2_semantic::types::UserMetaType
+pub fn slang_solidity_v2_semantic::types::UserMetaType::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::UserMetaType

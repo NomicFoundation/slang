@@ -2,13 +2,15 @@ use std::sync::Arc;
 
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
+use slang_solidity_v2_ir::ir::NodeIdentity;
 
 use super::Pass;
 use crate::binder::{Reference, Resolution, Typing};
 use crate::built_ins::InternalBuiltIn;
 use crate::passes::common::{filter_overriden_definitions, node_id_for_string_expression_typing};
 use crate::types::{
-    ArrayType, DataLocation, FixedSizeArrayType, MappingType, Number, TupleType, Type,
+    AddressType, ArrayType, DataLocation, FixedSizeArrayType, MappingType, MetaType, Number,
+    TupleType, Type, UserMetaType,
 };
 
 impl Visitor for Pass<'_> {
@@ -102,26 +104,49 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_expression(&mut self, node: &ir::Expression) -> bool {
-        if let ir::Expression::Identifier(identifier) = node {
-            let symbol = identifier.unparse();
-            let resolution = if symbol == "_" && self.is_in_modifier_scope() {
-                Resolution::BuiltIn(InternalBuiltIn::ModifierUnderscore)
-            } else {
-                let scope_id = self.current_scope_id();
-                let resolution = self.resolve_symbol_in_scope(scope_id, symbol);
-                filter_overriden_definitions(self.binder, self.types, resolution)
-            };
+        match node {
+            ir::Expression::Identifier(identifier) => {
+                let symbol = identifier.unparse();
+                let resolution = if symbol == "_" && self.is_in_modifier_scope() {
+                    Resolution::BuiltIn(InternalBuiltIn::ModifierUnderscore)
+                } else {
+                    let scope_id = self.current_scope_id();
+                    let resolution = self.resolve_symbol_in_scope(scope_id, symbol);
+                    filter_overriden_definitions(self.binder, self.types, resolution)
+                };
 
-            // Set the typing for the `Identifier` node.
-            // The resolution may point to an imported symbol, so we need to
-            // follow through in order to get to the actual typing.
-            let followed_resolution = self.binder.follow_symbol_aliases(resolution.clone());
-            let typing = self.typing_of_resolution(&followed_resolution);
-            self.binder.set_node_typing(identifier.id(), typing);
+                // Set the typing for the `Identifier` node.
+                // The resolution may point to an imported symbol, so we need to
+                // follow through in order to get to the actual typing.
+                let followed_resolution = self.binder.follow_symbol_aliases(resolution.clone());
+                let typing = self.typing_of_resolution(&followed_resolution);
+                self.binder.set_node_typing(identifier.id(), typing);
 
-            // Finally, create the reference for the identifier.
-            let reference = Reference::new(Arc::clone(identifier), resolution);
-            self.binder.insert_reference(reference);
+                // Finally, create the reference for the identifier.
+                let reference = Reference::new(Arc::clone(identifier), resolution);
+                self.binder.insert_reference(reference);
+            }
+            // An elementary type keyword in expression position denotes a
+            // type, so it types as the meta-type of that type (eg. `uint`
+            // types as `type(uint256)`). This is handled here rather than in
+            // `leave_elementary_type` because elementary types in type
+            // positions (which vastly outnumber expression uses) don't need a
+            // typing registered.
+            ir::Expression::ElementaryType(elementary_type) => {
+                let typing = self.meta_typing_of(Self::type_of_elementary_type(elementary_type));
+                let node_id = elementary_type
+                    .node_id()
+                    .expect("ElementaryType should have a node id");
+                self.binder.set_node_typing(node_id, typing);
+            }
+            // A standalone `payable` (the operand of a `payable(x)` cast)
+            // denotes the `address payable` type, so it types as its
+            // meta-type.
+            ir::Expression::PayableKeyword(payable_keyword) => {
+                let typing = self.meta_typing_of(Type::Address(AddressType { is_payable: true }));
+                self.binder.set_node_typing(payable_keyword.id(), typing);
+            }
+            _ => {}
         }
         true
     }
@@ -388,8 +413,7 @@ impl Visitor for Pass<'_> {
         let typing = match self.typing_of_expression(&node.operand) {
             Typing::Resolved(operand_type_id) => {
                 let range_access = node.end.is_some();
-                let operand_type = self.types.get_type_by_id(operand_type_id);
-                match operand_type {
+                match self.types.get_type_by_id(operand_type_id) {
                     Type::Array(ArrayType { element_type, .. })
                     | Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
                         // TODO(validation) SDR[58]: for fixed-size arrays, if the range
@@ -426,30 +450,33 @@ impl Visitor for Pass<'_> {
                             Typing::Resolved(*value_type_id)
                         }
                     }
+                    // Indexing a meta-type creates the meta-type of an array,
+                    // eg. the `uint[]` in `abi.decode(data, (uint[]))` or the
+                    // fixed-size `uint[3]`.
+                    Type::MetaType(MetaType {
+                        type_id: element_type,
+                    }) => self.meta_typing_of(Type::Array(ArrayType {
+                        element_type: *element_type,
+                        location: DataLocation::Memory,
+                    })),
+                    // Indexing a user meta-type likewise creates the meta-type
+                    // of an array (eg. `MyStruct[]`).
+                    Type::UserMetaType(UserMetaType { definition_id }) => {
+                        let definition_id = *definition_id;
+                        if let Some(operand_type) = self.type_of_definition(definition_id) {
+                            let element_type = self.types.register_type(operand_type);
+                            self.meta_typing_of(Type::Array(ArrayType {
+                                element_type,
+                                location: DataLocation::Memory,
+                            }))
+                        } else {
+                            Typing::Unresolved
+                        }
+                    }
                     _ => {
                         // TODO(validation) SDR[45]: the operand is not indexable
                         Typing::Unresolved
                     }
-                }
-            }
-            Typing::MetaType(operand_type) => {
-                // indexing a meta-type creates a new meta-type of the array
-                let operand_type_id = self.types.register_type(operand_type);
-                Typing::MetaType(Type::Array(ArrayType {
-                    element_type: operand_type_id,
-                    location: DataLocation::Memory,
-                }))
-            }
-            Typing::UserMetaType(definition_id) => {
-                // indexing a user meta-type creates a new meta-type of the array
-                if let Some(operand_type) = self.type_of_definition(definition_id) {
-                    let operand_type_id = self.types.register_type(operand_type);
-                    Typing::MetaType(Type::Array(ArrayType {
-                        element_type: operand_type_id,
-                        location: DataLocation::Memory,
-                    }))
-                } else {
-                    Typing::Unresolved
                 }
             }
             _ => Typing::Unresolved,

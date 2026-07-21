@@ -124,20 +124,15 @@ impl Pass<'_> {
         argument_typing: &Typing,
         external_call: bool,
     ) -> bool {
-        match argument_typing {
-            Typing::Resolved(type_id) => {
-                if external_call {
-                    self.types
-                        .implicitly_convertible_to_for_external_call(*type_id, parameter_type)
-                } else {
-                    self.types
-                        .implicitly_convertible_to(*type_id, parameter_type)
-                }
-            }
-            Typing::This(type_id) => self
-                .types
-                .implicitly_convertible_to(*type_id, parameter_type),
-            _ => false,
+        let Some(type_id) = argument_typing.as_type_id() else {
+            return false;
+        };
+        if external_call {
+            self.types
+                .implicitly_convertible_to_for_external_call(type_id, parameter_type)
+        } else {
+            self.types
+                .implicitly_convertible_to(type_id, parameter_type)
         }
     }
 

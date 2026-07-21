@@ -40,7 +40,7 @@ impl Visitor for Pass<'_> {
         self.leave_scope_for_node_id(node.id());
 
         self.current_receiver_type = None;
-        self.binder.mark_user_meta_type_node(node.id());
+        self.mark_user_meta_type_node(node.id());
     }
 
     fn enter_interface_definition(&mut self, node: &ir::InterfaceDefinition) -> bool {
@@ -64,7 +64,7 @@ impl Visitor for Pass<'_> {
         self.leave_scope_for_node_id(node.id());
 
         self.current_receiver_type = None;
-        self.binder.mark_user_meta_type_node(node.id());
+        self.mark_user_meta_type_node(node.id());
     }
 
     fn enter_library_definition(&mut self, node: &ir::LibraryDefinition) -> bool {
@@ -80,12 +80,12 @@ impl Visitor for Pass<'_> {
     fn leave_library_definition(&mut self, node: &ir::LibraryDefinition) {
         self.leave_scope_for_node_id(node.id());
 
-        self.binder.mark_user_meta_type_node(node.id());
+        self.mark_user_meta_type_node(node.id());
     }
 
     fn leave_path_import(&mut self, node: &ir::PathImport) {
         if node.alias.is_some() {
-            self.binder.mark_user_meta_type_node(node.id());
+            self.mark_user_meta_type_node(node.id());
         }
     }
 
@@ -182,7 +182,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_event_definition(&mut self, node: &ir::EventDefinition) {
-        self.binder.mark_user_meta_type_node(node.id());
+        self.mark_user_meta_type_node(node.id());
 
         // Resolve and collect the types of the parameters, saving them in the
         // scope to use in overload disambiguation when invoking an event as a
@@ -210,7 +210,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_error_definition(&mut self, node: &ir::ErrorDefinition) {
-        self.binder.mark_user_meta_type_node(node.id());
+        self.mark_user_meta_type_node(node.id());
 
         // Resolve the types of the parameters
         for parameter in &node.parameters {
@@ -261,7 +261,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_struct_definition(&mut self, node: &ir::StructDefinition) {
-        self.binder.mark_user_meta_type_node(node.id());
+        self.mark_user_meta_type_node(node.id());
     }
 
     fn leave_struct_member(&mut self, node: &ir::StructMember) {
@@ -277,14 +277,14 @@ impl Visitor for Pass<'_> {
             self.binder.set_node_type(member.id(), Some(type_id));
         }
 
-        self.binder.mark_user_meta_type_node(node.id());
+        self.mark_user_meta_type_node(node.id());
     }
 
     fn leave_user_defined_value_type_definition(
         &mut self,
         node: &ir::UserDefinedValueTypeDefinition,
     ) {
-        self.binder.mark_user_meta_type_node(node.id());
+        self.mark_user_meta_type_node(node.id());
 
         let target_type_id = self.type_of_elementary_type(&node.value_type, None);
         let Definition::UserDefinedValueType(udvt) = self.binder.get_definition_mut(node.id())

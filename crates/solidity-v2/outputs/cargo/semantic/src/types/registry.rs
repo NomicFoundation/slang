@@ -509,8 +509,10 @@ impl TypeRegistry {
             | Type::Library(_)
             | Type::Literal(_)
             | Type::Mapping(_)
+            | Type::MetaType(_)
             | Type::Tuple(_)
             | Type::UserDefinedValue(_)
+            | Type::UserMetaType(_)
             | Type::Void => return Some(type_id),
         };
         self.find_type(&canonical_type)
@@ -569,7 +571,9 @@ impl TypeRegistry {
             | Type::Library(_)
             | Type::Literal(_)
             | Type::Mapping(_)
+            | Type::MetaType(_)
             | Type::UserDefinedValue(_)
+            | Type::UserMetaType(_)
             | Type::Void => type_,
         };
         self.register_type(type_with_location)
