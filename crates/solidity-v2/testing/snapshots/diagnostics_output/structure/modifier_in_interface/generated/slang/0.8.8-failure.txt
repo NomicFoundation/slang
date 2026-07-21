@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/modifier-in-interface] Error: Modifiers cannot be defined or declared in interfaces.
+   ╭─[input.sol:6:5]
+   │
+ 6 │ ╭─▶     modifier m() {
+   ┆ ┆   
+ 8 │ ├─▶     }
+   │ │           
+   │ ╰─────────── Error occurred here.
+───╯

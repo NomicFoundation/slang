@@ -86,7 +86,7 @@ impl SemanticContext {
         let mut types = TypeRegistry::new(language_version);
         let file_node_mapper = FileNodeMapper::build_from(files);
 
-        p1_collect_definitions::run(files, &mut binder, diagnostics);
+        p1_collect_definitions::run(files, &mut binder, language_version, diagnostics);
         p2_linearise_contracts::run(files, &mut binder, diagnostics);
         p3_type_definitions::run(
             files,

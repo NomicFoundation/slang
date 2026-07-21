@@ -1191,6 +1191,11 @@ mod structure {
     }
 
     #[test]
+    fn modifier_in_interface() -> Result<()> {
+        run("structure", "modifier_in_interface")
+    }
+
+    #[test]
     fn multiple_constructors() -> Result<()> {
         run("structure", "multiple_constructors")
     }

@@ -19,6 +19,7 @@ mod library_receive_function;
 mod library_virtual_function;
 mod library_virtual_modifier;
 mod missing_function_visibility;
+mod modifier_in_interface;
 mod multiple_constructors;
 mod non_abstract_contract_internal_constructor;
 mod payable_internal_or_private_function;
@@ -49,6 +50,7 @@ pub use library_receive_function::LibraryReceiveFunction;
 pub use library_virtual_function::LibraryVirtualFunction;
 pub use library_virtual_modifier::LibraryVirtualModifier;
 pub use missing_function_visibility::MissingFunctionVisibility;
+pub use modifier_in_interface::ModifierInInterface;
 pub use multiple_constructors::MultipleConstructors;
 pub use non_abstract_contract_internal_constructor::NonAbstractContractInternalConstructor;
 pub use payable_internal_or_private_function::PayableInternalOrPrivateFunction;
@@ -127,6 +129,8 @@ define_diagnostic_kind! {
 
         /// A modifier without an implementation body is not marked `virtual`.
         UnimplementedModifierMustBeVirtual(UnimplementedModifierMustBeVirtual),
+        /// A modifier is defined or declared in an interface.
+        ModifierInInterface(ModifierInInterface),
 
         /// A free function is marked `virtual`.
         VirtualFreeFunction(VirtualFreeFunction),

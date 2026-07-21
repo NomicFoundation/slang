@@ -7,7 +7,7 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     FreeFunctionVisibility, FunctionMustBeImplemented, FunctionNameMatchesContainer,
     InterfaceFunctionCannotBeImplemented, InterfaceFunctionNotExternal,
     InvalidUsingDirectiveContainer, LibraryPayableFunction, LibraryVirtualFunction,
-    LibraryVirtualModifier, MissingFunctionVisibility, MultipleConstructors,
+    LibraryVirtualModifier, MissingFunctionVisibility, ModifierInInterface, MultipleConstructors,
     NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
     UnimplementedModifierMustBeVirtual, VirtualFreeFunction, VirtualPrivateFunction,
 };
@@ -15,6 +15,7 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
@@ -34,10 +35,11 @@ mod conflicts;
 pub fn run(
     files: &[impl SemanticFile],
     binder: &mut Binder,
+    language_version: LanguageVersion,
     diagnostics: &mut DiagnosticCollection,
 ) {
     for file in files {
-        Pass::visit_file(file, binder, diagnostics);
+        Pass::visit_file(file, binder, language_version, diagnostics);
     }
 
     // Once every file scope is populated, detect clashes involving the
@@ -65,6 +67,7 @@ struct ScopeFrame {
 
 struct Pass<'a, F: SemanticFile> {
     current_file: &'a F,
+    language_version: LanguageVersion,
     scope_stack: Vec<ScopeFrame>,
     // Number of enclosing loops (`for`, `while`, `do-while`) at the current
     // traversal point. Used to flag `break` statements that appear outside any
@@ -75,9 +78,15 @@ struct Pass<'a, F: SemanticFile> {
 }
 
 impl<'a, F: SemanticFile> Pass<'a, F> {
-    fn visit_file(file: &'a F, binder: &'a mut Binder, diagnostics: &'a mut DiagnosticCollection) {
+    fn visit_file(
+        file: &'a F,
+        binder: &'a mut Binder,
+        language_version: LanguageVersion,
+        diagnostics: &'a mut DiagnosticCollection,
+    ) {
         let mut pass = Self {
             current_file: file,
+            language_version,
             scope_stack: Vec::new(),
             loop_depth: 0,
             binder,
@@ -401,6 +410,13 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
 
     /// Check modifier attributes, also constrained by the grammar.
     fn check_modifier_attributes(&mut self, node: &ir::FunctionDefinition) {
+        // A modifier cannot be defined or declared in an interface. solc only
+        // began rejecting this in 0.8.8 (error 6408); earlier versions accept
+        // it, so gate the diagnostic accordingly.
+        if self.language_version >= LanguageVersion::V0_8_8 && self.current_scope_is_interface() {
+            self.report(node, ModifierInInterface);
+        }
+
         // A modifier without an implementation body must be marked `virtual`.
         if node.body.is_none() && !node.attributes.is_virtual {
             self.report(node, UnimplementedModifierMustBeVirtual);
