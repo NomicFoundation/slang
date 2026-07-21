@@ -463,19 +463,9 @@ impl Pass<'_> {
                 );
 
                 if let Some(candidate_type_id) = candidate {
-                    // The reference of the operand disambiguates to the
-                    // selected overload, even when calling it turns out to be
-                    // invalid (eg. a declaration reached through a contract
-                    // type name).
-                    let reference_node_id = reference_node_id_for_expression(&node.operand);
-                    if let (Some(node_id), Some(definition_id)) = (
-                        reference_node_id,
-                        self.candidate_definition_id(candidate_type_id),
-                    ) {
-                        // TODO: maybe update the typing of the operand as well?
-                        self.binder
-                            .fixup_reference(node_id, Resolution::Definition(definition_id));
-                    }
+                    // The operand disambiguates to the selected overload, even
+                    // when calling it turns out to be invalid
+                    self.disambiguate_operand(&node.operand, candidate_type_id);
 
                     self.typing_of_type_with_positional_arguments(
                         node,
@@ -486,6 +476,26 @@ impl Pass<'_> {
                     Typing::Unresolved
                 }
             }
+        }
+    }
+
+    /// Narrows an overloaded call operand from its whole candidate set down to
+    /// the single selected overload `candidate_type_id`: both the operand's
+    /// reference (so it points at the selected declaration) and its recorded
+    /// typing (so querying the operand yields the selected overload rather than
+    /// the ambiguous `Undetermined` set) are updated.
+    fn disambiguate_operand(&mut self, operand: &ir::Expression, candidate_type_id: TypeId) {
+        if let (Some(reference_node_id), Some(definition_id)) = (
+            reference_node_id_for_expression(operand),
+            self.candidate_definition_id(candidate_type_id),
+        ) {
+            self.binder
+                .fixup_reference(reference_node_id, Resolution::Definition(definition_id));
+        }
+
+        if let Some(operand_node_id) = operand.node_id() {
+            self.binder
+                .update_node_typing(operand_node_id, Typing::Resolved(candidate_type_id));
         }
     }
 
@@ -595,19 +605,9 @@ impl Pass<'_> {
                 );
 
                 if let Some(candidate_type_id) = candidate {
-                    // The reference of the operand disambiguates to the
-                    // selected overload, even when calling it turns out to be
-                    // invalid (eg. a declaration reached through a contract
-                    // type name).
-                    let reference_node_id = reference_node_id_for_expression(&node.operand);
-                    if let (Some(node_id), Some(definition_id)) = (
-                        reference_node_id,
-                        self.candidate_definition_id(candidate_type_id),
-                    ) {
-                        // TODO: maybe update the typing of the operand as well?
-                        self.binder
-                            .fixup_reference(node_id, Resolution::Definition(definition_id));
-                    }
+                    // The operand disambiguates to the selected overload, even
+                    // when calling it turns out to be invalid
+                    self.disambiguate_operand(&node.operand, candidate_type_id);
 
                     self.typing_of_type_with_named_arguments(node, candidate_type_id)
                 } else {
