@@ -7,7 +7,7 @@ use slang_solidity_v2_ir::ir::NodeIdentity;
 use super::Pass;
 use crate::binder::{Reference, Resolution, Typing};
 use crate::built_ins::InternalBuiltIn;
-use crate::passes::common::{filter_overriden_definitions, node_id_for_string_expression_typing};
+use crate::passes::common::filter_overriden_definitions;
 use crate::types::{
     AddressType, ArrayType, DataLocation, FixedSizeArrayType, MappingType, MetaType, Number,
     TupleType, Type, UserMetaType,
@@ -169,7 +169,9 @@ impl Visitor for Pass<'_> {
         let type_id = self
             .types
             .register_type(Self::type_of_string_expression(node));
-        let node_id = node_id_for_string_expression_typing(node);
+        let node_id = node
+            .node_id()
+            .expect("StringExpression should have a NodeId");
         self.binder.set_node_type(node_id, Some(type_id));
     }
 
@@ -537,6 +539,20 @@ impl Visitor for Pass<'_> {
             None => operand_typing,
         };
         self.binder.set_node_typing(node.id(), typing);
+    }
+
+    fn visit_true_keyword(&mut self, node: &ir::TrueKeyword) {
+        self.binder
+            .set_node_typing(node.id(), Typing::Resolved(self.types.boolean()));
+    }
+
+    fn visit_false_keyword(&mut self, node: &ir::FalseKeyword) {
+        self.binder
+            .set_node_typing(node.id(), Typing::Resolved(self.types.boolean()));
+    }
+
+    fn visit_super_keyword(&mut self, node: &ir::SuperKeyword) {
+        self.binder.set_node_typing(node.id(), Typing::Super);
     }
 
     fn visit_this_keyword(&mut self, node: &ir::ThisKeyword) {

@@ -9,12 +9,11 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
+use slang_solidity_v2_ir::ir::{self, NodeIdGenerator, NodeIdentity};
 
 use super::{build_file, TestFile};
-use crate::binder::{Binder, Definition};
+use crate::binder::{Binder, Definition, Typing};
 use crate::context::{FileNodeMapper, SemanticContext, SemanticFile};
-use crate::passes::common::node_id_for_expression_typing;
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p5_resolve_references,
 };
@@ -91,7 +90,7 @@ fn recover_expression_type(
     binder: &Binder,
     types: &TypeRegistry,
 ) -> Option<Type> {
-    let node_id = node_id_for_expression_typing(node)?;
+    let node_id = node.node_id()?;
     binder
         .node_typing(node_id)
         .as_type_id()
@@ -1032,6 +1031,45 @@ fn test_conditional_expression_unifies_booleans() {
 }
 
 #[test]
+fn test_super_keyword_types_as_super() {
+    let source = r#"
+        contract A {
+            function f() public virtual {}
+        }
+        contract B is A {
+            function g() public {
+                super.f();
+            }
+        }
+        "#;
+
+    let TypeAnalysis { file, binder, .. } = analyze(LanguageVersion::LATEST, source);
+
+    let contract = find_contract(&file, "B");
+    let function = find_function(&contract.members, "g").expect("g function");
+    let body = function.body.as_ref().expect("g has a body");
+
+    let statement = body.statements.first().expect("g has a statement");
+    let ir::Statement::ExpressionStatement(expression_statement) = statement else {
+        panic!("expected an expression statement");
+    };
+    let ir::Expression::FunctionCallExpression(call) = &expression_statement.expression else {
+        panic!("expected a function call expression");
+    };
+    let ir::Expression::MemberAccessExpression(member_access) = &call.operand else {
+        panic!("expected a member access expression");
+    };
+    let ir::Expression::SuperKeyword(super_keyword) = &member_access.operand else {
+        panic!("expected a super keyword");
+    };
+
+    assert!(
+        matches!(binder.node_typing(super_keyword.id()), Typing::Super),
+        "`super` should be typed as `Typing::Super`"
+    );
+}
+
+#[test]
 fn test_string_literal_byte_count_with_escapes() {
     // Plain ASCII: one byte per char.
     let (type_, _) = type_of_expression(r#""abc""#);
@@ -1809,8 +1847,7 @@ fn test_meta_type_internal_names() {
     let ir::Expression::FunctionCallExpression(call) = cast else {
         panic!("expected a function call expression");
     };
-    let operand_node_id =
-        node_id_for_expression_typing(&call.operand).expect("operand has a typing node");
+    let operand_node_id = call.operand.node_id().expect("operand has a node id");
     let uint_meta_id = context
         .binder()
         .node_typing(operand_node_id)
@@ -1820,8 +1857,7 @@ fn test_meta_type_internal_names() {
 
     // `E`: the bare enum name carries the user meta-type.
     let enum_expression = expressions.next().expect("enum statement");
-    let enum_node_id =
-        node_id_for_expression_typing(enum_expression).expect("expression has a typing node");
+    let enum_node_id = enum_expression.node_id().expect("expression has a node id");
     let enum_meta_id = context
         .binder()
         .node_typing(enum_node_id)
