@@ -1,10 +1,10 @@
 use ruint::aliases::{U160, U256};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_ir::ir::NodeIdentity;
 
 use super::Pass;
 use crate::binder::{Definition, Resolution, Typing};
-use crate::passes::common::node_id_for_expression_typing;
 use crate::types::{
     literals, AddressType, ContractType, DataLocation, FixedSizeArrayType, FunctionType,
     IntegerType, LiteralKind, MetaType, Number, StringType, Type, TypeId, UserMetaType,
@@ -22,26 +22,12 @@ impl Pass<'_> {
     }
 
     pub(super) fn typing_of_expression(&self, node: &ir::Expression) -> Typing {
-        match node {
-            // These are always typed as boolean
-            ir::Expression::OrExpression(_)
-            | ir::Expression::AndExpression(_)
-            | ir::Expression::EqualityExpression(_)
-            | ir::Expression::InequalityExpression(_)
-            | ir::Expression::TrueKeyword(_)
-            | ir::Expression::FalseKeyword(_) => Typing::Resolved(self.types.boolean()),
-
-            // Other special cases
-            ir::Expression::SuperKeyword(_) => Typing::Super,
-
-            // By default, query the binder for registered typing information
-            _ => {
-                let node_id = node_id_for_expression_typing(node).expect(
-                    "typing of expression variant not handled and it doesn't have a NodeId",
-                );
-                self.binder.node_typing(node_id)
-            }
-        }
+        // Every expression variant registers its typing in the binder during
+        // the pass, so we simply look it up by `NodeId`.
+        let node_id = node
+            .node_id()
+            .expect("expression should have a NodeId to look up its typing");
+        self.binder.node_typing(node_id)
     }
 
     pub(super) fn type_of_elementary_type(elementary_type: &ir::ElementaryType) -> Type {
