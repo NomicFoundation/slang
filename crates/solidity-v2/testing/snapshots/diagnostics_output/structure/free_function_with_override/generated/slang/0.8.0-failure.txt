@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/free-function-with-override] Error: Free functions cannot override.
+   ╭─[input.sol:5:1]
+   │
+ 5 │ function fun() override {}
+   │ ─────────────┬────────────  
+   │              ╰────────────── Error occurred here.
+───╯

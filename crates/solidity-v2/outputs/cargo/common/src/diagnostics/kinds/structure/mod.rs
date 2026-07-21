@@ -8,6 +8,8 @@ mod empty_struct;
 mod enum_with_too_many_members;
 mod free_function_payable;
 mod free_function_visibility;
+mod free_function_with_modifiers;
+mod free_function_with_override;
 mod function_declaration_with_modifiers;
 mod function_must_be_implemented;
 mod function_name_matches_container;
@@ -40,6 +42,8 @@ pub use empty_struct::EmptyStruct;
 pub use enum_with_too_many_members::EnumWithTooManyMembers;
 pub use free_function_payable::FreeFunctionPayable;
 pub use free_function_visibility::FreeFunctionVisibility;
+pub use free_function_with_modifiers::FreeFunctionWithModifiers;
+pub use free_function_with_override::FreeFunctionWithOverride;
 pub use function_declaration_with_modifiers::FunctionDeclarationWithModifiers;
 pub use function_must_be_implemented::FunctionMustBeImplemented;
 pub use function_name_matches_container::FunctionNameMatchesContainer;
@@ -85,6 +89,10 @@ define_diagnostic_kind! {
 
         /// A free function specifies a visibility modifier.
         FreeFunctionVisibility(FreeFunctionVisibility),
+        /// A free function has one or more modifier invocations.
+        FreeFunctionWithModifiers(FreeFunctionWithModifiers),
+        /// A free function carries an `override` specifier.
+        FreeFunctionWithOverride(FreeFunctionWithOverride),
 
         /// A non-free, non-constructor function does not specify a visibility modifier.
         MissingFunctionVisibility(MissingFunctionVisibility),

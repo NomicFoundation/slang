@@ -611,6 +611,8 @@ pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnostic
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EnumWithTooManyMembers(slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::FreeFunctionPayable(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionPayable)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::FreeFunctionVisibility(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionVisibility)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::FreeFunctionWithModifiers(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::FreeFunctionWithOverride(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::FunctionDeclarationWithModifiers(slang_solidity_v2_common::diagnostics::kinds::structure::FunctionDeclarationWithModifiers)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::FunctionMustBeImplemented(slang_solidity_v2_common::diagnostics::kinds::structure::FunctionMustBeImplemented)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::FunctionNameMatchesContainer(slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer)
@@ -657,6 +659,10 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionPayable) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionVisibility> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionVisibility) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FunctionDeclarationWithModifiers> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FunctionDeclarationWithModifiers) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FunctionMustBeImplemented> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -901,6 +907,44 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionVisibility::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionVisibility::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionVisibility::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::FunctionDeclarationWithModifiers
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::FunctionDeclarationWithModifiers
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FunctionDeclarationWithModifiers::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::FunctionDeclarationWithModifiers
@@ -1994,6 +2038,10 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionPayable) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionVisibility> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionVisibility) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FunctionDeclarationWithModifiers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FunctionDeclarationWithModifiers) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FunctionMustBeImplemented> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -2298,6 +2346,14 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionVisibility::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionVisibility::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionVisibility::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::FunctionDeclarationWithModifiers
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FunctionDeclarationWithModifiers::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FunctionDeclarationWithModifiers::message(&self) -> alloc::string::String

@@ -1098,6 +1098,16 @@ mod structure {
     }
 
     #[test]
+    fn free_function_with_modifiers() -> Result<()> {
+        run("structure", "free_function_with_modifiers")
+    }
+
+    #[test]
+    fn free_function_with_override() -> Result<()> {
+        run("structure", "free_function_with_override")
+    }
+
+    #[test]
     fn free_function_without_body() -> Result<()> {
         run("structure", "free_function_without_body")
     }

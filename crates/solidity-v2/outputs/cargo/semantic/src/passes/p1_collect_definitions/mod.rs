@@ -4,11 +4,12 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclar
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     AbstractContractPublicConstructor, BreakOutsideLoop, ConstructorNotInContract,
     ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FreeFunctionPayable,
-    FreeFunctionVisibility, FunctionDeclarationWithModifiers, FunctionMustBeImplemented,
-    FunctionNameMatchesContainer, InterfaceFunctionCannotBeImplemented,
-    InterfaceFunctionNotExternal, InvalidUsingDirectiveContainer, LibraryPayableFunction,
-    LibraryVirtualFunction, LibraryVirtualModifier, MissingFunctionVisibility, ModifierInInterface,
-    MultipleConstructors, NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
+    FreeFunctionVisibility, FreeFunctionWithModifiers, FreeFunctionWithOverride,
+    FunctionDeclarationWithModifiers, FunctionMustBeImplemented, FunctionNameMatchesContainer,
+    InterfaceFunctionCannotBeImplemented, InterfaceFunctionNotExternal,
+    InvalidUsingDirectiveContainer, LibraryPayableFunction, LibraryVirtualFunction,
+    LibraryVirtualModifier, MissingFunctionVisibility, ModifierInInterface, MultipleConstructors,
+    NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
     UnimplementedModifierMustBeVirtual, VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
@@ -323,6 +324,16 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
             // A free (file-level) function cannot be `payable`.
             if node.attributes.mutability == ir::FunctionMutability::Payable {
                 self.report(node, FreeFunctionPayable);
+            }
+
+            // A free (file-level) function cannot have modifier invocations.
+            if !node.attributes.modifier_invocations.is_empty() {
+                self.report(node, FreeFunctionWithModifiers);
+            }
+
+            // A free (file-level) function cannot carry an `override` specifier.
+            if node.attributes.override_specifier.is_some() {
+                self.report(node, FreeFunctionWithOverride);
             }
         } else if node.kind == ir::FunctionKind::Regular {
             // The remaining checks only concern regular (named) functions.
