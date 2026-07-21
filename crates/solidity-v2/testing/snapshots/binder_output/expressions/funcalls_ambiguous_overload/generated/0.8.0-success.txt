@@ -51,11 +51,11 @@ Bindings:
     │                    │   
     │                    ╰─── ref: 7
     │ 
-  9 │   function add(int) public returns (int);
+  9 │   function add(int) public returns (int) {}
     │            ─┬─  
     │             ╰─── name: 7
     │ 
- 11 │   function add(int) public returns (int);
+ 11 │   function add(int) public returns (int) {}
     │            ─┬─  
     │             ╰─── name: 8
 ────╯

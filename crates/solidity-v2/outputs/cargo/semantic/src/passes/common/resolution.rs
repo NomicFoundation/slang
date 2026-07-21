@@ -78,8 +78,13 @@ pub(crate) fn filter_overriden_definitions(
                 }
             }
             Definition::StateVariable(state_variable) => {
-                // remember the getter type if present to override functions
-                // in bases
+                // TODO(validation) SDR[36]: the state variable should have the
+                // `override` attribute and the rest of the definitions should
+                // be either functions with the correct signature, state
+                // variables or private variables or constants.
+                //
+                // Remember the getter type if present to override functions in
+                // bases.
                 if let Some(getter_type_id) = state_variable.getter_type_id {
                     let Type::Function(getter_type) = types.get_type_by_id(getter_type_id) else {
                         unreachable!("getter function type is not a function")

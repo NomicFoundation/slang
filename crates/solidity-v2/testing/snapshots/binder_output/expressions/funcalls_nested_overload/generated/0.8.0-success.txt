@@ -42,11 +42,11 @@ Bindings:
    │                         │   
    │                         ╰─── ref: 5
    │ 
- 6 │   function add(int64, int64) public returns (int256);
+ 6 │   function add(int64, int64) public returns (int256) {}
    │            ─┬─  
    │             ╰─── name: 4
    │ 
- 8 │   function add(int64) public returns (int64);
+ 8 │   function add(int64) public returns (int64) {}
    │            ─┬─  
    │             ╰─── name: 5
 ───╯

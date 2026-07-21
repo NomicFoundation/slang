@@ -29,8 +29,8 @@ Definitions (6):
 ------------------------------------------------------------------------
 
 References (2):
-- Ref: ["k" @ input.sol:9:9] -> #1
-- Ref: ["x" @ input.sol:10:9] -> #4
+- Ref: ["k" @ input.sol:9:9] -> unresolved
+- Ref: ["x" @ input.sol:10:9] -> unresolved
 
 ------------------------------------------------------------------------
 
@@ -63,8 +63,8 @@ Bindings:
     │                ╰─── name: 6
   9 │         k;
     │         ┬  
-    │         ╰── ref: 1
+    │         ╰── unresolved
  10 │         x;
     │         ┬  
-    │         ╰── ref: 4
+    │         ╰── unresolved
 ────╯

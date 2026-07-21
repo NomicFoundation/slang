@@ -1,0 +1,33 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[TypeError 3656] Error: Contract "B" should be marked as abstract.
+    ╭─[input.sol:11:1]
+    │
+ 11 │ ╭─▶ contract B is A {
+    ┆ ┆   
+ 14 │ ├─▶ }
+    │ │       
+    │ ╰─────── Error occurred here.
+────╯
+
+[TypeError 3656] Error: Contract "C" should be marked as abstract.
+    ╭─[input.sol:17:1]
+    │
+ 17 │ ╭─▶ contract C is A {
+    ┆ ┆   
+ 20 │ ├─▶ }
+    │ │       
+    │ ╰─────── Error occurred here.
+────╯
+
+[TypeError 3656] Error: Contract "D" should be marked as abstract.
+    ╭─[input.sol:23:1]
+    │
+ 23 │ ╭─▶ contract D is A {
+    ┆ ┆   
+ 26 │ ├─▶ }
+    │ │       
+    │ ╰─────── Error occurred here.
+────╯

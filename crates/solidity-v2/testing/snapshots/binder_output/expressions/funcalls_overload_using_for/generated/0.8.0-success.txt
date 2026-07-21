@@ -55,7 +55,7 @@ Bindings:
     │                  │   
     │                  ╰─── ref: 8
     │ 
-  9 │   function add(int, int32) public returns (int);
+  9 │   function add(int, int32) public returns (int) {}
     │            ─┬─  
     │             ╰─── name: 6
     │ 

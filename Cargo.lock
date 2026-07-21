@@ -4320,6 +4320,7 @@ dependencies = [
  "slang_solidity_v2_common",
  "slang_solidity_v2_ir",
  "slang_solidity_v2_parser",
+ "smallvec",
 ]
 
 [[package]]

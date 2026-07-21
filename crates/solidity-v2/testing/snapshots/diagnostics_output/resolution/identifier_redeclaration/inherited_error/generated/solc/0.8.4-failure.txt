@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 9097] Error: Identifier already declared.
+   ╭─[input.sol:9:5]
+   │
+ 9 │     error Err(bytes32);
+   │     ─────────┬─────────  
+   │              ╰─────────── Error occurred here.
+───╯

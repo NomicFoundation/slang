@@ -27,6 +27,7 @@ ruint = { workspace = true, features = ["num-bigint"] }
 sha3 = { workspace = true }
 slang_solidity_v2_common = { workspace = true }
 slang_solidity_v2_ir = { workspace = true }
+smallvec = { workspace = true }
 
 [dev-dependencies]
 slang_solidity_v2_parser = { workspace = true }

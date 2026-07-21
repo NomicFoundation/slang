@@ -1,7 +1,7 @@
 contract TestBase {
-  function add(int, int) public returns (int);
+  function add(int, int) public returns (int) {}
 
-  function add(int) public returns (int);
+  function add(int) public returns (int) {}
 }
 
 contract Test is TestBase {

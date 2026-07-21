@@ -288,6 +288,13 @@ impl Definition {
                 variable_definition.ir_node.attributes.visibility,
                 ir::StateVariableVisibility::Private
             ),
+            // A `private` constant isn't visible to derived contracts; one
+            // without an explicit visibility (or a file-level constant, which
+            // can't specify one) defaults to internally visible.
+            Self::Constant(constant_definition) => !matches!(
+                constant_definition.ir_node.visibility,
+                Some(ir::StateVariableVisibility::Private)
+            ),
             _ => true,
         }
     }

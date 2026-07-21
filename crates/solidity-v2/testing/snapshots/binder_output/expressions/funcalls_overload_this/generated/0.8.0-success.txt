@@ -37,11 +37,11 @@ Bindings:
   1 │ contract TestBase {
     │          ────┬───  
     │              ╰───── name: 1
-  2 │   function add(int, int) public returns (int);
+  2 │   function add(int, int) public returns (int) {}
     │            ─┬─  
     │             ╰─── name: 2
     │ 
-  4 │   function add(int) public returns (int);
+  4 │   function add(int) public returns (int) {}
     │            ─┬─  
     │             ╰─── name: 3
     │ 

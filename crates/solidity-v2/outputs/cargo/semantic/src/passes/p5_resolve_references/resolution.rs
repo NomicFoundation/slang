@@ -25,38 +25,9 @@ use crate::types::{ContractType, InterfaceType, StructType, Type, TypeId, UserMe
 impl Pass<'_> {
     // This is a "top-level" (ie. not a member access) resolution method
     pub(super) fn resolve_symbol_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
-        let resolution = self.binder.resolve_in_scope(scope_id, symbol);
-        match &resolution {
-            Resolution::Unresolved => BuiltInsResolver::lookup_global(symbol).into(),
-            Resolution::Ambiguous(definition_ids) => {
-                // Try to disambiguate known cases
-                let first_id = definition_ids.first().copied().unwrap();
-                let first_definition = self.binder.find_definition_by_id(first_id).unwrap();
-
-                match first_definition {
-                    Definition::StateVariable(_) => {
-                        // TODO(validation) SDR[36]: the state variable should have the
-                        // `override` attribute and the rest of the definitions
-                        // should be either functions with the correct
-                        // signature, state variables or private variables or
-                        // constants
-                        Resolution::Definition(first_id)
-                    }
-                    Definition::Constant(_) => {
-                        // TODO(validation) SDR[33]: if there are other definitions in
-                        // base contracts, they should be marked private and
-                        // they should be constants or state variables
-                        Resolution::Definition(first_id)
-                    }
-                    _ => {
-                        // TODO(validation) SDR[32]: check that the returned definitions are
-                        // all functions (or maybe modifiers?)
-                        resolution
-                    }
-                }
-            }
-            Resolution::Definition(_) | Resolution::BuiltIn(_) => resolution,
-        }
+        self.binder
+            .resolve_in_scope(scope_id, symbol)
+            .or_else(|| BuiltInsResolver::lookup_global(symbol).into())
     }
 
     fn active_using_directives_for_type(

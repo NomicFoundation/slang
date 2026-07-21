@@ -4,6 +4,7 @@ use slang_solidity_v2_ir::ir;
 
 /// Pre-computed member linearisations for a single contract.
 #[allow(clippy::struct_field_names)]
+#[derive(Default)]
 pub(crate) struct ContractLinearisations {
     pub(crate) functions: Vec<ir::FunctionDefinition>,
     pub(crate) state_variables: Vec<ir::StateVariableDefinition>,

@@ -8,7 +8,7 @@ contract Test {
     int literal_2 = add(3, 1);
   }
 
-  function add(int, int) public returns (int);
+  function add(int, int) public returns (int) {}
 
-  function add(int) public returns (int);
+  function add(int) public returns (int) {}
 }

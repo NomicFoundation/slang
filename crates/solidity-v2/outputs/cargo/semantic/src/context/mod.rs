@@ -96,7 +96,8 @@ impl SemanticContext {
             diagnostics,
         );
 
-        let contract_data = p4_compute_linearisations::run(&binder, &types);
+        let contract_data =
+            p4_compute_linearisations::run(&binder, &types, &file_node_mapper, diagnostics);
         p5_resolve_references::run(
             files,
             &mut binder,

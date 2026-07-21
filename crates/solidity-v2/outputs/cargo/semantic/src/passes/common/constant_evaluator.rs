@@ -627,7 +627,8 @@ impl ConstantIdentifierResolver<ScopeId> for ConstantResolver<'_> {
                 }
             }
             Resolution::Ambiguous(_) => {
-                // TODO(validation) SDR[1731]: multiple definitions found which is an error
+                // If we resolved to multiple definitions, it's an error which
+                // should be already diagnosed.
                 ComptimeResolution::Unresolved
             }
             Resolution::BuiltIn(_) => unreachable!("the binder doesn't resolve to built-ins"),

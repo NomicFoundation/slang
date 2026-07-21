@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[DeclarationError 9097] Error: Identifier already declared.
+    ╭─[input.sol:11:5]
+    │
+ 11 │     uint public m;
+    │     ──────┬──────  
+    │           ╰──────── Error occurred here.
+────╯
+
+[TypeError 1456] Error: Override changes modifier to public state variable.
+    ╭─[input.sol:11:5]
+    │
+ 11 │     uint public m;
+    │     ──────┬──────  
+    │           ╰──────── Error occurred here.
+────╯

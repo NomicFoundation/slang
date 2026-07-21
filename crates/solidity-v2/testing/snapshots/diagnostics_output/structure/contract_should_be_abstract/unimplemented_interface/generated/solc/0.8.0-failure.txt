@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 3656] Error: Contract "C" should be marked as abstract.
+   ╭─[input.sol:9:1]
+   │
+ 9 │ contract C is I {}
+   │ ─────────┬────────  
+   │          ╰────────── Error occurred here.
+───╯
