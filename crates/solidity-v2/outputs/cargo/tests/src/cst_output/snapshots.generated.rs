@@ -152,6 +152,16 @@ mod contract_definition {
     }
 
     #[test]
+    fn abstract_only() -> Result<()> {
+        run("ContractDefinition", "abstract_only")
+    }
+
+    #[test]
+    fn abstract_without_contract_keyword() -> Result<()> {
+        run("ContractDefinition", "abstract_without_contract_keyword")
+    }
+
+    #[test]
     fn constructor_contextual() -> Result<()> {
         run("ContractDefinition", "constructor_contextual")
     }
@@ -421,6 +431,11 @@ mod decimal_number_expression {
     }
 
     #[test]
+    fn float_underscore_before_period() -> Result<()> {
+        run("DecimalNumberExpression", "float_underscore_before_period")
+    }
+
+    #[test]
     fn float_with_exponent() -> Result<()> {
         run("DecimalNumberExpression", "float_with_exponent")
     }
@@ -461,6 +476,14 @@ mod decimal_number_expression {
         run(
             "DecimalNumberExpression",
             "integer_underscore_after_exponent",
+        )
+    }
+
+    #[test]
+    fn integer_underscore_end_of_mantissa() -> Result<()> {
+        run(
+            "DecimalNumberExpression",
+            "integer_underscore_end_of_mantissa",
         )
     }
 
@@ -567,8 +590,18 @@ mod event_definition {
     use super::*;
 
     #[test]
+    fn multiple_parameters_trailing_comma() -> Result<()> {
+        run("EventDefinition", "multiple_parameters_trailing_comma")
+    }
+
+    #[test]
     fn no_parens() -> Result<()> {
         run("EventDefinition", "no_parens")
+    }
+
+    #[test]
+    fn single_parameter_trailing_comma() -> Result<()> {
+        run("EventDefinition", "single_parameter_trailing_comma")
     }
 
     #[test]
@@ -1074,6 +1107,19 @@ mod function_definition {
     }
 
     #[test]
+    fn multiple_parameters_trailing_comma() -> Result<()> {
+        run("FunctionDefinition", "multiple_parameters_trailing_comma")
+    }
+
+    #[test]
+    fn multiple_return_parameters_trailing_comma() -> Result<()> {
+        run(
+            "FunctionDefinition",
+            "multiple_return_parameters_trailing_comma",
+        )
+    }
+
+    #[test]
     fn overridden() -> Result<()> {
         run("FunctionDefinition", "overridden")
     }
@@ -1091,6 +1137,19 @@ mod function_definition {
     #[test]
     fn return_multiple_storage_locations() -> Result<()> {
         run("FunctionDefinition", "return_multiple_storage_locations")
+    }
+
+    #[test]
+    fn single_parameter_trailing_comma() -> Result<()> {
+        run("FunctionDefinition", "single_parameter_trailing_comma")
+    }
+
+    #[test]
+    fn single_return_parameter_trailing_comma() -> Result<()> {
+        run(
+            "FunctionDefinition",
+            "single_return_parameter_trailing_comma",
+        )
     }
 }
 
@@ -1326,6 +1385,11 @@ mod modifier_definition {
     use super::*;
 
     #[test]
+    fn multiple_parameters_trailing_comma() -> Result<()> {
+        run("ModifierDefinition", "multiple_parameters_trailing_comma")
+    }
+
+    #[test]
     fn override_attr() -> Result<()> {
         run("ModifierDefinition", "override_attr")
     }
@@ -1333,6 +1397,11 @@ mod modifier_definition {
     #[test]
     fn parameter_multiple_storage_locations() -> Result<()> {
         run("ModifierDefinition", "parameter_multiple_storage_locations")
+    }
+
+    #[test]
+    fn single_parameter_trailing_comma() -> Result<()> {
+        run("ModifierDefinition", "single_parameter_trailing_comma")
     }
 }
 
@@ -2135,6 +2204,14 @@ mod using_deconstruction_symbol {
     use super::*;
 
     #[test]
+    fn identifier_instead_of_operator() -> Result<()> {
+        run(
+            "UsingDeconstructionSymbol",
+            "identifier_instead_of_operator",
+        )
+    }
+
+    #[test]
     fn identifier_path() -> Result<()> {
         run("UsingDeconstructionSymbol", "identifier_path")
     }
@@ -2145,6 +2222,16 @@ mod using_deconstruction_symbol {
     }
 
     #[test]
+    fn missing_operator() -> Result<()> {
+        run("UsingDeconstructionSymbol", "missing_operator")
+    }
+
+    #[test]
+    fn non_user_definable_operator() -> Result<()> {
+        run("UsingDeconstructionSymbol", "non_user_definable_operator")
+    }
+
+    #[test]
     fn single_id() -> Result<()> {
         run("UsingDeconstructionSymbol", "single_id")
     }
@@ -2152,6 +2239,14 @@ mod using_deconstruction_symbol {
     #[test]
     fn single_id_as_operator() -> Result<()> {
         run("UsingDeconstructionSymbol", "single_id_as_operator")
+    }
+
+    #[test]
+    fn string_literal_instead_of_operator() -> Result<()> {
+        run(
+            "UsingDeconstructionSymbol",
+            "string_literal_instead_of_operator",
+        )
     }
 }
 
@@ -2423,8 +2518,23 @@ mod yul_function_definition {
     use super::*;
 
     #[test]
+    fn function_name_with_dots() -> Result<()> {
+        run("YulFunctionDefinition", "function_name_with_dots")
+    }
+
+    #[test]
     fn identifier_with_trailing_dot() -> Result<()> {
         run("YulFunctionDefinition", "identifier_with_trailing_dot")
+    }
+
+    #[test]
+    fn parameter_with_dots() -> Result<()> {
+        run("YulFunctionDefinition", "parameter_with_dots")
+    }
+
+    #[test]
+    fn return_variable_with_dots() -> Result<()> {
+        run("YulFunctionDefinition", "return_variable_with_dots")
     }
 }
 
@@ -2466,6 +2576,11 @@ mod yul_statement {
     #[test]
     fn label() -> Result<()> {
         run("YulStatement", "label")
+    }
+
+    #[test]
+    fn switch_case_non_literal() -> Result<()> {
+        run("YulStatement", "switch_case_non_literal")
     }
 
     #[test]
@@ -2585,5 +2700,10 @@ mod yul_variable_declaration_statement {
             "YulVariableDeclarationStatement",
             "multiple_variables_with_value",
         )
+    }
+
+    #[test]
+    fn variable_with_dots() -> Result<()> {
+        run("YulVariableDeclarationStatement", "variable_with_dots")
     }
 }

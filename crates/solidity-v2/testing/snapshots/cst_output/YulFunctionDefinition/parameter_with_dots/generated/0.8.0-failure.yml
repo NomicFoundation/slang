@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                                 │ 0..12
+  2  │     function f() {                                                                                                           │ 13..31
+  3  │         assembly {                                                                                                           │ 32..50
+  4  │             // https://github.com/argotorg/solidity/blob/v0.8.30/test/libyul/yulSyntaxTests/dot_consecutive_function_arg.yul │ 51..175
+  5  │             function x(a..b) {}                                                                                              │ 176..207
+  6  │         }                                                                                                                    │ 208..217
+  7  │     }                                                                                                                        │ 218..223
+  8  │ }                                                                                                                            │ 224..225
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected YulPeriod. One of YulCloseParen, YulComma was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulFunctionDefinition/parameter_with_dots/input.sol:5:25]
+       │
+     5 │             function x(a..b) {}
+       │                         ┬  
+       │                         ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

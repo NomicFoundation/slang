@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                         │ 0..12
+  2  │     function f() {                                                                                                   │ 13..31
+  3  │         assembly {                                                                                                   │ 32..50
+  4  │             // https://github.com/argotorg/solidity/blob/v0.8.30/test/libyul/yulSyntaxTests/dot_ellipse_function.yul │ 51..167
+  5  │             function x...y() {}                                                                                      │ 168..199
+  6  │         }                                                                                                            │ 200..209
+  7  │     }                                                                                                                │ 210..215
+  8  │ }                                                                                                                    │ 216..217
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected YulPeriod. One of YulOpenParen was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulFunctionDefinition/function_name_with_dots/input.sol:5:23]
+       │
+     5 │             function x...y() {}
+       │                       ┬  
+       │                       ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []
