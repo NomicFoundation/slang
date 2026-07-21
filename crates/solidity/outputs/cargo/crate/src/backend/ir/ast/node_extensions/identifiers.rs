@@ -13,7 +13,7 @@ pub(crate) fn create_identifier(
     ir_node: &Rc<TerminalNode>,
     semantic: &Rc<SemanticAnalysis>,
 ) -> Identifier {
-    assert!(ir_node.kind == TerminalKind::Identifier);
+    assert_eq!(ir_node.kind, TerminalKind::Identifier);
     Rc::new(IdentifierStruct {
         ir_node: Rc::clone(ir_node),
         semantic: Rc::clone(semantic),
@@ -121,7 +121,7 @@ pub(crate) fn create_yul_identifier(
     ir_node: &Rc<TerminalNode>,
     semantic: &Rc<SemanticAnalysis>,
 ) -> YulIdentifier {
-    assert!(ir_node.kind == TerminalKind::YulIdentifier);
+    assert_eq!(ir_node.kind, TerminalKind::YulIdentifier);
     Rc::new(YulIdentifierStruct {
         ir_node: Rc::clone(ir_node),
         semantic: Rc::clone(semantic),

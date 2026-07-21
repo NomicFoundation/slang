@@ -38,9 +38,9 @@ impl NpmController {
         let test_runner = format!(
             "cargo run --package {package} -- --pattern=\"{pattern}\" --cold={cold} --hot={hot}",
             package = "solidity_testing_perf_npm",
-            pattern = &self.pattern,
-            cold = &self.cold,
-            hot = &self.hot,
+            pattern = self.pattern,
+            cold = self.cold,
+            hot = self.hot,
         );
 
         // 15% threshold: npm benchmarks use wall-clock duration which has natural variance,

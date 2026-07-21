@@ -176,8 +176,8 @@ where
                             .remaining_nodes()
                             .all(|edge| edge
                                 .as_terminal()
-                                .filter(|tok| !tok.kind.is_valid())
-                                .is_none())
+                                .as_ref()
+                                .is_none_or(|tok| tok.kind.is_valid()))
                     );
 
                     ParseOutput { tree, errors }

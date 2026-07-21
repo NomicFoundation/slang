@@ -576,15 +576,10 @@ impl<T: KindTypes + 'static> Matcher<T> for AlternativesMatcher<T> {
             if self.child.is_none() {
                 // Create the next available child matcher forwarding the
                 // `require_explicit_match` flag, or give up if we have no more
-                match self.matcher.children.get(self.next_child_number) {
-                    Some(child) => {
-                        let child =
-                            child.create_matcher(self.cursor.clone(), self.require_explicit_match);
-                        self.child = Some(child);
-                        self.next_child_number += 1;
-                    }
-                    None => return None,
-                }
+                let child = self.matcher.children.get(self.next_child_number)?;
+                let child = child.create_matcher(self.cursor.clone(), self.require_explicit_match);
+                self.child = Some(child);
+                self.next_child_number += 1;
             }
 
             match self.child.as_mut().unwrap().next() {

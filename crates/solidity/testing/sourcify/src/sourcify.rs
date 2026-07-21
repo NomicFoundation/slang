@@ -41,7 +41,7 @@ impl Manifest {
             })
             .unwrap_or_default();
 
-        archive_descriptors.sort_by(|a, b| a.prefix.cmp(&b.prefix));
+        archive_descriptors.sort_by_key(|a| a.prefix);
 
         if archive_descriptors.is_empty() {
             return Err(Error::msg(format!(
@@ -265,9 +265,7 @@ impl ContractArchive {
     }
 
     pub fn contract_count(&self) -> usize {
-        fs::read_dir(&self.contracts_path)
-            .map(|i| i.count())
-            .unwrap_or(0)
+        fs::read_dir(&self.contracts_path).map_or(0, |i| i.count())
     }
 
     pub fn display_path(&self) -> String {

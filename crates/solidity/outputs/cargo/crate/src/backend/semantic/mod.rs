@@ -312,12 +312,12 @@ impl SemanticAnalysis {
 
             Type::Array { element_type, .. } => self
                 .type_canonical_name(*element_type)
-                .map(|element| format!("{element}[]",)),
+                .map(|element| format!("{element}[]")),
             Type::FixedSizeArray {
                 element_type, size, ..
             } => self
                 .type_canonical_name(*element_type)
-                .map(|element| format!("{element}[{size}]",)),
+                .map(|element| format!("{element}[{size}]")),
 
             Type::Contract { .. } | Type::Interface { .. } => Some("address".to_string()),
 
