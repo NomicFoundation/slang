@@ -169,7 +169,9 @@ impl SemanticContext {
 
     /// Returns the pre-computed list of functions visible in the given
     /// contract's hierarchy (per C3 linearisation), with overrides resolved and
-    /// sorted by name. `contract_id` must be a registered contract definition.
+    /// sorted by name. A function overridden by a public state variable's getter
+    /// is dropped from the list. `contract_id` must be a registered contract
+    /// definition.
     pub fn linearised_functions(&self, contract_id: NodeId) -> &[ir::FunctionDefinition] {
         self.contract_data.linearised_functions(contract_id)
     }

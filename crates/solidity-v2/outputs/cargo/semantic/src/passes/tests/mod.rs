@@ -1,4 +1,5 @@
 mod binder;
+mod getter_overrides;
 mod typing;
 
 use slang_solidity_v2_common::files::FileId;
