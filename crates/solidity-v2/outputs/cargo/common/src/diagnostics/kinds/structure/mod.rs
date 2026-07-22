@@ -4,6 +4,7 @@ mod conflicting_mapping_parameter_name;
 mod constructor_not_in_contract;
 mod continue_outside_loop;
 mod contract_should_be_abstract;
+mod duplicate_catch_clause;
 mod duplicate_named_argument;
 mod empty_enum;
 mod empty_struct;
@@ -21,6 +22,7 @@ mod global_using_for_wildcard;
 mod interface_function_cannot_be_implemented;
 mod interface_function_not_external;
 mod interface_function_with_modifiers;
+mod invalid_catch_clause_name;
 mod invalid_using_directive_container;
 mod library_fallback_function;
 mod library_non_constant_state_variable;
@@ -56,6 +58,7 @@ pub use conflicting_mapping_parameter_name::ConflictingMappingParameterName;
 pub use constructor_not_in_contract::ConstructorNotInContract;
 pub use continue_outside_loop::ContinueOutsideLoop;
 pub use contract_should_be_abstract::ContractShouldBeAbstract;
+pub use duplicate_catch_clause::{CatchClauseKind, DuplicateCatchClause};
 pub use duplicate_named_argument::DuplicateNamedArgument;
 pub use empty_enum::EmptyEnum;
 pub use empty_struct::EmptyStruct;
@@ -73,6 +76,7 @@ pub use global_using_for_wildcard::GlobalUsingForWildcard;
 pub use interface_function_cannot_be_implemented::InterfaceFunctionCannotBeImplemented;
 pub use interface_function_not_external::InterfaceFunctionNotExternal;
 pub use interface_function_with_modifiers::InterfaceFunctionWithModifiers;
+pub use invalid_catch_clause_name::InvalidCatchClauseName;
 pub use invalid_using_directive_container::InvalidUsingDirectiveContainer;
 pub use library_fallback_function::LibraryFallbackFunction;
 pub use library_non_constant_state_variable::LibraryNonConstantStateVariable;
@@ -114,6 +118,14 @@ define_diagnostic_kind! {
     pub enum StructureDiagnosticKind {
         /// A `break` statement appears outside of any loop.
         BreakOutsideLoop(BreakOutsideLoop),
+
+        /// A `try` statement has more than one catch clause of the same kind
+        /// (two `Error`, two `Panic`, or two low-level clauses).
+        DuplicateCatchClause(DuplicateCatchClause),
+        /// A `try` statement declares a catch clause with an invalid selector
+        /// name (not `Error`, `Panic`, or a low-level clause).
+        InvalidCatchClauseName(InvalidCatchClauseName),
+
         /// A `continue` statement appears outside of any loop.
         ContinueOutsideLoop(ContinueOutsideLoop),
 

@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 6732] Error: This try statement already has a "Panic" catch clause.
+    ╭─[input.sol:10:11]
+    │
+ 10 │ ╭─▶         } catch Panic(uint256 b) {
+    ┆ ┆   
+ 12 │ ├─▶         }
+    │ │               
+    │ ╰─────────────── Error occurred here.
+────╯
