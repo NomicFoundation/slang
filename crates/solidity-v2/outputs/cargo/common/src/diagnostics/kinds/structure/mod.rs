@@ -27,6 +27,7 @@ mod modifier_in_interface;
 mod multiple_constructors;
 mod multiple_fallback_functions;
 mod multiple_receive_functions;
+mod nested_unchecked_block;
 mod non_abstract_contract_internal_constructor;
 mod payable_internal_or_private_function;
 mod storage_layout_for_abstract_contract;
@@ -68,6 +69,7 @@ pub use modifier_in_interface::ModifierInInterface;
 pub use multiple_constructors::MultipleConstructors;
 pub use multiple_fallback_functions::MultipleFallbackFunctions;
 pub use multiple_receive_functions::MultipleReceiveFunctions;
+pub use nested_unchecked_block::NestedUncheckedBlock;
 pub use non_abstract_contract_internal_constructor::NonAbstractContractInternalConstructor;
 pub use payable_internal_or_private_function::PayableInternalOrPrivateFunction;
 use serde::Serialize;
@@ -188,6 +190,8 @@ define_diagnostic_kind! {
         /// An `unchecked` block is used as the un-braced body of a control-flow
         /// statement, rather than directly inside a regular block.
         UncheckedBlockNotInRegularBlock(UncheckedBlockNotInRegularBlock),
+        /// An `unchecked` block appears inside another `unchecked` block.
+        NestedUncheckedBlock(NestedUncheckedBlock),
 
         /// A variable is declared in an interface.
         VariableInInterface(VariableInInterface),

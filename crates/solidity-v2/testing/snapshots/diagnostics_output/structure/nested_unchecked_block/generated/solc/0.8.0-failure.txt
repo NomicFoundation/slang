@@ -1,0 +1,33 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[SyntaxError 1941] Error: "unchecked" blocks cannot be nested.
+    ╭─[input.sol:8:13]
+    │
+  8 │ ╭─▶             unchecked {
+    ┆ ┆   
+ 10 │ ├─▶             }
+    │ │                   
+    │ ╰─────────────────── Error occurred here.
+────╯
+
+[SyntaxError 1941] Error: "unchecked" blocks cannot be nested.
+    ╭─[input.sol:16:17]
+    │
+ 16 │ ╭─▶                 unchecked {
+    ┆ ┆   
+ 18 │ ├─▶                 }
+    │ │                       
+    │ ╰─────────────────────── Error occurred here.
+────╯
+
+[SyntaxError 1941] Error: "unchecked" blocks cannot be nested.
+    ╭─[input.sol:25:17]
+    │
+ 25 │ ╭─▶                 unchecked {
+    ┆ ┆   
+ 27 │ ├─▶                 }
+    │ │                       
+    │ ╰─────────────────────── Error occurred here.
+────╯
