@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 7858] Error: Expected pragma, import directive or contract/interface/library/struct/enum/constant/function definition.
+   ╭─[input.sol:4:1]
+   │
+ 4 │ using {keccak256} for bytes;
+   │ ──┬──  
+   │   ╰──── Error occurred here.
+───╯

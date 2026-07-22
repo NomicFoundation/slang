@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[resolution/identifier-redeclaration] Error: Identifier already declared.
+   ╭─[input.sol:8:18]
+   │
+ 8 │ uint256 constant foo = 1;
+   │                  ─┬─  
+   │                   ╰─── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
+    ╭─[input.sol:11:11]
+    │
+ 11 │     using {foo} for uint256;
+    │           ──┬──  
+    │             ╰──── Error occurred here.
+────╯
+
+[resolution/identifier-not-function-or-not-unique] Error: Identifier is not a function name or not unique.
+    ╭─[input.sol:11:12]
+    │
+ 11 │     using {foo} for uint256;
+    │            ─┬─  
+    │             ╰─── Error occurred here.
+────╯

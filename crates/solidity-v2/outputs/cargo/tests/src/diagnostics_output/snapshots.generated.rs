@@ -60,6 +60,148 @@ mod resolution {
         }
     }
 
+    mod expected_function_in_using_directive {
+        use super::*;
+
+        #[test]
+        fn ambiguous_with_non_function() -> Result<()> {
+            run(
+                "resolution/expected_function_in_using_directive",
+                "ambiguous_with_non_function",
+            )
+        }
+
+        #[test]
+        fn asterisk_not_a_library() -> Result<()> {
+            run(
+                "resolution/expected_function_in_using_directive",
+                "asterisk_not_a_library",
+            )
+        }
+
+        #[test]
+        fn builtin_keccak256() -> Result<()> {
+            run(
+                "resolution/expected_function_in_using_directive",
+                "builtin_keccak256",
+            )
+        }
+
+        #[test]
+        fn builtin_name_in_member_path() -> Result<()> {
+            run(
+                "resolution/expected_function_in_using_directive",
+                "builtin_name_in_member_path",
+            )
+        }
+
+        #[test]
+        fn contract_member_function() -> Result<()> {
+            run(
+                "resolution/expected_function_in_using_directive",
+                "contract_member_function",
+            )
+        }
+
+        #[test]
+        fn error() -> Result<()> {
+            run("resolution/expected_function_in_using_directive", "error")
+        }
+
+        #[test]
+        fn event() -> Result<()> {
+            run("resolution/expected_function_in_using_directive", "event")
+        }
+
+        #[test]
+        fn free_and_library_function() -> Result<()> {
+            run(
+                "resolution/expected_function_in_using_directive",
+                "free_and_library_function",
+            )
+        }
+
+        #[test]
+        fn function_without_braces() -> Result<()> {
+            run(
+                "resolution/expected_function_in_using_directive",
+                "function_without_braces",
+            )
+        }
+
+        #[test]
+        fn imported_alias() -> Result<()> {
+            run(
+                "resolution/expected_function_in_using_directive",
+                "imported_alias",
+            )
+        }
+
+        #[test]
+        fn library_form() -> Result<()> {
+            run(
+                "resolution/expected_function_in_using_directive",
+                "library_form",
+            )
+        }
+
+        #[test]
+        fn library_forward_reference() -> Result<()> {
+            run(
+                "resolution/expected_function_in_using_directive",
+                "library_forward_reference",
+            )
+        }
+
+        #[test]
+        fn library_not_found() -> Result<()> {
+            run(
+                "resolution/expected_function_in_using_directive",
+                "library_not_found",
+            )
+        }
+
+        #[test]
+        fn not_a_library() -> Result<()> {
+            run(
+                "resolution/expected_function_in_using_directive",
+                "not_a_library",
+            )
+        }
+
+        #[test]
+        fn not_found() -> Result<()> {
+            run(
+                "resolution/expected_function_in_using_directive",
+                "not_found",
+            )
+        }
+
+        #[test]
+        fn operator_non_function() -> Result<()> {
+            run(
+                "resolution/expected_function_in_using_directive",
+                "operator_non_function",
+            )
+        }
+
+        #[test]
+        fn overloaded_functions() -> Result<()> {
+            run(
+                "resolution/expected_function_in_using_directive",
+                "overloaded_functions",
+            )
+        }
+
+        #[test]
+        fn state_variable() -> Result<()> {
+            run(
+                "resolution/expected_function_in_using_directive",
+                "state_variable",
+            )
+        }
+    }
+
     mod external_declaration_shadowing {
         use super::*;
 

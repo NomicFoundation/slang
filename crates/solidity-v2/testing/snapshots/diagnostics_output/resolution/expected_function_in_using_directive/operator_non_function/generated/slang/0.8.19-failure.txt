@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.22'.
+   ╭─[input.sol:4:1]
+   │
+ 4 │ event E();
+   │ ─────┬────  
+   │      ╰────── Error occurred here.
+───╯
+
+[resolution/identifier-not-function-or-not-unique] Error: Identifier is not a function name or not unique.
+   ╭─[input.sol:8:8]
+   │
+ 8 │ using {E as +} for T;
+   │        ┬  
+   │        ╰── Error occurred here.
+───╯

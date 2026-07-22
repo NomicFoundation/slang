@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
+   ╭─[input.sol:5:11]
+   │
+ 5 │     using {f} for uint256;
+   │           ─┬─  
+   │            ╰─── Error occurred here.
+───╯
+
+[resolution/non-free-or-library-function-in-using-directive] Error: Only file-level functions and library functions can be attached to a type in a "using" directive.
+   ╭─[input.sol:5:12]
+   │
+ 5 │     using {f} for uint256;
+   │            ┬  
+   │            ╰── Error occurred here.
+───╯

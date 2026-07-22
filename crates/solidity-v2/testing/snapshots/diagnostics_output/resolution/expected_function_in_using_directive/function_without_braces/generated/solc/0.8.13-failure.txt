@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4357] Error: Library name expected. If you want to attach a function, use '{...}'.
+   ╭─[input.sol:8:7]
+   │
+ 8 │ using f for uint256;
+   │       ┬  
+   │       ╰── Error occurred here.
+───╯

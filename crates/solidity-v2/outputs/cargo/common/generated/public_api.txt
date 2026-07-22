@@ -277,9 +277,12 @@ pub enum slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDia
 pub slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::BuiltInRedeclaration(slang_solidity_v2_common::diagnostics::kinds::resolution::BuiltInRedeclaration)
 pub slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::ExternalDeclarationShadowing(slang_solidity_v2_common::diagnostics::kinds::resolution::ExternalDeclarationShadowing)
 pub slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::IdentifierNotFound(slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound)
+pub slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::IdentifierNotFunctionOrNotUnique(slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique)
+pub slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::IdentifierNotLibraryName(slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName)
 pub slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::IdentifierRedeclaration(slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration)
 pub slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::IncompatibleBuiltInTarget(slang_solidity_v2_common::diagnostics::kinds::resolution::IncompatibleBuiltInTarget)
 pub slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::IncompatibleBuiltInVersion(slang_solidity_v2_common::diagnostics::kinds::resolution::IncompatibleBuiltInVersion)
+pub slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::NonFreeOrLibraryFunctionInUsingDirective(slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective)
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
 impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
@@ -291,12 +294,18 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolutio
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::ExternalDeclarationShadowing) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound> for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique> for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName> for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration> for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::IncompatibleBuiltInTarget> for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::IncompatibleBuiltInTarget) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::IncompatibleBuiltInVersion> for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::IncompatibleBuiltInVersion) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective> for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind) -> Self
 impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
@@ -366,6 +375,44 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique> for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName> for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration
@@ -425,6 +472,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IncompatibleBuiltInVersion::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IncompatibleBuiltInVersion::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IncompatibleBuiltInVersion::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective> for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub mod slang_solidity_v2_common::diagnostics::kinds::semantic
 pub enum slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::CyclicConstantDefinition(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDefinition)
@@ -1906,12 +1972,18 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolutio
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::ExternalDeclarationShadowing) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::IncompatibleBuiltInTarget> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::IncompatibleBuiltInTarget) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::IncompatibleBuiltInVersion> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::IncompatibleBuiltInVersion) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDefinition> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -2162,6 +2234,14 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotLibraryName::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration::message(&self) -> alloc::string::String
@@ -2174,6 +2254,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IncompatibleBuiltInVersion::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IncompatibleBuiltInVersion::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IncompatibleBuiltInVersion::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::message(&self) -> alloc::string::String

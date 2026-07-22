@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 9589] Error: Identifier is not a function name or not unique.
+   ╭─[input.sol:5:12]
+   │
+ 5 │     using {doesNotExist} for uint256;
+   │            ──────┬─────  
+   │                  ╰─────── Error occurred here.
+───╯

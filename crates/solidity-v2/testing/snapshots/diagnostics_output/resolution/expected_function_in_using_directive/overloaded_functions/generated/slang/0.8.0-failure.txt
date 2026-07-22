@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
+    ╭─[input.sol:13:11]
+    │
+ 13 │     using {f} for uint256;
+    │           ─┬─  
+    │            ╰─── Error occurred here.
+────╯
+
+[resolution/identifier-not-function-or-not-unique] Error: Identifier is not a function name or not unique.
+    ╭─[input.sol:13:12]
+    │
+ 13 │     using {f} for uint256;
+    │            ┬  
+    │            ╰── Error occurred here.
+────╯

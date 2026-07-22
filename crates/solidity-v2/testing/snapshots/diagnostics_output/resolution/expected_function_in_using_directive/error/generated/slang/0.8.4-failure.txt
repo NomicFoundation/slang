@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.8'.
+   ╭─[input.sol:6:1]
+   │
+ 6 │ type T is uint256;
+   │ ─────────┬────────  
+   │          ╰────────── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
+   ╭─[input.sol:8:1]
+   │
+ 8 │ using {Err} for T;
+   │ ─────────┬────────  
+   │          ╰────────── Error occurred here.
+───╯
+
+[resolution/identifier-not-function-or-not-unique] Error: Identifier is not a function name or not unique.
+   ╭─[input.sol:8:8]
+   │
+ 8 │ using {Err} for T;
+   │        ─┬─  
+   │         ╰─── Error occurred here.
+───╯

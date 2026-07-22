@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 8187] Error: Expected function name.
+   ╭─[input.sol:4:8]
+   │
+ 4 │ using {keccak256} for bytes;
+   │        ────┬────  
+   │            ╰────── Error occurred here.
+───╯

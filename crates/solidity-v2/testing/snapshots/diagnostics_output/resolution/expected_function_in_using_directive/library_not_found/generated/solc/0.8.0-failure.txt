@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 7920] Error: Identifier not found or not unique.
+   ╭─[input.sol:5:11]
+   │
+ 5 │     using L for uint256;
+   │           ┬  
+   │           ╰── Error occurred here.
+───╯

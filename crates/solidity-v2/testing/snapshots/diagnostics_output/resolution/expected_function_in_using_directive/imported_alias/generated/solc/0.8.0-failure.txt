@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 2314] Error: Expected identifier but got '{'
+   ╭─[main.sol:7:11]
+   │
+ 7 │     using {aliased} for uint256;
+   │           ┬  
+   │           ╰── Error occurred here.
+───╯
