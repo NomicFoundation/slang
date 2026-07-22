@@ -313,10 +313,10 @@ impl Pass<'_> {
     /// - function declarations that are not callable through the operand's
     ///   contract/interface type name become the user meta type of their
     ///   definition.
-    pub(super) fn adjusted_member_access_type(
+    pub(super) fn adjust_member_access_type_for_operand(
         &mut self,
-        operand_typing: &Typing,
         type_id: TypeId,
+        operand_typing: &Typing,
     ) -> TypeId {
         let type_ = self.types.get_type_by_id(type_id);
 
@@ -343,10 +343,10 @@ impl Pass<'_> {
                         .partially_apply_function_type(function_type.clone());
                 }
 
-                if let Some(declaration_type_id) = self.non_callable_declaration_type(
-                    function_type.visibility,
-                    function_type.definition_id,
+                if let Some(declaration_type_id) = self.as_foreign_function_declaration_type(
                     receiver_type_id,
+                    function_type.definition_id,
+                    function_type.visibility,
                 ) {
                     return declaration_type_id;
                 }
@@ -361,11 +361,11 @@ impl Pass<'_> {
     /// always, and public functions of a *foreign* contract. Internal/private
     /// functions reached the same way stay normal callables (qualified base
     /// calls), as do members of library type names (`L.f`).
-    fn non_callable_declaration_type(
+    fn as_foreign_function_declaration_type(
         &mut self,
-        visibility: FunctionTypeVisibility,
-        function_definition_id: Option<NodeId>,
         receiver_type_id: TypeId,
+        function_definition_id: Option<NodeId>,
+        visibility: FunctionTypeVisibility,
     ) -> Option<TypeId> {
         let Type::UserMetaType(UserMetaType { definition_id }) =
             self.types.get_type_by_id(receiver_type_id)
@@ -451,9 +451,11 @@ impl Pass<'_> {
                 .built_ins_resolver()
                 .typing_of_function_call(&built_in, &argument_typings),
 
-            Typing::Resolved(type_id) => {
-                self.typing_of_type_with_positional_arguments(node, type_id, &argument_typings)
-            }
+            Typing::Resolved(type_id) => self.typing_of_type_called_with_positional_arguments(
+                node,
+                type_id,
+                &argument_typings,
+            ),
             Typing::Undetermined(type_ids) => {
                 let receiver_type_id = self.type_id_of_value_receiver(&node.operand);
                 let candidate = self.lookup_function_matching_positional_arguments(
@@ -465,9 +467,9 @@ impl Pass<'_> {
                 if let Some(candidate_type_id) = candidate {
                     // The operand disambiguates to the selected overload, even
                     // when calling it turns out to be invalid
-                    self.disambiguate_operand(&node.operand, candidate_type_id);
+                    self.fixup_operand_expression(&node.operand, candidate_type_id);
 
-                    self.typing_of_type_with_positional_arguments(
+                    self.typing_of_type_called_with_positional_arguments(
                         node,
                         candidate_type_id,
                         &argument_typings,
@@ -484,7 +486,7 @@ impl Pass<'_> {
     /// reference (so it points at the selected declaration) and its recorded
     /// typing (so querying the operand yields the selected overload rather than
     /// the ambiguous `Undetermined` set) are updated.
-    fn disambiguate_operand(&mut self, operand: &ir::Expression, candidate_type_id: TypeId) {
+    fn fixup_operand_expression(&mut self, operand: &ir::Expression, candidate_type_id: TypeId) {
         if let (Some(reference_node_id), Some(definition_id)) = (
             reference_node_id_for_expression(operand),
             self.candidate_definition_id(candidate_type_id),
@@ -503,7 +505,7 @@ impl Pass<'_> {
     /// function value is an actual call, a meta type is a cast (or a struct
     /// construction), and the user meta type of a function is a non-callable
     /// declaration reached through a contract/interface type name.
-    fn typing_of_type_with_positional_arguments(
+    fn typing_of_type_called_with_positional_arguments(
         &mut self,
         node: &ir::FunctionCallExpression,
         type_id: TypeId,
@@ -594,7 +596,9 @@ impl Pass<'_> {
                 // `this` and `super` are not callable
                 (Typing::Unresolved, None)
             }
-            Typing::Resolved(type_id) => self.typing_of_type_with_named_arguments(node, type_id),
+            Typing::Resolved(type_id) => {
+                self.typing_of_type_called_with_named_arguments(node, type_id)
+            }
             Typing::Undetermined(type_ids) => {
                 let receiver_type_id = self.type_id_of_value_receiver(&node.operand);
                 let argument_typings = self.collect_named_argument_typings(arguments);
@@ -607,9 +611,9 @@ impl Pass<'_> {
                 if let Some(candidate_type_id) = candidate {
                     // The operand disambiguates to the selected overload, even
                     // when calling it turns out to be invalid
-                    self.disambiguate_operand(&node.operand, candidate_type_id);
+                    self.fixup_operand_expression(&node.operand, candidate_type_id);
 
-                    self.typing_of_type_with_named_arguments(node, candidate_type_id)
+                    self.typing_of_type_called_with_named_arguments(node, candidate_type_id)
                 } else {
                     (Typing::Unresolved, None)
                 }
@@ -638,11 +642,11 @@ impl Pass<'_> {
 
     /// Types a call with named arguments whose operand is (or was
     /// disambiguated to) `type_id`, additionally returning the definition the
-    /// operand resolves to (if any). Only function values, struct
-    /// constructions and (<0.5.0) events are callable this way; the user meta
-    /// type of a function is a non-callable declaration reached through a
-    /// contract/interface type name.
-    fn typing_of_type_with_named_arguments(
+    /// operand resolves to (if any). Only function values and struct
+    /// constructions are callable this way; the user meta type of a function is
+    /// a non-callable declaration reached through a contract/interface type
+    /// name.
+    fn typing_of_type_called_with_named_arguments(
         &mut self,
         node: &ir::FunctionCallExpression,
         type_id: TypeId,
@@ -670,10 +674,6 @@ impl Pass<'_> {
                             .expect("struct definitions are handled by type_of_definition");
                         let type_id = self.types.register_type(type_);
                         (Typing::Resolved(type_id), Some(definition_id))
-                    }
-                    Some(Definition::Event(_)) => {
-                        // this is an event called as a function, which is valid in <0.5.0
-                        (Typing::Resolved(self.types.void()), Some(definition_id))
                     }
                     Some(Definition::Function(_)) => {
                         // Calling a function via a contract/interface type name is

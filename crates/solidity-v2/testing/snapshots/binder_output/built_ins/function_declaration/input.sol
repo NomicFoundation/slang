@@ -5,6 +5,10 @@ interface I {
 contract C {
     function ext() external {}
     function pub() public {}
+    function tC() internal {
+        this.ext.selector; // ok
+        this.ext.address; // ok (external function value)
+    }
 }
 contract D is C {
     function tD() internal {

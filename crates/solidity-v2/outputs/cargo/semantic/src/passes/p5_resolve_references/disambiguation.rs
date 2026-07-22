@@ -25,10 +25,10 @@ impl Pass<'_> {
         Some(&parameters_scope.parameters)
     }
 
-    /// Returns the `FunctionType` to match `type_id` against call arguments
-    /// during overload resolution: either a function value, or a function
-    /// declaration reached through a contract/interface type name (typed as
-    /// the user meta type of its definition).
+    /// Fetch the `FunctionType` defined by `type_id`. It can be a direct
+    /// function type `Type::Function` or a function declaration through a
+    /// member access of a contract/interface, ie. `C.foo`, which is
+    /// represented via `Type::UserMetaType`.
     fn candidate_function_type(&self, type_id: TypeId) -> Option<&FunctionType> {
         match self.types.get_type_by_id(type_id) {
             Type::Function(function_type) => Some(function_type),

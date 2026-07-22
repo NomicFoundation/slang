@@ -365,18 +365,20 @@ impl Visitor for Pass<'_> {
             self.typing_of_resolution(&resolution)
         };
 
-        // Special cases: see `adjusted_member_access_type`
+        // Special cases: see `adjust_member_access_type_for_operand`
         let typing = match typing {
-            Typing::Resolved(type_id) => {
-                Typing::Resolved(self.adjusted_member_access_type(&operand_typing, type_id))
-            }
+            Typing::Resolved(type_id) => Typing::Resolved(
+                self.adjust_member_access_type_for_operand(type_id, &operand_typing),
+            ),
             Typing::This(type_id) => {
-                Typing::This(self.adjusted_member_access_type(&operand_typing, type_id))
+                Typing::This(self.adjust_member_access_type_for_operand(type_id, &operand_typing))
             }
             Typing::Undetermined(type_ids) => Typing::Undetermined(
                 type_ids
                     .into_iter()
-                    .map(|type_id| self.adjusted_member_access_type(&operand_typing, type_id))
+                    .map(|type_id| {
+                        self.adjust_member_access_type_for_operand(type_id, &operand_typing)
+                    })
                     .collect(),
             ),
             Typing::Unresolved | Typing::BuiltIn(_) | Typing::NewExpression(_) | Typing::Super => {
