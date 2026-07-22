@@ -33,6 +33,7 @@ mod multiple_receive_functions;
 mod nested_unchecked_block;
 mod non_abstract_contract_internal_constructor;
 mod payable_internal_or_private_function;
+mod placeholder_in_unchecked_block;
 mod storage_layout_for_abstract_contract;
 mod unchecked_block_not_in_regular_block;
 mod unimplemented_function_with_modifiers;
@@ -79,6 +80,7 @@ pub use multiple_receive_functions::MultipleReceiveFunctions;
 pub use nested_unchecked_block::NestedUncheckedBlock;
 pub use non_abstract_contract_internal_constructor::NonAbstractContractInternalConstructor;
 pub use payable_internal_or_private_function::PayableInternalOrPrivateFunction;
+pub use placeholder_in_unchecked_block::PlaceholderInUncheckedBlock;
 use serde::Serialize;
 pub use storage_layout_for_abstract_contract::StorageLayoutForAbstractContract;
 pub use unchecked_block_not_in_regular_block::UncheckedBlockNotInRegularBlock;
@@ -186,6 +188,9 @@ define_diagnostic_kind! {
 
         /// An implemented modifier's body does not contain a placeholder statement (`_`).
         ModifierBodyWithoutPlaceholder(ModifierBodyWithoutPlaceholder),
+
+        /// A placeholder statement (`_`) appears inside an `unchecked` block.
+        PlaceholderInUncheckedBlock(PlaceholderInUncheckedBlock),
 
         /// A free function is marked `virtual`.
         VirtualFreeFunction(VirtualFreeFunction),
