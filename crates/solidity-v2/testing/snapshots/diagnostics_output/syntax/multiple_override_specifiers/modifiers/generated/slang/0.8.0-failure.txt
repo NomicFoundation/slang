@@ -5,7 +5,7 @@ Diagnostics: 1
 [syntax/multiple-override-specifiers] Error: Only a single override specifier can be provided.
    ╭─[input.sol:5:27]
    │
- 5 │     modifier f() override override {}
+ 5 │     modifier f() override override { _; }
    │                           ────┬───  
    │                               ╰───── Error occurred here.
 ───╯

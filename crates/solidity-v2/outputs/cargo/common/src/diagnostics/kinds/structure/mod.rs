@@ -20,10 +20,12 @@ mod library_receive_function;
 mod library_virtual_function;
 mod library_virtual_modifier;
 mod missing_function_visibility;
+mod modifier_body_without_placeholder;
 mod multiple_constructors;
 mod nested_unchecked_block;
 mod non_abstract_contract_internal_constructor;
 mod payable_internal_or_private_function;
+mod placeholder_in_unchecked_block;
 mod storage_layout_for_abstract_contract;
 mod unchecked_block_not_in_regular_block;
 mod unimplemented_modifier_must_be_virtual;
@@ -55,10 +57,12 @@ pub use library_receive_function::LibraryReceiveFunction;
 pub use library_virtual_function::LibraryVirtualFunction;
 pub use library_virtual_modifier::LibraryVirtualModifier;
 pub use missing_function_visibility::MissingFunctionVisibility;
+pub use modifier_body_without_placeholder::ModifierBodyWithoutPlaceholder;
 pub use multiple_constructors::MultipleConstructors;
 pub use nested_unchecked_block::NestedUncheckedBlock;
 pub use non_abstract_contract_internal_constructor::NonAbstractContractInternalConstructor;
 pub use payable_internal_or_private_function::PayableInternalOrPrivateFunction;
+pub use placeholder_in_unchecked_block::PlaceholderInUncheckedBlock;
 use serde::Serialize;
 pub use storage_layout_for_abstract_contract::StorageLayoutForAbstractContract;
 pub use unchecked_block_not_in_regular_block::UncheckedBlockNotInRegularBlock;
@@ -139,6 +143,12 @@ define_diagnostic_kind! {
 
         /// A modifier without an implementation body is not marked `virtual`.
         UnimplementedModifierMustBeVirtual(UnimplementedModifierMustBeVirtual),
+
+        /// An implemented modifier's body does not contain a placeholder statement (`_`).
+        ModifierBodyWithoutPlaceholder(ModifierBodyWithoutPlaceholder),
+
+        /// A placeholder statement (`_`) appears inside an `unchecked` block.
+        PlaceholderInUncheckedBlock(PlaceholderInUncheckedBlock),
 
         /// A free function is marked `virtual`.
         VirtualFreeFunction(VirtualFreeFunction),
