@@ -8,7 +8,9 @@
 //! `view`/`pure` mutability, or with a `returns` clause). Only the forms that
 //! parse cleanly need a semantic check here.
 
-use slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction;
+use slang_solidity_v2_common::diagnostics::kinds::structure::{
+    LibraryReceiveFunction, MultipleReceiveFunctions,
+};
 use slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_ir::ir::{self, TextRange};
@@ -32,12 +34,28 @@ pub(crate) fn check_receive_functions(
             _ => continue,
         };
 
+        let mut receive_count = 0usize;
+
         for member in members {
             let ir::ContractMember::FunctionDefinition(function) = member else {
                 continue;
             };
 
             if matches!(function.kind, ir::FunctionKind::Receive) {
+                receive_count += 1;
+
+                // A container may declare at most one receive function. As in
+                // solc, the error is reported on every receive beyond the first.
+                if receive_count > 1 {
+                    diagnostics.push(
+                        file_node_mapper
+                            .file_id_from_node_id(function.id())
+                            .to_owned(),
+                        function.signature_text_range(),
+                        MultipleReceiveFunctions,
+                    );
+                }
+
                 check_receive_function(
                     function,
                     enclosing_is_library,
