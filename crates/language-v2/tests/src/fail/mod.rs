@@ -6,17 +6,17 @@ use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
 #[test]
 fn run_trybuild() {
-    // SAFETY: This runs at the start of the test before any other threads are spawned.
-    unsafe {
-        if GitHub::is_running_in_ci() {
-            // This instructs 'trybuild' to fail the tests if any snapshots are out of date.
-            // Snapshots are written to a 'wip' directory (git-ignored).
-            std::env::set_var("TRYBUILD", "wip");
-        } else {
-            // This instructs 'trybuild' to overwrite (or generate new) snapshots next to test files that generate them.
-            // This is useful for local development, where we always want to see the updates as we edit the tests.
-            std::env::set_var("TRYBUILD", "overwrite");
-        }
+    // SAFETY: Under nextest (this repository's standard test runner), each test runs in its own
+    // process, so nothing can access the environment concurrently. Under 'cargo test', other
+    // tests in this binary may run on parallel threads, but none of them access the environment.
+    if GitHub::is_running_in_ci() {
+        // This instructs 'trybuild' to fail the tests if any snapshots are out of date.
+        // Snapshots are written to a 'wip' directory (git-ignored).
+        unsafe { std::env::set_var("TRYBUILD", "wip") };
+    } else {
+        // This instructs 'trybuild' to overwrite (or generate new) snapshots next to test files that generate them.
+        // This is useful for local development, where we always want to see the updates as we edit the tests.
+        unsafe { std::env::set_var("TRYBUILD", "overwrite") };
     }
 
     let crate_dir = &CargoWorkspace::locate_source_crate(env!("CARGO_PKG_NAME")).unwrap();
