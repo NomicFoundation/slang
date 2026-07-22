@@ -25,6 +25,7 @@ mod library_receive_function;
 mod library_virtual_function;
 mod library_virtual_modifier;
 mod missing_function_visibility;
+mod modifier_body_without_placeholder;
 mod modifier_in_interface;
 mod multiple_constructors;
 mod multiple_fallback_functions;
@@ -70,6 +71,7 @@ pub use library_receive_function::LibraryReceiveFunction;
 pub use library_virtual_function::LibraryVirtualFunction;
 pub use library_virtual_modifier::LibraryVirtualModifier;
 pub use missing_function_visibility::MissingFunctionVisibility;
+pub use modifier_body_without_placeholder::ModifierBodyWithoutPlaceholder;
 pub use modifier_in_interface::ModifierInInterface;
 pub use multiple_constructors::MultipleConstructors;
 pub use multiple_fallback_functions::MultipleFallbackFunctions;
@@ -181,6 +183,9 @@ define_diagnostic_kind! {
         UnimplementedModifierMustBeVirtual(UnimplementedModifierMustBeVirtual),
         /// A modifier is defined or declared in an interface.
         ModifierInInterface(ModifierInInterface),
+
+        /// An implemented modifier's body does not contain a placeholder statement (`_`).
+        ModifierBodyWithoutPlaceholder(ModifierBodyWithoutPlaceholder),
 
         /// A free function is marked `virtual`.
         VirtualFreeFunction(VirtualFreeFunction),

@@ -1363,6 +1363,11 @@ mod structure {
     }
 
     #[test]
+    fn modifier_body_without_placeholder() -> Result<()> {
+        run("structure", "modifier_body_without_placeholder")
+    }
+
+    #[test]
     fn modifier_in_interface() -> Result<()> {
         run("structure", "modifier_in_interface")
     }
