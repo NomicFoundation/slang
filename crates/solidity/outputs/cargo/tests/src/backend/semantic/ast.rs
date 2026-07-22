@@ -274,3 +274,34 @@ fn test_function_get_type() -> Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn test_is_type_conversion() -> Result<()> {
+    let unit = fixtures::TypeConversions::build_compilation_unit()?;
+    let semantic = unit.semantic_analysis();
+
+    let mut collector = TypeConversionCollector::default();
+    for file in unit.files() {
+        let root = semantic.get_file_ast_root(file.id()).unwrap();
+        ast::visitor::accept_source_unit(&root, &mut collector);
+    }
+
+    // Function calls in source order: `uint256[](value)` (an array-type cast
+    // whose operand is an `IndexAccessExpression`), `uint256(value)` (an
+    // elementary-type cast) and `identity(value)` (a plain call).
+    assert_eq!(collector.casts, vec![true, true, false]);
+
+    Ok(())
+}
+
+#[derive(Default)]
+struct TypeConversionCollector {
+    casts: Vec<bool>,
+}
+
+impl ast::visitor::Visitor for TypeConversionCollector {
+    fn enter_function_call_expression(&mut self, node: &ast::FunctionCallExpression) -> bool {
+        self.casts.push(node.is_type_conversion());
+        true
+    }
+}

@@ -19,6 +19,7 @@ contract C {
         abi.decode(b, (uint[]));
         uint(x);
         (uint)(x);
+        uint[](x);
     }
 }
 "#,
@@ -67,7 +68,7 @@ fn function_calls() -> Vec<ast::FunctionCallExpression> {
 #[test]
 fn meta_type_ast_wrappers_are_reachable_via_get_type() {
     let calls = function_calls();
-    assert_eq!(calls.len(), 4);
+    assert_eq!(calls.len(), 5);
 
     // `S(x)`: a construction through a type name is a type conversion, and the
     // operand `S` carries a `Type::UserMetaType` that resolves back to the
@@ -129,4 +130,19 @@ fn meta_type_ast_wrappers_are_reachable_via_get_type() {
     // meta-type through, so it is still a type conversion.
     let parenthesized_cast = &calls[3];
     assert!(parenthesized_cast.is_type_conversion());
+
+    // `uint[](x)`: an array-type cast; the operand `uint[]` is an index-access
+    // expression carrying a `Type::MetaType` wrapping the array type, so it is
+    // a type conversion rather than a function call.
+    let array_cast = &calls[4];
+    assert!(array_cast.is_type_conversion());
+    let operand_type = array_cast
+        .operand()
+        .get_type()
+        .expect("`uint[]` operand is typed");
+    let ast::Type::MetaType(meta) = &operand_type else {
+        panic!("expected the `uint[]` operand to carry a `Type::MetaType`");
+    };
+    assert!(matches!(meta.meta_type(), ast::Type::Array(_)));
+    assert!(AbiType::try_from(&operand_type).is_err());
 }
