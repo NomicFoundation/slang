@@ -8,10 +8,10 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     InterfaceFunctionCannotBeImplemented, InterfaceFunctionNotExternal,
     InvalidUsingDirectiveContainer, LibraryNonConstantStateVariable, LibraryPayableFunction,
     LibraryVirtualFunction, LibraryVirtualModifier, MissingFunctionVisibility,
-    MultipleConstructors, NestedUncheckedBlock, NonAbstractContractInternalConstructor,
-    PayableInternalOrPrivateFunction, UncheckedBlockNotInRegularBlock,
-    UnimplementedModifierMustBeVirtual, VariableDeclarationNotInBlock, VariableInInterface,
-    VirtualFreeFunction, VirtualPrivateFunction,
+    ModifierBodyWithoutPlaceholder, MultipleConstructors, NestedUncheckedBlock,
+    NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
+    UncheckedBlockNotInRegularBlock, UnimplementedModifierMustBeVirtual,
+    VariableDeclarationNotInBlock, VariableInInterface, VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -75,6 +75,11 @@ struct Pass<'a, F: SemanticFile> {
     // Number of enclosing `unchecked` blocks at the current traversal point.
     // Used to flag `unchecked` blocks nested inside another one.
     unchecked_depth: usize,
+    // While traversing the body of an implemented modifier, holds whether a
+    // placeholder statement (`_`) has been encountered so far. `None` when not
+    // inside such a body. Used to flag implemented modifiers whose body lacks a
+    // placeholder.
+    modifier_placeholder_found: Option<bool>,
     binder: &'a mut Binder,
     diagnostics: &'a mut DiagnosticCollection,
 }
@@ -86,6 +91,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
             scope_stack: Vec::new(),
             loop_depth: 0,
             unchecked_depth: 0,
+            modifier_placeholder_found: None,
             binder,
             diagnostics,
         };
@@ -93,6 +99,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         assert!(pass.scope_stack.is_empty());
         assert_eq!(pass.loop_depth, 0);
         assert_eq!(pass.unchecked_depth, 0);
+        assert!(pass.modifier_placeholder_found.is_none());
     }
 
     fn enter_scope(&mut self, scope: Scope) -> ScopeId {
@@ -611,6 +618,13 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
             ir::FunctionKind::Modifier => {
                 self.check_modifier_attributes(node);
 
+                // An implemented modifier (i.e. one with a body) must contain a
+                // placeholder statement (`_`). Start tracking whether one is
+                // seen while its body is traversed.
+                if node.body.is_some() {
+                    self.modifier_placeholder_found = Some(false);
+                }
+
                 let definition = Definition::new_modifier(node);
                 self.insert_definition_in_current_scope(definition);
 
@@ -623,6 +637,13 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn leave_function_definition(&mut self, node: &ir::FunctionDefinition) {
+        // If we were tracking an implemented modifier's body and no placeholder
+        // statement (`_`) was found, flag it. `take()` also clears the state for
+        // any non-modifier function (where it is already `None`).
+        if self.modifier_placeholder_found.take() == Some(false) {
+            self.report(node, ModifierBodyWithoutPlaceholder);
+        }
+
         self.leave_scope_for_node_id(node.id());
     }
 
@@ -834,6 +855,19 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         // `do-while` loop.
         if self.loop_depth == 0 {
             self.report(node, ContinueOutsideLoop);
+        }
+        true
+    }
+
+    fn enter_expression_statement(&mut self, node: &ir::ExpressionStatement) -> bool {
+        // A placeholder statement (`_`) parses as an expression statement whose
+        // expression is the `_` identifier. Record it when found inside a
+        // modifier body (possibly nested within control-flow statements).
+        if let Some(found) = self.modifier_placeholder_found.as_mut() {
+            if matches!(&node.expression, ir::Expression::Identifier(identifier) if identifier.unparse() == "_")
+            {
+                *found = true;
+            }
         }
         true
     }

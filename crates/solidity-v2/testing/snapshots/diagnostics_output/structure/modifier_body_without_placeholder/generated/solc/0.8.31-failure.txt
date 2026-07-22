@@ -1,0 +1,29 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[SyntaxError 2883] Error: Modifier body does not contain '_'.
+   ╭─[input.sol:6:19]
+   │
+ 6 │     modifier m1() {}
+   │                   ─┬  
+   │                    ╰── Error occurred here.
+───╯
+
+[SyntaxError 2883] Error: Modifier body does not contain '_'.
+    ╭─[input.sol:9:19]
+    │
+  9 │ ╭─▶     modifier m2() {
+    ┆ ┆   
+ 11 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
+
+[Warning 8429] Warning: Virtual modifiers are deprecated and scheduled for removal.
+    ╭─[input.sol:26:5]
+    │
+ 26 │     modifier m5() virtual;
+    │     ───────────┬──────────  
+    │                ╰──────────── Error occurred here.
+────╯

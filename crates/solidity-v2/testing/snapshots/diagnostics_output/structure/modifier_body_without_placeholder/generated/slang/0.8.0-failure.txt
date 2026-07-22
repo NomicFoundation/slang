@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[structure/modifier-body-without-placeholder] Error: Modifier body does not contain '_'.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     modifier m1() {}
+   │     ────────┬───────  
+   │             ╰───────── Error occurred here.
+───╯
+
+[structure/modifier-body-without-placeholder] Error: Modifier body does not contain '_'.
+    ╭─[input.sol:9:5]
+    │
+  9 │ ╭─▶     modifier m2() {
+    ┆ ┆   
+ 11 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯

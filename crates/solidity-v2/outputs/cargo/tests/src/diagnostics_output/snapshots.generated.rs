@@ -1196,6 +1196,11 @@ mod structure {
     }
 
     #[test]
+    fn modifier_body_without_placeholder() -> Result<()> {
+        run("structure", "modifier_body_without_placeholder")
+    }
+
+    #[test]
     fn multiple_constructors() -> Result<()> {
         run("structure", "multiple_constructors")
     }

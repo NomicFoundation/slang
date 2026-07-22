@@ -3,5 +3,6 @@ library Lib {
 
   modifier test() {
     revert IndexOutOfBounds();
+    _;
   }
 }

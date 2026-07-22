@@ -20,6 +20,7 @@ mod library_receive_function;
 mod library_virtual_function;
 mod library_virtual_modifier;
 mod missing_function_visibility;
+mod modifier_body_without_placeholder;
 mod multiple_constructors;
 mod nested_unchecked_block;
 mod non_abstract_contract_internal_constructor;
@@ -55,6 +56,7 @@ pub use library_receive_function::LibraryReceiveFunction;
 pub use library_virtual_function::LibraryVirtualFunction;
 pub use library_virtual_modifier::LibraryVirtualModifier;
 pub use missing_function_visibility::MissingFunctionVisibility;
+pub use modifier_body_without_placeholder::ModifierBodyWithoutPlaceholder;
 pub use multiple_constructors::MultipleConstructors;
 pub use nested_unchecked_block::NestedUncheckedBlock;
 pub use non_abstract_contract_internal_constructor::NonAbstractContractInternalConstructor;
@@ -139,6 +141,9 @@ define_diagnostic_kind! {
 
         /// A modifier without an implementation body is not marked `virtual`.
         UnimplementedModifierMustBeVirtual(UnimplementedModifierMustBeVirtual),
+
+        /// An implemented modifier's body does not contain a placeholder statement (`_`).
+        ModifierBodyWithoutPlaceholder(ModifierBodyWithoutPlaceholder),
 
         /// A free function is marked `virtual`.
         VirtualFreeFunction(VirtualFreeFunction),
