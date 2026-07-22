@@ -10,11 +10,11 @@ mod free_function_payable;
 mod free_function_visibility;
 mod free_function_with_modifiers;
 mod free_function_with_override;
-mod function_declaration_with_modifiers;
 mod function_must_be_implemented;
 mod function_name_matches_container;
 mod interface_function_cannot_be_implemented;
 mod interface_function_not_external;
+mod interface_function_with_modifiers;
 mod invalid_using_directive_container;
 mod library_fallback_function;
 mod library_payable_function;
@@ -27,6 +27,7 @@ mod multiple_constructors;
 mod non_abstract_contract_internal_constructor;
 mod payable_internal_or_private_function;
 mod storage_layout_for_abstract_contract;
+mod unimplemented_function_with_modifiers;
 mod unimplemented_modifier_must_be_virtual;
 mod uninitialized_constant;
 mod virtual_free_function;
@@ -44,11 +45,11 @@ pub use free_function_payable::FreeFunctionPayable;
 pub use free_function_visibility::FreeFunctionVisibility;
 pub use free_function_with_modifiers::FreeFunctionWithModifiers;
 pub use free_function_with_override::FreeFunctionWithOverride;
-pub use function_declaration_with_modifiers::FunctionDeclarationWithModifiers;
 pub use function_must_be_implemented::FunctionMustBeImplemented;
 pub use function_name_matches_container::FunctionNameMatchesContainer;
 pub use interface_function_cannot_be_implemented::InterfaceFunctionCannotBeImplemented;
 pub use interface_function_not_external::InterfaceFunctionNotExternal;
+pub use interface_function_with_modifiers::InterfaceFunctionWithModifiers;
 pub use invalid_using_directive_container::InvalidUsingDirectiveContainer;
 pub use library_fallback_function::LibraryFallbackFunction;
 pub use library_payable_function::LibraryPayableFunction;
@@ -62,6 +63,7 @@ pub use non_abstract_contract_internal_constructor::NonAbstractContractInternalC
 pub use payable_internal_or_private_function::PayableInternalOrPrivateFunction;
 use serde::Serialize;
 pub use storage_layout_for_abstract_contract::StorageLayoutForAbstractContract;
+pub use unimplemented_function_with_modifiers::UnimplementedFunctionWithModifiers;
 pub use unimplemented_modifier_must_be_virtual::UnimplementedModifierMustBeVirtual;
 pub use uninitialized_constant::UninitializedConstant;
 pub use virtual_free_function::VirtualFreeFunction;
@@ -102,9 +104,11 @@ define_diagnostic_kind! {
 
         /// A function declared in an interface has an implementation body.
         InterfaceFunctionCannotBeImplemented(InterfaceFunctionCannotBeImplemented),
-        /// A function declaration (in an interface, or any function without an
-        /// implementation body) has one or more modifier invocations.
-        FunctionDeclarationWithModifiers(FunctionDeclarationWithModifiers),
+        /// A function declared in an interface has one or more modifier invocations.
+        InterfaceFunctionWithModifiers(InterfaceFunctionWithModifiers),
+        /// A function without an implementation body has one or more modifier
+        /// invocations.
+        UnimplementedFunctionWithModifiers(UnimplementedFunctionWithModifiers),
         /// A function that requires an implementation body (a free function or a
         /// library function) has none.
         FunctionMustBeImplemented(FunctionMustBeImplemented),

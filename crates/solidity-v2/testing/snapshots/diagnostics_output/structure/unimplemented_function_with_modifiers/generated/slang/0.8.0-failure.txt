@@ -2,7 +2,7 @@
 
 Diagnostics: 2
 
-[structure/function-declaration-with-modifiers] Error: Function declaration cannot have modifiers
+[structure/unimplemented-function-with-modifiers] Error: Function without an implementation body cannot have modifiers
     ╭─[input.sol:10:5]
     │
  10 │     function foo() public virtual onlyOwner;
@@ -10,7 +10,7 @@ Diagnostics: 2
     │                         ╰───────────────────── Error occurred here.
 ────╯
 
-[structure/function-declaration-with-modifiers] Error: Function declaration cannot have modifiers
+[structure/unimplemented-function-with-modifiers] Error: Function without an implementation body cannot have modifiers
     ╭─[input.sol:11:5]
     │
  11 │     function bar() public onlyOwner virtual;

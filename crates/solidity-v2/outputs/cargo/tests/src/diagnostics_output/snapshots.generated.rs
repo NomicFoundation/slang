@@ -1112,23 +1112,6 @@ mod structure {
         run("structure", "free_function_without_body")
     }
 
-    mod function_declaration_with_modifiers {
-        use super::*;
-
-        #[test]
-        fn abstract_contract() -> Result<()> {
-            run(
-                "structure/function_declaration_with_modifiers",
-                "abstract_contract",
-            )
-        }
-
-        #[test]
-        fn interface() -> Result<()> {
-            run("structure/function_declaration_with_modifiers", "interface")
-        }
-    }
-
     mod function_name_matches_container {
         use super::*;
 
@@ -1156,6 +1139,11 @@ mod structure {
     #[test]
     fn interface_function_not_external() -> Result<()> {
         run("structure", "interface_function_not_external")
+    }
+
+    #[test]
+    fn interface_function_with_modifiers() -> Result<()> {
+        run("structure", "interface_function_with_modifiers")
     }
 
     mod invalid_using_directive_container {
@@ -1276,6 +1264,11 @@ mod structure {
     #[test]
     fn storage_layout_for_abstract_contract() -> Result<()> {
         run("structure", "storage_layout_for_abstract_contract")
+    }
+
+    #[test]
+    fn unimplemented_function_with_modifiers() -> Result<()> {
+        run("structure", "unimplemented_function_with_modifiers")
     }
 
     #[test]

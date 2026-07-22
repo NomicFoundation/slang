@@ -5,12 +5,13 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     AbstractContractPublicConstructor, BreakOutsideLoop, ConstructorNotInContract,
     ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FreeFunctionPayable,
     FreeFunctionVisibility, FreeFunctionWithModifiers, FreeFunctionWithOverride,
-    FunctionDeclarationWithModifiers, FunctionMustBeImplemented, FunctionNameMatchesContainer,
-    InterfaceFunctionCannotBeImplemented, InterfaceFunctionNotExternal,
-    InvalidUsingDirectiveContainer, LibraryPayableFunction, LibraryVirtualFunction,
-    LibraryVirtualModifier, MissingFunctionVisibility, ModifierInInterface, MultipleConstructors,
+    FunctionMustBeImplemented, FunctionNameMatchesContainer, InterfaceFunctionCannotBeImplemented,
+    InterfaceFunctionNotExternal, InterfaceFunctionWithModifiers, InvalidUsingDirectiveContainer,
+    LibraryPayableFunction, LibraryVirtualFunction, LibraryVirtualModifier,
+    MissingFunctionVisibility, ModifierInInterface, MultipleConstructors,
     NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
-    UnimplementedModifierMustBeVirtual, VirtualFreeFunction, VirtualPrivateFunction,
+    UnimplementedFunctionWithModifiers, UnimplementedModifierMustBeVirtual, VirtualFreeFunction,
+    VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -380,14 +381,17 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
                 self.report(node, InterfaceFunctionNotExternal);
             }
 
-            // A function declaration cannot have modifier invocations. This
-            // covers a function in an interface (solc 5842) as well as any
-            // function without an implementation body, e.g. an abstract
-            // function in a contract (solc 2668).
-            if !node.attributes.modifier_invocations.is_empty()
-                && (self.current_scope_is_interface() || node.body.is_none())
-            {
-                self.report(node, FunctionDeclarationWithModifiers);
+            // A function declared in an interface cannot have modifier
+            // invocations (solc 5842). Otherwise, any function without an
+            // implementation body (eg. an abstract function in a contract)
+            // cannot have them either (solc 2668). solc reports only one of the
+            // two, so mirror that with an `else if`.
+            if !node.attributes.modifier_invocations.is_empty() {
+                if self.current_scope_is_interface() {
+                    self.report(node, InterfaceFunctionWithModifiers);
+                } else if node.body.is_none() {
+                    self.report(node, UnimplementedFunctionWithModifiers);
+                }
             }
 
             // A function declared in a library cannot be `payable`.

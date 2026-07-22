@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity *;
 
-// An interface cannot define or declare a modifier.
+// An interface cannot define or declare a modifier on or after `0.8.8`.
 interface I {
     modifier m() {
         _;
