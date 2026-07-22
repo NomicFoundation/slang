@@ -1,13 +1,16 @@
 use ruint::aliases::{U160, U256};
+use slang_solidity_v2_common::diagnostics::kinds::type_system::CannotCallViaContractTypeName;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
 
 use super::Pass;
 use crate::binder::{Definition, Resolution, Typing};
+use crate::passes::common::node_location;
 use crate::types::{
     literals, AddressType, ContractType, DataLocation, FixedSizeArrayType, FunctionType,
-    IntegerType, LiteralKind, MetaType, Number, StringType, Type, TypeId, UserMetaType,
+    FunctionTypeVisibility, IntegerType, LiteralKind, MetaType, Number, StringType, Type, TypeId,
+    UserMetaType,
 };
 
 impl Pass<'_> {
@@ -267,6 +270,23 @@ impl Pass<'_> {
         typing
     }
 
+    /// Whether `contract_id` is accessed from a scope that neither is it nor
+    /// derives from it (solc's "Foreign" access). The linearisation includes
+    /// the contract itself, so containment means local/deriving access.
+    pub(crate) fn is_foreign_contract(&self, contract_id: NodeId) -> bool {
+        let Some(scope_id) = self.current_contract_scope_id() else {
+            return true;
+        };
+        let current_contract_id = self.binder.get_scope_by_id(scope_id).node_id();
+        !self
+            .binder
+            .get_linearised_bases(current_contract_id)
+            .is_some_and(|bases| bases.contains(&contract_id))
+    }
+
+    /// Returns the typing of the *receiver* of a call — the operand of the
+    /// member access being called (eg. for `a.f(...)`, the typing of `a`).
+    /// Returns `None` when the call target is not a member access.
     fn type_id_of_value_receiver(&self, operand: &ir::Expression) -> Option<TypeId> {
         if let ir::Expression::MemberAccessExpression(member_access_expression) = operand {
             let type_id = self
@@ -282,6 +302,97 @@ impl Pass<'_> {
         } else {
             None
         }
+    }
+
+    /// Adjusts the type of a member reached through a member access whose
+    /// operand types as `operand_typing`:
+    /// - reference types with an "inherited" data location take the operand's
+    ///   location;
+    /// - functions attached via `using for` bind the receiver as their first
+    ///   argument, producing a partially applied function;
+    /// - function declarations that are not callable through the operand's
+    ///   contract/interface type name become the user meta type of their
+    ///   definition.
+    pub(super) fn adjust_member_access_type_for_operand(
+        &mut self,
+        type_id: TypeId,
+        operand_typing: &Typing,
+    ) -> TypeId {
+        let type_ = self.types.get_type_by_id(type_id);
+
+        if type_.is_inherited_location() {
+            if let Some(operand_location) = operand_typing
+                .as_type_id()
+                .and_then(|type_id| self.types.get_type_by_id(type_id).data_location())
+            {
+                let type_ = type_.clone();
+                return self
+                    .types
+                    .register_type_with_data_location(type_, operand_location);
+            }
+        } else if let Type::Function(function_type) = type_ {
+            if let Some(receiver_type_id) = operand_typing.as_type_id() {
+                if function_type.implicit_receiver_type.is_none()
+                    && function_type.parameter_types.first().is_some_and(|first| {
+                        self.types
+                            .implicitly_convertible_to_for_external_call(receiver_type_id, *first)
+                    })
+                {
+                    return self
+                        .types
+                        .partially_apply_function_type(function_type.clone());
+                }
+
+                if let Some(declaration_type_id) = self.as_foreign_function_declaration_type(
+                    receiver_type_id,
+                    function_type.definition_id,
+                    function_type.visibility,
+                ) {
+                    return declaration_type_id;
+                }
+            }
+        }
+        type_id
+    }
+
+    /// Returns the user meta type of a function's definition when reaching the
+    /// function through a contract/interface *type name* (eg. `C.g`) makes it
+    /// a non-callable declaration with no mobile type: external functions
+    /// always, and public functions of a *foreign* contract. Internal/private
+    /// functions reached the same way stay normal callables (qualified base
+    /// calls), as do members of library type names (`L.f`).
+    fn as_foreign_function_declaration_type(
+        &mut self,
+        receiver_type_id: TypeId,
+        function_definition_id: Option<NodeId>,
+        visibility: FunctionTypeVisibility,
+    ) -> Option<TypeId> {
+        let Type::UserMetaType(UserMetaType { definition_id }) =
+            self.types.get_type_by_id(receiver_type_id)
+        else {
+            return None;
+        };
+        if !matches!(
+            self.binder.find_definition_by_id(*definition_id),
+            Some(Definition::Contract(_) | Definition::Interface(_))
+        ) {
+            return None;
+        }
+
+        let is_foreign_and_visible = match visibility {
+            FunctionTypeVisibility::External => true,
+            FunctionTypeVisibility::Public => self.is_foreign_contract(*definition_id),
+            FunctionTypeVisibility::Internal | FunctionTypeVisibility::Private => false,
+        };
+        if !is_foreign_and_visible {
+            return None;
+        }
+
+        let definition_id = function_definition_id?;
+        Some(
+            self.types
+                .register_type(Type::UserMetaType(UserMetaType { definition_id })),
+        )
     }
 
     fn typing_of_cast(&mut self, argument_typing: &Typing, target_type_id: TypeId) -> Typing {
@@ -327,76 +438,6 @@ impl Pass<'_> {
                 // `this` and `super` are not callable
                 Typing::Unresolved
             }
-            Typing::Resolved(type_id) => match self.types.get_type_by_id(type_id) {
-                Type::Function(FunctionType { return_type, .. }) => Typing::Resolved(*return_type),
-                Type::MetaType(MetaType {
-                    type_id: target_type_id,
-                }) => {
-                    // This is an explicit cast to the (meta-)type, eg. `uint(x)`.
-                    let target_type_id = *target_type_id;
-                    if argument_typings.len() == 1 {
-                        self.typing_of_cast(&argument_typings[0], target_type_id)
-                    } else {
-                        Typing::Unresolved
-                    }
-                }
-                Type::UserMetaType(UserMetaType { definition_id }) => {
-                    // A cast to the underlying type of the definition (eg.
-                    // `MyEnum(1)`), or a struct construction. UDVTs are not
-                    // castable by name (they convert via `wrap`/`unwrap`).
-                    let definition_id = *definition_id;
-                    match self.binder.find_definition_by_id(definition_id) {
-                        Some(
-                            Definition::Contract(_)
-                            | Definition::Interface(_)
-                            | Definition::Library(_)
-                            | Definition::Enum(_)
-                            | Definition::Struct(_),
-                        ) => {
-                            // TODO(validation) SDR[39]: for contract, interface
-                            // and library targets the type of the (single)
-                            // argument should be an address
-                            // TODO(validation) SDR[868]: For enums, only one argument expected
-                            // TODO(validation) SDR[1698]: For enums, check the type of the argument is compatible
-
-                            let type_ = self
-                                .type_of_definition(definition_id)
-                                .expect("definition kind is handled by type_of_definition");
-                            Typing::Resolved(self.types.register_type(type_))
-                        }
-                        _ => Typing::Unresolved,
-                    }
-                }
-                _ => {
-                    // TODO(validation) SDR[41]: the operand did not resolve to a function
-                    Typing::Unresolved
-                }
-            },
-            Typing::Undetermined(type_ids) => {
-                let receiver_type_id = self.type_id_of_value_receiver(&node.operand);
-                let candidate = self.lookup_function_matching_positional_arguments(
-                    &type_ids,
-                    &argument_typings,
-                    receiver_type_id,
-                );
-
-                if let Some(candidate) = candidate {
-                    let return_type = candidate.return_type;
-
-                    let reference_node_id = reference_node_id_for_expression(&node.operand);
-                    let definition_id = candidate.definition_id;
-                    if let (Some(node_id), Some(definition_id)) = (reference_node_id, definition_id)
-                    {
-                        // TODO: maybe update the typing of the operand as well?
-                        self.binder
-                            .fixup_reference(node_id, Resolution::Definition(definition_id));
-                    }
-
-                    Typing::Resolved(return_type)
-                } else {
-                    Typing::Unresolved
-                }
-            }
             Typing::NewExpression(type_id) => {
                 match self.types.get_type_by_id(type_id) {
                     Type::Array(_) | Type::Contract(_) => Typing::Resolved(type_id),
@@ -409,6 +450,122 @@ impl Pass<'_> {
             Typing::BuiltIn(built_in) => self
                 .built_ins_resolver()
                 .typing_of_function_call(&built_in, &argument_typings),
+
+            Typing::Resolved(type_id) => self.typing_of_type_called_with_positional_arguments(
+                node,
+                type_id,
+                &argument_typings,
+            ),
+            Typing::Undetermined(type_ids) => {
+                let receiver_type_id = self.type_id_of_value_receiver(&node.operand);
+                let candidate = self.lookup_function_matching_positional_arguments(
+                    &type_ids,
+                    &argument_typings,
+                    receiver_type_id,
+                );
+
+                if let Some(candidate_type_id) = candidate {
+                    // The operand disambiguates to the selected overload, even
+                    // when calling it turns out to be invalid
+                    self.fixup_operand_expression(&node.operand, candidate_type_id);
+
+                    self.typing_of_type_called_with_positional_arguments(
+                        node,
+                        candidate_type_id,
+                        &argument_typings,
+                    )
+                } else {
+                    Typing::Unresolved
+                }
+            }
+        }
+    }
+
+    /// Narrows an overloaded call operand from its whole candidate set down to
+    /// the single selected overload `candidate_type_id`: both the operand's
+    /// reference (so it points at the selected declaration) and its recorded
+    /// typing (so querying the operand yields the selected overload rather than
+    /// the ambiguous `Undetermined` set) are updated.
+    fn fixup_operand_expression(&mut self, operand: &ir::Expression, candidate_type_id: TypeId) {
+        if let (Some(reference_node_id), Some(definition_id)) = (
+            reference_node_id_for_expression(operand),
+            self.candidate_definition_id(candidate_type_id),
+        ) {
+            self.binder
+                .fixup_reference(reference_node_id, Resolution::Definition(definition_id));
+        }
+
+        if let Some(operand_node_id) = operand.node_id() {
+            self.binder
+                .update_node_typing(operand_node_id, Typing::Resolved(candidate_type_id));
+        }
+    }
+
+    /// Types a call whose operand is (or was disambiguated to) `type_id`: a
+    /// function value is an actual call, a meta type is a cast (or a struct
+    /// construction), and the user meta type of a function is a non-callable
+    /// declaration reached through a contract/interface type name.
+    fn typing_of_type_called_with_positional_arguments(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        type_id: TypeId,
+        argument_typings: &[Typing],
+    ) -> Typing {
+        match self.types.get_type_by_id(type_id) {
+            Type::Function(FunctionType { return_type, .. }) => Typing::Resolved(*return_type),
+            Type::MetaType(MetaType {
+                type_id: target_type_id,
+            }) => {
+                // This is an explicit cast to the (meta-)type, eg. `uint(x)`.
+                let target_type_id = *target_type_id;
+                if argument_typings.len() == 1 {
+                    self.typing_of_cast(&argument_typings[0], target_type_id)
+                } else {
+                    Typing::Unresolved
+                }
+            }
+            Type::UserMetaType(UserMetaType { definition_id }) => {
+                // A cast to the underlying type of the definition (eg.
+                // `MyEnum(1)`), or a struct construction. UDVTs are not
+                // castable by name (they convert via `wrap`/`unwrap`).
+                let definition_id = *definition_id;
+                match self.binder.find_definition_by_id(definition_id) {
+                    Some(
+                        Definition::Contract(_)
+                        | Definition::Interface(_)
+                        | Definition::Library(_)
+                        | Definition::Enum(_)
+                        | Definition::Struct(_),
+                    ) => {
+                        // TODO(validation) SDR[39]: for contract, interface
+                        // and library targets the type of the (single)
+                        // argument should be an address
+                        // TODO(validation) SDR[868]: For enums, only one argument expected
+                        // TODO(validation) SDR[1698]: For enums, check the type of the argument is compatible
+
+                        let type_ = self
+                            .type_of_definition(definition_id)
+                            .expect("definition kind is handled by type_of_definition");
+                        Typing::Resolved(self.types.register_type(type_))
+                    }
+                    Some(Definition::Function(_)) => {
+                        // Calling a function referenced through a contract/interface
+                        // type name (eg. `C.f()`) is invalid: it's a non-callable
+                        // declaration.
+                        let (file_id, range) = node_location(node, self.file_node_mapper);
+
+                        self.diagnostics
+                            .push(file_id, range, CannotCallViaContractTypeName);
+                        Typing::Unresolved
+                    }
+
+                    _ => Typing::Unresolved,
+                }
+            }
+            _ => {
+                // TODO(validation) SDR[41]: the operand did not resolve to a function
+                Typing::Unresolved
+            }
         }
     }
 
@@ -439,42 +596,9 @@ impl Pass<'_> {
                 // `this` and `super` are not callable
                 (Typing::Unresolved, None)
             }
-            Typing::Resolved(type_id) => match self.types.get_type_by_id(type_id) {
-                Type::Function(FunctionType {
-                    definition_id,
-                    return_type,
-                    ..
-                }) => (Typing::Resolved(*return_type), *definition_id),
-                Type::MetaType(_) => {
-                    // This is a cast to the given type and is not valid with named arguments
-                    (Typing::Unresolved, None)
-                }
-                Type::UserMetaType(UserMetaType { definition_id }) => {
-                    // Function call with named arguments are only valid in user
-                    // types of the struct kind, which results in the construction
-                    // of such struct in memory
-                    let definition_id = *definition_id;
-                    match self.binder.find_definition_by_id(definition_id) {
-                        Some(Definition::Struct(_)) => {
-                            // struct construction
-                            let type_ = self
-                                .type_of_definition(definition_id)
-                                .expect("struct definitions are handled by type_of_definition");
-                            let type_id = self.types.register_type(type_);
-                            (Typing::Resolved(type_id), Some(definition_id))
-                        }
-                        Some(Definition::Event(_)) => {
-                            // this is an event called as a function, which is valid in <0.5.0
-                            (Typing::Resolved(self.types.void()), Some(definition_id))
-                        }
-                        _ => (Typing::Unresolved, None),
-                    }
-                }
-                _ => {
-                    // TODO(validation) SDR[41]: the operand did not resolve to a function
-                    (Typing::Unresolved, None)
-                }
-            },
+            Typing::Resolved(type_id) => {
+                self.typing_of_type_called_with_named_arguments(node, type_id)
+            }
             Typing::Undetermined(type_ids) => {
                 let receiver_type_id = self.type_id_of_value_receiver(&node.operand);
                 let argument_typings = self.collect_named_argument_typings(arguments);
@@ -484,19 +608,12 @@ impl Pass<'_> {
                     receiver_type_id,
                 );
 
-                if let Some(candidate) = candidate {
-                    let return_type = candidate.return_type;
+                if let Some(candidate_type_id) = candidate {
+                    // The operand disambiguates to the selected overload, even
+                    // when calling it turns out to be invalid
+                    self.fixup_operand_expression(&node.operand, candidate_type_id);
 
-                    let reference_node_id = reference_node_id_for_expression(&node.operand);
-                    let definition_id = candidate.definition_id;
-                    if let (Some(node_id), Some(definition_id)) = (reference_node_id, definition_id)
-                    {
-                        // TODO: maybe update the typing of the operand as well?
-                        self.binder
-                            .fixup_reference(node_id, Resolution::Definition(definition_id));
-                    }
-
-                    (Typing::Resolved(return_type), definition_id)
+                    self.typing_of_type_called_with_named_arguments(node, candidate_type_id)
                 } else {
                     (Typing::Unresolved, None)
                 }
@@ -521,6 +638,62 @@ impl Pass<'_> {
         self.resolve_named_arguments(arguments, definition_id);
 
         typing
+    }
+
+    /// Types a call with named arguments whose operand is (or was
+    /// disambiguated to) `type_id`, additionally returning the definition the
+    /// operand resolves to (if any). Only function values and struct
+    /// constructions are callable this way; the user meta type of a function is
+    /// a non-callable declaration reached through a contract/interface type
+    /// name.
+    fn typing_of_type_called_with_named_arguments(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        type_id: TypeId,
+    ) -> (Typing, Option<NodeId>) {
+        match self.types.get_type_by_id(type_id) {
+            Type::Function(FunctionType {
+                definition_id,
+                return_type,
+                ..
+            }) => (Typing::Resolved(*return_type), *definition_id),
+            Type::MetaType(_) => {
+                // This is a cast to the given type and is not valid with named arguments
+                (Typing::Unresolved, None)
+            }
+            Type::UserMetaType(UserMetaType { definition_id }) => {
+                // Function call with named arguments are only valid in user
+                // types of the struct kind, which results in the construction
+                // of such struct in memory
+                let definition_id = *definition_id;
+                match self.binder.find_definition_by_id(definition_id) {
+                    Some(Definition::Struct(_)) => {
+                        // struct construction
+                        let type_ = self
+                            .type_of_definition(definition_id)
+                            .expect("struct definitions are handled by type_of_definition");
+                        let type_id = self.types.register_type(type_);
+                        (Typing::Resolved(type_id), Some(definition_id))
+                    }
+                    Some(Definition::Function(_)) => {
+                        // Calling a function via a contract/interface type name is
+                        // invalid. Still return the definition so the argument
+                        // names resolve against its parameters.
+                        let (file_id, range) = node_location(node, self.file_node_mapper);
+
+                        self.diagnostics
+                            .push(file_id, range, CannotCallViaContractTypeName);
+                        (Typing::Unresolved, Some(definition_id))
+                    }
+
+                    _ => (Typing::Unresolved, None),
+                }
+            }
+            _ => {
+                // TODO(validation) SDR[41]: the operand did not resolve to a function
+                (Typing::Unresolved, None)
+            }
+        }
     }
 }
 

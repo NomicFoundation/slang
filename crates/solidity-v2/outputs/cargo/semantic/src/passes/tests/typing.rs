@@ -19,8 +19,8 @@ use crate::passes::{
 };
 use crate::types::{
     ArrayType, ByteArrayType, BytesType, ContractType, DataLocation, FixedSizeArrayType,
-    IntegerType, LibraryType, LiteralKind, MappingType, MetaType, StringType, StructType,
-    TupleType, Type, TypeId, TypeRegistry,
+    FunctionType, IntegerType, LibraryType, LiteralKind, MappingType, MetaType, StringType,
+    StructType, TupleType, Type, TypeId, TypeRegistry, UserMetaType,
 };
 
 struct TypeAnalysis {
@@ -321,6 +321,28 @@ fn folded_array_length(context: &str, array_type: &str) -> (U256, Option<Diagnos
         other => panic!("expected a FixedSizeArray type, got {other:?}"),
     };
     (size, diagnostic_kind(&diagnostics))
+}
+
+/// Collects the `FunctionCallExpression` of each expression statement in the
+/// body of `function` within `contract`, in source order.
+fn call_expressions<'a>(
+    file: &'a TestFile,
+    contract: &str,
+    function: &str,
+) -> Vec<&'a ir::FunctionCallExpression> {
+    let c = find_contract(file, contract);
+    let f = find_function(&c.members, function).expect("function not found");
+    let body = f.body.as_ref().expect("function has a body");
+    body.statements
+        .iter()
+        .filter_map(|stmt| match stmt {
+            ir::Statement::ExpressionStatement(s) => match &s.expression {
+                ir::Expression::FunctionCallExpression(call) => Some(call),
+                _ => None,
+            },
+            _ => None,
+        })
+        .collect()
 }
 
 #[test]
@@ -1915,4 +1937,244 @@ fn test_tuple_of_type_names_is_a_tuple_of_meta_types() {
         registry.get_type_by_id(element_ids[1]),
         Type::MetaType(_)
     ));
+}
+
+#[test]
+fn test_function_declaration_via_type_name_has_no_mobile_type() {
+    // A function reached through a contract/interface *type name* (`C.g`) is a
+    // non-value declaration with no mobile type — only good for `.selector` —
+    // not a function value. This mirrors solc's `FunctionType::Kind::Declaration`.
+    // `external` functions are always declarations via the type name; `public`
+    // ones only from a non-deriving ("foreign") scope; `internal` and local
+    // `public` stay callable function values.
+    let source = r#"
+        interface I {
+            function h() external;
+        }
+        contract C {
+            function g() external {}
+            function pub() public {}
+            function intl() internal pure {}
+        }
+        contract D is C {
+            function tD() internal {
+                C.g;
+                C.g.selector;
+                C.pub;
+                C.intl;
+                I.h;
+            }
+        }
+        contract E {
+            function tE() internal {
+                C.pub;
+            }
+        }
+    "#;
+
+    let TypeAnalysis {
+        file,
+        binder,
+        types,
+        ..
+    } = analyze(LanguageVersion::LATEST, source);
+
+    let statement_typings = |contract: &str, function: &str| -> Vec<Typing> {
+        let c = find_contract(&file, contract);
+        let f = find_function(&c.members, function).expect("function not found");
+        let body = f.body.as_ref().expect("function has a body");
+        body.statements
+            .iter()
+            .filter_map(|stmt| match stmt {
+                ir::Statement::ExpressionStatement(s) => {
+                    let node_id = s.expression.node_id().expect("expression has a node id");
+                    Some(binder.node_typing(node_id))
+                }
+                _ => None,
+            })
+            .collect()
+    };
+
+    let is_function_value = |typing: &Typing| {
+        matches!(
+            typing.as_type_id().map(|id| types.get_type_by_id(id)),
+            Some(Type::Function(_))
+        )
+    };
+
+    let is_meta_type = |typing: &Typing| {
+        typing
+            .as_type_id()
+            .is_some_and(|id| types.get_type_by_id(id).is_meta_type())
+    };
+
+    let d = statement_typings("D", "tD");
+    // `C.g` (external) is a declaration with no mobile type.
+    assert!(
+        is_meta_type(&d[0]),
+        "C.g should be a function declaration, got {:?}",
+        d[0]
+    );
+    // `C.g.selector` still resolves to `bytes4`.
+    assert!(
+        matches!(
+            d[1].as_type_id().map(|id| types.get_type_by_id(id)),
+            Some(Type::ByteArray(ByteArrayType { width: 4 }))
+        ),
+        "C.g.selector should be bytes4, got {:?}",
+        d[1]
+    );
+    // `C.pub` (public) accessed from a deriving contract stays a callable value.
+    assert!(
+        is_function_value(&d[2]),
+        "local C.pub should be a callable function value, got {:?}",
+        d[2]
+    );
+    // `C.intl` (internal) accessed locally stays a callable value.
+    assert!(
+        is_function_value(&d[3]),
+        "local C.intl should be a callable function value, got {:?}",
+        d[3]
+    );
+    // `I.h` (interface, external) is a declaration.
+    assert!(
+        is_meta_type(&d[4]),
+        "I.h should be a function declaration, got {:?}",
+        d[4]
+    );
+
+    // `C.pub` accessed from an unrelated contract (foreign) is a declaration.
+    let e = statement_typings("E", "tE");
+    assert!(
+        is_meta_type(&e[0]),
+        "foreign C.pub should be a function declaration, got {:?}",
+        e[0]
+    );
+}
+
+#[test]
+fn test_overloaded_call_operand_narrows_to_selected_overload() {
+    // When an overloaded callee resolves to a single overload through the
+    // call's arguments, the operand's typing is narrowed from the whole
+    // candidate set (`Undetermined`) down to the selected overload — for
+    // positional and named argument calls alike.
+    let source = r#"
+        contract C {
+            function f(uint x) internal pure {}
+            function f(bool b) internal pure {}
+            function g() internal pure {
+                f(1);
+                f({b: true});
+            }
+        }
+    "#;
+
+    let TypeAnalysis {
+        file,
+        binder,
+        types,
+        ..
+    } = analyze(LanguageVersion::LATEST, source);
+
+    let calls = call_expressions(&file, "C", "g");
+    assert_eq!(calls.len(), 2);
+
+    // Recovers the single parameter type of the operand's (now resolved)
+    // function type, failing if the operand is still an ambiguous candidate set.
+    let sole_parameter_type = |call: &ir::FunctionCallExpression| -> TypeId {
+        let node_id = call.operand.node_id().expect("operand has a node id");
+        let type_id = match binder.node_typing(node_id) {
+            Typing::Resolved(type_id) => type_id,
+            other => panic!("operand should be narrowed to a single overload, got {other:?}"),
+        };
+        let Type::Function(FunctionType {
+            parameter_types, ..
+        }) = types.get_type_by_id(type_id)
+        else {
+            panic!("operand should type as a function");
+        };
+        assert_eq!(
+            parameter_types.len(),
+            1,
+            "each overload takes one parameter"
+        );
+        parameter_types[0]
+    };
+
+    // `f(1)`: the literal only converts to `uint`, selecting `f(uint)`.
+    assert_eq!(sole_parameter_type(calls[0]), types.uint256());
+    // `f({b: true})`: the named argument selects `f(bool)`.
+    assert_eq!(sole_parameter_type(calls[1]), types.boolean());
+}
+
+#[test]
+fn test_overloaded_declaration_via_type_name_operand_narrows() {
+    // Even though calling an overload through a contract *type name* is invalid,
+    // the operand still disambiguates to the overload matching the arguments:
+    // its typing is narrowed to that specific (non-callable) declaration rather
+    // than left as the ambiguous candidate set.
+    let source = r#"
+        contract A {
+            function f() external {}
+            function f(uint x) external {}
+        }
+        contract B {
+            function g() internal {
+                A.f();
+                A.f(1);
+            }
+        }
+    "#;
+
+    let TypeAnalysis {
+        file,
+        binder,
+        types,
+        diagnostics,
+    } = analyze_with_diagnostics(LanguageVersion::LATEST, source);
+
+    // Both calls are invalid: external functions aren't callable via the type name.
+    assert_eq!(
+        diagnostics.iter().count(),
+        2,
+        "both calls via the contract type name should be rejected"
+    );
+
+    let calls = call_expressions(&file, "B", "g");
+    assert_eq!(calls.len(), 2);
+
+    // The operand narrows to the user meta type of the selected overload's
+    // function definition (a non-callable declaration), not the candidate set.
+    let selected_definition = |call: &ir::FunctionCallExpression| {
+        let node_id = call.operand.node_id().expect("operand has a node id");
+        match binder.node_typing(node_id) {
+            Typing::Resolved(type_id) => match types.get_type_by_id(type_id) {
+                Type::UserMetaType(UserMetaType { definition_id }) => *definition_id,
+                other => panic!("operand should be a declaration meta type, got {other:?}"),
+            },
+            other => panic!("operand should be narrowed to a single overload, got {other:?}"),
+        }
+    };
+
+    // The definition's own typing tells us which overload was picked.
+    let parameter_count = |definition_id| match binder
+        .node_typing(definition_id)
+        .as_type_id()
+        .map(|id| types.get_type_by_id(id))
+    {
+        Some(Type::Function(FunctionType {
+            parameter_types, ..
+        })) => parameter_types.len(),
+        other => panic!("definition should type as a function, got {other:?}"),
+    };
+
+    let first = selected_definition(calls[0]);
+    let second = selected_definition(calls[1]);
+    assert_ne!(
+        first, second,
+        "the two calls should disambiguate to different overloads"
+    );
+    // `A.f()` selects the parameterless overload, `A.f(1)` the one-parameter one.
+    assert_eq!(parameter_count(first), 0);
+    assert_eq!(parameter_count(second), 1);
 }

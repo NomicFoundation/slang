@@ -394,6 +394,18 @@ impl Binder {
         }
     }
 
+    /// Overwrites a node's typing that was already set, used when a later step
+    /// refines it (eg. narrowing an `Undetermined` call operand to the selected
+    /// overload). Unlike [`Self::set_node_typing`], an existing typing is
+    /// expected.
+    pub(crate) fn update_node_typing(&mut self, node_id: NodeId, typing: Typing) {
+        let previous_typing = self.node_typing.insert(node_id, typing);
+        debug_assert!(
+            previous_typing.is_some(),
+            "update_node_typing called on node {node_id:?} with no existing typing"
+        );
+    }
+
     // File scope resolution context
 
     pub(crate) fn get_file_scope(&self, file_id: &FileId) -> &FileScope {

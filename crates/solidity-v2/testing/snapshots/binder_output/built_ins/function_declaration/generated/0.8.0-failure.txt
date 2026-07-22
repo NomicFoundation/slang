@@ -1,0 +1,139 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (10):
+- Def: #1 ["I" @ input.sol:1:11] (interface)
+- Def: #2 ["i" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["C" @ input.sol:5:10] (contract)
+- Def: #4 ["ext" @ input.sol:6:14] (function, type: function () returns void)
+- Def: #5 ["pub" @ input.sol:7:14] (function, type: function () returns void)
+- Def: #6 ["tC" @ input.sol:8:14] (function, type: function () returns void)
+- Def: #7 ["D" @ input.sol:13:10] (contract)
+- Def: #8 ["tD" @ input.sol:14:14] (function, type: function () returns void)
+- Def: #9 ["E" @ input.sol:19:10] (contract)
+- Def: #10 ["test" @ input.sol:20:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (23):
+- Ref: ["ext" @ input.sol:9:14] -> #4
+- Ref: ["selector" @ input.sol:9:18] -> built-in
+- Ref: ["ext" @ input.sol:10:14] -> #4
+- Ref: ["address" @ input.sol:10:18] -> built-in
+- Ref: ["C" @ input.sol:13:15] -> #3
+- Ref: ["C" @ input.sol:15:9] -> #3
+- Ref: ["ext" @ input.sol:15:11] -> #4
+- Ref: ["selector" @ input.sol:15:15] -> built-in
+- Ref: ["C" @ input.sol:16:9] -> #3
+- Ref: ["ext" @ input.sol:16:11] -> #4
+- Ref: ["address" @ input.sol:16:15] -> unresolved
+- Ref: ["I" @ input.sol:21:9] -> #1
+- Ref: ["i" @ input.sol:21:11] -> #2
+- Ref: ["selector" @ input.sol:21:13] -> built-in
+- Ref: ["I" @ input.sol:22:9] -> #1
+- Ref: ["i" @ input.sol:22:11] -> #2
+- Ref: ["address" @ input.sol:22:13] -> unresolved
+- Ref: ["C" @ input.sol:24:9] -> #3
+- Ref: ["pub" @ input.sol:24:11] -> #5
+- Ref: ["selector" @ input.sol:24:15] -> built-in
+- Ref: ["C" @ input.sol:25:9] -> #3
+- Ref: ["pub" @ input.sol:25:11] -> #5
+- Ref: ["address" @ input.sol:25:15] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface I {
+    │           ┬  
+    │           ╰── name: 1
+  2 │     function i() external;
+    │              ┬  
+    │              ╰── name: 2
+    │ 
+  5 │ contract C {
+    │          ┬  
+    │          ╰── name: 3
+  6 │     function ext() external {}
+    │              ─┬─  
+    │               ╰─── name: 4
+  7 │     function pub() public {}
+    │              ─┬─  
+    │               ╰─── name: 5
+  8 │     function tC() internal {
+    │              ─┬  
+    │               ╰── name: 6
+  9 │         this.ext.selector; // ok
+    │              ─┬─ ────┬───  
+    │               ╰──────────── ref: 4
+    │                      │     
+    │                      ╰───── built-in
+ 10 │         this.ext.address; // ok (external function value)
+    │              ─┬─ ───┬───  
+    │               ╰─────────── ref: 4
+    │                     │     
+    │                     ╰───── built-in
+    │ 
+ 13 │ contract D is C {
+    │          ┬    ┬  
+    │          ╰─────── name: 7
+    │               │  
+    │               ╰── ref: 3
+ 14 │     function tD() internal {
+    │              ─┬  
+    │               ╰── name: 8
+ 15 │         C.ext.selector; // ok
+    │         ┬ ─┬─ ────┬───  
+    │         ╰─────────────── ref: 3
+    │            │      │     
+    │            ╰──────────── ref: 4
+    │                   │     
+    │                   ╰───── built-in
+ 16 │         C.ext.address; // not ok
+    │         ┬ ─┬─ ───┬───  
+    │         ╰────────────── ref: 3
+    │            │     │     
+    │            ╰─────────── ref: 4
+    │                  │     
+    │                  ╰───── unresolved
+    │ 
+ 19 │ contract E {
+    │          ┬  
+    │          ╰── name: 9
+ 20 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 10
+ 21 │         I.i.selector; // ok
+    │         ┬ ┬ ────┬───  
+    │         ╰───────────── ref: 1
+    │           │     │     
+    │           ╰─────────── ref: 2
+    │                 │     
+    │                 ╰───── built-in
+ 22 │         I.i.address; // not ok
+    │         ┬ ┬ ───┬───  
+    │         ╰──────────── ref: 1
+    │           │    │     
+    │           ╰────────── ref: 2
+    │                │     
+    │                ╰───── unresolved
+    │ 
+ 24 │         C.pub.selector; // ok
+    │         ┬ ─┬─ ────┬───  
+    │         ╰─────────────── ref: 3
+    │            │      │     
+    │            ╰──────────── ref: 5
+    │                   │     
+    │                   ╰───── built-in
+ 25 │         C.pub.address; // not ok
+    │         ┬ ─┬─ ───┬───  
+    │         ╰────────────── ref: 3
+    │            │     │     
+    │            ╰─────────── ref: 5
+    │                  │     
+    │                  ╰───── unresolved
+────╯

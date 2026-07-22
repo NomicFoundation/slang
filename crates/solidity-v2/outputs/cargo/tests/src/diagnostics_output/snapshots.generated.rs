@@ -1784,6 +1784,66 @@ mod type_system {
         }
     }
 
+    mod cannot_call_via_contract_type_name {
+        use super::*;
+
+        #[test]
+        fn external_base() -> Result<()> {
+            run(
+                "type_system/cannot_call_via_contract_type_name",
+                "external_base",
+            )
+        }
+
+        #[test]
+        fn foreign_contract() -> Result<()> {
+            run(
+                "type_system/cannot_call_via_contract_type_name",
+                "foreign_contract",
+            )
+        }
+
+        #[test]
+        fn free_function() -> Result<()> {
+            run(
+                "type_system/cannot_call_via_contract_type_name",
+                "free_function",
+            )
+        }
+
+        #[test]
+        fn named_arguments() -> Result<()> {
+            run(
+                "type_system/cannot_call_via_contract_type_name",
+                "named_arguments",
+            )
+        }
+
+        #[test]
+        fn overloaded() -> Result<()> {
+            run(
+                "type_system/cannot_call_via_contract_type_name",
+                "overloaded",
+            )
+        }
+
+        #[test]
+        fn overloaded_internal_selected() -> Result<()> {
+            run(
+                "type_system/cannot_call_via_contract_type_name",
+                "overloaded_internal_selected",
+            )
+        }
+
+        #[test]
+        fn overloaded_public_selected() -> Result<()> {
+            run(
+                "type_system/cannot_call_via_contract_type_name",
+                "overloaded_public_selected",
+            )
+        }
+    }
+
     #[test]
     fn fallback_function_mutability() -> Result<()> {
         run("type_system", "fallback_function_mutability")
