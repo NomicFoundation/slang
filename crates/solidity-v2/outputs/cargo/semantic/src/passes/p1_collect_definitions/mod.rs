@@ -10,8 +10,9 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     LibraryVirtualFunction, LibraryVirtualModifier, MissingFunctionVisibility,
     ModifierBodyWithoutPlaceholder, MultipleConstructors, NestedUncheckedBlock,
     NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
-    UncheckedBlockNotInRegularBlock, UnimplementedModifierMustBeVirtual,
-    VariableDeclarationNotInBlock, VariableInInterface, VirtualFreeFunction, VirtualPrivateFunction,
+    PlaceholderInUncheckedBlock, UncheckedBlockNotInRegularBlock,
+    UnimplementedModifierMustBeVirtual, VariableDeclarationNotInBlock, VariableInInterface,
+    VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -861,12 +862,17 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
 
     fn enter_expression_statement(&mut self, node: &ir::ExpressionStatement) -> bool {
         // A placeholder statement (`_`) parses as an expression statement whose
-        // expression is the `_` identifier. Record it when found inside a
+        // expression is the `_` identifier. It is only meaningful inside a
         // modifier body (possibly nested within control-flow statements).
-        if let Some(found) = self.modifier_placeholder_found.as_mut() {
-            if matches!(&node.expression, ir::Expression::Identifier(identifier) if identifier.unparse() == "_")
-            {
-                *found = true;
+        let is_placeholder = self.modifier_placeholder_found.is_some()
+            && matches!(&node.expression, ir::Expression::Identifier(identifier) if identifier.unparse() == "_");
+
+        if is_placeholder {
+            // The placeholder counts as present regardless of where it appears,
+            // but it cannot be used inside an `unchecked` block.
+            self.modifier_placeholder_found = Some(true);
+            if self.unchecked_depth > 0 {
+                self.report(node, PlaceholderInUncheckedBlock);
             }
         }
         true

@@ -1257,6 +1257,11 @@ mod structure {
     }
 
     #[test]
+    fn placeholder_in_unchecked_block() -> Result<()> {
+        run("structure", "placeholder_in_unchecked_block")
+    }
+
+    #[test]
     fn storage_layout_for_abstract_contract() -> Result<()> {
         run("structure", "storage_layout_for_abstract_contract")
     }
