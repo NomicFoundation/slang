@@ -302,8 +302,8 @@ fn check_field(
                 Some(lexical_context),
             );
 
-            if let Some(target) = analysis.metadata.get(&**reference) {
-                if match &target.item {
+            if let Some(target) = analysis.metadata.get(&**reference)
+                && match &target.item {
                     SpannedItem::Repeated { item: child } => {
                         child.allow_empty.as_ref().is_some_and(|b| **b)
                     }
@@ -311,11 +311,11 @@ fn check_field(
                         child.allow_empty.as_ref().is_some_and(|b| **b)
                     }
                     _ => false,
-                } {
-                    analysis
-                        .errors
-                        .add(reference, &Errors::OptionalFieldAllowsEmpty);
                 }
+            {
+                analysis
+                    .errors
+                    .add(reference, &Errors::OptionalFieldAllowsEmpty);
             }
         }
     }
@@ -481,13 +481,13 @@ fn check_reference(
         );
     }
 
-    if let Some(expected) = lexical_context {
-        if target.lexical_context != *expected {
-            analysis.errors.add(
-                reference,
-                &Errors::InvalidReferenceContext(reference, &target.lexical_context, expected),
-            );
-        }
+    if let Some(expected) = lexical_context
+        && target.lexical_context != *expected
+    {
+        analysis.errors.add(
+            reference,
+            &Errors::InvalidReferenceContext(reference, &target.lexical_context, expected),
+        );
     }
 
     target.used_in.add_version_set(enablement);

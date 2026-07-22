@@ -255,14 +255,14 @@ impl<T: KindTypes> Cursor<T> {
         }
 
         // If the current cursor is a node and it has children, go to first children
-        if let Some(new_parent) = self.as_ancestor_node() {
-            if let Some(new_child) = new_parent.nonterminal_node.children.first().cloned() {
-                self.parent = Parent::Connected(new_parent);
-                self.node = new_child.node;
-                self.child_index = 0;
+        if let Some(new_parent) = self.as_ancestor_node()
+            && let Some(new_child) = new_parent.nonterminal_node.children.first().cloned()
+        {
+            self.parent = Parent::Connected(new_parent);
+            self.node = new_child.node;
+            self.child_index = 0;
 
-                return true;
-            }
+            return true;
         }
 
         false
@@ -276,18 +276,18 @@ impl<T: KindTypes> Cursor<T> {
             return false;
         }
 
-        if let Some(new_parent) = self.as_ancestor_node() {
-            if let Some(new_child) = new_parent.nonterminal_node.children.last().cloned() {
-                self.child_index = new_parent.nonterminal_node.children.len() - 1;
-                self.node = new_child.node;
-                // Remember: range is not inclusive
-                for sibling in &new_parent.nonterminal_node.children[..self.child_index] {
-                    self.text_offset += sibling.text_len();
-                }
-                self.parent = Parent::Connected(new_parent);
-
-                return true;
+        if let Some(new_parent) = self.as_ancestor_node()
+            && let Some(new_child) = new_parent.nonterminal_node.children.last().cloned()
+        {
+            self.child_index = new_parent.nonterminal_node.children.len() - 1;
+            self.node = new_child.node;
+            // Remember: range is not inclusive
+            for sibling in &new_parent.nonterminal_node.children[..self.child_index] {
+                self.text_offset += sibling.text_len();
             }
+            self.parent = Parent::Connected(new_parent);
+
+            return true;
         }
 
         false
@@ -301,23 +301,22 @@ impl<T: KindTypes> Cursor<T> {
             return false;
         }
 
-        if let Some(new_parent) = self.as_ancestor_node() {
-            if let Some(new_child) = new_parent
+        if let Some(new_parent) = self.as_ancestor_node()
+            && let Some(new_child) = new_parent
                 .nonterminal_node
                 .children
                 .get(child_index)
                 .cloned()
-            {
-                self.child_index = child_index;
-                self.node = new_child.node;
-                // Remember: range is not inclusive
-                for sibling in &new_parent.nonterminal_node.children[..self.child_index] {
-                    self.text_offset += sibling.text_len();
-                }
-                self.parent = Parent::Connected(new_parent);
-
-                return true;
+        {
+            self.child_index = child_index;
+            self.node = new_child.node;
+            // Remember: range is not inclusive
+            for sibling in &new_parent.nonterminal_node.children[..self.child_index] {
+                self.text_offset += sibling.text_len();
             }
+            self.parent = Parent::Connected(new_parent);
+
+            return true;
         }
 
         false
@@ -353,20 +352,20 @@ impl<T: KindTypes> Cursor<T> {
             return false;
         }
 
-        if let Parent::Connected(parent) = &self.parent {
-            if self.child_index > 0 {
-                let new_child_number = self.child_index - 1;
-                let new_child = &parent.nonterminal_node.children[new_child_number];
-                self.child_index = new_child_number;
-                self.node = new_child.node.clone();
-                // Remember: range is not inclusive
-                self.text_offset = parent.text_offset;
-                for sibling in &parent.nonterminal_node.children[..self.child_index] {
-                    self.text_offset += sibling.text_len();
-                }
-
-                return true;
+        if let Parent::Connected(parent) = &self.parent
+            && self.child_index > 0
+        {
+            let new_child_number = self.child_index - 1;
+            let new_child = &parent.nonterminal_node.children[new_child_number];
+            self.child_index = new_child_number;
+            self.node = new_child.node.clone();
+            // Remember: range is not inclusive
+            self.text_offset = parent.text_offset;
+            for sibling in &parent.nonterminal_node.children[..self.child_index] {
+                self.text_offset += sibling.text_len();
             }
+
+            return true;
         }
 
         false

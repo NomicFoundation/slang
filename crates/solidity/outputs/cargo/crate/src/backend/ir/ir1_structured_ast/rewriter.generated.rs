@@ -1674,55 +1674,55 @@ pub trait Rewriter {
         source: &SourceUnitMember,
     ) -> SourceUnitMember {
         match source {
-            SourceUnitMember::PragmaDirective(ref pragma_directive) => {
+            SourceUnitMember::PragmaDirective(pragma_directive) => {
                 SourceUnitMember::PragmaDirective(self.rewrite_pragma_directive(pragma_directive))
             }
-            SourceUnitMember::ImportDirective(ref import_directive) => {
+            SourceUnitMember::ImportDirective(import_directive) => {
                 SourceUnitMember::ImportDirective(self.rewrite_import_directive(import_directive))
             }
-            SourceUnitMember::ContractDefinition(ref contract_definition) => {
+            SourceUnitMember::ContractDefinition(contract_definition) => {
                 SourceUnitMember::ContractDefinition(
                     self.rewrite_contract_definition(contract_definition),
                 )
             }
-            SourceUnitMember::InterfaceDefinition(ref interface_definition) => {
+            SourceUnitMember::InterfaceDefinition(interface_definition) => {
                 SourceUnitMember::InterfaceDefinition(
                     self.rewrite_interface_definition(interface_definition),
                 )
             }
-            SourceUnitMember::LibraryDefinition(ref library_definition) => {
+            SourceUnitMember::LibraryDefinition(library_definition) => {
                 SourceUnitMember::LibraryDefinition(
                     self.rewrite_library_definition(library_definition),
                 )
             }
-            SourceUnitMember::StructDefinition(ref struct_definition) => {
+            SourceUnitMember::StructDefinition(struct_definition) => {
                 SourceUnitMember::StructDefinition(
                     self.rewrite_struct_definition(struct_definition),
                 )
             }
-            SourceUnitMember::EnumDefinition(ref enum_definition) => {
+            SourceUnitMember::EnumDefinition(enum_definition) => {
                 SourceUnitMember::EnumDefinition(self.rewrite_enum_definition(enum_definition))
             }
-            SourceUnitMember::FunctionDefinition(ref function_definition) => {
+            SourceUnitMember::FunctionDefinition(function_definition) => {
                 SourceUnitMember::FunctionDefinition(
                     self.rewrite_function_definition(function_definition),
                 )
             }
-            SourceUnitMember::ErrorDefinition(ref error_definition) => {
+            SourceUnitMember::ErrorDefinition(error_definition) => {
                 SourceUnitMember::ErrorDefinition(self.rewrite_error_definition(error_definition))
             }
             SourceUnitMember::UserDefinedValueTypeDefinition(
-                ref user_defined_value_type_definition,
+                user_defined_value_type_definition,
             ) => SourceUnitMember::UserDefinedValueTypeDefinition(
                 self.rewrite_user_defined_value_type_definition(user_defined_value_type_definition),
             ),
-            SourceUnitMember::UsingDirective(ref using_directive) => {
+            SourceUnitMember::UsingDirective(using_directive) => {
                 SourceUnitMember::UsingDirective(self.rewrite_using_directive(using_directive))
             }
-            SourceUnitMember::EventDefinition(ref event_definition) => {
+            SourceUnitMember::EventDefinition(event_definition) => {
                 SourceUnitMember::EventDefinition(self.rewrite_event_definition(event_definition))
             }
-            SourceUnitMember::ConstantDefinition(ref constant_definition) => {
+            SourceUnitMember::ConstantDefinition(constant_definition) => {
                 SourceUnitMember::ConstantDefinition(
                     self.rewrite_constant_definition(constant_definition),
                 )
@@ -1735,13 +1735,13 @@ pub trait Rewriter {
 
     fn default_rewrite_pragma(&mut self, source: &Pragma) -> Pragma {
         match source {
-            Pragma::VersionPragma(ref version_pragma) => {
+            Pragma::VersionPragma(version_pragma) => {
                 Pragma::VersionPragma(self.rewrite_version_pragma(version_pragma))
             }
-            Pragma::AbicoderPragma(ref abicoder_pragma) => {
+            Pragma::AbicoderPragma(abicoder_pragma) => {
                 Pragma::AbicoderPragma(self.rewrite_abicoder_pragma(abicoder_pragma))
             }
-            Pragma::ExperimentalPragma(ref experimental_pragma) => {
+            Pragma::ExperimentalPragma(experimental_pragma) => {
                 Pragma::ExperimentalPragma(self.rewrite_experimental_pragma(experimental_pragma))
             }
         }
@@ -1765,7 +1765,7 @@ pub trait Rewriter {
         source: &ExperimentalFeature,
     ) -> ExperimentalFeature {
         match source {
-            ExperimentalFeature::StringLiteral(ref string_literal) => {
+            ExperimentalFeature::StringLiteral(string_literal) => {
                 ExperimentalFeature::StringLiteral(self.rewrite_string_literal(string_literal))
             }
             ExperimentalFeature::ABIEncoderV2Keyword => ExperimentalFeature::ABIEncoderV2Keyword,
@@ -1784,10 +1784,10 @@ pub trait Rewriter {
         source: &VersionExpression,
     ) -> VersionExpression {
         match source {
-            VersionExpression::VersionRange(ref version_range) => {
+            VersionExpression::VersionRange(version_range) => {
                 VersionExpression::VersionRange(self.rewrite_version_range(version_range))
             }
-            VersionExpression::VersionTerm(ref version_term) => {
+            VersionExpression::VersionTerm(version_term) => {
                 VersionExpression::VersionTerm(self.rewrite_version_term(version_term))
             }
         }
@@ -1813,7 +1813,7 @@ pub trait Rewriter {
 
     fn default_rewrite_version_literal(&mut self, source: &VersionLiteral) -> VersionLiteral {
         match source {
-            VersionLiteral::SimpleVersionLiteral(ref simple_version_literal) => {
+            VersionLiteral::SimpleVersionLiteral(simple_version_literal) => {
                 VersionLiteral::SimpleVersionLiteral(
                     self.rewrite_simple_version_literal(simple_version_literal),
                 )
@@ -1832,13 +1832,13 @@ pub trait Rewriter {
 
     fn default_rewrite_import_clause(&mut self, source: &ImportClause) -> ImportClause {
         match source {
-            ImportClause::PathImport(ref path_import) => {
+            ImportClause::PathImport(path_import) => {
                 ImportClause::PathImport(self.rewrite_path_import(path_import))
             }
-            ImportClause::NamedImport(ref named_import) => {
+            ImportClause::NamedImport(named_import) => {
                 ImportClause::NamedImport(self.rewrite_named_import(named_import))
             }
-            ImportClause::ImportDeconstruction(ref import_deconstruction) => {
+            ImportClause::ImportDeconstruction(import_deconstruction) => {
                 ImportClause::ImportDeconstruction(
                     self.rewrite_import_deconstruction(import_deconstruction),
                 )
@@ -1851,10 +1851,10 @@ pub trait Rewriter {
 
     fn default_rewrite_using_clause(&mut self, source: &UsingClause) -> UsingClause {
         match source {
-            UsingClause::IdentifierPath(ref identifier_path) => {
+            UsingClause::IdentifierPath(identifier_path) => {
                 UsingClause::IdentifierPath(self.rewrite_identifier_path(identifier_path))
             }
-            UsingClause::UsingDeconstruction(ref using_deconstruction) => {
+            UsingClause::UsingDeconstruction(using_deconstruction) => {
                 UsingClause::UsingDeconstruction(
                     self.rewrite_using_deconstruction(using_deconstruction),
                 )
@@ -1890,7 +1890,7 @@ pub trait Rewriter {
 
     fn default_rewrite_using_target(&mut self, source: &UsingTarget) -> UsingTarget {
         match source {
-            UsingTarget::TypeName(ref type_name) => {
+            UsingTarget::TypeName(type_name) => {
                 UsingTarget::TypeName(self.rewrite_type_name(type_name))
             }
             UsingTarget::Asterisk => UsingTarget::Asterisk,
@@ -1905,12 +1905,12 @@ pub trait Rewriter {
         source: &ContractSpecifier,
     ) -> ContractSpecifier {
         match source {
-            ContractSpecifier::InheritanceSpecifier(ref inheritance_specifier) => {
+            ContractSpecifier::InheritanceSpecifier(inheritance_specifier) => {
                 ContractSpecifier::InheritanceSpecifier(
                     self.rewrite_inheritance_specifier(inheritance_specifier),
                 )
             }
-            ContractSpecifier::StorageLayoutSpecifier(ref storage_layout_specifier) => {
+            ContractSpecifier::StorageLayoutSpecifier(storage_layout_specifier) => {
                 ContractSpecifier::StorageLayoutSpecifier(
                     self.rewrite_storage_layout_specifier(storage_layout_specifier),
                 )
@@ -1923,57 +1923,59 @@ pub trait Rewriter {
 
     fn default_rewrite_contract_member(&mut self, source: &ContractMember) -> ContractMember {
         match source {
-            ContractMember::UsingDirective(ref using_directive) => {
+            ContractMember::UsingDirective(using_directive) => {
                 ContractMember::UsingDirective(self.rewrite_using_directive(using_directive))
             }
-            ContractMember::FunctionDefinition(ref function_definition) => {
+            ContractMember::FunctionDefinition(function_definition) => {
                 ContractMember::FunctionDefinition(
                     self.rewrite_function_definition(function_definition),
                 )
             }
-            ContractMember::ConstructorDefinition(ref constructor_definition) => {
+            ContractMember::ConstructorDefinition(constructor_definition) => {
                 ContractMember::ConstructorDefinition(
                     self.rewrite_constructor_definition(constructor_definition),
                 )
             }
-            ContractMember::ReceiveFunctionDefinition(ref receive_function_definition) => {
+            ContractMember::ReceiveFunctionDefinition(receive_function_definition) => {
                 ContractMember::ReceiveFunctionDefinition(
                     self.rewrite_receive_function_definition(receive_function_definition),
                 )
             }
-            ContractMember::FallbackFunctionDefinition(ref fallback_function_definition) => {
+            ContractMember::FallbackFunctionDefinition(fallback_function_definition) => {
                 ContractMember::FallbackFunctionDefinition(
                     self.rewrite_fallback_function_definition(fallback_function_definition),
                 )
             }
-            ContractMember::UnnamedFunctionDefinition(ref unnamed_function_definition) => {
+            ContractMember::UnnamedFunctionDefinition(unnamed_function_definition) => {
                 ContractMember::UnnamedFunctionDefinition(
                     self.rewrite_unnamed_function_definition(unnamed_function_definition),
                 )
             }
-            ContractMember::ModifierDefinition(ref modifier_definition) => {
+            ContractMember::ModifierDefinition(modifier_definition) => {
                 ContractMember::ModifierDefinition(
                     self.rewrite_modifier_definition(modifier_definition),
                 )
             }
-            ContractMember::StructDefinition(ref struct_definition) => {
+            ContractMember::StructDefinition(struct_definition) => {
                 ContractMember::StructDefinition(self.rewrite_struct_definition(struct_definition))
             }
-            ContractMember::EnumDefinition(ref enum_definition) => {
+            ContractMember::EnumDefinition(enum_definition) => {
                 ContractMember::EnumDefinition(self.rewrite_enum_definition(enum_definition))
             }
-            ContractMember::EventDefinition(ref event_definition) => {
+            ContractMember::EventDefinition(event_definition) => {
                 ContractMember::EventDefinition(self.rewrite_event_definition(event_definition))
             }
-            ContractMember::ErrorDefinition(ref error_definition) => {
+            ContractMember::ErrorDefinition(error_definition) => {
                 ContractMember::ErrorDefinition(self.rewrite_error_definition(error_definition))
             }
-            ContractMember::UserDefinedValueTypeDefinition(
-                ref user_defined_value_type_definition,
-            ) => ContractMember::UserDefinedValueTypeDefinition(
-                self.rewrite_user_defined_value_type_definition(user_defined_value_type_definition),
-            ),
-            ContractMember::StateVariableDefinition(ref state_variable_definition) => {
+            ContractMember::UserDefinedValueTypeDefinition(user_defined_value_type_definition) => {
+                ContractMember::UserDefinedValueTypeDefinition(
+                    self.rewrite_user_defined_value_type_definition(
+                        user_defined_value_type_definition,
+                    ),
+                )
+            }
+            ContractMember::StateVariableDefinition(state_variable_definition) => {
                 ContractMember::StateVariableDefinition(
                     self.rewrite_state_variable_definition(state_variable_definition),
                 )
@@ -1989,7 +1991,7 @@ pub trait Rewriter {
         source: &StateVariableAttribute,
     ) -> StateVariableAttribute {
         match source {
-            StateVariableAttribute::OverrideSpecifier(ref override_specifier) => {
+            StateVariableAttribute::OverrideSpecifier(override_specifier) => {
                 StateVariableAttribute::OverrideSpecifier(
                     self.rewrite_override_specifier(override_specifier),
                 )
@@ -2025,12 +2027,12 @@ pub trait Rewriter {
         source: &FunctionAttribute,
     ) -> FunctionAttribute {
         match source {
-            FunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
+            FunctionAttribute::ModifierInvocation(modifier_invocation) => {
                 FunctionAttribute::ModifierInvocation(
                     self.rewrite_modifier_invocation(modifier_invocation),
                 )
             }
-            FunctionAttribute::OverrideSpecifier(ref override_specifier) => {
+            FunctionAttribute::OverrideSpecifier(override_specifier) => {
                 FunctionAttribute::OverrideSpecifier(
                     self.rewrite_override_specifier(override_specifier),
                 )
@@ -2052,7 +2054,7 @@ pub trait Rewriter {
 
     fn default_rewrite_function_body(&mut self, source: &FunctionBody) -> FunctionBody {
         match source {
-            FunctionBody::Block(ref block) => FunctionBody::Block(self.rewrite_block(block)),
+            FunctionBody::Block(block) => FunctionBody::Block(self.rewrite_block(block)),
             FunctionBody::Semicolon => FunctionBody::Semicolon,
         }
     }
@@ -2065,7 +2067,7 @@ pub trait Rewriter {
         source: &ConstructorAttribute,
     ) -> ConstructorAttribute {
         match source {
-            ConstructorAttribute::ModifierInvocation(ref modifier_invocation) => {
+            ConstructorAttribute::ModifierInvocation(modifier_invocation) => {
                 ConstructorAttribute::ModifierInvocation(
                     self.rewrite_modifier_invocation(modifier_invocation),
                 )
@@ -2089,7 +2091,7 @@ pub trait Rewriter {
         source: &UnnamedFunctionAttribute,
     ) -> UnnamedFunctionAttribute {
         match source {
-            UnnamedFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
+            UnnamedFunctionAttribute::ModifierInvocation(modifier_invocation) => {
                 UnnamedFunctionAttribute::ModifierInvocation(
                     self.rewrite_modifier_invocation(modifier_invocation),
                 )
@@ -2113,12 +2115,12 @@ pub trait Rewriter {
         source: &FallbackFunctionAttribute,
     ) -> FallbackFunctionAttribute {
         match source {
-            FallbackFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
+            FallbackFunctionAttribute::ModifierInvocation(modifier_invocation) => {
                 FallbackFunctionAttribute::ModifierInvocation(
                     self.rewrite_modifier_invocation(modifier_invocation),
                 )
             }
-            FallbackFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
+            FallbackFunctionAttribute::OverrideSpecifier(override_specifier) => {
                 FallbackFunctionAttribute::OverrideSpecifier(
                     self.rewrite_override_specifier(override_specifier),
                 )
@@ -2144,12 +2146,12 @@ pub trait Rewriter {
         source: &ReceiveFunctionAttribute,
     ) -> ReceiveFunctionAttribute {
         match source {
-            ReceiveFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
+            ReceiveFunctionAttribute::ModifierInvocation(modifier_invocation) => {
                 ReceiveFunctionAttribute::ModifierInvocation(
                     self.rewrite_modifier_invocation(modifier_invocation),
                 )
             }
-            ReceiveFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
+            ReceiveFunctionAttribute::OverrideSpecifier(override_specifier) => {
                 ReceiveFunctionAttribute::OverrideSpecifier(
                     self.rewrite_override_specifier(override_specifier),
                 )
@@ -2171,7 +2173,7 @@ pub trait Rewriter {
         source: &ModifierAttribute,
     ) -> ModifierAttribute {
         match source {
-            ModifierAttribute::OverrideSpecifier(ref override_specifier) => {
+            ModifierAttribute::OverrideSpecifier(override_specifier) => {
                 ModifierAttribute::OverrideSpecifier(
                     self.rewrite_override_specifier(override_specifier),
                 )
@@ -2185,19 +2187,19 @@ pub trait Rewriter {
 
     fn default_rewrite_type_name(&mut self, source: &TypeName) -> TypeName {
         match source {
-            TypeName::ArrayTypeName(ref array_type_name) => {
+            TypeName::ArrayTypeName(array_type_name) => {
                 TypeName::ArrayTypeName(self.rewrite_array_type_name(array_type_name))
             }
-            TypeName::FunctionType(ref function_type) => {
+            TypeName::FunctionType(function_type) => {
                 TypeName::FunctionType(self.rewrite_function_type(function_type))
             }
-            TypeName::MappingType(ref mapping_type) => {
+            TypeName::MappingType(mapping_type) => {
                 TypeName::MappingType(self.rewrite_mapping_type(mapping_type))
             }
-            TypeName::ElementaryType(ref elementary_type) => {
+            TypeName::ElementaryType(elementary_type) => {
                 TypeName::ElementaryType(self.rewrite_elementary_type(elementary_type))
             }
-            TypeName::IdentifierPath(ref identifier_path) => {
+            TypeName::IdentifierPath(identifier_path) => {
                 TypeName::IdentifierPath(self.rewrite_identifier_path(identifier_path))
             }
         }
@@ -2230,10 +2232,10 @@ pub trait Rewriter {
 
     fn default_rewrite_mapping_key_type(&mut self, source: &MappingKeyType) -> MappingKeyType {
         match source {
-            MappingKeyType::ElementaryType(ref elementary_type) => {
+            MappingKeyType::ElementaryType(elementary_type) => {
                 MappingKeyType::ElementaryType(self.rewrite_elementary_type(elementary_type))
             }
-            MappingKeyType::IdentifierPath(ref identifier_path) => {
+            MappingKeyType::IdentifierPath(identifier_path) => {
                 MappingKeyType::IdentifierPath(self.rewrite_identifier_path(identifier_path))
             }
         }
@@ -2244,7 +2246,7 @@ pub trait Rewriter {
 
     fn default_rewrite_elementary_type(&mut self, source: &ElementaryType) -> ElementaryType {
         match source {
-            ElementaryType::AddressType(ref address_type) => {
+            ElementaryType::AddressType(address_type) => {
                 ElementaryType::AddressType(self.rewrite_address_type(address_type))
             }
             ElementaryType::BytesKeyword(node) => ElementaryType::BytesKeyword(Rc::clone(node)),
@@ -2263,61 +2265,59 @@ pub trait Rewriter {
 
     fn default_rewrite_statement(&mut self, source: &Statement) -> Statement {
         match source {
-            Statement::IfStatement(ref if_statement) => {
+            Statement::IfStatement(if_statement) => {
                 Statement::IfStatement(self.rewrite_if_statement(if_statement))
             }
-            Statement::ForStatement(ref for_statement) => {
+            Statement::ForStatement(for_statement) => {
                 Statement::ForStatement(self.rewrite_for_statement(for_statement))
             }
-            Statement::WhileStatement(ref while_statement) => {
+            Statement::WhileStatement(while_statement) => {
                 Statement::WhileStatement(self.rewrite_while_statement(while_statement))
             }
-            Statement::DoWhileStatement(ref do_while_statement) => {
+            Statement::DoWhileStatement(do_while_statement) => {
                 Statement::DoWhileStatement(self.rewrite_do_while_statement(do_while_statement))
             }
-            Statement::ContinueStatement(ref continue_statement) => {
+            Statement::ContinueStatement(continue_statement) => {
                 Statement::ContinueStatement(self.rewrite_continue_statement(continue_statement))
             }
-            Statement::BreakStatement(ref break_statement) => {
+            Statement::BreakStatement(break_statement) => {
                 Statement::BreakStatement(self.rewrite_break_statement(break_statement))
             }
-            Statement::ReturnStatement(ref return_statement) => {
+            Statement::ReturnStatement(return_statement) => {
                 Statement::ReturnStatement(self.rewrite_return_statement(return_statement))
             }
-            Statement::ThrowStatement(ref throw_statement) => {
+            Statement::ThrowStatement(throw_statement) => {
                 Statement::ThrowStatement(self.rewrite_throw_statement(throw_statement))
             }
-            Statement::EmitStatement(ref emit_statement) => {
+            Statement::EmitStatement(emit_statement) => {
                 Statement::EmitStatement(self.rewrite_emit_statement(emit_statement))
             }
-            Statement::TryStatement(ref try_statement) => {
+            Statement::TryStatement(try_statement) => {
                 Statement::TryStatement(self.rewrite_try_statement(try_statement))
             }
-            Statement::RevertStatement(ref revert_statement) => {
+            Statement::RevertStatement(revert_statement) => {
                 Statement::RevertStatement(self.rewrite_revert_statement(revert_statement))
             }
-            Statement::AssemblyStatement(ref assembly_statement) => {
+            Statement::AssemblyStatement(assembly_statement) => {
                 Statement::AssemblyStatement(self.rewrite_assembly_statement(assembly_statement))
             }
-            Statement::Block(ref block) => Statement::Block(self.rewrite_block(block)),
-            Statement::UncheckedBlock(ref unchecked_block) => {
+            Statement::Block(block) => Statement::Block(self.rewrite_block(block)),
+            Statement::UncheckedBlock(unchecked_block) => {
                 Statement::UncheckedBlock(self.rewrite_unchecked_block(unchecked_block))
             }
-            Statement::TupleDeconstructionStatement(ref tuple_deconstruction_statement) => {
+            Statement::TupleDeconstructionStatement(tuple_deconstruction_statement) => {
                 Statement::TupleDeconstructionStatement(
                     self.rewrite_tuple_deconstruction_statement(tuple_deconstruction_statement),
                 )
             }
-            Statement::VariableDeclarationStatement(ref variable_declaration_statement) => {
+            Statement::VariableDeclarationStatement(variable_declaration_statement) => {
                 Statement::VariableDeclarationStatement(
                     self.rewrite_variable_declaration_statement(variable_declaration_statement),
                 )
             }
-            Statement::ExpressionStatement(ref expression_statement) => {
-                Statement::ExpressionStatement(
-                    self.rewrite_expression_statement(expression_statement),
-                )
-            }
+            Statement::ExpressionStatement(expression_statement) => Statement::ExpressionStatement(
+                self.rewrite_expression_statement(expression_statement),
+            ),
         }
     }
     fn rewrite_statement(&mut self, source: &Statement) -> Statement {
@@ -2326,10 +2326,10 @@ pub trait Rewriter {
 
     fn default_rewrite_tuple_member(&mut self, source: &TupleMember) -> TupleMember {
         match source {
-            TupleMember::TypedTupleMember(ref typed_tuple_member) => {
+            TupleMember::TypedTupleMember(typed_tuple_member) => {
                 TupleMember::TypedTupleMember(self.rewrite_typed_tuple_member(typed_tuple_member))
             }
-            TupleMember::UntypedTupleMember(ref untyped_tuple_member) => {
+            TupleMember::UntypedTupleMember(untyped_tuple_member) => {
                 TupleMember::UntypedTupleMember(
                     self.rewrite_untyped_tuple_member(untyped_tuple_member),
                 )
@@ -2345,7 +2345,7 @@ pub trait Rewriter {
         source: &VariableDeclarationType,
     ) -> VariableDeclarationType {
         match source {
-            VariableDeclarationType::TypeName(ref type_name) => {
+            VariableDeclarationType::TypeName(type_name) => {
                 VariableDeclarationType::TypeName(self.rewrite_type_name(type_name))
             }
             VariableDeclarationType::VarKeyword => VariableDeclarationType::VarKeyword,
@@ -2375,16 +2375,16 @@ pub trait Rewriter {
     ) -> ForStatementInitialization {
         match source {
             ForStatementInitialization::TupleDeconstructionStatement(
-                ref tuple_deconstruction_statement,
+                tuple_deconstruction_statement,
             ) => ForStatementInitialization::TupleDeconstructionStatement(
                 self.rewrite_tuple_deconstruction_statement(tuple_deconstruction_statement),
             ),
             ForStatementInitialization::VariableDeclarationStatement(
-                ref variable_declaration_statement,
+                variable_declaration_statement,
             ) => ForStatementInitialization::VariableDeclarationStatement(
                 self.rewrite_variable_declaration_statement(variable_declaration_statement),
             ),
-            ForStatementInitialization::ExpressionStatement(ref expression_statement) => {
+            ForStatementInitialization::ExpressionStatement(expression_statement) => {
                 ForStatementInitialization::ExpressionStatement(
                     self.rewrite_expression_statement(expression_statement),
                 )
@@ -2404,7 +2404,7 @@ pub trait Rewriter {
         source: &ForStatementCondition,
     ) -> ForStatementCondition {
         match source {
-            ForStatementCondition::ExpressionStatement(ref expression_statement) => {
+            ForStatementCondition::ExpressionStatement(expression_statement) => {
                 ForStatementCondition::ExpressionStatement(
                     self.rewrite_expression_statement(expression_statement),
                 )
@@ -2421,117 +2421,113 @@ pub trait Rewriter {
 
     fn default_rewrite_expression(&mut self, source: &Expression) -> Expression {
         match source {
-            Expression::AssignmentExpression(ref assignment_expression) => {
+            Expression::AssignmentExpression(assignment_expression) => {
                 Expression::AssignmentExpression(
                     self.rewrite_assignment_expression(assignment_expression),
                 )
             }
-            Expression::ConditionalExpression(ref conditional_expression) => {
+            Expression::ConditionalExpression(conditional_expression) => {
                 Expression::ConditionalExpression(
                     self.rewrite_conditional_expression(conditional_expression),
                 )
             }
-            Expression::OrExpression(ref or_expression) => {
+            Expression::OrExpression(or_expression) => {
                 Expression::OrExpression(self.rewrite_or_expression(or_expression))
             }
-            Expression::AndExpression(ref and_expression) => {
+            Expression::AndExpression(and_expression) => {
                 Expression::AndExpression(self.rewrite_and_expression(and_expression))
             }
-            Expression::EqualityExpression(ref equality_expression) => {
-                Expression::EqualityExpression(
-                    self.rewrite_equality_expression(equality_expression),
-                )
-            }
-            Expression::InequalityExpression(ref inequality_expression) => {
+            Expression::EqualityExpression(equality_expression) => Expression::EqualityExpression(
+                self.rewrite_equality_expression(equality_expression),
+            ),
+            Expression::InequalityExpression(inequality_expression) => {
                 Expression::InequalityExpression(
                     self.rewrite_inequality_expression(inequality_expression),
                 )
             }
-            Expression::BitwiseOrExpression(ref bitwise_or_expression) => {
+            Expression::BitwiseOrExpression(bitwise_or_expression) => {
                 Expression::BitwiseOrExpression(
                     self.rewrite_bitwise_or_expression(bitwise_or_expression),
                 )
             }
-            Expression::BitwiseXorExpression(ref bitwise_xor_expression) => {
+            Expression::BitwiseXorExpression(bitwise_xor_expression) => {
                 Expression::BitwiseXorExpression(
                     self.rewrite_bitwise_xor_expression(bitwise_xor_expression),
                 )
             }
-            Expression::BitwiseAndExpression(ref bitwise_and_expression) => {
+            Expression::BitwiseAndExpression(bitwise_and_expression) => {
                 Expression::BitwiseAndExpression(
                     self.rewrite_bitwise_and_expression(bitwise_and_expression),
                 )
             }
-            Expression::ShiftExpression(ref shift_expression) => {
+            Expression::ShiftExpression(shift_expression) => {
                 Expression::ShiftExpression(self.rewrite_shift_expression(shift_expression))
             }
-            Expression::AdditiveExpression(ref additive_expression) => {
-                Expression::AdditiveExpression(
-                    self.rewrite_additive_expression(additive_expression),
-                )
-            }
-            Expression::MultiplicativeExpression(ref multiplicative_expression) => {
+            Expression::AdditiveExpression(additive_expression) => Expression::AdditiveExpression(
+                self.rewrite_additive_expression(additive_expression),
+            ),
+            Expression::MultiplicativeExpression(multiplicative_expression) => {
                 Expression::MultiplicativeExpression(
                     self.rewrite_multiplicative_expression(multiplicative_expression),
                 )
             }
-            Expression::ExponentiationExpression(ref exponentiation_expression) => {
+            Expression::ExponentiationExpression(exponentiation_expression) => {
                 Expression::ExponentiationExpression(
                     self.rewrite_exponentiation_expression(exponentiation_expression),
                 )
             }
-            Expression::PostfixExpression(ref postfix_expression) => {
+            Expression::PostfixExpression(postfix_expression) => {
                 Expression::PostfixExpression(self.rewrite_postfix_expression(postfix_expression))
             }
-            Expression::PrefixExpression(ref prefix_expression) => {
+            Expression::PrefixExpression(prefix_expression) => {
                 Expression::PrefixExpression(self.rewrite_prefix_expression(prefix_expression))
             }
-            Expression::FunctionCallExpression(ref function_call_expression) => {
+            Expression::FunctionCallExpression(function_call_expression) => {
                 Expression::FunctionCallExpression(
                     self.rewrite_function_call_expression(function_call_expression),
                 )
             }
-            Expression::CallOptionsExpression(ref call_options_expression) => {
+            Expression::CallOptionsExpression(call_options_expression) => {
                 Expression::CallOptionsExpression(
                     self.rewrite_call_options_expression(call_options_expression),
                 )
             }
-            Expression::MemberAccessExpression(ref member_access_expression) => {
+            Expression::MemberAccessExpression(member_access_expression) => {
                 Expression::MemberAccessExpression(
                     self.rewrite_member_access_expression(member_access_expression),
                 )
             }
-            Expression::IndexAccessExpression(ref index_access_expression) => {
+            Expression::IndexAccessExpression(index_access_expression) => {
                 Expression::IndexAccessExpression(
                     self.rewrite_index_access_expression(index_access_expression),
                 )
             }
-            Expression::NewExpression(ref new_expression) => {
+            Expression::NewExpression(new_expression) => {
                 Expression::NewExpression(self.rewrite_new_expression(new_expression))
             }
-            Expression::TupleExpression(ref tuple_expression) => {
+            Expression::TupleExpression(tuple_expression) => {
                 Expression::TupleExpression(self.rewrite_tuple_expression(tuple_expression))
             }
-            Expression::TypeExpression(ref type_expression) => {
+            Expression::TypeExpression(type_expression) => {
                 Expression::TypeExpression(self.rewrite_type_expression(type_expression))
             }
-            Expression::ArrayExpression(ref array_expression) => {
+            Expression::ArrayExpression(array_expression) => {
                 Expression::ArrayExpression(self.rewrite_array_expression(array_expression))
             }
-            Expression::HexNumberExpression(ref hex_number_expression) => {
+            Expression::HexNumberExpression(hex_number_expression) => {
                 Expression::HexNumberExpression(
                     self.rewrite_hex_number_expression(hex_number_expression),
                 )
             }
-            Expression::DecimalNumberExpression(ref decimal_number_expression) => {
+            Expression::DecimalNumberExpression(decimal_number_expression) => {
                 Expression::DecimalNumberExpression(
                     self.rewrite_decimal_number_expression(decimal_number_expression),
                 )
             }
-            Expression::StringExpression(ref string_expression) => {
+            Expression::StringExpression(string_expression) => {
                 Expression::StringExpression(self.rewrite_string_expression(string_expression))
             }
-            Expression::ElementaryType(ref elementary_type) => {
+            Expression::ElementaryType(elementary_type) => {
                 Expression::ElementaryType(self.rewrite_elementary_type(elementary_type))
             }
             Expression::Identifier(node) => Expression::Identifier(Rc::clone(node)),
@@ -2552,11 +2548,11 @@ pub trait Rewriter {
     ) -> ArgumentsDeclaration {
         match source {
             ArgumentsDeclaration::PositionalArgumentsDeclaration(
-                ref positional_arguments_declaration,
+                positional_arguments_declaration,
             ) => ArgumentsDeclaration::PositionalArgumentsDeclaration(
                 self.rewrite_positional_arguments_declaration(positional_arguments_declaration),
             ),
-            ArgumentsDeclaration::NamedArgumentsDeclaration(ref named_arguments_declaration) => {
+            ArgumentsDeclaration::NamedArgumentsDeclaration(named_arguments_declaration) => {
                 ArgumentsDeclaration::NamedArgumentsDeclaration(
                     self.rewrite_named_arguments_declaration(named_arguments_declaration),
                 )
@@ -2591,23 +2587,23 @@ pub trait Rewriter {
 
     fn default_rewrite_string_expression(&mut self, source: &StringExpression) -> StringExpression {
         match source {
-            StringExpression::StringLiteral(ref string_literal) => {
+            StringExpression::StringLiteral(string_literal) => {
                 StringExpression::StringLiteral(self.rewrite_string_literal(string_literal))
             }
-            StringExpression::StringLiterals(ref string_literals) => {
+            StringExpression::StringLiterals(string_literals) => {
                 StringExpression::StringLiterals(self.rewrite_string_literals(string_literals))
             }
-            StringExpression::HexStringLiteral(ref hex_string_literal) => {
+            StringExpression::HexStringLiteral(hex_string_literal) => {
                 StringExpression::HexStringLiteral(
                     self.rewrite_hex_string_literal(hex_string_literal),
                 )
             }
-            StringExpression::HexStringLiterals(ref hex_string_literals) => {
+            StringExpression::HexStringLiterals(hex_string_literals) => {
                 StringExpression::HexStringLiterals(
                     self.rewrite_hex_string_literals(hex_string_literals),
                 )
             }
-            StringExpression::UnicodeStringLiterals(ref unicode_string_literals) => {
+            StringExpression::UnicodeStringLiterals(unicode_string_literals) => {
                 StringExpression::UnicodeStringLiterals(
                     self.rewrite_unicode_string_literals(unicode_string_literals),
                 )
@@ -2671,61 +2667,63 @@ pub trait Rewriter {
 
     fn default_rewrite_yul_statement(&mut self, source: &YulStatement) -> YulStatement {
         match source {
-            YulStatement::YulBlock(ref yul_block) => {
+            YulStatement::YulBlock(yul_block) => {
                 YulStatement::YulBlock(self.rewrite_yul_block(yul_block))
             }
-            YulStatement::YulFunctionDefinition(ref yul_function_definition) => {
+            YulStatement::YulFunctionDefinition(yul_function_definition) => {
                 YulStatement::YulFunctionDefinition(
                     self.rewrite_yul_function_definition(yul_function_definition),
                 )
             }
-            YulStatement::YulStackAssignmentStatement(ref yul_stack_assignment_statement) => {
+            YulStatement::YulStackAssignmentStatement(yul_stack_assignment_statement) => {
                 YulStatement::YulStackAssignmentStatement(
                     self.rewrite_yul_stack_assignment_statement(yul_stack_assignment_statement),
                 )
             }
-            YulStatement::YulIfStatement(ref yul_if_statement) => {
+            YulStatement::YulIfStatement(yul_if_statement) => {
                 YulStatement::YulIfStatement(self.rewrite_yul_if_statement(yul_if_statement))
             }
-            YulStatement::YulForStatement(ref yul_for_statement) => {
+            YulStatement::YulForStatement(yul_for_statement) => {
                 YulStatement::YulForStatement(self.rewrite_yul_for_statement(yul_for_statement))
             }
-            YulStatement::YulSwitchStatement(ref yul_switch_statement) => {
+            YulStatement::YulSwitchStatement(yul_switch_statement) => {
                 YulStatement::YulSwitchStatement(
                     self.rewrite_yul_switch_statement(yul_switch_statement),
                 )
             }
-            YulStatement::YulLeaveStatement(ref yul_leave_statement) => {
+            YulStatement::YulLeaveStatement(yul_leave_statement) => {
                 YulStatement::YulLeaveStatement(
                     self.rewrite_yul_leave_statement(yul_leave_statement),
                 )
             }
-            YulStatement::YulBreakStatement(ref yul_break_statement) => {
+            YulStatement::YulBreakStatement(yul_break_statement) => {
                 YulStatement::YulBreakStatement(
                     self.rewrite_yul_break_statement(yul_break_statement),
                 )
             }
-            YulStatement::YulContinueStatement(ref yul_continue_statement) => {
+            YulStatement::YulContinueStatement(yul_continue_statement) => {
                 YulStatement::YulContinueStatement(
                     self.rewrite_yul_continue_statement(yul_continue_statement),
                 )
             }
-            YulStatement::YulVariableAssignmentStatement(ref yul_variable_assignment_statement) => {
+            YulStatement::YulVariableAssignmentStatement(yul_variable_assignment_statement) => {
                 YulStatement::YulVariableAssignmentStatement(
                     self.rewrite_yul_variable_assignment_statement(
                         yul_variable_assignment_statement,
                     ),
                 )
             }
-            YulStatement::YulLabel(ref yul_label) => {
+            YulStatement::YulLabel(yul_label) => {
                 YulStatement::YulLabel(self.rewrite_yul_label(yul_label))
             }
-            YulStatement::YulVariableDeclarationStatement(
-                ref yul_variable_declaration_statement,
-            ) => YulStatement::YulVariableDeclarationStatement(
-                self.rewrite_yul_variable_declaration_statement(yul_variable_declaration_statement),
-            ),
-            YulStatement::YulExpression(ref yul_expression) => {
+            YulStatement::YulVariableDeclarationStatement(yul_variable_declaration_statement) => {
+                YulStatement::YulVariableDeclarationStatement(
+                    self.rewrite_yul_variable_declaration_statement(
+                        yul_variable_declaration_statement,
+                    ),
+                )
+            }
+            YulStatement::YulExpression(yul_expression) => {
                 YulStatement::YulExpression(self.rewrite_yul_expression(yul_expression))
             }
         }
@@ -2739,7 +2737,7 @@ pub trait Rewriter {
         source: &YulAssignmentOperator,
     ) -> YulAssignmentOperator {
         match source {
-            YulAssignmentOperator::YulColonAndEqual(ref yul_colon_and_equal) => {
+            YulAssignmentOperator::YulColonAndEqual(yul_colon_and_equal) => {
                 YulAssignmentOperator::YulColonAndEqual(
                     self.rewrite_yul_colon_and_equal(yul_colon_and_equal),
                 )
@@ -2759,7 +2757,7 @@ pub trait Rewriter {
         source: &YulStackAssignmentOperator,
     ) -> YulStackAssignmentOperator {
         match source {
-            YulStackAssignmentOperator::YulEqualAndColon(ref yul_equal_and_colon) => {
+            YulStackAssignmentOperator::YulEqualAndColon(yul_equal_and_colon) => {
                 YulStackAssignmentOperator::YulEqualAndColon(
                     self.rewrite_yul_equal_and_colon(yul_equal_and_colon),
                 )
@@ -2776,10 +2774,10 @@ pub trait Rewriter {
 
     fn default_rewrite_yul_switch_case(&mut self, source: &YulSwitchCase) -> YulSwitchCase {
         match source {
-            YulSwitchCase::YulDefaultCase(ref yul_default_case) => {
+            YulSwitchCase::YulDefaultCase(yul_default_case) => {
                 YulSwitchCase::YulDefaultCase(self.rewrite_yul_default_case(yul_default_case))
             }
-            YulSwitchCase::YulValueCase(ref yul_value_case) => {
+            YulSwitchCase::YulValueCase(yul_value_case) => {
                 YulSwitchCase::YulValueCase(self.rewrite_yul_value_case(yul_value_case))
             }
         }
@@ -2790,15 +2788,15 @@ pub trait Rewriter {
 
     fn default_rewrite_yul_expression(&mut self, source: &YulExpression) -> YulExpression {
         match source {
-            YulExpression::YulFunctionCallExpression(ref yul_function_call_expression) => {
+            YulExpression::YulFunctionCallExpression(yul_function_call_expression) => {
                 YulExpression::YulFunctionCallExpression(
                     self.rewrite_yul_function_call_expression(yul_function_call_expression),
                 )
             }
-            YulExpression::YulLiteral(ref yul_literal) => {
+            YulExpression::YulLiteral(yul_literal) => {
                 YulExpression::YulLiteral(self.rewrite_yul_literal(yul_literal))
             }
-            YulExpression::YulPath(ref yul_path) => {
+            YulExpression::YulPath(yul_path) => {
                 YulExpression::YulPath(self.rewrite_yul_path(yul_path))
             }
         }
@@ -2809,10 +2807,10 @@ pub trait Rewriter {
 
     fn default_rewrite_yul_literal(&mut self, source: &YulLiteral) -> YulLiteral {
         match source {
-            YulLiteral::HexStringLiteral(ref hex_string_literal) => {
+            YulLiteral::HexStringLiteral(hex_string_literal) => {
                 YulLiteral::HexStringLiteral(self.rewrite_hex_string_literal(hex_string_literal))
             }
-            YulLiteral::StringLiteral(ref string_literal) => {
+            YulLiteral::StringLiteral(string_literal) => {
                 YulLiteral::StringLiteral(self.rewrite_string_literal(string_literal))
             }
             YulLiteral::YulDecimalLiteral(node) => YulLiteral::YulDecimalLiteral(Rc::clone(node)),

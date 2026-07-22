@@ -1,7 +1,8 @@
 [package]
 version.workspace = true
 rust-version.workspace = true
-edition.workspace = true
+# Vendored fork of an external crate; pinned to edition 2021 to minimize divergence from upstream.
+edition = "2021"
 publish = true
 
 name = "metaslang_graph_builder"

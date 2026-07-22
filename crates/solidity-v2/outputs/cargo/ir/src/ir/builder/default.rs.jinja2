@@ -82,7 +82,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         match source {
           {% for variant in choice.variants -%}
             {% if not variant.is_new -%}
-              input::{{ choice.source_name }}::{{ variant.source.name }}(ref {{ variant.source.name | snake_case }}) => {
+              input::{{ choice.source_name }}::{{ variant.source.name }}({{ variant.source.name | snake_case }}) => {
                 output::{{ parent_type }}::{{ variant.target.name }}(self.build_{{ variant.source.name | snake_case }}({{ variant.source.name | snake_case }}))
               }
             {%- endif -%}

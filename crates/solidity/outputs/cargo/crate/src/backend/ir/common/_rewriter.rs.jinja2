@@ -49,7 +49,7 @@
       fn default_rewrite_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
         match source {
           {% for nonterminal in choice.variants | filter(attribute="kind", value="Nonterminal") -%}
-            {{ parent_type }}::{{ nonterminal.name }}(ref {{ nonterminal.name | snake_case }}) => {
+            {{ parent_type }}::{{ nonterminal.name }}({{ nonterminal.name | snake_case }}) => {
               {{ parent_type }}::{{ nonterminal.name }}(self.rewrite_{{ nonterminal.name | snake_case }}({{ nonterminal.name | snake_case }}))
             }
           {%- endfor %}

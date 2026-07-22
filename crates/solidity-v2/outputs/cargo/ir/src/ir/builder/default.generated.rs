@@ -1539,12 +1539,12 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::AbicoderVersion::AbicoderV1Keyword(ref abicoder_v1_keyword) => {
+            input::AbicoderVersion::AbicoderV1Keyword(abicoder_v1_keyword) => {
                 output::AbicoderVersion::AbicoderV1Keyword(
                     self.build_abicoder_v1_keyword(abicoder_v1_keyword),
                 )
             }
-            input::AbicoderVersion::AbicoderV2Keyword(ref abicoder_v2_keyword) => {
+            input::AbicoderVersion::AbicoderV2Keyword(abicoder_v2_keyword) => {
                 output::AbicoderVersion::AbicoderV2Keyword(
                     self.build_abicoder_v2_keyword(abicoder_v2_keyword),
                 )
@@ -1560,10 +1560,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Expression_AdditiveExpression_Operator::Minus(ref minus) => {
+            input::Expression_AdditiveExpression_Operator::Minus(minus) => {
                 output::AdditiveExpressionOperator::Minus(self.build_minus(minus))
             }
-            input::Expression_AdditiveExpression_Operator::Plus(ref plus) => {
+            input::Expression_AdditiveExpression_Operator::Plus(plus) => {
                 output::AdditiveExpressionOperator::Plus(self.build_plus(plus))
             }
         }
@@ -1590,29 +1590,29 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-          input::Expression_AssignmentExpression_Operator::AmpersandEqual(ref ampersand_equal) => {
+          input::Expression_AssignmentExpression_Operator::AmpersandEqual(ampersand_equal) => {
                 output::AssignmentExpressionOperator::AmpersandEqual(self.build_ampersand_equal(ampersand_equal))
-              }input::Expression_AssignmentExpression_Operator::AsteriskEqual(ref asterisk_equal) => {
+              }input::Expression_AssignmentExpression_Operator::AsteriskEqual(asterisk_equal) => {
                 output::AssignmentExpressionOperator::AsteriskEqual(self.build_asterisk_equal(asterisk_equal))
-              }input::Expression_AssignmentExpression_Operator::BarEqual(ref bar_equal) => {
+              }input::Expression_AssignmentExpression_Operator::BarEqual(bar_equal) => {
                 output::AssignmentExpressionOperator::BarEqual(self.build_bar_equal(bar_equal))
-              }input::Expression_AssignmentExpression_Operator::CaretEqual(ref caret_equal) => {
+              }input::Expression_AssignmentExpression_Operator::CaretEqual(caret_equal) => {
                 output::AssignmentExpressionOperator::CaretEqual(self.build_caret_equal(caret_equal))
-              }input::Expression_AssignmentExpression_Operator::Equal(ref equal) => {
+              }input::Expression_AssignmentExpression_Operator::Equal(equal) => {
                 output::AssignmentExpressionOperator::Equal(self.build_equal(equal))
-              }input::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual(ref greater_than_greater_than_equal) => {
+              }input::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual(greater_than_greater_than_equal) => {
                 output::AssignmentExpressionOperator::GreaterThanGreaterThanEqual(self.build_greater_than_greater_than_equal(greater_than_greater_than_equal))
-              }input::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual(ref greater_than_greater_than_greater_than_equal) => {
+              }input::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual(greater_than_greater_than_greater_than_equal) => {
                 output::AssignmentExpressionOperator::GreaterThanGreaterThanGreaterThanEqual(self.build_greater_than_greater_than_greater_than_equal(greater_than_greater_than_greater_than_equal))
-              }input::Expression_AssignmentExpression_Operator::LessThanLessThanEqual(ref less_than_less_than_equal) => {
+              }input::Expression_AssignmentExpression_Operator::LessThanLessThanEqual(less_than_less_than_equal) => {
                 output::AssignmentExpressionOperator::LessThanLessThanEqual(self.build_less_than_less_than_equal(less_than_less_than_equal))
-              }input::Expression_AssignmentExpression_Operator::MinusEqual(ref minus_equal) => {
+              }input::Expression_AssignmentExpression_Operator::MinusEqual(minus_equal) => {
                 output::AssignmentExpressionOperator::MinusEqual(self.build_minus_equal(minus_equal))
-              }input::Expression_AssignmentExpression_Operator::PercentEqual(ref percent_equal) => {
+              }input::Expression_AssignmentExpression_Operator::PercentEqual(percent_equal) => {
                 output::AssignmentExpressionOperator::PercentEqual(self.build_percent_equal(percent_equal))
-              }input::Expression_AssignmentExpression_Operator::PlusEqual(ref plus_equal) => {
+              }input::Expression_AssignmentExpression_Operator::PlusEqual(plus_equal) => {
                 output::AssignmentExpressionOperator::PlusEqual(self.build_plus_equal(plus_equal))
-              }input::Expression_AssignmentExpression_Operator::SlashEqual(ref slash_equal) => {
+              }input::Expression_AssignmentExpression_Operator::SlashEqual(slash_equal) => {
                 output::AssignmentExpressionOperator::SlashEqual(self.build_slash_equal(slash_equal))
               }}
     }
@@ -1626,38 +1626,38 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::ContractMember::UsingDirective(ref using_directive) => {
+            input::ContractMember::UsingDirective(using_directive) => {
                 output::ContractMember::UsingDirective(self.build_using_directive(using_directive))
             }
-            input::ContractMember::FunctionDefinition(ref function_definition) => {
+            input::ContractMember::FunctionDefinition(function_definition) => {
                 output::ContractMember::FunctionDefinition(
                     self.build_function_definition(function_definition),
                 )
             }
-            input::ContractMember::StructDefinition(ref struct_definition) => {
+            input::ContractMember::StructDefinition(struct_definition) => {
                 output::ContractMember::StructDefinition(
                     self.build_struct_definition(struct_definition),
                 )
             }
-            input::ContractMember::EnumDefinition(ref enum_definition) => {
+            input::ContractMember::EnumDefinition(enum_definition) => {
                 output::ContractMember::EnumDefinition(self.build_enum_definition(enum_definition))
             }
-            input::ContractMember::EventDefinition(ref event_definition) => {
+            input::ContractMember::EventDefinition(event_definition) => {
                 output::ContractMember::EventDefinition(
                     self.build_event_definition(event_definition),
                 )
             }
-            input::ContractMember::ErrorDefinition(ref error_definition) => {
+            input::ContractMember::ErrorDefinition(error_definition) => {
                 output::ContractMember::ErrorDefinition(
                     self.build_error_definition(error_definition),
                 )
             }
             input::ContractMember::UserDefinedValueTypeDefinition(
-                ref user_defined_value_type_definition,
+                user_defined_value_type_definition,
             ) => output::ContractMember::UserDefinedValueTypeDefinition(
                 self.build_user_defined_value_type_definition(user_defined_value_type_definition),
             ),
-            input::ContractMember::StateVariableDefinition(ref state_variable_definition) => {
+            input::ContractMember::StateVariableDefinition(state_variable_definition) => {
                 output::ContractMember::StateVariableDefinition(
                     self.build_state_variable_definition(state_variable_definition),
                 )
@@ -1674,28 +1674,28 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::ElementaryType::BoolKeyword(ref bool_keyword) => {
+            input::ElementaryType::BoolKeyword(bool_keyword) => {
                 output::ElementaryType::BoolKeyword(self.build_bool_keyword(bool_keyword))
             }
-            input::ElementaryType::StringKeyword(ref string_keyword) => {
+            input::ElementaryType::StringKeyword(string_keyword) => {
                 output::ElementaryType::StringKeyword(self.build_string_keyword(string_keyword))
             }
-            input::ElementaryType::AddressType(ref address_type) => {
+            input::ElementaryType::AddressType(address_type) => {
                 output::ElementaryType::AddressType(self.build_address_type(address_type))
             }
-            input::ElementaryType::BytesKeyword(ref bytes_keyword) => {
+            input::ElementaryType::BytesKeyword(bytes_keyword) => {
                 output::ElementaryType::BytesKeyword(self.build_bytes_keyword(bytes_keyword))
             }
-            input::ElementaryType::IntKeyword(ref int_keyword) => {
+            input::ElementaryType::IntKeyword(int_keyword) => {
                 output::ElementaryType::IntKeyword(self.build_int_keyword(int_keyword))
             }
-            input::ElementaryType::UintKeyword(ref uint_keyword) => {
+            input::ElementaryType::UintKeyword(uint_keyword) => {
                 output::ElementaryType::UintKeyword(self.build_uint_keyword(uint_keyword))
             }
-            input::ElementaryType::FixedKeyword(ref fixed_keyword) => {
+            input::ElementaryType::FixedKeyword(fixed_keyword) => {
                 output::ElementaryType::FixedKeyword(self.build_fixed_keyword(fixed_keyword))
             }
-            input::ElementaryType::UfixedKeyword(ref ufixed_keyword) => {
+            input::ElementaryType::UfixedKeyword(ufixed_keyword) => {
                 output::ElementaryType::UfixedKeyword(self.build_ufixed_keyword(ufixed_keyword))
             }
         }
@@ -1709,10 +1709,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Expression_EqualityExpression_Operator::BangEqual(ref bang_equal) => {
+            input::Expression_EqualityExpression_Operator::BangEqual(bang_equal) => {
                 output::EqualityExpressionOperator::BangEqual(self.build_bang_equal(bang_equal))
             }
-            input::Expression_EqualityExpression_Operator::EqualEqual(ref equal_equal) => {
+            input::Expression_EqualityExpression_Operator::EqualEqual(equal_equal) => {
                 output::EqualityExpressionOperator::EqualEqual(self.build_equal_equal(equal_equal))
             }
         }
@@ -1726,17 +1726,17 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::ExperimentalFeature::ABIEncoderV2Keyword(ref abi_encoder_v2_keyword) => {
+            input::ExperimentalFeature::ABIEncoderV2Keyword(abi_encoder_v2_keyword) => {
                 output::ExperimentalFeature::ABIEncoderV2Keyword(
                     self.build_abi_encoder_v2_keyword(abi_encoder_v2_keyword),
                 )
             }
-            input::ExperimentalFeature::SMTCheckerKeyword(ref smt_checker_keyword) => {
+            input::ExperimentalFeature::SMTCheckerKeyword(smt_checker_keyword) => {
                 output::ExperimentalFeature::SMTCheckerKeyword(
                     self.build_smt_checker_keyword(smt_checker_keyword),
                 )
             }
-            input::ExperimentalFeature::PragmaStringLiteral(ref pragma_string_literal) => {
+            input::ExperimentalFeature::PragmaStringLiteral(pragma_string_literal) => {
                 output::ExperimentalFeature::StringLiteral(
                     self.build_pragma_string_literal(pragma_string_literal),
                 )
@@ -1749,141 +1749,141 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Expression::AssignmentExpression(ref assignment_expression) => {
+            input::Expression::AssignmentExpression(assignment_expression) => {
                 output::Expression::AssignmentExpression(
                     self.build_assignment_expression(assignment_expression),
                 )
             }
-            input::Expression::ConditionalExpression(ref conditional_expression) => {
+            input::Expression::ConditionalExpression(conditional_expression) => {
                 output::Expression::ConditionalExpression(
                     self.build_conditional_expression(conditional_expression),
                 )
             }
-            input::Expression::OrExpression(ref or_expression) => {
+            input::Expression::OrExpression(or_expression) => {
                 output::Expression::OrExpression(self.build_or_expression(or_expression))
             }
-            input::Expression::AndExpression(ref and_expression) => {
+            input::Expression::AndExpression(and_expression) => {
                 output::Expression::AndExpression(self.build_and_expression(and_expression))
             }
-            input::Expression::EqualityExpression(ref equality_expression) => {
+            input::Expression::EqualityExpression(equality_expression) => {
                 output::Expression::EqualityExpression(
                     self.build_equality_expression(equality_expression),
                 )
             }
-            input::Expression::InequalityExpression(ref inequality_expression) => {
+            input::Expression::InequalityExpression(inequality_expression) => {
                 output::Expression::InequalityExpression(
                     self.build_inequality_expression(inequality_expression),
                 )
             }
-            input::Expression::BitwiseOrExpression(ref bitwise_or_expression) => {
+            input::Expression::BitwiseOrExpression(bitwise_or_expression) => {
                 output::Expression::BitwiseOrExpression(
                     self.build_bitwise_or_expression(bitwise_or_expression),
                 )
             }
-            input::Expression::BitwiseXorExpression(ref bitwise_xor_expression) => {
+            input::Expression::BitwiseXorExpression(bitwise_xor_expression) => {
                 output::Expression::BitwiseXorExpression(
                     self.build_bitwise_xor_expression(bitwise_xor_expression),
                 )
             }
-            input::Expression::BitwiseAndExpression(ref bitwise_and_expression) => {
+            input::Expression::BitwiseAndExpression(bitwise_and_expression) => {
                 output::Expression::BitwiseAndExpression(
                     self.build_bitwise_and_expression(bitwise_and_expression),
                 )
             }
-            input::Expression::ShiftExpression(ref shift_expression) => {
+            input::Expression::ShiftExpression(shift_expression) => {
                 output::Expression::ShiftExpression(self.build_shift_expression(shift_expression))
             }
-            input::Expression::AdditiveExpression(ref additive_expression) => {
+            input::Expression::AdditiveExpression(additive_expression) => {
                 output::Expression::AdditiveExpression(
                     self.build_additive_expression(additive_expression),
                 )
             }
-            input::Expression::MultiplicativeExpression(ref multiplicative_expression) => {
+            input::Expression::MultiplicativeExpression(multiplicative_expression) => {
                 output::Expression::MultiplicativeExpression(
                     self.build_multiplicative_expression(multiplicative_expression),
                 )
             }
-            input::Expression::ExponentiationExpression(ref exponentiation_expression) => {
+            input::Expression::ExponentiationExpression(exponentiation_expression) => {
                 output::Expression::ExponentiationExpression(
                     self.build_exponentiation_expression(exponentiation_expression),
                 )
             }
-            input::Expression::PostfixExpression(ref postfix_expression) => {
+            input::Expression::PostfixExpression(postfix_expression) => {
                 output::Expression::PostfixExpression(
                     self.build_postfix_expression(postfix_expression),
                 )
             }
-            input::Expression::PrefixExpression(ref prefix_expression) => {
+            input::Expression::PrefixExpression(prefix_expression) => {
                 output::Expression::PrefixExpression(
                     self.build_prefix_expression(prefix_expression),
                 )
             }
-            input::Expression::FunctionCallExpression(ref function_call_expression) => {
+            input::Expression::FunctionCallExpression(function_call_expression) => {
                 output::Expression::FunctionCallExpression(
                     self.build_function_call_expression(function_call_expression),
                 )
             }
-            input::Expression::CallOptionsExpression(ref call_options_expression) => {
+            input::Expression::CallOptionsExpression(call_options_expression) => {
                 output::Expression::CallOptionsExpression(
                     self.build_call_options_expression(call_options_expression),
                 )
             }
-            input::Expression::MemberAccessExpression(ref member_access_expression) => {
+            input::Expression::MemberAccessExpression(member_access_expression) => {
                 output::Expression::MemberAccessExpression(
                     self.build_member_access_expression(member_access_expression),
                 )
             }
-            input::Expression::IndexAccessExpression(ref index_access_expression) => {
+            input::Expression::IndexAccessExpression(index_access_expression) => {
                 output::Expression::IndexAccessExpression(
                     self.build_index_access_expression(index_access_expression),
                 )
             }
-            input::Expression::NewExpression(ref new_expression) => {
+            input::Expression::NewExpression(new_expression) => {
                 output::Expression::NewExpression(self.build_new_expression(new_expression))
             }
-            input::Expression::TupleExpression(ref tuple_expression) => {
+            input::Expression::TupleExpression(tuple_expression) => {
                 output::Expression::TupleExpression(self.build_tuple_expression(tuple_expression))
             }
-            input::Expression::TypeExpression(ref type_expression) => {
+            input::Expression::TypeExpression(type_expression) => {
                 output::Expression::TypeExpression(self.build_type_expression(type_expression))
             }
-            input::Expression::ArrayExpression(ref array_expression) => {
+            input::Expression::ArrayExpression(array_expression) => {
                 output::Expression::ArrayExpression(self.build_array_expression(array_expression))
             }
-            input::Expression::HexNumberExpression(ref hex_number_expression) => {
+            input::Expression::HexNumberExpression(hex_number_expression) => {
                 output::Expression::HexNumberExpression(
                     self.build_hex_number_expression(hex_number_expression),
                 )
             }
-            input::Expression::DecimalNumberExpression(ref decimal_number_expression) => {
+            input::Expression::DecimalNumberExpression(decimal_number_expression) => {
                 output::Expression::DecimalNumberExpression(
                     self.build_decimal_number_expression(decimal_number_expression),
                 )
             }
-            input::Expression::StringExpression(ref string_expression) => {
+            input::Expression::StringExpression(string_expression) => {
                 output::Expression::StringExpression(
                     self.build_string_expression(string_expression),
                 )
             }
-            input::Expression::ElementaryType(ref elementary_type) => {
+            input::Expression::ElementaryType(elementary_type) => {
                 output::Expression::ElementaryType(self.build_elementary_type(elementary_type))
             }
-            input::Expression::PayableKeyword(ref payable_keyword) => {
+            input::Expression::PayableKeyword(payable_keyword) => {
                 output::Expression::PayableKeyword(self.build_payable_keyword(payable_keyword))
             }
-            input::Expression::ThisKeyword(ref this_keyword) => {
+            input::Expression::ThisKeyword(this_keyword) => {
                 output::Expression::ThisKeyword(self.build_this_keyword(this_keyword))
             }
-            input::Expression::SuperKeyword(ref super_keyword) => {
+            input::Expression::SuperKeyword(super_keyword) => {
                 output::Expression::SuperKeyword(self.build_super_keyword(super_keyword))
             }
-            input::Expression::TrueKeyword(ref true_keyword) => {
+            input::Expression::TrueKeyword(true_keyword) => {
                 output::Expression::TrueKeyword(self.build_true_keyword(true_keyword))
             }
-            input::Expression::FalseKeyword(ref false_keyword) => {
+            input::Expression::FalseKeyword(false_keyword) => {
                 output::Expression::FalseKeyword(self.build_false_keyword(false_keyword))
             }
-            input::Expression::Identifier(ref identifier) => {
+            input::Expression::Identifier(identifier) => {
                 output::Expression::Identifier(self.build_identifier(identifier))
             }
         }
@@ -1897,12 +1897,12 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::ForStatementCondition::ExpressionStatement(ref expression_statement) => {
+            input::ForStatementCondition::ExpressionStatement(expression_statement) => {
                 output::ForStatementCondition::ExpressionStatement(
                     self.build_expression_statement(expression_statement),
                 )
             }
-            input::ForStatementCondition::Semicolon(ref semicolon) => {
+            input::ForStatementCondition::Semicolon(semicolon) => {
                 output::ForStatementCondition::Semicolon(self.build_semicolon(semicolon))
             }
         }
@@ -1917,16 +1917,16 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_single_binding)]
         match source {
             input::ForStatementInitialization::VariableDeclarationStatement(
-                ref variable_declaration_statement,
+                variable_declaration_statement,
             ) => output::ForStatementInitialization::VariableDeclarationStatement(
                 self.build_variable_declaration_statement(variable_declaration_statement),
             ),
-            input::ForStatementInitialization::ExpressionStatement(ref expression_statement) => {
+            input::ForStatementInitialization::ExpressionStatement(expression_statement) => {
                 output::ForStatementInitialization::ExpressionStatement(
                     self.build_expression_statement(expression_statement),
                 )
             }
-            input::ForStatementInitialization::Semicolon(ref semicolon) => {
+            input::ForStatementInitialization::Semicolon(semicolon) => {
                 output::ForStatementInitialization::Semicolon(self.build_semicolon(semicolon))
             }
         }
@@ -1941,10 +1941,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::ImportClause::PathImport(ref path_import) => {
+            input::ImportClause::PathImport(path_import) => {
                 output::ImportClause::PathImport(self.build_path_import(path_import))
             }
-            input::ImportClause::ImportDeconstruction(ref import_deconstruction) => {
+            input::ImportClause::ImportDeconstruction(import_deconstruction) => {
                 output::ImportClause::ImportDeconstruction(
                     self.build_import_deconstruction(import_deconstruction),
                 )
@@ -1961,20 +1961,20 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Expression_InequalityExpression_Operator::GreaterThan(ref greater_than) => {
+            input::Expression_InequalityExpression_Operator::GreaterThan(greater_than) => {
                 output::InequalityExpressionOperator::GreaterThan(
                     self.build_greater_than(greater_than),
                 )
             }
             input::Expression_InequalityExpression_Operator::GreaterThanEqual(
-                ref greater_than_equal,
+                greater_than_equal,
             ) => output::InequalityExpressionOperator::GreaterThanEqual(
                 self.build_greater_than_equal(greater_than_equal),
             ),
-            input::Expression_InequalityExpression_Operator::LessThan(ref less_than) => {
+            input::Expression_InequalityExpression_Operator::LessThan(less_than) => {
                 output::InequalityExpressionOperator::LessThan(self.build_less_than(less_than))
             }
-            input::Expression_InequalityExpression_Operator::LessThanEqual(ref less_than_equal) => {
+            input::Expression_InequalityExpression_Operator::LessThanEqual(less_than_equal) => {
                 output::InequalityExpressionOperator::LessThanEqual(
                     self.build_less_than_equal(less_than_equal),
                 )
@@ -1990,13 +1990,13 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Expression_MultiplicativeExpression_Operator::Asterisk(ref asterisk) => {
+            input::Expression_MultiplicativeExpression_Operator::Asterisk(asterisk) => {
                 output::MultiplicativeExpressionOperator::Asterisk(self.build_asterisk(asterisk))
             }
-            input::Expression_MultiplicativeExpression_Operator::Percent(ref percent) => {
+            input::Expression_MultiplicativeExpression_Operator::Percent(percent) => {
                 output::MultiplicativeExpressionOperator::Percent(self.build_percent(percent))
             }
-            input::Expression_MultiplicativeExpression_Operator::Slash(ref slash) => {
+            input::Expression_MultiplicativeExpression_Operator::Slash(slash) => {
                 output::MultiplicativeExpressionOperator::Slash(self.build_slash(slash))
             }
         }
@@ -2007,28 +2007,28 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::NumberUnit::WeiKeyword(ref wei_keyword) => {
+            input::NumberUnit::WeiKeyword(wei_keyword) => {
                 output::NumberUnit::WeiKeyword(self.build_wei_keyword(wei_keyword))
             }
-            input::NumberUnit::GweiKeyword(ref gwei_keyword) => {
+            input::NumberUnit::GweiKeyword(gwei_keyword) => {
                 output::NumberUnit::GweiKeyword(self.build_gwei_keyword(gwei_keyword))
             }
-            input::NumberUnit::EtherKeyword(ref ether_keyword) => {
+            input::NumberUnit::EtherKeyword(ether_keyword) => {
                 output::NumberUnit::EtherKeyword(self.build_ether_keyword(ether_keyword))
             }
-            input::NumberUnit::SecondsKeyword(ref seconds_keyword) => {
+            input::NumberUnit::SecondsKeyword(seconds_keyword) => {
                 output::NumberUnit::SecondsKeyword(self.build_seconds_keyword(seconds_keyword))
             }
-            input::NumberUnit::MinutesKeyword(ref minutes_keyword) => {
+            input::NumberUnit::MinutesKeyword(minutes_keyword) => {
                 output::NumberUnit::MinutesKeyword(self.build_minutes_keyword(minutes_keyword))
             }
-            input::NumberUnit::HoursKeyword(ref hours_keyword) => {
+            input::NumberUnit::HoursKeyword(hours_keyword) => {
                 output::NumberUnit::HoursKeyword(self.build_hours_keyword(hours_keyword))
             }
-            input::NumberUnit::DaysKeyword(ref days_keyword) => {
+            input::NumberUnit::DaysKeyword(days_keyword) => {
                 output::NumberUnit::DaysKeyword(self.build_days_keyword(days_keyword))
             }
-            input::NumberUnit::WeeksKeyword(ref weeks_keyword) => {
+            input::NumberUnit::WeeksKeyword(weeks_keyword) => {
                 output::NumberUnit::WeeksKeyword(self.build_weeks_keyword(weeks_keyword))
             }
         }
@@ -2042,10 +2042,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Expression_PostfixExpression_Operator::MinusMinus(ref minus_minus) => {
+            input::Expression_PostfixExpression_Operator::MinusMinus(minus_minus) => {
                 output::PostfixExpressionOperator::MinusMinus(self.build_minus_minus(minus_minus))
             }
-            input::Expression_PostfixExpression_Operator::PlusPlus(ref plus_plus) => {
+            input::Expression_PostfixExpression_Operator::PlusPlus(plus_plus) => {
                 output::PostfixExpressionOperator::PlusPlus(self.build_plus_plus(plus_plus))
             }
         }
@@ -2056,13 +2056,13 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Pragma::VersionPragma(ref version_pragma) => {
+            input::Pragma::VersionPragma(version_pragma) => {
                 output::Pragma::VersionPragma(self.build_version_pragma(version_pragma))
             }
-            input::Pragma::AbicoderPragma(ref abicoder_pragma) => {
+            input::Pragma::AbicoderPragma(abicoder_pragma) => {
                 output::Pragma::AbicoderPragma(self.build_abicoder_pragma(abicoder_pragma))
             }
-            input::Pragma::ExperimentalPragma(ref experimental_pragma) => {
+            input::Pragma::ExperimentalPragma(experimental_pragma) => {
                 output::Pragma::ExperimentalPragma(
                     self.build_experimental_pragma(experimental_pragma),
                 )
@@ -2078,24 +2078,24 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Expression_PrefixExpression_Operator::Bang(ref bang) => {
+            input::Expression_PrefixExpression_Operator::Bang(bang) => {
                 output::PrefixExpressionOperator::Bang(self.build_bang(bang))
             }
-            input::Expression_PrefixExpression_Operator::DeleteKeyword(ref delete_keyword) => {
+            input::Expression_PrefixExpression_Operator::DeleteKeyword(delete_keyword) => {
                 output::PrefixExpressionOperator::DeleteKeyword(
                     self.build_delete_keyword(delete_keyword),
                 )
             }
-            input::Expression_PrefixExpression_Operator::Minus(ref minus) => {
+            input::Expression_PrefixExpression_Operator::Minus(minus) => {
                 output::PrefixExpressionOperator::Minus(self.build_minus(minus))
             }
-            input::Expression_PrefixExpression_Operator::MinusMinus(ref minus_minus) => {
+            input::Expression_PrefixExpression_Operator::MinusMinus(minus_minus) => {
                 output::PrefixExpressionOperator::MinusMinus(self.build_minus_minus(minus_minus))
             }
-            input::Expression_PrefixExpression_Operator::PlusPlus(ref plus_plus) => {
+            input::Expression_PrefixExpression_Operator::PlusPlus(plus_plus) => {
                 output::PrefixExpressionOperator::PlusPlus(self.build_plus_plus(plus_plus))
             }
-            input::Expression_PrefixExpression_Operator::Tilde(ref tilde) => {
+            input::Expression_PrefixExpression_Operator::Tilde(tilde) => {
                 output::PrefixExpressionOperator::Tilde(self.build_tilde(tilde))
             }
         }
@@ -2110,22 +2110,22 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_single_binding)]
         match source {
             input::Expression_ShiftExpression_Operator::GreaterThanGreaterThan(
-                ref greater_than_greater_than,
+                greater_than_greater_than,
             ) => output::ShiftExpressionOperator::GreaterThanGreaterThan(
                 self.build_greater_than_greater_than(greater_than_greater_than),
             ),
             input::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan(
-                ref greater_than_greater_than_greater_than,
+                greater_than_greater_than_greater_than,
             ) => output::ShiftExpressionOperator::GreaterThanGreaterThanGreaterThan(
                 self.build_greater_than_greater_than_greater_than(
                     greater_than_greater_than_greater_than,
                 ),
             ),
-            input::Expression_ShiftExpression_Operator::LessThanLessThan(
-                ref less_than_less_than,
-            ) => output::ShiftExpressionOperator::LessThanLessThan(
-                self.build_less_than_less_than(less_than_less_than),
-            ),
+            input::Expression_ShiftExpression_Operator::LessThanLessThan(less_than_less_than) => {
+                output::ShiftExpressionOperator::LessThanLessThan(
+                    self.build_less_than_less_than(less_than_less_than),
+                )
+            }
         }
     }
 
@@ -2137,67 +2137,67 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::SourceUnitMember::PragmaDirective(ref pragma_directive) => {
+            input::SourceUnitMember::PragmaDirective(pragma_directive) => {
                 output::SourceUnitMember::PragmaDirective(
                     self.build_pragma_directive(pragma_directive),
                 )
             }
-            input::SourceUnitMember::ImportDirective(ref import_directive) => {
+            input::SourceUnitMember::ImportDirective(import_directive) => {
                 output::SourceUnitMember::ImportClause(
                     self.build_import_directive(import_directive),
                 )
             }
-            input::SourceUnitMember::ContractDefinition(ref contract_definition) => {
+            input::SourceUnitMember::ContractDefinition(contract_definition) => {
                 output::SourceUnitMember::ContractDefinition(
                     self.build_contract_definition(contract_definition),
                 )
             }
-            input::SourceUnitMember::InterfaceDefinition(ref interface_definition) => {
+            input::SourceUnitMember::InterfaceDefinition(interface_definition) => {
                 output::SourceUnitMember::InterfaceDefinition(
                     self.build_interface_definition(interface_definition),
                 )
             }
-            input::SourceUnitMember::LibraryDefinition(ref library_definition) => {
+            input::SourceUnitMember::LibraryDefinition(library_definition) => {
                 output::SourceUnitMember::LibraryDefinition(
                     self.build_library_definition(library_definition),
                 )
             }
-            input::SourceUnitMember::StructDefinition(ref struct_definition) => {
+            input::SourceUnitMember::StructDefinition(struct_definition) => {
                 output::SourceUnitMember::StructDefinition(
                     self.build_struct_definition(struct_definition),
                 )
             }
-            input::SourceUnitMember::EnumDefinition(ref enum_definition) => {
+            input::SourceUnitMember::EnumDefinition(enum_definition) => {
                 output::SourceUnitMember::EnumDefinition(
                     self.build_enum_definition(enum_definition),
                 )
             }
-            input::SourceUnitMember::FunctionDefinition(ref function_definition) => {
+            input::SourceUnitMember::FunctionDefinition(function_definition) => {
                 output::SourceUnitMember::FunctionDefinition(
                     self.build_function_definition(function_definition),
                 )
             }
-            input::SourceUnitMember::ErrorDefinition(ref error_definition) => {
+            input::SourceUnitMember::ErrorDefinition(error_definition) => {
                 output::SourceUnitMember::ErrorDefinition(
                     self.build_error_definition(error_definition),
                 )
             }
             input::SourceUnitMember::UserDefinedValueTypeDefinition(
-                ref user_defined_value_type_definition,
+                user_defined_value_type_definition,
             ) => output::SourceUnitMember::UserDefinedValueTypeDefinition(
                 self.build_user_defined_value_type_definition(user_defined_value_type_definition),
             ),
-            input::SourceUnitMember::UsingDirective(ref using_directive) => {
+            input::SourceUnitMember::UsingDirective(using_directive) => {
                 output::SourceUnitMember::UsingDirective(
                     self.build_using_directive(using_directive),
                 )
             }
-            input::SourceUnitMember::EventDefinition(ref event_definition) => {
+            input::SourceUnitMember::EventDefinition(event_definition) => {
                 output::SourceUnitMember::EventDefinition(
                     self.build_event_definition(event_definition),
                 )
             }
-            input::SourceUnitMember::ConstantDefinition(ref constant_definition) => {
+            input::SourceUnitMember::ConstantDefinition(constant_definition) => {
                 output::SourceUnitMember::ConstantDefinition(
                     self.build_constant_definition(constant_definition),
                 )
@@ -2210,55 +2210,55 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Statement::IfStatement(ref if_statement) => {
+            input::Statement::IfStatement(if_statement) => {
                 output::Statement::IfStatement(self.build_if_statement(if_statement))
             }
-            input::Statement::ForStatement(ref for_statement) => {
+            input::Statement::ForStatement(for_statement) => {
                 output::Statement::ForStatement(self.build_for_statement(for_statement))
             }
-            input::Statement::WhileStatement(ref while_statement) => {
+            input::Statement::WhileStatement(while_statement) => {
                 output::Statement::WhileStatement(self.build_while_statement(while_statement))
             }
-            input::Statement::DoWhileStatement(ref do_while_statement) => {
+            input::Statement::DoWhileStatement(do_while_statement) => {
                 output::Statement::DoWhileStatement(
                     self.build_do_while_statement(do_while_statement),
                 )
             }
-            input::Statement::ContinueStatement(ref continue_statement) => {
+            input::Statement::ContinueStatement(continue_statement) => {
                 output::Statement::ContinueStatement(
                     self.build_continue_statement(continue_statement),
                 )
             }
-            input::Statement::BreakStatement(ref break_statement) => {
+            input::Statement::BreakStatement(break_statement) => {
                 output::Statement::BreakStatement(self.build_break_statement(break_statement))
             }
-            input::Statement::ReturnStatement(ref return_statement) => {
+            input::Statement::ReturnStatement(return_statement) => {
                 output::Statement::ReturnStatement(self.build_return_statement(return_statement))
             }
-            input::Statement::EmitStatement(ref emit_statement) => {
+            input::Statement::EmitStatement(emit_statement) => {
                 output::Statement::EmitStatement(self.build_emit_statement(emit_statement))
             }
-            input::Statement::TryStatement(ref try_statement) => {
+            input::Statement::TryStatement(try_statement) => {
                 output::Statement::TryStatement(self.build_try_statement(try_statement))
             }
-            input::Statement::RevertStatement(ref revert_statement) => {
+            input::Statement::RevertStatement(revert_statement) => {
                 output::Statement::RevertStatement(self.build_revert_statement(revert_statement))
             }
-            input::Statement::AssemblyStatement(ref assembly_statement) => {
+            input::Statement::AssemblyStatement(assembly_statement) => {
                 output::Statement::AssemblyStatement(
                     self.build_assembly_statement(assembly_statement),
                 )
             }
-            input::Statement::Block(ref block) => output::Statement::Block(self.build_block(block)),
-            input::Statement::UncheckedBlock(ref unchecked_block) => {
+            input::Statement::Block(block) => output::Statement::Block(self.build_block(block)),
+            input::Statement::UncheckedBlock(unchecked_block) => {
                 output::Statement::UncheckedBlock(self.build_unchecked_block(unchecked_block))
             }
-            input::Statement::VariableDeclarationStatement(ref variable_declaration_statement) => {
+            input::Statement::VariableDeclarationStatement(variable_declaration_statement) => {
                 output::Statement::VariableDeclarationStatement(
                     self.build_variable_declaration_statement(variable_declaration_statement),
                 )
             }
-            input::Statement::ExpressionStatement(ref expression_statement) => {
+            input::Statement::ExpressionStatement(expression_statement) => {
                 output::Statement::ExpressionStatement(
                     self.build_expression_statement(expression_statement),
                 )
@@ -2274,13 +2274,13 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::StorageLocation::MemoryKeyword(ref memory_keyword) => {
+            input::StorageLocation::MemoryKeyword(memory_keyword) => {
                 output::StorageLocation::MemoryKeyword(self.build_memory_keyword(memory_keyword))
             }
-            input::StorageLocation::StorageKeyword(ref storage_keyword) => {
+            input::StorageLocation::StorageKeyword(storage_keyword) => {
                 output::StorageLocation::StorageKeyword(self.build_storage_keyword(storage_keyword))
             }
-            input::StorageLocation::CallDataKeyword(ref call_data_keyword) => {
+            input::StorageLocation::CallDataKeyword(call_data_keyword) => {
                 output::StorageLocation::CallDataKeyword(
                     self.build_call_data_keyword(call_data_keyword),
                 )
@@ -2296,17 +2296,17 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::StringExpression::StringLiterals(ref string_literals) => {
+            input::StringExpression::StringLiterals(string_literals) => {
                 output::StringExpression::StringLiterals(
                     self.build_string_literals(string_literals),
                 )
             }
-            input::StringExpression::HexStringLiterals(ref hex_string_literals) => {
+            input::StringExpression::HexStringLiterals(hex_string_literals) => {
                 output::StringExpression::HexStringLiterals(
                     self.build_hex_string_literals(hex_string_literals),
                 )
             }
-            input::StringExpression::UnicodeStringLiterals(ref unicode_string_literals) => {
+            input::StringExpression::UnicodeStringLiterals(unicode_string_literals) => {
                 output::StringExpression::UnicodeStringLiterals(
                     self.build_unicode_string_literals(unicode_string_literals),
                 )
@@ -2319,19 +2319,19 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::TypeName::ArrayTypeName(ref array_type_name) => {
+            input::TypeName::ArrayTypeName(array_type_name) => {
                 output::TypeName::ArrayTypeName(self.build_array_type_name(array_type_name))
             }
-            input::TypeName::FunctionType(ref function_type) => {
+            input::TypeName::FunctionType(function_type) => {
                 output::TypeName::FunctionType(self.build_function_type(function_type))
             }
-            input::TypeName::MappingType(ref mapping_type) => {
+            input::TypeName::MappingType(mapping_type) => {
                 output::TypeName::MappingType(self.build_mapping_type(mapping_type))
             }
-            input::TypeName::ElementaryType(ref elementary_type) => {
+            input::TypeName::ElementaryType(elementary_type) => {
                 output::TypeName::ElementaryType(self.build_elementary_type(elementary_type))
             }
-            input::TypeName::IdentifierPath(ref identifier_path) => {
+            input::TypeName::IdentifierPath(identifier_path) => {
                 output::TypeName::IdentifierPath(self.build_identifier_path(identifier_path))
             }
         }
@@ -2345,10 +2345,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::UsingClause::IdentifierPath(ref identifier_path) => {
+            input::UsingClause::IdentifierPath(identifier_path) => {
                 output::UsingClause::IdentifierPath(self.build_identifier_path(identifier_path))
             }
-            input::UsingClause::UsingDeconstruction(ref using_deconstruction) => {
+            input::UsingClause::UsingDeconstruction(using_deconstruction) => {
                 output::UsingClause::UsingDeconstruction(
                     self.build_using_deconstruction(using_deconstruction),
                 )
@@ -2364,49 +2364,47 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::UsingOperator::Ampersand(ref ampersand) => {
+            input::UsingOperator::Ampersand(ampersand) => {
                 output::UsingOperator::Ampersand(self.build_ampersand(ampersand))
             }
-            input::UsingOperator::Asterisk(ref asterisk) => {
+            input::UsingOperator::Asterisk(asterisk) => {
                 output::UsingOperator::Asterisk(self.build_asterisk(asterisk))
             }
-            input::UsingOperator::BangEqual(ref bang_equal) => {
+            input::UsingOperator::BangEqual(bang_equal) => {
                 output::UsingOperator::BangEqual(self.build_bang_equal(bang_equal))
             }
-            input::UsingOperator::Bar(ref bar) => output::UsingOperator::Bar(self.build_bar(bar)),
-            input::UsingOperator::Caret(ref caret) => {
+            input::UsingOperator::Bar(bar) => output::UsingOperator::Bar(self.build_bar(bar)),
+            input::UsingOperator::Caret(caret) => {
                 output::UsingOperator::Caret(self.build_caret(caret))
             }
-            input::UsingOperator::EqualEqual(ref equal_equal) => {
+            input::UsingOperator::EqualEqual(equal_equal) => {
                 output::UsingOperator::EqualEqual(self.build_equal_equal(equal_equal))
             }
-            input::UsingOperator::GreaterThan(ref greater_than) => {
+            input::UsingOperator::GreaterThan(greater_than) => {
                 output::UsingOperator::GreaterThan(self.build_greater_than(greater_than))
             }
-            input::UsingOperator::GreaterThanEqual(ref greater_than_equal) => {
+            input::UsingOperator::GreaterThanEqual(greater_than_equal) => {
                 output::UsingOperator::GreaterThanEqual(
                     self.build_greater_than_equal(greater_than_equal),
                 )
             }
-            input::UsingOperator::LessThan(ref less_than) => {
+            input::UsingOperator::LessThan(less_than) => {
                 output::UsingOperator::LessThan(self.build_less_than(less_than))
             }
-            input::UsingOperator::LessThanEqual(ref less_than_equal) => {
+            input::UsingOperator::LessThanEqual(less_than_equal) => {
                 output::UsingOperator::LessThanEqual(self.build_less_than_equal(less_than_equal))
             }
-            input::UsingOperator::Minus(ref minus) => {
+            input::UsingOperator::Minus(minus) => {
                 output::UsingOperator::Minus(self.build_minus(minus))
             }
-            input::UsingOperator::Percent(ref percent) => {
+            input::UsingOperator::Percent(percent) => {
                 output::UsingOperator::Percent(self.build_percent(percent))
             }
-            input::UsingOperator::Plus(ref plus) => {
-                output::UsingOperator::Plus(self.build_plus(plus))
-            }
-            input::UsingOperator::Slash(ref slash) => {
+            input::UsingOperator::Plus(plus) => output::UsingOperator::Plus(self.build_plus(plus)),
+            input::UsingOperator::Slash(slash) => {
                 output::UsingOperator::Slash(self.build_slash(slash))
             }
-            input::UsingOperator::Tilde(ref tilde) => {
+            input::UsingOperator::Tilde(tilde) => {
                 output::UsingOperator::Tilde(self.build_tilde(tilde))
             }
         }
@@ -2420,10 +2418,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::UsingTarget::TypeName(ref type_name) => {
+            input::UsingTarget::TypeName(type_name) => {
                 output::UsingTarget::TypeName(self.build_type_name(type_name))
             }
-            input::UsingTarget::Asterisk(ref asterisk) => {
+            input::UsingTarget::Asterisk(asterisk) => {
                 output::UsingTarget::Asterisk(self.build_asterisk(asterisk))
             }
         }
@@ -2437,16 +2435,16 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::VariableDeclarationTarget::SingleTypedDeclaration(
-                ref single_typed_declaration,
-            ) => output::VariableDeclarationTarget::SingleTypedDeclaration(
-                self.build_single_typed_declaration(single_typed_declaration),
-            ),
-            input::VariableDeclarationTarget::MultiTypedDeclaration(
-                ref multi_typed_declaration,
-            ) => output::VariableDeclarationTarget::MultiTypedDeclaration(
-                self.build_multi_typed_declaration(multi_typed_declaration),
-            ),
+            input::VariableDeclarationTarget::SingleTypedDeclaration(single_typed_declaration) => {
+                output::VariableDeclarationTarget::SingleTypedDeclaration(
+                    self.build_single_typed_declaration(single_typed_declaration),
+                )
+            }
+            input::VariableDeclarationTarget::MultiTypedDeclaration(multi_typed_declaration) => {
+                output::VariableDeclarationTarget::MultiTypedDeclaration(
+                    self.build_multi_typed_declaration(multi_typed_declaration),
+                )
+            }
         }
     }
 
@@ -2458,10 +2456,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::VersionExpression::VersionRange(ref version_range) => {
+            input::VersionExpression::VersionRange(version_range) => {
                 output::VersionExpression::VersionRange(self.build_version_range(version_range))
             }
-            input::VersionExpression::VersionTerm(ref version_term) => {
+            input::VersionExpression::VersionTerm(version_term) => {
                 output::VersionExpression::VersionTerm(self.build_version_term(version_term))
             }
         }
@@ -2475,12 +2473,12 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::VersionLiteral::SimpleVersionLiteral(ref simple_version_literal) => {
+            input::VersionLiteral::SimpleVersionLiteral(simple_version_literal) => {
                 output::VersionLiteral::SimpleVersionLiteral(
                     self.build_simple_version_literal(simple_version_literal),
                 )
             }
-            input::VersionLiteral::PragmaStringLiteral(ref pragma_string_literal) => {
+            input::VersionLiteral::PragmaStringLiteral(pragma_string_literal) => {
                 output::VersionLiteral::StringLiteral(
                     self.build_pragma_string_literal(pragma_string_literal),
                 )
@@ -2496,31 +2494,31 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::VersionOperator::PragmaCaret(ref pragma_caret) => {
+            input::VersionOperator::PragmaCaret(pragma_caret) => {
                 output::VersionOperator::PragmaCaret(self.build_pragma_caret(pragma_caret))
             }
-            input::VersionOperator::PragmaTilde(ref pragma_tilde) => {
+            input::VersionOperator::PragmaTilde(pragma_tilde) => {
                 output::VersionOperator::PragmaTilde(self.build_pragma_tilde(pragma_tilde))
             }
-            input::VersionOperator::PragmaEqual(ref pragma_equal) => {
+            input::VersionOperator::PragmaEqual(pragma_equal) => {
                 output::VersionOperator::PragmaEqual(self.build_pragma_equal(pragma_equal))
             }
-            input::VersionOperator::PragmaLessThan(ref pragma_less_than) => {
+            input::VersionOperator::PragmaLessThan(pragma_less_than) => {
                 output::VersionOperator::PragmaLessThan(
                     self.build_pragma_less_than(pragma_less_than),
                 )
             }
-            input::VersionOperator::PragmaGreaterThan(ref pragma_greater_than) => {
+            input::VersionOperator::PragmaGreaterThan(pragma_greater_than) => {
                 output::VersionOperator::PragmaGreaterThan(
                     self.build_pragma_greater_than(pragma_greater_than),
                 )
             }
-            input::VersionOperator::PragmaLessThanEqual(ref pragma_less_than_equal) => {
+            input::VersionOperator::PragmaLessThanEqual(pragma_less_than_equal) => {
                 output::VersionOperator::PragmaLessThanEqual(
                     self.build_pragma_less_than_equal(pragma_less_than_equal),
                 )
             }
-            input::VersionOperator::PragmaGreaterThanEqual(ref pragma_greater_than_equal) => {
+            input::VersionOperator::PragmaGreaterThanEqual(pragma_greater_than_equal) => {
                 output::VersionOperator::PragmaGreaterThanEqual(
                     self.build_pragma_greater_than_equal(pragma_greater_than_equal),
                 )
@@ -2536,15 +2534,15 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::YulExpression::YulFunctionCallExpression(ref yul_function_call_expression) => {
+            input::YulExpression::YulFunctionCallExpression(yul_function_call_expression) => {
                 output::YulExpression::YulFunctionCallExpression(
                     self.build_yul_function_call_expression(yul_function_call_expression),
                 )
             }
-            input::YulExpression::YulLiteral(ref yul_literal) => {
+            input::YulExpression::YulLiteral(yul_literal) => {
                 output::YulExpression::YulLiteral(self.build_yul_literal(yul_literal))
             }
-            input::YulExpression::YulPath(ref yul_path) => {
+            input::YulExpression::YulPath(yul_path) => {
                 output::YulExpression::YulPath(self.build_yul_path(yul_path))
             }
         }
@@ -2555,26 +2553,26 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::YulLiteral::YulTrueKeyword(ref yul_true_keyword) => {
+            input::YulLiteral::YulTrueKeyword(yul_true_keyword) => {
                 output::YulLiteral::TrueKeyword(self.build_yul_true_keyword(yul_true_keyword))
             }
-            input::YulLiteral::YulFalseKeyword(ref yul_false_keyword) => {
+            input::YulLiteral::YulFalseKeyword(yul_false_keyword) => {
                 output::YulLiteral::FalseKeyword(self.build_yul_false_keyword(yul_false_keyword))
             }
-            input::YulLiteral::YulDecimalLiteral(ref yul_decimal_literal) => {
+            input::YulLiteral::YulDecimalLiteral(yul_decimal_literal) => {
                 output::YulLiteral::DecimalLiteral(
                     self.build_yul_decimal_literal(yul_decimal_literal),
                 )
             }
-            input::YulLiteral::YulHexLiteral(ref yul_hex_literal) => {
+            input::YulLiteral::YulHexLiteral(yul_hex_literal) => {
                 output::YulLiteral::HexLiteral(self.build_yul_hex_literal(yul_hex_literal))
             }
-            input::YulLiteral::YulHexStringLiteral(ref yul_hex_string_literal) => {
+            input::YulLiteral::YulHexStringLiteral(yul_hex_string_literal) => {
                 output::YulLiteral::HexStringLiteral(
                     self.build_yul_hex_string_literal(yul_hex_string_literal),
                 )
             }
-            input::YulLiteral::YulStringLiteral(ref yul_string_literal) => {
+            input::YulLiteral::YulStringLiteral(yul_string_literal) => {
                 output::YulLiteral::StringLiteral(self.build_yul_string_literal(yul_string_literal))
             }
         }
@@ -2588,53 +2586,53 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::YulStatement::YulBlock(ref yul_block) => {
+            input::YulStatement::YulBlock(yul_block) => {
                 output::YulStatement::YulBlock(self.build_yul_block(yul_block))
             }
-            input::YulStatement::YulFunctionDefinition(ref yul_function_definition) => {
+            input::YulStatement::YulFunctionDefinition(yul_function_definition) => {
                 output::YulStatement::YulFunctionDefinition(
                     self.build_yul_function_definition(yul_function_definition),
                 )
             }
-            input::YulStatement::YulIfStatement(ref yul_if_statement) => {
+            input::YulStatement::YulIfStatement(yul_if_statement) => {
                 output::YulStatement::YulIfStatement(self.build_yul_if_statement(yul_if_statement))
             }
-            input::YulStatement::YulForStatement(ref yul_for_statement) => {
+            input::YulStatement::YulForStatement(yul_for_statement) => {
                 output::YulStatement::YulForStatement(
                     self.build_yul_for_statement(yul_for_statement),
                 )
             }
-            input::YulStatement::YulSwitchStatement(ref yul_switch_statement) => {
+            input::YulStatement::YulSwitchStatement(yul_switch_statement) => {
                 output::YulStatement::YulSwitchStatement(
                     self.build_yul_switch_statement(yul_switch_statement),
                 )
             }
-            input::YulStatement::YulLeaveStatement(ref yul_leave_statement) => {
+            input::YulStatement::YulLeaveStatement(yul_leave_statement) => {
                 output::YulStatement::YulLeaveStatement(
                     self.build_yul_leave_statement(yul_leave_statement),
                 )
             }
-            input::YulStatement::YulBreakStatement(ref yul_break_statement) => {
+            input::YulStatement::YulBreakStatement(yul_break_statement) => {
                 output::YulStatement::YulBreakStatement(
                     self.build_yul_break_statement(yul_break_statement),
                 )
             }
-            input::YulStatement::YulContinueStatement(ref yul_continue_statement) => {
+            input::YulStatement::YulContinueStatement(yul_continue_statement) => {
                 output::YulStatement::YulContinueStatement(
                     self.build_yul_continue_statement(yul_continue_statement),
                 )
             }
             input::YulStatement::YulVariableAssignmentStatement(
-                ref yul_variable_assignment_statement,
+                yul_variable_assignment_statement,
             ) => output::YulStatement::YulVariableAssignmentStatement(
                 self.build_yul_variable_assignment_statement(yul_variable_assignment_statement),
             ),
             input::YulStatement::YulVariableDeclarationStatement(
-                ref yul_variable_declaration_statement,
+                yul_variable_declaration_statement,
             ) => output::YulStatement::YulVariableDeclarationStatement(
                 self.build_yul_variable_declaration_statement(yul_variable_declaration_statement),
             ),
-            input::YulStatement::YulExpression(ref yul_expression) => {
+            input::YulStatement::YulExpression(yul_expression) => {
                 output::YulStatement::YulExpression(self.build_yul_expression(yul_expression))
             }
         }
@@ -2648,10 +2646,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::YulSwitchCase::YulDefaultCase(ref yul_default_case) => {
+            input::YulSwitchCase::YulDefaultCase(yul_default_case) => {
                 output::YulSwitchCase::YulDefaultCase(self.build_yul_default_case(yul_default_case))
             }
-            input::YulSwitchCase::YulValueCase(ref yul_value_case) => {
+            input::YulSwitchCase::YulValueCase(yul_value_case) => {
                 output::YulSwitchCase::YulValueCase(self.build_yul_value_case(yul_value_case))
             }
         }

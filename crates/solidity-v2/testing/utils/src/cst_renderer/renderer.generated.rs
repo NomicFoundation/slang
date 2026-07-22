@@ -4241,7 +4241,7 @@ pub fn render_abicoder_version(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        AbicoderVersion::AbicoderV1Keyword(ref element) => {
+        AbicoderVersion::AbicoderV1Keyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4255,7 +4255,7 @@ pub fn render_abicoder_version(
             (range, frags)
         }
 
-        AbicoderVersion::AbicoderV2Keyword(ref element) => {
+        AbicoderVersion::AbicoderV2Keyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4277,7 +4277,7 @@ pub fn render_arguments_declaration(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        ArgumentsDeclaration::PositionalArgumentsDeclaration(ref element) => {
+        ArgumentsDeclaration::PositionalArgumentsDeclaration(element) => {
             let (range, mut frags) =
                 render_positional_arguments_declaration(source, element, depth);
 
@@ -4295,7 +4295,7 @@ pub fn render_arguments_declaration(
             (range, frags)
         }
 
-        ArgumentsDeclaration::NamedArgumentsDeclaration(ref element) => {
+        ArgumentsDeclaration::NamedArgumentsDeclaration(element) => {
             let (range, mut frags) = render_named_arguments_declaration(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4317,7 +4317,7 @@ pub fn render_constructor_attribute(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        ConstructorAttribute::ModifierInvocation(ref element) => {
+        ConstructorAttribute::ModifierInvocation(element) => {
             let (range, mut frags) = render_modifier_invocation(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4331,7 +4331,7 @@ pub fn render_constructor_attribute(
             (range, frags)
         }
 
-        ConstructorAttribute::InternalKeyword(ref element) => {
+        ConstructorAttribute::InternalKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4345,7 +4345,7 @@ pub fn render_constructor_attribute(
             (range, frags)
         }
 
-        ConstructorAttribute::PayableKeyword(ref element) => {
+        ConstructorAttribute::PayableKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4359,7 +4359,7 @@ pub fn render_constructor_attribute(
             (range, frags)
         }
 
-        ConstructorAttribute::PublicKeyword(ref element) => {
+        ConstructorAttribute::PublicKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4377,7 +4377,7 @@ pub fn render_constructor_attribute(
 
 pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize) -> RenderedOutput {
     match node {
-        ContractMember::UsingDirective(ref element) => {
+        ContractMember::UsingDirective(element) => {
             let (range, mut frags) = render_using_directive(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4391,7 +4391,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
             (range, frags)
         }
 
-        ContractMember::FunctionDefinition(ref element) => {
+        ContractMember::FunctionDefinition(element) => {
             let (range, mut frags) = render_function_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4405,7 +4405,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
             (range, frags)
         }
 
-        ContractMember::ConstructorDefinition(ref element) => {
+        ContractMember::ConstructorDefinition(element) => {
             let (range, mut frags) = render_constructor_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4419,7 +4419,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
             (range, frags)
         }
 
-        ContractMember::ReceiveFunctionDefinition(ref element) => {
+        ContractMember::ReceiveFunctionDefinition(element) => {
             let (range, mut frags) = render_receive_function_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4433,7 +4433,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
             (range, frags)
         }
 
-        ContractMember::FallbackFunctionDefinition(ref element) => {
+        ContractMember::FallbackFunctionDefinition(element) => {
             let (range, mut frags) = render_fallback_function_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4447,7 +4447,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
             (range, frags)
         }
 
-        ContractMember::ModifierDefinition(ref element) => {
+        ContractMember::ModifierDefinition(element) => {
             let (range, mut frags) = render_modifier_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4461,7 +4461,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
             (range, frags)
         }
 
-        ContractMember::StructDefinition(ref element) => {
+        ContractMember::StructDefinition(element) => {
             let (range, mut frags) = render_struct_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4475,7 +4475,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
             (range, frags)
         }
 
-        ContractMember::EnumDefinition(ref element) => {
+        ContractMember::EnumDefinition(element) => {
             let (range, mut frags) = render_enum_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4489,7 +4489,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
             (range, frags)
         }
 
-        ContractMember::EventDefinition(ref element) => {
+        ContractMember::EventDefinition(element) => {
             let (range, mut frags) = render_event_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4503,7 +4503,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
             (range, frags)
         }
 
-        ContractMember::ErrorDefinition(ref element) => {
+        ContractMember::ErrorDefinition(element) => {
             let (range, mut frags) = render_error_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4517,7 +4517,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
             (range, frags)
         }
 
-        ContractMember::UserDefinedValueTypeDefinition(ref element) => {
+        ContractMember::UserDefinedValueTypeDefinition(element) => {
             let (range, mut frags) =
                 render_user_defined_value_type_definition(source, element, depth);
 
@@ -4535,7 +4535,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
             (range, frags)
         }
 
-        ContractMember::StateVariableDefinition(ref element) => {
+        ContractMember::StateVariableDefinition(element) => {
             let (range, mut frags) = render_state_variable_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4557,7 +4557,7 @@ pub fn render_contract_specifier(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        ContractSpecifier::InheritanceSpecifier(ref element) => {
+        ContractSpecifier::InheritanceSpecifier(element) => {
             let (range, mut frags) = render_inheritance_specifier(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4571,7 +4571,7 @@ pub fn render_contract_specifier(
             (range, frags)
         }
 
-        ContractSpecifier::StorageLayoutSpecifier(ref element) => {
+        ContractSpecifier::StorageLayoutSpecifier(element) => {
             let (range, mut frags) = render_storage_layout_specifier(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4589,7 +4589,7 @@ pub fn render_contract_specifier(
 
 pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize) -> RenderedOutput {
     match node {
-        ElementaryType::BoolKeyword(ref element) => {
+        ElementaryType::BoolKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4603,7 +4603,7 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
             (range, frags)
         }
 
-        ElementaryType::StringKeyword(ref element) => {
+        ElementaryType::StringKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4617,7 +4617,7 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
             (range, frags)
         }
 
-        ElementaryType::AddressType(ref element) => {
+        ElementaryType::AddressType(element) => {
             let (range, mut frags) = render_address_type(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4631,7 +4631,7 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
             (range, frags)
         }
 
-        ElementaryType::BytesKeyword(ref element) => {
+        ElementaryType::BytesKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4645,7 +4645,7 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
             (range, frags)
         }
 
-        ElementaryType::IntKeyword(ref element) => {
+        ElementaryType::IntKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4659,7 +4659,7 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
             (range, frags)
         }
 
-        ElementaryType::UintKeyword(ref element) => {
+        ElementaryType::UintKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4673,7 +4673,7 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
             (range, frags)
         }
 
-        ElementaryType::FixedKeyword(ref element) => {
+        ElementaryType::FixedKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4687,7 +4687,7 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
             (range, frags)
         }
 
-        ElementaryType::UfixedKeyword(ref element) => {
+        ElementaryType::UfixedKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4709,7 +4709,7 @@ pub fn render_experimental_feature(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        ExperimentalFeature::ABIEncoderV2Keyword(ref element) => {
+        ExperimentalFeature::ABIEncoderV2Keyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4723,7 +4723,7 @@ pub fn render_experimental_feature(
             (range, frags)
         }
 
-        ExperimentalFeature::SMTCheckerKeyword(ref element) => {
+        ExperimentalFeature::SMTCheckerKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4737,7 +4737,7 @@ pub fn render_experimental_feature(
             (range, frags)
         }
 
-        ExperimentalFeature::PragmaStringLiteral(ref element) => {
+        ExperimentalFeature::PragmaStringLiteral(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4755,7 +4755,7 @@ pub fn render_experimental_feature(
 
 pub fn render_expression(source: &str, node: &Expression, depth: usize) -> RenderedOutput {
     match node {
-        Expression::AssignmentExpression(ref element) => {
+        Expression::AssignmentExpression(element) => {
             let (range, mut frags) = render_assignment_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4769,7 +4769,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::ConditionalExpression(ref element) => {
+        Expression::ConditionalExpression(element) => {
             let (range, mut frags) = render_conditional_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4783,7 +4783,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::OrExpression(ref element) => {
+        Expression::OrExpression(element) => {
             let (range, mut frags) = render_or_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4797,7 +4797,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::AndExpression(ref element) => {
+        Expression::AndExpression(element) => {
             let (range, mut frags) = render_and_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4811,7 +4811,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::EqualityExpression(ref element) => {
+        Expression::EqualityExpression(element) => {
             let (range, mut frags) = render_equality_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4825,7 +4825,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::InequalityExpression(ref element) => {
+        Expression::InequalityExpression(element) => {
             let (range, mut frags) = render_inequality_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4839,7 +4839,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::BitwiseOrExpression(ref element) => {
+        Expression::BitwiseOrExpression(element) => {
             let (range, mut frags) = render_bitwise_or_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4853,7 +4853,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::BitwiseXorExpression(ref element) => {
+        Expression::BitwiseXorExpression(element) => {
             let (range, mut frags) = render_bitwise_xor_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4867,7 +4867,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::BitwiseAndExpression(ref element) => {
+        Expression::BitwiseAndExpression(element) => {
             let (range, mut frags) = render_bitwise_and_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4881,7 +4881,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::ShiftExpression(ref element) => {
+        Expression::ShiftExpression(element) => {
             let (range, mut frags) = render_shift_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4895,7 +4895,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::AdditiveExpression(ref element) => {
+        Expression::AdditiveExpression(element) => {
             let (range, mut frags) = render_additive_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4909,7 +4909,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::MultiplicativeExpression(ref element) => {
+        Expression::MultiplicativeExpression(element) => {
             let (range, mut frags) = render_multiplicative_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4923,7 +4923,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::ExponentiationExpression(ref element) => {
+        Expression::ExponentiationExpression(element) => {
             let (range, mut frags) = render_exponentiation_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4937,7 +4937,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::PostfixExpression(ref element) => {
+        Expression::PostfixExpression(element) => {
             let (range, mut frags) = render_postfix_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4951,7 +4951,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::PrefixExpression(ref element) => {
+        Expression::PrefixExpression(element) => {
             let (range, mut frags) = render_prefix_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4965,7 +4965,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::FunctionCallExpression(ref element) => {
+        Expression::FunctionCallExpression(element) => {
             let (range, mut frags) = render_function_call_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4979,7 +4979,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::CallOptionsExpression(ref element) => {
+        Expression::CallOptionsExpression(element) => {
             let (range, mut frags) = render_call_options_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -4993,7 +4993,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::MemberAccessExpression(ref element) => {
+        Expression::MemberAccessExpression(element) => {
             let (range, mut frags) = render_member_access_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5007,7 +5007,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::IndexAccessExpression(ref element) => {
+        Expression::IndexAccessExpression(element) => {
             let (range, mut frags) = render_index_access_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5021,7 +5021,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::NewExpression(ref element) => {
+        Expression::NewExpression(element) => {
             let (range, mut frags) = render_new_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5035,7 +5035,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::TupleExpression(ref element) => {
+        Expression::TupleExpression(element) => {
             let (range, mut frags) = render_tuple_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5049,7 +5049,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::TypeExpression(ref element) => {
+        Expression::TypeExpression(element) => {
             let (range, mut frags) = render_type_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5063,7 +5063,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::ArrayExpression(ref element) => {
+        Expression::ArrayExpression(element) => {
             let (range, mut frags) = render_array_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5077,7 +5077,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::HexNumberExpression(ref element) => {
+        Expression::HexNumberExpression(element) => {
             let (range, mut frags) = render_hex_number_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5091,7 +5091,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::DecimalNumberExpression(ref element) => {
+        Expression::DecimalNumberExpression(element) => {
             let (range, mut frags) = render_decimal_number_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5105,7 +5105,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::StringExpression(ref element) => {
+        Expression::StringExpression(element) => {
             let (range, mut frags) = render_string_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5119,7 +5119,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::ElementaryType(ref element) => {
+        Expression::ElementaryType(element) => {
             let (range, mut frags) = render_elementary_type(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5133,7 +5133,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::PayableKeyword(ref element) => {
+        Expression::PayableKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5147,7 +5147,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::ThisKeyword(ref element) => {
+        Expression::ThisKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5161,7 +5161,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::SuperKeyword(ref element) => {
+        Expression::SuperKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5175,7 +5175,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::TrueKeyword(ref element) => {
+        Expression::TrueKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5189,7 +5189,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::FalseKeyword(ref element) => {
+        Expression::FalseKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5203,7 +5203,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
             (range, frags)
         }
 
-        Expression::Identifier(ref element) => {
+        Expression::Identifier(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5225,7 +5225,7 @@ pub fn render_expression_additive_expression_operator(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        Expression_AdditiveExpression_Operator::Minus(ref element) => {
+        Expression_AdditiveExpression_Operator::Minus(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5236,7 +5236,7 @@ pub fn render_expression_additive_expression_operator(
             (range, frags)
         }
 
-        Expression_AdditiveExpression_Operator::Plus(ref element) => {
+        Expression_AdditiveExpression_Operator::Plus(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5255,7 +5255,7 @@ pub fn render_expression_assignment_expression_operator(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        Expression_AssignmentExpression_Operator::AmpersandEqual(ref element) => {
+        Expression_AssignmentExpression_Operator::AmpersandEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5269,7 +5269,7 @@ pub fn render_expression_assignment_expression_operator(
             (range, frags)
         }
 
-        Expression_AssignmentExpression_Operator::AsteriskEqual(ref element) => {
+        Expression_AssignmentExpression_Operator::AsteriskEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5283,7 +5283,7 @@ pub fn render_expression_assignment_expression_operator(
             (range, frags)
         }
 
-        Expression_AssignmentExpression_Operator::BarEqual(ref element) => {
+        Expression_AssignmentExpression_Operator::BarEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5294,7 +5294,7 @@ pub fn render_expression_assignment_expression_operator(
             (range, frags)
         }
 
-        Expression_AssignmentExpression_Operator::CaretEqual(ref element) => {
+        Expression_AssignmentExpression_Operator::CaretEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5308,7 +5308,7 @@ pub fn render_expression_assignment_expression_operator(
             (range, frags)
         }
 
-        Expression_AssignmentExpression_Operator::Equal(ref element) => {
+        Expression_AssignmentExpression_Operator::Equal(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5319,7 +5319,7 @@ pub fn render_expression_assignment_expression_operator(
             (range, frags)
         }
 
-        Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual(ref element) => {
+        Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5337,7 +5337,7 @@ pub fn render_expression_assignment_expression_operator(
         }
 
         Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual(
-            ref element,
+            element,
         ) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
@@ -5355,7 +5355,7 @@ pub fn render_expression_assignment_expression_operator(
             (range, frags)
         }
 
-        Expression_AssignmentExpression_Operator::LessThanLessThanEqual(ref element) => {
+        Expression_AssignmentExpression_Operator::LessThanLessThanEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5369,7 +5369,7 @@ pub fn render_expression_assignment_expression_operator(
             (range, frags)
         }
 
-        Expression_AssignmentExpression_Operator::MinusEqual(ref element) => {
+        Expression_AssignmentExpression_Operator::MinusEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5383,7 +5383,7 @@ pub fn render_expression_assignment_expression_operator(
             (range, frags)
         }
 
-        Expression_AssignmentExpression_Operator::PercentEqual(ref element) => {
+        Expression_AssignmentExpression_Operator::PercentEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5397,7 +5397,7 @@ pub fn render_expression_assignment_expression_operator(
             (range, frags)
         }
 
-        Expression_AssignmentExpression_Operator::PlusEqual(ref element) => {
+        Expression_AssignmentExpression_Operator::PlusEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5408,7 +5408,7 @@ pub fn render_expression_assignment_expression_operator(
             (range, frags)
         }
 
-        Expression_AssignmentExpression_Operator::SlashEqual(ref element) => {
+        Expression_AssignmentExpression_Operator::SlashEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5430,7 +5430,7 @@ pub fn render_expression_equality_expression_operator(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        Expression_EqualityExpression_Operator::BangEqual(ref element) => {
+        Expression_EqualityExpression_Operator::BangEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5441,7 +5441,7 @@ pub fn render_expression_equality_expression_operator(
             (range, frags)
         }
 
-        Expression_EqualityExpression_Operator::EqualEqual(ref element) => {
+        Expression_EqualityExpression_Operator::EqualEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5463,7 +5463,7 @@ pub fn render_expression_inequality_expression_operator(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        Expression_InequalityExpression_Operator::GreaterThan(ref element) => {
+        Expression_InequalityExpression_Operator::GreaterThan(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5477,7 +5477,7 @@ pub fn render_expression_inequality_expression_operator(
             (range, frags)
         }
 
-        Expression_InequalityExpression_Operator::GreaterThanEqual(ref element) => {
+        Expression_InequalityExpression_Operator::GreaterThanEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5491,7 +5491,7 @@ pub fn render_expression_inequality_expression_operator(
             (range, frags)
         }
 
-        Expression_InequalityExpression_Operator::LessThan(ref element) => {
+        Expression_InequalityExpression_Operator::LessThan(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5502,7 +5502,7 @@ pub fn render_expression_inequality_expression_operator(
             (range, frags)
         }
 
-        Expression_InequalityExpression_Operator::LessThanEqual(ref element) => {
+        Expression_InequalityExpression_Operator::LessThanEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5524,7 +5524,7 @@ pub fn render_expression_multiplicative_expression_operator(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        Expression_MultiplicativeExpression_Operator::Asterisk(ref element) => {
+        Expression_MultiplicativeExpression_Operator::Asterisk(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5535,7 +5535,7 @@ pub fn render_expression_multiplicative_expression_operator(
             (range, frags)
         }
 
-        Expression_MultiplicativeExpression_Operator::Percent(ref element) => {
+        Expression_MultiplicativeExpression_Operator::Percent(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5546,7 +5546,7 @@ pub fn render_expression_multiplicative_expression_operator(
             (range, frags)
         }
 
-        Expression_MultiplicativeExpression_Operator::Slash(ref element) => {
+        Expression_MultiplicativeExpression_Operator::Slash(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5565,7 +5565,7 @@ pub fn render_expression_postfix_expression_operator(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        Expression_PostfixExpression_Operator::MinusMinus(ref element) => {
+        Expression_PostfixExpression_Operator::MinusMinus(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5579,7 +5579,7 @@ pub fn render_expression_postfix_expression_operator(
             (range, frags)
         }
 
-        Expression_PostfixExpression_Operator::PlusPlus(ref element) => {
+        Expression_PostfixExpression_Operator::PlusPlus(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5598,7 +5598,7 @@ pub fn render_expression_prefix_expression_operator(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        Expression_PrefixExpression_Operator::Bang(ref element) => {
+        Expression_PrefixExpression_Operator::Bang(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5609,7 +5609,7 @@ pub fn render_expression_prefix_expression_operator(
             (range, frags)
         }
 
-        Expression_PrefixExpression_Operator::DeleteKeyword(ref element) => {
+        Expression_PrefixExpression_Operator::DeleteKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5623,7 +5623,7 @@ pub fn render_expression_prefix_expression_operator(
             (range, frags)
         }
 
-        Expression_PrefixExpression_Operator::Minus(ref element) => {
+        Expression_PrefixExpression_Operator::Minus(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5634,7 +5634,7 @@ pub fn render_expression_prefix_expression_operator(
             (range, frags)
         }
 
-        Expression_PrefixExpression_Operator::MinusMinus(ref element) => {
+        Expression_PrefixExpression_Operator::MinusMinus(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5648,7 +5648,7 @@ pub fn render_expression_prefix_expression_operator(
             (range, frags)
         }
 
-        Expression_PrefixExpression_Operator::PlusPlus(ref element) => {
+        Expression_PrefixExpression_Operator::PlusPlus(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5659,7 +5659,7 @@ pub fn render_expression_prefix_expression_operator(
             (range, frags)
         }
 
-        Expression_PrefixExpression_Operator::Tilde(ref element) => {
+        Expression_PrefixExpression_Operator::Tilde(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5678,7 +5678,7 @@ pub fn render_expression_shift_expression_operator(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        Expression_ShiftExpression_Operator::GreaterThanGreaterThan(ref element) => {
+        Expression_ShiftExpression_Operator::GreaterThanGreaterThan(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5692,7 +5692,7 @@ pub fn render_expression_shift_expression_operator(
             (range, frags)
         }
 
-        Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan(ref element) => {
+        Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5709,7 +5709,7 @@ pub fn render_expression_shift_expression_operator(
             (range, frags)
         }
 
-        Expression_ShiftExpression_Operator::LessThanLessThan(ref element) => {
+        Expression_ShiftExpression_Operator::LessThanLessThan(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5731,7 +5731,7 @@ pub fn render_fallback_function_attribute(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        FallbackFunctionAttribute::ModifierInvocation(ref element) => {
+        FallbackFunctionAttribute::ModifierInvocation(element) => {
             let (range, mut frags) = render_modifier_invocation(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5745,7 +5745,7 @@ pub fn render_fallback_function_attribute(
             (range, frags)
         }
 
-        FallbackFunctionAttribute::OverrideSpecifier(ref element) => {
+        FallbackFunctionAttribute::OverrideSpecifier(element) => {
             let (range, mut frags) = render_override_specifier(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5759,7 +5759,7 @@ pub fn render_fallback_function_attribute(
             (range, frags)
         }
 
-        FallbackFunctionAttribute::ExternalKeyword(ref element) => {
+        FallbackFunctionAttribute::ExternalKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5773,7 +5773,7 @@ pub fn render_fallback_function_attribute(
             (range, frags)
         }
 
-        FallbackFunctionAttribute::PayableKeyword(ref element) => {
+        FallbackFunctionAttribute::PayableKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5787,7 +5787,7 @@ pub fn render_fallback_function_attribute(
             (range, frags)
         }
 
-        FallbackFunctionAttribute::PureKeyword(ref element) => {
+        FallbackFunctionAttribute::PureKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5801,7 +5801,7 @@ pub fn render_fallback_function_attribute(
             (range, frags)
         }
 
-        FallbackFunctionAttribute::ViewKeyword(ref element) => {
+        FallbackFunctionAttribute::ViewKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5815,7 +5815,7 @@ pub fn render_fallback_function_attribute(
             (range, frags)
         }
 
-        FallbackFunctionAttribute::VirtualKeyword(ref element) => {
+        FallbackFunctionAttribute::VirtualKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5837,7 +5837,7 @@ pub fn render_for_statement_condition(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        ForStatementCondition::ExpressionStatement(ref element) => {
+        ForStatementCondition::ExpressionStatement(element) => {
             let (range, mut frags) = render_expression_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5851,7 +5851,7 @@ pub fn render_for_statement_condition(
             (range, frags)
         }
 
-        ForStatementCondition::Semicolon(ref element) => {
+        ForStatementCondition::Semicolon(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5870,7 +5870,7 @@ pub fn render_for_statement_initialization(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        ForStatementInitialization::VariableDeclarationStatement(ref element) => {
+        ForStatementInitialization::VariableDeclarationStatement(element) => {
             let (range, mut frags) = render_variable_declaration_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5887,7 +5887,7 @@ pub fn render_for_statement_initialization(
             (range, frags)
         }
 
-        ForStatementInitialization::ExpressionStatement(ref element) => {
+        ForStatementInitialization::ExpressionStatement(element) => {
             let (range, mut frags) = render_expression_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5901,7 +5901,7 @@ pub fn render_for_statement_initialization(
             (range, frags)
         }
 
-        ForStatementInitialization::Semicolon(ref element) => {
+        ForStatementInitialization::Semicolon(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5920,7 +5920,7 @@ pub fn render_function_attribute(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        FunctionAttribute::ModifierInvocation(ref element) => {
+        FunctionAttribute::ModifierInvocation(element) => {
             let (range, mut frags) = render_modifier_invocation(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5934,7 +5934,7 @@ pub fn render_function_attribute(
             (range, frags)
         }
 
-        FunctionAttribute::OverrideSpecifier(ref element) => {
+        FunctionAttribute::OverrideSpecifier(element) => {
             let (range, mut frags) = render_override_specifier(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5948,7 +5948,7 @@ pub fn render_function_attribute(
             (range, frags)
         }
 
-        FunctionAttribute::ExternalKeyword(ref element) => {
+        FunctionAttribute::ExternalKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5962,7 +5962,7 @@ pub fn render_function_attribute(
             (range, frags)
         }
 
-        FunctionAttribute::InternalKeyword(ref element) => {
+        FunctionAttribute::InternalKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5976,7 +5976,7 @@ pub fn render_function_attribute(
             (range, frags)
         }
 
-        FunctionAttribute::PayableKeyword(ref element) => {
+        FunctionAttribute::PayableKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -5990,7 +5990,7 @@ pub fn render_function_attribute(
             (range, frags)
         }
 
-        FunctionAttribute::PrivateKeyword(ref element) => {
+        FunctionAttribute::PrivateKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6004,7 +6004,7 @@ pub fn render_function_attribute(
             (range, frags)
         }
 
-        FunctionAttribute::PublicKeyword(ref element) => {
+        FunctionAttribute::PublicKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6018,7 +6018,7 @@ pub fn render_function_attribute(
             (range, frags)
         }
 
-        FunctionAttribute::PureKeyword(ref element) => {
+        FunctionAttribute::PureKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6032,7 +6032,7 @@ pub fn render_function_attribute(
             (range, frags)
         }
 
-        FunctionAttribute::ViewKeyword(ref element) => {
+        FunctionAttribute::ViewKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6046,7 +6046,7 @@ pub fn render_function_attribute(
             (range, frags)
         }
 
-        FunctionAttribute::VirtualKeyword(ref element) => {
+        FunctionAttribute::VirtualKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6064,7 +6064,7 @@ pub fn render_function_attribute(
 
 pub fn render_function_body(source: &str, node: &FunctionBody, depth: usize) -> RenderedOutput {
     match node {
-        FunctionBody::Block(ref element) => {
+        FunctionBody::Block(element) => {
             let (range, mut frags) = render_block(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6075,7 +6075,7 @@ pub fn render_function_body(source: &str, node: &FunctionBody, depth: usize) -> 
             (range, frags)
         }
 
-        FunctionBody::Semicolon(ref element) => {
+        FunctionBody::Semicolon(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6090,7 +6090,7 @@ pub fn render_function_body(source: &str, node: &FunctionBody, depth: usize) -> 
 
 pub fn render_function_name(source: &str, node: &FunctionName, depth: usize) -> RenderedOutput {
     match node {
-        FunctionName::Identifier(ref element) => {
+        FunctionName::Identifier(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6104,7 +6104,7 @@ pub fn render_function_name(source: &str, node: &FunctionName, depth: usize) -> 
             (range, frags)
         }
 
-        FunctionName::FallbackKeyword(ref element) => {
+        FunctionName::FallbackKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6118,7 +6118,7 @@ pub fn render_function_name(source: &str, node: &FunctionName, depth: usize) -> 
             (range, frags)
         }
 
-        FunctionName::ReceiveKeyword(ref element) => {
+        FunctionName::ReceiveKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6140,7 +6140,7 @@ pub fn render_function_type_attribute(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        FunctionTypeAttribute::InternalKeyword(ref element) => {
+        FunctionTypeAttribute::InternalKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6154,7 +6154,7 @@ pub fn render_function_type_attribute(
             (range, frags)
         }
 
-        FunctionTypeAttribute::ExternalKeyword(ref element) => {
+        FunctionTypeAttribute::ExternalKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6168,7 +6168,7 @@ pub fn render_function_type_attribute(
             (range, frags)
         }
 
-        FunctionTypeAttribute::PrivateKeyword(ref element) => {
+        FunctionTypeAttribute::PrivateKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6182,7 +6182,7 @@ pub fn render_function_type_attribute(
             (range, frags)
         }
 
-        FunctionTypeAttribute::PublicKeyword(ref element) => {
+        FunctionTypeAttribute::PublicKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6196,7 +6196,7 @@ pub fn render_function_type_attribute(
             (range, frags)
         }
 
-        FunctionTypeAttribute::PureKeyword(ref element) => {
+        FunctionTypeAttribute::PureKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6210,7 +6210,7 @@ pub fn render_function_type_attribute(
             (range, frags)
         }
 
-        FunctionTypeAttribute::ViewKeyword(ref element) => {
+        FunctionTypeAttribute::ViewKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6224,7 +6224,7 @@ pub fn render_function_type_attribute(
             (range, frags)
         }
 
-        FunctionTypeAttribute::PayableKeyword(ref element) => {
+        FunctionTypeAttribute::PayableKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6246,7 +6246,7 @@ pub fn render_identifier_path_element(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        IdentifierPathElement::Identifier(ref element) => {
+        IdentifierPathElement::Identifier(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6260,7 +6260,7 @@ pub fn render_identifier_path_element(
             (range, frags)
         }
 
-        IdentifierPathElement::AddressKeyword(ref element) => {
+        IdentifierPathElement::AddressKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6278,7 +6278,7 @@ pub fn render_identifier_path_element(
 
 pub fn render_import_clause(source: &str, node: &ImportClause, depth: usize) -> RenderedOutput {
     match node {
-        ImportClause::PathImport(ref element) => {
+        ImportClause::PathImport(element) => {
             let (range, mut frags) = render_path_import(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6292,7 +6292,7 @@ pub fn render_import_clause(source: &str, node: &ImportClause, depth: usize) -> 
             (range, frags)
         }
 
-        ImportClause::NamedImport(ref element) => {
+        ImportClause::NamedImport(element) => {
             let (range, mut frags) = render_named_import(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6306,7 +6306,7 @@ pub fn render_import_clause(source: &str, node: &ImportClause, depth: usize) -> 
             (range, frags)
         }
 
-        ImportClause::ImportDeconstruction(ref element) => {
+        ImportClause::ImportDeconstruction(element) => {
             let (range, mut frags) = render_import_deconstruction(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6328,7 +6328,7 @@ pub fn render_mapping_key_type(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        MappingKeyType::ElementaryType(ref element) => {
+        MappingKeyType::ElementaryType(element) => {
             let (range, mut frags) = render_elementary_type(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6342,7 +6342,7 @@ pub fn render_mapping_key_type(
             (range, frags)
         }
 
-        MappingKeyType::IdentifierPath(ref element) => {
+        MappingKeyType::IdentifierPath(element) => {
             let (range, mut frags) = render_identifier_path(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6364,7 +6364,7 @@ pub fn render_modifier_attribute(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        ModifierAttribute::OverrideSpecifier(ref element) => {
+        ModifierAttribute::OverrideSpecifier(element) => {
             let (range, mut frags) = render_override_specifier(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6378,7 +6378,7 @@ pub fn render_modifier_attribute(
             (range, frags)
         }
 
-        ModifierAttribute::VirtualKeyword(ref element) => {
+        ModifierAttribute::VirtualKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6396,7 +6396,7 @@ pub fn render_modifier_attribute(
 
 pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> RenderedOutput {
     match node {
-        NumberUnit::WeiKeyword(ref element) => {
+        NumberUnit::WeiKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6410,7 +6410,7 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
             (range, frags)
         }
 
-        NumberUnit::GweiKeyword(ref element) => {
+        NumberUnit::GweiKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6424,7 +6424,7 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
             (range, frags)
         }
 
-        NumberUnit::EtherKeyword(ref element) => {
+        NumberUnit::EtherKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6438,7 +6438,7 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
             (range, frags)
         }
 
-        NumberUnit::SecondsKeyword(ref element) => {
+        NumberUnit::SecondsKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6452,7 +6452,7 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
             (range, frags)
         }
 
-        NumberUnit::MinutesKeyword(ref element) => {
+        NumberUnit::MinutesKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6466,7 +6466,7 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
             (range, frags)
         }
 
-        NumberUnit::HoursKeyword(ref element) => {
+        NumberUnit::HoursKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6480,7 +6480,7 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
             (range, frags)
         }
 
-        NumberUnit::DaysKeyword(ref element) => {
+        NumberUnit::DaysKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6494,7 +6494,7 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
             (range, frags)
         }
 
-        NumberUnit::WeeksKeyword(ref element) => {
+        NumberUnit::WeeksKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6512,7 +6512,7 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
 
 pub fn render_pragma(source: &str, node: &Pragma, depth: usize) -> RenderedOutput {
     match node {
-        Pragma::VersionPragma(ref element) => {
+        Pragma::VersionPragma(element) => {
             let (range, mut frags) = render_version_pragma(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6526,7 +6526,7 @@ pub fn render_pragma(source: &str, node: &Pragma, depth: usize) -> RenderedOutpu
             (range, frags)
         }
 
-        Pragma::AbicoderPragma(ref element) => {
+        Pragma::AbicoderPragma(element) => {
             let (range, mut frags) = render_abicoder_pragma(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6540,7 +6540,7 @@ pub fn render_pragma(source: &str, node: &Pragma, depth: usize) -> RenderedOutpu
             (range, frags)
         }
 
-        Pragma::ExperimentalPragma(ref element) => {
+        Pragma::ExperimentalPragma(element) => {
             let (range, mut frags) = render_experimental_pragma(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6562,7 +6562,7 @@ pub fn render_receive_function_attribute(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        ReceiveFunctionAttribute::ModifierInvocation(ref element) => {
+        ReceiveFunctionAttribute::ModifierInvocation(element) => {
             let (range, mut frags) = render_modifier_invocation(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6576,7 +6576,7 @@ pub fn render_receive_function_attribute(
             (range, frags)
         }
 
-        ReceiveFunctionAttribute::OverrideSpecifier(ref element) => {
+        ReceiveFunctionAttribute::OverrideSpecifier(element) => {
             let (range, mut frags) = render_override_specifier(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6590,7 +6590,7 @@ pub fn render_receive_function_attribute(
             (range, frags)
         }
 
-        ReceiveFunctionAttribute::ExternalKeyword(ref element) => {
+        ReceiveFunctionAttribute::ExternalKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6604,7 +6604,7 @@ pub fn render_receive_function_attribute(
             (range, frags)
         }
 
-        ReceiveFunctionAttribute::PayableKeyword(ref element) => {
+        ReceiveFunctionAttribute::PayableKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6618,7 +6618,7 @@ pub fn render_receive_function_attribute(
             (range, frags)
         }
 
-        ReceiveFunctionAttribute::VirtualKeyword(ref element) => {
+        ReceiveFunctionAttribute::VirtualKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6640,7 +6640,7 @@ pub fn render_source_unit_member(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        SourceUnitMember::PragmaDirective(ref element) => {
+        SourceUnitMember::PragmaDirective(element) => {
             let (range, mut frags) = render_pragma_directive(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6654,7 +6654,7 @@ pub fn render_source_unit_member(
             (range, frags)
         }
 
-        SourceUnitMember::ImportDirective(ref element) => {
+        SourceUnitMember::ImportDirective(element) => {
             let (range, mut frags) = render_import_directive(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6668,7 +6668,7 @@ pub fn render_source_unit_member(
             (range, frags)
         }
 
-        SourceUnitMember::ContractDefinition(ref element) => {
+        SourceUnitMember::ContractDefinition(element) => {
             let (range, mut frags) = render_contract_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6682,7 +6682,7 @@ pub fn render_source_unit_member(
             (range, frags)
         }
 
-        SourceUnitMember::InterfaceDefinition(ref element) => {
+        SourceUnitMember::InterfaceDefinition(element) => {
             let (range, mut frags) = render_interface_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6696,7 +6696,7 @@ pub fn render_source_unit_member(
             (range, frags)
         }
 
-        SourceUnitMember::LibraryDefinition(ref element) => {
+        SourceUnitMember::LibraryDefinition(element) => {
             let (range, mut frags) = render_library_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6710,7 +6710,7 @@ pub fn render_source_unit_member(
             (range, frags)
         }
 
-        SourceUnitMember::StructDefinition(ref element) => {
+        SourceUnitMember::StructDefinition(element) => {
             let (range, mut frags) = render_struct_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6724,7 +6724,7 @@ pub fn render_source_unit_member(
             (range, frags)
         }
 
-        SourceUnitMember::EnumDefinition(ref element) => {
+        SourceUnitMember::EnumDefinition(element) => {
             let (range, mut frags) = render_enum_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6738,7 +6738,7 @@ pub fn render_source_unit_member(
             (range, frags)
         }
 
-        SourceUnitMember::FunctionDefinition(ref element) => {
+        SourceUnitMember::FunctionDefinition(element) => {
             let (range, mut frags) = render_function_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6752,7 +6752,7 @@ pub fn render_source_unit_member(
             (range, frags)
         }
 
-        SourceUnitMember::ErrorDefinition(ref element) => {
+        SourceUnitMember::ErrorDefinition(element) => {
             let (range, mut frags) = render_error_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6766,7 +6766,7 @@ pub fn render_source_unit_member(
             (range, frags)
         }
 
-        SourceUnitMember::UserDefinedValueTypeDefinition(ref element) => {
+        SourceUnitMember::UserDefinedValueTypeDefinition(element) => {
             let (range, mut frags) =
                 render_user_defined_value_type_definition(source, element, depth);
 
@@ -6784,7 +6784,7 @@ pub fn render_source_unit_member(
             (range, frags)
         }
 
-        SourceUnitMember::UsingDirective(ref element) => {
+        SourceUnitMember::UsingDirective(element) => {
             let (range, mut frags) = render_using_directive(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6798,7 +6798,7 @@ pub fn render_source_unit_member(
             (range, frags)
         }
 
-        SourceUnitMember::EventDefinition(ref element) => {
+        SourceUnitMember::EventDefinition(element) => {
             let (range, mut frags) = render_event_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6812,7 +6812,7 @@ pub fn render_source_unit_member(
             (range, frags)
         }
 
-        SourceUnitMember::ConstantDefinition(ref element) => {
+        SourceUnitMember::ConstantDefinition(element) => {
             let (range, mut frags) = render_constant_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6834,7 +6834,7 @@ pub fn render_state_variable_attribute(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        StateVariableAttribute::OverrideSpecifier(ref element) => {
+        StateVariableAttribute::OverrideSpecifier(element) => {
             let (range, mut frags) = render_override_specifier(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6848,7 +6848,7 @@ pub fn render_state_variable_attribute(
             (range, frags)
         }
 
-        StateVariableAttribute::ConstantKeyword(ref element) => {
+        StateVariableAttribute::ConstantKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6862,7 +6862,7 @@ pub fn render_state_variable_attribute(
             (range, frags)
         }
 
-        StateVariableAttribute::InternalKeyword(ref element) => {
+        StateVariableAttribute::InternalKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6876,7 +6876,7 @@ pub fn render_state_variable_attribute(
             (range, frags)
         }
 
-        StateVariableAttribute::PrivateKeyword(ref element) => {
+        StateVariableAttribute::PrivateKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6890,7 +6890,7 @@ pub fn render_state_variable_attribute(
             (range, frags)
         }
 
-        StateVariableAttribute::PublicKeyword(ref element) => {
+        StateVariableAttribute::PublicKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6904,7 +6904,7 @@ pub fn render_state_variable_attribute(
             (range, frags)
         }
 
-        StateVariableAttribute::ImmutableKeyword(ref element) => {
+        StateVariableAttribute::ImmutableKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6918,7 +6918,7 @@ pub fn render_state_variable_attribute(
             (range, frags)
         }
 
-        StateVariableAttribute::TransientKeyword(ref element) => {
+        StateVariableAttribute::TransientKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6936,7 +6936,7 @@ pub fn render_state_variable_attribute(
 
 pub fn render_statement(source: &str, node: &Statement, depth: usize) -> RenderedOutput {
     match node {
-        Statement::IfStatement(ref element) => {
+        Statement::IfStatement(element) => {
             let (range, mut frags) = render_if_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6950,7 +6950,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
             (range, frags)
         }
 
-        Statement::ForStatement(ref element) => {
+        Statement::ForStatement(element) => {
             let (range, mut frags) = render_for_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6964,7 +6964,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
             (range, frags)
         }
 
-        Statement::WhileStatement(ref element) => {
+        Statement::WhileStatement(element) => {
             let (range, mut frags) = render_while_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6978,7 +6978,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
             (range, frags)
         }
 
-        Statement::DoWhileStatement(ref element) => {
+        Statement::DoWhileStatement(element) => {
             let (range, mut frags) = render_do_while_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -6992,7 +6992,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
             (range, frags)
         }
 
-        Statement::ContinueStatement(ref element) => {
+        Statement::ContinueStatement(element) => {
             let (range, mut frags) = render_continue_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7006,7 +7006,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
             (range, frags)
         }
 
-        Statement::BreakStatement(ref element) => {
+        Statement::BreakStatement(element) => {
             let (range, mut frags) = render_break_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7020,7 +7020,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
             (range, frags)
         }
 
-        Statement::ReturnStatement(ref element) => {
+        Statement::ReturnStatement(element) => {
             let (range, mut frags) = render_return_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7034,7 +7034,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
             (range, frags)
         }
 
-        Statement::EmitStatement(ref element) => {
+        Statement::EmitStatement(element) => {
             let (range, mut frags) = render_emit_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7048,7 +7048,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
             (range, frags)
         }
 
-        Statement::TryStatement(ref element) => {
+        Statement::TryStatement(element) => {
             let (range, mut frags) = render_try_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7062,7 +7062,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
             (range, frags)
         }
 
-        Statement::RevertStatement(ref element) => {
+        Statement::RevertStatement(element) => {
             let (range, mut frags) = render_revert_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7076,7 +7076,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
             (range, frags)
         }
 
-        Statement::AssemblyStatement(ref element) => {
+        Statement::AssemblyStatement(element) => {
             let (range, mut frags) = render_assembly_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7090,7 +7090,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
             (range, frags)
         }
 
-        Statement::Block(ref element) => {
+        Statement::Block(element) => {
             let (range, mut frags) = render_block(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7101,7 +7101,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
             (range, frags)
         }
 
-        Statement::UncheckedBlock(ref element) => {
+        Statement::UncheckedBlock(element) => {
             let (range, mut frags) = render_unchecked_block(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7115,7 +7115,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
             (range, frags)
         }
 
-        Statement::VariableDeclarationStatement(ref element) => {
+        Statement::VariableDeclarationStatement(element) => {
             let (range, mut frags) = render_variable_declaration_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7132,7 +7132,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
             (range, frags)
         }
 
-        Statement::ExpressionStatement(ref element) => {
+        Statement::ExpressionStatement(element) => {
             let (range, mut frags) = render_expression_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7154,7 +7154,7 @@ pub fn render_storage_location(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        StorageLocation::MemoryKeyword(ref element) => {
+        StorageLocation::MemoryKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7168,7 +7168,7 @@ pub fn render_storage_location(
             (range, frags)
         }
 
-        StorageLocation::StorageKeyword(ref element) => {
+        StorageLocation::StorageKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7182,7 +7182,7 @@ pub fn render_storage_location(
             (range, frags)
         }
 
-        StorageLocation::CallDataKeyword(ref element) => {
+        StorageLocation::CallDataKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7204,7 +7204,7 @@ pub fn render_string_expression(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        StringExpression::StringLiterals(ref element) => {
+        StringExpression::StringLiterals(element) => {
             let (range, mut frags) = render_string_literals(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7218,7 +7218,7 @@ pub fn render_string_expression(
             (range, frags)
         }
 
-        StringExpression::HexStringLiterals(ref element) => {
+        StringExpression::HexStringLiterals(element) => {
             let (range, mut frags) = render_hex_string_literals(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7232,7 +7232,7 @@ pub fn render_string_expression(
             (range, frags)
         }
 
-        StringExpression::UnicodeStringLiterals(ref element) => {
+        StringExpression::UnicodeStringLiterals(element) => {
             let (range, mut frags) = render_unicode_string_literals(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7250,7 +7250,7 @@ pub fn render_string_expression(
 
 pub fn render_type_name(source: &str, node: &TypeName, depth: usize) -> RenderedOutput {
     match node {
-        TypeName::ArrayTypeName(ref element) => {
+        TypeName::ArrayTypeName(element) => {
             let (range, mut frags) = render_array_type_name(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7264,7 +7264,7 @@ pub fn render_type_name(source: &str, node: &TypeName, depth: usize) -> Rendered
             (range, frags)
         }
 
-        TypeName::FunctionType(ref element) => {
+        TypeName::FunctionType(element) => {
             let (range, mut frags) = render_function_type(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7278,7 +7278,7 @@ pub fn render_type_name(source: &str, node: &TypeName, depth: usize) -> Rendered
             (range, frags)
         }
 
-        TypeName::MappingType(ref element) => {
+        TypeName::MappingType(element) => {
             let (range, mut frags) = render_mapping_type(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7292,7 +7292,7 @@ pub fn render_type_name(source: &str, node: &TypeName, depth: usize) -> Rendered
             (range, frags)
         }
 
-        TypeName::ElementaryType(ref element) => {
+        TypeName::ElementaryType(element) => {
             let (range, mut frags) = render_elementary_type(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7306,7 +7306,7 @@ pub fn render_type_name(source: &str, node: &TypeName, depth: usize) -> Rendered
             (range, frags)
         }
 
-        TypeName::IdentifierPath(ref element) => {
+        TypeName::IdentifierPath(element) => {
             let (range, mut frags) = render_identifier_path(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7324,7 +7324,7 @@ pub fn render_type_name(source: &str, node: &TypeName, depth: usize) -> Rendered
 
 pub fn render_using_clause(source: &str, node: &UsingClause, depth: usize) -> RenderedOutput {
     match node {
-        UsingClause::IdentifierPath(ref element) => {
+        UsingClause::IdentifierPath(element) => {
             let (range, mut frags) = render_identifier_path(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7338,7 +7338,7 @@ pub fn render_using_clause(source: &str, node: &UsingClause, depth: usize) -> Re
             (range, frags)
         }
 
-        UsingClause::UsingDeconstruction(ref element) => {
+        UsingClause::UsingDeconstruction(element) => {
             let (range, mut frags) = render_using_deconstruction(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7356,7 +7356,7 @@ pub fn render_using_clause(source: &str, node: &UsingClause, depth: usize) -> Re
 
 pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -> RenderedOutput {
     match node {
-        UsingOperator::Ampersand(ref element) => {
+        UsingOperator::Ampersand(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7367,7 +7367,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
             (range, frags)
         }
 
-        UsingOperator::Asterisk(ref element) => {
+        UsingOperator::Asterisk(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7378,7 +7378,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
             (range, frags)
         }
 
-        UsingOperator::BangEqual(ref element) => {
+        UsingOperator::BangEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7389,7 +7389,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
             (range, frags)
         }
 
-        UsingOperator::Bar(ref element) => {
+        UsingOperator::Bar(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7397,7 +7397,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
             (range, frags)
         }
 
-        UsingOperator::Caret(ref element) => {
+        UsingOperator::Caret(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7408,7 +7408,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
             (range, frags)
         }
 
-        UsingOperator::EqualEqual(ref element) => {
+        UsingOperator::EqualEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7422,7 +7422,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
             (range, frags)
         }
 
-        UsingOperator::GreaterThan(ref element) => {
+        UsingOperator::GreaterThan(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7436,7 +7436,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
             (range, frags)
         }
 
-        UsingOperator::GreaterThanEqual(ref element) => {
+        UsingOperator::GreaterThanEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7450,7 +7450,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
             (range, frags)
         }
 
-        UsingOperator::LessThan(ref element) => {
+        UsingOperator::LessThan(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7461,7 +7461,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
             (range, frags)
         }
 
-        UsingOperator::LessThanEqual(ref element) => {
+        UsingOperator::LessThanEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7475,7 +7475,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
             (range, frags)
         }
 
-        UsingOperator::Minus(ref element) => {
+        UsingOperator::Minus(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7486,7 +7486,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
             (range, frags)
         }
 
-        UsingOperator::Percent(ref element) => {
+        UsingOperator::Percent(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7497,7 +7497,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
             (range, frags)
         }
 
-        UsingOperator::Plus(ref element) => {
+        UsingOperator::Plus(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7508,7 +7508,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
             (range, frags)
         }
 
-        UsingOperator::Slash(ref element) => {
+        UsingOperator::Slash(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7519,7 +7519,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
             (range, frags)
         }
 
-        UsingOperator::Tilde(ref element) => {
+        UsingOperator::Tilde(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7534,7 +7534,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
 
 pub fn render_using_target(source: &str, node: &UsingTarget, depth: usize) -> RenderedOutput {
     match node {
-        UsingTarget::TypeName(ref element) => {
+        UsingTarget::TypeName(element) => {
             let (range, mut frags) = render_type_name(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7545,7 +7545,7 @@ pub fn render_using_target(source: &str, node: &UsingTarget, depth: usize) -> Re
             (range, frags)
         }
 
-        UsingTarget::Asterisk(ref element) => {
+        UsingTarget::Asterisk(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7564,7 +7564,7 @@ pub fn render_variable_declaration_target(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        VariableDeclarationTarget::SingleTypedDeclaration(ref element) => {
+        VariableDeclarationTarget::SingleTypedDeclaration(element) => {
             let (range, mut frags) = render_single_typed_declaration(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7578,7 +7578,7 @@ pub fn render_variable_declaration_target(
             (range, frags)
         }
 
-        VariableDeclarationTarget::MultiTypedDeclaration(ref element) => {
+        VariableDeclarationTarget::MultiTypedDeclaration(element) => {
             let (range, mut frags) = render_multi_typed_declaration(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7600,7 +7600,7 @@ pub fn render_version_expression(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        VersionExpression::VersionRange(ref element) => {
+        VersionExpression::VersionRange(element) => {
             let (range, mut frags) = render_version_range(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7614,7 +7614,7 @@ pub fn render_version_expression(
             (range, frags)
         }
 
-        VersionExpression::VersionTerm(ref element) => {
+        VersionExpression::VersionTerm(element) => {
             let (range, mut frags) = render_version_term(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7632,7 +7632,7 @@ pub fn render_version_expression(
 
 pub fn render_version_literal(source: &str, node: &VersionLiteral, depth: usize) -> RenderedOutput {
     match node {
-        VersionLiteral::SimpleVersionLiteral(ref element) => {
+        VersionLiteral::SimpleVersionLiteral(element) => {
             let (range, mut frags) = render_simple_version_literal(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7646,7 +7646,7 @@ pub fn render_version_literal(source: &str, node: &VersionLiteral, depth: usize)
             (range, frags)
         }
 
-        VersionLiteral::PragmaStringLiteral(ref element) => {
+        VersionLiteral::PragmaStringLiteral(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7668,7 +7668,7 @@ pub fn render_version_operator(
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        VersionOperator::PragmaCaret(ref element) => {
+        VersionOperator::PragmaCaret(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7682,7 +7682,7 @@ pub fn render_version_operator(
             (range, frags)
         }
 
-        VersionOperator::PragmaTilde(ref element) => {
+        VersionOperator::PragmaTilde(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7696,7 +7696,7 @@ pub fn render_version_operator(
             (range, frags)
         }
 
-        VersionOperator::PragmaEqual(ref element) => {
+        VersionOperator::PragmaEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7710,7 +7710,7 @@ pub fn render_version_operator(
             (range, frags)
         }
 
-        VersionOperator::PragmaLessThan(ref element) => {
+        VersionOperator::PragmaLessThan(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7724,7 +7724,7 @@ pub fn render_version_operator(
             (range, frags)
         }
 
-        VersionOperator::PragmaGreaterThan(ref element) => {
+        VersionOperator::PragmaGreaterThan(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7738,7 +7738,7 @@ pub fn render_version_operator(
             (range, frags)
         }
 
-        VersionOperator::PragmaLessThanEqual(ref element) => {
+        VersionOperator::PragmaLessThanEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7752,7 +7752,7 @@ pub fn render_version_operator(
             (range, frags)
         }
 
-        VersionOperator::PragmaGreaterThanEqual(ref element) => {
+        VersionOperator::PragmaGreaterThanEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7770,7 +7770,7 @@ pub fn render_version_operator(
 
 pub fn render_yul_expression(source: &str, node: &YulExpression, depth: usize) -> RenderedOutput {
     match node {
-        YulExpression::YulFunctionCallExpression(ref element) => {
+        YulExpression::YulFunctionCallExpression(element) => {
             let (range, mut frags) = render_yul_function_call_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7784,7 +7784,7 @@ pub fn render_yul_expression(source: &str, node: &YulExpression, depth: usize) -
             (range, frags)
         }
 
-        YulExpression::YulLiteral(ref element) => {
+        YulExpression::YulLiteral(element) => {
             let (range, mut frags) = render_yul_literal(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7798,7 +7798,7 @@ pub fn render_yul_expression(source: &str, node: &YulExpression, depth: usize) -
             (range, frags)
         }
 
-        YulExpression::YulPath(ref element) => {
+        YulExpression::YulPath(element) => {
             let (range, mut frags) = render_yul_path(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7813,7 +7813,7 @@ pub fn render_yul_expression(source: &str, node: &YulExpression, depth: usize) -
 
 pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> RenderedOutput {
     match node {
-        YulLiteral::YulTrueKeyword(ref element) => {
+        YulLiteral::YulTrueKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7827,7 +7827,7 @@ pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> Rend
             (range, frags)
         }
 
-        YulLiteral::YulFalseKeyword(ref element) => {
+        YulLiteral::YulFalseKeyword(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7841,7 +7841,7 @@ pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> Rend
             (range, frags)
         }
 
-        YulLiteral::YulDecimalLiteral(ref element) => {
+        YulLiteral::YulDecimalLiteral(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7855,7 +7855,7 @@ pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> Rend
             (range, frags)
         }
 
-        YulLiteral::YulHexLiteral(ref element) => {
+        YulLiteral::YulHexLiteral(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7869,7 +7869,7 @@ pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> Rend
             (range, frags)
         }
 
-        YulLiteral::YulHexStringLiteral(ref element) => {
+        YulLiteral::YulHexStringLiteral(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7883,7 +7883,7 @@ pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> Rend
             (range, frags)
         }
 
-        YulLiteral::YulStringLiteral(ref element) => {
+        YulLiteral::YulStringLiteral(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7901,7 +7901,7 @@ pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> Rend
 
 pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> RenderedOutput {
     match node {
-        YulStatement::YulBlock(ref element) => {
+        YulStatement::YulBlock(element) => {
             let (range, mut frags) = render_yul_block(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7912,7 +7912,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
             (range, frags)
         }
 
-        YulStatement::YulFunctionDefinition(ref element) => {
+        YulStatement::YulFunctionDefinition(element) => {
             let (range, mut frags) = render_yul_function_definition(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7926,7 +7926,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
             (range, frags)
         }
 
-        YulStatement::YulIfStatement(ref element) => {
+        YulStatement::YulIfStatement(element) => {
             let (range, mut frags) = render_yul_if_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7940,7 +7940,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
             (range, frags)
         }
 
-        YulStatement::YulForStatement(ref element) => {
+        YulStatement::YulForStatement(element) => {
             let (range, mut frags) = render_yul_for_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7954,7 +7954,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
             (range, frags)
         }
 
-        YulStatement::YulSwitchStatement(ref element) => {
+        YulStatement::YulSwitchStatement(element) => {
             let (range, mut frags) = render_yul_switch_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7968,7 +7968,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
             (range, frags)
         }
 
-        YulStatement::YulLeaveStatement(ref element) => {
+        YulStatement::YulLeaveStatement(element) => {
             let (range, mut frags) = render_yul_leave_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7982,7 +7982,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
             (range, frags)
         }
 
-        YulStatement::YulBreakStatement(ref element) => {
+        YulStatement::YulBreakStatement(element) => {
             let (range, mut frags) = render_yul_break_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7996,7 +7996,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
             (range, frags)
         }
 
-        YulStatement::YulContinueStatement(ref element) => {
+        YulStatement::YulContinueStatement(element) => {
             let (range, mut frags) = render_yul_continue_statement(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -8010,7 +8010,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
             (range, frags)
         }
 
-        YulStatement::YulVariableAssignmentStatement(ref element) => {
+        YulStatement::YulVariableAssignmentStatement(element) => {
             let (range, mut frags) =
                 render_yul_variable_assignment_statement(source, element, depth);
 
@@ -8028,7 +8028,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
             (range, frags)
         }
 
-        YulStatement::YulVariableDeclarationStatement(ref element) => {
+        YulStatement::YulVariableDeclarationStatement(element) => {
             let (range, mut frags) =
                 render_yul_variable_declaration_statement(source, element, depth);
 
@@ -8046,7 +8046,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
             (range, frags)
         }
 
-        YulStatement::YulExpression(ref element) => {
+        YulStatement::YulExpression(element) => {
             let (range, mut frags) = render_yul_expression(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -8064,7 +8064,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
 
 pub fn render_yul_switch_case(source: &str, node: &YulSwitchCase, depth: usize) -> RenderedOutput {
     match node {
-        YulSwitchCase::YulDefaultCase(ref element) => {
+        YulSwitchCase::YulDefaultCase(element) => {
             let (range, mut frags) = render_yul_default_case(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -8078,7 +8078,7 @@ pub fn render_yul_switch_case(source: &str, node: &YulSwitchCase, depth: usize) 
             (range, frags)
         }
 
-        YulSwitchCase::YulValueCase(ref element) => {
+        YulSwitchCase::YulValueCase(element) => {
             let (range, mut frags) = render_yul_value_case(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).

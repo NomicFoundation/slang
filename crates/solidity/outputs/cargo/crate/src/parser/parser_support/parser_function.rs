@@ -75,10 +75,10 @@ where
 
                 let mut start = TextIndex::ZERO;
                 for edge in &children {
-                    if let Node::Terminal(terminal) = &edge.node {
-                        if terminal.kind.is_valid() {
-                            start.advance_str(terminal.text.as_str());
-                        }
+                    if let Node::Terminal(terminal) = &edge.node
+                        && terminal.kind.is_valid()
+                    {
+                        start.advance_str(terminal.text.as_str());
                     }
                 }
                 let input = &input[start.utf8..];

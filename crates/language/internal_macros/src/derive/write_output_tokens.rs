@@ -23,7 +23,7 @@ fn derive_struct(name: &Ident, fields: &[InputField]) -> TokenStream {
 
                 return quote::quote! {
                     language_definition::model::#stripped_name {
-                        #( #keys: ##keys ),*
+                        #( #keys: # #keys ),*
                     }
                 };
             }
@@ -58,7 +58,7 @@ fn derive_enum(name: &Ident, variants: &[InputVariant]) -> TokenStream {
 
                         return quote::quote! {
                             language_definition::model::#stripped_name::#variant_name {
-                                #( #keys: ##keys ),*
+                                #( #keys: # #keys ),*
                             }
                         };
                     }

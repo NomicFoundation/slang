@@ -62,7 +62,7 @@
         }
         match node {
           {% for nonterminal in nonterminals -%}
-            {{ parent_type }}::{{ nonterminal.name }}(ref {{ nonterminal.name | snake_case }}) => {
+            {{ parent_type }}::{{ nonterminal.name }}({{ nonterminal.name | snake_case }}) => {
               accept_{{ nonterminal.name | snake_case }}({{ nonterminal.name | snake_case }}, visitor);
             }
           {%- endfor %}

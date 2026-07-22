@@ -322,10 +322,9 @@ impl<'a, KT: KindTypes + 'static>
                             .symbol_stack_postcondition
                             .iter(self.partials)
                             .last()
+                            && &self.graph.stack_graph[last_symbol.symbol] == "@typeof"
                         {
-                            if &self.graph.stack_graph[last_symbol.symbol] == "@typeof" {
-                                return false;
-                            }
+                            return false;
                         }
                     }
                     true

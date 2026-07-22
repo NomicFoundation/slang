@@ -43,7 +43,7 @@ pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type
 pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type }}, depth: usize) -> RenderedOutput {
   match node {
     {% for variant in choice.variants %}
-      {{ parent_type }}::{{ variant.variant_type.name }}(ref element) => {
+      {{ parent_type }}::{{ variant.variant_type.name }}(element) => {
         {% if variant.variant_type.is_terminal %}
           let (range, mut frags) = render_terminal(source, &element.range);
         {% else %}

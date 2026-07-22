@@ -1,5 +1,9 @@
 # rustfmt nightly configuration options:
 # https://github.com/rust-lang/rustfmt/blob/master/Configurations.md
 
+# Keep the formatting style pinned to the 2021 edition, so upgrading the crate
+# `edition` to 2024 does not reformat the entire workspace with 2024 style rules.
+style_edition = "2021"
+
 group_imports = "StdExternalCrate"
 imports_granularity = "Module"

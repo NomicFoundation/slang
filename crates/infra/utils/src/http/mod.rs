@@ -19,10 +19,10 @@ where
 {
     let client = Client::new();
     let mut request_builder = client.get(url);
-    if let Ok(metadata) = fs::metadata(path) {
-        if let Ok(modified) = metadata.modified() {
-            request_builder = request_builder.header(IF_MODIFIED_SINCE, fmt_http_date(modified));
-        }
+    if let Ok(metadata) = fs::metadata(path)
+        && let Ok(modified) = metadata.modified()
+    {
+        request_builder = request_builder.header(IF_MODIFIED_SINCE, fmt_http_date(modified));
     }
 
     let response = match request_builder.send() {

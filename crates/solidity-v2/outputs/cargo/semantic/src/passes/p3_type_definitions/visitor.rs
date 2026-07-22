@@ -27,10 +27,10 @@ impl Visitor for Pass<'_> {
         }));
         self.current_receiver_type = Some(type_id);
 
-        if let Some(bases) = self.binder.get_linearised_bases(node.id()) {
-            if !bases.is_empty() {
-                self.register_super_types(type_id, &bases.clone());
-            }
+        if let Some(bases) = self.binder.get_linearised_bases(node.id())
+            && !bases.is_empty()
+        {
+            self.register_super_types(type_id, &bases.clone());
         }
 
         true
@@ -51,10 +51,10 @@ impl Visitor for Pass<'_> {
         }));
         self.current_receiver_type = Some(type_id);
 
-        if let Some(bases) = self.binder.get_linearised_bases(node.id()) {
-            if !bases.is_empty() {
-                self.register_super_types(type_id, &bases.clone());
-            }
+        if let Some(bases) = self.binder.get_linearised_bases(node.id())
+            && !bases.is_empty()
+        {
+            self.register_super_types(type_id, &bases.clone());
         }
 
         true
@@ -139,7 +139,7 @@ impl Visitor for Pass<'_> {
             else {
                 unreachable!("FunctionDefinition does not have associated parameters scope");
             };
-            let Scope::Parameters(ref mut parameters_scope) =
+            let Scope::Parameters(parameters_scope) =
                 self.binder.get_scope_mut(parameters_scope_id)
             else {
                 unreachable!("scope is not a ParametersScope");
@@ -201,8 +201,7 @@ impl Visitor for Pass<'_> {
         else {
             unreachable!("EventDefinition does not have associated parameters scope");
         };
-        let Scope::Parameters(ref mut parameters_scope) =
-            self.binder.get_scope_mut(parameters_scope_id)
+        let Scope::Parameters(parameters_scope) = self.binder.get_scope_mut(parameters_scope_id)
         else {
             unreachable!("scope is not a ParametersScope");
         };

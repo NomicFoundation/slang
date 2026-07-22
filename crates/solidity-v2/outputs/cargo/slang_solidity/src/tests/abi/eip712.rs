@@ -124,11 +124,11 @@ fn encode_type(primary: &StructDefinition) -> Option<String> {
     let mut queue = vec![Arc::clone(primary)];
     while let Some(def) = queue.pop() {
         for member in def.members().iter() {
-            if let Some(dependency) = referenced_struct(&member.get_type()?) {
-                if seen.insert(dependency.node_id()) {
-                    referenced.push(Arc::clone(&dependency));
-                    queue.push(dependency);
-                }
+            if let Some(dependency) = referenced_struct(&member.get_type()?)
+                && seen.insert(dependency.node_id())
+            {
+                referenced.push(Arc::clone(&dependency));
+                queue.push(dependency);
             }
         }
     }

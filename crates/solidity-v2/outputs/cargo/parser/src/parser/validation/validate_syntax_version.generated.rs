@@ -76,13 +76,13 @@ impl SyntaxVersionValidator<'_> {
     }
 
     fn check_assembly_statement(&mut self, node: &AssemblyStatement) {
-        if let Some(ref child) = node.flags {
-            if self.check(
+        if let Some(ref child) = node.flags
+            && self.check(
                 child,
                 LanguageVersionSpecifier::from(LanguageVersion::V0_8_13),
-            ) {
-                self.check_yul_flags_declaration(child);
-            }
+            )
+        {
+            self.check_yul_flags_declaration(child);
         }
     }
 
@@ -586,13 +586,13 @@ impl SyntaxVersionValidator<'_> {
             return;
         }
 
-        if let Some(ref child) = node.alias {
-            if self.check(
+        if let Some(ref child) = node.alias
+            && self.check(
                 child,
                 LanguageVersionSpecifier::from(LanguageVersion::V0_8_19),
-            ) {
-                self.check_using_alias(child);
-            }
+            )
+        {
+            self.check_using_alias(child);
         }
     }
 

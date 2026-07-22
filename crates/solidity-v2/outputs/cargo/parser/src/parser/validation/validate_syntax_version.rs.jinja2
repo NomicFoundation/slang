@@ -70,15 +70,17 @@ impl SyntaxVersionValidator<'_> {
                                 }
                             {%- endif %}
                         {%- else %}
-                            if let Some(ref child) = node.{{ field.label | snake_case }} {
-                                {%- if recurse %}
-                                    if self.check(child, {{ _versions::specifier(s=field.enabled) }}) {
-                                        self.check_{{ field.field_type.name | snake_case }}(child);
-                                    }
-                                {%- else %}
+                            {%- if recurse %}
+                                if let Some(ref child) = node.{{ field.label | snake_case }}
+                                    && self.check(child, {{ _versions::specifier(s=field.enabled) }})
+                                {
+                                    self.check_{{ field.field_type.name | snake_case }}(child);
+                                }
+                            {%- else %}
+                                if let Some(ref child) = node.{{ field.label | snake_case }} {
                                     self.check(child, {{ _versions::specifier(s=field.enabled) }});
-                                {%- endif %}
-                            }
+                                }
+                            {%- endif %}
                         {%- endif %}
                     {%- else %}
                         {# Required field — always present, just recurse if child has versioned descendants #}

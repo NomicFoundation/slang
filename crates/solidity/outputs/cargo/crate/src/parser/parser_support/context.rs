@@ -156,12 +156,12 @@ impl<'s> ParserContext<'s> {
         f: impl FnOnce(&mut Self) -> ParserResult,
     ) -> ParserResult {
         let position = self.position();
-        if let Some(cache) = &self.leading_trivia_cache {
-            if cache.start_position == position {
-                let result = cache.result.clone();
-                self.set_position(cache.end_position);
-                return result;
-            }
+        if let Some(cache) = &self.leading_trivia_cache
+            && cache.start_position == position
+        {
+            let result = cache.result.clone();
+            self.set_position(cache.end_position);
+            return result;
         }
 
         let result = f(self);

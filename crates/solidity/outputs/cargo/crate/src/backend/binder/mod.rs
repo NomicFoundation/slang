@@ -323,15 +323,15 @@ impl Binder {
         scope_id: ScopeId,
     ) -> impl Iterator<Item = &UsingDirective> {
         let scope = self.get_scope_by_id(scope_id);
-        if let Scope::Contract(contract_scope) = scope {
-            if let Some(linearisations) = self.linearisations.get(&contract_scope.node_id) {
-                return EitherIter::Left(
-                    linearisations
-                        .iter()
-                        .filter_map(|node_id| self.scope_id_for_node_id(*node_id))
-                        .flat_map(|scope_id| self.get_scope_by_id(scope_id).get_using_directives()),
-                );
-            }
+        if let Scope::Contract(contract_scope) = scope
+            && let Some(linearisations) = self.linearisations.get(&contract_scope.node_id)
+        {
+            return EitherIter::Left(
+                linearisations
+                    .iter()
+                    .filter_map(|node_id| self.scope_id_for_node_id(*node_id))
+                    .flat_map(|scope_id| self.get_scope_by_id(scope_id).get_using_directives()),
+            );
         }
         EitherIter::Right(scope.get_using_directives())
     }

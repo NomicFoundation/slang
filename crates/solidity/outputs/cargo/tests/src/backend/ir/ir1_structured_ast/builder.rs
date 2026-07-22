@@ -138,7 +138,7 @@ contract Test {
     else {
         panic!("Expected ElementaryType");
     };
-    let ir1_structured_ast::ElementaryType::AddressType(ref address_type) = parameter_type else {
+    let ir1_structured_ast::ElementaryType::AddressType(address_type) = parameter_type else {
         panic!("Expected AddressType");
     };
     assert!(!address_type.payable_keyword);
