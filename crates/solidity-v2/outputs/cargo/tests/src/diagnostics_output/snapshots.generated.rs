@@ -1215,6 +1215,21 @@ mod structure {
     }
 
     #[test]
+    fn duplicate_error_catch_clause() -> Result<()> {
+        run("structure", "duplicate_error_catch_clause")
+    }
+
+    #[test]
+    fn duplicate_low_level_catch_clause() -> Result<()> {
+        run("structure", "duplicate_low_level_catch_clause")
+    }
+
+    #[test]
+    fn duplicate_panic_catch_clause() -> Result<()> {
+        run("structure", "duplicate_panic_catch_clause")
+    }
+
+    #[test]
     fn empty_enum() -> Result<()> {
         run("structure", "empty_enum")
     }
@@ -1271,6 +1286,11 @@ mod structure {
     #[test]
     fn interface_function_not_external() -> Result<()> {
         run("structure", "interface_function_not_external")
+    }
+
+    #[test]
+    fn invalid_catch_clause_name() -> Result<()> {
+        run("structure", "invalid_catch_clause_name")
     }
 
     mod invalid_using_directive_container {

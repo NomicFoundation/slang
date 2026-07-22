@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 5320] Error: This try statement already has a low-level catch clause.
+    ╭─[input.sol:9:11]
+    │
+  9 │ ╭─▶         } catch (bytes memory data) {
+    ┆ ┆   
+ 11 │ ├─▶         }
+    │ │               
+    │ ╰─────────────── Error occurred here.
+────╯
