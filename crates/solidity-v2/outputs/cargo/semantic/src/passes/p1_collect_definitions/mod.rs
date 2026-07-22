@@ -8,10 +8,10 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     InterfaceFunctionCannotBeImplemented, InterfaceFunctionNotExternal,
     InvalidUsingDirectiveContainer, LibraryNonConstantStateVariable, LibraryPayableFunction,
     LibraryVirtualFunction, LibraryVirtualModifier, MissingFunctionVisibility,
-    MultipleConstructors, NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
-    UncheckedBlockNotInRegularBlock, UnimplementedModifierMustBeVirtual,
-    VariableDeclarationNotInBlock, VariableInInterface, VirtualFreeFunction,
-    VirtualPrivateFunction,
+    MultipleConstructors, NestedUncheckedBlock, NonAbstractContractInternalConstructor,
+    PayableInternalOrPrivateFunction, UncheckedBlockNotInRegularBlock,
+    UnimplementedModifierMustBeVirtual, VariableDeclarationNotInBlock, VariableInInterface,
+    VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -72,6 +72,9 @@ struct Pass<'a, F: SemanticFile> {
     // traversal point. Used to flag `break` statements that appear outside any
     // loop.
     loop_depth: usize,
+    // Number of enclosing `unchecked` blocks at the current traversal point.
+    // Used to flag `unchecked` blocks nested inside another one.
+    unchecked_depth: usize,
     binder: &'a mut Binder,
     diagnostics: &'a mut DiagnosticCollection,
 }
@@ -82,12 +85,14 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
             current_file: file,
             scope_stack: Vec::new(),
             loop_depth: 0,
+            unchecked_depth: 0,
             binder,
             diagnostics,
         };
         ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
         assert!(pass.scope_stack.is_empty());
         assert_eq!(pass.loop_depth, 0);
+        assert_eq!(pass.unchecked_depth, 0);
     }
 
     fn enter_scope(&mut self, scope: Scope) -> ScopeId {
@@ -800,6 +805,19 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
 
     fn leave_do_while_statement(&mut self, _node: &ir::DoWhileStatement) {
         self.loop_depth -= 1;
+    }
+
+    fn enter_unchecked_block(&mut self, node: &ir::UncheckedBlock) -> bool {
+        // An `unchecked` block cannot be nested inside another one.
+        if self.unchecked_depth > 0 {
+            self.report(node, NestedUncheckedBlock);
+        }
+        self.unchecked_depth += 1;
+        true
+    }
+
+    fn leave_unchecked_block(&mut self, _node: &ir::UncheckedBlock) {
+        self.unchecked_depth -= 1;
     }
 
     fn enter_break_statement(&mut self, node: &ir::BreakStatement) -> bool {

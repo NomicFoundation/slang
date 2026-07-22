@@ -1201,6 +1201,11 @@ mod structure {
     }
 
     #[test]
+    fn nested_unchecked_block() -> Result<()> {
+        run("structure", "nested_unchecked_block")
+    }
+
+    #[test]
     fn non_abstract_contract_internal_constructor() -> Result<()> {
         run("structure", "non_abstract_contract_internal_constructor")
     }
