@@ -9,8 +9,9 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     InvalidUsingDirectiveContainer, LibraryNonConstantStateVariable, LibraryPayableFunction,
     LibraryVirtualFunction, LibraryVirtualModifier, MissingFunctionVisibility,
     MultipleConstructors, NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
-    UnimplementedModifierMustBeVirtual, VariableDeclarationNotInBlock, VariableInInterface,
-    VirtualFreeFunction, VirtualPrivateFunction,
+    UncheckedBlockNotInRegularBlock, UnimplementedModifierMustBeVirtual,
+    VariableDeclarationNotInBlock, VariableInInterface, VirtualFreeFunction,
+    VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -161,11 +162,17 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     }
 
     /// Reports a diagnostic if the given statement, used as the un-braced body
-    /// of a control-flow statement, is a variable declaration. Variable
-    /// declarations are only allowed inside blocks.
-    fn check_body_is_not_variable_declaration(&mut self, body: &ir::Statement) {
-        if let ir::Statement::VariableDeclarationStatement(declaration) = body {
-            self.report(declaration, VariableDeclarationNotInBlock);
+    /// of a control-flow statement, is one that is only allowed directly inside
+    /// a block: a variable declaration or an `unchecked` block.
+    fn check_control_flow_body(&mut self, body: &ir::Statement) {
+        match body {
+            ir::Statement::VariableDeclarationStatement(declaration) => {
+                self.report(declaration, VariableDeclarationNotInBlock);
+            }
+            ir::Statement::UncheckedBlock(unchecked_block) => {
+                self.report(unchecked_block, UncheckedBlockNotInRegularBlock);
+            }
+            _ => {}
         }
     }
 
@@ -752,15 +759,15 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn enter_if_statement(&mut self, node: &ir::IfStatement) -> bool {
-        self.check_body_is_not_variable_declaration(&node.body);
+        self.check_control_flow_body(&node.body);
         if let Some(else_branch) = &node.else_branch {
-            self.check_body_is_not_variable_declaration(else_branch);
+            self.check_control_flow_body(else_branch);
         }
         true
     }
 
     fn enter_for_statement(&mut self, node: &ir::ForStatement) -> bool {
-        self.check_body_is_not_variable_declaration(&node.body);
+        self.check_control_flow_body(&node.body);
 
         // Open a new block here to hold declarations in the initialization
         // clause. This is a new lexical scope.
@@ -776,7 +783,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn enter_while_statement(&mut self, node: &ir::WhileStatement) -> bool {
-        self.check_body_is_not_variable_declaration(&node.body);
+        self.check_control_flow_body(&node.body);
         self.loop_depth += 1;
         true
     }
@@ -786,7 +793,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn enter_do_while_statement(&mut self, node: &ir::DoWhileStatement) -> bool {
-        self.check_body_is_not_variable_declaration(&node.body);
+        self.check_control_flow_body(&node.body);
         self.loop_depth += 1;
         true
     }

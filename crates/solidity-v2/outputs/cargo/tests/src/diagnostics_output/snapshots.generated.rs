@@ -1251,6 +1251,50 @@ mod structure {
         run("structure", "storage_layout_for_abstract_contract")
     }
 
+    mod unchecked_block_not_in_regular_block {
+        use super::*;
+
+        #[test]
+        fn do_while_statement() -> Result<()> {
+            run(
+                "structure/unchecked_block_not_in_regular_block",
+                "do_while_statement",
+            )
+        }
+
+        #[test]
+        fn else_branch() -> Result<()> {
+            run(
+                "structure/unchecked_block_not_in_regular_block",
+                "else_branch",
+            )
+        }
+
+        #[test]
+        fn for_statement() -> Result<()> {
+            run(
+                "structure/unchecked_block_not_in_regular_block",
+                "for_statement",
+            )
+        }
+
+        #[test]
+        fn if_statement() -> Result<()> {
+            run(
+                "structure/unchecked_block_not_in_regular_block",
+                "if_statement",
+            )
+        }
+
+        #[test]
+        fn while_statement() -> Result<()> {
+            run(
+                "structure/unchecked_block_not_in_regular_block",
+                "while_statement",
+            )
+        }
+    }
+
     #[test]
     fn unimplemented_modifier_must_be_virtual() -> Result<()> {
         run("structure", "unimplemented_modifier_must_be_virtual")

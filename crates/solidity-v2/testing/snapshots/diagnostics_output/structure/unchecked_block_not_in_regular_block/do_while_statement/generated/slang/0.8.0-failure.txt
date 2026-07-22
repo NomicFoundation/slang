@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/unchecked-block-not-in-regular-block] Error: "unchecked" blocks can only be used inside regular blocks.
+   ╭─[input.sol:8:13]
+   │
+ 8 │             unchecked {}
+   │             ──────┬─────  
+   │                   ╰─────── Error occurred here.
+───╯
