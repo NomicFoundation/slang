@@ -30,6 +30,7 @@ mod multiple_receive_functions;
 mod non_abstract_contract_internal_constructor;
 mod payable_internal_or_private_function;
 mod storage_layout_for_abstract_contract;
+mod unchecked_block_not_in_regular_block;
 mod unimplemented_function_with_modifiers;
 mod unimplemented_modifier_must_be_virtual;
 mod uninitialized_constant;
@@ -71,6 +72,7 @@ pub use non_abstract_contract_internal_constructor::NonAbstractContractInternalC
 pub use payable_internal_or_private_function::PayableInternalOrPrivateFunction;
 use serde::Serialize;
 pub use storage_layout_for_abstract_contract::StorageLayoutForAbstractContract;
+pub use unchecked_block_not_in_regular_block::UncheckedBlockNotInRegularBlock;
 pub use unimplemented_function_with_modifiers::UnimplementedFunctionWithModifiers;
 pub use unimplemented_modifier_must_be_virtual::UnimplementedModifierMustBeVirtual;
 pub use uninitialized_constant::UninitializedConstant;
@@ -182,6 +184,10 @@ define_diagnostic_kind! {
         /// A variable declaration is used as the un-braced body of a control-flow
         /// statement, rather than inside a block.
         VariableDeclarationNotInBlock(VariableDeclarationNotInBlock),
+
+        /// An `unchecked` block is used as the un-braced body of a control-flow
+        /// statement, rather than directly inside a regular block.
+        UncheckedBlockNotInRegularBlock(UncheckedBlockNotInRegularBlock),
 
         /// A variable is declared in an interface.
         VariableInInterface(VariableInInterface),
