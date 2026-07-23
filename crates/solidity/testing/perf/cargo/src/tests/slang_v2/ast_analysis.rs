@@ -1,3 +1,4 @@
+use std::hint::black_box;
 use std::sync::Arc;
 
 use slang_solidity_v2_ast::ast::visitor::{accept_source_unit, Visitor};
@@ -60,13 +61,15 @@ struct AnalysisWalk {
 
 impl Visitor for AnalysisWalk {
     fn visit_identifier(&mut self, node: &Identifier) {
-        if node.resolve_to_definition().is_some() || node.resolve_to_built_in().is_some() {
+        if black_box(node.resolve_to_definition()).is_some()
+            || black_box(node.resolve_to_built_in()).is_some()
+        {
             self.resolved_references_count += 1;
         }
     }
 
     fn enter_expression(&mut self, node: &Expression) -> bool {
-        if node.get_type().is_some() {
+        if black_box(node.get_type()).is_some() {
             self.typed_expressions_count += 1;
         }
         true
