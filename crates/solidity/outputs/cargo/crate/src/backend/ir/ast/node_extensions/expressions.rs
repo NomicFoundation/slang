@@ -95,6 +95,10 @@ impl FunctionCallExpressionStruct {
                 self.semantic.binder.node_typing(mae.node_id),
                 Typing::MetaType(_) | Typing::UserMetaType(_)
             ),
+            input_ir::Expression::IndexAccessExpression(iae) => matches!(
+                self.semantic.binder.node_typing(iae.node_id),
+                Typing::MetaType(_) | Typing::UserMetaType(_)
+            ),
             _ => false,
         }
     }
