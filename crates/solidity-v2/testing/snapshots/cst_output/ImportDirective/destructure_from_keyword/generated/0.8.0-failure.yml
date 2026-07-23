@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/parsing/import_complex_invalid_from.sol │ 0..120
+  2  │ import {hello, world} from function;                                                                                     │ 121..157
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected FunctionKeyword. One of StringLiteral was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ImportDirective/destructure_from_keyword/input.sol:2:28]
+       │
+     2 │ import {hello, world} from function;
+       │                            ────┬───  
+       │                                ╰───── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

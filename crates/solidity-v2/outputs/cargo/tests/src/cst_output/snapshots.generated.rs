@@ -1299,6 +1299,16 @@ mod import_directive {
     use super::*;
 
     #[test]
+    fn destructure_from_keyword() -> Result<()> {
+        run("ImportDirective", "destructure_from_keyword")
+    }
+
+    #[test]
+    fn destructure_from_namespace() -> Result<()> {
+        run("ImportDirective", "destructure_from_namespace")
+    }
+
+    #[test]
     fn destructure_import_empty() -> Result<()> {
         run("ImportDirective", "destructure_import_empty")
     }
