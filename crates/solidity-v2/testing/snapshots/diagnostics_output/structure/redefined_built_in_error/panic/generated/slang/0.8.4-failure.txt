@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/redefined-built-in-error] Error: The built-in errors "Error" and "Panic" cannot be re-defined.
+   ╭─[input.sol:5:1]
+   │
+ 5 │ error Panic(uint256 code);
+   │ ─────────────┬────────────  
+   │              ╰────────────── Error occurred here.
+───╯

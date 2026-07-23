@@ -24,6 +24,7 @@ mod missing_function_visibility;
 mod multiple_constructors;
 mod non_abstract_contract_internal_constructor;
 mod payable_internal_or_private_function;
+mod redefined_built_in_error;
 mod storage_layout_for_abstract_contract;
 mod unimplemented_modifier_must_be_virtual;
 mod uninitialized_constant;
@@ -56,6 +57,7 @@ pub use missing_function_visibility::MissingFunctionVisibility;
 pub use multiple_constructors::MultipleConstructors;
 pub use non_abstract_contract_internal_constructor::NonAbstractContractInternalConstructor;
 pub use payable_internal_or_private_function::PayableInternalOrPrivateFunction;
+pub use redefined_built_in_error::RedefinedBuiltInError;
 use serde::Serialize;
 pub use storage_layout_for_abstract_contract::StorageLayoutForAbstractContract;
 pub use unimplemented_modifier_must_be_virtual::UnimplementedModifierMustBeVirtual;
@@ -125,6 +127,10 @@ define_diagnostic_kind! {
 
         /// A struct declares no members.
         EmptyStruct(EmptyStruct),
+
+        /// An error is defined with a name reserved for a built-in error
+        /// (`Error` or `Panic`).
+        RedefinedBuiltInError(RedefinedBuiltInError),
 
         /// A library declares a fallback function.
         LibraryFallbackFunction(LibraryFallbackFunction),
