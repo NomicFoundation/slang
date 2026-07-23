@@ -683,17 +683,22 @@ pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnostic
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::InterfaceFunctionNotExternal(slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionNotExternal)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::InvalidUsingDirectiveContainer(slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::LibraryFallbackFunction(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::LibraryNonConstantStateVariable(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::LibraryPayableFunction(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryPayableFunction)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::LibraryReceiveFunction(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::LibraryVirtualFunction(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryVirtualFunction)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::LibraryVirtualModifier(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryVirtualModifier)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::MissingFunctionVisibility(slang_solidity_v2_common::diagnostics::kinds::structure::MissingFunctionVisibility)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::MultipleConstructors(slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::NestedUncheckedBlock(slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::NonAbstractContractInternalConstructor(slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::PayableInternalOrPrivateFunction(slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::StorageLayoutForAbstractContract(slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UncheckedBlockNotInRegularBlock(slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UnimplementedModifierMustBeVirtual(slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UninitializedConstant(slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::VariableDeclarationNotInBlock(slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::VariableInInterface(slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::VirtualFreeFunction(slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::VirtualPrivateFunction(slang_solidity_v2_common::diagnostics::kinds::structure::VirtualPrivateFunction)
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -733,6 +738,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::LibraryPayableFunction> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryPayableFunction) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -745,6 +752,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::MissingFunctionVisibility) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -753,10 +762,16 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::VirtualPrivateFunction> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -1075,6 +1090,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::LibraryPayableFunction
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::LibraryPayableFunction
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryPayableFunction::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::LibraryPayableFunction
@@ -1190,6 +1224,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor
@@ -1247,6 +1300,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual
@@ -1285,6 +1357,44 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction
@@ -2056,6 +2166,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::LibraryPayableFunction> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryPayableFunction) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -2068,6 +2180,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::MissingFunctionVisibility) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -2076,10 +2190,16 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::VirtualPrivateFunction> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -2382,6 +2502,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryNonConstantStateVariable::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::LibraryPayableFunction
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryPayableFunction::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::LibraryPayableFunction::message(&self) -> alloc::string::String
@@ -2406,6 +2530,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor::message(&self) -> alloc::string::String
@@ -2422,6 +2550,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual::message(&self) -> alloc::string::String
@@ -2430,6 +2562,14 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableDeclarationNotInBlock::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VariableInInterface::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction::message(&self) -> alloc::string::String

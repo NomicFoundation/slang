@@ -1308,6 +1308,11 @@ mod structure {
     }
 
     #[test]
+    fn library_non_constant_state_variable() -> Result<()> {
+        run("structure", "library_non_constant_state_variable")
+    }
+
+    #[test]
     fn library_payable_function() -> Result<()> {
         run("structure", "library_payable_function")
     }
@@ -1335,6 +1340,11 @@ mod structure {
     #[test]
     fn multiple_constructors() -> Result<()> {
         run("structure", "multiple_constructors")
+    }
+
+    #[test]
+    fn nested_unchecked_block() -> Result<()> {
+        run("structure", "nested_unchecked_block")
     }
 
     #[test]
@@ -1388,6 +1398,50 @@ mod structure {
         run("structure", "storage_layout_for_abstract_contract")
     }
 
+    mod unchecked_block_not_in_regular_block {
+        use super::*;
+
+        #[test]
+        fn do_while_statement() -> Result<()> {
+            run(
+                "structure/unchecked_block_not_in_regular_block",
+                "do_while_statement",
+            )
+        }
+
+        #[test]
+        fn else_branch() -> Result<()> {
+            run(
+                "structure/unchecked_block_not_in_regular_block",
+                "else_branch",
+            )
+        }
+
+        #[test]
+        fn for_statement() -> Result<()> {
+            run(
+                "structure/unchecked_block_not_in_regular_block",
+                "for_statement",
+            )
+        }
+
+        #[test]
+        fn if_statement() -> Result<()> {
+            run(
+                "structure/unchecked_block_not_in_regular_block",
+                "if_statement",
+            )
+        }
+
+        #[test]
+        fn while_statement() -> Result<()> {
+            run(
+                "structure/unchecked_block_not_in_regular_block",
+                "while_statement",
+            )
+        }
+    }
+
     #[test]
     fn unimplemented_modifier_must_be_virtual() -> Result<()> {
         run("structure", "unimplemented_modifier_must_be_virtual")
@@ -1401,6 +1455,52 @@ mod structure {
     #[test]
     fn uninitialized_file_level_constant() -> Result<()> {
         run("structure", "uninitialized_file_level_constant")
+    }
+
+    mod variable_declaration_not_in_block {
+        use super::*;
+
+        #[test]
+        fn do_while_statement() -> Result<()> {
+            run(
+                "structure/variable_declaration_not_in_block",
+                "do_while_statement",
+            )
+        }
+
+        #[test]
+        fn else_branch() -> Result<()> {
+            run("structure/variable_declaration_not_in_block", "else_branch")
+        }
+
+        #[test]
+        fn for_statement() -> Result<()> {
+            run(
+                "structure/variable_declaration_not_in_block",
+                "for_statement",
+            )
+        }
+
+        #[test]
+        fn if_statement() -> Result<()> {
+            run(
+                "structure/variable_declaration_not_in_block",
+                "if_statement",
+            )
+        }
+
+        #[test]
+        fn while_statement() -> Result<()> {
+            run(
+                "structure/variable_declaration_not_in_block",
+                "while_statement",
+            )
+        }
+    }
+
+    #[test]
+    fn variable_in_interface() -> Result<()> {
+        run("structure", "variable_in_interface")
     }
 
     #[test]

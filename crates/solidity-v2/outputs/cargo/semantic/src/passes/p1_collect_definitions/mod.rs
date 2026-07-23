@@ -6,10 +6,12 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FreeFunctionPayable,
     FreeFunctionVisibility, FunctionMustBeImplemented, FunctionNameMatchesContainer,
     InterfaceFunctionCannotBeImplemented, InterfaceFunctionNotExternal,
-    InvalidUsingDirectiveContainer, LibraryPayableFunction, LibraryVirtualFunction,
-    LibraryVirtualModifier, MissingFunctionVisibility, MultipleConstructors,
-    NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
-    UnimplementedModifierMustBeVirtual, VirtualFreeFunction, VirtualPrivateFunction,
+    InvalidUsingDirectiveContainer, LibraryNonConstantStateVariable, LibraryPayableFunction,
+    LibraryVirtualFunction, LibraryVirtualModifier, MissingFunctionVisibility,
+    MultipleConstructors, NestedUncheckedBlock, NonAbstractContractInternalConstructor,
+    PayableInternalOrPrivateFunction, UncheckedBlockNotInRegularBlock,
+    UnimplementedModifierMustBeVirtual, VariableDeclarationNotInBlock, VariableInInterface,
+    VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -70,6 +72,9 @@ struct Pass<'a, F: SemanticFile> {
     // traversal point. Used to flag `break` statements that appear outside any
     // loop.
     loop_depth: usize,
+    // Number of enclosing `unchecked` blocks at the current traversal point.
+    // Used to flag `unchecked` blocks nested inside another one.
+    unchecked_depth: usize,
     binder: &'a mut Binder,
     diagnostics: &'a mut DiagnosticCollection,
 }
@@ -80,12 +85,14 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
             current_file: file,
             scope_stack: Vec::new(),
             loop_depth: 0,
+            unchecked_depth: 0,
             binder,
             diagnostics,
         };
         ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
         assert!(pass.scope_stack.is_empty());
         assert_eq!(pass.loop_depth, 0);
+        assert_eq!(pass.unchecked_depth, 0);
     }
 
     fn enter_scope(&mut self, scope: Scope) -> ScopeId {
@@ -157,6 +164,21 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
                 .expect("IR node is expected to have a range."),
             kind,
         );
+    }
+
+    /// Reports a diagnostic if the given statement, used as the un-braced body
+    /// of a control-flow statement, is one that is only allowed directly inside
+    /// a block: a variable declaration or an `unchecked` block.
+    fn check_control_flow_body(&mut self, body: &ir::Statement) {
+        match body {
+            ir::Statement::VariableDeclarationStatement(declaration) => {
+                self.report(declaration, VariableDeclarationNotInBlock);
+            }
+            ir::Statement::UncheckedBlock(unchecked_block) => {
+                self.report(unchecked_block, UncheckedBlockNotInRegularBlock);
+            }
+            _ => {}
+        }
     }
 
     /// Whether the current (enclosing) scope belongs to a library definition.
@@ -665,6 +687,17 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         let definition = Definition::new_state_variable(node);
         self.insert_definition_in_current_scope(definition);
 
+        // Interfaces cannot declare any variables.
+        if self.current_scope_is_interface() {
+            self.report(node, VariableInInterface);
+        }
+        // Libraries can only declare `constant` state variables.
+        else if self.current_scope_is_library()
+            && node.attributes.mutability != ir::StateVariableMutability::Constant
+        {
+            self.report(node, LibraryNonConstantStateVariable);
+        }
+
         // there may be more definitions in the type of the state variable (eg.
         // key/value names in mappings)
         true
@@ -673,6 +706,15 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     fn enter_constant_definition(&mut self, node: &ir::ConstantDefinition) -> bool {
         let definition = Definition::new_constant(node, self.current_scope_id());
         self.insert_definition_in_current_scope(definition);
+
+        // Interfaces cannot declare any variables, including `constant`s. Note
+        // that a non-`public` `constant` state variable is lowered to a
+        // `ConstantDefinition` in the IR, so this complements the check in
+        // `enter_state_variable_definition` (which catches `public constant`s
+        // and non-`constant` state variables).
+        if self.current_scope_is_interface() {
+            self.report(node, VariableInInterface);
+        }
 
         false
     }
@@ -721,7 +763,17 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         self.leave_scope_for_node_id(node.id());
     }
 
+    fn enter_if_statement(&mut self, node: &ir::IfStatement) -> bool {
+        self.check_control_flow_body(&node.body);
+        if let Some(else_branch) = &node.else_branch {
+            self.check_control_flow_body(else_branch);
+        }
+        true
+    }
+
     fn enter_for_statement(&mut self, node: &ir::ForStatement) -> bool {
+        self.check_control_flow_body(&node.body);
+
         // Open a new block here to hold declarations in the initialization
         // clause. This is a new lexical scope.
         let scope = Scope::new_block(node.id(), self.current_scope_id());
@@ -735,7 +787,8 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         self.leave_scope_for_node_id(node.id());
     }
 
-    fn enter_while_statement(&mut self, _node: &ir::WhileStatement) -> bool {
+    fn enter_while_statement(&mut self, node: &ir::WhileStatement) -> bool {
+        self.check_control_flow_body(&node.body);
         self.loop_depth += 1;
         true
     }
@@ -744,13 +797,27 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         self.loop_depth -= 1;
     }
 
-    fn enter_do_while_statement(&mut self, _node: &ir::DoWhileStatement) -> bool {
+    fn enter_do_while_statement(&mut self, node: &ir::DoWhileStatement) -> bool {
+        self.check_control_flow_body(&node.body);
         self.loop_depth += 1;
         true
     }
 
     fn leave_do_while_statement(&mut self, _node: &ir::DoWhileStatement) {
         self.loop_depth -= 1;
+    }
+
+    fn enter_unchecked_block(&mut self, node: &ir::UncheckedBlock) -> bool {
+        // An `unchecked` block cannot be nested inside another one.
+        if self.unchecked_depth > 0 {
+            self.report(node, NestedUncheckedBlock);
+        }
+        self.unchecked_depth += 1;
+        true
+    }
+
+    fn leave_unchecked_block(&mut self, _node: &ir::UncheckedBlock) {
+        self.unchecked_depth -= 1;
     }
 
     fn enter_break_statement(&mut self, node: &ir::BreakStatement) -> bool {

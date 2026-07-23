@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[TypeError 8274] Error: Variables cannot be declared in interfaces.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     uint x;
+   │     ───┬──  
+   │        ╰──── Error occurred here.
+───╯
+
+[TypeError 8274] Error: Variables cannot be declared in interfaces.
+   ╭─[input.sol:9:5]
+   │
+ 9 │     uint constant Y = 1;
+   │     ─────────┬─────────  
+   │              ╰─────────── Error occurred here.
+───╯
+
+[TypeError 8274] Error: Variables cannot be declared in interfaces.
+    ╭─[input.sol:12:5]
+    │
+ 12 │     uint public constant Z = 2;
+    │     ─────────────┬────────────  
+    │                  ╰────────────── Error occurred here.
+────╯
