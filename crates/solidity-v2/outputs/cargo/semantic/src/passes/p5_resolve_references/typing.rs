@@ -63,6 +63,22 @@ impl Pass<'_> {
         definition.try_into().ok()
     }
 
+    /// Records the common type both operands of a comparison reconcile to
+    /// before the comparison runs.
+    pub(super) fn record_comparison_common_operand_type(
+        &mut self,
+        node_id: NodeId,
+        left_operand: &ir::Expression,
+        right_operand: &ir::Expression,
+    ) {
+        let common = self
+            .typing_of_expression(left_operand)
+            .as_type_id()
+            .zip(self.typing_of_expression(right_operand).as_type_id())
+            .and_then(|(left, right)| self.types.common_operand_type(left, right));
+        self.binder.set_common_operand_type(node_id, common);
+    }
+
     /// Returns the type of an binary operator expression. If both operands are
     /// number literals, applies `op` to fold them into a narrowed literal type;
     /// otherwise falls back to the implicit-convertibility rule between the

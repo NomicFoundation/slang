@@ -222,12 +222,22 @@ impl Visitor for Pass<'_> {
 
     fn leave_equality_expression(&mut self, node: &ir::EqualityExpression) {
         // TODO(validation) SDR[55]: check that both operands have a compatible type
+        self.record_comparison_common_operand_type(
+            node.id(),
+            &node.left_operand,
+            &node.right_operand,
+        );
         self.binder
             .set_node_type(node.id(), Some(self.types.boolean()));
     }
 
     fn leave_inequality_expression(&mut self, node: &ir::InequalityExpression) {
         // TODO(validation) SDR[55]: check that both operands have a compatible type
+        self.record_comparison_common_operand_type(
+            node.id(),
+            &node.left_operand,
+            &node.right_operand,
+        );
         self.binder
             .set_node_type(node.id(), Some(self.types.boolean()));
     }
