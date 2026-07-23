@@ -448,7 +448,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         let ir::ArgumentsDeclaration::PositionalArguments(arguments) = arguments else {
             return Err(EvaluationError::CouldNotEvaluate);
         };
-        let [argument] = arguments.as_slice() else {
+        let [argument] = &arguments[..] else {
             // Reject other arities
             return Err(EvaluationError::CouldNotEvaluate);
         };

@@ -35,8 +35,8 @@ pub(super) fn compute_linearisations(
 
     for base_id in linearised_bases.iter().rev() {
         let (members, base_is_interface) = match binder.find_definition_by_id(*base_id) {
-            Some(Definition::Contract(contract)) => (contract.ir_node.members.as_slice(), false),
-            Some(Definition::Interface(interface)) => (interface.ir_node.members.as_slice(), true),
+            Some(Definition::Contract(contract)) => (&contract.ir_node.members[..], false),
+            Some(Definition::Interface(interface)) => (&interface.ir_node.members[..], true),
             _ => unreachable!("base should be a contract or interface"),
         };
 

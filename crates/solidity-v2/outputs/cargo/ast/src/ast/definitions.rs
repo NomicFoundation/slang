@@ -170,7 +170,7 @@ impl Definition {
             Definition::Constant(constant_definition) => constant_definition.name(),
             Definition::Contract(contract_definition) => contract_definition.name(),
             Definition::Enum(enum_definition) => enum_definition.name(),
-            Definition::EnumMember(identifier) => Arc::clone(identifier),
+            Definition::EnumMember(identifier) => identifier.clone(),
             Definition::Error(error_definition) => error_definition.name(),
             Definition::Event(event_definition) => event_definition.name(),
             Definition::Function(function_definition) => {
@@ -218,8 +218,8 @@ impl Definition {
                 variable_declaration_statement.name()
             }
             Definition::YulFunction(yul_function_definition) => yul_function_definition.name(),
-            Definition::YulParameter(identifier) => Arc::clone(identifier),
-            Definition::YulVariable(identifier) => Arc::clone(identifier),
+            Definition::YulParameter(identifier) => identifier.clone(),
+            Definition::YulVariable(identifier) => identifier.clone(),
         }
     }
 

@@ -6,8 +6,8 @@ use crate::ast::references::references_binding_to_definition;
 use crate::ast::{Definition, Reference};
 
 impl IdentifierStruct {
-    pub fn name(&self) -> String {
-        self.ir_node.unparse().to_string()
+    pub fn name(&self) -> &str {
+        self.ir_node.unparse()
     }
 
     pub fn is_reference(&self) -> bool {

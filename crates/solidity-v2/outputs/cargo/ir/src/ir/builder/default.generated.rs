@@ -2691,6 +2691,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::ArrayValues,
     ) -> output::ArrayValues {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2702,6 +2705,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::CallOptions,
     ) -> output::CallOptions {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2713,6 +2719,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::CatchClauses,
     ) -> output::CatchClauses {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2724,6 +2733,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::ContractMembers,
     ) -> output::ContractMembers {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2735,6 +2747,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::EnumMembers,
     ) -> output::EnumMembers {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2746,6 +2761,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::HexStringLiterals,
     ) -> output::HexStringLiterals {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2757,6 +2775,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::IdentifierPath,
     ) -> output::IdentifierPath {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2768,6 +2789,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::ImportDeconstructionSymbols,
     ) -> output::ImportDeconstructionSymbols {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2779,6 +2803,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::InheritanceTypes,
     ) -> output::InheritanceTypes {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2790,6 +2817,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::InterfaceMembers,
     ) -> output::InterfaceMembers {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2801,6 +2831,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::LibraryMembers,
     ) -> output::LibraryMembers {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2812,6 +2845,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::MultiTypedDeclarationElements,
     ) -> output::MultiTypedDeclarationElements {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2823,6 +2859,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::NamedArguments,
     ) -> output::NamedArguments {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2834,6 +2873,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::OverridePaths,
     ) -> output::OverridePaths {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2842,6 +2884,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     pub(super) fn build_parameters(&mut self, source: &input::Parameters) -> output::Parameters {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2853,6 +2898,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::PositionalArguments,
     ) -> output::PositionalArguments {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2864,6 +2912,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::SimpleVersionLiteral,
     ) -> output::SimpleVersionLiteral {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2875,6 +2926,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::SourceUnitMembers,
     ) -> output::SourceUnitMembers {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2883,6 +2937,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     pub(super) fn build_statements(&mut self, source: &input::Statements) -> output::Statements {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2894,6 +2951,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::StringLiterals,
     ) -> output::StringLiterals {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2905,6 +2965,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::StructMembers,
     ) -> output::StructMembers {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2916,6 +2979,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::TupleValues,
     ) -> output::TupleValues {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2927,6 +2993,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::UnicodeStringLiterals,
     ) -> output::UnicodeStringLiterals {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2938,6 +3007,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::UsingDeconstructionSymbols,
     ) -> output::UsingDeconstructionSymbols {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2949,6 +3021,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::VersionExpressionSet,
     ) -> output::VersionExpressionSet {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2960,6 +3035,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::VersionExpressionSets,
     ) -> output::VersionExpressionSets {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2971,6 +3049,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::YulArguments,
     ) -> output::YulArguments {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2979,6 +3060,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     pub(super) fn build_yul_flags(&mut self, source: &input::YulFlags) -> output::YulFlags {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2990,6 +3074,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::YulParameters,
     ) -> output::YulParameters {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -2998,6 +3085,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     pub(super) fn build_yul_path(&mut self, source: &input::YulPath) -> output::YulPath {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -3006,6 +3096,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     pub(super) fn build_yul_paths(&mut self, source: &input::YulPaths) -> output::YulPaths {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -3017,6 +3110,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::YulStatements,
     ) -> output::YulStatements {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -3028,6 +3124,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::YulSwitchCases,
     ) -> output::YulSwitchCases {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()
@@ -3039,6 +3138,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::YulVariableNames,
     ) -> output::YulVariableNames {
+        if source.elements.is_empty() {
+            return Arc::default();
+        }
         source
             .elements
             .iter()

@@ -21,7 +21,7 @@ impl Visitor for Pass<'_> {
         // Yul function definitions are hoisted: their names are visible in the
         // entire enclosing block, even before their definition statement. Insert
         // them before descending so later references resolve.
-        for statement in &node.statements {
+        for statement in node.statements.iter() {
             if let ir::YulStatement::YulFunctionDefinition(function) = statement {
                 let definition = Definition::new_yul_function(function);
                 self.insert_definition_in_current_scope(definition);
@@ -41,12 +41,12 @@ impl Visitor for Pass<'_> {
         let scope = Scope::new_yul_function(node.id(), self.current_scope_id());
         let scope_id = self.enter_scope(scope);
 
-        for parameter in &node.parameters {
+        for parameter in node.parameters.iter() {
             let definition = Definition::new_yul_parameter(parameter);
             self.insert_definition_in_scope(definition, scope_id);
         }
         if let Some(returns) = &node.returns {
-            for parameter in returns {
+            for parameter in returns.iter() {
                 let definition = Definition::new_yul_variable(parameter);
                 self.insert_definition_in_scope(definition, scope_id);
             }
@@ -63,7 +63,7 @@ impl Visitor for Pass<'_> {
         &mut self,
         node: &ir::YulVariableDeclarationStatement,
     ) -> bool {
-        for variable in &node.variables {
+        for variable in node.variables.iter() {
             let definition = Definition::new_yul_variable(variable);
             self.insert_definition_in_current_scope(definition);
         }

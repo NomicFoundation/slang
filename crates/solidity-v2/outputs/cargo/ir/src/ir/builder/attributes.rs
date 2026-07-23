@@ -27,7 +27,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let mut mutability = None;
         let mut is_virtual = false;
         let mut override_specifier = None;
-        let mut modifier_invocations = output::ModifierInvocations::new();
+        let mut modifier_invocations = Vec::new();
 
         for attribute in &attributes.elements {
             match attribute {
@@ -72,7 +72,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             mutability: mutability.unwrap_or(FunctionMutability::NonPayable),
             is_virtual,
             override_specifier,
-            modifier_invocations,
+            modifier_invocations: modifier_invocations.into(),
         })
     }
 
@@ -85,7 +85,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
         let mut visibility = None;
         let mut mutability = None;
-        let mut modifier_invocations = output::ModifierInvocations::new();
+        let mut modifier_invocations = Vec::new();
 
         for attribute in &attributes.elements {
             match attribute {
@@ -112,7 +112,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             mutability: mutability.unwrap_or(FunctionMutability::NonPayable),
             is_virtual: false,
             override_specifier: None,
-            modifier_invocations,
+            modifier_invocations: modifier_invocations.into(),
         })
     }
 
@@ -128,7 +128,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let mut mutability = None;
         let mut is_virtual = false;
         let mut override_specifier = None;
-        let mut modifier_invocations = output::ModifierInvocations::new();
+        let mut modifier_invocations = Vec::new();
 
         for attribute in &attributes.elements {
             match attribute {
@@ -175,7 +175,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             mutability: mutability.unwrap_or(FunctionMutability::NonPayable),
             is_virtual,
             override_specifier,
-            modifier_invocations,
+            modifier_invocations: modifier_invocations.into(),
         })
     }
 
@@ -191,7 +191,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let mut mutability = None;
         let mut is_virtual = false;
         let mut override_specifier = None;
-        let mut modifier_invocations = output::ModifierInvocations::new();
+        let mut modifier_invocations = Vec::new();
 
         for attribute in &attributes.elements {
             match attribute {
@@ -242,7 +242,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             mutability,
             is_virtual,
             override_specifier,
-            modifier_invocations,
+            modifier_invocations: modifier_invocations.into(),
         })
     }
 
@@ -275,7 +275,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             mutability: FunctionMutability::NonPayable,
             is_virtual,
             override_specifier,
-            modifier_invocations: output::ModifierInvocations::new(),
+            modifier_invocations: output::ModifierInvocations::default(),
         })
     }
 
@@ -452,9 +452,8 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                 specifier
                     .overridden
                     .as_ref()
-                    .map_or(Vec::new(), |declaration| {
-                        self.build_override_paths_declaration(declaration)
-                    }),
+                    .map(|declaration| self.build_override_paths_declaration(declaration))
+                    .unwrap_or_default(),
             );
         }
     }

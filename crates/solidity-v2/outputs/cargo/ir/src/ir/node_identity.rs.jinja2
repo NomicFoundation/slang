@@ -32,7 +32,7 @@ impl<T: NodeIdentity> NodeIdentity for Option<T> {
     }
 }
 
-impl<T: NodeIdentity> NodeIdentity for Vec<T> {
+impl<T: NodeIdentity> NodeIdentity for Arc<[T]> {
     fn node_id(&self) -> Option<NodeId> {
         self.first()?.node_id()
     }
