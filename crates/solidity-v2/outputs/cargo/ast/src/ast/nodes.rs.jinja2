@@ -14,8 +14,9 @@ use super::types::Type;
 //
 
 {% for parent_type, sequence in target.sequences %}
-  pub type {{ parent_type }} = Arc<{{ parent_type }}Struct>;
+  pub type {{ parent_type }} = {{ parent_type }}Struct;
 
+  #[derive(Clone)]
   pub struct {{ parent_type }}Struct {
     pub(crate) ir_node: ir::{{ parent_type }},
     pub(crate) semantic: Arc<SemanticContext>,
@@ -25,10 +26,10 @@ use super::types::Type;
     ir_node: &ir::{{ parent_type }},
     semantic: &Arc<SemanticContext>,
   ) -> {{ parent_type }} {
-    Arc::new({{ parent_type }}Struct {
+    {{ parent_type }}Struct {
       ir_node: Arc::clone(ir_node),
       semantic: Arc::clone(semantic),
-    })
+    }
   }
 
   impl {{ parent_type }}Struct {
@@ -117,20 +118,21 @@ use super::types::Type;
 //
 
 {% for parent_type, collection in target.collections -%}
-  pub type {{ parent_type }} = Arc<{{ parent_type }}Struct>;
+  pub type {{ parent_type }} = {{ parent_type }}Struct;
 
   pub(crate) fn create_{{ parent_type | snake_case }}(
-    nodes: &[ir::{{ collection.item_type.name }}],
+    nodes: &ir::{{ parent_type }},
     semantic: &Arc<SemanticContext>,
   ) -> {{ parent_type }} {
-    Arc::new({{ parent_type }}Struct {
-      ir_nodes: nodes.to_vec(),
+    {{ parent_type }}Struct {
+      ir_nodes: Arc::clone(nodes),
       semantic: Arc::clone(semantic),
-    })
+    }
   }
 
+  #[derive(Clone)]
   pub struct {{ parent_type }}Struct {
-    pub(crate) ir_nodes: Vec<ir::{{ collection.item_type.name }}>,
+    pub(crate) ir_nodes: ir::{{ parent_type }},
     pub(crate) semantic: Arc<SemanticContext>,
   }
 
@@ -156,8 +158,9 @@ use super::types::Type;
 //
 
 {% for terminal_type, terminal in target.terminals %}
-  pub type {{ terminal_type }} = Arc<{{ terminal_type }}Struct>;
+  pub type {{ terminal_type }} = {{ terminal_type }}Struct;
 
+  #[derive(Clone)]
   pub struct {{ terminal_type }}Struct {
     pub(crate) ir_node: ir::{{ terminal_type }},
     pub(crate) semantic: Arc<SemanticContext>,
@@ -167,10 +170,10 @@ use super::types::Type;
     ir_node: &ir::{{ terminal_type }},
     semantic: &Arc<SemanticContext>,
   ) -> {{ terminal_type }} {
-    Arc::new({{ terminal_type }}Struct {
+    {{ terminal_type }}Struct {
       ir_node: Arc::clone(ir_node),
       semantic: Arc::clone(semantic),
-    })
+    }
   }
 
   impl {{ terminal_type }}Struct {

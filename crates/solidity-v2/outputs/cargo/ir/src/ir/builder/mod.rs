@@ -553,9 +553,11 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let kind = output::FunctionKind::Modifier;
         let name = Some(self.build_identifier(&source.name));
-        let parameters = source.parameters.as_ref().map_or(Vec::new(), |parameter| {
-            self.build_parameters_declaration(parameter)
-        });
+        let parameters = source
+            .parameters
+            .as_ref()
+            .map(|parameter| self.build_parameters_declaration(parameter))
+            .unwrap_or_default();
         let attributes = self.build_modifier_attributes(&source.attributes);
         let returns = None;
         let body = self.build_function_body(&source.body);

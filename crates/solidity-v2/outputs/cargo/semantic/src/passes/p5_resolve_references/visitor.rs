@@ -26,14 +26,14 @@ impl Visitor for Pass<'_> {
     fn enter_contract_definition(&mut self, node: &ir::ContractDefinition) -> bool {
         // Push the contract scope to visit the contract members
         self.enter_scope_for_node_id(node.id());
-        for member in &node.members {
+        for member in node.members.iter() {
             ir::visitor::accept_contract_member(member, self);
         }
         self.leave_scope_for_node_id(node.id());
 
         // But any reference in the inheritance types and the storage layout
         // specifier should resolve in the parent scope
-        for inheritance_type in &node.inheritance_types {
+        for inheritance_type in node.inheritance_types.iter() {
             ir::visitor::accept_inheritance_type(inheritance_type, self);
         }
         if let Some(ref storage_layout) = node.storage_layout {
@@ -73,7 +73,7 @@ impl Visitor for Pass<'_> {
         // TODO(validation) SDR[51]: for modifier kind, they are not allowed inside
         // interfaces since 0.8.8
 
-        for modifier_invocation in &node.attributes.modifier_invocations {
+        for modifier_invocation in node.attributes.modifier_invocations.iter() {
             self.resolve_modifier_invocation(modifier_invocation);
         }
 
@@ -334,7 +334,7 @@ impl Visitor for Pass<'_> {
                 })
         } else {
             let mut types = Vec::new();
-            for item in &node.items {
+            for item in node.items.iter() {
                 let type_id = item
                     .expression
                     .as_ref()
@@ -496,7 +496,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_call_options_expression(&mut self, node: &ir::CallOptionsExpression) -> bool {
-        for option in &node.options {
+        for option in node.options.iter() {
             let identifier = &option.name;
             let resolution =
                 crate::built_ins::BuiltInsResolver::lookup_call_option(identifier.unparse()).into();

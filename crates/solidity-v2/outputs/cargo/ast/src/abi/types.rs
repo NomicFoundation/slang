@@ -201,7 +201,7 @@ fn abi_type_from_ast_type(value: &AstType, visited_structs: &mut Set<NodeId>) ->
             }
             let mut components = Vec::new();
             for member in definition.members().iter() {
-                let name = member.name().name();
+                let name = member.name().name().to_owned();
                 let ty = abi_type_from_ast_type(&member.get_type()?, visited_structs)?;
                 components.push(TupleComponent::new(name, ty));
             }

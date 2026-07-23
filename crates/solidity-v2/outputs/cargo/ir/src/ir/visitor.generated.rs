@@ -3108,84 +3108,84 @@ pub fn accept_yul_switch_case(node: &YulSwitchCase, visitor: &mut impl Visitor) 
 //
 
 #[inline]
-fn accept_array_values(items: &Vec<Expression>, visitor: &mut impl Visitor) {
+fn accept_array_values(items: &ArrayValues, visitor: &mut impl Visitor) {
     if !visitor.enter_array_values(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_expression(item, visitor);
     }
 
     visitor.leave_array_values(items);
 }
 #[inline]
-fn accept_call_options(items: &Vec<NamedArgument>, visitor: &mut impl Visitor) {
+fn accept_call_options(items: &CallOptions, visitor: &mut impl Visitor) {
     if !visitor.enter_call_options(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_named_argument(item, visitor);
     }
 
     visitor.leave_call_options(items);
 }
 #[inline]
-fn accept_catch_clauses(items: &Vec<CatchClause>, visitor: &mut impl Visitor) {
+fn accept_catch_clauses(items: &CatchClauses, visitor: &mut impl Visitor) {
     if !visitor.enter_catch_clauses(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_catch_clause(item, visitor);
     }
 
     visitor.leave_catch_clauses(items);
 }
 #[inline]
-fn accept_contract_members(items: &Vec<ContractMember>, visitor: &mut impl Visitor) {
+fn accept_contract_members(items: &ContractMembers, visitor: &mut impl Visitor) {
     if !visitor.enter_contract_members(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_contract_member(item, visitor);
     }
 
     visitor.leave_contract_members(items);
 }
 #[inline]
-fn accept_enum_members(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
+fn accept_enum_members(items: &EnumMembers, visitor: &mut impl Visitor) {
     if !visitor.enter_enum_members(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         visitor.visit_identifier(item);
     }
 
     visitor.leave_enum_members(items);
 }
 #[inline]
-fn accept_hex_string_literals(items: &Vec<HexStringLiteral>, visitor: &mut impl Visitor) {
+fn accept_hex_string_literals(items: &HexStringLiterals, visitor: &mut impl Visitor) {
     if !visitor.enter_hex_string_literals(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         visitor.visit_hex_string_literal(item);
     }
 
     visitor.leave_hex_string_literals(items);
 }
 #[inline]
-fn accept_identifier_path(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
+fn accept_identifier_path(items: &IdentifierPath, visitor: &mut impl Visitor) {
     if !visitor.enter_identifier_path(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         visitor.visit_identifier(item);
     }
 
@@ -3193,62 +3193,62 @@ fn accept_identifier_path(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
 }
 #[inline]
 fn accept_import_deconstruction_symbols(
-    items: &Vec<ImportDeconstructionSymbol>,
+    items: &ImportDeconstructionSymbols,
     visitor: &mut impl Visitor,
 ) {
     if !visitor.enter_import_deconstruction_symbols(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_import_deconstruction_symbol(item, visitor);
     }
 
     visitor.leave_import_deconstruction_symbols(items);
 }
 #[inline]
-fn accept_inheritance_types(items: &Vec<InheritanceType>, visitor: &mut impl Visitor) {
+fn accept_inheritance_types(items: &InheritanceTypes, visitor: &mut impl Visitor) {
     if !visitor.enter_inheritance_types(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_inheritance_type(item, visitor);
     }
 
     visitor.leave_inheritance_types(items);
 }
 #[inline]
-fn accept_interface_members(items: &Vec<ContractMember>, visitor: &mut impl Visitor) {
+fn accept_interface_members(items: &InterfaceMembers, visitor: &mut impl Visitor) {
     if !visitor.enter_interface_members(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_contract_member(item, visitor);
     }
 
     visitor.leave_interface_members(items);
 }
 #[inline]
-fn accept_library_members(items: &Vec<ContractMember>, visitor: &mut impl Visitor) {
+fn accept_library_members(items: &LibraryMembers, visitor: &mut impl Visitor) {
     if !visitor.enter_library_members(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_contract_member(item, visitor);
     }
 
     visitor.leave_library_members(items);
 }
 #[inline]
-fn accept_modifier_invocations(items: &Vec<ModifierInvocation>, visitor: &mut impl Visitor) {
+fn accept_modifier_invocations(items: &ModifierInvocations, visitor: &mut impl Visitor) {
     if !visitor.enter_modifier_invocations(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_modifier_invocation(item, visitor);
     }
 
@@ -3256,146 +3256,146 @@ fn accept_modifier_invocations(items: &Vec<ModifierInvocation>, visitor: &mut im
 }
 #[inline]
 fn accept_multi_typed_declaration_elements(
-    items: &Vec<MultiTypedDeclarationElement>,
+    items: &MultiTypedDeclarationElements,
     visitor: &mut impl Visitor,
 ) {
     if !visitor.enter_multi_typed_declaration_elements(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_multi_typed_declaration_element(item, visitor);
     }
 
     visitor.leave_multi_typed_declaration_elements(items);
 }
 #[inline]
-fn accept_named_arguments(items: &Vec<NamedArgument>, visitor: &mut impl Visitor) {
+fn accept_named_arguments(items: &NamedArguments, visitor: &mut impl Visitor) {
     if !visitor.enter_named_arguments(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_named_argument(item, visitor);
     }
 
     visitor.leave_named_arguments(items);
 }
 #[inline]
-fn accept_override_paths(items: &Vec<IdentifierPath>, visitor: &mut impl Visitor) {
+fn accept_override_paths(items: &OverridePaths, visitor: &mut impl Visitor) {
     if !visitor.enter_override_paths(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_identifier_path(item, visitor);
     }
 
     visitor.leave_override_paths(items);
 }
 #[inline]
-fn accept_parameters(items: &Vec<Parameter>, visitor: &mut impl Visitor) {
+fn accept_parameters(items: &Parameters, visitor: &mut impl Visitor) {
     if !visitor.enter_parameters(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_parameter(item, visitor);
     }
 
     visitor.leave_parameters(items);
 }
 #[inline]
-fn accept_positional_arguments(items: &Vec<Expression>, visitor: &mut impl Visitor) {
+fn accept_positional_arguments(items: &PositionalArguments, visitor: &mut impl Visitor) {
     if !visitor.enter_positional_arguments(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_expression(item, visitor);
     }
 
     visitor.leave_positional_arguments(items);
 }
 #[inline]
-fn accept_simple_version_literal(items: &Vec<VersionSpecifier>, visitor: &mut impl Visitor) {
+fn accept_simple_version_literal(items: &SimpleVersionLiteral, visitor: &mut impl Visitor) {
     if !visitor.enter_simple_version_literal(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         visitor.visit_version_specifier(item);
     }
 
     visitor.leave_simple_version_literal(items);
 }
 #[inline]
-fn accept_source_unit_members(items: &Vec<SourceUnitMember>, visitor: &mut impl Visitor) {
+fn accept_source_unit_members(items: &SourceUnitMembers, visitor: &mut impl Visitor) {
     if !visitor.enter_source_unit_members(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_source_unit_member(item, visitor);
     }
 
     visitor.leave_source_unit_members(items);
 }
 #[inline]
-fn accept_statements(items: &Vec<Statement>, visitor: &mut impl Visitor) {
+fn accept_statements(items: &Statements, visitor: &mut impl Visitor) {
     if !visitor.enter_statements(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_statement(item, visitor);
     }
 
     visitor.leave_statements(items);
 }
 #[inline]
-fn accept_string_literals(items: &Vec<StringLiteral>, visitor: &mut impl Visitor) {
+fn accept_string_literals(items: &StringLiterals, visitor: &mut impl Visitor) {
     if !visitor.enter_string_literals(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         visitor.visit_string_literal(item);
     }
 
     visitor.leave_string_literals(items);
 }
 #[inline]
-fn accept_struct_members(items: &Vec<StructMember>, visitor: &mut impl Visitor) {
+fn accept_struct_members(items: &StructMembers, visitor: &mut impl Visitor) {
     if !visitor.enter_struct_members(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_struct_member(item, visitor);
     }
 
     visitor.leave_struct_members(items);
 }
 #[inline]
-fn accept_tuple_values(items: &Vec<TupleValue>, visitor: &mut impl Visitor) {
+fn accept_tuple_values(items: &TupleValues, visitor: &mut impl Visitor) {
     if !visitor.enter_tuple_values(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_tuple_value(item, visitor);
     }
 
     visitor.leave_tuple_values(items);
 }
 #[inline]
-fn accept_unicode_string_literals(items: &Vec<UnicodeStringLiteral>, visitor: &mut impl Visitor) {
+fn accept_unicode_string_literals(items: &UnicodeStringLiterals, visitor: &mut impl Visitor) {
     if !visitor.enter_unicode_string_literals(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         visitor.visit_unicode_string_literal(item);
     }
 
@@ -3403,134 +3403,134 @@ fn accept_unicode_string_literals(items: &Vec<UnicodeStringLiteral>, visitor: &m
 }
 #[inline]
 fn accept_using_deconstruction_symbols(
-    items: &Vec<UsingDeconstructionSymbol>,
+    items: &UsingDeconstructionSymbols,
     visitor: &mut impl Visitor,
 ) {
     if !visitor.enter_using_deconstruction_symbols(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_using_deconstruction_symbol(item, visitor);
     }
 
     visitor.leave_using_deconstruction_symbols(items);
 }
 #[inline]
-fn accept_version_expression_set(items: &Vec<VersionExpression>, visitor: &mut impl Visitor) {
+fn accept_version_expression_set(items: &VersionExpressionSet, visitor: &mut impl Visitor) {
     if !visitor.enter_version_expression_set(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_version_expression(item, visitor);
     }
 
     visitor.leave_version_expression_set(items);
 }
 #[inline]
-fn accept_version_expression_sets(items: &Vec<VersionExpressionSet>, visitor: &mut impl Visitor) {
+fn accept_version_expression_sets(items: &VersionExpressionSets, visitor: &mut impl Visitor) {
     if !visitor.enter_version_expression_sets(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_version_expression_set(item, visitor);
     }
 
     visitor.leave_version_expression_sets(items);
 }
 #[inline]
-fn accept_yul_arguments(items: &Vec<YulExpression>, visitor: &mut impl Visitor) {
+fn accept_yul_arguments(items: &YulArguments, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_arguments(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_yul_expression(item, visitor);
     }
 
     visitor.leave_yul_arguments(items);
 }
 #[inline]
-fn accept_yul_flags(items: &Vec<StringLiteral>, visitor: &mut impl Visitor) {
+fn accept_yul_flags(items: &YulFlags, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_flags(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         visitor.visit_string_literal(item);
     }
 
     visitor.leave_yul_flags(items);
 }
 #[inline]
-fn accept_yul_parameters(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
+fn accept_yul_parameters(items: &YulParameters, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_parameters(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         visitor.visit_identifier(item);
     }
 
     visitor.leave_yul_parameters(items);
 }
 #[inline]
-fn accept_yul_path(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
+fn accept_yul_path(items: &YulPath, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_path(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         visitor.visit_identifier(item);
     }
 
     visitor.leave_yul_path(items);
 }
 #[inline]
-fn accept_yul_paths(items: &Vec<YulPath>, visitor: &mut impl Visitor) {
+fn accept_yul_paths(items: &YulPaths, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_paths(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_yul_path(item, visitor);
     }
 
     visitor.leave_yul_paths(items);
 }
 #[inline]
-fn accept_yul_statements(items: &Vec<YulStatement>, visitor: &mut impl Visitor) {
+fn accept_yul_statements(items: &YulStatements, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_statements(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_yul_statement(item, visitor);
     }
 
     visitor.leave_yul_statements(items);
 }
 #[inline]
-fn accept_yul_switch_cases(items: &Vec<YulSwitchCase>, visitor: &mut impl Visitor) {
+fn accept_yul_switch_cases(items: &YulSwitchCases, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_switch_cases(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         accept_yul_switch_case(item, visitor);
     }
 
     visitor.leave_yul_switch_cases(items);
 }
 #[inline]
-fn accept_yul_variable_names(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
+fn accept_yul_variable_names(items: &YulVariableNames, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_variable_names(items) {
         return;
     }
 
-    for item in items {
+    for item in items.iter() {
         visitor.visit_identifier(item);
     }
 

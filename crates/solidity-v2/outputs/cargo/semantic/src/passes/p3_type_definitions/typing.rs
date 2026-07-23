@@ -287,7 +287,7 @@ impl Pass<'_> {
     }
 
     pub(super) fn visit_parameters(&mut self, parameters: &ir::Parameters) {
-        for parameter in parameters {
+        for parameter in parameters.iter() {
             let type_id = self.resolve_type_name(
                 &parameter.type_name,
                 parameter.storage_location.as_ref().map(Into::into),

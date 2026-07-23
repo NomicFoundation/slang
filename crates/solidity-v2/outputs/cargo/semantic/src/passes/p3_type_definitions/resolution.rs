@@ -41,7 +41,7 @@ impl Pass<'_> {
         parameters: &ir::Parameters,
     ) -> Option<Vec<TypeId>> {
         let mut parameter_types = Vec::new();
-        for parameter in parameters {
+        for parameter in parameters.iter() {
             let parameter_type_id = self.binder.node_typing(parameter.id()).as_type_id()?;
             parameter_types.push(parameter_type_id);
         }

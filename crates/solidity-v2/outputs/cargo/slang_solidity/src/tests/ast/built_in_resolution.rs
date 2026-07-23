@@ -43,7 +43,7 @@ struct BuiltInCollector {
 impl ast::visitor::Visitor for BuiltInCollector {
     fn visit_identifier(&mut self, node: &ast::Identifier) {
         if let Some(built_in) = node.resolve_to_built_in() {
-            self.found.push((node.name(), built_in));
+            self.found.push((node.name().to_string(), built_in));
         }
     }
 }

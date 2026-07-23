@@ -1,6 +1,5 @@
 use std::fmt::Display;
 use std::ops::Range;
-use std::sync::Arc;
 
 use slang_solidity_v2::ast::visitor::{accept_source_unit, Visitor};
 use slang_solidity_v2::ast::{DataLocation, Definition, Identifier, LiteralKind, NodeId, Type};
@@ -103,7 +102,7 @@ trait IdentifierCollector {
         let file_contents = self.file_contents(file_id);
         let (line, column) = Self::byte_offset_to_line_column(file_contents, range.start);
         CollectedIdentifier {
-            node: Arc::clone(node),
+            node: node.clone(),
             line,
             column,
         }
@@ -303,7 +302,7 @@ impl Display for CollectedIdentifier {
 // Data display helpers
 
 fn definition_name(definition: &Definition) -> String {
-    definition.identifier().name()
+    definition.identifier().name().to_string()
 }
 
 fn definition_type(definition: &Definition) -> String {

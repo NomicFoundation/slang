@@ -32,7 +32,7 @@ pub(crate) fn check_receive_functions(
             _ => continue,
         };
 
-        for member in members {
+        for member in members.iter() {
             let ir::ContractMember::FunctionDefinition(function) = member else {
                 continue;
             };

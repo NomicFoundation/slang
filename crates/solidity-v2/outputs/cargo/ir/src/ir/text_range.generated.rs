@@ -31,7 +31,7 @@ impl<T: TextRange> TextRange for Option<T> {
     }
 }
 
-impl<T: TextRange> TextRange for Vec<T> {
+impl<T: TextRange> TextRange for Arc<[T]> {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         let start = self.first()?.calculate_text_range()?.start;
         let end = self.last()?.calculate_text_range()?.end;

@@ -60,7 +60,7 @@ pub fn test(input: Input) -> Output {
 pub fn count_contracts(output: &Output) -> usize {
     let mut contract_count = 0;
     for source_unit in &output.ir_source_units {
-        for member in &source_unit.members {
+        for member in source_unit.members.iter() {
             match member {
                 SourceUnitMember::ContractDefinition(_)
                 | SourceUnitMember::InterfaceDefinition(_)
@@ -79,7 +79,7 @@ pub fn count_contracts(output: &Output) -> usize {
 pub fn count_concrete_contracts(output: &Output) -> usize {
     let mut count = 0;
     for source_unit in &output.ir_source_units {
-        for member in &source_unit.members {
+        for member in source_unit.members.iter() {
             if let SourceUnitMember::ContractDefinition(contract) = member {
                 if !contract.is_abstract {
                     count += 1;

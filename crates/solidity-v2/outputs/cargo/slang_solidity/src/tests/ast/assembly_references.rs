@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use crate::ast::{self, AssemblyStatement};
 use crate::define_fixture;
 
@@ -30,7 +28,7 @@ struct AssemblyCollector {
 
 impl ast::visitor::Visitor for AssemblyCollector {
     fn enter_assembly_statement(&mut self, node: &AssemblyStatement) -> bool {
-        self.statements.push(Arc::clone(node));
+        self.statements.push(node.clone());
         true
     }
 }
@@ -51,7 +49,7 @@ fn test_assembly_referenced_definitions() {
     let mut names: Vec<String> = assembly
         .referenced_definitions()
         .iter()
-        .map(|definition| definition.identifier().name())
+        .map(|definition| definition.identifier().name().to_string())
         .collect();
     names.sort();
     assert_eq!(names, vec!["localVar".to_string(), "stateVar".to_string()]);
