@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/duplicate-catch-clause] Error: This try statement already has an "Error" catch clause.
+    ╭─[input.sol:10:11]
+    │
+ 10 │ ╭─▶         } catch Error(string memory b) {
+    ┆ ┆   
+ 12 │ ├─▶         }
+    │ │               
+    │ ╰─────────────── Error occurred here.
+────╯

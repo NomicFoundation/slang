@@ -666,12 +666,28 @@ pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructVa
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub mod slang_solidity_v2_common::diagnostics::kinds::structure
+pub enum slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind
+pub slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind::Error
+pub slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind::LowLevel
+pub slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind::Panic
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind) -> bool
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
 pub enum slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::AbstractContractPublicConstructor(slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::BreakOutsideLoop(slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::ConstructorNotInContract(slang_solidity_v2_common::diagnostics::kinds::structure::ConstructorNotInContract)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::ContinueOutsideLoop(slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::ContractShouldBeAbstract(slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::DuplicateCatchClause(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EmptyEnum(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EmptyStruct(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EnumWithTooManyMembers(slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers)
@@ -681,6 +697,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnostic
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::FunctionNameMatchesContainer(slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::InterfaceFunctionCannotBeImplemented(slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionCannotBeImplemented)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::InterfaceFunctionNotExternal(slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionNotExternal)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::InvalidCatchClauseName(slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::InvalidUsingDirectiveContainer(slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::LibraryFallbackFunction(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::LibraryPayableFunction(slang_solidity_v2_common::diagnostics::kinds::structure::LibraryPayableFunction)
@@ -691,6 +708,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnostic
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::MultipleConstructors(slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::NonAbstractContractInternalConstructor(slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::PayableInternalOrPrivateFunction(slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::RedefinedBuiltInError(slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::StorageLayoutForAbstractContract(slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UnimplementedModifierMustBeVirtual(slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UninitializedConstant(slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant)
@@ -711,6 +729,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -729,6 +749,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionCannotBeImplemented) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionNotExternal> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionNotExternal) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -749,6 +771,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -866,6 +890,26 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause
+pub slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause::kind: slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum
@@ -1037,6 +1081,26 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionNotExternal::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionNotExternal::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionNotExternal::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName
+pub slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName::panic_allowed: bool
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer
@@ -1228,6 +1292,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract
@@ -2034,6 +2117,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -2052,6 +2137,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionCannotBeImplemented) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionNotExternal> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionNotExternal) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -2072,6 +2159,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -2338,6 +2427,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum::message(&self) -> alloc::string::String
@@ -2374,6 +2467,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionNotExternal::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionNotExternal::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionNotExternal::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InvalidCatchClauseName::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InvalidUsingDirectiveContainer::message(&self) -> alloc::string::String
@@ -2414,6 +2511,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract::message(&self) -> alloc::string::String

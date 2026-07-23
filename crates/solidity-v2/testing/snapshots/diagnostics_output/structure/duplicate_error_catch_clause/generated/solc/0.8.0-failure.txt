@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 1036] Error: This try statement already has an "Error" catch clause.
+    ╭─[input.sol:10:11]
+    │
+ 10 │ ╭─▶         } catch Error(string memory b) {
+    ┆ ┆   
+ 12 │ ├─▶         }
+    │ │               
+    │ ╰─────────────── Error occurred here.
+────╯
+
+[TypeError 3542] Error: Invalid catch clause name. Expected either `catch (...)` or `catch Error(...)`.
+    ╭─[input.sol:21:11]
+    │
+ 21 │ ╭─▶         } catch Panic(uint256 code) {
+    ┆ ┆   
+ 23 │ ├─▶         } catch (bytes memory data) {
+    │ │                                           
+    │ ╰─────────────────────────────────────────── Error occurred here.
+────╯

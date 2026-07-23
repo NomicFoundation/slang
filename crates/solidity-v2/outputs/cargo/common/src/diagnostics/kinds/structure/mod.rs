@@ -3,6 +3,7 @@ mod break_outside_loop;
 mod constructor_not_in_contract;
 mod continue_outside_loop;
 mod contract_should_be_abstract;
+mod duplicate_catch_clause;
 mod empty_enum;
 mod empty_struct;
 mod enum_with_too_many_members;
@@ -12,6 +13,7 @@ mod function_must_be_implemented;
 mod function_name_matches_container;
 mod interface_function_cannot_be_implemented;
 mod interface_function_not_external;
+mod invalid_catch_clause_name;
 mod invalid_using_directive_container;
 mod library_fallback_function;
 mod library_payable_function;
@@ -22,6 +24,7 @@ mod missing_function_visibility;
 mod multiple_constructors;
 mod non_abstract_contract_internal_constructor;
 mod payable_internal_or_private_function;
+mod redefined_built_in_error;
 mod storage_layout_for_abstract_contract;
 mod unimplemented_modifier_must_be_virtual;
 mod uninitialized_constant;
@@ -33,6 +36,7 @@ pub use break_outside_loop::BreakOutsideLoop;
 pub use constructor_not_in_contract::ConstructorNotInContract;
 pub use continue_outside_loop::ContinueOutsideLoop;
 pub use contract_should_be_abstract::ContractShouldBeAbstract;
+pub use duplicate_catch_clause::{CatchClauseKind, DuplicateCatchClause};
 pub use empty_enum::EmptyEnum;
 pub use empty_struct::EmptyStruct;
 pub use enum_with_too_many_members::EnumWithTooManyMembers;
@@ -42,6 +46,7 @@ pub use function_must_be_implemented::FunctionMustBeImplemented;
 pub use function_name_matches_container::FunctionNameMatchesContainer;
 pub use interface_function_cannot_be_implemented::InterfaceFunctionCannotBeImplemented;
 pub use interface_function_not_external::InterfaceFunctionNotExternal;
+pub use invalid_catch_clause_name::InvalidCatchClauseName;
 pub use invalid_using_directive_container::InvalidUsingDirectiveContainer;
 pub use library_fallback_function::LibraryFallbackFunction;
 pub use library_payable_function::LibraryPayableFunction;
@@ -52,6 +57,7 @@ pub use missing_function_visibility::MissingFunctionVisibility;
 pub use multiple_constructors::MultipleConstructors;
 pub use non_abstract_contract_internal_constructor::NonAbstractContractInternalConstructor;
 pub use payable_internal_or_private_function::PayableInternalOrPrivateFunction;
+pub use redefined_built_in_error::RedefinedBuiltInError;
 use serde::Serialize;
 pub use storage_layout_for_abstract_contract::StorageLayoutForAbstractContract;
 pub use unimplemented_modifier_must_be_virtual::UnimplementedModifierMustBeVirtual;
@@ -70,6 +76,14 @@ define_diagnostic_kind! {
     pub enum StructureDiagnosticKind {
         /// A `break` statement appears outside of any loop.
         BreakOutsideLoop(BreakOutsideLoop),
+
+        /// A `try` statement has more than one catch clause of the same kind
+        /// (two `Error`, two `Panic`, or two low-level clauses).
+        DuplicateCatchClause(DuplicateCatchClause),
+        /// A `try` statement declares a catch clause with an invalid selector
+        /// name (not `Error`, `Panic`, or a low-level clause).
+        InvalidCatchClauseName(InvalidCatchClauseName),
+
         /// A `continue` statement appears outside of any loop.
         ContinueOutsideLoop(ContinueOutsideLoop),
 
@@ -113,6 +127,10 @@ define_diagnostic_kind! {
 
         /// A struct declares no members.
         EmptyStruct(EmptyStruct),
+
+        /// An error is defined with a name reserved for a built-in error
+        /// (`Error` or `Panic`).
+        RedefinedBuiltInError(RedefinedBuiltInError),
 
         /// A library declares a fallback function.
         LibraryFallbackFunction(LibraryFallbackFunction),

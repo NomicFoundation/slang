@@ -2,19 +2,21 @@ use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
-    AbstractContractPublicConstructor, BreakOutsideLoop, ConstructorNotInContract,
-    ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FreeFunctionPayable,
-    FreeFunctionVisibility, FunctionMustBeImplemented, FunctionNameMatchesContainer,
-    InterfaceFunctionCannotBeImplemented, InterfaceFunctionNotExternal,
-    InvalidUsingDirectiveContainer, LibraryPayableFunction, LibraryVirtualFunction,
-    LibraryVirtualModifier, MissingFunctionVisibility, MultipleConstructors,
-    NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
-    UnimplementedModifierMustBeVirtual, VirtualFreeFunction, VirtualPrivateFunction,
+    AbstractContractPublicConstructor, BreakOutsideLoop, CatchClauseKind, ConstructorNotInContract,
+    ContinueOutsideLoop, DuplicateCatchClause, EmptyEnum, EmptyStruct, EnumWithTooManyMembers,
+    FreeFunctionPayable, FreeFunctionVisibility, FunctionMustBeImplemented,
+    FunctionNameMatchesContainer, InterfaceFunctionCannotBeImplemented,
+    InterfaceFunctionNotExternal, InvalidCatchClauseName, InvalidUsingDirectiveContainer,
+    LibraryPayableFunction, LibraryVirtualFunction, LibraryVirtualModifier,
+    MissingFunctionVisibility, MultipleConstructors, NonAbstractContractInternalConstructor,
+    PayableInternalOrPrivateFunction, RedefinedBuiltInError, UnimplementedModifierMustBeVirtual,
+    VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
@@ -34,10 +36,11 @@ mod conflicts;
 pub fn run(
     files: &[impl SemanticFile],
     binder: &mut Binder,
+    language_version: LanguageVersion,
     diagnostics: &mut DiagnosticCollection,
 ) {
     for file in files {
-        Pass::visit_file(file, binder, diagnostics);
+        Pass::visit_file(file, binder, language_version, diagnostics);
     }
 
     // Once every file scope is populated, detect clashes involving the
@@ -71,16 +74,23 @@ struct Pass<'a, F: SemanticFile> {
     // loop.
     loop_depth: usize,
     binder: &'a mut Binder,
+    language_version: LanguageVersion,
     diagnostics: &'a mut DiagnosticCollection,
 }
 
 impl<'a, F: SemanticFile> Pass<'a, F> {
-    fn visit_file(file: &'a F, binder: &'a mut Binder, diagnostics: &'a mut DiagnosticCollection) {
+    fn visit_file(
+        file: &'a F,
+        binder: &'a mut Binder,
+        language_version: LanguageVersion,
+        diagnostics: &'a mut DiagnosticCollection,
+    ) {
         let mut pass = Self {
             current_file: file,
             scope_stack: Vec::new(),
             loop_depth: 0,
             binder,
+            language_version,
             diagnostics,
         };
         ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
@@ -646,6 +656,17 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn enter_error_definition(&mut self, node: &ir::ErrorDefinition) -> bool {
+        // `Error` and `Panic` are built-in errors and cannot be re-defined.
+        // Custom errors were introduced in 0.8.4; before that the error-tolerant
+        // parser still yields an `ErrorDefinition` node, but it is already
+        // flagged as invalid syntax for the version, so don't pile a semantic
+        // diagnostic on top of it.
+        if self.language_version >= LanguageVersion::V0_8_4
+            && matches!(node.name.text.as_str(), "Error" | "Panic")
+        {
+            self.report(node.as_ref(), RedefinedBuiltInError);
+        }
+
         let parameters_scope_id = self.collect_parameters(&node.parameters);
         let definition = Definition::new_error(node, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
@@ -777,6 +798,38 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
             // statement and make them available in the body block.
             let body_scope_id = self.binder.scope_id_for_node_id(node.body.id()).unwrap();
             self.collect_named_parameters_into_scope(returns, body_scope_id);
+        }
+
+        // A `try` statement's catch clauses must each carry a valid selector
+        // name (`Error`, `Panic`, or none for a low-level clause), and it may
+        // declare at most one clause of each kind. Flag invalid names, and any
+        // additional clause of a kind already seen.
+        let panic_allowed = self.language_version >= LanguageVersion::V0_8_1;
+        let mut seen_error = false;
+        let mut seen_panic = false;
+        let mut seen_low_level = false;
+        for clause in &node.catch_clauses {
+            // A named selector identifies `Error`/`Panic` clauses; a clause
+            // without one (`catch { ... }` or `catch (bytes ...) { ... }`) is
+            // low-level.
+            let selector = clause.error.as_ref().and_then(|error| error.name.as_ref());
+            let (kind, seen) = match selector.map(|name| name.text.as_str()) {
+                Some("Error") => (CatchClauseKind::Error, &mut seen_error),
+                // The `Panic` catch clause selector was introduced in 0.8.1;
+                // before that solc treats `Panic` as an invalid clause name.
+                Some("Panic") if panic_allowed => (CatchClauseKind::Panic, &mut seen_panic),
+                // Any other named selector (`Panic` too before 0.8.1) is not a
+                // valid catch clause name.
+                Some(_) => {
+                    self.report(clause.as_ref(), InvalidCatchClauseName { panic_allowed });
+                    continue;
+                }
+                None => (CatchClauseKind::LowLevel, &mut seen_low_level),
+            };
+            if *seen {
+                self.report(clause.as_ref(), DuplicateCatchClause { kind });
+            }
+            *seen = true;
         }
     }
 
