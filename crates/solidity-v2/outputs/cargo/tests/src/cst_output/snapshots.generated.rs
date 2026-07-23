@@ -2528,6 +2528,16 @@ mod yul_function_definition {
     }
 
     #[test]
+    fn invalid_parameter_type() -> Result<()> {
+        run("YulFunctionDefinition", "invalid_parameter_type")
+    }
+
+    #[test]
+    fn invalid_return_type() -> Result<()> {
+        run("YulFunctionDefinition", "invalid_return_type")
+    }
+
+    #[test]
     fn parameter_with_dots() -> Result<()> {
         run("YulFunctionDefinition", "parameter_with_dots")
     }
@@ -2622,6 +2632,11 @@ mod yul_variable_assignment_statement {
     }
 
     #[test]
+    fn invalid_type() -> Result<()> {
+        run("YulVariableAssignmentStatement", "invalid_type")
+    }
+
+    #[test]
     fn multiple_literal_before_var() -> Result<()> {
         run(
             "YulVariableAssignmentStatement",
@@ -2657,6 +2672,11 @@ mod yul_variable_declaration_statement {
             "YulVariableDeclarationStatement",
             "identifier_with_trailing_dot",
         )
+    }
+
+    #[test]
+    fn invalid_type() -> Result<()> {
+        run("YulVariableDeclarationStatement", "invalid_type")
     }
 
     #[test]
