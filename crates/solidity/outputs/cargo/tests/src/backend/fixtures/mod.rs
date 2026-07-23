@@ -6,6 +6,7 @@ mod counter;
 mod full_abi;
 mod overrides;
 mod storage_layout;
+mod type_conversions;
 
 pub(crate) use abi_with_tuples::AbiWithTuples;
 pub(crate) use chained_imports::ChainedImports;
@@ -13,6 +14,7 @@ pub(crate) use counter::Counter;
 pub(crate) use full_abi::FullAbi;
 pub(crate) use overrides::Overrides;
 pub(crate) use storage_layout::StorageLayout;
+pub(crate) use type_conversions::TypeConversions;
 
 #[test]
 fn test_build_abi_with_tuples_fixture() -> Result<()> {
@@ -62,6 +64,15 @@ fn test_build_overrides_fixture() -> Result<()> {
 #[test]
 fn test_build_storage_layout_fixture() -> Result<()> {
     let unit = StorageLayout::build_compilation_unit()?;
+    let semantic_analysis = unit.semantic_analysis();
+    assert_eq!(1, semantic_analysis.files().len());
+
+    Ok(())
+}
+
+#[test]
+fn test_build_type_conversions_fixture() -> Result<()> {
+    let unit = TypeConversions::build_compilation_unit()?;
     let semantic_analysis = unit.semantic_analysis();
     assert_eq!(1, semantic_analysis.files().len());
 
