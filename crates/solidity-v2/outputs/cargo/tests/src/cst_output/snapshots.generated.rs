@@ -1314,6 +1314,11 @@ mod import_directive {
     }
 
     #[test]
+    fn destructure_import_without_from() -> Result<()> {
+        run("ImportDirective", "destructure_import_without_from")
+    }
+
+    #[test]
     fn invalid_token() -> Result<()> {
         run("ImportDirective", "invalid_token")
     }
