@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/parsing/import_invalid_token.sol │ 0..113
+  2  │ import function;                                                                                                  │ 114..130
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected FunctionKeyword. One of Asterisk, OpenBrace, StringLiteral was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ImportDirective/invalid_token/input.sol:2:8]
+       │
+     2 │ import function;
+       │        ────┬───  
+       │            ╰───── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

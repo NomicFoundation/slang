@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                  │ 0..12
+  2  │     function f() {                                                                                            │ 13..31
+  3  │         assembly {                                                                                            │ 32..50
+  4  │             // https://github.com/argotorg/solidity/blob/v0.8.27/test/libyul/yulSyntaxTests/invalid_type3.yul │ 51..160
+  5  │             function f(a) -> b: invalidType {}                                                                │ 161..207
+  6  │         }                                                                                                     │ 208..217
+  7  │     }                                                                                                         │ 218..223
+  8  │ }                                                                                                             │ 224..225
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of YulComma, YulOpenBrace was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulFunctionDefinition/invalid_return_type/input.sol:5:31]
+       │
+     5 │             function f(a) -> b: invalidType {}
+       │                               ┬  
+       │                               ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

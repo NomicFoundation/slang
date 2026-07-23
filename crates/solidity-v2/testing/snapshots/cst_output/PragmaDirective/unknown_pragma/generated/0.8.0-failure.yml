@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/pragma/unknown_pragma.sol │ 0..106
+  2  │ pragma thisdoesntexist;                                                                                    │ 107..130
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of AbicoderKeyword, ExperimentalKeyword, SolidityKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/unknown_pragma/input.sol:2:8]
+       │
+     2 │ pragma thisdoesntexist;
+       │        ┬  
+       │        ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

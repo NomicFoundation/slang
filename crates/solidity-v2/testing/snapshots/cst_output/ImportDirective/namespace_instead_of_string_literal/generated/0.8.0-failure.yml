@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // https://github.com/argotorg/solidity/blob/v0.8.21/test/libsolidity/syntaxTests/experimental/parsing_stdlib_import_without_pragma_1.sol │ 0..137
+  2  │ import std.stub;                                                                                                                          │ 138..154
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected Identifier. One of Asterisk, OpenBrace, StringLiteral was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ImportDirective/namespace_instead_of_string_literal/input.sol:2:8]
+       │
+     2 │ import std.stub;
+       │        ─┬─  
+       │         ╰─── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

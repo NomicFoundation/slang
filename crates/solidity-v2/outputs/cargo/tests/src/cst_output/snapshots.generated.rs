@@ -1299,6 +1299,16 @@ mod import_directive {
     use super::*;
 
     #[test]
+    fn destructure_from_keyword() -> Result<()> {
+        run("ImportDirective", "destructure_from_keyword")
+    }
+
+    #[test]
+    fn destructure_from_namespace() -> Result<()> {
+        run("ImportDirective", "destructure_from_namespace")
+    }
+
+    #[test]
     fn destructure_import_empty() -> Result<()> {
         run("ImportDirective", "destructure_import_empty")
     }
@@ -1314,8 +1324,23 @@ mod import_directive {
     }
 
     #[test]
+    fn destructure_import_without_from() -> Result<()> {
+        run("ImportDirective", "destructure_import_without_from")
+    }
+
+    #[test]
+    fn invalid_token() -> Result<()> {
+        run("ImportDirective", "invalid_token")
+    }
+
+    #[test]
     fn named_import() -> Result<()> {
         run("ImportDirective", "named_import")
+    }
+
+    #[test]
+    fn namespace_instead_of_string_literal() -> Result<()> {
+        run("ImportDirective", "namespace_instead_of_string_literal")
     }
 
     #[test]
@@ -1453,6 +1478,11 @@ mod pragma_directive {
     }
 
     #[test]
+    fn experimental_empty() -> Result<()> {
+        run("PragmaDirective", "experimental_empty")
+    }
+
+    #[test]
     fn experimental_smtchecker() -> Result<()> {
         run("PragmaDirective", "experimental_smtchecker")
     }
@@ -1470,6 +1500,16 @@ mod pragma_directive {
     #[test]
     fn experimental_unknown_identifier() -> Result<()> {
         run("PragmaDirective", "experimental_unknown_identifier")
+    }
+
+    #[test]
+    fn invalid_number_pragma() -> Result<()> {
+        run("PragmaDirective", "invalid_number_pragma")
+    }
+
+    #[test]
+    fn unknown_pragma() -> Result<()> {
+        run("PragmaDirective", "unknown_pragma")
     }
 
     #[test]
@@ -2528,6 +2568,16 @@ mod yul_function_definition {
     }
 
     #[test]
+    fn invalid_parameter_type() -> Result<()> {
+        run("YulFunctionDefinition", "invalid_parameter_type")
+    }
+
+    #[test]
+    fn invalid_return_type() -> Result<()> {
+        run("YulFunctionDefinition", "invalid_return_type")
+    }
+
+    #[test]
     fn parameter_with_dots() -> Result<()> {
         run("YulFunctionDefinition", "parameter_with_dots")
     }
@@ -2622,6 +2672,11 @@ mod yul_variable_assignment_statement {
     }
 
     #[test]
+    fn invalid_type() -> Result<()> {
+        run("YulVariableAssignmentStatement", "invalid_type")
+    }
+
+    #[test]
     fn multiple_literal_before_var() -> Result<()> {
         run(
             "YulVariableAssignmentStatement",
@@ -2657,6 +2712,11 @@ mod yul_variable_declaration_statement {
             "YulVariableDeclarationStatement",
             "identifier_with_trailing_dot",
         )
+    }
+
+    #[test]
+    fn invalid_type() -> Result<()> {
+        run("YulVariableDeclarationStatement", "invalid_type")
     }
 
     #[test]

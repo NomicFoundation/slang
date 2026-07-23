@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/parsing/import_complex_without_from.sol │ 0..120
+  2  │ import {hello, world};                                                                                                   │ 121..143
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected Semicolon. One of FromKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ImportDirective/destructure_import_without_from/input.sol:2:22]
+       │
+     2 │ import {hello, world};
+       │                      ┬  
+       │                      ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []
