@@ -1503,6 +1503,11 @@ mod pragma_directive {
     }
 
     #[test]
+    fn unknown_pragma() -> Result<()> {
+        run("PragmaDirective", "unknown_pragma")
+    }
+
+    #[test]
     fn version() -> Result<()> {
         run("PragmaDirective", "version")
     }
