@@ -985,6 +985,40 @@ fn test_conditional_expression_unifies_literal_tuples() {
 }
 
 #[test]
+fn test_conditional_expression_with_function_call_tuple() {
+    // A branch that calls a function returning `(uint256, uint256)` gives the
+    // conditional a tuple type. The other branch's elements are unified
+    // element-wise against it, widening literal elements (`3`) against the
+    // concrete `uint256` coming from `pair()`, matching solc's common tuple
+    // type. Every combination below resolves to `(uint256, uint256)`.
+    let ctx = "function pair() internal pure returns (uint256, uint256) { return (1, 2); }";
+
+    for expr in [
+        "true ? pair() : (uint256(3), uint256(4))",
+        "true ? pair() : (3, uint256(4))",
+        "true ? pair() : (3, 4)",
+        "true ? (uint256(1), uint256(2)) : (3, uint256(4))",
+        // Symmetric: the concrete branch on the right also unifies.
+        "true ? (3, 4) : pair()",
+    ] {
+        let (expr_type, types) = type_of_expression_in_context(ctx, expr);
+        let Type::Tuple(TupleType { types: tuple_types }) = expr_type else {
+            panic!("expected Tuple for `{expr}`, got {expr_type:?}");
+        };
+        assert_eq!(tuple_types.len(), 2, "arity for `{expr}`");
+        assert_eq!(tuple_types[0], types.uint256(), "element 0 for `{expr}`");
+        assert_eq!(tuple_types[1], types.uint256(), "element 1 for `{expr}`");
+    }
+
+    // No common type: each tuple is "wider" in a different position (element 0
+    // on the left, element 1 on the right), so neither converts to the other
+    // (matches solc error 1080).
+    let expr = "true ? (uint256(1), uint128(2)) : (uint128(3), uint256(4))";
+    let (expr_type, _) = try_type_of_expression(expr);
+    assert!(expr_type.is_none());
+}
+
+#[test]
 fn test_mappings_only_unify_on_equal_elements() {
     // Mappings must match on key and value types
     let (expr_type, _) = try_type_of_expression_in_context(
