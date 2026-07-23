@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // https://github.com/argotorg/solidity/blob/v0.8.1/test/libsolidity/syntaxTests/pragma/experimental_pragma_empty.sol │ 0..117
+  2  │ pragma experimental;                                                                                                  │ 118..138
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected PragmaSemicolon. One of ABIEncoderV2Keyword, PragmaStringLiteral, SMTCheckerKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/experimental_empty/input.sol:2:20]
+       │
+     2 │ pragma experimental;
+       │                    ┬  
+       │                    ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

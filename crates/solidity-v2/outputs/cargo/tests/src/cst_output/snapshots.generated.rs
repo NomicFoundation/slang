@@ -1478,6 +1478,11 @@ mod pragma_directive {
     }
 
     #[test]
+    fn experimental_empty() -> Result<()> {
+        run("PragmaDirective", "experimental_empty")
+    }
+
+    #[test]
     fn experimental_smtchecker() -> Result<()> {
         run("PragmaDirective", "experimental_smtchecker")
     }
