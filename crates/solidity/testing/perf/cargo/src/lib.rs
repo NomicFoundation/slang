@@ -23,6 +23,8 @@ mod unit_tests {
     const IDENTIFIER_COUNT: usize = 2829;
     // Sum of the references resolved by the binder.
     const RESOLVED_REFERENCES_COUNT: usize = 1443;
+    // Sum of all of expressions that the AST provides a type for.
+    const TYPED_EXPRESSIONS_COUNT: usize = 1910;
 
     mod slang {
         macro_rules! define_payload_test {
@@ -103,6 +105,23 @@ mod unit_tests {
             compute_contracts_abi,
             count_concrete_contracts,
             super::CONCRETE_CONTRACT_COUNT
+        );
+
+        define_payload_test_and_assert_count_eq!(
+            ast_visitor,
+            count_identifiers,
+            super::IDENTIFIER_COUNT
+        );
+
+        define_payload_test_and_assert_count_eq!(
+            ast_analysis,
+            count_resolved_references,
+            super::RESOLVED_REFERENCES_COUNT
+        );
+        define_payload_test_and_assert_count_eq!(
+            ast_analysis,
+            count_typed_expressions,
+            super::TYPED_EXPRESSIONS_COUNT
         );
     }
 
