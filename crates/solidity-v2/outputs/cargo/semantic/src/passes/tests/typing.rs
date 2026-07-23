@@ -46,7 +46,7 @@ fn analyze_with_diagnostics(language_version: LanguageVersion, source: &str) -> 
     let mut types = TypeRegistry::new(language_version);
     let mut diagnostics = DiagnosticCollection::default();
     let file_node_mapper = FileNodeMapper::build_from(&files);
-    p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    p1_collect_definitions::run(&files, &mut binder, language_version, &mut diagnostics);
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
     p3_type_definitions::run(
         &files,

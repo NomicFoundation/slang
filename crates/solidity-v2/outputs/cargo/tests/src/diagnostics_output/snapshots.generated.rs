@@ -1240,6 +1240,16 @@ mod structure {
     }
 
     #[test]
+    fn free_function_with_modifiers() -> Result<()> {
+        run("structure", "free_function_with_modifiers")
+    }
+
+    #[test]
+    fn free_function_with_override() -> Result<()> {
+        run("structure", "free_function_with_override")
+    }
+
+    #[test]
     fn free_function_without_body() -> Result<()> {
         run("structure", "free_function_without_body")
     }
@@ -1271,6 +1281,11 @@ mod structure {
     #[test]
     fn interface_function_not_external() -> Result<()> {
         run("structure", "interface_function_not_external")
+    }
+
+    #[test]
+    fn interface_function_with_modifiers() -> Result<()> {
+        run("structure", "interface_function_with_modifiers")
     }
 
     mod invalid_using_directive_container {
@@ -1333,6 +1348,11 @@ mod structure {
     }
 
     #[test]
+    fn modifier_in_interface() -> Result<()> {
+        run("structure", "modifier_in_interface")
+    }
+
+    #[test]
     fn multiple_constructors() -> Result<()> {
         run("structure", "multiple_constructors")
     }
@@ -1386,6 +1406,11 @@ mod structure {
     #[test]
     fn storage_layout_for_abstract_contract() -> Result<()> {
         run("structure", "storage_layout_for_abstract_contract")
+    }
+
+    #[test]
+    fn unimplemented_function_with_modifiers() -> Result<()> {
+        run("structure", "unimplemented_function_with_modifiers")
     }
 
     #[test]

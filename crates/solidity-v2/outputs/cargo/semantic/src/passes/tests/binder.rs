@@ -32,7 +32,12 @@ contract Test is Base layout at 0 {}
     let files = [file];
     let mut binder = Binder::default();
     let mut diagnostics = DiagnosticCollection::default();
-    p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    p1_collect_definitions::run(
+        &files,
+        &mut binder,
+        LanguageVersion::LATEST,
+        &mut diagnostics,
+    );
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
     assert!(
         diagnostics.is_empty(),
@@ -95,7 +100,12 @@ interface A is C {}
     let files = [file];
     let mut binder = Binder::default();
     let mut diagnostics = DiagnosticCollection::default();
-    p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    p1_collect_definitions::run(
+        &files,
+        &mut binder,
+        LanguageVersion::LATEST,
+        &mut diagnostics,
+    );
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
     assert!(
         diagnostics.is_empty(),
@@ -144,7 +154,12 @@ contract B {}
     let files = [file];
     let mut binder = Binder::default();
     let mut diagnostics = DiagnosticCollection::default();
-    p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    p1_collect_definitions::run(
+        &files,
+        &mut binder,
+        LanguageVersion::LATEST,
+        &mut diagnostics,
+    );
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
     assert!(
         diagnostics.is_empty(),
@@ -184,7 +199,12 @@ contract Test is Base, Foo { // Base should resolve to the contract, not the var
     let files = [file];
     let mut binder = Binder::default();
     let mut diagnostics = DiagnosticCollection::default();
-    p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    p1_collect_definitions::run(
+        &files,
+        &mut binder,
+        LanguageVersion::LATEST,
+        &mut diagnostics,
+    );
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
@@ -257,7 +277,7 @@ contract Test is Base {
     let mut types = TypeRegistry::new(language_version);
 
     let mut diagnostics = DiagnosticCollection::default();
-    p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    p1_collect_definitions::run(&files, &mut binder, language_version, &mut diagnostics);
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
 
     let types_before = types.iter_types().count();
@@ -330,7 +350,7 @@ contract Test is Base {
     let mut types = TypeRegistry::new(language_version);
 
     let mut diagnostics = DiagnosticCollection::default();
-    p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    p1_collect_definitions::run(&files, &mut binder, language_version, &mut diagnostics);
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
     let file_node_mapper = FileNodeMapper::build_from(&files);
     p3_type_definitions::run(
@@ -396,7 +416,7 @@ contract Test {
     let mut diagnostics = DiagnosticCollection::default();
     let file_node_mapper = FileNodeMapper::build_from(&files);
 
-    p1_collect_definitions::run(&files, &mut binder, &mut diagnostics);
+    p1_collect_definitions::run(&files, &mut binder, language_version, &mut diagnostics);
     p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
     p3_type_definitions::run(
         &files,

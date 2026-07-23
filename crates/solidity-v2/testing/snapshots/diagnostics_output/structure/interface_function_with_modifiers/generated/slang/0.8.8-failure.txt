@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[structure/interface-function-with-modifiers] Error: Functions in interfaces cannot have modifiers.
+   ╭─[input.sol:6:5]
+   │
+ 6 │     function f() external m pure returns (uint);
+   │     ──────────────────────┬─────────────────────  
+   │                           ╰─────────────────────── Error occurred here.
+───╯
+
+[structure/modifier-in-interface] Error: Modifiers cannot be defined or declared in interfaces.
+   ╭─[input.sol:7:5]
+   │
+ 7 │ ╭─▶     modifier m() {
+   ┆ ┆   
+ 9 │ ├─▶     }
+   │ │           
+   │ ╰─────────── Error occurred here.
+───╯

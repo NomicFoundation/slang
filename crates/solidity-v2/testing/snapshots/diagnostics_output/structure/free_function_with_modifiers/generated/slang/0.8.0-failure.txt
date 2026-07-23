@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/free-function-with-modifiers] Error: Free functions cannot have modifiers.
+    ╭─[input.sol:11:1]
+    │
+ 11 │ function fun() C.someModifier {}
+    │ ────────────────┬───────────────  
+    │                 ╰───────────────── Error occurred here.
+────╯

@@ -4,17 +4,20 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclar
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     AbstractContractPublicConstructor, BreakOutsideLoop, ConstructorNotInContract,
     ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FreeFunctionPayable,
-    FreeFunctionVisibility, FunctionMustBeImplemented, FunctionNameMatchesContainer,
-    InterfaceFunctionCannotBeImplemented, InterfaceFunctionNotExternal,
-    InvalidUsingDirectiveContainer, LibraryPayableFunction, LibraryVirtualFunction,
-    LibraryVirtualModifier, MissingFunctionVisibility, MultipleConstructors,
+    FreeFunctionVisibility, FreeFunctionWithModifiers, FreeFunctionWithOverride,
+    FunctionMustBeImplemented, FunctionNameMatchesContainer, InterfaceFunctionCannotBeImplemented,
+    InterfaceFunctionNotExternal, InterfaceFunctionWithModifiers, InvalidUsingDirectiveContainer,
+    LibraryPayableFunction, LibraryVirtualFunction, LibraryVirtualModifier,
+    MissingFunctionVisibility, ModifierInInterface, MultipleConstructors,
     NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
-    UnimplementedModifierMustBeVirtual, VirtualFreeFunction, VirtualPrivateFunction,
+    UnimplementedFunctionWithModifiers, UnimplementedModifierMustBeVirtual, VirtualFreeFunction,
+    VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
@@ -34,10 +37,11 @@ mod conflicts;
 pub fn run(
     files: &[impl SemanticFile],
     binder: &mut Binder,
+    language_version: LanguageVersion,
     diagnostics: &mut DiagnosticCollection,
 ) {
     for file in files {
-        Pass::visit_file(file, binder, diagnostics);
+        Pass::visit_file(file, binder, language_version, diagnostics);
     }
 
     // Once every file scope is populated, detect clashes involving the
@@ -65,6 +69,7 @@ struct ScopeFrame {
 
 struct Pass<'a, F: SemanticFile> {
     current_file: &'a F,
+    language_version: LanguageVersion,
     scope_stack: Vec<ScopeFrame>,
     // Number of enclosing loops (`for`, `while`, `do-while`) at the current
     // traversal point. Used to flag `break` statements that appear outside any
@@ -75,9 +80,15 @@ struct Pass<'a, F: SemanticFile> {
 }
 
 impl<'a, F: SemanticFile> Pass<'a, F> {
-    fn visit_file(file: &'a F, binder: &'a mut Binder, diagnostics: &'a mut DiagnosticCollection) {
+    fn visit_file(
+        file: &'a F,
+        binder: &'a mut Binder,
+        language_version: LanguageVersion,
+        diagnostics: &'a mut DiagnosticCollection,
+    ) {
         let mut pass = Self {
             current_file: file,
+            language_version,
             scope_stack: Vec::new(),
             loop_depth: 0,
             binder,
@@ -315,6 +326,16 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
             if node.attributes.mutability == ir::FunctionMutability::Payable {
                 self.report(node, FreeFunctionPayable);
             }
+
+            // A free (file-level) function cannot have modifier invocations.
+            if !node.attributes.modifier_invocations.is_empty() {
+                self.report(node, FreeFunctionWithModifiers);
+            }
+
+            // A free (file-level) function cannot carry an `override` specifier.
+            if node.attributes.override_specifier.is_some() {
+                self.report(node, FreeFunctionWithOverride);
+            }
         } else if node.kind == ir::FunctionKind::Regular {
             // The remaining checks only concern regular (named) functions.
             // Constructors are handled separately and fallback/receive functions
@@ -360,6 +381,19 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
                 self.report(node, InterfaceFunctionNotExternal);
             }
 
+            // A function declared in an interface cannot have modifier
+            // invocations (solc 5842). Otherwise, any function without an
+            // implementation body (eg. an abstract function in a contract)
+            // cannot have them either (solc 2668). solc reports only one of the
+            // two, so mirror that with an `else if`.
+            if !node.attributes.modifier_invocations.is_empty() {
+                if self.current_scope_is_interface() {
+                    self.report(node, InterfaceFunctionWithModifiers);
+                } else if node.body.is_none() {
+                    self.report(node, UnimplementedFunctionWithModifiers);
+                }
+            }
+
             // A function declared in a library cannot be `payable`.
             if node.attributes.mutability == ir::FunctionMutability::Payable
                 && self.current_scope_is_library()
@@ -401,6 +435,13 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
 
     /// Check modifier attributes, also constrained by the grammar.
     fn check_modifier_attributes(&mut self, node: &ir::FunctionDefinition) {
+        // A modifier cannot be defined or declared in an interface. solc only
+        // began rejecting this in 0.8.8 (error 6408); earlier versions accept
+        // it, so gate the diagnostic accordingly.
+        if self.language_version >= LanguageVersion::V0_8_8 && self.current_scope_is_interface() {
+            self.report(node, ModifierInInterface);
+        }
+
         // A modifier without an implementation body must be marked `virtual`.
         if node.body.is_none() && !node.attributes.is_virtual {
             self.report(node, UnimplementedModifierMustBeVirtual);
