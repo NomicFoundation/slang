@@ -1314,8 +1314,18 @@ mod import_directive {
     }
 
     #[test]
+    fn invalid_token() -> Result<()> {
+        run("ImportDirective", "invalid_token")
+    }
+
+    #[test]
     fn named_import() -> Result<()> {
         run("ImportDirective", "named_import")
+    }
+
+    #[test]
+    fn namespace_instead_of_string_literal() -> Result<()> {
+        run("ImportDirective", "namespace_instead_of_string_literal")
     }
 
     #[test]
