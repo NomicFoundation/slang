@@ -24,7 +24,7 @@ mod unit_tests {
     // Sum of the references resolved by the binder.
     const RESOLVED_REFERENCES_COUNT: usize = 1443;
     // Sum of all of expressions that the AST provides a type for.
-    const TYPED_EXPRESSIONS_COUNT: usize = 1815;
+    const TYPED_EXPRESSIONS_COUNT: usize = 1910;
 
     mod slang {
         macro_rules! define_payload_test {
