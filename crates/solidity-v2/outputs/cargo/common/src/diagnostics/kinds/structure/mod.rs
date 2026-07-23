@@ -41,6 +41,7 @@ mod nested_unchecked_block;
 mod non_abstract_contract_internal_constructor;
 mod payable_internal_or_private_function;
 mod placeholder_in_unchecked_block;
+mod redefined_built_in_error;
 mod storage_layout_for_abstract_contract;
 mod unchecked_block_not_in_regular_block;
 mod unimplemented_function_with_modifiers;
@@ -95,6 +96,7 @@ pub use nested_unchecked_block::NestedUncheckedBlock;
 pub use non_abstract_contract_internal_constructor::NonAbstractContractInternalConstructor;
 pub use payable_internal_or_private_function::PayableInternalOrPrivateFunction;
 pub use placeholder_in_unchecked_block::PlaceholderInUncheckedBlock;
+pub use redefined_built_in_error::RedefinedBuiltInError;
 use serde::Serialize;
 pub use storage_layout_for_abstract_contract::StorageLayoutForAbstractContract;
 pub use unchecked_block_not_in_regular_block::UncheckedBlockNotInRegularBlock;
@@ -202,6 +204,10 @@ define_diagnostic_kind! {
         MultipleFallbackFunctions(MultipleFallbackFunctions),
         /// A contract defines more than one receive function.
         MultipleReceiveFunctions(MultipleReceiveFunctions),
+
+        /// An error is defined with a name reserved for a built-in error
+        /// (`Error` or `Panic`).
+        RedefinedBuiltInError(RedefinedBuiltInError),
 
         /// A library declares a fallback function.
         LibraryFallbackFunction(LibraryFallbackFunction),
