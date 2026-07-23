@@ -1498,6 +1498,11 @@ mod pragma_directive {
     }
 
     #[test]
+    fn invalid_number_pragma() -> Result<()> {
+        run("PragmaDirective", "invalid_number_pragma")
+    }
+
+    #[test]
     fn version() -> Result<()> {
         run("PragmaDirective", "version")
     }

@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/pragma/invalid_pragma.sol │ 0..106
+  2  │ pragma 0;                                                                                                  │ 107..116
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected VersionSpecifier. One of AbicoderKeyword, ExperimentalKeyword, SolidityKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/invalid_number_pragma/input.sol:2:8]
+       │
+     2 │ pragma 0;
+       │        ┬  
+       │        ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []
