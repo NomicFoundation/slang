@@ -7,7 +7,7 @@ use crate::ast::ParametersStruct;
 impl ParametersStruct {
     pub(crate) fn compute_abi_parameters(&self) -> Option<Vec<AbiParameter>> {
         let mut result = Vec::new();
-        for parameter in &self.ir_nodes {
+        for parameter in self.ir_nodes.iter() {
             let node_id = parameter.id();
             let name = parameter
                 .name

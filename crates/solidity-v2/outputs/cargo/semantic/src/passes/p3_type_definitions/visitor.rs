@@ -90,7 +90,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_import_deconstruction(&mut self, node: &ir::ImportDeconstruction) -> bool {
-        for symbol in &node.symbols {
+        for symbol in node.symbols.iter() {
             // find the associated definition to get the imported file ID
             let Some(Definition::ImportedSymbol(imported_symbol)) =
                 self.binder.find_definition_by_id(symbol.id())
@@ -175,7 +175,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_override_paths(&mut self, items: &ir::OverridePaths) -> bool {
-        for identifier_path in items {
+        for identifier_path in items.iter() {
             self.resolve_identifier_path(identifier_path);
         }
         false
@@ -188,7 +188,7 @@ impl Visitor for Pass<'_> {
         // scope to use in overload disambiguation when invoking an event as a
         // function
         let mut parameter_types = Vec::new();
-        for parameter in &node.parameters {
+        for parameter in node.parameters.iter() {
             // TODO: the data location is not strictly correct, but strings, bytes
             // and structs are allowed as event parameters and they won't type if we
             // pass None here
@@ -213,7 +213,7 @@ impl Visitor for Pass<'_> {
         self.mark_user_meta_type_node(node.id());
 
         // Resolve the types of the parameters
-        for parameter in &node.parameters {
+        for parameter in node.parameters.iter() {
             // TODO: the data location is not strictly correct, but strings, bytes
             // and structs are allowed as error parameters and they won't type if we
             // pass None here
@@ -247,7 +247,7 @@ impl Visitor for Pass<'_> {
                 self.binder.set_node_type(single.declaration.id(), type_id);
             }
             ir::VariableDeclarationTarget::MultiTypedDeclaration(multi) => {
-                for element in &multi.elements {
+                for element in multi.elements.iter() {
                     if let Some(declaration) = &element.member {
                         let type_id = self.resolve_type_name(
                             &declaration.type_name,
@@ -273,7 +273,7 @@ impl Visitor for Pass<'_> {
         let type_id = self.types.register_type(Type::Enum(EnumType {
             definition_id: node.id(),
         }));
-        for member in &node.members {
+        for member in node.members.iter() {
             self.binder.set_node_type(member.id(), Some(type_id));
         }
 
@@ -300,7 +300,7 @@ impl Visitor for Pass<'_> {
                 self.resolve_identifier_path(identifier_path);
             }
             ir::UsingClause::UsingDeconstruction(using_deconstruction) => {
-                for symbol in &using_deconstruction.symbols {
+                for symbol in using_deconstruction.symbols.iter() {
                     self.resolve_identifier_path(&symbol.name);
                 }
             }
@@ -336,7 +336,7 @@ impl Visitor for Pass<'_> {
                         let mut symbols = Map::default();
                         let mut operators = Map::default();
 
-                        for symbol in &using_deconstruction.symbols {
+                        for symbol in using_deconstruction.symbols.iter() {
                             let symbol_name = symbol.name.last().unwrap();
                             let resolution = self
                                 .binder

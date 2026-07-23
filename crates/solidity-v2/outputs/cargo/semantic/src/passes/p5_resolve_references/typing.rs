@@ -150,7 +150,7 @@ impl Pass<'_> {
         array: &ir::ArrayExpression,
     ) -> Option<TypeId> {
         let mut item_type_ids: Vec<TypeId> = Vec::with_capacity(array.items.len());
-        for item in &array.items {
+        for item in array.items.iter() {
             item_type_ids.push(self.typing_of_expression(item).as_type_id()?);
         }
         let element_type = self.types.type_of_array_literal(&item_type_ids)?;

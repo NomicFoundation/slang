@@ -223,7 +223,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     // to link with the enclosing function definition
     fn collect_parameters(&mut self, parameters: &ir::Parameters) -> ScopeId {
         let mut scope = ParametersScope::new();
-        for parameter in parameters {
+        for parameter in parameters.iter() {
             if let Some(name) = &parameter.name {
                 // Parameters cannot overload, so any earlier parameter with
                 // the same name is a redeclaration.
@@ -246,7 +246,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         parameters: &ir::Parameters,
         scope_id: ScopeId,
     ) {
-        for parameter in parameters {
+        for parameter in parameters.iter() {
             if parameter.name.is_some() {
                 let definition = Definition::new_parameter(parameter);
                 self.insert_definition_in_scope(definition, scope_id);
@@ -502,7 +502,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     fn enter_import_deconstruction(&mut self, node: &ir::ImportDeconstruction) -> bool {
         let imported_file_id = self.resolve_import_path(node.id());
 
-        for symbol in &node.symbols {
+        for symbol in node.symbols.iter() {
             let definition = Definition::new_imported_symbol(
                 symbol,
                 symbol.name.unparse().to_owned(),
@@ -618,7 +618,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
 
         let enum_scope = Scope::new_enum(node.id());
         let enum_scope_id = self.binder.insert_scope(enum_scope);
-        for member in &node.members {
+        for member in node.members.iter() {
             let definition = Definition::new_enum_member(member);
             self.insert_definition_in_scope(definition, enum_scope_id);
         }
@@ -637,7 +637,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
 
         let struct_scope = Scope::new_struct(node.id());
         let struct_scope_id = self.binder.insert_scope(struct_scope);
-        for member in &node.members {
+        for member in node.members.iter() {
             let definition = Definition::new_struct_member(member);
             self.insert_definition_in_scope(definition, struct_scope_id);
         }
@@ -701,7 +701,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                 self.insert_definition_in_current_scope(definition);
             }
             ir::VariableDeclarationTarget::MultiTypedDeclaration(multi) => {
-                for element in &multi.elements {
+                for element in multi.elements.iter() {
                     if let Some(member) = &element.member {
                         let definition = Definition::new_variable(member);
                         self.insert_definition_in_current_scope(definition);
@@ -803,14 +803,14 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn enter_function_type(&mut self, node: &ir::FunctionType) -> bool {
-        for parameter in &node.parameters {
+        for parameter in node.parameters.iter() {
             if parameter.name.is_some() {
                 let definition = Definition::new_type_parameter(parameter);
                 self.binder.insert_definition_no_scope(definition);
             }
         }
         if let Some(returns) = &node.returns {
-            for parameter in returns {
+            for parameter in returns.iter() {
                 if parameter.name.is_some() {
                     let definition = Definition::new_type_parameter(parameter);
                     self.binder.insert_definition_no_scope(definition);

@@ -2,7 +2,6 @@
 
 use std::ops::Range;
 use std::sync::Arc;
-use std::vec::Vec;
 
 pub(super) use slang_solidity_v2_common::nodes::NodeId;
 
@@ -2151,75 +2150,75 @@ pub enum YulSwitchCase {
 // Repeated & Separated
 //
 
-pub type ArrayValues = Vec<Expression>;
+pub type ArrayValues = Arc<[Expression]>;
 
-pub type CallOptions = Vec<NamedArgument>;
+pub type CallOptions = Arc<[NamedArgument]>;
 
-pub type CatchClauses = Vec<CatchClause>;
+pub type CatchClauses = Arc<[CatchClause]>;
 
-pub type ContractMembers = Vec<ContractMember>;
+pub type ContractMembers = Arc<[ContractMember]>;
 
-pub type EnumMembers = Vec<Identifier>;
+pub type EnumMembers = Arc<[Identifier]>;
 
-pub type HexStringLiterals = Vec<HexStringLiteral>;
+pub type HexStringLiterals = Arc<[HexStringLiteral]>;
 
-pub type IdentifierPath = Vec<Identifier>;
+pub type IdentifierPath = Arc<[Identifier]>;
 
-pub type ImportDeconstructionSymbols = Vec<ImportDeconstructionSymbol>;
+pub type ImportDeconstructionSymbols = Arc<[ImportDeconstructionSymbol]>;
 
-pub type InheritanceTypes = Vec<InheritanceType>;
+pub type InheritanceTypes = Arc<[InheritanceType]>;
 
-pub type InterfaceMembers = Vec<ContractMember>;
+pub type InterfaceMembers = Arc<[ContractMember]>;
 
-pub type LibraryMembers = Vec<ContractMember>;
+pub type LibraryMembers = Arc<[ContractMember]>;
 
-pub type ModifierInvocations = Vec<ModifierInvocation>;
+pub type ModifierInvocations = Arc<[ModifierInvocation]>;
 
-pub type MultiTypedDeclarationElements = Vec<MultiTypedDeclarationElement>;
+pub type MultiTypedDeclarationElements = Arc<[MultiTypedDeclarationElement]>;
 
-pub type NamedArguments = Vec<NamedArgument>;
+pub type NamedArguments = Arc<[NamedArgument]>;
 
-pub type OverridePaths = Vec<IdentifierPath>;
+pub type OverridePaths = Arc<[IdentifierPath]>;
 
-pub type Parameters = Vec<Parameter>;
+pub type Parameters = Arc<[Parameter]>;
 
-pub type PositionalArguments = Vec<Expression>;
+pub type PositionalArguments = Arc<[Expression]>;
 
-pub type SimpleVersionLiteral = Vec<VersionSpecifier>;
+pub type SimpleVersionLiteral = Arc<[VersionSpecifier]>;
 
-pub type SourceUnitMembers = Vec<SourceUnitMember>;
+pub type SourceUnitMembers = Arc<[SourceUnitMember]>;
 
-pub type Statements = Vec<Statement>;
+pub type Statements = Arc<[Statement]>;
 
-pub type StringLiterals = Vec<StringLiteral>;
+pub type StringLiterals = Arc<[StringLiteral]>;
 
-pub type StructMembers = Vec<StructMember>;
+pub type StructMembers = Arc<[StructMember]>;
 
-pub type TupleValues = Vec<TupleValue>;
+pub type TupleValues = Arc<[TupleValue]>;
 
-pub type UnicodeStringLiterals = Vec<UnicodeStringLiteral>;
+pub type UnicodeStringLiterals = Arc<[UnicodeStringLiteral]>;
 
-pub type UsingDeconstructionSymbols = Vec<UsingDeconstructionSymbol>;
+pub type UsingDeconstructionSymbols = Arc<[UsingDeconstructionSymbol]>;
 
-pub type VersionExpressionSet = Vec<VersionExpression>;
+pub type VersionExpressionSet = Arc<[VersionExpression]>;
 
-pub type VersionExpressionSets = Vec<VersionExpressionSet>;
+pub type VersionExpressionSets = Arc<[VersionExpressionSet]>;
 
-pub type YulArguments = Vec<YulExpression>;
+pub type YulArguments = Arc<[YulExpression]>;
 
-pub type YulFlags = Vec<StringLiteral>;
+pub type YulFlags = Arc<[StringLiteral]>;
 
-pub type YulParameters = Vec<Identifier>;
+pub type YulParameters = Arc<[Identifier]>;
 
-pub type YulPath = Vec<Identifier>;
+pub type YulPath = Arc<[Identifier]>;
 
-pub type YulPaths = Vec<YulPath>;
+pub type YulPaths = Arc<[YulPath]>;
 
-pub type YulStatements = Vec<YulStatement>;
+pub type YulStatements = Arc<[YulStatement]>;
 
-pub type YulSwitchCases = Vec<YulSwitchCase>;
+pub type YulSwitchCases = Arc<[YulSwitchCase]>;
 
-pub type YulVariableNames = Vec<Identifier>;
+pub type YulVariableNames = Arc<[Identifier]>;
 
 //
 // Terminals

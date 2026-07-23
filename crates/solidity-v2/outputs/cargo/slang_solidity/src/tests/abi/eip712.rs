@@ -15,8 +15,6 @@
 //! member uses its ABI type spelling — so the example leans on `AbiType` for
 //! leaves and walks the AST for the struct (and array-of-struct) members.
 
-use std::sync::Arc;
-
 use slang_solidity_v2_common::collections::OrderedSet;
 
 use crate::abi::AbiType;
@@ -69,7 +67,7 @@ fn member_type_string(ty: &Type) -> Option<String> {
             let Definition::Struct(def) = struct_type.definition() else {
                 unreachable!("a struct type resolves to a struct definition");
             };
-            Some(def.name().name().clone())
+            Some(def.name().name().to_owned())
         }
         Type::Array(array) => Some(format!("{}[]", member_type_string(&array.element_type())?)),
         Type::FixedSizeArray(array) => Some(format!(
@@ -121,12 +119,12 @@ fn encode_type(primary: &StructDefinition) -> Option<String> {
     let mut seen = OrderedSet::default();
     seen.insert(primary.node_id());
     let mut referenced: Vec<StructDefinition> = Vec::new();
-    let mut queue = vec![Arc::clone(primary)];
+    let mut queue = vec![primary.clone()];
     while let Some(def) = queue.pop() {
         for member in def.members().iter() {
             if let Some(dependency) = referenced_struct(&member.get_type()?) {
                 if seen.insert(dependency.node_id()) {
-                    referenced.push(Arc::clone(&dependency));
+                    referenced.push(dependency.clone());
                     queue.push(dependency);
                 }
             }
@@ -136,7 +134,7 @@ fn encode_type(primary: &StructDefinition) -> Option<String> {
     // The primary type comes first; referenced types follow, sorted by name.
     // Two distinct structs can share a name, so break ties on the definition's
     // `NodeId` to keep the ordering deterministic.
-    referenced.sort_by_key(|def| (def.name().name(), def.node_id()));
+    referenced.sort_by_key(|def| (def.name().name().to_owned(), def.node_id()));
 
     let mut result = encode_one(primary)?;
     for def in &referenced {

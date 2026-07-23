@@ -97,7 +97,7 @@ impl<'a> Pass<'a> {
     }
 
     fn type_getters_from(&mut self, source_unit: &ir::SourceUnit) {
-        for source_unit_member in &source_unit.members {
+        for source_unit_member in source_unit.members.iter() {
             let ir::SourceUnitMember::ContractDefinition(contract_definition) = source_unit_member
             else {
                 continue;
@@ -105,7 +105,7 @@ impl<'a> Pass<'a> {
             let receiver_type_id = self.types.register_type(Type::Contract(ContractType {
                 definition_id: contract_definition.id(),
             }));
-            for contract_member in &contract_definition.members {
+            for contract_member in contract_definition.members.iter() {
                 let ir::ContractMember::StateVariableDefinition(state_var_definition) =
                     contract_member
                 else {
