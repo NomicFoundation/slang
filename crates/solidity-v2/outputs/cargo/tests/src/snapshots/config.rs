@@ -14,6 +14,10 @@ const CONFIG_FILE_NAME: &str = ".tests.config.json";
 #[derive(Clone, Copy, Debug)]
 pub struct TestConfig {
     pub matrix: TestMatrix,
+    /// Whether slang and solc are expected to disagree on the compilation
+    /// status of at least one matrix entry. Snapshots for both are still
+    /// generated, keeping the divergence visible.
+    pub expected_solc_divergence: bool,
 }
 
 /// Configuration controlling how a snapshot test iterates over the
@@ -68,6 +72,11 @@ impl TestConfig {
 #[serde(deny_unknown_fields)]
 struct RawConfigFile {
     matrix: RawTestMatrix,
+    /// Reason why slang intentionally diverges from solc on this test (for
+    /// documentation purposes). The runner requires the divergence to occur,
+    /// so the marker cannot go stale.
+    #[serde(default)]
+    expected_solc_divergence: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -103,6 +112,17 @@ impl From<RawConfigFile> for TestConfig {
             }
         };
 
-        Self { matrix }
+        let expected_solc_divergence = match raw.expected_solc_divergence {
+            Some(reason) => {
+                assert!(!reason.trim().is_empty(), "Reason must be non-empty");
+                true
+            }
+            None => false,
+        };
+
+        Self {
+            matrix,
+            expected_solc_divergence,
+        }
     }
 }

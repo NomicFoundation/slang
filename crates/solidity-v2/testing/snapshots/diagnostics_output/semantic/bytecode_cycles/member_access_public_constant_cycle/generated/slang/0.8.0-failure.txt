@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/cyclic-bytecode-dependency] Error: Circular contract bytecode dependency.
+   ╭─[input.sol:9:34]
+   │
+ 9 │     bytes public constant CODE = type(A).creationCode;
+   │                                  ──────────┬─────────  
+   │                                            ╰─────────── Error occurred here.
+───╯

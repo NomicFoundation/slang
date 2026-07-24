@@ -868,6 +868,293 @@ mod resolution {
 mod semantic {
     use super::*;
 
+    mod bytecode_cycles {
+        use super::*;
+
+        #[test]
+        fn abstract_contract_reaching_cycle() -> Result<()> {
+            run(
+                "semantic/bytecode_cycles",
+                "abstract_contract_reaching_cycle",
+            )
+        }
+
+        #[test]
+        fn attached_function_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "attached_function_cycle")
+        }
+
+        #[test]
+        fn attached_function_on_contract_value() -> Result<()> {
+            run(
+                "semantic/bytecode_cycles",
+                "attached_function_on_contract_value",
+            )
+        }
+
+        #[test]
+        fn base_constructor_and_derived_initializer() -> Result<()> {
+            run(
+                "semantic/bytecode_cycles",
+                "base_constructor_and_derived_initializer",
+            )
+        }
+
+        #[test]
+        fn base_constructor_arguments() -> Result<()> {
+            run("semantic/bytecode_cycles", "base_constructor_arguments")
+        }
+
+        #[test]
+        fn base_constructor_modifier_arguments() -> Result<()> {
+            run(
+                "semantic/bytecode_cycles",
+                "base_constructor_modifier_arguments",
+            )
+        }
+
+        #[test]
+        fn chain_reaching_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "chain_reaching_cycle")
+        }
+
+        #[test]
+        fn constant_getter_override_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "constant_getter_override_cycle")
+        }
+
+        #[test]
+        fn constant_value_attribution() -> Result<()> {
+            run("semantic/bytecode_cycles", "constant_value_attribution")
+        }
+
+        #[test]
+        fn creation_code_of_base() -> Result<()> {
+            run("semantic/bytecode_cycles", "creation_code_of_base")
+        }
+
+        #[test]
+        fn creation_code_of_self_and_base() -> Result<()> {
+            run("semantic/bytecode_cycles", "creation_code_of_self_and_base")
+        }
+
+        #[test]
+        fn diamond_super_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "diamond_super_cycle")
+        }
+
+        #[test]
+        fn external_call_no_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "external_call_no_cycle")
+        }
+
+        #[test]
+        fn free_function_call_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "free_function_call_cycle")
+        }
+
+        #[test]
+        fn function_and_fallback_attribution() -> Result<()> {
+            run(
+                "semantic/bytecode_cycles",
+                "function_and_fallback_attribution",
+            )
+        }
+
+        #[test]
+        fn function_pointer_reference() -> Result<()> {
+            run("semantic/bytecode_cycles", "function_pointer_reference")
+        }
+
+        #[test]
+        fn getter_override_no_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "getter_override_no_cycle")
+        }
+
+        #[test]
+        fn import_alias_constant_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "import_alias_constant_cycle")
+        }
+
+        #[test]
+        fn imported_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "imported_cycle")
+        }
+
+        #[test]
+        fn inherited_entry_point_attribution() -> Result<()> {
+            run(
+                "semantic/bytecode_cycles",
+                "inherited_entry_point_attribution",
+            )
+        }
+
+        #[test]
+        fn inherited_public_constant_getter() -> Result<()> {
+            run(
+                "semantic/bytecode_cycles",
+                "inherited_public_constant_getter",
+            )
+        }
+
+        #[test]
+        fn inherited_shared_site() -> Result<()> {
+            run("semantic/bytecode_cycles", "inherited_shared_site")
+        }
+
+        #[test]
+        fn internal_library_call_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "internal_library_call_cycle")
+        }
+
+        #[test]
+        fn library_creation_code_of_self() -> Result<()> {
+            run("semantic/bytecode_cycles", "library_creation_code_of_self")
+        }
+
+        #[test]
+        fn library_public_constant_getter() -> Result<()> {
+            run("semantic/bytecode_cycles", "library_public_constant_getter")
+        }
+
+        #[test]
+        fn member_access_constant_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "member_access_constant_cycle")
+        }
+
+        #[test]
+        fn member_access_public_constant_cycle() -> Result<()> {
+            run(
+                "semantic/bytecode_cycles",
+                "member_access_public_constant_cycle",
+            )
+        }
+
+        #[test]
+        fn modifier_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "modifier_cycle")
+        }
+
+        #[test]
+        fn modifier_invocation_arguments() -> Result<()> {
+            run("semantic/bytecode_cycles", "modifier_invocation_arguments")
+        }
+
+        #[test]
+        fn mutual_state_variables() -> Result<()> {
+            run("semantic/bytecode_cycles", "mutual_state_variables")
+        }
+
+        #[test]
+        fn new_in_constructor() -> Result<()> {
+            run("semantic/bytecode_cycles", "new_in_constructor")
+        }
+
+        #[test]
+        fn private_library_function_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "private_library_function_cycle")
+        }
+
+        #[test]
+        fn public_constant_getter() -> Result<()> {
+            run("semantic/bytecode_cycles", "public_constant_getter")
+        }
+
+        #[test]
+        fn public_constant_getter_of_self() -> Result<()> {
+            run("semantic/bytecode_cycles", "public_constant_getter_of_self")
+        }
+
+        #[test]
+        fn public_library_call_no_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "public_library_call_no_cycle")
+        }
+
+        #[test]
+        fn qualified_modifier_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "qualified_modifier_cycle")
+        }
+
+        #[test]
+        fn qualified_modifier_override_no_cycle() -> Result<()> {
+            run(
+                "semantic/bytecode_cycles",
+                "qualified_modifier_override_no_cycle",
+            )
+        }
+
+        #[test]
+        fn receive_and_fallback_attribution() -> Result<()> {
+            run(
+                "semantic/bytecode_cycles",
+                "receive_and_fallback_attribution",
+            )
+        }
+
+        #[test]
+        fn referenced_constant_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "referenced_constant_cycle")
+        }
+
+        #[test]
+        fn runtime_code_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "runtime_code_cycle")
+        }
+
+        #[test]
+        fn selector_access_no_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "selector_access_no_cycle")
+        }
+
+        #[test]
+        fn shared_dependency_attribution() -> Result<()> {
+            run("semantic/bytecode_cycles", "shared_dependency_attribution")
+        }
+
+        #[test]
+        fn super_call_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "super_call_cycle")
+        }
+
+        #[test]
+        fn super_unimplemented_override_cycle() -> Result<()> {
+            run(
+                "semantic/bytecode_cycles",
+                "super_unimplemented_override_cycle",
+            )
+        }
+
+        #[test]
+        fn three_contract_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "three_contract_cycle")
+        }
+
+        #[test]
+        fn unreferenced_constant_no_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "unreferenced_constant_no_cycle")
+        }
+
+        #[test]
+        fn unused_overload_no_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "unused_overload_no_cycle")
+        }
+
+        #[test]
+        fn user_defined_operator_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "user_defined_operator_cycle")
+        }
+
+        #[test]
+        fn validator_exhausted() -> Result<()> {
+            run("semantic/bytecode_cycles", "validator_exhausted")
+        }
+
+        #[test]
+        fn virtual_override_no_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "virtual_override_no_cycle")
+        }
+    }
+
     mod constant_cycles {
         use super::*;
 

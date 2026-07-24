@@ -495,6 +495,8 @@ pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibrar
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub mod slang_solidity_v2_common::diagnostics::kinds::semantic
 pub enum slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::BytecodeDependencyValidatorExhausted(slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::CyclicBytecodeDependency(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency)
 pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::CyclicConstantDefinition(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDefinition)
 pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::CyclicConstantDependency(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDependency)
 pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::CyclicDependencyValidatorExhausted(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicDependencyValidatorExhausted)
@@ -507,6 +509,10 @@ pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosti
 impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDefinition> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDefinition) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDependency> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
@@ -532,6 +538,44 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDefinition
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDefinition
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDefinition::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDefinition
@@ -2579,6 +2623,10 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolutio
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::NonFreeOrLibraryFunctionInUsingDirective) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDefinition> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDefinition) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDependency> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -2907,6 +2955,14 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::BytecodeDependencyValidatorExhausted::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDefinition
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDefinition::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDefinition::message(&self) -> alloc::string::String

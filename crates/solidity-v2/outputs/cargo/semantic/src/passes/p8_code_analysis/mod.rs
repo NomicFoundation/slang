@@ -8,7 +8,7 @@ use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::binder::Binder;
-use crate::context::FileNodeMapper;
+use crate::context::{ContractData, FileNodeMapper};
 use crate::types::TypeRegistry;
 
 /// This pass hosts analyses that emit diagnostics over the fully resolved
@@ -16,13 +16,14 @@ use crate::types::TypeRegistry;
 /// It produces no data for later consumption.
 pub fn run(
     binder: &Binder,
+    contract_data: &ContractData,
     language_version: LanguageVersion,
     evm_target: EvmTarget,
     file_node_mapper: &FileNodeMapper,
     types: &TypeRegistry,
     diagnostics: &mut DiagnosticCollection,
 ) {
-    cycle_detection::run(binder, types, file_node_mapper, diagnostics);
+    cycle_detection::run(binder, contract_data, types, file_node_mapper, diagnostics);
 
     built_ins::validate_built_in_references(
         binder,

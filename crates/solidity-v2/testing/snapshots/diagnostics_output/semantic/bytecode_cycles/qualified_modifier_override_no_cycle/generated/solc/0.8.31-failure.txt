@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[Warning 8429] Warning: Virtual modifiers are deprecated and scheduled for removal.
+    ╭─[input.sol:8:5]
+    │
+  8 │ ╭─▶     modifier m() virtual {
+    ┆ ┆   
+ 10 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯

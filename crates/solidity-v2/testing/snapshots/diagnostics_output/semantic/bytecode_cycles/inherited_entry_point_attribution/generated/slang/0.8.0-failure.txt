@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[semantic/cyclic-bytecode-dependency] Error: Circular contract bytecode dependency.
+    ╭─[input.sol:14:9]
+    │
+ 14 │         new X();
+    │         ──┬──  
+    │           ╰──── Error occurred here.
+────╯
+
+[semantic/cyclic-bytecode-dependency] Error: Circular contract bytecode dependency.
+    ╭─[input.sol:30:9]
+    │
+ 30 │         new Base();
+    │         ────┬───  
+    │             ╰───── Error occurred here.
+────╯

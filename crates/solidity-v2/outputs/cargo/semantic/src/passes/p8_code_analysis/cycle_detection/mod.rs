@@ -3,20 +3,28 @@ use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 
 use crate::binder::Binder;
-use crate::context::FileNodeMapper;
+use crate::context::{ContractData, FileNodeMapper};
 use crate::types::TypeRegistry;
 
+mod bytecode;
 mod constants;
 mod structs;
 
 pub(crate) fn run(
     binder: &Binder,
+    contract_data: &ContractData,
     types: &TypeRegistry,
     file_node_mapper: &FileNodeMapper,
     diagnostics: &mut DiagnosticCollection,
 ) {
     constants::detect_constant_value_dependency_cycles(binder, file_node_mapper, diagnostics);
     structs::detect_recursive_structs(binder, types, file_node_mapper, diagnostics);
+    bytecode::detect_bytecode_dependency_cycles(
+        binder,
+        contract_data,
+        file_node_mapper,
+        diagnostics,
+    );
 }
 
 struct DependencyGraph {

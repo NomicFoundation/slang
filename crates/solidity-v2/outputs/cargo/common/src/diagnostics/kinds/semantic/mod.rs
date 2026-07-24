@@ -1,3 +1,5 @@
+mod bytecode_dependency_validator_exhausted;
+mod cyclic_bytecode_dependency;
 mod cyclic_constant_definition;
 mod cyclic_constant_dependency;
 mod cyclic_dependency_validator_exhausted;
@@ -6,6 +8,8 @@ mod linearisation_impossible;
 mod recursive_struct;
 mod recursive_struct_validator_exhausted;
 
+pub use bytecode_dependency_validator_exhausted::BytecodeDependencyValidatorExhausted;
+pub use cyclic_bytecode_dependency::CyclicBytecodeDependency;
 pub use cyclic_constant_definition::CyclicConstantDefinition;
 pub use cyclic_constant_dependency::CyclicConstantDependency;
 pub use cyclic_dependency_validator_exhausted::CyclicDependencyValidatorExhausted;
@@ -24,6 +28,12 @@ define_diagnostic_kind! {
     /// Group of diagnostics produced by semantic analysis.
     #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub enum SemanticDiagnosticKind {
+        /// Contract bytecode dependency graph traversal exceeded the depth
+        /// limit.
+        BytecodeDependencyValidatorExhausted(BytecodeDependencyValidatorExhausted),
+        /// A contract references its own bytecode through a cycle of `new`
+        /// or `type(...).creationCode` / `type(...).runtimeCode` uses.
+        CyclicBytecodeDependency(CyclicBytecodeDependency),
         /// Compile-time constant evaluation hit a cycle or exceeded the
         /// recursion limit.
         CyclicConstantDefinition(CyclicConstantDefinition),
