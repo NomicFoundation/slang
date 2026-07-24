@@ -10,6 +10,15 @@ contract C {
             }
         }
 
+        // Three levels of nested `unchecked` blocks.
+        unchecked {
+            unchecked {
+                unchecked {
+                    uint a = 2 + 3;
+                }
+            }
+        }
+
         // Nesting through an intermediate regular block is also not allowed.
         unchecked {
             {
