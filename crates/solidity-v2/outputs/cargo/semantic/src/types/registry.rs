@@ -348,6 +348,23 @@ impl TypeRegistry {
                 .get(from_node_id)
                 .is_some_and(|super_types| super_types.contains(to_node_id)),
 
+            (
+                Type::Tuple(TupleType { types: from_types }),
+                Type::Tuple(TupleType { types: to_types }),
+            ) => {
+                // TODO(validation) SDR[59]: assignment LHS holes (`(a, ) = f()`)
+                // are modeled as `Void` tuple elements, which reject any
+                // concrete source element here. solc instead skips empty
+                // target components (`TupleType::isImplicitlyConvertibleTo`),
+                // so once assignments are validated with this rule, holes need
+                // a special case
+                from_types.len() == to_types.len()
+                    && from_types
+                        .iter()
+                        .zip(to_types.iter())
+                        .all(|(from, to)| self.implicitly_convertible_to(*from, *to))
+            }
+
             // TODO: add more implicit conversion rules
             _ => false,
         }
