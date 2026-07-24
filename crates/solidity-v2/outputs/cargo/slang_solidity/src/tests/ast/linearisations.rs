@@ -81,21 +81,31 @@ fn test_contract_compute_linearised_functions() {
     let functions = counter.linearised_functions();
     assert_eq!(functions.len(), 5);
 
-    assert!(functions[0]
-        .name()
-        .is_some_and(|name| name.name() == "click"));
-    assert!(functions[1]
-        .name()
-        .is_some_and(|name| name.name() == "disable"));
-    assert!(functions[2]
-        .name()
-        .is_some_and(|name| name.name() == "enable"));
-    assert!(functions[3]
-        .name()
-        .is_some_and(|name| name.name() == "increment"));
-    assert!(functions[4]
-        .name()
-        .is_some_and(|name| name.name() == "isEnabled"));
+    assert!(
+        functions[0]
+            .name()
+            .is_some_and(|name| name.name() == "click")
+    );
+    assert!(
+        functions[1]
+            .name()
+            .is_some_and(|name| name.name() == "disable")
+    );
+    assert!(
+        functions[2]
+            .name()
+            .is_some_and(|name| name.name() == "enable")
+    );
+    assert!(
+        functions[3]
+            .name()
+            .is_some_and(|name| name.name() == "increment")
+    );
+    assert!(
+        functions[4]
+            .name()
+            .is_some_and(|name| name.name() == "isEnabled")
+    );
 }
 
 #[test]
@@ -108,13 +118,19 @@ fn test_contract_compute_linearised_functions_with_overrides() {
         .expect("can find contract");
     let functions = inherited.linearised_functions();
     assert_eq!(functions.len(), 3);
-    assert!(functions[0]
-        .name()
-        .is_some_and(|name| name.name() == "in_base"));
-    assert!(functions[1]
-        .name()
-        .is_some_and(|name| name.name() == "in_middle"));
-    assert!(functions[2]
-        .name()
-        .is_some_and(|name| name.name() == "override_me"));
+    assert!(
+        functions[0]
+            .name()
+            .is_some_and(|name| name.name() == "in_base")
+    );
+    assert!(
+        functions[1]
+            .name()
+            .is_some_and(|name| name.name() == "in_middle")
+    );
+    assert!(
+        functions[2]
+            .name()
+            .is_some_and(|name| name.name() == "override_me")
+    );
 }

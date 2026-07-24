@@ -2,10 +2,10 @@
 
 use std::ops::Range;
 
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     IncompatibleBuiltInTarget, IncompatibleBuiltInVersion,
 };
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::{EvmTarget, EvmTargetSpecifier};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::{LanguageVersion, LanguageVersionSpecifier};

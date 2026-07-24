@@ -6,7 +6,7 @@ use infra_utils::commands::Command;
 use infra_utils::paths::{FileWalker, PathExtensions};
 
 use crate::commands::perf::binaries;
-use crate::toolchains::bencher::{run_bench, BencherThreshold};
+use crate::toolchains::bencher::{BencherThreshold, run_bench};
 use crate::toolchains::pipenv::PipEnv;
 use crate::utils::DryRun;
 

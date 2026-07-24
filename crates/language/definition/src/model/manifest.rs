@@ -2,7 +2,7 @@ use std::collections::BTreeSet;
 use std::path::PathBuf;
 
 use indexmap::IndexSet;
-use language_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
+use language_internal_macros::{ParseInputTokens, WriteOutputTokens, derive_spanned_type};
 use semver::Version;
 use serde::{Deserialize, Serialize};
 

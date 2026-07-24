@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 use std::fmt::Display;
 
+use slang_solidity::backend::SemanticAnalysis;
 use slang_solidity::backend::binder::{Definition, Resolution, Typing};
 use slang_solidity::backend::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
-use slang_solidity::backend::SemanticAnalysis;
 use slang_solidity::cst::{Cursor, NodeId, NodeKind, TerminalKindExtensions};
 
 // Types

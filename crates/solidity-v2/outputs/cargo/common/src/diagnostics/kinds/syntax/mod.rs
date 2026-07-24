@@ -25,8 +25,8 @@ use serde::Serialize;
 pub use unexpected_eof::UnexpectedEof;
 pub use unexpected_terminal::UnexpectedTerminal;
 
-use crate::diagnostics::kinds::utils::define_diagnostic_kind;
 use crate::diagnostics::kinds::DiagnosticKind;
+use crate::diagnostics::kinds::utils::define_diagnostic_kind;
 
 define_diagnostic_kind! {
     parent_kind = DiagnosticKind::Syntax;

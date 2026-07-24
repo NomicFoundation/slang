@@ -3,8 +3,8 @@ use std::collections::{BTreeMap, BTreeSet};
 use indexmap::IndexMap;
 use inflector::Inflector;
 use language_v2_definition::model;
-use serde::ser::SerializeMap;
 use serde::Serialize;
+use serde::ser::SerializeMap;
 
 #[derive(Default, Serialize)]
 pub struct IrModel {

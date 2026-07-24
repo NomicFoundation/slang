@@ -2,7 +2,7 @@ use std::fmt;
 use std::rc::Rc;
 
 use nom::branch::alt;
-use nom::bytes::complete::{is_not, take_while, take_while1, take_while_m_n};
+use nom::bytes::complete::{is_not, take_while, take_while_m_n, take_while1};
 use nom::character::complete::{char, multispace0, multispace1, none_of, satisfy};
 use nom::combinator::{
     all_consuming, cut, eof, map_opt, map_res, opt, peek, recognize, success, value, verify,
@@ -117,7 +117,10 @@ impl fmt::Display for QuerySyntaxError {
                 write!(f, "Invalid escaped Unicode character")
             }
             QuerySyntaxError::DeprecatedEllipsis => {
-                write!(f, "The ellipsis `...` operator is deprecated, and replaced with a new adjacency `.` operator.")
+                write!(
+                    f,
+                    "The ellipsis `...` operator is deprecated, and replaced with a new adjacency `.` operator."
+                )
             }
             QuerySyntaxError::ForbiddenTriviaKind => {
                 write!(f, "Matching trivia nodes directly is forbidden.")

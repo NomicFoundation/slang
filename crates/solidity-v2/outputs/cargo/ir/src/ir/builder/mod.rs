@@ -5,20 +5,20 @@ pub(crate) mod node_id_generator;
 
 use std::sync::Arc;
 
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     StorageLayoutForAbstractContract, UninitializedConstant,
 };
 use slang_solidity_v2_common::diagnostics::kinds::syntax::{
     MoreThanOneInheritanceList, MoreThanOneStorageLayout,
 };
-use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 use slang_solidity_v2_cst::structured_cst::text_range::TextRange;
 
 use crate::ir::builder::node_id_generator::NodeIdGenerator;
-use crate::ir::{nodes as output, Source};
+use crate::ir::{Source, nodes as output};
 
 /// The output of a CST → IR build operation, containing both the built IR
 /// source unit and any diagnostics emitted during the build.

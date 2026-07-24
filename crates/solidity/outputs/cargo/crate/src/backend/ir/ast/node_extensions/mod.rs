@@ -9,10 +9,10 @@ pub use definitions::Definition;
 mod expressions;
 
 mod identifiers;
-pub(crate) use identifiers::{create_identifier, create_yul_identifier};
 pub use identifiers::{
     Identifier, IdentifierStruct, Reference, YulIdentifier, YulIdentifierStruct,
 };
+pub(crate) use identifiers::{create_identifier, create_yul_identifier};
 
 mod types;
 pub use types::Type;

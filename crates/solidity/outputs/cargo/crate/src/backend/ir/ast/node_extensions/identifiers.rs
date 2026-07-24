@@ -2,9 +2,9 @@ use std::rc::Rc;
 
 use super::super::IdentifierPathStruct;
 use super::{Definition, Type};
+use crate::backend::SemanticAnalysis;
 use crate::backend::binder::Resolution;
 use crate::backend::built_ins::BuiltIn;
-use crate::backend::SemanticAnalysis;
 use crate::cst::{NodeId, TerminalKind, TerminalNode, TextIndex};
 
 pub type Identifier = Rc<IdentifierStruct>;

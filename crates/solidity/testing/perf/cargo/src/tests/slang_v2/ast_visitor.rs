@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use slang_solidity_v2_ast::ast::visitor::{accept_source_unit, Visitor};
+use slang_solidity_v2_ast::ast::visitor::{Visitor, accept_source_unit};
 use slang_solidity_v2_ast::ast::{self, Identifier};
 use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
 

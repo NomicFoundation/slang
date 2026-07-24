@@ -8,11 +8,11 @@ use std::path::PathBuf;
 
 use anyhow::Result;
 use clap::Parser;
-use console::{style, Color};
+use console::{Color, style};
 use infra_utils::paths::PathExtensions;
 use infra_utils::solc::{
-    is_solc_segfault, render_solc_error, Binary, CliInput, CliSettings, Error, InputSource,
-    LanguageSelector, Severity,
+    Binary, CliInput, CliSettings, Error, InputSource, LanguageSelector, Severity,
+    is_solc_segfault, render_solc_error,
 };
 use infra_utils::terminal::Terminal;
 use itertools::Itertools;

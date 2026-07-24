@@ -387,13 +387,13 @@ enum VersionErrors<'err> {
         "Explicit 'Always' is redundant, since it is the default when 'enabled' is not specified."
     )]
     RedundantAlways,
-    #[error("'From' with the first supported version '{0}' is equivalent to 'Always', and can be removed.")]
+    #[error(
+        "'From' with the first supported version '{0}' is equivalent to 'Always', and can be removed."
+    )]
     RedundantFrom(&'err Version),
     #[error("'Till' with the first supported version '{0}' is equivalent to 'Never'.")]
     RedundantTill(&'err Version),
-    #[error(
-        "'Range' starting from the first supported version '{0}' can be simplified to 'Till'."
-    )]
+    #[error("'Range' starting from the first supported version '{0}' can be simplified to 'Till'.")]
     RedundantRangeFrom(&'err Version),
 }
 
@@ -409,9 +409,13 @@ enum EvmTargetErrors<'err> {
         "Explicit 'Always' is redundant, since it is the default when 'evm_enabled' is not specified."
     )]
     RedundantAlways,
-    #[error("'From' with the first supported EVM target '{0}' is equivalent to 'Always', and can be removed.")]
+    #[error(
+        "'From' with the first supported EVM target '{0}' is equivalent to 'Always', and can be removed."
+    )]
     RedundantFrom(&'err Identifier),
-    #[error("'Till' with the first supported EVM target '{0}' produces an empty range, disabling the built-in on every EVM target.")]
+    #[error(
+        "'Till' with the first supported EVM target '{0}' produces an empty range, disabling the built-in on every EVM target."
+    )]
     RedundantTill(&'err Identifier),
     #[error(
         "'Range' starting from the first supported EVM target '{0}' can be simplified to 'Till'."

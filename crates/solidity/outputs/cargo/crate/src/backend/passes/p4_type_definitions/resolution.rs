@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
-use super::evaluator::{evaluate_compile_time_uint_constant, ConstantIdentifierResolver};
 use super::Pass;
+use super::evaluator::{ConstantIdentifierResolver, evaluate_compile_time_uint_constant};
 use crate::backend::binder::{Definition, ImportDefinition, Reference, Resolution, ScopeId};
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, FunctionType, Type, TypeId};

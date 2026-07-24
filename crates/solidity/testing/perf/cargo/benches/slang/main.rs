@@ -69,8 +69,8 @@ macro_rules! bench_projects {
 
 mod cst_group {
     use super::{
-        black_box, cursor_setup, library_benchmark, library_benchmark_group, parser_setup,
-        query_setup, tests, CompilationUnit, Rc, SolidityProject,
+        CompilationUnit, Rc, SolidityProject, black_box, cursor_setup, library_benchmark,
+        library_benchmark_group, parser_setup, query_setup, tests,
     };
 
     bench_projects! {
@@ -104,8 +104,8 @@ use cst_group::cst;
 
 mod bindings_group {
     use super::{
-        bindings_build_setup, bindings_resolve_setup, black_box, library_benchmark,
-        library_benchmark_group, tests, BuiltBindingGraph, CompilationUnit, Rc,
+        BuiltBindingGraph, CompilationUnit, Rc, bindings_build_setup, bindings_resolve_setup,
+        black_box, library_benchmark, library_benchmark_group, tests,
     };
 
     bench_projects! {
@@ -139,8 +139,8 @@ use bindings_group::bindings;
 
 mod v2_binder_group {
     use super::{
-        binder_v2_cleanup_setup, binder_v2_run_setup, black_box, library_benchmark,
-        library_benchmark_group, tests, BuiltSemanticAnalysis, CompilationUnit, Rc,
+        BuiltSemanticAnalysis, CompilationUnit, Rc, binder_v2_cleanup_setup, binder_v2_run_setup,
+        black_box, library_benchmark, library_benchmark_group, tests,
     };
 
     bench_projects! {

@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use crate::utils::{
-    define_rc_wrapper, define_refcell_wrapper, define_wrapper, enum_to_enum, FromFFI, IntoFFI,
+    FromFFI, IntoFFI, define_rc_wrapper, define_refcell_wrapper, define_wrapper, enum_to_enum,
 };
 
 mod ffi {

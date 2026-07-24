@@ -1,7 +1,7 @@
 use std::env::var;
 use std::path::{Path, PathBuf};
 
-use anyhow::{ensure, Context, Result};
+use anyhow::{Context, Result, ensure};
 use itertools::Itertools;
 
 pub trait PathExtensions {
@@ -16,7 +16,7 @@ pub trait PathExtensions {
     fn strip_repo_root(&self) -> Result<&Path>;
 
     fn replace_prefix(&self, old_prefix: impl AsRef<Path>, new_prefix: impl AsRef<Path>)
-        -> PathBuf;
+    -> PathBuf;
 
     fn unwrap_str(&self) -> &str;
 

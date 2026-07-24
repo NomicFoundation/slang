@@ -1,7 +1,7 @@
 use slang_solidity_v2_semantic::types::TypeId;
 
-use crate::abi::types::type_as_abi_type;
 use crate::abi::AbiParameter;
+use crate::abi::types::type_as_abi_type;
 use crate::ast::ParametersStruct;
 
 impl ParametersStruct {

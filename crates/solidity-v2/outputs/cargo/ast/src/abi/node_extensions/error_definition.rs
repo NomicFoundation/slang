@@ -1,4 +1,4 @@
-use crate::abi::{selector_from_signature, AbiEntry, AbiError};
+use crate::abi::{AbiEntry, AbiError, selector_from_signature};
 use crate::ast::ErrorDefinitionStruct;
 
 impl ErrorDefinitionStruct {

@@ -2,7 +2,7 @@ use itertools::Itertools;
 use proc_macro2::{Ident, Literal, TokenStream};
 use quote::quote;
 
-use crate::input_model::{strip_spanned_prefix, InputField, InputItem, InputVariant};
+use crate::input_model::{InputField, InputItem, InputVariant, strip_spanned_prefix};
 
 pub fn parse_input_tokens(item: InputItem) -> TokenStream {
     match item {

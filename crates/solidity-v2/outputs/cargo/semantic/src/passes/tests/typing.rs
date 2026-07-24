@@ -1,17 +1,17 @@
 use num_bigint::{BigInt, BigUint};
 use num_rational::BigRational;
 use ruint::aliases::U256;
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     ArrayLengthFractional, ArrayLengthNotConstant, ArrayLengthZero, ConstantArithmeticError,
     IncompatibleConstantOperator, StorageLayoutBaseNotConstant,
 };
-use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdGenerator, NodeIdentity};
 
-use super::{build_file, TestFile};
+use super::{TestFile, build_file};
 use crate::binder::{Binder, Definition, Typing};
 use crate::context::{FileNodeMapper, SemanticContext, SemanticFile};
 use crate::passes::{

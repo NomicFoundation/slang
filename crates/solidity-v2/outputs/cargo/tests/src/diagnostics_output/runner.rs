@@ -1,6 +1,6 @@
 use std::fmt::Write;
 
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;

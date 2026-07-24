@@ -2,9 +2,9 @@ use std::mem;
 use std::ops::ControlFlow;
 
 use crate::cst::{Node, TerminalKindExtensions, TextIndex};
-use crate::parser::parser_support::context::{Marker, ParserContext};
-use crate::parser::parser_support::ParserResult;
 use crate::parser::ParseError;
+use crate::parser::parser_support::ParserResult;
+use crate::parser::parser_support::context::{Marker, ParserContext};
 
 /// Starting from a given position in the input, this helper will try to pick (and remember) a best match. Settles on
 /// a first full match if possible, otherwise on the best incomplete match.

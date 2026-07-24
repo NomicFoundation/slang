@@ -4,8 +4,8 @@ use std::ops::Deref;
 use proc_macro2::{Literal, TokenStream};
 use quote::quote;
 use serde::{Deserialize, Serialize};
-use syn::parse::ParseStream;
 use syn::Ident;
+use syn::parse::ParseStream;
 
 use crate::internals::{
     ErrorsCollection, ParseHelpers, ParseInputTokens, Result, WriteOutputTokens,

@@ -6,11 +6,11 @@ use std::rc::Rc;
 use paste::paste;
 
 use super::node_extensions::{
-    create_identifier, create_yul_identifier, Identifier, IdentifierStruct, YulIdentifier,
-    YulIdentifierStruct,
+    Identifier, IdentifierStruct, YulIdentifier, YulIdentifierStruct, create_identifier,
+    create_yul_identifier,
 };
-use super::{input as input_ir, Type};
-use crate::backend::{binder, SemanticAnalysis};
+use super::{Type, input as input_ir};
+use crate::backend::{SemanticAnalysis, binder};
 use crate::cst::{NodeId, TerminalKind, TerminalNode, TextIndex};
 
 //

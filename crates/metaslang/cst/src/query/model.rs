@@ -80,7 +80,7 @@ impl<T: KindTypes> Query<T> {
                             return Err(QueryError::create(
                                 "Quantification over quantification is not allowed".to_string(),
                                 TextIndex::ZERO..TextIndex::ZERO,
-                            ))
+                            ));
                         }
                     };
                     collect_capture_quantifiers(

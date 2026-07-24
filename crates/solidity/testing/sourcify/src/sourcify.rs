@@ -3,9 +3,9 @@ use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use std::time::SystemTime;
 
-use anyhow::{anyhow, bail, Error, Result};
+use anyhow::{Error, Result, anyhow, bail};
 use infra_utils::cargo::CargoWorkspace;
-use infra_utils::http::{request_download_if_modified, DownloadResult};
+use infra_utils::http::{DownloadResult, request_download_if_modified};
 use infra_utils::paths::PathExtensions;
 use semver::{BuildMetadata, Prerelease, Version};
 use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};

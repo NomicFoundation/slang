@@ -1,5 +1,5 @@
 use anyhow::Result;
-use console::{strip_ansi_codes, style, Color, Term};
+use console::{Color, Term, strip_ansi_codes, style};
 use num_format::ToFormattedString;
 
 pub struct Terminal;

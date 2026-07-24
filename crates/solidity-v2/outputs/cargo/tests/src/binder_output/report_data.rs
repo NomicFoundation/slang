@@ -2,7 +2,7 @@ use std::fmt::Display;
 use std::ops::Range;
 use std::sync::Arc;
 
-use slang_solidity_v2::ast::visitor::{accept_source_unit, Visitor};
+use slang_solidity_v2::ast::visitor::{Visitor, accept_source_unit};
 use slang_solidity_v2::ast::{DataLocation, Definition, Identifier, LiteralKind, NodeId, Type};
 use slang_solidity_v2::compilation::{CompilationUnit, FileId};
 use slang_solidity_v2_common::collections::{Map, SortedMap};

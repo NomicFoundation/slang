@@ -5,7 +5,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
 use slang_solidity_v2_semantic::binder::{self, Resolution};
 use slang_solidity_v2_semantic::context::{
-    extract_import_paths_from_source_unit, SemanticContext, SemanticFile,
+    SemanticContext, SemanticFile, extract_import_paths_from_source_unit,
 };
 
 use crate::dataset::SolidityProject;

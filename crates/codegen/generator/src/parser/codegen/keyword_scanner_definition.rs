@@ -99,10 +99,12 @@ impl KeywordItemAtom {
     /// Wraps the keyword scanner definition if it is a single atom value.
     pub fn try_from_def(def: &Rc<model::KeywordItem>) -> Option<Self> {
         match def.definitions[..] {
-            [model::KeywordDefinition {
-                value: model::KeywordValue::Atom { .. },
-                ..
-            }] => Some(Self(Rc::clone(def))),
+            [
+                model::KeywordDefinition {
+                    value: model::KeywordValue::Atom { .. },
+                    ..
+                },
+            ] => Some(Self(Rc::clone(def))),
             _ => None,
         }
     }

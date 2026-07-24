@@ -4,7 +4,7 @@ use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 
 use crate::parser::codegen::parser_definition::{
-    make_choice, make_sequence, ParserDefinitionNodeCodegen,
+    ParserDefinitionNodeCodegen, make_choice, make_sequence,
 };
 use crate::parser::grammar::{
     PrecedenceOperatorModel, PrecedenceParserDefinitionNode, PrecedenceParserDefinitionRef,

@@ -1,5 +1,6 @@
 use num_traits::Signed;
 use ruint::aliases::U256;
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     IdentifierNotFunctionOrNotUnique, IdentifierNotLibraryName,
     NonFreeOrLibraryFunctionInUsingDirective,
@@ -8,14 +9,13 @@ use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     ArrayLengthFractional, ArrayLengthNegative, ArrayLengthNotConstant, ArrayLengthTooLarge,
     ArrayLengthZero,
 };
-use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
 use super::Pass;
 use crate::binder::{Definition, Resolution, ScopeId};
 use crate::passes::common::constant_evaluator::{
-    evaluate_compile_time_constant, ConstantResolver, EvaluationError,
+    ConstantResolver, EvaluationError, evaluate_compile_time_constant,
 };
 use crate::passes::common::{node_location, resolve_identifier_path_in_scope};
 use crate::types::{

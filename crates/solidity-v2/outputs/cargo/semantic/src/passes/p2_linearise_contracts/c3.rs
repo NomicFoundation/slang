@@ -130,11 +130,7 @@ fn merge<Item: Clone + Debug + PartialEq>(mut set: Vec<Vec<Item>>) -> Option<Vec
     }
     // If set is empty, we successfully merged the set.
     // Otherwise, linearisation is not possible.
-    if set.is_empty() {
-        Some(result)
-    } else {
-        None
-    }
+    if set.is_empty() { Some(result) } else { None }
 }
 
 // Find a candidate in a set. A valid candidate can only appear in the last

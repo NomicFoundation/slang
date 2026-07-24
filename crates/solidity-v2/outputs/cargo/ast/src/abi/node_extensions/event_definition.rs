@@ -1,4 +1,4 @@
-use crate::abi::{selector_from_signature, AbiEntry, AbiEvent};
+use crate::abi::{AbiEntry, AbiEvent, selector_from_signature};
 use crate::ast::EventDefinitionStruct;
 
 impl EventDefinitionStruct {

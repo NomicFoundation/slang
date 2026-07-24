@@ -3808,10 +3808,13 @@ impl NodeChecker for ExpressionStatement {
             node.kind() == NodeKind::Nonterminal(NonterminalKind::TupleDeconstructionStatement);
 
         if !is_v1_expr_stmt && !is_v1_tuple_deconstruct {
-            return vec![NodeCheckerError::new(format!(
-                "Expected node kind to be ExpressionStatement or TupleDeconstructionStatement, but it was {}",
-                node.kind()
-            ), node_range)];
+            return vec![NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be ExpressionStatement or TupleDeconstructionStatement, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            )];
         }
 
         let mut children = children_with_offsets(node, text_offset);
@@ -10335,10 +10338,13 @@ impl NodeChecker for VariableDeclarationStatement {
             node.kind() == NodeKind::Nonterminal(NonterminalKind::TupleDeconstructionStatement);
 
         if !is_v1_var_decl && !is_v1_tuple_deconstruct {
-            return vec![NodeCheckerError::new(format!(
-                "Expected node kind to be VariableDeclarationStatement or TupleDeconstructionStatement, but it was {}",
-                node.kind()
-            ), node_range)];
+            return vec![NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be VariableDeclarationStatement or TupleDeconstructionStatement, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            )];
         }
 
         let mut children = children_with_offsets(node, text_offset);
@@ -14844,7 +14850,13 @@ impl NodeChecker for VersionLiteral {
                 if let NodeKind::Terminal(terminal_kind) = child.node.kind() {
                     match terminal_kind.as_ref() {
                         "SingleQuotedVersionLiteral" | "DoubleQuotedVersionLiteral" => vec![],
-                        _ => vec![NodeCheckerError::new(format!("Expected node kind to be SingleQuotedVersionLiteral or DoubleQuotedVersionLiteral, but it was {}", terminal_kind.as_ref()), child_range)],
+                        _ => vec![NodeCheckerError::new(
+                            format!(
+                                "Expected node kind to be SingleQuotedVersionLiteral or DoubleQuotedVersionLiteral, but it was {}",
+                                terminal_kind.as_ref()
+                            ),
+                            child_range,
+                        )],
                     }
                 } else {
                     vec![NodeCheckerError::new(
@@ -19208,7 +19220,10 @@ impl NodeChecker for HexStringLiteral {
             match terminal_kind.as_ref() {
                 "SingleQuotedHexStringLiteral" | "DoubleQuotedHexStringLiteral" => vec![],
                 _ => vec![NodeCheckerError::new(
-                    format!("Expected SingleQuotedHexStringLiteral or DoubleQuotedHexStringLiteral, but it was {}", terminal_kind.as_ref()),
+                    format!(
+                        "Expected SingleQuotedHexStringLiteral or DoubleQuotedHexStringLiteral, but it was {}",
+                        terminal_kind.as_ref()
+                    ),
                     child_range,
                 )],
             }
@@ -20826,7 +20841,10 @@ impl NodeChecker for PragmaStringLiteral {
             match terminal_kind.as_ref() {
                 "SingleQuotedStringLiteral" | "DoubleQuotedStringLiteral" => vec![],
                 _ => vec![NodeCheckerError::new(
-                    format!("Expected SingleQuotedStringLiteral or DoubleQuotedStringLiteral, but it was {}", terminal_kind.as_ref()),
+                    format!(
+                        "Expected SingleQuotedStringLiteral or DoubleQuotedStringLiteral, but it was {}",
+                        terminal_kind.as_ref()
+                    ),
                     child_range,
                 )],
             }
@@ -21520,7 +21538,10 @@ impl NodeChecker for StringLiteral {
             match terminal_kind.as_ref() {
                 "SingleQuotedStringLiteral" | "DoubleQuotedStringLiteral" => vec![],
                 _ => vec![NodeCheckerError::new(
-                    format!("Expected SingleQuotedStringLiteral or DoubleQuotedStringLiteral, but it was {}", terminal_kind.as_ref()),
+                    format!(
+                        "Expected SingleQuotedStringLiteral or DoubleQuotedStringLiteral, but it was {}",
+                        terminal_kind.as_ref()
+                    ),
                     child_range,
                 )],
             }
@@ -22020,7 +22041,10 @@ impl NodeChecker for UnicodeStringLiteral {
             match terminal_kind.as_ref() {
                 "SingleQuotedUnicodeStringLiteral" | "DoubleQuotedUnicodeStringLiteral" => vec![],
                 _ => vec![NodeCheckerError::new(
-                    format!("Expected SingleQuotedUnicodeStringLiteral or DoubleQuotedUnicodeStringLiteral, but it was {}", terminal_kind.as_ref()),
+                    format!(
+                        "Expected SingleQuotedUnicodeStringLiteral or DoubleQuotedUnicodeStringLiteral, but it was {}",
+                        terminal_kind.as_ref()
+                    ),
                     child_range,
                 )],
             }
@@ -22740,7 +22764,10 @@ impl NodeChecker for YulHexStringLiteral {
             match terminal_kind.as_ref() {
                 "SingleQuotedHexStringLiteral" | "DoubleQuotedHexStringLiteral" => vec![],
                 _ => vec![NodeCheckerError::new(
-                    format!("Expected SingleQuotedHexStringLiteral or DoubleQuotedHexStringLiteral, but it was {}", terminal_kind.as_ref()),
+                    format!(
+                        "Expected SingleQuotedHexStringLiteral or DoubleQuotedHexStringLiteral, but it was {}",
+                        terminal_kind.as_ref()
+                    ),
                     child_range,
                 )],
             }
@@ -23014,7 +23041,10 @@ impl NodeChecker for YulStringLiteral {
             match terminal_kind.as_ref() {
                 "SingleQuotedStringLiteral" | "DoubleQuotedStringLiteral" => vec![],
                 _ => vec![NodeCheckerError::new(
-                    format!("Expected SingleQuotedStringLiteral or DoubleQuotedStringLiteral, but it was {}", terminal_kind.as_ref()),
+                    format!(
+                        "Expected SingleQuotedStringLiteral or DoubleQuotedStringLiteral, but it was {}",
+                        terminal_kind.as_ref()
+                    ),
                     child_range,
                 )],
             }

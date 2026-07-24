@@ -1,8 +1,8 @@
 use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
 
-use super::definitions::Definition;
 use super::ScopeId;
+use super::definitions::Definition;
 use crate::backend::types::TypeId;
 use crate::cst::{NodeId, TerminalKind, TerminalNode};
 

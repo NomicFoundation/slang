@@ -1592,12 +1592,10 @@ impl Helper {
 
     fn select(&mut self, target_label: EdgeLabel) -> Result<Node> {
         match self.try_select(target_label) {
-            Some(node) => {
-                Ok(node)
-            },
-            None => {
-                Err(format!("Missing child with label '{target_label}'. Creating AST types from incorrect/incomplete CST nodes is not supported yet."))
-            }
+            Some(node) => Ok(node),
+            None => Err(format!(
+                "Missing child with label '{target_label}'. Creating AST types from incorrect/incomplete CST nodes is not supported yet."
+            )),
         }
     }
 
@@ -1632,12 +1630,11 @@ impl Helper {
 
     fn finalize(mut self) -> Result<()> {
         match self.current() {
-            Some(edge) => {
-                Err(format!("Unrecognized child with label '{label}'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.", label = edge.label))
-            }
-            None => {
-                Ok(())
-            },
+            Some(edge) => Err(format!(
+                "Unrecognized child with label '{label}'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.",
+                label = edge.label
+            )),
+            None => Ok(()),
         }
     }
 }

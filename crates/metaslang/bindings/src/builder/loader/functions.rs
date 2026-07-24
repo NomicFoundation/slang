@@ -18,9 +18,9 @@ pub fn default_functions<KT: KindTypes + 'static>(
 
 mod version {
     use metaslang_cst::kinds::KindTypes;
+    use metaslang_graph_builder::ExecutionError;
     use metaslang_graph_builder::functions::{Function, Functions, Parameters};
     use metaslang_graph_builder::graph::{Graph, Value};
-    use metaslang_graph_builder::ExecutionError;
     use semver::{Version, VersionReq};
 
     pub fn add_version_functions<KT: KindTypes + 'static>(
@@ -59,12 +59,12 @@ mod resolver {
     use std::rc::Rc;
 
     use metaslang_cst::kinds::KindTypes;
+    use metaslang_graph_builder::ExecutionError;
     use metaslang_graph_builder::functions::{Function, Functions, Parameters};
     use metaslang_graph_builder::graph::{Graph, Value};
-    use metaslang_graph_builder::ExecutionError;
 
-    use crate::builder::FileDescriptor;
     use crate::PathResolver;
+    use crate::builder::FileDescriptor;
 
     pub fn add_functions<KT: KindTypes + 'static>(
         functions: &mut Functions<KT>,

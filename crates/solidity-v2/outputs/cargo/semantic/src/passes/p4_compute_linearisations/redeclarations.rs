@@ -107,11 +107,7 @@ impl MemberKind {
     /// Folds another same-named member into a name's slot; differing kinds
     /// collapse to [`Self::Other`].
     fn merge(self, other: Self) -> Self {
-        if self == other {
-            self
-        } else {
-            Self::Other
-        }
+        if self == other { self } else { Self::Other }
     }
 
     /// Whether a `derived` member redeclares the members occupying this slot. A

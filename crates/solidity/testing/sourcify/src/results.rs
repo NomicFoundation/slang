@@ -72,8 +72,12 @@ impl<'de> Visitor<'de> for AllResultsVisitor {
 
 pub fn display_all_results(all_results: &AllResults) {
     let mut totals = ShardResults::default();
-    println!("Shard ID | Source files |    V1 Passed |    V1 Failed |    V2 Passed |    V2 Failed | Incompatible | Elapsed");
-    println!("-------------------------------------------------------------------------------------------------------------");
+    println!(
+        "Shard ID | Source files |    V1 Passed |    V1 Failed |    V2 Passed |    V2 Failed | Incompatible | Elapsed"
+    );
+    println!(
+        "-------------------------------------------------------------------------------------------------------------"
+    );
     for (shard_index, shard_results) in &all_results.shards {
         println!(
             "{shard_index:<8} | \
@@ -100,7 +104,9 @@ pub fn display_all_results(all_results: &AllResults) {
         totals.incompatible += shard_results.incompatible;
         totals.elapsed += shard_results.elapsed;
     }
-    println!("-------------------------------------------------------------------------------------------------------------");
+    println!(
+        "-------------------------------------------------------------------------------------------------------------"
+    );
     println!(
         "TOTALS   | \
          {source_files:>12} | \

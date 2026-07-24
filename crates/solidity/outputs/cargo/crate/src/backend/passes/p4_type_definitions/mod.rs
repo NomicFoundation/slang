@@ -130,6 +130,8 @@ impl<'a> Pass<'a> {
                 return *scope_id;
             }
         }
-        unreachable!("attempt to get the current contract scope without a contract or file scope in the stack");
+        unreachable!(
+            "attempt to get the current contract scope without a contract or file scope in the stack"
+        );
     }
 }

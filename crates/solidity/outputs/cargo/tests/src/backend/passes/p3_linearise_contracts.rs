@@ -2,8 +2,8 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use anyhow::{Ok, Result};
-use slang_solidity::backend::binder::Binder;
 use slang_solidity::backend::SemanticAnalysis;
+use slang_solidity::backend::binder::Binder;
 use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
 use slang_solidity::utils::LanguageFacts;
 

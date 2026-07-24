@@ -1,9 +1,9 @@
 use crate::cst::{Edge, IsLexicalContext, TerminalKind, TextRange, TextRangeExtensions};
+use crate::parser::ParseError;
 use crate::parser::lexer::{Lexer, ScannedTerminal};
+use crate::parser::parser_support::ParserResult;
 use crate::parser::parser_support::context::ParserContext;
 use crate::parser::parser_support::parser_result::SkippedUntil;
-use crate::parser::parser_support::ParserResult;
-use crate::parser::ParseError;
 
 fn opt_parse(
     input: &mut ParserContext<'_>,

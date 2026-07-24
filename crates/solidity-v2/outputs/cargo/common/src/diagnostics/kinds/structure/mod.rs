@@ -69,8 +69,8 @@ pub use uninitialized_constant::UninitializedConstant;
 pub use virtual_free_function::VirtualFreeFunction;
 pub use virtual_private_function::VirtualPrivateFunction;
 
-use crate::diagnostics::kinds::utils::define_diagnostic_kind;
 use crate::diagnostics::kinds::DiagnosticKind;
+use crate::diagnostics::kinds::utils::define_diagnostic_kind;
 
 define_diagnostic_kind! {
     parent_kind = DiagnosticKind::Structure;

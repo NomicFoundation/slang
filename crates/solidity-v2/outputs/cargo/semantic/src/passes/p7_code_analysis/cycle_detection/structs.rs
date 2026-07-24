@@ -1,8 +1,8 @@
 use slang_solidity_v2_common::collections::SortedMap;
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::semantic::{
     RecursiveStruct, RecursiveStructValidatorExhausted,
 };
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 
 use super::{CycleSearchResult, DependencyGraph};

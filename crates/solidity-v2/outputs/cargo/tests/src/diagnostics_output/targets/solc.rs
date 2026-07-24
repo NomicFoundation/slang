@@ -1,7 +1,7 @@
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use inflector::Inflector;
 use infra_utils::solc::{
-    render_solc_error, Binary, CliInput, CliSettings, InputSource, LanguageSelector,
+    Binary, CliInput, CliSettings, InputSource, LanguageSelector, render_solc_error,
 };
 use semver::Version;
 use slang_solidity_v2::compilation::FileId;

@@ -17,7 +17,7 @@ mod node_extensions;
 
 mod builder;
 pub use builder::node_id_generator::{NodeIdGenerator, NodeKindHistogram};
-pub use builder::{build_source_unit as build, BuildOutput};
+pub use builder::{BuildOutput, build_source_unit as build};
 
 mod source;
 pub use source::Source;

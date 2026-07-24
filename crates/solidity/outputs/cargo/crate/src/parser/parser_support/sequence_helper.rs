@@ -113,12 +113,15 @@ impl SequenceHelper {
                     }));
                 }
 
-                (ParserResult::PrattOperatorMatch(running), ParserResult::SkippedUntil(skipped)) => {
+                (
+                    ParserResult::PrattOperatorMatch(running),
+                    ParserResult::SkippedUntil(skipped),
+                ) => {
                     let nodes: Vec<_> = std::mem::take(&mut running.elements)
-                            .into_iter()
-                            .flat_map(|e| e.into_nodes_with_label(EdgeLabel::Unrecognized))
-                            .chain(skipped.nodes)
-                            .collect();
+                        .into_iter()
+                        .flat_map(|e| e.into_nodes_with_label(EdgeLabel::Unrecognized))
+                        .chain(skipped.nodes)
+                        .collect();
 
                     self.result = State::Running(ParserResult::SkippedUntil(SkippedUntil {
                         nodes,
@@ -161,10 +164,10 @@ impl SequenceHelper {
                         (TerminalKind::UNRECOGNIZED, EdgeLabel::Unrecognized)
                     };
 
-                    running.nodes.push(Edge{label, node: Node::terminal(
-                        kind,
-                        std::mem::take(&mut running.skipped),
-                    )});
+                    running.nodes.push(Edge {
+                        label,
+                        node: Node::terminal(kind, std::mem::take(&mut running.skipped)),
+                    });
                     running.nodes.extend(next.nodes);
 
                     self.result = State::Running(ParserResult::Match(Match {

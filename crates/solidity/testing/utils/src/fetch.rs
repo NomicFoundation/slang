@@ -2,7 +2,7 @@ use std::path::Path;
 use std::time::Duration;
 use std::{fs, thread};
 
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use reqwest::header::CONTENT_TYPE;
 use serde_json::Value;
 

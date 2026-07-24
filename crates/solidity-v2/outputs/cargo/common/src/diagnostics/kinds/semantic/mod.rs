@@ -15,8 +15,8 @@ pub use recursive_struct::RecursiveStruct;
 pub use recursive_struct_validator_exhausted::RecursiveStructValidatorExhausted;
 use serde::Serialize;
 
-use crate::diagnostics::kinds::utils::define_diagnostic_kind;
 use crate::diagnostics::kinds::DiagnosticKind;
+use crate::diagnostics::kinds::utils::define_diagnostic_kind;
 
 define_diagnostic_kind! {
     parent_kind = DiagnosticKind::Semantic;

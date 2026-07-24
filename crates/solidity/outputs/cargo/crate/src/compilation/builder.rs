@@ -2,8 +2,8 @@ use std::collections::HashSet;
 
 use semver::Version;
 
-use crate::compilation::internal_builder::{AddFileResponse, InternalCompilationBuilder};
 use crate::compilation::CompilationUnit;
+use crate::compilation::internal_builder::{AddFileResponse, InternalCompilationBuilder};
 use crate::cst::Cursor;
 
 /// User-provided callbacks necessary for the `CompilationBuilder` to perform its job.

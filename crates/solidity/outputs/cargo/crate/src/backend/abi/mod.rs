@@ -3,6 +3,7 @@ use std::ops::Div;
 
 use sha3::{Digest, Keccak256};
 
+use super::SemanticAnalysis;
 use super::binder::Definition;
 use super::ir::ast::{
     ContractDefinitionStruct, ErrorDefinitionStruct, EventDefinitionStruct,
@@ -11,7 +12,6 @@ use super::ir::ast::{
 };
 use super::ir::ir2_flat_contracts as input_ir;
 use super::types::{Type, TypeId};
-use super::SemanticAnalysis;
 use crate::cst::NodeId;
 
 pub struct ContractAbi {

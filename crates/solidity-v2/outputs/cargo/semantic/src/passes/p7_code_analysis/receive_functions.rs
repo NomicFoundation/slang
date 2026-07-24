@@ -8,9 +8,9 @@
 //! `view`/`pure` mutability, or with a `returns` clause). Only the forms that
 //! parse cleanly need a semantic check here.
 
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::structure::LibraryReceiveFunction;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::ReceiveFunctionParameters;
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_ir::ir::{self, TextRange};
 
 use crate::binder::{Binder, Definition, Typing};

@@ -6,7 +6,7 @@ use semver::Version;
 use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
 
 use crate::compilation::resolver::TestsPathResolver;
-use crate::utils::multi_part_file::{split_multi_file, MultiPart};
+use crate::utils::multi_part_file::{MultiPart, split_multi_file};
 
 struct MultiPartBuildConfig<'a> {
     resolver: TestsPathResolver,

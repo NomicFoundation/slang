@@ -5,8 +5,8 @@ use language_definition::model::KeywordDefinition;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
-use crate::parser::codegen::versioned::VersionedQuote as _;
 use crate::parser::codegen::KeywordItemAtom;
+use crate::parser::codegen::versioned::VersionedQuote as _;
 use crate::parser::grammar::ScannerDefinitionRef;
 
 #[derive(Clone, Debug, Default)]

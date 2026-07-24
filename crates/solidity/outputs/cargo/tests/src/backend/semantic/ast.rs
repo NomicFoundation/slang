@@ -268,9 +268,11 @@ fn test_function_get_type() -> Result<()> {
     };
     assert!(function_type.external());
     assert!(matches!(function_type.return_type(), ast::Type::Integer(_)));
-    assert!(function_type
-        .associated_definition()
-        .is_some_and(|definition| matches!(definition, ast::Definition::Function(_))));
+    assert!(
+        function_type
+            .associated_definition()
+            .is_some_and(|definition| matches!(definition, ast::Definition::Function(_)))
+    );
 
     Ok(())
 }

@@ -1,8 +1,8 @@
 use std::path::{Path, PathBuf};
 
 use anyhow::Result;
-use ignore::overrides::OverrideBuilder;
 use ignore::WalkBuilder;
+use ignore::overrides::OverrideBuilder;
 
 use crate::paths::PrivatePathExtensions;
 

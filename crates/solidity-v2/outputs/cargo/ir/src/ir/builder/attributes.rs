@@ -11,8 +11,8 @@ use slang_solidity_v2_cst::structured_cst::text_range::TextRange;
 
 use crate::ir::builder::{CstToIrBuilder, Source};
 use crate::ir::{
-    nodes as output, FunctionMutability, FunctionVisibility, StateVariableMutability,
-    StateVariableVisibility,
+    FunctionMutability, FunctionVisibility, StateVariableMutability, StateVariableVisibility,
+    nodes as output,
 };
 
 impl<S: Source> CstToIrBuilder<'_, S> {

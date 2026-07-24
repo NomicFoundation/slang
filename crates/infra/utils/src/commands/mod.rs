@@ -6,7 +6,7 @@ use std::os::unix::process::ExitStatusExt;
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command as StdCommand, ExitStatus, Output, Stdio};
 
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, bail};
 use itertools::Itertools;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
@@ -249,11 +249,7 @@ impl Display for Command {
 
         for arg in &self.args {
             let delimiter = if arg.contains(' ') {
-                if arg.contains('"') {
-                    "'"
-                } else {
-                    "\""
-                }
+                if arg.contains('"') { "'" } else { "\"" }
             } else {
                 ""
             };

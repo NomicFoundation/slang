@@ -4,7 +4,7 @@ use anyhow::Result;
 use clap::Parser;
 use indicatif::{ProgressBar, ProgressStyle};
 use infra_utils::solc::{
-    is_solc_segfault, Binary, CliInput, CliSettings, InputSource, LanguageSelector,
+    Binary, CliInput, CliSettings, InputSource, LanguageSelector, is_solc_segfault,
 };
 use infra_utils::terminal::NumbersDefaultDisplay;
 use language_definition::model::{Item, KeywordDefinition, KeywordItem, Language};

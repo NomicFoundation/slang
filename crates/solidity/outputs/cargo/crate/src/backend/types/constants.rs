@@ -2,8 +2,8 @@ use std::str::FromStr;
 
 use num_bigint::BigInt;
 use num_integer::Integer;
-use num_traits::cast::ToPrimitive;
 use num_traits::Num;
+use num_traits::cast::ToPrimitive;
 
 use super::LiteralKind;
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
