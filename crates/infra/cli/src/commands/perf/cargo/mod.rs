@@ -6,13 +6,9 @@ use infra_utils::commands::Command;
 use infra_utils::paths::{FileWalker, PathExtensions};
 
 use crate::commands::perf::binaries;
-use crate::toolchains::bencher::{BencherThreshold, run_bench};
+use crate::toolchains::bencher::{BencherProject, BencherThreshold, run_bench};
 use crate::toolchains::pipenv::PipEnv;
 use crate::utils::DryRun;
-
-const DEFAULT_BENCHER_PROJECT_CMP: &str = "slang-dashboard-cargo-cmp";
-const DEFAULT_BENCHER_PROJECT_SLANG: &str = "slang-dashboard-cargo-slang";
-const DEFAULT_BENCHER_PROJECT_SLANG_V2: &str = "slang-dashboard-cargo-slang-v2";
 
 #[allow(clippy::struct_excessive_bools)]
 #[derive(Clone, Debug, Parser)]
@@ -74,22 +70,12 @@ impl CargoController {
             binaries::install_bencher_cli()?;
         }
 
-        let (package, bench_name, bencher_project) = match self.bench {
-            Benches::Slang => (
-                "solidity_testing_perf_cargo",
-                "slang",
-                DEFAULT_BENCHER_PROJECT_SLANG,
-            ),
-            Benches::Comparison => (
-                "solidity_testing_perf_cargo",
-                "comparison",
-                DEFAULT_BENCHER_PROJECT_CMP,
-            ),
-            Benches::SlangV2 => (
-                "solidity_testing_perf_cargo",
-                "slang_v2",
-                DEFAULT_BENCHER_PROJECT_SLANG_V2,
-            ),
+        let package = "solidity_testing_perf_cargo";
+
+        let (bench_name, bencher_project) = match self.bench {
+            Benches::Comparison => ("comparison", BencherProject::SlangDashboardCargoCmp),
+            Benches::Slang => ("slang", BencherProject::SlangDashboardCargoSlang),
+            Benches::SlangV2 => ("slang_v2", BencherProject::SlangDashboardCargoSlangV2),
         };
 
         if self.smoke {
@@ -107,7 +93,12 @@ impl CargoController {
         Ok(())
     }
 
-    fn run_gungraun_bench(&self, package_name: &str, bench_name: &str, bencher_project: &str) {
+    fn run_gungraun_bench(
+        &self,
+        package_name: &str,
+        bench_name: &str,
+        bencher_project: BencherProject,
+    ) {
         let test_runner = format!("cargo bench --package {package_name} --bench {bench_name}");
 
         // gungraun's metrics come from valgrind's simulation, so they're deterministic: any change reflects a

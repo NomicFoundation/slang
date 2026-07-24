@@ -30,9 +30,30 @@ jobs:
           setup-tools: "cargo"
           sfw-optional: "true"
 
-      - name: "infra perf archive"
+      - name: "infra perf archive slang-dashboard-cargo-cmp"
         continue-on-error: true
         env:
-          BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
+          BENCHER_API_KEY: "${{ secrets.BENCHER_API_KEY__CARGO_CMP }}"
           HEAD_REF: "${{ github.head_ref }}"
-        run: './scripts/bin/infra perf archive --branch "${HEAD_REF}"'
+        run: './scripts/bin/infra perf archive --project "slang-dashboard-cargo-cmp" --branch "${HEAD_REF}"'
+
+      - name: "infra perf archive slang-dashboard-cargo-slang-v2"
+        continue-on-error: true
+        env:
+          BENCHER_API_KEY: "${{ secrets.BENCHER_API_KEY__CARGO_SLANG_V2 }}"
+          HEAD_REF: "${{ github.head_ref }}"
+        run: './scripts/bin/infra perf archive --project "slang-dashboard-cargo-slang-v2" --branch "${HEAD_REF}"'
+
+      - name: "infra perf archive slang-dashboard-cargo-slang"
+        continue-on-error: true
+        env:
+          BENCHER_API_KEY: "${{ secrets.BENCHER_API_KEY__CARGO_SLANG }}"
+          HEAD_REF: "${{ github.head_ref }}"
+        run: './scripts/bin/infra perf archive --project "slang-dashboard-cargo-slang" --branch "${HEAD_REF}"'
+
+      - name: "infra perf archive slang-dashboard-npm"
+        continue-on-error: true
+        env:
+          BENCHER_API_KEY: "${{ secrets.BENCHER_API_KEY__NPM }}"
+          HEAD_REF: "${{ github.head_ref }}"
+        run: './scripts/bin/infra perf archive --project "slang-dashboard-npm" --branch "${HEAD_REF}"'
