@@ -155,6 +155,20 @@ contract C {
 "#,
 );
 
+define_fixture!(
+    CalldataSlice,
+    file: "main.sol", r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+contract C {
+    function f(string calldata data) external pure {
+        string calldata s = data[:3];
+    }
+}
+"#,
+);
+
 #[test]
 fn test_literal_plus_integer_get_type() {
     let unit = LiteralPlusInteger::build_compilation_unit();
@@ -296,6 +310,45 @@ fn test_binary_operator_common_type() {
         assert!(!integer.is_signed(), "`{function_name}` result is unsigned");
         assert_eq!(integer.bits(), 16, "`{function_name}` result is 16-bit");
     }
+}
+
+/// Captures the resolved type of the (single) index-access expression in a unit.
+#[derive(Default)]
+struct IndexAccessType {
+    found: bool,
+    resolved: Option<ast::Type>,
+}
+
+impl Visitor for IndexAccessType {
+    fn enter_index_access_expression(&mut self, node: &ast::IndexAccessExpression) -> bool {
+        self.found = true;
+        self.resolved = node.get_type();
+        true
+    }
+}
+
+#[test]
+fn test_calldata_slice_get_type() {
+    let unit = CalldataSlice::build_compilation_unit();
+
+    let mut finder = IndexAccessType::default();
+    for file in unit.files() {
+        accept_source_unit(&file.ast(), &mut finder);
+    }
+    assert!(finder.found, "the range index `data[:3]` is found");
+
+    // `data[:3]` slices a `string calldata`, so it types as an array slice
+    // whose underlying array is that `string`.
+    let ast::Type::ArraySlice(slice) = finder
+        .resolved
+        .expect("the range index has a resolved type")
+    else {
+        panic!("expected the range index to type as an array slice");
+    };
+    assert!(
+        matches!(slice.array_type(), ast::Type::String(_)),
+        "the slice is of a `string` array"
+    );
 }
 
 define_fixture!(

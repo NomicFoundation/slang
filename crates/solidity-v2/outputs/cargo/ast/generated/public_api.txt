@@ -1034,6 +1034,7 @@ pub fn slang_solidity_v2_ast::ast::StringExpression::serialize<S: serde_core::se
 pub enum slang_solidity_v2_ast::ast::Type
 pub slang_solidity_v2_ast::ast::Type::Address(slang_solidity_v2_ast::ast::AddressType)
 pub slang_solidity_v2_ast::ast::Type::Array(slang_solidity_v2_ast::ast::ArrayType)
+pub slang_solidity_v2_ast::ast::Type::ArraySlice(slang_solidity_v2_ast::ast::ArraySliceType)
 pub slang_solidity_v2_ast::ast::Type::Boolean(slang_solidity_v2_ast::ast::BooleanType)
 pub slang_solidity_v2_ast::ast::Type::ByteArray(slang_solidity_v2_ast::ast::ByteArrayType)
 pub slang_solidity_v2_ast::ast::Type::Bytes(slang_solidity_v2_ast::ast::BytesType)
@@ -1306,6 +1307,11 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::ArrayExpressionStruct
 pub fn slang_solidity_v2_ast::ast::ArrayExpressionStruct::clone(&self) -> slang_solidity_v2_ast::ast::ArrayExpressionStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::ArrayExpressionStruct
 pub fn slang_solidity_v2_ast::ast::ArrayExpressionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub struct slang_solidity_v2_ast::ast::ArraySliceType
+impl slang_solidity_v2_ast::ast::ArraySliceType
+pub fn slang_solidity_v2_ast::ast::ArraySliceType::array_type(&self) -> slang_solidity_v2_ast::ast::Type
+impl core::clone::Clone for slang_solidity_v2_ast::ast::ArraySliceType
+pub fn slang_solidity_v2_ast::ast::ArraySliceType::clone(&self) -> slang_solidity_v2_ast::ast::ArraySliceType
 pub struct slang_solidity_v2_ast::ast::ArrayType
 impl slang_solidity_v2_ast::ast::ArrayType
 pub fn slang_solidity_v2_ast::ast::ArrayType::element_type(&self) -> slang_solidity_v2_ast::ast::Type

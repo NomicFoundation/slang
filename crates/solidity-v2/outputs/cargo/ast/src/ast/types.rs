@@ -17,6 +17,7 @@ use super::Definition;
 pub enum Type {
     Address(AddressType),
     Array(ArrayType),
+    ArraySlice(ArraySliceType),
     Boolean(BooleanType),
     ByteArray(ByteArrayType),
     Bytes(BytesType),
@@ -73,6 +74,7 @@ define_value_type_variant!(String);
 // Variants that need the semantic context to resolve nested types or
 // definitions.
 define_type_variant!(Array);
+define_type_variant!(ArraySlice);
 define_type_variant!(Contract);
 define_type_variant!(Enum);
 define_type_variant!(FixedSizeArray);
@@ -112,6 +114,7 @@ impl Type {
         match type_ {
             types::Type::Address(inner) => Self::Address(AddressType { inner }),
             types::Type::Array(inner) => Self::Array(ArrayType { inner, semantic }),
+            types::Type::ArraySlice(inner) => Self::ArraySlice(ArraySliceType { inner, semantic }),
             types::Type::Boolean => Self::Boolean(BooleanType),
             types::Type::ByteArray(inner) => Self::ByteArray(ByteArrayType { inner }),
             types::Type::Bytes(inner) => Self::Bytes(BytesType { inner }),
@@ -152,6 +155,8 @@ impl Type {
     pub fn data_location(&self) -> Option<DataLocation> {
         match self {
             Type::Array(details) => Some(details.location()),
+            // A slice inherits its underlying array's location (always calldata).
+            Type::ArraySlice(details) => details.array_type().data_location(),
             Type::Bytes(details) => Some(details.location()),
             Type::FixedSizeArray(details) => Some(details.location()),
             Type::String(details) => Some(details.location()),
@@ -167,6 +172,7 @@ impl Type {
         matches!(
             self,
             Type::Array(_)
+                | Type::ArraySlice(_)
                 | Type::FixedSizeArray(_)
                 | Type::Bytes(_)
                 | Type::String(_)
@@ -188,6 +194,14 @@ impl ArrayType {
     }
     pub fn location(&self) -> DataLocation {
         self.inner.location
+    }
+}
+
+impl ArraySliceType {
+    /// The array this is a slice of (an `Array`, `Bytes`, or `String`, always in
+    /// `calldata`).
+    pub fn array_type(&self) -> Type {
+        Type::create(self.inner.array_type_id, &self.semantic)
     }
 }
 

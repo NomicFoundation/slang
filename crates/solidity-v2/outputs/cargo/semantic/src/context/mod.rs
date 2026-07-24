@@ -17,9 +17,9 @@ use crate::passes::{
     p5_resolve_references, p6_resolve_yul, p7_code_analysis,
 };
 use crate::types::{
-    ArrayType, ByteArrayType, ContractType, EnumType, FixedPointNumberType, FixedSizeArrayType,
-    IntegerType, InterfaceType, LibraryType, MappingType, MetaType, StructType, TupleType, Type,
-    TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
+    ArraySliceType, ArrayType, ByteArrayType, ContractType, EnumType, FixedPointNumberType,
+    FixedSizeArrayType, IntegerType, InterfaceType, LibraryType, MappingType, MetaType, StructType,
+    TupleType, Type, TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
 };
 
 mod contract_data;
@@ -240,6 +240,9 @@ impl SemanticContext {
                     element = self.type_internal_name(*element_type)
                 )
             }
+            Type::ArraySlice(ArraySliceType { array_type_id }) => {
+                format!("{} slice", self.type_internal_name(*array_type_id))
+            }
             Type::Boolean => "bool".to_string(),
             Type::ByteArray(ByteArrayType { width }) => format!("bytes{width}"),
             Type::Bytes(_) => "bytes".to_string(),
@@ -389,7 +392,8 @@ impl SemanticContext {
             | Type::MetaType(_)
             | Type::Tuple(_)
             | Type::UserMetaType(_)
-            | Type::Void => None,
+            | Type::Void
+            | Type::ArraySlice(_) => None,
         }
     }
 }

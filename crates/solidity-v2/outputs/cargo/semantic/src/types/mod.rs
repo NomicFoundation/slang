@@ -22,6 +22,7 @@ pub struct TypeId(usize);
 pub enum Type {
     Address(AddressType),
     Array(ArrayType),
+    ArraySlice(ArraySliceType),
     Boolean,
     ByteArray(ByteArrayType),
     Bytes(BytesType),
@@ -58,6 +59,13 @@ pub struct AddressType {
 pub struct ArrayType {
     pub element_type: TypeId,
     pub location: DataLocation,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct ArraySliceType {
+    /// The underlying array type this is a slice of (an `Array`, `Bytes`, or
+    /// `String`, always in `calldata`).
+    pub array_type_id: TypeId,
 }
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
@@ -408,6 +416,7 @@ impl Type {
 
             // Can be returned, just not inside a struct
             Type::Array(_)
+            | Type::ArraySlice(_)
             | Type::FixedSizeArray(_)
             | Type::Mapping(_)
             // Actually can't return from a getter
