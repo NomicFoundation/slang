@@ -74,6 +74,72 @@ fn test_function_get_type() {
 }
 
 define_fixture!(
+    LiteralPlusInteger,
+    file: "main.sol", r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+contract C {
+    function f(uint8 i) internal pure returns (uint256) {
+        return 0x1000 + i;
+    }
+}
+"#,
+);
+
+#[test]
+fn test_literal_plus_integer_get_type() {
+    let unit = LiteralPlusInteger::build_compilation_unit();
+
+    let contract = unit
+        .find_contract_by_name("C")
+        .next()
+        .expect("contract C is found");
+
+    let function = contract
+        .members()
+        .iter()
+        .find_map(|member| match member {
+            ast::ContractMember::FunctionDefinition(function)
+                if function.name().is_some_and(|name| name.name() == "f") =>
+            {
+                Some(function)
+            }
+            _ => None,
+        })
+        .expect("function f is found");
+
+    // `f`'s only statement is `return 0x1000 + i;`.
+    let body = function.body().expect("f has a body");
+    let ret = body
+        .statements()
+        .iter()
+        .find_map(|statement| match statement {
+            ast::Statement::ReturnStatement(ret) => Some(ret),
+            _ => None,
+        })
+        .expect("f has a return statement");
+
+    let ast::Expression::AdditiveExpression(additive) =
+        ret.expression().expect("return has an expression")
+    else {
+        panic!("expected the returned expression to be an addition");
+    };
+
+    // `0x1000 + i` adds the integer literal `4096` (mobile type `uint16`, the
+    // smallest unsigned type it fits) to a `uint8`; their common type — and so
+    // the type of the addition — is `uint16`.
+    let ast::Type::Integer(integer) = additive
+        .get_type()
+        .expect("the addition has a resolved type")
+    else {
+        panic!("expected the addition to type as an integer");
+    };
+    assert!(!integer.is_signed(), "result is unsigned");
+    assert_eq!(integer.bits(), 16, "result is 16-bit");
+}
+
+define_fixture!(
     ConditionalTernary,
     file: "main.sol", r#"
 // SPDX-License-Identifier: UNLICENSED
