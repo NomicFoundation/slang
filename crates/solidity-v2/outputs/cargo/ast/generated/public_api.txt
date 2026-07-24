@@ -1231,6 +1231,8 @@ pub fn slang_solidity_v2_ast::ast::AdditiveExpressionStruct::operator(&self) -> 
 pub fn slang_solidity_v2_ast::ast::AdditiveExpressionStruct::right_operand(&self) -> slang_solidity_v2_ast::ast::Expression
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AdditiveExpressionStruct
 pub fn slang_solidity_v2_ast::ast::AdditiveExpressionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::AdditiveExpressionStruct
+pub fn slang_solidity_v2_ast::ast::AdditiveExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub struct slang_solidity_v2_ast::ast::AddressType
 impl slang_solidity_v2_ast::ast::AddressType
 pub fn slang_solidity_v2_ast::ast::AddressType::is_payable(&self) -> bool
@@ -1273,6 +1275,8 @@ pub fn slang_solidity_v2_ast::ast::AndExpressionStruct::node_id(&self) -> slang_
 pub fn slang_solidity_v2_ast::ast::AndExpressionStruct::right_operand(&self) -> slang_solidity_v2_ast::ast::Expression
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AndExpressionStruct
 pub fn slang_solidity_v2_ast::ast::AndExpressionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::AndExpressionStruct
+pub fn slang_solidity_v2_ast::ast::AndExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub struct slang_solidity_v2_ast::ast::ArrayExpressionStruct
 impl slang_solidity_v2_ast::ast::ArrayExpressionStruct
 pub fn slang_solidity_v2_ast::ast::ArrayExpressionStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
@@ -1393,6 +1397,8 @@ pub fn slang_solidity_v2_ast::ast::BitwiseAndExpressionStruct::node_id(&self) ->
 pub fn slang_solidity_v2_ast::ast::BitwiseAndExpressionStruct::right_operand(&self) -> slang_solidity_v2_ast::ast::Expression
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::BitwiseAndExpressionStruct
 pub fn slang_solidity_v2_ast::ast::BitwiseAndExpressionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::BitwiseAndExpressionStruct
+pub fn slang_solidity_v2_ast::ast::BitwiseAndExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub struct slang_solidity_v2_ast::ast::BitwiseOrExpressionStruct
 impl slang_solidity_v2_ast::ast::BitwiseOrExpressionStruct
 pub fn slang_solidity_v2_ast::ast::BitwiseOrExpressionStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
@@ -1403,6 +1409,8 @@ pub fn slang_solidity_v2_ast::ast::BitwiseOrExpressionStruct::node_id(&self) -> 
 pub fn slang_solidity_v2_ast::ast::BitwiseOrExpressionStruct::right_operand(&self) -> slang_solidity_v2_ast::ast::Expression
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::BitwiseOrExpressionStruct
 pub fn slang_solidity_v2_ast::ast::BitwiseOrExpressionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::BitwiseOrExpressionStruct
+pub fn slang_solidity_v2_ast::ast::BitwiseOrExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub struct slang_solidity_v2_ast::ast::BitwiseXorExpressionStruct
 impl slang_solidity_v2_ast::ast::BitwiseXorExpressionStruct
 pub fn slang_solidity_v2_ast::ast::BitwiseXorExpressionStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
@@ -1413,6 +1421,8 @@ pub fn slang_solidity_v2_ast::ast::BitwiseXorExpressionStruct::node_id(&self) ->
 pub fn slang_solidity_v2_ast::ast::BitwiseXorExpressionStruct::right_operand(&self) -> slang_solidity_v2_ast::ast::Expression
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::BitwiseXorExpressionStruct
 pub fn slang_solidity_v2_ast::ast::BitwiseXorExpressionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::BitwiseXorExpressionStruct
+pub fn slang_solidity_v2_ast::ast::BitwiseXorExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub struct slang_solidity_v2_ast::ast::BlockStruct
 impl slang_solidity_v2_ast::ast::BlockStruct
 pub fn slang_solidity_v2_ast::ast::BlockStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
@@ -1729,6 +1739,8 @@ pub fn slang_solidity_v2_ast::ast::EqualityExpressionStruct::operator(&self) -> 
 pub fn slang_solidity_v2_ast::ast::EqualityExpressionStruct::right_operand(&self) -> slang_solidity_v2_ast::ast::Expression
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::EqualityExpressionStruct
 pub fn slang_solidity_v2_ast::ast::EqualityExpressionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::EqualityExpressionStruct
+pub fn slang_solidity_v2_ast::ast::EqualityExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub struct slang_solidity_v2_ast::ast::ErrorDefinitionStruct
 impl slang_solidity_v2_ast::ast::ErrorDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ErrorDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
@@ -1798,6 +1810,8 @@ pub fn slang_solidity_v2_ast::ast::ExponentiationExpressionStruct::node_id(&self
 pub fn slang_solidity_v2_ast::ast::ExponentiationExpressionStruct::right_operand(&self) -> slang_solidity_v2_ast::ast::Expression
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::ExponentiationExpressionStruct
 pub fn slang_solidity_v2_ast::ast::ExponentiationExpressionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::ExponentiationExpressionStruct
+pub fn slang_solidity_v2_ast::ast::ExponentiationExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub struct slang_solidity_v2_ast::ast::ExpressionStatementStruct
 impl slang_solidity_v2_ast::ast::ExpressionStatementStruct
 pub fn slang_solidity_v2_ast::ast::ExpressionStatementStruct::expression(&self) -> slang_solidity_v2_ast::ast::Expression
@@ -2141,6 +2155,8 @@ pub fn slang_solidity_v2_ast::ast::InequalityExpressionStruct::operator(&self) -
 pub fn slang_solidity_v2_ast::ast::InequalityExpressionStruct::right_operand(&self) -> slang_solidity_v2_ast::ast::Expression
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::InequalityExpressionStruct
 pub fn slang_solidity_v2_ast::ast::InequalityExpressionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::InequalityExpressionStruct
+pub fn slang_solidity_v2_ast::ast::InequalityExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub struct slang_solidity_v2_ast::ast::InheritanceTypeStruct
 impl slang_solidity_v2_ast::ast::InheritanceTypeStruct
 pub fn slang_solidity_v2_ast::ast::InheritanceTypeStruct::arguments(&self) -> core::option::Option<slang_solidity_v2_ast::ast::ArgumentsDeclaration>
@@ -2391,6 +2407,8 @@ pub fn slang_solidity_v2_ast::ast::MultiplicativeExpressionStruct::operator(&sel
 pub fn slang_solidity_v2_ast::ast::MultiplicativeExpressionStruct::right_operand(&self) -> slang_solidity_v2_ast::ast::Expression
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::MultiplicativeExpressionStruct
 pub fn slang_solidity_v2_ast::ast::MultiplicativeExpressionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::MultiplicativeExpressionStruct
+pub fn slang_solidity_v2_ast::ast::MultiplicativeExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub struct slang_solidity_v2_ast::ast::NamedArgumentStruct
 impl slang_solidity_v2_ast::ast::NamedArgumentStruct
 pub fn slang_solidity_v2_ast::ast::NamedArgumentStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
@@ -2427,6 +2445,8 @@ pub fn slang_solidity_v2_ast::ast::OrExpressionStruct::node_id(&self) -> slang_s
 pub fn slang_solidity_v2_ast::ast::OrExpressionStruct::right_operand(&self) -> slang_solidity_v2_ast::ast::Expression
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::OrExpressionStruct
 pub fn slang_solidity_v2_ast::ast::OrExpressionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::OrExpressionStruct
+pub fn slang_solidity_v2_ast::ast::OrExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub struct slang_solidity_v2_ast::ast::OverridePathsStruct
 impl slang_solidity_v2_ast::ast::OverridePathsStruct
 pub fn slang_solidity_v2_ast::ast::OverridePathsStruct::is_empty(&self) -> bool
@@ -2688,6 +2708,8 @@ pub fn slang_solidity_v2_ast::ast::ShiftExpressionStruct::operator(&self) -> sla
 pub fn slang_solidity_v2_ast::ast::ShiftExpressionStruct::right_operand(&self) -> slang_solidity_v2_ast::ast::Expression
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::ShiftExpressionStruct
 pub fn slang_solidity_v2_ast::ast::ShiftExpressionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::ShiftExpressionStruct
+pub fn slang_solidity_v2_ast::ast::ShiftExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub struct slang_solidity_v2_ast::ast::SimpleVersionLiteralStruct
 impl slang_solidity_v2_ast::ast::SimpleVersionLiteralStruct
 pub fn slang_solidity_v2_ast::ast::SimpleVersionLiteralStruct::is_empty(&self) -> bool
@@ -3362,6 +3384,30 @@ pub fn slang_solidity_v2_ast::ast::YulVariableNamesStruct::iter(&self) -> impl c
 pub fn slang_solidity_v2_ast::ast::YulVariableNamesStruct::len(&self) -> usize
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::YulVariableNamesStruct
 pub fn slang_solidity_v2_ast::ast::YulVariableNamesStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub trait slang_solidity_v2_ast::ast::BinaryOperatorExpression
+pub fn slang_solidity_v2_ast::ast::BinaryOperatorExpression::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::AdditiveExpressionStruct
+pub fn slang_solidity_v2_ast::ast::AdditiveExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::AndExpressionStruct
+pub fn slang_solidity_v2_ast::ast::AndExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::BitwiseAndExpressionStruct
+pub fn slang_solidity_v2_ast::ast::BitwiseAndExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::BitwiseOrExpressionStruct
+pub fn slang_solidity_v2_ast::ast::BitwiseOrExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::BitwiseXorExpressionStruct
+pub fn slang_solidity_v2_ast::ast::BitwiseXorExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::EqualityExpressionStruct
+pub fn slang_solidity_v2_ast::ast::EqualityExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::ExponentiationExpressionStruct
+pub fn slang_solidity_v2_ast::ast::ExponentiationExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::InequalityExpressionStruct
+pub fn slang_solidity_v2_ast::ast::InequalityExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::MultiplicativeExpressionStruct
+pub fn slang_solidity_v2_ast::ast::MultiplicativeExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::OrExpressionStruct
+pub fn slang_solidity_v2_ast::ast::OrExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::ShiftExpressionStruct
+pub fn slang_solidity_v2_ast::ast::ShiftExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub fn slang_solidity_v2_ast::ast::create_abicoder_pragma(&slang_solidity_v2_ir::ir::nodes::AbicoderPragma, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::AbicoderPragma
 pub fn slang_solidity_v2_ast::ast::create_additive_expression(&slang_solidity_v2_ir::ir::nodes::AdditiveExpression, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::AdditiveExpression
 pub fn slang_solidity_v2_ast::ast::create_address_type(&slang_solidity_v2_ir::ir::nodes::AddressType, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> alloc::sync::Arc<slang_solidity_v2_ast::ast::AddressTypeStruct>
