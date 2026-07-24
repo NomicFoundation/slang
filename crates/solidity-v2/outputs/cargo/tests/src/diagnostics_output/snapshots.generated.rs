@@ -1274,6 +1274,16 @@ mod structure {
     }
 
     #[test]
+    fn global_using_for_inside_contract() -> Result<()> {
+        run("structure", "global_using_for_inside_contract")
+    }
+
+    #[test]
+    fn global_using_for_wildcard() -> Result<()> {
+        run("structure", "global_using_for_wildcard")
+    }
+
+    #[test]
     fn interface_function_cannot_be_implemented() -> Result<()> {
         run("structure", "interface_function_cannot_be_implemented")
     }
@@ -1426,6 +1436,11 @@ mod structure {
     #[test]
     fn uninitialized_file_level_constant() -> Result<()> {
         run("structure", "uninitialized_file_level_constant")
+    }
+
+    #[test]
+    fn using_for_wildcard_at_file_level() -> Result<()> {
+        run("structure", "using_for_wildcard_at_file_level")
     }
 
     #[test]
