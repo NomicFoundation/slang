@@ -510,6 +510,12 @@ impl Visitor for Pass<'_> {
 
     fn leave_new_expression(&mut self, node: &ir::NewExpression) {
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
+        // Creating a contract pulls in its bytecode.
+        if let Some(type_id) = type_id
+            && matches!(self.types.get_type_by_id(type_id), Type::Contract(_))
+        {
+            self.binder.record_contract_reference();
+        }
         let typing = type_id.map_or(Typing::Unresolved, Typing::NewExpression);
         self.binder.set_node_typing(node.id(), typing);
     }

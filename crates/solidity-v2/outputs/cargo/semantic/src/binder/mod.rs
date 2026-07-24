@@ -125,6 +125,9 @@ pub struct Binder {
     /// Maps a definition's `NodeId` to the `NodeId` of the definition it was
     /// declared in. Valid if the immediate enclosing node is a definition.
     enclosing_definitions: Map<NodeId, NodeId>,
+    /// Whether the program refers to a contract's bytecode anywhere, ie. with
+    /// `new C`, `type(C).creationCode` or `type(C).runtimeCode`.
+    has_contract_references: bool,
 }
 
 /// This controls visibility filtering and how to use the linearisation when
@@ -293,6 +296,15 @@ impl Binder {
 
     pub fn references(&self) -> &Map<NodeId, Reference> {
         &self.references
+    }
+
+    pub(crate) fn record_contract_reference(&mut self) {
+        self.has_contract_references = true;
+    }
+
+    /// Whether the program refers to a contract's bytecode anywhere.
+    pub(crate) fn has_contract_references(&self) -> bool {
+        self.has_contract_references
     }
 
     pub(crate) fn set_operator_function(&mut self, node_id: NodeId, definition_id: NodeId) {

@@ -99,6 +99,39 @@ pub(crate) fn filter_overriden_definitions(
     Resolution::from(filtered_definitions)
 }
 
+/// Whether `overriding` overrides `overridden`: they share a name (or are the
+/// same kind of unnamed function) and their signatures are in an override
+/// relationship.
+pub(crate) fn function_overrides(
+    binder: &Binder,
+    types: &TypeRegistry,
+    overriding: &ir::FunctionDefinition,
+    overridden: &ir::FunctionDefinition,
+) -> bool {
+    let name_matches = match (&overriding.name, &overridden.name) {
+        (None, None) => overriding.kind == overridden.kind,
+        (Some(name), Some(other_name)) => {
+            debug_assert!(
+                overriding.kind == overridden.kind && overriding.kind == ir::FunctionKind::Regular,
+                "compared functions are both regular"
+            );
+            name.unparse() == other_name.unparse()
+        }
+        _ => false,
+    };
+    if !name_matches {
+        return false;
+    }
+    let overriding_type_id = binder.node_typing(overriding.id()).as_type_id();
+    let overridden_type_id = binder.node_typing(overridden.id()).as_type_id();
+    match (overriding_type_id, overridden_type_id) {
+        (Some(overriding_type_id), Some(overridden_type_id)) => {
+            types.type_id_is_function_and_overrides(overriding_type_id, overridden_type_id)
+        }
+        _ => false,
+    }
+}
+
 /// Given a `Definition`'s `NodeId`, find the scope where we should resolve
 /// symbols if the definition acts as a namespace. This is typically used when
 /// resolving `MemberAccessExpression`s with a `UserMetatype` operand. Returns

@@ -1,7 +1,8 @@
+pub use contract_data::ContractReference;
 pub(crate) use contract_data::{ContractData, ContractLinearisations};
 pub(crate) use file_node_mapper::FileNodeMapper;
 use ruint::aliases::U256;
-use slang_solidity_v2_common::collections::Set;
+use slang_solidity_v2_common::collections::{Set, SortedMap};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::files::FileId;
@@ -14,7 +15,7 @@ pub use storage_layout::{StorageLayoutBuilder, StoragePosition, StorageSize};
 use crate::binder::{Binder, BinderCapacities, Definition, Reference};
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_compute_linearisations,
-    p5_resolve_references, p6_resolve_yul, p7_code_analysis,
+    p5_resolve_references, p6_resolve_yul, p7_contract_properties, p8_code_analysis,
 };
 use crate::types::{
     ArraySliceType, ArrayType, ByteArrayType, ContractType, EnumType, FixedPointNumberType,
@@ -97,7 +98,7 @@ impl SemanticContext {
             diagnostics,
         );
 
-        let contract_data =
+        let mut contract_data =
             p4_compute_linearisations::run(&binder, &types, &file_node_mapper, diagnostics);
         p5_resolve_references::run(
             files,
@@ -107,7 +108,8 @@ impl SemanticContext {
             diagnostics,
         );
         p6_resolve_yul::run(&mut binder, &types, &file_node_mapper, diagnostics);
-        p7_code_analysis::run(
+        p7_contract_properties::run(&binder, &mut contract_data, &types);
+        p8_code_analysis::run(
             &binder,
             language_version,
             evm_target,
@@ -175,6 +177,31 @@ impl SemanticContext {
     /// definition.
     pub fn linearised_functions(&self, contract_id: NodeId) -> &[ir::FunctionDefinition] {
         self.contract_data.linearised_functions(contract_id)
+    }
+
+    /// For each contract, the contracts that its creation code embeds through
+    /// `new`, `type(...).creationCode` or `type(...).runtimeCode`. Keyed by
+    /// definition id and then by dependency id, mapped to the first expression
+    /// embedding them. Contracts without dependencies have no entry, and
+    /// libraries never have one.
+    pub fn creation_bytecode_dependencies(
+        &self,
+    ) -> &SortedMap<NodeId, SortedMap<NodeId, ContractReference>> {
+        self.contract_data.creation_bytecode_dependencies()
+    }
+
+    /// The same for the deployed code.
+    pub fn deployed_bytecode_dependencies(
+        &self,
+    ) -> &SortedMap<NodeId, SortedMap<NodeId, ContractReference>> {
+        self.contract_data.deployed_bytecode_dependencies()
+    }
+
+    /// The creation and deployed dependencies combined into one map, built on
+    /// each call. When both embed the same contract, the creation expression is
+    /// the one recorded.
+    pub fn contract_dependencies(&self) -> SortedMap<NodeId, SortedMap<NodeId, ContractReference>> {
+        self.contract_data.contract_dependencies()
     }
 
     /// Returns the pre-computed list of state variables visible in the given

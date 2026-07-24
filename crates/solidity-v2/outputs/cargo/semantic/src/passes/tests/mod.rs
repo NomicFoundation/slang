@@ -1,4 +1,5 @@
 mod binder;
+mod contract_dependencies;
 mod getter_overrides;
 mod typing;
 mod user_defined_operator_functions;
