@@ -5,7 +5,9 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
 use super::Pass;
-use crate::binder::{Definition, Reference, Resolution, Scope, Typing, UsingDirective};
+use crate::binder::{
+    Definition, OperatorMapping, Reference, Resolution, Scope, Typing, UsingDirective,
+};
 use crate::built_ins::InternalBuiltIn;
 use crate::types::{ContractType, DataLocation, EnumType, InterfaceType, LibraryType, Type};
 
@@ -333,7 +335,7 @@ impl Visitor for Pass<'_> {
                     }
                     ir::UsingClause::UsingDeconstruction(using_deconstruction) => {
                         let mut symbols = Map::default();
-                        let mut operators = Map::default();
+                        let mut operators = OperatorMapping::default();
 
                         for symbol in using_deconstruction.symbols.iter() {
                             let symbol_name = symbol.name.last().unwrap();
@@ -350,12 +352,14 @@ impl Visitor for Pass<'_> {
                             }
 
                             let definition_ids = resolution.get_definition_ids();
-                            symbols.insert(symbol_name.unparse().to_string(), definition_ids);
-
                             if let Some(operator) = &symbol.alias {
+                                // Append since `-` can bind a unary and a binary function.
                                 operators
-                                    .insert(operator.into(), symbol_name.unparse().to_string());
+                                    .entry(operator.into())
+                                    .or_default()
+                                    .extend(definition_ids.iter().copied());
                             }
+                            symbols.insert(symbol_name.unparse().to_string(), definition_ids);
                         }
 
                         let scope = Scope::new_using(node.id(), symbols);
