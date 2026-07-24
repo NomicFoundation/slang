@@ -83,7 +83,7 @@
           #[allow(clippy::match_single_binding)]
           match source {
             {% for nonterminal in choice.variants | filter(attribute="kind", value="Nonterminal") -%}
-              input::{{ parent_type }}::{{ nonterminal.name }}(ref {{ nonterminal.name | snake_case }}) => {
+              input::{{ parent_type }}::{{ nonterminal.name }}({{ nonterminal.name | snake_case }}) => {
                 output::{{ parent_type }}::{{ nonterminal.name }}(self.transform_{{ nonterminal.name | snake_case }}({{ nonterminal.name | snake_case }}))
               }
             {%- endfor -%}

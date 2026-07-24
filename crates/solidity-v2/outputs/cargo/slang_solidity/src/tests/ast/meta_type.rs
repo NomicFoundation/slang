@@ -38,13 +38,12 @@ fn function_calls() -> Vec<ast::FunctionCallExpression> {
         .members()
         .iter()
         .find_map(|member| {
-            if let ast::ContractMember::FunctionDefinition(function_definition) = member {
-                if function_definition
+            if let ast::ContractMember::FunctionDefinition(function_definition) = member
+                && function_definition
                     .name()
                     .is_some_and(|name| name.name() == "f")
-                {
-                    return Some(function_definition);
-                }
+            {
+                return Some(function_definition);
             }
             None
         })

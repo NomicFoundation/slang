@@ -21,13 +21,14 @@ impl FileWalker {
         }
     }
 
-    pub fn find_all(&self) -> Result<impl Iterator<Item = PathBuf>> {
+    pub fn find_all(&self) -> Result<impl Iterator<Item = PathBuf> + use<>> {
         self.find(["**/*"])
     }
 
-    pub fn find<G>(&self, globs: impl AsRef<[G]>) -> Result<impl Iterator<Item = PathBuf>>
+    pub fn find<G, L>(&self, globs: L) -> Result<impl Iterator<Item = PathBuf> + use<G, L>>
     where
         G: AsRef<str>,
+        L: AsRef<[G]>,
     {
         let globs = globs.as_ref();
         assert!(!globs.is_empty(), "Must provide at least one glob.");

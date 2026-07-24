@@ -605,15 +605,15 @@ impl TypeRegistry {
     /// The type both operands can convert into. It takes the mobile type of one
     /// side and checks whether the *raw* other side implicitly converts into it.
     pub(crate) fn common_type(&mut self, left: TypeId, right: TypeId) -> Option<TypeId> {
-        if let Some(left_mobile) = self.compute_mobile_type(left) {
-            if self.implicitly_convertible_to(right, left_mobile) {
-                return Some(left_mobile);
-            }
+        if let Some(left_mobile) = self.compute_mobile_type(left)
+            && self.implicitly_convertible_to(right, left_mobile)
+        {
+            return Some(left_mobile);
         }
-        if let Some(right_mobile) = self.compute_mobile_type(right) {
-            if self.implicitly_convertible_to(left, right_mobile) {
-                return Some(right_mobile);
-            }
+        if let Some(right_mobile) = self.compute_mobile_type(right)
+            && self.implicitly_convertible_to(left, right_mobile)
+        {
+            return Some(right_mobile);
         }
         None
     }

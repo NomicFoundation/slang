@@ -649,10 +649,10 @@ impl<T: KindTypes + 'static> Matcher<T> for OptionalMatcher<T> {
     }
 
     fn record_captures(&self, captures: &mut BTreeMap<String, Vec<Cursor<T>>>) {
-        if self.have_nonempty_match {
-            if let Some(child) = self.child.as_ref() {
-                child.record_captures(captures);
-            }
+        if self.have_nonempty_match
+            && let Some(child) = self.child.as_ref()
+        {
+            child.record_captures(captures);
         }
     }
 }

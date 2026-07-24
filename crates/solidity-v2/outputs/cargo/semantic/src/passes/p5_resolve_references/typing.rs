@@ -236,14 +236,12 @@ impl Pass<'_> {
         resolution: &Resolution,
     ) -> Typing {
         // Check if the target is a state variable, and if it has a getter
-        if let Resolution::Definition(definition_id) = resolution {
-            if let Definition::StateVariable(state_var_definition) =
+        if let Resolution::Definition(definition_id) = resolution
+            && let Definition::StateVariable(state_var_definition) =
                 self.binder.find_definition_by_id(*definition_id).unwrap()
-            {
-                if let Some(getter_type_id) = state_var_definition.getter_type_id {
-                    return Typing::Resolved(getter_type_id);
-                }
-            }
+            && let Some(getter_type_id) = state_var_definition.getter_type_id
+        {
+            return Typing::Resolved(getter_type_id);
         }
 
         let mut typing = self.typing_of_resolution(resolution);
@@ -330,26 +328,26 @@ impl Pass<'_> {
                     .types
                     .register_type_with_data_location(type_, operand_location);
             }
-        } else if let Type::Function(function_type) = type_ {
-            if let Some(receiver_type_id) = operand_typing.as_type_id() {
-                if function_type.implicit_receiver_type.is_none()
-                    && function_type.parameter_types.first().is_some_and(|first| {
-                        self.types
-                            .implicitly_convertible_to_for_external_call(receiver_type_id, *first)
-                    })
-                {
-                    return self
-                        .types
-                        .partially_apply_function_type(function_type.clone());
-                }
+        } else if let Type::Function(function_type) = type_
+            && let Some(receiver_type_id) = operand_typing.as_type_id()
+        {
+            if function_type.implicit_receiver_type.is_none()
+                && function_type.parameter_types.first().is_some_and(|first| {
+                    self.types
+                        .implicitly_convertible_to_for_external_call(receiver_type_id, *first)
+                })
+            {
+                return self
+                    .types
+                    .partially_apply_function_type(function_type.clone());
+            }
 
-                if let Some(declaration_type_id) = self.as_foreign_function_declaration_type(
-                    receiver_type_id,
-                    function_type.definition_id,
-                    function_type.visibility,
-                ) {
-                    return declaration_type_id;
-                }
+            if let Some(declaration_type_id) = self.as_foreign_function_declaration_type(
+                receiver_type_id,
+                function_type.definition_id,
+                function_type.visibility,
+            ) {
+                return declaration_type_id;
             }
         }
         type_id

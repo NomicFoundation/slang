@@ -64,5 +64,10 @@ fn run_rustfmt(contents: &str) -> Result<String> {
     Command::new("rustfmt")
         .arg(format!("+{}", env!("RUST_NIGHTLY_VERSION")))
         .property("--emit", "stdout")
+        // Parse as edition 2024 so generated code can use edition-2024 syntax (e.g. let-chains).
+        // The formatting style is still governed by `style_edition` in `.rustfmt.toml`.
+        //
+        // __RUST_EDITION_MARKER__ (keep in sync)
+        .property("--edition", "2024")
         .evaluate_with_input(contents)
 }

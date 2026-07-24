@@ -71,11 +71,11 @@ pub trait Visitor {
         {% elif variant.kind == "UniqueTerminal" -%}
           {{ parent_type }}::{{ variant.name }}(_) => {},
         {% elif variant.kind == "Terminal" -%}
-          {{ parent_type }}::{{ variant.name }}(ref {{ variant.name | snake_case }}) => {
+          {{ parent_type }}::{{ variant.name }}({{ variant.name | snake_case }}) => {
             visitor.visit_{{ variant.name | snake_case }}({{ variant.name | snake_case }});
           },
         {% else -%}
-          {{ parent_type }}::{{ variant.name }}(ref {{ variant.name | snake_case }}) => {
+          {{ parent_type }}::{{ variant.name }}({{ variant.name | snake_case }}) => {
             accept_{{ variant.name | snake_case }}({{ variant.name | snake_case }}, visitor);
           }
         {%- endif %}

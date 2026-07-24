@@ -41,11 +41,10 @@ contract C {
 /// Get contract `C` from the fixture compilation unit.
 fn get_contract_c() -> ContractDefinition {
     let unit = TypeConversion::build_compilation_unit();
-    let contract = unit
-        .find_contract_by_name("C")
+
+    unit.find_contract_by_name("C")
         .next()
-        .expect("contract C exists");
-    contract
+        .expect("contract C exists")
 }
 
 /// Resolves the named state variable definition in `contract`.

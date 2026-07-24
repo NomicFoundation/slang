@@ -254,14 +254,12 @@ impl Pass<'_> {
     }
 
     pub(super) fn typing_of_resolution_as_getter(&self, resolution: &Resolution) -> Typing {
-        if let Resolution::Definition(definition_id) = resolution {
-            if let Definition::StateVariable(state_var_definition) =
+        if let Resolution::Definition(definition_id) = resolution
+            && let Definition::StateVariable(state_var_definition) =
                 self.binder.find_definition_by_id(*definition_id).unwrap()
-            {
-                if let Some(getter_type_id) = state_var_definition.getter_type_id {
-                    return Typing::Resolved(getter_type_id);
-                }
-            }
+            && let Some(getter_type_id) = state_var_definition.getter_type_id
+        {
+            return Typing::Resolved(getter_type_id);
         }
         self.typing_of_resolution(resolution)
     }

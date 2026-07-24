@@ -349,13 +349,12 @@ fn check_evm_target_specifier(
             if let (Some(from_index), Some(till_index)) = (
                 analysis.language.evm_targets.get_index_of(from),
                 analysis.language.evm_targets.get_index_of(till),
-            ) {
-                if from_index >= till_index {
-                    analysis
-                        .errors
-                        .add(from, &EvmTargetErrors::UnorderedEvmTargetPair(from, till));
-                    return;
-                }
+            ) && from_index >= till_index
+            {
+                analysis
+                    .errors
+                    .add(from, &EvmTargetErrors::UnorderedEvmTargetPair(from, till));
+                return;
             }
 
             check_evm_target(analysis, from);

@@ -325,16 +325,15 @@ impl Visitor for Pass<'_> {
         // "inherited", we use the operand's location for the resulting typing
         if let Some(type_id) = typing.as_type_id() {
             let type_ = self.types.get_type_by_id(type_id);
-            if type_.is_inherited_location() {
-                if let Some(operand_location) = operand_typing
+            if type_.is_inherited_location()
+                && let Some(operand_location) = operand_typing
                     .as_type_id()
                     .and_then(|type_id| self.types.get_type_by_id(type_id).data_location())
-                {
-                    let type_id_with_location = self
-                        .types
-                        .register_type_with_data_location(type_.clone(), operand_location);
-                    typing = Typing::Resolved(type_id_with_location);
-                }
+            {
+                let type_id_with_location = self
+                    .types
+                    .register_type_with_data_location(type_.clone(), operand_location);
+                typing = Typing::Resolved(type_id_with_location);
             }
         }
 

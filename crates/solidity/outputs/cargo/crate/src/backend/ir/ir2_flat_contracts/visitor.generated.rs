@@ -1826,45 +1826,43 @@ pub fn accept_source_unit_member(node: &SourceUnitMember, visitor: &mut impl Vis
         return;
     }
     match node {
-        SourceUnitMember::PragmaDirective(ref pragma_directive) => {
+        SourceUnitMember::PragmaDirective(pragma_directive) => {
             accept_pragma_directive(pragma_directive, visitor);
         }
-        SourceUnitMember::ContractDefinition(ref contract_definition) => {
+        SourceUnitMember::ContractDefinition(contract_definition) => {
             accept_contract_definition(contract_definition, visitor);
         }
-        SourceUnitMember::InterfaceDefinition(ref interface_definition) => {
+        SourceUnitMember::InterfaceDefinition(interface_definition) => {
             accept_interface_definition(interface_definition, visitor);
         }
-        SourceUnitMember::LibraryDefinition(ref library_definition) => {
+        SourceUnitMember::LibraryDefinition(library_definition) => {
             accept_library_definition(library_definition, visitor);
         }
-        SourceUnitMember::StructDefinition(ref struct_definition) => {
+        SourceUnitMember::StructDefinition(struct_definition) => {
             accept_struct_definition(struct_definition, visitor);
         }
-        SourceUnitMember::EnumDefinition(ref enum_definition) => {
+        SourceUnitMember::EnumDefinition(enum_definition) => {
             accept_enum_definition(enum_definition, visitor);
         }
-        SourceUnitMember::FunctionDefinition(ref function_definition) => {
+        SourceUnitMember::FunctionDefinition(function_definition) => {
             accept_function_definition(function_definition, visitor);
         }
-        SourceUnitMember::ErrorDefinition(ref error_definition) => {
+        SourceUnitMember::ErrorDefinition(error_definition) => {
             accept_error_definition(error_definition, visitor);
         }
-        SourceUnitMember::UserDefinedValueTypeDefinition(
-            ref user_defined_value_type_definition,
-        ) => {
+        SourceUnitMember::UserDefinedValueTypeDefinition(user_defined_value_type_definition) => {
             accept_user_defined_value_type_definition(user_defined_value_type_definition, visitor);
         }
-        SourceUnitMember::UsingDirective(ref using_directive) => {
+        SourceUnitMember::UsingDirective(using_directive) => {
             accept_using_directive(using_directive, visitor);
         }
-        SourceUnitMember::EventDefinition(ref event_definition) => {
+        SourceUnitMember::EventDefinition(event_definition) => {
             accept_event_definition(event_definition, visitor);
         }
-        SourceUnitMember::ConstantDefinition(ref constant_definition) => {
+        SourceUnitMember::ConstantDefinition(constant_definition) => {
             accept_constant_definition(constant_definition, visitor);
         }
-        SourceUnitMember::ImportClause(ref import_clause) => {
+        SourceUnitMember::ImportClause(import_clause) => {
             accept_import_clause(import_clause, visitor);
         }
     }
@@ -1876,13 +1874,13 @@ pub fn accept_pragma(node: &Pragma, visitor: &mut impl Visitor) {
         return;
     }
     match node {
-        Pragma::VersionPragma(ref version_pragma) => {
+        Pragma::VersionPragma(version_pragma) => {
             accept_version_pragma(version_pragma, visitor);
         }
-        Pragma::AbicoderPragma(ref abicoder_pragma) => {
+        Pragma::AbicoderPragma(abicoder_pragma) => {
             accept_abicoder_pragma(abicoder_pragma, visitor);
         }
-        Pragma::ExperimentalPragma(ref experimental_pragma) => {
+        Pragma::ExperimentalPragma(experimental_pragma) => {
             accept_experimental_pragma(experimental_pragma, visitor);
         }
     }
@@ -1898,10 +1896,10 @@ pub fn accept_version_expression(node: &VersionExpression, visitor: &mut impl Vi
         return;
     }
     match node {
-        VersionExpression::VersionRange(ref version_range) => {
+        VersionExpression::VersionRange(version_range) => {
             accept_version_range(version_range, visitor);
         }
-        VersionExpression::VersionTerm(ref version_term) => {
+        VersionExpression::VersionTerm(version_term) => {
             accept_version_term(version_term, visitor);
         }
     }
@@ -1915,7 +1913,7 @@ pub fn accept_version_literal(node: &VersionLiteral, visitor: &mut impl Visitor)
         return;
     }
     match node {
-        VersionLiteral::SimpleVersionLiteral(ref simple_version_literal) => {
+        VersionLiteral::SimpleVersionLiteral(simple_version_literal) => {
             accept_simple_version_literal(simple_version_literal, visitor);
         }
         VersionLiteral::SingleQuotedVersionLiteral(_)
@@ -1929,10 +1927,10 @@ pub fn accept_import_clause(node: &ImportClause, visitor: &mut impl Visitor) {
         return;
     }
     match node {
-        ImportClause::PathImport(ref path_import) => {
+        ImportClause::PathImport(path_import) => {
             accept_path_import(path_import, visitor);
         }
-        ImportClause::ImportDeconstruction(ref import_deconstruction) => {
+        ImportClause::ImportDeconstruction(import_deconstruction) => {
             accept_import_deconstruction(import_deconstruction, visitor);
         }
     }
@@ -1944,10 +1942,10 @@ pub fn accept_using_clause(node: &UsingClause, visitor: &mut impl Visitor) {
         return;
     }
     match node {
-        UsingClause::IdentifierPath(ref identifier_path) => {
+        UsingClause::IdentifierPath(identifier_path) => {
             accept_identifier_path(identifier_path, visitor);
         }
-        UsingClause::UsingDeconstruction(ref using_deconstruction) => {
+        UsingClause::UsingDeconstruction(using_deconstruction) => {
             accept_using_deconstruction(using_deconstruction, visitor);
         }
     }
@@ -1961,7 +1959,7 @@ pub fn accept_using_target(node: &UsingTarget, visitor: &mut impl Visitor) {
         return;
     }
     match node {
-        UsingTarget::TypeName(ref type_name) => {
+        UsingTarget::TypeName(type_name) => {
             accept_type_name(type_name, visitor);
         }
         UsingTarget::Asterisk => {}
@@ -1974,31 +1972,31 @@ pub fn accept_contract_member(node: &ContractMember, visitor: &mut impl Visitor)
         return;
     }
     match node {
-        ContractMember::UsingDirective(ref using_directive) => {
+        ContractMember::UsingDirective(using_directive) => {
             accept_using_directive(using_directive, visitor);
         }
-        ContractMember::FunctionDefinition(ref function_definition) => {
+        ContractMember::FunctionDefinition(function_definition) => {
             accept_function_definition(function_definition, visitor);
         }
-        ContractMember::StructDefinition(ref struct_definition) => {
+        ContractMember::StructDefinition(struct_definition) => {
             accept_struct_definition(struct_definition, visitor);
         }
-        ContractMember::EnumDefinition(ref enum_definition) => {
+        ContractMember::EnumDefinition(enum_definition) => {
             accept_enum_definition(enum_definition, visitor);
         }
-        ContractMember::EventDefinition(ref event_definition) => {
+        ContractMember::EventDefinition(event_definition) => {
             accept_event_definition(event_definition, visitor);
         }
-        ContractMember::ErrorDefinition(ref error_definition) => {
+        ContractMember::ErrorDefinition(error_definition) => {
             accept_error_definition(error_definition, visitor);
         }
-        ContractMember::UserDefinedValueTypeDefinition(ref user_defined_value_type_definition) => {
+        ContractMember::UserDefinedValueTypeDefinition(user_defined_value_type_definition) => {
             accept_user_defined_value_type_definition(user_defined_value_type_definition, visitor);
         }
-        ContractMember::StateVariableDefinition(ref state_variable_definition) => {
+        ContractMember::StateVariableDefinition(state_variable_definition) => {
             accept_state_variable_definition(state_variable_definition, visitor);
         }
-        ContractMember::ConstantDefinition(ref constant_definition) => {
+        ContractMember::ConstantDefinition(constant_definition) => {
             accept_constant_definition(constant_definition, visitor);
         }
     }
@@ -2010,19 +2008,19 @@ pub fn accept_type_name(node: &TypeName, visitor: &mut impl Visitor) {
         return;
     }
     match node {
-        TypeName::ArrayTypeName(ref array_type_name) => {
+        TypeName::ArrayTypeName(array_type_name) => {
             accept_array_type_name(array_type_name, visitor);
         }
-        TypeName::FunctionType(ref function_type) => {
+        TypeName::FunctionType(function_type) => {
             accept_function_type(function_type, visitor);
         }
-        TypeName::MappingType(ref mapping_type) => {
+        TypeName::MappingType(mapping_type) => {
             accept_mapping_type(mapping_type, visitor);
         }
-        TypeName::ElementaryType(ref elementary_type) => {
+        TypeName::ElementaryType(elementary_type) => {
             accept_elementary_type(elementary_type, visitor);
         }
-        TypeName::IdentifierPath(ref identifier_path) => {
+        TypeName::IdentifierPath(identifier_path) => {
             accept_identifier_path(identifier_path, visitor);
         }
     }
@@ -2034,7 +2032,7 @@ pub fn accept_elementary_type(node: &ElementaryType, visitor: &mut impl Visitor)
         return;
     }
     match node {
-        ElementaryType::AddressType(ref address_type) => {
+        ElementaryType::AddressType(address_type) => {
             accept_address_type(address_type, visitor);
         }
         ElementaryType::BytesKeyword(_)
@@ -2054,55 +2052,55 @@ pub fn accept_statement(node: &Statement, visitor: &mut impl Visitor) {
         return;
     }
     match node {
-        Statement::IfStatement(ref if_statement) => {
+        Statement::IfStatement(if_statement) => {
             accept_if_statement(if_statement, visitor);
         }
-        Statement::ForStatement(ref for_statement) => {
+        Statement::ForStatement(for_statement) => {
             accept_for_statement(for_statement, visitor);
         }
-        Statement::WhileStatement(ref while_statement) => {
+        Statement::WhileStatement(while_statement) => {
             accept_while_statement(while_statement, visitor);
         }
-        Statement::DoWhileStatement(ref do_while_statement) => {
+        Statement::DoWhileStatement(do_while_statement) => {
             accept_do_while_statement(do_while_statement, visitor);
         }
-        Statement::ContinueStatement(ref continue_statement) => {
+        Statement::ContinueStatement(continue_statement) => {
             accept_continue_statement(continue_statement, visitor);
         }
-        Statement::BreakStatement(ref break_statement) => {
+        Statement::BreakStatement(break_statement) => {
             accept_break_statement(break_statement, visitor);
         }
-        Statement::ReturnStatement(ref return_statement) => {
+        Statement::ReturnStatement(return_statement) => {
             accept_return_statement(return_statement, visitor);
         }
-        Statement::ThrowStatement(ref throw_statement) => {
+        Statement::ThrowStatement(throw_statement) => {
             accept_throw_statement(throw_statement, visitor);
         }
-        Statement::EmitStatement(ref emit_statement) => {
+        Statement::EmitStatement(emit_statement) => {
             accept_emit_statement(emit_statement, visitor);
         }
-        Statement::TryStatement(ref try_statement) => {
+        Statement::TryStatement(try_statement) => {
             accept_try_statement(try_statement, visitor);
         }
-        Statement::RevertStatement(ref revert_statement) => {
+        Statement::RevertStatement(revert_statement) => {
             accept_revert_statement(revert_statement, visitor);
         }
-        Statement::AssemblyStatement(ref assembly_statement) => {
+        Statement::AssemblyStatement(assembly_statement) => {
             accept_assembly_statement(assembly_statement, visitor);
         }
-        Statement::Block(ref block) => {
+        Statement::Block(block) => {
             accept_block(block, visitor);
         }
-        Statement::UncheckedBlock(ref unchecked_block) => {
+        Statement::UncheckedBlock(unchecked_block) => {
             accept_unchecked_block(unchecked_block, visitor);
         }
-        Statement::TupleDeconstructionStatement(ref tuple_deconstruction_statement) => {
+        Statement::TupleDeconstructionStatement(tuple_deconstruction_statement) => {
             accept_tuple_deconstruction_statement(tuple_deconstruction_statement, visitor);
         }
-        Statement::VariableDeclarationStatement(ref variable_declaration_statement) => {
+        Statement::VariableDeclarationStatement(variable_declaration_statement) => {
             accept_variable_declaration_statement(variable_declaration_statement, visitor);
         }
-        Statement::ExpressionStatement(ref expression_statement) => {
+        Statement::ExpressionStatement(expression_statement) => {
             accept_expression_statement(expression_statement, visitor);
         }
     }
@@ -2120,16 +2118,16 @@ pub fn accept_for_statement_initialization(
     }
     match node {
         ForStatementInitialization::TupleDeconstructionStatement(
-            ref tuple_deconstruction_statement,
+            tuple_deconstruction_statement,
         ) => {
             accept_tuple_deconstruction_statement(tuple_deconstruction_statement, visitor);
         }
         ForStatementInitialization::VariableDeclarationStatement(
-            ref variable_declaration_statement,
+            variable_declaration_statement,
         ) => {
             accept_variable_declaration_statement(variable_declaration_statement, visitor);
         }
-        ForStatementInitialization::ExpressionStatement(ref expression_statement) => {
+        ForStatementInitialization::ExpressionStatement(expression_statement) => {
             accept_expression_statement(expression_statement, visitor);
         }
         ForStatementInitialization::Semicolon => {}
@@ -2142,7 +2140,7 @@ pub fn accept_for_statement_condition(node: &ForStatementCondition, visitor: &mu
         return;
     }
     match node {
-        ForStatementCondition::ExpressionStatement(ref expression_statement) => {
+        ForStatementCondition::ExpressionStatement(expression_statement) => {
             accept_expression_statement(expression_statement, visitor);
         }
         ForStatementCondition::Semicolon => {}
@@ -2155,85 +2153,85 @@ pub fn accept_expression(node: &Expression, visitor: &mut impl Visitor) {
         return;
     }
     match node {
-        Expression::AssignmentExpression(ref assignment_expression) => {
+        Expression::AssignmentExpression(assignment_expression) => {
             accept_assignment_expression(assignment_expression, visitor);
         }
-        Expression::ConditionalExpression(ref conditional_expression) => {
+        Expression::ConditionalExpression(conditional_expression) => {
             accept_conditional_expression(conditional_expression, visitor);
         }
-        Expression::OrExpression(ref or_expression) => {
+        Expression::OrExpression(or_expression) => {
             accept_or_expression(or_expression, visitor);
         }
-        Expression::AndExpression(ref and_expression) => {
+        Expression::AndExpression(and_expression) => {
             accept_and_expression(and_expression, visitor);
         }
-        Expression::EqualityExpression(ref equality_expression) => {
+        Expression::EqualityExpression(equality_expression) => {
             accept_equality_expression(equality_expression, visitor);
         }
-        Expression::InequalityExpression(ref inequality_expression) => {
+        Expression::InequalityExpression(inequality_expression) => {
             accept_inequality_expression(inequality_expression, visitor);
         }
-        Expression::BitwiseOrExpression(ref bitwise_or_expression) => {
+        Expression::BitwiseOrExpression(bitwise_or_expression) => {
             accept_bitwise_or_expression(bitwise_or_expression, visitor);
         }
-        Expression::BitwiseXorExpression(ref bitwise_xor_expression) => {
+        Expression::BitwiseXorExpression(bitwise_xor_expression) => {
             accept_bitwise_xor_expression(bitwise_xor_expression, visitor);
         }
-        Expression::BitwiseAndExpression(ref bitwise_and_expression) => {
+        Expression::BitwiseAndExpression(bitwise_and_expression) => {
             accept_bitwise_and_expression(bitwise_and_expression, visitor);
         }
-        Expression::ShiftExpression(ref shift_expression) => {
+        Expression::ShiftExpression(shift_expression) => {
             accept_shift_expression(shift_expression, visitor);
         }
-        Expression::AdditiveExpression(ref additive_expression) => {
+        Expression::AdditiveExpression(additive_expression) => {
             accept_additive_expression(additive_expression, visitor);
         }
-        Expression::MultiplicativeExpression(ref multiplicative_expression) => {
+        Expression::MultiplicativeExpression(multiplicative_expression) => {
             accept_multiplicative_expression(multiplicative_expression, visitor);
         }
-        Expression::ExponentiationExpression(ref exponentiation_expression) => {
+        Expression::ExponentiationExpression(exponentiation_expression) => {
             accept_exponentiation_expression(exponentiation_expression, visitor);
         }
-        Expression::PostfixExpression(ref postfix_expression) => {
+        Expression::PostfixExpression(postfix_expression) => {
             accept_postfix_expression(postfix_expression, visitor);
         }
-        Expression::PrefixExpression(ref prefix_expression) => {
+        Expression::PrefixExpression(prefix_expression) => {
             accept_prefix_expression(prefix_expression, visitor);
         }
-        Expression::FunctionCallExpression(ref function_call_expression) => {
+        Expression::FunctionCallExpression(function_call_expression) => {
             accept_function_call_expression(function_call_expression, visitor);
         }
-        Expression::CallOptionsExpression(ref call_options_expression) => {
+        Expression::CallOptionsExpression(call_options_expression) => {
             accept_call_options_expression(call_options_expression, visitor);
         }
-        Expression::MemberAccessExpression(ref member_access_expression) => {
+        Expression::MemberAccessExpression(member_access_expression) => {
             accept_member_access_expression(member_access_expression, visitor);
         }
-        Expression::IndexAccessExpression(ref index_access_expression) => {
+        Expression::IndexAccessExpression(index_access_expression) => {
             accept_index_access_expression(index_access_expression, visitor);
         }
-        Expression::NewExpression(ref new_expression) => {
+        Expression::NewExpression(new_expression) => {
             accept_new_expression(new_expression, visitor);
         }
-        Expression::TupleExpression(ref tuple_expression) => {
+        Expression::TupleExpression(tuple_expression) => {
             accept_tuple_expression(tuple_expression, visitor);
         }
-        Expression::TypeExpression(ref type_expression) => {
+        Expression::TypeExpression(type_expression) => {
             accept_type_expression(type_expression, visitor);
         }
-        Expression::ArrayExpression(ref array_expression) => {
+        Expression::ArrayExpression(array_expression) => {
             accept_array_expression(array_expression, visitor);
         }
-        Expression::HexNumberExpression(ref hex_number_expression) => {
+        Expression::HexNumberExpression(hex_number_expression) => {
             accept_hex_number_expression(hex_number_expression, visitor);
         }
-        Expression::DecimalNumberExpression(ref decimal_number_expression) => {
+        Expression::DecimalNumberExpression(decimal_number_expression) => {
             accept_decimal_number_expression(decimal_number_expression, visitor);
         }
-        Expression::StringExpression(ref string_expression) => {
+        Expression::StringExpression(string_expression) => {
             accept_string_expression(string_expression, visitor);
         }
-        Expression::ElementaryType(ref elementary_type) => {
+        Expression::ElementaryType(elementary_type) => {
             accept_elementary_type(elementary_type, visitor);
         }
         Expression::Identifier(_) => {}
@@ -2251,10 +2249,10 @@ pub fn accept_arguments_declaration(node: &ArgumentsDeclaration, visitor: &mut i
         return;
     }
     match node {
-        ArgumentsDeclaration::PositionalArguments(ref positional_arguments) => {
+        ArgumentsDeclaration::PositionalArguments(positional_arguments) => {
             accept_positional_arguments(positional_arguments, visitor);
         }
-        ArgumentsDeclaration::NamedArguments(ref named_arguments) => {
+        ArgumentsDeclaration::NamedArguments(named_arguments) => {
             accept_named_arguments(named_arguments, visitor);
         }
     }
@@ -2268,13 +2266,13 @@ pub fn accept_string_expression(node: &StringExpression, visitor: &mut impl Visi
         return;
     }
     match node {
-        StringExpression::Strings(ref strings) => {
+        StringExpression::Strings(strings) => {
             accept_strings(strings, visitor);
         }
-        StringExpression::HexStrings(ref hex_strings) => {
+        StringExpression::HexStrings(hex_strings) => {
             accept_hex_strings(hex_strings, visitor);
         }
-        StringExpression::UnicodeStrings(ref unicode_strings) => {
+        StringExpression::UnicodeStrings(unicode_strings) => {
             accept_unicode_strings(unicode_strings, visitor);
         }
     }
@@ -2286,43 +2284,43 @@ pub fn accept_yul_statement(node: &YulStatement, visitor: &mut impl Visitor) {
         return;
     }
     match node {
-        YulStatement::YulBlock(ref yul_block) => {
+        YulStatement::YulBlock(yul_block) => {
             accept_yul_block(yul_block, visitor);
         }
-        YulStatement::YulFunctionDefinition(ref yul_function_definition) => {
+        YulStatement::YulFunctionDefinition(yul_function_definition) => {
             accept_yul_function_definition(yul_function_definition, visitor);
         }
-        YulStatement::YulStackAssignmentStatement(ref yul_stack_assignment_statement) => {
+        YulStatement::YulStackAssignmentStatement(yul_stack_assignment_statement) => {
             accept_yul_stack_assignment_statement(yul_stack_assignment_statement, visitor);
         }
-        YulStatement::YulIfStatement(ref yul_if_statement) => {
+        YulStatement::YulIfStatement(yul_if_statement) => {
             accept_yul_if_statement(yul_if_statement, visitor);
         }
-        YulStatement::YulForStatement(ref yul_for_statement) => {
+        YulStatement::YulForStatement(yul_for_statement) => {
             accept_yul_for_statement(yul_for_statement, visitor);
         }
-        YulStatement::YulSwitchStatement(ref yul_switch_statement) => {
+        YulStatement::YulSwitchStatement(yul_switch_statement) => {
             accept_yul_switch_statement(yul_switch_statement, visitor);
         }
-        YulStatement::YulLeaveStatement(ref yul_leave_statement) => {
+        YulStatement::YulLeaveStatement(yul_leave_statement) => {
             accept_yul_leave_statement(yul_leave_statement, visitor);
         }
-        YulStatement::YulBreakStatement(ref yul_break_statement) => {
+        YulStatement::YulBreakStatement(yul_break_statement) => {
             accept_yul_break_statement(yul_break_statement, visitor);
         }
-        YulStatement::YulContinueStatement(ref yul_continue_statement) => {
+        YulStatement::YulContinueStatement(yul_continue_statement) => {
             accept_yul_continue_statement(yul_continue_statement, visitor);
         }
-        YulStatement::YulVariableAssignmentStatement(ref yul_variable_assignment_statement) => {
+        YulStatement::YulVariableAssignmentStatement(yul_variable_assignment_statement) => {
             accept_yul_variable_assignment_statement(yul_variable_assignment_statement, visitor);
         }
-        YulStatement::YulLabel(ref yul_label) => {
+        YulStatement::YulLabel(yul_label) => {
             accept_yul_label(yul_label, visitor);
         }
-        YulStatement::YulVariableDeclarationStatement(ref yul_variable_declaration_statement) => {
+        YulStatement::YulVariableDeclarationStatement(yul_variable_declaration_statement) => {
             accept_yul_variable_declaration_statement(yul_variable_declaration_statement, visitor);
         }
-        YulStatement::YulExpression(ref yul_expression) => {
+        YulStatement::YulExpression(yul_expression) => {
             accept_yul_expression(yul_expression, visitor);
         }
     }
@@ -2334,7 +2332,7 @@ pub fn accept_yul_assignment_operator(node: &YulAssignmentOperator, visitor: &mu
         return;
     }
     match node {
-        YulAssignmentOperator::YulColonAndEqual(ref yul_colon_and_equal) => {
+        YulAssignmentOperator::YulColonAndEqual(yul_colon_and_equal) => {
             accept_yul_colon_and_equal(yul_colon_and_equal, visitor);
         }
         YulAssignmentOperator::ColonEqual => {}
@@ -2350,7 +2348,7 @@ pub fn accept_yul_stack_assignment_operator(
         return;
     }
     match node {
-        YulStackAssignmentOperator::YulEqualAndColon(ref yul_equal_and_colon) => {
+        YulStackAssignmentOperator::YulEqualAndColon(yul_equal_and_colon) => {
             accept_yul_equal_and_colon(yul_equal_and_colon, visitor);
         }
         YulStackAssignmentOperator::EqualColon => {}
@@ -2363,10 +2361,10 @@ pub fn accept_yul_switch_case(node: &YulSwitchCase, visitor: &mut impl Visitor) 
         return;
     }
     match node {
-        YulSwitchCase::YulDefaultCase(ref yul_default_case) => {
+        YulSwitchCase::YulDefaultCase(yul_default_case) => {
             accept_yul_default_case(yul_default_case, visitor);
         }
-        YulSwitchCase::YulValueCase(ref yul_value_case) => {
+        YulSwitchCase::YulValueCase(yul_value_case) => {
             accept_yul_value_case(yul_value_case, visitor);
         }
     }
@@ -2378,13 +2376,13 @@ pub fn accept_yul_expression(node: &YulExpression, visitor: &mut impl Visitor) {
         return;
     }
     match node {
-        YulExpression::YulFunctionCallExpression(ref yul_function_call_expression) => {
+        YulExpression::YulFunctionCallExpression(yul_function_call_expression) => {
             accept_yul_function_call_expression(yul_function_call_expression, visitor);
         }
-        YulExpression::YulLiteral(ref yul_literal) => {
+        YulExpression::YulLiteral(yul_literal) => {
             accept_yul_literal(yul_literal, visitor);
         }
-        YulExpression::YulPath(ref yul_path) => {
+        YulExpression::YulPath(yul_path) => {
             accept_yul_path(yul_path, visitor);
         }
     }
@@ -2419,9 +2417,7 @@ pub fn accept_tuple_deconstruction_member(
         return;
     }
     match node {
-        TupleDeconstructionMember::VariableDeclarationStatement(
-            ref variable_declaration_statement,
-        ) => {
+        TupleDeconstructionMember::VariableDeclarationStatement(variable_declaration_statement) => {
             accept_variable_declaration_statement(variable_declaration_statement, visitor);
         }
         TupleDeconstructionMember::Identifier(_) => {}

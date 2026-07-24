@@ -139,17 +139,15 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             });
         let first_storage_layout_specifier = storage_layout_specifiers.next();
         // Abstract contracts cannot specify a storage layout.
-        if is_abstract {
-            if let Some(storage_layout) = first_storage_layout_specifier {
-                self.diagnostics.push(
-                    self.file_id.to_owned(),
-                    storage_layout
-                        .layout_keyword
-                        .calculate_text_range()
-                        .unwrap(),
-                    StorageLayoutForAbstractContract,
-                );
-            }
+        if is_abstract && let Some(storage_layout) = first_storage_layout_specifier {
+            self.diagnostics.push(
+                self.file_id.to_owned(),
+                storage_layout
+                    .layout_keyword
+                    .calculate_text_range()
+                    .unwrap(),
+                StorageLayoutForAbstractContract,
+            );
         }
         let storage_layout = first_storage_layout_specifier
             .map(|storage_layout| self.build_storage_layout_specifier(storage_layout));

@@ -1283,64 +1283,64 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::SourceUnitMember::PragmaDirective(ref pragma_directive) => {
+            input::SourceUnitMember::PragmaDirective(pragma_directive) => {
                 output::SourceUnitMember::PragmaDirective(
                     self.transform_pragma_directive(pragma_directive),
                 )
             }
-            input::SourceUnitMember::ContractDefinition(ref contract_definition) => {
+            input::SourceUnitMember::ContractDefinition(contract_definition) => {
                 output::SourceUnitMember::ContractDefinition(
                     self.transform_contract_definition(contract_definition),
                 )
             }
-            input::SourceUnitMember::InterfaceDefinition(ref interface_definition) => {
+            input::SourceUnitMember::InterfaceDefinition(interface_definition) => {
                 output::SourceUnitMember::InterfaceDefinition(
                     self.transform_interface_definition(interface_definition),
                 )
             }
-            input::SourceUnitMember::LibraryDefinition(ref library_definition) => {
+            input::SourceUnitMember::LibraryDefinition(library_definition) => {
                 output::SourceUnitMember::LibraryDefinition(
                     self.transform_library_definition(library_definition),
                 )
             }
-            input::SourceUnitMember::StructDefinition(ref struct_definition) => {
+            input::SourceUnitMember::StructDefinition(struct_definition) => {
                 output::SourceUnitMember::StructDefinition(
                     self.transform_struct_definition(struct_definition),
                 )
             }
-            input::SourceUnitMember::EnumDefinition(ref enum_definition) => {
+            input::SourceUnitMember::EnumDefinition(enum_definition) => {
                 output::SourceUnitMember::EnumDefinition(
                     self.transform_enum_definition(enum_definition),
                 )
             }
-            input::SourceUnitMember::FunctionDefinition(ref function_definition) => {
+            input::SourceUnitMember::FunctionDefinition(function_definition) => {
                 output::SourceUnitMember::FunctionDefinition(
                     self.transform_function_definition(function_definition),
                 )
             }
-            input::SourceUnitMember::ErrorDefinition(ref error_definition) => {
+            input::SourceUnitMember::ErrorDefinition(error_definition) => {
                 output::SourceUnitMember::ErrorDefinition(
                     self.transform_error_definition(error_definition),
                 )
             }
             input::SourceUnitMember::UserDefinedValueTypeDefinition(
-                ref user_defined_value_type_definition,
+                user_defined_value_type_definition,
             ) => output::SourceUnitMember::UserDefinedValueTypeDefinition(
                 self.transform_user_defined_value_type_definition(
                     user_defined_value_type_definition,
                 ),
             ),
-            input::SourceUnitMember::UsingDirective(ref using_directive) => {
+            input::SourceUnitMember::UsingDirective(using_directive) => {
                 output::SourceUnitMember::UsingDirective(
                     self.transform_using_directive(using_directive),
                 )
             }
-            input::SourceUnitMember::EventDefinition(ref event_definition) => {
+            input::SourceUnitMember::EventDefinition(event_definition) => {
                 output::SourceUnitMember::EventDefinition(
                     self.transform_event_definition(event_definition),
                 )
             }
-            input::SourceUnitMember::ConstantDefinition(ref constant_definition) => {
+            input::SourceUnitMember::ConstantDefinition(constant_definition) => {
                 output::SourceUnitMember::ConstantDefinition(
                     self.transform_constant_definition(constant_definition),
                 )
@@ -1359,13 +1359,13 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Pragma::VersionPragma(ref version_pragma) => {
+            input::Pragma::VersionPragma(version_pragma) => {
                 output::Pragma::VersionPragma(self.transform_version_pragma(version_pragma))
             }
-            input::Pragma::AbicoderPragma(ref abicoder_pragma) => {
+            input::Pragma::AbicoderPragma(abicoder_pragma) => {
                 output::Pragma::AbicoderPragma(self.transform_abicoder_pragma(abicoder_pragma))
             }
-            input::Pragma::ExperimentalPragma(ref experimental_pragma) => {
+            input::Pragma::ExperimentalPragma(experimental_pragma) => {
                 output::Pragma::ExperimentalPragma(
                     self.transform_experimental_pragma(experimental_pragma),
                 )
@@ -1424,10 +1424,10 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::VersionExpression::VersionRange(ref version_range) => {
+            input::VersionExpression::VersionRange(version_range) => {
                 output::VersionExpression::VersionRange(self.transform_version_range(version_range))
             }
-            input::VersionExpression::VersionTerm(ref version_term) => {
+            input::VersionExpression::VersionTerm(version_term) => {
                 output::VersionExpression::VersionTerm(self.transform_version_term(version_term))
             }
         }
@@ -1469,7 +1469,7 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::VersionLiteral::SimpleVersionLiteral(ref simple_version_literal) => {
+            input::VersionLiteral::SimpleVersionLiteral(simple_version_literal) => {
                 output::VersionLiteral::SimpleVersionLiteral(
                     self.transform_simple_version_literal(simple_version_literal),
                 )
@@ -1496,10 +1496,10 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::ImportClause::PathImport(ref path_import) => {
+            input::ImportClause::PathImport(path_import) => {
                 output::ImportClause::PathImport(self.transform_path_import(path_import))
             }
-            input::ImportClause::ImportDeconstruction(ref import_deconstruction) => {
+            input::ImportClause::ImportDeconstruction(import_deconstruction) => {
                 output::ImportClause::ImportDeconstruction(
                     self.transform_import_deconstruction(import_deconstruction),
                 )
@@ -1518,10 +1518,10 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::UsingClause::IdentifierPath(ref identifier_path) => {
+            input::UsingClause::IdentifierPath(identifier_path) => {
                 output::UsingClause::IdentifierPath(self.transform_identifier_path(identifier_path))
             }
-            input::UsingClause::UsingDeconstruction(ref using_deconstruction) => {
+            input::UsingClause::UsingDeconstruction(using_deconstruction) => {
                 output::UsingClause::UsingDeconstruction(
                     self.transform_using_deconstruction(using_deconstruction),
                 )
@@ -1567,7 +1567,7 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::UsingTarget::TypeName(ref type_name) => {
+            input::UsingTarget::TypeName(type_name) => {
                 output::UsingTarget::TypeName(self.transform_type_name(type_name))
             }
             input::UsingTarget::Asterisk => output::UsingTarget::Asterisk,
@@ -1584,44 +1584,44 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::ContractMember::UsingDirective(ref using_directive) => {
+            input::ContractMember::UsingDirective(using_directive) => {
                 output::ContractMember::UsingDirective(
                     self.transform_using_directive(using_directive),
                 )
             }
-            input::ContractMember::FunctionDefinition(ref function_definition) => {
+            input::ContractMember::FunctionDefinition(function_definition) => {
                 output::ContractMember::FunctionDefinition(
                     self.transform_function_definition(function_definition),
                 )
             }
-            input::ContractMember::StructDefinition(ref struct_definition) => {
+            input::ContractMember::StructDefinition(struct_definition) => {
                 output::ContractMember::StructDefinition(
                     self.transform_struct_definition(struct_definition),
                 )
             }
-            input::ContractMember::EnumDefinition(ref enum_definition) => {
+            input::ContractMember::EnumDefinition(enum_definition) => {
                 output::ContractMember::EnumDefinition(
                     self.transform_enum_definition(enum_definition),
                 )
             }
-            input::ContractMember::EventDefinition(ref event_definition) => {
+            input::ContractMember::EventDefinition(event_definition) => {
                 output::ContractMember::EventDefinition(
                     self.transform_event_definition(event_definition),
                 )
             }
-            input::ContractMember::ErrorDefinition(ref error_definition) => {
+            input::ContractMember::ErrorDefinition(error_definition) => {
                 output::ContractMember::ErrorDefinition(
                     self.transform_error_definition(error_definition),
                 )
             }
             input::ContractMember::UserDefinedValueTypeDefinition(
-                ref user_defined_value_type_definition,
+                user_defined_value_type_definition,
             ) => output::ContractMember::UserDefinedValueTypeDefinition(
                 self.transform_user_defined_value_type_definition(
                     user_defined_value_type_definition,
                 ),
             ),
-            input::ContractMember::StateVariableDefinition(ref state_variable_definition) => {
+            input::ContractMember::StateVariableDefinition(state_variable_definition) => {
                 output::ContractMember::StateVariableDefinition(
                     self.transform_state_variable_definition(state_variable_definition),
                 )
@@ -1640,19 +1640,19 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::TypeName::ArrayTypeName(ref array_type_name) => {
+            input::TypeName::ArrayTypeName(array_type_name) => {
                 output::TypeName::ArrayTypeName(self.transform_array_type_name(array_type_name))
             }
-            input::TypeName::FunctionType(ref function_type) => {
+            input::TypeName::FunctionType(function_type) => {
                 output::TypeName::FunctionType(self.transform_function_type(function_type))
             }
-            input::TypeName::MappingType(ref mapping_type) => {
+            input::TypeName::MappingType(mapping_type) => {
                 output::TypeName::MappingType(self.transform_mapping_type(mapping_type))
             }
-            input::TypeName::ElementaryType(ref elementary_type) => {
+            input::TypeName::ElementaryType(elementary_type) => {
                 output::TypeName::ElementaryType(self.transform_elementary_type(elementary_type))
             }
-            input::TypeName::IdentifierPath(ref identifier_path) => {
+            input::TypeName::IdentifierPath(identifier_path) => {
                 output::TypeName::IdentifierPath(self.transform_identifier_path(identifier_path))
             }
         }
@@ -1668,7 +1668,7 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::ElementaryType::AddressType(ref address_type) => {
+            input::ElementaryType::AddressType(address_type) => {
                 output::ElementaryType::AddressType(self.transform_address_type(address_type))
             }
             input::ElementaryType::BytesKeyword(node) => {
@@ -1702,69 +1702,67 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Statement::IfStatement(ref if_statement) => {
+            input::Statement::IfStatement(if_statement) => {
                 output::Statement::IfStatement(self.transform_if_statement(if_statement))
             }
-            input::Statement::ForStatement(ref for_statement) => {
+            input::Statement::ForStatement(for_statement) => {
                 output::Statement::ForStatement(self.transform_for_statement(for_statement))
             }
-            input::Statement::WhileStatement(ref while_statement) => {
+            input::Statement::WhileStatement(while_statement) => {
                 output::Statement::WhileStatement(self.transform_while_statement(while_statement))
             }
-            input::Statement::DoWhileStatement(ref do_while_statement) => {
+            input::Statement::DoWhileStatement(do_while_statement) => {
                 output::Statement::DoWhileStatement(
                     self.transform_do_while_statement(do_while_statement),
                 )
             }
-            input::Statement::ContinueStatement(ref continue_statement) => {
+            input::Statement::ContinueStatement(continue_statement) => {
                 output::Statement::ContinueStatement(
                     self.transform_continue_statement(continue_statement),
                 )
             }
-            input::Statement::BreakStatement(ref break_statement) => {
+            input::Statement::BreakStatement(break_statement) => {
                 output::Statement::BreakStatement(self.transform_break_statement(break_statement))
             }
-            input::Statement::ReturnStatement(ref return_statement) => {
+            input::Statement::ReturnStatement(return_statement) => {
                 output::Statement::ReturnStatement(
                     self.transform_return_statement(return_statement),
                 )
             }
-            input::Statement::ThrowStatement(ref throw_statement) => {
+            input::Statement::ThrowStatement(throw_statement) => {
                 output::Statement::ThrowStatement(self.transform_throw_statement(throw_statement))
             }
-            input::Statement::EmitStatement(ref emit_statement) => {
+            input::Statement::EmitStatement(emit_statement) => {
                 output::Statement::EmitStatement(self.transform_emit_statement(emit_statement))
             }
-            input::Statement::TryStatement(ref try_statement) => {
+            input::Statement::TryStatement(try_statement) => {
                 output::Statement::TryStatement(self.transform_try_statement(try_statement))
             }
-            input::Statement::RevertStatement(ref revert_statement) => {
+            input::Statement::RevertStatement(revert_statement) => {
                 output::Statement::RevertStatement(
                     self.transform_revert_statement(revert_statement),
                 )
             }
-            input::Statement::AssemblyStatement(ref assembly_statement) => {
+            input::Statement::AssemblyStatement(assembly_statement) => {
                 output::Statement::AssemblyStatement(
                     self.transform_assembly_statement(assembly_statement),
                 )
             }
-            input::Statement::Block(ref block) => {
-                output::Statement::Block(self.transform_block(block))
-            }
-            input::Statement::UncheckedBlock(ref unchecked_block) => {
+            input::Statement::Block(block) => output::Statement::Block(self.transform_block(block)),
+            input::Statement::UncheckedBlock(unchecked_block) => {
                 output::Statement::UncheckedBlock(self.transform_unchecked_block(unchecked_block))
             }
-            input::Statement::TupleDeconstructionStatement(ref tuple_deconstruction_statement) => {
+            input::Statement::TupleDeconstructionStatement(tuple_deconstruction_statement) => {
                 output::Statement::TupleDeconstructionStatement(
                     self.transform_tuple_deconstruction_statement(tuple_deconstruction_statement),
                 )
             }
-            input::Statement::VariableDeclarationStatement(ref variable_declaration_statement) => {
+            input::Statement::VariableDeclarationStatement(variable_declaration_statement) => {
                 output::Statement::VariableDeclarationStatement(
                     self.transform_variable_declaration_statement(variable_declaration_statement),
                 )
             }
-            input::Statement::ExpressionStatement(ref expression_statement) => {
+            input::Statement::ExpressionStatement(expression_statement) => {
                 output::Statement::ExpressionStatement(
                     self.transform_expression_statement(expression_statement),
                 )
@@ -1802,16 +1800,16 @@ pub trait Transformer {
         #[allow(clippy::match_single_binding)]
         match source {
             input::ForStatementInitialization::TupleDeconstructionStatement(
-                ref tuple_deconstruction_statement,
+                tuple_deconstruction_statement,
             ) => output::ForStatementInitialization::TupleDeconstructionStatement(
                 self.transform_tuple_deconstruction_statement(tuple_deconstruction_statement),
             ),
             input::ForStatementInitialization::VariableDeclarationStatement(
-                ref variable_declaration_statement,
+                variable_declaration_statement,
             ) => output::ForStatementInitialization::VariableDeclarationStatement(
                 self.transform_variable_declaration_statement(variable_declaration_statement),
             ),
-            input::ForStatementInitialization::ExpressionStatement(ref expression_statement) => {
+            input::ForStatementInitialization::ExpressionStatement(expression_statement) => {
                 output::ForStatementInitialization::ExpressionStatement(
                     self.transform_expression_statement(expression_statement),
                 )
@@ -1835,7 +1833,7 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::ForStatementCondition::ExpressionStatement(ref expression_statement) => {
+            input::ForStatementCondition::ExpressionStatement(expression_statement) => {
                 output::ForStatementCondition::ExpressionStatement(
                     self.transform_expression_statement(expression_statement),
                 )
@@ -1854,129 +1852,129 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Expression::AssignmentExpression(ref assignment_expression) => {
+            input::Expression::AssignmentExpression(assignment_expression) => {
                 output::Expression::AssignmentExpression(
                     self.transform_assignment_expression(assignment_expression),
                 )
             }
-            input::Expression::ConditionalExpression(ref conditional_expression) => {
+            input::Expression::ConditionalExpression(conditional_expression) => {
                 output::Expression::ConditionalExpression(
                     self.transform_conditional_expression(conditional_expression),
                 )
             }
-            input::Expression::OrExpression(ref or_expression) => {
+            input::Expression::OrExpression(or_expression) => {
                 output::Expression::OrExpression(self.transform_or_expression(or_expression))
             }
-            input::Expression::AndExpression(ref and_expression) => {
+            input::Expression::AndExpression(and_expression) => {
                 output::Expression::AndExpression(self.transform_and_expression(and_expression))
             }
-            input::Expression::EqualityExpression(ref equality_expression) => {
+            input::Expression::EqualityExpression(equality_expression) => {
                 output::Expression::EqualityExpression(
                     self.transform_equality_expression(equality_expression),
                 )
             }
-            input::Expression::InequalityExpression(ref inequality_expression) => {
+            input::Expression::InequalityExpression(inequality_expression) => {
                 output::Expression::InequalityExpression(
                     self.transform_inequality_expression(inequality_expression),
                 )
             }
-            input::Expression::BitwiseOrExpression(ref bitwise_or_expression) => {
+            input::Expression::BitwiseOrExpression(bitwise_or_expression) => {
                 output::Expression::BitwiseOrExpression(
                     self.transform_bitwise_or_expression(bitwise_or_expression),
                 )
             }
-            input::Expression::BitwiseXorExpression(ref bitwise_xor_expression) => {
+            input::Expression::BitwiseXorExpression(bitwise_xor_expression) => {
                 output::Expression::BitwiseXorExpression(
                     self.transform_bitwise_xor_expression(bitwise_xor_expression),
                 )
             }
-            input::Expression::BitwiseAndExpression(ref bitwise_and_expression) => {
+            input::Expression::BitwiseAndExpression(bitwise_and_expression) => {
                 output::Expression::BitwiseAndExpression(
                     self.transform_bitwise_and_expression(bitwise_and_expression),
                 )
             }
-            input::Expression::ShiftExpression(ref shift_expression) => {
+            input::Expression::ShiftExpression(shift_expression) => {
                 output::Expression::ShiftExpression(
                     self.transform_shift_expression(shift_expression),
                 )
             }
-            input::Expression::AdditiveExpression(ref additive_expression) => {
+            input::Expression::AdditiveExpression(additive_expression) => {
                 output::Expression::AdditiveExpression(
                     self.transform_additive_expression(additive_expression),
                 )
             }
-            input::Expression::MultiplicativeExpression(ref multiplicative_expression) => {
+            input::Expression::MultiplicativeExpression(multiplicative_expression) => {
                 output::Expression::MultiplicativeExpression(
                     self.transform_multiplicative_expression(multiplicative_expression),
                 )
             }
-            input::Expression::ExponentiationExpression(ref exponentiation_expression) => {
+            input::Expression::ExponentiationExpression(exponentiation_expression) => {
                 output::Expression::ExponentiationExpression(
                     self.transform_exponentiation_expression(exponentiation_expression),
                 )
             }
-            input::Expression::PostfixExpression(ref postfix_expression) => {
+            input::Expression::PostfixExpression(postfix_expression) => {
                 output::Expression::PostfixExpression(
                     self.transform_postfix_expression(postfix_expression),
                 )
             }
-            input::Expression::PrefixExpression(ref prefix_expression) => {
+            input::Expression::PrefixExpression(prefix_expression) => {
                 output::Expression::PrefixExpression(
                     self.transform_prefix_expression(prefix_expression),
                 )
             }
-            input::Expression::FunctionCallExpression(ref function_call_expression) => {
+            input::Expression::FunctionCallExpression(function_call_expression) => {
                 output::Expression::FunctionCallExpression(
                     self.transform_function_call_expression(function_call_expression),
                 )
             }
-            input::Expression::CallOptionsExpression(ref call_options_expression) => {
+            input::Expression::CallOptionsExpression(call_options_expression) => {
                 output::Expression::CallOptionsExpression(
                     self.transform_call_options_expression(call_options_expression),
                 )
             }
-            input::Expression::MemberAccessExpression(ref member_access_expression) => {
+            input::Expression::MemberAccessExpression(member_access_expression) => {
                 output::Expression::MemberAccessExpression(
                     self.transform_member_access_expression(member_access_expression),
                 )
             }
-            input::Expression::IndexAccessExpression(ref index_access_expression) => {
+            input::Expression::IndexAccessExpression(index_access_expression) => {
                 output::Expression::IndexAccessExpression(
                     self.transform_index_access_expression(index_access_expression),
                 )
             }
-            input::Expression::NewExpression(ref new_expression) => {
+            input::Expression::NewExpression(new_expression) => {
                 output::Expression::NewExpression(self.transform_new_expression(new_expression))
             }
-            input::Expression::TupleExpression(ref tuple_expression) => {
+            input::Expression::TupleExpression(tuple_expression) => {
                 output::Expression::TupleExpression(
                     self.transform_tuple_expression(tuple_expression),
                 )
             }
-            input::Expression::TypeExpression(ref type_expression) => {
+            input::Expression::TypeExpression(type_expression) => {
                 output::Expression::TypeExpression(self.transform_type_expression(type_expression))
             }
-            input::Expression::ArrayExpression(ref array_expression) => {
+            input::Expression::ArrayExpression(array_expression) => {
                 output::Expression::ArrayExpression(
                     self.transform_array_expression(array_expression),
                 )
             }
-            input::Expression::HexNumberExpression(ref hex_number_expression) => {
+            input::Expression::HexNumberExpression(hex_number_expression) => {
                 output::Expression::HexNumberExpression(
                     self.transform_hex_number_expression(hex_number_expression),
                 )
             }
-            input::Expression::DecimalNumberExpression(ref decimal_number_expression) => {
+            input::Expression::DecimalNumberExpression(decimal_number_expression) => {
                 output::Expression::DecimalNumberExpression(
                     self.transform_decimal_number_expression(decimal_number_expression),
                 )
             }
-            input::Expression::StringExpression(ref string_expression) => {
+            input::Expression::StringExpression(string_expression) => {
                 output::Expression::StringExpression(
                     self.transform_string_expression(string_expression),
                 )
             }
-            input::Expression::ElementaryType(ref elementary_type) => {
+            input::Expression::ElementaryType(elementary_type) => {
                 output::Expression::ElementaryType(self.transform_elementary_type(elementary_type))
             }
             input::Expression::Identifier(node) => output::Expression::Identifier(Rc::clone(node)),
@@ -2053,65 +2051,65 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::YulStatement::YulBlock(ref yul_block) => {
+            input::YulStatement::YulBlock(yul_block) => {
                 output::YulStatement::YulBlock(self.transform_yul_block(yul_block))
             }
-            input::YulStatement::YulFunctionDefinition(ref yul_function_definition) => {
+            input::YulStatement::YulFunctionDefinition(yul_function_definition) => {
                 output::YulStatement::YulFunctionDefinition(
                     self.transform_yul_function_definition(yul_function_definition),
                 )
             }
-            input::YulStatement::YulStackAssignmentStatement(
-                ref yul_stack_assignment_statement,
-            ) => output::YulStatement::YulStackAssignmentStatement(
-                self.transform_yul_stack_assignment_statement(yul_stack_assignment_statement),
-            ),
-            input::YulStatement::YulIfStatement(ref yul_if_statement) => {
+            input::YulStatement::YulStackAssignmentStatement(yul_stack_assignment_statement) => {
+                output::YulStatement::YulStackAssignmentStatement(
+                    self.transform_yul_stack_assignment_statement(yul_stack_assignment_statement),
+                )
+            }
+            input::YulStatement::YulIfStatement(yul_if_statement) => {
                 output::YulStatement::YulIfStatement(
                     self.transform_yul_if_statement(yul_if_statement),
                 )
             }
-            input::YulStatement::YulForStatement(ref yul_for_statement) => {
+            input::YulStatement::YulForStatement(yul_for_statement) => {
                 output::YulStatement::YulForStatement(
                     self.transform_yul_for_statement(yul_for_statement),
                 )
             }
-            input::YulStatement::YulSwitchStatement(ref yul_switch_statement) => {
+            input::YulStatement::YulSwitchStatement(yul_switch_statement) => {
                 output::YulStatement::YulSwitchStatement(
                     self.transform_yul_switch_statement(yul_switch_statement),
                 )
             }
-            input::YulStatement::YulLeaveStatement(ref yul_leave_statement) => {
+            input::YulStatement::YulLeaveStatement(yul_leave_statement) => {
                 output::YulStatement::YulLeaveStatement(
                     self.transform_yul_leave_statement(yul_leave_statement),
                 )
             }
-            input::YulStatement::YulBreakStatement(ref yul_break_statement) => {
+            input::YulStatement::YulBreakStatement(yul_break_statement) => {
                 output::YulStatement::YulBreakStatement(
                     self.transform_yul_break_statement(yul_break_statement),
                 )
             }
-            input::YulStatement::YulContinueStatement(ref yul_continue_statement) => {
+            input::YulStatement::YulContinueStatement(yul_continue_statement) => {
                 output::YulStatement::YulContinueStatement(
                     self.transform_yul_continue_statement(yul_continue_statement),
                 )
             }
             input::YulStatement::YulVariableAssignmentStatement(
-                ref yul_variable_assignment_statement,
+                yul_variable_assignment_statement,
             ) => output::YulStatement::YulVariableAssignmentStatement(
                 self.transform_yul_variable_assignment_statement(yul_variable_assignment_statement),
             ),
-            input::YulStatement::YulLabel(ref yul_label) => {
+            input::YulStatement::YulLabel(yul_label) => {
                 output::YulStatement::YulLabel(self.transform_yul_label(yul_label))
             }
             input::YulStatement::YulVariableDeclarationStatement(
-                ref yul_variable_declaration_statement,
+                yul_variable_declaration_statement,
             ) => output::YulStatement::YulVariableDeclarationStatement(
                 self.transform_yul_variable_declaration_statement(
                     yul_variable_declaration_statement,
                 ),
             ),
-            input::YulStatement::YulExpression(ref yul_expression) => {
+            input::YulStatement::YulExpression(yul_expression) => {
                 output::YulStatement::YulExpression(self.transform_yul_expression(yul_expression))
             }
         }
@@ -2127,7 +2125,7 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::YulAssignmentOperator::YulColonAndEqual(ref yul_colon_and_equal) => {
+            input::YulAssignmentOperator::YulColonAndEqual(yul_colon_and_equal) => {
                 output::YulAssignmentOperator::YulColonAndEqual(
                     self.transform_yul_colon_and_equal(yul_colon_and_equal),
                 )
@@ -2149,7 +2147,7 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::YulStackAssignmentOperator::YulEqualAndColon(ref yul_equal_and_colon) => {
+            input::YulStackAssignmentOperator::YulEqualAndColon(yul_equal_and_colon) => {
                 output::YulStackAssignmentOperator::YulEqualAndColon(
                     self.transform_yul_equal_and_colon(yul_equal_and_colon),
                 )
@@ -2173,12 +2171,12 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::YulSwitchCase::YulDefaultCase(ref yul_default_case) => {
+            input::YulSwitchCase::YulDefaultCase(yul_default_case) => {
                 output::YulSwitchCase::YulDefaultCase(
                     self.transform_yul_default_case(yul_default_case),
                 )
             }
-            input::YulSwitchCase::YulValueCase(ref yul_value_case) => {
+            input::YulSwitchCase::YulValueCase(yul_value_case) => {
                 output::YulSwitchCase::YulValueCase(self.transform_yul_value_case(yul_value_case))
             }
         }
@@ -2197,15 +2195,15 @@ pub trait Transformer {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::YulExpression::YulFunctionCallExpression(ref yul_function_call_expression) => {
+            input::YulExpression::YulFunctionCallExpression(yul_function_call_expression) => {
                 output::YulExpression::YulFunctionCallExpression(
                     self.transform_yul_function_call_expression(yul_function_call_expression),
                 )
             }
-            input::YulExpression::YulLiteral(ref yul_literal) => {
+            input::YulExpression::YulLiteral(yul_literal) => {
                 output::YulExpression::YulLiteral(self.transform_yul_literal(yul_literal))
             }
-            input::YulExpression::YulPath(ref yul_path) => {
+            input::YulExpression::YulPath(yul_path) => {
                 output::YulExpression::YulPath(self.transform_yul_path(yul_path))
             }
         }

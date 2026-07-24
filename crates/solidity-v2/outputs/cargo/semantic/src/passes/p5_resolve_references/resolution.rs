@@ -100,17 +100,17 @@ impl Pass<'_> {
                         .get_definition_ids();
 
                     // Consider active `using` directives for `this`
-                    if let Typing::This(receiver_type_id) = typing {
-                        if matches!(
+                    if let Typing::This(receiver_type_id) = typing
+                        && matches!(
                             self.types.get_type_by_id(*receiver_type_id),
                             Type::Contract(_)
-                        ) {
-                            self.add_attached_functions_for_type(
-                                *receiver_type_id,
-                                symbol,
-                                &mut definition_ids,
-                            );
-                        }
+                        )
+                    {
+                        self.add_attached_functions_for_type(
+                            *receiver_type_id,
+                            symbol,
+                            &mut definition_ids,
+                        );
                     }
 
                     Resolution::from(definition_ids)
