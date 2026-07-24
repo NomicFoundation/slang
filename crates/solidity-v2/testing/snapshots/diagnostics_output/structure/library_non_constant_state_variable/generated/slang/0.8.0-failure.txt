@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/library-non-constant-state-variable] Error: Library cannot have non-constant state variables
+   ╭─[input.sol:6:5]
+   │
+ 6 │     uint x;
+   │     ───┬───  
+   │        ╰───── Error occurred here.
+───╯
