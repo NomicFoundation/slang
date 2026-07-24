@@ -454,11 +454,13 @@ impl Pass<'_> {
             }
             Typing::NewExpression(type_id) => {
                 match self.types.get_type_by_id(type_id) {
-                    Type::Array(_) | Type::Contract(_) => Typing::Resolved(type_id),
-                    _ => {
-                        // only contracts can be created with `new`
-                        Typing::Unresolved
+                    // `new` creates a contract, a dynamic array (`new T[](n)`),
+                    // or a dynamic `bytes`/`string` (`new bytes(n)`), yielding a
+                    // value of that type.
+                    Type::Array(_) | Type::Contract(_) | Type::Bytes(_) | Type::String(_) => {
+                        Typing::Resolved(type_id)
                     }
+                    _ => Typing::Unresolved,
                 }
             }
             Typing::BuiltIn(built_in) => self
