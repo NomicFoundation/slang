@@ -80,6 +80,7 @@ pub fn slang_solidity_v2_semantic::binder::Binder::get_linearised_bases(&self, s
 pub fn slang_solidity_v2_semantic::binder::Binder::get_references_by_definition_id(&self, slang_solidity_v2_common::nodes::NodeId) -> alloc::vec::Vec<slang_solidity_v2_common::nodes::NodeId>
 pub fn slang_solidity_v2_semantic::binder::Binder::node_typing(&self, slang_solidity_v2_common::nodes::NodeId) -> slang_solidity_v2_semantic::binder::Typing
 pub fn slang_solidity_v2_semantic::binder::Binder::references(&self) -> &slang_solidity_v2_common::collections::aliases::Map<slang_solidity_v2_common::nodes::NodeId, slang_solidity_v2_semantic::binder::Reference>
+pub fn slang_solidity_v2_semantic::binder::Binder::resolved_operator_function(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl core::default::Default for slang_solidity_v2_semantic::binder::Binder
 pub fn slang_solidity_v2_semantic::binder::Binder::default() -> slang_solidity_v2_semantic::binder::Binder
 pub struct slang_solidity_v2_semantic::binder::Reference

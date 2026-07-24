@@ -5,7 +5,7 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 use slang_solidity_v2_ir::ir::NodeIdentity;
 
 use super::Pass;
-use crate::binder::{Reference, Resolution, Typing};
+use crate::binder::{Reference, Resolution, Typing, UsingOperator};
 use crate::built_ins::InternalBuiltIn;
 use crate::passes::common::filter_overriden_definitions;
 use crate::types::{
@@ -224,12 +224,14 @@ impl Visitor for Pass<'_> {
         // TODO(validation) SDR[55]: check that both operands have a compatible type
         self.binder
             .set_node_type(node.id(), Some(self.types.boolean()));
+        self.resolve_operator_function(node.id(), (&node.operator).into(), &node.left_operand, 2);
     }
 
     fn leave_inequality_expression(&mut self, node: &ir::InequalityExpression) {
         // TODO(validation) SDR[55]: check that both operands have a compatible type
         self.binder
             .set_node_type(node.id(), Some(self.types.boolean()));
+        self.resolve_operator_function(node.id(), (&node.operator).into(), &node.left_operand, 2);
     }
 
     fn leave_bitwise_or_expression(&mut self, node: &ir::BitwiseOrExpression) {
@@ -239,6 +241,7 @@ impl Visitor for Pass<'_> {
             |l, r| l.bit_or(r),
         );
         self.binder.set_node_type(node.id(), type_id);
+        self.resolve_operator_function(node.id(), UsingOperator::Bar, &node.left_operand, 2);
     }
 
     fn leave_bitwise_xor_expression(&mut self, node: &ir::BitwiseXorExpression) {
@@ -248,6 +251,7 @@ impl Visitor for Pass<'_> {
             |l, r| l.bit_xor(r),
         );
         self.binder.set_node_type(node.id(), type_id);
+        self.resolve_operator_function(node.id(), UsingOperator::Caret, &node.left_operand, 2);
     }
 
     fn leave_bitwise_and_expression(&mut self, node: &ir::BitwiseAndExpression) {
@@ -257,6 +261,7 @@ impl Visitor for Pass<'_> {
             |l, r| l.bit_and(r),
         );
         self.binder.set_node_type(node.id(), type_id);
+        self.resolve_operator_function(node.id(), UsingOperator::Ampersand, &node.left_operand, 2);
     }
 
     fn leave_shift_expression(&mut self, node: &ir::ShiftExpression) {
@@ -284,6 +289,7 @@ impl Visitor for Pass<'_> {
             },
         );
         self.binder.set_node_type(node.id(), type_id);
+        self.resolve_operator_function(node.id(), (&node.operator).into(), &node.left_operand, 2);
     }
 
     fn leave_multiplicative_expression(&mut self, node: &ir::MultiplicativeExpression) {
@@ -297,6 +303,7 @@ impl Visitor for Pass<'_> {
             },
         );
         self.binder.set_node_type(node.id(), type_id);
+        self.resolve_operator_function(node.id(), (&node.operator).into(), &node.left_operand, 2);
     }
 
     fn leave_exponentiation_expression(&mut self, node: &ir::ExponentiationExpression) {
@@ -317,6 +324,12 @@ impl Visitor for Pass<'_> {
     fn leave_prefix_expression(&mut self, node: &ir::PrefixExpression) {
         let type_id = self.type_of_prefix_expression(node);
         self.binder.set_node_type(node.id(), type_id);
+        let operator = match &node.operator {
+            ir::PrefixExpressionOperator::Minus(_) => UsingOperator::Minus,
+            ir::PrefixExpressionOperator::Tilde(_) => UsingOperator::Tilde,
+            _ => return,
+        };
+        self.resolve_operator_function(node.id(), operator, &node.operand, 1);
     }
 
     fn leave_tuple_expression(&mut self, node: &ir::TupleExpression) {
