@@ -12,6 +12,7 @@ use crate::types::TypeRegistry;
 
 mod conflicts;
 mod resolution;
+mod switch;
 mod visitor;
 
 use conflicts::YulConflict;

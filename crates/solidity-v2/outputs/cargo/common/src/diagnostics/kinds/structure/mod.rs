@@ -7,6 +7,7 @@ mod contract_should_be_abstract;
 mod duplicate_catch_clause;
 mod duplicate_named_argument;
 mod duplicate_switch_default_case;
+mod duplicate_yul_switch_case;
 mod empty_enum;
 mod empty_struct;
 mod empty_tuple_component;
@@ -64,6 +65,7 @@ pub use contract_should_be_abstract::ContractShouldBeAbstract;
 pub use duplicate_catch_clause::{CatchClauseKind, DuplicateCatchClause};
 pub use duplicate_named_argument::DuplicateNamedArgument;
 pub use duplicate_switch_default_case::DuplicateSwitchDefaultCase;
+pub use duplicate_yul_switch_case::DuplicateYulSwitchCase;
 pub use empty_enum::EmptyEnum;
 pub use empty_struct::EmptyStruct;
 pub use empty_tuple_component::EmptyTupleComponent;
@@ -134,6 +136,9 @@ define_diagnostic_kind! {
 
         /// A `continue` statement appears outside of any loop.
         ContinueOutsideLoop(ContinueOutsideLoop),
+
+        /// A Yul `switch` statement declares more than one case with the same value.
+        DuplicateYulSwitchCase(DuplicateYulSwitchCase),
 
         /// Using directives are only allowed at the file level, or inside contracts and libraries.
         InvalidUsingDirectiveContainer(InvalidUsingDirectiveContainer),

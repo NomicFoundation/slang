@@ -1677,6 +1677,20 @@ mod structure {
         run("structure", "duplicate_panic_catch_clause")
     }
 
+    mod duplicate_yul_switch_case {
+        use super::*;
+
+        #[test]
+        fn distinct_values() -> Result<()> {
+            run("structure/duplicate_yul_switch_case", "distinct_values")
+        }
+
+        #[test]
+        fn equivalent_values() -> Result<()> {
+            run("structure/duplicate_yul_switch_case", "equivalent_values")
+        }
+    }
+
     #[test]
     fn empty_enum() -> Result<()> {
         run("structure", "empty_enum")

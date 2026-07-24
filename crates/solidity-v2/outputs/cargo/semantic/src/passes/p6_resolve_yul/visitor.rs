@@ -98,6 +98,14 @@ impl Visitor for Pass<'_> {
         false
     }
 
+    fn enter_yul_switch_statement(&mut self, node: &ir::YulSwitchStatement) -> bool {
+        self.check_duplicate_switch_cases(node);
+
+        // Continue descending so the switch expression and case bodies are
+        // resolved as usual.
+        true
+    }
+
     fn enter_yul_path(&mut self, items: &ir::YulPath) -> bool {
         if items.is_empty() {
             return false;
