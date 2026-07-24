@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/global-using-for-inside-contract] Error: "global" can only be used at file level.
+   ╭─[input.sol:8:5]
+   │
+ 8 │     using L for uint256 global;
+   │     ─────────────┬─────────────  
+   │                  ╰─────────────── Error occurred here.
+───╯

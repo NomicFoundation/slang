@@ -12,6 +12,8 @@ mod free_function_with_modifiers;
 mod free_function_with_override;
 mod function_must_be_implemented;
 mod function_name_matches_container;
+mod global_using_for_inside_contract;
+mod global_using_for_wildcard;
 mod interface_function_cannot_be_implemented;
 mod interface_function_not_external;
 mod interface_function_with_modifiers;
@@ -30,6 +32,7 @@ mod storage_layout_for_abstract_contract;
 mod unimplemented_function_with_modifiers;
 mod unimplemented_modifier_must_be_virtual;
 mod uninitialized_constant;
+mod using_for_wildcard_at_file_level;
 mod virtual_free_function;
 mod virtual_private_function;
 
@@ -47,6 +50,8 @@ pub use free_function_with_modifiers::FreeFunctionWithModifiers;
 pub use free_function_with_override::FreeFunctionWithOverride;
 pub use function_must_be_implemented::FunctionMustBeImplemented;
 pub use function_name_matches_container::FunctionNameMatchesContainer;
+pub use global_using_for_inside_contract::GlobalUsingForInsideContract;
+pub use global_using_for_wildcard::GlobalUsingForWildcard;
 pub use interface_function_cannot_be_implemented::InterfaceFunctionCannotBeImplemented;
 pub use interface_function_not_external::InterfaceFunctionNotExternal;
 pub use interface_function_with_modifiers::InterfaceFunctionWithModifiers;
@@ -66,6 +71,7 @@ pub use storage_layout_for_abstract_contract::StorageLayoutForAbstractContract;
 pub use unimplemented_function_with_modifiers::UnimplementedFunctionWithModifiers;
 pub use unimplemented_modifier_must_be_virtual::UnimplementedModifierMustBeVirtual;
 pub use uninitialized_constant::UninitializedConstant;
+pub use using_for_wildcard_at_file_level::UsingForWildcardAtFileLevel;
 pub use virtual_free_function::VirtualFreeFunction;
 pub use virtual_private_function::VirtualPrivateFunction;
 
@@ -85,6 +91,12 @@ define_diagnostic_kind! {
 
         /// Using directives are only allowed at the file level, or inside contracts and libraries.
         InvalidUsingDirectiveContainer(InvalidUsingDirectiveContainer),
+        /// A file-level `using` directive targets the wildcard type (`*`).
+        UsingForWildcardAtFileLevel(UsingForWildcardAtFileLevel),
+        /// A `global` `using` directive appears inside a contract, library or interface.
+        GlobalUsingForInsideContract(GlobalUsingForInsideContract),
+        /// A `global` `using` directive targets the wildcard type (`*`).
+        GlobalUsingForWildcard(GlobalUsingForWildcard),
 
         /// A function has the same name as its enclosing container.
         FunctionNameMatchesContainer(FunctionNameMatchesContainer),

@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[structure/global-using-for-wildcard] Error: Can only globally attach functions to specific types.
+    ╭─[input.sol:11:1]
+    │
+ 11 │ using L for * global;
+    │ ──────────┬──────────  
+    │           ╰──────────── Error occurred here.
+────╯
+
+[structure/using-for-wildcard-at-file-level] Error: The type has to be specified explicitly at file level (cannot use '*').
+    ╭─[input.sol:11:1]
+    │
+ 11 │ using L for * global;
+    │ ──────────┬──────────  
+    │           ╰──────────── Error occurred here.
+────╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
+    ╭─[input.sol:11:1]
+    │
+ 11 │ using L for * global;
+    │ ──────────┬──────────  
+    │           ╰──────────── Error occurred here.
+────╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
+    ╭─[input.sol:14:1]
+    │
+ 14 │ using L for S global;
+    │ ──────────┬──────────  
+    │           ╰──────────── Error occurred here.
+────╯

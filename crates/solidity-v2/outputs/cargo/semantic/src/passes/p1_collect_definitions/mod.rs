@@ -7,13 +7,13 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     AbstractContractPublicConstructor, BreakOutsideLoop, ConstructorNotInContract,
     ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FreeFunctionPayable,
     FreeFunctionVisibility, FreeFunctionWithModifiers, FreeFunctionWithOverride,
-    FunctionMustBeImplemented, FunctionNameMatchesContainer, InterfaceFunctionCannotBeImplemented,
-    InterfaceFunctionNotExternal, InterfaceFunctionWithModifiers, InvalidUsingDirectiveContainer,
-    LibraryPayableFunction, LibraryVirtualFunction, LibraryVirtualModifier,
-    MissingFunctionVisibility, ModifierInInterface, MultipleConstructors,
-    NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
-    UnimplementedFunctionWithModifiers, UnimplementedModifierMustBeVirtual, VirtualFreeFunction,
-    VirtualPrivateFunction,
+    FunctionMustBeImplemented, FunctionNameMatchesContainer, GlobalUsingForInsideContract,
+    GlobalUsingForWildcard, InterfaceFunctionCannotBeImplemented, InterfaceFunctionNotExternal,
+    InterfaceFunctionWithModifiers, InvalidUsingDirectiveContainer, LibraryPayableFunction,
+    LibraryVirtualFunction, LibraryVirtualModifier, MissingFunctionVisibility, ModifierInInterface,
+    MultipleConstructors, NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
+    UnimplementedFunctionWithModifiers, UnimplementedModifierMustBeVirtual,
+    UsingForWildcardAtFileLevel, VirtualFreeFunction, VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -510,7 +510,12 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
 
     fn enter_using_directive(&mut self, node: &ir::UsingDirective) -> bool {
         let current_scope_node_id = self.current_scope().node_id();
-        let in_allowed_container = match self.binder.find_definition_by_id(current_scope_node_id) {
+        let container = self.binder.find_definition_by_id(current_scope_node_id);
+        // `None` means the directive is at the file level; any definition here
+        // is a contract, library or interface (the only containers that can hold
+        // a `using` directive).
+        let at_file_level = container.is_none();
+        let in_allowed_container = match container {
             None => {
                 true // allow in global (file-level) scope
             }
@@ -521,6 +526,24 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
 
         if !in_allowed_container {
             self.report(node, InvalidUsingDirectiveContainer);
+        }
+
+        let targets_wildcard = matches!(node.target, ir::UsingTarget::Asterisk(_));
+
+        // The target type must be spelled out explicitly at the file level; the
+        // wildcard `*` is only allowed inside a contract, library or interface.
+        if at_file_level && targets_wildcard {
+            self.report(node, UsingForWildcardAtFileLevel);
+        }
+
+        // `global` is only meaningful at the file level.
+        if node.is_global && !at_file_level {
+            self.report(node, GlobalUsingForInsideContract);
+        }
+
+        // `global` can only attach functions to a specific type, not to `*`.
+        if node.is_global && targets_wildcard {
+            self.report(node, GlobalUsingForWildcard);
         }
 
         true

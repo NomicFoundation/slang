@@ -681,6 +681,8 @@ pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnostic
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::FreeFunctionWithOverride(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithOverride)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::FunctionMustBeImplemented(slang_solidity_v2_common::diagnostics::kinds::structure::FunctionMustBeImplemented)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::FunctionNameMatchesContainer(slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::GlobalUsingForInsideContract(slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::GlobalUsingForWildcard(slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::InterfaceFunctionCannotBeImplemented(slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionCannotBeImplemented)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::InterfaceFunctionNotExternal(slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionNotExternal)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::InterfaceFunctionWithModifiers(slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionWithModifiers)
@@ -699,6 +701,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnostic
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UnimplementedFunctionWithModifiers(slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedFunctionWithModifiers)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UnimplementedModifierMustBeVirtual(slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UninitializedConstant(slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UsingForWildcardAtFileLevel(slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::VirtualFreeFunction(slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::VirtualPrivateFunction(slang_solidity_v2_common::diagnostics::kinds::structure::VirtualPrivateFunction)
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -734,6 +737,10 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FunctionMustBeImplemented) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionCannotBeImplemented> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionCannotBeImplemented) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionNotExternal> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -772,6 +779,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::VirtualPrivateFunction> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -1052,6 +1061,44 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionCannotBeImplemented
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionCannotBeImplemented
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionCannotBeImplemented::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionCannotBeImplemented
@@ -1395,6 +1442,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction
@@ -2162,6 +2228,10 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FunctionMustBeImplemented) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionCannotBeImplemented> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionCannotBeImplemented) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionNotExternal> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -2200,6 +2270,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::VirtualPrivateFunction> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -2494,6 +2566,14 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FunctionNameMatchesContainer::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForInsideContract::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::GlobalUsingForWildcard::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionCannotBeImplemented
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionCannotBeImplemented::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::InterfaceFunctionCannotBeImplemented::message(&self) -> alloc::string::String
@@ -2570,6 +2650,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UninitializedConstant::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UsingForWildcardAtFileLevel::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::VirtualFreeFunction::message(&self) -> alloc::string::String
