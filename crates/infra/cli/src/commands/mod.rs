@@ -7,6 +7,7 @@ mod publish;
 mod run;
 mod setup;
 mod test;
+mod verify;
 mod watch;
 
 use anyhow::Result;
@@ -21,6 +22,7 @@ use crate::commands::publish::PublishController;
 use crate::commands::run::RunController;
 use crate::commands::setup::SetupController;
 use crate::commands::test::TestController;
+use crate::commands::verify::VerifyController;
 use crate::commands::watch::WatchController;
 
 #[derive(Debug, Parser)]
@@ -44,11 +46,16 @@ pub enum AppCommand {
     ///
     /// Running this command without any args will test everything.
     Test(TestController),
+    /// Run verification checks against external datasets (e.g. compiling solc's
+    /// semantic test suite with slang).
+    ///
+    /// Running this command without any args will run all verifications.
+    Verify(VerifyController),
     /// Run linters for formatting, spelling, broken links, and other issues.
     ///
     /// Running this command without any args will lint everything.
     Lint(LintController),
-    /// Perform a full CI run locally, by running 'setup', 'check', 'test', and 'lint' (in that order).
+    /// Perform a full CI run locally, by running 'setup', 'check', 'test', 'verify', and 'lint' (in that order).
     Ci(CiController),
     /// Run specific local binaries within this repository, forwarding any additional arguments along.
     Run(RunController),
@@ -74,6 +81,7 @@ impl AppCommand {
             AppCommand::Setup(controller) => controller.execute()?,
             AppCommand::Check(controller) => controller.execute()?,
             AppCommand::Test(controller) => controller.execute(),
+            AppCommand::Verify(controller) => controller.execute()?,
             AppCommand::Lint(controller) => controller.execute()?,
             AppCommand::Ci(controller) => controller.execute()?,
             AppCommand::Run(controller) => controller.execute(),

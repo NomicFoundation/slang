@@ -5,6 +5,7 @@ use crate::commands::check::CheckController;
 use crate::commands::lint::LintController;
 use crate::commands::setup::SetupController;
 use crate::commands::test::TestController;
+use crate::commands::verify::VerifyController;
 
 #[derive(Clone, Debug, Parser)]
 pub struct CiController;
@@ -18,6 +19,7 @@ impl CiController {
         // Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
         CheckController::default().execute()?;
         TestController::default().execute();
+        VerifyController::default().execute()?;
         LintController::default().execute()?;
 
         Ok(())

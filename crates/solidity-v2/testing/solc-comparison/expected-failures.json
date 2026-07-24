@@ -1,0 +1,214 @@
+{
+  "0.8.7": [
+    "inlineAssembly/basefee_berlin_function.sol"
+  ],
+  "0.8.8": [
+    "inlineAssembly/basefee_berlin_function.sol"
+  ],
+  "0.8.9": [
+    "inlineAssembly/basefee_berlin_function.sol"
+  ],
+  "0.8.10": [
+    "inlineAssembly/basefee_berlin_function.sol"
+  ],
+  "0.8.11": [
+    "inlineAssembly/basefee_berlin_function.sol"
+  ],
+  "0.8.12": [
+    "inlineAssembly/basefee_berlin_function.sol"
+  ],
+  "0.8.13": [
+    "inlineAssembly/basefee_berlin_function.sol"
+  ],
+  "0.8.14": [
+    "inlineAssembly/basefee_berlin_function.sol"
+  ],
+  "0.8.15": [
+    "inlineAssembly/basefee_berlin_function.sol"
+  ],
+  "0.8.16": [
+    "inlineAssembly/basefee_berlin_function.sol"
+  ],
+  "0.8.17": [
+    "inlineAssembly/basefee_berlin_function.sol"
+  ],
+  "0.8.18": [
+    "inlineAssembly/basefee_berlin_function.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ],
+  "0.8.19": [
+    "inlineAssembly/basefee_berlin_function.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ],
+  "0.8.20": [
+    "inlineAssembly/basefee_berlin_function.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ],
+  "0.8.21": [
+    "inlineAssembly/basefee_berlin_function.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ],
+  "0.8.22": [
+    "inlineAssembly/basefee_berlin_function.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ],
+  "0.8.23": [
+    "inlineAssembly/basefee_berlin_function.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ],
+  "0.8.24": [
+    "experimental/stub.sol",
+    "experimental/type_class.sol",
+    "inlineAssembly/basefee_berlin_function.sol",
+    "inlineAssembly/blobbasefee_shanghai_function.sol",
+    "inlineAssembly/blobhash_pre_cancun.sol",
+    "inlineAssembly/mcopy_as_identifier_pre_cancun.sol",
+    "inlineAssembly/tload_tstore_not_reserved_before_cancun.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ],
+  "0.8.25": [
+    "experimental/stub.sol",
+    "experimental/type_class.sol",
+    "inlineAssembly/basefee_berlin_function.sol",
+    "inlineAssembly/blobbasefee_shanghai_function.sol",
+    "inlineAssembly/blobhash_pre_cancun.sol",
+    "inlineAssembly/mcopy_as_identifier_pre_cancun.sol",
+    "inlineAssembly/tload_tstore_not_reserved_before_cancun.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ],
+  "0.8.26": [
+    "experimental/stub.sol",
+    "experimental/type_class.sol",
+    "inlineAssembly/basefee_berlin_function.sol",
+    "inlineAssembly/blobbasefee_shanghai_function.sol",
+    "inlineAssembly/blobhash_pre_cancun.sol",
+    "inlineAssembly/mcopy_as_identifier_pre_cancun.sol",
+    "inlineAssembly/tload_tstore_not_reserved_before_cancun.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ],
+  "0.8.27": [
+    "experimental/stub.sol",
+    "experimental/type_class.sol",
+    "inlineAssembly/basefee_berlin_function.sol",
+    "inlineAssembly/blobbasefee_shanghai_function.sol",
+    "inlineAssembly/blobhash_pre_cancun.sol",
+    "inlineAssembly/mcopy_as_identifier_pre_cancun.sol",
+    "inlineAssembly/tload_tstore_not_reserved_before_cancun.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ],
+  "0.8.28": [
+    "experimental/stub.sol",
+    "experimental/type_class.sol",
+    "inlineAssembly/basefee_berlin_function.sol",
+    "inlineAssembly/blobbasefee_shanghai_function.sol",
+    "inlineAssembly/blobhash_pre_cancun.sol",
+    "inlineAssembly/mcopy_as_identifier_pre_cancun.sol",
+    "inlineAssembly/tload_tstore_not_reserved_before_cancun.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ],
+  "0.8.29": [
+    "experimental/stub.sol",
+    "experimental/type_class.sol",
+    "inlineAssembly/basefee_berlin_function.sol",
+    "inlineAssembly/blobbasefee_shanghai_function.sol",
+    "inlineAssembly/blobhash_pre_cancun.sol",
+    "inlineAssembly/mcopy_as_identifier_pre_cancun.sol",
+    "inlineAssembly/tload_tstore_not_reserved_before_cancun.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ],
+  "0.8.30": [
+    "experimental/stub.sol",
+    "experimental/type_class.sol",
+    "inlineAssembly/basefee_berlin_function.sol",
+    "inlineAssembly/blobbasefee_shanghai_function.sol",
+    "inlineAssembly/blobhash_pre_cancun.sol",
+    "inlineAssembly/mcopy_as_identifier_pre_cancun.sol",
+    "inlineAssembly/tload_tstore_not_reserved_before_cancun.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ],
+  "0.8.31": [
+    "experimental/stub.sol",
+    "experimental/type_class.sol",
+    "inlineAssembly/basefee_berlin_function.sol",
+    "inlineAssembly/blobbasefee_shanghai_function.sol",
+    "inlineAssembly/blobhash_pre_cancun.sol",
+    "inlineAssembly/clz_pre_osaka.sol",
+    "inlineAssembly/mcopy_as_identifier_pre_cancun.sol",
+    "inlineAssembly/tload_tstore_not_reserved_before_cancun.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ],
+  "0.8.32": [
+    "experimental/stub.sol",
+    "experimental/type_class.sol",
+    "inlineAssembly/basefee_berlin_function.sol",
+    "inlineAssembly/blobbasefee_shanghai_function.sol",
+    "inlineAssembly/blobhash_pre_cancun.sol",
+    "inlineAssembly/clz_pre_osaka.sol",
+    "inlineAssembly/mcopy_as_identifier_pre_cancun.sol",
+    "inlineAssembly/tload_tstore_not_reserved_before_cancun.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ],
+  "0.8.33": [
+    "experimental/stub.sol",
+    "experimental/type_class.sol",
+    "inlineAssembly/basefee_berlin_function.sol",
+    "inlineAssembly/blobbasefee_shanghai_function.sol",
+    "inlineAssembly/blobhash_pre_cancun.sol",
+    "inlineAssembly/clz_pre_osaka.sol",
+    "inlineAssembly/mcopy_as_identifier_pre_cancun.sol",
+    "inlineAssembly/tload_tstore_not_reserved_before_cancun.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ],
+  "0.8.34": [
+    "experimental/stub.sol",
+    "experimental/type_class.sol",
+    "inlineAssembly/basefee_berlin_function.sol",
+    "inlineAssembly/blobbasefee_shanghai_function.sol",
+    "inlineAssembly/blobhash_pre_cancun.sol",
+    "inlineAssembly/clz_pre_osaka.sol",
+    "inlineAssembly/mcopy_as_identifier_pre_cancun.sol",
+    "inlineAssembly/tload_tstore_not_reserved_before_cancun.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ],
+  "0.8.35": [
+    "experimental/stub.sol",
+    "experimental/type_class.sol",
+    "inlineAssembly/basefee_berlin_function.sol",
+    "inlineAssembly/blobbasefee_shanghai_function.sol",
+    "inlineAssembly/blobhash_pre_cancun.sol",
+    "inlineAssembly/clz_pre_osaka.sol",
+    "inlineAssembly/mcopy_as_identifier_pre_cancun.sol",
+    "inlineAssembly/tload_tstore_not_reserved_before_cancun.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ],
+  "0.8.36": [
+    "experimental/stub.sol",
+    "experimental/type_class.sol",
+    "inlineAssembly/basefee_berlin_function.sol",
+    "inlineAssembly/blobbasefee_shanghai_function.sol",
+    "inlineAssembly/blobhash_pre_cancun.sol",
+    "inlineAssembly/clz_pre_osaka.sol",
+    "inlineAssembly/mcopy_as_identifier_pre_cancun.sol",
+    "inlineAssembly/tload_tstore_not_reserved_before_cancun.sol",
+    "state/block_difficulty_post_paris.sol",
+    "state/block_prevrandao_pre_paris.sol"
+  ]
+}
