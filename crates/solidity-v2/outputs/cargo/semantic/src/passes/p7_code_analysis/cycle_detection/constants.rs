@@ -1,8 +1,8 @@
 use slang_solidity_v2_common::collections::{SortedMap, SortedSet};
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::semantic::{
     CyclicConstantDependency, CyclicDependencyValidatorExhausted,
 };
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;

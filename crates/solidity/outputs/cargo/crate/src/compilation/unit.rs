@@ -6,7 +6,7 @@ use semver::Version;
 
 #[cfg(feature = "__private_backend_api")]
 use crate::backend::SemanticAnalysis;
-use crate::bindings::{create_with_resolver_internal, BindingGraph};
+use crate::bindings::{BindingGraph, create_with_resolver_internal};
 use crate::compilation::File;
 use crate::cst::{Cursor, KindTypes};
 

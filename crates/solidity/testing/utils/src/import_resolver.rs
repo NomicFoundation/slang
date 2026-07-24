@@ -1,7 +1,7 @@
 use std::path::{Component, PathBuf};
 use std::str::FromStr;
 
-use anyhow::{bail, Error, Result};
+use anyhow::{Error, Result, bail};
 use url::Url;
 
 pub struct ImportResolver {

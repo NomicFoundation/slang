@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use language_v2_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
+use language_v2_internal_macros::{ParseInputTokens, WriteOutputTokens, derive_spanned_type};
 use serde::{Deserialize, Serialize};
 use strum::EnumDiscriminants;
 

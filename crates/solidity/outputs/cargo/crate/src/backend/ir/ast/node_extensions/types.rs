@@ -4,7 +4,7 @@ use paste::paste;
 
 use super::Definition;
 use crate::backend::types::{self, DataLocation, FunctionTypeKind, LiteralKind, TypeId};
-use crate::backend::{binder, SemanticAnalysis};
+use crate::backend::{SemanticAnalysis, binder};
 
 // __SLANG_TYPE_TYPES__ keep in sync with binder types
 #[derive(Clone)]

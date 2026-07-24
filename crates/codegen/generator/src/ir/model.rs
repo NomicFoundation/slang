@@ -1,7 +1,7 @@
 use indexmap::IndexMap;
 use language_definition::model;
-use serde::ser::SerializeMap;
 use serde::Serialize;
+use serde::ser::SerializeMap;
 
 #[derive(Default, Serialize)]
 pub struct IrModel {

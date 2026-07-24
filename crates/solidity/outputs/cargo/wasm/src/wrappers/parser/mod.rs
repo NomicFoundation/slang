@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::utils::{define_wrapper, FromFFI, IntoFFI};
+use crate::utils::{FromFFI, IntoFFI, define_wrapper};
 
 mod ffi {
     pub use crate::bindgen::exports::nomic_foundation::slang::cst::{Cursor, NonterminalNode};

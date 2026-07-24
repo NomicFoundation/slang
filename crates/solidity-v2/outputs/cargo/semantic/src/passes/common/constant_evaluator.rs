@@ -1,11 +1,11 @@
 use num_bigint::{BigInt, Sign};
 use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicConstantDefinition;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     ConstantArithmeticError, IncompatibleConstantOperator, TypeSystemDiagnosticKind,
 };
-use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_ir::ir;
 
@@ -13,8 +13,8 @@ use crate::binder::{Binder, ConstantDefinition, Definition, Resolution, Scope, S
 use crate::built_ins::{BuiltInsResolver, InternalBuiltIn};
 use crate::types::literals::numbers::{integer_literal_fits, rational_literal_fits};
 use crate::types::{
-    literals, BinaryOperator, IntegerType, LiteralKind, Number, Type, TypeId, TypeRegistry,
-    UnaryOperator,
+    BinaryOperator, IntegerType, LiteralKind, Number, Type, TypeId, TypeRegistry, UnaryOperator,
+    literals,
 };
 
 /// Reason why a constant expression could not be evaluated.
@@ -841,8 +841,10 @@ mod tests {
 
     #[test]
     fn test_reducible_rational_literals() {
-        assert!(eval_string("1.5 ether")
-            .is_some_and(|value| value == integer(1_500_000_000_000_000_000)));
+        assert!(
+            eval_string("1.5 ether")
+                .is_some_and(|value| value == integer(1_500_000_000_000_000_000))
+        );
         assert!(
             eval_string("0.5 ether").is_some_and(|value| value == integer(500_000_000_000_000_000))
         );
@@ -920,11 +922,10 @@ mod tests {
         );
         // switching contexts: the value of FOO should resolve in the CTX.
         // context, where BAR is defined
-        assert!(eval_string_with_context(
-            "FOO",
-            &[("FOO", "BAR", "CTX."), ("CTX.BAR", "42", "CTX.")]
-        )
-        .is_some_and(|value| value == integer(42)));
+        assert!(
+            eval_string_with_context("FOO", &[("FOO", "BAR", "CTX."), ("CTX.BAR", "42", "CTX.")])
+                .is_some_and(|value| value == integer(42))
+        );
     }
 
     #[test]
@@ -1051,8 +1052,10 @@ mod tests {
         .map(Number::Integer)
         .unwrap();
 
-        assert!(eval_string_with_erc7201(r#"erc7201("example.main")"#)
-            .is_some_and(|value| value == expected));
+        assert!(
+            eval_string_with_erc7201(r#"erc7201("example.main")"#)
+                .is_some_and(|value| value == expected)
+        );
         assert!(
             eval_string_with_erc7201(r#"erc7201(unicode"example.main")"#)
                 .is_some_and(|value| value == expected)
@@ -1093,13 +1096,15 @@ mod tests {
             16,
         )
         .unwrap();
-        assert!(eval_string_with_erc7201_and_context(
-            r#"erc7201(NAME)"#,
-            &[
-                ("NAME", "NAME", "SUB."),
-                ("SUB.NAME", "\"example.main\"", "")
-            ],
-        )
-        .is_some_and(|value| value == Number::Integer(expected)));
+        assert!(
+            eval_string_with_erc7201_and_context(
+                r#"erc7201(NAME)"#,
+                &[
+                    ("NAME", "NAME", "SUB."),
+                    ("SUB.NAME", "\"example.main\"", "")
+                ],
+            )
+            .is_some_and(|value| value == Number::Integer(expected))
+        );
     }
 }

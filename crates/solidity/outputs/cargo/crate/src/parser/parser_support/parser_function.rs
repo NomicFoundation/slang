@@ -120,7 +120,12 @@ where
                 };
 
                 let topmost_node = match &nodes[..] {
-                    [Edge { node: Node::Nonterminal(nonterminal), ..} ] => Rc::clone(nonterminal),
+                    [
+                        Edge {
+                            node: Node::Nonterminal(nonterminal),
+                            ..
+                        },
+                    ] => Rc::clone(nonterminal),
                     [_] => unreachable!(
                         "(Incomplete)Match at the top level of a parser is not a Nonterminal node"
                     ),

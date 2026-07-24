@@ -3,8 +3,8 @@ use std::fmt::Write;
 use std::rc::Rc;
 
 use anyhow::Result;
-use slang_solidity::backend::binder::Resolution;
 use slang_solidity::backend::SemanticAnalysis;
+use slang_solidity::backend::binder::Resolution;
 use slang_solidity::bindings::BindingGraph;
 use slang_solidity::cst::NodeId;
 

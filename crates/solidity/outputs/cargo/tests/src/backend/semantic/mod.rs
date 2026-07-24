@@ -176,18 +176,22 @@ fn test_get_references() -> Result<()> {
 
     let references = only_owner.references();
     assert_eq!(references.len(), 3);
-    assert!(references.iter().all(|reference| reference
-        .resolve_to_definition()
-        .and_then(|definition| {
-            if let Definition::Modifier(modifier) = definition {
-                Some(modifier)
-            } else {
-                None
-            }
-        })
-        .is_some_and(|modifier| modifier
-            .name()
-            .is_some_and(|name| name.name() == "onlyOwner"))));
+    assert!(references.iter().all(|reference| {
+        reference
+            .resolve_to_definition()
+            .and_then(|definition| {
+                if let Definition::Modifier(modifier) = definition {
+                    Some(modifier)
+                } else {
+                    None
+                }
+            })
+            .is_some_and(|modifier| {
+                modifier
+                    .name()
+                    .is_some_and(|name| name.name() == "onlyOwner")
+            })
+    }));
 
     Ok(())
 }
@@ -224,21 +228,31 @@ fn test_get_linearised_functions() -> Result<()> {
     let functions = counter.compute_linearised_functions();
     assert_eq!(functions.len(), 5);
 
-    assert!(functions[0]
-        .name()
-        .is_some_and(|name| name.name() == "click"));
-    assert!(functions[1]
-        .name()
-        .is_some_and(|name| name.name() == "disable"));
-    assert!(functions[2]
-        .name()
-        .is_some_and(|name| name.name() == "enable"));
-    assert!(functions[3]
-        .name()
-        .is_some_and(|name| name.name() == "increment"));
-    assert!(functions[4]
-        .name()
-        .is_some_and(|name| name.name() == "isEnabled"));
+    assert!(
+        functions[0]
+            .name()
+            .is_some_and(|name| name.name() == "click")
+    );
+    assert!(
+        functions[1]
+            .name()
+            .is_some_and(|name| name.name() == "disable")
+    );
+    assert!(
+        functions[2]
+            .name()
+            .is_some_and(|name| name.name() == "enable")
+    );
+    assert!(
+        functions[3]
+            .name()
+            .is_some_and(|name| name.name() == "increment")
+    );
+    assert!(
+        functions[4]
+            .name()
+            .is_some_and(|name| name.name() == "isEnabled")
+    );
 
     Ok(())
 }
@@ -271,15 +285,21 @@ fn test_get_linearised_function_with_overrides() -> Result<()> {
         .expect("can find contract");
     let functions = inherited.compute_linearised_functions();
     assert_eq!(functions.len(), 3);
-    assert!(functions[0]
-        .name()
-        .is_some_and(|name| name.name() == "in_base"));
-    assert!(functions[1]
-        .name()
-        .is_some_and(|name| name.name() == "in_middle"));
-    assert!(functions[2]
-        .name()
-        .is_some_and(|name| name.name() == "override_me"));
+    assert!(
+        functions[0]
+            .name()
+            .is_some_and(|name| name.name() == "in_base")
+    );
+    assert!(
+        functions[1]
+            .name()
+            .is_some_and(|name| name.name() == "in_middle")
+    );
+    assert!(
+        functions[2]
+            .name()
+            .is_some_and(|name| name.name() == "override_me")
+    );
 
     Ok(())
 }

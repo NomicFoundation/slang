@@ -16,6 +16,7 @@ use crate::cst;
 use crate::cst::{
     EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonterminalKind, TerminalKind,
 };
+use crate::parser::ParseOutput;
 use crate::parser::lexer::{KeywordScan, Lexer, ScannedTerminal};
 use crate::parser::parser_support::{
     ChoiceHelper, OneOrMoreHelper, OptionalHelper, ParserContext, ParserFunction, ParserResult,
@@ -25,7 +26,6 @@ use crate::parser::scanner_macros::{
     scan_char_range, scan_chars, scan_choice, scan_keyword_choice, scan_none_of,
     scan_not_followed_by, scan_one_or_more, scan_optional, scan_sequence, scan_zero_or_more,
 };
-use crate::parser::ParseOutput;
 use crate::utils::LanguageFacts;
 
 /// Parses `Solidity` source code. `Parser` must be initialized with a specific
@@ -625,14 +625,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::AdditiveExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::AdditiveExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -674,14 +678,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::AndExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::AndExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -748,14 +756,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::TypeName => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::ArrayTypeName => {
+                },
+            ] if node.kind == NonterminalKind::TypeName => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::ArrayTypeName => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -868,14 +880,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::AssignmentExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::AssignmentExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -891,14 +907,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::BitwiseAndExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::BitwiseAndExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -914,14 +934,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::BitwiseOrExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::BitwiseOrExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -937,14 +961,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::BitwiseXorExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::BitwiseXorExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -1049,14 +1077,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::CallOptionsExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::CallOptionsExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -1130,14 +1162,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::ConditionalExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::ConditionalExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -1684,14 +1720,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::EqualityExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::EqualityExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -2025,14 +2065,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::ExponentiationExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::ExponentiationExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -3054,14 +3098,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::FunctionCallExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::FunctionCallExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -3515,14 +3563,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::IndexAccessExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::IndexAccessExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -3538,14 +3590,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::InequalityExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::InequalityExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -3847,14 +3903,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::MemberAccessExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::MemberAccessExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -3939,14 +3999,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::MultiplicativeExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::MultiplicativeExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -4187,14 +4251,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::OrExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::OrExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -4430,14 +4498,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::PostfixExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::PostfixExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -4511,14 +4583,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::PrefixExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::PrefixExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -4707,14 +4783,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::ShiftExpression => {
+                },
+            ] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::ShiftExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),
@@ -6494,14 +6574,18 @@ impl Parser {
             return result;
         };
         match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::YulExpression => match &node.children[..] {
-                [inner @ cst::Edge {
+            [
+                cst::Edge {
                     node: cst::Node::Nonterminal(node),
                     ..
-                }] if node.kind == NonterminalKind::YulFunctionCallExpression => {
+                },
+            ] if node.kind == NonterminalKind::YulExpression => match &node.children[..] {
+                [
+                    inner @ cst::Edge {
+                        node: cst::Node::Nonterminal(node),
+                        ..
+                    },
+                ] if node.kind == NonterminalKind::YulFunctionCallExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),

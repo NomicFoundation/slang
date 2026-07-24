@@ -6,13 +6,13 @@ use std::rc::Rc;
 
 use slang_solidity_v2_common::diagnostics::kinds::syntax::ExpectedArrayLengthExpression;
 use slang_solidity_v2_cst::structured_cst::nodes::{
-    new_array_type_name, new_expression_elementary_type, new_expression_identifier,
-    new_expression_index_access_expression, new_expression_member_access_expression,
-    new_function_type, new_function_type_attributes, new_index_access_expression,
-    new_member_access_expression, new_type_name_array_type_name, new_type_name_elementary_type,
-    new_type_name_identifier_path, CloseBracket, ElementaryType, Expression, FunctionType,
-    FunctionTypeAttribute, FunctionTypeStruct, IdentifierPath, IdentifierPathElement,
-    IndexAccessEnd, OpenBracket, Period, StateVariableAttribute, TypeName,
+    CloseBracket, ElementaryType, Expression, FunctionType, FunctionTypeAttribute,
+    FunctionTypeStruct, IdentifierPath, IdentifierPathElement, IndexAccessEnd, OpenBracket, Period,
+    StateVariableAttribute, TypeName, new_array_type_name, new_expression_elementary_type,
+    new_expression_identifier, new_expression_index_access_expression,
+    new_expression_member_access_expression, new_function_type, new_function_type_attributes,
+    new_index_access_expression, new_member_access_expression, new_type_name_array_type_name,
+    new_type_name_elementary_type, new_type_name_identifier_path,
 };
 
 use crate::parser::GrammarCtx;

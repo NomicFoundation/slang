@@ -4,8 +4,8 @@ use std::path::{Path, PathBuf};
 use anyhow::Result;
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
-use crate::codegen::tera::TeraWrapper;
 use crate::codegen::CodegenFileSystem;
+use crate::codegen::tera::TeraWrapper;
 use crate::paths::{PathExtensions, PrivatePathExtensions};
 
 pub struct CodegenRuntime;

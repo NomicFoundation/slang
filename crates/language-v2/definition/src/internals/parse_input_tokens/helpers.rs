@@ -4,7 +4,7 @@ use indexmap::IndexMap;
 use proc_macro2::extra::DelimSpan;
 use proc_macro2::{Delimiter, Ident, TokenStream};
 use syn::parse::ParseStream;
-use syn::{braced, bracketed, parenthesized, Token};
+use syn::{Token, braced, bracketed, parenthesized};
 
 use crate::internals::{Error, ErrorsCollection, ParseInputTokens, Result, Spanned};
 

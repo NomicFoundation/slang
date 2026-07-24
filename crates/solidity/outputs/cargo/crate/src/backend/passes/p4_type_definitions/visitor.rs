@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use super::evaluator::evaluate_compile_time_uint_constant;
 use super::Pass;
+use super::evaluator::evaluate_compile_time_uint_constant;
 use crate::backend::binder::{Definition, Reference, Resolution, Scope, Typing, UsingDirective};
 use crate::backend::built_ins::BuiltIn;
 use crate::backend::ir::ir2_flat_contracts::visitor::Visitor;

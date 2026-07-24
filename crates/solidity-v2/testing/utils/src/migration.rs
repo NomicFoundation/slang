@@ -1,7 +1,7 @@
 use std::fmt::Write;
 use std::path::{Path, PathBuf};
 
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use infra_utils::paths::{FileWalker, PathExtensions};
 use slang_solidity_v2_common::collections::Set;
 

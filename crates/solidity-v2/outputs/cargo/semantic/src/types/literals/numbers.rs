@@ -465,7 +465,7 @@ mod tests {
     use num_bigint::BigInt;
     use num_rational::BigRational;
 
-    use super::{rational_literal_fits, smallest_fixed_point_type_to_fit, Number, Type};
+    use super::{Number, Type, rational_literal_fits, smallest_fixed_point_type_to_fit};
     use crate::types::FixedPointNumberType;
 
     fn integer(value: i64) -> Number {

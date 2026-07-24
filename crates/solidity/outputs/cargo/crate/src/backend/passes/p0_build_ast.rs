@@ -1,4 +1,4 @@
-use crate::backend::ir::ir1_structured_ast::{builder, SourceUnit};
+use crate::backend::ir::ir1_structured_ast::{SourceUnit, builder};
 use crate::compilation::File;
 
 pub fn run_file(file: &File) -> Option<SourceUnit> {

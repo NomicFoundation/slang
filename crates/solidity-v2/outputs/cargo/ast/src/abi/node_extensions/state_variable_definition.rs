@@ -2,8 +2,8 @@ use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::types::Type;
 
 use crate::abi::{
-    extract_function_type_parameters_abi, selector_from_signature, AbiEntry, AbiFunction,
-    AbiMutability, AbiParameter,
+    AbiEntry, AbiFunction, AbiMutability, AbiParameter, extract_function_type_parameters_abi,
+    selector_from_signature,
 };
 use crate::ast::{StateVariableDefinitionStruct, StateVariableVisibility};
 

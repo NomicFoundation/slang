@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use language_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
+use language_internal_macros::{ParseInputTokens, WriteOutputTokens, derive_spanned_type};
 use serde::{Deserialize, Serialize};
 
 use crate::model::{Identifier, Scanner, VersionSpecifier};

@@ -2,8 +2,8 @@
 
 use std::ops::Range;
 
-use serde::ser::{SerializeMap, SerializeSeq, Serializer};
 use serde::Serialize;
+use serde::ser::{SerializeMap, SerializeSeq, Serializer};
 
 #[allow(clippy::wildcard_imports)]
 use super::nodes::*;

@@ -66,9 +66,11 @@ fn test_function_get_type() {
     };
     assert!(function_type.is_externally_visible());
     assert!(matches!(function_type.return_type(), ast::Type::Integer(_)));
-    assert!(function_type
-        .associated_definition()
-        .is_some_and(|definition| matches!(definition, ast::Definition::Function(_))));
+    assert!(
+        function_type
+            .associated_definition()
+            .is_some_and(|definition| matches!(definition, ast::Definition::Function(_)))
+    );
 }
 
 define_fixture!(

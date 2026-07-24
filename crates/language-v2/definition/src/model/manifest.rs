@@ -1,5 +1,5 @@
 use indexmap::IndexSet;
-use language_v2_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
+use language_v2_internal_macros::{ParseInputTokens, WriteOutputTokens, derive_spanned_type};
 use semver::Version;
 use serde::{Deserialize, Serialize};
 

@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use semver::Version;
 
-use crate::utils::{define_rc_wrapper, define_refcell_wrapper, IntoFFI};
+use crate::utils::{IntoFFI, define_rc_wrapper, define_refcell_wrapper};
 
 mod ffi {
     pub use crate::bindgen::exports::nomic_foundation::slang::bindings::BindingGraph;

@@ -6,24 +6,24 @@ use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::SemanticContext;
 
 use super::nodes::{
-    create_constant_definition, create_contract_definition, create_enum_definition,
-    create_error_definition, create_event_definition, create_function_definition,
-    create_identifier, create_import_deconstruction_symbol, create_interface_definition,
-    create_library_definition, create_parameter, create_path_import,
+    ConstantDefinition, ConstantDefinitionStruct, ContractDefinition, ContractDefinitionStruct,
+    EnumDefinition, EnumDefinitionStruct, ErrorDefinition, ErrorDefinitionStruct, EventDefinition,
+    EventDefinitionStruct, FunctionDefinition, FunctionDefinitionStruct, Identifier,
+    ImportDeconstructionSymbol, ImportDeconstructionSymbolStruct, InterfaceDefinition,
+    InterfaceDefinitionStruct, LibraryDefinition, LibraryDefinitionStruct, Parameter,
+    ParameterStruct, PathImport, PathImportStruct, StateVariableDefinition,
+    StateVariableDefinitionStruct, StructDefinition, StructDefinitionStruct, StructMember,
+    StructMemberStruct, UserDefinedValueTypeDefinition, UserDefinedValueTypeDefinitionStruct,
+    VariableDeclaration, VariableDeclarationStruct, YulFunctionDefinition,
+    YulFunctionDefinitionStruct, create_constant_definition, create_contract_definition,
+    create_enum_definition, create_error_definition, create_event_definition,
+    create_function_definition, create_identifier, create_import_deconstruction_symbol,
+    create_interface_definition, create_library_definition, create_parameter, create_path_import,
     create_state_variable_definition, create_struct_definition, create_struct_member,
     create_user_defined_value_type_definition, create_variable_declaration,
-    create_yul_function_definition, ConstantDefinition, ConstantDefinitionStruct,
-    ContractDefinition, ContractDefinitionStruct, EnumDefinition, EnumDefinitionStruct,
-    ErrorDefinition, ErrorDefinitionStruct, EventDefinition, EventDefinitionStruct,
-    FunctionDefinition, FunctionDefinitionStruct, Identifier, ImportDeconstructionSymbol,
-    ImportDeconstructionSymbolStruct, InterfaceDefinition, InterfaceDefinitionStruct,
-    LibraryDefinition, LibraryDefinitionStruct, Parameter, ParameterStruct, PathImport,
-    PathImportStruct, StateVariableDefinition, StateVariableDefinitionStruct, StructDefinition,
-    StructDefinitionStruct, StructMember, StructMemberStruct, UserDefinedValueTypeDefinition,
-    UserDefinedValueTypeDefinitionStruct, VariableDeclaration, VariableDeclarationStruct,
-    YulFunctionDefinition, YulFunctionDefinitionStruct,
+    create_yul_function_definition,
 };
-use super::references::{references_binding_to_definition, Reference};
+use super::references::{Reference, references_binding_to_definition};
 
 // __SLANG_DEFINITION_TYPES__ keep in sync with binder
 #[derive(Clone)]

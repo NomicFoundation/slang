@@ -10,7 +10,7 @@ use slang_solidity_v2_cst::structured_cst::nodes as input;
 use slang_solidity_v2_cst::structured_cst::text_range::TextRange;
 
 use super::CstToIrBuilder;
-use crate::ir::{nodes as output, Source};
+use crate::ir::{Source, nodes as output};
 
 impl<S: Source> CstToIrBuilder<'_, S> {
     //

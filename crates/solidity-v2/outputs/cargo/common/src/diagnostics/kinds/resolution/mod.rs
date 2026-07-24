@@ -19,8 +19,8 @@ pub use incompatible_built_in_version::IncompatibleBuiltInVersion;
 pub use non_free_or_library_function_in_using_directive::NonFreeOrLibraryFunctionInUsingDirective;
 use serde::Serialize;
 
-use crate::diagnostics::kinds::utils::define_diagnostic_kind;
 use crate::diagnostics::kinds::DiagnosticKind;
+use crate::diagnostics::kinds::utils::define_diagnostic_kind;
 
 define_diagnostic_kind! {
     parent_kind = DiagnosticKind::Resolution;

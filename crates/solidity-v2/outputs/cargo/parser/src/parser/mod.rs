@@ -1,12 +1,12 @@
 use lalrpop_util::lalrpop_mod;
 use slang_solidity_v2_common::collections::SortedSet;
-use slang_solidity_v2_common::diagnostics::kinds::syntax::{UnexpectedEof, UnexpectedTerminal};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::diagnostics::kinds::syntax::{UnexpectedEof, UnexpectedTerminal};
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::terminals::TerminalKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::{
-    new_source_unit, new_source_unit_members, SourceUnit,
+    SourceUnit, new_source_unit, new_source_unit_members,
 };
 
 use crate::lexer::{LexemeKind, Lexer};
@@ -141,9 +141,15 @@ fn convert_parse_error(
                 },
             );
         }
-        lalrpop_util::ParseError::ExtraToken { .. } => unreachable!("The parser should never return an extra token error: the top-level `SourceUnit` rule is a greedy repetition"),
-        lalrpop_util::ParseError::User { .. } => unreachable!("The parser should never return a user error, since we're not using any custom error types in our grammar"),
-        lalrpop_util::ParseError::InvalidToken { .. } => unreachable!("The parser should never return an invalid token error, since it's not using the default lexer"),
+        lalrpop_util::ParseError::ExtraToken { .. } => unreachable!(
+            "The parser should never return an extra token error: the top-level `SourceUnit` rule is a greedy repetition"
+        ),
+        lalrpop_util::ParseError::User { .. } => unreachable!(
+            "The parser should never return a user error, since we're not using any custom error types in our grammar"
+        ),
+        lalrpop_util::ParseError::InvalidToken { .. } => unreachable!(
+            "The parser should never return an invalid token error, since it's not using the default lexer"
+        ),
     }
 }
 

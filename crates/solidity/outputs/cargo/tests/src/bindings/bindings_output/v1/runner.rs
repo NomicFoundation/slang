@@ -15,7 +15,7 @@ use super::graph::graphviz::render as render_graphviz_graph;
 use super::graph::mermaid::render as render_mermaid_graph;
 use super::renderer::render_bindings;
 use crate::compilation::resolver::TestsPathResolver;
-use crate::utils::multi_part_file::{split_multi_file, Part};
+use crate::utils::multi_part_file::{Part, split_multi_file};
 
 pub(crate) struct ParsedPart<'a> {
     pub path: &'a str,

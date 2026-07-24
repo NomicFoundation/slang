@@ -555,7 +555,9 @@ enum Errors<'err> {
     UnknownReference(&'err Identifier),
     #[error("Reference '{0}' is only defined in '{1}', but not in '{2}'.")]
     InvalidReferenceVersion(&'err Identifier, &'err VersionSet, &'err VersionSet),
-    #[error("Optional field points to a container that allows empty children. Should this be required instead?")]
+    #[error(
+        "Optional field points to a container that allows empty children. Should this be required instead?"
+    )]
     OptionalFieldAllowsEmpty,
     #[error("Reference '{0}' of kind '{1:?}' is not valid. Expected: {2:?}")]
     InvalidReferenceFilter(

@@ -96,7 +96,12 @@ impl PrecedenceHelper {
                     continue;
                 }
 
-                [Prefix { right, .. }, Expression { .. }, Binary { left, .. }, ..] => {
+                [
+                    Prefix { right, .. },
+                    Expression { .. },
+                    Binary { left, .. },
+                    ..,
+                ] => {
                     if right <= left {
                         i += 2;
                         continue;
@@ -105,7 +110,12 @@ impl PrecedenceHelper {
                     }
                 }
 
-                [Prefix { right, .. }, Expression { .. }, Postfix { left, .. }, ..] => {
+                [
+                    Prefix { right, .. },
+                    Expression { .. },
+                    Postfix { left, .. },
+                    ..,
+                ] => {
                     if right <= left {
                         i += 2;
                         continue;
@@ -121,7 +131,12 @@ impl PrecedenceHelper {
                     continue;
                 }
 
-                [Binary { right, .. }, Expression { .. }, Binary { left, .. }, ..] => {
+                [
+                    Binary { right, .. },
+                    Expression { .. },
+                    Binary { left, .. },
+                    ..,
+                ] => {
                     if right <= left {
                         i += 2;
                         continue;
@@ -130,7 +145,12 @@ impl PrecedenceHelper {
                     }
                 }
 
-                [Binary { right, .. }, Expression { .. }, Postfix { left, .. }, ..] => {
+                [
+                    Binary { right, .. },
+                    Expression { .. },
+                    Postfix { left, .. },
+                    ..,
+                ] => {
                     if right <= left {
                         i += 2;
                         continue;

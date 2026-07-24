@@ -8,9 +8,9 @@ use super::Pass;
 use crate::binder::{Definition, Resolution, Typing};
 use crate::passes::common::node_location;
 use crate::types::{
-    literals, AddressType, ContractType, DataLocation, FixedSizeArrayType, FunctionType,
+    AddressType, ContractType, DataLocation, FixedSizeArrayType, FunctionType,
     FunctionTypeVisibility, IntegerType, LiteralKind, MetaType, Number, StringType, Type, TypeId,
-    UserMetaType,
+    UserMetaType, literals,
 };
 
 impl Pass<'_> {

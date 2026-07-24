@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use anyhow::{bail, ensure, Context, Result};
+use anyhow::{Context, Result, bail, ensure};
 use infra_utils::paths::PathExtensions;
 use semver::Version;
 use serde::Deserialize;

@@ -4,7 +4,7 @@ use std::rc::Rc;
 use metaslang_cst::kinds::TerminalKindExtensions;
 use semver::Version;
 
-use self::ast::{create_contract_definition, create_source_unit, ContractDefinition, Definition};
+use self::ast::{ContractDefinition, Definition, create_contract_definition, create_source_unit};
 use super::abi::ContractAbi;
 use crate::backend::binder::Binder;
 pub use crate::backend::ir::{ast, ir2_flat_contracts as output_ir};

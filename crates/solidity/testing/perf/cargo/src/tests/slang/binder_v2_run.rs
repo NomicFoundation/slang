@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
-use slang_solidity::backend::binder::Resolution;
 use slang_solidity::backend::SemanticAnalysis;
+use slang_solidity::backend::binder::Resolution;
 use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::{NodeKind, TerminalKindExtensions};
 

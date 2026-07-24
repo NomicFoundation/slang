@@ -1,4 +1,4 @@
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use rayon::iter::{ParallelBridge, ParallelIterator};
 use slang_solidity::compilation::CompilationInitializationError;
 use slang_solidity::cst::{Cursor, TextRange};

@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
 use slang_solidity_v2_ir::ir;
-use slang_solidity_v2_ir::ir::visitor::Visitor;
 use slang_solidity_v2_ir::ir::NodeIdentity;
+use slang_solidity_v2_ir::ir::visitor::Visitor;
 
 use super::Pass;
 use crate::binder::{Reference, Resolution, Typing};

@@ -1,10 +1,10 @@
 use slang_solidity_v2_common::collections::Map;
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound;
 use slang_solidity_v2_common::diagnostics::kinds::semantic::{
     CyclicInheritance, LinearisationImpossible,
 };
 use slang_solidity_v2_common::diagnostics::kinds::type_system::InvalidBase;
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;

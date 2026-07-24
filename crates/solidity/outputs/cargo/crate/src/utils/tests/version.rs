@@ -1,8 +1,8 @@
 use semver::Version;
 
 use crate::parser::Parser;
-use crate::utils::version::{parse_range, Range};
 use crate::utils::LanguageFacts;
+use crate::utils::version::{Range, parse_range};
 
 type Result<T> = std::result::Result<T, String>;
 

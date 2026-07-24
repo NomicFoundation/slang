@@ -1,7 +1,7 @@
 use std::io::Write;
 use std::time::Duration;
 
-use console::{style, Color, Term};
+use console::{Color, Term, style};
 use indicatif::{InMemoryTerm, MultiProgress, ProgressBar, ProgressDrawTarget, ProgressStyle};
 
 const TICK_FREQUENCY: Duration = Duration::from_millis(250);

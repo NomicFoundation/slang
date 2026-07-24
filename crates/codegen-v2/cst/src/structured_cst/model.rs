@@ -12,8 +12,8 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use language_v2_definition::model;
-use serde::ser::SerializeMap;
 use serde::Serialize;
+use serde::ser::SerializeMap;
 
 use super::builder::StructuredCstModelBuilder;
 use super::versioned_descendants::compute_has_versioned_descendant;

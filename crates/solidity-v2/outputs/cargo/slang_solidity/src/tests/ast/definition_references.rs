@@ -32,16 +32,20 @@ fn test_definition_references() {
 
     let references = only_owner.references();
     assert_eq!(references.len(), 3);
-    assert!(references.iter().all(|reference| reference
-        .resolve_to_definition()
-        .and_then(|definition| {
-            if let Definition::Modifier(modifier) = definition {
-                Some(modifier)
-            } else {
-                None
-            }
-        })
-        .is_some_and(|modifier| modifier
-            .name()
-            .is_some_and(|name| name.name() == "onlyOwner"))));
+    assert!(references.iter().all(|reference| {
+        reference
+            .resolve_to_definition()
+            .and_then(|definition| {
+                if let Definition::Modifier(modifier) = definition {
+                    Some(modifier)
+                } else {
+                    None
+                }
+            })
+            .is_some_and(|modifier| {
+                modifier
+                    .name()
+                    .is_some_and(|name| name.name() == "onlyOwner")
+            })
+    }));
 }

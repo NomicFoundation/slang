@@ -3,9 +3,9 @@ use std::io::Read;
 use std::path::Path;
 
 use httpdate::fmt_http_date;
+use reqwest::StatusCode;
 use reqwest::blocking::Client;
 use reqwest::header::IF_MODIFIED_SINCE;
-use reqwest::StatusCode;
 
 pub enum DownloadResult {
     Ok(Box<dyn Read>),

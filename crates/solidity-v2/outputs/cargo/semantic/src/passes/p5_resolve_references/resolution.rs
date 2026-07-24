@@ -2,10 +2,10 @@ use std::sync::Arc;
 
 use ruint::aliases::U256;
 use slang_solidity_v2_common::collections::Set;
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     StorageLayoutBaseNonInteger, StorageLayoutBaseNotConstant, StorageLayoutBaseOutOfRange,
 };
-use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
@@ -16,7 +16,7 @@ use crate::binder::{
 };
 use crate::built_ins::BuiltInsResolver;
 use crate::passes::common::constant_evaluator::{
-    evaluate_compile_time_constant, ConstantResolver, EvaluationError,
+    ConstantResolver, EvaluationError, evaluate_compile_time_constant,
 };
 use crate::passes::common::{find_definition_namespace_scope_id, node_location};
 use crate::types::{ContractType, InterfaceType, StructType, Type, TypeId, UserMetaType};

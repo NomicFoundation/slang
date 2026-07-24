@@ -77,11 +77,7 @@ impl Resolution {
     where
         F: FnOnce() -> Self,
     {
-        if self == Self::Unresolved {
-            f()
-        } else {
-            self
-        }
+        if self == Self::Unresolved { f() } else { self }
     }
 }
 

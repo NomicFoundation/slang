@@ -7,7 +7,7 @@
 use slang_solidity_v2_cst::structured_cst::nodes::*;
 
 use crate::cst_renderer::{
-    format_label_kind, render_terminal, ChildrenAccumulator, RenderedOutput,
+    ChildrenAccumulator, RenderedOutput, format_label_kind, render_terminal,
 };
 
 //

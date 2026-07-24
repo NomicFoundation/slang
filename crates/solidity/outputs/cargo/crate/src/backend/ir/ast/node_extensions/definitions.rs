@@ -14,7 +14,7 @@ use super::super::nodes::{
     VariableDeclarationStatement, VariableDeclarationStatementStruct, YulFunctionDefinition,
     YulFunctionDefinitionStruct, YulLabel, YulLabelStruct,
 };
-use super::{create_identifier, create_yul_identifier, Identifier, Reference, YulIdentifier};
+use super::{Identifier, Reference, YulIdentifier, create_identifier, create_yul_identifier};
 use crate::backend::ir::ast::{
     create_constant_definition, create_contract_definition, create_enum_definition,
     create_error_definition, create_event_definition, create_function_definition,
@@ -23,7 +23,7 @@ use crate::backend::ir::ast::{
     create_struct_definition, create_struct_member, create_user_defined_value_type_definition,
     create_variable_declaration_statement, create_yul_function_definition, create_yul_label,
 };
-use crate::backend::{binder, SemanticAnalysis};
+use crate::backend::{SemanticAnalysis, binder};
 use crate::cst::{NodeId, TextIndex};
 
 // __SLANG_DEFINITION_TYPES__ keep in sync with binder

@@ -3,7 +3,7 @@ use clap::Parser;
 use infra_utils::commands::Command;
 
 use crate::commands::perf::binaries;
-use crate::toolchains::bencher::{run_bench, BencherThreshold};
+use crate::toolchains::bencher::{BencherThreshold, run_bench};
 use crate::utils::DryRun;
 
 const DEFAULT_BENCHER_PROJECT: &str = "slang-dashboard-npm";

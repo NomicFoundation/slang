@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     AbstractContractPublicConstructor, BreakOutsideLoop, ConstructorNotInContract,
@@ -13,8 +15,6 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     UnimplementedFunctionWithModifiers, UnimplementedModifierMustBeVirtual, VirtualFreeFunction,
     VirtualPrivateFunction,
 };
-use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;

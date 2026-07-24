@@ -289,8 +289,8 @@ mod tests {
     use crate::backend::passes::p1_flatten_contracts::transform_expression;
     use crate::cst::NonterminalKind;
     use crate::parser;
-    use crate::utils::versions::{VERSION_0_4_26, VERSION_0_5_0};
     use crate::utils::LanguageFacts;
+    use crate::utils::versions::{VERSION_0_4_26, VERSION_0_5_0};
 
     #[derive(Default)]
     struct MapResolver {
@@ -352,22 +352,35 @@ mod tests {
 
     #[test]
     fn test_literals() {
-        assert!(eval_string("1")
-            .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
-        assert!(eval_string("42")
-            .is_some_and(|value| value == ConstantValue::Integer(42.to_bigint().unwrap())));
-        assert!(eval_string("0x01")
-            .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
-        assert!(eval_string("0xa0")
-            .is_some_and(|value| value == ConstantValue::Integer(160.to_bigint().unwrap())));
+        assert!(
+            eval_string("1")
+                .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("42")
+                .is_some_and(|value| value == ConstantValue::Integer(42.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("0x01")
+                .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("0xa0")
+                .is_some_and(|value| value == ConstantValue::Integer(160.to_bigint().unwrap()))
+        );
     }
 
     #[test]
     fn test_literals_with_digit_separators() {
-        assert!(eval_string("1_000")
-            .is_some_and(|value| value == ConstantValue::Integer(1_000.to_bigint().unwrap())));
-        assert!(eval_string("1_000_000")
-            .is_some_and(|value| value == ConstantValue::Integer(1_000_000.to_bigint().unwrap())));
+        assert!(
+            eval_string("1_000")
+                .is_some_and(|value| value == ConstantValue::Integer(1_000.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("1_000_000").is_some_and(
+                |value| value == ConstantValue::Integer(1_000_000.to_bigint().unwrap())
+            )
+        );
         assert!(eval_string("0xdead_beef").is_some_and(
             |value| value == ConstantValue::Integer(0xdead_beef_u64.to_bigint().unwrap())
         ));
@@ -378,8 +391,10 @@ mod tests {
 
     #[test]
     fn test_literals_with_number_units() {
-        assert!(eval_string("1 wei")
-            .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
+        assert!(
+            eval_string("1 wei")
+                .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap()))
+        );
         assert!(eval_string("1 gwei").is_some_and(
             |value| value == ConstantValue::Integer(1_000_000_000u64.to_bigint().unwrap())
         ));
@@ -387,37 +402,52 @@ mod tests {
             == ConstantValue::Integer(1_000_000_000_000_000_000u64.to_bigint().unwrap())));
         assert!(eval_string("2 ether").is_some_and(|value| value
             == ConstantValue::Integer(2_000_000_000_000_000_000u64.to_bigint().unwrap())));
-        assert!(eval_string("1 seconds")
-            .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
-        assert!(eval_string("1 minutes")
-            .is_some_and(|value| value == ConstantValue::Integer(60.to_bigint().unwrap())));
-        assert!(eval_string("1 hours")
-            .is_some_and(|value| value == ConstantValue::Integer(3_600.to_bigint().unwrap())));
-        assert!(eval_string("1 days")
-            .is_some_and(|value| value == ConstantValue::Integer(86_400.to_bigint().unwrap())));
-        assert!(eval_string("1 weeks")
-            .is_some_and(|value| value == ConstantValue::Integer(604_800.to_bigint().unwrap())));
+        assert!(
+            eval_string("1 seconds")
+                .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("1 minutes")
+                .is_some_and(|value| value == ConstantValue::Integer(60.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("1 hours")
+                .is_some_and(|value| value == ConstantValue::Integer(3_600.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("1 days")
+                .is_some_and(|value| value == ConstantValue::Integer(86_400.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("1 weeks")
+                .is_some_and(|value| value == ConstantValue::Integer(604_800.to_bigint().unwrap()))
+        );
         assert!(
             eval_string_in_version("1 szabo", &VERSION_0_4_26)
                 .is_some_and(|value| value
                     == ConstantValue::Integer(1_000_000_000_000u64.to_bigint().unwrap()))
         );
-        assert!(eval_string_in_version("1 finney", &VERSION_0_4_26)
-            .is_some_and(|value| value
-                == ConstantValue::Integer(1_000_000_000_000_000u64.to_bigint().unwrap())));
+        assert!(
+            eval_string_in_version("1 finney", &VERSION_0_4_26).is_some_and(|value| value
+                == ConstantValue::Integer(1_000_000_000_000_000u64.to_bigint().unwrap()))
+        );
     }
 
     #[test]
     fn test_literals_with_scientific_notation() {
-        assert!(eval_string("1e3")
-            .is_some_and(|value| value == ConstantValue::Integer(1_000.to_bigint().unwrap())));
+        assert!(
+            eval_string("1e3")
+                .is_some_and(|value| value == ConstantValue::Integer(1_000.to_bigint().unwrap()))
+        );
         assert!(eval_string("2e10").is_some_and(
             |value| value == ConstantValue::Integer(20_000_000_000u64.to_bigint().unwrap())
         ));
         assert!(eval_string("1e18").is_some_and(|value| value
             == ConstantValue::Integer(1_000_000_000_000_000_000u64.to_bigint().unwrap())));
-        assert!(eval_string("1.5e3")
-            .is_some_and(|value| value == ConstantValue::Integer(1_500.to_bigint().unwrap())));
+        assert!(
+            eval_string("1.5e3")
+                .is_some_and(|value| value == ConstantValue::Integer(1_500.to_bigint().unwrap()))
+        );
     }
 
     #[test]
@@ -440,53 +470,87 @@ mod tests {
 
     #[test]
     fn test_prefix_expression() {
-        assert!(eval_string("-42")
-            .is_some_and(|value| value == ConstantValue::Integer(-42.to_bigint().unwrap())));
-        assert!(eval_string_in_version("+42", &VERSION_0_4_26)
-            .is_some_and(|value| value == ConstantValue::Integer(42.to_bigint().unwrap())));
+        assert!(
+            eval_string("-42")
+                .is_some_and(|value| value == ConstantValue::Integer(-42.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string_in_version("+42", &VERSION_0_4_26)
+                .is_some_and(|value| value == ConstantValue::Integer(42.to_bigint().unwrap()))
+        );
         assert!(eval_string_in_version("+42", &VERSION_0_5_0).is_none());
     }
 
     #[test]
     fn test_binary_expression() {
-        assert!(eval_string("1 + 2")
-            .is_some_and(|value| value == ConstantValue::Integer(3.to_bigint().unwrap())));
-        assert!(eval_string("2 - 2")
-            .is_some_and(|value| value == ConstantValue::Integer(0.to_bigint().unwrap())));
-        assert!(eval_string("1 - 2")
-            .is_some_and(|value| value == ConstantValue::Integer(-1.to_bigint().unwrap())));
-        assert!(eval_string("1 * 2")
-            .is_some_and(|value| value == ConstantValue::Integer(2.to_bigint().unwrap())));
-        assert!(eval_string("4 / 2")
-            .is_some_and(|value| value == ConstantValue::Integer(2.to_bigint().unwrap())));
-        assert!(eval_string("5 % 2")
-            .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
-        assert!(eval_string("2 ** 5")
-            .is_some_and(|value| value == ConstantValue::Integer(32.to_bigint().unwrap())));
-        assert!(eval_string("32 << 2")
-            .is_some_and(|value| value == ConstantValue::Integer(128.to_bigint().unwrap())));
-        assert!(eval_string("32 >> 2")
-            .is_some_and(|value| value == ConstantValue::Integer(8.to_bigint().unwrap())));
-        assert!(eval_string("32 | 16")
-            .is_some_and(|value| value == ConstantValue::Integer(48.to_bigint().unwrap())));
-        assert!(eval_string("15 ^ 31")
-            .is_some_and(|value| value == ConstantValue::Integer(16.to_bigint().unwrap())));
-        assert!(eval_string("15 & 31")
-            .is_some_and(|value| value == ConstantValue::Integer(15.to_bigint().unwrap())));
+        assert!(
+            eval_string("1 + 2")
+                .is_some_and(|value| value == ConstantValue::Integer(3.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("2 - 2")
+                .is_some_and(|value| value == ConstantValue::Integer(0.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("1 - 2")
+                .is_some_and(|value| value == ConstantValue::Integer(-1.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("1 * 2")
+                .is_some_and(|value| value == ConstantValue::Integer(2.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("4 / 2")
+                .is_some_and(|value| value == ConstantValue::Integer(2.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("5 % 2")
+                .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("2 ** 5")
+                .is_some_and(|value| value == ConstantValue::Integer(32.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("32 << 2")
+                .is_some_and(|value| value == ConstantValue::Integer(128.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("32 >> 2")
+                .is_some_and(|value| value == ConstantValue::Integer(8.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("32 | 16")
+                .is_some_and(|value| value == ConstantValue::Integer(48.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("15 ^ 31")
+                .is_some_and(|value| value == ConstantValue::Integer(16.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("15 & 31")
+                .is_some_and(|value| value == ConstantValue::Integer(15.to_bigint().unwrap()))
+        );
     }
 
     #[test]
     fn test_nesting_expressions() {
-        assert!(eval_string("1 + (2 + 3)")
-            .is_some_and(|value| value == ConstantValue::Integer(6.to_bigint().unwrap())));
-        assert!(eval_string("3 * (2 + 1)")
-            .is_some_and(|value| value == ConstantValue::Integer(9.to_bigint().unwrap())));
+        assert!(
+            eval_string("1 + (2 + 3)")
+                .is_some_and(|value| value == ConstantValue::Integer(6.to_bigint().unwrap()))
+        );
+        assert!(
+            eval_string("3 * (2 + 1)")
+                .is_some_and(|value| value == ConstantValue::Integer(9.to_bigint().unwrap()))
+        );
     }
 
     #[test]
     fn test_identifier_lookup() {
-        assert!(eval_string_with_context("FOO", &[("FOO", "1", "")])
-            .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
+        assert!(
+            eval_string_with_context("FOO", &[("FOO", "1", "")])
+                .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap()))
+        );
         assert!(
             eval_string_with_context("FOO + 2*BAR", &[("FOO", "1", ""), ("BAR", "5", "")])
                 .is_some_and(|value| value == ConstantValue::Integer(11.to_bigint().unwrap()))
@@ -499,10 +563,9 @@ mod tests {
         );
         // switching contexts: the value of FOO should resolve in the CTX.
         // context, where BAR is defined
-        assert!(eval_string_with_context(
-            "FOO",
-            &[("FOO", "BAR", "CTX."), ("CTX.BAR", "42", "CTX.")]
-        )
-        .is_some_and(|value| value == ConstantValue::Integer(42.to_bigint().unwrap())));
+        assert!(
+            eval_string_with_context("FOO", &[("FOO", "BAR", "CTX."), ("CTX.BAR", "42", "CTX.")])
+                .is_some_and(|value| value == ConstantValue::Integer(42.to_bigint().unwrap()))
+        );
     }
 }

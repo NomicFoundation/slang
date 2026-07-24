@@ -1,10 +1,10 @@
 use std::ops::Range;
 
 use slang_solidity_v2_common::collections::{Set, SortedMap};
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::compilation::{
     MissingFile, MissingImportedFile, UnresolvedImport,
 };
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::utils::strip_string_literal_quotes;
@@ -13,7 +13,7 @@ use slang_solidity_v2_cst::structured_cst::nodes as cst;
 use slang_solidity_v2_ir::ir::{self, BuildOutput};
 use slang_solidity_v2_parser::{ParseOutput, Parser};
 use slang_solidity_v2_semantic::context::{
-    extract_import_paths_from_source_unit, SemanticContext, SemanticFile,
+    SemanticContext, SemanticFile, extract_import_paths_from_source_unit,
 };
 
 use super::file::InternalFile;

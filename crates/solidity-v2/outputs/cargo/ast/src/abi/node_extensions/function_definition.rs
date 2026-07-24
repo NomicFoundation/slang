@@ -1,8 +1,8 @@
 use slang_solidity_v2_ir::ir;
 
 use crate::abi::{
-    selector_from_signature, AbiConstructor, AbiEntry, AbiFallback, AbiFunction, AbiMutability,
-    AbiReceive,
+    AbiConstructor, AbiEntry, AbiFallback, AbiFunction, AbiMutability, AbiReceive,
+    selector_from_signature,
 };
 use crate::ast::{FunctionDefinitionStruct, FunctionVisibility};
 

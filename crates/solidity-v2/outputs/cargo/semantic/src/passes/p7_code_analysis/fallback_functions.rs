@@ -10,11 +10,11 @@
 //! mutability on a `receive`). Only the forms that parse cleanly need a
 //! semantic check here.
 
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     FallbackFunctionMutability, FallbackFunctionSignature,
 };
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, Typing};

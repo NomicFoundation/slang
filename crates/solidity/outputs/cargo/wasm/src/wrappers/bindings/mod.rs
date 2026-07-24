@@ -1,4 +1,4 @@
-use crate::utils::{define_rc_wrapper, define_wrapper, IntoFFI};
+use crate::utils::{IntoFFI, define_rc_wrapper, define_wrapper};
 
 mod ffi {
     pub use crate::bindgen::exports::nomic_foundation::slang::bindings::{

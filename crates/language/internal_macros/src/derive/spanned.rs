@@ -1,9 +1,9 @@
 use proc_macro2::TokenStream;
-use quote::{format_ident, quote, ToTokens};
+use quote::{ToTokens, format_ident, quote};
 use syn::fold::Fold;
-use syn::{parse_quote, Error, GenericArgument, Type};
+use syn::{Error, GenericArgument, Type, parse_quote};
 
-use crate::input_model::{add_spanned_prefix, InputField, InputItem, InputVariant};
+use crate::input_model::{InputField, InputItem, InputVariant, add_spanned_prefix};
 
 pub fn spanned(item: InputItem, spanned_derive_args: TokenStream) -> TokenStream {
     let derive_attribute = if spanned_derive_args.is_empty() {

@@ -3,7 +3,7 @@ use std::fs;
 use std::path::Path;
 use std::sync::OnceLock;
 
-use anyhow::{anyhow, bail, Result};
+use anyhow::{Result, anyhow, bail};
 use infra_utils::solc::default_evm_version;
 use semver::{BuildMetadata, Prerelease, Version};
 use serde::Deserialize;
