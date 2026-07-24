@@ -1,6 +1,7 @@
 mod binder;
 mod getter_overrides;
 mod typing;
+mod user_defined_operator_functions;
 
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;

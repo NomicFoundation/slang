@@ -465,7 +465,6 @@ impl YulFunctionScope {
 //////////////////////////////////////////////////////////////////////////////
 // Using directives
 
-#[allow(dead_code)]
 pub(crate) enum UsingDirective {
     AllTypes {
         scope_id: ScopeId,
@@ -476,7 +475,11 @@ pub(crate) enum UsingDirective {
     },
     SingleTypeOperator {
         scope_id: ScopeId,
-        operator_mapping: Map<UsingOperator, String>,
+        /// The definitions bound to each operator. One operator can carry
+        /// several. A `-` binds both a unary and a binary function for the
+        /// same type, and erroneous code can bind an operator repeatedly.
+        /// A use resolves to a single function by its operand count.
+        operator_mapping: Map<UsingOperator, Vec<NodeId>>,
         type_id: TypeId,
     },
 }
@@ -523,6 +526,45 @@ impl From<&ir::UsingOperator> for UsingOperator {
     }
 }
 
+impl From<&ir::AdditiveExpressionOperator> for UsingOperator {
+    fn from(value: &ir::AdditiveExpressionOperator) -> Self {
+        match value {
+            ir::AdditiveExpressionOperator::Plus(_) => Self::Plus,
+            ir::AdditiveExpressionOperator::Minus(_) => Self::Minus,
+        }
+    }
+}
+
+impl From<&ir::MultiplicativeExpressionOperator> for UsingOperator {
+    fn from(value: &ir::MultiplicativeExpressionOperator) -> Self {
+        match value {
+            ir::MultiplicativeExpressionOperator::Asterisk(_) => Self::Asterisk,
+            ir::MultiplicativeExpressionOperator::Slash(_) => Self::Slash,
+            ir::MultiplicativeExpressionOperator::Percent(_) => Self::Percent,
+        }
+    }
+}
+
+impl From<&ir::EqualityExpressionOperator> for UsingOperator {
+    fn from(value: &ir::EqualityExpressionOperator) -> Self {
+        match value {
+            ir::EqualityExpressionOperator::EqualEqual(_) => Self::EqualEqual,
+            ir::EqualityExpressionOperator::BangEqual(_) => Self::BangEqual,
+        }
+    }
+}
+
+impl From<&ir::InequalityExpressionOperator> for UsingOperator {
+    fn from(value: &ir::InequalityExpressionOperator) -> Self {
+        match value {
+            ir::InequalityExpressionOperator::LessThan(_) => Self::LessThan,
+            ir::InequalityExpressionOperator::LessThanEqual(_) => Self::LessThanEqual,
+            ir::InequalityExpressionOperator::GreaterThan(_) => Self::GreaterThan,
+            ir::InequalityExpressionOperator::GreaterThanEqual(_) => Self::GreaterThanEqual,
+        }
+    }
+}
+
 impl UsingDirective {
     pub(crate) fn new_all(scope_id: ScopeId) -> Self {
         Self::AllTypes { scope_id }
@@ -535,7 +577,7 @@ impl UsingDirective {
     pub(crate) fn new_single_type_with_operators(
         scope_id: ScopeId,
         type_id: TypeId,
-        operator_mapping: Map<UsingOperator, String>,
+        operator_mapping: Map<UsingOperator, Vec<NodeId>>,
     ) -> Self {
         Self::SingleTypeOperator {
             scope_id,

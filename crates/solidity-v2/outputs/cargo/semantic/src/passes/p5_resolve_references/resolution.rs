@@ -13,6 +13,7 @@ use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 use super::{Pass, ScopeFrame};
 use crate::binder::{
     Definition, Reference, Resolution, ResolveOptions, ScopeId, Typing, UsingDirective,
+    UsingOperator,
 };
 use crate::built_ins::BuiltInsResolver;
 use crate::passes::common::constant_evaluator::{
@@ -234,6 +235,76 @@ impl Pass<'_> {
                 self.types
                     .implicitly_convertible_to_for_external_call(receiver_type_id, *type_id)
             })
+    }
+
+    /// Resolves the function a user-defined operator expression invokes and
+    /// records it in the binder. The operand must be a user-defined value
+    /// type with exactly one bound function taking `operand_count` operands.
+    pub(super) fn resolve_operator_function(
+        &mut self,
+        node_id: NodeId,
+        operator: UsingOperator,
+        operand: &ir::Expression,
+        operand_count: usize,
+    ) {
+        let Some(operand_type_id) =
+            self.typing_of_expression(operand)
+                .as_type_id()
+                .filter(|&type_id| {
+                    matches!(
+                        self.types.get_type_by_id(type_id),
+                        Type::UserDefinedValue(_)
+                    )
+                })
+        else {
+            return;
+        };
+
+        let mut candidates = Vec::new();
+        for directive in self.active_using_directives_for_type(operand_type_id) {
+            let UsingDirective::SingleTypeOperator {
+                operator_mapping, ..
+            } = directive
+            else {
+                continue;
+            };
+            for &definition_id in operator_mapping.get(&operator).into_iter().flatten() {
+                if !candidates.contains(&definition_id)
+                    && self.is_operator_function(definition_id, operand_type_id, operand_count)
+                {
+                    candidates.push(definition_id);
+                }
+            }
+        }
+
+        if let [definition_id] = candidates[..] {
+            self.binder.set_operator_function(node_id, definition_id);
+        }
+    }
+
+    /// Whether the definition is a function taking exactly `operand_count`
+    /// parameters of the operand's type. A `-` bound to both a unary and a
+    /// binary function disambiguates by the parameter count.
+    fn is_operator_function(
+        &self,
+        definition_id: NodeId,
+        operand_type_id: TypeId,
+        operand_count: usize,
+    ) -> bool {
+        let Some(Definition::Function(_)) = self.binder.find_definition_by_id(definition_id) else {
+            return false;
+        };
+        let Typing::Resolved(definition_type_id) = self.binder.node_typing(definition_id) else {
+            return false;
+        };
+        let Type::Function(function_type) = self.types.get_type_by_id(definition_type_id) else {
+            unreachable!("type of function definition is not a function");
+        };
+        function_type.parameter_types.len() == operand_count
+            && function_type
+                .parameter_types
+                .iter()
+                .all(|parameter_type_id| *parameter_type_id == operand_type_id)
     }
 
     fn resolve_first_modifier(&self, resolution: &Resolution) -> Resolution {

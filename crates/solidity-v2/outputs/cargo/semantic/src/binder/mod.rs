@@ -21,7 +21,9 @@ pub(crate) use definitions::{
 };
 pub use references::{Reference, Resolution};
 use scopes::ContractScope;
-pub(crate) use scopes::{FileScope, ParameterDefinition, ParametersScope, Scope, UsingDirective};
+pub(crate) use scopes::{
+    FileScope, ParameterDefinition, ParametersScope, Scope, UsingDirective, UsingOperator,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub(crate) struct ScopeId(usize);
@@ -99,6 +101,9 @@ pub struct Binder {
     definitions_by_identifier: Map<NodeId, NodeId>,
     /// `Reference` objects (identifier + `Resolution`), indexed by identifier `NodeId`
     references: Map<NodeId, Reference>,
+    /// User-defined operator functions, indexed by the `NodeId` of the
+    /// operator expression that invokes them
+    operator_functions: Map<NodeId, NodeId>,
     /// `Typing` information for each relevant `NodeId` of the AST
     node_typing: Map<NodeId, Typing>,
     /// Linearisations, as a vector of definitions, indexed by the
@@ -280,6 +285,16 @@ impl Binder {
 
     pub fn references(&self) -> &Map<NodeId, Reference> {
         &self.references
+    }
+
+    pub(crate) fn set_operator_function(&mut self, node_id: NodeId, definition_id: NodeId) {
+        self.operator_functions.insert(node_id, definition_id);
+    }
+
+    /// The user-defined operator function the operator expression with
+    /// `node_id` invokes, if it resolved to one.
+    pub fn resolved_operator_function(&self, node_id: NodeId) -> Option<NodeId> {
+        self.operator_functions.get(&node_id).copied()
     }
 
     pub(crate) fn update_definitions_to_references_index(&mut self) {
