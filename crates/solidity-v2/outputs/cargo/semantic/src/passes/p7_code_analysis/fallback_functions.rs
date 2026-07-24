@@ -10,7 +10,9 @@
 //! mutability on a `receive`). Only the forms that parse cleanly need a
 //! semantic check here.
 
-use slang_solidity_v2_common::diagnostics::kinds::structure::LibraryFallbackFunction;
+use slang_solidity_v2_common::diagnostics::kinds::structure::{
+    LibraryFallbackFunction, MultipleFallbackFunctions,
+};
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     FallbackFunctionMutability, FallbackFunctionSignature,
 };
@@ -36,12 +38,28 @@ pub(crate) fn check_fallback_functions(
             _ => continue,
         };
 
+        let mut fallback_count = 0usize;
+
         for member in members {
             let ir::ContractMember::FunctionDefinition(function) = member else {
                 continue;
             };
 
             if matches!(function.kind, ir::FunctionKind::Fallback) {
+                fallback_count += 1;
+
+                // A container may declare at most one fallback function. As in
+                // solc, the error is reported on every fallback beyond the first.
+                if fallback_count > 1 {
+                    diagnostics.push(
+                        file_node_mapper
+                            .file_id_from_node_id(function.id())
+                            .to_owned(),
+                        function.signature_text_range(),
+                        MultipleFallbackFunctions,
+                    );
+                }
+
                 check_fallback_function(
                     function,
                     enclosing_is_library,

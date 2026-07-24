@@ -1358,6 +1358,16 @@ mod structure {
     }
 
     #[test]
+    fn multiple_fallback_functions() -> Result<()> {
+        run("structure", "multiple_fallback_functions")
+    }
+
+    #[test]
+    fn multiple_receive_functions() -> Result<()> {
+        run("structure", "multiple_receive_functions")
+    }
+
+    #[test]
     fn non_abstract_contract_internal_constructor() -> Result<()> {
         run("structure", "non_abstract_contract_internal_constructor")
     }
