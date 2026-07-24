@@ -70,16 +70,18 @@ Available binaries in `./bin/`: `cargo`, `node`, `npm`, `npx`, `pnpm`, `gh`, `py
 The project uses a custom `infra` CLI that orchestrates all build operations. Use `--help` on any command or subcommand to discover options:
 
 ```sh
-./scripts/bin/infra --help       # See all available commands
-./scripts/bin/infra setup        # Install all dependencies
-./scripts/bin/infra setup --help # See setup subcommands (cargo, npm, etc.)
-./scripts/bin/infra check        # Codegen + cargo check + npm check + public API check
-./scripts/bin/infra check --help # See check subcommands (codegen, cargo, npm, public-api)
-./scripts/bin/infra test         # Run all tests (cargo nextest + jest)
-./scripts/bin/infra test --help  # See test subcommands (cargo, npm) and passthrough args
-./scripts/bin/infra lint         # Run all linters
-./scripts/bin/infra lint --help  # See lint subcommands (markdownlint, rustfmt, yamllint, actionlint, zizmor, prettier, etc.)
-./scripts/bin/infra ci           # Full CI run: setup + check + test + lint
+./scripts/bin/infra --help                     # See all available commands
+./scripts/bin/infra setup                      # Install all dependencies
+./scripts/bin/infra setup --help               # See setup subcommands (cargo, npm, etc.)
+./scripts/bin/infra check                      # Codegen + cargo check + npm check + public API check
+./scripts/bin/infra check --help               # See check subcommands (codegen, cargo, npm, public-api)
+./scripts/bin/infra test                       # Run all tests (cargo nextest + jest)
+./scripts/bin/infra test --help                # See test subcommands (cargo, npm) and passthrough args
+./scripts/bin/infra verify                     # Run verification checks against external datasets (e.g. solc-comparison)
+./scripts/bin/infra verify solc-semantic-suite # Run slang v2 against solc's libsolidity semanticTests (regression guard for valid Solidity)
+./scripts/bin/infra lint                       # Run all linters
+./scripts/bin/infra lint --help                # See lint subcommands (markdownlint, rustfmt, yamllint, actionlint, zizmor, prettier, etc.)
+./scripts/bin/infra ci                         # Full CI run: setup + check + test + lint
 ```
 
 Always run `infra setup` when initializing a new workspace, to ensure all tools/dependencies are available.
@@ -142,6 +144,19 @@ For testing, we maintain snapshots checked into the repo:
 When source changes cause snapshot mismatches, the test output shows the diff.
 Simply re-run the tests, and they will update the snapshot files on disk automatically.
 Then commit the updated snapshots alongside your code change.
+
+### `solc-comparison` baseline
+
+`infra verify` (specifically `infra verify solc-semantic-suite`) runs slang v2
+against solc's `libsolidity` semanticTests (a large corpus of known-valid
+Solidity) to catch new validations that accidentally reject valid code. It runs
+in CI as a step after `infra test`. The set of currently-failing tests is
+tracked in `crates/solidity-v2/testing/solc-comparison/expected-failures.json`.
+Like the other snapshot tests, the mode is chosen by the `CI` env var: in CI it
+checks against the committed baseline, run locally it regenerates it. So if you
+intentionally change which tests pass (add a validation, fix the parser, bump
+the supported version), just run `infra verify solc-semantic-suite` locally and
+commit the regenerated `expected-failures.json` / `pinned-commits.json`.
 
 ### V2 Snapshot `.tests.config.json`
 

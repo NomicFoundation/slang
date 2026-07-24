@@ -58,6 +58,9 @@ jobs:
       - name: "infra test"
         run: "./scripts/bin/infra test"
 
+      - name: "infra verify"
+        run: "./scripts/bin/infra verify"
+
       - name: "infra lint"
         # GH_TOKEN lets zizmor run its online audits (known-vulnerabilities,
         # tag→SHA resolution); without it zizmor falls back to offline.

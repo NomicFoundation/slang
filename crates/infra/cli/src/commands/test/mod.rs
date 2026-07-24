@@ -47,6 +47,9 @@ fn test_cargo(passthrough: impl IntoIterator<Item = impl Into<String>>) {
     Command::new("cargo")
         .args(["nextest", "run"])
         .flag("--workspace")
+        // The solc-comparison suite is an external-dataset check owned by
+        // 'infra verify', not part of the default test run.
+        .property("--exclude", "solidity_testing_solc_comparison")
         .flag("--all-features")
         .flag("--tests")
         .flag("--lib")
