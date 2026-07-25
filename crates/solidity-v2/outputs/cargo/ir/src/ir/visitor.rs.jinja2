@@ -91,12 +91,12 @@ pub trait Visitor {
 
 {% for parent_type, collection in target.collections -%}
   #[inline]
-  fn accept_{{ parent_type | snake_case }}(items: &Vec<{{ collection.item_type.name }}>, visitor: &mut impl Visitor) {
+  fn accept_{{ parent_type | snake_case }}(items: &{{ parent_type }}, visitor: &mut impl Visitor) {
     if !visitor.enter_{{ parent_type | snake_case }}(items) {
       return;
     }
-    
-    for item in items {
+
+    for item in items.iter() {
       {%- if collection.item_type.is_terminal %}
         visitor.visit_{{ collection.item_type.name | snake_case }}(item);
       {% else %}

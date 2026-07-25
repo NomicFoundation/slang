@@ -2,7 +2,6 @@
 
 use std::sync::Arc;
 use std::ops::Range;
-use std::vec::Vec;
 
 pub(super) use slang_solidity_v2_common::nodes::NodeId;
 
@@ -95,9 +94,9 @@ pub use super::kinds::NodeKind;
 //
 
 {% for parent_type, collection in target.collections %}
-  pub type {{ parent_type }} = Vec<
+  pub type {{ parent_type }} = Arc<[
     {{ collection.item_type.name }}
-  >;
+  ]>;
 {% endfor %}
 
 //

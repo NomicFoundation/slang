@@ -68,7 +68,7 @@ impl<'a> Pass<'a> {
             .binder
             .scope_id_for_node_id(source_unit.id())
             .expect("source unit should have a defined scope");
-        for member in &source_unit.members {
+        for member in source_unit.members.iter() {
             match member {
                 ir::SourceUnitMember::ContractDefinition(contract_definition) => {
                     self.visit_contract_definition(contract_definition, scope_id);
@@ -109,7 +109,7 @@ impl<'a> Pass<'a> {
         scope_id: ScopeId,
     ) -> Vec<NodeId> {
         let mut resolved_bases = Vec::new();
-        for inheritance_type in types {
+        for inheritance_type in types.iter() {
             let resolution = resolve_identifier_path_in_scope(
                 self.binder,
                 &inheritance_type.type_name,
@@ -143,7 +143,7 @@ impl<'a> Pass<'a> {
     }
 
     fn linearise_contracts_from(&mut self, source_unit: &ir::SourceUnit) {
-        for member in &source_unit.members {
+        for member in source_unit.members.iter() {
             let (node_id, range) = match member {
                 ir::SourceUnitMember::ContractDefinition(contract_definition) => {
                     (contract_definition.id(), contract_definition.range.clone())

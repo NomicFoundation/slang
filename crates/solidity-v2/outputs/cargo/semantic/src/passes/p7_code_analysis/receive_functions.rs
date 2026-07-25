@@ -36,7 +36,7 @@ pub(crate) fn check_receive_functions(
 
         let mut receive_count = 0usize;
 
-        for member in members {
+        for member in members.iter() {
             let ir::ContractMember::FunctionDefinition(function) = member else {
                 continue;
             };

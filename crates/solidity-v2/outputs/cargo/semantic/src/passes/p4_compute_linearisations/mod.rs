@@ -163,8 +163,8 @@ impl<'a> HierarchyChecker<'a> {
     fn fold_base(&mut self, base_id: NodeId) {
         let binder = self.binder;
         let members = match binder.find_definition_by_id(base_id) {
-            Some(Definition::Contract(contract)) => contract.ir_node.members.as_slice(),
-            Some(Definition::Interface(interface)) => interface.ir_node.members.as_slice(),
+            Some(Definition::Contract(contract)) => &contract.ir_node.members[..],
+            Some(Definition::Interface(interface)) => &interface.ir_node.members[..],
             _ => unreachable!("base should be a contract or interface"),
         };
         // The head of the linearisation is the type we're computing for; every

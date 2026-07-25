@@ -40,7 +40,7 @@ pub(crate) fn check_fallback_functions(
 
         let mut fallback_count = 0usize;
 
-        for member in members {
+        for member in members.iter() {
             let ir::ContractMember::FunctionDefinition(function) = member else {
                 continue;
             };

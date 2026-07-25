@@ -43,7 +43,7 @@ pub fn extract_import_paths_from_source_unit(
 ) -> Vec<(NodeId, String)> {
     let mut import_paths = Vec::new();
 
-    for member in &source_unit.members {
+    for member in source_unit.members.iter() {
         let ir::SourceUnitMember::ImportClause(import_clause) = member else {
             continue;
         };
@@ -363,7 +363,7 @@ impl SemanticContext {
                     return None;
                 };
                 let mut builder = StorageLayoutBuilder::new(U256::ZERO);
-                for member in &struct_definition.ir_node.members {
+                for member in struct_definition.ir_node.members.iter() {
                     let member_type_id = self.binder.node_typing(member.id()).as_type_id()?;
                     let member_size =
                         self.storage_size_of_type_id_impl(member_type_id, visited_structs)?;
