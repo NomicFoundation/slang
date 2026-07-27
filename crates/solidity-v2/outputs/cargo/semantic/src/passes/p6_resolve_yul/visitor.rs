@@ -4,7 +4,7 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
 use super::Pass;
-use super::for_loop_clause::YulForLoopClause;
+use super::structure_checks::YulForLoopClause;
 use crate::binder::{Definition, Reference, Resolution, Scope};
 
 impl Visitor for Pass<'_> {

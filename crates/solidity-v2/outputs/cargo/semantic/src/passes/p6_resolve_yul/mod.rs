@@ -11,13 +11,12 @@ use crate::context::FileNodeMapper;
 use crate::types::TypeRegistry;
 
 mod conflicts;
-mod for_loop_clause;
 mod resolution;
-mod switch;
+mod structure_checks;
 mod visitor;
 
 use conflicts::YulConflict;
-use for_loop_clause::YulForLoopClause;
+use structure_checks::YulForLoopClause;
 
 /// This pass processes all Yul/`assembly` code. In a single traversal it both
 /// collects Yul definitions and scopes (creating `YulBlockScope`/
