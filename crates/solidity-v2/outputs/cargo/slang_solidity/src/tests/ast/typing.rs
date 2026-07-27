@@ -140,6 +140,97 @@ fn test_literal_plus_integer_get_type() {
 }
 
 define_fixture!(
+    BinaryOperatorCommonType,
+    file: "main.sol", r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+contract C {
+    function mul(uint8 i) internal pure returns (uint256) {
+        return 0x1000 * i;
+    }
+
+    function div(uint8 i) internal pure returns (uint256) {
+        return 0x1000 / i;
+    }
+
+    function rem(uint8 i) internal pure returns (uint256) {
+        return 0x1000 % i;
+    }
+
+    function bit_and(uint8 i) internal pure returns (uint256) {
+        return 0x1000 & i;
+    }
+
+    function bit_or(uint8 i) internal pure returns (uint256) {
+        return 0x1000 | i;
+    }
+
+    function bit_xor(uint8 i) internal pure returns (uint256) {
+        return 0x1000 ^ i;
+    }
+}
+"#,
+);
+
+/// Returns the resolved type of the single `return <expr>;` statement in the
+/// named function of `contract`.
+fn return_expression_type(contract: &ast::ContractDefinition, function_name: &str) -> ast::Type {
+    let function = contract
+        .members()
+        .iter()
+        .find_map(|member| match member {
+            ast::ContractMember::FunctionDefinition(function)
+                if function
+                    .name()
+                    .is_some_and(|name| name.name() == function_name) =>
+            {
+                Some(function)
+            }
+            _ => None,
+        })
+        .unwrap_or_else(|| panic!("function {function_name} is found"));
+
+    let body = function.body().expect("function has a body");
+    let ret = body
+        .statements()
+        .iter()
+        .find_map(|statement| match statement {
+            ast::Statement::ReturnStatement(ret) => Some(ret),
+            _ => None,
+        })
+        .expect("function has a return statement");
+
+    ret.expression()
+        .expect("return has an expression")
+        .get_type()
+        .expect("the returned expression has a resolved type")
+}
+
+#[test]
+fn test_binary_operator_common_type() {
+    let unit = BinaryOperatorCommonType::build_compilation_unit();
+
+    let contract = unit
+        .find_contract_by_name("C")
+        .next()
+        .expect("contract C is found");
+
+    // The multiplicative (`*`, `/`, `%`) and bitwise (`&`, `|`, `^`) operators
+    // share the same result typing as addition: with one non-constant operand,
+    // the result is the operands' common type. Here `0x1000` has mobile type
+    // `uint16` (the smallest unsigned type holding `4096`) and the other operand
+    // is a `uint8`, so every one of these operators resolves to `uint16`.
+    for function_name in ["mul", "div", "rem", "bit_and", "bit_or", "bit_xor"] {
+        let ast::Type::Integer(integer) = return_expression_type(&contract, function_name) else {
+            panic!("expected `{function_name}` to type as an integer");
+        };
+        assert!(!integer.is_signed(), "`{function_name}` result is unsigned");
+        assert_eq!(integer.bits(), 16, "`{function_name}` result is 16-bit");
+    }
+}
+
+define_fixture!(
     ConditionalTernary,
     file: "main.sol", r#"
 // SPDX-License-Identifier: UNLICENSED
