@@ -10,14 +10,14 @@ use crate::binder::{AssemblyBlock, Binder, Definition, Scope, ScopeId};
 use crate::context::FileNodeMapper;
 use crate::types::TypeRegistry;
 
-mod break_continue;
 mod conflicts;
+mod for_loop_clause;
 mod resolution;
 mod switch;
 mod visitor;
 
-use break_continue::YulForLoopClause;
 use conflicts::YulConflict;
+use for_loop_clause::YulForLoopClause;
 
 /// This pass processes all Yul/`assembly` code. In a single traversal it both
 /// collects Yul definitions and scopes (creating `YulBlockScope`/

@@ -3,6 +3,7 @@ use std::ops::Range;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     YulBreakContinueInForLoopInit, YulBreakContinueInForLoopPost, YulBreakContinueOutsideForLoop,
+    YulFunctionInForLoopInit,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 
@@ -62,6 +63,23 @@ impl Pass<'_> {
                 .file_id_from_node_id(node_id)
                 .to_owned();
             self.diagnostics.push(file_id, range.clone(), kind);
+        }
+    }
+
+    /// Reports a Yul function definition declared directly in a for-loop init
+    /// block (i.e. when the current clause is [`YulForLoopClause::Init`]).
+    pub(super) fn check_function_definition_position(
+        &mut self,
+        node_id: NodeId,
+        range: &Range<usize>,
+    ) {
+        if self.for_loop_clause == YulForLoopClause::Init {
+            let file_id = self
+                .file_node_mapper
+                .file_id_from_node_id(node_id)
+                .to_owned();
+            self.diagnostics
+                .push(file_id, range.clone(), YulFunctionInForLoopInit);
         }
     }
 }

@@ -4,7 +4,7 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
 use super::Pass;
-use super::break_continue::YulForLoopClause;
+use super::for_loop_clause::YulForLoopClause;
 use crate::binder::{Definition, Reference, Resolution, Scope};
 
 impl Visitor for Pass<'_> {
@@ -37,6 +37,10 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_yul_function_definition(&mut self, node: &ir::YulFunctionDefinition) -> bool {
+        // A function definition is not allowed in a for-loop init block. This
+        // must be checked before the clause is reset below.
+        self.check_function_definition_position(node.id(), &node.range);
+
         // A for-loop does not extend into functions declared inside it, so
         // entering a function resets the for-loop context. It's restored when
         // leaving the function.

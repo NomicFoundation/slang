@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/yul-function-in-for-loop-init] Error: Functions cannot be defined inside a for-loop init block.
+   ╭─[input.sol:7:19]
+   │
+ 7 │             for { function g() {} } n { } { }
+   │                   ───────┬───────  
+   │                          ╰───────── Error occurred here.
+───╯

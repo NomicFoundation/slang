@@ -58,6 +58,7 @@ mod virtual_private_function;
 mod yul_break_continue_in_for_loop_init;
 mod yul_break_continue_in_for_loop_post;
 mod yul_break_continue_outside_for_loop;
+mod yul_function_in_for_loop_init;
 
 pub use abstract_contract_public_constructor::AbstractContractPublicConstructor;
 pub use break_outside_loop::BreakOutsideLoop;
@@ -120,6 +121,7 @@ pub use virtual_private_function::VirtualPrivateFunction;
 pub use yul_break_continue_in_for_loop_init::YulBreakContinueInForLoopInit;
 pub use yul_break_continue_in_for_loop_post::YulBreakContinueInForLoopPost;
 pub use yul_break_continue_outside_for_loop::YulBreakContinueOutsideForLoop;
+pub use yul_function_in_for_loop_init::YulFunctionInForLoopInit;
 
 use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
@@ -152,6 +154,8 @@ define_diagnostic_kind! {
         YulBreakContinueInForLoopInit(YulBreakContinueInForLoopInit),
         /// A Yul `break` or `continue` keyword appears in the post block of a for-loop.
         YulBreakContinueInForLoopPost(YulBreakContinueInForLoopPost),
+        /// A Yul function definition appears in the init block of a for-loop.
+        YulFunctionInForLoopInit(YulFunctionInForLoopInit),
 
         /// Using directives are only allowed at the file level, or inside contracts and libraries.
         InvalidUsingDirectiveContainer(InvalidUsingDirectiveContainer),

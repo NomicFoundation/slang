@@ -2155,6 +2155,36 @@ mod structure {
             run("structure/yul_break_continue", "valid")
         }
     }
+
+    mod yul_function_in_for_loop_init {
+        use super::*;
+
+        #[test]
+        fn in_init_block() -> Result<()> {
+            run("structure/yul_function_in_for_loop_init", "in_init_block")
+        }
+
+        #[test]
+        fn nested_for_in_init_block() -> Result<()> {
+            run(
+                "structure/yul_function_in_for_loop_init",
+                "nested_for_in_init_block",
+            )
+        }
+
+        #[test]
+        fn nested_for_in_post_block() -> Result<()> {
+            run(
+                "structure/yul_function_in_for_loop_init",
+                "nested_for_in_post_block",
+            )
+        }
+
+        #[test]
+        fn valid() -> Result<()> {
+            run("structure/yul_function_in_for_loop_init", "valid")
+        }
+    }
 }
 
 mod syntax {
