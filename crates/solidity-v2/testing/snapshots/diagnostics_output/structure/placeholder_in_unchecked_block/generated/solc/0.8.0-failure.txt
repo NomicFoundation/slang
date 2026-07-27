@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[SyntaxError 2573] Error: The placeholder statement "_" cannot be used inside an "unchecked" block.
+    ╭─[input.sol:10:13]
+    │
+ 10 │             _;
+    │             ┬  
+    │             ╰── Error occurred here.
+────╯
+
+[SyntaxError 2573] Error: The placeholder statement "_" cannot be used inside an "unchecked" block.
+    ╭─[input.sol:18:17]
+    │
+ 18 │                 _;
+    │                 ┬  
+    │                 ╰── Error occurred here.
+────╯

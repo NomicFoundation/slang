@@ -2,5 +2,5 @@
 pragma solidity *;
 
 contract C {
-    modifier f() override override {}
+    modifier f() override override { _; }
 }

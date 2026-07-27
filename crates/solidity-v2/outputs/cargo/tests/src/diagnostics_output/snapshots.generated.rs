@@ -1363,6 +1363,11 @@ mod structure {
     }
 
     #[test]
+    fn modifier_body_without_placeholder() -> Result<()> {
+        run("structure", "modifier_body_without_placeholder")
+    }
+
+    #[test]
     fn modifier_in_interface() -> Result<()> {
         run("structure", "modifier_in_interface")
     }
@@ -1431,6 +1436,11 @@ mod structure {
     #[test]
     fn payable_internal_or_private_function() -> Result<()> {
         run("structure", "payable_internal_or_private_function")
+    }
+
+    #[test]
+    fn placeholder_in_unchecked_block() -> Result<()> {
+        run("structure", "placeholder_in_unchecked_block")
     }
 
     #[test]

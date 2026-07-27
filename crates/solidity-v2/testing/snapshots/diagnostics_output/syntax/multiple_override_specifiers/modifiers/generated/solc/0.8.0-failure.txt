@@ -5,7 +5,7 @@ Diagnostics: 1
 [ParserError 9102] Error: Override already specified.
    ╭─[input.sol:5:27]
    │
- 5 │     modifier f() override override {}
+ 5 │     modifier f() override override { _; }
    │                           ────┬───  
    │                               ╰───── Error occurred here.
 ───╯
