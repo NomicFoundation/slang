@@ -17,8 +17,8 @@ pub(super) struct FixtureFile {
 
 #[macro_export]
 macro_rules! define_fixture {
-    // Recursive case: consume one file definition
-    (@accum [$($acc:expr),*] ; $name:ident ; file : $k:literal, $v:literal $(, $($rest:tt)*)?) => {
+    // Recursive case: consume one file definition.
+    (@accum [$($acc:expr),*] ; $name:ident ; file : $k:literal, $v:expr $(, $($rest:tt)*)?) => {
         define_fixture!(
             @accum [$($acc,)* $crate::tests::fixtures::FixtureFile { id: $k.into(), contents: $v }] ;
             $name ;

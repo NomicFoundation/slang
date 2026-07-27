@@ -83,6 +83,43 @@ impl UnaryOperator {
 }
 
 impl TypeRegistry {
+    /// The type both operands of a binary operator reconcile to.
+    ///
+    /// `Self::common_type` mobilises *one* side and tests the other operand's
+    /// *raw* type against it (solc's `Type::commonType` rule), so a raw literal
+    /// is measured against a concrete operand as-is — eg. `int8 x; x == 5`
+    /// keeps `5` raw and reconciles to `int8`, not to `5`'s own mobile type
+    /// `uint8`. When neither raw type fits the other's mobile type, both sides
+    /// are mobilised and retried, recovering eg. two address literals whose raw
+    /// literal types don't inter-convert but whose mobile `address` types do.
+    pub(crate) fn common_operand_type(&mut self, left: TypeId, right: TypeId) -> Option<TypeId> {
+        // Fast path: operands that already share a type reconcile to its mobile
+        // type. The `common_type`/mobilise dance below would only rediscover
+        // that, at the cost of extra `Type` clones and convertibility checks.
+        if left == right {
+            return self.compute_mobile_type(left);
+        }
+        if let Some(common) = self.common_type(left, right) {
+            return Some(common);
+        }
+        let left_mobile = self.compute_mobile_type(left)?;
+        let right_mobile = self.compute_mobile_type(right)?;
+        if left_mobile == left && right_mobile == right {
+            // Nothing mobilised, so `common_type` already failed on these.
+            return None;
+        }
+        // Equivalent to `common_type(left_mobile, right_mobile)`, but mobile
+        // types are idempotent (`mobile(mobile(t)) == mobile(t)`), so skip
+        // re-mobilising both sides — just apply the convertibility rule.
+        if self.implicitly_convertible_to(right_mobile, left_mobile) {
+            return Some(left_mobile);
+        }
+        if self.implicitly_convertible_to(left_mobile, right_mobile) {
+            return Some(right_mobile);
+        }
+        None
+    }
+
     /// Result type of a binary operator, dispatched on the left operand. For
     /// shifts and exponentiation the result follows the left operand, and the
     /// right operand must be a nonnegative unsigned integer amount or
