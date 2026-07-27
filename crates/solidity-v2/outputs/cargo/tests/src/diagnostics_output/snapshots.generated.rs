@@ -1797,6 +1797,25 @@ mod syntax {
         }
     }
 
+    mod non_address_state_mutability {
+        use super::*;
+
+        #[test]
+        fn local_variable() -> Result<()> {
+            run("syntax/non_address_state_mutability", "local_variable")
+        }
+
+        #[test]
+        fn return_parameter() -> Result<()> {
+            run("syntax/non_address_state_mutability", "return_parameter")
+        }
+
+        #[test]
+        fn state_variable() -> Result<()> {
+            run("syntax/non_address_state_mutability", "state_variable")
+        }
+    }
+
     #[test]
     fn unexpected_eof() -> Result<()> {
         run("syntax", "unexpected_eof")

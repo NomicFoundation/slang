@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 9106] Error: State mutability can only be specified for address types.
+   ╭─[input.sol:7:47]
+   │
+ 7 │     function f() public pure returns (uint256 payable) {}
+   │                                               ───┬───  
+   │                                                  ╰───── Error occurred here.
+───╯

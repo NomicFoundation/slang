@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/unexpected-terminal] Error: Unexpected PayableKeyword. One of AtKeyword, CallDataKeyword, CloseParen, Comma, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, MemoryKeyword, OpenBracket, RevertKeyword, StorageKeyword, TransientKeyword was expected
+   ╭─[input.sol:7:47]
+   │
+ 7 │     function f() public pure returns (uint256 payable) {}
+   │                                               ───┬───  
+   │                                                  ╰───── Error occurred here.
+───╯
