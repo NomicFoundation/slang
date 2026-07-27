@@ -789,6 +789,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnostic
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::YulBreakContinueInForLoopPost(slang_solidity_v2_common::diagnostics::kinds::structure::YulBreakContinueInForLoopPost)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::YulBreakContinueOutsideForLoop(slang_solidity_v2_common::diagnostics::kinds::structure::YulBreakContinueOutsideForLoop)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::YulFunctionInForLoopInit(slang_solidity_v2_common::diagnostics::kinds::structure::YulFunctionInForLoopInit)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::YulLeaveOutsideFunction(slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction)
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -918,6 +919,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::YulBreakContinueOutsideForLoop) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::YulFunctionInForLoopInit> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::YulFunctionInForLoopInit) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction) -> Self
 impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -2096,6 +2099,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulFunctionInForLoopInit::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulFunctionInForLoopInit::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulFunctionInForLoopInit::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub mod slang_solidity_v2_common::diagnostics::kinds::syntax
 pub enum slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::ExpectedArrayLengthExpression(slang_solidity_v2_common::diagnostics::kinds::syntax::ExpectedArrayLengthExpression)
@@ -2925,6 +2947,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::YulBreakContinueOutsideForLoop) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::YulFunctionInForLoopInit> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::YulFunctionInForLoopInit) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::ExpectedArrayLengthExpression> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::syntax::ExpectedArrayLengthExpression) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleSyntaxVersion> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -3415,6 +3439,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulFunctionInForLoopInit::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulFunctionInForLoopInit::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulFunctionInForLoopInit::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::YulLeaveOutsideFunction::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::ExpectedArrayLengthExpression
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::ExpectedArrayLengthExpression::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::ExpectedArrayLengthExpression::message(&self) -> alloc::string::String

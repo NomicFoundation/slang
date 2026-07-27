@@ -66,9 +66,12 @@ struct Pass<'a> {
     /// Which for-loop clause the traversal is currently inside, used to
     /// validate the placement of `break`/`continue` keywords.
     for_loop_clause: YulForLoopClause,
-    /// Stack of `for_loop_clause` values saved when entering a Yul function
-    /// definition (which resets the context) and restored when leaving it.
-    for_loop_clause_stack: Vec<YulForLoopClause>,
+    /// The `for_loop_clause` active around each Yul function definition the
+    /// traversal is currently nested inside: saved when entering a function
+    /// (which resets the clause) and restored when leaving it. One entry per
+    /// enclosing function, so its depth also tells whether we're inside any
+    /// function, used to validate the placement of `leave` keywords.
+    function_clause_stack: Vec<YulForLoopClause>,
 }
 
 impl<'a> Pass<'a> {
@@ -99,7 +102,7 @@ impl<'a> Pass<'a> {
             diagnostics,
             solidity_references,
             for_loop_clause: YulForLoopClause::None,
-            for_loop_clause_stack: Vec::new(),
+            function_clause_stack: Vec::new(),
         };
         ir::visitor::accept_yul_block(&ir_node.body, &mut pass);
         // Only the seeded enclosing scope should remain.

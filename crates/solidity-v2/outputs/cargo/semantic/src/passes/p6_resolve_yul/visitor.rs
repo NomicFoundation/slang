@@ -44,7 +44,7 @@ impl Visitor for Pass<'_> {
         // A for-loop does not extend into functions declared inside it, so
         // entering a function resets the for-loop context. It's restored when
         // leaving the function.
-        self.for_loop_clause_stack.push(self.for_loop_clause);
+        self.function_clause_stack.push(self.for_loop_clause);
         self.for_loop_clause = YulForLoopClause::None;
 
         // The function name definition was already inserted (hoisted) when
@@ -69,7 +69,7 @@ impl Visitor for Pass<'_> {
     fn leave_yul_function_definition(&mut self, node: &ir::YulFunctionDefinition) {
         self.leave_scope_for_node_id(node.id());
         self.for_loop_clause = self
-            .for_loop_clause_stack
+            .function_clause_stack
             .pop()
             .expect("unbalanced function definition enter/leave");
     }
@@ -133,6 +133,11 @@ impl Visitor for Pass<'_> {
 
     fn enter_yul_continue_statement(&mut self, node: &ir::YulContinueStatement) -> bool {
         self.check_break_continue_position("continue", node.id(), &node.range);
+        true
+    }
+
+    fn enter_yul_leave_statement(&mut self, node: &ir::YulLeaveStatement) -> bool {
+        self.check_leave_position(node.id(), &node.range);
         true
     }
 

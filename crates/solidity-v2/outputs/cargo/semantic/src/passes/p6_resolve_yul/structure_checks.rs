@@ -5,7 +5,7 @@ use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     DuplicateYulSwitchCase, YulBreakContinueInForLoopInit, YulBreakContinueInForLoopPost,
-    YulBreakContinueOutsideForLoop, YulFunctionInForLoopInit,
+    YulBreakContinueOutsideForLoop, YulFunctionInForLoopInit, YulLeaveOutsideFunction,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -111,6 +111,18 @@ impl Pass<'_> {
                 .to_owned();
             self.diagnostics
                 .push(file_id, range.clone(), YulFunctionInForLoopInit);
+        }
+    }
+
+    /// Reports a `leave` keyword that is not inside any function.
+    pub(super) fn check_leave_position(&mut self, node_id: NodeId, range: &Range<usize>) {
+        if self.function_clause_stack.is_empty() {
+            let file_id = self
+                .file_node_mapper
+                .file_id_from_node_id(node_id)
+                .to_owned();
+            self.diagnostics
+                .push(file_id, range.clone(), YulLeaveOutsideFunction);
         }
     }
 }

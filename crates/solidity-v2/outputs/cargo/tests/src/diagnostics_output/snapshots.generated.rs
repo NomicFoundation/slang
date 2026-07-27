@@ -2185,6 +2185,25 @@ mod structure {
             run("structure/yul_function_in_for_loop_init", "valid")
         }
     }
+
+    mod yul_leave_outside_function {
+        use super::*;
+
+        #[test]
+        fn in_for_loop_body() -> Result<()> {
+            run("structure/yul_leave_outside_function", "in_for_loop_body")
+        }
+
+        #[test]
+        fn outside_function() -> Result<()> {
+            run("structure/yul_leave_outside_function", "outside_function")
+        }
+
+        #[test]
+        fn valid() -> Result<()> {
+            run("structure/yul_leave_outside_function", "valid")
+        }
+    }
 }
 
 mod syntax {
