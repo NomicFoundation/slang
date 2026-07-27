@@ -4,6 +4,7 @@ use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
+use smallvec::SmallVec;
 
 use super::ScopeId;
 use crate::types::TypeId;
@@ -465,7 +466,11 @@ impl YulFunctionScope {
 //////////////////////////////////////////////////////////////////////////////
 // Using directives
 
-#[allow(dead_code)]
+/// The definitions bound to each operator. One operator can carry two at
+/// most in valid code, since a `-` binds both a unary and a binary function
+/// for the same type.
+pub(crate) type OperatorMapping = Map<UsingOperator, SmallVec<[NodeId; 2]>>;
+
 pub(crate) enum UsingDirective {
     AllTypes {
         scope_id: ScopeId,
@@ -476,7 +481,7 @@ pub(crate) enum UsingDirective {
     },
     SingleTypeOperator {
         scope_id: ScopeId,
-        operator_mapping: Map<UsingOperator, String>,
+        operator_mapping: OperatorMapping,
         type_id: TypeId,
     },
 }
@@ -523,6 +528,58 @@ impl From<&ir::UsingOperator> for UsingOperator {
     }
 }
 
+impl From<&ir::AdditiveExpressionOperator> for UsingOperator {
+    fn from(value: &ir::AdditiveExpressionOperator) -> Self {
+        match value {
+            ir::AdditiveExpressionOperator::Plus(_) => Self::Plus,
+            ir::AdditiveExpressionOperator::Minus(_) => Self::Minus,
+        }
+    }
+}
+
+impl From<&ir::MultiplicativeExpressionOperator> for UsingOperator {
+    fn from(value: &ir::MultiplicativeExpressionOperator) -> Self {
+        match value {
+            ir::MultiplicativeExpressionOperator::Asterisk(_) => Self::Asterisk,
+            ir::MultiplicativeExpressionOperator::Slash(_) => Self::Slash,
+            ir::MultiplicativeExpressionOperator::Percent(_) => Self::Percent,
+        }
+    }
+}
+
+impl From<&ir::EqualityExpressionOperator> for UsingOperator {
+    fn from(value: &ir::EqualityExpressionOperator) -> Self {
+        match value {
+            ir::EqualityExpressionOperator::EqualEqual(_) => Self::EqualEqual,
+            ir::EqualityExpressionOperator::BangEqual(_) => Self::BangEqual,
+        }
+    }
+}
+
+impl From<&ir::InequalityExpressionOperator> for UsingOperator {
+    fn from(value: &ir::InequalityExpressionOperator) -> Self {
+        match value {
+            ir::InequalityExpressionOperator::LessThan(_) => Self::LessThan,
+            ir::InequalityExpressionOperator::LessThanEqual(_) => Self::LessThanEqual,
+            ir::InequalityExpressionOperator::GreaterThan(_) => Self::GreaterThan,
+            ir::InequalityExpressionOperator::GreaterThanEqual(_) => Self::GreaterThanEqual,
+        }
+    }
+}
+
+impl TryFrom<&ir::PrefixExpressionOperator> for UsingOperator {
+    type Error = ();
+
+    /// Fails for the prefix operators that cannot be user-defined.
+    fn try_from(value: &ir::PrefixExpressionOperator) -> Result<Self, Self::Error> {
+        match value {
+            ir::PrefixExpressionOperator::Minus(_) => Ok(Self::Minus),
+            ir::PrefixExpressionOperator::Tilde(_) => Ok(Self::Tilde),
+            _ => Err(()),
+        }
+    }
+}
+
 impl UsingDirective {
     pub(crate) fn new_all(scope_id: ScopeId) -> Self {
         Self::AllTypes { scope_id }
@@ -535,7 +592,7 @@ impl UsingDirective {
     pub(crate) fn new_single_type_with_operators(
         scope_id: ScopeId,
         type_id: TypeId,
-        operator_mapping: Map<UsingOperator, String>,
+        operator_mapping: OperatorMapping,
     ) -> Self {
         Self::SingleTypeOperator {
             scope_id,
