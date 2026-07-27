@@ -103,8 +103,9 @@ pub struct Binder {
     node_typing: Map<NodeId, Typing>,
     /// Common type both operands of a comparison reconcile to before the
     /// comparison runs, indexed by the comparison expression's `NodeId`. Only
-    /// comparisons are stored, other binary operators have the common operand
-    /// types match the result.
+    /// comparison expressions are stored as other binary operators have
+    /// the type matching the result type, and hence stored in the typing of
+    /// the expression (ie. `node_typing` above).
     common_operand_typing: Map<NodeId, Typing>,
     /// Linearisations, as a vector of definitions, indexed by the
     /// contract/interface definition's `NodeId`

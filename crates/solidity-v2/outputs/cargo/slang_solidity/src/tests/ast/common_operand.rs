@@ -2,12 +2,12 @@
 //! both operands of a binary operator reconcile to before the operator runs,
 //! as recorded by the typing pass (solc's `commonType` annotation).
 
+use std::ops::Range;
+
 use crate::ast::BinaryOperatorExpression;
 use crate::{ast, define_fixture};
 
-define_fixture!(
-    CommonOperands,
-    file: "main.sol", r#"
+const SOURCE: &str = r#"
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.29;
 
@@ -77,19 +77,28 @@ contract CommonOperands {
         w1 < w2;
     }
 }
-"#,
-);
+"#;
+
+define_fixture!(CommonOperands, file: "main.sol", SOURCE);
+
+struct VisitedOperator {
+    range: Range<usize>,
+    common_type: Option<ast::Type>,
+}
 
 #[derive(Default)]
 struct CommonOperandCollector {
-    common_types: Vec<Option<ast::Type>>,
+    operators: Vec<VisitedOperator>,
 }
 
 macro_rules! collect_common_operand_type {
     ($($hook:ident: $node:ident),* $(,)?) => {
         $(
             fn $hook(&mut self, node: &ast::$node) -> bool {
-                self.common_types.push(node.common_operand_type());
+                self.operators.push(VisitedOperator {
+                    range: node.get_text_range().clone(),
+                    common_type: node.common_operand_type(),
+                });
                 true
             }
         )*
@@ -121,13 +130,21 @@ fn binary_operators_record_their_common_operand_type() {
     ast::visitor::accept_source_unit(&ast, &mut collector);
 
     // The collector visits the binary operators in source order; `next` pops
-    // the one matching the given source text (the text is just for readable
-    // failures).
-    let mut common_types = collector.common_types.into_iter();
+    // the next one and asserts its source text matches `source`, so an
+    // inserted/removed expression fails on the offending assertion rather than
+    // silently shifting every one that follows.
+    let mut operators = collector.operators.into_iter();
     let mut next = |source: &str| {
-        common_types
+        let operator = operators
             .next()
-            .unwrap_or_else(|| panic!("`{source}` is visited"))
+            .unwrap_or_else(|| panic!("`{source}` is visited"));
+        // Collapse whitespace so multi-line expressions match their snippet.
+        let visited = SOURCE[operator.range.clone()]
+            .split_whitespace()
+            .collect::<Vec<_>>()
+            .join(" ");
+        assert_eq!(visited, source, "walk landed on the expected expression");
+        operator.common_type
     };
 
     // Arithmetic: the smaller side widens into the common type, two literals
@@ -169,7 +186,10 @@ fn binary_operators_record_their_common_operand_type() {
     assert!(matches!(common, ast::Type::Integer(t) if !t.is_signed() && t.bits() == 8));
     let common = next("first == second").expect("addresses reconcile");
     assert!(matches!(common, ast::Type::Address(t) if !t.is_payable()));
-    let common = next("0x11..11 == 0x22..22").expect("two address literals reconcile");
+    let common = next(
+        "0x1111111111111111111111111111111111111111 == 0x2222222222222222222222222222222222222222",
+    )
+    .expect("two address literals reconcile");
     assert!(matches!(common, ast::Type::Address(t) if !t.is_payable()));
     let common = next("two < four").expect("fixed bytes reconcile");
     assert!(matches!(common, ast::Type::ByteArray(t) if t.width() == 4));
@@ -192,7 +212,7 @@ fn binary_operators_record_their_common_operand_type() {
     assert!(matches!(common, ast::Type::UserDefinedValue(_)));
 
     assert!(
-        common_types.next().is_none(),
+        operators.next().is_none(),
         "all binary operators are asserted on"
     );
 }
