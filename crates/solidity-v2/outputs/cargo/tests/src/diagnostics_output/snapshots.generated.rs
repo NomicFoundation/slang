@@ -1661,6 +1661,11 @@ mod syntax {
     }
 
     #[test]
+    fn library_inheritance() -> Result<()> {
+        run("syntax", "library_inheritance")
+    }
+
+    #[test]
     fn more_than_one_inheritance_list() -> Result<()> {
         run("syntax", "more_than_one_inheritance_list")
     }
