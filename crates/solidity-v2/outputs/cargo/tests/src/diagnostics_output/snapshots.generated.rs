@@ -1400,6 +1400,11 @@ mod structure {
     }
 
     #[test]
+    fn named_function_type_return_parameter() -> Result<()> {
+        run("structure", "named_function_type_return_parameter")
+    }
+
+    #[test]
     fn nested_unchecked_block() -> Result<()> {
         run("structure", "nested_unchecked_block")
     }

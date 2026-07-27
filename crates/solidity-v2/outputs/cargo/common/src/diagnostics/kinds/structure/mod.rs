@@ -30,6 +30,7 @@ mod modifier_in_interface;
 mod multiple_constructors;
 mod multiple_fallback_functions;
 mod multiple_receive_functions;
+mod named_function_type_return_parameter;
 mod nested_unchecked_block;
 mod non_abstract_contract_internal_constructor;
 mod payable_internal_or_private_function;
@@ -76,6 +77,7 @@ pub use modifier_in_interface::ModifierInInterface;
 pub use multiple_constructors::MultipleConstructors;
 pub use multiple_fallback_functions::MultipleFallbackFunctions;
 pub use multiple_receive_functions::MultipleReceiveFunctions;
+pub use named_function_type_return_parameter::NamedFunctionTypeReturnParameter;
 pub use nested_unchecked_block::NestedUncheckedBlock;
 pub use non_abstract_contract_internal_constructor::NonAbstractContractInternalConstructor;
 pub use payable_internal_or_private_function::PayableInternalOrPrivateFunction;
@@ -212,6 +214,9 @@ define_diagnostic_kind! {
 
         /// A variable is declared in an interface.
         VariableInInterface(VariableInInterface),
+
+        /// A return parameter of a function type is given a name.
+        NamedFunctionTypeReturnParameter(NamedFunctionTypeReturnParameter),
 
         /// An abstract contract declares a storage layout (`layout at`) specifier.
         StorageLayoutForAbstractContract(StorageLayoutForAbstractContract),

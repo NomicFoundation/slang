@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use slang_solidity_v2_common::collections::Map;
+use slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
@@ -174,6 +175,23 @@ impl Visitor for Pass<'_> {
         } else {
             true
         }
+    }
+
+    fn enter_function_type(&mut self, node: &ir::FunctionType) -> bool {
+        // The return parameters of a function type may not be named. Reported
+        // here (rather than while collecting definitions) because this pass
+        // reliably visits every function type, including those nested inside
+        // another function type's parameters.
+        if let Some(returns) = &node.returns {
+            for parameter in returns.iter() {
+                if let Some(name) = &parameter.name {
+                    self.push_diagnostic(name, NamedFunctionTypeReturnParameter);
+                }
+            }
+        }
+
+        // Keep recursing so nested function types are checked as well.
+        true
     }
 
     fn enter_override_paths(&mut self, items: &ir::OverridePaths) -> bool {
