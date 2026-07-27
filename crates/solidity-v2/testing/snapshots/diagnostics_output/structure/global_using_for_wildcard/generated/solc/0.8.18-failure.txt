@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[SyntaxError 8118] Error: The type has to be specified explicitly at file level (cannot use '*').
+    ╭─[input.sol:11:1]
+    │
+ 11 │ using L for * global;
+    │ ──────────┬──────────  
+    │           ╰──────────── Error occurred here.
+────╯
+
+[SyntaxError 2854] Error: Can only globally attach functions to specific types.
+    ╭─[input.sol:11:1]
+    │
+ 11 │ using L for * global;
+    │ ──────────┬──────────  
+    │           ╰──────────── Error occurred here.
+────╯

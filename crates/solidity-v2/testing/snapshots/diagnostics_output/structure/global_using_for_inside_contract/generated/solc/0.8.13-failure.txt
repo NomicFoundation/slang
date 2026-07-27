@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[SyntaxError 3367] Error: "global" can only be used at file level.
+   ╭─[input.sol:8:5]
+   │
+ 8 │     using L for uint256 global;
+   │     ─────────────┬─────────────  
+   │                  ╰─────────────── Error occurred here.
+───╯

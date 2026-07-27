@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[SyntaxError 8118] Error: The type has to be specified explicitly at file level (cannot use '*').
+   ╭─[input.sol:7:1]
+   │
+ 7 │ using L for *;
+   │ ───────┬──────  
+   │        ╰──────── Error occurred here.
+───╯
