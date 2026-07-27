@@ -39,7 +39,7 @@ impl Visitor for Pass<'_> {
     fn enter_yul_function_definition(&mut self, node: &ir::YulFunctionDefinition) -> bool {
         // A function definition is not allowed in a for-loop init block. This
         // must be checked before the clause is reset below.
-        self.check_function_definition_position(node.id(), &node.range);
+        self.check_function_definition_position(node);
 
         // A for-loop does not extend into functions declared inside it, so
         // entering a function resets the for-loop context. It's restored when
@@ -127,17 +127,17 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_yul_break_statement(&mut self, node: &ir::YulBreakStatement) -> bool {
-        self.check_break_continue_position("break", node.id(), &node.range);
+        self.check_break_continue_position("break", node);
         true
     }
 
     fn enter_yul_continue_statement(&mut self, node: &ir::YulContinueStatement) -> bool {
-        self.check_break_continue_position("continue", node.id(), &node.range);
+        self.check_break_continue_position("continue", node);
         true
     }
 
     fn enter_yul_leave_statement(&mut self, node: &ir::YulLeaveStatement) -> bool {
-        self.check_leave_position(node.id(), &node.range);
+        self.check_leave_position(node);
         true
     }
 

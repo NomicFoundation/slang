@@ -6,8 +6,7 @@ use super::strings::{value_of_hex_string_literals, value_of_string_literals};
 /// Computes the 256-bit word a Yul literal evaluates to.
 ///
 /// Number literals are parsed as integers, booleans as `1`/`0`, and string
-/// literals as their bytes left-aligned into a 256-bit word (see
-/// [`string_bytes_to_value`]).
+/// literals as their bytes left-aligned into a 256-bit word.
 ///
 /// Returns `None` when the literal cannot be parsed (e.g. it overflows 256
 /// bits).

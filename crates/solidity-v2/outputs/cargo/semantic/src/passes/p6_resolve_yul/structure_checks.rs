@@ -1,5 +1,3 @@
-use std::ops::Range;
-
 use ruint::aliases::U256;
 use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
@@ -7,8 +5,8 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     DuplicateYulSwitchCase, YulBreakContinueInForLoopInit, YulBreakContinueInForLoopPost,
     YulBreakContinueOutsideForLoop, YulFunctionInForLoopInit, YulLeaveOutsideFunction,
 };
-use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
 use super::Pass;
 use crate::types::literals::{
@@ -43,13 +41,8 @@ impl Pass<'_> {
                 continue;
             };
             if !seen.insert(value) {
-                let file_id = self
-                    .file_node_mapper
-                    .file_id_from_node_id(value_case.id())
-                    .to_owned();
-                self.diagnostics.push(
-                    file_id,
-                    value_case.range.clone(),
+                self.push_diagnostic(
+                    value_case,
                     DuplicateYulSwitchCase {
                         value: format_yul_literal(&value_case.value),
                     },
@@ -63,8 +56,7 @@ impl Pass<'_> {
     pub(super) fn check_break_continue_position(
         &mut self,
         keyword: &str,
-        node_id: NodeId,
-        range: &Range<usize>,
+        node: &(impl NodeIdentity + TextRange),
     ) {
         let kind: Option<DiagnosticKind> = match self.for_loop_clause {
             YulForLoopClause::Body => None,
@@ -89,11 +81,7 @@ impl Pass<'_> {
         };
 
         if let Some(kind) = kind {
-            let file_id = self
-                .file_node_mapper
-                .file_id_from_node_id(node_id)
-                .to_owned();
-            self.diagnostics.push(file_id, range.clone(), kind);
+            self.push_diagnostic(node, kind);
         }
     }
 
@@ -101,28 +89,17 @@ impl Pass<'_> {
     /// block (i.e. when the current clause is [`YulForLoopClause::Init`]).
     pub(super) fn check_function_definition_position(
         &mut self,
-        node_id: NodeId,
-        range: &Range<usize>,
+        node: &(impl NodeIdentity + TextRange),
     ) {
         if self.for_loop_clause == YulForLoopClause::Init {
-            let file_id = self
-                .file_node_mapper
-                .file_id_from_node_id(node_id)
-                .to_owned();
-            self.diagnostics
-                .push(file_id, range.clone(), YulFunctionInForLoopInit);
+            self.push_diagnostic(node, YulFunctionInForLoopInit);
         }
     }
 
     /// Reports a `leave` keyword that is not inside any function.
-    pub(super) fn check_leave_position(&mut self, node_id: NodeId, range: &Range<usize>) {
+    pub(super) fn check_leave_position(&mut self, node: &(impl NodeIdentity + TextRange)) {
         if self.function_clause_stack.is_empty() {
-            let file_id = self
-                .file_node_mapper
-                .file_id_from_node_id(node_id)
-                .to_owned();
-            self.diagnostics
-                .push(file_id, range.clone(), YulLeaveOutsideFunction);
+            self.push_diagnostic(node, YulLeaveOutsideFunction);
         }
     }
 }

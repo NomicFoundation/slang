@@ -5,9 +5,11 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
 use crate::binder::{AssemblyBlock, Binder, Definition, Scope, ScopeId};
 use crate::context::FileNodeMapper;
+use crate::passes::common::node_location;
 use crate::types::TypeRegistry;
 
 mod conflicts;
@@ -188,17 +190,19 @@ impl<'a> Pass<'a> {
         };
 
         if let Some(conflict_kind) = conflict_kind {
-            let file_id = self
-                .file_node_mapper
-                .file_id_from_node_id(definition.identifier().id())
-                .to_owned();
-            self.diagnostics.push(
-                file_id,
-                definition.identifier().range.clone(),
-                conflict_kind,
-            );
+            self.push_diagnostic(definition.identifier(), conflict_kind);
         }
 
         self.binder.insert_definition_in_scope(definition, scope_id);
+    }
+
+    /// Emits `kind` located at `node`.
+    fn push_diagnostic(
+        &mut self,
+        node: &(impl NodeIdentity + TextRange),
+        kind: impl Into<DiagnosticKind>,
+    ) {
+        let (file_id, range) = node_location(node, self.file_node_mapper);
+        self.diagnostics.push(file_id, range, kind);
     }
 }
