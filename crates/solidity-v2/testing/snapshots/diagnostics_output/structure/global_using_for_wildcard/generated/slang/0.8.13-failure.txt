@@ -2,7 +2,7 @@
 
 Diagnostics: 2
 
-[structure/global-using-for-wildcard] Error: Can only globally attach functions to specific types.
+[structure/global-using-for-wildcard] Error: Functions cannot be attached globally to '*'. The types have to be specified explicitly.
     ╭─[input.sol:11:1]
     │
  11 │ using L for * global;

@@ -17,6 +17,7 @@ impl DiagnosticExtensions for GlobalUsingForWildcard {
     }
 
     fn message(&self) -> String {
-        "Can only globally attach functions to specific types.".to_string()
+        "Functions cannot be attached globally to '*'. The types have to be specified explicitly."
+            .to_string()
     }
 }

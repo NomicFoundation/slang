@@ -17,6 +17,6 @@ impl DiagnosticExtensions for GlobalUsingForInsideContract {
     }
 
     fn message(&self) -> String {
-        "\"global\" can only be used at file level.".to_string()
+        "'global' can only be used at file level.".to_string()
     }
 }

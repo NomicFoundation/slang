@@ -2,7 +2,7 @@
 
 Diagnostics: 2
 
-[structure/global-using-for-inside-contract] Error: "global" can only be used at file level.
+[structure/global-using-for-inside-contract] Error: 'global' can only be used at file level.
    ╭─[input.sol:8:5]
    │
  8 │     using L for uint256 global;
