@@ -674,6 +674,8 @@ pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnostic
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::ContractShouldBeAbstract(slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EmptyEnum(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EmptyStruct(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EmptyTupleComponent(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EmptyTupleOnLhs(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EnumWithTooManyMembers(slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::FreeFunctionPayable(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionPayable)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::FreeFunctionVisibility(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionVisibility)
@@ -732,6 +734,10 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionPayable> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -955,6 +961,44 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers
@@ -2412,6 +2456,10 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionPayable> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -2754,6 +2802,14 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers::message(&self) -> alloc::string::String
