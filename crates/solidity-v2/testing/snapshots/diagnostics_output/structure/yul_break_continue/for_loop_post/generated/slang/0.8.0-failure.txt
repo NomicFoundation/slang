@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[structure/yul-break-continue-in-for-loop-post] Error: Keyword 'break' in for-loop post block is not allowed.
+   ╭─[input.sol:7:59]
+   │
+ 7 │             for { let i := 0 } lt(i, 10) { i := add(i, 1) break } { }
+   │                                                           ──┬──  
+   │                                                             ╰──── Error occurred here.
+───╯
+
+[structure/yul-break-continue-in-for-loop-post] Error: Keyword 'continue' in for-loop post block is not allowed.
+   ╭─[input.sol:8:59]
+   │
+ 8 │             for { let j := 0 } lt(j, 10) { j := add(j, 1) continue } { }
+   │                                                           ────┬───  
+   │                                                               ╰───── Error occurred here.
+───╯

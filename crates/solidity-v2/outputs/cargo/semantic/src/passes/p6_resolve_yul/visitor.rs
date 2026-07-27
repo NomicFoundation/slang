@@ -4,6 +4,7 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
 use super::Pass;
+use super::break_continue::YulForLoopClause;
 use crate::binder::{Definition, Reference, Resolution, Scope};
 
 impl Visitor for Pass<'_> {
@@ -36,6 +37,12 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_yul_function_definition(&mut self, node: &ir::YulFunctionDefinition) -> bool {
+        // A for-loop does not extend into functions declared inside it, so
+        // entering a function resets the for-loop context. It's restored when
+        // leaving the function.
+        self.for_loop_clause_stack.push(self.for_loop_clause);
+        self.for_loop_clause = YulForLoopClause::None;
+
         // The function name definition was already inserted (hoisted) when
         // entering the enclosing Yul block.
         let scope = Scope::new_yul_function(node.id(), self.current_scope_id());
@@ -57,6 +64,10 @@ impl Visitor for Pass<'_> {
 
     fn leave_yul_function_definition(&mut self, node: &ir::YulFunctionDefinition) {
         self.leave_scope_for_node_id(node.id());
+        self.for_loop_clause = self
+            .for_loop_clause_stack
+            .pop()
+            .expect("unbalanced function definition enter/leave");
     }
 
     fn enter_yul_variable_declaration_statement(
@@ -81,21 +92,44 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_yul_for_statement(&mut self, node: &ir::YulForStatement) -> bool {
+        // Track which for-loop clause we're in so that `break`/`continue`
+        // placement can be validated. The clause is restored to the enclosing
+        // loop's context once we're done.
+        let outer_clause = self.for_loop_clause;
+
         // Visit the initialization block first. Because collection and
         // resolution now happen in the same traversal, this both creates the
         // initialization scope and resolves references inside it.
+        self.for_loop_clause = YulForLoopClause::Init;
         ir::visitor::accept_yul_block(&node.initialization, self);
 
         // Visit the rest of the children, but in the scope of the
         // initialization block such that condition/iterator/body link to it.
         self.enter_scope_for_node_id(node.initialization.id());
+        // The condition is an expression and cannot contain `break`/`continue`,
+        // but reset the clause to match the parser's context anyway.
+        self.for_loop_clause = YulForLoopClause::None;
         ir::visitor::accept_yul_expression(&node.condition, self);
+        self.for_loop_clause = YulForLoopClause::Post;
         ir::visitor::accept_yul_block(&node.iterator, self);
+        self.for_loop_clause = YulForLoopClause::Body;
         ir::visitor::accept_yul_block(&node.body, self);
         self.leave_scope_for_node_id(node.initialization.id());
 
+        self.for_loop_clause = outer_clause;
+
         // We already visited our children
         false
+    }
+
+    fn enter_yul_break_statement(&mut self, node: &ir::YulBreakStatement) -> bool {
+        self.check_break_continue_position("break", node.id(), &node.range);
+        true
+    }
+
+    fn enter_yul_continue_statement(&mut self, node: &ir::YulContinueStatement) -> bool {
+        self.check_break_continue_position("continue", node.id(), &node.range);
+        true
     }
 
     fn enter_yul_switch_statement(&mut self, node: &ir::YulSwitchStatement) -> bool {

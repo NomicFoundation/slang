@@ -2126,6 +2126,35 @@ mod structure {
     fn virtual_private_function() -> Result<()> {
         run("structure", "virtual_private_function")
     }
+
+    mod yul_break_continue {
+        use super::*;
+
+        #[test]
+        fn for_loop_init() -> Result<()> {
+            run("structure/yul_break_continue", "for_loop_init")
+        }
+
+        #[test]
+        fn for_loop_post() -> Result<()> {
+            run("structure/yul_break_continue", "for_loop_post")
+        }
+
+        #[test]
+        fn nested_in_function() -> Result<()> {
+            run("structure/yul_break_continue", "nested_in_function")
+        }
+
+        #[test]
+        fn outside_for_loop() -> Result<()> {
+            run("structure/yul_break_continue", "outside_for_loop")
+        }
+
+        #[test]
+        fn valid() -> Result<()> {
+            run("structure/yul_break_continue", "valid")
+        }
+    }
 }
 
 mod syntax {

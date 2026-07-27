@@ -55,6 +55,9 @@ mod variable_declaration_not_in_block;
 mod variable_in_interface;
 mod virtual_free_function;
 mod virtual_private_function;
+mod yul_break_continue_in_for_loop_init;
+mod yul_break_continue_in_for_loop_post;
+mod yul_break_continue_outside_for_loop;
 
 pub use abstract_contract_public_constructor::AbstractContractPublicConstructor;
 pub use break_outside_loop::BreakOutsideLoop;
@@ -114,6 +117,9 @@ pub use variable_declaration_not_in_block::VariableDeclarationNotInBlock;
 pub use variable_in_interface::VariableInInterface;
 pub use virtual_free_function::VirtualFreeFunction;
 pub use virtual_private_function::VirtualPrivateFunction;
+pub use yul_break_continue_in_for_loop_init::YulBreakContinueInForLoopInit;
+pub use yul_break_continue_in_for_loop_post::YulBreakContinueInForLoopPost;
+pub use yul_break_continue_outside_for_loop::YulBreakContinueOutsideForLoop;
 
 use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
@@ -139,6 +145,13 @@ define_diagnostic_kind! {
 
         /// A Yul `switch` statement declares more than one case with the same value.
         DuplicateYulSwitchCase(DuplicateYulSwitchCase),
+
+        /// A Yul `break` or `continue` keyword appears outside of any for-loop body.
+        YulBreakContinueOutsideForLoop(YulBreakContinueOutsideForLoop),
+        /// A Yul `break` or `continue` keyword appears in the init block of a for-loop.
+        YulBreakContinueInForLoopInit(YulBreakContinueInForLoopInit),
+        /// A Yul `break` or `continue` keyword appears in the post block of a for-loop.
+        YulBreakContinueInForLoopPost(YulBreakContinueInForLoopPost),
 
         /// Using directives are only allowed at the file level, or inside contracts and libraries.
         InvalidUsingDirectiveContainer(InvalidUsingDirectiveContainer),

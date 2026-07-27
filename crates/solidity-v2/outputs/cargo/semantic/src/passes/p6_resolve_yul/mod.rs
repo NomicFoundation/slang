@@ -10,11 +10,13 @@ use crate::binder::{AssemblyBlock, Binder, Definition, Scope, ScopeId};
 use crate::context::FileNodeMapper;
 use crate::types::TypeRegistry;
 
+mod break_continue;
 mod conflicts;
 mod resolution;
 mod switch;
 mod visitor;
 
+use break_continue::YulForLoopClause;
 use conflicts::YulConflict;
 
 /// This pass processes all Yul/`assembly` code. In a single traversal it both
@@ -62,6 +64,12 @@ struct Pass<'a> {
     /// Distinct Solidity definitions referenced anywhere in the assembly block
     /// being processed, recorded in place as its Yul paths are resolved.
     solidity_references: &'a mut Vec<NodeId>,
+    /// Which for-loop clause the traversal is currently inside, used to
+    /// validate the placement of `break`/`continue` keywords.
+    for_loop_clause: YulForLoopClause,
+    /// Stack of `for_loop_clause` values saved when entering a Yul function
+    /// definition (which resets the context) and restored when leaving it.
+    for_loop_clause_stack: Vec<YulForLoopClause>,
 }
 
 impl<'a> Pass<'a> {
@@ -91,6 +99,8 @@ impl<'a> Pass<'a> {
             types,
             diagnostics,
             solidity_references,
+            for_loop_clause: YulForLoopClause::None,
+            for_loop_clause_stack: Vec::new(),
         };
         ir::visitor::accept_yul_block(&ir_node.body, &mut pass);
         // Only the seeded enclosing scope should remain.

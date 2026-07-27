@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[SyntaxError 9615] Error: Keyword "break" in for-loop init block is not allowed.
+   ╭─[input.sol:7:30]
+   │
+ 7 │             for { let i := 0 break } lt(i, 10) { i := add(i, 1) } { }
+   │                              ──┬──  
+   │                                ╰──── Error occurred here.
+───╯
+
+[SyntaxError 9615] Error: Keyword "continue" in for-loop init block is not allowed.
+   ╭─[input.sol:8:30]
+   │
+ 8 │             for { let j := 0 continue } lt(j, 10) { j := add(j, 1) } { }
+   │                              ────┬───  
+   │                                  ╰───── Error occurred here.
+───╯
