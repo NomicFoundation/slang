@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/duplicate-named-argument] Error: Duplicate named argument 'a'.
+    ╭─[input.sol:11:25]
+    │
+ 11 │         return f({a: 1, a: 2});
+    │                         ┬  
+    │                         ╰── Error occurred here.
+────╯

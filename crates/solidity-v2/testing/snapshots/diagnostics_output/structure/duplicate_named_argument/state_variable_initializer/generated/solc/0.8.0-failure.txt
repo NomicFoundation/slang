@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 6995] Error: Duplicate named argument "a".
+    ╭─[input.sol:13:17]
+    │
+ 13 │     S s = S({a: 1, a: 2});
+    │                 ┬  
+    │                 ╰── Error occurred here.
+────╯

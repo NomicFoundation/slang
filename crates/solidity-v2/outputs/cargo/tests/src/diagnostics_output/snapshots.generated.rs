@@ -1214,6 +1214,23 @@ mod structure {
         }
     }
 
+    mod duplicate_named_argument {
+        use super::*;
+
+        #[test]
+        fn function_call() -> Result<()> {
+            run("structure/duplicate_named_argument", "function_call")
+        }
+
+        #[test]
+        fn state_variable_initializer() -> Result<()> {
+            run(
+                "structure/duplicate_named_argument",
+                "state_variable_initializer",
+            )
+        }
+    }
+
     #[test]
     fn empty_enum() -> Result<()> {
         run("structure", "empty_enum")

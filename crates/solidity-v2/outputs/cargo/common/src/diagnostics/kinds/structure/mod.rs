@@ -3,6 +3,7 @@ mod break_outside_loop;
 mod constructor_not_in_contract;
 mod continue_outside_loop;
 mod contract_should_be_abstract;
+mod duplicate_named_argument;
 mod empty_enum;
 mod empty_struct;
 mod enum_with_too_many_members;
@@ -48,6 +49,7 @@ pub use break_outside_loop::BreakOutsideLoop;
 pub use constructor_not_in_contract::ConstructorNotInContract;
 pub use continue_outside_loop::ContinueOutsideLoop;
 pub use contract_should_be_abstract::ContractShouldBeAbstract;
+pub use duplicate_named_argument::DuplicateNamedArgument;
 pub use empty_enum::EmptyEnum;
 pub use empty_struct::EmptyStruct;
 pub use enum_with_too_many_members::EnumWithTooManyMembers;
@@ -145,6 +147,9 @@ define_diagnostic_kind! {
         MultipleConstructors(MultipleConstructors),
         /// A constructor is declared outside of a contract (i.e. in an interface or library).
         ConstructorNotInContract(ConstructorNotInContract),
+
+        /// A function call's named-argument list contains two arguments with the same name.
+        DuplicateNamedArgument(DuplicateNamedArgument),
 
         /// A constructor in an abstract contract is declared `public`.
         AbstractContractPublicConstructor(AbstractContractPublicConstructor),
