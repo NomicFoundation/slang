@@ -51,6 +51,7 @@ fn analyze_with_diagnostics(language_version: LanguageVersion, source: &str) -> 
     p3_type_definitions::run(
         &files,
         &mut binder,
+        language_version,
         &mut types,
         &file_node_mapper,
         &mut diagnostics,

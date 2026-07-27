@@ -285,6 +285,7 @@ contract Test is Base {
     p3_type_definitions::run(
         &files,
         &mut binder,
+        language_version,
         &mut types,
         &file_node_mapper,
         &mut diagnostics,
@@ -356,6 +357,7 @@ contract Test is Base {
     p3_type_definitions::run(
         &files,
         &mut binder,
+        language_version,
         &mut types,
         &file_node_mapper,
         &mut diagnostics,
@@ -421,6 +423,7 @@ contract Test {
     p3_type_definitions::run(
         &files,
         &mut binder,
+        language_version,
         &mut types,
         &file_node_mapper,
         &mut diagnostics,

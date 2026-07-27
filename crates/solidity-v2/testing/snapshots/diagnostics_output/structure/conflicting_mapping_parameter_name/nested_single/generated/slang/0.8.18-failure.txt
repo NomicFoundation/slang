@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/conflicting-mapping-parameter-name] Error: Conflicting parameter name 'owner' in mapping.
+   ╭─[input.sol:7:63]
+   │
+ 7 │     mapping(address owner => mapping(address hello => address owner)) m;
+   │                                                               ──┬──  
+   │                                                                 ╰──── Error occurred here.
+───╯

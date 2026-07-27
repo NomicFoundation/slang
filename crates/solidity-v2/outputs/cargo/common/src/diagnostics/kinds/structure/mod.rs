@@ -1,5 +1,6 @@
 mod abstract_contract_public_constructor;
 mod break_outside_loop;
+mod conflicting_mapping_parameter_name;
 mod constructor_not_in_contract;
 mod continue_outside_loop;
 mod contract_should_be_abstract;
@@ -47,6 +48,7 @@ mod virtual_private_function;
 
 pub use abstract_contract_public_constructor::AbstractContractPublicConstructor;
 pub use break_outside_loop::BreakOutsideLoop;
+pub use conflicting_mapping_parameter_name::ConflictingMappingParameterName;
 pub use constructor_not_in_contract::ConstructorNotInContract;
 pub use continue_outside_loop::ContinueOutsideLoop;
 pub use contract_should_be_abstract::ContractShouldBeAbstract;
@@ -152,6 +154,10 @@ define_diagnostic_kind! {
 
         /// A function call's named-argument list contains two arguments with the same name.
         DuplicateNamedArgument(DuplicateNamedArgument),
+
+        /// A named parameter of a mapping type reuses a name already used by
+        /// another parameter in the same or a nested mapping type.
+        ConflictingMappingParameterName(ConflictingMappingParameterName),
 
         /// A constructor in an abstract contract is declared `public`.
         AbstractContractPublicConstructor(AbstractContractPublicConstructor),

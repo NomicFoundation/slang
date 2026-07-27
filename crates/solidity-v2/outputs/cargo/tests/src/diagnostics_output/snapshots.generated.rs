@@ -1142,6 +1142,52 @@ mod structure {
         run("structure", "break_outside_loop")
     }
 
+    mod conflicting_mapping_parameter_name {
+        use super::*;
+
+        #[test]
+        fn function_type_parameter() -> Result<()> {
+            run(
+                "structure/conflicting_mapping_parameter_name",
+                "function_type_parameter",
+            )
+        }
+
+        #[test]
+        fn function_type_value() -> Result<()> {
+            run(
+                "structure/conflicting_mapping_parameter_name",
+                "function_type_value",
+            )
+        }
+
+        #[test]
+        fn nested_multiple() -> Result<()> {
+            run(
+                "structure/conflicting_mapping_parameter_name",
+                "nested_multiple",
+            )
+        }
+
+        #[test]
+        fn nested_single() -> Result<()> {
+            run(
+                "structure/conflicting_mapping_parameter_name",
+                "nested_single",
+            )
+        }
+
+        #[test]
+        fn same_level() -> Result<()> {
+            run("structure/conflicting_mapping_parameter_name", "same_level")
+        }
+
+        #[test]
+        fn valid() -> Result<()> {
+            run("structure/conflicting_mapping_parameter_name", "valid")
+        }
+    }
+
     #[test]
     fn constructor_in_interface() -> Result<()> {
         run("structure", "constructor_in_interface")

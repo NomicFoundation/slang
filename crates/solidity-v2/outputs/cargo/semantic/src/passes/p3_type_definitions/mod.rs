@@ -1,5 +1,6 @@
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, Scope, ScopeId};
@@ -22,25 +23,45 @@ mod visitor;
 pub fn run(
     files: &[impl SemanticFile],
     binder: &mut Binder,
+    language_version: LanguageVersion,
     types: &mut TypeRegistry,
     file_node_mapper: &FileNodeMapper,
     diagnostics: &mut DiagnosticCollection,
 ) {
     for file in files {
-        Pass::visit_file(file, binder, types, file_node_mapper, diagnostics);
+        Pass::visit_file(
+            file,
+            binder,
+            language_version,
+            types,
+            file_node_mapper,
+            diagnostics,
+        );
     }
     for file in files {
-        Pass::visit_file_type_getters(file, binder, types, file_node_mapper, diagnostics);
+        Pass::visit_file_type_getters(
+            file,
+            binder,
+            language_version,
+            types,
+            file_node_mapper,
+            diagnostics,
+        );
     }
 }
 
 struct Pass<'a> {
     scope_stack: Vec<ScopeId>,
     binder: &'a mut Binder,
+    language_version: LanguageVersion,
     types: &'a mut TypeRegistry,
     file_node_mapper: &'a FileNodeMapper,
     diagnostics: &'a mut DiagnosticCollection,
     current_receiver_type: Option<TypeId>,
+    // Number of upcoming mapping type nodes that belong to a mapping value
+    // chain already covered by the enclosing chain's parameter-name conflict
+    // check, and so must be skipped rather than checked as their own chain root.
+    nested_mappings_to_skip: usize,
 }
 
 impl<'a> Pass<'a> {
@@ -56,6 +77,7 @@ impl<'a> Pass<'a> {
     fn visit_file(
         file: &'a impl SemanticFile,
         binder: &'a mut Binder,
+        language_version: LanguageVersion,
         types: &'a mut TypeRegistry,
         file_node_mapper: &'a FileNodeMapper,
         diagnostics: &'a mut DiagnosticCollection,
@@ -63,10 +85,12 @@ impl<'a> Pass<'a> {
         let mut pass = Self {
             scope_stack: Vec::new(),
             binder,
+            language_version,
             types,
             file_node_mapper,
             diagnostics,
             current_receiver_type: None,
+            nested_mappings_to_skip: 0,
         };
         ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
         assert!(pass.scope_stack.is_empty());
@@ -81,6 +105,7 @@ impl<'a> Pass<'a> {
     fn visit_file_type_getters(
         file: &'a impl SemanticFile,
         binder: &'a mut Binder,
+        language_version: LanguageVersion,
         types: &'a mut TypeRegistry,
         file_node_mapper: &'a FileNodeMapper,
         diagnostics: &'a mut DiagnosticCollection,
@@ -88,10 +113,12 @@ impl<'a> Pass<'a> {
         let mut pass = Self {
             scope_stack: Vec::new(),
             binder,
+            language_version,
             types,
             file_node_mapper,
             diagnostics,
             current_receiver_type: None,
+            nested_mappings_to_skip: 0,
         };
         pass.type_getters_from(file.ir_root());
     }

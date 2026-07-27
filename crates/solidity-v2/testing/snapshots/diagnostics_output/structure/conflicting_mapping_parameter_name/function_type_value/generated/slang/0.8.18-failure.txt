@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/conflicting-mapping-parameter-name] Error: Conflicting parameter name 'a' in mapping.
+   ╭─[input.sol:8:55]
+   │
+ 8 │     mapping(uint k => function(mapping(uint a => uint a) storage) internal) m;
+   │                                                       ┬  
+   │                                                       ╰── Error occurred here.
+───╯
