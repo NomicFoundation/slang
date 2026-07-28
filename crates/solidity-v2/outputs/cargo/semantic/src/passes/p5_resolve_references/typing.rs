@@ -108,21 +108,10 @@ impl Pass<'_> {
 
         // TODO(validation) SDR[44]: check that both operands are valid for the operator
         // (needs additional parameter or check at the call site)
-        if self
-            .types
-            .implicitly_convertible_to(right_type_id, left_type_id)
-        {
-            Some(left_type_id)
-        } else if self
-            .types
-            .implicitly_convertible_to(left_type_id, right_type_id)
-        {
-            Some(right_type_id)
-        } else {
-            // TODO(validation) SDR[43]: the types are not compatible, we should
-            // emit an error, or signal our caller
-            None
-        }
+        //
+        // TODO(validation) SDR[43]: a `None` here means the types are not
+        // compatible; we should emit an error, or signal our caller.
+        self.types.common_type(left_type_id, right_type_id)
     }
 
     pub(super) fn type_of_prefix_expression(
