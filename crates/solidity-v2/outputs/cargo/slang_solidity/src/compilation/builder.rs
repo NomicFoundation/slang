@@ -182,6 +182,7 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
                     &file_id,
                     &internal_file.source_unit,
                     &internal_file.contents,
+                    language_version,
                     &mut id_generator,
                 );
                 diagnostics.extend(ir_diagnostics);

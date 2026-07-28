@@ -741,11 +741,13 @@ impl NodeIdentity for EqualityExpressionOperator {
 impl NodeIdentity for ExperimentalFeature {
     fn node_id(&self) -> Option<NodeId> {
         match self {
-            ExperimentalFeature::ABIEncoderV2Keyword(inner) => inner.node_id(),
+            ExperimentalFeature::ABIEncoderV2 => None,
 
-            ExperimentalFeature::SMTCheckerKeyword(inner) => inner.node_id(),
+            ExperimentalFeature::SMTChecker => None,
 
-            ExperimentalFeature::StringLiteral(inner) => inner.node_id(),
+            ExperimentalFeature::Solidity => None,
+
+            ExperimentalFeature::Unrecognized => None,
         }
     }
 }
@@ -1306,12 +1308,6 @@ impl NodeIdentity for YulSwitchCase {
     }
 }
 
-impl NodeIdentity for ABIEncoderV2KeywordStruct {
-    fn node_id(&self) -> Option<NodeId> {
-        Some(self.id)
-    }
-}
-
 impl NodeIdentity for AbicoderV1KeywordStruct {
     fn node_id(&self) -> Option<NodeId> {
         Some(self.id)
@@ -1649,12 +1645,6 @@ impl NodeIdentity for PragmaLessThanEqualStruct {
 }
 
 impl NodeIdentity for PragmaTildeStruct {
-    fn node_id(&self) -> Option<NodeId> {
-        Some(self.id)
-    }
-}
-
-impl NodeIdentity for SMTCheckerKeywordStruct {
     fn node_id(&self) -> Option<NodeId> {
         Some(self.id)
     }

@@ -1214,6 +1214,47 @@ mod structure {
         }
     }
 
+    mod duplicate_experimental_feature {
+        use super::*;
+
+        #[test]
+        fn abi_encoder_v2_keyword() -> Result<()> {
+            run(
+                "structure/duplicate_experimental_feature",
+                "abi_encoder_v2_keyword",
+            )
+        }
+
+        #[test]
+        fn abi_encoder_v2_mixed_forms() -> Result<()> {
+            run(
+                "structure/duplicate_experimental_feature",
+                "abi_encoder_v2_mixed_forms",
+            )
+        }
+
+        #[test]
+        fn distinct_unrecognized_features() -> Result<()> {
+            run(
+                "structure/duplicate_experimental_feature",
+                "distinct_unrecognized_features",
+            )
+        }
+
+        #[test]
+        fn same_unrecognized_feature() -> Result<()> {
+            run(
+                "structure/duplicate_experimental_feature",
+                "same_unrecognized_feature",
+            )
+        }
+
+        #[test]
+        fn smt_checker() -> Result<()> {
+            run("structure/duplicate_experimental_feature", "smt_checker")
+        }
+    }
+
     #[test]
     fn empty_enum() -> Result<()> {
         run("structure", "empty_enum")
@@ -1588,6 +1629,45 @@ mod syntax {
         #[test]
         fn state_variable() -> Result<()> {
             run("syntax/expected_array_length_expression", "state_variable")
+        }
+    }
+
+    mod experimental_features {
+        use super::*;
+
+        #[test]
+        fn abi_encoder_v2_keyword() -> Result<()> {
+            run("syntax/experimental_features", "abi_encoder_v2_keyword")
+        }
+
+        #[test]
+        fn abi_encoder_v2_string() -> Result<()> {
+            run("syntax/experimental_features", "abi_encoder_v2_string")
+        }
+
+        #[test]
+        fn smt_checker_keyword() -> Result<()> {
+            run("syntax/experimental_features", "smt_checker_keyword")
+        }
+
+        #[test]
+        fn smt_checker_string() -> Result<()> {
+            run("syntax/experimental_features", "smt_checker_string")
+        }
+
+        #[test]
+        fn solidity_keyword() -> Result<()> {
+            run("syntax/experimental_features", "solidity_keyword")
+        }
+
+        #[test]
+        fn solidity_string() -> Result<()> {
+            run("syntax/experimental_features", "solidity_string")
+        }
+
+        #[test]
+        fn unrecognized_string() -> Result<()> {
+            run("syntax/experimental_features", "unrecognized_string")
         }
     }
 

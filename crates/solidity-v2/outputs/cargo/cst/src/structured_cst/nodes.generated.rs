@@ -2766,6 +2766,7 @@ pub fn new_elementary_type_ufixed_keyword(element: UfixedKeyword) -> ElementaryT
 pub enum ExperimentalFeature {
     ABIEncoderV2Keyword(ABIEncoderV2Keyword),
     SMTCheckerKeyword(SMTCheckerKeyword),
+    SolidityKeyword(SolidityKeyword),
     PragmaStringLiteral(PragmaStringLiteral),
 }
 
@@ -2779,6 +2780,10 @@ pub fn new_experimental_feature_smt_checker_keyword(
     element: SMTCheckerKeyword,
 ) -> ExperimentalFeature {
     ExperimentalFeature::SMTCheckerKeyword(element)
+}
+
+pub fn new_experimental_feature_solidity_keyword(element: SolidityKeyword) -> ExperimentalFeature {
+    ExperimentalFeature::SolidityKeyword(element)
 }
 
 pub fn new_experimental_feature_pragma_string_literal(

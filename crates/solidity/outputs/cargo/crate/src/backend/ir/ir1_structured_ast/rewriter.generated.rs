@@ -1770,6 +1770,7 @@ pub trait Rewriter {
             }
             ExperimentalFeature::ABIEncoderV2Keyword => ExperimentalFeature::ABIEncoderV2Keyword,
             ExperimentalFeature::SMTCheckerKeyword => ExperimentalFeature::SMTCheckerKeyword,
+            ExperimentalFeature::SolidityKeyword => ExperimentalFeature::SolidityKeyword,
         }
     }
     fn rewrite_experimental_feature(

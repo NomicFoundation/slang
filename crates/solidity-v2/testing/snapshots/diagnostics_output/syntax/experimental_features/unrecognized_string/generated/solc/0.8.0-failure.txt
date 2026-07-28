@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[SyntaxError 8491] Error: Unsupported experimental feature name.
+   ╭─[input.sol:4:1]
+   │
+ 4 │ pragma experimental "NotAKnownFeature";
+   │ ───────────────────┬───────────────────  
+   │                    ╰───────────────────── Error occurred here.
+───╯

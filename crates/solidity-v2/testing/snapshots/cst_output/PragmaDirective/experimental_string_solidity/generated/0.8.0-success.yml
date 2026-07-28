@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/PragmaDirective/experimental_string_solidity/input.sol │ 0..118
+  2  │ pragma experimental "solidity";                                                                                        │ 119..150
+  3  │                                                                                                                        │ 151..151
+  4  │ // <<<                                                                                                                 │ 152..158
+
+Tree:
+  - (root꞉ SourceUnit): # 'pragma experimental "solidity";' (119..150)
+      - (members꞉ SourceUnitMembers): # 'pragma experimental "solidity";' (119..150)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # 'pragma experimental "solidity";' (119..150)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (119..125)
+              - (pragma꞉ Pragma) ► (experimental_pragma꞉ ExperimentalPragma): # 'experimental "solidity"' (126..149)
+                  - (experimental_keyword꞉ ExperimentalKeyword): "experimental" # (126..138)
+                  - (feature꞉ ExperimentalFeature) ► (pragma_string_literal꞉ PragmaStringLiteral): '"solidity"' # (139..149)
+              - (semicolon꞉ PragmaSemicolon): ";" # (149..150)

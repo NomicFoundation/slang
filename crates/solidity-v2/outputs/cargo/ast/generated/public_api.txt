@@ -796,9 +796,10 @@ pub fn slang_solidity_v2_ast::ast::EqualityExpressionOperator::clone(&self) -> s
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::EqualityExpressionOperator
 pub fn slang_solidity_v2_ast::ast::EqualityExpressionOperator::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub enum slang_solidity_v2_ast::ast::ExperimentalFeature
-pub slang_solidity_v2_ast::ast::ExperimentalFeature::ABIEncoderV2Keyword(slang_solidity_v2_ast::ast::ABIEncoderV2Keyword)
-pub slang_solidity_v2_ast::ast::ExperimentalFeature::SMTCheckerKeyword(slang_solidity_v2_ast::ast::SMTCheckerKeyword)
-pub slang_solidity_v2_ast::ast::ExperimentalFeature::StringLiteral(slang_solidity_v2_ast::ast::StringLiteral)
+pub slang_solidity_v2_ast::ast::ExperimentalFeature::ABIEncoderV2
+pub slang_solidity_v2_ast::ast::ExperimentalFeature::SMTChecker
+pub slang_solidity_v2_ast::ast::ExperimentalFeature::Solidity
+pub slang_solidity_v2_ast::ast::ExperimentalFeature::Unrecognized
 impl core::clone::Clone for slang_solidity_v2_ast::ast::ExperimentalFeature
 pub fn slang_solidity_v2_ast::ast::ExperimentalFeature::clone(&self) -> slang_solidity_v2_ast::ast::ExperimentalFeature
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::ExperimentalFeature
@@ -1184,17 +1185,6 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::YulSwitchCase
 pub fn slang_solidity_v2_ast::ast::YulSwitchCase::clone(&self) -> slang_solidity_v2_ast::ast::YulSwitchCase
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::YulSwitchCase
 pub fn slang_solidity_v2_ast::ast::YulSwitchCase::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct
-impl slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct
-pub fn slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
-pub fn slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
-pub fn slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct::unparse(&self) -> &str
-impl core::clone::Clone for slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct
-pub fn slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct::clone(&self) -> slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct
-pub fn slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::AbicoderPragmaStruct
 impl slang_solidity_v2_ast::ast::AbicoderPragmaStruct
 pub fn slang_solidity_v2_ast::ast::AbicoderPragmaStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
@@ -2942,17 +2932,6 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::RevertStatementStruct
 pub fn slang_solidity_v2_ast::ast::RevertStatementStruct::clone(&self) -> slang_solidity_v2_ast::ast::RevertStatementStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::RevertStatementStruct
 pub fn slang_solidity_v2_ast::ast::RevertStatementStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct
-impl slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct
-pub fn slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
-pub fn slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
-pub fn slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct::unparse(&self) -> &str
-impl core::clone::Clone for slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct
-pub fn slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct::clone(&self) -> slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct
-pub fn slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::SecondsKeywordStruct
 impl slang_solidity_v2_ast::ast::SecondsKeywordStruct
 pub fn slang_solidity_v2_ast::ast::SecondsKeywordStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
@@ -3921,7 +3900,6 @@ pub fn slang_solidity_v2_ast::ast::create_yul_value_case(&slang_solidity_v2_ir::
 pub fn slang_solidity_v2_ast::ast::create_yul_variable_assignment_statement(&slang_solidity_v2_ir::ir::nodes::YulVariableAssignmentStatement, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulVariableAssignmentStatement
 pub fn slang_solidity_v2_ast::ast::create_yul_variable_declaration_statement(&slang_solidity_v2_ir::ir::nodes::YulVariableDeclarationStatement, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulVariableDeclarationStatement
 pub fn slang_solidity_v2_ast::ast::create_yul_variable_declaration_value(&slang_solidity_v2_ir::ir::nodes::YulVariableDeclarationValue, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulVariableDeclarationValue
-pub type slang_solidity_v2_ast::ast::ABIEncoderV2Keyword = slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct
 pub type slang_solidity_v2_ast::ast::AbicoderPragma = slang_solidity_v2_ast::ast::AbicoderPragmaStruct
 pub type slang_solidity_v2_ast::ast::AbicoderV1Keyword = slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct
 pub type slang_solidity_v2_ast::ast::AbicoderV2Keyword = slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct
@@ -4054,7 +4032,6 @@ pub type slang_solidity_v2_ast::ast::PragmaTilde = slang_solidity_v2_ast::ast::P
 pub type slang_solidity_v2_ast::ast::PrefixExpression = slang_solidity_v2_ast::ast::PrefixExpressionStruct
 pub type slang_solidity_v2_ast::ast::ReturnStatement = slang_solidity_v2_ast::ast::ReturnStatementStruct
 pub type slang_solidity_v2_ast::ast::RevertStatement = slang_solidity_v2_ast::ast::RevertStatementStruct
-pub type slang_solidity_v2_ast::ast::SMTCheckerKeyword = slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct
 pub type slang_solidity_v2_ast::ast::SecondsKeyword = slang_solidity_v2_ast::ast::SecondsKeywordStruct
 pub type slang_solidity_v2_ast::ast::Semicolon = slang_solidity_v2_ast::ast::SemicolonStruct
 pub type slang_solidity_v2_ast::ast::ShiftExpression = slang_solidity_v2_ast::ast::ShiftExpressionStruct

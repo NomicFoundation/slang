@@ -746,11 +746,13 @@ impl TextRange for EqualityExpressionOperator {
 impl TextRange for ExperimentalFeature {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         match self {
-            ExperimentalFeature::ABIEncoderV2Keyword(inner) => inner.calculate_text_range(),
+            ExperimentalFeature::ABIEncoderV2 => None,
 
-            ExperimentalFeature::SMTCheckerKeyword(inner) => inner.calculate_text_range(),
+            ExperimentalFeature::SMTChecker => None,
 
-            ExperimentalFeature::StringLiteral(inner) => inner.calculate_text_range(),
+            ExperimentalFeature::Solidity => None,
+
+            ExperimentalFeature::Unrecognized => None,
         }
     }
 }
@@ -1317,12 +1319,6 @@ impl TextRange for YulSwitchCase {
     }
 }
 
-impl TextRange for ABIEncoderV2KeywordStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
-    }
-}
-
 impl TextRange for AbicoderV1KeywordStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.range.clone())
@@ -1660,12 +1656,6 @@ impl TextRange for PragmaLessThanEqualStruct {
 }
 
 impl TextRange for PragmaTildeStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
-    }
-}
-
-impl TextRange for SMTCheckerKeywordStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.range.clone())
     }

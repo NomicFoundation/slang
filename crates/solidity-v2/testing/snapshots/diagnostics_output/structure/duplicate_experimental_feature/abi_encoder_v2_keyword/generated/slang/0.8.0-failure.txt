@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/duplicate-experimental-feature] Error: This experimental feature is already enabled in this file.
+   ╭─[input.sol:5:21]
+   │
+ 5 │ pragma experimental ABIEncoderV2;
+   │                     ──────┬─────  
+   │                           ╰─────── Error occurred here.
+───╯

@@ -1,0 +1,6 @@
+{
+  "contains_status_mismatch": {
+    "value": true,
+    "reason": "Slang is intentionally stricter than solc here: we don't support the `SMTChecker` experimental feature, so we report an error where solc succeeds."
+  }
+}

@@ -101,19 +101,30 @@ fn compare_outcomes(
 ) -> Result<()> {
     // Both runs iterate the same axis in the same order.
     assert_eq!(slang_outcomes.len(), solc_outcomes.len());
-    let statuses_match = slang_outcomes
+
+    let found_mismatch = slang_outcomes
         .iter()
         .zip(solc_outcomes)
-        .all(|(slang, solc)| slang.status == solc.status);
-    if statuses_match {
+        .any(|(slang, solc)| slang.status != solc.status);
+
+    if found_mismatch == config.contains_status_mismatch {
         return Ok(());
     }
 
     let mut message = String::new();
-    writeln!(
-        message,
-        "slang and solc disagree on the compilation status of `{group_name}/{test_name}`."
-    )?;
+    if found_mismatch {
+        writeln!(
+            message,
+            "slang and solc disagree on the compilation status of `{group_name}/{test_name}`. \
+             If this is intentional, set `contains_status_mismatch` in `.tests.config.json`."
+        )?;
+    } else {
+        writeln!(
+            message,
+            "`{group_name}/{test_name}` sets `contains_status_mismatch`, but slang and solc \
+             agree on the compilation status of all snapshots. Please remove it from `.tests.config.json`."
+        )?;
+    }
     writeln!(message)?;
 
     for (slang, solc) in slang_outcomes.iter().zip(solc_outcomes) {

@@ -225,6 +225,10 @@ impl SyntaxVersionValidator<'_> {
         self.check_event_parameters(&node.parameters);
     }
 
+    fn check_experimental_pragma(&mut self, node: &ExperimentalPragma) {
+        self.check_experimental_feature(&node.feature);
+    }
+
     fn check_exponentiation_expression(&mut self, node: &ExponentiationExpression) {
         self.check_expression(&node.left_operand);
 
@@ -433,6 +437,10 @@ impl SyntaxVersionValidator<'_> {
 
     fn check_postfix_expression(&mut self, node: &PostfixExpression) {
         self.check_expression(&node.operand);
+    }
+
+    fn check_pragma_directive(&mut self, node: &PragmaDirective) {
+        self.check_pragma(&node.pragma);
     }
 
     fn check_prefix_expression(&mut self, node: &PrefixExpression) {
@@ -731,6 +739,22 @@ impl SyntaxVersionValidator<'_> {
         }
     }
 
+    fn check_experimental_feature(&mut self, node: &ExperimentalFeature) {
+        match node {
+            ExperimentalFeature::ABIEncoderV2Keyword(_) => {}
+            ExperimentalFeature::SMTCheckerKeyword(_) => {}
+            ExperimentalFeature::SolidityKeyword(child) => {
+                if !self.check(
+                    child,
+                    LanguageVersionSpecifier::from(LanguageVersion::V0_8_21),
+                ) {
+                    return;
+                }
+            }
+            ExperimentalFeature::PragmaStringLiteral(_) => {}
+        }
+    }
+
     fn check_expression(&mut self, node: &Expression) {
         match node {
             Expression::AssignmentExpression(child) => {
@@ -876,6 +900,16 @@ impl SyntaxVersionValidator<'_> {
         }
     }
 
+    fn check_pragma(&mut self, node: &Pragma) {
+        match node {
+            Pragma::VersionPragma(_) => {}
+            Pragma::AbicoderPragma(_) => {}
+            Pragma::ExperimentalPragma(child) => {
+                self.check_experimental_pragma(child);
+            }
+        }
+    }
+
     fn check_receive_function_attribute(&mut self, node: &ReceiveFunctionAttribute) {
         match node {
             ReceiveFunctionAttribute::ModifierInvocation(child) => {
@@ -890,7 +924,9 @@ impl SyntaxVersionValidator<'_> {
 
     fn check_source_unit_member(&mut self, node: &SourceUnitMember) {
         match node {
-            SourceUnitMember::PragmaDirective(_) => {}
+            SourceUnitMember::PragmaDirective(child) => {
+                self.check_pragma_directive(child);
+            }
             SourceUnitMember::ImportDirective(_) => {}
             SourceUnitMember::ContractDefinition(child) => {
                 self.check_contract_definition(child);

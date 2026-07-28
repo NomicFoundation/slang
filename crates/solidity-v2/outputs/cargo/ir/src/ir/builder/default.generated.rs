@@ -409,17 +409,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         })
     }
 
-    pub(super) fn build_experimental_pragma(
-        &mut self,
-        source: &input::ExperimentalPragma,
-    ) -> output::ExperimentalPragma {
-        let id = self.next_id(output::NodeKind::ExperimentalPragma);
-        let range = source.calculate_text_range().unwrap_or_default();
-        let feature = self.build_experimental_feature(&source.feature);
-
-        Arc::new(output::ExperimentalPragmaStruct { id, range, feature })
-    }
-
     pub(super) fn build_exponentiation_expression(
         &mut self,
         source: &input::ExponentiationExpression,
@@ -1714,32 +1703,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             }
             input::Expression_EqualityExpression_Operator::EqualEqual(equal_equal) => {
                 output::EqualityExpressionOperator::EqualEqual(self.build_equal_equal(equal_equal))
-            }
-        }
-    }
-
-    #[allow(clippy::unused_self)]
-    pub(super) fn build_experimental_feature(
-        &mut self,
-        source: &input::ExperimentalFeature,
-    ) -> output::ExperimentalFeature {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::ExperimentalFeature::ABIEncoderV2Keyword(abi_encoder_v2_keyword) => {
-                output::ExperimentalFeature::ABIEncoderV2Keyword(
-                    self.build_abi_encoder_v2_keyword(abi_encoder_v2_keyword),
-                )
-            }
-            input::ExperimentalFeature::SMTCheckerKeyword(smt_checker_keyword) => {
-                output::ExperimentalFeature::SMTCheckerKeyword(
-                    self.build_smt_checker_keyword(smt_checker_keyword),
-                )
-            }
-            input::ExperimentalFeature::PragmaStringLiteral(pragma_string_literal) => {
-                output::ExperimentalFeature::StringLiteral(
-                    self.build_pragma_string_literal(pragma_string_literal),
-                )
             }
         }
     }
@@ -3152,16 +3115,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     // Terminals
     //
 
-    pub(super) fn build_abi_encoder_v2_keyword(
-        &mut self,
-        source: &input::ABIEncoderV2Keyword,
-    ) -> output::ABIEncoderV2Keyword {
-        Arc::new(output::ABIEncoderV2KeywordStruct {
-            id: self.next_id(output::NodeKind::ABIEncoderV2Keyword),
-            range: source.range.clone(),
-        })
-    }
-
     pub(super) fn build_abicoder_v1_keyword(
         &mut self,
         source: &input::AbicoderV1Keyword,
@@ -3672,16 +3625,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     ) -> output::PragmaTilde {
         Arc::new(output::PragmaTildeStruct {
             id: self.next_id(output::NodeKind::PragmaTilde),
-            range: source.range.clone(),
-        })
-    }
-
-    pub(super) fn build_smt_checker_keyword(
-        &mut self,
-        source: &input::SMTCheckerKeyword,
-    ) -> output::SMTCheckerKeyword {
-        Arc::new(output::SMTCheckerKeywordStruct {
-            id: self.next_id(output::NodeKind::SMTCheckerKeyword),
             range: source.range.clone(),
         })
     }

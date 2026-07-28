@@ -3,6 +3,7 @@ mod break_outside_loop;
 mod constructor_not_in_contract;
 mod continue_outside_loop;
 mod contract_should_be_abstract;
+mod duplicate_experimental_feature;
 mod empty_enum;
 mod empty_struct;
 mod enum_with_too_many_members;
@@ -50,6 +51,7 @@ pub use break_outside_loop::BreakOutsideLoop;
 pub use constructor_not_in_contract::ConstructorNotInContract;
 pub use continue_outside_loop::ContinueOutsideLoop;
 pub use contract_should_be_abstract::ContractShouldBeAbstract;
+pub use duplicate_experimental_feature::DuplicateExperimentalFeature;
 pub use empty_enum::EmptyEnum;
 pub use empty_struct::EmptyStruct;
 pub use enum_with_too_many_members::EnumWithTooManyMembers;
@@ -220,5 +222,8 @@ define_diagnostic_kind! {
 
         /// An abstract contract declares a storage layout (`layout at`) specifier.
         StorageLayoutForAbstractContract(StorageLayoutForAbstractContract),
+
+        /// The same experimental feature is enabled more than once in the same file.
+        DuplicateExperimentalFeature(DuplicateExperimentalFeature),
     }
 }
