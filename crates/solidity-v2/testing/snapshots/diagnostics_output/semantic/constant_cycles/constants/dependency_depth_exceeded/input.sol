@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity *;
 
+// A dependency chain of 261 constants that loops back to its head. The
+// validator gives up at a depth of 256, before ever reaching the cycle at
+// the end of the chain. Every constant heads such a path, so only the first
+// give-up is reported.
+
 uint256 constant C0 = C1 + 1;
 uint256 constant C1 = C2 + 1;
 uint256 constant C2 = C3 + 1;
@@ -261,4 +266,4 @@ uint256 constant C256 = C257 + 1;
 uint256 constant C257 = C258 + 1;
 uint256 constant C258 = C259 + 1;
 uint256 constant C259 = C260 + 1;
-uint256 constant C260 = 1;
+uint256 constant C260 = C0 + 1;

@@ -54,20 +54,24 @@ impl DependencyGraph {
         Self { edges }
     }
 
-    /// Runs [`Self::find_cycle`] on every node, dropping cycle-free results.
-    /// Searches from different roots can give up at the same node, so
-    /// depth-exceeded results are reported once per node.
+    /// Runs [`Self::find_cycle`] on every node and drops the cycle-free results.
+    /// Returns every cycle, but only the first depth-exceeded result. A graph
+    /// past the depth limit exceeds it from many nodes, so keeping them all
+    /// would mean hundreds of identical errors.
     fn find_all_cycles(&self) -> impl Iterator<Item = (NodeId, CycleSearchResult)> + '_ {
-        let mut reported_depth_exceeded = Set::default();
+        let mut reported_exhaustion = false;
 
         self.edges
             .keys()
             .copied()
             .filter_map(move |node| match self.find_cycle(node) {
                 CycleSearchResult::None => None,
-                CycleSearchResult::DepthExceeded { node: capped } => reported_depth_exceeded
-                    .insert(capped)
-                    .then_some((node, CycleSearchResult::DepthExceeded { node: capped })),
+                CycleSearchResult::DepthExceeded { node: capped } => {
+                    (!reported_exhaustion).then(|| {
+                        reported_exhaustion = true;
+                        (node, CycleSearchResult::DepthExceeded { node: capped })
+                    })
+                }
                 CycleSearchResult::Cycle { via } => Some((node, CycleSearchResult::Cycle { via })),
             })
     }
@@ -284,19 +288,44 @@ mod tests {
         assert_eq!(find_cycle(&graph, 0), CycleSearchResult::None);
     }
 
-    #[test]
-    fn find_all_cycles_reports_each_capped_node_once() {
-        // Roots 0 and 1 enter the same chain at the same offset, so both
-        // searches give up at the same node and only the first is kept. Root 2
-        // sits one step deeper into the chain, gives up one node later, and is
-        // still reported. Deeper roots stay under the cap and are dropped.
+    /// An oversized chain `2 -> 3 -> ... -> end`, entered by roots 0 and 1.
+    /// Searches from 0, 1 and 2 all give up, each at a different node.
+    fn oversized_chain(extra_edges: Vec<(usize, Vec<usize>)>) -> DependencyGraph {
         let chain_end = DependencyGraph::MAX_DEPTH + 1;
         let mut edges = vec![(0, vec![2]), (1, vec![2])];
         edges.extend((2..=chain_end).map(|id| {
             let successors = if id < chain_end { vec![id + 1] } else { vec![] };
             (id, successors)
         }));
-        let graph = graph(edges);
+        edges.extend(extra_edges);
+        graph(edges)
+    }
+
+    #[test]
+    fn find_all_cycles_reports_exhaustion_once() {
+        // Three roots give up on the same oversized chain, at three different
+        // nodes, and only the first is kept. Deeper roots stay under the cap and
+        // are dropped.
+        let graph = oversized_chain(vec![]);
+
+        assert_eq!(
+            graph.find_all_cycles().collect::<Vec<_>>(),
+            vec![(
+                NodeId::from(0),
+                CycleSearchResult::DepthExceeded {
+                    node: NodeId::from(DependencyGraph::MAX_DEPTH)
+                }
+            )]
+        );
+    }
+
+    #[test]
+    fn cycles_are_still_reported_after_an_exhaustion() {
+        // A cycle declared after the oversized chain. Dropping the repeated
+        // give-ups must not drop the cycle behind them.
+        let first = DependencyGraph::MAX_DEPTH + 2;
+        let second = first + 1;
+        let graph = oversized_chain(vec![(first, vec![second]), (second, vec![first])]);
 
         assert_eq!(
             graph.find_all_cycles().collect::<Vec<_>>(),
@@ -308,9 +337,15 @@ mod tests {
                     }
                 ),
                 (
-                    NodeId::from(2),
-                    CycleSearchResult::DepthExceeded {
-                        node: NodeId::from(chain_end)
+                    NodeId::from(first),
+                    CycleSearchResult::Cycle {
+                        via: NodeId::from(second)
+                    }
+                ),
+                (
+                    NodeId::from(second),
+                    CycleSearchResult::Cycle {
+                        via: NodeId::from(first)
                     }
                 ),
             ]
