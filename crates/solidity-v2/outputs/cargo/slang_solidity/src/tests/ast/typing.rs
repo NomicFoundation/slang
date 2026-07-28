@@ -1,5 +1,73 @@
 use super::fixtures;
+use crate::ast::visitor::{Visitor, accept_source_unit};
 use crate::{ast, define_fixture};
+
+define_fixture!(
+    NewDynamic,
+    file: "main.sol", r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+contract C {
+    function f() public pure {
+        bytes memory b = new bytes(35);
+        string memory s = new string(4);
+        b;
+        s;
+    }
+}
+"#,
+);
+
+/// Captures the resolved type of every function-call expression in a unit.
+#[derive(Default)]
+struct FunctionCallTypes {
+    types: Vec<Option<ast::Type>>,
+}
+
+impl Visitor for FunctionCallTypes {
+    fn enter_function_call_expression(&mut self, node: &ast::FunctionCallExpression) -> bool {
+        self.types.push(node.get_type());
+        true
+    }
+}
+
+#[test]
+fn test_new_bytes_and_string_get_type() {
+    let unit = NewDynamic::build_compilation_unit();
+
+    let mut finder = FunctionCallTypes::default();
+    for file in unit.files() {
+        accept_source_unit(&file.ast(), &mut finder);
+    }
+
+    // `new bytes(35)` and `new string(4)` type as `bytes memory` / `string
+    // memory` (matching solc), not left unresolved.
+    let resolved: Vec<ast::Type> = finder
+        .types
+        .into_iter()
+        .map(|t| t.expect("each `new` call has a resolved type"))
+        .collect();
+    assert_eq!(resolved.len(), 2, "two `new` calls");
+
+    let ast::Type::Bytes(bytes) = &resolved[0] else {
+        panic!("`new bytes(35)` should type as bytes");
+    };
+    assert_eq!(
+        bytes.location(),
+        ast::DataLocation::Memory,
+        "`new bytes(35)` is `bytes memory`"
+    );
+
+    let ast::Type::String(string) = &resolved[1] else {
+        panic!("`new string(4)` should type as string");
+    };
+    assert_eq!(
+        string.location(),
+        ast::DataLocation::Memory,
+        "`new string(4)` is `string memory`"
+    );
+}
 
 #[test]
 fn test_get_type() {
