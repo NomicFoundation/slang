@@ -3,10 +3,8 @@ use clap::Parser;
 use infra_utils::commands::Command;
 
 use crate::commands::perf::binaries;
-use crate::toolchains::bencher::{BencherThreshold, run_bench};
+use crate::toolchains::bencher::{BencherProject, BencherThreshold, run_bench};
 use crate::utils::DryRun;
-
-const DEFAULT_BENCHER_PROJECT: &str = "slang-dashboard-npm";
 
 #[derive(Clone, Debug, Parser)]
 pub struct NpmController {
@@ -48,7 +46,7 @@ impl NpmController {
         run_bench(
             self.dry_run.get(),
             self.pr_benchmark,
-            DEFAULT_BENCHER_PROJECT,
+            BencherProject::Npm,
             "json",
             &[BencherThreshold::new("duration", "0.15")],
             &[],

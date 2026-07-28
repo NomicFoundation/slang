@@ -11,10 +11,6 @@ on:
         required: true
         default: true
 
-      bencherProject:
-        description: "Bencher project:"
-        type: "string"
-
   # Run on pushes to 'main' branch:
   push:
     branches:
@@ -44,7 +40,7 @@ jobs:
       pull-requests: "write"
       checks: "write"
 
-    # Skip fork PRs (can't access BENCHER_API_TOKEN). For non-PR events, only run on the main repo.
+    # Skip fork PRs (can't access GitHub Actions secrets). For non-PR events, only run on the main repo.
     if: >-
       ${{
         (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
@@ -72,8 +68,7 @@ jobs:
         if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') || contains(github.event.pull_request.labels.*.name, 'ci:perf:full') }}"
         run: "./scripts/bin/infra perf cargo ${{ github.event_name == 'pull_request' && (contains(github.event.pull_request.labels.*.name, 'ci:perf:full') && '--pr-benchmark=full' || '--pr-benchmark') || (inputs.dryRun == true && '--dry-run' || '') }} slang"
         env:
-          SLANG_BENCHER_PROJECT: "${{ inputs.bencherProject }}"
-          BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
+          BENCHER_API_KEY: "${{ secrets.BENCHER_API_KEY__CARGO_SLANG }}"
           BENCHER_PR_HEAD_HASH: "${{ github.event.pull_request.head.sha }}"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 

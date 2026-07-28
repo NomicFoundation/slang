@@ -3,17 +3,14 @@ use clap::Parser;
 use infra_utils::commands::Command;
 
 use crate::commands::perf::binaries;
-use crate::toolchains::bencher;
-
-const BENCHER_PROJECTS: &[&str] = &[
-    "slang-dashboard-cargo-slang",
-    "slang-dashboard-cargo-slang-v2",
-    "slang-dashboard-cargo-cmp",
-    "slang-dashboard-npm",
-];
+use crate::toolchains::bencher::{BencherProject, archive_branch, unarchive_branch};
 
 #[derive(Clone, Debug, Parser)]
 pub struct ArchiveController {
+    /// Bencher project to archive.
+    #[arg(long)]
+    project: BencherProject,
+
     /// Branch name to archive. If omitted, uses the current git branch.
     #[arg(long)]
     branch: Option<String>,
@@ -21,6 +18,10 @@ pub struct ArchiveController {
 
 #[derive(Clone, Debug, Parser)]
 pub struct UnarchiveController {
+    /// Bencher project to unarchive.
+    #[arg(long)]
+    project: BencherProject,
+
     /// Branch name to unarchive. If omitted, uses the current git branch.
     #[arg(long)]
     branch: Option<String>,
@@ -50,11 +51,7 @@ impl ArchiveController {
     pub fn execute(&self) -> Result<()> {
         let branch = resolve_branch(self.branch.as_deref())?;
         binaries::install_bencher_cli()?;
-
-        for project in BENCHER_PROJECTS {
-            bencher::archive_branch(project, &branch);
-        }
-
+        archive_branch(self.project, &branch);
         Ok(())
     }
 }
@@ -63,11 +60,7 @@ impl UnarchiveController {
     pub fn execute(&self) -> Result<()> {
         let branch = resolve_branch(self.branch.as_deref())?;
         binaries::install_bencher_cli()?;
-
-        for project in BENCHER_PROJECTS {
-            bencher::unarchive_branch(project, &branch);
-        }
-
+        unarchive_branch(self.project, &branch);
         Ok(())
     }
 }

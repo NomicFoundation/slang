@@ -1,16 +1,41 @@
+use std::fmt::Display;
+
+use clap::ValueEnum;
 use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 
 // Three modes:
-// 1. dry-run: runs benchmarks locally, uploads to bencher with a dummy token (no dashboard update).
+// 1. dry-run: runs benchmarks locally, uploads to bencher with a dummy key (no dashboard update).
 // 2. pr-benchmark: uploads to a temporary PR branch in bencher, compares against the base branch
 //    with inline thresholds (percentage), and posts results as a PR comment. Mutually exclusive with dry-run.
 // 3. normal (neither flag): uploads results to the main branch on the bencher dashboard.
 //
-// Use a dummy test token for dry runs:
+// Use a dummy test key for dry runs:
 // https://github.com/bencherdev/bencher/issues/468
-// Source: https://github.com/bencherdev/bencher/blob/aa31a002842cfb0da9d6c60569396fc5261f5111/tasks/test_api/src/task/test/smoke_test.rs#L20
-const BENCHER_TEST_TOKEN: &str = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhcGlfa2V5IiwiZXhwIjo1OTkzNjQyMTU2LCJpYXQiOjE2OTg2NzQ4NjEsImlzcyI6Imh0dHBzOi8vZGV2ZWwtLWJlbmNoZXIubmV0bGlmeS5hcHAvIiwic3ViIjoibXVyaWVsLmJhZ2dlQG5vd2hlcmUuY29tIiwib3JnIjpudWxsfQ.9z7jmM53TcVzc1inDxTeX9_OR0PQPpZAsKsCE7lWHfo";
+// Source: https://github.com/bencherdev/bencher/blob/d2895af8c867c83b8fe766a6b84d8ccd4df5c315/tasks/test_api/src/task/test/smoke_test.rs#L27
+const BENCHER_TEST_API_KEY: &str = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhcGlfa2V5IiwiZXhwIjo1OTkzNjQyMTU2LCJpYXQiOjE2OTg2NzQ4NjEsImlzcyI6Imh0dHBzOi8vZGV2ZWwtLWJlbmNoZXIubmV0bGlmeS5hcHAvIiwic3ViIjoibXVyaWVsLmJhZ2dlQG5vd2hlcmUuY29tIiwib3JnIjpudWxsfQ.9z7jmM53TcVzc1inDxTeX9_OR0PQPpZAsKsCE7lWHfo";
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
+pub(crate) enum BencherProject {
+    // https://bencher.dev/console/projects/slang-dashboard-cargo-cmp/
+    #[value(name = "slang-dashboard-cargo-cmp")]
+    CargoCmp,
+    // https://bencher.dev/console/projects/slang-dashboard-cargo-slang-v2/
+    #[value(name = "slang-dashboard-cargo-slang-v2")]
+    CargoSlangV2,
+    // https://bencher.dev/console/projects/slang-dashboard-cargo-slang/
+    #[value(name = "slang-dashboard-cargo-slang")]
+    CargoSlang,
+    // https://bencher.dev/console/projects/slang-dashboard-npm/
+    #[value(name = "slang-dashboard-npm")]
+    Npm,
+}
+
+impl Display for BencherProject {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.to_possible_value().unwrap().get_name().fmt(f)
+    }
+}
 
 /// Represents a performance threshold for a Bencher benchmark comparison, used in PR benchmarking mode.
 #[derive(Clone)]
@@ -37,7 +62,7 @@ impl BencherThreshold {
 pub(crate) fn run_bench(
     dry_run: bool,
     pr_benchmark: bool,
-    project: &str,
+    project: BencherProject,
     adapter: &str,
     thresholds: &[BencherThreshold],
     // Extra environment variables to set on the benchmark command. These
@@ -51,12 +76,12 @@ pub(crate) fn run_bench(
          PR benchmarks must upload to bencher for comparison."
     );
 
-    let token = if dry_run {
-        BENCHER_TEST_TOKEN.to_string()
+    let api_key = if dry_run {
+        BENCHER_TEST_API_KEY.to_string()
     } else {
-        std::env::var("BENCHER_API_TOKEN").expect(
-            "BENCHER_API_TOKEN is not set. Either perform a '--dry-run', or set it to your Bencher API token: https://bencher.dev/console"
-        )
+        std::env::var("BENCHER_API_KEY").unwrap_or_else(|_| {
+            panic!("BENCHER_API_KEY is not set. Either perform a '--dry-run', or set it to the project's Bencher API key: https://bencher.dev/console/projects/{project}/keys");
+        })
     };
 
     let testbed = if GitHub::is_running_in_ci() {
@@ -65,17 +90,12 @@ pub(crate) fn run_bench(
         "dev"
     };
 
-    let project = std::env::var("SLANG_BENCHER_PROJECT")
-        .ok()
-        .filter(|value| !value.is_empty())
-        .unwrap_or_else(|| project.to_owned());
-
     let mut command = Command::new("bencher")
         .arg("run")
-        .property("--project", &project)
+        .property("--project", project.to_string())
         .property("--adapter", adapter)
         .property("--testbed", testbed)
-        .secret("BENCHER_API_TOKEN", token);
+        .secret("BENCHER_API_KEY", api_key);
 
     for (key, value) in bench_env {
         command = command.env(*key, *value);
@@ -139,23 +159,23 @@ Test Results: [https://bencher.dev/console/projects/{project}/reports]
     );
 }
 
-pub(crate) fn archive_branch(project: &str, branch: &str) {
+pub(crate) fn archive_branch(project: BencherProject, branch: &str) {
     bencher_archive_command("archive", project, branch);
 }
 
-pub(crate) fn unarchive_branch(project: &str, branch: &str) {
+pub(crate) fn unarchive_branch(project: BencherProject, branch: &str) {
     bencher_archive_command("unarchive", project, branch);
 }
 
-fn bencher_archive_command(action: &str, project: &str, branch: &str) {
-    let token = std::env::var("BENCHER_API_TOKEN").expect(
-        "BENCHER_API_TOKEN is not set. Set it to your Bencher API token: https://bencher.dev/console",
-    );
+fn bencher_archive_command(action: &str, project: BencherProject, branch: &str) {
+    let api_key = std::env::var("BENCHER_API_KEY").unwrap_or_else(|_| {
+        panic!("BENCHER_API_KEY is not set. Set it to the project's Bencher API key: https://bencher.dev/console/projects/{project}/keys");
+    });
 
     Command::new("bencher")
         .arg(action)
-        .property("--project", project)
+        .property("--project", project.to_string())
         .property("--branch", branch)
-        .secret("BENCHER_API_TOKEN", token)
+        .secret("BENCHER_API_KEY", api_key)
         .run();
 }
