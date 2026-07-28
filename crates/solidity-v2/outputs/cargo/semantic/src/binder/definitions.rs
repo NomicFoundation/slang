@@ -123,6 +123,9 @@ pub struct ParameterDefinition {
 pub struct StateVariableDefinition {
     pub ir_node: ir::StateVariableDefinition,
     pub getter_type_id: Option<TypeId>,
+    // This is the scope the variable is defined in, and is used to change the
+    // resolution context in the `CompileConstantEvaluator`.
+    pub(crate) enclosing_scope_id: ScopeId,
 }
 
 #[derive(Debug)]
@@ -453,10 +456,14 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_state_variable(ir_node: &ir::StateVariableDefinition) -> Self {
+    pub(crate) fn new_state_variable(
+        ir_node: &ir::StateVariableDefinition,
+        enclosing_scope_id: ScopeId,
+    ) -> Self {
         Self::StateVariable(StateVariableDefinition {
             ir_node: Arc::clone(ir_node),
             getter_type_id: None,
+            enclosing_scope_id,
         })
     }
 
