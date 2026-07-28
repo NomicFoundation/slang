@@ -12,6 +12,7 @@ mod hex_number_expression;
 pub use contract_base::ContractBase;
 
 mod expression;
+mod for_statement;
 mod function_call_expression;
 mod identifier;
 mod identifier_path;
