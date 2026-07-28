@@ -17,4 +17,8 @@ mod identifier;
 mod identifier_path;
 mod source_unit;
 mod string_expression;
+
+mod user_defined_operators;
+pub use user_defined_operators::UserDefinedOperatorExpression;
+
 mod yul_literal;
