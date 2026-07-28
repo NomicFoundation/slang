@@ -46,7 +46,7 @@ impl NpmController {
         run_bench(
             self.dry_run.get(),
             self.pr_benchmark,
-            BencherProject::SlangDashboardNpm,
+            BencherProject::Npm,
             "json",
             &[BencherThreshold::new("duration", "0.15")],
             &[],

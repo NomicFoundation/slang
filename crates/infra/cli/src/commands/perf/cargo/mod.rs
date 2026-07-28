@@ -73,9 +73,9 @@ impl CargoController {
         let package = "solidity_testing_perf_cargo";
 
         let (bench_name, bencher_project) = match self.bench {
-            Benches::Comparison => ("comparison", BencherProject::SlangDashboardCargoCmp),
-            Benches::Slang => ("slang", BencherProject::SlangDashboardCargoSlang),
-            Benches::SlangV2 => ("slang_v2", BencherProject::SlangDashboardCargoSlangV2),
+            Benches::Comparison => ("comparison", BencherProject::CargoCmp),
+            Benches::Slang => ("slang", BencherProject::CargoSlang),
+            Benches::SlangV2 => ("slang_v2", BencherProject::CargoSlangV2),
         };
 
         if self.smoke {
