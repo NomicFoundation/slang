@@ -317,6 +317,31 @@ impl Definition {
         }
     }
 
+    /// Whether this definition is a constant. Covers both constant shapes,
+    /// a `ConstantDefinition` or a `public` `constant` state variable.
+    pub(crate) fn is_constant(&self) -> bool {
+        match self {
+            Self::Constant(_) => true,
+            Self::StateVariable(variable_definition) => matches!(
+                variable_definition.ir_node.attributes.mutability,
+                ir::StateVariableMutability::Constant
+            ),
+            _ => false,
+        }
+    }
+
+    /// The value expression of a constant. Returns `None` for non-constants
+    /// and for a constant with no value.
+    pub(crate) fn constant_value(&self) -> Option<&ir::Expression> {
+        match self {
+            Self::Constant(constant_definition) => constant_definition.ir_node.value.as_ref(),
+            Self::StateVariable(variable_definition) if self.is_constant() => {
+                variable_definition.ir_node.value.as_ref()
+            }
+            _ => None,
+        }
+    }
+
     /// Whether `self` is allowed to share a name with `other` in the same
     /// scope. Only same-kind overloadable definitions may coexist: functions
     /// overload other functions, and events overload other events.
