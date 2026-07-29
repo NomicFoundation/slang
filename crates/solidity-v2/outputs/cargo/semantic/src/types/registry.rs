@@ -487,8 +487,8 @@ impl TypeRegistry {
                     location: DataLocation::Inherited,
                 })
             }
-            // Canonicalise through the underlying array (slices don't appear in
-            // struct fields, but keep the wrapper consistent if one reaches here).
+            // Canonicalise a slice to a slice of the canonical array, keeping
+            // the `ArraySlice` wrapper on purpose.
             Type::ArraySlice(ArraySliceType { array_type_id }) => {
                 let array_type_id = self.find_canonical_type_id(*array_type_id)?;
                 Type::ArraySlice(ArraySliceType { array_type_id })
@@ -568,13 +568,13 @@ impl TypeRegistry {
                 element_type: self.register_type_id_with_data_location(element_type, location),
                 location,
             }),
-            // A slice's location follows its underlying array.
-            Type::ArraySlice(ArraySliceType { array_type_id }) => {
-                debug_assert_eq!(location, DataLocation::Calldata);
-                Type::ArraySlice(ArraySliceType {
-                    array_type_id: self
-                        .register_type_id_with_data_location(array_type_id, location),
-                })
+            // A calldata slice is only ever produced by a range-index
+            // expression `a[i:j]`, never written in source as a parameter,
+            // struct field, or cast target. Location relocation only runs on
+            // such source-declared types (and elements nested within them, none
+            // of which can be a slice), so a slice never reaches here.
+            Type::ArraySlice(_) => {
+                unreachable!("array slices are calldata-only and are never relocated")
             }
             Type::Bytes(_) => Type::Bytes(BytesType { location }),
             Type::FixedSizeArray(FixedSizeArrayType {

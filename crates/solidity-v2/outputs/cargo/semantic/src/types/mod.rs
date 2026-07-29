@@ -382,6 +382,9 @@ impl Type {
             | Self::String(StringType { location })
             | Self::Struct(StructType { location, .. }) => Some(*location),
             Self::Mapping(_) => Some(DataLocation::Storage),
+            // A slice only ever wraps a calldata array (see `ArraySliceType`),
+            // so its location is always calldata.
+            Self::ArraySlice(_) => Some(DataLocation::Calldata),
             _ => None,
         }
     }
