@@ -209,11 +209,6 @@ impl<'a> BuiltInValidator<'a> {
                 );
             }
             InternalBuiltIn::YulDifficulty => {
-                self.check_version(
-                    node_id,
-                    range,
-                    LanguageVersionSpecifier::till(LanguageVersion::V0_8_18),
-                );
                 self.check_target(node_id, range, EvmTargetSpecifier::till(EvmTarget::Paris));
             }
             InternalBuiltIn::YulExtcodehash => {

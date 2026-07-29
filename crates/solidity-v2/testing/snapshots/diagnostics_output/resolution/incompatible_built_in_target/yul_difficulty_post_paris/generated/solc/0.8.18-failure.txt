@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[DeclarationError 4619] Error: Function "difficulty" not found.
+   ╭─[input.sol:7:23]
+   │
+ 7 │             result := difficulty()
+   │                       ─────┬────  
+   │                            ╰────── Error occurred here.
+───╯
+
+[DeclarationError 8678] Error: Variable count for assignment to "result" does not match number of values (1 vs. 0)
+   ╭─[input.sol:7:13]
+   │
+ 7 │             result := difficulty()
+   │             ───────────┬──────────  
+   │                        ╰──────────── Error occurred here.
+───╯
