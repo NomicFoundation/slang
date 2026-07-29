@@ -32,10 +32,19 @@ impl Visitor for Pass<'_> {
         self.leave_scope_for_node_id(node.id());
 
         // But any reference in the inheritance types and the storage layout
-        // specifier should resolve in the parent scope
+        // specifier should resolve in the parent scope.
+        //
+        // The inheritance types still need the contract to be visible
+        // *structurally* though: a base-constructor argument may call a base
+        // function through its qualified name (eg. `is Base(Base.g())`), which
+        // is only legal because the enclosing contract derives from `Base` — so
+        // `is_foreign_contract` has to be able to see which contract is being
+        // defined, even while names resolve outside of it.
+        self.enter_structural_scope_for_node_id(node.id());
         for inheritance_type in node.inheritance_types.iter() {
             ir::visitor::accept_inheritance_type(inheritance_type, self);
         }
+        self.leave_scope_for_node_id(node.id());
         if let Some(ref storage_layout) = node.storage_layout {
             // TODO(validation) SDR[56]: check that the expression is not binding constant variables up until 0.8.31
             // https://www.soliditylang.org/blog/2025/12/03/solidity-0.8.31-release-announcement
