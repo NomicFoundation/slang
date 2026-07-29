@@ -33,16 +33,11 @@ impl DiagnosticExtensions for DuplicateCatchClause {
     }
 
     fn message(&self) -> String {
-        match self.kind {
-            CatchClauseKind::Error => {
-                "This try statement already has an \"Error\" catch clause.".to_string()
-            }
-            CatchClauseKind::Panic => {
-                "This try statement already has a \"Panic\" catch clause.".to_string()
-            }
-            CatchClauseKind::LowLevel => {
-                "This try statement already has a low-level catch clause.".to_string()
-            }
-        }
+        let kind = match self.kind {
+            CatchClauseKind::Error => "an 'Error'",
+            CatchClauseKind::Panic => "a 'Panic'",
+            CatchClauseKind::LowLevel => "a low-level",
+        };
+        format!("This try statement already has {kind} catch clause.")
     }
 }

@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[structure/duplicate-catch-clause] Error: This try statement already has a "Panic" catch clause.
+[structure/duplicate-catch-clause] Error: This try statement already has a 'Panic' catch clause.
     ╭─[input.sol:10:11]
     │
  10 │ ╭─▶         } catch Panic(uint256 b) {

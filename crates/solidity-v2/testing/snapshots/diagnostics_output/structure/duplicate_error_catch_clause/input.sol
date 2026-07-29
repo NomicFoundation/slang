@@ -18,8 +18,6 @@ contract C {
         try this.g() returns (uint256) {
         } catch Error(string memory a) {
             a;
-        } catch Panic(uint256 code) {
-            code;
         } catch (bytes memory data) {
             data;
         }

@@ -1292,6 +1292,16 @@ mod structure {
         }
     }
 
+    #[test]
+    fn duplicate_error_catch_clause() -> Result<()> {
+        run("structure", "duplicate_error_catch_clause")
+    }
+
+    #[test]
+    fn duplicate_low_level_catch_clause() -> Result<()> {
+        run("structure", "duplicate_low_level_catch_clause")
+    }
+
     mod duplicate_named_argument {
         use super::*;
 
@@ -1307,16 +1317,6 @@ mod structure {
                 "state_variable_initializer",
             )
         }
-    }
-
-    #[test]
-    fn duplicate_error_catch_clause() -> Result<()> {
-        run("structure", "duplicate_error_catch_clause")
-    }
-
-    #[test]
-    fn duplicate_low_level_catch_clause() -> Result<()> {
-        run("structure", "duplicate_low_level_catch_clause")
     }
 
     #[test]
@@ -1606,6 +1606,11 @@ mod structure {
         run("structure", "payable_internal_or_private_function")
     }
 
+    #[test]
+    fn placeholder_in_unchecked_block() -> Result<()> {
+        run("structure", "placeholder_in_unchecked_block")
+    }
+
     mod redefined_built_in_error {
         use super::*;
 
@@ -1618,11 +1623,6 @@ mod structure {
         fn panic() -> Result<()> {
             run("structure/redefined_built_in_error", "panic")
         }
-    }
-
-    #[test]
-    fn placeholder_in_unchecked_block() -> Result<()> {
-        run("structure", "placeholder_in_unchecked_block")
     }
 
     #[test]
