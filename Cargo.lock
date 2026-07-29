@@ -4683,9 +4683,7 @@ version = "1.3.7"
 name = "solidity_v2_testing_utils"
 version = "1.3.7"
 dependencies = [
- "anyhow",
  "ariadne",
- "infra_utils",
  "semver 1.0.28",
  "slang_solidity",
  "slang_solidity_v2_common",
