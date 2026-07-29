@@ -687,7 +687,7 @@ impl TypeRegistry {
 
         // The exception is if the `other` function is external, which allows
         // changing the data location of parameters *and return values* from
-        // `memory` to `calldata` (or viceversa) if the visibility of `ftype` is
+        // `memory` to `calldata` (or vice versa) if the visibility of `ftype` is
         // external or public.
         if !matches!(other.visibility, FunctionTypeVisibility::External)
             || !matches!(
