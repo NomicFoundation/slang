@@ -234,6 +234,7 @@
                   "variants": [
                     { "reference": "ABIEncoderV2Keyword" },
                     { "reference": "SMTCheckerKeyword" },
+                    { "reference": "SolidityKeyword", "enabled": { "From": { "from": "0.8.21" } } },
                     { "reference": "StringLiteral" }
                   ]
                 }

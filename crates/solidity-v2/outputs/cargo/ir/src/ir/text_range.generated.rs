@@ -750,6 +750,8 @@ impl TextRange for ExperimentalFeature {
 
             ExperimentalFeature::SMTCheckerKeyword(inner) => inner.calculate_text_range(),
 
+            ExperimentalFeature::SolidityKeyword(inner) => inner.calculate_text_range(),
+
             ExperimentalFeature::StringLiteral(inner) => inner.calculate_text_range(),
         }
     }
@@ -1690,6 +1692,12 @@ impl TextRange for SlashStruct {
 }
 
 impl TextRange for SlashEqualStruct {
+    fn calculate_text_range(&self) -> Option<Range<usize>> {
+        Some(self.range.clone())
+    }
+}
+
+impl TextRange for SolidityKeywordStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.range.clone())
     }

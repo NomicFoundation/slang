@@ -1,0 +1,4 @@
+// >>> Copied from crates/solidity/testing/snapshots/cst_output/PragmaDirective/experimental_solidity/input.sol
+pragma experimental solidity;
+
+// <<<

@@ -1736,6 +1736,11 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                     self.build_smt_checker_keyword(smt_checker_keyword),
                 )
             }
+            input::ExperimentalFeature::SolidityKeyword(solidity_keyword) => {
+                output::ExperimentalFeature::SolidityKeyword(
+                    self.build_solidity_keyword(solidity_keyword),
+                )
+            }
             input::ExperimentalFeature::PragmaStringLiteral(pragma_string_literal) => {
                 output::ExperimentalFeature::StringLiteral(
                     self.build_pragma_string_literal(pragma_string_literal),
@@ -3713,6 +3718,16 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     pub(super) fn build_slash_equal(&mut self, source: &input::SlashEqual) -> output::SlashEqual {
         Arc::new(output::SlashEqualStruct {
             id: self.next_id(output::NodeKind::SlashEqual),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_solidity_keyword(
+        &mut self,
+        source: &input::SolidityKeyword,
+    ) -> output::SolidityKeyword {
+        Arc::new(output::SolidityKeywordStruct {
+            id: self.next_id(output::NodeKind::SolidityKeyword),
             range: source.range.clone(),
         })
     }

@@ -933,6 +933,7 @@ pub enum ExperimentalFeature {
     StringLiteral(Rc<TerminalNode>),
     ABIEncoderV2Keyword,
     SMTCheckerKeyword,
+    SolidityKeyword,
 }
 
 #[derive(Clone, Debug)]

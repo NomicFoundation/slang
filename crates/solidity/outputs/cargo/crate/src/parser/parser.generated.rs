@@ -78,6 +78,7 @@ pub struct Parser {
     pub(crate) version_is_at_least_0_8_13: bool,
     pub(crate) version_is_at_least_0_8_18: bool,
     pub(crate) version_is_at_least_0_8_19: bool,
+    pub(crate) version_is_at_least_0_8_21: bool,
     pub(crate) version_is_at_least_0_8_22: bool,
     pub(crate) version_is_at_least_0_8_27: bool,
     pub(crate) version_is_at_least_0_8_29: bool,
@@ -131,6 +132,7 @@ impl Parser {
                 version_is_at_least_0_8_13: Version::new(0, 8, 13) <= language_version,
                 version_is_at_least_0_8_18: Version::new(0, 8, 18) <= language_version,
                 version_is_at_least_0_8_19: Version::new(0, 8, 19) <= language_version,
+                version_is_at_least_0_8_21: Version::new(0, 8, 21) <= language_version,
                 version_is_at_least_0_8_22: Version::new(0, 8, 22) <= language_version,
                 version_is_at_least_0_8_27: Version::new(0, 8, 27) <= language_version,
                 version_is_at_least_0_8_29: Version::new(0, 8, 29) <= language_version,
@@ -2027,6 +2029,13 @@ impl Parser {
                     TerminalKind::SMTCheckerKeyword,
                 );
                 choice.consider(input, result)?;
+                if self.version_is_at_least_0_8_21 {
+                    let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                        input,
+                        TerminalKind::SolidityKeyword,
+                    );
+                    choice.consider(input, result)?;
+                }
                 let result = self.string_literal(input);
                 choice.consider(input, result)?;
                 choice.finish(input)

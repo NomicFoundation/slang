@@ -2080,6 +2080,7 @@ pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut imp
     match node {
         ExperimentalFeature::ABIEncoderV2Keyword(_) => {}
         ExperimentalFeature::SMTCheckerKeyword(_) => {}
+        ExperimentalFeature::SolidityKeyword(_) => {}
         ExperimentalFeature::StringLiteral(string_literal) => {
             visitor.visit_string_literal(string_literal);
         }

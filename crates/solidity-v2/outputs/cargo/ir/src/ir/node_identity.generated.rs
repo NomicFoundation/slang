@@ -745,6 +745,8 @@ impl NodeIdentity for ExperimentalFeature {
 
             ExperimentalFeature::SMTCheckerKeyword(inner) => inner.node_id(),
 
+            ExperimentalFeature::SolidityKeyword(inner) => inner.node_id(),
+
             ExperimentalFeature::StringLiteral(inner) => inner.node_id(),
         }
     }
@@ -1679,6 +1681,12 @@ impl NodeIdentity for SlashStruct {
 }
 
 impl NodeIdentity for SlashEqualStruct {
+    fn node_id(&self) -> Option<NodeId> {
+        Some(self.id)
+    }
+}
+
+impl NodeIdentity for SolidityKeywordStruct {
     fn node_id(&self) -> Option<NodeId> {
         Some(self.id)
     }

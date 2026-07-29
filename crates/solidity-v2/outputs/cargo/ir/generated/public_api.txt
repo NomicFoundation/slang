@@ -411,6 +411,7 @@ pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_semicolon(&mut self, &s
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_slash(&mut self, &slang_solidity_v2_ir::ir::Slash)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_slash_equal(&mut self, &slang_solidity_v2_ir::ir::SlashEqual)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_smt_checker_keyword(&mut self, &slang_solidity_v2_ir::ir::SMTCheckerKeyword)
+pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_solidity_keyword(&mut self, &slang_solidity_v2_ir::ir::SolidityKeyword)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_storage_keyword(&mut self, &slang_solidity_v2_ir::ir::StorageKeyword)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_string_keyword(&mut self, &slang_solidity_v2_ir::ir::StringKeyword)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::visit_string_literal(&mut self, &slang_solidity_v2_ir::ir::StringLiteral)
@@ -672,6 +673,7 @@ pub fn slang_solidity_v2_ir::ir::EqualityExpressionOperator::calculate_text_rang
 pub enum slang_solidity_v2_ir::ir::ExperimentalFeature
 pub slang_solidity_v2_ir::ir::ExperimentalFeature::ABIEncoderV2Keyword(slang_solidity_v2_ir::ir::ABIEncoderV2Keyword)
 pub slang_solidity_v2_ir::ir::ExperimentalFeature::SMTCheckerKeyword(slang_solidity_v2_ir::ir::SMTCheckerKeyword)
+pub slang_solidity_v2_ir::ir::ExperimentalFeature::SolidityKeyword(slang_solidity_v2_ir::ir::SolidityKeyword)
 pub slang_solidity_v2_ir::ir::ExperimentalFeature::StringLiteral(slang_solidity_v2_ir::ir::StringLiteral)
 impl slang_solidity_v2_ir::ir::ExperimentalFeature
 pub fn slang_solidity_v2_ir::ir::ExperimentalFeature::unparse(&self) -> &str
@@ -976,26 +978,27 @@ pub slang_solidity_v2_ir::ir::NodeKind::ShiftExpression = 61
 pub slang_solidity_v2_ir::ir::NodeKind::SingleTypedDeclaration = 62
 pub slang_solidity_v2_ir::ir::NodeKind::Slash = 158
 pub slang_solidity_v2_ir::ir::NodeKind::SlashEqual = 159
+pub slang_solidity_v2_ir::ir::NodeKind::SolidityKeyword = 160
 pub slang_solidity_v2_ir::ir::NodeKind::SourceUnit = 63
 pub slang_solidity_v2_ir::ir::NodeKind::StateVariableAttributes = 64
 pub slang_solidity_v2_ir::ir::NodeKind::StateVariableDefinition = 65
-pub slang_solidity_v2_ir::ir::NodeKind::StorageKeyword = 160
-pub slang_solidity_v2_ir::ir::NodeKind::StringKeyword = 161
-pub slang_solidity_v2_ir::ir::NodeKind::StringLiteral = 162
+pub slang_solidity_v2_ir::ir::NodeKind::StorageKeyword = 161
+pub slang_solidity_v2_ir::ir::NodeKind::StringKeyword = 162
+pub slang_solidity_v2_ir::ir::NodeKind::StringLiteral = 163
 pub slang_solidity_v2_ir::ir::NodeKind::StructDefinition = 66
 pub slang_solidity_v2_ir::ir::NodeKind::StructMember = 67
-pub slang_solidity_v2_ir::ir::NodeKind::SuperKeyword = 163
-pub slang_solidity_v2_ir::ir::NodeKind::ThisKeyword = 164
-pub slang_solidity_v2_ir::ir::NodeKind::Tilde = 165
-pub slang_solidity_v2_ir::ir::NodeKind::TrueKeyword = 166
+pub slang_solidity_v2_ir::ir::NodeKind::SuperKeyword = 164
+pub slang_solidity_v2_ir::ir::NodeKind::ThisKeyword = 165
+pub slang_solidity_v2_ir::ir::NodeKind::Tilde = 166
+pub slang_solidity_v2_ir::ir::NodeKind::TrueKeyword = 167
 pub slang_solidity_v2_ir::ir::NodeKind::TryStatement = 68
 pub slang_solidity_v2_ir::ir::NodeKind::TupleExpression = 69
 pub slang_solidity_v2_ir::ir::NodeKind::TupleValue = 70
 pub slang_solidity_v2_ir::ir::NodeKind::TypeExpression = 71
-pub slang_solidity_v2_ir::ir::NodeKind::UfixedKeyword = 167
-pub slang_solidity_v2_ir::ir::NodeKind::UintKeyword = 168
+pub slang_solidity_v2_ir::ir::NodeKind::UfixedKeyword = 168
+pub slang_solidity_v2_ir::ir::NodeKind::UintKeyword = 169
 pub slang_solidity_v2_ir::ir::NodeKind::UncheckedBlock = 72
-pub slang_solidity_v2_ir::ir::NodeKind::UnicodeStringLiteral = 169
+pub slang_solidity_v2_ir::ir::NodeKind::UnicodeStringLiteral = 170
 pub slang_solidity_v2_ir::ir::NodeKind::UserDefinedValueTypeDefinition = 73
 pub slang_solidity_v2_ir::ir::NodeKind::UsingDeconstruction = 74
 pub slang_solidity_v2_ir::ir::NodeKind::UsingDeconstructionSymbol = 75
@@ -1004,10 +1007,10 @@ pub slang_solidity_v2_ir::ir::NodeKind::VariableDeclaration = 77
 pub slang_solidity_v2_ir::ir::NodeKind::VariableDeclarationStatement = 78
 pub slang_solidity_v2_ir::ir::NodeKind::VersionPragma = 79
 pub slang_solidity_v2_ir::ir::NodeKind::VersionRange = 80
-pub slang_solidity_v2_ir::ir::NodeKind::VersionSpecifier = 170
+pub slang_solidity_v2_ir::ir::NodeKind::VersionSpecifier = 171
 pub slang_solidity_v2_ir::ir::NodeKind::VersionTerm = 81
-pub slang_solidity_v2_ir::ir::NodeKind::WeeksKeyword = 171
-pub slang_solidity_v2_ir::ir::NodeKind::WeiKeyword = 172
+pub slang_solidity_v2_ir::ir::NodeKind::WeeksKeyword = 172
+pub slang_solidity_v2_ir::ir::NodeKind::WeiKeyword = 173
 pub slang_solidity_v2_ir::ir::NodeKind::WhileStatement = 82
 pub slang_solidity_v2_ir::ir::NodeKind::YulBlock = 83
 pub slang_solidity_v2_ir::ir::NodeKind::YulBreakStatement = 84
@@ -3267,6 +3270,23 @@ impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::SlashS
 pub fn slang_solidity_v2_ir::ir::SlashStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::SlashStruct
 pub fn slang_solidity_v2_ir::ir::SlashStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+pub struct slang_solidity_v2_ir::ir::SolidityKeywordStruct
+pub slang_solidity_v2_ir::ir::SolidityKeywordStruct::range: core::ops::range::Range<usize>
+impl slang_solidity_v2_ir::ir::SolidityKeywordStruct
+pub fn slang_solidity_v2_ir::ir::SolidityKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ir::ir::SolidityKeywordStruct::unparse(&self) -> &'static str
+impl core::clone::Clone for slang_solidity_v2_ir::ir::SolidityKeywordStruct
+pub fn slang_solidity_v2_ir::ir::SolidityKeywordStruct::clone(&self) -> slang_solidity_v2_ir::ir::SolidityKeywordStruct
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::SolidityKeywordStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::SolidityKeywordStruct
+pub fn slang_solidity_v2_ir::ir::SolidityKeywordStruct::eq(&self, &slang_solidity_v2_ir::ir::SolidityKeywordStruct) -> bool
+impl core::fmt::Debug for slang_solidity_v2_ir::ir::SolidityKeywordStruct
+pub fn slang_solidity_v2_ir::ir::SolidityKeywordStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::SolidityKeywordStruct
+impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::SolidityKeywordStruct
+pub fn slang_solidity_v2_ir::ir::SolidityKeywordStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
+impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::SolidityKeywordStruct
+pub fn slang_solidity_v2_ir::ir::SolidityKeywordStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::SourceUnitStruct
 pub slang_solidity_v2_ir::ir::SourceUnitStruct::members: slang_solidity_v2_ir::ir::SourceUnitMembers
 pub slang_solidity_v2_ir::ir::SourceUnitStruct::range: core::ops::range::Range<usize>
@@ -4193,6 +4213,8 @@ impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::SlashE
 pub fn slang_solidity_v2_ir::ir::SlashEqualStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::SlashStruct
 pub fn slang_solidity_v2_ir::ir::SlashStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
+impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::SolidityKeywordStruct
+pub fn slang_solidity_v2_ir::ir::SolidityKeywordStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::SourceUnitMember
 pub fn slang_solidity_v2_ir::ir::SourceUnitMember::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::SourceUnitStruct
@@ -4635,6 +4657,8 @@ impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::SlashEqua
 pub fn slang_solidity_v2_ir::ir::SlashEqualStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::SlashStruct
 pub fn slang_solidity_v2_ir::ir::SlashStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::SolidityKeywordStruct
+pub fn slang_solidity_v2_ir::ir::SolidityKeywordStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::SourceUnitMember
 pub fn slang_solidity_v2_ir::ir::SourceUnitMember::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::SourceUnitStruct
@@ -4916,6 +4940,7 @@ pub type slang_solidity_v2_ir::ir::SimpleVersionLiteral = alloc::sync::Arc<[slan
 pub type slang_solidity_v2_ir::ir::SingleTypedDeclaration = alloc::sync::Arc<slang_solidity_v2_ir::ir::SingleTypedDeclarationStruct>
 pub type slang_solidity_v2_ir::ir::Slash = alloc::sync::Arc<slang_solidity_v2_ir::ir::SlashStruct>
 pub type slang_solidity_v2_ir::ir::SlashEqual = alloc::sync::Arc<slang_solidity_v2_ir::ir::SlashEqualStruct>
+pub type slang_solidity_v2_ir::ir::SolidityKeyword = alloc::sync::Arc<slang_solidity_v2_ir::ir::SolidityKeywordStruct>
 pub type slang_solidity_v2_ir::ir::SourceUnit = alloc::sync::Arc<slang_solidity_v2_ir::ir::SourceUnitStruct>
 pub type slang_solidity_v2_ir::ir::SourceUnitMembers = alloc::sync::Arc<[slang_solidity_v2_ir::ir::SourceUnitMember]>
 pub type slang_solidity_v2_ir::ir::StateVariableAttributes = alloc::sync::Arc<slang_solidity_v2_ir::ir::StateVariableAttributesStruct>

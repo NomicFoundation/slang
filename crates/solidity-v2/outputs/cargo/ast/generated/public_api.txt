@@ -798,6 +798,7 @@ pub fn slang_solidity_v2_ast::ast::EqualityExpressionOperator::serialize<S: serd
 pub enum slang_solidity_v2_ast::ast::ExperimentalFeature
 pub slang_solidity_v2_ast::ast::ExperimentalFeature::ABIEncoderV2Keyword(slang_solidity_v2_ast::ast::ABIEncoderV2Keyword)
 pub slang_solidity_v2_ast::ast::ExperimentalFeature::SMTCheckerKeyword(slang_solidity_v2_ast::ast::SMTCheckerKeyword)
+pub slang_solidity_v2_ast::ast::ExperimentalFeature::SolidityKeyword(slang_solidity_v2_ast::ast::SolidityKeyword)
 pub slang_solidity_v2_ast::ast::ExperimentalFeature::StringLiteral(slang_solidity_v2_ast::ast::StringLiteral)
 impl core::clone::Clone for slang_solidity_v2_ast::ast::ExperimentalFeature
 pub fn slang_solidity_v2_ast::ast::ExperimentalFeature::clone(&self) -> slang_solidity_v2_ast::ast::ExperimentalFeature
@@ -3033,6 +3034,17 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::SlashStruct
 pub fn slang_solidity_v2_ast::ast::SlashStruct::clone(&self) -> slang_solidity_v2_ast::ast::SlashStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::SlashStruct
 pub fn slang_solidity_v2_ast::ast::SlashStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub struct slang_solidity_v2_ast::ast::SolidityKeywordStruct
+impl slang_solidity_v2_ast::ast::SolidityKeywordStruct
+pub fn slang_solidity_v2_ast::ast::SolidityKeywordStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
+pub fn slang_solidity_v2_ast::ast::SolidityKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
+pub fn slang_solidity_v2_ast::ast::SolidityKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+pub fn slang_solidity_v2_ast::ast::SolidityKeywordStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::SolidityKeywordStruct::unparse(&self) -> &str
+impl core::clone::Clone for slang_solidity_v2_ast::ast::SolidityKeywordStruct
+pub fn slang_solidity_v2_ast::ast::SolidityKeywordStruct::clone(&self) -> slang_solidity_v2_ast::ast::SolidityKeywordStruct
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::SolidityKeywordStruct
+pub fn slang_solidity_v2_ast::ast::SolidityKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::SourceUnitMembersStruct
 impl slang_solidity_v2_ast::ast::SourceUnitMembersStruct
 pub fn slang_solidity_v2_ast::ast::SourceUnitMembersStruct::is_empty(&self) -> bool
@@ -4062,6 +4074,7 @@ pub type slang_solidity_v2_ast::ast::SimpleVersionLiteral = slang_solidity_v2_as
 pub type slang_solidity_v2_ast::ast::SingleTypedDeclaration = slang_solidity_v2_ast::ast::SingleTypedDeclarationStruct
 pub type slang_solidity_v2_ast::ast::Slash = slang_solidity_v2_ast::ast::SlashStruct
 pub type slang_solidity_v2_ast::ast::SlashEqual = slang_solidity_v2_ast::ast::SlashEqualStruct
+pub type slang_solidity_v2_ast::ast::SolidityKeyword = slang_solidity_v2_ast::ast::SolidityKeywordStruct
 pub type slang_solidity_v2_ast::ast::SourceUnit = slang_solidity_v2_ast::ast::SourceUnitStruct
 pub type slang_solidity_v2_ast::ast::SourceUnitMembers = slang_solidity_v2_ast::ast::SourceUnitMembersStruct
 pub type slang_solidity_v2_ast::ast::StateVariableAttributes = slang_solidity_v2_ast::ast::StateVariableAttributesStruct

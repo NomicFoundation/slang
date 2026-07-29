@@ -4252,6 +4252,7 @@ pub(crate) fn create_abicoder_version(
 pub enum ExperimentalFeature {
     ABIEncoderV2Keyword,
     SMTCheckerKeyword,
+    SolidityKeyword,
     StringLiteral(Rc<TerminalNode>),
 }
 
@@ -4265,6 +4266,7 @@ pub(crate) fn create_experimental_feature(
             ExperimentalFeature::ABIEncoderV2Keyword
         }
         input_ir::ExperimentalFeature::SMTCheckerKeyword => ExperimentalFeature::SMTCheckerKeyword,
+        input_ir::ExperimentalFeature::SolidityKeyword => ExperimentalFeature::SolidityKeyword,
         input_ir::ExperimentalFeature::StringLiteral(node) => {
             ExperimentalFeature::StringLiteral(Rc::clone(node))
         }

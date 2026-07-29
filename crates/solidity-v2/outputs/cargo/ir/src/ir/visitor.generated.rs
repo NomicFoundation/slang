@@ -1043,6 +1043,8 @@ pub trait Visitor {
 
     fn visit_slash_equal(&mut self, _node: &SlashEqual) {}
 
+    fn visit_solidity_keyword(&mut self, _node: &SolidityKeyword) {}
+
     fn visit_storage_keyword(&mut self, _node: &StorageKeyword) {}
 
     fn visit_string_keyword(&mut self, _node: &StringKeyword) {}
@@ -2268,6 +2270,9 @@ pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut imp
         }
         ExperimentalFeature::SMTCheckerKeyword(smt_checker_keyword) => {
             visitor.visit_smt_checker_keyword(smt_checker_keyword);
+        }
+        ExperimentalFeature::SolidityKeyword(solidity_keyword) => {
+            visitor.visit_solidity_keyword(solidity_keyword);
         }
         ExperimentalFeature::StringLiteral(string_literal) => {
             visitor.visit_string_literal(string_literal);

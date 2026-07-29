@@ -2663,6 +2663,7 @@ pub fn build_experimental_feature(node: &Rc<NonterminalNode>) -> Option<Experime
         NodeKind::Terminal(TerminalKind::SMTCheckerKeyword) => {
             ExperimentalFeature::SMTCheckerKeyword
         }
+        NodeKind::Terminal(TerminalKind::SolidityKeyword) => ExperimentalFeature::SolidityKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             unreachable!(
                 "unexpected variant node of kind {kind}",

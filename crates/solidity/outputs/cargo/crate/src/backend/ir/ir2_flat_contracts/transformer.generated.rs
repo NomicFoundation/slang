@@ -1407,6 +1407,9 @@ pub trait Transformer {
             input::ExperimentalFeature::SMTCheckerKeyword => {
                 output::ExperimentalFeature::SMTCheckerKeyword
             }
+            input::ExperimentalFeature::SolidityKeyword => {
+                output::ExperimentalFeature::SolidityKeyword
+            }
             _ => panic!("Unexpected variant {source:?}"),
         }
     }

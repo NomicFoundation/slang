@@ -1696,6 +1696,7 @@ impl EqualityExpressionOperator {
 pub enum ExperimentalFeature {
     ABIEncoderV2Keyword(ABIEncoderV2Keyword),
     SMTCheckerKeyword(SMTCheckerKeyword),
+    SolidityKeyword(SolidityKeyword),
     StringLiteral(StringLiteral),
 }
 
@@ -1704,6 +1705,7 @@ impl ExperimentalFeature {
         match self {
             ExperimentalFeature::ABIEncoderV2Keyword(inner) => inner.unparse(),
             ExperimentalFeature::SMTCheckerKeyword(inner) => inner.unparse(),
+            ExperimentalFeature::SolidityKeyword(inner) => inner.unparse(),
             ExperimentalFeature::StringLiteral(inner) => inner.unparse(),
         }
     }
@@ -3299,6 +3301,23 @@ impl SlashEqualStruct {
     }
     pub fn unparse(&self) -> &'static str {
         "/="
+    }
+}
+
+pub type SolidityKeyword = Arc<SolidityKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct SolidityKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl SolidityKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+    pub fn unparse(&self) -> &'static str {
+        "solidity"
     }
 }
 

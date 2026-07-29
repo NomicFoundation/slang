@@ -12797,6 +12797,10 @@ impl NodeChecker for ExperimentalFeature {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
 
+            Self::SolidityKeyword(element) => {
+                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
+            }
+
             Self::PragmaStringLiteral(element) => {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }

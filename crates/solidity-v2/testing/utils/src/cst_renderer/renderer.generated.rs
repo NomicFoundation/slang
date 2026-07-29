@@ -4737,6 +4737,20 @@ pub fn render_experimental_feature(
             (range, frags)
         }
 
+        ExperimentalFeature::SolidityKeyword(element) => {
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("solidity_keyword", "SolidityKeyword")
+                ),
+            );
+            (range, frags)
+        }
+
         ExperimentalFeature::PragmaStringLiteral(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 

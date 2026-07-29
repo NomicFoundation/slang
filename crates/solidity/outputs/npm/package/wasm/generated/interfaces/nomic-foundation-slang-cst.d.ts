@@ -633,6 +633,7 @@ export declare enum NonterminalKind {
    * (* Introduced in 0.4.16 *)
    * ExperimentalFeature = (* variant: *) ABI_ENCODER_V2_KEYWORD
    *                     | (* variant: *) SMT_CHECKER_KEYWORD
+   *                     | (* variant: *) SOLIDITY_KEYWORD (* Introduced in 0.8.21 *)
    *                     | (* variant: *) StringLiteral;
    * ```
    */

@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/PragmaDirective/experimental_string_smtchecker/input.sol │ 0..120
+  2  │ pragma experimental "SMTChecker";                                                                                        │ 121..154
+  3  │                                                                                                                          │ 155..155
+  4  │ // <<<                                                                                                                   │ 156..162
+
+Tree:
+  - (root꞉ SourceUnit): # 'pragma experimental "SMTChecker";' (121..154)
+      - (members꞉ SourceUnitMembers): # 'pragma experimental "SMTChecker";' (121..154)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # 'pragma experimental "SMTChecker";' (121..154)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (121..127)
+              - (pragma꞉ Pragma) ► (experimental_pragma꞉ ExperimentalPragma): # 'experimental "SMTChecker"' (128..153)
+                  - (experimental_keyword꞉ ExperimentalKeyword): "experimental" # (128..140)
+                  - (feature꞉ ExperimentalFeature) ► (pragma_string_literal꞉ PragmaStringLiteral): '"SMTChecker"' # (141..153)
+              - (semicolon꞉ PragmaSemicolon): ";" # (153..154)
