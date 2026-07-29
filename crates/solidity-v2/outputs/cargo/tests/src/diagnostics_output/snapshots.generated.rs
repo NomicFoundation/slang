@@ -837,6 +837,22 @@ mod resolution {
         fn blobhash() -> Result<()> {
             run("resolution/incompatible_built_in_target", "blobhash")
         }
+
+        #[test]
+        fn yul_difficulty_post_paris() -> Result<()> {
+            run(
+                "resolution/incompatible_built_in_target",
+                "yul_difficulty_post_paris",
+            )
+        }
+
+        #[test]
+        fn yul_difficulty_pre_paris() -> Result<()> {
+            run(
+                "resolution/incompatible_built_in_target",
+                "yul_difficulty_pre_paris",
+            )
+        }
     }
 
     mod incompatible_built_in_version {

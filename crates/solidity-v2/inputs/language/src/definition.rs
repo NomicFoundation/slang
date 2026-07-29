@@ -4667,11 +4667,7 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                         BuiltInDefinition(name = YulCreate),
                         BuiltInDefinition(name = YulCreate2, evm_enabled = From(Constantinople)),
                         BuiltInDefinition(name = YulDelegatecall),
-                        BuiltInDefinition(
-                            name = YulDifficulty,
-                            enabled = Till("0.8.18"),
-                            evm_enabled = Till(Paris)
-                        ),
+                        BuiltInDefinition(name = YulDifficulty, evm_enabled = Till(Paris)),
                         BuiltInDefinition(name = YulDiv),
                         BuiltInDefinition(name = YulEq),
                         BuiltInDefinition(name = YulExp),

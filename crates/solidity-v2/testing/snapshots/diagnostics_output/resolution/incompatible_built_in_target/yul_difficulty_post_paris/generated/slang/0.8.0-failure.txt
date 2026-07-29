@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/incompatible-built-in-target] Error: This built-in was deprecated in EVM target 'Paris'.
+   ╭─[input.sol:7:23]
+   │
+ 7 │             result := difficulty()
+   │                       ─────┬────  
+   │                            ╰────── Error occurred here.
+───╯
