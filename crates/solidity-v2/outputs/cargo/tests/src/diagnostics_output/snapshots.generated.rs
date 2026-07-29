@@ -1161,6 +1161,22 @@ mod structure {
         use super::*;
 
         #[test]
+        fn external_override_data_location() -> Result<()> {
+            run(
+                "structure/contract_should_be_abstract",
+                "external_override_data_location",
+            )
+        }
+
+        #[test]
+        fn external_override_return_type_differs() -> Result<()> {
+            run(
+                "structure/contract_should_be_abstract",
+                "external_override_return_type_differs",
+            )
+        }
+
+        #[test]
         fn fully_implemented() -> Result<()> {
             run("structure/contract_should_be_abstract", "fully_implemented")
         }

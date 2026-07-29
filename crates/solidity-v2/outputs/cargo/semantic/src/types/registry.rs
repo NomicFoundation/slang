@@ -674,43 +674,46 @@ impl TypeRegistry {
         ftype: &FunctionType,
         other: &FunctionType,
     ) -> bool {
-        if ftype.parameter_types.len() != other.parameter_types.len()
-            || ftype.return_type != other.return_type
-        {
+        if ftype.parameter_types.len() != other.parameter_types.len() {
             return false;
         }
 
-        // In general, parameter types must match exactly for functions to
-        // override others.
-        if ftype.parameter_types == other.parameter_types {
-            true
+        // In general, parameter and return types must match exactly for
+        // functions to override others.
+        if ftype.parameter_types == other.parameter_types && ftype.return_type == other.return_type
+        {
+            return true;
+        }
 
-        // The exception is if the `other` function is external which allows
-        // changing the data location of parameters from `memory` to `calldata`
-        // (or viceversa) if the visibility of `ftype` is external or public.
-        } else if matches!(other.visibility, FunctionTypeVisibility::External)
-            && matches!(
+        // The exception is if the `other` function is external, which allows
+        // changing the data location of parameters *and return values* from
+        // `memory` to `calldata` (or viceversa) if the visibility of `ftype` is
+        // external or public.
+        if !matches!(other.visibility, FunctionTypeVisibility::External)
+            || !matches!(
                 ftype.visibility,
                 FunctionTypeVisibility::External | FunctionTypeVisibility::Public
             )
         {
-            ftype
+            // Types don't match: `ftype` *does not* override `other`.
+            return false;
+        }
+
+        self.type_overrides_in_external_function(ftype.return_type, other.return_type)
+            && ftype
                 .parameter_types
                 .iter()
                 .zip(other.parameter_types.iter())
                 .all(|(ptype_left, ptype_right)| {
-                    self.parameter_type_overrides_in_external_function(*ptype_left, *ptype_right)
+                    self.type_overrides_in_external_function(*ptype_left, *ptype_right)
                 })
-        } else {
-            // Parameter types don't match: `ftype` *does not* override `other`.
-            false
-        }
     }
 
-    // Returns true if a the `left` type can override the `right` type in an
+    // Returns true if the `left` type can override the `right` type in an
     // external function signature. External functions allow changing data
-    // location from `memory` to `calldata` and viceversa.
-    fn parameter_type_overrides_in_external_function(&self, left: TypeId, right: TypeId) -> bool {
+    // location from `memory` to `calldata` and viceversa. This applies to both
+    // parameter and return types (a multi-value return is a tuple).
+    fn type_overrides_in_external_function(&self, left: TypeId, right: TypeId) -> bool {
         if left == right {
             return true;
         }
@@ -728,7 +731,7 @@ impl TypeRegistry {
                 }),
             ) => {
                 location_left.overrides_in_external_function(*location_right)
-                    && self.parameter_type_overrides_in_external_function(
+                    && self.type_overrides_in_external_function(
                         *element_type_left,
                         *element_type_right,
                     )
@@ -747,7 +750,7 @@ impl TypeRegistry {
             ) => {
                 size_left == size_right
                     && location_left.overrides_in_external_function(*location_right)
-                    && self.parameter_type_overrides_in_external_function(
+                    && self.type_overrides_in_external_function(
                         *element_type_left,
                         *element_type_right,
                     )
@@ -780,6 +783,23 @@ impl TypeRegistry {
             ) => {
                 definition_id_left == definition_id_right
                     && location_left.overrides_in_external_function(*location_right)
+            }
+            // A function returning multiple values returns a tuple, so the
+            // relaxation applies element-wise to reach their data locations.
+            (
+                Type::Tuple(TupleType {
+                    types: left_elements,
+                }),
+                Type::Tuple(TupleType {
+                    types: right_elements,
+                }),
+            ) => {
+                left_elements.len() == right_elements.len()
+                    && left_elements.iter().zip(right_elements.iter()).all(
+                        |(left_element, right_element)| {
+                            self.type_overrides_in_external_function(*left_element, *right_element)
+                        },
+                    )
             }
             _ => {
                 // anything else is not compatible because it should have

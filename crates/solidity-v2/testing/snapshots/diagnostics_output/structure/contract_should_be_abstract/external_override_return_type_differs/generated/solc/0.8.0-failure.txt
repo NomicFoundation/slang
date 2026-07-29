@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4822] Error: Overriding function return types differ.
+    ╭─[input.sol:16:5]
+    │
+ 16 │ ╭─▶     function f(uint256[] memory a)
+    ┆ ┆   
+ 23 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
