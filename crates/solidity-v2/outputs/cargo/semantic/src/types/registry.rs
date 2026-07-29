@@ -695,7 +695,7 @@ impl TypeRegistry {
                 FunctionTypeVisibility::External | FunctionTypeVisibility::Public
             )
         {
-            // Types don't match: `ftype` *does not* override `other`.
+            // Not overriding an external function and we already checked that the types don't match.
             return false;
         }
 
