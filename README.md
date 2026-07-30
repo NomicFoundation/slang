@@ -37,6 +37,12 @@ Or if you are using `yarn`:
 yarn add "@nomicfoundation/slang"
 ```
 
+Or if you are using `pnpm` (common in the Nomic/Hardhat ecosystem):
+
+```sh
+pnpm add @nomicfoundation/slang
+```
+
 - [Learn more about how to get started with Slang.](https://nomicfoundation.github.io/slang/latest/user-guide/04-getting-started/01-installation/)
 
 ## Example
