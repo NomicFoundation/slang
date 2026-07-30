@@ -53,7 +53,7 @@ fn test_cargo(passthrough: impl IntoIterator<Item = impl Into<String>>) {
         .flag("--bins")
         .flag("--examples")
         .flag("--no-fail-fast")
-        .add_build_rustflags()
+        .add_nextest_build_rustflags()
         .args(passthrough)
         .run();
 }
