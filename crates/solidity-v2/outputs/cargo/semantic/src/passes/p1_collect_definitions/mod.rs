@@ -771,7 +771,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn enter_state_variable_definition(&mut self, node: &ir::StateVariableDefinition) -> bool {
-        let definition = Definition::new_state_variable(node);
+        let definition = Definition::new_state_variable(node, self.current_scope_id());
         self.insert_definition_in_current_scope(definition);
 
         // Interfaces cannot declare any variables.

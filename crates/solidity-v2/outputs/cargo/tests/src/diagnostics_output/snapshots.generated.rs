@@ -1961,6 +1961,19 @@ mod type_system {
         }
 
         #[test]
+        fn public_constant_forward_reference() -> Result<()> {
+            run(
+                "type_system/array_length",
+                "public_constant_forward_reference",
+            )
+        }
+
+        #[test]
+        fn public_constant_length() -> Result<()> {
+            run("type_system/array_length", "public_constant_length")
+        }
+
+        #[test]
         fn too_large() -> Result<()> {
             run("type_system/array_length", "too_large")
         }

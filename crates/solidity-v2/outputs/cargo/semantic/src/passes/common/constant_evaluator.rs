@@ -9,7 +9,7 @@ use slang_solidity_v2_common::diagnostics::kinds::type_system::{
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_ir::ir;
 
-use crate::binder::{Binder, ConstantDefinition, Definition, Resolution, Scope, ScopeId};
+use crate::binder::{Binder, Definition, Resolution, Scope, ScopeId};
 use crate::built_ins::{BuiltInsResolver, InternalBuiltIn};
 use crate::types::literals::numbers::{integer_literal_fits, rational_literal_fits};
 use crate::types::{
@@ -561,19 +561,16 @@ impl ConstantResolver<'_> {
     /// Whether the constant is declared past the use site, in the same file.
     /// The comparison is always against the original use site, so a chain
     /// through an earlier constant is rejected as well.
-    fn is_forward_reference(&self, constant_definition: &ConstantDefinition) -> bool {
+    fn is_forward_reference(&self, declaration_start: usize, enclosing_scope_id: ScopeId) -> bool {
         let Some((use_file_id, use_offset)) = self.use_site else {
             return false;
         };
-        if constant_definition.ir_node.range.start <= use_offset {
+        if declaration_start <= use_offset {
             return false;
         }
         // Constants are only declared in file scopes, or in the contract
         // scopes of contracts, interfaces and libraries.
-        let file_id = match self
-            .binder
-            .get_scope_by_id(constant_definition.enclosing_scope_id)
-        {
+        let file_id = match self.binder.get_scope_by_id(enclosing_scope_id) {
             Scope::File(file_scope) => &file_scope.file_id,
             Scope::Contract(contract_scope) => {
                 match self.binder.get_scope_by_id(contract_scope.file_scope_id) {
@@ -584,6 +581,34 @@ impl ConstantResolver<'_> {
             _ => unreachable!("constants are only defined in file or contract scopes"),
         };
         file_id == use_file_id
+    }
+
+    /// Resolves a constant declaration to its value expression. Shared by the
+    /// two constant shapes, free or non-public constants and public constant
+    /// state variables.
+    fn resolve_constant(
+        &self,
+        declaration_start: usize,
+        enclosing_scope_id: ScopeId,
+        value: Option<&ir::Expression>,
+        type_name: &ir::TypeName,
+    ) -> ComptimeResolution<ScopeId> {
+        // Hack to match solc behavior by rejecting forward references
+        // within the same file for array length.
+        if self.is_forward_reference(declaration_start, enclosing_scope_id) {
+            return ComptimeResolution::Unresolved;
+        }
+        let Some(value) = value else {
+            // This is a `constant` state variable for which the grammar
+            // allows an absent value expression but it's a semantic/syntactic
+            // error which should be already reported.
+            return ComptimeResolution::Unresolved;
+        };
+        ComptimeResolution::Constant {
+            value: value.clone(),
+            target_scope: enclosing_scope_id,
+            integer_type: declared_integer_type(type_name),
+        }
     }
 }
 
@@ -602,26 +627,33 @@ impl ConstantIdentifierResolver<ScopeId> for ConstantResolver<'_> {
                     .find_definition_by_id(definition_id)
                     .expect("resolved definition is found")
                 {
-                    Definition::Constant(constant_definition) => {
-                        // Hack to match solc behavior by rejecting forward references
-                        // within the same file for array length.
-                        if self.is_forward_reference(constant_definition) {
-                            ComptimeResolution::Unresolved
-                        } else if let Some(value) = &constant_definition.ir_node.value {
-                            let integer_type =
-                                declared_integer_type(&constant_definition.ir_node.type_name);
-                            ComptimeResolution::Constant {
-                                value: value.clone(),
-                                target_scope: constant_definition.enclosing_scope_id,
-                                integer_type,
-                            }
-                        } else {
-                            // This is a `constant` state variable for which the
-                            // grammar allows an absent value expression but
-                            // it's a semantic/syntactic error which should be
-                            // already reported.
-                            ComptimeResolution::Unresolved
-                        }
+                    Definition::Constant(constant_definition) => self.resolve_constant(
+                        constant_definition.ir_node.range.start,
+                        constant_definition.enclosing_scope_id,
+                        constant_definition.ir_node.value.as_ref(),
+                        &constant_definition.ir_node.type_name,
+                    ),
+                    // A public constant keeps its state variable shape in the
+                    // IR, but is evaluated like any other constant.
+                    Definition::StateVariable(variable_definition)
+                        if matches!(
+                            variable_definition.ir_node.attributes.mutability,
+                            ir::StateVariableMutability::Constant
+                        ) =>
+                    {
+                        debug_assert!(
+                            matches!(
+                                variable_definition.ir_node.attributes.visibility,
+                                ir::StateVariableVisibility::Public
+                            ),
+                            "non-public constants are lowered to `ConstantDefinition` in the IR"
+                        );
+                        self.resolve_constant(
+                            variable_definition.ir_node.range.start,
+                            variable_definition.enclosing_scope_id,
+                            variable_definition.ir_node.value.as_ref(),
+                            &variable_definition.ir_node.type_name,
+                        )
                     }
                     _ => ComptimeResolution::Unresolved,
                 }
