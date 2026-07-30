@@ -176,6 +176,8 @@ pub trait slang_solidity_v2_common::collections::DefaultWithCapacity
 pub fn slang_solidity_v2_common::collections::DefaultWithCapacity::default_with_capacity(usize) -> Self
 impl<K, V> slang_solidity_v2_common::collections::DefaultWithCapacity for slang_solidity_v2_common::collections::Map<K, V>
 pub fn slang_solidity_v2_common::collections::Map<K, V>::default_with_capacity(usize) -> Self
+impl<T> slang_solidity_v2_common::collections::DefaultWithCapacity for slang_solidity_v2_common::collections::Set<T>
+pub fn slang_solidity_v2_common::collections::Set<T>::default_with_capacity(usize) -> Self
 pub type slang_solidity_v2_common::collections::DeterministicState = core::hash::BuildHasherDefault<fxhash::FxHasher>
 pub type slang_solidity_v2_common::collections::Map<K, V> = std::collections::hash::map::HashMap<K, V, slang_solidity_v2_common::collections::DeterministicState>
 pub type slang_solidity_v2_common::collections::OrderedMap<K, V> = indexmap::map::IndexMap<K, V, slang_solidity_v2_common::collections::DeterministicState>
@@ -669,9 +671,11 @@ pub mod slang_solidity_v2_common::diagnostics::kinds::structure
 pub enum slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::AbstractContractPublicConstructor(slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::BreakOutsideLoop(slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::ConflictingMappingParameterName(slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::ConstructorNotInContract(slang_solidity_v2_common::diagnostics::kinds::structure::ConstructorNotInContract)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::ContinueOutsideLoop(slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::ContractShouldBeAbstract(slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::DuplicateNamedArgument(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EmptyEnum(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EmptyStruct(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EmptyTupleComponent(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent)
@@ -701,6 +705,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnostic
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::MultipleConstructors(slang_solidity_v2_common::diagnostics::kinds::structure::MultipleConstructors)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::MultipleFallbackFunctions(slang_solidity_v2_common::diagnostics::kinds::structure::MultipleFallbackFunctions)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::MultipleReceiveFunctions(slang_solidity_v2_common::diagnostics::kinds::structure::MultipleReceiveFunctions)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::NamedFunctionTypeReturnParameter(slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::NestedUncheckedBlock(slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::NonAbstractContractInternalConstructor(slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::PayableInternalOrPrivateFunction(slang_solidity_v2_common::diagnostics::kinds::structure::PayableInternalOrPrivateFunction)
@@ -724,12 +729,16 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ConstructorNotInContract> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ConstructorNotInContract) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -788,6 +797,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::MultipleFallbackFunctions) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::MultipleReceiveFunctions> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::MultipleReceiveFunctions) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -865,6 +876,26 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName
+pub slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName::name: alloc::string::String
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::ConstructorNotInContract
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::ConstructorNotInContract
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ConstructorNotInContract::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::ConstructorNotInContract
@@ -923,6 +954,26 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument
+pub slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument::name: alloc::string::String
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum
@@ -1475,6 +1526,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::MultipleReceiveFunctions::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::MultipleReceiveFunctions::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::MultipleReceiveFunctions::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock
@@ -2446,12 +2516,16 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ConstructorNotInContract> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ConstructorNotInContract) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ContinueOutsideLoop) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -2510,6 +2584,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::MultipleFallbackFunctions) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::MultipleReceiveFunctions> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::MultipleReceiveFunctions) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::NonAbstractContractInternalConstructor> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -2782,6 +2858,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::ConstructorNotInContract
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ConstructorNotInContract::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ConstructorNotInContract::message(&self) -> alloc::string::String
@@ -2794,6 +2874,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum::message(&self) -> alloc::string::String
@@ -2910,6 +2994,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::MultipleReceiveFunctions::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::MultipleReceiveFunctions::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::MultipleReceiveFunctions::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NamedFunctionTypeReturnParameter::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::NestedUncheckedBlock::message(&self) -> alloc::string::String

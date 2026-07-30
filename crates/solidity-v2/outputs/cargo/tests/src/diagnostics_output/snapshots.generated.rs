@@ -1158,6 +1158,52 @@ mod structure {
         run("structure", "break_outside_loop")
     }
 
+    mod conflicting_mapping_parameter_name {
+        use super::*;
+
+        #[test]
+        fn function_type_parameter() -> Result<()> {
+            run(
+                "structure/conflicting_mapping_parameter_name",
+                "function_type_parameter",
+            )
+        }
+
+        #[test]
+        fn function_type_value() -> Result<()> {
+            run(
+                "structure/conflicting_mapping_parameter_name",
+                "function_type_value",
+            )
+        }
+
+        #[test]
+        fn nested_multiple() -> Result<()> {
+            run(
+                "structure/conflicting_mapping_parameter_name",
+                "nested_multiple",
+            )
+        }
+
+        #[test]
+        fn nested_single() -> Result<()> {
+            run(
+                "structure/conflicting_mapping_parameter_name",
+                "nested_single",
+            )
+        }
+
+        #[test]
+        fn same_level() -> Result<()> {
+            run("structure/conflicting_mapping_parameter_name", "same_level")
+        }
+
+        #[test]
+        fn valid() -> Result<()> {
+            run("structure/conflicting_mapping_parameter_name", "valid")
+        }
+    }
+
     #[test]
     fn constructor_in_interface() -> Result<()> {
         run("structure", "constructor_in_interface")
@@ -1242,6 +1288,23 @@ mod structure {
             run(
                 "structure/contract_should_be_abstract",
                 "unimplemented_modifier",
+            )
+        }
+    }
+
+    mod duplicate_named_argument {
+        use super::*;
+
+        #[test]
+        fn function_call() -> Result<()> {
+            run("structure/duplicate_named_argument", "function_call")
+        }
+
+        #[test]
+        fn state_variable_initializer() -> Result<()> {
+            run(
+                "structure/duplicate_named_argument",
+                "state_variable_initializer",
             )
         }
     }
@@ -1465,6 +1528,11 @@ mod structure {
     #[test]
     fn multiple_receive_functions() -> Result<()> {
         run("structure", "multiple_receive_functions")
+    }
+
+    #[test]
+    fn named_function_type_return_parameter() -> Result<()> {
+        run("structure", "named_function_type_return_parameter")
     }
 
     #[test]

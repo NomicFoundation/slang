@@ -74,3 +74,10 @@ impl<K, V> DefaultWithCapacity for Map<K, V> {
         Map::with_capacity_and_hasher(capacity, DeterministicState::default())
     }
 }
+
+#[allow(clippy::implicit_hasher)]
+impl<T> DefaultWithCapacity for Set<T> {
+    fn default_with_capacity(capacity: usize) -> Self {
+        Set::with_capacity_and_hasher(capacity, DeterministicState::default())
+    }
+}

@@ -91,6 +91,7 @@ impl SemanticContext {
         p3_type_definitions::run(
             files,
             &mut binder,
+            language_version,
             &mut types,
             &file_node_mapper,
             diagnostics,

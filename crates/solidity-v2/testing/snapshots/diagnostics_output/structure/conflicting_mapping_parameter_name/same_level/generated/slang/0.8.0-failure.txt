@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.18'.
+   ╭─[input.sol:6:21]
+   │
+ 6 │     mapping(address owner => address owner) m;
+   │                     ──┬──  
+   │                       ╰──── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.18'.
+   ╭─[input.sol:6:38]
+   │
+ 6 │     mapping(address owner => address owner) m;
+   │                                      ──┬──  
+   │                                        ╰──── Error occurred here.
+───╯

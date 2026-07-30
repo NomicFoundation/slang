@@ -2,13 +2,11 @@ use std::sync::Arc;
 
 use ruint::aliases::U256;
 use slang_solidity_v2_common::collections::Set;
-use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     StorageLayoutBaseNonInteger, StorageLayoutBaseNotConstant, StorageLayoutBaseOutOfRange,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
-use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
 use super::{Pass, ScopeFrame};
 use crate::binder::{
@@ -19,7 +17,7 @@ use crate::built_ins::BuiltInsResolver;
 use crate::passes::common::constant_evaluator::{
     ConstantResolver, EvaluationError, evaluate_compile_time_constant,
 };
-use crate::passes::common::{find_definition_namespace_scope_id, node_location};
+use crate::passes::common::find_definition_namespace_scope_id;
 use crate::types::{ContractType, InterfaceType, StructType, Type, TypeId, UserMetaType};
 
 /// Lexical style resolution of symbols
@@ -446,15 +444,5 @@ impl Pass<'_> {
             unreachable!("the definition is not a contract");
         };
         contract_definition.base_slot = Some(base_slot);
-    }
-
-    /// Emits `kind` located at `node`.
-    fn push_diagnostic(
-        &mut self,
-        node: &(impl NodeIdentity + TextRange),
-        kind: impl Into<DiagnosticKind>,
-    ) {
-        let (file_id, range) = node_location(node, self.file_node_mapper);
-        self.diagnostics.push(file_id, range, kind);
     }
 }

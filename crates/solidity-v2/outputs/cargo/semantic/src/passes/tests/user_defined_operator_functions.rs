@@ -38,6 +38,7 @@ fn analyze(source: &str) -> (TestFile, Binder) {
     p3_type_definitions::run(
         &files,
         &mut binder,
+        LanguageVersion::LATEST,
         &mut types,
         &file_node_mapper,
         &mut diagnostics,

@@ -1,10 +1,13 @@
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
 use crate::binder::{Binder, Scope, ScopeId};
 use crate::built_ins::BuiltInsResolver;
 use crate::context::{FileNodeMapper, SemanticFile};
+use crate::passes::common::node_location;
 use crate::types::TypeRegistry;
 
 mod disambiguation;
@@ -115,6 +118,16 @@ impl<'a> Pass<'a> {
             )
             .copied()
             .unwrap()
+    }
+
+    /// Emits `kind` located at `node`.
+    fn push_diagnostic(
+        &mut self,
+        node: &(impl NodeIdentity + TextRange),
+        kind: impl Into<DiagnosticKind>,
+    ) {
+        let (file_id, range) = node_location(node, self.file_node_mapper);
+        self.diagnostics.push(file_id, range, kind);
     }
 
     fn is_in_modifier_scope(&self) -> bool {

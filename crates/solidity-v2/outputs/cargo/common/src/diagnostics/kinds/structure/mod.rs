@@ -1,8 +1,10 @@
 mod abstract_contract_public_constructor;
 mod break_outside_loop;
+mod conflicting_mapping_parameter_name;
 mod constructor_not_in_contract;
 mod continue_outside_loop;
 mod contract_should_be_abstract;
+mod duplicate_named_argument;
 mod empty_enum;
 mod empty_struct;
 mod empty_tuple_component;
@@ -32,6 +34,7 @@ mod modifier_in_interface;
 mod multiple_constructors;
 mod multiple_fallback_functions;
 mod multiple_receive_functions;
+mod named_function_type_return_parameter;
 mod nested_unchecked_block;
 mod non_abstract_contract_internal_constructor;
 mod payable_internal_or_private_function;
@@ -49,9 +52,11 @@ mod virtual_private_function;
 
 pub use abstract_contract_public_constructor::AbstractContractPublicConstructor;
 pub use break_outside_loop::BreakOutsideLoop;
+pub use conflicting_mapping_parameter_name::ConflictingMappingParameterName;
 pub use constructor_not_in_contract::ConstructorNotInContract;
 pub use continue_outside_loop::ContinueOutsideLoop;
 pub use contract_should_be_abstract::ContractShouldBeAbstract;
+pub use duplicate_named_argument::DuplicateNamedArgument;
 pub use empty_enum::EmptyEnum;
 pub use empty_struct::EmptyStruct;
 pub use empty_tuple_component::EmptyTupleComponent;
@@ -81,6 +86,7 @@ pub use modifier_in_interface::ModifierInInterface;
 pub use multiple_constructors::MultipleConstructors;
 pub use multiple_fallback_functions::MultipleFallbackFunctions;
 pub use multiple_receive_functions::MultipleReceiveFunctions;
+pub use named_function_type_return_parameter::NamedFunctionTypeReturnParameter;
 pub use nested_unchecked_block::NestedUncheckedBlock;
 pub use non_abstract_contract_internal_constructor::NonAbstractContractInternalConstructor;
 pub use payable_internal_or_private_function::PayableInternalOrPrivateFunction;
@@ -153,6 +159,13 @@ define_diagnostic_kind! {
         MultipleConstructors(MultipleConstructors),
         /// A constructor is declared outside of a contract (i.e. in an interface or library).
         ConstructorNotInContract(ConstructorNotInContract),
+
+        /// A function call's named-argument list contains two arguments with the same name.
+        DuplicateNamedArgument(DuplicateNamedArgument),
+
+        /// A named parameter of a mapping type reuses a name already used by
+        /// another parameter in the same or a nested mapping type.
+        ConflictingMappingParameterName(ConflictingMappingParameterName),
 
         /// A constructor in an abstract contract is declared `public`.
         AbstractContractPublicConstructor(AbstractContractPublicConstructor),
@@ -227,6 +240,9 @@ define_diagnostic_kind! {
 
         /// A variable is declared in an interface.
         VariableInInterface(VariableInInterface),
+
+        /// A return parameter of a function type is given a name.
+        NamedFunctionTypeReturnParameter(NamedFunctionTypeReturnParameter),
 
         /// An abstract contract declares a storage layout (`layout at`) specifier.
         StorageLayoutForAbstractContract(StorageLayoutForAbstractContract),

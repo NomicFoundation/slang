@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.18'.
+   ╭─[input.sol:6:21]
+   │
+ 6 │     mapping(address key => mapping(address inner => address value)) m;
+   │                     ─┬─  
+   │                      ╰─── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.18'.
+   ╭─[input.sol:6:44]
+   │
+ 6 │     mapping(address key => mapping(address inner => address value)) m;
+   │                                            ──┬──  
+   │                                              ╰──── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.18'.
+   ╭─[input.sol:6:61]
+   │
+ 6 │     mapping(address key => mapping(address inner => address value)) m;
+   │                                                             ──┬──  
+   │                                                               ╰──── Error occurred here.
+───╯

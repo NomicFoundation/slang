@@ -1,6 +1,10 @@
 use std::sync::Arc;
 
-use slang_solidity_v2_common::collections::Map;
+use slang_solidity_v2_common::collections::{DefaultWithCapacity, Map, Set};
+use slang_solidity_v2_common::diagnostics::kinds::structure::{
+    ConflictingMappingParameterName, NamedFunctionTypeReturnParameter,
+};
+use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
@@ -174,6 +178,77 @@ impl Visitor for Pass<'_> {
         } else {
             true
         }
+    }
+
+    fn enter_function_type(&mut self, node: &ir::FunctionType) -> bool {
+        // The return parameters of a function type may not be named. Reported
+        // here (rather than while collecting definitions) because this pass
+        // reliably visits every function type, including those nested inside
+        // another function type's parameters.
+        if let Some(returns) = &node.returns {
+            for parameter in returns.iter() {
+                if let Some(name) = &parameter.name {
+                    self.push_diagnostic(name, NamedFunctionTypeReturnParameter);
+                }
+            }
+        }
+
+        // Keep recursing so nested function types are checked as well.
+        true
+    }
+
+    fn enter_mapping_type(&mut self, node: &ir::MappingType) -> bool {
+        // Named mapping parameters were introduced in 0.8.18; before that the
+        // parser rejects them, so there is nothing to check. The rule is that a
+        // parameter name may not be reused by another parameter in the same or a
+        // nested mapping type: the key and value names of a mapping and all of
+        // its nested value mappings form a single namespace.
+        //
+        // Each namespace is checked once, from its outermost mapping. Because a
+        // key can never be (or contain) a mapping, the value mappings of that
+        // chain are the very next mapping nodes the traversal visits, so instead
+        // of tracking their ids we just skip the next N of them. The counter
+        // reaches zero at the last chain member (before its value subtree is
+        // visited), so a mapping nested inside e.g. a function-type value is
+        // correctly treated as a new namespace root.
+        if self.language_version >= LanguageVersion::V0_8_18 {
+            if self.nested_mappings_to_skip > 0 {
+                self.nested_mappings_to_skip -= 1;
+            } else {
+                let mut seen: Set<&str> = Set::default_with_capacity(4);
+                let mut mapping = node;
+                let mut nested = 0;
+                loop {
+                    for parameter in [&mapping.key_type, &mapping.value_type] {
+                        if let Some(name) = &parameter.name
+                            && !seen.insert(name.unparse())
+                        {
+                            // Report at the offending name, so each reuse points
+                            // at a distinct, meaningful location.
+                            self.push_diagnostic(
+                                name,
+                                ConflictingMappingParameterName {
+                                    name: name.unparse().to_owned(),
+                                },
+                            );
+                        }
+                    }
+
+                    match &mapping.value_type.type_name {
+                        ir::TypeName::MappingType(inner) => {
+                            nested += 1;
+                            mapping = inner;
+                        }
+                        _ => break,
+                    }
+                }
+                self.nested_mappings_to_skip = nested;
+            }
+        }
+
+        // Keep recursing so any type references inside the key/value types are
+        // still resolved.
+        true
     }
 
     fn enter_override_paths(&mut self, items: &ir::OverridePaths) -> bool {

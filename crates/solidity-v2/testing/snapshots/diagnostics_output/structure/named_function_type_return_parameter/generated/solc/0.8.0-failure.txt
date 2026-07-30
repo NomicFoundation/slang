@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[SyntaxError 7304] Error: Return parameters in function types may not be named.
+   ╭─[input.sol:6:34]
+   │
+ 6 │     function() external returns (uint256 x) a;
+   │                                  ────┬────  
+   │                                      ╰────── Error occurred here.
+───╯
+
+[SyntaxError 7304] Error: Return parameters in function types may not be named.
+    ╭─[input.sol:10:43]
+    │
+ 10 │     function(function() external returns (uint256 inner)) external b;
+    │                                           ──────┬──────  
+    │                                                 ╰──────── Error occurred here.
+────╯
+
+[SyntaxError 7304] Error: Return parameters in function types may not be named.
+    ╭─[input.sol:13:34]
+    │
+ 13 │     function() external returns (uint256 p, uint256 q) c;
+    │                                  ────┬────  
+    │                                      ╰────── Error occurred here.
+────╯
+
+[SyntaxError 7304] Error: Return parameters in function types may not be named.
+    ╭─[input.sol:13:45]
+    │
+ 13 │     function() external returns (uint256 p, uint256 q) c;
+    │                                             ────┬────  
+    │                                                 ╰────── Error occurred here.
+────╯

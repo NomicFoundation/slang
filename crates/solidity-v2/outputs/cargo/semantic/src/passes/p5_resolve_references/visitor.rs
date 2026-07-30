@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use slang_solidity_v2_common::collections::{DefaultWithCapacity, Set};
+use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
@@ -681,5 +683,24 @@ impl Visitor for Pass<'_> {
         // All Yul is collected and resolved in `p6_resolve_yul`; this pass does
         // not resolve Yul references, so skip the assembly body entirely.
         false
+    }
+
+    fn enter_named_arguments(&mut self, items: &ir::NamedArguments) -> bool {
+        // A function call's named-argument list must not repeat a name. This is
+        // a purely structural check, but it's done here because this pass is
+        // the one that reliably visits every expression.
+        let mut seen = Set::default_with_capacity(items.len());
+        for argument in items.iter() {
+            let name = argument.name.unparse();
+            if !seen.insert(name) {
+                self.push_diagnostic(
+                    &argument.name,
+                    DuplicateNamedArgument {
+                        name: name.to_owned(),
+                    },
+                );
+            }
+        }
+        true
     }
 }
