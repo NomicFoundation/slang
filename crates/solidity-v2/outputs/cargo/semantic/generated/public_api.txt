@@ -422,6 +422,7 @@ impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::Nu
 pub enum slang_solidity_v2_semantic::types::Type
 pub slang_solidity_v2_semantic::types::Type::Address(slang_solidity_v2_semantic::types::AddressType)
 pub slang_solidity_v2_semantic::types::Type::Array(slang_solidity_v2_semantic::types::ArrayType)
+pub slang_solidity_v2_semantic::types::Type::ArraySlice(slang_solidity_v2_semantic::types::ArraySliceType)
 pub slang_solidity_v2_semantic::types::Type::Boolean
 pub slang_solidity_v2_semantic::types::Type::ByteArray(slang_solidity_v2_semantic::types::ByteArrayType)
 pub slang_solidity_v2_semantic::types::Type::Bytes(slang_solidity_v2_semantic::types::BytesType)
@@ -480,6 +481,18 @@ pub fn slang_solidity_v2_semantic::types::AddressType::fmt(&self, &mut core::fmt
 impl core::hash::Hash for slang_solidity_v2_semantic::types::AddressType
 pub fn slang_solidity_v2_semantic::types::AddressType::hash<__H: core::hash::Hasher>(&self, &mut __H)
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::AddressType
+pub struct slang_solidity_v2_semantic::types::ArraySliceType
+pub slang_solidity_v2_semantic::types::ArraySliceType::array_type_id: slang_solidity_v2_semantic::types::TypeId
+impl core::clone::Clone for slang_solidity_v2_semantic::types::ArraySliceType
+pub fn slang_solidity_v2_semantic::types::ArraySliceType::clone(&self) -> slang_solidity_v2_semantic::types::ArraySliceType
+impl core::cmp::Eq for slang_solidity_v2_semantic::types::ArraySliceType
+impl core::cmp::PartialEq for slang_solidity_v2_semantic::types::ArraySliceType
+pub fn slang_solidity_v2_semantic::types::ArraySliceType::eq(&self, &slang_solidity_v2_semantic::types::ArraySliceType) -> bool
+impl core::fmt::Debug for slang_solidity_v2_semantic::types::ArraySliceType
+pub fn slang_solidity_v2_semantic::types::ArraySliceType::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for slang_solidity_v2_semantic::types::ArraySliceType
+pub fn slang_solidity_v2_semantic::types::ArraySliceType::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::ArraySliceType
 pub struct slang_solidity_v2_semantic::types::ArrayType
 pub slang_solidity_v2_semantic::types::ArrayType::element_type: slang_solidity_v2_semantic::types::TypeId
 pub slang_solidity_v2_semantic::types::ArrayType::location: slang_solidity_v2_semantic::types::DataLocation

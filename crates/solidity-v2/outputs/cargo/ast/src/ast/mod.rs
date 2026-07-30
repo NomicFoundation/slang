@@ -16,8 +16,8 @@ mod serialize;
 
 mod types;
 pub use types::{
-    AddressType, ArrayType, BooleanType, ByteArrayType, BytesType, ContractType, EnumType,
-    FixedPointNumberType, FixedSizeArrayType, FunctionType, IntegerType, InterfaceType,
+    AddressType, ArraySliceType, ArrayType, BooleanType, ByteArrayType, BytesType, ContractType,
+    EnumType, FixedPointNumberType, FixedSizeArrayType, FunctionType, IntegerType, InterfaceType,
     LiteralKind, LiteralType, MappingType, MetaType, Number, StringType, StructType, TupleType,
     Type, UserDefinedValueType, UserMetaType, VoidType,
 };

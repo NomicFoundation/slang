@@ -9,8 +9,8 @@ use crate::binder::{Reference, Resolution, Typing, UsingOperator};
 use crate::built_ins::InternalBuiltIn;
 use crate::passes::common::filter_overriden_definitions;
 use crate::types::{
-    AddressType, ArrayType, DataLocation, FixedSizeArrayType, MappingType, MetaType, Number,
-    TupleType, Type, UserMetaType,
+    AddressType, ArraySliceType, ArrayType, BytesType, DataLocation, FixedSizeArrayType,
+    MappingType, MetaType, Number, StringType, TupleType, Type, UserMetaType,
 };
 
 impl Visitor for Pass<'_> {
@@ -414,39 +414,71 @@ impl Visitor for Pass<'_> {
     fn leave_index_access_expression(&mut self, node: &ir::IndexAccessExpression) {
         let typing = match self.typing_of_expression(&node.operand) {
             Typing::Resolved(operand_type_id) => {
-                let range_access = node.end.is_some();
                 match self.types.get_type_by_id(operand_type_id) {
-                    Type::Array(ArrayType { element_type, .. })
-                    | Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
-                        // TODO(validation) SDR[58]: for fixed-size arrays, if the range
-                        // is resolvable at compile time we should check for out
-                        // of bounds accesses.
-                        // TODO(validation) SDR[46]: array slices should only be
-                        // implemented for calldata arrays (as of 0.8.33).
-                        // TODO(validation) SDR[50]: we should return a new
-                        // (intermediate) type for array slices.
-                        if range_access {
-                            Typing::Resolved(operand_type_id)
+                    Type::Array(ArrayType {
+                        element_type,
+                        location,
+                    }) => {
+                        let (element_type, location) = (*element_type, *location);
+                        if node.is_slice {
+                            // A range index of a (calldata) array is a slice.
+                            self.slice_typing(operand_type_id, location)
                         } else {
-                            Typing::Resolved(*element_type)
+                            Typing::Resolved(element_type)
+                        }
+                    }
+                    Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
+                        // TODO(validation) SDR[58]: for fixed-size arrays, if the
+                        // index is resolvable at compile time we should check for
+                        // out-of-bounds accesses. Fixed-size arrays aren't
+                        // dynamically sized, so they can't be sliced.
+                        let element_type = *element_type;
+                        if node.is_slice {
+                            Typing::Unresolved
+                        } else {
+                            Typing::Resolved(element_type)
                         }
                     }
                     Type::ByteArray(_) => {
-                        if range_access {
+                        if node.is_slice {
                             Typing::Unresolved
                         } else {
                             Typing::Resolved(self.types.bytes1())
                         }
                     }
-                    Type::Bytes(_) => {
-                        if range_access {
-                            Typing::Resolved(operand_type_id)
+                    Type::Bytes(BytesType { location }) => {
+                        if node.is_slice {
+                            self.slice_typing(operand_type_id, *location)
                         } else {
                             Typing::Resolved(self.types.bytes1())
                         }
                     }
+                    Type::String(StringType { location }) => {
+                        if node.is_slice {
+                            // `string` can be sliced in calldata, but not indexed.
+                            self.slice_typing(operand_type_id, *location)
+                        } else {
+                            Typing::Unresolved
+                        }
+                    }
+                    Type::ArraySlice(ArraySliceType { array_type_id }) => {
+                        let array_type_id = *array_type_id;
+                        if node.is_slice {
+                            // Re-slicing a slice yields the same slice type.
+                            Typing::Resolved(operand_type_id)
+                        } else {
+                            // Indexing a slice yields its array's element type.
+                            match self.types.get_type_by_id(array_type_id) {
+                                Type::Array(ArrayType { element_type, .. }) => {
+                                    Typing::Resolved(*element_type)
+                                }
+                                Type::Bytes(_) => Typing::Resolved(self.types.bytes1()),
+                                _ => Typing::Unresolved,
+                            }
+                        }
+                    }
                     Type::Mapping(MappingType { value_type_id, .. }) => {
-                        if range_access {
+                        if node.is_slice {
                             Typing::Unresolved
                         } else {
                             Typing::Resolved(*value_type_id)

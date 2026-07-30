@@ -6,7 +6,7 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 
 use super::literals::numbers;
 use super::{
-    AddressType, ArrayType, ByteArrayType, BytesType, ContractType, DataLocation,
+    AddressType, ArraySliceType, ArrayType, ByteArrayType, BytesType, ContractType, DataLocation,
     FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType, InterfaceType,
     LiteralKind, Number, StringType, StructType, TupleType, Type, TypeId,
 };
@@ -148,6 +148,14 @@ impl TypeRegistry {
         }
         let from_type = self.get_type_by_id(from_type_id);
         let to_type = self.get_type_by_id(to_type_id);
+
+        // A calldata slice converts wherever its underlying array converts (and
+        // to itself, handled above). Mirrors solc's
+        // `ArraySliceType::isImplicitlyConvertibleTo`.
+        if let Type::ArraySlice(ArraySliceType { array_type_id }) = from_type {
+            let array_type_id = *array_type_id;
+            return self.implicitly_convertible_to(array_type_id, to_type_id);
+        }
 
         match (from_type, to_type) {
             (
@@ -479,6 +487,12 @@ impl TypeRegistry {
                     location: DataLocation::Inherited,
                 })
             }
+            // Canonicalise a slice to a slice of the canonical array, keeping
+            // the `ArraySlice` wrapper on purpose.
+            Type::ArraySlice(ArraySliceType { array_type_id }) => {
+                let array_type_id = self.find_canonical_type_id(*array_type_id)?;
+                Type::ArraySlice(ArraySliceType { array_type_id })
+            }
             Type::Bytes(_) => Type::Bytes(BytesType {
                 location: DataLocation::Inherited,
             }),
@@ -554,6 +568,14 @@ impl TypeRegistry {
                 element_type: self.register_type_id_with_data_location(element_type, location),
                 location,
             }),
+            // A calldata slice is only ever produced by a range-index
+            // expression `a[i:j]`, never written in source as a parameter,
+            // struct field, or cast target. Location relocation only runs on
+            // such source-declared types (and elements nested within them, none
+            // of which can be a slice), so a slice never reaches here.
+            Type::ArraySlice(_) => {
+                unreachable!("array slices are calldata-only and are never relocated")
+            }
             Type::Bytes(_) => Type::Bytes(BytesType { location }),
             Type::FixedSizeArray(FixedSizeArrayType {
                 element_type, size, ..
@@ -603,6 +625,10 @@ impl TypeRegistry {
                 let mobile = kind.mobile_type()?;
                 Some(self.register_type(mobile))
             }
+            // A calldata slice decays to the array it slices — this is what lets
+            // `bytes calldata b = data[:3];` type-check. Mirrors solc's
+            // `ArraySliceType::mobileType`.
+            Type::ArraySlice(ArraySliceType { array_type_id }) => Some(array_type_id),
             Type::Tuple(TupleType { types: element_ids }) => {
                 let mobile_ids: Option<Vec<TypeId>> = element_ids
                     .iter()

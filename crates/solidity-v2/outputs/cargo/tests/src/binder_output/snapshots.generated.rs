@@ -1174,6 +1174,11 @@ mod using {
     }
 
     #[test]
+    fn calldata_slice() -> Result<()> {
+        run("using", "calldata_slice")
+    }
+
+    #[test]
     fn can_override_built_ins() -> Result<()> {
         run("using", "can_override_built_ins")
     }

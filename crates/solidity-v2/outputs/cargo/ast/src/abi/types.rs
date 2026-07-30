@@ -183,6 +183,8 @@ fn abi_type_from_ast_type(value: &AstType, visited_structs: &mut Set<NodeId>) ->
                 element: Box::new(element),
             })
         }
+        // A slice ABI-encodes exactly like the array it slices.
+        AstType::ArraySlice(slice) => abi_type_from_ast_type(&slice.array_type(), visited_structs),
         AstType::FixedSizeArray(array) => {
             let element = abi_type_from_ast_type(&array.element_type(), visited_structs)?;
             Some(AbiType::FixedSizeArray {

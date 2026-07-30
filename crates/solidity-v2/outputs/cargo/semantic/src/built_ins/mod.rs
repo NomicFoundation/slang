@@ -257,6 +257,7 @@ impl<'a> BuiltInsResolver<'a> {
                 "push" => Some(InternalBuiltIn::ArrayPush(*element_type)),
                 _ => None,
             },
+            Type::ArraySlice(_) => None,
             Type::Boolean => None,
             Type::ByteArray(_) => match symbol {
                 "length" => Some(InternalBuiltIn::Length),

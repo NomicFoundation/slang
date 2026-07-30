@@ -8,7 +8,7 @@ use super::Pass;
 use crate::binder::{Definition, Resolution, Typing};
 use crate::passes::common::node_location;
 use crate::types::{
-    AddressType, ContractType, DataLocation, FixedSizeArrayType, FunctionType,
+    AddressType, ArraySliceType, ContractType, DataLocation, FixedSizeArrayType, FunctionType,
     FunctionTypeVisibility, IntegerType, LiteralKind, MetaType, Number, StringType, Type, TypeId,
     UserMetaType, literals,
 };
@@ -147,6 +147,22 @@ impl Pass<'_> {
                 Some(self.types.boolean())
             }
             ir::PrefixExpressionOperator::DeleteKeyword(_) => Some(self.types.void()),
+        }
+    }
+
+    /// Types a range index (`a[i:j]`) whose operand is the array `array_type_id`
+    /// in `location`. Only dynamically-sized calldata arrays can be sliced, so a
+    /// calldata operand yields a [`Type::ArraySlice`] wrapping it and anything
+    /// else is left unresolved.
+    pub(super) fn slice_typing(&mut self, array_type_id: TypeId, location: DataLocation) -> Typing {
+        if location == DataLocation::Calldata {
+            Typing::Resolved(
+                self.types
+                    .register_type(Type::ArraySlice(ArraySliceType { array_type_id })),
+            )
+        } else {
+            // TODO(validation) SDR[46]: slicing a non-calldata array is invalid.
+            Typing::Unresolved
         }
     }
 

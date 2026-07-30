@@ -391,6 +391,9 @@ fn type_display(type_: &Type) -> String {
             element_type = type_display(&array.element_type()),
             location = data_location_display(array.location()),
         ),
+        Type::ArraySlice(slice) => {
+            format!("{array} slice", array = type_display(&slice.array_type()))
+        }
         Type::Boolean(_) => "bool".to_string(),
         Type::ByteArray(byte_array) => format!("bytes{width}", width = byte_array.width()),
         Type::Bytes(bytes) => {

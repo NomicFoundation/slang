@@ -155,6 +155,24 @@ contract C {
 "#,
 );
 
+define_fixture!(
+    CalldataSlice,
+    file: "main.sol", r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+contract C {
+    function f(string calldata s, bytes calldata b, uint[] calldata u) external pure {
+        s[:3];       // string slice
+        b[1:2];      // bytes slice
+        b[1:2][1];   // byte
+        u[3:];       // uint[] slice
+        u[3:][0];    // uint
+    }
+}
+"#,
+);
+
 #[test]
 fn test_literal_plus_integer_get_type() {
     let unit = LiteralPlusInteger::build_compilation_unit();
@@ -296,6 +314,168 @@ fn test_binary_operator_common_type() {
         assert!(!integer.is_signed(), "`{function_name}` result is unsigned");
         assert_eq!(integer.bits(), 16, "`{function_name}` result is 16-bit");
     }
+}
+
+#[test]
+fn test_calldata_slice_get_type() {
+    let unit = CalldataSlice::build_compilation_unit();
+
+    let contract = unit
+        .find_contract_by_name("C")
+        .next()
+        .expect("contract C is found");
+
+    let function = contract
+        .members()
+        .iter()
+        .find_map(|member| match member {
+            ast::ContractMember::FunctionDefinition(function)
+                if function.name().is_some_and(|name| name.name() == "f") =>
+            {
+                Some(function)
+            }
+            _ => None,
+        })
+        .expect("function f is found");
+
+    // `f`'s body is five expression statements, each a slice or an index into a
+    // slice, in source order.
+    let types: Vec<ast::Type> = function
+        .body()
+        .expect("function has a body")
+        .statements()
+        .iter()
+        .map(|statement| {
+            let ast::Statement::ExpressionStatement(statement) = statement else {
+                panic!("expected an expression statement");
+            };
+            let ast::Expression::IndexAccessExpression(index) = statement.expression() else {
+                panic!("expected an index-access expression");
+            };
+            index
+                .get_type()
+                .expect("the index-access expression has a resolved type")
+        })
+        .collect();
+
+    let [s_slice, b_slice, b_byte, u_slice, u_element] = types.as_slice() else {
+        panic!("expected exactly five index-access expressions");
+    };
+
+    // `s[:3]` slices a `string calldata` -> a slice of that `string`.
+    let ast::Type::ArraySlice(slice) = s_slice else {
+        panic!("expected `s[:3]` to type as an array slice");
+    };
+    assert!(
+        matches!(slice.array_type(), ast::Type::String(_)),
+        "`s[:3]` is a slice of a `string`"
+    );
+
+    // `b[1:2]` slices a `bytes calldata` -> a slice of that `bytes`.
+    let ast::Type::ArraySlice(slice) = b_slice else {
+        panic!("expected `b[1:2]` to type as an array slice");
+    };
+    assert!(
+        matches!(slice.array_type(), ast::Type::Bytes(_)),
+        "`b[1:2]` is a slice of a `bytes`"
+    );
+
+    // Indexing the `bytes` slice yields a single `bytes1`.
+    let ast::Type::ByteArray(byte) = b_byte else {
+        panic!("expected `b[1:2][1]` to type as a byte array");
+    };
+    assert_eq!(byte.width(), 1, "`b[1:2][1]` is a `bytes1`");
+
+    // `u[3:]` slices a `uint[] calldata` -> a slice of that array.
+    let ast::Type::ArraySlice(slice) = u_slice else {
+        panic!("expected `u[3:]` to type as an array slice");
+    };
+    assert!(
+        matches!(slice.array_type(), ast::Type::Array(_)),
+        "`u[3:]` is a slice of a `uint[]`"
+    );
+
+    // Indexing the `uint[]` slice yields a `uint256`.
+    let ast::Type::Integer(integer) = u_element else {
+        panic!("expected `u[3:][0]` to type as an integer");
+    };
+    assert!(!integer.is_signed(), "`u[3:][0]` is unsigned");
+    assert_eq!(integer.bits(), 256, "`u[3:][0]` is 256-bit");
+}
+
+define_fixture!(
+    OpenEndedSliceOfNonSliceable,
+    file: "main.sol", r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+contract C {
+    mapping(uint256 => uint256) m;
+    bytes32 b;
+
+    function f() internal view {
+        b[1:];   // slicing a fixed `bytes32` is not valid
+        m[1:];   // slicing a mapping is not valid
+    }
+}
+"#,
+);
+
+#[test]
+fn test_open_ended_slice_of_non_sliceable_is_unresolved() {
+    let unit = OpenEndedSliceOfNonSliceable::build_compilation_unit();
+
+    let contract = unit
+        .find_contract_by_name("C")
+        .next()
+        .expect("contract C is found");
+
+    let function = contract
+        .members()
+        .iter()
+        .find_map(|member| match member {
+            ast::ContractMember::FunctionDefinition(function)
+                if function.name().is_some_and(|name| name.name() == "f") =>
+            {
+                Some(function)
+            }
+            _ => None,
+        })
+        .expect("function f is found");
+
+    // `f`'s body is two open-ended slice expressions, in source order.
+    let types: Vec<Option<ast::Type>> = function
+        .body()
+        .expect("function has a body")
+        .statements()
+        .iter()
+        .map(|statement| {
+            let ast::Statement::ExpressionStatement(statement) = statement else {
+                panic!("expected an expression statement");
+            };
+            let ast::Expression::IndexAccessExpression(index) = statement.expression() else {
+                panic!("expected an index-access expression");
+            };
+            assert!(
+                index.is_slice(),
+                "the expression is an open-ended slice `x[1:]`"
+            );
+            index.get_type()
+        })
+        .collect();
+
+    let [b_slice, m_slice] = types.as_slice() else {
+        panic!("expected exactly two slice expressions");
+    };
+
+    assert!(
+        b_slice.is_none(),
+        "slicing a fixed `bytes32` does not resolve to a type"
+    );
+    assert!(
+        m_slice.is_none(),
+        "slicing a mapping does not resolve to a type"
+    );
 }
 
 define_fixture!(
