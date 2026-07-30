@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/unexpected-terminal] Error: Unexpected PayableKeyword. One of AtKeyword, ConstantKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, ImmutableKeyword, InternalKeyword, LayoutKeyword, OpenBracket, OverrideKeyword, PrivateKeyword, PublicKeyword, RevertKeyword, TransientKeyword was expected
+   ╭─[input.sol:7:13]
+   │
+ 7 │     uint256 payable x;
+   │             ───┬───  
+   │                ╰───── Error occurred here.
+───╯

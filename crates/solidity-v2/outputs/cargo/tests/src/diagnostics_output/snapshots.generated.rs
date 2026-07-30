@@ -1751,6 +1751,11 @@ mod syntax {
     }
 
     #[test]
+    fn library_inheritance() -> Result<()> {
+        run("syntax", "library_inheritance")
+    }
+
+    #[test]
     fn more_than_one_inheritance_list() -> Result<()> {
         run("syntax", "more_than_one_inheritance_list")
     }
@@ -1884,6 +1889,25 @@ mod syntax {
         #[test]
         fn state_variables() -> Result<()> {
             run("syntax/multiple_visibility_specifiers", "state_variables")
+        }
+    }
+
+    mod non_address_state_mutability {
+        use super::*;
+
+        #[test]
+        fn local_variable() -> Result<()> {
+            run("syntax/non_address_state_mutability", "local_variable")
+        }
+
+        #[test]
+        fn return_parameter() -> Result<()> {
+            run("syntax/non_address_state_mutability", "return_parameter")
+        }
+
+        #[test]
+        fn state_variable() -> Result<()> {
+            run("syntax/non_address_state_mutability", "state_variable")
         }
     }
 

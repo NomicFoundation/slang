@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9469] Error: Library is not allowed to inherit.
+   ╭─[input.sol:7:1]
+   │
+ 7 │ library L is Base {}
+   │ ──────────┬─────────  
+   │           ╰─────────── Error occurred here.
+───╯
