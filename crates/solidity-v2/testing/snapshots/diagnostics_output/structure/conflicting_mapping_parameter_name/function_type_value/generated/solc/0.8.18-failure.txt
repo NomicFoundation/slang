@@ -5,7 +5,7 @@ Diagnostics: 1
 [DeclarationError 1809] Error: Conflicting parameter name "a" in mapping.
    ╭─[input.sol:8:32]
    │
- 8 │     mapping(uint k => function(mapping(uint a => uint a) storage) internal) m;
+ 8 │     mapping(uint a => function(mapping(uint a => uint a) storage) internal) m;
    │                                ────────────┬────────────  
    │                                            ╰────────────── Error occurred here.
 ───╯

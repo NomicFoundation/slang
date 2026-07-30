@@ -5,7 +5,7 @@ Diagnostics: 3
 [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.18'.
    ╭─[input.sol:8:18]
    │
- 8 │     mapping(uint k => function(mapping(uint a => uint a) storage) internal) m;
+ 8 │     mapping(uint a => function(mapping(uint a => uint a) storage) internal) m;
    │                  ┬  
    │                  ╰── Error occurred here.
 ───╯
@@ -13,7 +13,7 @@ Diagnostics: 3
 [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.18'.
    ╭─[input.sol:8:45]
    │
- 8 │     mapping(uint k => function(mapping(uint a => uint a) storage) internal) m;
+ 8 │     mapping(uint a => function(mapping(uint a => uint a) storage) internal) m;
    │                                             ┬  
    │                                             ╰── Error occurred here.
 ───╯
@@ -21,7 +21,7 @@ Diagnostics: 3
 [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.18'.
    ╭─[input.sol:8:55]
    │
- 8 │     mapping(uint k => function(mapping(uint a => uint a) storage) internal) m;
+ 8 │     mapping(uint a => function(mapping(uint a => uint a) storage) internal) m;
    │                                                       ┬  
    │                                                       ╰── Error occurred here.
 ───╯
