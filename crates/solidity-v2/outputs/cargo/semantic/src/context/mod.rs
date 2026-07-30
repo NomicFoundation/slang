@@ -387,13 +387,13 @@ impl SemanticContext {
                 )
             }
 
-            Type::Library(_)
+            Type::ArraySlice(_)
+            | Type::Library(_)
             | Type::Literal(_)
             | Type::MetaType(_)
             | Type::Tuple(_)
             | Type::UserMetaType(_)
-            | Type::Void
-            | Type::ArraySlice(_) => None,
+            | Type::Void => None,
         }
     }
 }

@@ -1,7 +1,7 @@
 use super::binder::{Binder, Definition, Typing};
 use super::types::{
-    AddressType, ArraySliceType, ArrayType, BytesType, DataLocation, LiteralKind, MetaType,
-    TupleType, Type, TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
+    AddressType, ArrayType, BytesType, DataLocation, LiteralKind, MetaType, TupleType, Type,
+    TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
 };
 
 #[path = "internal.generated.rs"]
@@ -257,10 +257,7 @@ impl<'a> BuiltInsResolver<'a> {
                 "push" => Some(InternalBuiltIn::ArrayPush(*element_type)),
                 _ => None,
             },
-            // A slice exposes the same members as the array it slices
-            Type::ArraySlice(ArraySliceType { array_type_id }) => {
-                self.lookup_member_of_type_id(*array_type_id, symbol)
-            }
+            Type::ArraySlice(_) => None,
             Type::Boolean => None,
             Type::ByteArray(_) => match symbol {
                 "length" => Some(InternalBuiltIn::Length),

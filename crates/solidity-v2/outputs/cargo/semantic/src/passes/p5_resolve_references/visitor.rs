@@ -414,14 +414,13 @@ impl Visitor for Pass<'_> {
     fn leave_index_access_expression(&mut self, node: &ir::IndexAccessExpression) {
         let typing = match self.typing_of_expression(&node.operand) {
             Typing::Resolved(operand_type_id) => {
-                let range_access = node.end.is_some();
                 match self.types.get_type_by_id(operand_type_id) {
                     Type::Array(ArrayType {
                         element_type,
                         location,
                     }) => {
                         let (element_type, location) = (*element_type, *location);
-                        if range_access {
+                        if node.is_slice {
                             // A range index of a (calldata) array is a slice.
                             self.slice_typing(operand_type_id, location)
                         } else {
@@ -434,28 +433,28 @@ impl Visitor for Pass<'_> {
                         // out-of-bounds accesses. Fixed-size arrays aren't
                         // dynamically sized, so they can't be sliced.
                         let element_type = *element_type;
-                        if range_access {
+                        if node.is_slice {
                             Typing::Unresolved
                         } else {
                             Typing::Resolved(element_type)
                         }
                     }
                     Type::ByteArray(_) => {
-                        if range_access {
+                        if node.is_slice {
                             Typing::Unresolved
                         } else {
                             Typing::Resolved(self.types.bytes1())
                         }
                     }
                     Type::Bytes(BytesType { location }) => {
-                        if range_access {
+                        if node.is_slice {
                             self.slice_typing(operand_type_id, *location)
                         } else {
                             Typing::Resolved(self.types.bytes1())
                         }
                     }
                     Type::String(StringType { location }) => {
-                        if range_access {
+                        if node.is_slice {
                             // `string` can be sliced in calldata, but not indexed.
                             self.slice_typing(operand_type_id, *location)
                         } else {
@@ -464,7 +463,7 @@ impl Visitor for Pass<'_> {
                     }
                     Type::ArraySlice(ArraySliceType { array_type_id }) => {
                         let array_type_id = *array_type_id;
-                        if range_access {
+                        if node.is_slice {
                             // Re-slicing a slice yields the same slice type.
                             Typing::Resolved(operand_type_id)
                         } else {
@@ -479,7 +478,7 @@ impl Visitor for Pass<'_> {
                         }
                     }
                     Type::Mapping(MappingType { value_type_id, .. }) => {
-                        if range_access {
+                        if node.is_slice {
                             Typing::Unresolved
                         } else {
                             Typing::Resolved(*value_type_id)
