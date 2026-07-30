@@ -5,11 +5,11 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     AbstractContractPublicConstructor, BreakOutsideLoop, ConstructorNotInContract,
-    ContinueOutsideLoop, EmptyEnum, EmptyStruct, EnumWithTooManyMembers, FreeFunctionPayable,
-    FreeFunctionVisibility, FreeFunctionWithModifiers, FreeFunctionWithOverride,
-    FunctionMustBeImplemented, FunctionNameMatchesContainer, GlobalUsingForInsideContract,
-    GlobalUsingForWildcard, InterfaceFunctionCannotBeImplemented, InterfaceFunctionNotExternal,
-    InterfaceFunctionWithModifiers, InvalidUsingDirectiveContainer,
+    ContinueOutsideLoop, EmptyEnum, EmptyStruct, EmptyTupleComponent, EmptyTupleOnLhs,
+    EnumWithTooManyMembers, FreeFunctionPayable, FreeFunctionVisibility, FreeFunctionWithModifiers,
+    FreeFunctionWithOverride, FunctionMustBeImplemented, FunctionNameMatchesContainer,
+    GlobalUsingForInsideContract, GlobalUsingForWildcard, InterfaceFunctionCannotBeImplemented,
+    InterfaceFunctionNotExternal, InterfaceFunctionWithModifiers, InvalidUsingDirectiveContainer,
     LibraryNonConstantStateVariable, LibraryPayableFunction, LibraryVirtualFunction,
     LibraryVirtualModifier, MissingFunctionVisibility, ModifierBodyWithoutPlaceholder,
     ModifierInInterface, MultipleConstructors, NestedUncheckedBlock,
@@ -198,6 +198,32 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
                 self.report(unchecked_block, UncheckedBlockNotInRegularBlock);
             }
             _ => {}
+        }
+    }
+
+    /// Walks the left hand side of an assignment, which is a write (l-value)
+    /// position. An empty tuple `()` found here is not a valid assignment target
+    /// and is flagged. The recursion follows tuple components only, mirroring how
+    /// the write context propagates: l-value tuples are traversed here (and so
+    /// never reach `enter_tuple_expression`, where they would be wrongly flagged
+    /// for their legal omitted slots), while sub-expressions such as index or
+    /// member accesses are read positions and are handed back to the regular
+    /// traversal so any tuples inside them are still checked.
+    fn visit_lvalue(&mut self, expression: &ir::Expression) {
+        match expression {
+            ir::Expression::TupleExpression(tuple) => {
+                if tuple.is_empty_tuple() {
+                    self.report(tuple, EmptyTupleOnLhs);
+                    return;
+                }
+
+                for item in tuple.items.iter() {
+                    if let Some(inner) = &item.expression {
+                        self.visit_lvalue(inner);
+                    }
+                }
+            }
+            other => ir::visitor::accept_expression(other, self),
         }
     }
 
@@ -940,6 +966,30 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                 self.report(node, PlaceholderInUncheckedBlock);
             }
         }
+
+        true
+    }
+
+    fn enter_assignment_expression(&mut self, node: &ir::AssignmentExpression) -> bool {
+        // The left hand side of an assignment is a write (l-value) position, so
+        // walk it specially (see `visit_lvalue`). The right hand side is a read
+        // position, so hand it back to the normal traversal.
+        self.visit_lvalue(&node.left_operand);
+        ir::visitor::accept_expression(&node.right_operand, self);
+        // We've driven recursion into both operands ourselves.
+        false
+    }
+
+    fn enter_tuple_expression(&mut self, node: &ir::TupleExpression) -> bool {
+        // Any tuple reaching here is in a read position: l-value tuples are
+        // traversed by `visit_lvalue` and never recursed into here. A missing
+        // component slot is not allowed in a read position. The empty tuple `()`
+        // (a single empty component) is a valid value, so only tuples with more
+        // than one component are considered.
+        if node.items.len() > 1 && node.items.iter().any(|item| item.expression.is_none()) {
+            self.report(node, EmptyTupleComponent);
+        }
+
         true
     }
 

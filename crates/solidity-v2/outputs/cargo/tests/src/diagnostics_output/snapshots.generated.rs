@@ -1256,6 +1256,54 @@ mod structure {
         run("structure", "empty_struct")
     }
 
+    mod empty_tuple_component {
+        use super::*;
+
+        #[test]
+        fn assignment_rhs() -> Result<()> {
+            run("structure/empty_tuple_component", "assignment_rhs")
+        }
+
+        #[test]
+        fn read_statement() -> Result<()> {
+            run("structure/empty_tuple_component", "read_statement")
+        }
+
+        #[test]
+        fn unary_operand() -> Result<()> {
+            run("structure/empty_tuple_component", "unary_operand")
+        }
+
+        #[test]
+        fn valid() -> Result<()> {
+            run("structure/empty_tuple_component", "valid")
+        }
+    }
+
+    mod empty_tuple_on_lhs {
+        use super::*;
+
+        #[test]
+        fn direct() -> Result<()> {
+            run("structure/empty_tuple_on_lhs", "direct")
+        }
+
+        #[test]
+        fn nested() -> Result<()> {
+            run("structure/empty_tuple_on_lhs", "nested")
+        }
+
+        #[test]
+        fn parenthesized() -> Result<()> {
+            run("structure/empty_tuple_on_lhs", "parenthesized")
+        }
+
+        #[test]
+        fn valid() -> Result<()> {
+            run("structure/empty_tuple_on_lhs", "valid")
+        }
+    }
+
     #[test]
     fn enum_with_too_many_members() -> Result<()> {
         run("structure", "enum_with_too_many_members")

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/empty-tuple-on-lhs] Error: Empty tuple on the left hand side.
+   ╭─[input.sol:9:10]
+   │
+ 9 │         (()) = ();
+   │          ─┬  
+   │           ╰── Error occurred here.
+───╯

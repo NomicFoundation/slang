@@ -5,6 +5,8 @@ mod continue_outside_loop;
 mod contract_should_be_abstract;
 mod empty_enum;
 mod empty_struct;
+mod empty_tuple_component;
+mod empty_tuple_on_lhs;
 mod enum_with_too_many_members;
 mod free_function_payable;
 mod free_function_visibility;
@@ -52,6 +54,8 @@ pub use continue_outside_loop::ContinueOutsideLoop;
 pub use contract_should_be_abstract::ContractShouldBeAbstract;
 pub use empty_enum::EmptyEnum;
 pub use empty_struct::EmptyStruct;
+pub use empty_tuple_component::EmptyTupleComponent;
+pub use empty_tuple_on_lhs::EmptyTupleOnLhs;
 pub use enum_with_too_many_members::EnumWithTooManyMembers;
 pub use free_function_payable::FreeFunctionPayable;
 pub use free_function_visibility::FreeFunctionVisibility;
@@ -162,6 +166,12 @@ define_diagnostic_kind! {
 
         /// A struct declares no members.
         EmptyStruct(EmptyStruct),
+
+        /// An empty tuple appears on the left hand side of an assignment.
+        EmptyTupleOnLhs(EmptyTupleOnLhs),
+        /// A tuple expression used in a read position has a missing (empty)
+        /// component.
+        EmptyTupleComponent(EmptyTupleComponent),
 
         /// A contract defines more than one fallback function.
         MultipleFallbackFunctions(MultipleFallbackFunctions),
