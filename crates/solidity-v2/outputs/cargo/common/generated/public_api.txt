@@ -3293,6 +3293,8 @@ impl core::cmp::PartialEq for slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_common::nodes::NodeId::eq(&self, &slang_solidity_v2_common::nodes::NodeId) -> bool
 impl core::cmp::PartialOrd for slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_common::nodes::NodeId::partial_cmp(&self, &slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<core::cmp::Ordering>
+impl core::convert::From<slang_solidity_v2_common::nodes::NodeId> for usize
+pub fn usize::from(slang_solidity_v2_common::nodes::NodeId) -> Self
 impl core::convert::From<usize> for slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_common::nodes::NodeId::from(usize) -> Self
 impl core::fmt::Debug for slang_solidity_v2_common::nodes::NodeId
