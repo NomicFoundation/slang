@@ -4559,7 +4559,6 @@ version = "1.3.7"
 name = "solidity_testing_perf_cargo"
 version = "1.3.7"
 dependencies = [
- "Inflector",
  "anyhow",
  "gungraun",
  "infra_utils",
@@ -4651,7 +4650,6 @@ dependencies = [
 name = "solidity_v2_cargo_tests"
 version = "1.3.7"
 dependencies = [
- "Inflector",
  "anyhow",
  "ariadne",
  "indoc",

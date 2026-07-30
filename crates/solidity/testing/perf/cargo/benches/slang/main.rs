@@ -22,7 +22,6 @@ use tests::slang::query::setup as query_setup;
 
 mod __dependencies_used_in_lib__ {
     use anyhow as _;
-    use inflector as _;
     use infra_utils as _;
     use paste as _;
     use semver as _;

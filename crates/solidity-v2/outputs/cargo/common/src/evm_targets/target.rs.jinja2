@@ -5,6 +5,7 @@ use thiserror::Error;
 
 /// All supported EVM targets of `{{ model.language.name }}`, in chronological order.
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum EvmTarget {
     {% for evm_target in model.language.evm_targets %}
         {{ evm_target }} = {{ loop.index0 }},
@@ -26,11 +27,12 @@ impl EvmTarget {
     ];
 }
 
+/// Formats the target matching `solc`'s format (camelCase).
 impl Display for EvmTarget {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             {%- for evm_target in model.language.evm_targets %}
-                EvmTarget::{{ evm_target }} => write!(f, "{{ evm_target }}"),
+                EvmTarget::{{ evm_target }} => write!(f, "{{ evm_target | camel_case }}"),
             {%- endfor %}
         }
     }
@@ -48,7 +50,7 @@ impl TryFrom<&str> for EvmTarget {
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         match value {
             {%- for evm_target in model.language.evm_targets %}
-                "{{ evm_target }}" => Ok(EvmTarget::{{ evm_target }}),
+                "{{ evm_target | camel_case }}" => Ok(EvmTarget::{{ evm_target }}),
             {%- endfor %}
             _ => Err(EvmTargetConversionError::UnrecognizedEvmTarget),
         }

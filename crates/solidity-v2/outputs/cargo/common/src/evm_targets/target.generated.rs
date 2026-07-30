@@ -7,6 +7,7 @@ use thiserror::Error;
 
 /// All supported EVM targets of `Solidity`, in chronological order.
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum EvmTarget {
     Frontier = 0,
     Homestead = 1,
@@ -54,25 +55,26 @@ impl EvmTarget {
     ];
 }
 
+/// Formats the target matching `solc`'s format (camelCase).
 impl Display for EvmTarget {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            EvmTarget::Frontier => write!(f, "Frontier"),
-            EvmTarget::Homestead => write!(f, "Homestead"),
-            EvmTarget::TangerineWhistle => write!(f, "TangerineWhistle"),
-            EvmTarget::SpuriousDragon => write!(f, "SpuriousDragon"),
-            EvmTarget::Byzantium => write!(f, "Byzantium"),
-            EvmTarget::Constantinople => write!(f, "Constantinople"),
-            EvmTarget::Petersburg => write!(f, "Petersburg"),
-            EvmTarget::Istanbul => write!(f, "Istanbul"),
-            EvmTarget::Berlin => write!(f, "Berlin"),
-            EvmTarget::London => write!(f, "London"),
-            EvmTarget::Paris => write!(f, "Paris"),
-            EvmTarget::Shanghai => write!(f, "Shanghai"),
-            EvmTarget::Cancun => write!(f, "Cancun"),
-            EvmTarget::Prague => write!(f, "Prague"),
-            EvmTarget::Osaka => write!(f, "Osaka"),
-            EvmTarget::Amsterdam => write!(f, "Amsterdam"),
+            EvmTarget::Frontier => write!(f, "frontier"),
+            EvmTarget::Homestead => write!(f, "homestead"),
+            EvmTarget::TangerineWhistle => write!(f, "tangerineWhistle"),
+            EvmTarget::SpuriousDragon => write!(f, "spuriousDragon"),
+            EvmTarget::Byzantium => write!(f, "byzantium"),
+            EvmTarget::Constantinople => write!(f, "constantinople"),
+            EvmTarget::Petersburg => write!(f, "petersburg"),
+            EvmTarget::Istanbul => write!(f, "istanbul"),
+            EvmTarget::Berlin => write!(f, "berlin"),
+            EvmTarget::London => write!(f, "london"),
+            EvmTarget::Paris => write!(f, "paris"),
+            EvmTarget::Shanghai => write!(f, "shanghai"),
+            EvmTarget::Cancun => write!(f, "cancun"),
+            EvmTarget::Prague => write!(f, "prague"),
+            EvmTarget::Osaka => write!(f, "osaka"),
+            EvmTarget::Amsterdam => write!(f, "amsterdam"),
         }
     }
 }
@@ -88,22 +90,22 @@ impl TryFrom<&str> for EvmTarget {
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         match value {
-            "Frontier" => Ok(EvmTarget::Frontier),
-            "Homestead" => Ok(EvmTarget::Homestead),
-            "TangerineWhistle" => Ok(EvmTarget::TangerineWhistle),
-            "SpuriousDragon" => Ok(EvmTarget::SpuriousDragon),
-            "Byzantium" => Ok(EvmTarget::Byzantium),
-            "Constantinople" => Ok(EvmTarget::Constantinople),
-            "Petersburg" => Ok(EvmTarget::Petersburg),
-            "Istanbul" => Ok(EvmTarget::Istanbul),
-            "Berlin" => Ok(EvmTarget::Berlin),
-            "London" => Ok(EvmTarget::London),
-            "Paris" => Ok(EvmTarget::Paris),
-            "Shanghai" => Ok(EvmTarget::Shanghai),
-            "Cancun" => Ok(EvmTarget::Cancun),
-            "Prague" => Ok(EvmTarget::Prague),
-            "Osaka" => Ok(EvmTarget::Osaka),
-            "Amsterdam" => Ok(EvmTarget::Amsterdam),
+            "frontier" => Ok(EvmTarget::Frontier),
+            "homestead" => Ok(EvmTarget::Homestead),
+            "tangerineWhistle" => Ok(EvmTarget::TangerineWhistle),
+            "spuriousDragon" => Ok(EvmTarget::SpuriousDragon),
+            "byzantium" => Ok(EvmTarget::Byzantium),
+            "constantinople" => Ok(EvmTarget::Constantinople),
+            "petersburg" => Ok(EvmTarget::Petersburg),
+            "istanbul" => Ok(EvmTarget::Istanbul),
+            "berlin" => Ok(EvmTarget::Berlin),
+            "london" => Ok(EvmTarget::London),
+            "paris" => Ok(EvmTarget::Paris),
+            "shanghai" => Ok(EvmTarget::Shanghai),
+            "cancun" => Ok(EvmTarget::Cancun),
+            "prague" => Ok(EvmTarget::Prague),
+            "osaka" => Ok(EvmTarget::Osaka),
+            "amsterdam" => Ok(EvmTarget::Amsterdam),
             _ => Err(EvmTargetConversionError::UnrecognizedEvmTarget),
         }
     }

@@ -1,7 +1,7 @@
 {
   "matrix": {
     "type": "SingleTargetAllVersions",
-    "target": "Paris",
+    "target": "paris",
     "reason": "'difficulty' was replaced by 'prevrandao' in 'Paris', so it must be rejected on that target regardless of the language version."
   }
 }

@@ -1,4 +1,3 @@
-use inflector::Inflector;
 use semver::{BuildMetadata, Prerelease, Version};
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
@@ -13,5 +12,5 @@ pub fn parse_version(project: &SolidityProject) -> LanguageVersion {
 }
 
 pub fn parse_evm_target(project: &SolidityProject) -> EvmTarget {
-    EvmTarget::try_from(project.evm_version.to_pascal_case().as_str()).unwrap()
+    EvmTarget::try_from(project.evm_version.as_str()).unwrap()
 }

@@ -1,7 +1,7 @@
 {
   "matrix": {
     "type": "SingleTargetAllVersions",
-    "target": "Istanbul",
+    "target": "istanbul",
     "reason": "The Yul 'difficulty' built-in is gated by EVM target only, so on a pre-Paris target it must stay available on every language version."
   }
 }

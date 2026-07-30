@@ -8,7 +8,6 @@ publish = false
 [dependencies]
 anyhow = { workspace = true }
 gungraun = { workspace = true }
-Inflector = { workspace = true }
 infra_utils = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }

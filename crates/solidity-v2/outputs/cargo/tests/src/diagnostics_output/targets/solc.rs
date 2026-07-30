@@ -1,5 +1,4 @@
 use anyhow::{Result, anyhow};
-use inflector::Inflector;
 use infra_utils::solc::{
     Binary, CliInput, CliSettings, InputSource, LanguageSelector, render_solc_error,
 };
@@ -60,7 +59,7 @@ impl TestTarget for SolcTarget {
                 })
                 .collect(),
             settings: CliSettings {
-                evm_version: Some(evm_target.to_string().to_camel_case()),
+                evm_version: Some(evm_target.to_string()),
                 experimental: if version < LanguageVersion::V0_8_35 {
                     // 'experimental' flag was introduced in '0.8.35'
                     None

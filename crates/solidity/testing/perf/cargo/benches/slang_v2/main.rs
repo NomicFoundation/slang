@@ -16,7 +16,6 @@ use tests::slang_v2::semantic::setup as semantic_setup;
 
 mod __dependencies_used_in_lib__ {
     use anyhow as _;
-    use inflector as _;
     use infra_utils as _;
     use paste as _;
     use semver as _;

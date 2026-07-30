@@ -155,7 +155,7 @@ iterate every language version:
 {
     "matrix": {
         "type": "SingleTargetAllVersions",
-        "target": "Istanbul",
+        "target": "istanbul",
         "reason": "Explain why this target was pinned..."
     }
 }

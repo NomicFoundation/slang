@@ -6,7 +6,6 @@ edition.workspace = true
 publish = false
 
 [dev-dependencies]
-Inflector = { workspace = true }
 anyhow = { workspace = true }
 ariadne = { workspace = true }
 indoc = { workspace = true }
