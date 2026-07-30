@@ -97,6 +97,7 @@ pub enum slang_solidity_v2_cst::structured_cst::nodes::ExperimentalFeature
 pub slang_solidity_v2_cst::structured_cst::nodes::ExperimentalFeature::ABIEncoderV2Keyword(slang_solidity_v2_cst::structured_cst::nodes::ABIEncoderV2Keyword)
 pub slang_solidity_v2_cst::structured_cst::nodes::ExperimentalFeature::PragmaStringLiteral(slang_solidity_v2_cst::structured_cst::nodes::PragmaStringLiteral)
 pub slang_solidity_v2_cst::structured_cst::nodes::ExperimentalFeature::SMTCheckerKeyword(slang_solidity_v2_cst::structured_cst::nodes::SMTCheckerKeyword)
+pub slang_solidity_v2_cst::structured_cst::nodes::ExperimentalFeature::SolidityKeyword(slang_solidity_v2_cst::structured_cst::nodes::SolidityKeyword)
 impl core::clone::Clone for slang_solidity_v2_cst::structured_cst::nodes::ExperimentalFeature
 pub fn slang_solidity_v2_cst::structured_cst::nodes::ExperimentalFeature::clone(&self) -> slang_solidity_v2_cst::structured_cst::nodes::ExperimentalFeature
 impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::ExperimentalFeature
@@ -5338,6 +5339,7 @@ pub fn slang_solidity_v2_cst::structured_cst::nodes::new_event_parameters_declar
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_experimental_feature_abi_encoder_v2_keyword(slang_solidity_v2_cst::structured_cst::nodes::ABIEncoderV2Keyword) -> slang_solidity_v2_cst::structured_cst::nodes::ExperimentalFeature
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_experimental_feature_pragma_string_literal(slang_solidity_v2_cst::structured_cst::nodes::PragmaStringLiteral) -> slang_solidity_v2_cst::structured_cst::nodes::ExperimentalFeature
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_experimental_feature_smt_checker_keyword(slang_solidity_v2_cst::structured_cst::nodes::SMTCheckerKeyword) -> slang_solidity_v2_cst::structured_cst::nodes::ExperimentalFeature
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_experimental_feature_solidity_keyword(slang_solidity_v2_cst::structured_cst::nodes::SolidityKeyword) -> slang_solidity_v2_cst::structured_cst::nodes::ExperimentalFeature
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_experimental_keyword(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::ExperimentalKeyword
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_experimental_pragma(slang_solidity_v2_cst::structured_cst::nodes::ExperimentalKeyword, slang_solidity_v2_cst::structured_cst::nodes::ExperimentalFeature) -> slang_solidity_v2_cst::structured_cst::nodes::ExperimentalPragma
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_exponentiation_expression(slang_solidity_v2_cst::structured_cst::nodes::Expression, slang_solidity_v2_cst::structured_cst::nodes::AsteriskAsterisk, slang_solidity_v2_cst::structured_cst::nodes::Expression) -> slang_solidity_v2_cst::structured_cst::nodes::ExponentiationExpression

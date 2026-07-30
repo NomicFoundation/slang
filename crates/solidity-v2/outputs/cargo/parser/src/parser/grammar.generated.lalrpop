@@ -62,6 +62,7 @@ Repeated<T>: Vec<T> = {
     ExperimentalFeature: ExperimentalFeature = {
         <abi_encoder_v2_keyword: ABIEncoderV2Keyword>  => new_experimental_feature_abi_encoder_v2_keyword(<>),
         <smt_checker_keyword: SMTCheckerKeyword>  => new_experimental_feature_smt_checker_keyword(<>),
+        <solidity_keyword: SolidityKeyword>  => new_experimental_feature_solidity_keyword(<>),
         <pragma_string_literal: PragmaStringLiteral>  => new_experimental_feature_pragma_string_literal(<>),
         
     };

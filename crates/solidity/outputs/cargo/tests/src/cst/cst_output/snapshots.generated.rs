@@ -1183,8 +1183,23 @@ mod pragma_directive {
     }
 
     #[test]
+    fn experimental_solidity() -> Result<()> {
+        run("PragmaDirective", "experimental_solidity")
+    }
+
+    #[test]
     fn experimental_string() -> Result<()> {
         run("PragmaDirective", "experimental_string")
+    }
+
+    #[test]
+    fn experimental_string_smtchecker() -> Result<()> {
+        run("PragmaDirective", "experimental_string_smtchecker")
+    }
+
+    #[test]
+    fn experimental_string_solidity() -> Result<()> {
+        run("PragmaDirective", "experimental_string_solidity")
     }
 
     #[test]

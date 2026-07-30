@@ -1208,6 +1208,7 @@ pub enum ExperimentalFeature {
     StringLiteral(StringLiteral),
     ABIEncoderV2Keyword,
     SMTCheckerKeyword,
+    SolidityKeyword,
 }
 
 #[derive(Clone, Debug)]

@@ -128,6 +128,7 @@ language_macros::compile!(Language(
                             variants = [
                                 EnumVariant(reference = ABIEncoderV2Keyword),
                                 EnumVariant(reference = SMTCheckerKeyword),
+                                EnumVariant(reference = SolidityKeyword, enabled = From("0.8.21")),
                                 EnumVariant(reference = StringLiteral)
                             ]
                         ),

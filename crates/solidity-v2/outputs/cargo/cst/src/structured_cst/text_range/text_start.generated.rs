@@ -1141,6 +1141,7 @@ impl TextStart for ExperimentalFeature {
         match self {
             ExperimentalFeature::ABIEncoderV2Keyword(child) => child.calculate_text_start(),
             ExperimentalFeature::SMTCheckerKeyword(child) => child.calculate_text_start(),
+            ExperimentalFeature::SolidityKeyword(child) => child.calculate_text_start(),
             ExperimentalFeature::PragmaStringLiteral(child) => child.calculate_text_start(),
         }
     }

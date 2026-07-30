@@ -1141,6 +1141,7 @@ impl TextEnd for ExperimentalFeature {
         match self {
             ExperimentalFeature::ABIEncoderV2Keyword(child) => child.calculate_text_end(),
             ExperimentalFeature::SMTCheckerKeyword(child) => child.calculate_text_end(),
+            ExperimentalFeature::SolidityKeyword(child) => child.calculate_text_end(),
             ExperimentalFeature::PragmaStringLiteral(child) => child.calculate_text_end(),
         }
     }

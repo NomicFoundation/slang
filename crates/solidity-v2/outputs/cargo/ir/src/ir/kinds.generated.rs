@@ -170,23 +170,24 @@ pub enum NodeKind {
     Semicolon = 157,
     Slash = 158,
     SlashEqual = 159,
-    StorageKeyword = 160,
-    StringKeyword = 161,
-    StringLiteral = 162,
-    SuperKeyword = 163,
-    ThisKeyword = 164,
-    Tilde = 165,
-    TrueKeyword = 166,
-    UfixedKeyword = 167,
-    UintKeyword = 168,
-    UnicodeStringLiteral = 169,
-    VersionSpecifier = 170,
-    WeeksKeyword = 171,
-    WeiKeyword = 172,
+    SolidityKeyword = 160,
+    StorageKeyword = 161,
+    StringKeyword = 162,
+    StringLiteral = 163,
+    SuperKeyword = 164,
+    ThisKeyword = 165,
+    Tilde = 166,
+    TrueKeyword = 167,
+    UfixedKeyword = 168,
+    UintKeyword = 169,
+    UnicodeStringLiteral = 170,
+    VersionSpecifier = 171,
+    WeeksKeyword = 172,
+    WeiKeyword = 173,
 }
 
 impl NodeKind {
     /// The number of distinct node kinds; valid `NodeKind` discriminants are
     /// `0..COUNT`, making it the length of any per-kind lookup array.
-    pub const COUNT: usize = 173;
+    pub const COUNT: usize = 174;
 }

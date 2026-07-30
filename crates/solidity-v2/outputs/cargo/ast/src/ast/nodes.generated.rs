@@ -4680,6 +4680,7 @@ pub(crate) fn create_equality_expression_operator(
 pub enum ExperimentalFeature {
     ABIEncoderV2Keyword(ABIEncoderV2Keyword),
     SMTCheckerKeyword(SMTCheckerKeyword),
+    SolidityKeyword(SolidityKeyword),
     StringLiteral(StringLiteral),
 }
 
@@ -4697,6 +4698,9 @@ pub(crate) fn create_experimental_feature(
         }
         ir::ExperimentalFeature::SMTCheckerKeyword(variant) => {
             ExperimentalFeature::SMTCheckerKeyword(create_smt_checker_keyword(variant, semantic))
+        }
+        ir::ExperimentalFeature::SolidityKeyword(variant) => {
+            ExperimentalFeature::SolidityKeyword(create_solidity_keyword(variant, semantic))
         }
         ir::ExperimentalFeature::StringLiteral(variant) => {
             ExperimentalFeature::StringLiteral(create_string_literal(variant, semantic))
@@ -9478,6 +9482,46 @@ pub(crate) fn create_slash_equal(
 }
 
 impl SlashEqualStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &FileId {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type SolidityKeyword = SolidityKeywordStruct;
+
+#[derive(Clone)]
+pub struct SolidityKeywordStruct {
+    pub(crate) ir_node: ir::SolidityKeyword,
+    pub(crate) semantic: Arc<SemanticContext>,
+}
+
+pub(crate) fn create_solidity_keyword(
+    ir_node: &ir::SolidityKeyword,
+    semantic: &Arc<SemanticContext>,
+) -> SolidityKeyword {
+    SolidityKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
+    }
+}
+
+impl SolidityKeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
