@@ -1292,6 +1292,16 @@ mod structure {
         }
     }
 
+    #[test]
+    fn duplicate_error_catch_clause() -> Result<()> {
+        run("structure", "duplicate_error_catch_clause")
+    }
+
+    #[test]
+    fn duplicate_low_level_catch_clause() -> Result<()> {
+        run("structure", "duplicate_low_level_catch_clause")
+    }
+
     mod duplicate_named_argument {
         use super::*;
 
@@ -1307,6 +1317,11 @@ mod structure {
                 "state_variable_initializer",
             )
         }
+    }
+
+    #[test]
+    fn duplicate_panic_catch_clause() -> Result<()> {
+        run("structure", "duplicate_panic_catch_clause")
     }
 
     #[test]
@@ -1439,6 +1454,11 @@ mod structure {
     #[test]
     fn interface_function_with_modifiers() -> Result<()> {
         run("structure", "interface_function_with_modifiers")
+    }
+
+    #[test]
+    fn invalid_catch_clause_name() -> Result<()> {
+        run("structure", "invalid_catch_clause_name")
     }
 
     mod invalid_using_directive_container {
@@ -1589,6 +1609,20 @@ mod structure {
     #[test]
     fn placeholder_in_unchecked_block() -> Result<()> {
         run("structure", "placeholder_in_unchecked_block")
+    }
+
+    mod redefined_built_in_error {
+        use super::*;
+
+        #[test]
+        fn error() -> Result<()> {
+            run("structure/redefined_built_in_error", "error")
+        }
+
+        #[test]
+        fn panic() -> Result<()> {
+            run("structure/redefined_built_in_error", "panic")
+        }
     }
 
     #[test]

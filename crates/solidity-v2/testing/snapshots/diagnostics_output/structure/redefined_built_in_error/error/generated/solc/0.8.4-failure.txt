@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[SyntaxError 1855] Error: The built-in errors "Error" and "Panic" cannot be re-defined.
+   ╭─[input.sol:5:1]
+   │
+ 5 │ error Error(uint256 code);
+   │ ─────────────┬────────────  
+   │              ╰────────────── Error occurred here.
+───╯

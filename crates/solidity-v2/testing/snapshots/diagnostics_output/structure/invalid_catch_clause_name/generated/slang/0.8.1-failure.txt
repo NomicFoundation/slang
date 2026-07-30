@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[structure/invalid-catch-clause-name] Error: Invalid catch clause name. Expected either `catch (...)`, `catch Error(...)`, or `catch Panic(...)`.
+    ╭─[input.sol:9:11]
+    │
+  9 │ ╭─▶         } catch Error2(string memory a) {
+    ┆ ┆   
+ 11 │ ├─▶         } catch abc() {
+    │ │                             
+    │ ╰───────────────────────────── Error occurred here.
+────╯
+
+[structure/invalid-catch-clause-name] Error: Invalid catch clause name. Expected either `catch (...)`, `catch Error(...)`, or `catch Panic(...)`.
+    ╭─[input.sol:11:11]
+    │
+ 11 │ ╭─▶         } catch abc() {
+ 12 │ ├─▶         }
+    │ │               
+    │ ╰─────────────── Error occurred here.
+────╯
