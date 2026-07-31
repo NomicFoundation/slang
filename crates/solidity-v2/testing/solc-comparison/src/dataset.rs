@@ -1,13 +1,13 @@
 use std::ffi::OsStr;
 use std::fs;
 use std::io::Read;
-use std::path::{Path, PathBuf};
+use std::path::{Component, Path, PathBuf};
 
 use anyhow::{Context, Result, bail};
 use flate2::read::GzDecoder;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::github::GitHub;
-use infra_utils::http::{DownloadResult, request_download_if_modified};
+use infra_utils::http::{DownloadResult, request_download};
 use infra_utils::paths::PathExtensions;
 use rayon::prelude::*;
 use semver::Version;
@@ -83,9 +83,8 @@ impl Dataset {
             });
         }
 
-        // Reuse the shared download helper (as the sourcify runner does).
         let url = format!("https://codeload.github.com/argotorg/solidity/tar.gz/{tag}");
-        let commit_sha = match request_download_if_modified(&url, &root) {
+        let commit_sha = match request_download(&url) {
             DownloadResult::Ok(response) => {
                 println!("Downloading semantic tests from {url}");
                 let commit_sha = extract_semantic_tests(response, &root)?;
@@ -99,7 +98,7 @@ impl Dataset {
                 commit_sha
             }
             DownloadResult::NotModified => {
-                bail!("Unexpected 'not modified' response downloading {url} into an empty cache");
+                unreachable!("`request_download` never revalidates, so it cannot report 304");
             }
             DownloadResult::Error(error) => {
                 bail!("Failed to download semantic tests from {url}: {error}");
@@ -279,6 +278,13 @@ fn extract_semantic_tests(reader: impl Read, root: &Path) -> Result<String> {
             continue;
         };
 
+        // `relative` comes from the archive, and we're about to join it onto
+        // `root`. A `..` or absolute component would escape the cache directory,
+        // so refuse to unpack rather than trusting the tarball.
+        if !is_contained_relative(&relative) {
+            bail!("Refusing to unpack entry with a non-relative path: {entry_path:?}");
+        }
+
         let dest = root.join(relative);
         if entry.header().entry_type().is_dir() {
             continue;
@@ -301,6 +307,14 @@ fn parse_pax_comment(header: &str) -> Option<String> {
     let start = header.find("comment=")? + "comment=".len();
     let value = header[start..].lines().next()?.trim();
     (!value.is_empty()).then(|| value.to_owned())
+}
+
+/// Whether `path` stays inside whatever directory it is joined onto: every
+/// component must be an ordinary name, ruling out `..` (which escapes upwards)
+/// and root/prefix components (which discard the base path entirely).
+fn is_contained_relative(path: &Path) -> bool {
+    path.components()
+        .all(|component| matches!(component, Component::Normal(_)))
 }
 
 /// Returns the portion of `path` after the `test/libsolidity/semanticTests`
@@ -381,5 +395,17 @@ mod tests {
             strip_to_semantic_tests(Path::new("solidity-0.8.20/test/libsolidity/semanticTests")),
             None
         );
+    }
+
+    #[test]
+    fn rejects_paths_escaping_the_cache_directory() {
+        assert!(is_contained_relative(Path::new("various/erc20.sol")));
+
+        // `..` climbs out of the destination, and an absolute path replaces it.
+        assert!(!is_contained_relative(Path::new("../../etc/passwd")));
+        assert!(!is_contained_relative(Path::new(
+            "various/../../escaped.sol"
+        )));
+        assert!(!is_contained_relative(Path::new("/etc/passwd")));
     }
 }

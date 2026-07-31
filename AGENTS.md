@@ -81,7 +81,7 @@ The project uses a custom `infra` CLI that orchestrates all build operations. Us
 ./scripts/bin/infra verify solc-semantic-suite # Run slang v2 against solc's libsolidity semanticTests (regression guard for valid Solidity)
 ./scripts/bin/infra lint                       # Run all linters
 ./scripts/bin/infra lint --help                # See lint subcommands (markdownlint, rustfmt, yamllint, actionlint, zizmor, prettier, etc.)
-./scripts/bin/infra ci                         # Full CI run: setup + check + test + lint
+./scripts/bin/infra ci                         # Full CI run: setup + check + test + verify + lint
 ```
 
 Always run `infra setup` when initializing a new workspace, to ensure all tools/dependencies are available.
