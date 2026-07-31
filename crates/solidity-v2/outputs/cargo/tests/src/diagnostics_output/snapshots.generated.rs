@@ -2172,6 +2172,11 @@ mod structure {
     }
 
     #[test]
+    fn using_for_functions_with_wildcard() -> Result<()> {
+        run("structure", "using_for_functions_with_wildcard")
+    }
+
+    #[test]
     fn using_for_wildcard_at_file_level() -> Result<()> {
         run("structure", "using_for_wildcard_at_file_level")
     }

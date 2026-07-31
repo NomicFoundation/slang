@@ -8,8 +8,9 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     LibraryVirtualModifier, MissingFunctionVisibility, ModifierInInterface,
     NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
     UncheckedBlockNotInRegularBlock, UnimplementedFunctionWithModifiers,
-    UnimplementedModifierMustBeVirtual, UsingForWildcardAtFileLevel, VariableDeclarationNotInBlock,
-    VariableInInterface, VirtualFreeFunction, VirtualPrivateFunction,
+    UnimplementedModifierMustBeVirtual, UsingForFunctionsWithWildcard, UsingForWildcardAtFileLevel,
+    VariableDeclarationNotInBlock, VariableInInterface, VirtualFreeFunction,
+    VirtualPrivateFunction,
 };
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
@@ -41,20 +42,35 @@ impl<F: SemanticFile> Pass<'_, F> {
 
         let targets_wildcard = matches!(node.target, ir::UsingTarget::Asterisk(_));
 
-        // The target type must be spelled out explicitly at the file level; the
-        // wildcard `*` is only allowed inside a contract, library or interface.
-        if at_file_level && targets_wildcard {
-            self.report(node, UsingForWildcardAtFileLevel);
+        if targets_wildcard {
+            // The target type must be spelled out explicitly at the file level; the
+            // wildcard `*` is only allowed inside a contract, library or interface.
+            if at_file_level {
+                self.report(node, UsingForWildcardAtFileLevel);
+            } else if self.language_version >= LanguageVersion::V0_8_13
+                && matches!(node.clause, ir::UsingClause::UsingDeconstruction(_))
+            {
+                // Inside a contract, library or interface, the wildcard `*` is
+                // only allowed when attaching a whole library, not a list of
+                // functions. Attaching a list of functions was introduced in
+                // 0.8.13; before that the error-tolerant parser still yields
+                // the deconstruction clause, but it is already flagged as
+                // invalid syntax for the version, so don't pile a semantic
+                // diagnostic on top of it.
+                self.report(node, UsingForFunctionsWithWildcard);
+            }
         }
 
-        // `global` is only meaningful at the file level.
-        if node.is_global && !at_file_level {
-            self.report(node, GlobalUsingForInsideContract);
-        }
+        if node.is_global {
+            // `global` is only meaningful at the file level.
+            if !at_file_level {
+                self.report(node, GlobalUsingForInsideContract);
+            }
 
-        // `global` can only attach functions to a specific type, not to `*`.
-        if node.is_global && targets_wildcard {
-            self.report(node, GlobalUsingForWildcard);
+            // `global` can only attach functions to a specific type, not to `*`.
+            if targets_wildcard {
+                self.report(node, GlobalUsingForWildcard);
+            }
         }
     }
 
