@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[structure/duplicate-memory-safe-assembly-flag] Error: Inline assembly already marked as 'memory-safe'.
+   ╭─[input.sol:7:34]
+   │
+ 7 │         assembly ("memory-safe", "memory-safe") {}
+   │                                  ──────┬──────  
+   │                                        ╰──────── Error occurred here.
+───╯
+
+[structure/duplicate-memory-safe-assembly-flag] Error: Inline assembly already marked as 'memory-safe'.
+    ╭─[input.sol:12:43]
+    │
+ 12 │         assembly "evmasm" ("memory-safe", "memory-safe") {}
+    │                                           ──────┬──────  
+    │                                                 ╰──────── Error occurred here.
+────╯
+
+[structure/duplicate-memory-safe-assembly-flag] Error: Inline assembly already marked as 'memory-safe'.
+    ╭─[input.sol:17:34]
+    │
+ 17 │         assembly ("memory-safe", "memory-safe", "memory-safe") {}
+    │                                  ──────┬──────  
+    │                                        ╰──────── Error occurred here.
+────╯
+
+[structure/duplicate-memory-safe-assembly-flag] Error: Inline assembly already marked as 'memory-safe'.
+    ╭─[input.sol:17:49]
+    │
+ 17 │         assembly ("memory-safe", "memory-safe", "memory-safe") {}
+    │                                                 ──────┬──────  
+    │                                                       ╰──────── Error occurred here.
+────╯
