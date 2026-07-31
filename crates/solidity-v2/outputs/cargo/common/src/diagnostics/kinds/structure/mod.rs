@@ -51,6 +51,7 @@ mod unchecked_block_not_in_regular_block;
 mod unimplemented_function_with_modifiers;
 mod unimplemented_modifier_must_be_virtual;
 mod uninitialized_constant;
+mod using_for_functions_with_wildcard;
 mod using_for_wildcard_at_file_level;
 mod variable_declaration_not_in_block;
 mod variable_in_interface;
@@ -114,6 +115,7 @@ pub use unchecked_block_not_in_regular_block::UncheckedBlockNotInRegularBlock;
 pub use unimplemented_function_with_modifiers::UnimplementedFunctionWithModifiers;
 pub use unimplemented_modifier_must_be_virtual::UnimplementedModifierMustBeVirtual;
 pub use uninitialized_constant::UninitializedConstant;
+pub use using_for_functions_with_wildcard::UsingForFunctionsWithWildcard;
 pub use using_for_wildcard_at_file_level::UsingForWildcardAtFileLevel;
 pub use variable_declaration_not_in_block::VariableDeclarationNotInBlock;
 pub use variable_in_interface::VariableInInterface;
@@ -159,6 +161,8 @@ define_diagnostic_kind! {
         InvalidUsingDirectiveContainer(InvalidUsingDirectiveContainer),
         /// A file-level `using` directive targets the wildcard type (`*`).
         UsingForWildcardAtFileLevel(UsingForWildcardAtFileLevel),
+        /// A `using` directive attaching specific functions targets the wildcard type (`*`).
+        UsingForFunctionsWithWildcard(UsingForFunctionsWithWildcard),
         /// A `global` `using` directive appears inside a contract, library or interface.
         GlobalUsingForInsideContract(GlobalUsingForInsideContract),
         /// A `global` `using` directive targets the wildcard type (`*`).

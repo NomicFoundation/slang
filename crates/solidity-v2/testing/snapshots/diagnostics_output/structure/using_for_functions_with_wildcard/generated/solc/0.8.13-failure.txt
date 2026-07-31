@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[SyntaxError 8118] Error: The type has to be specified explicitly at file level (cannot use '*').
+    ╭─[input.sol:12:1]
+    │
+ 12 │ using {L.f} for *;
+    │ ─────────┬────────  
+    │          ╰────────── Error occurred here.
+────╯
+
+[SyntaxError 3349] Error: The type has to be specified explicitly when attaching specific functions.
+    ╭─[input.sol:16:5]
+    │
+ 16 │     using {L.f} for *;
+    │     ─────────┬────────  
+    │              ╰────────── Error occurred here.
+────╯
