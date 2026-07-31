@@ -977,6 +977,11 @@ mod semantic {
         }
 
         #[test]
+        fn import_alias_function_cycle() -> Result<()> {
+            run("semantic/bytecode_cycles", "import_alias_function_cycle")
+        }
+
+        #[test]
         fn imported_cycle() -> Result<()> {
             run("semantic/bytecode_cycles", "imported_cycle")
         }

@@ -217,6 +217,15 @@ impl ReferenceCollector<'_> {
                                 CallableReference::Static(definition_id),
                             );
                         }
+                        // A function member of an import alias is a free
+                        // function of the imported file and runs within
+                        // the caller.
+                        Some(Definition::Import(_)) => {
+                            self.insert_function_reference(
+                                node_id,
+                                CallableReference::Static(definition_id),
+                            );
+                        }
                         _ => {}
                     }
                 }
