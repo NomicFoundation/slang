@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 7813] Error: Circular reference to contract bytecode either via "new" or "type(...).creationCode" / "type(...).runtimeCode".
+    ╭─[input.sol:13:9]
+    │
+ 13 │         new B();
+    │         ──┬──  
+    │           ╰──── Error occurred here.
+────╯
+
+[TypeError 7813] Error: Circular reference to contract bytecode either via "new" or "type(...).creationCode" / "type(...).runtimeCode".
+    ╭─[input.sol:23:9]
+    │
+ 23 │         new A();
+    │         ──┬──  
+    │           ╰──── Error occurred here.
+────╯

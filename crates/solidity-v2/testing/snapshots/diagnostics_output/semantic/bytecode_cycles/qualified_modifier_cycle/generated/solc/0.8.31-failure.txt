@@ -1,0 +1,29 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[Warning 8429] Warning: Virtual modifiers are deprecated and scheduled for removal.
+    ╭─[input.sol:8:5]
+    │
+  8 │ ╭─▶     modifier m() virtual {
+    ┆ ┆   
+ 11 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
+
+[TypeError 7813] Error: Circular reference to contract bytecode either via "new" or "type(...).creationCode" / "type(...).runtimeCode".
+   ╭─[input.sol:9:9]
+   │
+ 9 │         new B();
+   │         ──┬──  
+   │           ╰──── Error occurred here.
+───╯
+
+[TypeError 7813] Error: Circular reference to contract bytecode either via "new" or "type(...).creationCode" / "type(...).runtimeCode".
+    ╭─[input.sol:24:9]
+    │
+ 24 │         new C();
+    │         ──┬──  
+    │           ╰──── Error occurred here.
+────╯

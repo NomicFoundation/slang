@@ -5,6 +5,8 @@
 //! expression than solc for a dependency they both find.
 
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
+use slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
@@ -15,6 +17,17 @@ use crate::binder::Definition;
 use crate::context::SemanticContext;
 
 fn build_context(source: &str) -> SemanticContext {
+    let (context, diagnostics) = build_context_with_diagnostics(source);
+    assert!(
+        diagnostics.is_empty(),
+        "Semantic diagnostics: {diagnostics:?}"
+    );
+    context
+}
+
+/// Builds the context without asserting on the diagnostics, for sources
+/// whose dependencies form a cycle.
+fn build_context_with_diagnostics(source: &str) -> (SemanticContext, DiagnosticCollection) {
     let mut id_generator = NodeIdGenerator::default();
     let file = build_file(
         "test.sol".into(),
@@ -32,11 +45,7 @@ fn build_context(source: &str) -> SemanticContext {
         None,
         &mut diagnostics,
     );
-    assert!(
-        diagnostics.is_empty(),
-        "Semantic diagnostics: {diagnostics:?}"
-    );
-    context
+    (context, diagnostics)
 }
 
 fn contract_id(context: &SemanticContext, name: &str) -> NodeId {
@@ -429,7 +438,20 @@ fn code_access_records_a_deployed_dependency_for_the_library() {
                 return type(L).creationCode;
             }
         }";
-    let context = build_context(source);
+    let (context, diagnostics) = build_context_with_diagnostics(source);
+    // The self dependency is reported as a cycle at the code access.
+    let diagnostics: Vec<_> = diagnostics.iter().collect();
+    let [diagnostic] = diagnostics[..] else {
+        panic!("Expected one diagnostic: {diagnostics:?}");
+    };
+    assert_eq!(
+        DiagnosticKind::from(CyclicBytecodeDependency),
+        *diagnostic.kind()
+    );
+    assert_eq!(
+        "type(L).creationCode",
+        &source[diagnostic.text_range().clone()]
+    );
 
     let l = library_id(&context, "L");
 
@@ -476,7 +498,20 @@ fn a_constant_embedding_the_reader_records_a_self_dependency() {
         contract A {
             function f() public pure returns (bytes memory) { return B.CODE; }
         }";
-    let context = build_context(source);
+    let (context, diagnostics) = build_context_with_diagnostics(source);
+    // The self dependency is reported as a cycle at the code access.
+    let diagnostics: Vec<_> = diagnostics.iter().collect();
+    let [diagnostic] = diagnostics[..] else {
+        panic!("Expected one diagnostic: {diagnostics:?}");
+    };
+    assert_eq!(
+        DiagnosticKind::from(CyclicBytecodeDependency),
+        *diagnostic.kind()
+    );
+    assert_eq!(
+        "type(A).creationCode",
+        &source[diagnostic.text_range().clone()]
+    );
 
     let a = contract_id(&context, "A");
 

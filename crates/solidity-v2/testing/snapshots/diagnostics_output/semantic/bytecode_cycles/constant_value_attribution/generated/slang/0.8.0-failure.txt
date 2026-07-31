@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[semantic/cyclic-bytecode-dependency] Error: Circular contract bytecode dependency.
+    ╭─[input.sol:12:20]
+    │
+ 12 │ bytes constant K = type(X).creationCode;
+    │                    ──────────┬─────────  
+    │                              ╰─────────── Error occurred here.
+────╯
+
+[semantic/cyclic-bytecode-dependency] Error: Circular contract bytecode dependency.
+    ╭─[input.sol:23:36]
+    │
+ 23 │         return abi.encodePacked(a, type(X).creationCode);
+    │                                    ──────────┬─────────  
+    │                                              ╰─────────── Error occurred here.
+────╯
+
+[semantic/cyclic-bytecode-dependency] Error: Circular contract bytecode dependency.
+    ╭─[input.sol:29:9]
+    │
+ 29 │         new Base();
+    │         ────┬───  
+    │             ╰───── Error occurred here.
+────╯

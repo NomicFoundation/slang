@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[Warning 5667] Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+   ╭─[input.sol:8:16]
+   │
+ 8 │     function g(C self) internal {
+   │                ───┬──  
+   │                   ╰──── Error occurred here.
+───╯

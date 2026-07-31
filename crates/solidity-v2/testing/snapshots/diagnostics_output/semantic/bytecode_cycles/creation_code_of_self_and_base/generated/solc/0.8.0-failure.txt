@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4224] Error: Circular reference for contract code access.
+    ╭─[input.sol:15:16]
+    │
+ 15 │         return type(Test1).creationCode;
+    │                ────────────┬───────────  
+    │                            ╰───────────── Error occurred here.
+────╯

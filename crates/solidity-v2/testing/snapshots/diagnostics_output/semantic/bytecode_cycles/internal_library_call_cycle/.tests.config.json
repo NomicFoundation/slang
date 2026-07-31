@@ -1,0 +1,8 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "target": "Istanbul",
+    "reason": "Using the latest EVM target supported by solc '0.8.0', to avoid triggering any additional 'Evm Version not supported' errors when comparing outputs."
+  },
+  "expected_solc_divergence": "solc detects bytecode cycles across all function calls only since '0.8.4'. Slang implements the '0.8.4' semantics for every version, so it also reports this cycle on '0.8.0' to '0.8.3', where solc misses it."
+}

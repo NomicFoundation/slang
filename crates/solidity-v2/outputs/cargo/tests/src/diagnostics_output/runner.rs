@@ -106,6 +106,15 @@ fn compare_outcomes(
         .zip(solc_outcomes)
         .all(|(slang, solc)| slang.status == solc.status);
     if statuses_match {
+        if config.expected_solc_divergence {
+            bail!(
+                "`{group_name}/{test_name}` is marked `expected_solc_divergence`, but slang and \
+                 solc agree on every compilation status. Remove the marker."
+            );
+        }
+        return Ok(());
+    }
+    if config.expected_solc_divergence {
         return Ok(());
     }
 

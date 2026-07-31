@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4579] Error: Circular reference for contract creation (cannot create instance of derived or same contract).
+    ╭─[input.sol:11:9]
+    │
+ 11 │         new A();
+    │         ──┬──  
+    │           ╰──── Error occurred here.
+────╯

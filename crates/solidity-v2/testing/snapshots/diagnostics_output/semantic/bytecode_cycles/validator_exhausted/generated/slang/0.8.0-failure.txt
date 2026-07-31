@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/bytecode-dependency-validator-exhausted] Error: Contract dependencies exhausting cyclic dependency validator.
+      ╭─[input.sol:1283:1]
+      │
+ 1283 │ contract C255 {}
+      │ ────────┬───────  
+      │         ╰───────── Error occurred here.
+──────╯

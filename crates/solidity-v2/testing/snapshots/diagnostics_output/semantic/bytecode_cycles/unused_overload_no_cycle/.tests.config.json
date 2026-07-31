@@ -1,0 +1,8 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "target": "Istanbul",
+    "reason": "Using the latest EVM target supported by solc '0.8.0', to avoid triggering any additional 'Evm Version not supported' errors when comparing outputs."
+  },
+  "expected_solc_divergence": "Before '0.8.4' solc reported error 4579 on any `new A()` written inside `A`, without reachability analysis. Slang implements the '0.8.4' call graph semantics for every version and accepts this on '0.8.0' to '0.8.3' as well."
+}

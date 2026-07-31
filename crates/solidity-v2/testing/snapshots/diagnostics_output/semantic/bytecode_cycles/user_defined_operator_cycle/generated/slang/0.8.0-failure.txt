@@ -1,0 +1,51 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 6
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.8'.
+   ╭─[input.sol:8:1]
+   │
+ 8 │ type Int is int256;
+   │ ─────────┬─────────  
+   │          ╰─────────── Error occurred here.
+───╯
+
+[semantic/cyclic-bytecode-dependency] Error: Circular contract bytecode dependency.
+    ╭─[input.sol:11:22]
+    │
+ 11 │     bytes memory b = type(C).creationCode;
+    │                      ──────────┬─────────  
+    │                                ╰─────────── Error occurred here.
+────╯
+
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.8'.
+    ╭─[input.sol:12:16]
+    │
+ 12 │     return Int.wrap(int256(uint256(b.length)));
+    │                ──┬─  
+    │                  ╰─── Error occurred here.
+────╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
+    ╭─[input.sol:15:1]
+    │
+ 15 │ using {add as +} for Int global;
+    │ ────────────────┬───────────────  
+    │                 ╰───────────────── Error occurred here.
+────╯
+
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.8'.
+    ╭─[input.sol:19:20]
+    │
+ 19 │         return Int.wrap(1) + Int.wrap(2);
+    │                    ──┬─  
+    │                      ╰─── Error occurred here.
+────╯
+
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.8'.
+    ╭─[input.sol:19:34]
+    │
+ 19 │         return Int.wrap(1) + Int.wrap(2);
+    │                                  ──┬─  
+    │                                    ╰─── Error occurred here.
+────╯
