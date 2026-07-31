@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/event-with-too-many-indexed-parameters] Error: More than 3 indexed arguments for event.
+   ╭─[input.sol:7:5]
+   │
+ 7 │     event TooMany(address indexed a, address indexed b, address indexed c, uint256 indexed d);
+   │     ─────────────────────────────────────────────┬────────────────────────────────────────────  
+   │                                                  ╰────────────────────────────────────────────── Error occurred here.
+───╯

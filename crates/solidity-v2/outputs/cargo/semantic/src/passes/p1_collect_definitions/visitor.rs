@@ -281,6 +281,8 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn enter_event_definition(&mut self, node: &ir::EventDefinition) -> bool {
+        self.check_event_indexed_parameters(node);
+
         let parameters_scope_id = self.collect_parameters(&node.parameters);
         let definition = Definition::new_event(node, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);

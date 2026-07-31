@@ -1,5 +1,6 @@
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
-    AbstractContractPublicConstructor, CatchClauseKind, DuplicateCatchClause, FreeFunctionPayable,
+    AbstractContractPublicConstructor, AnonymousEventWithTooManyIndexedParameters, CatchClauseKind,
+    DuplicateCatchClause, EventWithTooManyIndexedParameters, FreeFunctionPayable,
     FreeFunctionVisibility, FreeFunctionWithModifiers, FreeFunctionWithOverride,
     FunctionMustBeImplemented, GlobalUsingForInsideContract, GlobalUsingForWildcard,
     InterfaceFunctionCannotBeImplemented, InterfaceFunctionNotExternal,
@@ -71,6 +72,25 @@ impl<F: SemanticFile> Pass<'_, F> {
             if targets_wildcard {
                 self.report(node, GlobalUsingForWildcard);
             }
+        }
+    }
+
+    /// An event's `indexed` parameters each take up one of the log topics
+    /// emitted for it. A non-anonymous event spends the first topic on its own
+    /// selector, leaving 3; an anonymous one has all 4 available.
+    pub(super) fn check_event_indexed_parameters(&mut self, node: &ir::EventDefinition) {
+        let indexed_count = node
+            .parameters
+            .iter()
+            .filter(|parameter| parameter.is_indexed)
+            .count();
+
+        if node.is_anonymous {
+            if indexed_count > 4 {
+                self.report(node, AnonymousEventWithTooManyIndexedParameters);
+            }
+        } else if indexed_count > 3 {
+            self.report(node, EventWithTooManyIndexedParameters);
         }
     }
 
