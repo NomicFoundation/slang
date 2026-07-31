@@ -3,9 +3,11 @@
 Diagnostics: 1
 
 [TypeError 7864] Error: Contract dependencies exhausting cyclic dependency validator
-      ╭─[input.sol:1283:1]
+      ╭─[input.sol:1284:1]
       │
- 1283 │ contract C255 {}
-      │ ────────┬───────  
-      │         ╰───────── Error occurred here.
+ 1284 │ ╭─▶ contract C254 {
+      ┆ ┆   
+ 1288 │ ├─▶ }
+      │ │       
+      │ ╰─────── Error occurred here.
 ──────╯

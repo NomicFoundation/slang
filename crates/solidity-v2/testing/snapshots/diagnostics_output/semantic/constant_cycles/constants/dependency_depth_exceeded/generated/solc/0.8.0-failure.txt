@@ -3,9 +3,9 @@
 Diagnostics: 1
 
 [DeclarationError 7380] Error: Variable definition exhausting cyclic dependency validator.
-     ╭─[input.sol:259:1]
+     ╭─[input.sol:264:1]
      │
- 259 │ uint256 constant C255 = C256 + 1;
+ 264 │ uint256 constant C255 = C256 + 1;
      │ ────────────────┬───────────────  
      │                 ╰───────────────── Error occurred here.
 ─────╯

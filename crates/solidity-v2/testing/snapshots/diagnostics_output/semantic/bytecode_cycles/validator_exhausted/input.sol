@@ -1,9 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity *;
 
-// A dependency chain of 256 contracts, with no cycle in it. The search from
-// C0 gives up on reaching the depth limit at C255. Every later contract sits
-// one step further along, so no other search is deep enough to hit it.
+// A dependency chain of 257 contracts. The cycle detector gives up at a
+// depth of 256, at contract C254, before ever reaching the cycle at the
+// end of the chain.
+
+contract D {
+    function f() public {
+        new C0();
+    }
+}
 
 contract C0 {
     constructor() {
@@ -1280,4 +1286,8 @@ contract C254 {
         new C255();
     }
 }
-contract C255 {}
+contract C255 {
+    constructor() {
+        new C0();
+    }
+}

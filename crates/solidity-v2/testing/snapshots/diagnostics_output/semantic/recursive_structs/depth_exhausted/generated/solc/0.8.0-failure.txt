@@ -3,9 +3,9 @@
 Diagnostics: 1
 
 [DeclarationError 5651] Error: Struct definition exhausts cyclic dependency validator.
-     ╭─[input.sol:267:5]
-     │
- 267 │     struct S259 { int m; }
-     │     ───────────┬──────────  
-     │                ╰──────────── Error occurred here.
-─────╯
+    ╭─[input.sol:15:5]
+    │
+ 15 │     struct S0 { S1 m; }
+    │     ─────────┬─────────  
+    │              ╰─────────── Error occurred here.
+────╯

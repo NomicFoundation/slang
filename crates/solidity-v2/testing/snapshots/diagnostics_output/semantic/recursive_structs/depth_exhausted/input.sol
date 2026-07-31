@@ -1,8 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity *;
 
-// A chain of distinct structs nested deeper than the cyclic-dependency
-// validator limit is rejected even though it contains no cycle.
+// A chain of 260 structs that loops back to its head. The validator gives up
+// at a depth of 256, before ever reaching the cycle at the end of the chain.
+// Every struct heads such a path, so only the first give-up is reported.
+//
+// Slang searches the fully typed graph in declaration order, so it gives up at
+// S255. solc searches during nested visits, where an in-progress ancestor's
+// members are still untyped, so each of its searches dead-ends at S0. The first
+// one deep enough to give up starts at S5 and reports S0. Only the reported
+// location differs.
 
 contract Main {
     struct S0 { S1 m; }
@@ -264,5 +271,5 @@ contract Main {
     struct S256 { S257 m; }
     struct S257 { S258 m; }
     struct S258 { S259 m; }
-    struct S259 { int m; }
+    struct S259 { S0 m; }
 }
