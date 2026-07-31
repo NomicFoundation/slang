@@ -79,6 +79,16 @@ impl<'a> Pass<'a> {
         });
     }
 
+    /// Pushes a frame whose *structural* scope is the one associated with
+    /// `node_id`, while names keep resolving in the enclosing lexical scope.
+    fn enter_structural_scope_for_node_id(&mut self, node_id: NodeId) {
+        let structural_scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
+        self.scope_stack.push(ScopeFrame {
+            structural_scope_id,
+            lexical_scope_id: self.current_scope_id(),
+        });
+    }
+
     fn replace_scope_for_node_id(&mut self, node_id: NodeId) {
         let Some(ScopeFrame {
             structural_scope_id,

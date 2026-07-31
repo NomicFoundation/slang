@@ -1,0 +1,41 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (3):
+- Def: #1 ["Base" @ input.sol:1:10] (contract)
+- Def: #2 ["g" @ input.sol:4:14] (function, type: function () returns uint256)
+- Def: #3 ["Derived" @ input.sol:11:10] (contract)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Base" @ input.sol:11:21] -> #1
+- Ref: ["Base" @ input.sol:11:26] -> #1
+- Ref: ["g" @ input.sol:11:31] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Base {
+    │          ──┬─  
+    │            ╰─── name: 1
+    │ 
+  4 │     function g() public pure returns (uint) {
+    │              ┬  
+    │              ╰── name: 2
+    │ 
+ 11 │ contract Derived is Base(Base.g()) {}
+    │          ───┬───    ──┬─ ──┬─ ┬  
+    │             ╰──────────────────── name: 3
+    │                       │    │  │  
+    │                       ╰────────── ref: 1
+    │                            │  │  
+    │                            ╰───── ref: 1
+    │                               │  
+    │                               ╰── ref: 2
+────╯

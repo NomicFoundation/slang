@@ -270,6 +270,11 @@ mod contracts {
     }
 
     #[test]
+    fn inheritance_arguments_with_base_call() -> Result<()> {
+        run("contracts", "inheritance_arguments_with_base_call")
+    }
+
+    #[test]
     fn inheritance_arguments_with_inner_constant() -> Result<()> {
         run("contracts", "inheritance_arguments_with_inner_constant")
     }

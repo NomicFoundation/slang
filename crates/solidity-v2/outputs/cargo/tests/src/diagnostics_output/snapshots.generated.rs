@@ -2167,6 +2167,14 @@ mod type_system {
         use super::*;
 
         #[test]
+        fn base_constructor_argument() -> Result<()> {
+            run(
+                "type_system/cannot_call_via_contract_type_name",
+                "base_constructor_argument",
+            )
+        }
+
+        #[test]
         fn external_base() -> Result<()> {
             run(
                 "type_system/cannot_call_via_contract_type_name",
