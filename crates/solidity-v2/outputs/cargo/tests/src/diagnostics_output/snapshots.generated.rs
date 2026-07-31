@@ -1800,6 +1800,11 @@ mod structure {
         run("structure", "duplicate_low_level_catch_clause")
     }
 
+    #[test]
+    fn duplicate_memory_safe_assembly_flag() -> Result<()> {
+        run("structure", "duplicate_memory_safe_assembly_flag")
+    }
+
     mod duplicate_named_argument {
         use super::*;
 

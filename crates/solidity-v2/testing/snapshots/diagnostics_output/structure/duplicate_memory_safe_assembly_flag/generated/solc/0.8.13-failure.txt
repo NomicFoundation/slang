@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[SyntaxError 7026] Error: Inline assembly marked memory-safe multiple times.
+   ╭─[input.sol:7:9]
+   │
+ 7 │         assembly ("memory-safe", "memory-safe") {}
+   │         ─────────────────────┬────────────────────  
+   │                              ╰────────────────────── Error occurred here.
+───╯
+
+[SyntaxError 7026] Error: Inline assembly marked memory-safe multiple times.
+    ╭─[input.sol:12:9]
+    │
+ 12 │         assembly "evmasm" ("memory-safe", "memory-safe") {}
+    │         ─────────────────────────┬─────────────────────────  
+    │                                  ╰─────────────────────────── Error occurred here.
+────╯
+
+[SyntaxError 7026] Error: Inline assembly marked memory-safe multiple times.
+    ╭─[input.sol:17:9]
+    │
+ 17 │         assembly ("memory-safe", "memory-safe", "memory-safe") {}
+    │         ────────────────────────────┬────────────────────────────  
+    │                                     ╰────────────────────────────── Error occurred here.
+────╯
+
+[SyntaxError 7026] Error: Inline assembly marked memory-safe multiple times.
+    ╭─[input.sol:17:9]
+    │
+ 17 │         assembly ("memory-safe", "memory-safe", "memory-safe") {}
+    │         ────────────────────────────┬────────────────────────────  
+    │                                     ╰────────────────────────────── Error occurred here.
+────╯

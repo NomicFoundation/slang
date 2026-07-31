@@ -522,6 +522,8 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn enter_assembly_statement(&mut self, node: &ir::AssemblyStatement) -> bool {
+        self.check_assembly_flags(node);
+
         // Record the assembly block (with the enclosing Solidity scope) so that
         // `p6_resolve_yul` can process only these branches instead of walking
         // the full IR tree, and so the backend has a per-block record of the

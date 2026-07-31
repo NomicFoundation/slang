@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
+   ╭─[input.sol:7:18]
+   │
+ 7 │         assembly ("memory-safe", "memory-safe") {}
+   │                  ───────────────┬──────────────  
+   │                                 ╰──────────────── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
+    ╭─[input.sol:12:27]
+    │
+ 12 │         assembly "evmasm" ("memory-safe", "memory-safe") {}
+    │                           ───────────────┬──────────────  
+    │                                          ╰──────────────── Error occurred here.
+────╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
+    ╭─[input.sol:17:18]
+    │
+ 17 │         assembly ("memory-safe", "memory-safe", "memory-safe") {}
+    │                  ──────────────────────┬──────────────────────  
+    │                                        ╰──────────────────────── Error occurred here.
+────╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
+    ╭─[input.sol:22:18]
+    │
+ 22 │         assembly ("memory-safe") {}
+    │                  ───────┬───────  
+    │                         ╰───────── Error occurred here.
+────╯
