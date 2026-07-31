@@ -384,6 +384,16 @@ impl Visitor for Pass<'_> {
             self.resolve_symbol_in_typing(&operand_typing, node.member.unparse());
         let resolution = filter_overriden_definitions(self.binder, self.types, member_resolution);
 
+        // Reading a contract's code pulls in its bytecode.
+        if matches!(
+            resolution,
+            Resolution::BuiltIn(
+                InternalBuiltIn::TypeCreationCode | InternalBuiltIn::TypeRuntimeCode
+            )
+        ) {
+            self.binder.record_contract_reference();
+        }
+
         // If the operand is either `this` or a contract/interface reference
         // type, then resolve the member typing as a contract member. This
         // handles public getters and visibility changes for public methods.

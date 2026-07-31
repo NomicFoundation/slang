@@ -305,10 +305,7 @@ impl Definition {
     pub(crate) fn is_externally_visible(&self) -> bool {
         match self {
             Self::Function(function_definition) => {
-                matches!(
-                    function_definition.ir_node.attributes.visibility,
-                    ir::FunctionVisibility::External | ir::FunctionVisibility::Public
-                )
+                function_definition.ir_node.is_externally_visible()
             }
             Self::StateVariable(variable_definition) => {
                 matches!(

@@ -264,6 +264,16 @@ pub fn slang_solidity_v2_semantic::built_ins::InternalBuiltIn::hash<__H: core::h
 impl core::marker::Copy for slang_solidity_v2_semantic::built_ins::InternalBuiltIn
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::built_ins::InternalBuiltIn
 pub mod slang_solidity_v2_semantic::context
+pub enum slang_solidity_v2_semantic::context::ContractReference
+pub slang_solidity_v2_semantic::context::ContractReference::CodeAccess(slang_solidity_v2_ir::ir::nodes::MemberAccessExpression)
+pub slang_solidity_v2_semantic::context::ContractReference::New(slang_solidity_v2_ir::ir::nodes::NewExpression)
+impl slang_solidity_v2_semantic::context::ContractReference
+pub fn slang_solidity_v2_semantic::context::ContractReference::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_semantic::context::ContractReference::range(&self) -> core::ops::range::Range<usize>
+impl core::clone::Clone for slang_solidity_v2_semantic::context::ContractReference
+pub fn slang_solidity_v2_semantic::context::ContractReference::clone(&self) -> slang_solidity_v2_semantic::context::ContractReference
+impl core::fmt::Debug for slang_solidity_v2_semantic::context::ContractReference
+pub fn slang_solidity_v2_semantic::context::ContractReference::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity_v2_semantic::context::StorageSize
 pub slang_solidity_v2_semantic::context::StorageSize::Bytes(usize)
 pub slang_solidity_v2_semantic::context::StorageSize::Slots(ruint::aliases::U256)
@@ -286,6 +296,9 @@ pub fn slang_solidity_v2_semantic::context::SemanticContext::build_from(slang_so
 pub fn slang_solidity_v2_semantic::context::SemanticContext::find_contract_by_name<'a, 'b>(&'a self, &'b str) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ir::ir::nodes::ContractDefinition> + use<'a> where 'b: 'a
 pub fn slang_solidity_v2_semantic::context::SemanticContext::types(&self) -> &slang_solidity_v2_semantic::types::TypeRegistry
 impl slang_solidity_v2_semantic::context::SemanticContext
+pub fn slang_solidity_v2_semantic::context::SemanticContext::contract_dependencies(&self) -> slang_solidity_v2_common::collections::aliases::SortedMap<slang_solidity_v2_common::nodes::NodeId, slang_solidity_v2_common::collections::aliases::SortedMap<slang_solidity_v2_common::nodes::NodeId, slang_solidity_v2_semantic::context::ContractReference>>
+pub fn slang_solidity_v2_semantic::context::SemanticContext::creation_bytecode_dependencies(&self) -> &slang_solidity_v2_common::collections::aliases::SortedMap<slang_solidity_v2_common::nodes::NodeId, slang_solidity_v2_common::collections::aliases::SortedMap<slang_solidity_v2_common::nodes::NodeId, slang_solidity_v2_semantic::context::ContractReference>>
+pub fn slang_solidity_v2_semantic::context::SemanticContext::deployed_bytecode_dependencies(&self) -> &slang_solidity_v2_common::collections::aliases::SortedMap<slang_solidity_v2_common::nodes::NodeId, slang_solidity_v2_common::collections::aliases::SortedMap<slang_solidity_v2_common::nodes::NodeId, slang_solidity_v2_semantic::context::ContractReference>>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::file_id_from_node_id(&self, slang_solidity_v2_common::nodes::NodeId) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_semantic::context::SemanticContext::linearised_errors(&self, slang_solidity_v2_common::nodes::NodeId) -> &[slang_solidity_v2_ir::ir::nodes::ErrorDefinition]
 pub fn slang_solidity_v2_semantic::context::SemanticContext::linearised_events(&self, slang_solidity_v2_common::nodes::NodeId) -> &[slang_solidity_v2_ir::ir::nodes::EventDefinition]

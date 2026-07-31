@@ -3,6 +3,14 @@ use std::ops::Range;
 use crate::ir;
 
 impl ir::FunctionDefinitionStruct {
+    /// Whether the function is declared `public` or `external`.
+    pub fn is_externally_visible(&self) -> bool {
+        matches!(
+            self.attributes.visibility,
+            ir::FunctionVisibility::Public | ir::FunctionVisibility::External
+        )
+    }
+
     /// The text range of the function's signature, ie. everything but its body.
     ///
     /// Falls back to the full range for bodyless declarations (eg. functions in

@@ -10,6 +10,7 @@ use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition};
 use crate::context::ContractLinearisations;
+use crate::passes::common::function_overrides;
 use crate::types::{TypeId, TypeRegistry};
 
 /// Walks the contract's linearised bases in reverse (most-base-first) and
@@ -103,6 +104,8 @@ fn linearise_functions(
                     // and the overriden functions must be marked `virtual`
                     // TODO(validation): if overriding multiple ancestors, the function needs to
                     // specify the bases in a specifier
+                    // TODO(validation) SDR[6]: if overriding, the function mutability must be
+                    // stricter than the overridden one's
                 }
                 ir::ContractMember::StateVariableDefinition(state_variable) => {
                     // Record its getter, if it has one, so it can shadow a
@@ -164,38 +167,4 @@ fn getter_overrides(
             .is_some_and(|function_type_id| {
                 types.type_id_is_function_and_overrides(getter.type_id, function_type_id)
             })
-}
-
-/// Whether `overriding` overrides `overridden`: they share a name (or are the
-/// same kind of unnamed function) and their signatures are in an override
-/// relationship.
-fn function_overrides(
-    binder: &Binder,
-    types: &TypeRegistry,
-    overriding: &ir::FunctionDefinition,
-    overridden: &ir::FunctionDefinition,
-) -> bool {
-    let name_matches = match (&overriding.name, &overridden.name) {
-        (None, None) => overriding.kind == overridden.kind,
-        (Some(name), Some(other_name)) => {
-            debug_assert!(
-                overriding.kind == overridden.kind && overriding.kind == ir::FunctionKind::Regular,
-                "compared functions are both regular"
-            );
-            name.unparse() == other_name.unparse()
-        }
-        _ => false,
-    };
-    if !name_matches {
-        return false;
-    }
-    let overriding_type_id = binder.node_typing(overriding.id()).as_type_id();
-    let overridden_type_id = binder.node_typing(overridden.id()).as_type_id();
-    match (overriding_type_id, overridden_type_id) {
-        (Some(overriding_type_id), Some(overridden_type_id)) => {
-            types.type_id_is_function_and_overrides(overriding_type_id, overridden_type_id)
-        }
-        _ => false,
-    }
-    // TODO(validation) SDR[6]: check also that the function mutability is stricter than the overridden one's
 }
