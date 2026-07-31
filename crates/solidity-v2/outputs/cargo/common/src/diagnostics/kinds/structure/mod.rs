@@ -1,4 +1,5 @@
 mod abstract_contract_public_constructor;
+mod anonymous_event_with_too_many_indexed_parameters;
 mod break_outside_loop;
 mod conflicting_mapping_parameter_name;
 mod constructor_not_in_contract;
@@ -14,6 +15,7 @@ mod empty_struct;
 mod empty_tuple_component;
 mod empty_tuple_on_lhs;
 mod enum_with_too_many_members;
+mod event_with_too_many_indexed_parameters;
 mod free_function_payable;
 mod free_function_visibility;
 mod free_function_with_modifiers;
@@ -62,6 +64,7 @@ mod yul_function_in_for_loop_init;
 mod yul_leave_outside_function;
 
 pub use abstract_contract_public_constructor::AbstractContractPublicConstructor;
+pub use anonymous_event_with_too_many_indexed_parameters::AnonymousEventWithTooManyIndexedParameters;
 pub use break_outside_loop::BreakOutsideLoop;
 pub use conflicting_mapping_parameter_name::ConflictingMappingParameterName;
 pub use constructor_not_in_contract::ConstructorNotInContract;
@@ -77,6 +80,7 @@ pub use empty_struct::EmptyStruct;
 pub use empty_tuple_component::EmptyTupleComponent;
 pub use empty_tuple_on_lhs::EmptyTupleOnLhs;
 pub use enum_with_too_many_members::EnumWithTooManyMembers;
+pub use event_with_too_many_indexed_parameters::EventWithTooManyIndexedParameters;
 pub use free_function_payable::FreeFunctionPayable;
 pub use free_function_visibility::FreeFunctionVisibility;
 pub use free_function_with_modifiers::FreeFunctionWithModifiers;
@@ -221,6 +225,11 @@ define_diagnostic_kind! {
 
         /// A struct declares no members.
         EmptyStruct(EmptyStruct),
+
+        /// A non-anonymous event declares more than 3 `indexed` parameters.
+        EventWithTooManyIndexedParameters(EventWithTooManyIndexedParameters),
+        /// An anonymous event declares more than 4 `indexed` parameters.
+        AnonymousEventWithTooManyIndexedParameters(AnonymousEventWithTooManyIndexedParameters),
 
         /// An empty tuple appears on the left hand side of an assignment.
         EmptyTupleOnLhs(EmptyTupleOnLhs),

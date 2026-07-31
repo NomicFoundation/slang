@@ -728,6 +728,7 @@ impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
 pub enum slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::AbstractContractPublicConstructor(slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::AnonymousEventWithTooManyIndexedParameters(slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::BreakOutsideLoop(slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::ConflictingMappingParameterName(slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::ConstructorNotInContract(slang_solidity_v2_common::diagnostics::kinds::structure::ConstructorNotInContract)
@@ -743,6 +744,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnostic
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EmptyTupleComponent(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EmptyTupleOnLhs(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EnumWithTooManyMembers(slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EventWithTooManyIndexedParameters(slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::FreeFunctionPayable(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionPayable)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::FreeFunctionVisibility(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionVisibility)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::FreeFunctionWithModifiers(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionWithModifiers)
@@ -796,6 +798,8 @@ impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::stru
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind) -> bool
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -826,6 +830,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionPayable> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionPayable) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionVisibility> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -948,6 +954,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop
@@ -1238,6 +1263,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionPayable
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionPayable
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionPayable::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionPayable
@@ -2910,6 +2954,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic:
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::ConflictingMappingParameterName> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -2940,6 +2986,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleOnLhs) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionPayable> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionPayable) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionVisibility> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -3288,6 +3336,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::BreakOutsideLoop::message(&self) -> alloc::string::String
@@ -3348,6 +3400,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EnumWithTooManyMembers::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EventWithTooManyIndexedParameters::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionPayable
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionPayable::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::FreeFunctionPayable::message(&self) -> alloc::string::String

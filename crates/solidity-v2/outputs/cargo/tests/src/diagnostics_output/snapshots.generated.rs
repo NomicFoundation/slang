@@ -1558,6 +1558,14 @@ mod structure {
     }
 
     #[test]
+    fn anonymous_event_with_too_many_indexed_parameters() -> Result<()> {
+        run(
+            "structure",
+            "anonymous_event_with_too_many_indexed_parameters",
+        )
+    }
+
+    #[test]
     fn break_outside_loop() -> Result<()> {
         run("structure", "break_outside_loop")
     }
@@ -1889,6 +1897,11 @@ mod structure {
     #[test]
     fn enum_with_too_many_members() -> Result<()> {
         run("structure", "enum_with_too_many_members")
+    }
+
+    #[test]
+    fn event_with_too_many_indexed_parameters() -> Result<()> {
+        run("structure", "event_with_too_many_indexed_parameters")
     }
 
     #[test]
