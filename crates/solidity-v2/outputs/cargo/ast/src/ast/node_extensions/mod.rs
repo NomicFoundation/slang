@@ -4,6 +4,7 @@ mod assembly_statement;
 mod binary_operators;
 pub use binary_operators::BinaryOperatorExpression;
 
+mod catch_clause;
 mod contract_base;
 mod contract_definition;
 mod contract_members;

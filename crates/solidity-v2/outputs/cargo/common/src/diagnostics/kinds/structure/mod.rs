@@ -61,7 +61,7 @@ pub use conflicting_mapping_parameter_name::ConflictingMappingParameterName;
 pub use constructor_not_in_contract::ConstructorNotInContract;
 pub use continue_outside_loop::ContinueOutsideLoop;
 pub use contract_should_be_abstract::ContractShouldBeAbstract;
-pub use duplicate_catch_clause::{CatchClauseKind, DuplicateCatchClause};
+pub use duplicate_catch_clause::DuplicateCatchClause;
 pub use duplicate_named_argument::DuplicateNamedArgument;
 pub use duplicate_switch_default_case::DuplicateSwitchDefaultCase;
 pub use empty_enum::EmptyEnum;

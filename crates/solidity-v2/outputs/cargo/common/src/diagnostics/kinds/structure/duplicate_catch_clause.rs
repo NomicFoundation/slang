@@ -1,19 +1,8 @@
 use serde::Serialize;
 
+use crate::catch_clauses::CatchClauseKind;
 use crate::diagnostics::extensions::DiagnosticExtensions;
 use crate::diagnostics::severity::DiagnosticSeverity;
-
-/// The kind of catch clause a `try` statement may declare at most once.
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
-pub enum CatchClauseKind {
-    /// A named `catch Error(...)` clause.
-    Error,
-    /// A named `catch Panic(...)` clause.
-    Panic,
-    /// A low-level clause without a selector name: `catch { ... }` or
-    /// `catch (bytes ...) { ... }`.
-    LowLevel,
-}
 
 /// Diagnostic emitted when a `try` statement declares more than one catch clause
 /// of the same kind (two `Error`, two `Panic`, or two low-level clauses).

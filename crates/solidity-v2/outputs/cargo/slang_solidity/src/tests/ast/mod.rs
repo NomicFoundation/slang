@@ -2,6 +2,7 @@ use super::fixtures;
 
 mod assembly_references;
 mod built_in_resolution;
+mod catch_clause_kind;
 mod common_operand;
 mod definition_references;
 mod enclosing_definition;
