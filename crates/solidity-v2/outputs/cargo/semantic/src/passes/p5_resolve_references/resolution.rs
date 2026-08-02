@@ -18,7 +18,10 @@ use crate::passes::common::constant_evaluator::{
     ConstantResolver, EvaluationError, evaluate_compile_time_constant,
 };
 use crate::passes::common::find_definition_namespace_scope_id;
-use crate::types::{ContractType, InterfaceType, StructType, Type, TypeId, UserMetaType};
+use crate::types::{
+    ArrayType, ContractType, DataLocation, FixedSizeArrayType, InterfaceType, StructType, Type,
+    TypeId, UserMetaType,
+};
 
 /// Lexical style resolution of symbols
 impl Pass<'_> {
@@ -389,6 +392,33 @@ impl Pass<'_> {
             let reference = Reference::new(Arc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
         }
+    }
+
+    /// The array an indexed type denotes: `T[n]` for a constant `size`, `T[]` otherwise.
+    pub(super) fn array_of(&mut self, element_type: TypeId, size: Option<&ir::Expression>) -> Type {
+        if let Some(expression) = size
+            && let Ok(value) = evaluate_compile_time_constant(
+                expression,
+                self.current_scope_id(),
+                self.types,
+                &ConstantResolver {
+                    binder: self.binder,
+                    use_site: None,
+                },
+            )
+            && let Some(integer) = value.as_integer()
+            && let Ok(size) = U256::try_from(integer)
+        {
+            return Type::FixedSizeArray(FixedSizeArrayType {
+                element_type,
+                size,
+                location: DataLocation::Memory,
+            });
+        }
+        Type::Array(ArrayType {
+            element_type,
+            location: DataLocation::Memory,
+        })
     }
 
     /// Resolves and validates a contract's `layout at <expr>` storage base

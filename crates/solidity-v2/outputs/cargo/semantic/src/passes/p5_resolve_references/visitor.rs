@@ -11,8 +11,8 @@ use crate::binder::{Reference, Resolution, Typing, UsingOperator};
 use crate::built_ins::InternalBuiltIn;
 use crate::passes::common::filter_overriden_definitions;
 use crate::types::{
-    AddressType, ArraySliceType, ArrayType, BytesType, DataLocation, FixedSizeArrayType,
-    MappingType, MetaType, Number, StringType, TupleType, Type, UserMetaType,
+    AddressType, ArraySliceType, ArrayType, BytesType, FixedSizeArrayType, MappingType, MetaType,
+    Number, StringType, TupleType, Type, UserMetaType,
 };
 
 impl Visitor for Pass<'_> {
@@ -510,20 +510,18 @@ impl Visitor for Pass<'_> {
                     // fixed-size `uint[3]`.
                     Type::MetaType(MetaType {
                         type_id: element_type,
-                    }) => self.meta_typing_of(Type::Array(ArrayType {
-                        element_type: *element_type,
-                        location: DataLocation::Memory,
-                    })),
+                    }) => {
+                        let array = self.array_of(*element_type, node.start.as_ref());
+                        self.meta_typing_of(array)
+                    }
                     // Indexing a user meta-type likewise creates the meta-type
                     // of an array (eg. `MyStruct[]`).
                     Type::UserMetaType(UserMetaType { definition_id }) => {
                         let definition_id = *definition_id;
                         if let Some(operand_type) = self.type_of_definition(definition_id) {
                             let element_type = self.types.register_type(operand_type);
-                            self.meta_typing_of(Type::Array(ArrayType {
-                                element_type,
-                                location: DataLocation::Memory,
-                            }))
+                            let array = self.array_of(element_type, node.start.as_ref());
+                            self.meta_typing_of(array)
                         } else {
                             Typing::Unresolved
                         }
