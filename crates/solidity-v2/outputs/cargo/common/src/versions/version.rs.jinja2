@@ -1,4 +1,3 @@
-
 use std::convert::TryFrom;
 use std::fmt::{Display, Formatter};
 
@@ -69,7 +68,7 @@ impl From<LanguageVersion> for Version {
     fn from(version: LanguageVersion) -> Self {
         match version {
             {%- for version in model.language.versions %}
-                {{<v2.versions.version v={version} />}} => Version::new({{ version | split(pat=".") | first }}, {{ (version | split(pat="."))[1] }}, {{ version | split(pat=".") | last }}),
+                {{<v2.versions.version v={version} />}} => Version::new({{ (version | split(pat="."))[0] }}, {{ (version | split(pat="."))[1] }}, {{ (version | split(pat="."))[2] }}),
             {%- endfor %}
         }
     }

@@ -65,7 +65,8 @@ impl TeraWrapper {
 
 /// Tera silently ignores unexpected keyword arguments, so a typo would otherwise be dropped.
 fn assert_kwarg_count(kwargs: &Kwargs, expected: usize) {
-    assert_eq!(kwargs.iter().count(), expected, "Unexpected arguments");
+    let keys = kwargs.iter().map(|(key, _)| key).collect::<Vec<_>>();
+    assert_eq!(keys.len(), expected, "Unexpected arguments: {keys:?}");
 }
 
 fn camel_case_filter(value: &str, kwargs: Kwargs, _: &State<'_>) -> String {
