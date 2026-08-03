@@ -4753,7 +4753,10 @@ version = "2.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "511f07fd91a70e92efbe4793d111aaa9035f8474dd157aaa1e31e7c27f5051da"
 dependencies = [
+ "globset",
+ "indexmap 2.14.0",
  "serde",
+ "walkdir",
 ]
 
 [[package]]

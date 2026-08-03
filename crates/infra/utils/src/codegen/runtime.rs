@@ -20,8 +20,8 @@ impl CodegenRuntime {
         let all_templates = tera
             .find_all_templates()?
             .filter(|path|
-            // Templates starting with underscore are meant to contain common macros.
-            // They are not rendered directly, but imported by other templates.
+            // Templates starting with underscore only define shared components. They are still
+            // loaded above (which is what registers those components), but never rendered alone.
             !path.unwrap_name().starts_with('_'))
             .collect::<Vec<_>>();
 
