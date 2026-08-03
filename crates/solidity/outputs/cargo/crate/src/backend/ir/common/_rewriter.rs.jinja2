@@ -1,4 +1,4 @@
-{% macro render_rewriter(language) -%}
+{% component v1.ir.render_rewriter(language, model) -%}
   {%- set target = model.ir_languages[language].target -%}
   #![allow(clippy::too_many_lines)]
 
@@ -48,15 +48,15 @@
     {% for parent_type, choice in target.choices %}
       fn default_rewrite_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
         match source {
-          {% for nonterminal in choice.variants | filter(attribute="kind", value="Nonterminal") -%}
+          {% for nonterminal in [variant for variant in choice.variants if variant.kind == "Nonterminal"] -%}
             {{ parent_type }}::{{ nonterminal.name }}({{ nonterminal.name | snake_case }}) => {
               {{ parent_type }}::{{ nonterminal.name }}(self.rewrite_{{ nonterminal.name | snake_case }}({{ nonterminal.name | snake_case }}))
             }
           {%- endfor %}
-          {% for terminal in choice.variants | filter(attribute="kind", value="Terminal") -%}
+          {% for terminal in [variant for variant in choice.variants if variant.kind == "Terminal"] -%}
             {{ parent_type }}::{{ terminal.name }}(node) => {{ parent_type }}::{{ terminal.name }}(Rc::clone(node)),
           {%- endfor -%}
-          {% for terminal in choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
+          {% for terminal in [variant for variant in choice.variants if variant.kind == "UniqueTerminal"] -%}
             {{ parent_type }}::{{ terminal.name }} => {{ parent_type }}::{{ terminal.name }},
           {%- endfor -%}
         }
@@ -82,4 +82,4 @@
     {% endfor %}
   }
 
-{% endmacro render_rewriter %}
+{% endcomponent v1.ir.render_rewriter %}

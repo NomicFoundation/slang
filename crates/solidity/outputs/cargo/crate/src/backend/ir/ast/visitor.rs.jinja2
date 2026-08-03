@@ -18,7 +18,7 @@ pub trait Visitor {
     fn leave_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) {}
   {% endfor -%}
   {%- for parent_type, collection in target.collections %}
-    {%- if collection.item_type.is_terminal and custom_types is not containing(collection.item_type.name) %}
+    {%- if collection.item_type.is_terminal and custom_types is not containing(pat=collection.item_type.name) %}
       fn enter_{{ parent_type | snake_case }}(&mut self, _items: &[Rc<TerminalNode>]) -> bool { true }
       fn leave_{{ parent_type | snake_case }}(&mut self, _items: &[Rc<TerminalNode>]) {}
     {% else %}
@@ -51,13 +51,13 @@ pub fn accept_yul_identifier(node: &YulIdentifier, visitor: &mut impl Visitor) {
     }
     {% for field in sequence.fields -%}
       {%- if field.is_optional -%}
-        {%- if custom_types is containing(field.type.name) or not field.type.is_terminal -%}
+        {%- if custom_types is containing(pat=field.type.name) or not field.type.is_terminal -%}
           if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }}() {
             accept_{{ field.type.name | snake_case }}({{ field.label | snake_case }}, visitor);
           }
         {%- endif -%}
       {%- else -%}
-        {%- if custom_types is containing(field.type.name) or not field.type.is_terminal -%}
+        {%- if custom_types is containing(pat=field.type.name) or not field.type.is_terminal -%}
           accept_{{ field.type.name | snake_case }}(&node.{{ field.label | snake_case }}(), visitor);
         {%- endif -%}
       {%- endif -%}
@@ -72,9 +72,9 @@ pub fn accept_yul_identifier(node: &YulIdentifier, visitor: &mut impl Visitor) {
 //
 
 {% for parent_type, choice in target.choices %}
-  {%- set nonterminals = choice.variants | filter(attribute="kind", value="Nonterminal") -%}
-  {%- set unique_terminals = choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
-  {%- set non_unique_terminals = choice.variants | filter(attribute="kind", value="Terminal") -%}
+  {%- set nonterminals = [variant for variant in choice.variants if variant.kind == "Nonterminal"] -%}
+  {%- set unique_terminals = [variant for variant in choice.variants if variant.kind == "UniqueTerminal"] -%}
+  {%- set non_unique_terminals = [variant for variant in choice.variants if variant.kind == "Terminal"] -%}
 
   {% if (nonterminals | length == 0) and (non_unique_terminals | length == 0) %}
     pub fn accept_{{ parent_type | snake_case }}(_node: &{{ parent_type }}, _visitor: &mut impl Visitor) {}
@@ -93,7 +93,7 @@ pub fn accept_yul_identifier(node: &YulIdentifier, visitor: &mut impl Visitor) {
           }
         {%- endfor %}
         {% for terminal in non_unique_terminals -%}
-          {% if custom_types is containing(terminal.name) %}
+          {% if custom_types is containing(pat=terminal.name) %}
             {{ parent_type }}::{{ terminal.name }}(variant) => {
               accept_{{ terminal.name | snake_case }}(variant, visitor);
             }
@@ -115,7 +115,7 @@ pub fn accept_yul_identifier(node: &YulIdentifier, visitor: &mut impl Visitor) {
 //
 
 {% for parent_type, collection in target.collections -%}
-  {%- if custom_types is containing(collection.item_type.name) or
+  {%- if custom_types is containing(pat=collection.item_type.name) or
          not collection.item_type.is_terminal %}
     {% set actual_type = parent_type %}
     {% set visit_items = True %}

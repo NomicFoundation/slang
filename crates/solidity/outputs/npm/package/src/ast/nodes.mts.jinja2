@@ -87,7 +87,7 @@ import { NonterminalKind, NonterminalNode, TerminalNode } from "../cst/index.mjs
   export class {{ choice.parent_type }} {
     {%- set variant_types = choice.nonterminal_types -%}
     {%- if choice.includes_terminals -%}
-      {%- set variant_types = variant_types | concat(with = "TerminalNode") -%}
+      {%- set variant_types = [...variant_types, "TerminalNode"] -%}
     {%- endif -%}
     {%- set variant_types = variant_types | join(sep = " | ") -%}
 

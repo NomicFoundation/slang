@@ -1,4 +1,4 @@
-{% macro render_nodes(language) -%}
+{% component v1.ir.render_nodes(language, model) -%}
   {%- set target = model.ir_languages[language].target -%}
   use std::rc::Rc;
   use std::vec::Vec;
@@ -48,13 +48,13 @@
   {% for parent_type, choice in target.choices %}
     #[derive(Clone, Debug)]
     pub enum {{ parent_type }} {
-      {% for nonterminal in choice.variants | filter(attribute="kind", value="Nonterminal") -%}
+      {% for nonterminal in [variant for variant in choice.variants if variant.kind == "Nonterminal"] -%}
         {{ nonterminal.name }}({{ nonterminal.name }}),
       {%- endfor -%}
-      {% for terminal in choice.variants | filter(attribute="kind", value="Terminal") -%}
+      {% for terminal in [variant for variant in choice.variants if variant.kind == "Terminal"] -%}
         {{ terminal.name }}(Rc<TerminalNode>),
       {%- endfor -%}
-      {% for terminal in choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
+      {% for terminal in [variant for variant in choice.variants if variant.kind == "UniqueTerminal"] -%}
         {{ terminal.name }},
       {%- endfor -%}
     }
@@ -74,4 +74,4 @@
     >;
   {% endfor %}
 
-{% endmacro render_nodes %}
+{% endcomponent v1.ir.render_nodes %}

@@ -1,9 +1,5 @@
-{%- import "crates/solidity/outputs/cargo/tests/src/utils/_render_snapshot_tests.rs.jinja2" as common -%}
-
-{{
-    common::render_snapshot_tests(
-        crate_name="solidity_testing_snapshots",
-        path="bindings_output",
-        runner="crate::bindings::bindings_output::runner",
-    )
-}}
+{{<v1.snapshots.render_snapshot_tests
+    crate_name="solidity_testing_snapshots"
+    path="bindings_output"
+    runner="crate::bindings::bindings_output::runner"
+/>}}
