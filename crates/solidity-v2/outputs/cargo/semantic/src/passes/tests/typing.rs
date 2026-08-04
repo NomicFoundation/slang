@@ -1234,7 +1234,11 @@ fn test_external_signature_relocates_parameters_and_results() {
     //    result both read back as `bytes memory`;
     //  - `this.echo(bs)` — the call result is `bytes memory`;
     //  - `this.echo(bs)[0]` — indexing that result reads memory rather than a
-    //    calldata offset, yielding `bytes1`.
+    //    calldata offset, yielding `bytes1`;
+    //  - `this.split(bs)` — multiple results are modeled as a tuple, which
+    //    carries no location of its own, so the relocation has to reach each
+    //    element separately: the `bytes calldata` result becomes memory while
+    //    the results that were not in calldata keep their declared type.
     let (typings, types) = type_of_expressions(
         LanguageVersion::LATEST,
         None,
@@ -1243,12 +1247,32 @@ fn test_external_signature_relocates_parameters_and_results() {
             bytes bs;
             function echo(bytes calldata xs) external pure returns (bytes calldata) { return xs; }
             function keep(bytes calldata xs) internal pure returns (bytes calldata) { return xs; }
+            function split(bytes calldata xs)
+                external
+                pure
+                returns (bytes calldata, string memory, uint)
+            {
+                return (xs, "", 1);
+            }
             "#,
         ),
-        &["keep", "this.echo", "this.echo(bs)", "this.echo(bs)[0]"],
+        &[
+            "keep",
+            "this.echo",
+            "this.echo(bs)",
+            "this.echo(bs)[0]",
+            "this.split(bs)",
+        ],
     );
-    let [internal_reference, external_reference, call, indexed] = typings.as_slice() else {
-        panic!("expected four expression statements, got {typings:?}");
+    let [
+        internal_reference,
+        external_reference,
+        call,
+        indexed,
+        tuple_call,
+    ] = typings.as_slice()
+    else {
+        panic!("expected five expression statements, got {typings:?}");
     };
 
     // Both function references carry the same declared signature, differing
@@ -1283,8 +1307,30 @@ fn test_external_signature_relocates_parameters_and_results() {
         (memory_bytes.clone(), memory_bytes.clone()),
         "an external reference relocates both its parameter and its result",
     );
-    assert_eq!(call, &Some(memory_bytes));
+    assert_eq!(call, &Some(memory_bytes.clone()));
     assert_eq!(indexed, &Some(Type::ByteArray(ByteArrayType { width: 1 })));
+
+    let Some(Type::Tuple(TupleType { types: elements })) = tuple_call else {
+        panic!("expected `this.split(bs)` to be typed as a tuple, got {tuple_call:?}");
+    };
+    let element_types: Vec<Type> = elements
+        .iter()
+        .map(|type_id| types.get_type_by_id(*type_id).clone())
+        .collect();
+    assert_eq!(
+        element_types,
+        vec![
+            memory_bytes,
+            Type::String(StringType {
+                location: DataLocation::Memory,
+            }),
+            Type::Integer(IntegerType {
+                is_signed: false,
+                bits: 256,
+            }),
+        ],
+        "only the calldata result is relocated",
+    );
 }
 
 #[test]
