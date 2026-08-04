@@ -207,9 +207,9 @@ fn aliased_definitions_conflict(binder: &Binder, existing_id: NodeId, new_id: No
     let existing_targets = resolved_targets(binder, existing_id);
 
     resolved_targets(binder, new_id).iter().any(|&new| {
-        let Some(new_definition) = binder.find_definition_by_id(new) else {
-            return false;
-        };
+        let new_definition = binder
+            .find_definition_by_id(new)
+            .expect("definition is registered");
         existing_targets
             .iter()
             // The same underlying declaration reached through both names is
