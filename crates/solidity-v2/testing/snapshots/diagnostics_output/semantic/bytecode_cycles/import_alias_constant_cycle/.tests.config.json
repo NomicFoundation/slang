@@ -1,8 +1,18 @@
 {
   "matrix": {
     "type": "SingleTargetAllVersions",
-    "target": "Istanbul",
-    "reason": "Using the latest EVM target supported by solc '0.8.0', to avoid triggering any additional 'Evm Version not supported' errors when comparing outputs."
-  },
-  "expected_solc_divergence": "solc's reachability analysis does not follow constants referenced as members, so it never records A's dependency on itself and accepts this program on every version, then fails with an internal error during code generation. Slang follows the reference and reports the cycle on every version."
+    "target": {
+      "value": "Istanbul",
+      "reason": "Using the latest EVM target supported by solc '0.8.0', to avoid triggering any additional 'Evm Version not supported' errors when comparing outputs."
+    },
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "From",
+          "from": "0.8.0"
+        },
+        "reason": "solc's reachability analysis does not follow constants referenced as members, so it never records A's dependency on itself and accepts this program on every version, then fails with an internal error during code generation. Slang follows the reference and reports the cycle on every version."
+      }
+    ]
+  }
 }

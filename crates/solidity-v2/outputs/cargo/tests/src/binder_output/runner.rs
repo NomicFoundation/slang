@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{Result, ensure};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
@@ -8,15 +8,15 @@ use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, Unr
 
 use super::report::binder_report;
 use super::report_data::ReportData;
-use crate::snapshots::{self, SnapshotOutcome, SnapshotStatus};
+use crate::snapshots::{self, SnapshotOutcome, SnapshotStatus, TestConfig, TestMatrix};
 use crate::utils::multi_part_file::split_multi_file;
 use crate::utils::path_resolver;
 
-struct TestConfig {
+struct CompilationConfig {
     files: SortedMap<FileId, String>,
 }
 
-impl CompilationBuilderConfig for TestConfig {
+impl CompilationBuilderConfig for CompilationConfig {
     fn read_file(&mut self, file_id: &FileId) -> Result<String, MissingFile> {
         self.files.get(file_id).cloned().ok_or_else(|| MissingFile {
             reason: "File not found".to_string(),
@@ -52,38 +52,56 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         .map(|part| (part.name.into(), part.contents.to_string()))
         .collect();
 
-    snapshots::generate_snapshots(&test_dir, &mut fs, "generated", |version, target| {
-        let config = TestConfig {
-            files: files.clone(),
-        };
-        let mut builder = CompilationBuilder::create(version, target, config);
+    let test_config = TestConfig::resolve(&test_dir)?;
+    match &test_config.matrix {
+        TestMatrix::SingleVersionAllTargets(matrix) => ensure!(
+            matrix.expected_solc_divergence.is_empty(),
+            "Not comparing with 'solc' in 'binder_output' tests"
+        ),
+        TestMatrix::SingleTargetAllVersions(matrix) => ensure!(
+            matrix.expected_solc_divergence.is_empty(),
+            "Not comparing with 'solc' in 'binder_output' tests"
+        ),
+    }
 
-        // While `builder.add_file()` recursively adds dependencies, so adding
-        // the root file would be enough, we don't want to depend on the
-        // ordering of the parts in `input.sol`. Calling `add_file()` on files
-        // already added is idempotent, so to be sure we add all parts.
-        for file in files.keys() {
-            builder.add_file(file.clone());
-        }
+    snapshots::generate_snapshots(
+        &test_dir,
+        &mut fs,
+        &test_config,
+        "generated",
+        |version, target| {
+            let compilation_config = CompilationConfig {
+                files: files.clone(),
+            };
+            let mut builder = CompilationBuilder::create(version, target, compilation_config);
 
-        let compilation = builder.build();
-        let report_data = ReportData::prepare(&compilation, &files);
+            // While `builder.add_file()` recursively adds dependencies, so adding
+            // the root file would be enough, we don't want to depend on the
+            // ordering of the parts in `input.sol`. Calling `add_file()` on files
+            // already added is idempotent, so to be sure we add all parts.
+            for file in files.keys() {
+                builder.add_file(file.clone());
+            }
 
-        let status = if report_data.all_resolved() {
-            SnapshotStatus::Success
-        } else {
-            SnapshotStatus::Failure
-        };
+            let compilation = builder.build();
+            let report_data = ReportData::prepare(&compilation, &files);
 
-        let contents = binder_report(&report_data)?;
-        Ok(SnapshotOutcome {
-            version,
-            target,
-            status,
-            contents,
-            extension: "txt",
-        })
-    })?;
+            let status = if report_data.all_resolved() {
+                SnapshotStatus::Success
+            } else {
+                SnapshotStatus::Failure
+            };
+
+            let contents = binder_report(&report_data)?;
+            Ok(SnapshotOutcome {
+                version,
+                target,
+                status,
+                contents,
+                extension: "txt",
+            })
+        },
+    )?;
 
     Ok(())
 }

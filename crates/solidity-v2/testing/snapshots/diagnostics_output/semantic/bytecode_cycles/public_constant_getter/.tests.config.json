@@ -1,8 +1,18 @@
 {
   "matrix": {
     "type": "SingleTargetAllVersions",
-    "target": "Istanbul",
-    "reason": "Using the latest EVM target supported by solc '0.8.0', to avoid triggering any additional 'Evm Version not supported' errors when comparing outputs."
-  },
-  "expected_solc_divergence": "Before '0.8.4' solc reported error 4579 on the `new A()`, without reachability analysis. Since '0.8.4' solc leaves getters out of its reachability analysis, so it never records A's dependency on B and accepts this program, then fails with an internal error during code generation. Slang counts a public constant's getter as an entry point and reports the cycle on every version."
+    "target": {
+      "value": "Istanbul",
+      "reason": "Using the latest EVM target supported by solc '0.8.0', to avoid triggering any additional 'Evm Version not supported' errors when comparing outputs."
+    },
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "From",
+          "from": "0.8.4"
+        },
+        "reason": "Before '0.8.4' solc reported error 4579 on the `new A()`, without reachability analysis. Since '0.8.4' solc leaves getters out of its reachability analysis, so it never records A's dependency on B and accepts this program, then fails with an internal error during code generation. Slang counts a public constant's getter as an entry point and reports the cycle on every version."
+      }
+    ]
+  }
 }

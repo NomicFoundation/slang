@@ -4,11 +4,12 @@ use std::convert::TryFrom;
 use std::fmt::{Display, Formatter};
 
 use semver::Version;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 /// All supported versions of `Solidity`.
-#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Serialize)]
+#[derive(Clone, Copy, Debug, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
+#[serde(try_from = "Version")]
 pub enum LanguageVersion {
     V0_8_0,
     V0_8_1,

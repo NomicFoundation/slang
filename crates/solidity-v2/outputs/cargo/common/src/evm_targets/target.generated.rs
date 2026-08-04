@@ -2,11 +2,12 @@
 
 use std::fmt::{Display, Formatter};
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 /// All supported EVM targets of `Solidity`, in chronological order.
-#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Serialize)]
+#[derive(Clone, Copy, Debug, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
+#[serde(try_from = "&str")]
 pub enum EvmTarget {
     Frontier = 0,
     Homestead = 1,
