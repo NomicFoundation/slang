@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[SyntaxError 3845] Error: ABI coder has already been selected for this source unit.
+   ╭─[input.sol:8:1]
+   │
+ 8 │ pragma abicoder v1;
+   │ ─────────┬─────────  
+   │          ╰─────────── Error occurred here.
+───╯

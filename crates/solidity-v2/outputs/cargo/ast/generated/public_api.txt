@@ -685,8 +685,8 @@ pub fn slang_solidity_v2_ast::ast::visitor::accept_yul_variable_assignment_state
 pub fn slang_solidity_v2_ast::ast::visitor::accept_yul_variable_declaration_statement(&slang_solidity_v2_ast::ast::YulVariableDeclarationStatement, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_yul_variable_declaration_value(&slang_solidity_v2_ast::ast::YulVariableDeclarationValue, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub enum slang_solidity_v2_ast::ast::AbicoderVersion
-pub slang_solidity_v2_ast::ast::AbicoderVersion::AbicoderV1Keyword(slang_solidity_v2_ast::ast::AbicoderV1Keyword)
-pub slang_solidity_v2_ast::ast::AbicoderVersion::AbicoderV2Keyword(slang_solidity_v2_ast::ast::AbicoderV2Keyword)
+pub slang_solidity_v2_ast::ast::AbicoderVersion::V1
+pub slang_solidity_v2_ast::ast::AbicoderVersion::V2
 impl core::clone::Clone for slang_solidity_v2_ast::ast::AbicoderVersion
 pub fn slang_solidity_v2_ast::ast::AbicoderVersion::clone(&self) -> slang_solidity_v2_ast::ast::AbicoderVersion
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AbicoderVersion
@@ -1187,28 +1187,6 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::AbicoderPragmaStruct
 pub fn slang_solidity_v2_ast::ast::AbicoderPragmaStruct::clone(&self) -> slang_solidity_v2_ast::ast::AbicoderPragmaStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AbicoderPragmaStruct
 pub fn slang_solidity_v2_ast::ast::AbicoderPragmaStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct
-impl slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct
-pub fn slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
-pub fn slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
-pub fn slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct::unparse(&self) -> &str
-impl core::clone::Clone for slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct
-pub fn slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct::clone(&self) -> slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct
-pub fn slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct
-impl slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct
-pub fn slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
-pub fn slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
-pub fn slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct::unparse(&self) -> &str
-impl core::clone::Clone for slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct
-pub fn slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct::clone(&self) -> slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct
-pub fn slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::AdditiveExpressionStruct
 impl slang_solidity_v2_ast::ast::AdditiveExpressionStruct
 pub fn slang_solidity_v2_ast::ast::AdditiveExpressionStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
@@ -3932,8 +3910,6 @@ pub fn slang_solidity_v2_ast::ast::create_yul_variable_assignment_statement(&sla
 pub fn slang_solidity_v2_ast::ast::create_yul_variable_declaration_statement(&slang_solidity_v2_ir::ir::nodes::YulVariableDeclarationStatement, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulVariableDeclarationStatement
 pub fn slang_solidity_v2_ast::ast::create_yul_variable_declaration_value(&slang_solidity_v2_ir::ir::nodes::YulVariableDeclarationValue, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulVariableDeclarationValue
 pub type slang_solidity_v2_ast::ast::AbicoderPragma = slang_solidity_v2_ast::ast::AbicoderPragmaStruct
-pub type slang_solidity_v2_ast::ast::AbicoderV1Keyword = slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct
-pub type slang_solidity_v2_ast::ast::AbicoderV2Keyword = slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct
 pub type slang_solidity_v2_ast::ast::AdditiveExpression = slang_solidity_v2_ast::ast::AdditiveExpressionStruct
 pub type slang_solidity_v2_ast::ast::Ampersand = slang_solidity_v2_ast::ast::AmpersandStruct
 pub type slang_solidity_v2_ast::ast::AmpersandEqual = slang_solidity_v2_ast::ast::AmpersandEqualStruct

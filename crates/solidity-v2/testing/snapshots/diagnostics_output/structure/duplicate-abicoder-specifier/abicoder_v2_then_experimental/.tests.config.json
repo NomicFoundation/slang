@@ -1,0 +1,14 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "From",
+          "from": "0.8.0"
+        },
+        "reason": "solc has a bug where it reports an error on `experimental ABIEncoderV2` after `abicoder v2`, but not the other way around. Slang implements the correct semantics, so it reports this error on all versions."
+      }
+    ]
+  }
+}

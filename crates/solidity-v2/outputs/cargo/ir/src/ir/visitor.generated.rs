@@ -904,10 +904,6 @@ pub trait Visitor {
     fn leave_yul_variable_names(&mut self, _items: &YulVariableNames) {}
     // Terminals are not entered or left, since there's no children to them.
     // Instead they're just visited.
-    fn visit_abicoder_v1_keyword(&mut self, _node: &AbicoderV1Keyword) {}
-
-    fn visit_abicoder_v2_keyword(&mut self, _node: &AbicoderV2Keyword) {}
-
     fn visit_ampersand(&mut self, _node: &Ampersand) {}
 
     fn visit_ampersand_equal(&mut self, _node: &AmpersandEqual) {}
@@ -2068,12 +2064,8 @@ pub fn accept_abicoder_version(node: &AbicoderVersion, visitor: &mut impl Visito
         return;
     }
     match &node {
-        AbicoderVersion::AbicoderV1Keyword(abicoder_v1_keyword) => {
-            visitor.visit_abicoder_v1_keyword(abicoder_v1_keyword);
-        }
-        AbicoderVersion::AbicoderV2Keyword(abicoder_v2_keyword) => {
-            visitor.visit_abicoder_v2_keyword(abicoder_v2_keyword);
-        }
+        AbicoderVersion::V1 => {}
+        AbicoderVersion::V2 => {}
     }
     visitor.leave_abicoder_version(node);
 }

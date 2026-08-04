@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/duplicate-abicoder-specifier] Error: The Abicoder version has already been specified in this file.
+   ╭─[input.sol:5:17]
+   │
+ 5 │ pragma abicoder v2;
+   │                 ─┬  
+   │                  ╰── Error occurred here.
+───╯

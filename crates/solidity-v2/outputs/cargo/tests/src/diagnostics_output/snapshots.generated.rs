@@ -1666,6 +1666,59 @@ mod structure {
                 "abi_encoder_v2_strings",
             )
         }
+
+        #[test]
+        fn abicoder_v1_then_experimental() -> Result<()> {
+            run(
+                "structure/duplicate-abicoder-specifier",
+                "abicoder_v1_then_experimental",
+            )
+        }
+
+        #[test]
+        fn abicoder_v1_then_v2() -> Result<()> {
+            run(
+                "structure/duplicate-abicoder-specifier",
+                "abicoder_v1_then_v2",
+            )
+        }
+
+        #[test]
+        fn abicoder_v2() -> Result<()> {
+            run("structure/duplicate-abicoder-specifier", "abicoder_v2")
+        }
+
+        #[test]
+        fn abicoder_v2_then_experimental() -> Result<()> {
+            run(
+                "structure/duplicate-abicoder-specifier",
+                "abicoder_v2_then_experimental",
+            )
+        }
+
+        #[test]
+        fn abicoder_v2_then_v1() -> Result<()> {
+            run(
+                "structure/duplicate-abicoder-specifier",
+                "abicoder_v2_then_v1",
+            )
+        }
+
+        #[test]
+        fn experimental_then_abicoder_v1() -> Result<()> {
+            run(
+                "structure/duplicate-abicoder-specifier",
+                "experimental_then_abicoder_v1",
+            )
+        }
+
+        #[test]
+        fn experimental_then_abicoder_v2() -> Result<()> {
+            run(
+                "structure/duplicate-abicoder-specifier",
+                "experimental_then_abicoder_v2",
+            )
+        }
     }
 
     #[test]
@@ -2435,6 +2488,20 @@ mod syntax {
                 "syntax/unrecognized_experimental_feature",
                 "same_unrecognized_feature",
             )
+        }
+    }
+
+    mod unsupported_abicoder_v_1 {
+        use super::*;
+
+        #[test]
+        fn v1() -> Result<()> {
+            run("syntax/unsupported_abicoder_v1", "v1")
+        }
+
+        #[test]
+        fn v2() -> Result<()> {
+            run("syntax/unsupported_abicoder_v1", "v2")
         }
     }
 

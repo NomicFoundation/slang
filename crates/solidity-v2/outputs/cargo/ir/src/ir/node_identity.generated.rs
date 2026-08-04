@@ -623,9 +623,9 @@ impl NodeIdentity for YulVariableDeclarationValueStruct {
 impl NodeIdentity for AbicoderVersion {
     fn node_id(&self) -> Option<NodeId> {
         match self {
-            AbicoderVersion::AbicoderV1Keyword(inner) => inner.node_id(),
+            AbicoderVersion::V1 => None,
 
-            AbicoderVersion::AbicoderV2Keyword(inner) => inner.node_id(),
+            AbicoderVersion::V2 => None,
         }
     }
 }
@@ -1295,18 +1295,6 @@ impl NodeIdentity for YulStatement {
 
             YulStatement::YulExpression(inner) => inner.node_id(),
         }
-    }
-}
-
-impl NodeIdentity for AbicoderV1KeywordStruct {
-    fn node_id(&self) -> Option<NodeId> {
-        Some(self.id)
-    }
-}
-
-impl NodeIdentity for AbicoderV2KeywordStruct {
-    fn node_id(&self) -> Option<NodeId> {
-        Some(self.id)
     }
 }
 
