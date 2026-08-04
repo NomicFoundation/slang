@@ -49,19 +49,22 @@ pub fn run(
         Pass::visit_file(file, binder, language_version, diagnostics);
     }
 
-    // Once every file scope is populated, detect clashes involving the
-    // symbols brought into each file's scope through default imports (which,
-    // unlike aliased/deconstructed imports, don't register a local definition
-    // and so can't be caught while visiting a single file).
-    let file_ids = files.iter().map(|file| file.id());
-    for (file_id, range) in conflicts::find_default_import_conflicts(binder, file_ids) {
-        diagnostics.push(file_id, range, IdentifierRedeclaration);
-    }
-
     // The default-import graph is now final. Precompute each file's transitive
     // import closure once, so later passes resolve file-scope symbols with a
     // flat scan instead of re-walking the graph on every lookup.
     binder.precompute_default_import_closures();
+
+    // Once every file scope is populated and the import closures are in place,
+    // detect redeclaration clashes at file scope. These are handled here
+    // (rather than while visiting each file) because resolving them correctly
+    // may require following import aliases to declarations in other files,
+    // which are only guaranteed to be registered once all files have been
+    // visited. It runs after the closures are precomputed because following an
+    // alias resolves symbols in file scopes, which relies on them.
+    let file_ids = files.iter().map(|file| file.id());
+    for (file_id, range) in conflicts::find_file_scope_conflicts(binder, file_ids) {
+        diagnostics.push(file_id, range, IdentifierRedeclaration);
+    }
 }
 
 struct ScopeFrame {
@@ -264,17 +267,25 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     // an `IdentifierRedeclaration` diagnostic is emitted; the definition is
     // registered regardless, so later passes can still type this definition and
     // resolve references to it.
+    //
+    // Conflicts at *file* scope are not checked here: they may involve imported
+    // symbols whose target declarations live in files that haven't been visited
+    // yet, so following an alias to decide whether two names actually clash is
+    // only reliable once every file scope is populated. They are detected in a
+    // second step instead (see `conflicts::find_file_scope_conflicts`).
     fn insert_definition_in_scope(&mut self, definition: Definition, scope_id: ScopeId) {
-        let symbol = definition.identifier().unparse();
-        if conflicts::find_conflicting_solidity_definition(
-            self.binder,
-            scope_id,
-            symbol,
-            &definition,
-        )
-        .is_some()
-        {
-            self.report(definition.identifier(), IdentifierRedeclaration);
+        if !matches!(self.binder.get_scope_by_id(scope_id), Scope::File(_)) {
+            let symbol = definition.identifier().unparse();
+            if conflicts::find_conflicting_solidity_definition(
+                self.binder,
+                scope_id,
+                symbol,
+                &definition,
+            )
+            .is_some()
+            {
+                self.report(definition.identifier(), IdentifierRedeclaration);
+            }
         }
         self.binder.insert_definition_in_scope(definition, scope_id);
     }

@@ -22,8 +22,8 @@ pub(crate) use definitions::{
 pub use references::{Reference, Resolution};
 use scopes::ContractScope;
 pub(crate) use scopes::{
-    FileScope, OperatorMapping, ParameterDefinition, ParametersScope, Scope, UsingDirective,
-    UsingOperator,
+    DefaultImport, FileScope, OperatorMapping, ParameterDefinition, ParametersScope, Scope,
+    UsingDirective, UsingOperator,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

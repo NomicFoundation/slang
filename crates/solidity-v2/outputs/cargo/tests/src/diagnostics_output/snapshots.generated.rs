@@ -307,6 +307,14 @@ mod resolution {
         use super::*;
 
         #[test]
+        fn aliased_import_overload_set() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "aliased_import_overload_set",
+            )
+        }
+
+        #[test]
         fn constant_redefinition() -> Result<()> {
             run(
                 "resolution/identifier_redeclaration",
@@ -404,6 +412,22 @@ mod resolution {
         #[test]
         fn function_parameter() -> Result<()> {
             run("resolution/identifier_redeclaration", "function_parameter")
+        }
+
+        #[test]
+        fn idempotent_default_imports() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "idempotent_default_imports",
+            )
+        }
+
+        #[test]
+        fn idempotent_transitive_import() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "idempotent_transitive_import",
+            )
         }
 
         #[test]
@@ -550,6 +574,22 @@ mod resolution {
         }
 
         #[test]
+        fn local_function_overloads_default_import() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "local_function_overloads_default_import",
+            )
+        }
+
+        #[test]
+        fn local_function_overloads_import() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "local_function_overloads_import",
+            )
+        }
+
+        #[test]
         fn local_variable() -> Result<()> {
             run("resolution/identifier_redeclaration", "local_variable")
         }
@@ -565,6 +605,14 @@ mod resolution {
         #[test]
         fn modifier_overload() -> Result<()> {
             run("resolution/identifier_redeclaration", "modifier_overload")
+        }
+
+        #[test]
+        fn overloaded_and_idempotent_imports() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "overloaded_and_idempotent_imports",
+            )
         }
 
         #[test]
@@ -594,6 +642,14 @@ mod resolution {
         #[test]
         fn return_parameter() -> Result<()> {
             run("resolution/identifier_redeclaration", "return_parameter")
+        }
+
+        #[test]
+        fn single_directive_duplicate_import() -> Result<()> {
+            run(
+                "resolution/identifier_redeclaration",
+                "single_directive_duplicate_import",
+            )
         }
 
         #[test]
