@@ -3,7 +3,6 @@
   "recommendations": [
     // Language Support
     "dtsvet.vscode-wasm",
-    "igochkov.vscode-ebnf",
     "NomicFoundation.hardhat-solidity",
     "redhat.vscode-yaml",
     "rust-lang.rust-analyzer",
