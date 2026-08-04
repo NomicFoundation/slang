@@ -1224,6 +1224,70 @@ fn test_data_locations_of_state_variable_and_getter_accesses() {
 }
 
 #[test]
+fn test_external_signature_relocates_parameters_and_results() {
+    // The ABI boundary decodes a calldata-located reference into fresh memory,
+    // so an externally callable signature names both its parameters and its
+    // results there. In source order:
+    //  - `keep` — an *internal* reference is not an ABI boundary, so its
+    //    `bytes calldata` parameter and result both stay in calldata;
+    //  - `this.echo` — the same signature reached externally: parameter and
+    //    result both read back as `bytes memory`;
+    //  - `this.echo(bs)` — the call result is `bytes memory`;
+    //  - `this.echo(bs)[0]` — indexing that result reads memory rather than a
+    //    calldata offset, yielding `bytes1`.
+    let (typings, types) = type_of_expressions(
+        LanguageVersion::LATEST,
+        None,
+        Some(
+            r#"
+            bytes bs;
+            function echo(bytes calldata xs) external pure returns (bytes calldata) { return xs; }
+            function keep(bytes calldata xs) internal pure returns (bytes calldata) { return xs; }
+            "#,
+        ),
+        &["keep", "this.echo", "this.echo(bs)", "this.echo(bs)[0]"],
+    );
+    let [internal_reference, external_reference, call, indexed] = typings.as_slice() else {
+        panic!("expected four expression statements, got {typings:?}");
+    };
+
+    // Both function references carry the same declared signature, differing
+    // only in whether it was relocated for the ABI boundary.
+    let signature_locations = |typing: &Option<Type>| {
+        let Some(Type::Function(function_type)) = typing else {
+            panic!("expected a function type, got {typing:?}");
+        };
+        let [parameter_type_id] = function_type.parameter_types.as_slice() else {
+            panic!("expected a single parameter");
+        };
+        (
+            types.get_type_by_id(*parameter_type_id).clone(),
+            types.get_type_by_id(function_type.return_type).clone(),
+        )
+    };
+
+    let calldata_bytes = Type::Bytes(BytesType {
+        location: DataLocation::Calldata,
+    });
+    let memory_bytes = Type::Bytes(BytesType {
+        location: DataLocation::Memory,
+    });
+
+    assert_eq!(
+        signature_locations(internal_reference),
+        (calldata_bytes.clone(), calldata_bytes),
+        "an internal reference keeps its declared calldata locations",
+    );
+    assert_eq!(
+        signature_locations(external_reference),
+        (memory_bytes.clone(), memory_bytes.clone()),
+        "an external reference relocates both its parameter and its result",
+    );
+    assert_eq!(call, &Some(memory_bytes));
+    assert_eq!(indexed, &Some(Type::ByteArray(ByteArrayType { width: 1 })));
+}
+
+#[test]
 fn test_cast_address_to_library_is_library_typed() {
     // Casting an address to a library (`MyLib(x)`) is valid Solidity and
     // yields a value of the library type, which can then be compared against
