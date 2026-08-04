@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/unsupported-experimental-smt-checker] Error: The 'SMTChecker' experimental feature is not supported.
+   ╭─[input.sol:4:21]
+   │
+ 4 │ pragma experimental "SMTChecker";
+   │                     ──────┬─────  
+   │                           ╰─────── Error occurred here.
+───╯

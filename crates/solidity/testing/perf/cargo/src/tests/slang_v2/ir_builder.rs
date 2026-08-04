@@ -1,11 +1,14 @@
+use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit as InputSourceUnit;
 use slang_solidity_v2_ir::ir::visitor::{Visitor, accept_source_unit};
 use slang_solidity_v2_ir::ir::{self, NodeIdGenerator, SourceUnit, SourceUnitMember};
 
 use crate::dataset::SolidityProject;
+use crate::tests::slang_v2::common::parse_version;
 
 pub struct Input {
     pub(crate) project: &'static SolidityProject,
+    pub(crate) language_version: LanguageVersion,
     pub(crate) source_units: Vec<(String, InputSourceUnit)>,
 }
 
@@ -16,10 +19,12 @@ pub struct Output {
 
 pub fn setup(project: &str) -> Input {
     let project = super::parser::setup(project);
+    let language_version = parse_version(project);
     let source_units = super::parser::test(project);
 
     Input {
         project,
+        language_version,
         source_units,
     }
 }
@@ -41,7 +46,13 @@ pub fn test(input: Input) -> Output {
         let ir::BuildOutput {
             ir_root,
             diagnostics,
-        } = ir::build(&name.as_str().into(), &source, contents, &mut id_generator);
+        } = ir::build(
+            &name.as_str().into(),
+            &source,
+            contents,
+            input.language_version,
+            &mut id_generator,
+        );
 
         assert!(
             diagnostics.is_empty(),

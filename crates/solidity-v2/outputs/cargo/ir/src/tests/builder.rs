@@ -39,6 +39,7 @@ contract MyContract {
         &"test.sol".into(),
         &source_unit,
         &CONTENTS,
+        LanguageVersion::LATEST,
         &mut id_generator,
     );
 
@@ -124,6 +125,7 @@ contract MyContract {
         &"test.sol".into(),
         &source_unit,
         &CONTENTS,
+        LanguageVersion::LATEST,
         &mut id_generator,
     );
     assert!(
@@ -172,6 +174,7 @@ contract Test is Base layout at 0 {}
         &"test.sol".into(),
         &source_unit,
         &CONTENTS,
+        LanguageVersion::LATEST,
         &mut id_generator,
     );
 
@@ -247,6 +250,7 @@ contract Test {
         &"test.sol".into(),
         &source_unit,
         &CONTENTS,
+        LanguageVersion::LATEST,
         &mut id_generator,
     );
 

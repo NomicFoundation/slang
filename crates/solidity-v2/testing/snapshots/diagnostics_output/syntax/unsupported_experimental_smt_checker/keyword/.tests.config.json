@@ -1,0 +1,14 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "Till",
+          "till": "0.8.4"
+        },
+        "reason": "Slang is intentionally stricter than solc here: we don't support the `SMTChecker` experimental feature, so we report an error where solc succeeds. From '0.8.4' onwards, solc reports its own deprecation warning, so both agree on failing."
+      }
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.21'.
+   ╭─[input.sol:4:21]
+   │
+ 4 │ pragma experimental solidity;
+   │                     ────┬───  
+   │                         ╰───── Error occurred here.
+───╯
+
+[syntax/unrecognized-experimental-feature] Error: Unrecognized experimental feature.
+   ╭─[input.sol:5:21]
+   │
+ 5 │ pragma experimental "solidity";
+   │                     ─────┬────  
+   │                          ╰────── Error occurred here.
+───╯

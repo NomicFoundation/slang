@@ -4,6 +4,7 @@ mod conflicting_mapping_parameter_name;
 mod constructor_not_in_contract;
 mod continue_outside_loop;
 mod contract_should_be_abstract;
+mod duplicate_abicoder_specifier;
 mod duplicate_catch_clause;
 mod duplicate_named_argument;
 mod duplicate_switch_default_case;
@@ -61,6 +62,7 @@ pub use conflicting_mapping_parameter_name::ConflictingMappingParameterName;
 pub use constructor_not_in_contract::ConstructorNotInContract;
 pub use continue_outside_loop::ContinueOutsideLoop;
 pub use contract_should_be_abstract::ContractShouldBeAbstract;
+pub use duplicate_abicoder_specifier::DuplicateAbicoderSpecifier;
 pub use duplicate_catch_clause::{CatchClauseKind, DuplicateCatchClause};
 pub use duplicate_named_argument::DuplicateNamedArgument;
 pub use duplicate_switch_default_case::DuplicateSwitchDefaultCase;
@@ -273,5 +275,9 @@ define_diagnostic_kind! {
         DuplicateSwitchDefaultCase(DuplicateSwitchDefaultCase),
         /// A Yul `switch` statement declared a `value` case after its `default` case.
         TrailingSwitchValueCase(TrailingSwitchValueCase),
+
+        /// A diagnostic that is emitted when `pragma experimental ABIEncoderV2` or
+        /// `pragma abicoder v2` is specified more than once in a Solidity source file.
+        DuplicateAbicoderSpecifier(DuplicateAbicoderSpecifier),
     }
 }

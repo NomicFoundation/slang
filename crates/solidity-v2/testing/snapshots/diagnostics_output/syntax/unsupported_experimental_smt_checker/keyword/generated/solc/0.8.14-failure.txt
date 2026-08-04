@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[Warning 5523] Warning: The SMTChecker pragma has been deprecated and will be removed in the future. Please use the "model checker engine" compiler setting to activate the SMTChecker instead. If the pragma is enabled, all engines will be used.
+   ╭─[input.sol:4:1]
+   │
+ 4 │ pragma experimental SMTChecker;
+   │ ───────────────┬───────────────  
+   │                ╰───────────────── Error occurred here.
+───╯
+
+[Warning 8158] Warning: z3 was selected as a Horn solver for CHC analysis but libz3.so.4.8 was not found.

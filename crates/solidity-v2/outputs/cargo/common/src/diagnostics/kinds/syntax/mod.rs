@@ -10,6 +10,9 @@ mod multiple_virtual_specifiers;
 mod multiple_visibility_specifiers;
 mod unexpected_eof;
 mod unexpected_terminal;
+mod unrecognized_experimental_feature;
+mod unsupported_experimental_smt_checker;
+mod unsupported_experimental_solidity;
 
 pub use expected_array_length_expression::ExpectedArrayLengthExpression;
 pub use incompatible_syntax_version::IncompatibleSyntaxVersion;
@@ -24,6 +27,9 @@ pub use multiple_visibility_specifiers::MultipleVisibilitySpecifiers;
 use serde::Serialize;
 pub use unexpected_eof::UnexpectedEof;
 pub use unexpected_terminal::UnexpectedTerminal;
+pub use unrecognized_experimental_feature::UnrecognizedExperimentalFeature;
+pub use unsupported_experimental_smt_checker::UnsupportedExperimentalSmtChecker;
+pub use unsupported_experimental_solidity::UnsupportedExperimentalSolidity;
 
 use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
@@ -67,5 +73,12 @@ define_diagnostic_kind! {
         MoreThanOneInheritanceList(MoreThanOneInheritanceList),
         /// A contract declared more than one storage layout (`layout at`) specifier.
         MoreThanOneStorageLayout(MoreThanOneStorageLayout),
+
+        /// A `pragma experimental` named a feature that Slang does not recognize.
+        UnrecognizedExperimentalFeature(UnrecognizedExperimentalFeature),
+        /// A `pragma experimental solidity`, which Slang does not support.
+        UnsupportedExperimentalSolidity(UnsupportedExperimentalSolidity),
+        /// A `pragma experimental SMTChecker`, which Slang does not support.
+        UnsupportedExperimentalSmtChecker(UnsupportedExperimentalSmtChecker),
     }
 }
