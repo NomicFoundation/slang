@@ -3,15 +3,21 @@
 //! [`find_conflicting_solidity_definition`] is the scope-walk used when
 //! registering each Solidity definition: it answers "may I declare this name
 //! here?". The search is bounded to the *local lexical chain* — it stops at
-//! lexical and namespace boundaries (block/contract/file/struct/enum), since
+//! lexical and namespace boundaries (block/contract/struct/enum), since
 //! shadowing an outer Solidity scope is legal, and continues *past*
 //! non-conflicting hits (overloads).
 //!
-//! The rest of this module handles file-level clashes specific to *default
-//! imports* — symbols brought into a file's scope through unqualified
-//! `import "file";` directives. That is separate because it runs as a second
-//! step once every file scope is populated, and it needs provenance (which
-//! import directive brought a symbol in) that `Resolution` discards.
+//! The rest of this module handles *file-level* clashes, via
+//! [`find_file_scope_conflicts`]. Those are separate because they run as a
+//! second step once every file scope is populated: deciding whether two
+//! file-level names clash may require following an import alias into a file
+//! that hasn't been visited yet, and clashes involving default imports need
+//! provenance (which import directive brought a symbol in) that `Resolution`
+//! discards.
+//!
+//! Both parts share the same pairwise primitives from
+//! [`crate::passes::common::conflicts`]; the file-level detectors wrap them
+//! with alias-following (see [`aliased_definitions_conflict`]).
 
 use std::collections::VecDeque;
 use std::ops::Range;
@@ -20,7 +26,7 @@ use slang_solidity_v2_common::collections::{Map, Set};
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 
-use crate::binder::{Binder, Definition, FileScope, Scope, ScopeId};
+use crate::binder::{Binder, DefaultImport, Definition, FileScope, Resolution, Scope, ScopeId};
 use crate::passes::common::conflicts::{conflicting_definition, first_conflicting_definition};
 
 // Looks for a previously-registered definition that conflicts with a Solidity
@@ -91,10 +97,12 @@ pub(super) fn find_conflicting_solidity_definition(
             .definitions
             .get(symbol)
             .and_then(|existing| first_conflicting_definition(binder, existing, new_definition)),
-        Scope::File(file_scope) => file_scope
-            .definitions
-            .get(symbol)
-            .and_then(|existing| first_conflicting_definition(binder, existing, new_definition)),
+        // File-scope conflicts are detected by `find_file_scope_conflicts`
+        // once every file scope is populated, so the walk never starts (nor
+        // ends up) here.
+        Scope::File(_) => {
+            unreachable!("file-scope conflicts are checked after all files are visited")
+        }
         Scope::Enum(enum_scope) => enum_scope
             .definitions
             .get(symbol)
@@ -113,25 +121,25 @@ pub(super) fn find_conflicting_solidity_definition(
     }
 }
 
-// Detects clashes involving the symbols brought into a file's scope through
-// (unqualified) default imports.
+// Detects redeclaration clashes at file scope, once every file scope has been
+// populated.
 //
-// Unlike aliased or deconstructed imports — which register a local
-// definition and are therefore caught while collecting definitions — a
-// default import (`import "file";`) makes *all* of the imported file's
-// symbols available without a local definition. A clash can only be
-// detected once every file scope is populated, so this runs as a second
-// step after all files have been visited.
+// This covers three kinds of clash:
 //
-// Two kinds of clash are detected for each file: between symbols brought in
-// by two different import directives (reported at the later directive, like
-// solc does), and between the file's own declarations and an imported symbol
-// (reported at the local declaration).
+//  * between two of a file's own declarations sharing a name — including
+//    aliased/deconstructed imported symbols, which register a local definition;
+//  * between symbols brought in by two different (unqualified) default import
+//    directives (reported at the later directive, like solc does);
+//  * between the file's own declarations and a symbol brought into scope
+//    through a default import (reported at the local declaration).
 //
-// Returns the list of `(file_id, range)` pairs locating each conflict,
-// ordered deterministically (by the given file order, then directive order,
-// then symbol name).
-pub(super) fn find_default_import_conflicts<'a>(
+// Every comparison follows import aliases to the underlying declarations, so
+// re-importing the *same* declaration through several paths is idempotent, and
+// several free functions (or events) sharing a name form an overload set rather
+// than a redeclaration — matching solc.
+//
+// Returns the list of `(file_id, range)` pairs locating each conflict.
+pub(super) fn find_file_scope_conflicts<'a>(
     binder: &Binder,
     file_ids: impl Iterator<Item = &'a FileId>,
 ) -> Vec<(FileId, Range<usize>)> {
@@ -139,18 +147,112 @@ pub(super) fn find_default_import_conflicts<'a>(
 
     for file_id in file_ids {
         let file_scope = binder.get_file_scope(file_id);
+
+        find_own_declaration_conflicts(binder, file_scope, &mut conflicts);
+
         if file_scope.default_imports.is_empty() {
             continue;
         }
-        if file_scope.default_imports.len() > 1 {
+
+        // Collect the scopes each directive transitively brings in once; both
+        // import detectors below iterate them.
+        let directive_scopes: Vec<(&DefaultImport, Vec<&FileScope>)> = file_scope
+            .default_imports
+            .iter()
+            .map(|import| {
+                let imported_scopes =
+                    transitive_file_scopes(binder, &import.file_id, &file_scope.file_id);
+                (import, imported_scopes)
+            })
+            .collect();
+
+        if directive_scopes.len() > 1 {
             // Look for conflicts among imported symbols if there is more than
             // one default import
-            find_imported_symbol_conflicts(binder, file_scope, &mut conflicts);
+            find_imported_symbol_conflicts(binder, file_scope, &directive_scopes, &mut conflicts);
         }
-        find_local_definition_conflicts(binder, file_scope, &mut conflicts);
+        find_local_definition_conflicts(binder, file_scope, &directive_scopes, &mut conflicts);
     }
 
     conflicts
+}
+
+// Follows any import aliases starting at `definition_id` and returns the
+// underlying declaration(s) it ultimately refers to. A non-import definition
+// resolves to itself.
+//
+// An imported symbol whose target cannot be resolved — because the import
+// path didn't resolve to a file (which gets its own diagnostic), or because
+// the imported file doesn't declare the symbol — also falls back to itself.
+// This keeps the unresolvable import a distinct opaque declaration that
+// conflicts with anything else sharing its name (the pre-alias-following
+// behaviour), rather than treating it as compatible with everything.
+fn resolved_targets(binder: &Binder, definition_id: NodeId) -> Vec<NodeId> {
+    let targets = binder
+        .follow_symbol_aliases(Resolution::Definition(definition_id))
+        .get_definition_ids();
+    if targets.is_empty() {
+        vec![definition_id]
+    } else {
+        targets
+    }
+}
+
+// Whether declaring `new_id` under the same name as the already-visible
+// `existing_id` is a redeclaration, resolving both through any import aliases
+// first. They may legally coexist when every underlying declaration pair is
+// either the very same declaration (an idempotent re-import) or a legal
+// overload, as decided by the shared `conflicting_definition` primitive.
+fn aliased_definitions_conflict(binder: &Binder, existing_id: NodeId, new_id: NodeId) -> bool {
+    let existing_targets = resolved_targets(binder, existing_id);
+
+    resolved_targets(binder, new_id).iter().any(|&new| {
+        let new_definition = binder
+            .find_definition_by_id(new)
+            .expect("definition is registered");
+        existing_targets
+            .iter()
+            // The same underlying declaration reached through both names is
+            // not a conflict.
+            .filter(|&&existing| existing != new)
+            .any(|&existing| conflicting_definition(binder, existing, new_definition).is_some())
+    })
+}
+
+// Returns whether `new_id` conflicts with any of `existing_ids`; the
+// alias-following counterpart of `first_conflicting_definition`.
+fn any_aliased_conflict(binder: &Binder, existing_ids: &[NodeId], new_id: NodeId) -> bool {
+    existing_ids
+        .iter()
+        .any(|&existing_id| aliased_definitions_conflict(binder, existing_id, new_id))
+}
+
+// Detects clashes between two of a file's own declarations sharing a name. Each
+// declaration is checked against the earlier ones (in source order), and a
+// clash is reported at the later declaration, matching solc. Aliased imported
+// symbols participate here too, following their aliases so that idempotent
+// re-imports and function/event overload sets don't count as redeclarations.
+fn find_own_declaration_conflicts(
+    binder: &Binder,
+    file_scope: &FileScope,
+    conflicts: &mut Vec<(FileId, Range<usize>)>,
+) {
+    for definition_ids in file_scope.definitions.values() {
+        if definition_ids.len() < 2 {
+            continue;
+        }
+        for (index, &new_id) in definition_ids.iter().enumerate() {
+            if any_aliased_conflict(binder, &definition_ids[..index], new_id) {
+                let new_definition = binder
+                    .find_definition_by_id(new_id)
+                    .expect("definition is registered");
+                conflicts.push((
+                    file_scope.file_id.clone(),
+                    new_definition.identifier().range.clone(),
+                ));
+            }
+        }
+    }
 }
 
 // Detects clashes between symbols brought in by two different default import
@@ -161,17 +263,16 @@ pub(super) fn find_default_import_conflicts<'a>(
 // brought in by a single directive (those are reported when processing the
 // imported file itself).
 fn find_imported_symbol_conflicts<'a>(
-    binder: &'a Binder,
-    file_scope: &'a FileScope,
+    binder: &Binder,
+    file_scope: &FileScope,
+    directive_scopes: &[(&DefaultImport, Vec<&'a FileScope>)],
     conflicts: &mut Vec<(FileId, Range<usize>)>,
 ) {
     // All the symbols imported by the directives processed so far.
     let mut seen: Map<&'a str, Vec<NodeId>> = Map::default();
 
-    let mut import_iter = file_scope.default_imports.iter().peekable();
-    while let Some(import) = import_iter.next() {
-        let imported_scopes = transitive_file_scopes(binder, &import.file_id, &file_scope.file_id);
-
+    let mut import_iter = directive_scopes.iter().peekable();
+    while let Some((import, imported_scopes)) = import_iter.next() {
         // Gather the symbols this directive brings in. We don't care about them
         // being sorted because if there's any conflict we will report the
         // conflict on the import directive anyway.
@@ -198,10 +299,7 @@ fn find_imported_symbol_conflicts<'a>(
                     // The same definition is visible through an earlier directive.
                     continue;
                 }
-                let definition = binder
-                    .find_definition_by_id(definition_id)
-                    .expect("definition is registered");
-                if first_conflicting_definition(binder, seen_ids, definition).is_some() {
+                if any_aliased_conflict(binder, seen_ids, definition_id) {
                     conflicts.push((file_scope.file_id.clone(), import.range.clone()));
                     // If we found a conflict produced by this import directive,
                     // we report it only once and stop looking for more
@@ -231,18 +329,10 @@ fn find_imported_symbol_conflicts<'a>(
 fn find_local_definition_conflicts(
     binder: &Binder,
     file_scope: &FileScope,
+    directive_scopes: &[(&DefaultImport, Vec<&FileScope>)],
     conflicts: &mut Vec<(FileId, Range<usize>)>,
 ) {
-    let default_imports_scopes: Vec<_> = file_scope
-        .default_imports
-        .iter()
-        .map(|default_import| {
-            let imported_scopes =
-                transitive_file_scopes(binder, &default_import.file_id, &file_scope.file_id);
-            (default_import, imported_scopes)
-        })
-        .collect();
-    if default_imports_scopes
+    if directive_scopes
         .iter()
         .all(|(_, imported_scopes)| imported_scopes.is_empty())
     {
@@ -251,7 +341,7 @@ fn find_local_definition_conflicts(
 
     let symbols: Vec<&String> = file_scope.definitions.keys().collect();
     for symbol in symbols {
-        for (default_import, imported_scopes) in &default_imports_scopes {
+        for (default_import, imported_scopes) in directive_scopes {
             let imported: Vec<NodeId> = imported_scopes
                 .iter()
                 .flat_map(|scope| scope.lookup_symbol(symbol))
@@ -261,16 +351,18 @@ fn find_local_definition_conflicts(
             }
 
             for &local_id in &file_scope.definitions[symbol] {
-                let local_definition = binder
-                    .find_definition_by_id(local_id)
-                    .expect("local definition is registered");
-                if first_conflicting_definition(binder, &imported, local_definition).is_some() {
+                if any_aliased_conflict(binder, &imported, local_id) {
                     // Report the conflict on the definition if it appears later
                     // in the file (most common case). Otherwise, report the
                     // conflict on the import.
+                    let local_definition_range = &binder
+                        .find_definition_by_id(local_id)
+                        .expect("local definition is registered")
+                        .identifier()
+                        .range;
                     let conflict_range =
-                        if local_definition.identifier().range.start > default_import.range.start {
-                            local_definition.identifier().range.clone()
+                        if local_definition_range.start > default_import.range.start {
+                            local_definition_range.clone()
                         } else {
                             default_import.range.clone()
                         };
