@@ -32,34 +32,45 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         .map(|part| (part.name.into(), part.contents.to_string()))
         .collect();
 
-    let config = TestConfig::resolve(&test_dir)?;
-    let solc_versions: SortedSet<Version> = match config.matrix {
-        TestMatrix::SingleTargetAllVersions { .. } => {
+    let test_config = TestConfig::resolve(&test_dir)?;
+    let solc_versions: SortedSet<Version> = match test_config.matrix {
+        TestMatrix::SingleTargetAllVersions(_) => {
             LanguageVersion::ALL.iter().map(|v| (*v).into()).collect()
         }
-        TestMatrix::SingleVersionAllTargets { version } => SortedSet::from_iter([version.into()]),
+        TestMatrix::SingleVersionAllTargets(ref matrix) => {
+            SortedSet::from_iter([matrix.version.into()])
+        }
     };
 
     let slang_target = SlangTarget;
     let solc_target = SolcTarget::new(solc_versions)?;
-    let slang_subdir = format!("generated/{}", slang_target.name());
-    let solc_subdir = format!("generated/{}", solc_target.name());
 
-    let slang_outcomes =
-        snapshots::generate_snapshots(&test_dir, &mut fs, &slang_subdir, |version, target| {
+    let slang_outcomes = snapshots::generate_snapshots(
+        &test_dir,
+        &mut fs,
+        &test_config,
+        &format!("generated/{}", slang_target.name()),
+        |version, target| {
             let errors = slang_target.collect_diagnostics(&files, version, target)?;
             Ok(make_outcome(version, target, &errors))
-        })?;
-    let solc_outcomes =
-        snapshots::generate_snapshots(&test_dir, &mut fs, &solc_subdir, |version, target| {
+        },
+    )?;
+
+    let solc_outcomes = snapshots::generate_snapshots(
+        &test_dir,
+        &mut fs,
+        &test_config,
+        &format!("generated/{}", solc_target.name()),
+        |version, target| {
             let errors = solc_target.collect_diagnostics(&files, version, target)?;
             Ok(make_outcome(version, target, &errors))
-        })?;
+        },
+    )?;
 
     compare_outcomes(
         group_name,
         test_name,
-        config,
+        &test_config,
         &slang_outcomes,
         &solc_outcomes,
     )
@@ -95,58 +106,64 @@ fn make_outcome(
 fn compare_outcomes(
     group_name: &str,
     test_name: &str,
-    config: TestConfig,
+    config: &TestConfig,
     slang_outcomes: &[SnapshotOutcome],
     solc_outcomes: &[SnapshotOutcome],
 ) -> Result<()> {
     // Both runs iterate the same axis in the same order.
     assert_eq!(slang_outcomes.len(), solc_outcomes.len());
-    let statuses_match = slang_outcomes
-        .iter()
-        .zip(solc_outcomes)
-        .all(|(slang, solc)| slang.status == solc.status);
-    if statuses_match {
-        if config.expected_solc_divergence {
-            bail!(
-                "`{group_name}/{test_name}` is marked `expected_solc_divergence`, but slang and \
-                 solc agree on every compilation status. Remove the marker."
-            );
-        }
-        return Ok(());
-    }
-    if config.expected_solc_divergence {
-        return Ok(());
-    }
 
-    let mut message = String::new();
-    writeln!(
-        message,
-        "slang and solc disagree on the compilation status of `{group_name}/{test_name}`."
-    )?;
-    writeln!(message)?;
+    let mut report = String::new();
+    let mut is_valid = true;
 
     for (slang, solc) in slang_outcomes.iter().zip(solc_outcomes) {
-        debug_assert_eq!(slang.version, solc.version);
-        debug_assert_eq!(slang.target, solc.target);
+        assert_eq!(slang.version, solc.version);
+        assert_eq!(slang.target, solc.target);
 
-        let label = match config.matrix {
-            TestMatrix::SingleTargetAllVersions { .. } => slang.version.to_string(),
-            TestMatrix::SingleVersionAllTargets { .. } => slang.target.to_string(),
+        let (label, expected_divergence) = match &config.matrix {
+            TestMatrix::SingleTargetAllVersions(matrix) => (
+                slang.version.to_string(),
+                matrix
+                    .expected_solc_divergence
+                    .iter()
+                    .any(|specifier| specifier.contains(slang.version)),
+            ),
+            TestMatrix::SingleVersionAllTargets(matrix) => (
+                slang.target.to_string(),
+                matrix
+                    .expected_solc_divergence
+                    .iter()
+                    .any(|specifier| specifier.contains(slang.target)),
+            ),
         };
 
-        let slang_status = slang.status;
-        let solc_status = solc.status;
-        let outcome = if slang_status == solc_status {
-            "match"
-        } else {
-            "differ"
-        };
+        let found_divergence = slang.status != solc.status;
 
-        writeln!(
-            message,
-            "  {label}: slang={slang_status:?}, solc={solc_status:?} ({outcome})"
-        )?;
+        if found_divergence != expected_divergence {
+            is_valid = false;
+
+            writeln!(
+                report,
+                "  - {label}: slang={slang_status:?}, solc={solc_status:?} ({outcome})",
+                slang_status = slang.status,
+                solc_status = solc.status,
+                outcome = match (found_divergence, expected_divergence) {
+                    (false, false) => "statuses match, as expected",
+                    (true, true) => "statuses differ, as expected",
+                    (true, false) => "ERROR: unexpected status divergence",
+                    (false, true) => "ERROR: expected status divergence no longer happens",
+                }
+            )?;
+        }
     }
 
-    bail!(message)
+    if is_valid {
+        return Ok(());
+    }
+
+    bail!(
+        "The status divergence between slang and solc in `{group_name}/{test_name}` doesn't match \
+         the `expected_solc_divergence` in its `.tests.config.json`:\
+         \n\n{report}\n\n"
+    )
 }

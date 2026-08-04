@@ -142,36 +142,68 @@ Then commit the updated snapshots alongside your code change.
 
 ### V2 Snapshot `.tests.config.json`
 
-V2 test runner resolves a per-test `.tests.config.json` to pick which
-`(LanguageVersion, EvmTarget)` matrix axis to vary; the other axis is
-pinned. Resolution searches next to the test's `input.sol` and then each
-parent directory up to the owning crate root, erroring if none is found —
-so each suite defines one at its root.
+V2 test runner resolves a per-test `.tests.config.json`, by visiting the
+file next to the test's `input.sol` and then in each parent directory, up
+to the owning crate root.
 
-The config has a single `matrix` field with two shapes. Pin the target,
-iterate every language version:
+Every field is optional and resolved independently, with the closest
+config file providing it winning — so a nested config only needs to
+override the individual fields it cares about.
 
-```json
-{
-    "matrix": {
-        "type": "SingleTargetAllVersions",
-        "target": "Istanbul",
-        "reason": "Explain why this target was pinned..."
+Fields:
+
+- `matrix` picks which `(LanguageVersion, EvmTarget)` axis to vary; the
+  other axis is pinned by a `target`/`version` object holding its `value` and
+  a `reason`. It is required: resolution fails if no config file in the chain
+  provides it, so each suite defines it at its root.
+
+    Pin the target, iterating every language version:
+
+    ```json
+    {
+        "matrix": {
+            "type": "SingleTargetAllVersions",
+            "target": {
+                "value": "Istanbul",
+                "reason": "Explain why this target was pinned..."
+            }
+        }
     }
-}
-```
+    ```
 
-Or pin the version, iterate every EVM target:
+    Or pin the version, iterating every EVM target:
 
-```json
-{
-    "matrix": {
-        "type": "SingleVersionAllTargets",
-        "version": "0.8.35",
-        "reason": "Explain why this version was pinned..."
+    ```json
+    {
+        "matrix": {
+            "type": "SingleVersionAllTargets",
+            "version": {
+                "value": "0.8.35",
+                "reason": "Explain why this version was pinned..."
+            }
+        }
     }
-}
-```
+    ```
+
+    Both variants accept an optional `expected_solc_divergence` list,
+    declaring where slang and solc are expected to disagree on the status
+    (success/failure) of a snapshot — for diagnostics where Slang is
+    intentionally stricter/looser than solc. Each entry has a `reason`, and a
+    `specifier` ( `EvmTargetSpecifier` or `LanguageVersionSpecifier`).
+
+    ```json
+    {
+        "matrix": {
+            "type": "SingleTargetAllVersions",
+            "expected_solc_divergence": [
+                {
+                    "specifier": { "type": "Till", "till": "0.8.4" },
+                    "reason": "Explain why slang and solc are expected to disagree..."
+                }
+            ]
+        }
+    }
+    ```
 
 ## Important Gotchas
 

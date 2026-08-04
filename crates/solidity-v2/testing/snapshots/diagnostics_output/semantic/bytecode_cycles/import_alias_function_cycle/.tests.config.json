@@ -1,8 +1,14 @@
 {
   "matrix": {
     "type": "SingleTargetAllVersions",
-    "target": "Istanbul",
-    "reason": "Using the latest EVM target supported by solc '0.8.0', to avoid triggering any additional 'Evm Version not supported' errors when comparing outputs."
-  },
-  "expected_solc_divergence": "Before '0.8.4' solc recorded dependencies only for expressions written inside contracts, so the `new A()` inside the free function is never attributed and it accepts this program, then fails with an internal error during code generation. Since '0.8.4' solc follows the call from `f` and reports the cycle like slang."
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "Till",
+          "till": "0.8.4"
+        },
+        "reason": "Before '0.8.4' solc recorded dependencies only for expressions written inside contracts, so the `new A()` inside the free function is never attributed and it accepts this program, then fails with an internal error during code generation. Since '0.8.4' solc follows the call from `f` and reports the cycle like slang."
+      }
+    ]
+  }
 }

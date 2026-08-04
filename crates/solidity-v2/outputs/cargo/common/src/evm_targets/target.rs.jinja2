@@ -1,10 +1,10 @@
 use std::fmt::{Display, Formatter};
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 /// All supported EVM targets of `{{ model.language.name }}`, in chronological order.
-#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Serialize)]
+#[derive(Clone, Copy, Debug, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
 pub enum EvmTarget {
     {% for evm_target in model.language.evm_targets %}
         {{ evm_target }} = {{ loop.index0 }},

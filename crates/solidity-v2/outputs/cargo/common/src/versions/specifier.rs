@@ -1,8 +1,9 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::versions::LanguageVersion;
 
-#[derive(Clone, Debug, Eq, PartialEq, PartialOrd, Ord, Serialize)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, PartialOrd, Ord, Serialize)]
+#[serde(tag = "type")]
 pub enum LanguageVersionSpecifier {
     From {
         from: LanguageVersion,

@@ -32,20 +32,19 @@ pub struct SnapshotOutcome {
 pub fn generate_snapshots<F>(
     test_dir: &Path,
     fs: &mut CodegenFileSystem,
+    config: &TestConfig,
     output_subdir: &str,
     run: F,
 ) -> Result<Vec<SnapshotOutcome>>
 where
     F: FnMut(LanguageVersion, EvmTarget) -> Result<SnapshotOutcome>,
 {
-    let config = TestConfig::resolve(test_dir)?;
-
-    match config.matrix {
-        TestMatrix::SingleTargetAllVersions { target } => {
-            iterate_versions(test_dir, fs, output_subdir, target, run)
+    match &config.matrix {
+        TestMatrix::SingleTargetAllVersions(matrix) => {
+            iterate_versions(test_dir, fs, output_subdir, matrix.target, run)
         }
-        TestMatrix::SingleVersionAllTargets { version } => {
-            iterate_targets(test_dir, fs, output_subdir, version, run)
+        TestMatrix::SingleVersionAllTargets(matrix) => {
+            iterate_targets(test_dir, fs, output_subdir, matrix.version, run)
         }
     }
 }

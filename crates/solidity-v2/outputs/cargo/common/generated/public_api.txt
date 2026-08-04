@@ -3373,6 +3373,8 @@ impl core::marker::Copy for slang_solidity_v2_common::evm_targets::EvmTarget
 impl core::marker::StructuralPartialEq for slang_solidity_v2_common::evm_targets::EvmTarget
 impl serde_core::ser::Serialize for slang_solidity_v2_common::evm_targets::EvmTarget
 pub fn slang_solidity_v2_common::evm_targets::EvmTarget::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for slang_solidity_v2_common::evm_targets::EvmTarget
+pub fn slang_solidity_v2_common::evm_targets::EvmTarget::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
 pub enum slang_solidity_v2_common::evm_targets::EvmTargetConversionError
 pub slang_solidity_v2_common::evm_targets::EvmTargetConversionError::UnrecognizedEvmTarget
 impl core::clone::Clone for slang_solidity_v2_common::evm_targets::EvmTargetConversionError
@@ -3413,6 +3415,8 @@ pub fn slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::fmt(&self, &mu
 impl core::marker::StructuralPartialEq for slang_solidity_v2_common::evm_targets::EvmTargetSpecifier
 impl serde_core::ser::Serialize for slang_solidity_v2_common::evm_targets::EvmTargetSpecifier
 pub fn slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for slang_solidity_v2_common::evm_targets::EvmTargetSpecifier
+pub fn slang_solidity_v2_common::evm_targets::EvmTargetSpecifier::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
 pub mod slang_solidity_v2_common::files
 pub struct slang_solidity_v2_common::files::FileId(_)
 impl slang_solidity_v2_common::files::FileId
@@ -3768,6 +3772,8 @@ impl core::marker::Copy for slang_solidity_v2_common::versions::LanguageVersion
 impl core::marker::StructuralPartialEq for slang_solidity_v2_common::versions::LanguageVersion
 impl serde_core::ser::Serialize for slang_solidity_v2_common::versions::LanguageVersion
 pub fn slang_solidity_v2_common::versions::LanguageVersion::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for slang_solidity_v2_common::versions::LanguageVersion
+pub fn slang_solidity_v2_common::versions::LanguageVersion::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
 pub enum slang_solidity_v2_common::versions::LanguageVersionConversionError
 pub slang_solidity_v2_common::versions::LanguageVersionConversionError::UnexpectedMetadata
 pub slang_solidity_v2_common::versions::LanguageVersionConversionError::UnsupportedVersion
@@ -3813,3 +3819,5 @@ pub fn slang_solidity_v2_common::versions::LanguageVersionSpecifier::fmt(&self, 
 impl core::marker::StructuralPartialEq for slang_solidity_v2_common::versions::LanguageVersionSpecifier
 impl serde_core::ser::Serialize for slang_solidity_v2_common::versions::LanguageVersionSpecifier
 pub fn slang_solidity_v2_common::versions::LanguageVersionSpecifier::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for slang_solidity_v2_common::versions::LanguageVersionSpecifier
+pub fn slang_solidity_v2_common::versions::LanguageVersionSpecifier::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>

@@ -1,7 +1,9 @@
 {
   "matrix": {
     "type": "SingleTargetAllVersions",
-    "target": "Istanbul",
-    "reason": "Using the latest EVM target supported by solc '0.8.0', to avoid triggering any additional 'Evm Version not supported' errors when comparing outputs."
+    "target": {
+      "value": "Istanbul",
+      "reason": "Using the latest EVM target supported by solc '0.8.0', to avoid triggering any additional 'Evm Version not supported' errors when comparing outputs."
+    }
   }
 }
