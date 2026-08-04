@@ -1503,7 +1503,8 @@ pub struct YulSwitchStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub expression: YulExpression,
-    pub cases: YulSwitchCases,
+    pub value_cases: YulValueCases,
+    pub default_case: Option<YulDefaultCase>,
 }
 
 impl YulSwitchStatementStruct {
@@ -2142,12 +2143,6 @@ pub enum YulStatement {
     YulExpression(YulExpression),
 }
 
-#[derive(Clone, Debug)]
-pub enum YulSwitchCase {
-    YulDefaultCase(YulDefaultCase),
-    YulValueCase(YulValueCase),
-}
-
 //
 // Repeated & Separated
 //
@@ -2218,7 +2213,7 @@ pub type YulPaths = Arc<[YulPath]>;
 
 pub type YulStatements = Arc<[YulStatement]>;
 
-pub type YulSwitchCases = Arc<[YulSwitchCase]>;
+pub type YulValueCases = Arc<[YulValueCase]>;
 
 pub type YulVariableNames = Arc<[Identifier]>;
 

@@ -1298,16 +1298,6 @@ impl NodeIdentity for YulStatement {
     }
 }
 
-impl NodeIdentity for YulSwitchCase {
-    fn node_id(&self) -> Option<NodeId> {
-        match self {
-            YulSwitchCase::YulDefaultCase(inner) => inner.node_id(),
-
-            YulSwitchCase::YulValueCase(inner) => inner.node_id(),
-        }
-    }
-}
-
 impl NodeIdentity for ABIEncoderV2KeywordStruct {
     fn node_id(&self) -> Option<NodeId> {
         Some(self.id)

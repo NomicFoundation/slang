@@ -720,11 +720,6 @@ pub trait Visitor {
     }
     fn leave_yul_statement(&mut self, _node: &YulStatement) {}
 
-    fn enter_yul_switch_case(&mut self, _node: &YulSwitchCase) -> bool {
-        true
-    }
-    fn leave_yul_switch_case(&mut self, _node: &YulSwitchCase) {}
-
     fn enter_array_values(&mut self, _items: &ArrayValues) -> bool {
         true
     }
@@ -896,10 +891,10 @@ pub trait Visitor {
     }
     fn leave_yul_statements(&mut self, _items: &YulStatements) {}
 
-    fn enter_yul_switch_cases(&mut self, _items: &YulSwitchCases) -> bool {
+    fn enter_yul_value_cases(&mut self, _items: &YulValueCases) -> bool {
         true
     }
-    fn leave_yul_switch_cases(&mut self, _items: &YulSwitchCases) {}
+    fn leave_yul_value_cases(&mut self, _items: &YulValueCases) {}
 
     fn enter_yul_variable_names(&mut self, _items: &YulVariableNames) -> bool {
         true
@@ -1876,7 +1871,10 @@ pub fn accept_yul_switch_statement(node: &YulSwitchStatement, visitor: &mut impl
         return;
     }
     accept_yul_expression(&node.expression(), visitor);
-    accept_yul_switch_cases(&node.cases(), visitor);
+    accept_yul_value_cases(&node.value_cases(), visitor);
+    if let Some(ref default_case) = node.default_case() {
+        accept_yul_default_case(default_case, visitor);
+    }
     visitor.leave_yul_switch_statement(node);
 }
 
@@ -2774,21 +2772,6 @@ pub fn accept_yul_statement(node: &YulStatement, visitor: &mut impl Visitor) {
     visitor.leave_yul_statement(node);
 }
 
-pub fn accept_yul_switch_case(node: &YulSwitchCase, visitor: &mut impl Visitor) {
-    if !visitor.enter_yul_switch_case(node) {
-        return;
-    }
-    match node {
-        YulSwitchCase::YulDefaultCase(yul_default_case) => {
-            accept_yul_default_case(yul_default_case, visitor);
-        }
-        YulSwitchCase::YulValueCase(yul_value_case) => {
-            accept_yul_value_case(yul_value_case, visitor);
-        }
-    }
-    visitor.leave_yul_switch_case(node);
-}
-
 //
 // Repeated & Separated
 //
@@ -3166,14 +3149,14 @@ fn accept_yul_statements(items: &YulStatements, visitor: &mut impl Visitor) {
 }
 
 #[inline]
-fn accept_yul_switch_cases(items: &YulSwitchCases, visitor: &mut impl Visitor) {
-    if !visitor.enter_yul_switch_cases(items) {
+fn accept_yul_value_cases(items: &YulValueCases, visitor: &mut impl Visitor) {
+    if !visitor.enter_yul_value_cases(items) {
         return;
     }
     for item in items.iter() {
-        accept_yul_switch_case(&item, visitor);
+        accept_yul_value_case(&item, visitor);
     }
-    visitor.leave_yul_switch_cases(items);
+    visitor.leave_yul_value_cases(items);
 }
 
 #[inline]

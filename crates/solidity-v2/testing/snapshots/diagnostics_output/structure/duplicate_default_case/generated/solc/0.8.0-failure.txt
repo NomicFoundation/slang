@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 6931] Error: Only one default case allowed.
+    ╭─[input.sol:18:13]
+    │
+ 18 │             default { }
+    │             ───┬───  
+    │                ╰───── Error occurred here.
+────╯
