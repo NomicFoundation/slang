@@ -2,6 +2,7 @@ mod attributes;
 #[path = "default.generated.rs"]
 mod default;
 pub(crate) mod node_id_generator;
+mod yul;
 
 use std::sync::Arc;
 

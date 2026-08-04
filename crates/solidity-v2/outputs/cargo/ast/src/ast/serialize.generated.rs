@@ -1232,13 +1232,14 @@ impl Serialize for YulLeaveStatementStruct {
 
 impl Serialize for YulSwitchStatementStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(6))?;
+        let mut map = serializer.serialize_map(Some(7))?;
         map.serialize_entry("id", &self.node_id())?;
         map.serialize_entry("type", "YulSwitchStatement")?;
         map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
         map.serialize_entry("file", self.get_file_id())?;
         map.serialize_entry("expression", &self.expression())?;
-        map.serialize_entry("cases", &self.cases())?;
+        map.serialize_entry("value_cases", &self.value_cases())?;
+        map.serialize_entry("default_case", &self.default_case())?;
         map.end()
     }
 }
@@ -1882,15 +1883,6 @@ impl Serialize for YulStatement {
     }
 }
 
-impl Serialize for YulSwitchCase {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        match self {
-            YulSwitchCase::YulDefaultCase(inner) => inner.serialize(serializer),
-            YulSwitchCase::YulValueCase(inner) => inner.serialize(serializer),
-        }
-    }
-}
-
 //
 // Repeated & Separated
 //
@@ -2225,7 +2217,7 @@ impl Serialize for YulStatementsStruct {
     }
 }
 
-impl Serialize for YulSwitchCasesStruct {
+impl Serialize for YulValueCasesStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut seq = serializer.serialize_seq(Some(self.len()))?;
         for item in self.iter() {

@@ -168,10 +168,9 @@ pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_path(&mut self, &sl
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_paths(&mut self, &slang_solidity_v2_ir::ir::YulPaths) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_statement(&mut self, &slang_solidity_v2_ir::ir::YulStatement) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_statements(&mut self, &slang_solidity_v2_ir::ir::YulStatements) -> bool
-pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_switch_case(&mut self, &slang_solidity_v2_ir::ir::YulSwitchCase) -> bool
-pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_switch_cases(&mut self, &slang_solidity_v2_ir::ir::YulSwitchCases) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_switch_statement(&mut self, &slang_solidity_v2_ir::ir::YulSwitchStatement) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_value_case(&mut self, &slang_solidity_v2_ir::ir::YulValueCase) -> bool
+pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_value_cases(&mut self, &slang_solidity_v2_ir::ir::YulValueCases) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_variable_assignment_statement(&mut self, &slang_solidity_v2_ir::ir::YulVariableAssignmentStatement) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_variable_declaration_statement(&mut self, &slang_solidity_v2_ir::ir::YulVariableDeclarationStatement) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_variable_declaration_value(&mut self, &slang_solidity_v2_ir::ir::YulVariableDeclarationValue) -> bool
@@ -340,10 +339,9 @@ pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_path(&mut self, &sl
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_paths(&mut self, &slang_solidity_v2_ir::ir::YulPaths)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_statement(&mut self, &slang_solidity_v2_ir::ir::YulStatement)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_statements(&mut self, &slang_solidity_v2_ir::ir::YulStatements)
-pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_switch_case(&mut self, &slang_solidity_v2_ir::ir::YulSwitchCase)
-pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_switch_cases(&mut self, &slang_solidity_v2_ir::ir::YulSwitchCases)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_switch_statement(&mut self, &slang_solidity_v2_ir::ir::YulSwitchStatement)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_value_case(&mut self, &slang_solidity_v2_ir::ir::YulValueCase)
+pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_value_cases(&mut self, &slang_solidity_v2_ir::ir::YulValueCases)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_variable_assignment_statement(&mut self, &slang_solidity_v2_ir::ir::YulVariableAssignmentStatement)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_variable_declaration_statement(&mut self, &slang_solidity_v2_ir::ir::YulVariableDeclarationStatement)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_variable_declaration_value(&mut self, &slang_solidity_v2_ir::ir::YulVariableDeclarationValue)
@@ -556,7 +554,6 @@ pub fn slang_solidity_v2_ir::ir::visitor::accept_yul_if_statement(&slang_solidit
 pub fn slang_solidity_v2_ir::ir::visitor::accept_yul_leave_statement(&slang_solidity_v2_ir::ir::YulLeaveStatement, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_yul_literal(&slang_solidity_v2_ir::ir::YulLiteral, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_yul_statement(&slang_solidity_v2_ir::ir::YulStatement, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
-pub fn slang_solidity_v2_ir::ir::visitor::accept_yul_switch_case(&slang_solidity_v2_ir::ir::YulSwitchCase, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_yul_switch_statement(&slang_solidity_v2_ir::ir::YulSwitchStatement, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_yul_value_case(&slang_solidity_v2_ir::ir::YulValueCase, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_yul_variable_assignment_statement(&slang_solidity_v2_ir::ir::YulVariableAssignmentStatement, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
@@ -1387,17 +1384,6 @@ impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulSta
 pub fn slang_solidity_v2_ir::ir::YulStatement::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulStatement
 pub fn slang_solidity_v2_ir::ir::YulStatement::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-pub enum slang_solidity_v2_ir::ir::YulSwitchCase
-pub slang_solidity_v2_ir::ir::YulSwitchCase::YulDefaultCase(slang_solidity_v2_ir::ir::YulDefaultCase)
-pub slang_solidity_v2_ir::ir::YulSwitchCase::YulValueCase(slang_solidity_v2_ir::ir::YulValueCase)
-impl core::clone::Clone for slang_solidity_v2_ir::ir::YulSwitchCase
-pub fn slang_solidity_v2_ir::ir::YulSwitchCase::clone(&self) -> slang_solidity_v2_ir::ir::YulSwitchCase
-impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulSwitchCase
-pub fn slang_solidity_v2_ir::ir::YulSwitchCase::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulSwitchCase
-pub fn slang_solidity_v2_ir::ir::YulSwitchCase::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
-impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulSwitchCase
-pub fn slang_solidity_v2_ir::ir::YulSwitchCase::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::ABIEncoderV2KeywordStruct
 pub slang_solidity_v2_ir::ir::ABIEncoderV2KeywordStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::ABIEncoderV2KeywordStruct
@@ -3860,9 +3846,10 @@ pub fn slang_solidity_v2_ir::ir::YulLeaveStatementStruct::node_id(&self) -> core
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulLeaveStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulLeaveStatementStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::YulSwitchStatementStruct
-pub slang_solidity_v2_ir::ir::YulSwitchStatementStruct::cases: slang_solidity_v2_ir::ir::YulSwitchCases
+pub slang_solidity_v2_ir::ir::YulSwitchStatementStruct::default_case: core::option::Option<slang_solidity_v2_ir::ir::YulDefaultCase>
 pub slang_solidity_v2_ir::ir::YulSwitchStatementStruct::expression: slang_solidity_v2_ir::ir::YulExpression
 pub slang_solidity_v2_ir::ir::YulSwitchStatementStruct::range: core::ops::range::Range<usize>
+pub slang_solidity_v2_ir::ir::YulSwitchStatementStruct::value_cases: slang_solidity_v2_ir::ir::YulValueCases
 impl slang_solidity_v2_ir::ir::YulSwitchStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulSwitchStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulSwitchStatementStruct
@@ -4336,8 +4323,6 @@ impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulLit
 pub fn slang_solidity_v2_ir::ir::YulLiteral::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulStatement
 pub fn slang_solidity_v2_ir::ir::YulStatement::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
-impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulSwitchCase
-pub fn slang_solidity_v2_ir::ir::YulSwitchCase::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulSwitchStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulSwitchStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulValueCaseStruct
@@ -4780,8 +4765,6 @@ impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulLitera
 pub fn slang_solidity_v2_ir::ir::YulLiteral::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulStatement
 pub fn slang_solidity_v2_ir::ir::YulStatement::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulSwitchCase
-pub fn slang_solidity_v2_ir::ir::YulSwitchCase::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulSwitchStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulSwitchStatementStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulValueCaseStruct
@@ -5001,9 +4984,9 @@ pub type slang_solidity_v2_ir::ir::YulParameters = alloc::sync::Arc<[slang_solid
 pub type slang_solidity_v2_ir::ir::YulPath = alloc::sync::Arc<[slang_solidity_v2_ir::ir::Identifier]>
 pub type slang_solidity_v2_ir::ir::YulPaths = alloc::sync::Arc<[slang_solidity_v2_ir::ir::YulPath]>
 pub type slang_solidity_v2_ir::ir::YulStatements = alloc::sync::Arc<[slang_solidity_v2_ir::ir::YulStatement]>
-pub type slang_solidity_v2_ir::ir::YulSwitchCases = alloc::sync::Arc<[slang_solidity_v2_ir::ir::YulSwitchCase]>
 pub type slang_solidity_v2_ir::ir::YulSwitchStatement = alloc::sync::Arc<slang_solidity_v2_ir::ir::YulSwitchStatementStruct>
 pub type slang_solidity_v2_ir::ir::YulValueCase = alloc::sync::Arc<slang_solidity_v2_ir::ir::YulValueCaseStruct>
+pub type slang_solidity_v2_ir::ir::YulValueCases = alloc::sync::Arc<[slang_solidity_v2_ir::ir::YulValueCase]>
 pub type slang_solidity_v2_ir::ir::YulVariableAssignmentStatement = alloc::sync::Arc<slang_solidity_v2_ir::ir::YulVariableAssignmentStatementStruct>
 pub type slang_solidity_v2_ir::ir::YulVariableDeclarationStatement = alloc::sync::Arc<slang_solidity_v2_ir::ir::YulVariableDeclarationStatementStruct>
 pub type slang_solidity_v2_ir::ir::YulVariableDeclarationValue = alloc::sync::Arc<slang_solidity_v2_ir::ir::YulVariableDeclarationValueStruct>

@@ -358,10 +358,9 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_path(&mut self, &
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_paths(&mut self, &slang_solidity_v2_ast::ast::YulPaths) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_statement(&mut self, &slang_solidity_v2_ast::ast::YulStatement) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_statements(&mut self, &slang_solidity_v2_ast::ast::YulStatements) -> bool
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_switch_case(&mut self, &slang_solidity_v2_ast::ast::YulSwitchCase) -> bool
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_switch_cases(&mut self, &slang_solidity_v2_ast::ast::YulSwitchCases) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_switch_statement(&mut self, &slang_solidity_v2_ast::ast::YulSwitchStatement) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_value_case(&mut self, &slang_solidity_v2_ast::ast::YulValueCase) -> bool
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_value_cases(&mut self, &slang_solidity_v2_ast::ast::YulValueCases) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_variable_assignment_statement(&mut self, &slang_solidity_v2_ast::ast::YulVariableAssignmentStatement) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_variable_declaration_statement(&mut self, &slang_solidity_v2_ast::ast::YulVariableDeclarationStatement) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_variable_declaration_value(&mut self, &slang_solidity_v2_ast::ast::YulVariableDeclarationValue) -> bool
@@ -530,10 +529,9 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_path(&mut self, &
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_paths(&mut self, &slang_solidity_v2_ast::ast::YulPaths)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_statement(&mut self, &slang_solidity_v2_ast::ast::YulStatement)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_statements(&mut self, &slang_solidity_v2_ast::ast::YulStatements)
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_switch_case(&mut self, &slang_solidity_v2_ast::ast::YulSwitchCase)
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_switch_cases(&mut self, &slang_solidity_v2_ast::ast::YulSwitchCases)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_switch_statement(&mut self, &slang_solidity_v2_ast::ast::YulSwitchStatement)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_value_case(&mut self, &slang_solidity_v2_ast::ast::YulValueCase)
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_value_cases(&mut self, &slang_solidity_v2_ast::ast::YulValueCases)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_variable_assignment_statement(&mut self, &slang_solidity_v2_ast::ast::YulVariableAssignmentStatement)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_variable_declaration_statement(&mut self, &slang_solidity_v2_ast::ast::YulVariableDeclarationStatement)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_variable_declaration_value(&mut self, &slang_solidity_v2_ast::ast::YulVariableDeclarationValue)
@@ -681,7 +679,6 @@ pub fn slang_solidity_v2_ast::ast::visitor::accept_yul_if_statement(&slang_solid
 pub fn slang_solidity_v2_ast::ast::visitor::accept_yul_leave_statement(&slang_solidity_v2_ast::ast::YulLeaveStatement, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_yul_literal(&slang_solidity_v2_ast::ast::YulLiteral, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_yul_statement(&slang_solidity_v2_ast::ast::YulStatement, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
-pub fn slang_solidity_v2_ast::ast::visitor::accept_yul_switch_case(&slang_solidity_v2_ast::ast::YulSwitchCase, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_yul_switch_statement(&slang_solidity_v2_ast::ast::YulSwitchStatement, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_yul_value_case(&slang_solidity_v2_ast::ast::YulValueCase, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_yul_variable_assignment_statement(&slang_solidity_v2_ast::ast::YulVariableAssignmentStatement, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
@@ -1179,13 +1176,6 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::YulStatement
 pub fn slang_solidity_v2_ast::ast::YulStatement::clone(&self) -> slang_solidity_v2_ast::ast::YulStatement
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::YulStatement
 pub fn slang_solidity_v2_ast::ast::YulStatement::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub enum slang_solidity_v2_ast::ast::YulSwitchCase
-pub slang_solidity_v2_ast::ast::YulSwitchCase::YulDefaultCase(slang_solidity_v2_ast::ast::YulDefaultCase)
-pub slang_solidity_v2_ast::ast::YulSwitchCase::YulValueCase(slang_solidity_v2_ast::ast::YulValueCase)
-impl core::clone::Clone for slang_solidity_v2_ast::ast::YulSwitchCase
-pub fn slang_solidity_v2_ast::ast::YulSwitchCase::clone(&self) -> slang_solidity_v2_ast::ast::YulSwitchCase
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::YulSwitchCase
-pub fn slang_solidity_v2_ast::ast::YulSwitchCase::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct
 impl slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct
 pub fn slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
@@ -3757,23 +3747,15 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::YulStatementsStruct
 pub fn slang_solidity_v2_ast::ast::YulStatementsStruct::clone(&self) -> slang_solidity_v2_ast::ast::YulStatementsStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::YulStatementsStruct
 pub fn slang_solidity_v2_ast::ast::YulStatementsStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::YulSwitchCasesStruct
-impl slang_solidity_v2_ast::ast::YulSwitchCasesStruct
-pub fn slang_solidity_v2_ast::ast::YulSwitchCasesStruct::is_empty(&self) -> bool
-pub fn slang_solidity_v2_ast::ast::YulSwitchCasesStruct::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::YulSwitchCase> + use<'_>
-pub fn slang_solidity_v2_ast::ast::YulSwitchCasesStruct::len(&self) -> usize
-impl core::clone::Clone for slang_solidity_v2_ast::ast::YulSwitchCasesStruct
-pub fn slang_solidity_v2_ast::ast::YulSwitchCasesStruct::clone(&self) -> slang_solidity_v2_ast::ast::YulSwitchCasesStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::YulSwitchCasesStruct
-pub fn slang_solidity_v2_ast::ast::YulSwitchCasesStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::YulSwitchStatementStruct
 impl slang_solidity_v2_ast::ast::YulSwitchStatementStruct
-pub fn slang_solidity_v2_ast::ast::YulSwitchStatementStruct::cases(&self) -> slang_solidity_v2_ast::ast::YulSwitchCases
+pub fn slang_solidity_v2_ast::ast::YulSwitchStatementStruct::default_case(&self) -> core::option::Option<slang_solidity_v2_ast::ast::YulDefaultCase>
 pub fn slang_solidity_v2_ast::ast::YulSwitchStatementStruct::expression(&self) -> slang_solidity_v2_ast::ast::YulExpression
 pub fn slang_solidity_v2_ast::ast::YulSwitchStatementStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::ast::YulSwitchStatementStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::YulSwitchStatementStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub fn slang_solidity_v2_ast::ast::YulSwitchStatementStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::YulSwitchStatementStruct::value_cases(&self) -> slang_solidity_v2_ast::ast::YulValueCases
 impl core::clone::Clone for slang_solidity_v2_ast::ast::YulSwitchStatementStruct
 pub fn slang_solidity_v2_ast::ast::YulSwitchStatementStruct::clone(&self) -> slang_solidity_v2_ast::ast::YulSwitchStatementStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::YulSwitchStatementStruct
@@ -3790,6 +3772,15 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::YulValueCaseStruct
 pub fn slang_solidity_v2_ast::ast::YulValueCaseStruct::clone(&self) -> slang_solidity_v2_ast::ast::YulValueCaseStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::YulValueCaseStruct
 pub fn slang_solidity_v2_ast::ast::YulValueCaseStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub struct slang_solidity_v2_ast::ast::YulValueCasesStruct
+impl slang_solidity_v2_ast::ast::YulValueCasesStruct
+pub fn slang_solidity_v2_ast::ast::YulValueCasesStruct::is_empty(&self) -> bool
+pub fn slang_solidity_v2_ast::ast::YulValueCasesStruct::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::YulValueCase> + use<'_>
+pub fn slang_solidity_v2_ast::ast::YulValueCasesStruct::len(&self) -> usize
+impl core::clone::Clone for slang_solidity_v2_ast::ast::YulValueCasesStruct
+pub fn slang_solidity_v2_ast::ast::YulValueCasesStruct::clone(&self) -> slang_solidity_v2_ast::ast::YulValueCasesStruct
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::YulValueCasesStruct
+pub fn slang_solidity_v2_ast::ast::YulValueCasesStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::YulVariableAssignmentStatementStruct
 impl slang_solidity_v2_ast::ast::YulVariableAssignmentStatementStruct
 pub fn slang_solidity_v2_ast::ast::YulVariableAssignmentStatementStruct::expression(&self) -> slang_solidity_v2_ast::ast::YulExpression
@@ -4172,9 +4163,9 @@ pub type slang_solidity_v2_ast::ast::YulParameters = slang_solidity_v2_ast::ast:
 pub type slang_solidity_v2_ast::ast::YulPath = slang_solidity_v2_ast::ast::YulPathStruct
 pub type slang_solidity_v2_ast::ast::YulPaths = slang_solidity_v2_ast::ast::YulPathsStruct
 pub type slang_solidity_v2_ast::ast::YulStatements = slang_solidity_v2_ast::ast::YulStatementsStruct
-pub type slang_solidity_v2_ast::ast::YulSwitchCases = slang_solidity_v2_ast::ast::YulSwitchCasesStruct
 pub type slang_solidity_v2_ast::ast::YulSwitchStatement = slang_solidity_v2_ast::ast::YulSwitchStatementStruct
 pub type slang_solidity_v2_ast::ast::YulValueCase = slang_solidity_v2_ast::ast::YulValueCaseStruct
+pub type slang_solidity_v2_ast::ast::YulValueCases = slang_solidity_v2_ast::ast::YulValueCasesStruct
 pub type slang_solidity_v2_ast::ast::YulVariableAssignmentStatement = slang_solidity_v2_ast::ast::YulVariableAssignmentStatementStruct
 pub type slang_solidity_v2_ast::ast::YulVariableDeclarationStatement = slang_solidity_v2_ast::ast::YulVariableDeclarationStatementStruct
 pub type slang_solidity_v2_ast::ast::YulVariableDeclarationValue = slang_solidity_v2_ast::ast::YulVariableDeclarationValueStruct

@@ -1309,16 +1309,6 @@ impl TextRange for YulStatement {
     }
 }
 
-impl TextRange for YulSwitchCase {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        match self {
-            YulSwitchCase::YulDefaultCase(inner) => inner.calculate_text_range(),
-
-            YulSwitchCase::YulValueCase(inner) => inner.calculate_text_range(),
-        }
-    }
-}
-
 impl TextRange for ABIEncoderV2KeywordStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.range.clone())

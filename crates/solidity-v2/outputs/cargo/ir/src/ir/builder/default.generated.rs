@@ -1338,23 +1338,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         Arc::new(output::YulLeaveStatementStruct { id, range })
     }
 
-    pub(super) fn build_yul_switch_statement(
-        &mut self,
-        source: &input::YulSwitchStatement,
-    ) -> output::YulSwitchStatement {
-        let id = self.next_id(output::NodeKind::YulSwitchStatement);
-        let range = source.calculate_text_range().unwrap_or_default();
-        let expression = self.build_yul_expression(&source.expression);
-        let cases = self.build_yul_switch_cases(&source.cases);
-
-        Arc::new(output::YulSwitchStatementStruct {
-            id,
-            range,
-            expression,
-            cases,
-        })
-    }
-
     pub(super) fn build_yul_value_case(
         &mut self,
         source: &input::YulValueCase,
@@ -2643,23 +2626,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         }
     }
 
-    #[allow(clippy::unused_self)]
-    pub(super) fn build_yul_switch_case(
-        &mut self,
-        source: &input::YulSwitchCase,
-    ) -> output::YulSwitchCase {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::YulSwitchCase::YulDefaultCase(yul_default_case) => {
-                output::YulSwitchCase::YulDefaultCase(self.build_yul_default_case(yul_default_case))
-            }
-            input::YulSwitchCase::YulValueCase(yul_value_case) => {
-                output::YulSwitchCase::YulValueCase(self.build_yul_value_case(yul_value_case))
-            }
-        }
-    }
-
     //
     // Collapsed choices
     //
@@ -3122,20 +3088,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .elements
             .iter()
             .map(|item| self.build_yul_statement(item))
-            .collect()
-    }
-
-    pub(super) fn build_yul_switch_cases(
-        &mut self,
-        source: &input::YulSwitchCases,
-    ) -> output::YulSwitchCases {
-        if source.elements.is_empty() {
-            return Arc::default();
-        }
-        source
-            .elements
-            .iter()
-            .map(|item| self.build_yul_switch_case(item))
             .collect()
     }
 

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 4904] Error: Case not allowed after default case.
+    ╭─[input.sol:17:13]
+    │
+ 17 │             case 1 { }
+    │             ──┬─  
+    │               ╰─── Error occurred here.
+────╯

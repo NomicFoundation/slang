@@ -31,6 +31,7 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
     rename_operator_fields(&mut mutator);
     rename_operator_choice_types(&mut mutator);
     simplify_booleans(&mut mutator);
+    reshape_yul_switch_cases(&mut mutator);
 
     // Final clean-up:
     remove_unused_types(&mut mutator);
@@ -377,6 +378,22 @@ fn simplify_mapping_type_parameters(mutator: &mut IrModelMutator) {
 
     mutator.add_sequence_field("MappingType", "key_type", "Parameter", false);
     mutator.add_sequence_field("MappingType", "value_type", "Parameter", false);
+}
+
+fn reshape_yul_switch_cases(mutator: &mut IrModelMutator) {
+    // Tighten the shape of `YulSwitchStatement` so the IR can only represent a
+    // well-formed switch: a list of value cases plus at most one `default` case.
+    mutator.add_collection_type("YulValueCases", "YulValueCase");
+
+    mutator.remove_sequence_field("YulSwitchStatement", "cases");
+    mutator.add_sequence_field("YulSwitchStatement", "value_cases", "YulValueCases", false);
+    mutator.add_sequence_field("YulSwitchStatement", "default_case", "YulDefaultCase", true);
+
+    // Remove the collection before its item type: `remove_type` on the item
+    // would otherwise cascade-drop `YulSwitchCases`, leaving the second call
+    // with nothing to find.
+    mutator.remove_type("YulSwitchCases");
+    mutator.remove_type("YulSwitchCase");
 }
 
 fn remove_unused_types(mutator: &mut IrModelMutator) {

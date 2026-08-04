@@ -6,6 +6,7 @@ mod continue_outside_loop;
 mod contract_should_be_abstract;
 mod duplicate_catch_clause;
 mod duplicate_named_argument;
+mod duplicate_switch_default_case;
 mod empty_enum;
 mod empty_struct;
 mod empty_tuple_component;
@@ -43,6 +44,7 @@ mod payable_internal_or_private_function;
 mod placeholder_in_unchecked_block;
 mod redefined_built_in_error;
 mod storage_layout_for_abstract_contract;
+mod trailing_switch_value_case;
 mod unchecked_block_not_in_regular_block;
 mod unimplemented_function_with_modifiers;
 mod unimplemented_modifier_must_be_virtual;
@@ -61,6 +63,7 @@ pub use continue_outside_loop::ContinueOutsideLoop;
 pub use contract_should_be_abstract::ContractShouldBeAbstract;
 pub use duplicate_catch_clause::{CatchClauseKind, DuplicateCatchClause};
 pub use duplicate_named_argument::DuplicateNamedArgument;
+pub use duplicate_switch_default_case::DuplicateSwitchDefaultCase;
 pub use empty_enum::EmptyEnum;
 pub use empty_struct::EmptyStruct;
 pub use empty_tuple_component::EmptyTupleComponent;
@@ -99,6 +102,7 @@ pub use placeholder_in_unchecked_block::PlaceholderInUncheckedBlock;
 pub use redefined_built_in_error::RedefinedBuiltInError;
 use serde::Serialize;
 pub use storage_layout_for_abstract_contract::StorageLayoutForAbstractContract;
+pub use trailing_switch_value_case::TrailingSwitchValueCase;
 pub use unchecked_block_not_in_regular_block::UncheckedBlockNotInRegularBlock;
 pub use unimplemented_function_with_modifiers::UnimplementedFunctionWithModifiers;
 pub use unimplemented_modifier_must_be_virtual::UnimplementedModifierMustBeVirtual;
@@ -264,5 +268,10 @@ define_diagnostic_kind! {
 
         /// An abstract contract declares a storage layout (`layout at`) specifier.
         StorageLayoutForAbstractContract(StorageLayoutForAbstractContract),
+
+        /// A Yul `switch` statement declared more than one `default` case.
+        DuplicateSwitchDefaultCase(DuplicateSwitchDefaultCase),
+        /// A Yul `switch` statement declared a `value` case after its `default` case.
+        TrailingSwitchValueCase(TrailingSwitchValueCase),
     }
 }

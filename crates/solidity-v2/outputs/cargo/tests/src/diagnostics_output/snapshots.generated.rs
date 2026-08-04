@@ -1585,6 +1585,11 @@ mod structure {
     }
 
     #[test]
+    fn duplicate_default_case() -> Result<()> {
+        run("structure", "duplicate_default_case")
+    }
+
+    #[test]
     fn duplicate_error_catch_clause() -> Result<()> {
         run("structure", "duplicate_error_catch_clause")
     }
@@ -1920,6 +1925,11 @@ mod structure {
     #[test]
     fn storage_layout_for_abstract_contract() -> Result<()> {
         run("structure", "storage_layout_for_abstract_contract")
+    }
+
+    #[test]
+    fn trailing_non_default_case() -> Result<()> {
+        run("structure", "trailing_non_default_case")
     }
 
     mod unchecked_block_not_in_regular_block {

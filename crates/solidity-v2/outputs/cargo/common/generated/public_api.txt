@@ -736,6 +736,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnostic
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::ContractShouldBeAbstract(slang_solidity_v2_common::diagnostics::kinds::structure::ContractShouldBeAbstract)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::DuplicateCatchClause(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::DuplicateNamedArgument(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::DuplicateSwitchDefaultCase(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EmptyEnum(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EmptyStruct(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::EmptyTupleComponent(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyTupleComponent)
@@ -773,6 +774,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnostic
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::PlaceholderInUncheckedBlock(slang_solidity_v2_common::diagnostics::kinds::structure::PlaceholderInUncheckedBlock)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::RedefinedBuiltInError(slang_solidity_v2_common::diagnostics::kinds::structure::RedefinedBuiltInError)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::StorageLayoutForAbstractContract(slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract)
+pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::TrailingSwitchValueCase(slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UncheckedBlockNotInRegularBlock(slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UnimplementedFunctionWithModifiers(slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedFunctionWithModifiers)
 pub slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::UnimplementedModifierMustBeVirtual(slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedModifierMustBeVirtual)
@@ -803,6 +805,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -879,6 +883,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedFunctionWithModifiers> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
@@ -1062,6 +1068,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum
@@ -1767,6 +1792,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase> for slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock
@@ -2659,6 +2703,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateCatchClause) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::EmptyStruct> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -2735,6 +2781,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::StorageLayoutForAbstractContract) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::UnimplementedFunctionWithModifiers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -3027,6 +3075,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateSwitchDefaultCase::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::EmptyEnum::message(&self) -> alloc::string::String
@@ -3179,6 +3231,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::StructureDiagnosticKind::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::structure::TrailingSwitchValueCase::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::UncheckedBlockNotInRegularBlock::message(&self) -> alloc::string::String

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/duplicate-switch-default-case] Error: A switch statement cannot have more than one default case.
+    ╭─[input.sol:18:13]
+    │
+ 18 │             default { }
+    │             ───┬───  
+    │                ╰───── Error occurred here.
+────╯

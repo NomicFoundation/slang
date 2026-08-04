@@ -4224,8 +4224,15 @@ impl YulSwitchStatementStruct {
         create_yul_expression(&self.ir_node.expression, &self.semantic)
     }
 
-    pub fn cases(&self) -> YulSwitchCases {
-        create_yul_switch_cases(&self.ir_node.cases, &self.semantic)
+    pub fn value_cases(&self) -> YulValueCases {
+        create_yul_value_cases(&self.ir_node.value_cases, &self.semantic)
+    }
+
+    pub fn default_case(&self) -> Option<YulDefaultCase> {
+        self.ir_node
+            .default_case
+            .as_ref()
+            .map(|ir_node| create_yul_default_case(ir_node, &self.semantic))
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -5833,28 +5840,6 @@ pub(crate) fn create_yul_statement(
     }
 }
 
-#[derive(Clone)]
-pub enum YulSwitchCase {
-    YulDefaultCase(YulDefaultCase),
-    YulValueCase(YulValueCase),
-}
-
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_yul_switch_case(
-    ir_node: &ir::YulSwitchCase,
-    semantic: &Arc<SemanticContext>,
-) -> YulSwitchCase {
-    match ir_node {
-        ir::YulSwitchCase::YulDefaultCase(variant) => {
-            YulSwitchCase::YulDefaultCase(create_yul_default_case(variant, semantic))
-        }
-        ir::YulSwitchCase::YulValueCase(variant) => {
-            YulSwitchCase::YulValueCase(create_yul_value_case(variant, semantic))
-        }
-    }
-}
-
 //
 // Repeated & Separated
 //
@@ -6939,29 +6924,29 @@ impl YulStatementsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type YulSwitchCases = YulSwitchCasesStruct;
+pub type YulValueCases = YulValueCasesStruct;
 
-pub(crate) fn create_yul_switch_cases(
-    nodes: &ir::YulSwitchCases,
+pub(crate) fn create_yul_value_cases(
+    nodes: &ir::YulValueCases,
     semantic: &Arc<SemanticContext>,
-) -> YulSwitchCases {
-    YulSwitchCasesStruct {
+) -> YulValueCases {
+    YulValueCasesStruct {
         ir_nodes: Arc::clone(nodes),
         semantic: Arc::clone(semantic),
     }
 }
 
 #[derive(Clone)]
-pub struct YulSwitchCasesStruct {
-    pub(crate) ir_nodes: ir::YulSwitchCases,
+pub struct YulValueCasesStruct {
+    pub(crate) ir_nodes: ir::YulValueCases,
     pub(crate) semantic: Arc<SemanticContext>,
 }
 
-impl YulSwitchCasesStruct {
-    pub fn iter(&self) -> impl Iterator<Item = YulSwitchCase> + use<'_> {
+impl YulValueCasesStruct {
+    pub fn iter(&self) -> impl Iterator<Item = YulValueCase> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| create_yul_switch_case(ir_node, &self.semantic))
+            .map(|ir_node| create_yul_value_case(ir_node, &self.semantic))
     }
 
     pub fn len(&self) -> usize {
