@@ -9,7 +9,7 @@ use thiserror::Error;
 
 /// All supported versions of `Solidity`.
 #[derive(Clone, Copy, Debug, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
-#[serde(try_from = "Version")]
+#[serde(into = "Version", try_from = "Version")]
 pub enum LanguageVersion {
     V0_8_0,
     V0_8_1,

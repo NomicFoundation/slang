@@ -70,7 +70,7 @@ struct RawTestConfig {
 }
 
 impl RawTestConfig {
-    /// Absorbs values from `other`, a config file further up the traversal, for
+    /// Absorbs fields from `parent`, a config file further up the traversal, for
     /// every field that `self` doesn't already provide.
     fn absorb(&mut self, parent: Self) {
         let Self {

@@ -28,7 +28,7 @@ pub(super) struct RawSingleTargetAllVersions {
 }
 
 impl RawSingleTargetAllVersions {
-    /// Absorbs fields from `other`, a matrix declared further up the traversal,
+    /// Absorbs fields from `parent`, a matrix declared further up the traversal,
     /// for every field that `self` doesn't already provide.
     pub(super) fn absorb(&mut self, parent: Self) {
         let Self {
