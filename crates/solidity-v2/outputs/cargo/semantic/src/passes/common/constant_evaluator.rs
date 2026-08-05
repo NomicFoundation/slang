@@ -783,7 +783,13 @@ mod tests {
         let ir::BuildOutput {
             ir_root,
             diagnostics,
-        } = ir::build(&"test.sol".into(), &source_unit, &source, &mut id_generator);
+        } = ir::build(
+            &"test.sol".into(),
+            &source_unit,
+            &source,
+            version,
+            &mut id_generator,
+        );
 
         assert!(
             diagnostics.is_empty(),

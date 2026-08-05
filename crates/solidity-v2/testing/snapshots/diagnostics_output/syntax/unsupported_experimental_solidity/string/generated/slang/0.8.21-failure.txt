@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/unsupported-experimental-solidity] Error: The 'solidity' experimental feature is not supported.
+   ╭─[input.sol:4:21]
+   │
+ 4 │ pragma experimental "solidity";
+   │                     ─────┬────  
+   │                          ╰────── Error occurred here.
+───╯

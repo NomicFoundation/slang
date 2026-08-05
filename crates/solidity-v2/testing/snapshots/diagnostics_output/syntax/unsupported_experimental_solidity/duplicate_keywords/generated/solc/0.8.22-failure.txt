@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[Warning 2264] Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+   ╭─[input.sol:4:1]
+   │
+ 4 │ pragma experimental solidity;
+   │ ──────────────┬──────────────  
+   │               ╰──────────────── Error occurred here.
+───╯
+
+[SyntaxError 1231] Error: Duplicate experimental feature name.
+   ╭─[input.sol:5:1]
+   │
+ 5 │ pragma experimental solidity;
+   │ ──────────────┬──────────────  
+   │               ╰──────────────── Error occurred here.
+───╯
+
+[UnimplementedFeatureError 6547] Error: Experimental Analysis is not implemented yet.

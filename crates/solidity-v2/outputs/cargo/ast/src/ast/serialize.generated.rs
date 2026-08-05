@@ -1394,10 +1394,26 @@ impl Serialize for EqualityExpressionOperator {
 impl Serialize for ExperimentalFeature {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         match self {
-            ExperimentalFeature::ABIEncoderV2Keyword(inner) => inner.serialize(serializer),
-            ExperimentalFeature::SMTCheckerKeyword(inner) => inner.serialize(serializer),
-            ExperimentalFeature::SolidityKeyword(inner) => inner.serialize(serializer),
-            ExperimentalFeature::StringLiteral(inner) => inner.serialize(serializer),
+            ExperimentalFeature::ABIEncoderV2 => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "ExperimentalFeature::ABIEncoderV2")?;
+                map.end()
+            }
+            ExperimentalFeature::SMTChecker => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "ExperimentalFeature::SMTChecker")?;
+                map.end()
+            }
+            ExperimentalFeature::Solidity => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "ExperimentalFeature::Solidity")?;
+                map.end()
+            }
+            ExperimentalFeature::Unrecognized => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "ExperimentalFeature::Unrecognized")?;
+                map.end()
+            }
         }
     }
 }
@@ -2241,17 +2257,6 @@ impl Serialize for YulVariableNamesStruct {
 // Terminals
 //
 
-impl Serialize for ABIEncoderV2KeywordStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(4))?;
-        map.serialize_entry("id", &self.ir_node.id())?;
-        map.serialize_entry("type", "ABIEncoderV2Keyword")?;
-        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
-        map.serialize_entry("file", self.get_file_id())?;
-        map.end()
-    }
-}
-
 impl Serialize for AbicoderV1KeywordStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut map = serializer.serialize_map(Some(4))?;
@@ -2886,17 +2891,6 @@ impl Serialize for PragmaTildeStruct {
     }
 }
 
-impl Serialize for SMTCheckerKeywordStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(4))?;
-        map.serialize_entry("id", &self.ir_node.id())?;
-        map.serialize_entry("type", "SMTCheckerKeyword")?;
-        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
-        map.serialize_entry("file", self.get_file_id())?;
-        map.end()
-    }
-}
-
 impl Serialize for SecondsKeywordStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut map = serializer.serialize_map(Some(4))?;
@@ -2935,17 +2929,6 @@ impl Serialize for SlashEqualStruct {
         let mut map = serializer.serialize_map(Some(4))?;
         map.serialize_entry("id", &self.ir_node.id())?;
         map.serialize_entry("type", "SlashEqual")?;
-        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
-        map.serialize_entry("file", self.get_file_id())?;
-        map.end()
-    }
-}
-
-impl Serialize for SolidityKeywordStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(4))?;
-        map.serialize_entry("id", &self.ir_node.id())?;
-        map.serialize_entry("type", "SolidityKeyword")?;
         map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
         map.serialize_entry("file", self.get_file_id())?;
         map.end()

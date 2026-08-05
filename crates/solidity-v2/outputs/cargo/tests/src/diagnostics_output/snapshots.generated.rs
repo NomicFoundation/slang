@@ -1640,6 +1640,34 @@ mod structure {
         }
     }
 
+    mod duplicate_abicoder_specifier {
+        use super::*;
+
+        #[test]
+        fn abi_encoder_v2_keywords() -> Result<()> {
+            run(
+                "structure/duplicate-abicoder-specifier",
+                "abi_encoder_v2_keywords",
+            )
+        }
+
+        #[test]
+        fn abi_encoder_v2_mixed_forms() -> Result<()> {
+            run(
+                "structure/duplicate-abicoder-specifier",
+                "abi_encoder_v2_mixed_forms",
+            )
+        }
+
+        #[test]
+        fn abi_encoder_v2_strings() -> Result<()> {
+            run(
+                "structure/duplicate-abicoder-specifier",
+                "abi_encoder_v2_strings",
+            )
+        }
+    }
+
     #[test]
     fn duplicate_default_case() -> Result<()> {
         run("structure", "duplicate_default_case")
@@ -2387,6 +2415,86 @@ mod syntax {
         #[test]
         fn trailing_token() -> Result<()> {
             run("syntax/unexpected_terminal", "trailing_token")
+        }
+    }
+
+    mod unrecognized_experimental_feature {
+        use super::*;
+
+        #[test]
+        fn distinct_unrecognized_features() -> Result<()> {
+            run(
+                "syntax/unrecognized_experimental_feature",
+                "distinct_unrecognized_features",
+            )
+        }
+
+        #[test]
+        fn same_unrecognized_feature() -> Result<()> {
+            run(
+                "syntax/unrecognized_experimental_feature",
+                "same_unrecognized_feature",
+            )
+        }
+    }
+
+    mod unsupported_experimental_smt_checker {
+        use super::*;
+
+        #[test]
+        fn duplicate_keywords() -> Result<()> {
+            run(
+                "syntax/unsupported_experimental_smt_checker",
+                "duplicate_keywords",
+            )
+        }
+
+        #[test]
+        fn duplicate_mixed_forms() -> Result<()> {
+            run(
+                "syntax/unsupported_experimental_smt_checker",
+                "duplicate_mixed_forms",
+            )
+        }
+
+        #[test]
+        fn keyword() -> Result<()> {
+            run("syntax/unsupported_experimental_smt_checker", "keyword")
+        }
+
+        #[test]
+        fn string() -> Result<()> {
+            run("syntax/unsupported_experimental_smt_checker", "string")
+        }
+    }
+
+    mod unsupported_experimental_solidity {
+        use super::*;
+
+        #[test]
+        fn duplicate_keywords() -> Result<()> {
+            run(
+                "syntax/unsupported_experimental_solidity",
+                "duplicate_keywords",
+            )
+        }
+
+        #[test]
+        fn duplicate_mixed_forms() -> Result<()> {
+            run(
+                "syntax/unsupported_experimental_solidity",
+                "duplicate_mixed_forms",
+            )
+        }
+
+        #[test]
+        fn keyword() -> Result<()> {
+            run("syntax/unsupported_experimental_solidity", "keyword")
+        }
+
+        #[test]
+        fn string() -> Result<()> {
+            run("syntax/unsupported_experimental_solidity", "string")
         }
     }
 }

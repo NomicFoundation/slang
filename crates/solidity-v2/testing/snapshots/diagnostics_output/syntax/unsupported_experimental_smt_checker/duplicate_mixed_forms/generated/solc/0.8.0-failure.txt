@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[SyntaxError 1231] Error: Duplicate experimental feature name.
+   ╭─[input.sol:5:1]
+   │
+ 5 │ pragma experimental "SMTChecker";
+   │ ────────────────┬────────────────  
+   │                 ╰────────────────── Error occurred here.
+───╯

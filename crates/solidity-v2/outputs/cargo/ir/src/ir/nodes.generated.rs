@@ -1693,23 +1693,12 @@ impl EqualityExpressionOperator {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum ExperimentalFeature {
-    ABIEncoderV2Keyword(ABIEncoderV2Keyword),
-    SMTCheckerKeyword(SMTCheckerKeyword),
-    SolidityKeyword(SolidityKeyword),
-    StringLiteral(StringLiteral),
-}
-
-impl ExperimentalFeature {
-    pub fn unparse(&self) -> &str {
-        match self {
-            ExperimentalFeature::ABIEncoderV2Keyword(inner) => inner.unparse(),
-            ExperimentalFeature::SMTCheckerKeyword(inner) => inner.unparse(),
-            ExperimentalFeature::SolidityKeyword(inner) => inner.unparse(),
-            ExperimentalFeature::StringLiteral(inner) => inner.unparse(),
-        }
-    }
+    ABIEncoderV2,
+    SMTChecker,
+    Solidity,
+    Unrecognized,
 }
 
 #[derive(Clone, Debug)]
@@ -2220,23 +2209,6 @@ pub type YulVariableNames = Arc<[Identifier]>;
 //
 // Terminals
 //
-
-pub type ABIEncoderV2Keyword = Arc<ABIEncoderV2KeywordStruct>;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct ABIEncoderV2KeywordStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-}
-
-impl ABIEncoderV2KeywordStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-    pub fn unparse(&self) -> &'static str {
-        "ABIEncoderV2"
-    }
-}
 
 pub type AbicoderV1Keyword = Arc<AbicoderV1KeywordStruct>;
 
@@ -3214,23 +3186,6 @@ impl PragmaTildeStruct {
     }
 }
 
-pub type SMTCheckerKeyword = Arc<SMTCheckerKeywordStruct>;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct SMTCheckerKeywordStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-}
-
-impl SMTCheckerKeywordStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-    pub fn unparse(&self) -> &'static str {
-        "SMTChecker"
-    }
-}
-
 pub type SecondsKeyword = Arc<SecondsKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -3296,23 +3251,6 @@ impl SlashEqualStruct {
     }
     pub fn unparse(&self) -> &'static str {
         "/="
-    }
-}
-
-pub type SolidityKeyword = Arc<SolidityKeywordStruct>;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct SolidityKeywordStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-}
-
-impl SolidityKeywordStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-    pub fn unparse(&self) -> &'static str {
-        "solidity"
     }
 }
 

@@ -4685,10 +4685,10 @@ pub(crate) fn create_equality_expression_operator(
 
 #[derive(Clone)]
 pub enum ExperimentalFeature {
-    ABIEncoderV2Keyword(ABIEncoderV2Keyword),
-    SMTCheckerKeyword(SMTCheckerKeyword),
-    SolidityKeyword(SolidityKeyword),
-    StringLiteral(StringLiteral),
+    ABIEncoderV2,
+    SMTChecker,
+    Solidity,
+    Unrecognized,
 }
 
 #[allow(clippy::too_many_lines)]
@@ -4698,20 +4698,10 @@ pub(crate) fn create_experimental_feature(
     semantic: &Arc<SemanticContext>,
 ) -> ExperimentalFeature {
     match ir_node {
-        ir::ExperimentalFeature::ABIEncoderV2Keyword(variant) => {
-            ExperimentalFeature::ABIEncoderV2Keyword(create_abi_encoder_v2_keyword(
-                variant, semantic,
-            ))
-        }
-        ir::ExperimentalFeature::SMTCheckerKeyword(variant) => {
-            ExperimentalFeature::SMTCheckerKeyword(create_smt_checker_keyword(variant, semantic))
-        }
-        ir::ExperimentalFeature::SolidityKeyword(variant) => {
-            ExperimentalFeature::SolidityKeyword(create_solidity_keyword(variant, semantic))
-        }
-        ir::ExperimentalFeature::StringLiteral(variant) => {
-            ExperimentalFeature::StringLiteral(create_string_literal(variant, semantic))
-        }
+        ir::ExperimentalFeature::ABIEncoderV2 => ExperimentalFeature::ABIEncoderV2,
+        ir::ExperimentalFeature::SMTChecker => ExperimentalFeature::SMTChecker,
+        ir::ExperimentalFeature::Solidity => ExperimentalFeature::Solidity,
+        ir::ExperimentalFeature::Unrecognized => ExperimentalFeature::Unrecognized,
     }
 }
 
@@ -6995,46 +6985,6 @@ impl YulVariableNamesStruct {
 // Terminals
 //
 
-pub type ABIEncoderV2Keyword = ABIEncoderV2KeywordStruct;
-
-#[derive(Clone)]
-pub struct ABIEncoderV2KeywordStruct {
-    pub(crate) ir_node: ir::ABIEncoderV2Keyword,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub(crate) fn create_abi_encoder_v2_keyword(
-    ir_node: &ir::ABIEncoderV2Keyword,
-    semantic: &Arc<SemanticContext>,
-) -> ABIEncoderV2Keyword {
-    ABIEncoderV2KeywordStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    }
-}
-
-impl ABIEncoderV2KeywordStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &FileId {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
 pub type AbicoderV1Keyword = AbicoderV1KeywordStruct;
 
 #[derive(Clone)]
@@ -9291,46 +9241,6 @@ impl PragmaTildeStruct {
     }
 }
 
-pub type SMTCheckerKeyword = SMTCheckerKeywordStruct;
-
-#[derive(Clone)]
-pub struct SMTCheckerKeywordStruct {
-    pub(crate) ir_node: ir::SMTCheckerKeyword,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub(crate) fn create_smt_checker_keyword(
-    ir_node: &ir::SMTCheckerKeyword,
-    semantic: &Arc<SemanticContext>,
-) -> SMTCheckerKeyword {
-    SMTCheckerKeywordStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    }
-}
-
-impl SMTCheckerKeywordStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &FileId {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
 pub type SecondsKeyword = SecondsKeywordStruct;
 
 #[derive(Clone)]
@@ -9467,46 +9377,6 @@ pub(crate) fn create_slash_equal(
 }
 
 impl SlashEqualStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &FileId {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
-pub type SolidityKeyword = SolidityKeywordStruct;
-
-#[derive(Clone)]
-pub struct SolidityKeywordStruct {
-    pub(crate) ir_node: ir::SolidityKeyword,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub(crate) fn create_solidity_keyword(
-    ir_node: &ir::SolidityKeyword,
-    semantic: &Arc<SemanticContext>,
-) -> SolidityKeyword {
-    SolidityKeywordStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    }
-}
-
-impl SolidityKeywordStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }

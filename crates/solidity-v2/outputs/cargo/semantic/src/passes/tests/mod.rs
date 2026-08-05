@@ -50,7 +50,13 @@ fn build_file(
     let ir::BuildOutput {
         ir_root,
         diagnostics,
-    } = ir::build(&file_id, &source_unit, &contents, id_generator);
+    } = ir::build(
+        &file_id,
+        &source_unit,
+        &contents,
+        language_version,
+        id_generator,
+    );
 
     assert!(
         diagnostics.is_empty(),

@@ -2076,12 +2076,10 @@ pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut imp
         return;
     }
     match node {
-        ExperimentalFeature::ABIEncoderV2Keyword(_) => {}
-        ExperimentalFeature::SMTCheckerKeyword(_) => {}
-        ExperimentalFeature::SolidityKeyword(_) => {}
-        ExperimentalFeature::StringLiteral(string_literal) => {
-            visitor.visit_string_literal(string_literal);
-        }
+        ExperimentalFeature::ABIEncoderV2 => {}
+        ExperimentalFeature::SMTChecker => {}
+        ExperimentalFeature::Solidity => {}
+        ExperimentalFeature::Unrecognized => {}
     }
     visitor.leave_experimental_feature(node);
 }

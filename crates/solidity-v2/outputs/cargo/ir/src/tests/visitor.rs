@@ -95,6 +95,7 @@ contract Counter is Ownable {
         &"test.sol".into(),
         &source_unit,
         &CONTENTS,
+        LanguageVersion::LATEST,
         &mut id_generator,
     );
 

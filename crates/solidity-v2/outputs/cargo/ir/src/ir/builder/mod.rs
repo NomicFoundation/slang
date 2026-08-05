@@ -2,6 +2,7 @@ mod attributes;
 #[path = "default.generated.rs"]
 mod default;
 pub(crate) mod node_id_generator;
+mod pragmas;
 mod yul;
 
 use std::sync::Arc;
@@ -15,6 +16,7 @@ use slang_solidity_v2_common::diagnostics::kinds::syntax::{
     MoreThanOneInheritanceList, MoreThanOneStorageLayout,
 };
 use slang_solidity_v2_common::files::FileId;
+use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 use slang_solidity_v2_cst::structured_cst::text_range::TextRange;
 
@@ -32,12 +34,15 @@ pub fn build_source_unit(
     file_id: &FileId,
     source_unit: &input::SourceUnit,
     source: &impl Source,
+    language_version: LanguageVersion,
     id_generator: &mut NodeIdGenerator,
 ) -> BuildOutput {
     let mut builder = CstToIrBuilder {
         source,
         file_id,
+        language_version,
         id_generator,
+        is_abicoder_specified: false,
         diagnostics: DiagnosticCollection::default(),
     };
 
@@ -52,7 +57,9 @@ pub fn build_source_unit(
 pub(crate) struct CstToIrBuilder<'a, S: Source> {
     source: &'a S,
     file_id: &'a FileId,
+    language_version: LanguageVersion,
     id_generator: &'a mut NodeIdGenerator,
+    is_abicoder_specified: bool,
     diagnostics: DiagnosticCollection,
 }
 

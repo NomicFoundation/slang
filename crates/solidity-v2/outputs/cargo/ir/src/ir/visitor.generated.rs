@@ -904,8 +904,6 @@ pub trait Visitor {
     fn leave_yul_variable_names(&mut self, _items: &YulVariableNames) {}
     // Terminals are not entered or left, since there's no children to them.
     // Instead they're just visited.
-    fn visit_abi_encoder_v2_keyword(&mut self, _node: &ABIEncoderV2Keyword) {}
-
     fn visit_abicoder_v1_keyword(&mut self, _node: &AbicoderV1Keyword) {}
 
     fn visit_abicoder_v2_keyword(&mut self, _node: &AbicoderV2Keyword) {}
@@ -1028,8 +1026,6 @@ pub trait Visitor {
 
     fn visit_pragma_tilde(&mut self, _node: &PragmaTilde) {}
 
-    fn visit_smt_checker_keyword(&mut self, _node: &SMTCheckerKeyword) {}
-
     fn visit_seconds_keyword(&mut self, _node: &SecondsKeyword) {}
 
     fn visit_semicolon(&mut self, _node: &Semicolon) {}
@@ -1037,8 +1033,6 @@ pub trait Visitor {
     fn visit_slash(&mut self, _node: &Slash) {}
 
     fn visit_slash_equal(&mut self, _node: &SlashEqual) {}
-
-    fn visit_solidity_keyword(&mut self, _node: &SolidityKeyword) {}
 
     fn visit_storage_keyword(&mut self, _node: &StorageKeyword) {}
 
@@ -2263,18 +2257,10 @@ pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut imp
         return;
     }
     match &node {
-        ExperimentalFeature::ABIEncoderV2Keyword(abi_encoder_v2_keyword) => {
-            visitor.visit_abi_encoder_v2_keyword(abi_encoder_v2_keyword);
-        }
-        ExperimentalFeature::SMTCheckerKeyword(smt_checker_keyword) => {
-            visitor.visit_smt_checker_keyword(smt_checker_keyword);
-        }
-        ExperimentalFeature::SolidityKeyword(solidity_keyword) => {
-            visitor.visit_solidity_keyword(solidity_keyword);
-        }
-        ExperimentalFeature::StringLiteral(string_literal) => {
-            visitor.visit_string_literal(string_literal);
-        }
+        ExperimentalFeature::ABIEncoderV2 => {}
+        ExperimentalFeature::SMTChecker => {}
+        ExperimentalFeature::Solidity => {}
+        ExperimentalFeature::Unrecognized => {}
     }
     visitor.leave_experimental_feature(node);
 }

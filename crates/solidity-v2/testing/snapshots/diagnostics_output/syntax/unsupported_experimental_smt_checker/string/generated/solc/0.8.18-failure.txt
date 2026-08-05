@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[Warning 8158] Warning: Solver z3 was selected for SMTChecker but it is not available. libz3.so.4.11 was not found.
+
+[Warning 5523] Warning: The SMTChecker pragma has been deprecated and will be removed in the future. Please use the "model checker engine" compiler setting to activate the SMTChecker instead. If the pragma is enabled, all engines will be used.
+   ╭─[input.sol:4:1]
+   │
+ 4 │ pragma experimental "SMTChecker";
+   │ ────────────────┬────────────────  
+   │                 ╰────────────────── Error occurred here.
+───╯
+
+[Warning 7649] Warning: CHC analysis was not possible since no Horn solver was found and enabled. The accepted solvers for CHC are Eldarica and z3.
+
+[Warning 7710] Warning: BMC analysis was not possible since no SMT solver was found and enabled. The accepted solvers for BMC are cvc4 and z3.

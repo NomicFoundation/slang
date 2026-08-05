@@ -24,6 +24,7 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
     transmute_constant_state_variables(&mut mutator);
     collapse_redundant_node_types(&mut mutator);
     simplify_string_literals(&mut mutator);
+    normalize_experimental_feature(&mut mutator);
     normalize_yul_terminals(&mut mutator);
     simplify_imports(&mut mutator);
     simplify_parameters(&mut mutator);
@@ -322,6 +323,21 @@ fn simplify_string_literals(mutator: &mut IrModelMutator) {
     // Collapse YulFlagsDeclaration to its inner YulFlags collection.
     // This preserves AssemblyStatement.flags as optional.
     mutator.collapse_sequence("YulFlagsDeclaration");
+}
+
+fn normalize_experimental_feature(mutator: &mut IrModelMutator) {
+    // Normalize string literals into a strongly-typed enum of known feature names:
+    mutator.remove_type("ExperimentalFeature");
+    mutator.add_enum_type(
+        "ExperimentalFeature",
+        &["ABIEncoderV2", "SMTChecker", "Solidity", "Unrecognized"],
+    );
+    mutator.add_sequence_field(
+        "ExperimentalPragma",
+        "feature",
+        "ExperimentalFeature",
+        false,
+    );
 }
 
 fn normalize_yul_terminals(mutator: &mut IrModelMutator) {
