@@ -204,11 +204,12 @@ impl Serialize for CallOptionsExpressionStruct {
 
 impl Serialize for CatchClauseStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(6))?;
+        let mut map = serializer.serialize_map(Some(7))?;
         map.serialize_entry("id", &self.node_id())?;
         map.serialize_entry("type", "CatchClause")?;
         map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
         map.serialize_entry("file", self.get_file_id())?;
+        map.serialize_entry("kind", &self.kind())?;
         map.serialize_entry("error", &self.error())?;
         map.serialize_entry("body", &self.body())?;
         map.end()
@@ -1347,6 +1348,28 @@ impl Serialize for AssignmentExpressionOperator {
             AssignmentExpressionOperator::PercentEqual(inner) => inner.serialize(serializer),
             AssignmentExpressionOperator::PlusEqual(inner) => inner.serialize(serializer),
             AssignmentExpressionOperator::SlashEqual(inner) => inner.serialize(serializer),
+        }
+    }
+}
+
+impl Serialize for CatchClauseKind {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        match self {
+            CatchClauseKind::Error => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "CatchClauseKind::Error")?;
+                map.end()
+            }
+            CatchClauseKind::Panic => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "CatchClauseKind::Panic")?;
+                map.end()
+            }
+            CatchClauseKind::LowLevel => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "CatchClauseKind::LowLevel")?;
+                map.end()
+            }
         }
     }
 }

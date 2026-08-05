@@ -537,6 +537,11 @@ pub trait Visitor {
     }
     fn leave_assignment_expression_operator(&mut self, _node: &AssignmentExpressionOperator) {}
 
+    fn enter_catch_clause_kind(&mut self, _node: &CatchClauseKind) -> bool {
+        true
+    }
+    fn leave_catch_clause_kind(&mut self, _node: &CatchClauseKind) {}
+
     fn enter_contract_member(&mut self, _node: &ContractMember) -> bool {
         true
     }
@@ -1202,6 +1207,9 @@ pub fn accept_call_options_expression(node: &CallOptionsExpression, visitor: &mu
 pub fn accept_catch_clause(node: &CatchClause, visitor: &mut impl Visitor) {
     if !visitor.enter_catch_clause(node) {
         return;
+    }
+    if let Some(kind) = &node.kind {
+        accept_catch_clause_kind(kind, visitor);
     }
     if let Some(error) = &node.error {
         accept_catch_clause_error(error, visitor);
@@ -2169,6 +2177,18 @@ pub fn accept_assignment_expression_operator(
         }
     }
     visitor.leave_assignment_expression_operator(node);
+}
+
+pub fn accept_catch_clause_kind(node: &CatchClauseKind, visitor: &mut impl Visitor) {
+    if !visitor.enter_catch_clause_kind(node) {
+        return;
+    }
+    match &node {
+        CatchClauseKind::Error => {}
+        CatchClauseKind::Panic => {}
+        CatchClauseKind::LowLevel => {}
+    }
+    visitor.leave_catch_clause_kind(node);
 }
 
 pub fn accept_contract_member(node: &ContractMember, visitor: &mut impl Visitor) {

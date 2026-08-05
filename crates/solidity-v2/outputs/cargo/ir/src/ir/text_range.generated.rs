@@ -687,6 +687,18 @@ impl TextRange for AssignmentExpressionOperator {
     }
 }
 
+impl TextRange for CatchClauseKind {
+    fn calculate_text_range(&self) -> Option<Range<usize>> {
+        match self {
+            CatchClauseKind::Error => None,
+
+            CatchClauseKind::Panic => None,
+
+            CatchClauseKind::LowLevel => None,
+        }
+    }
+}
+
 impl TextRange for ContractMember {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         match self {

@@ -26,6 +26,7 @@ pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_call_options(&mut self,
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_call_options_expression(&mut self, &slang_solidity_v2_ir::ir::CallOptionsExpression) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_catch_clause(&mut self, &slang_solidity_v2_ir::ir::CatchClause) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_catch_clause_error(&mut self, &slang_solidity_v2_ir::ir::CatchClauseError) -> bool
+pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_catch_clause_kind(&mut self, &slang_solidity_v2_ir::ir::CatchClauseKind) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_catch_clauses(&mut self, &slang_solidity_v2_ir::ir::CatchClauses) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_conditional_expression(&mut self, &slang_solidity_v2_ir::ir::ConditionalExpression) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_constant_definition(&mut self, &slang_solidity_v2_ir::ir::ConstantDefinition) -> bool
@@ -197,6 +198,7 @@ pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_call_options(&mut self,
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_call_options_expression(&mut self, &slang_solidity_v2_ir::ir::CallOptionsExpression)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_catch_clause(&mut self, &slang_solidity_v2_ir::ir::CatchClause)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_catch_clause_error(&mut self, &slang_solidity_v2_ir::ir::CatchClauseError)
+pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_catch_clause_kind(&mut self, &slang_solidity_v2_ir::ir::CatchClauseKind)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_catch_clauses(&mut self, &slang_solidity_v2_ir::ir::CatchClauses)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_conditional_expression(&mut self, &slang_solidity_v2_ir::ir::ConditionalExpression)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_constant_definition(&mut self, &slang_solidity_v2_ir::ir::ConstantDefinition)
@@ -443,6 +445,7 @@ pub fn slang_solidity_v2_ir::ir::visitor::accept_break_statement(&slang_solidity
 pub fn slang_solidity_v2_ir::ir::visitor::accept_call_options_expression(&slang_solidity_v2_ir::ir::CallOptionsExpression, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_catch_clause(&slang_solidity_v2_ir::ir::CatchClause, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_catch_clause_error(&slang_solidity_v2_ir::ir::CatchClauseError, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
+pub fn slang_solidity_v2_ir::ir::visitor::accept_catch_clause_kind(&slang_solidity_v2_ir::ir::CatchClauseKind, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_conditional_expression(&slang_solidity_v2_ir::ir::ConditionalExpression, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_constant_definition(&slang_solidity_v2_ir::ir::ConstantDefinition, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_continue_statement(&slang_solidity_v2_ir::ir::ContinueStatement, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
@@ -619,6 +622,25 @@ impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::Assign
 pub fn slang_solidity_v2_ir::ir::AssignmentExpressionOperator::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AssignmentExpressionOperator
 pub fn slang_solidity_v2_ir::ir::AssignmentExpressionOperator::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+pub enum slang_solidity_v2_ir::ir::CatchClauseKind
+pub slang_solidity_v2_ir::ir::CatchClauseKind::Error
+pub slang_solidity_v2_ir::ir::CatchClauseKind::LowLevel
+pub slang_solidity_v2_ir::ir::CatchClauseKind::Panic
+impl core::clone::Clone for slang_solidity_v2_ir::ir::CatchClauseKind
+pub fn slang_solidity_v2_ir::ir::CatchClauseKind::clone(&self) -> slang_solidity_v2_ir::ir::CatchClauseKind
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::CatchClauseKind
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::CatchClauseKind
+pub fn slang_solidity_v2_ir::ir::CatchClauseKind::eq(&self, &slang_solidity_v2_ir::ir::CatchClauseKind) -> bool
+impl core::fmt::Debug for slang_solidity_v2_ir::ir::CatchClauseKind
+pub fn slang_solidity_v2_ir::ir::CatchClauseKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for slang_solidity_v2_ir::ir::CatchClauseKind
+pub fn slang_solidity_v2_ir::ir::CatchClauseKind::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for slang_solidity_v2_ir::ir::CatchClauseKind
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::CatchClauseKind
+impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::CatchClauseKind
+pub fn slang_solidity_v2_ir::ir::CatchClauseKind::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
+impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::CatchClauseKind
+pub fn slang_solidity_v2_ir::ir::CatchClauseKind::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub enum slang_solidity_v2_ir::ir::ContractMember
 pub slang_solidity_v2_ir::ir::ContractMember::ConstantDefinition(slang_solidity_v2_ir::ir::ConstantDefinition)
 pub slang_solidity_v2_ir::ir::ContractMember::EnumDefinition(slang_solidity_v2_ir::ir::EnumDefinition)
@@ -1840,6 +1862,7 @@ pub fn slang_solidity_v2_ir::ir::CatchClauseErrorStruct::calculate_text_range(&s
 pub struct slang_solidity_v2_ir::ir::CatchClauseStruct
 pub slang_solidity_v2_ir::ir::CatchClauseStruct::body: slang_solidity_v2_ir::ir::Block
 pub slang_solidity_v2_ir::ir::CatchClauseStruct::error: core::option::Option<slang_solidity_v2_ir::ir::CatchClauseError>
+pub slang_solidity_v2_ir::ir::CatchClauseStruct::kind: core::option::Option<slang_solidity_v2_ir::ir::CatchClauseKind>
 pub slang_solidity_v2_ir::ir::CatchClauseStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::CatchClauseStruct
 pub fn slang_solidity_v2_ir::ir::CatchClauseStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
@@ -3977,6 +4000,8 @@ impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::CaretS
 pub fn slang_solidity_v2_ir::ir::CaretStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::CatchClauseErrorStruct
 pub fn slang_solidity_v2_ir::ir::CatchClauseErrorStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
+impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::CatchClauseKind
+pub fn slang_solidity_v2_ir::ir::CatchClauseKind::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::CatchClauseStruct
 pub fn slang_solidity_v2_ir::ir::CatchClauseStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ConditionalExpressionStruct
@@ -4419,6 +4444,8 @@ impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::CaretStru
 pub fn slang_solidity_v2_ir::ir::CaretStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::CatchClauseErrorStruct
 pub fn slang_solidity_v2_ir::ir::CatchClauseErrorStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::CatchClauseKind
+pub fn slang_solidity_v2_ir::ir::CatchClauseKind::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::CatchClauseStruct
 pub fn slang_solidity_v2_ir::ir::CatchClauseStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ConditionalExpressionStruct

@@ -1,5 +1,4 @@
 pub mod built_ins;
-pub mod catch_clauses;
 pub mod collections;
 pub mod diagnostics;
 pub mod evm_targets;

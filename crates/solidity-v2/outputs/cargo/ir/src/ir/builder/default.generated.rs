@@ -248,26 +248,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         })
     }
 
-    pub(super) fn build_catch_clause(
-        &mut self,
-        source: &input::CatchClause,
-    ) -> output::CatchClause {
-        let id = self.next_id(output::NodeKind::CatchClause);
-        let range = source.calculate_text_range().unwrap_or_default();
-        let error = source
-            .error
-            .as_ref()
-            .map(|value| self.build_catch_clause_error(value));
-        let body = self.build_block(&source.body);
-
-        Arc::new(output::CatchClauseStruct {
-            id,
-            range,
-            error,
-            body,
-        })
-    }
-
     pub(super) fn build_catch_clause_error(
         &mut self,
         source: &input::CatchClauseError,

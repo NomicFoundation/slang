@@ -78,6 +78,34 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     // Abstract sequence methods
     //
 
+    fn build_catch_clause(&mut self, source: &input::CatchClause) -> output::CatchClause {
+        let id = self.next_id(output::NodeKind::CatchClause);
+        let range = source.calculate_text_range().unwrap_or_default();
+        let error = source
+            .error
+            .as_ref()
+            .map(|error| self.build_catch_clause_error(error));
+        let kind = match error
+            .as_ref()
+            .and_then(|error| error.name.as_ref())
+            .map(|name| name.text.as_str())
+        {
+            Some("Error") => Some(output::CatchClauseKind::Error),
+            Some("Panic") => Some(output::CatchClauseKind::Panic),
+            Some(_) => None,
+            None => Some(output::CatchClauseKind::LowLevel),
+        };
+        let body = self.build_block(&source.body);
+
+        Arc::new(output::CatchClauseStruct {
+            id,
+            range,
+            kind,
+            error,
+            body,
+        })
+    }
+
     fn build_constant_definition(
         &mut self,
         source: &input::ConstantDefinition,

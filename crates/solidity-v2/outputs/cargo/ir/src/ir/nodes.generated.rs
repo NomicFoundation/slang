@@ -240,6 +240,7 @@ pub type CatchClause = Arc<CatchClauseStruct>;
 pub struct CatchClauseStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
+    pub kind: Option<CatchClauseKind>,
     pub error: Option<CatchClauseError>,
     pub body: Block,
 }
@@ -1651,6 +1652,13 @@ impl AssignmentExpressionOperator {
             AssignmentExpressionOperator::SlashEqual(inner) => inner.unparse(),
         }
     }
+}
+
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+pub enum CatchClauseKind {
+    Error,
+    Panic,
+    LowLevel,
 }
 
 #[derive(Clone, Debug)]

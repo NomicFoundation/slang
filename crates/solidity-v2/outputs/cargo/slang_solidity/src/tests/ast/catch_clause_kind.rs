@@ -1,6 +1,5 @@
-//! Exercises `CatchClause::kind`, which names a clause `Error`, `Panic` or
-//! low-level. `Error` and `Panic` both bind to the same built-in, so the kind
-//! is not recoverable from the binding.
+//! Exercises `CatchClause::kind`. `Error` and `Panic` both bind to the same
+//! built-in, so the kind is not recoverable from the binding.
 
 use crate::ast::CatchClauseKind;
 use crate::{ast, define_fixture};
@@ -53,13 +52,14 @@ fn catch_clauses_report_their_kind() {
     let mut collector = CatchClauseCollector::default();
     ast::visitor::accept_source_unit(&ast, &mut collector);
 
-    assert_eq!(
-        collector.kinds,
-        vec![
-            Some(CatchClauseKind::Error),
-            Some(CatchClauseKind::Panic),
-            Some(CatchClauseKind::LowLevel),
-            Some(CatchClauseKind::LowLevel),
-        ]
-    );
+    let [error, panic, with_data, bare] = collector.kinds.as_slice() else {
+        panic!(
+            "expected four catch clauses, got {:?}",
+            collector.kinds.len()
+        );
+    };
+    assert!(matches!(error, Some(CatchClauseKind::Error)));
+    assert!(matches!(panic, Some(CatchClauseKind::Panic)));
+    assert!(matches!(with_data, Some(CatchClauseKind::LowLevel)));
+    assert!(matches!(bare, Some(CatchClauseKind::LowLevel)));
 }

@@ -682,6 +682,18 @@ impl NodeIdentity for AssignmentExpressionOperator {
     }
 }
 
+impl NodeIdentity for CatchClauseKind {
+    fn node_id(&self) -> Option<NodeId> {
+        match self {
+            CatchClauseKind::Error => None,
+
+            CatchClauseKind::Panic => None,
+
+            CatchClauseKind::LowLevel => None,
+        }
+    }
+}
+
 impl NodeIdentity for ContractMember {
     fn node_id(&self) -> Option<NodeId> {
         match self {

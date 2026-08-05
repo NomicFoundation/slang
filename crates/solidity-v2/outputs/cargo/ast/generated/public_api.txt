@@ -216,6 +216,7 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_call_options(&mut sel
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_call_options_expression(&mut self, &slang_solidity_v2_ast::ast::CallOptionsExpression) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_catch_clause(&mut self, &slang_solidity_v2_ast::ast::CatchClause) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_catch_clause_error(&mut self, &slang_solidity_v2_ast::ast::CatchClauseError) -> bool
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_catch_clause_kind(&mut self, &slang_solidity_v2_ast::ast::CatchClauseKind) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_catch_clauses(&mut self, &slang_solidity_v2_ast::ast::CatchClauses) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_conditional_expression(&mut self, &slang_solidity_v2_ast::ast::ConditionalExpression) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_constant_definition(&mut self, &slang_solidity_v2_ast::ast::ConstantDefinition) -> bool
@@ -387,6 +388,7 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_call_options(&mut sel
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_call_options_expression(&mut self, &slang_solidity_v2_ast::ast::CallOptionsExpression)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_catch_clause(&mut self, &slang_solidity_v2_ast::ast::CatchClause)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_catch_clause_error(&mut self, &slang_solidity_v2_ast::ast::CatchClauseError)
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_catch_clause_kind(&mut self, &slang_solidity_v2_ast::ast::CatchClauseKind)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_catch_clauses(&mut self, &slang_solidity_v2_ast::ast::CatchClauses)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_conditional_expression(&mut self, &slang_solidity_v2_ast::ast::ConditionalExpression)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_constant_definition(&mut self, &slang_solidity_v2_ast::ast::ConstantDefinition)
@@ -568,6 +570,7 @@ pub fn slang_solidity_v2_ast::ast::visitor::accept_break_statement(&slang_solidi
 pub fn slang_solidity_v2_ast::ast::visitor::accept_call_options_expression(&slang_solidity_v2_ast::ast::CallOptionsExpression, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_catch_clause(&slang_solidity_v2_ast::ast::CatchClause, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_catch_clause_error(&slang_solidity_v2_ast::ast::CatchClauseError, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
+pub fn slang_solidity_v2_ast::ast::visitor::accept_catch_clause_kind(&slang_solidity_v2_ast::ast::CatchClauseKind, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_conditional_expression(&slang_solidity_v2_ast::ast::ConditionalExpression, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_constant_definition(&slang_solidity_v2_ast::ast::ConstantDefinition, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_continue_statement(&slang_solidity_v2_ast::ast::ContinueStatement, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
@@ -722,6 +725,14 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::AssignmentExpressionOper
 pub fn slang_solidity_v2_ast::ast::AssignmentExpressionOperator::clone(&self) -> slang_solidity_v2_ast::ast::AssignmentExpressionOperator
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AssignmentExpressionOperator
 pub fn slang_solidity_v2_ast::ast::AssignmentExpressionOperator::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub enum slang_solidity_v2_ast::ast::CatchClauseKind
+pub slang_solidity_v2_ast::ast::CatchClauseKind::Error
+pub slang_solidity_v2_ast::ast::CatchClauseKind::LowLevel
+pub slang_solidity_v2_ast::ast::CatchClauseKind::Panic
+impl core::clone::Clone for slang_solidity_v2_ast::ast::CatchClauseKind
+pub fn slang_solidity_v2_ast::ast::CatchClauseKind::clone(&self) -> slang_solidity_v2_ast::ast::CatchClauseKind
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::CatchClauseKind
+pub fn slang_solidity_v2_ast::ast::CatchClauseKind::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub enum slang_solidity_v2_ast::ast::ContractBase
 pub slang_solidity_v2_ast::ast::ContractBase::Contract(slang_solidity_v2_ast::ast::ContractDefinition)
 pub slang_solidity_v2_ast::ast::ContractBase::Interface(slang_solidity_v2_ast::ast::InterfaceDefinition)
@@ -1603,6 +1614,7 @@ pub fn slang_solidity_v2_ast::ast::CatchClauseStruct::error(&self) -> core::opti
 pub fn slang_solidity_v2_ast::ast::CatchClauseStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::ast::CatchClauseStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::CatchClauseStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+pub fn slang_solidity_v2_ast::ast::CatchClauseStruct::kind(&self) -> core::option::Option<slang_solidity_v2_ast::ast::CatchClauseKind>
 pub fn slang_solidity_v2_ast::ast::CatchClauseStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl core::clone::Clone for slang_solidity_v2_ast::ast::CatchClauseStruct
 pub fn slang_solidity_v2_ast::ast::CatchClauseStruct::clone(&self) -> slang_solidity_v2_ast::ast::CatchClauseStruct

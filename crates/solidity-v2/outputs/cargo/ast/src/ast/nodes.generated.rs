@@ -648,6 +648,13 @@ impl CatchClauseStruct {
         self.ir_node.id()
     }
 
+    pub fn kind(&self) -> Option<CatchClauseKind> {
+        self.ir_node
+            .kind
+            .as_ref()
+            .map(|ir_node| create_catch_clause_kind(ir_node, &self.semantic))
+    }
+
     pub fn error(&self) -> Option<CatchClauseError> {
         self.ir_node
             .error
@@ -4558,6 +4565,26 @@ pub(crate) fn create_assignment_expression_operator(
         ir::AssignmentExpressionOperator::SlashEqual(variant) => {
             AssignmentExpressionOperator::SlashEqual(create_slash_equal(variant, semantic))
         }
+    }
+}
+
+#[derive(Clone)]
+pub enum CatchClauseKind {
+    Error,
+    Panic,
+    LowLevel,
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_catch_clause_kind(
+    ir_node: &ir::CatchClauseKind,
+    semantic: &Arc<SemanticContext>,
+) -> CatchClauseKind {
+    match ir_node {
+        ir::CatchClauseKind::Error => CatchClauseKind::Error,
+        ir::CatchClauseKind::Panic => CatchClauseKind::Panic,
+        ir::CatchClauseKind::LowLevel => CatchClauseKind::LowLevel,
     }
 }
 

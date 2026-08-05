@@ -1,6 +1,5 @@
-use slang_solidity_v2_common::catch_clauses::CatchClauseKind;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
-    AbstractContractPublicConstructor, DuplicateCatchClause, FreeFunctionPayable,
+    AbstractContractPublicConstructor, CatchClauseKind, DuplicateCatchClause, FreeFunctionPayable,
     FreeFunctionVisibility, FreeFunctionWithModifiers, FreeFunctionWithOverride,
     FunctionMustBeImplemented, GlobalUsingForInsideContract, GlobalUsingForWildcard,
     InterfaceFunctionCannotBeImplemented, InterfaceFunctionNotExternal,
@@ -281,17 +280,19 @@ impl<F: SemanticFile> Pass<'_, F> {
         let mut seen_panic = false;
         let mut seen_low_level = false;
         for clause in node.catch_clauses.iter() {
-            let (kind, seen) = match clause.kind() {
-                Some(CatchClauseKind::Error) => (CatchClauseKind::Error, &mut seen_error),
+            let (kind, seen) = match clause.kind {
+                Some(ir::CatchClauseKind::Error) => (CatchClauseKind::Error, &mut seen_error),
                 // The `Panic` catch clause selector was introduced in 0.8.1;
                 // before that solc treats `Panic` as an invalid clause name.
-                Some(CatchClauseKind::Panic) if panic_allowed => {
+                Some(ir::CatchClauseKind::Panic) if panic_allowed => {
                     (CatchClauseKind::Panic, &mut seen_panic)
                 }
-                Some(CatchClauseKind::LowLevel) => (CatchClauseKind::LowLevel, &mut seen_low_level),
+                Some(ir::CatchClauseKind::LowLevel) => {
+                    (CatchClauseKind::LowLevel, &mut seen_low_level)
+                }
                 // Any other named selector (`Panic` too before 0.8.1) is not a
                 // valid catch clause name.
-                Some(CatchClauseKind::Panic) | None => {
+                Some(ir::CatchClauseKind::Panic) | None => {
                     self.report(clause.as_ref(), InvalidCatchClauseName { panic_allowed });
                     continue;
                 }

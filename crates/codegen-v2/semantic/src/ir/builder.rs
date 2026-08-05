@@ -19,6 +19,7 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
     flatten_contract_specifiers(&mut mutator);
     simplify_identifier_path_element(&mut mutator);
     unify_function_types(&mut mutator);
+    normalize_catch_clause_kinds(&mut mutator);
     flatten_function_attributes(&mut mutator);
     flatten_state_variable_attributes(&mut mutator);
     transmute_constant_state_variables(&mut mutator);
@@ -132,6 +133,14 @@ fn unify_function_types(mutator: &mut IrModelMutator) {
     // We don't need FunctionName or FunctionBody anymore
     mutator.remove_type("FunctionName");
     mutator.remove_type("FunctionBody");
+}
+
+fn normalize_catch_clause_kinds(mutator: &mut IrModelMutator) {
+    mutator.add_enum_type("CatchClauseKind", &["Error", "Panic", "LowLevel"]);
+
+    // Requires code in the transformer implementation. Optional because the
+    // selector name is an identifier, not a keyword: `catch Foo(...)` has no kind.
+    mutator.insert_sequence_field_before("CatchClause", "kind", "CatchClauseKind", true, "error");
 }
 
 fn flatten_function_attributes(mutator: &mut IrModelMutator) {
