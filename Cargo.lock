@@ -845,7 +845,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_ebnf"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "Inflector",
  "derive-new",
@@ -855,7 +855,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_generator"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -876,7 +876,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_runner"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "anyhow",
  "codegen_generator",
@@ -890,7 +890,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_spec"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -904,7 +904,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_v2_cst"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "indexmap 2.14.0",
  "language_v2_definition",
@@ -913,7 +913,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_v2_parser"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "indexmap 2.14.0",
  "language_v2_definition",
@@ -922,7 +922,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_v2_semantic"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "Inflector",
  "indexmap 2.14.0",
@@ -2152,7 +2152,7 @@ dependencies = [
 
 [[package]]
 name = "infra_cli"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "anyhow",
  "clap",
@@ -2173,7 +2173,7 @@ dependencies = [
 
 [[package]]
 name = "infra_utils"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -2433,7 +2433,7 @@ checksum = "884f3e747ed2dcee867cda1b0c31a048f9e20de2d916a248949319921a2e666e"
 
 [[package]]
 name = "language_definition"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "Inflector",
  "indexmap 2.14.0",
@@ -2451,7 +2451,7 @@ dependencies = [
 
 [[package]]
 name = "language_internal_macros"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "itertools 0.15.0",
  "proc-macro2",
@@ -2461,14 +2461,14 @@ dependencies = [
 
 [[package]]
 name = "language_macros"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "language_definition",
 ]
 
 [[package]]
 name = "language_tests"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "infra_utils",
  "language_definition",
@@ -2480,7 +2480,7 @@ dependencies = [
 
 [[package]]
 name = "language_v2_definition"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "Inflector",
  "indexmap 2.14.0",
@@ -2498,7 +2498,7 @@ dependencies = [
 
 [[package]]
 name = "language_v2_internal_macros"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "itertools 0.15.0",
  "proc-macro2",
@@ -2508,14 +2508,14 @@ dependencies = [
 
 [[package]]
 name = "language_v2_macros"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "language_v2_definition",
 ]
 
 [[package]]
 name = "language_v2_tests"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "indexmap 2.14.0",
  "infra_utils",
@@ -2693,7 +2693,7 @@ checksum = "32a282da65faaf38286cf3be983213fcf1d2e2a58700e808f83f4ea9a4804bc0"
 
 [[package]]
 name = "metaslang_bindings"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "metaslang_cst",
  "metaslang_graph_builder",
@@ -2704,7 +2704,7 @@ dependencies = [
 
 [[package]]
 name = "metaslang_cst"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "nom",
  "serde",
@@ -2713,7 +2713,7 @@ dependencies = [
 
 [[package]]
 name = "metaslang_graph_builder"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "env_logger",
  "indoc",
@@ -2730,7 +2730,7 @@ dependencies = [
 
 [[package]]
 name = "metaslang_stack_graphs"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "bitvec",
  "controlled-option",
@@ -4002,7 +4002,7 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
 
 [[package]]
 name = "slang_solidity"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "ariadne",
  "indexmap 2.14.0",
@@ -4021,7 +4021,7 @@ dependencies = [
 
 [[package]]
 name = "slang_solidity_cli"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "clap",
  "semver 1.0.28",
@@ -4031,7 +4031,7 @@ dependencies = [
 
 [[package]]
 name = "slang_solidity_v2"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "num-bigint",
  "num-rational",
@@ -4047,7 +4047,7 @@ dependencies = [
 
 [[package]]
 name = "slang_solidity_v2_ast"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "itertools 0.15.0",
  "num-bigint",
@@ -4063,7 +4063,7 @@ dependencies = [
 
 [[package]]
 name = "slang_solidity_v2_common"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "fxhash",
  "indexmap 2.14.0",
@@ -4076,11 +4076,11 @@ dependencies = [
 
 [[package]]
 name = "slang_solidity_v2_cst"
-version = "1.3.7"
+version = "1.3.8"
 
 [[package]]
 name = "slang_solidity_v2_ir"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "slang_solidity_v2_common",
  "slang_solidity_v2_cst",
@@ -4089,7 +4089,7 @@ dependencies = [
 
 [[package]]
 name = "slang_solidity_v2_parser"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "lalrpop",
  "lalrpop-util",
@@ -4102,7 +4102,7 @@ dependencies = [
 
 [[package]]
 name = "slang_solidity_v2_semantic"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "num-bigint",
  "num-integer",
@@ -4372,7 +4372,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_cargo_tests"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -4391,7 +4391,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_cargo_wasm"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "paste",
  "semver 1.0.28",
@@ -4402,7 +4402,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_language"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "language_definition",
  "language_macros",
@@ -4411,15 +4411,15 @@ dependencies = [
 
 [[package]]
 name = "solidity_npm_package"
-version = "1.3.7"
+version = "1.3.8"
 
 [[package]]
 name = "solidity_spec"
-version = "1.3.7"
+version = "1.3.8"
 
 [[package]]
 name = "solidity_testing_perf_cargo"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -4445,7 +4445,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_perf_npm"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "anyhow",
  "clap",
@@ -4458,11 +4458,11 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_snapshots"
-version = "1.3.7"
+version = "1.3.8"
 
 [[package]]
 name = "solidity_testing_solc"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "anyhow",
  "clap",
@@ -4480,7 +4480,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_sourcify"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "anyhow",
  "clap",
@@ -4499,7 +4499,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_utils"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "anyhow",
  "infra_utils",
@@ -4511,7 +4511,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_v2_cargo_tests"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -4530,7 +4530,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_v2_language"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "language_v2_definition",
  "language_v2_macros",
@@ -4539,11 +4539,11 @@ dependencies = [
 
 [[package]]
 name = "solidity_v2_testing_snapshots"
-version = "1.3.7"
+version = "1.3.8"
 
 [[package]]
 name = "solidity_v2_testing_utils"
-version = "1.3.7"
+version = "1.3.8"
 dependencies = [
  "ariadne",
  "semver 1.0.28",
