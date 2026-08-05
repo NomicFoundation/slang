@@ -1,4 +1,4 @@
-{% macro render_visitor(language) -%}
+{% component v1.ir.render_visitor(language, model) -%}
   {%- set target = model.ir_languages[language].target -%}
   use std::rc::Rc;
   use crate::cst::TerminalNode;
@@ -50,9 +50,9 @@
   //
 
   {% for parent_type, choice in target.choices %}
-    {%- set nonterminals = choice.variants | filter(attribute="kind", value="Nonterminal") -%}
-    {%- set unique_terminals = choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
-    {%- set non_unique_terminals = choice.variants | filter(attribute="kind", value="Terminal") -%}
+    {%- set nonterminals = [variant for variant in choice.variants if variant.kind == "Nonterminal"] -%}
+    {%- set unique_terminals = [variant for variant in choice.variants if variant.kind == "UniqueTerminal"] -%}
+    {%- set non_unique_terminals = [variant for variant in choice.variants if variant.kind == "Terminal"] -%}
     {% if nonterminals | length == 0 %}
       pub fn accept_{{ parent_type | snake_case }}(_node: &{{ parent_type }}, _visitor: &mut impl Visitor) {}
     {% else %}
@@ -112,4 +112,4 @@
     {% endif -%}
   {% endfor %}
 
-{% endmacro render_visitor %}
+{% endcomponent v1.ir.render_visitor %}

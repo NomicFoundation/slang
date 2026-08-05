@@ -38,7 +38,7 @@ impl From<&LexemeKind> for TerminalKind {
             LexemeKind::UNRECOGNIZED => TerminalKind::UNRECOGNIZED,
 
             {% for kind in model.parser.lexer.all_lexeme_kinds -%}
-                {% if model.parser.lexer.trivia_lexeme_kinds is not containing(kind) -%}
+                {% if model.parser.lexer.trivia_lexeme_kinds is not containing(pat=kind) -%}
                     LexemeKind::{{ kind }} => TerminalKind::{{ kind | replace(from="_Reserved", to="") | replace(from="_Unreserved", to="") }},
                 {% endif -%}
             {%- endfor %}

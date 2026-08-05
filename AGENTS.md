@@ -104,7 +104,10 @@ Many source files are auto-generated, and are either under a `/generated/` direc
 ```
 
 Most of the generated files are produced from an accompanying `.jinja2` template next to them.
-Despite the `.jinja2` file extension, they use [Tera](https://keats.github.io/tera/docs/) syntax — **not** Jinja2.
+Despite the `.jinja2` file extension, they use [Tera](https://keats.github.io/tera/) v2 syntax — **not** Jinja2.
+
+Templates whose name starts with `_` are never rendered on their own: they define shared
+[components](https://keats.github.io/tera/#components).
 
 ## Sync Markers
 

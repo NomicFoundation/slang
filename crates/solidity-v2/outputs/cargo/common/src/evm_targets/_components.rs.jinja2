@@ -1,5 +1,5 @@
 {#- Renders a `EvmTargetSpecifier::<variant>(..)` constructor call from a `EvmTargetSpecifier`-shaped object. -#}
-{%- macro specifier(s) -%}
+{%- component v2.evm_targets.specifier(s) -%}
     {%- if s.type == "From" -%}
         EvmTargetSpecifier::from(
             EvmTarget::{{ s.from }}
@@ -16,4 +16,4 @@
     {%- else -%}
         {{ throw(message="Unexpected EVM target specifier type: " ~ s.type) }}
     {%- endif -%}
-{%- endmacro specifier -%}
+{%- endcomponent v2.evm_targets.specifier -%}

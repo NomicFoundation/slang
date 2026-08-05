@@ -41,9 +41,9 @@ use super::Type;
     }
     {% for field in sequence.fields -%}
       {% if field.is_optional %}
-        {% if custom_types is containing(field.type.name) or
-              target.sequences is containing(field.type.name) or
-              target.choices is containing(field.type.name) %}
+        {% if custom_types is containing(pat=field.type.name) or
+              target.sequences is containing(pat=field.type.name) or
+              target.choices is containing(pat=field.type.name) %}
           pub fn {{ field.label }}(&self) -> Option<{{ field.type.name }}> {
             self.ir_node.{{ field.label }}.as_ref().map(|ir_node| {
               create_{{ field.type.name | snake_case }}(ir_node, &self.semantic)
@@ -57,9 +57,9 @@ use super::Type;
           pub fn {{ field.label }}(&self) -> Option<Rc<TerminalNode>> {
             self.ir_node.{{ field.label }}.as_ref().map(Rc::clone)
           }
-        {% elif target.collections is containing(field.type.name) %}
+        {% elif target.collections is containing(pat=field.type.name) %}
           {% set item_type = target.collections[field.type.name].item_type %}
-          {% if custom_types is containing(item_type.name) or not item_type.is_terminal %}
+          {% if custom_types is containing(pat=item_type.name) or not item_type.is_terminal %}
             pub fn {{ field.label }}(&self) -> Option<{{ field.type.name }}> {
               self.ir_node.{{ field.label }}.as_ref().map(|ir_node| {
                 create_{{ field.type.name | snake_case }}(ir_node, &self.semantic)
@@ -72,9 +72,9 @@ use super::Type;
           {% endif -%}
         {% endif %}
       {% else %}
-        {% if custom_types is containing(field.type.name) or
-              target.sequences is containing(field.type.name) or
-              target.choices is containing(field.type.name) %}
+        {% if custom_types is containing(pat=field.type.name) or
+              target.sequences is containing(pat=field.type.name) or
+              target.choices is containing(pat=field.type.name) %}
           pub fn {{ field.label }}(&self) -> {{ field.type.name }} {
             create_{{ field.type.name | snake_case }}(&self.ir_node.{{ field.label }}, &self.semantic)
           }
@@ -82,9 +82,9 @@ use super::Type;
           pub fn {{ field.label }}(&self) -> Rc<TerminalNode> {
             Rc::clone(&self.ir_node.{{ field.label }})
           }
-        {% elif target.collections is containing(field.type.name) %}
+        {% elif target.collections is containing(pat=field.type.name) %}
           {% set item_type = target.collections[field.type.name].item_type %}
-          {% if custom_types is containing(item_type.name) or not item_type.is_terminal %}
+          {% if custom_types is containing(pat=item_type.name) or not item_type.is_terminal %}
             pub fn {{ field.label }}(&self) -> {{ field.type.name }} {
               create_{{ field.type.name | snake_case }}(&self.ir_node.{{ field.label }}, &self.semantic)
             }
@@ -116,15 +116,15 @@ use super::Type;
   pub enum {{ parent_type }} {
     {% for variant in choice.variants -%}
       {{ variant.name }}
-      {%- if custom_types is containing(variant.name) or
-             target.sequences is containing(variant.name) or
-             target.choices is containing(variant.name) -%}
+      {%- if custom_types is containing(pat=variant.name) or
+             target.sequences is containing(pat=variant.name) or
+             target.choices is containing(pat=variant.name) -%}
         ({{ variant.name }})
-      {%- elif target.collections is containing(variant.name) -%}
+      {%- elif target.collections is containing(pat=variant.name) -%}
         {% set item_type = target.collections[variant.name].item_type %}
-        {% if custom_types is containing(item_type.name) or
-              target.sequences is containing(item_type.name) or
-              target.choices is containing(item_type.name) %}
+        {% if custom_types is containing(pat=item_type.name) or
+              target.sequences is containing(pat=item_type.name) or
+              target.choices is containing(pat=item_type.name) %}
           ({{ variant.name }})
         {% elif variant.kind != "UniqueTerminal" %}
           (Vec<Rc<TerminalNode>>)
@@ -144,17 +144,17 @@ use super::Type;
     match ir_node {
       {% for variant in choice.variants -%}
         input_ir::{{ parent_type }}::{{ variant.name }}
-        {%- if custom_types is containing(variant.name) or
-               target.sequences is containing(variant.name) or
-               target.choices is containing(variant.name) -%}
+        {%- if custom_types is containing(pat=variant.name) or
+               target.sequences is containing(pat=variant.name) or
+               target.choices is containing(pat=variant.name) -%}
           (variant) => {{ parent_type }}::{{ variant.name }}(
             create_{{ variant.name | snake_case }}(variant, semantic)
           ),
-        {%- elif target.collections is containing(variant.name) -%}
+        {%- elif target.collections is containing(pat=variant.name) -%}
           {% set item_type = target.collections[variant.name].item_type %}
-          {% if custom_types is containing(item_type.name) or
-                target.sequences is containing(item_type.name) or
-                target.choices is containing(item_type.name) %}
+          {% if custom_types is containing(pat=item_type.name) or
+                target.sequences is containing(pat=item_type.name) or
+                target.choices is containing(pat=item_type.name) %}
             (nodes) => {{ parent_type }}::{{ variant.name }}(
               create_{{ variant.name | snake_case }}(nodes, semantic)
             ),
@@ -178,7 +178,7 @@ use super::Type;
 
 {%- for parent_type, collection in target.collections %}
   {# Declare types only for collections of non-terminals *or* custom-type terminals #}
-  {%- if collection.item_type.is_terminal and custom_types is containing(collection.item_type.name) %}
+  {%- if collection.item_type.is_terminal and custom_types is containing(pat=collection.item_type.name) %}
     {% set ir_type = "Rc<TerminalNode>" %}
   {% elif not collection.item_type.is_terminal %}
     {% set ir_type = "input_ir::" ~ collection.item_type.name %}

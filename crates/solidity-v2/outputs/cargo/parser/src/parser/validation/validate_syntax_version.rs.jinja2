@@ -1,5 +1,3 @@
-{%- import "crates/solidity-v2/outputs/cargo/common/src/versions/_macros.rs.jinja2" as _versions -%}
-
 {%- set model = model.structured_cst_model -%}
 
 #![allow(clippy::needless_return)]
@@ -54,7 +52,7 @@ impl SyntaxVersionValidator<'_> {
                 {%- if sequence.enabled.type == "Always" %}
                     {# No version constraint on the node itself. #}
                 {%- else %}
-                    if !self.check(node, {{ _versions::specifier(s=sequence.enabled) }}) {
+                    if !self.check(node, {{<v2.versions.specifier s={sequence.enabled} />}}) {
                         return;
                     }
                 {%- endif %}
@@ -72,13 +70,13 @@ impl SyntaxVersionValidator<'_> {
                         {%- else %}
                             {%- if recurse %}
                                 if let Some(ref child) = node.{{ field.label | snake_case }}
-                                    && self.check(child, {{ _versions::specifier(s=field.enabled) }})
+                                    && self.check(child, {{<v2.versions.specifier s={field.enabled} />}})
                                 {
                                     self.check_{{ field.field_type.name | snake_case }}(child);
                                 }
                             {%- else %}
                                 if let Some(ref child) = node.{{ field.label | snake_case }} {
-                                    self.check(child, {{ _versions::specifier(s=field.enabled) }});
+                                    self.check(child, {{<v2.versions.specifier s={field.enabled} />}});
                                 }
                             {%- endif %}
                         {%- endif %}
@@ -103,7 +101,7 @@ impl SyntaxVersionValidator<'_> {
                 {%- if choice.enabled.type == "Always" %}
                     {# No version constraint on the node itself. #}
                 {%- else %}
-                    if !self.check(node, {{ _versions::specifier(s=choice.enabled) }}) {
+                    if !self.check(node, {{<v2.versions.specifier s={choice.enabled} />}}) {
                         return;
                     }
                 {%- endif %}
@@ -118,7 +116,7 @@ impl SyntaxVersionValidator<'_> {
                             {%- if variant.enabled.type == "Always" %}
                                 {# No version constraint on the variant itself. #}
                             {%- else %}
-                                if !self.check(child, {{ _versions::specifier(s=variant.enabled) }}) {
+                                if !self.check(child, {{<v2.versions.specifier s={variant.enabled} />}}) {
                                     return;
                                 }
                             {%- endif %}
@@ -143,7 +141,7 @@ impl SyntaxVersionValidator<'_> {
                 {%- if collection.enabled.type == "Always" %}
                     {# No version constraint on the node itself. #}
                 {%- else %}
-                    if !self.check(node, {{ _versions::specifier(s=collection.enabled) }}) {
+                    if !self.check(node, {{<v2.versions.specifier s={collection.enabled} />}}) {
                         return;
                     }
                 {%- endif %}

@@ -1,13 +1,8 @@
-#![allow(clippy::unnecessary_wraps)]
-
-use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
-use anyhow::{Result, anyhow, bail};
+use anyhow::{Result, anyhow};
 use inflector::Inflector;
-use regex::Regex;
-use serde_json::{Map, Value};
-use tera::Tera;
+use tera::{Kwargs, State, Tera, TeraResult, Value};
 
 use crate::cargo::CargoWorkspace;
 use crate::codegen::snapshots::collect_snapshot_tests;
@@ -27,26 +22,23 @@ impl TeraWrapper {
 
         let templates_glob = input_dir.join(JINJA_GLOB);
 
-        let mut instance = Tera::new(templates_glob.unwrap_str()).map_err(|error| {
-            // Stringify and wrap with newlines, as the default error serialization
-            // does not render the error report correctly:
-            anyhow!("\n{error}\n")
-        })?;
+        let mut instance = Tera::new();
 
+        // Everything must be registered before the templates are loaded below: tera validates at
+        // load time that every filter/function/component a template references exists.
         instance.register_filter("camel_case", camel_case_filter);
         instance.register_filter("pascal_case", pascal_case_filter);
-        instance.register_filter("kebab_case", kebab_case_filter);
         instance.register_filter("snake_case", snake_case_filter);
         instance.register_filter("wit_case", wit_case_filter);
 
-        instance.register_filter("default_array", default_array_filter);
-        instance.register_filter("default_object", default_object_filter);
-
-        instance.register_function("panic", panic_function);
-
         instance.register_function("collect_snapshot_tests", collect_snapshot_tests_function);
 
-        instance.autoescape_on(vec![]); // disable autoescaping
+        instance.autoescape_on(Vec::<&str>::new()); // disable autoescaping
+
+        instance
+            .load_from_glob(templates_glob.unwrap_str())
+            // Wrap with newlines, so that the multi-line error report starts on its own line:
+            .map_err(|error| anyhow!("\n{error}\n"))?;
 
         Ok(Self {
             input_dir,
@@ -62,122 +54,50 @@ impl TeraWrapper {
         // tera expects the template path to be relative to the input directory:
         let template_relative_path = template_path.strip_prefix(&self.input_dir)?.unwrap_str();
 
-        let rendered = match self.instance.render(template_relative_path, context) {
-            Ok(rendered) => rendered,
-            Err(error) => {
-                self.try_report_error(error)?;
-
-                // Exit process, to skip printing irrelevant backtraces:
-                #[allow(clippy::exit)]
-                std::process::exit(1);
-            }
-        };
-
-        Ok(rendered)
-    }
-
-    fn try_report_error(&self, error: tera::Error) -> Result<()> {
-        // Unfortunately, tera's error details are hidden in the debug output.
-        // It should be fixed in v2: https://github.com/Keats/tera/issues/885
-        let error_details = format!("{error:?}");
-
-        let Some(captures) = Regex::new(
-            r"Variable `(?<variable>.+)` not found in context while rendering '(?<template>.+)'",
-        )?
-        .captures(&error_details) else {
-            // Another (unrecognized) error: just propagate it as-is:
-            bail!(error);
-        };
-
-        let message = &captures[0];
-        let variable = captures.name("variable").unwrap().as_str();
-        let template = captures.name("template").unwrap().as_str();
-
-        let template_path = self.input_dir.join(template);
-        let source = template_path.read_to_string()?;
-
-        let Some(variable_location) = Regex::new(&format!(
-            "\\{{.*[^a-zA-Z0-9_\\.](?<variable>{variable}).*\\}}"
-        ))?
-        .captures(&source) else {
-            // The variable cannot be found as a direct interpolation in the
-            // source: propagate the error as-is
-            bail!(error);
-        };
-        let variable_location = variable_location.name("variable").unwrap().start();
-
-        let start = source[..variable_location].chars().count();
-        let end = start + variable.chars().count();
-
-        let source_id = template_path.unwrap_str();
-        let label = ariadne::Label::new((source_id, start..end)).with_message(message);
-
-        ariadne::Report::build(ariadne::ReportKind::Error, source_id, start)
-            .with_message(message)
-            .with_label(label)
-            .finish()
-            .write(
-                (source_id, ariadne::Source::from(&source)),
-                &mut std::io::stdout(),
-            )?;
-
-        Ok(())
+        self.instance
+            .render(template_relative_path, context)
+            .map_err(|error| anyhow!("\n{error}\n"))
     }
 }
 
-fn camel_case_filter(value: &Value, args: &HashMap<String, Value>) -> tera::Result<Value> {
-    assert_eq!(args.len(), 0, "Expected no arguments");
+// The callbacks below take `Kwargs` by value, as tera's `Filter`/`Function` traits require, hence
+// the `needless_pass_by_value` allows.
 
-    Ok(Value::String(
-        value
-            .as_str()
-            .expect("Expected a string value")
-            .to_camel_case(),
-    ))
+/// Tera silently ignores unexpected keyword arguments, so a typo would otherwise be dropped.
+fn assert_kwarg_count(kwargs: &Kwargs, expected: usize) {
+    let keys = kwargs.iter().map(|(key, _)| key).collect::<Vec<_>>();
+    assert_eq!(keys.len(), expected, "Unexpected arguments: {keys:?}");
 }
 
-fn pascal_case_filter(value: &Value, args: &HashMap<String, Value>) -> tera::Result<Value> {
-    assert_eq!(args.len(), 0, "Expected no arguments");
+#[allow(clippy::needless_pass_by_value)]
+fn camel_case_filter(value: &str, kwargs: Kwargs, _: &State<'_>) -> String {
+    assert_kwarg_count(&kwargs, 0);
 
-    Ok(Value::String(
-        value
-            .as_str()
-            .expect("Expected a string value")
-            .to_pascal_case(),
-    ))
+    value.to_camel_case()
 }
 
-fn kebab_case_filter(value: &Value, args: &HashMap<String, Value>) -> tera::Result<Value> {
-    assert_eq!(args.len(), 0, "Expected no arguments");
+#[allow(clippy::needless_pass_by_value)]
+fn pascal_case_filter(value: &str, kwargs: Kwargs, _: &State<'_>) -> String {
+    assert_kwarg_count(&kwargs, 0);
 
-    Ok(Value::String(
-        value
-            .as_str()
-            .expect("Expected a string value")
-            .to_kebab_case(),
-    ))
+    value.to_pascal_case()
 }
 
-fn snake_case_filter(value: &Value, args: &HashMap<String, Value>) -> tera::Result<Value> {
-    assert_eq!(args.len(), 0, "Expected no arguments");
+#[allow(clippy::needless_pass_by_value)]
+fn snake_case_filter(value: &str, kwargs: Kwargs, _: &State<'_>) -> String {
+    assert_kwarg_count(&kwargs, 0);
 
-    Ok(Value::String(
-        value
-            .as_str()
-            .expect("Expected a string value")
-            .to_snake_case(),
-    ))
+    value.to_snake_case()
 }
 
-fn wit_case_filter(value: &Value, args: &HashMap<String, Value>) -> tera::Result<Value> {
-    assert_eq!(args.len(), 0, "Expected no arguments");
-
-    let input = value.as_str().expect("Expected a string value");
+#[allow(clippy::needless_pass_by_value)]
+fn wit_case_filter(value: &str, kwargs: Kwargs, _: &State<'_>) -> String {
+    assert_kwarg_count(&kwargs, 0);
 
     let mut result = String::new();
     result.push('%');
 
-    for (i, c) in input.chars().enumerate() {
+    for (i, c) in value.chars().enumerate() {
         if c.is_uppercase() {
             if i > 0 {
                 result.push('-');
@@ -192,55 +112,15 @@ fn wit_case_filter(value: &Value, args: &HashMap<String, Value>) -> tera::Result
         }
     }
 
-    Ok(Value::String(result))
+    result
 }
 
-fn default_array_filter(value: &Value, args: &HashMap<String, Value>) -> tera::Result<Value> {
-    assert_eq!(args.len(), 0, "Expected no arguments");
+#[allow(clippy::needless_pass_by_value)]
+fn collect_snapshot_tests_function(kwargs: Kwargs, _: &State<'_>) -> TeraResult<Value> {
+    assert_kwarg_count(&kwargs, 2);
 
-    if value.is_null() {
-        Ok(Value::Array(Vec::default()))
-    } else {
-        Ok(value.clone())
-    }
-}
-
-fn default_object_filter(value: &Value, args: &HashMap<String, Value>) -> tera::Result<Value> {
-    assert_eq!(args.len(), 0, "Expected no arguments");
-
-    if value.is_null() {
-        Ok(Value::Object(Map::default()))
-    } else {
-        Ok(value.clone())
-    }
-}
-
-fn panic_function(args: &HashMap<String, Value>) -> tera::Result<Value> {
-    assert_eq!(args.len(), 1, "Expected one argument");
-
-    let message = args
-        .get("message")
-        .expect("Expected a 'message' argument")
-        .as_str()
-        .expect("Expected a string message");
-
-    panic!("{message}");
-}
-
-fn collect_snapshot_tests_function(args: &HashMap<String, Value>) -> tera::Result<Value> {
-    assert_eq!(args.len(), 2, "Expected two arguments");
-
-    let crate_name = args
-        .get("crate_name")
-        .expect("Expected a 'crate_name' argument")
-        .as_str()
-        .expect("Expected a string crate_name");
-
-    let path = args
-        .get("path")
-        .expect("Expected a 'path' argument")
-        .as_str()
-        .expect("Expected a string path");
+    let crate_name = kwargs.must_get::<&str>("crate_name")?;
+    let path = kwargs.must_get::<&str>("path")?;
 
     let data_dir = CargoWorkspace::locate_source_crate(crate_name)
         .unwrap()
@@ -248,5 +128,5 @@ fn collect_snapshot_tests_function(args: &HashMap<String, Value>) -> tera::Resul
 
     let entries = collect_snapshot_tests(&data_dir);
 
-    Ok(serde_json::to_value(entries).unwrap())
+    Ok(Value::from_serializable(&entries))
 }

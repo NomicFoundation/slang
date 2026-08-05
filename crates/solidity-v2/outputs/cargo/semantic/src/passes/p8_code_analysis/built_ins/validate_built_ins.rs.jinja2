@@ -1,6 +1,3 @@
-{%- import "crates/solidity-v2/outputs/cargo/common/src/versions/_macros.rs.jinja2" as _versions -%}
-{%- import "crates/solidity-v2/outputs/cargo/common/src/evm_targets/_macros.rs.jinja2" as _evm_targets -%}
-
 use std::ops::Range;
 
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
@@ -50,10 +47,10 @@ impl<'a> BuiltInValidator<'a> {
                         {%- if definition.enabled.type != "Always" or definition.evm_enabled.type != "Always" %}
                             InternalBuiltIn::{{ definition.name }}{% if definition.internal_parameter %}(_){% endif %} => {
                                 {%- if definition.enabled.type != "Always" %}
-                                    self.check_version(node_id, range, {{ _versions::specifier(s=definition.enabled) }});
+                                    self.check_version(node_id, range, {{<v2.versions.specifier s={definition.enabled} />}});
                                 {%- endif %}
                                 {%- if definition.evm_enabled.type != "Always" %}
-                                    self.check_target(node_id, range, {{ _evm_targets::specifier(s=definition.evm_enabled) }});
+                                    self.check_target(node_id, range, {{<v2.evm_targets.specifier s={definition.evm_enabled} />}});
                                 {%- endif %}
                             }
                         {%- endif %}

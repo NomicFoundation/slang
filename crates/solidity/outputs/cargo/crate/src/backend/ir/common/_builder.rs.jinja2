@@ -1,4 +1,4 @@
-{% macro render_builder(language) -%}
+{% component v1.ir.render_builder(language, model) -%}
   {%- set builder = model.ir_languages[language].builder -%}
   #![allow(clippy::too_many_lines)]
 
@@ -72,17 +72,17 @@
       let mut helper = ChildrenHelper::new(&node.children);
       let variant = helper.accept_label(EdgeLabel::Variant)?;
       let item = match variant.kind() {
-        {% for type in choice.variants | filter(attribute="kind", value="Nonterminal") -%}
+        {% for type in [variant for variant in choice.variants if variant.kind == "Nonterminal"] -%}
           NodeKind::Nonterminal(NonterminalKind::{{ type.name }}) => {{ parent_type }}::{{ type.name }}(build_{{ type.name | snake_case }}(nonterminal_node(variant))?),
         {%- endfor -%}
 
-        {% for type in choice.variants | filter(attribute="kind", value="Terminal") -%}
+        {% for type in [variant for variant in choice.variants if variant.kind == "Terminal"] -%}
           NodeKind::Terminal(TerminalKind::{{ type.name }}) => {
             {{ parent_type }}::{{ type.name }}(terminal_node_cloned(variant))
           },
         {%- endfor -%}
 
-        {% for type in choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
+        {% for type in [variant for variant in choice.variants if variant.kind == "UniqueTerminal"] -%}
           NodeKind::Terminal(TerminalKind::{{ type.name }}) => {
             {{ parent_type }}::{{ type.name }}
           },
@@ -193,4 +193,4 @@
     }
   }
 
-{% endmacro render_builder %}
+{% endcomponent v1.ir.render_builder %}

@@ -1,5 +1,3 @@
-{%- import "crates/solidity-v2/outputs/cargo/common/src/versions/_macros.rs.jinja2" as _versions -%}
-
 use logos::{FilterResult, Lexer, Logos};
 use slang_solidity_v2_common::versions::LanguageVersion;
 
@@ -108,7 +106,7 @@ impl<'source> ContextWrapper<'source> {
                         |_| { LexemeKind::{{ lexeme.kind }}_Unreserved }
                     {%- else -%}
                         |lexer| {
-                            if {{ _versions::specifier(s=lexeme.reserved) }}.contains(lexer.extras.language_version) {
+                            if {{<v2.versions.specifier s={lexeme.reserved} />}}.contains(lexer.extras.language_version) {
                                 LexemeKind::{{ lexeme.kind }}_Reserved
                             }
                             else {
