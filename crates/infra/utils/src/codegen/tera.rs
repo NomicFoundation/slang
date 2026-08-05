@@ -1,6 +1,3 @@
-// Tera's `Filter`/`Function` traits take `Kwargs` by value, so the callbacks below cannot borrow it:
-#![allow(clippy::needless_pass_by_value)]
-
 use std::path::{Path, PathBuf};
 
 use anyhow::{Result, anyhow};
@@ -63,30 +60,37 @@ impl TeraWrapper {
     }
 }
 
+// The callbacks below take `Kwargs` by value, as tera's `Filter`/`Function` traits require, hence
+// the `needless_pass_by_value` allows.
+
 /// Tera silently ignores unexpected keyword arguments, so a typo would otherwise be dropped.
 fn assert_kwarg_count(kwargs: &Kwargs, expected: usize) {
     let keys = kwargs.iter().map(|(key, _)| key).collect::<Vec<_>>();
     assert_eq!(keys.len(), expected, "Unexpected arguments: {keys:?}");
 }
 
+#[allow(clippy::needless_pass_by_value)]
 fn camel_case_filter(value: &str, kwargs: Kwargs, _: &State<'_>) -> String {
     assert_kwarg_count(&kwargs, 0);
 
     value.to_camel_case()
 }
 
+#[allow(clippy::needless_pass_by_value)]
 fn pascal_case_filter(value: &str, kwargs: Kwargs, _: &State<'_>) -> String {
     assert_kwarg_count(&kwargs, 0);
 
     value.to_pascal_case()
 }
 
+#[allow(clippy::needless_pass_by_value)]
 fn snake_case_filter(value: &str, kwargs: Kwargs, _: &State<'_>) -> String {
     assert_kwarg_count(&kwargs, 0);
 
     value.to_snake_case()
 }
 
+#[allow(clippy::needless_pass_by_value)]
 fn wit_case_filter(value: &str, kwargs: Kwargs, _: &State<'_>) -> String {
     assert_kwarg_count(&kwargs, 0);
 
@@ -111,6 +115,7 @@ fn wit_case_filter(value: &str, kwargs: Kwargs, _: &State<'_>) -> String {
     result
 }
 
+#[allow(clippy::needless_pass_by_value)]
 fn collect_snapshot_tests_function(kwargs: Kwargs, _: &State<'_>) -> TeraResult<Value> {
     assert_kwarg_count(&kwargs, 2);
 
