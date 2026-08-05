@@ -12,4 +12,24 @@ contract C {
             default { }
         }
     }
+
+    function g(uint256 x) public pure {
+        assembly {
+            switch x
+            case 64 { }
+            case 0x40 { }
+            case 65 { }
+            default { }
+        }
+    }
+
+    function h(uint256 x) public pure {
+        assembly {
+            switch x
+            case 0x4100000000000000000000000000000000000000000000000000000000000000 { }
+            case "A" { }
+            case "ABC" { }
+            default { }
+        }
+    }
 }

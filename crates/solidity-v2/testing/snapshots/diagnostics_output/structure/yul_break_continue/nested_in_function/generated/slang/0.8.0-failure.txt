@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[structure/yul-break-continue-outside-for-loop] Error: Keyword 'break' needs to be inside a for-loop body.
+[structure/yul-break-continue-outside-for-loop] Error: Keyword 'break' is only valid inside a for-loop body.
     ╭─[input.sol:10:32]
     │
  10 │                 function g() { break }

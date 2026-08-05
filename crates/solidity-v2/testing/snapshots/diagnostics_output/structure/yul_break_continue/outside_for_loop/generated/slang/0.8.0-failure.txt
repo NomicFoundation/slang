@@ -2,7 +2,7 @@
 
 Diagnostics: 2
 
-[structure/yul-break-continue-outside-for-loop] Error: Keyword 'break' needs to be inside a for-loop body.
+[structure/yul-break-continue-outside-for-loop] Error: Keyword 'break' is only valid inside a for-loop body.
    ╭─[input.sol:7:20]
    │
  7 │             if 1 { break }
@@ -10,7 +10,7 @@ Diagnostics: 2
    │                      ╰──── Error occurred here.
 ───╯
 
-[structure/yul-break-continue-outside-for-loop] Error: Keyword 'continue' needs to be inside a for-loop body.
+[structure/yul-break-continue-outside-for-loop] Error: Keyword 'continue' is only valid inside a for-loop body.
    ╭─[input.sol:8:20]
    │
  8 │             if 1 { continue }

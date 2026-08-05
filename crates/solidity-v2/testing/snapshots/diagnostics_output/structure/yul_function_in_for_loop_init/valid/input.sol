@@ -11,6 +11,9 @@ contract C {
                 inBody()
                 noop()
             }
+
+            // They're allowed in a post block nested inside an init block.
+            for { for { } n { function g() {} } { } } n { } { }
         }
     }
 }

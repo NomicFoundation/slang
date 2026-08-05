@@ -2,7 +2,7 @@
 
 Diagnostics: 2
 
-[structure/yul-break-continue-in-for-loop-init] Error: Keyword 'break' in for-loop init block is not allowed.
+[structure/yul-break-continue-outside-for-loop] Error: Keyword 'break' is only valid inside a for-loop body.
    ╭─[input.sol:7:30]
    │
  7 │             for { let i := 0 break } lt(i, 10) { i := add(i, 1) } { }
@@ -10,7 +10,7 @@ Diagnostics: 2
    │                                ╰──── Error occurred here.
 ───╯
 
-[structure/yul-break-continue-in-for-loop-init] Error: Keyword 'continue' in for-loop init block is not allowed.
+[structure/yul-break-continue-outside-for-loop] Error: Keyword 'continue' is only valid inside a for-loop body.
    ╭─[input.sol:8:30]
    │
  8 │             for { let j := 0 continue } lt(j, 10) { j := add(j, 1) } { }

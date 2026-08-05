@@ -2,8 +2,8 @@ use ruint::aliases::U256;
 use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
-    DuplicateYulSwitchCase, YulBreakContinueInForLoopInit, YulBreakContinueInForLoopPost,
-    YulBreakContinueOutsideForLoop, YulFunctionInForLoopInit, YulLeaveOutsideFunction,
+    DuplicateYulSwitchCase, YulBreakContinueOutsideForLoop, YulFunctionInForLoopInit,
+    YulLeaveOutsideFunction,
 };
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
@@ -55,29 +55,14 @@ impl Pass<'_> {
     /// for-loop body, according to the current [`YulForLoopClause`].
     pub(super) fn check_break_continue_position(
         &mut self,
-        keyword: &str,
+        keyword: &'static str,
         node: &(impl NodeIdentity + TextRange),
     ) {
         let kind: Option<DiagnosticKind> = match self.for_loop_clause {
             YulForLoopClause::Body => None,
-            YulForLoopClause::None => Some(
-                YulBreakContinueOutsideForLoop {
-                    keyword: keyword.to_owned(),
-                }
-                .into(),
-            ),
-            YulForLoopClause::Init => Some(
-                YulBreakContinueInForLoopInit {
-                    keyword: keyword.to_owned(),
-                }
-                .into(),
-            ),
-            YulForLoopClause::Post => Some(
-                YulBreakContinueInForLoopPost {
-                    keyword: keyword.to_owned(),
-                }
-                .into(),
-            ),
+            YulForLoopClause::None => Some(YulBreakContinueOutsideForLoop { keyword }.into()),
+            YulForLoopClause::Init => Some(YulBreakContinueOutsideForLoop { keyword }.into()),
+            YulForLoopClause::Post => Some(YulBreakContinueOutsideForLoop { keyword }.into()),
         };
 
         if let Some(kind) = kind {

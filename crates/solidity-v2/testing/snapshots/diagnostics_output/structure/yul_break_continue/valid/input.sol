@@ -16,6 +16,22 @@ contract C {
                     if lt(j, 1) { continue }
                 }
             }
+
+            for {
+                let i := 0
+                // A nested loop in the init block keeps its own body context.
+                for { let j := 0 } lt(j, 10) { j := add(j, 1) } {
+                    if gt(j, 3) { break }
+                    if lt(j, 1) { continue }
+                }
+            } lt(i, 10) {
+                i := add(i, 1)
+                // A nested loop in the post block keeps its own body context.
+                for { let j := 0 } lt(j, 10) { j := add(j, 1) } {
+                    if gt(j, 3) { break }
+                    if lt(j, 1) { continue }
+                }
+            } {}
         }
     }
 }

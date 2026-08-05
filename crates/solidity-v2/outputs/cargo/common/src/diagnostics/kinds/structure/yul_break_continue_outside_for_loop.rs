@@ -8,7 +8,7 @@ use crate::diagnostics::severity::DiagnosticSeverity;
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct YulBreakContinueOutsideForLoop {
     /// The keyword that was misplaced (`break` or `continue`).
-    pub keyword: String,
+    pub keyword: &'static str,
 }
 
 impl DiagnosticExtensions for YulBreakContinueOutsideForLoop {
@@ -22,7 +22,7 @@ impl DiagnosticExtensions for YulBreakContinueOutsideForLoop {
 
     fn message(&self) -> String {
         format!(
-            "Keyword '{}' needs to be inside a for-loop body.",
+            "Keyword '{}' is only valid inside a for-loop body.",
             self.keyword
         )
     }
