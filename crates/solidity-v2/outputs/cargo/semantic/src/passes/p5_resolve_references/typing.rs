@@ -191,7 +191,8 @@ impl Pass<'_> {
     }
 
     /// The length an array index denotes, or `None` unless it is a non-negative
-    /// integer literal that fits a `U256`.
+    /// integer literal that fits a `U256`. The value is taken from the
+    /// expression type to benefit from the constant folding of literals.
     fn literal_array_size(&self, size: &ir::Expression) -> Option<U256> {
         let type_id = self.typing_of_expression(size).as_type_id()?;
         let value = self.types.number_value_of_type_id(type_id)?;
