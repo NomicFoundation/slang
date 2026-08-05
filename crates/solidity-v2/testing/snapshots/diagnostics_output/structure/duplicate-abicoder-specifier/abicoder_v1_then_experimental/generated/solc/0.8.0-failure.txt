@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[SyntaxError 8273] Error: ABI coder v1 has already been selected through "pragma abicoder v1".
+   ╭─[input.sol:8:1]
+   │
+ 8 │ pragma experimental ABIEncoderV2;
+   │ ────────────────┬────────────────  
+   │                 ╰────────────────── Error occurred here.
+───╯

@@ -624,9 +624,9 @@ impl TextRange for YulVariableDeclarationValueStruct {
 impl TextRange for AbicoderVersion {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         match self {
-            AbicoderVersion::AbicoderV1Keyword(inner) => inner.calculate_text_range(),
+            AbicoderVersion::V1 => None,
 
-            AbicoderVersion::AbicoderV2Keyword(inner) => inner.calculate_text_range(),
+            AbicoderVersion::V2 => None,
         }
     }
 }
@@ -1306,18 +1306,6 @@ impl TextRange for YulStatement {
 
             YulStatement::YulExpression(inner) => inner.calculate_text_range(),
         }
-    }
-}
-
-impl TextRange for AbicoderV1KeywordStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
-    }
-}
-
-impl TextRange for AbicoderV2KeywordStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
     }
 }
 

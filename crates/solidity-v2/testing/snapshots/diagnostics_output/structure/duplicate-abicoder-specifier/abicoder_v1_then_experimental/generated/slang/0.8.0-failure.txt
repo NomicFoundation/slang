@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/unsupported-abicoder-v1] Error: ABI coder v1 is not supported.
+   ╭─[input.sol:7:17]
+   │
+ 7 │ pragma abicoder v1;
+   │                 ─┬  
+   │                  ╰── Error occurred here.
+───╯

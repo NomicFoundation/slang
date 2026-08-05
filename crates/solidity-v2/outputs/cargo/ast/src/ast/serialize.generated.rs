@@ -1302,8 +1302,16 @@ impl Serialize for YulVariableDeclarationValueStruct {
 impl Serialize for AbicoderVersion {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         match self {
-            AbicoderVersion::AbicoderV1Keyword(inner) => inner.serialize(serializer),
-            AbicoderVersion::AbicoderV2Keyword(inner) => inner.serialize(serializer),
+            AbicoderVersion::V1 => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "AbicoderVersion::V1")?;
+                map.end()
+            }
+            AbicoderVersion::V2 => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "AbicoderVersion::V2")?;
+                map.end()
+            }
         }
     }
 }
@@ -2256,28 +2264,6 @@ impl Serialize for YulVariableNamesStruct {
 //
 // Terminals
 //
-
-impl Serialize for AbicoderV1KeywordStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(4))?;
-        map.serialize_entry("id", &self.ir_node.id())?;
-        map.serialize_entry("type", "AbicoderV1Keyword")?;
-        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
-        map.serialize_entry("file", self.get_file_id())?;
-        map.end()
-    }
-}
-
-impl Serialize for AbicoderV2KeywordStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(4))?;
-        map.serialize_entry("id", &self.ir_node.id())?;
-        map.serialize_entry("type", "AbicoderV2Keyword")?;
-        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
-        map.serialize_entry("file", self.get_file_id())?;
-        map.end()
-    }
-}
 
 impl Serialize for AmpersandStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {

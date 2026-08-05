@@ -1933,8 +1933,8 @@ pub fn accept_abicoder_version(node: &AbicoderVersion, visitor: &mut impl Visito
         return;
     }
     match node {
-        AbicoderVersion::AbicoderV1Keyword(_) => {}
-        AbicoderVersion::AbicoderV2Keyword(_) => {}
+        AbicoderVersion::V1 => {}
+        AbicoderVersion::V2 => {}
     }
     visitor.leave_abicoder_version(node);
 }

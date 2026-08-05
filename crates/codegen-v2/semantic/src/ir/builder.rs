@@ -25,6 +25,7 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
     collapse_redundant_node_types(&mut mutator);
     simplify_string_literals(&mut mutator);
     normalize_experimental_feature(&mut mutator);
+    normalize_abicoder_version(&mut mutator);
     normalize_yul_terminals(&mut mutator);
     simplify_imports(&mut mutator);
     simplify_parameters(&mut mutator);
@@ -338,6 +339,12 @@ fn normalize_experimental_feature(mutator: &mut IrModelMutator) {
         "ExperimentalFeature",
         false,
     );
+}
+
+fn normalize_abicoder_version(mutator: &mut IrModelMutator) {
+    mutator.remove_type("AbicoderVersion");
+    mutator.add_enum_type("AbicoderVersion", &["V1", "V2"]);
+    mutator.add_sequence_field("AbicoderPragma", "version", "AbicoderVersion", false);
 }
 
 fn normalize_yul_terminals(mutator: &mut IrModelMutator) {

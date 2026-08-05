@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[Warning 9511] Warning: ABI coder v1 is deprecated and scheduled for removal. Use ABI coder v2 instead.
+   ╭─[input.sol:7:1]
+   │
+ 7 │ pragma abicoder v1;
+   │ ─────────┬─────────  
+   │          ╰─────────── Error occurred here.
+───╯

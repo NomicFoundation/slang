@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateAbicoderSpecifier;
 use slang_solidity_v2_common::diagnostics::kinds::syntax::{
-    UnrecognizedExperimentalFeature, UnsupportedExperimentalSmtChecker,
+    UnrecognizedExperimentalFeature, UnsupportedAbicoderV1, UnsupportedExperimentalSmtChecker,
     UnsupportedExperimentalSolidity,
 };
 use slang_solidity_v2_common::utils::strip_string_literal_quotes;
@@ -76,6 +76,43 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                     }
                 }
             }
+        }
+    }
+
+    pub(super) fn build_abicoder_pragma(
+        &mut self,
+        source: &input::AbicoderPragma,
+    ) -> output::AbicoderPragma {
+        let id = self.next_id(output::NodeKind::AbicoderPragma);
+        let range = source.calculate_text_range().unwrap_or_default();
+        let version = self.build_abicoder_version(&source.version);
+
+        match version {
+            output::AbicoderVersion::V1 => {
+                // V1 is unsupported. Skip reporting redundant diagnostics.
+            }
+            output::AbicoderVersion::V2 => {
+                if self.is_abicoder_specified {
+                    self.report(&source.version, DuplicateAbicoderSpecifier);
+                } else {
+                    self.is_abicoder_specified = true;
+                }
+            }
+        }
+
+        Arc::new(output::AbicoderPragmaStruct { id, range, version })
+    }
+
+    fn build_abicoder_version(
+        &mut self,
+        source: &input::AbicoderVersion,
+    ) -> output::AbicoderVersion {
+        match source {
+            input::AbicoderVersion::AbicoderV1Keyword(node) => {
+                self.report(node, UnsupportedAbicoderV1);
+                output::AbicoderVersion::V1
+            }
+            input::AbicoderVersion::AbicoderV2Keyword(_) => output::AbicoderVersion::V2,
         }
     }
 }

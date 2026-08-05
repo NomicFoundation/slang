@@ -4429,8 +4429,8 @@ impl YulVariableDeclarationValueStruct {
 
 #[derive(Clone)]
 pub enum AbicoderVersion {
-    AbicoderV1Keyword(AbicoderV1Keyword),
-    AbicoderV2Keyword(AbicoderV2Keyword),
+    V1,
+    V2,
 }
 
 #[allow(clippy::too_many_lines)]
@@ -4440,12 +4440,8 @@ pub(crate) fn create_abicoder_version(
     semantic: &Arc<SemanticContext>,
 ) -> AbicoderVersion {
     match ir_node {
-        ir::AbicoderVersion::AbicoderV1Keyword(variant) => {
-            AbicoderVersion::AbicoderV1Keyword(create_abicoder_v1_keyword(variant, semantic))
-        }
-        ir::AbicoderVersion::AbicoderV2Keyword(variant) => {
-            AbicoderVersion::AbicoderV2Keyword(create_abicoder_v2_keyword(variant, semantic))
-        }
+        ir::AbicoderVersion::V1 => AbicoderVersion::V1,
+        ir::AbicoderVersion::V2 => AbicoderVersion::V2,
     }
 }
 
@@ -6984,86 +6980,6 @@ impl YulVariableNamesStruct {
 //
 // Terminals
 //
-
-pub type AbicoderV1Keyword = AbicoderV1KeywordStruct;
-
-#[derive(Clone)]
-pub struct AbicoderV1KeywordStruct {
-    pub(crate) ir_node: ir::AbicoderV1Keyword,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub(crate) fn create_abicoder_v1_keyword(
-    ir_node: &ir::AbicoderV1Keyword,
-    semantic: &Arc<SemanticContext>,
-) -> AbicoderV1Keyword {
-    AbicoderV1KeywordStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    }
-}
-
-impl AbicoderV1KeywordStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &FileId {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
-pub type AbicoderV2Keyword = AbicoderV2KeywordStruct;
-
-#[derive(Clone)]
-pub struct AbicoderV2KeywordStruct {
-    pub(crate) ir_node: ir::AbicoderV2Keyword,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub(crate) fn create_abicoder_v2_keyword(
-    ir_node: &ir::AbicoderV2Keyword,
-    semantic: &Arc<SemanticContext>,
-) -> AbicoderV2Keyword {
-    AbicoderV2KeywordStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    }
-}
-
-impl AbicoderV2KeywordStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &FileId {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
 
 pub type Ampersand = AmpersandStruct;
 

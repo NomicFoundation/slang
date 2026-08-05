@@ -1580,19 +1580,10 @@ impl YulVariableDeclarationValueStruct {
 // Choices
 //
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum AbicoderVersion {
-    AbicoderV1Keyword(AbicoderV1Keyword),
-    AbicoderV2Keyword(AbicoderV2Keyword),
-}
-
-impl AbicoderVersion {
-    pub fn unparse(&self) -> &str {
-        match self {
-            AbicoderVersion::AbicoderV1Keyword(inner) => inner.unparse(),
-            AbicoderVersion::AbicoderV2Keyword(inner) => inner.unparse(),
-        }
-    }
+    V1,
+    V2,
 }
 
 #[derive(Clone, Debug)]
@@ -2209,40 +2200,6 @@ pub type YulVariableNames = Arc<[Identifier]>;
 //
 // Terminals
 //
-
-pub type AbicoderV1Keyword = Arc<AbicoderV1KeywordStruct>;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct AbicoderV1KeywordStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-}
-
-impl AbicoderV1KeywordStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-    pub fn unparse(&self) -> &'static str {
-        "v1"
-    }
-}
-
-pub type AbicoderV2Keyword = Arc<AbicoderV2KeywordStruct>;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct AbicoderV2KeywordStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-}
-
-impl AbicoderV2KeywordStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-    pub fn unparse(&self) -> &'static str {
-        "v2"
-    }
-}
 
 pub type Ampersand = Arc<AmpersandStruct>;
 

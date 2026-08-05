@@ -17,17 +17,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     // Sequences
     //
 
-    pub(super) fn build_abicoder_pragma(
-        &mut self,
-        source: &input::AbicoderPragma,
-    ) -> output::AbicoderPragma {
-        let id = self.next_id(output::NodeKind::AbicoderPragma);
-        let range = source.calculate_text_range().unwrap_or_default();
-        let version = self.build_abicoder_version(&source.version);
-
-        Arc::new(output::AbicoderPragmaStruct { id, range, version })
-    }
-
     pub(super) fn build_additive_expression(
         &mut self,
         source: &input::AdditiveExpression,
@@ -1502,27 +1491,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     //
     // Choices
     //
-
-    #[allow(clippy::unused_self)]
-    pub(super) fn build_abicoder_version(
-        &mut self,
-        source: &input::AbicoderVersion,
-    ) -> output::AbicoderVersion {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::AbicoderVersion::AbicoderV1Keyword(abicoder_v1_keyword) => {
-                output::AbicoderVersion::AbicoderV1Keyword(
-                    self.build_abicoder_v1_keyword(abicoder_v1_keyword),
-                )
-            }
-            input::AbicoderVersion::AbicoderV2Keyword(abicoder_v2_keyword) => {
-                output::AbicoderVersion::AbicoderV2Keyword(
-                    self.build_abicoder_v2_keyword(abicoder_v2_keyword),
-                )
-            }
-        }
-    }
 
     #[allow(clippy::unused_self)]
     pub(super) fn build_expression_additive_expression_operator(
@@ -3066,26 +3034,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     //
     // Terminals
     //
-
-    pub(super) fn build_abicoder_v1_keyword(
-        &mut self,
-        source: &input::AbicoderV1Keyword,
-    ) -> output::AbicoderV1Keyword {
-        Arc::new(output::AbicoderV1KeywordStruct {
-            id: self.next_id(output::NodeKind::AbicoderV1Keyword),
-            range: source.range.clone(),
-        })
-    }
-
-    pub(super) fn build_abicoder_v2_keyword(
-        &mut self,
-        source: &input::AbicoderV2Keyword,
-    ) -> output::AbicoderV2Keyword {
-        Arc::new(output::AbicoderV2KeywordStruct {
-            id: self.next_id(output::NodeKind::AbicoderV2Keyword),
-            range: source.range.clone(),
-        })
-    }
 
     pub(super) fn build_ampersand(&mut self, source: &input::Ampersand) -> output::Ampersand {
         Arc::new(output::AmpersandStruct {

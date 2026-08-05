@@ -11,6 +11,7 @@ mod multiple_visibility_specifiers;
 mod unexpected_eof;
 mod unexpected_terminal;
 mod unrecognized_experimental_feature;
+mod unsupported_abicoder_v1;
 mod unsupported_experimental_smt_checker;
 mod unsupported_experimental_solidity;
 
@@ -28,6 +29,7 @@ use serde::Serialize;
 pub use unexpected_eof::UnexpectedEof;
 pub use unexpected_terminal::UnexpectedTerminal;
 pub use unrecognized_experimental_feature::UnrecognizedExperimentalFeature;
+pub use unsupported_abicoder_v1::UnsupportedAbicoderV1;
 pub use unsupported_experimental_smt_checker::UnsupportedExperimentalSmtChecker;
 pub use unsupported_experimental_solidity::UnsupportedExperimentalSolidity;
 
@@ -73,6 +75,10 @@ define_diagnostic_kind! {
         MoreThanOneInheritanceList(MoreThanOneInheritanceList),
         /// A contract declared more than one storage layout (`layout at`) specifier.
         MoreThanOneStorageLayout(MoreThanOneStorageLayout),
+
+        /// A source file selected the legacy ABI coder via `pragma abicoder v1;`,
+        /// which Slang does not support.
+        UnsupportedAbicoderV1(UnsupportedAbicoderV1),
 
         /// A `pragma experimental` named a feature that Slang does not recognize.
         UnrecognizedExperimentalFeature(UnrecognizedExperimentalFeature),
