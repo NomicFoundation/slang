@@ -438,8 +438,38 @@ impl TypeRegistry {
         }
     }
 
-    // Changes a function type to have external visibility and any parameters
-    // normalized for that (ie. `calldata` location is changed to `memory`)
+    // The ABI boundary decodes a calldata-located reference into fresh memory,
+    // so an externally callable signature names it there.
+    fn externalize_type(&mut self, type_id: TypeId) -> TypeId {
+        let type_ = self.get_type_by_id(type_id);
+        if type_
+            .data_location()
+            .is_some_and(|location| location == DataLocation::Calldata)
+        {
+            return self.register_type_with_data_location(type_.clone(), DataLocation::Memory);
+        }
+        // A tuple has no location of its own — it only models a signature's
+        // multiple results — so each of its elements is relocated on its own.
+        // Recursing per element rather than relocating the tuple as a whole
+        // leaves a result that wasn't in calldata at its declared location,
+        // matching solc: a public library function declared
+        // `returns (uint256[] storage, bytes calldata)` is externally typed
+        // `returns (uint256[] storage pointer, bytes memory)`.
+        if let Type::Tuple(TupleType { types }) = type_ {
+            let element_type_ids = types.clone();
+            let externalized = element_type_ids
+                .into_iter()
+                .map(|element_type_id| self.externalize_type(element_type_id))
+                .collect();
+            return self.register_type(Type::Tuple(TupleType {
+                types: externalized,
+            }));
+        }
+        type_id
+    }
+
+    // Changes a function type to have external visibility and its parameters and
+    // results normalized for that (ie. `calldata` location is changed to `memory`)
     pub(crate) fn externalize_function_type(
         &mut self,
         function_type: FunctionType,
@@ -449,21 +479,9 @@ impl TypeRegistry {
             parameter_types: function_type
                 .parameter_types
                 .into_iter()
-                .map(|parameter_type_id| {
-                    let parameter_type = self.get_type_by_id(parameter_type_id);
-                    if parameter_type
-                        .data_location()
-                        .is_some_and(|location| location == DataLocation::Calldata)
-                    {
-                        self.register_type_with_data_location(
-                            parameter_type.clone(),
-                            DataLocation::Memory,
-                        )
-                    } else {
-                        parameter_type_id
-                    }
-                })
+                .map(|parameter_type_id| self.externalize_type(parameter_type_id))
                 .collect(),
+            return_type: self.externalize_type(function_type.return_type),
             ..function_type
         }
     }
