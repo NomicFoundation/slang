@@ -1,5 +1,11 @@
 # changelog
 
+## 1.3.8
+
+### Patch Changes
+
+- [#1997](https://github.com/NomicFoundation/slang/pull/1997) [`4dc9570`](https://github.com/NomicFoundation/slang/commit/4dc9570bceddea0446db08dfb38d2fd34c360b71) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - Add `solidity` experimental feature (`pragma experimental solidity;`) to the grammar/parser (supported from Solidity `0.8.21`).
+
 ## 1.3.7
 
 ### Patch Changes
