@@ -510,18 +510,14 @@ impl Visitor for Pass<'_> {
                     // fixed-size `uint[3]`.
                     Type::MetaType(MetaType {
                         type_id: element_type,
-                    }) => {
-                        let array = self.array_of(*element_type, node.start.as_ref());
-                        self.meta_typing_of(array)
-                    }
+                    }) => self.typing_of_indexed_meta_type(*element_type, node.start.as_ref()),
                     // Indexing a user meta-type likewise creates the meta-type
                     // of an array (eg. `MyStruct[]`).
                     Type::UserMetaType(UserMetaType { definition_id }) => {
                         let definition_id = *definition_id;
                         if let Some(operand_type) = self.type_of_definition(definition_id) {
                             let element_type = self.types.register_type(operand_type);
-                            let array = self.array_of(element_type, node.start.as_ref());
-                            self.meta_typing_of(array)
+                            self.typing_of_indexed_meta_type(element_type, node.start.as_ref())
                         } else {
                             Typing::Unresolved
                         }

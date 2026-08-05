@@ -8,9 +8,9 @@ use super::Pass;
 use crate::binder::{Definition, Resolution, Typing};
 use crate::passes::common::node_location;
 use crate::types::{
-    AddressType, ArraySliceType, ContractType, DataLocation, FixedSizeArrayType, FunctionType,
-    FunctionTypeVisibility, IntegerType, LiteralKind, MetaType, Number, StringType, Type, TypeId,
-    UserMetaType, literals,
+    AddressType, ArraySliceType, ArrayType, ContractType, DataLocation, FixedSizeArrayType,
+    FunctionType, FunctionTypeVisibility, IntegerType, LiteralKind, MetaType, Number, StringType,
+    Type, TypeId, UserMetaType, literals,
 };
 
 impl Pass<'_> {
@@ -164,6 +164,38 @@ impl Pass<'_> {
             // TODO(validation) SDR[46]: slicing a non-calldata array is invalid.
             Typing::Unresolved
         }
+    }
+
+    /// Unlike an array type name's length, a constant is not a length here: in
+    /// expression position solc folds literals only, and rejects `uint[N]`.
+    pub(super) fn typing_of_indexed_meta_type(
+        &mut self,
+        element_type: TypeId,
+        size: Option<&ir::Expression>,
+    ) -> Typing {
+        let Some(size) = size else {
+            return self.meta_typing_of(Type::Array(ArrayType {
+                element_type,
+                location: DataLocation::Memory,
+            }));
+        };
+        let Some(size) = self.literal_array_size(size) else {
+            // TODO(validation): a non-literal index is not an array length
+            return Typing::Unresolved;
+        };
+        self.meta_typing_of(Type::FixedSizeArray(FixedSizeArrayType {
+            element_type,
+            size,
+            location: DataLocation::Memory,
+        }))
+    }
+
+    /// The length an array index denotes, or `None` unless it is a non-negative
+    /// integer literal that fits a `U256`.
+    fn literal_array_size(&self, size: &ir::Expression) -> Option<U256> {
+        let type_id = self.typing_of_expression(size).as_type_id()?;
+        let value = self.types.number_value_of_type_id(type_id)?;
+        U256::try_from(value.as_integer()?).ok()
     }
 
     pub(super) fn type_of_array_expression(
