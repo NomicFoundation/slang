@@ -8,12 +8,6 @@ publish = false
 [lib]
 path = "src/lib.rs"
 
-# The semantic-test suite is a data-driven `datatest-stable` harness (one test
-# per (version, test-file) pair).
-[[test]]
-name = "semantic_tests"
-harness = false
-
 [dependencies]
 anyhow = { workspace = true }
 flate2 = { workspace = true }
@@ -27,11 +21,6 @@ slang_solidity_v2_common = { workspace = true }
 solidity_testing_utils = { workspace = true }
 solidity_v2_testing_utils = { workspace = true }
 tar = { workspace = true }
-
-# Only the `semantic_tests` integration harness uses `datatest-stable`, not the
-# library, so it's a dev-dependency (available to the test target).
-[dev-dependencies]
-datatest-stable = { workspace = true }
 
 [lints]
 workspace = true

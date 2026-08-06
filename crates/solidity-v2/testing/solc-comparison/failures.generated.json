@@ -1,37 +1,15 @@
 {
-  "0.8.7": [
-    "inlineAssembly/basefee_berlin_function.sol"
-  ],
-  "0.8.8": [
-    "inlineAssembly/basefee_berlin_function.sol"
-  ],
-  "0.8.9": [
-    "inlineAssembly/basefee_berlin_function.sol"
-  ],
-  "0.8.10": [
-    "inlineAssembly/basefee_berlin_function.sol"
-  ],
-  "0.8.11": [
-    "inlineAssembly/basefee_berlin_function.sol"
-  ],
-  "0.8.12": [
-    "inlineAssembly/basefee_berlin_function.sol"
-  ],
-  "0.8.13": [
-    "inlineAssembly/basefee_berlin_function.sol"
-  ],
-  "0.8.14": [
-    "inlineAssembly/basefee_berlin_function.sol"
-  ],
-  "0.8.15": [
-    "inlineAssembly/basefee_berlin_function.sol"
-  ],
-  "0.8.16": [
-    "inlineAssembly/basefee_berlin_function.sol"
-  ],
-  "0.8.17": [
-    "inlineAssembly/basefee_berlin_function.sol"
-  ],
+  "0.8.7": ["inlineAssembly/basefee_berlin_function.sol"],
+  "0.8.8": ["inlineAssembly/basefee_berlin_function.sol"],
+  "0.8.9": ["inlineAssembly/basefee_berlin_function.sol"],
+  "0.8.10": ["inlineAssembly/basefee_berlin_function.sol"],
+  "0.8.11": ["inlineAssembly/basefee_berlin_function.sol"],
+  "0.8.12": ["inlineAssembly/basefee_berlin_function.sol"],
+  "0.8.13": ["inlineAssembly/basefee_berlin_function.sol"],
+  "0.8.14": ["inlineAssembly/basefee_berlin_function.sol"],
+  "0.8.15": ["inlineAssembly/basefee_berlin_function.sol"],
+  "0.8.16": ["inlineAssembly/basefee_berlin_function.sol"],
+  "0.8.17": ["inlineAssembly/basefee_berlin_function.sol"],
   "0.8.18": [
     "inlineAssembly/basefee_berlin_function.sol",
     "state/block_difficulty_post_paris.sol",

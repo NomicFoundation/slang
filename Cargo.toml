@@ -137,7 +137,6 @@ clap = { version = "4.5.40", features = ["derive", "wrap_help"] }
 clap_complete = { version = "4.5.54" }
 console = { version = "0.16.3" }
 controlled-option = { version = "0.4.1" }
-datatest-stable = { version = "0.3.3" }
 derive-new = { version = "0.7.0" }
 either = { version = "1.6.0" }
 enumset = { version = "1.1.10" }

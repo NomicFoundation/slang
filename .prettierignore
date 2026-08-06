@@ -24,8 +24,3 @@ documentation/overrides/**/*.html
 **/target/
 **/Pipfile.lock
 **/pnpm-lock.yaml
-
-# Generated solc-comparison baseline (rewritten verbatim by `infra verify
-# solc-semantic-suite` via serde_json, whose array formatting differs from Prettier)
-crates/solidity-v2/testing/solc-comparison/expected-failures.json
-crates/solidity-v2/testing/solc-comparison/pinned-commits.json
