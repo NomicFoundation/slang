@@ -74,7 +74,6 @@ pub enum BuiltIn {
     CallOptionGas,
     CallOptionSalt,
     CallOptionValue,
-    ErrorOrPanic,
     Length,
     ModifierUnderscore,
     ErrorSelector,

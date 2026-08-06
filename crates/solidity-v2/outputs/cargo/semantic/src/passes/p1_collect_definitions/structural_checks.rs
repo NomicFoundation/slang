@@ -1,9 +1,8 @@
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
-    AbstractContractPublicConstructor, CatchClauseKind, DuplicateCatchClause, FreeFunctionPayable,
-    FreeFunctionVisibility, FreeFunctionWithModifiers, FreeFunctionWithOverride,
-    FunctionMustBeImplemented, GlobalUsingForInsideContract, GlobalUsingForWildcard,
-    InterfaceFunctionCannotBeImplemented, InterfaceFunctionNotExternal,
-    InterfaceFunctionWithModifiers, InvalidCatchClauseName, InvalidUsingDirectiveContainer,
+    AbstractContractPublicConstructor, FreeFunctionPayable, FreeFunctionVisibility,
+    FreeFunctionWithModifiers, FreeFunctionWithOverride, FunctionMustBeImplemented,
+    GlobalUsingForInsideContract, GlobalUsingForWildcard, InterfaceFunctionCannotBeImplemented,
+    InterfaceFunctionNotExternal, InterfaceFunctionWithModifiers, InvalidUsingDirectiveContainer,
     LibraryNonConstantStateVariable, LibraryPayableFunction, LibraryVirtualFunction,
     LibraryVirtualModifier, MissingFunctionVisibility, ModifierInInterface,
     NonAbstractContractInternalConstructor, PayableInternalOrPrivateFunction,
@@ -267,40 +266,6 @@ impl<F: SemanticFile> Pass<'_, F> {
         // and non-`constant` state variables).
         if self.current_scope_is_interface() {
             self.report(node, VariableInInterface);
-        }
-    }
-
-    pub(super) fn check_try_catch_clauses(&mut self, node: &ir::TryStatement) {
-        // A `try` statement's catch clauses must each carry a valid selector
-        // name (`Error`, `Panic`, or none for a low-level clause), and it may
-        // declare at most one clause of each kind. Flag invalid names, and any
-        // additional clause of a kind already seen.
-        let panic_allowed = self.language_version >= LanguageVersion::V0_8_1;
-        let mut seen_error = false;
-        let mut seen_panic = false;
-        let mut seen_low_level = false;
-        for clause in node.catch_clauses.iter() {
-            // A named selector identifies `Error`/`Panic` clauses; a clause
-            // without one (`catch { ... }` or `catch (bytes ...) { ... }`) is
-            // low-level.
-            let selector = clause.error.as_ref().and_then(|error| error.name.as_ref());
-            let (kind, seen) = match selector.map(|name| name.text.as_str()) {
-                Some("Error") => (CatchClauseKind::Error, &mut seen_error),
-                // The `Panic` catch clause selector was introduced in 0.8.1;
-                // before that solc treats `Panic` as an invalid clause name.
-                Some("Panic") if panic_allowed => (CatchClauseKind::Panic, &mut seen_panic),
-                // Any other named selector (`Panic` too before 0.8.1) is not a
-                // valid catch clause name.
-                Some(_) => {
-                    self.report(clause.as_ref(), InvalidCatchClauseName { panic_allowed });
-                    continue;
-                }
-                None => (CatchClauseKind::LowLevel, &mut seen_low_level),
-            };
-            if *seen {
-                self.report(clause.as_ref(), DuplicateCatchClause { kind });
-            }
-            *seen = true;
         }
     }
 }

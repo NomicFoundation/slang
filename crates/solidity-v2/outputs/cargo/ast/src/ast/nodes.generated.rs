@@ -648,11 +648,8 @@ impl CatchClauseStruct {
         self.ir_node.id()
     }
 
-    pub fn error(&self) -> Option<CatchClauseError> {
-        self.ir_node
-            .error
-            .as_ref()
-            .map(|ir_node| create_catch_clause_error(ir_node, &self.semantic))
+    pub fn kind(&self) -> CatchClauseKind {
+        create_catch_clause_kind(&self.ir_node.kind, &self.semantic)
     }
 
     pub fn body(&self) -> Block {
@@ -672,34 +669,110 @@ impl CatchClauseStruct {
     }
 }
 
-pub type CatchClauseError = CatchClauseErrorStruct;
+pub type ClauseErrorKind = ClauseErrorKindStruct;
 
 #[derive(Clone)]
-pub struct CatchClauseErrorStruct {
-    pub(crate) ir_node: ir::CatchClauseError,
+pub struct ClauseErrorKindStruct {
+    pub(crate) ir_node: ir::ClauseErrorKind,
     pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub fn create_catch_clause_error(
-    ir_node: &ir::CatchClauseError,
+pub fn create_clause_error_kind(
+    ir_node: &ir::ClauseErrorKind,
     semantic: &Arc<SemanticContext>,
-) -> CatchClauseError {
-    CatchClauseErrorStruct {
+) -> ClauseErrorKind {
+    ClauseErrorKindStruct {
         ir_node: Arc::clone(ir_node),
         semantic: Arc::clone(semantic),
     }
 }
 
-impl CatchClauseErrorStruct {
+impl ClauseErrorKindStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
-    pub fn name(&self) -> Option<Identifier> {
+    pub fn parameters(&self) -> Parameters {
+        create_parameters(&self.ir_node.parameters, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &FileId {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type ClauseLowLevelKind = ClauseLowLevelKindStruct;
+
+#[derive(Clone)]
+pub struct ClauseLowLevelKindStruct {
+    pub(crate) ir_node: ir::ClauseLowLevelKind,
+    pub(crate) semantic: Arc<SemanticContext>,
+}
+
+pub fn create_clause_low_level_kind(
+    ir_node: &ir::ClauseLowLevelKind,
+    semantic: &Arc<SemanticContext>,
+) -> ClauseLowLevelKind {
+    ClauseLowLevelKindStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
+    }
+}
+
+impl ClauseLowLevelKindStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn parameters(&self) -> Option<Parameters> {
         self.ir_node
-            .name
+            .parameters
             .as_ref()
-            .map(|ir_node| create_identifier(ir_node, &self.semantic))
+            .map(|ir_node| create_parameters(ir_node, &self.semantic))
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &FileId {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type ClausePanicKind = ClausePanicKindStruct;
+
+#[derive(Clone)]
+pub struct ClausePanicKindStruct {
+    pub(crate) ir_node: ir::ClausePanicKind,
+    pub(crate) semantic: Arc<SemanticContext>,
+}
+
+pub fn create_clause_panic_kind(
+    ir_node: &ir::ClausePanicKind,
+    semantic: &Arc<SemanticContext>,
+) -> ClausePanicKind {
+    ClausePanicKindStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
+    }
+}
+
+impl ClausePanicKindStruct {
+    pub fn node_id(&self) -> NodeId {
+        self.ir_node.id()
     }
 
     pub fn parameters(&self) -> Parameters {
@@ -4553,6 +4626,32 @@ pub(crate) fn create_assignment_expression_operator(
         }
         ir::AssignmentExpressionOperator::SlashEqual(variant) => {
             AssignmentExpressionOperator::SlashEqual(create_slash_equal(variant, semantic))
+        }
+    }
+}
+
+#[derive(Clone)]
+pub enum CatchClauseKind {
+    ClauseErrorKind(ClauseErrorKind),
+    ClausePanicKind(ClausePanicKind),
+    ClauseLowLevelKind(ClauseLowLevelKind),
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_catch_clause_kind(
+    ir_node: &ir::CatchClauseKind,
+    semantic: &Arc<SemanticContext>,
+) -> CatchClauseKind {
+    match ir_node {
+        ir::CatchClauseKind::ClauseErrorKind(variant) => {
+            CatchClauseKind::ClauseErrorKind(create_clause_error_kind(variant, semantic))
+        }
+        ir::CatchClauseKind::ClausePanicKind(variant) => {
+            CatchClauseKind::ClausePanicKind(create_clause_panic_kind(variant, semantic))
+        }
+        ir::CatchClauseKind::ClauseLowLevelKind(variant) => {
+            CatchClauseKind::ClauseLowLevelKind(create_clause_low_level_kind(variant, semantic))
         }
     }
 }
