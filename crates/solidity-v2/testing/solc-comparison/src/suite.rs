@@ -3,7 +3,7 @@ use infra_utils::codegen::CodegenFileSystem;
 use rayon::prelude::*;
 
 use crate::dataset::{self, Dataset};
-use crate::failures::{Failure, Failures};
+use crate::results::{Failure, TestResults, VersionRun};
 use crate::runner::{self, Outcome};
 
 /// Fetches every supported version's semantic tests, compiles all of them, and
@@ -16,46 +16,63 @@ pub fn run() -> Result<()> {
 
     // Loaded before we write, so we can point at *why* anything newly fails
     // (the checked-in file only records which `(version, test)` pairs do).
-    let previous = Failures::load()?;
+    let previous = TestResults::load()?;
 
-    let failures = collect_failures(&datasets)?;
+    let runs = execute(&datasets)?;
 
     // This step only prints new diagnostics, but the test fails or passes
-    // on the write below, checking that the list of failures stays the same.
-    report_new_failures(&previous, &failures);
+    // on the write below, checking that the results stay the same.
+    report_new_failures(&previous, &runs);
 
-    failures.into_iter().collect::<Failures>().write(&mut fs)
+    let results: TestResults = runs.into_iter().collect();
+    report_summary(&results);
+
+    results.write(&mut fs)
 }
 
-/// Compiles every test in every dataset, keeping the ones slang rejected.
-fn collect_failures(datasets: &[Dataset]) -> Result<Vec<Failure>> {
+/// Compiles every test in every dataset.
+fn execute(datasets: &[Dataset]) -> Result<Vec<VersionRun>> {
     // Roughly 1,600 tests across ~37 versions, each entirely independent, so
     // the whole matrix fans out across rayon.
-    let per_version = datasets
+    datasets
         .par_iter()
         .map(|dataset| {
             let version = dataset.version();
+            let test_files = dataset.test_files()?;
 
-            let failures: Vec<Failure> = dataset
-                .test_files()?
-                .into_par_iter()
+            let failures: Vec<Failure> = test_files
+                .par_iter()
                 .filter_map(
                     |test_file| match runner::run_test(&test_file.path, version) {
                         Outcome::Passed => None,
                         Outcome::Failed { diagnostics } => Some(Failure {
                             version,
-                            test_path: test_file.relative_path,
+                            test_path: test_file.relative_path.clone(),
                             diagnostics,
                         }),
                     },
                 )
                 .collect();
 
-            Ok(failures)
+            Ok(VersionRun {
+                version,
+                executed: test_files.len(),
+                failures,
+            })
         })
-        .collect::<Result<Vec<_>>>()?;
+        .collect()
+}
 
-    Ok(per_version.into_iter().flatten().collect())
+/// Prints what the run covered. Under `nextest` a passing test's output is
+/// captured, so this shows up on failure or with `--no-capture`; the same
+/// numbers are recorded per version in the checked-in results either way.
+fn report_summary(results: &TestResults) {
+    println!(
+        "Compiled {executed} semantic test(s): {passed} passed, {failed} failed.",
+        executed = results.executed(),
+        passed = results.passed(),
+        failed = results.failed(),
+    );
 }
 
 /// How many newly-failing tests to print diagnostics for. A regression usually
@@ -66,10 +83,11 @@ const MAX_REPORTED_FAILURES: usize = 10;
 /// Prints the diagnostics behind each failure that isn't already checked in.
 ///
 /// Note that an old failure that is now passing is not reported here.
-fn report_new_failures(previous: &Failures, failures: &[Failure]) {
-    let new_failures: Vec<&Failure> = failures
+fn report_new_failures(previous: &TestResults, runs: &[VersionRun]) {
+    let new_failures: Vec<&Failure> = runs
         .iter()
-        .filter(|failure| !previous.contains(failure.version, &failure.test_path))
+        .flat_map(|run| &run.failures)
+        .filter(|failure| !previous.contains_failure(failure.version, &failure.test_path))
         .collect();
 
     if new_failures.is_empty() {

@@ -4,8 +4,8 @@
 //!
 //! The building blocks live in submodules: fetching each version's tests
 //! ([`dataset`]), parsing the `isoltest` format ([`mod@test_case`]), running
-//! slang ([`runner`]), and the checked-in set of tests it rejects
-//! ([`failures`]). [`suite::run`] ties them together, and the whole matrix runs
+//! slang ([`runner`]), and the checked-in per-version tallies
+//! ([`results`]). [`suite::run`] ties them together, and the whole matrix runs
 //! as the single test below.
 
 use std::path::PathBuf;
@@ -14,7 +14,7 @@ use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 
 pub mod dataset;
-pub mod failures;
+pub mod results;
 pub mod runner;
 pub mod suite;
 pub mod test_case;
