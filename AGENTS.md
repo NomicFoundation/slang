@@ -144,24 +144,6 @@ When source changes cause snapshot mismatches, the test output shows the diff.
 Simply re-run the tests, and they will update the snapshot files on disk automatically.
 Then commit the updated snapshots alongside your code change.
 
-### `solc-comparison` baseline
-
-The `solidity_testing_solc_comparison` crate runs slang v2 against solc's
-`libsolidity` semanticTests (a large corpus of known-valid Solidity) to catch
-new validations that accidentally reject valid code. It's a single test over
-the whole `(version, test)` matrix. Because it fetches an external dataset it's
-marked `#[ignore]`, so no plain `cargo test`/`cargo nextest run` reaches for the
-network; running it is an explicit opt-in via `infra test solc-semantic` (which
-passes `--run-ignored all`), and `infra test` drives that as its own step. The
-per-version tally of executed/passed/failed tests, along with which ones
-failed, is tracked in
-`crates/solidity-v2/testing/solc-comparison/results.generated.json`.
-Like the other snapshot tests, the mode is chosen by the `CI` env var: in CI it
-checks against the committed baseline, run locally it regenerates it. So if you
-intentionally change which tests pass (add a validation, fix the parser, bump
-the supported version), just run the suite locally and commit the regenerated
-`results.generated.json` / `pinned-commits.generated.json`.
-
 ### V2 Snapshot `.tests.config.json`
 
 V2 test runner resolves a per-test `.tests.config.json`, by visiting the
@@ -226,6 +208,24 @@ Fields:
         }
     }
     ```
+
+## `solc-comparison` baseline
+
+The `solidity_testing_solc_comparison` crate runs slang v2 against solc's
+`libsolidity` semanticTests (a large corpus of known-valid Solidity) to catch
+new validations that accidentally reject valid code. It's a single test over
+the whole `(version, test)` matrix. Because it fetches an external dataset it's
+marked `#[ignore]`, so no plain `cargo test`/`cargo nextest run` reaches for the
+network; running it is an explicit opt-in via `infra test solc-semantic` (which
+passes `--run-ignored all`), and `infra test` drives that as its own step. The
+per-version tally of executed/passed/failed tests, along with which ones
+failed, is tracked in
+`crates/solidity-v2/testing/solc-comparison/results.generated.json`.
+Like the other snapshot tests, the mode is chosen by the `CI` env var: in CI it
+checks against the committed baseline, run locally it regenerates it. So if you
+intentionally change which tests pass (add a validation, fix the parser, bump
+the supported version), just run the suite locally and commit the regenerated
+`results.generated.json` / `pinned-commits.generated.json`.
 
 ## Important Gotchas
 
