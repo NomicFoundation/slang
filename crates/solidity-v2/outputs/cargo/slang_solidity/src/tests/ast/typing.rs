@@ -142,6 +142,55 @@ fn test_function_get_type() {
 }
 
 define_fixture!(
+    PublicMapping,
+    file: "main.sol", r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+contract C {
+    mapping(string => uint256) public balances;
+}
+"#,
+);
+
+#[test]
+fn test_public_mapping_getter_type() {
+    let unit = PublicMapping::build_compilation_unit();
+
+    let contract = unit
+        .find_contract_by_name("C")
+        .next()
+        .expect("contract C is found");
+
+    let balances = contract
+        .members()
+        .iter()
+        .find_map(|member| match member {
+            ast::ContractMember::StateVariableDefinition(state_variable) => Some(state_variable),
+            _ => None,
+        })
+        .expect("state variable balances is found");
+
+    let ast::Type::Function(getter) = balances
+        .getter_type()
+        .expect("a public state variable has a getter")
+    else {
+        panic!("expected the getter to type as a function");
+    };
+
+    assert_eq!(getter.visibility(), ast::FunctionTypeVisibility::External);
+
+    let parameter_types = getter.parameter_types();
+    let [key_type] = parameter_types.as_slice() else {
+        panic!("expected the getter to take the mapping key as its only parameter");
+    };
+    let ast::Type::String(key) = key_type else {
+        panic!("expected the key to type as a string");
+    };
+    assert_eq!(key.location(), ast::DataLocation::Memory);
+}
+
+define_fixture!(
     LiteralPlusInteger,
     file: "main.sol", r#"
 // SPDX-License-Identifier: UNLICENSED
