@@ -218,14 +218,14 @@ the whole `(version, test)` matrix. Because it fetches an external dataset it's
 marked `#[ignore]`, so no plain `cargo test`/`cargo nextest run` reaches for the
 network; running it is an explicit opt-in via `infra test solc-semantic` (which
 passes `--run-ignored all`), and `infra test` drives that as its own step. The
-per-version tally of executed/passed/failed tests, along with which ones
-failed, is tracked in
+per-version record — the commit its tests came from, how many executed, passed
+and failed, and which ones failed — is tracked in
 `crates/solidity-v2/testing/solc-comparison/results.generated.json`.
 Like the other snapshot tests, the mode is chosen by the `CI` env var: in CI it
 checks against the committed baseline, run locally it regenerates it. So if you
 intentionally change which tests pass (add a validation, fix the parser, bump
 the supported version), just run the suite locally and commit the regenerated
-`results.generated.json` / `pinned-commits.generated.json`.
+`results.generated.json`.
 
 ## Important Gotchas
 

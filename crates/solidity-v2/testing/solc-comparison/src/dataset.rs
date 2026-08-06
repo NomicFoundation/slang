@@ -5,21 +5,12 @@ use std::path::{Component, Path, PathBuf};
 
 use anyhow::{Context, Result, bail};
 use flate2::read::GzDecoder;
-use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::http::{DownloadResult, request_download};
 use infra_utils::paths::{FileWalker, PathExtensions};
 use rayon::prelude::*;
 use semver::Version;
-use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use tar::{Archive, EntryType};
-
-use crate::generated_file;
-
-/// Checked-in JSON file (`{ "<version>": "<commit-sha>" }`) pinning the exact
-/// commit each version's semantic tests were fetched from, so we notice if a
-/// tag is later re-pointed at a different commit.
-const PINNED_COMMITS_FILE: &str = "pinned-commits.generated.json";
 
 const SEMANTIC_TESTS_PATH: &str = "test/libsolidity/semanticTests";
 
@@ -56,9 +47,10 @@ pub struct TestFile {
 impl Dataset {
     /// Ensures the semantic tests for `version` are available locally,
     /// downloading and extracting them from the matching `solc` release tag if
-    /// necessary, and returns a handle to the extracted tree (carrying the
-    /// commit SHA the tag resolved to). Checking that SHA against the pinned
-    /// baseline is the caller's job (see [`write_pinned_commits`]).
+    /// necessary, and returns a handle to the extracted tree, carrying the
+    /// commit SHA the tag resolved to. That SHA is recorded alongside the
+    /// version's results, so a re-pointed tag shows up in the diff next to the
+    /// counts it invalidates.
     pub fn fetch(version: LanguageVersion) -> Result<Self> {
         let tag = release_tag(version);
         let version_dir = cache_dir().join(&tag);
@@ -152,35 +144,15 @@ impl Dataset {
     }
 }
 
-/// Fetches every supported version's semantic tests, and pins the commit each
-/// tag resolved to. Only a cold cache actually hits the network.
-pub fn fetch_all_versions(fs: &mut CodegenFileSystem) -> Result<Vec<Dataset>> {
+/// Fetches every supported version's semantic tests. Only a cold cache
+/// actually hits the network.
+pub fn fetch_all_versions() -> Result<Vec<Dataset>> {
     // Downloads are independent and I/O-bound; fetching ~three dozen tarballs
     // one at a time dominates a cold-cache run, so fan them out across rayon.
-    let datasets: Vec<Dataset> = LanguageVersion::ALL
+    LanguageVersion::ALL
         .par_iter()
         .map(|&version| Dataset::fetch(version))
-        .collect::<Result<_>>()?;
-
-    write_pinned_commits(fs, &datasets)?;
-
-    Ok(datasets)
-}
-
-/// Writes out the commit each version's tag resolved to. Locally that re-pins
-/// the checked-in file; in CI it asserts nothing moved, so a tag that gets
-/// re-pointed at different content fails the run instead of silently changing
-/// what we test against.
-fn write_pinned_commits(fs: &mut CodegenFileSystem, datasets: &[Dataset]) -> Result<()> {
-    let pinned: SortedMap<LanguageVersion, &str> = datasets
-        .iter()
-        .map(|dataset| (dataset.version(), dataset.commit_sha()))
-        .collect();
-
-    fs.write_file_formatted(
-        generated_file(PINNED_COMMITS_FILE)?,
-        serde_json::to_string(&pinned)?,
-    )
+        .collect()
 }
 
 fn is_populated(root: &Path) -> bool {

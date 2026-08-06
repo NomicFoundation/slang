@@ -1,12 +1,14 @@
+use std::path::PathBuf;
+
 use anyhow::Result;
+use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use serde::{Deserialize, Serialize};
 use slang_solidity_v2_common::collections::{SortedMap, SortedSet};
 use slang_solidity_v2_common::versions::LanguageVersion;
 
-use crate::generated_file;
-
+const CRATE_NAME: &str = "solidity_testing_solc_comparison";
 const RESULTS_FILE: &str = "results.generated.json";
 
 /// A single `(version, test)` pair that slang didn't compile cleanly.
@@ -22,6 +24,8 @@ pub struct Failure {
 /// checked in — they're far too noisy for a file we diff.
 pub struct VersionRun {
     pub version: LanguageVersion,
+    /// The commit this version's release tag resolved to when it was fetched.
+    pub commit: String,
     /// How many tests ran, whether they passed or not.
     pub executed: usize,
     pub failures: Vec<Failure>,
@@ -35,16 +39,32 @@ pub struct TestResults {
     versions: SortedMap<LanguageVersion, VersionResults>,
 }
 
-/// One version's tally. `executed` and `passed` are redundant with `failures`,
-/// but recording them means the diff also catches the dataset itself changing
-/// size — a version whose test count moves is worth noticing, and it would
-/// otherwise be invisible whenever the new tests happen to pass.
+/// One version's record: which commit its tests came from, and what happened
+/// when we compiled them.
+///
+/// Pinning the commit is what keeps the tally meaningful — solc's release tags
+/// are mutable, and the `pax_global_header` of each tarball tells us what the
+/// tag actually resolved to. If one is ever re-pointed, the change lands right
+/// next to the counts it invalidates rather than in a separate file.
+///
+/// `executed` and `passed` are redundant with `failures`, but recording them
+/// means the diff also catches the dataset itself changing size — a version
+/// whose test count moves is worth noticing, and it would otherwise be
+/// invisible whenever the new tests happen to pass.
 #[derive(Serialize, Deserialize)]
 pub struct VersionResults {
+    commit: String,
     executed: usize,
     passed: usize,
     failed: usize,
     failures: SortedSet<String>,
+}
+
+/// Path to the checked-in results file, located via the shared
+/// cargo-workspace helper (which resolves the crate's source directory from the
+/// workspace manifest).
+fn results_path() -> Result<PathBuf> {
+    Ok(CargoWorkspace::locate_source_crate(CRATE_NAME)?.join(RESULTS_FILE))
 }
 
 impl TestResults {
@@ -56,7 +76,7 @@ impl TestResults {
     /// That also means a change to this format needs no migration — the next
     /// local run just rewrites it.
     pub fn load() -> Result<Self> {
-        let path = generated_file(RESULTS_FILE)?;
+        let path = results_path()?;
 
         Ok(path
             .read_to_string()
@@ -77,7 +97,7 @@ impl TestResults {
     /// direction — a fresh failure is a regression, and a recorded case that
     /// now passes means the file is stale.
     pub fn write(&self, fs: &mut CodegenFileSystem) -> Result<()> {
-        fs.write_file_formatted(generated_file(RESULTS_FILE)?, serde_json::to_string(self)?)
+        fs.write_file_formatted(results_path()?, serde_json::to_string(self)?)
     }
 
     /// Total tests run across every version.
@@ -104,6 +124,7 @@ impl FromIterator<VersionRun> for TestResults {
                 let failed = run.failures.len();
 
                 let results = VersionResults {
+                    commit: run.commit,
                     executed: run.executed,
                     passed: run.executed - failed,
                     failed,

@@ -10,9 +10,7 @@ use crate::runner::{self, Outcome};
 /// writes the result out through [`CodegenFileSystem`] — which rewrites the
 /// checked-in files locally, and asserts they still match in CI.
 pub fn run() -> Result<()> {
-    let mut fs = CodegenFileSystem::default();
-
-    let datasets = dataset::fetch_all_versions(&mut fs)?;
+    let datasets = dataset::fetch_all_versions()?;
 
     // Loaded before we write, so we can point at *why* anything newly fails
     // (the checked-in file only records which `(version, test)` pairs do).
@@ -27,7 +25,7 @@ pub fn run() -> Result<()> {
     let results: TestResults = runs.into_iter().collect();
     report_summary(&results);
 
-    results.write(&mut fs)
+    results.write(&mut CodegenFileSystem::default())
 }
 
 /// Compiles every test in every dataset.
@@ -56,6 +54,7 @@ fn execute(datasets: &[Dataset]) -> Result<Vec<VersionRun>> {
 
             Ok(VersionRun {
                 version,
+                commit: dataset.commit_sha().to_owned(),
                 executed: test_files.len(),
                 failures,
             })
