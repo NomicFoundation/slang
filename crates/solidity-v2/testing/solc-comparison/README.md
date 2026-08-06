@@ -44,12 +44,11 @@ splitting them up would only cost `nextest` tens of thousands of processes.
    extract the `semanticTests/` tree into `target/solc-comparison/<tag>/`.
 
     **Tags are mutable, so we pin the commit.** Each tarball's `pax_global_header`
-    carries the commit SHA the tag resolved to; we record it (in
-    [`pinned-commits.generated.json`](./pinned-commits.generated.json), a
-    `{ "<version>": "<sha>" }` map) when the baseline is generated, and check it
-    on every run. If a tag is later re-pointed at a different commit, the run
-    fails loudly rather than silently testing against changed content. (A git commit SHA is itself a
-    content hash, so this subsumes a separate checksum — no extra download needed.)
+    carries the commit SHA the tag resolved to; we record it per version in the
+    results file below and check it on every run. If a tag is later re-pointed at
+    a different commit, the run fails loudly rather than silently testing against
+    changed content. (A git commit SHA is itself a content hash, so this subsumes
+    a separate checksum — no extra download needed.)
 
 2. **Parse** — each test file is in the `isoltest` format.
    We parse out the sources and the `EVMVersion` setting; the runtime
@@ -58,13 +57,14 @@ splitting them up would only cost `nextest` tens of thousands of processes.
    `CompilationBuilder` pinned to that language version and the resolved EVM
    target (the `EVMVersion` setting if present, else that version's default),
    resolving imports with the shared `solidity_testing_utils` `ImportResolver`.
-4. **Baseline** — the set of pairs slang rejected is reconciled with
-   `results.generated.json`: checked in CI, rewritten locally (see "Baseline
-   update mode"). Each version records how many tests ran, how many passed and
-   failed, and which ones failed:
+4. **Baseline** — everything the run produced is reconciled with
+   [`results.generated.json`](./results.generated.json): checked in CI, rewritten
+   locally. Each version records the commit its tests came from, how many ran,
+   how many passed and failed, and which ones failed:
 
     ```json
     "0.8.7": {
+        "commit": "6da8b019757383bcc85be6a3f7ecc2fb4c65f5f2",
         "executed": 1205,
         "passed": 1203,
         "failed": 2,
