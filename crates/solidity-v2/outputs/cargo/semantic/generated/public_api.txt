@@ -132,7 +132,6 @@ pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::CallOptionSalt
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::CallOptionValue
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::Ecrecover
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::Erc7201
-pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::ErrorOrPanic
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::ErrorSelector
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::EventSelector
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::FunctionAddress
