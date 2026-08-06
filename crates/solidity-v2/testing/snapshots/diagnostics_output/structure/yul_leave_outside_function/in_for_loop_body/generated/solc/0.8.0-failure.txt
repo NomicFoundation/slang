@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[SyntaxError 8149] Error: Keyword "leave" can only be used inside a function.
+   ╭─[input.sol:9:29]
+   │
+ 9 │             for { } n { } { leave }
+   │                             ──┬──  
+   │                               ╰──── Error occurred here.
+───╯

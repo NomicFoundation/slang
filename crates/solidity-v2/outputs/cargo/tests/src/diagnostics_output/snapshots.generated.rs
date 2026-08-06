@@ -1758,6 +1758,20 @@ mod structure {
         run("structure", "duplicate_panic_catch_clause")
     }
 
+    mod duplicate_yul_switch_case {
+        use super::*;
+
+        #[test]
+        fn distinct_values() -> Result<()> {
+            run("structure/duplicate_yul_switch_case", "distinct_values")
+        }
+
+        #[test]
+        fn equivalent_values() -> Result<()> {
+            run("structure/duplicate_yul_switch_case", "equivalent_values")
+        }
+    }
+
     #[test]
     fn empty_enum() -> Result<()> {
         run("structure", "empty_enum")
@@ -2192,6 +2206,84 @@ mod structure {
     #[test]
     fn virtual_private_function() -> Result<()> {
         run("structure", "virtual_private_function")
+    }
+
+    mod yul_break_continue {
+        use super::*;
+
+        #[test]
+        fn for_loop_init() -> Result<()> {
+            run("structure/yul_break_continue", "for_loop_init")
+        }
+
+        #[test]
+        fn for_loop_post() -> Result<()> {
+            run("structure/yul_break_continue", "for_loop_post")
+        }
+
+        #[test]
+        fn nested_in_function() -> Result<()> {
+            run("structure/yul_break_continue", "nested_in_function")
+        }
+
+        #[test]
+        fn outside_for_loop() -> Result<()> {
+            run("structure/yul_break_continue", "outside_for_loop")
+        }
+
+        #[test]
+        fn valid() -> Result<()> {
+            run("structure/yul_break_continue", "valid")
+        }
+    }
+
+    mod yul_function_in_for_loop_init {
+        use super::*;
+
+        #[test]
+        fn in_init_block() -> Result<()> {
+            run("structure/yul_function_in_for_loop_init", "in_init_block")
+        }
+
+        #[test]
+        fn nested_for_in_init_block() -> Result<()> {
+            run(
+                "structure/yul_function_in_for_loop_init",
+                "nested_for_in_init_block",
+            )
+        }
+
+        #[test]
+        fn nested_for_in_post_block() -> Result<()> {
+            run(
+                "structure/yul_function_in_for_loop_init",
+                "nested_for_in_post_block",
+            )
+        }
+
+        #[test]
+        fn valid() -> Result<()> {
+            run("structure/yul_function_in_for_loop_init", "valid")
+        }
+    }
+
+    mod yul_leave_outside_function {
+        use super::*;
+
+        #[test]
+        fn in_for_loop_body() -> Result<()> {
+            run("structure/yul_leave_outside_function", "in_for_loop_body")
+        }
+
+        #[test]
+        fn outside_function() -> Result<()> {
+            run("structure/yul_leave_outside_function", "outside_function")
+        }
+
+        #[test]
+        fn valid() -> Result<()> {
+            run("structure/yul_leave_outside_function", "valid")
+        }
     }
 }
 

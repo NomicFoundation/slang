@@ -5,16 +5,20 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_ir::ir::{NodeIdentity, TextRange};
 
 use crate::binder::{AssemblyBlock, Binder, Definition, Scope, ScopeId};
 use crate::context::FileNodeMapper;
+use crate::passes::common::node_location;
 use crate::types::TypeRegistry;
 
 mod conflicts;
 mod resolution;
+mod structure_checks;
 mod visitor;
 
 use conflicts::YulConflict;
+use structure_checks::YulForLoopClause;
 
 /// This pass processes all Yul/`assembly` code. In a single traversal it both
 /// collects Yul definitions and scopes (creating `YulBlockScope`/
@@ -61,6 +65,15 @@ struct Pass<'a> {
     /// Distinct Solidity definitions referenced anywhere in the assembly block
     /// being processed, recorded in place as its Yul paths are resolved.
     solidity_references: &'a mut Vec<NodeId>,
+    /// Which for-loop clause the traversal is currently inside, used to
+    /// validate the placement of `break`/`continue` keywords.
+    for_loop_clause: YulForLoopClause,
+    /// The `for_loop_clause` active around each Yul function definition the
+    /// traversal is currently nested inside: saved when entering a function
+    /// (which resets the clause) and restored when leaving it. One entry per
+    /// enclosing function, so its depth also tells whether we're inside any
+    /// function, used to validate the placement of `leave` keywords.
+    function_clause_stack: Vec<YulForLoopClause>,
 }
 
 impl<'a> Pass<'a> {
@@ -90,6 +103,8 @@ impl<'a> Pass<'a> {
             types,
             diagnostics,
             solidity_references,
+            for_loop_clause: YulForLoopClause::None,
+            function_clause_stack: Vec::new(),
         };
         ir::visitor::accept_yul_block(&ir_node.body, &mut pass);
         // Only the seeded enclosing scope should remain.
@@ -175,17 +190,19 @@ impl<'a> Pass<'a> {
         };
 
         if let Some(conflict_kind) = conflict_kind {
-            let file_id = self
-                .file_node_mapper
-                .file_id_from_node_id(definition.identifier().id())
-                .to_owned();
-            self.diagnostics.push(
-                file_id,
-                definition.identifier().range.clone(),
-                conflict_kind,
-            );
+            self.push_diagnostic(definition.identifier(), conflict_kind);
         }
 
         self.binder.insert_definition_in_scope(definition, scope_id);
+    }
+
+    /// Emits `kind` located at `node`.
+    fn push_diagnostic(
+        &mut self,
+        node: &(impl NodeIdentity + TextRange),
+        kind: impl Into<DiagnosticKind>,
+    ) {
+        let (file_id, range) = node_location(node, self.file_node_mapper);
+        self.diagnostics.push(file_id, range, kind);
     }
 }

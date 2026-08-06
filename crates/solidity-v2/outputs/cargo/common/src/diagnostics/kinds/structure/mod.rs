@@ -8,6 +8,7 @@ mod duplicate_abicoder_specifier;
 mod duplicate_catch_clause;
 mod duplicate_named_argument;
 mod duplicate_switch_default_case;
+mod duplicate_yul_switch_case;
 mod empty_enum;
 mod empty_struct;
 mod empty_tuple_component;
@@ -55,6 +56,9 @@ mod variable_declaration_not_in_block;
 mod variable_in_interface;
 mod virtual_free_function;
 mod virtual_private_function;
+mod yul_break_continue_outside_for_loop;
+mod yul_function_in_for_loop_init;
+mod yul_leave_outside_function;
 
 pub use abstract_contract_public_constructor::AbstractContractPublicConstructor;
 pub use break_outside_loop::BreakOutsideLoop;
@@ -66,6 +70,7 @@ pub use duplicate_abicoder_specifier::DuplicateAbicoderSpecifier;
 pub use duplicate_catch_clause::{CatchClauseKind, DuplicateCatchClause};
 pub use duplicate_named_argument::DuplicateNamedArgument;
 pub use duplicate_switch_default_case::DuplicateSwitchDefaultCase;
+pub use duplicate_yul_switch_case::DuplicateYulSwitchCase;
 pub use empty_enum::EmptyEnum;
 pub use empty_struct::EmptyStruct;
 pub use empty_tuple_component::EmptyTupleComponent;
@@ -114,6 +119,9 @@ pub use variable_declaration_not_in_block::VariableDeclarationNotInBlock;
 pub use variable_in_interface::VariableInInterface;
 pub use virtual_free_function::VirtualFreeFunction;
 pub use virtual_private_function::VirtualPrivateFunction;
+pub use yul_break_continue_outside_for_loop::YulBreakContinueOutsideForLoop;
+pub use yul_function_in_for_loop_init::YulFunctionInForLoopInit;
+pub use yul_leave_outside_function::YulLeaveOutsideFunction;
 
 use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
@@ -136,6 +144,16 @@ define_diagnostic_kind! {
 
         /// A `continue` statement appears outside of any loop.
         ContinueOutsideLoop(ContinueOutsideLoop),
+
+        /// A Yul `switch` statement declares more than one case with the same value.
+        DuplicateYulSwitchCase(DuplicateYulSwitchCase),
+
+        /// A Yul `break` or `continue` keyword appears outside of any for-loop body.
+        YulBreakContinueOutsideForLoop(YulBreakContinueOutsideForLoop),
+        /// A Yul function definition appears in the init block of a for-loop.
+        YulFunctionInForLoopInit(YulFunctionInForLoopInit),
+        /// A Yul `leave` keyword appears outside of a function.
+        YulLeaveOutsideFunction(YulLeaveOutsideFunction),
 
         /// Using directives are only allowed at the file level, or inside contracts and libraries.
         InvalidUsingDirectiveContainer(InvalidUsingDirectiveContainer),

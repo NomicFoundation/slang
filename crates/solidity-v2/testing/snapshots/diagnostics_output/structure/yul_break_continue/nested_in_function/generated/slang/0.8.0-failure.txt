@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/yul-break-continue-outside-for-loop] Error: Keyword 'break' is only valid inside a for-loop body.
+    ╭─[input.sol:10:32]
+    │
+ 10 │                 function g() { break }
+    │                                ──┬──  
+    │                                  ╰──── Error occurred here.
+────╯

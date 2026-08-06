@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[DeclarationError 6792] Error: Duplicate case "0" defined.
+   ╭─[input.sol:9:13]
+   │
+ 9 │             case 0x0 { }
+   │             ──────┬─────  
+   │                   ╰─────── Error occurred here.
+───╯
+
+[DeclarationError 6792] Error: Duplicate case "0" defined.
+    ╭─[input.sol:10:13]
+    │
+ 10 │             case "" { }
+    │             ─────┬─────  
+    │                  ╰─────── Error occurred here.
+────╯
+
+[DeclarationError 6792] Error: Duplicate case "64" defined.
+    ╭─[input.sol:20:13]
+    │
+ 20 │             case 0x40 { }
+    │             ──────┬──────  
+    │                   ╰──────── Error occurred here.
+────╯
+
+[DeclarationError 6792] Error: Duplicate case "29400335157912315244266070412362164103369332044010299463143527189509193072640" defined.
+    ╭─[input.sol:30:13]
+    │
+ 30 │             case "A" { }
+    │             ──────┬─────  
+    │                   ╰─────── Error occurred here.
+────╯

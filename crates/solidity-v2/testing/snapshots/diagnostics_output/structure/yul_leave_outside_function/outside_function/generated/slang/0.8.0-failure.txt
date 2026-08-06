@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/yul-leave-outside-function] Error: Keyword 'leave' can only be used inside a function.
+   ╭─[input.sol:7:13]
+   │
+ 7 │             leave
+   │             ──┬──  
+   │               ╰──── Error occurred here.
+───╯

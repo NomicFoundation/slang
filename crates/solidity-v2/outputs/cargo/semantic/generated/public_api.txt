@@ -334,6 +334,7 @@ pub mod slang_solidity_v2_semantic::types::literals
 pub fn slang_solidity_v2_semantic::types::literals::value_of_hex_string_literals(&[slang_solidity_v2_ir::ir::nodes::HexStringLiteral]) -> alloc::vec::Vec<u8>
 pub fn slang_solidity_v2_semantic::types::literals::value_of_string_literals(&[slang_solidity_v2_ir::ir::nodes::StringLiteral]) -> alloc::vec::Vec<u8>
 pub fn slang_solidity_v2_semantic::types::literals::value_of_unicode_string_literals(&[slang_solidity_v2_ir::ir::nodes::UnicodeStringLiteral]) -> alloc::vec::Vec<u8>
+pub fn slang_solidity_v2_semantic::types::literals::yul_literal_value(&slang_solidity_v2_ir::ir::nodes::YulLiteral) -> core::option::Option<ruint::aliases::U256>
 pub enum slang_solidity_v2_semantic::types::DataLocation
 pub slang_solidity_v2_semantic::types::DataLocation::Calldata
 pub slang_solidity_v2_semantic::types::DataLocation::Inherited

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[SyntaxError 3441] Error: Functions cannot be defined inside a for-loop init block.
+    ╭─[input.sol:10:31]
+    │
+ 10 │             for { } n { for { function g() {} } n { } { } } { }
+    │                               ────┬───  
+    │                                   ╰───── Error occurred here.
+────╯

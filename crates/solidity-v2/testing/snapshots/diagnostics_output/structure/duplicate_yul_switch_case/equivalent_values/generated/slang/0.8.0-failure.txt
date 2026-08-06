@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[structure/duplicate-yul-switch-case] Error: Duplicate case '0x0' defined.
+   ╭─[input.sol:9:13]
+   │
+ 9 │             case 0x0 { }
+   │             ──────┬─────  
+   │                   ╰─────── Error occurred here.
+───╯
+
+[structure/duplicate-yul-switch-case] Error: Duplicate case '' defined.
+    ╭─[input.sol:10:13]
+    │
+ 10 │             case "" { }
+    │             ─────┬─────  
+    │                  ╰─────── Error occurred here.
+────╯
+
+[structure/duplicate-yul-switch-case] Error: Duplicate case '0x40' defined.
+    ╭─[input.sol:20:13]
+    │
+ 20 │             case 0x40 { }
+    │             ──────┬──────  
+    │                   ╰──────── Error occurred here.
+────╯
+
+[structure/duplicate-yul-switch-case] Error: Duplicate case 'A' defined.
+    ╭─[input.sol:30:13]
+    │
+ 30 │             case "A" { }
+    │             ──────┬─────  
+    │                   ╰─────── Error occurred here.
+────╯

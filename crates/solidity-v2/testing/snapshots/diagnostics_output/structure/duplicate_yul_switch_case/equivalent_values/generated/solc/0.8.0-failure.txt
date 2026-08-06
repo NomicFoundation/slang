@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[DeclarationError 6792] Error: Duplicate case defined.
+   ╭─[input.sol:9:13]
+   │
+ 9 │             case 0x0 { }
+   │             ──────┬─────  
+   │                   ╰─────── Error occurred here.
+───╯
+
+[DeclarationError 6792] Error: Duplicate case defined.
+    ╭─[input.sol:10:13]
+    │
+ 10 │             case "" { }
+    │             ─────┬─────  
+    │                  ╰─────── Error occurred here.
+────╯
+
+[DeclarationError 6792] Error: Duplicate case defined.
+    ╭─[input.sol:20:13]
+    │
+ 20 │             case 0x40 { }
+    │             ──────┬──────  
+    │                   ╰──────── Error occurred here.
+────╯
+
+[DeclarationError 6792] Error: Duplicate case defined.
+    ╭─[input.sol:30:13]
+    │
+ 30 │             case "A" { }
+    │             ──────┬─────  
+    │                   ╰─────── Error occurred here.
+────╯
