@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.18'.
+    ╭─[input.sol:10:22]
+    │
+ 10 │         return block.prevrandao;
+    │                      ─────┬────  
+    │                           ╰────── Error occurred here.
+────╯

@@ -4526,14 +4526,10 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                         ),
                         BuiltInDefinition(name = BlockChainid, evm_enabled = From(Istanbul)),
                         BuiltInDefinition(name = BlockCoinbase),
-                        BuiltInDefinition(name = BlockDifficulty, evm_enabled = Till(Paris)),
+                        BuiltInDefinition(name = BlockDifficulty),
                         BuiltInDefinition(name = BlockGaslimit),
                         BuiltInDefinition(name = BlockNumber),
-                        BuiltInDefinition(
-                            name = BlockPrevrandao,
-                            enabled = From("0.8.18"),
-                            evm_enabled = From(Paris)
-                        ),
+                        BuiltInDefinition(name = BlockPrevrandao, enabled = From("0.8.18")),
                         BuiltInDefinition(name = BlockTimestamp)
                     ]
                 ),

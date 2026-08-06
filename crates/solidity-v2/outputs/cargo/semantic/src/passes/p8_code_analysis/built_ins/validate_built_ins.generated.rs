@@ -88,16 +88,12 @@ impl<'a> BuiltInValidator<'a> {
                     EvmTargetSpecifier::from(EvmTarget::Istanbul),
                 );
             }
-            InternalBuiltIn::BlockDifficulty => {
-                self.check_target(node_id, range, EvmTargetSpecifier::till(EvmTarget::Paris));
-            }
             InternalBuiltIn::BlockPrevrandao => {
                 self.check_version(
                     node_id,
                     range,
                     LanguageVersionSpecifier::from(LanguageVersion::V0_8_18),
                 );
-                self.check_target(node_id, range, EvmTargetSpecifier::from(EvmTarget::Paris));
             }
             InternalBuiltIn::AddressCodehash => {
                 self.check_target(

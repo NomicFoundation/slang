@@ -1,0 +1,34 @@
+{
+  "matrix": {
+    "type": "SingleVersionAllTargets",
+    "version": {
+      "value": "0.8.36",
+      "reason": "`block.difficulty` is not gated by language version; the interesting axis is the EVM target, since the Paris rename is what solc warns about."
+    },
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "Range",
+          "from": "Frontier",
+          "till": "Homestead"
+        },
+        "reason": "solc 0.8.36 declines the Frontier target outright ('Invalid EVM version requested'), which counts as a rejection, while slang compiles the input. Unrelated to `block.difficulty`: solc never looks at the source on this target."
+      },
+      {
+        "specifier": {
+          "type": "Range",
+          "from": "Homestead",
+          "till": "Constantinople"
+        },
+        "reason": "On pre-Constantinople targets solc emits 'Support for EVM versions older than constantinople is deprecated', a warning that counts as a rejection. slang is silent, so the statuses differ."
+      },
+      {
+        "specifier": {
+          "type": "From",
+          "from": "Paris"
+        },
+        "reason": "From Paris on solc emits Warning 8417 ('difficulty' was replaced by 'prevrandao'), a warning that counts as a rejection. slang accepts `block.difficulty` on every target and is silent, so the statuses differ."
+      }
+    ]
+  }
+}

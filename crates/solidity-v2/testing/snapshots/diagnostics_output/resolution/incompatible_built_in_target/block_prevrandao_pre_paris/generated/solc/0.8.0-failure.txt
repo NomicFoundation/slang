@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9582] Error: Member "prevrandao" not found or not visible after argument-dependent lookup in block.
+    ╭─[input.sol:10:16]
+    │
+ 10 │         return block.prevrandao;
+    │                ────────┬───────  
+    │                        ╰───────── Error occurred here.
+────╯
