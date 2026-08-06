@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 6275] Error: Source "does-not-exist.sol" not found: File not found. Searched the following locations: "".
+   ╭─[main.sol:6:1]
+   │
+ 6 │ import {Missing} from "./does-not-exist.sol";
+   │ ──────────────────────┬──────────────────────  
+   │                       ╰──────────────────────── Error occurred here.
+───╯

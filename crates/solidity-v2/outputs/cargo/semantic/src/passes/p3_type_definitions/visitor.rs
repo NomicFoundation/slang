@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use slang_solidity_v2_common::collections::{DefaultWithCapacity, Map, Set};
+use slang_solidity_v2_common::diagnostics::kinds::resolution::ImportedDeclarationNotFound;
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     ConflictingMappingParameterName, NamedFunctionTypeReturnParameter,
 };
@@ -103,16 +104,29 @@ impl Visitor for Pass<'_> {
             else {
                 unreachable!("expected to find definition associated to imported symbol");
             };
-            // now we can get the target scope ID
-            let scope_id = imported_symbol
-                .resolved_file_id
-                .as_ref()
-                .and_then(|file_id| self.binder.scope_id_for_file_id(file_id));
 
-            let resolution = scope_id.map_or(Resolution::Unresolved, |scope_id| {
-                self.binder
-                    .resolve_in_scope(scope_id, symbol.name.unparse())
-            });
+            // now we can get the target file scope ID
+            let resolution = if let Some(imported_file_id) = &imported_symbol.resolved_file_id
+                && let Some(scope_id) = self.binder.scope_id_for_file_id(imported_file_id)
+            {
+                let resolution = self
+                    .binder
+                    .resolve_in_scope(scope_id, symbol.name.unparse());
+                // Only report the symbol when there was a scope to search in the
+                // first place: an import whose file didn't resolve, or resolved to
+                // a file we couldn't read, is already reported on its own.
+                // Follow any aliases before deciding, since the symbol may be
+                // re-exported by a further import, and mutually importing files
+                // resolve to each other's aliases and to nothing else.
+                let followed = self.binder.follow_symbol_aliases(resolution.clone());
+                if matches!(followed, Resolution::Unresolved) {
+                    self.push_diagnostic(symbol, ImportedDeclarationNotFound);
+                }
+                resolution
+            } else {
+                Resolution::Unresolved
+            };
+
             let reference = Reference::new(Arc::clone(&symbol.name), resolution);
             self.binder.insert_reference(reference);
         }

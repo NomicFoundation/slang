@@ -4,6 +4,7 @@ mod identifier_not_found;
 mod identifier_not_function_or_not_unique;
 mod identifier_not_library_name;
 mod identifier_redeclaration;
+mod imported_declaration_not_found;
 mod incompatible_built_in_target;
 mod incompatible_built_in_version;
 mod non_free_or_library_function_in_using_directive;
@@ -14,6 +15,7 @@ pub use identifier_not_found::IdentifierNotFound;
 pub use identifier_not_function_or_not_unique::IdentifierNotFunctionOrNotUnique;
 pub use identifier_not_library_name::IdentifierNotLibraryName;
 pub use identifier_redeclaration::IdentifierRedeclaration;
+pub use imported_declaration_not_found::ImportedDeclarationNotFound;
 pub use incompatible_built_in_target::IncompatibleBuiltInTarget;
 pub use incompatible_built_in_version::IncompatibleBuiltInVersion;
 pub use non_free_or_library_function_in_using_directive::NonFreeOrLibraryFunctionInUsingDirective;
@@ -39,6 +41,9 @@ define_diagnostic_kind! {
         /// A Yul variable declaration shadows a declaration (Solidity or
         /// built-in) visible from outside the assembly block.
         ExternalDeclarationShadowing(ExternalDeclarationShadowing),
+        /// A symbol in an import deconstruction is not declared in the
+        /// imported file.
+        ImportedDeclarationNotFound(ImportedDeclarationNotFound),
 
         /// A symbol in a `using {...} for` directive did not resolve to a
         /// unique function.

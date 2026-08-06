@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[resolution/imported-declaration-not-found] Error: Declaration not found in imported file.
+   ╭─[a.sol:6:9]
+   │
+ 6 │ import {foo} from "./b.sol";
+   │         ─┬─  
+   │          ╰─── Error occurred here.
+───╯
+
+[resolution/imported-declaration-not-found] Error: Declaration not found in imported file.
+   ╭─[b.sol:4:9]
+   │
+ 4 │ import {foo} from "./a.sol";
+   │         ─┬─  
+   │          ╰─── Error occurred here.
+───╯
