@@ -19,6 +19,7 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
     flatten_contract_specifiers(&mut mutator);
     simplify_identifier_path_element(&mut mutator);
     unify_function_types(&mut mutator);
+    normalize_catch_clauses(&mut mutator);
     flatten_function_attributes(&mut mutator);
     flatten_state_variable_attributes(&mut mutator);
     transmute_constant_state_variables(&mut mutator);
@@ -134,6 +135,30 @@ fn unify_function_types(mutator: &mut IrModelMutator) {
     // We don't need FunctionName or FunctionBody anymore
     mutator.remove_type("FunctionName");
     mutator.remove_type("FunctionBody");
+}
+
+fn normalize_catch_clauses(mutator: &mut IrModelMutator) {
+    mutator.add_sequence_type("ClauseErrorKind");
+    mutator.add_sequence_field("ClauseErrorKind", "parameters", "Parameters", false);
+
+    mutator.add_sequence_type("ClausePanicKind");
+    mutator.add_sequence_field("ClausePanicKind", "parameters", "Parameters", false);
+
+    mutator.add_sequence_type("ClauseLowLevelKind");
+    mutator.add_sequence_field("ClauseLowLevelKind", "parameters", "Parameters", true);
+
+    mutator.add_choice_type("CatchClauseKind");
+    mutator.add_choice_variant("CatchClauseKind", "ClauseErrorKind");
+    mutator.add_choice_variant("CatchClauseKind", "ClausePanicKind");
+    mutator.add_choice_variant("CatchClauseKind", "ClauseLowLevelKind");
+
+    mutator.insert_sequence_field_before("CatchClause", "kind", "CatchClauseKind", false, "error");
+    mutator.remove_type("CatchClauseError");
+
+    // Remove and add back the clauses collection type to allow a custom builder
+    mutator.remove_type("CatchClauses");
+    mutator.add_collection_type("CatchClauses", "CatchClause");
+    mutator.add_sequence_field("TryStatement", "catch_clauses", "CatchClauses", false);
 }
 
 fn flatten_function_attributes(mutator: &mut IrModelMutator) {

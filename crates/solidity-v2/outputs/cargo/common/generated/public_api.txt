@@ -42,7 +42,6 @@ pub slang_solidity_v2_common::built_ins::BuiltIn::CallOptionSalt
 pub slang_solidity_v2_common::built_ins::BuiltIn::CallOptionValue
 pub slang_solidity_v2_common::built_ins::BuiltIn::Ecrecover
 pub slang_solidity_v2_common::built_ins::BuiltIn::Erc7201
-pub slang_solidity_v2_common::built_ins::BuiltIn::ErrorOrPanic
 pub slang_solidity_v2_common::built_ins::BuiltIn::ErrorSelector
 pub slang_solidity_v2_common::built_ins::BuiltIn::EventSelector
 pub slang_solidity_v2_common::built_ins::BuiltIn::FunctionAddress

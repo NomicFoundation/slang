@@ -12,10 +12,11 @@ contract MyContract {
     function withParams(uint256 first, bool second) public {}
 }"###;
 
+    let language_version = LanguageVersion::LATEST;
     let ParseOutput {
         source_unit,
         diagnostics,
-    } = Parser::parse(&"test.sol".into(), CONTENTS, LanguageVersion::LATEST);
+    } = Parser::parse(&"test.sol".into(), CONTENTS, language_version);
 
     assert!(
         diagnostics.is_empty(),
@@ -31,7 +32,7 @@ contract MyContract {
         &"test.sol".into(),
         &source_unit,
         &CONTENTS,
-        LanguageVersion::LATEST,
+        language_version,
         &mut id_generator,
     );
 

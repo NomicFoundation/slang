@@ -4595,7 +4595,6 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                         BuiltInDefinition(name = CallOptionGas),
                         BuiltInDefinition(name = CallOptionSalt),
                         BuiltInDefinition(name = CallOptionValue),
-                        BuiltInDefinition(name = ErrorOrPanic),
                         BuiltInDefinition(name = Length),
                         BuiltInDefinition(name = ModifierUnderscore),
                         BuiltInDefinition(name = ErrorSelector, enabled = From("0.8.4")),

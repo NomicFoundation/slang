@@ -237,46 +237,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         })
     }
 
-    pub(super) fn build_catch_clause(
-        &mut self,
-        source: &input::CatchClause,
-    ) -> output::CatchClause {
-        let id = self.next_id(output::NodeKind::CatchClause);
-        let range = source.calculate_text_range().unwrap_or_default();
-        let error = source
-            .error
-            .as_ref()
-            .map(|value| self.build_catch_clause_error(value));
-        let body = self.build_block(&source.body);
-
-        Arc::new(output::CatchClauseStruct {
-            id,
-            range,
-            error,
-            body,
-        })
-    }
-
-    pub(super) fn build_catch_clause_error(
-        &mut self,
-        source: &input::CatchClauseError,
-    ) -> output::CatchClauseError {
-        let id = self.next_id(output::NodeKind::CatchClauseError);
-        let range = source.calculate_text_range().unwrap_or_default();
-        let name = source
-            .name
-            .as_ref()
-            .map(|value| self.build_identifier(value));
-        let parameters = self.build_parameters_declaration(&source.parameters);
-
-        Arc::new(output::CatchClauseErrorStruct {
-            id,
-            range,
-            name,
-            parameters,
-        })
-    }
-
     pub(super) fn build_conditional_expression(
         &mut self,
         source: &input::ConditionalExpression,
@@ -940,30 +900,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             range,
             type_name,
             name,
-        })
-    }
-
-    pub(super) fn build_try_statement(
-        &mut self,
-        source: &input::TryStatement,
-    ) -> output::TryStatement {
-        let id = self.next_id(output::NodeKind::TryStatement);
-        let range = source.calculate_text_range().unwrap_or_default();
-        let expression = self.build_expression(&source.expression);
-        let returns = source
-            .returns
-            .as_ref()
-            .map(|value| self.build_returns_declaration(value));
-        let body = self.build_block(&source.body);
-        let catch_clauses = self.build_catch_clauses(&source.catch_clauses);
-
-        Arc::new(output::TryStatementStruct {
-            id,
-            range,
-            expression,
-            returns,
-            body,
-            catch_clauses,
         })
     }
 
@@ -2609,20 +2545,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .elements
             .iter()
             .map(|item| self.build_named_argument(item))
-            .collect()
-    }
-
-    pub(super) fn build_catch_clauses(
-        &mut self,
-        source: &input::CatchClauses,
-    ) -> output::CatchClauses {
-        if source.elements.is_empty() {
-            return Arc::default();
-        }
-        source
-            .elements
-            .iter()
-            .map(|item| self.build_catch_clause(item))
             .collect()
     }
 

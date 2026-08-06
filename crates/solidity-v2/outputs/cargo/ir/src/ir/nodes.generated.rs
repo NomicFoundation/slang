@@ -240,7 +240,7 @@ pub type CatchClause = Arc<CatchClauseStruct>;
 pub struct CatchClauseStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
-    pub error: Option<CatchClauseError>,
+    pub kind: CatchClauseKind,
     pub body: Block,
 }
 
@@ -250,17 +250,46 @@ impl CatchClauseStruct {
     }
 }
 
-pub type CatchClauseError = Arc<CatchClauseErrorStruct>;
+pub type ClauseErrorKind = Arc<ClauseErrorKindStruct>;
 
 #[derive(Debug)]
-pub struct CatchClauseErrorStruct {
+pub struct ClauseErrorKindStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
-    pub name: Option<Identifier>,
     pub parameters: Parameters,
 }
 
-impl CatchClauseErrorStruct {
+impl ClauseErrorKindStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type ClauseLowLevelKind = Arc<ClauseLowLevelKindStruct>;
+
+#[derive(Debug)]
+pub struct ClauseLowLevelKindStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+    pub parameters: Option<Parameters>,
+}
+
+impl ClauseLowLevelKindStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type ClausePanicKind = Arc<ClausePanicKindStruct>;
+
+#[derive(Debug)]
+pub struct ClausePanicKindStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+    pub parameters: Parameters,
+}
+
+impl ClausePanicKindStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
@@ -1642,6 +1671,13 @@ impl AssignmentExpressionOperator {
             AssignmentExpressionOperator::SlashEqual(inner) => inner.unparse(),
         }
     }
+}
+
+#[derive(Clone, Debug)]
+pub enum CatchClauseKind {
+    ClauseErrorKind(ClauseErrorKind),
+    ClausePanicKind(ClausePanicKind),
+    ClauseLowLevelKind(ClauseLowLevelKind),
 }
 
 #[derive(Clone, Debug)]
