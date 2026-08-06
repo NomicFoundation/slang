@@ -43,7 +43,7 @@ Like the repo's other snapshot tests, the mode is chosen by the `CI` env var:
 - **In CI** (`CI` set) the run **checks** against the committed baseline and
   fails on any drift.
 - **Run locally** (`CI` unset) it instead **rewrites** the baseline
-  (`failures.generated.json`) and re-pins `pinned-commits.generated.json`.
+  (`results.generated.json`) and re-pins `pinned-commits.generated.json`.
 
 Both files go through `infra_utils`' `CodegenFileSystem`, which is what gives us
 the check-vs-rewrite split (and the diff on mismatch) for free. They're named
@@ -89,5 +89,20 @@ splitting them up would only cost `nextest` tens of thousands of processes.
    target (the `EVMVersion` setting if present, else that version's default),
    resolving imports with the shared `solidity_testing_utils` `ImportResolver`.
 4. **Baseline** — the set of pairs slang rejected is reconciled with
-   `failures.generated.json`: checked in CI, rewritten locally (see "Baseline
-   update mode").
+   `results.generated.json`: checked in CI, rewritten locally (see "Baseline
+   update mode"). Each version records how many tests ran, how many passed and
+   failed, and which ones failed:
+
+    ```json
+    "0.8.7": {
+        "executed": 1205,
+        "passed": 1203,
+        "failed": 2,
+        "failures": ["experimental/stub.sol", "experimental/type_class.sol"]
+    }
+    ```
+
+    `executed` and `passed` are derivable from `failures`, but recording them
+    makes the diff catch the dataset itself changing size — a version whose test
+    count moves is worth noticing, and would otherwise be invisible whenever the
+    new tests happen to pass.
