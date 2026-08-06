@@ -158,11 +158,14 @@ impl Pass<'_> {
                 })))
             }
             ir::TypeName::MappingType(mapping_type) => {
-                let data_location = Some(DataLocation::Storage);
-                let key_type_id =
-                    self.resolve_type_name(&mapping_type.key_type.type_name, data_location)?;
-                let value_type_id =
-                    self.resolve_type_name(&mapping_type.value_type.type_name, data_location)?;
+                let key_type_id = self.resolve_type_name(
+                    &mapping_type.key_type.type_name,
+                    Some(DataLocation::Memory),
+                )?;
+                let value_type_id = self.resolve_type_name(
+                    &mapping_type.value_type.type_name,
+                    Some(DataLocation::Storage),
+                )?;
                 Some(self.types.register_type(Type::Mapping(MappingType {
                     key_type_id,
                     value_type_id,
