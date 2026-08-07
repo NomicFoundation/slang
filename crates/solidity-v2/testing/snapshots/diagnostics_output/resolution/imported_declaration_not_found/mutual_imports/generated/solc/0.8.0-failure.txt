@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 2904] Error: Declaration "foo" not found in "a.sol" (referenced as "./a.sol").
+   ╭─[b.sol:4:1]
+   │
+ 4 │ import {foo} from "./a.sol";
+   │ ──────────────┬─────────────  
+   │               ╰─────────────── Error occurred here.
+───╯

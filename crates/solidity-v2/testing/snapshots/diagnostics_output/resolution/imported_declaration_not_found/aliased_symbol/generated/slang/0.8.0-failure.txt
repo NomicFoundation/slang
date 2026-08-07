@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/imported-declaration-not-found] Error: Declaration not found in imported file.
+   ╭─[main.sol:5:9]
+   │
+ 5 │ import {Missing as AlsoRenamed} from "lib.sol";
+   │         ───────────┬──────────  
+   │                    ╰──────────── Error occurred here.
+───╯

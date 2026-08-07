@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 2904] Error: Declaration "Deep" not found in "lib.sol" (referenced as "./lib.sol").
+   ╭─[main.sol:7:1]
+   │
+ 7 │ import {Deep} from "./lib.sol";
+   │ ───────────────┬───────────────  
+   │                ╰───────────────── Error occurred here.
+───╯
