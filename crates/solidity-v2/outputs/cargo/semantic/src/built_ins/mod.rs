@@ -4,10 +4,15 @@ use super::types::{
     TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
 };
 
+mod availability;
 #[path = "internal.generated.rs"]
 mod internal;
+#[path = "specifiers.generated.rs"]
+mod specifiers;
 
+pub(crate) use availability::is_built_in_available;
 pub use internal::InternalBuiltIn;
+pub(crate) use specifiers::built_in_specifiers;
 
 pub(crate) struct BuiltInsResolver<'a> {
     binder: &'a Binder,

@@ -4,6 +4,24 @@
     "version": {
       "value": "0.8.36",
       "reason": "The EVM target is what decides whether the grace-period name is reserved, so iterating targets shows both sides of the Cancun boundary."
-    }
+    },
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "Range",
+          "from": "Frontier",
+          "till": "Homestead"
+        },
+        "reason": "solc 0.8.36 declines the Frontier target outright ('Invalid EVM version requested'), which counts as a rejection, while slang accepts the declaration."
+      },
+      {
+        "specifier": {
+          "type": "Range",
+          "from": "Homestead",
+          "till": "Cancun"
+        },
+        "reason": "Before Cancun solc accepts `let mcopy := 1` with only a warning ('mcopy' will be promoted to a Yul reserved identifier in the future; plus a deprecated-EVM warning on the oldest targets), which counts as a rejection. slang correctly accepts the grace-period name until the built-in exists, so the statuses differ until warnings are distinguished from errors."
+      }
+    ]
   }
 }

@@ -4,6 +4,15 @@
     "version": {
       "value": "0.8.36",
       "reason": "`difficulty` is not gated by language version; iterating the EVM target shows the built-in/reserved flip at Paris."
-    }
+    },
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "From",
+          "from": "Paris"
+        },
+        "reason": "TODO(validation) SDR[1180]: From Paris the `difficulty` opcode is superseded by `prevrandao`, so slang's availability-gated built-in check no longer fires and the declaration falls through to acceptance."
+      }
+    ]
   }
 }

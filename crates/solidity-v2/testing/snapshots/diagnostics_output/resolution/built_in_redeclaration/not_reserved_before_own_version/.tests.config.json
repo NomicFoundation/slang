@@ -9,10 +9,25 @@
       {
         "specifier": {
           "type": "Range",
-          "from": "Constantinople",
-          "till": "Cancun"
+          "from": "Frontier",
+          "till": "Homestead"
         },
-        "reason": "solc accepts `let mcopy := 1` here because 0.8.23 has no such built-in, while slang rejects the name on every version and target. This is the bug being fixed; the divergence goes away with the fix."
+        "reason": "solc 0.8.23 declines the Frontier target outright ('Invalid EVM version requested'), which counts as a rejection, while slang accepts the declaration."
+      },
+      {
+        "specifier": {
+          "type": "Range",
+          "from": "Homestead",
+          "till": "Constantinople"
+        },
+        "reason": "On pre-Constantinople targets solc warns that the EVM version is deprecated, which counts as a rejection, while slang is silent."
+      },
+      {
+        "specifier": {
+          "type": "From",
+          "from": "Cancun"
+        },
+        "reason": "Cancun support only arrives in solc 0.8.24, so 0.8.23 declines these targets ('Invalid EVM version requested') while slang accepts the declaration — which is the point of this test."
       }
     ]
   }

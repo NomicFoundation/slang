@@ -2,6 +2,7 @@ use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind;
+use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::NodeIdGenerator;
 
@@ -428,7 +429,14 @@ contract Test {
         &file_node_mapper,
         &mut diagnostics,
     );
-    p6_resolve_yul::run(&mut binder, &types, &file_node_mapper, &mut diagnostics);
+    p6_resolve_yul::run(
+        &mut binder,
+        language_version,
+        EvmTarget::LATEST,
+        &types,
+        &file_node_mapper,
+        &mut diagnostics,
+    );
     assert!(
         diagnostics.is_empty(),
         "Semantic diagnostics: {diagnostics:?}"
