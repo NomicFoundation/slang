@@ -4,6 +4,15 @@
     "target": {
       "value": "Petersburg",
       "reason": "Petersburg predates the Istanbul `chainid` opcode and is accepted by every supported solc."
-    }
+    },
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "From",
+          "from": "0.8.0"
+        },
+        "reason": "TODO(validation) SDR[1180]: solc rejects `let chainid := 1` on Petersburg on every version (DeclarationError 5017), slang still doesnt."
+      }
+    ]
   }
 }
