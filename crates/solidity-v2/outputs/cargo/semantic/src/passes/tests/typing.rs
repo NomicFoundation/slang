@@ -1662,6 +1662,44 @@ fn test_index_access_on_elementary_meta_type_yields_array_meta_type() {
 }
 
 #[test]
+fn test_index_access_on_elementary_meta_type_with_literal_index_yields_fixed_size_array() {
+    // A number literal index is the array's length, whether written directly,
+    // folded from literal arithmetic, or written in hex.
+    let expressions = ["uint[3]", "uint[1 + 2]", "uint[0x3]"];
+    let (typings, types) = type_of_expressions(LanguageVersion::LATEST, None, None, &expressions);
+
+    for (expression, typing) in expressions.iter().zip(&typings) {
+        let Some(Type::MetaType(MetaType { type_id: array_id })) = typing else {
+            panic!("expected `{expression}` to be a MetaType, got {typing:?}");
+        };
+        let Type::FixedSizeArray(FixedSizeArrayType {
+            element_type,
+            size,
+            location,
+        }) = types.get_type_by_id(*array_id).clone()
+        else {
+            panic!(
+                "expected `{expression}` to wrap a FixedSizeArray, got {:?}",
+                types.get_type_by_id(*array_id)
+            );
+        };
+        assert_eq!(size, U256::from(3), "`{expression}` has length 3");
+        assert_eq!(element_type, types.uint256());
+        assert_eq!(location, DataLocation::Memory);
+    }
+}
+
+#[test]
+fn test_index_access_on_elementary_meta_type_with_non_literal_index_is_unresolved() {
+    // Only a literal is a length in expression position, so neither a constant
+    // nor a cast is one (matches solc error 3940).
+    for expression in ["uint[N]", "uint[uint8(3)]"] {
+        let (typing, _) = try_type_of_expression_in_context("uint constant N = 3;", expression);
+        assert_eq!(typing, None, "`{expression}` is not a valid array length");
+    }
+}
+
+#[test]
 fn test_index_access_on_user_meta_type_yields_array_meta_type() {
     // `MyStruct[]` is a *type expression*: indexing the user meta-type of a
     // struct produces the meta-type of an array whose element is that struct.
@@ -1683,6 +1721,36 @@ fn test_index_access_on_user_meta_type_yields_array_meta_type() {
     assert_eq!(location, DataLocation::Memory);
 
     // The array element is the struct's own value type.
+    assert!(
+        matches!(
+            types.get_type_by_id(element_type),
+            Type::Struct(StructType { .. })
+        ),
+        "expected the array element to be the struct type, got {:?}",
+        types.get_type_by_id(element_type),
+    );
+}
+
+#[test]
+fn test_index_access_on_user_meta_type_with_literal_index_yields_fixed_size_array() {
+    let (meta, types) = type_of_expression_in_context("struct MyStruct { uint a; }", "MyStruct[3]");
+
+    let Type::MetaType(MetaType { type_id: array_id }) = meta else {
+        panic!("expected the `MyStruct[3]` expression to be a MetaType, got {meta:?}");
+    };
+    let Type::FixedSizeArray(FixedSizeArrayType {
+        element_type,
+        size,
+        location,
+    }) = types.get_type_by_id(array_id).clone()
+    else {
+        panic!(
+            "expected the meta-type to wrap a FixedSizeArray, got {:?}",
+            types.get_type_by_id(array_id)
+        );
+    };
+    assert_eq!(size, U256::from(3));
+    assert_eq!(location, DataLocation::Memory);
     assert!(
         matches!(
             types.get_type_by_id(element_type),
