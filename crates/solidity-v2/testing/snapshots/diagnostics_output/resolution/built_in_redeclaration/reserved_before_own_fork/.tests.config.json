@@ -1,0 +1,9 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "target": {
+      "value": "Petersburg",
+      "reason": "Petersburg predates the Istanbul `chainid` opcode and is accepted by every supported solc."
+    }
+  }
+}

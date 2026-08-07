@@ -1,0 +1,19 @@
+{
+  "matrix": {
+    "type": "SingleVersionAllTargets",
+    "version": {
+      "value": "0.8.23",
+      "reason": "The last version before `mcopy` exists, so no target makes it a built-in."
+    },
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "Range",
+          "from": "Constantinople",
+          "till": "Cancun"
+        },
+        "reason": "solc accepts `let mcopy := 1` here because 0.8.23 has no such built-in, while slang rejects the name on every version and target. This is the bug being fixed; the divergence goes away with the fix."
+      }
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "matrix": {
+    "type": "SingleVersionAllTargets",
+    "version": {
+      "value": "0.8.36",
+      "reason": "The EVM target is what decides whether the grace-period name is reserved, so iterating targets shows both sides of the Cancun boundary."
+    }
+  }
+}
