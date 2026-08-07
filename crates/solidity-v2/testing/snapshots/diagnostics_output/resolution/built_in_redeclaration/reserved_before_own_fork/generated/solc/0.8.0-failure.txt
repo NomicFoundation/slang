@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 5017] Error: The identifier "chainid" is reserved and can not be used.
+    ╭─[input.sol:11:17]
+    │
+ 11 │             let chainid := 1
+    │                 ───┬───  
+    │                    ╰───── Error occurred here.
+────╯

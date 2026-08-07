@@ -1,0 +1,9 @@
+{
+  "matrix": {
+    "type": "SingleVersionAllTargets",
+    "version": {
+      "value": "0.8.36",
+      "reason": "`difficulty` is not gated by language version; iterating the EVM target shows the built-in/reserved flip at Paris."
+    }
+  }
+}
