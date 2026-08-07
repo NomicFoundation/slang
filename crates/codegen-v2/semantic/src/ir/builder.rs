@@ -27,6 +27,7 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
     simplify_string_literals(&mut mutator);
     normalize_experimental_feature(&mut mutator);
     normalize_abicoder_version(&mut mutator);
+    normalize_assembly_statement(&mut mutator);
     normalize_yul_terminals(&mut mutator);
     simplify_imports(&mut mutator);
     simplify_parameters(&mut mutator);
@@ -335,10 +336,22 @@ fn simplify_string_literals(mutator: &mut IrModelMutator) {
     mutator.normalize_terminal("YulStringLiteral", "StringLiteral");
     mutator.normalize_terminal("YulHexStringLiteral", "HexStringLiteral");
     mutator.normalize_terminal("PragmaStringLiteral", "StringLiteral");
+}
 
-    // Collapse YulFlagsDeclaration to its inner YulFlags collection.
-    // This preserves AssemblyStatement.flags as optional.
-    mutator.collapse_sequence("YulFlagsDeclaration");
+fn normalize_assembly_statement(mutator: &mut IrModelMutator) {
+    mutator.remove_type("YulFlags");
+    mutator.remove_type("YulFlagsDeclaration");
+    mutator.remove_sequence_field("AssemblyStatement", "label");
+
+    mutator.add_enum_type("AssemblyFlag", &["MemorySafe"]);
+    mutator.add_collection_type("AssemblyFlags", "AssemblyFlag");
+    mutator.insert_sequence_field_before(
+        "AssemblyStatement",
+        "flags",
+        "AssemblyFlags",
+        true,
+        "body",
+    );
 }
 
 fn normalize_experimental_feature(mutator: &mut IrModelMutator) {

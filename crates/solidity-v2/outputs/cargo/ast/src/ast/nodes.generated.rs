@@ -297,18 +297,11 @@ impl AssemblyStatementStruct {
         self.ir_node.id()
     }
 
-    pub fn label(&self) -> Option<StringLiteral> {
-        self.ir_node
-            .label
-            .as_ref()
-            .map(|ir_node| create_string_literal(ir_node, &self.semantic))
-    }
-
-    pub fn flags(&self) -> Option<YulFlags> {
+    pub fn flags(&self) -> Option<AssemblyFlags> {
         self.ir_node
             .flags
             .as_ref()
-            .map(|ir_node| create_yul_flags(ir_node, &self.semantic))
+            .map(|ir_node| create_assembly_flags(ir_node, &self.semantic))
     }
 
     pub fn body(&self) -> YulBlock {
@@ -4447,6 +4440,22 @@ pub(crate) fn create_arguments_declaration(
 }
 
 #[derive(Clone)]
+pub enum AssemblyFlag {
+    MemorySafe,
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_assembly_flag(
+    ir_node: &ir::AssemblyFlag,
+    semantic: &Arc<SemanticContext>,
+) -> AssemblyFlag {
+    match ir_node {
+        ir::AssemblyFlag::MemorySafe => AssemblyFlag::MemorySafe,
+    }
+}
+
+#[derive(Clone)]
 pub enum AssignmentExpressionOperator {
     AmpersandEqual(AmpersandEqual),
     AsteriskEqual(AsteriskEqual),
@@ -5840,6 +5849,39 @@ impl ArrayValuesStruct {
         self.ir_nodes.is_empty()
     }
 }
+pub type AssemblyFlags = AssemblyFlagsStruct;
+
+pub(crate) fn create_assembly_flags(
+    nodes: &ir::AssemblyFlags,
+    semantic: &Arc<SemanticContext>,
+) -> AssemblyFlags {
+    AssemblyFlagsStruct {
+        ir_nodes: Arc::clone(nodes),
+        semantic: Arc::clone(semantic),
+    }
+}
+
+#[derive(Clone)]
+pub struct AssemblyFlagsStruct {
+    pub(crate) ir_nodes: ir::AssemblyFlags,
+    pub(crate) semantic: Arc<SemanticContext>,
+}
+
+impl AssemblyFlagsStruct {
+    pub fn iter(&self) -> impl Iterator<Item = AssemblyFlag> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| create_assembly_flag(ir_node, &self.semantic))
+    }
+
+    pub fn len(&self) -> usize {
+        self.ir_nodes.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.ir_nodes.is_empty()
+    }
+}
 pub type CallOptions = CallOptionsStruct;
 
 pub(crate) fn create_call_options(
@@ -6721,36 +6763,6 @@ impl YulArgumentsStruct {
         self.ir_nodes
             .iter()
             .map(|ir_node| create_yul_expression(ir_node, &self.semantic))
-    }
-
-    pub fn len(&self) -> usize {
-        self.ir_nodes.len()
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.ir_nodes.is_empty()
-    }
-}
-pub type YulFlags = YulFlagsStruct;
-
-pub(crate) fn create_yul_flags(nodes: &ir::YulFlags, semantic: &Arc<SemanticContext>) -> YulFlags {
-    YulFlagsStruct {
-        ir_nodes: Arc::clone(nodes),
-        semantic: Arc::clone(semantic),
-    }
-}
-
-#[derive(Clone)]
-pub struct YulFlagsStruct {
-    pub(crate) ir_nodes: ir::YulFlags,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-impl YulFlagsStruct {
-    pub fn iter(&self) -> impl Iterator<Item = StringLiteral> + use<'_> {
-        self.ir_nodes
-            .iter()
-            .map(|ir_node| create_string_literal(ir_node, &self.semantic))
     }
 
     pub fn len(&self) -> usize {

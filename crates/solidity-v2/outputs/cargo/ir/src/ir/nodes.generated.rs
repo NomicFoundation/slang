@@ -113,8 +113,7 @@ pub type AssemblyStatement = Arc<AssemblyStatementStruct>;
 pub struct AssemblyStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
-    pub label: Option<StringLiteral>,
-    pub flags: Option<YulFlags>,
+    pub flags: Option<AssemblyFlags>,
     pub body: YulBlock,
 }
 
@@ -1592,6 +1591,11 @@ pub enum ArgumentsDeclaration {
     NamedArguments(NamedArguments),
 }
 
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+pub enum AssemblyFlag {
+    MemorySafe,
+}
+
 #[derive(Clone, Debug)]
 pub enum AssignmentExpressionOperator {
     AmpersandEqual(AmpersandEqual),
@@ -2121,6 +2125,8 @@ pub enum YulStatement {
 
 pub type ArrayValues = Arc<[Expression]>;
 
+pub type AssemblyFlags = Arc<[AssemblyFlag]>;
+
 pub type CallOptions = Arc<[NamedArgument]>;
 
 pub type CatchClauses = Arc<[CatchClause]>;
@@ -2174,8 +2180,6 @@ pub type VersionExpressionSet = Arc<[VersionExpression]>;
 pub type VersionExpressionSets = Arc<[VersionExpressionSet]>;
 
 pub type YulArguments = Arc<[YulExpression]>;
-
-pub type YulFlags = Arc<[StringLiteral]>;
 
 pub type YulParameters = Arc<[Identifier]>;
 

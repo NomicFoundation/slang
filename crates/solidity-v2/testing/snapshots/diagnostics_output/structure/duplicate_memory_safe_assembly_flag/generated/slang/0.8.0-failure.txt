@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Diagnostics: 4
+Diagnostics: 9
 
 [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
    ╭─[input.sol:7:18]
@@ -29,7 +29,48 @@ Diagnostics: 4
 [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
     ╭─[input.sol:22:18]
     │
- 22 │         assembly ("memory-safe") {}
+ 22 │         assembly ("memory-safe", "\x6demory-safe") {}
+    │                  ────────────────┬────────────────  
+    │                                  ╰────────────────── Error occurred here.
+────╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
+    ╭─[input.sol:27:18]
+    │
+ 27 │         assembly ("\u006demory-safe", "memory-safe") {}
+    │                  ─────────────────┬─────────────────  
+    │                                   ╰─────────────────── Error occurred here.
+────╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
+    ╭─[input.sol:32:18]
+    │
+ 32 │         assembly ("memory-safe", "\x6d\x65\x6d\x6f\x72\x79\x2d\x73\x61\x66\x65") {}
+    │                  ───────────────────────────────┬───────────────────────────────  
+    │                                                 ╰───────────────────────────────── Error occurred here.
+────╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
+    ╭─[input.sol:37:18]
+    │
+ 37 │ ╭─▶         assembly ("memory-safe", "memory-\
+ 38 │ ├─▶ safe") {}
+    │ │               
+    │ ╰─────────────── Error occurred here.
+────╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
+    ╭─[input.sol:43:18]
+    │
+ 43 │         assembly ("memory-safe") {}
     │                  ───────┬───────  
     │                         ╰───────── Error occurred here.
+────╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
+    ╭─[input.sol:48:18]
+    │
+ 48 │         assembly ("\x6demory-safe") {}
+    │                  ─────────┬────────  
+    │                           ╰────────── Error occurred here.
 ────╯

@@ -14,6 +14,8 @@ pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_arguments_declaration(&
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_array_expression(&mut self, &slang_solidity_v2_ir::ir::ArrayExpression) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_array_type_name(&mut self, &slang_solidity_v2_ir::ir::ArrayTypeName) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_array_values(&mut self, &slang_solidity_v2_ir::ir::ArrayValues) -> bool
+pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_assembly_flag(&mut self, &slang_solidity_v2_ir::ir::AssemblyFlag) -> bool
+pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_assembly_flags(&mut self, &slang_solidity_v2_ir::ir::AssemblyFlags) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_assembly_statement(&mut self, &slang_solidity_v2_ir::ir::AssemblyStatement) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_assignment_expression(&mut self, &slang_solidity_v2_ir::ir::AssignmentExpression) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_assignment_expression_operator(&mut self, &slang_solidity_v2_ir::ir::AssignmentExpressionOperator) -> bool
@@ -156,7 +158,6 @@ pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_break_statement(&mu
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_continue_statement(&mut self, &slang_solidity_v2_ir::ir::YulContinueStatement) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_default_case(&mut self, &slang_solidity_v2_ir::ir::YulDefaultCase) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_expression(&mut self, &slang_solidity_v2_ir::ir::YulExpression) -> bool
-pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_flags(&mut self, &slang_solidity_v2_ir::ir::YulFlags) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_for_statement(&mut self, &slang_solidity_v2_ir::ir::YulForStatement) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_function_call_expression(&mut self, &slang_solidity_v2_ir::ir::YulFunctionCallExpression) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_yul_function_definition(&mut self, &slang_solidity_v2_ir::ir::YulFunctionDefinition) -> bool
@@ -185,6 +186,8 @@ pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_arguments_declaration(&
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_array_expression(&mut self, &slang_solidity_v2_ir::ir::ArrayExpression)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_array_type_name(&mut self, &slang_solidity_v2_ir::ir::ArrayTypeName)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_array_values(&mut self, &slang_solidity_v2_ir::ir::ArrayValues)
+pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_assembly_flag(&mut self, &slang_solidity_v2_ir::ir::AssemblyFlag)
+pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_assembly_flags(&mut self, &slang_solidity_v2_ir::ir::AssemblyFlags)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_assembly_statement(&mut self, &slang_solidity_v2_ir::ir::AssemblyStatement)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_assignment_expression(&mut self, &slang_solidity_v2_ir::ir::AssignmentExpression)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_assignment_expression_operator(&mut self, &slang_solidity_v2_ir::ir::AssignmentExpressionOperator)
@@ -327,7 +330,6 @@ pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_break_statement(&mu
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_continue_statement(&mut self, &slang_solidity_v2_ir::ir::YulContinueStatement)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_default_case(&mut self, &slang_solidity_v2_ir::ir::YulDefaultCase)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_expression(&mut self, &slang_solidity_v2_ir::ir::YulExpression)
-pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_flags(&mut self, &slang_solidity_v2_ir::ir::YulFlags)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_for_statement(&mut self, &slang_solidity_v2_ir::ir::YulForStatement)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_function_call_expression(&mut self, &slang_solidity_v2_ir::ir::YulFunctionCallExpression)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_yul_function_definition(&mut self, &slang_solidity_v2_ir::ir::YulFunctionDefinition)
@@ -427,6 +429,7 @@ pub fn slang_solidity_v2_ir::ir::visitor::accept_and_expression(&slang_solidity_
 pub fn slang_solidity_v2_ir::ir::visitor::accept_arguments_declaration(&slang_solidity_v2_ir::ir::ArgumentsDeclaration, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_array_expression(&slang_solidity_v2_ir::ir::ArrayExpression, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_array_type_name(&slang_solidity_v2_ir::ir::ArrayTypeName, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
+pub fn slang_solidity_v2_ir::ir::visitor::accept_assembly_flag(&slang_solidity_v2_ir::ir::AssemblyFlag, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_assembly_statement(&slang_solidity_v2_ir::ir::AssemblyStatement, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_assignment_expression(&slang_solidity_v2_ir::ir::AssignmentExpression, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_assignment_expression_operator(&slang_solidity_v2_ir::ir::AssignmentExpressionOperator, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
@@ -596,6 +599,23 @@ impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::Argume
 pub fn slang_solidity_v2_ir::ir::ArgumentsDeclaration::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ArgumentsDeclaration
 pub fn slang_solidity_v2_ir::ir::ArgumentsDeclaration::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+pub enum slang_solidity_v2_ir::ir::AssemblyFlag
+pub slang_solidity_v2_ir::ir::AssemblyFlag::MemorySafe
+impl core::clone::Clone for slang_solidity_v2_ir::ir::AssemblyFlag
+pub fn slang_solidity_v2_ir::ir::AssemblyFlag::clone(&self) -> slang_solidity_v2_ir::ir::AssemblyFlag
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::AssemblyFlag
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::AssemblyFlag
+pub fn slang_solidity_v2_ir::ir::AssemblyFlag::eq(&self, &slang_solidity_v2_ir::ir::AssemblyFlag) -> bool
+impl core::fmt::Debug for slang_solidity_v2_ir::ir::AssemblyFlag
+pub fn slang_solidity_v2_ir::ir::AssemblyFlag::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for slang_solidity_v2_ir::ir::AssemblyFlag
+pub fn slang_solidity_v2_ir::ir::AssemblyFlag::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for slang_solidity_v2_ir::ir::AssemblyFlag
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::AssemblyFlag
+impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::AssemblyFlag
+pub fn slang_solidity_v2_ir::ir::AssemblyFlag::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
+impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AssemblyFlag
+pub fn slang_solidity_v2_ir::ir::AssemblyFlag::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub enum slang_solidity_v2_ir::ir::AssignmentExpressionOperator
 pub slang_solidity_v2_ir::ir::AssignmentExpressionOperator::AmpersandEqual(slang_solidity_v2_ir::ir::AmpersandEqual)
 pub slang_solidity_v2_ir::ir::AssignmentExpressionOperator::AsteriskEqual(slang_solidity_v2_ir::ir::AsteriskEqual)
@@ -1508,8 +1528,7 @@ impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ArrayType
 pub fn slang_solidity_v2_ir::ir::ArrayTypeNameStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::AssemblyStatementStruct
 pub slang_solidity_v2_ir::ir::AssemblyStatementStruct::body: slang_solidity_v2_ir::ir::YulBlock
-pub slang_solidity_v2_ir::ir::AssemblyStatementStruct::flags: core::option::Option<slang_solidity_v2_ir::ir::YulFlags>
-pub slang_solidity_v2_ir::ir::AssemblyStatementStruct::label: core::option::Option<slang_solidity_v2_ir::ir::StringLiteral>
+pub slang_solidity_v2_ir::ir::AssemblyStatementStruct::flags: core::option::Option<slang_solidity_v2_ir::ir::AssemblyFlags>
 pub slang_solidity_v2_ir::ir::AssemblyStatementStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::AssemblyStatementStruct
 pub fn slang_solidity_v2_ir::ir::AssemblyStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
@@ -3851,6 +3870,8 @@ impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ArrayE
 pub fn slang_solidity_v2_ir::ir::ArrayExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ArrayTypeNameStruct
 pub fn slang_solidity_v2_ir::ir::ArrayTypeNameStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
+impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::AssemblyFlag
+pub fn slang_solidity_v2_ir::ir::AssemblyFlag::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::AssemblyStatementStruct
 pub fn slang_solidity_v2_ir::ir::AssemblyStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::AssignmentExpressionOperator
@@ -4283,6 +4304,8 @@ impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ArrayExpr
 pub fn slang_solidity_v2_ir::ir::ArrayExpressionStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ArrayTypeNameStruct
 pub fn slang_solidity_v2_ir::ir::ArrayTypeNameStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AssemblyFlag
+pub fn slang_solidity_v2_ir::ir::AssemblyFlag::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AssemblyStatementStruct
 pub fn slang_solidity_v2_ir::ir::AssemblyStatementStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AssignmentExpressionOperator
@@ -4693,6 +4716,7 @@ pub type slang_solidity_v2_ir::ir::AndExpression = alloc::sync::Arc<slang_solidi
 pub type slang_solidity_v2_ir::ir::ArrayExpression = alloc::sync::Arc<slang_solidity_v2_ir::ir::ArrayExpressionStruct>
 pub type slang_solidity_v2_ir::ir::ArrayTypeName = alloc::sync::Arc<slang_solidity_v2_ir::ir::ArrayTypeNameStruct>
 pub type slang_solidity_v2_ir::ir::ArrayValues = alloc::sync::Arc<[slang_solidity_v2_ir::ir::Expression]>
+pub type slang_solidity_v2_ir::ir::AssemblyFlags = alloc::sync::Arc<[slang_solidity_v2_ir::ir::AssemblyFlag]>
 pub type slang_solidity_v2_ir::ir::AssemblyStatement = alloc::sync::Arc<slang_solidity_v2_ir::ir::AssemblyStatementStruct>
 pub type slang_solidity_v2_ir::ir::AssignmentExpression = alloc::sync::Arc<slang_solidity_v2_ir::ir::AssignmentExpressionStruct>
 pub type slang_solidity_v2_ir::ir::Asterisk = alloc::sync::Arc<slang_solidity_v2_ir::ir::AsteriskStruct>
@@ -4870,7 +4894,6 @@ pub type slang_solidity_v2_ir::ir::YulBlock = alloc::sync::Arc<slang_solidity_v2
 pub type slang_solidity_v2_ir::ir::YulBreakStatement = alloc::sync::Arc<slang_solidity_v2_ir::ir::YulBreakStatementStruct>
 pub type slang_solidity_v2_ir::ir::YulContinueStatement = alloc::sync::Arc<slang_solidity_v2_ir::ir::YulContinueStatementStruct>
 pub type slang_solidity_v2_ir::ir::YulDefaultCase = alloc::sync::Arc<slang_solidity_v2_ir::ir::YulDefaultCaseStruct>
-pub type slang_solidity_v2_ir::ir::YulFlags = alloc::sync::Arc<[slang_solidity_v2_ir::ir::StringLiteral]>
 pub type slang_solidity_v2_ir::ir::YulForStatement = alloc::sync::Arc<slang_solidity_v2_ir::ir::YulForStatementStruct>
 pub type slang_solidity_v2_ir::ir::YulFunctionCallExpression = alloc::sync::Arc<slang_solidity_v2_ir::ir::YulFunctionCallExpressionStruct>
 pub type slang_solidity_v2_ir::ir::YulFunctionDefinition = alloc::sync::Arc<slang_solidity_v2_ir::ir::YulFunctionDefinitionStruct>

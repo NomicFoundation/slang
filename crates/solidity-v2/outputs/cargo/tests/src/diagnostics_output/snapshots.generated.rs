@@ -2400,6 +2400,25 @@ mod syntax {
         }
     }
 
+    mod invalid_assembly_dialect {
+        use super::*;
+
+        #[test]
+        fn encoded_dialect() -> Result<()> {
+            run("syntax/invalid_assembly_dialect", "encoded_dialect")
+        }
+
+        #[test]
+        fn supported_dialect() -> Result<()> {
+            run("syntax/invalid_assembly_dialect", "supported_dialect")
+        }
+
+        #[test]
+        fn unknown_dialect() -> Result<()> {
+            run("syntax/invalid_assembly_dialect", "unknown_dialect")
+        }
+    }
+
     mod invalid_mutability {
         use super::*;
 
