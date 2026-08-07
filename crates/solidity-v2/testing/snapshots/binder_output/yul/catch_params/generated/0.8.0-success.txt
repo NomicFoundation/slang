@@ -10,9 +10,8 @@ Definitions (6):
 
 ------------------------------------------------------------------------
 
-References (4):
+References (3):
 - Ref: ["test" @ input.sol:3:18] -> #2
-- Ref: ["Error" @ input.sol:4:17] -> built-in
 - Ref: ["reason" @ input.sol:6:26] -> #3
 - Ref: ["reason" @ input.sol:10:26] -> #5
 
@@ -35,9 +34,7 @@ Bindings:
     │                  ──┬─  
     │                    ╰─── ref: 2
   4 │         } catch Error(string memory reason) {
-    │                 ──┬──               ───┬──  
-    │                   ╰───────────────────────── built-in
-    │                                        │    
+    │                                     ───┬──  
     │                                        ╰──── name: 3
     │ 
   6 │                 let x := reason

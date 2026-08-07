@@ -19,7 +19,7 @@ Definitions (15):
 
 ------------------------------------------------------------------------
 
-References (12):
+References (11):
 - Ref: ["DataFeed" @ input.sol:4:5] -> #1
 - Ref: ["feed" @ input.sol:9:13] -> #6
 - Ref: ["getData" @ input.sol:9:18] -> #2
@@ -27,7 +27,6 @@ References (12):
 - Ref: ["lastValue" @ input.sol:10:13] -> #8
 - Ref: ["v" @ input.sol:10:25] -> #14
 - Ref: ["v" @ input.sol:11:21] -> #14
-- Ref: ["Error" @ input.sol:12:17] -> built-in
 - Ref: ["last_reason" @ input.sol:13:13] -> #13
 - Ref: ["reason" @ input.sol:13:27] -> #15
 - Ref: ["errorCount" @ input.sol:14:13] -> #7
@@ -96,9 +95,7 @@ Bindings:
     │                     ┬  
     │                     ╰── ref: 14
  12 │         } catch Error(string memory reason) {
-    │                 ──┬──               ───┬──  
-    │                   ╰───────────────────────── built-in
-    │                                        │    
+    │                                     ───┬──  
     │                                        ╰──── name: 15
  13 │             last_reason = reason;
     │             ─────┬─────   ───┬──  
