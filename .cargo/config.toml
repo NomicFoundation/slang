@@ -12,3 +12,14 @@ strip = false
 
 [profile.release]
 lto = true
+
+# Profile for the CI correctness gates (check, clippy, rustdoc, and the test
+# suite).
+# __FAST_TEST_PROFILE__ (keep in sync with crates/infra/utils/src/cargo/workspace.rs)
+[profile.fast-test]
+inherits = "test"
+opt-level = 1
+incremental = false
+# Trim full debuginfo (inherited from `dev`) to line tables: keeps readable
+# panic/backtrace locations while shrinking build time and the shared cache.
+debug = "line-tables-only"
