@@ -1,0 +1,37 @@
+use slang_solidity_v2_common::evm_targets::{EvmTarget, EvmTargetSpecifier};
+use slang_solidity_v2_common::versions::{LanguageVersion, LanguageVersionSpecifier};
+
+use crate::built_ins::InternalBuiltIn;
+
+/// The language version and EVM target ranges `built_in` is defined for, taken
+/// from `enabled` / `evm_enabled` in the language definition. `None` on an axis
+/// means the built-in is unrestricted along it.
+#[allow(clippy::too_many_lines)]
+pub(crate) fn built_in_specifiers(
+    built_in: InternalBuiltIn,
+) -> (Option<LanguageVersionSpecifier>, Option<EvmTargetSpecifier>) {
+    match built_in {
+        {%- for context in model.language.built_ins %}
+            {%- for scope in context.scopes %}
+                {%- for definition in scope.definitions %}
+                    {%- if definition.enabled.type != "Always" or definition.evm_enabled.type != "Always" %}
+                        InternalBuiltIn::{{ definition.name }}{% if definition.internal_parameter %}(_){% endif %} => (
+                            {%- if definition.enabled.type != "Always" %}
+                                Some({{<v2.versions.specifier s={definition.enabled} />}}),
+                            {%- else %}
+                                None,
+                            {%- endif %}
+                            {%- if definition.evm_enabled.type != "Always" %}
+                                Some({{<v2.evm_targets.specifier s={definition.evm_enabled} />}}),
+                            {%- else %}
+                                None,
+                            {%- endif %}
+                        ),
+                    {%- endif %}
+                {%- endfor %}
+            {%- endfor %}
+        {%- endfor %}
+
+        _ => (None, None),
+    }
+}

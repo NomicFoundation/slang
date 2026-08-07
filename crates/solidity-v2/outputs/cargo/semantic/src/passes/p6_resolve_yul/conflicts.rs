@@ -25,10 +25,12 @@
 //!   separately, but both produce the same `ExternalDeclarationShadowing`
 //!   conflict (matching solc).
 
+use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::binder::{Binder, Definition, Resolution, Scope, ScopeId};
-use crate::built_ins::BuiltInsResolver;
+use crate::built_ins::{BuiltInsResolver, is_built_in_available};
 use crate::passes::common::conflicts::conflicting_definition;
 
 /// Why a Yul declaration is not allowed, used to pick the diagnostic to report.
@@ -53,17 +55,26 @@ pub(super) enum YulConflict {
 // shadowing rules.
 pub(super) fn find_conflicting_yul_definition(
     binder: &Binder,
+    language_version: LanguageVersion,
+    evm_target: EvmTarget,
     scope_id: ScopeId,
     symbol: &str,
     new_definition: &Definition,
 ) -> Option<YulConflict> {
-    // A reserved Yul built-in name may never be declared, regardless of the
-    // declaration kind or what's in scope; this takes precedence over any
-    // redeclaration or shadowing conflict.
+    // The name of an *available* Yul built-in may never be declared, regardless
+    // of the declaration kind or what's in scope; this takes precedence over any
+    // redeclaration or shadowing conflict. A built-in that exists in the language
+    // but isn't available for the current version/target (e.g. `mcopy` before
+    // Cancun) is not a built-in here — matching solc, which only rejects the name
+    // once the built-in exists.
     //
-    // TODO: this checks against built-ins across all versions/targets, but we
-    // should restrict it to the current version/target.
-    if BuiltInsResolver::lookup_yul_global(symbol).is_some() {
+    // TODO: solc also reserves names where the built-in isn't available yet
+    // (opcode mnemonics, and target-gated built-ins like `chainid` on pre-fork
+    // targets). Those names are currently accepted; they need a separate
+    // reserved-identifier check.
+    if let Some(built_in) = BuiltInsResolver::lookup_yul_global(symbol)
+        && is_built_in_available(built_in, language_version, evm_target)
+    {
         return Some(YulConflict::BuiltInRedeclaration);
     }
 

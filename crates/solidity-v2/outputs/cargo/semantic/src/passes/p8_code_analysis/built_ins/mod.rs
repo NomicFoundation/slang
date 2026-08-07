@@ -1,4 +1,3 @@
-#[path = "validate_built_ins.generated.rs"]
 mod validate_built_ins;
 
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
