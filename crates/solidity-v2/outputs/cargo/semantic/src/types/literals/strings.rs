@@ -1,4 +1,4 @@
-use slang_solidity_v2_common::utils::strip_string_literal_prefix_and_quotes;
+use slang_solidity_v2_common::utils::{decode_escape_sequences, decode_hex_string, strip_string_literal_prefix_and_quotes};
 use slang_solidity_v2_ir::ir;
 
 /// Decodes the concatenated value of a collection of `StringLiteral` to its raw bytes.
@@ -36,76 +36,6 @@ pub fn value_of_unicode_string_literals(literals: &[ir::UnicodeStringLiteral]) -
         result.extend(decode_escape_sequences(content));
     }
     result
-}
-
-fn decode_hex_string(content: &str) -> Vec<u8> {
-    let mut result = Vec::with_capacity(content.len() / 2);
-    let mut i = 0usize;
-    while i < content.len() {
-        // Decode pairs of hex digits skipping over underscore separators
-        if content.as_bytes()[i] == b'_' {
-            i += 1;
-        }
-        // Parser grammar guarantees that we have at least 2 more digits
-        result.push(u8::from_str_radix(&content[i..i + 2], 16).unwrap());
-        i += 2;
-    }
-    result
-}
-
-fn decode_escape_sequences(content: &str) -> Vec<u8> {
-    let mut out = Vec::with_capacity(content.len());
-    let mut buf = [0u8; 4];
-    let mut chars = content.chars().peekable();
-    while let Some(c) = chars.next() {
-        if c != '\\' {
-            out.extend_from_slice(c.encode_utf8(&mut buf).as_bytes());
-            continue;
-        }
-        // Parser guarantees at least one char after backslash according to
-        // grammar definition.
-        let next = chars.next().expect("unterminated escape sequence");
-        match next {
-            'n' => out.push(b'\n'),
-            'r' => out.push(b'\r'),
-            't' => out.push(b'\t'),
-            '\'' => out.push(b'\''),
-            '"' => out.push(b'"'),
-            '\\' => out.push(b'\\'),
-            // Line continuation: `\<CR>`, `\<CRLF>`, `\<LF>` all decode to empty.
-            '\r' => {
-                if chars.peek() == Some(&'\n') {
-                    chars.next();
-                }
-            }
-            '\n' => {}
-            'x' => {
-                let h1 = u8::try_from(chars.next().unwrap().to_digit(16).unwrap()).unwrap();
-                let h2 = u8::try_from(chars.next().unwrap().to_digit(16).unwrap()).unwrap();
-                out.push((h1 << 4) | h2);
-            }
-            'u' => {
-                let h1 = chars.next().unwrap().to_digit(16).unwrap();
-                let h2 = chars.next().unwrap().to_digit(16).unwrap();
-                let h3 = chars.next().unwrap().to_digit(16).unwrap();
-                let h4 = chars.next().unwrap().to_digit(16).unwrap();
-                let code_point = (h1 << 12) | (h2 << 8) | (h3 << 4) | h4;
-                // `\uNNNN` code points in the surrogate range (0xD800..=0xDFFF)
-                // are not valid Unicode scalars; skip them silently.
-                if let Some(ch) = char::from_u32(code_point) {
-                    out.extend_from_slice(ch.encode_utf8(&mut buf).as_bytes());
-                }
-                // TODO(validation) SDR[5]: emit an error/warning if the unicode scalar
-                // is not valid
-            }
-            other => {
-                // Grammar should prevent unknown escape chars, but pass
-                // them through verbatim as a defensive fallback.
-                out.extend_from_slice(other.encode_utf8(&mut buf).as_bytes());
-            }
-        }
-    }
-    out
 }
 
 #[cfg(test)]
