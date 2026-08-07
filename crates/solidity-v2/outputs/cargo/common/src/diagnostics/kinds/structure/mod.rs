@@ -1,10 +1,12 @@
 mod abstract_contract_public_constructor;
+mod anonymous_event_with_too_many_indexed_parameters;
 mod break_outside_loop;
 mod conflicting_mapping_parameter_name;
 mod constructor_not_in_contract;
 mod continue_outside_loop;
 mod contract_should_be_abstract;
 mod duplicate_abicoder_specifier;
+mod duplicate_assembly_flag;
 mod duplicate_catch_clause;
 mod duplicate_named_argument;
 mod duplicate_switch_default_case;
@@ -14,6 +16,7 @@ mod empty_struct;
 mod empty_tuple_component;
 mod empty_tuple_on_lhs;
 mod enum_with_too_many_members;
+mod event_with_too_many_indexed_parameters;
 mod free_function_payable;
 mod free_function_visibility;
 mod free_function_with_modifiers;
@@ -51,6 +54,7 @@ mod unchecked_block_not_in_regular_block;
 mod unimplemented_function_with_modifiers;
 mod unimplemented_modifier_must_be_virtual;
 mod uninitialized_constant;
+mod using_for_functions_with_wildcard;
 mod using_for_wildcard_at_file_level;
 mod variable_declaration_not_in_block;
 mod variable_in_interface;
@@ -61,12 +65,14 @@ mod yul_function_in_for_loop_init;
 mod yul_leave_outside_function;
 
 pub use abstract_contract_public_constructor::AbstractContractPublicConstructor;
+pub use anonymous_event_with_too_many_indexed_parameters::AnonymousEventWithTooManyIndexedParameters;
 pub use break_outside_loop::BreakOutsideLoop;
 pub use conflicting_mapping_parameter_name::ConflictingMappingParameterName;
 pub use constructor_not_in_contract::ConstructorNotInContract;
 pub use continue_outside_loop::ContinueOutsideLoop;
 pub use contract_should_be_abstract::ContractShouldBeAbstract;
 pub use duplicate_abicoder_specifier::DuplicateAbicoderSpecifier;
+pub use duplicate_assembly_flag::DuplicateAssemblyFlag;
 pub use duplicate_catch_clause::{CatchClauseKind, DuplicateCatchClause};
 pub use duplicate_named_argument::DuplicateNamedArgument;
 pub use duplicate_switch_default_case::DuplicateSwitchDefaultCase;
@@ -76,6 +82,7 @@ pub use empty_struct::EmptyStruct;
 pub use empty_tuple_component::EmptyTupleComponent;
 pub use empty_tuple_on_lhs::EmptyTupleOnLhs;
 pub use enum_with_too_many_members::EnumWithTooManyMembers;
+pub use event_with_too_many_indexed_parameters::EventWithTooManyIndexedParameters;
 pub use free_function_payable::FreeFunctionPayable;
 pub use free_function_visibility::FreeFunctionVisibility;
 pub use free_function_with_modifiers::FreeFunctionWithModifiers;
@@ -114,6 +121,7 @@ pub use unchecked_block_not_in_regular_block::UncheckedBlockNotInRegularBlock;
 pub use unimplemented_function_with_modifiers::UnimplementedFunctionWithModifiers;
 pub use unimplemented_modifier_must_be_virtual::UnimplementedModifierMustBeVirtual;
 pub use uninitialized_constant::UninitializedConstant;
+pub use using_for_functions_with_wildcard::UsingForFunctionsWithWildcard;
 pub use using_for_wildcard_at_file_level::UsingForWildcardAtFileLevel;
 pub use variable_declaration_not_in_block::VariableDeclarationNotInBlock;
 pub use variable_in_interface::VariableInInterface;
@@ -159,6 +167,8 @@ define_diagnostic_kind! {
         InvalidUsingDirectiveContainer(InvalidUsingDirectiveContainer),
         /// A file-level `using` directive targets the wildcard type (`*`).
         UsingForWildcardAtFileLevel(UsingForWildcardAtFileLevel),
+        /// A `using` directive attaching specific functions targets the wildcard type (`*`).
+        UsingForFunctionsWithWildcard(UsingForFunctionsWithWildcard),
         /// A `global` `using` directive appears inside a contract, library or interface.
         GlobalUsingForInsideContract(GlobalUsingForInsideContract),
         /// A `global` `using` directive targets the wildcard type (`*`).
@@ -201,6 +211,9 @@ define_diagnostic_kind! {
         /// A function call's named-argument list contains two arguments with the same name.
         DuplicateNamedArgument(DuplicateNamedArgument),
 
+        /// An assembly statement lists the same flag more than once.
+        DuplicateAssemblyFlag(DuplicateAssemblyFlag),
+
         /// A named parameter of a mapping type reuses a name already used by
         /// another parameter in the same or a nested mapping type.
         ConflictingMappingParameterName(ConflictingMappingParameterName),
@@ -217,6 +230,11 @@ define_diagnostic_kind! {
 
         /// A struct declares no members.
         EmptyStruct(EmptyStruct),
+
+        /// A non-anonymous event declares more than 3 `indexed` parameters.
+        EventWithTooManyIndexedParameters(EventWithTooManyIndexedParameters),
+        /// An anonymous event declares more than 4 `indexed` parameters.
+        AnonymousEventWithTooManyIndexedParameters(AnonymousEventWithTooManyIndexedParameters),
 
         /// An empty tuple appears on the left hand side of an assignment.
         EmptyTupleOnLhs(EmptyTupleOnLhs),

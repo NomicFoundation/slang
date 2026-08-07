@@ -1,0 +1,68 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 8
+
+[SyntaxError 7026] Error: Inline assembly marked memory-safe multiple times.
+   ╭─[input.sol:7:9]
+   │
+ 7 │         assembly ("memory-safe", "memory-safe") {}
+   │         ─────────────────────┬────────────────────  
+   │                              ╰────────────────────── Error occurred here.
+───╯
+
+[SyntaxError 7026] Error: Inline assembly marked memory-safe multiple times.
+    ╭─[input.sol:12:9]
+    │
+ 12 │         assembly "evmasm" ("memory-safe", "memory-safe") {}
+    │         ─────────────────────────┬─────────────────────────  
+    │                                  ╰─────────────────────────── Error occurred here.
+────╯
+
+[SyntaxError 7026] Error: Inline assembly marked memory-safe multiple times.
+    ╭─[input.sol:17:9]
+    │
+ 17 │         assembly ("memory-safe", "memory-safe", "memory-safe") {}
+    │         ────────────────────────────┬────────────────────────────  
+    │                                     ╰────────────────────────────── Error occurred here.
+────╯
+
+[SyntaxError 7026] Error: Inline assembly marked memory-safe multiple times.
+    ╭─[input.sol:17:9]
+    │
+ 17 │         assembly ("memory-safe", "memory-safe", "memory-safe") {}
+    │         ────────────────────────────┬────────────────────────────  
+    │                                     ╰────────────────────────────── Error occurred here.
+────╯
+
+[SyntaxError 7026] Error: Inline assembly marked memory-safe multiple times.
+    ╭─[input.sol:22:9]
+    │
+ 22 │         assembly ("memory-safe", "\x6demory-safe") {}
+    │         ──────────────────────┬──────────────────────  
+    │                               ╰──────────────────────── Error occurred here.
+────╯
+
+[SyntaxError 7026] Error: Inline assembly marked memory-safe multiple times.
+    ╭─[input.sol:27:9]
+    │
+ 27 │         assembly ("\u006demory-safe", "memory-safe") {}
+    │         ───────────────────────┬───────────────────────  
+    │                                ╰───────────────────────── Error occurred here.
+────╯
+
+[SyntaxError 7026] Error: Inline assembly marked memory-safe multiple times.
+    ╭─[input.sol:32:9]
+    │
+ 32 │         assembly ("memory-safe", "\x6d\x65\x6d\x6f\x72\x79\x2d\x73\x61\x66\x65") {}
+    │         ─────────────────────────────────────┬─────────────────────────────────────  
+    │                                              ╰─────────────────────────────────────── Error occurred here.
+────╯
+
+[SyntaxError 7026] Error: Inline assembly marked memory-safe multiple times.
+    ╭─[input.sol:37:9]
+    │
+ 37 │ ╭─▶         assembly ("memory-safe", "memory-\
+ 38 │ ├─▶ safe") {}
+    │ │               
+    │ ╰─────────────── Error occurred here.
+────╯

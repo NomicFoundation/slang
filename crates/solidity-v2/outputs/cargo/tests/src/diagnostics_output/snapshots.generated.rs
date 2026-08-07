@@ -1526,6 +1526,14 @@ mod structure {
     }
 
     #[test]
+    fn anonymous_event_with_too_many_indexed_parameters() -> Result<()> {
+        run(
+            "structure",
+            "anonymous_event_with_too_many_indexed_parameters",
+        )
+    }
+
+    #[test]
     fn break_outside_loop() -> Result<()> {
         run("structure", "break_outside_loop")
     }
@@ -1746,6 +1754,11 @@ mod structure {
     }
 
     #[test]
+    fn duplicate_assembly_flag() -> Result<()> {
+        run("structure", "duplicate_assembly_flag")
+    }
+
+    #[test]
     fn duplicate_default_case() -> Result<()> {
         run("structure", "duplicate_default_case")
     }
@@ -1857,6 +1870,11 @@ mod structure {
     #[test]
     fn enum_with_too_many_members() -> Result<()> {
         run("structure", "enum_with_too_many_members")
+    }
+
+    #[test]
+    fn event_with_too_many_indexed_parameters() -> Result<()> {
+        run("structure", "event_with_too_many_indexed_parameters")
     }
 
     #[test]
@@ -2172,6 +2190,11 @@ mod structure {
     }
 
     #[test]
+    fn using_for_functions_with_wildcard() -> Result<()> {
+        run("structure", "using_for_functions_with_wildcard")
+    }
+
+    #[test]
     fn using_for_wildcard_at_file_level() -> Result<()> {
         run("structure", "using_for_wildcard_at_file_level")
     }
@@ -2342,6 +2365,25 @@ mod syntax {
                 "syntax/incompatible_syntax_version",
                 "storage_layout_specifier",
             )
+        }
+    }
+
+    mod invalid_assembly_dialect {
+        use super::*;
+
+        #[test]
+        fn encoded_dialect() -> Result<()> {
+            run("syntax/invalid_assembly_dialect", "encoded_dialect")
+        }
+
+        #[test]
+        fn supported_dialect() -> Result<()> {
+            run("syntax/invalid_assembly_dialect", "supported_dialect")
+        }
+
+        #[test]
+        fn unknown_dialect() -> Result<()> {
+            run("syntax/invalid_assembly_dialect", "unknown_dialect")
         }
     }
 

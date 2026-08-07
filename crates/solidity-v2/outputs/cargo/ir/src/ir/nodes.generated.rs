@@ -113,8 +113,7 @@ pub type AssemblyStatement = Arc<AssemblyStatementStruct>;
 pub struct AssemblyStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
-    pub label: Option<StringLiteral>,
-    pub flags: Option<YulFlags>,
+    pub is_memory_safe: bool,
     pub body: YulBlock,
 }
 
@@ -2182,8 +2181,6 @@ pub type VersionExpressionSet = Arc<[VersionExpression]>;
 pub type VersionExpressionSets = Arc<[VersionExpressionSet]>;
 
 pub type YulArguments = Arc<[YulExpression]>;
-
-pub type YulFlags = Arc<[StringLiteral]>;
 
 pub type YulParameters = Arc<[Identifier]>;
 

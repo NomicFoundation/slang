@@ -1,5 +1,6 @@
 mod expected_array_length_expression;
 mod incompatible_syntax_version;
+mod invalid_assembly_dialect;
 mod invalid_mutability;
 mod invalid_visibility;
 mod more_than_one_inheritance_list;
@@ -17,6 +18,7 @@ mod unsupported_experimental_solidity;
 
 pub use expected_array_length_expression::ExpectedArrayLengthExpression;
 pub use incompatible_syntax_version::IncompatibleSyntaxVersion;
+pub use invalid_assembly_dialect::InvalidAssemblyDialect;
 pub use invalid_mutability::InvalidMutability;
 pub use invalid_visibility::InvalidVisibility;
 pub use more_than_one_inheritance_list::MoreThanOneInheritanceList;
@@ -49,6 +51,9 @@ define_diagnostic_kind! {
 
         /// A piece of syntax is not compatible with the currently selected language version.
         IncompatibleSyntaxVersion(IncompatibleSyntaxVersion),
+
+        /// An assembly statement names a dialect other than 'evmasm'.
+        InvalidAssemblyDialect(InvalidAssemblyDialect),
 
         /// A definition declared a mutability that is not valid in its position,
         /// or omitted a required one.

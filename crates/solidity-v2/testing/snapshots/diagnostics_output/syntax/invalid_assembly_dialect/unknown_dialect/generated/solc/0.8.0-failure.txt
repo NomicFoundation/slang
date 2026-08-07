@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 4531] Error: Only "evmasm" supported.
+   ╭─[input.sol:7:18]
+   │
+ 7 │         assembly "evm" {}
+   │                  ──┬──  
+   │                    ╰──── Error occurred here.
+───╯
