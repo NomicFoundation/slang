@@ -129,15 +129,23 @@ impl ImportRemap {
             bail!("{remap_str}: Could not separate prefix and target");
         };
 
-        Ok(ImportRemap {
-            context: if context.is_empty() {
+        Ok(Self::new_from_components(
+            if context.is_empty() {
                 None
             } else {
-                Some(context.into())
+                Some(context)
             },
+            prefix,
+            target,
+        ))
+    }
+
+    pub fn new_from_components(context: Option<&str>, prefix: &str, target: &str) -> ImportRemap {
+        ImportRemap {
+            context: context.map(|c| c.into()),
             prefix: prefix.into(),
             target: target.into(),
-        })
+        }
     }
 
     /// Determine if `self` applies to the import `import_path` found in the file at `source_path`.
