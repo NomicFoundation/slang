@@ -339,19 +339,15 @@ fn simplify_string_literals(mutator: &mut IrModelMutator) {
 }
 
 fn normalize_assembly_statement(mutator: &mut IrModelMutator) {
+    // The dialect label and the flag list are both validated while lowering to
+    // the IR, so neither needs to survive into it. `memory-safe` is the only
+    // flag the language defines, so the whole list reduces to a single boolean;
+    // this is the one place to revisit if more flags are ever added.
     mutator.remove_type("YulFlags");
     mutator.remove_type("YulFlagsDeclaration");
     mutator.remove_sequence_field("AssemblyStatement", "label");
 
-    mutator.add_enum_type("AssemblyFlag", &["MemorySafe"]);
-    mutator.add_collection_type("AssemblyFlags", "AssemblyFlag");
-    mutator.insert_sequence_field_before(
-        "AssemblyStatement",
-        "flags",
-        "AssemblyFlags",
-        true,
-        "body",
-    );
+    mutator.insert_sequence_boolean_before("AssemblyStatement", "is_memory_safe", "body");
 }
 
 fn normalize_experimental_feature(mutator: &mut IrModelMutator) {

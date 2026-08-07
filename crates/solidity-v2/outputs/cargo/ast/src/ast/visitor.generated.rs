@@ -522,11 +522,6 @@ pub trait Visitor {
     }
     fn leave_arguments_declaration(&mut self, _node: &ArgumentsDeclaration) {}
 
-    fn enter_assembly_flag(&mut self, _node: &AssemblyFlag) -> bool {
-        true
-    }
-    fn leave_assembly_flag(&mut self, _node: &AssemblyFlag) {}
-
     fn enter_assignment_expression_operator(
         &mut self,
         _node: &AssignmentExpressionOperator,
@@ -729,11 +724,6 @@ pub trait Visitor {
         true
     }
     fn leave_array_values(&mut self, _items: &ArrayValues) {}
-
-    fn enter_assembly_flags(&mut self, _items: &AssemblyFlags) -> bool {
-        true
-    }
-    fn leave_assembly_flags(&mut self, _items: &AssemblyFlags) {}
 
     fn enter_call_options(&mut self, _items: &CallOptions) -> bool {
         true
@@ -991,9 +981,6 @@ pub fn accept_array_type_name(node: &ArrayTypeName, visitor: &mut impl Visitor) 
 pub fn accept_assembly_statement(node: &AssemblyStatement, visitor: &mut impl Visitor) {
     if !visitor.enter_assembly_statement(node) {
         return;
-    }
-    if let Some(ref flags) = node.flags() {
-        accept_assembly_flags(flags, visitor);
     }
     accept_yul_block(&node.body(), visitor);
     visitor.leave_assembly_statement(node);
@@ -1960,16 +1947,6 @@ pub fn accept_arguments_declaration(node: &ArgumentsDeclaration, visitor: &mut i
     visitor.leave_arguments_declaration(node);
 }
 
-pub fn accept_assembly_flag(node: &AssemblyFlag, visitor: &mut impl Visitor) {
-    if !visitor.enter_assembly_flag(node) {
-        return;
-    }
-    match node {
-        AssemblyFlag::MemorySafe => {}
-    }
-    visitor.leave_assembly_flag(node);
-}
-
 pub fn accept_assignment_expression_operator(
     node: &AssignmentExpressionOperator,
     visitor: &mut impl Visitor,
@@ -2797,17 +2774,6 @@ fn accept_array_values(items: &ArrayValues, visitor: &mut impl Visitor) {
         accept_expression(&item, visitor);
     }
     visitor.leave_array_values(items);
-}
-
-#[inline]
-fn accept_assembly_flags(items: &AssemblyFlags, visitor: &mut impl Visitor) {
-    if !visitor.enter_assembly_flags(items) {
-        return;
-    }
-    for item in items.iter() {
-        accept_assembly_flag(&item, visitor);
-    }
-    visitor.leave_assembly_flags(items);
 }
 
 #[inline]

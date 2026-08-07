@@ -753,29 +753,70 @@ impl IrModelMutator {
     // Adds a new boolean field to a sequence by using the synthetic `External`
     // "Boolean" type.
     pub fn add_sequence_boolean(&mut self, sequence_id: &str, field_label: &str) {
-        let sequence_id: model::Identifier = sequence_id.into();
-        let field_label: model::Identifier = field_label.into();
+        let field = self.new_boolean_field(sequence_id, field_label);
 
+        let sequence_id: model::Identifier = sequence_id.into();
         let Some(sequence) = self.sequences.get_mut(&sequence_id) else {
             panic!("Sequence {sequence_id} not found in IR model");
         };
+        sequence.fields.push(field);
+        sequence.has_added_fields = true;
+    }
+
+    // Inserts a new boolean field into a sequence, before an existing field, by
+    // using the synthetic `External` "Boolean" type.
+    pub fn insert_sequence_boolean_before(
+        &mut self,
+        sequence_id: &str,
+        field_label: &str,
+        before_label: &str,
+    ) {
+        let field = self.new_boolean_field(sequence_id, field_label);
+
+        let sequence_id: model::Identifier = sequence_id.into();
+        let Some(sequence) = self.sequences.get_mut(&sequence_id) else {
+            panic!("Sequence {sequence_id} not found in IR model");
+        };
+        let before_label: model::Identifier = before_label.into();
+        let Some(insertion_index) = sequence
+            .fields
+            .iter()
+            .position(|field| field.label == before_label)
+        else {
+            panic!("Could not find {before_label} in sequence {sequence_id}");
+        };
+        sequence.fields.insert(insertion_index, field);
+        sequence.has_added_fields = true;
+    }
+
+    // Builds a boolean field rendered via the shared synthetic `External`
+    // "Boolean" type, registering that type on first use. Boolean fields never
+    // map back to a single CST field, so callers must mark the owning sequence
+    // as having added fields and hand-write its builder.
+    fn new_boolean_field(&mut self, sequence_id: &str, field_label: &str) -> MutatedField {
+        let sequence_identifier: model::Identifier = sequence_id.into();
+        let field_label: model::Identifier = field_label.into();
+
+        let Some(sequence) = self.sequences.get(&sequence_identifier) else {
+            panic!("Sequence {sequence_id} not found in IR model");
+        };
         assert!(
-            sequence
+            !sequence
                 .fields
                 .iter()
-                .find(|field| field.label == field_label)
-                .is_none(),
+                .any(|field| field.label == field_label),
             "The sequence {sequence_id} already has a {field_label} field",
         );
+
+        self.external_types.insert("Boolean".into());
+
         let target_type = NodeType::External("Boolean".into());
-        sequence.fields.push(MutatedField {
+        MutatedField {
             label: field_label.clone(),
             source_label: field_label,
             field_type: target_type.clone(),
             is_optional: true,
             target_type,
-        });
-
-        self.external_types.insert("Boolean".into());
+        }
     }
 }

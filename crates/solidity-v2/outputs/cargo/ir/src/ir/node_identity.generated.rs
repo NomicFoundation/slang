@@ -644,14 +644,6 @@ impl NodeIdentity for ArgumentsDeclaration {
     }
 }
 
-impl NodeIdentity for AssemblyFlag {
-    fn node_id(&self) -> Option<NodeId> {
-        match self {
-            AssemblyFlag::MemorySafe => None,
-        }
-    }
-}
-
 impl NodeIdentity for AssignmentExpressionOperator {
     fn node_id(&self) -> Option<NodeId> {
         match self {

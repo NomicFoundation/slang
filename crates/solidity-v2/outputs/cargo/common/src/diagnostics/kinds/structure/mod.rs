@@ -6,8 +6,8 @@ mod constructor_not_in_contract;
 mod continue_outside_loop;
 mod contract_should_be_abstract;
 mod duplicate_abicoder_specifier;
+mod duplicate_assembly_flag;
 mod duplicate_catch_clause;
-mod duplicate_memory_safe_assembly_flag;
 mod duplicate_named_argument;
 mod duplicate_switch_default_case;
 mod duplicate_yul_switch_case;
@@ -72,8 +72,8 @@ pub use constructor_not_in_contract::ConstructorNotInContract;
 pub use continue_outside_loop::ContinueOutsideLoop;
 pub use contract_should_be_abstract::ContractShouldBeAbstract;
 pub use duplicate_abicoder_specifier::DuplicateAbicoderSpecifier;
+pub use duplicate_assembly_flag::DuplicateAssemblyFlag;
 pub use duplicate_catch_clause::{CatchClauseKind, DuplicateCatchClause};
-pub use duplicate_memory_safe_assembly_flag::DuplicateMemorySafeAssemblyFlag;
 pub use duplicate_named_argument::DuplicateNamedArgument;
 pub use duplicate_switch_default_case::DuplicateSwitchDefaultCase;
 pub use duplicate_yul_switch_case::DuplicateYulSwitchCase;
@@ -211,8 +211,8 @@ define_diagnostic_kind! {
         /// A function call's named-argument list contains two arguments with the same name.
         DuplicateNamedArgument(DuplicateNamedArgument),
 
-        /// An assembly statement lists the `"memory-safe"` flag more than once.
-        DuplicateMemorySafeAssemblyFlag(DuplicateMemorySafeAssemblyFlag),
+        /// An assembly statement lists the same flag more than once.
+        DuplicateAssemblyFlag(DuplicateAssemblyFlag),
 
         /// A named parameter of a mapping type reuses a name already used by
         /// another parameter in the same or a nested mapping type.

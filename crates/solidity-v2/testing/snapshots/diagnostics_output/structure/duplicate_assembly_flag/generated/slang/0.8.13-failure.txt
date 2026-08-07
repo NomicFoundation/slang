@@ -2,7 +2,7 @@
 
 Diagnostics: 8
 
-[structure/duplicate-memory-safe-assembly-flag] Error: Inline assembly already marked as 'memory-safe'.
+[structure/duplicate-assembly-flag] Error: The assembly flag 'memory-safe' has already been specified.
    ╭─[input.sol:7:34]
    │
  7 │         assembly ("memory-safe", "memory-safe") {}
@@ -10,7 +10,7 @@ Diagnostics: 8
    │                                        ╰──────── Error occurred here.
 ───╯
 
-[structure/duplicate-memory-safe-assembly-flag] Error: Inline assembly already marked as 'memory-safe'.
+[structure/duplicate-assembly-flag] Error: The assembly flag 'memory-safe' has already been specified.
     ╭─[input.sol:12:43]
     │
  12 │         assembly "evmasm" ("memory-safe", "memory-safe") {}
@@ -18,7 +18,7 @@ Diagnostics: 8
     │                                                 ╰──────── Error occurred here.
 ────╯
 
-[structure/duplicate-memory-safe-assembly-flag] Error: Inline assembly already marked as 'memory-safe'.
+[structure/duplicate-assembly-flag] Error: The assembly flag 'memory-safe' has already been specified.
     ╭─[input.sol:17:34]
     │
  17 │         assembly ("memory-safe", "memory-safe", "memory-safe") {}
@@ -26,7 +26,7 @@ Diagnostics: 8
     │                                        ╰──────── Error occurred here.
 ────╯
 
-[structure/duplicate-memory-safe-assembly-flag] Error: Inline assembly already marked as 'memory-safe'.
+[structure/duplicate-assembly-flag] Error: The assembly flag 'memory-safe' has already been specified.
     ╭─[input.sol:17:49]
     │
  17 │         assembly ("memory-safe", "memory-safe", "memory-safe") {}
@@ -34,7 +34,7 @@ Diagnostics: 8
     │                                                       ╰──────── Error occurred here.
 ────╯
 
-[structure/duplicate-memory-safe-assembly-flag] Error: Inline assembly already marked as 'memory-safe'.
+[structure/duplicate-assembly-flag] Error: The assembly flag 'memory-safe' has already been specified.
     ╭─[input.sol:22:34]
     │
  22 │         assembly ("memory-safe", "\x6demory-safe") {}
@@ -42,7 +42,7 @@ Diagnostics: 8
     │                                          ╰───────── Error occurred here.
 ────╯
 
-[structure/duplicate-memory-safe-assembly-flag] Error: Inline assembly already marked as 'memory-safe'.
+[structure/duplicate-assembly-flag] Error: The assembly flag 'memory-safe' has already been specified.
     ╭─[input.sol:27:39]
     │
  27 │         assembly ("\u006demory-safe", "memory-safe") {}
@@ -50,7 +50,7 @@ Diagnostics: 8
     │                                             ╰──────── Error occurred here.
 ────╯
 
-[structure/duplicate-memory-safe-assembly-flag] Error: Inline assembly already marked as 'memory-safe'.
+[structure/duplicate-assembly-flag] Error: The assembly flag 'memory-safe' has already been specified.
     ╭─[input.sol:32:34]
     │
  32 │         assembly ("memory-safe", "\x6d\x65\x6d\x6f\x72\x79\x2d\x73\x61\x66\x65") {}
@@ -58,7 +58,7 @@ Diagnostics: 8
     │                                                         ╰──────────────────────── Error occurred here.
 ────╯
 
-[structure/duplicate-memory-safe-assembly-flag] Error: Inline assembly already marked as 'memory-safe'.
+[structure/duplicate-assembly-flag] Error: The assembly flag 'memory-safe' has already been specified.
     ╭─[input.sol:37:34]
     │
  37 │ ╭─▶         assembly ("memory-safe", "memory-\
