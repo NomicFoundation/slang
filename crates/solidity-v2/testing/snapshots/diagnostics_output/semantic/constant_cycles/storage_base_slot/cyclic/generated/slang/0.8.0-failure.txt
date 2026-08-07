@@ -3,19 +3,19 @@
 Diagnostics: 4
 
 [semantic/cyclic-constant-dependency] Error: The value of the constant A has a cyclic dependency via B.
-   ╭─[input.sol:4:1]
+   ╭─[input.sol:4:18]
    │
  4 │ uint256 constant A = B;
-   │ ───────────┬───────────  
-   │            ╰───────────── Error occurred here.
+   │                  ┬  
+   │                  ╰── Error occurred here.
 ───╯
 
 [semantic/cyclic-constant-dependency] Error: The value of the constant B has a cyclic dependency via A.
-   ╭─[input.sol:5:1]
+   ╭─[input.sol:5:18]
    │
  5 │ uint256 constant B = A;
-   │ ───────────┬───────────  
-   │            ╰───────────── Error occurred here.
+   │                  ┬  
+   │                  ╰── Error occurred here.
 ───╯
 
 [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.

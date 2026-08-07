@@ -1335,6 +1335,16 @@ mod semantic {
             }
 
             #[test]
+            fn public_mixed_cycle() -> Result<()> {
+                run("semantic/constant_cycles/constants", "public_mixed_cycle")
+            }
+
+            #[test]
+            fn public_self_cycle() -> Result<()> {
+                run("semantic/constant_cycles/constants", "public_self_cycle")
+            }
+
+            #[test]
             fn qualified_self_reference_cycle() -> Result<()> {
                 run(
                     "semantic/constant_cycles/constants",

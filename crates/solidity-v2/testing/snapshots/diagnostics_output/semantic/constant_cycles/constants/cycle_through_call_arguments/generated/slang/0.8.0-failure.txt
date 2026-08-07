@@ -3,25 +3,25 @@
 Diagnostics: 3
 
 [semantic/cyclic-constant-dependency] Error: The value of the constant a has a cyclic dependency via c.
-   ╭─[input.sol:5:5]
+   ╭─[input.sol:5:22]
    │
  5 │     uint256 constant a = b * c;
-   │     ─────────────┬─────────────  
-   │                  ╰─────────────── Error occurred here.
+   │                      ┬  
+   │                      ╰── Error occurred here.
 ───╯
 
 [semantic/cyclic-constant-dependency] Error: The value of the constant c has a cyclic dependency via d.
-   ╭─[input.sol:7:5]
+   ╭─[input.sol:7:22]
    │
  7 │     uint256 constant c = b + uint256(keccak256(abi.encodePacked(d)));
-   │     ────────────────────────────────┬────────────────────────────────  
-   │                                     ╰────────────────────────────────── Error occurred here.
+   │                      ┬  
+   │                      ╰── Error occurred here.
 ───╯
 
 [semantic/cyclic-constant-dependency] Error: The value of the constant d has a cyclic dependency via a.
-   ╭─[input.sol:8:5]
+   ╭─[input.sol:8:22]
    │
  8 │     uint256 constant d = 2 + a;
-   │     ─────────────┬─────────────  
-   │                  ╰─────────────── Error occurred here.
+   │                      ┬  
+   │                      ╰── Error occurred here.
 ───╯
