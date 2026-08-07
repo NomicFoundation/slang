@@ -2,7 +2,7 @@
 
 Diagnostics: 4
 
-[syntax/invalid-assembly-label] Error: Invalid assembly dialect. Only 'evmasm' is supported.
+[syntax/invalid-assembly-dialect] Error: Invalid assembly dialect. Only 'evmasm' is supported.
    ╭─[input.sol:7:18]
    │
  7 │         assembly "evm" {}
@@ -10,7 +10,7 @@ Diagnostics: 4
    │                    ╰──── Error occurred here.
 ───╯
 
-[syntax/invalid-assembly-label] Error: Invalid assembly dialect. Only 'evmasm' is supported.
+[syntax/invalid-assembly-dialect] Error: Invalid assembly dialect. Only 'evmasm' is supported.
     ╭─[input.sol:11:18]
     │
  11 │         assembly "EVMASM" {}
@@ -18,7 +18,7 @@ Diagnostics: 4
     │                      ╰───── Error occurred here.
 ────╯
 
-[syntax/invalid-assembly-label] Error: Invalid assembly dialect. Only 'evmasm' is supported.
+[syntax/invalid-assembly-dialect] Error: Invalid assembly dialect. Only 'evmasm' is supported.
     ╭─[input.sol:15:18]
     │
  15 │         assembly "" {}
@@ -26,7 +26,7 @@ Diagnostics: 4
     │                   ╰── Error occurred here.
 ────╯
 
-[syntax/invalid-assembly-label] Error: Invalid assembly dialect. Only 'evmasm' is supported.
+[syntax/invalid-assembly-dialect] Error: Invalid assembly dialect. Only 'evmasm' is supported.
     ╭─[input.sol:19:18]
     │
  19 │         assembly "evmasm " {}

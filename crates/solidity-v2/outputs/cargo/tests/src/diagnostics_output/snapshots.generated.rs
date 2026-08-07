@@ -1754,6 +1754,11 @@ mod structure {
     }
 
     #[test]
+    fn duplicate_assembly_flag() -> Result<()> {
+        run("structure", "duplicate_assembly_flag")
+    }
+
+    #[test]
     fn duplicate_default_case() -> Result<()> {
         run("structure", "duplicate_default_case")
     }
@@ -1766,11 +1771,6 @@ mod structure {
     #[test]
     fn duplicate_low_level_catch_clause() -> Result<()> {
         run("structure", "duplicate_low_level_catch_clause")
-    }
-
-    #[test]
-    fn duplicate_memory_safe_assembly_flag() -> Result<()> {
-        run("structure", "duplicate_memory_safe_assembly_flag")
     }
 
     mod duplicate_named_argument {

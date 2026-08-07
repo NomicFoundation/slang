@@ -52,8 +52,8 @@ define_diagnostic_kind! {
         /// A piece of syntax is not compatible with the currently selected language version.
         IncompatibleSyntaxVersion(IncompatibleSyntaxVersion),
 
-        /// An assembly label can only be "evmasm"
-        InvalidAssemblyLabel(InvalidAssemblyDialect),
+        /// An assembly statement names a dialect other than 'evmasm'.
+        InvalidAssemblyDialect(InvalidAssemblyDialect),
 
         /// A definition declared a mutability that is not valid in its position,
         /// or omitted a required one.

@@ -16,7 +16,7 @@ impl DiagnosticExtensions for InvalidAssemblyDialect {
     }
 
     fn code(&self) -> &'static str {
-        "syntax/invalid-assembly-label"
+        "syntax/invalid-assembly-dialect"
     }
 
     fn message(&self) -> String {
