@@ -3,9 +3,9 @@
 Diagnostics: 1
 
 [semantic/cyclic-dependency-validator-exhausted] Error: Variable definition exhausting cyclic dependency validator.
-     ╭─[input.sol:265:1]
+     ╭─[input.sol:265:18]
      │
  265 │ uint256 constant A205 = 1;
-     │ ─────────────┬────────────  
-     │              ╰────────────── Error occurred here.
+     │                  ──┬─  
+     │                    ╰─── Error occurred here.
 ─────╯

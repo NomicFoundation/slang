@@ -3,17 +3,17 @@
 Diagnostics: 2
 
 [semantic/cyclic-constant-dependency] Error: The value of the constant A has a cyclic dependency via X.
-   ╭─[input.sol:5:5]
+   ╭─[input.sol:5:31]
    │
  5 │     uint256 internal constant A = X;
-   │     ────────────────┬───────────────  
-   │                     ╰───────────────── Error occurred here.
+   │                               ┬  
+   │                               ╰── Error occurred here.
 ───╯
 
 [semantic/cyclic-constant-dependency] Error: The value of the constant X has a cyclic dependency via A.
-   ╭─[input.sol:8:1]
+   ╭─[input.sol:8:18]
    │
  8 │ uint256 constant X = (L).A;
-   │ ─────────────┬─────────────  
-   │              ╰─────────────── Error occurred here.
+   │                  ┬  
+   │                  ╰── Error occurred here.
 ───╯
