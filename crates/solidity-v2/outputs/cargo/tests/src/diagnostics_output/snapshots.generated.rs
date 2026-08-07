@@ -895,6 +895,30 @@ mod resolution {
         }
 
         #[test]
+        fn block_difficulty_all_targets() -> Result<()> {
+            run(
+                "resolution/incompatible_built_in_target",
+                "block_difficulty_all_targets",
+            )
+        }
+
+        #[test]
+        fn block_prevrandao_all_targets() -> Result<()> {
+            run(
+                "resolution/incompatible_built_in_target",
+                "block_prevrandao_all_targets",
+            )
+        }
+
+        #[test]
+        fn block_prevrandao_pre_paris() -> Result<()> {
+            run(
+                "resolution/incompatible_built_in_target",
+                "block_prevrandao_pre_paris",
+            )
+        }
+
+        #[test]
         fn yul_difficulty_post_paris() -> Result<()> {
             run(
                 "resolution/incompatible_built_in_target",

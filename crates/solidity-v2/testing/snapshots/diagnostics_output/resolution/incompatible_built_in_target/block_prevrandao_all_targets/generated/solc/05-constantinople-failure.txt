@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[Warning 9432] Warning: "prevrandao" is not supported by the VM version and will be treated as "difficulty".
+   ╭─[input.sol:9:16]
+   │
+ 9 │         return block.prevrandao;
+   │                ────────┬───────  
+   │                        ╰───────── Error occurred here.
+───╯

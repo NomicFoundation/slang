@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[Warning 8417] Warning: Since the VM version paris, "difficulty" was replaced by "prevrandao", which now returns a random number based on the beacon chain.
+   ╭─[input.sol:9:16]
+   │
+ 9 │         return block.difficulty;
+   │                ────────┬───────  
+   │                        ╰───────── Error occurred here.
+───╯

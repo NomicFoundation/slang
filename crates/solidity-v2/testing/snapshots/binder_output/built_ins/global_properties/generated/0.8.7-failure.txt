@@ -22,13 +22,6 @@ Parse errors:
    │                         ─────┬─────  
    │                              ╰─────── Error occurred here.
 ───╯
-[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Paris'.
-    ╭─[input.sol:15:25]
-    │
- 15 │         uint v8 = block.prevrandao;
-    │                         ─────┬────  
-    │                              ╰────── Error occurred here.
-────╯
 [resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.18'.
     ╭─[input.sol:15:25]
     │
