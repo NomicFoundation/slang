@@ -204,6 +204,8 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_arguments_declaration
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_array_expression(&mut self, &slang_solidity_v2_ast::ast::ArrayExpression) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_array_type_name(&mut self, &slang_solidity_v2_ast::ast::ArrayTypeName) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_array_values(&mut self, &slang_solidity_v2_ast::ast::ArrayValues) -> bool
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_assembly_flag(&mut self, &slang_solidity_v2_ast::ast::AssemblyFlag) -> bool
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_assembly_flags(&mut self, &slang_solidity_v2_ast::ast::AssemblyFlags) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_assembly_statement(&mut self, &slang_solidity_v2_ast::ast::AssemblyStatement) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_assignment_expression(&mut self, &slang_solidity_v2_ast::ast::AssignmentExpression) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_assignment_expression_operator(&mut self, &slang_solidity_v2_ast::ast::AssignmentExpressionOperator) -> bool
@@ -346,7 +348,6 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_break_statement(&
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_continue_statement(&mut self, &slang_solidity_v2_ast::ast::YulContinueStatement) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_default_case(&mut self, &slang_solidity_v2_ast::ast::YulDefaultCase) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_expression(&mut self, &slang_solidity_v2_ast::ast::YulExpression) -> bool
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_flags(&mut self, &slang_solidity_v2_ast::ast::YulFlags) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_for_statement(&mut self, &slang_solidity_v2_ast::ast::YulForStatement) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_function_call_expression(&mut self, &slang_solidity_v2_ast::ast::YulFunctionCallExpression) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_function_definition(&mut self, &slang_solidity_v2_ast::ast::YulFunctionDefinition) -> bool
@@ -375,6 +376,8 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_arguments_declaration
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_array_expression(&mut self, &slang_solidity_v2_ast::ast::ArrayExpression)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_array_type_name(&mut self, &slang_solidity_v2_ast::ast::ArrayTypeName)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_array_values(&mut self, &slang_solidity_v2_ast::ast::ArrayValues)
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_assembly_flag(&mut self, &slang_solidity_v2_ast::ast::AssemblyFlag)
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_assembly_flags(&mut self, &slang_solidity_v2_ast::ast::AssemblyFlags)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_assembly_statement(&mut self, &slang_solidity_v2_ast::ast::AssemblyStatement)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_assignment_expression(&mut self, &slang_solidity_v2_ast::ast::AssignmentExpression)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_assignment_expression_operator(&mut self, &slang_solidity_v2_ast::ast::AssignmentExpressionOperator)
@@ -517,7 +520,6 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_break_statement(&
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_continue_statement(&mut self, &slang_solidity_v2_ast::ast::YulContinueStatement)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_default_case(&mut self, &slang_solidity_v2_ast::ast::YulDefaultCase)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_expression(&mut self, &slang_solidity_v2_ast::ast::YulExpression)
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_flags(&mut self, &slang_solidity_v2_ast::ast::YulFlags)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_for_statement(&mut self, &slang_solidity_v2_ast::ast::YulForStatement)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_function_call_expression(&mut self, &slang_solidity_v2_ast::ast::YulFunctionCallExpression)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_function_definition(&mut self, &slang_solidity_v2_ast::ast::YulFunctionDefinition)
@@ -557,6 +559,7 @@ pub fn slang_solidity_v2_ast::ast::visitor::accept_and_expression(&slang_solidit
 pub fn slang_solidity_v2_ast::ast::visitor::accept_arguments_declaration(&slang_solidity_v2_ast::ast::ArgumentsDeclaration, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_array_expression(&slang_solidity_v2_ast::ast::ArrayExpression, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_array_type_name(&slang_solidity_v2_ast::ast::ArrayTypeName, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
+pub fn slang_solidity_v2_ast::ast::visitor::accept_assembly_flag(&slang_solidity_v2_ast::ast::AssemblyFlag, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_assembly_statement(&slang_solidity_v2_ast::ast::AssemblyStatement, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_assignment_expression(&slang_solidity_v2_ast::ast::AssignmentExpression, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_assignment_expression_operator(&slang_solidity_v2_ast::ast::AssignmentExpressionOperator, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
@@ -705,6 +708,12 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::ArgumentsDeclaration
 pub fn slang_solidity_v2_ast::ast::ArgumentsDeclaration::clone(&self) -> slang_solidity_v2_ast::ast::ArgumentsDeclaration
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::ArgumentsDeclaration
 pub fn slang_solidity_v2_ast::ast::ArgumentsDeclaration::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub enum slang_solidity_v2_ast::ast::AssemblyFlag
+pub slang_solidity_v2_ast::ast::AssemblyFlag::MemorySafe
+impl core::clone::Clone for slang_solidity_v2_ast::ast::AssemblyFlag
+pub fn slang_solidity_v2_ast::ast::AssemblyFlag::clone(&self) -> slang_solidity_v2_ast::ast::AssemblyFlag
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AssemblyFlag
+pub fn slang_solidity_v2_ast::ast::AssemblyFlag::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub enum slang_solidity_v2_ast::ast::AssignmentExpressionOperator
 pub slang_solidity_v2_ast::ast::AssignmentExpressionOperator::AmpersandEqual(slang_solidity_v2_ast::ast::AmpersandEqual)
 pub slang_solidity_v2_ast::ast::AssignmentExpressionOperator::AsteriskEqual(slang_solidity_v2_ast::ast::AsteriskEqual)
@@ -1299,14 +1308,22 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::ArrayValuesStruct
 pub fn slang_solidity_v2_ast::ast::ArrayValuesStruct::clone(&self) -> slang_solidity_v2_ast::ast::ArrayValuesStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::ArrayValuesStruct
 pub fn slang_solidity_v2_ast::ast::ArrayValuesStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub struct slang_solidity_v2_ast::ast::AssemblyFlagsStruct
+impl slang_solidity_v2_ast::ast::AssemblyFlagsStruct
+pub fn slang_solidity_v2_ast::ast::AssemblyFlagsStruct::is_empty(&self) -> bool
+pub fn slang_solidity_v2_ast::ast::AssemblyFlagsStruct::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::AssemblyFlag> + use<'_>
+pub fn slang_solidity_v2_ast::ast::AssemblyFlagsStruct::len(&self) -> usize
+impl core::clone::Clone for slang_solidity_v2_ast::ast::AssemblyFlagsStruct
+pub fn slang_solidity_v2_ast::ast::AssemblyFlagsStruct::clone(&self) -> slang_solidity_v2_ast::ast::AssemblyFlagsStruct
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AssemblyFlagsStruct
+pub fn slang_solidity_v2_ast::ast::AssemblyFlagsStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::AssemblyStatementStruct
 impl slang_solidity_v2_ast::ast::AssemblyStatementStruct
 pub fn slang_solidity_v2_ast::ast::AssemblyStatementStruct::body(&self) -> slang_solidity_v2_ast::ast::YulBlock
-pub fn slang_solidity_v2_ast::ast::AssemblyStatementStruct::flags(&self) -> core::option::Option<slang_solidity_v2_ast::ast::YulFlags>
+pub fn slang_solidity_v2_ast::ast::AssemblyStatementStruct::flags(&self) -> core::option::Option<slang_solidity_v2_ast::ast::AssemblyFlags>
 pub fn slang_solidity_v2_ast::ast::AssemblyStatementStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::ast::AssemblyStatementStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::AssemblyStatementStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::AssemblyStatementStruct::label(&self) -> core::option::Option<slang_solidity_v2_ast::ast::StringLiteral>
 pub fn slang_solidity_v2_ast::ast::AssemblyStatementStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl slang_solidity_v2_ast::ast::AssemblyStatementStruct
 pub fn slang_solidity_v2_ast::ast::AssemblyStatementStruct::referenced_definitions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Definition>
@@ -3582,15 +3599,6 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::YulDefaultCaseStruct
 pub fn slang_solidity_v2_ast::ast::YulDefaultCaseStruct::clone(&self) -> slang_solidity_v2_ast::ast::YulDefaultCaseStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::YulDefaultCaseStruct
 pub fn slang_solidity_v2_ast::ast::YulDefaultCaseStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::YulFlagsStruct
-impl slang_solidity_v2_ast::ast::YulFlagsStruct
-pub fn slang_solidity_v2_ast::ast::YulFlagsStruct::is_empty(&self) -> bool
-pub fn slang_solidity_v2_ast::ast::YulFlagsStruct::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::StringLiteral> + use<'_>
-pub fn slang_solidity_v2_ast::ast::YulFlagsStruct::len(&self) -> usize
-impl core::clone::Clone for slang_solidity_v2_ast::ast::YulFlagsStruct
-pub fn slang_solidity_v2_ast::ast::YulFlagsStruct::clone(&self) -> slang_solidity_v2_ast::ast::YulFlagsStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::YulFlagsStruct
-pub fn slang_solidity_v2_ast::ast::YulFlagsStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::YulForStatementStruct
 impl slang_solidity_v2_ast::ast::YulForStatementStruct
 pub fn slang_solidity_v2_ast::ast::YulForStatementStruct::body(&self) -> slang_solidity_v2_ast::ast::YulBlock
@@ -3917,6 +3925,7 @@ pub type slang_solidity_v2_ast::ast::AndExpression = slang_solidity_v2_ast::ast:
 pub type slang_solidity_v2_ast::ast::ArrayExpression = slang_solidity_v2_ast::ast::ArrayExpressionStruct
 pub type slang_solidity_v2_ast::ast::ArrayTypeName = slang_solidity_v2_ast::ast::ArrayTypeNameStruct
 pub type slang_solidity_v2_ast::ast::ArrayValues = slang_solidity_v2_ast::ast::ArrayValuesStruct
+pub type slang_solidity_v2_ast::ast::AssemblyFlags = slang_solidity_v2_ast::ast::AssemblyFlagsStruct
 pub type slang_solidity_v2_ast::ast::AssemblyStatement = slang_solidity_v2_ast::ast::AssemblyStatementStruct
 pub type slang_solidity_v2_ast::ast::AssignmentExpression = slang_solidity_v2_ast::ast::AssignmentExpressionStruct
 pub type slang_solidity_v2_ast::ast::Asterisk = slang_solidity_v2_ast::ast::AsteriskStruct
@@ -4093,7 +4102,6 @@ pub type slang_solidity_v2_ast::ast::YulBlock = slang_solidity_v2_ast::ast::YulB
 pub type slang_solidity_v2_ast::ast::YulBreakStatement = slang_solidity_v2_ast::ast::YulBreakStatementStruct
 pub type slang_solidity_v2_ast::ast::YulContinueStatement = slang_solidity_v2_ast::ast::YulContinueStatementStruct
 pub type slang_solidity_v2_ast::ast::YulDefaultCase = slang_solidity_v2_ast::ast::YulDefaultCaseStruct
-pub type slang_solidity_v2_ast::ast::YulFlags = slang_solidity_v2_ast::ast::YulFlagsStruct
 pub type slang_solidity_v2_ast::ast::YulForStatement = slang_solidity_v2_ast::ast::YulForStatementStruct
 pub type slang_solidity_v2_ast::ast::YulFunctionCallExpression = slang_solidity_v2_ast::ast::YulFunctionCallExpressionStruct
 pub type slang_solidity_v2_ast::ast::YulFunctionDefinition = slang_solidity_v2_ast::ast::YulFunctionDefinitionStruct

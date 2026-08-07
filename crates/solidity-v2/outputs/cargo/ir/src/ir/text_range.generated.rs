@@ -651,6 +651,14 @@ impl TextRange for ArgumentsDeclaration {
     }
 }
 
+impl TextRange for AssemblyFlag {
+    fn calculate_text_range(&self) -> Option<Range<usize>> {
+        match self {
+            AssemblyFlag::MemorySafe => None,
+        }
+    }
+}
+
 impl TextRange for AssignmentExpressionOperator {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         match self {

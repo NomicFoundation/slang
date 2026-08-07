@@ -1,11 +1,9 @@
-use std::slice;
-
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
     AbstractContractPublicConstructor, AnonymousEventWithTooManyIndexedParameters, CatchClauseKind,
-    DuplicateCatchClause, DuplicateMemorySafeAssemblyFlag, EventWithTooManyIndexedParameters,
-    FreeFunctionPayable, FreeFunctionVisibility, FreeFunctionWithModifiers,
-    FreeFunctionWithOverride, FunctionMustBeImplemented, GlobalUsingForInsideContract,
-    GlobalUsingForWildcard, InterfaceFunctionCannotBeImplemented, InterfaceFunctionNotExternal,
+    DuplicateCatchClause, EventWithTooManyIndexedParameters, FreeFunctionPayable,
+    FreeFunctionVisibility, FreeFunctionWithModifiers, FreeFunctionWithOverride,
+    FunctionMustBeImplemented, GlobalUsingForInsideContract, GlobalUsingForWildcard,
+    InterfaceFunctionCannotBeImplemented, InterfaceFunctionNotExternal,
     InterfaceFunctionWithModifiers, InvalidCatchClauseName, InvalidUsingDirectiveContainer,
     LibraryNonConstantStateVariable, LibraryPayableFunction, LibraryVirtualFunction,
     LibraryVirtualModifier, MissingFunctionVisibility, ModifierInInterface,
@@ -21,7 +19,6 @@ use slang_solidity_v2_ir::ir;
 use super::Pass;
 use crate::binder::Definition;
 use crate::context::SemanticFile;
-use crate::types::literals::value_of_string_literals;
 
 impl<F: SemanticFile> Pass<'_, F> {
     pub(super) fn check_using_directive(&mut self, node: &ir::UsingDirective) {
@@ -94,38 +91,6 @@ impl<F: SemanticFile> Pass<'_, F> {
             }
         } else if indexed_count > 3 {
             self.report(node, EventWithTooManyIndexedParameters);
-        }
-    }
-
-    /// The `"memory-safe"` flag may only be listed once on an assembly
-    /// statement. Every repetition past the first is reported on the offending
-    /// flag itself, so a flag listed three times yields two diagnostics
-    /// pointing at the second and third occurrences.
-    pub(super) fn check_assembly_flags(&mut self, node: &ir::AssemblyStatement) {
-        const MEMORY_SAFE: &str = "memory-safe";
-
-        // Assembly flags were introduced in 0.8.13; before that the
-        // error-tolerant parser still yields them, but they are already flagged
-        // as invalid syntax for the version, so don't pile a semantic
-        // diagnostic on top of them.
-        if self.language_version < LanguageVersion::V0_8_13 {
-            return;
-        }
-
-        let Some(flags) = &node.flags else {
-            return;
-        };
-
-        let mut marked_memory_safe = false;
-        for flag in flags.iter() {
-            if value_of_string_literals(slice::from_ref(flag)) != MEMORY_SAFE.as_bytes() {
-                continue;
-            }
-
-            if marked_memory_safe {
-                self.report(flag.as_ref(), DuplicateMemorySafeAssemblyFlag);
-            }
-            marked_memory_safe = true;
         }
     }
 

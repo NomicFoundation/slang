@@ -101,12 +101,11 @@ impl Serialize for ArrayTypeNameStruct {
 
 impl Serialize for AssemblyStatementStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(7))?;
+        let mut map = serializer.serialize_map(Some(6))?;
         map.serialize_entry("id", &self.node_id())?;
         map.serialize_entry("type", "AssemblyStatement")?;
         map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
         map.serialize_entry("file", self.get_file_id())?;
-        map.serialize_entry("label", &self.label())?;
         map.serialize_entry("flags", &self.flags())?;
         map.serialize_entry("body", &self.body())?;
         map.end()
@@ -1334,6 +1333,18 @@ impl Serialize for ArgumentsDeclaration {
     }
 }
 
+impl Serialize for AssemblyFlag {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        match self {
+            AssemblyFlag::MemorySafe => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "AssemblyFlag::MemorySafe")?;
+                map.end()
+            }
+        }
+    }
+}
+
 impl Serialize for AssignmentExpressionOperator {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         match self {
@@ -1921,6 +1932,16 @@ impl Serialize for ArrayValuesStruct {
     }
 }
 
+impl Serialize for AssemblyFlagsStruct {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let mut seq = serializer.serialize_seq(Some(self.len()))?;
+        for item in self.iter() {
+            seq.serialize_element(&item)?;
+        }
+        seq.end()
+    }
+}
+
 impl Serialize for CallOptionsStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut seq = serializer.serialize_seq(Some(self.len()))?;
@@ -2182,16 +2203,6 @@ impl Serialize for VersionExpressionSetsStruct {
 }
 
 impl Serialize for YulArgumentsStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut seq = serializer.serialize_seq(Some(self.len()))?;
-        for item in self.iter() {
-            seq.serialize_element(&item)?;
-        }
-        seq.end()
-    }
-}
-
-impl Serialize for YulFlagsStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut seq = serializer.serialize_seq(Some(self.len()))?;
         for item in self.iter() {

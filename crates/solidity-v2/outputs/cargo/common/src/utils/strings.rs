@@ -94,8 +94,9 @@ pub fn decode_hex_string(content: &str) -> Vec<u8> {
 
 #[cfg(test)]
 mod tests {
-    use super::strip_string_literal_prefix_and_quotes;
-    use super::{decode_escape_sequences, decode_hex_string};
+    use super::{
+        decode_escape_sequences, decode_hex_string, strip_string_literal_prefix_and_quotes,
+    };
 
     #[test]
     fn strip_double_quotes_no_prefix() {

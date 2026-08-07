@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/invalid-assembly-label] Error: Invalid assembly dialect. Only 'evmasm' is supported.
+    ╭─[input.sol:29:18]
+    │
+ 29 │         assembly "\x65vm" {}
+    │                  ────┬───  
+    │                      ╰───── Error occurred here.
+────╯
