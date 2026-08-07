@@ -2,11 +2,12 @@ use anyhow::Result;
 use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig, FileId};
 use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
+use slang_solidity_v2_common::diagnostics::{DiagnosticExtensions, DiagnosticSeverity};
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use solidity_v2_testing_utils::reporting::diagnostic;
 
-use crate::diagnostics_output::targets::TestTarget;
+use crate::diagnostics_output::targets::{TargetOutcome, TestTarget};
 use crate::utils::path_resolver;
 
 pub(crate) struct SlangTarget;
@@ -16,12 +17,12 @@ impl TestTarget for SlangTarget {
         "slang"
     }
 
-    fn collect_diagnostics(
+    fn compile(
         &self,
         files: &SortedMap<FileId, String>,
         version: LanguageVersion,
         evm_target: EvmTarget,
-    ) -> Result<Vec<String>> {
+    ) -> Result<TargetOutcome> {
         let config = TestConfig {
             files: files.clone(),
         };
@@ -32,21 +33,27 @@ impl TestTarget for SlangTarget {
         }
 
         let compilation = builder.build();
-        let diagnostics = compilation.diagnostics();
 
-        let mut rendered = Vec::new();
-        for diagnostic in diagnostics {
-            let file_id = diagnostic.file_id();
-            let source = files.get(file_id).cloned().unwrap_or_default();
-            rendered.push(diagnostic::render(
-                diagnostic,
-                file_id.as_str(),
-                &source,
-                false,
-            ));
-        }
+        let compilation_succeeded = !compilation
+            .diagnostics()
+            .iter()
+            .any(|diagnostic| diagnostic.severity() == DiagnosticSeverity::Error);
 
-        Ok(rendered)
+        let diagnostics = compilation
+            .diagnostics()
+            .into_iter()
+            .map(|diagnostic| {
+                let file_id = diagnostic.file_id();
+                let source = files.get(file_id).cloned().unwrap_or_default();
+
+                diagnostic::render(diagnostic, file_id.as_str(), &source, false)
+            })
+            .collect();
+
+        Ok(TargetOutcome {
+            diagnostics,
+            compilation_succeeded,
+        })
     }
 }
 

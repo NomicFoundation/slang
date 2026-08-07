@@ -4,15 +4,6 @@
     "target": {
       "value": "Istanbul",
       "reason": "Istanbul is pre-Paris and accepted by every supported solc, so the version axis shows both the pre-0.8.18 error and the warning-only behaviour after it."
-    },
-    "expected_solc_divergence": [
-      {
-        "specifier": {
-          "type": "From",
-          "from": "0.8.18"
-        },
-        "reason": "From 0.8.18 `block.prevrandao` exists but on the pre-Paris Istanbul target solc emits Warning 9432 ('prevrandao' is not supported by the VM version and will be treated as 'difficulty'), a warning that counts as a rejection. slang is silent, so the statuses differ. Below 0.8.18 both reject the member (solc TypeError 9582), so those versions agree."
-      }
-    ]
+    }
   }
 }

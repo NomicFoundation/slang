@@ -1,0 +1,14 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "Till",
+          "till": "0.8.4"
+        },
+        "reason": "solc before '0.8.4' does not perform bytecode-cycle reachability analysis, so it only emits an unused-parameter warning and succeeds. Slang implements the '0.8.4' cycle-detection semantics for every version, so it reports the circular `new` dependency and fails on '0.8.0' to '0.8.3', where solc does not. From '0.8.4' solc reports the same `TypeError 7813`, so both fail and agree."
+      }
+    ]
+  }
+}
