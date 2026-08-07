@@ -458,7 +458,7 @@ impl<'a> BuiltInsResolver<'a> {
 
                 // `abi.decode(data, (T))`: a single-element tuple collapses to the
                 // meta-type of `T`, which decodes to `T` itself.
-                if let Some(decoded) = self.decoding_type(*type_id) {
+                if let Some(decoded) = self.abi_decoded_type_from_meta_type(*type_id) {
                     return Typing::Resolved(decoded);
                 }
 
@@ -470,7 +470,7 @@ impl<'a> BuiltInsResolver<'a> {
                     let element_ids = types.clone();
                     let mut decoded = Vec::with_capacity(element_ids.len());
                     for element_id in element_ids {
-                        let Some(element) = self.decoding_type(element_id) else {
+                        let Some(element) = self.abi_decoded_type_from_meta_type(element_id) else {
                             // TODO(validation) SDR[42]: report an error when a tuple
                             // element is not a type name (eg. `abi.decode(b, (uint, 5))`).
                             return Typing::Unresolved;
@@ -560,20 +560,20 @@ impl<'a> BuiltInsResolver<'a> {
     /// address decodes as `address payable`, the widest address type and the one the
     /// type-argument grammar cannot spell.
     /// Returns `None` when `type_id` is not a meta-type.
-    fn decoding_type(&mut self, type_id: TypeId) -> Option<TypeId> {
-        let denoted = match self.types.get_type_by_id(type_id) {
-            Type::MetaType(MetaType { type_id }) => *type_id,
+    fn abi_decoded_type_from_meta_type(&mut self, type_id: TypeId) -> Option<TypeId> {
+        match self.types.get_type_by_id(type_id) {
+            Type::MetaType(MetaType { type_id }) => Some(if *type_id == self.types.address() {
+                self.types.address_payable()
+            } else {
+                *type_id
+            }),
             Type::UserMetaType(UserMetaType { definition_id }) => {
                 let definition_id = *definition_id;
                 let definition = self.binder.find_definition_by_id(definition_id)?;
                 let type_ = definition.try_into().ok()?;
-                self.types.register_type(type_)
+                Some(self.types.register_type(type_))
             }
-            _ => return None,
-        };
-        Some(match self.types.get_type_by_id(denoted) {
-            Type::Address(_) => self.types.address_payable(),
-            _ => denoted,
-        })
+            _ => None,
+        }
     }
 }
