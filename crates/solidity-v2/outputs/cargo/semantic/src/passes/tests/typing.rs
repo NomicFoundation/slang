@@ -2133,6 +2133,21 @@ fn test_abi_decode_tuple_of_types() {
 }
 
 #[test]
+fn test_abi_decode_address_is_payable() {
+    // `address payable` is unspellable as a type argument, so an address decodes as
+    // the payable one, which converts down to `address` but not the other way.
+    let (decoded, types) = type_of_expression_in_context("bytes b;", "abi.decode(b, (address))");
+    assert_eq!(decoded, *types.get_type_by_id(types.address_payable()));
+
+    let (decoded, types) =
+        type_of_expression_in_context("bytes b;", "abi.decode(b, (uint, address))");
+    let Type::Tuple(TupleType { types: element_ids }) = decoded else {
+        panic!("expected a tuple type, got {decoded:?}");
+    };
+    assert_eq!(element_ids[1], types.address_payable());
+}
+
+#[test]
 fn test_tuple_of_type_names_is_a_tuple_of_meta_types() {
     // A tuple of type names is a *tuple of meta-types* (not a meta-type
     // itself): `(uint, bool)` types as `Tuple(type(uint256), type(bool))`.
