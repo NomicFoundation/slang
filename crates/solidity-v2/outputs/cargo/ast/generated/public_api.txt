@@ -187,6 +187,7 @@ pub fn slang_solidity_v2_ast::abi::TupleComponent::fmt(&self, &mut core::fmt::Fo
 impl core::hash::Hash for slang_solidity_v2_ast::abi::TupleComponent
 pub fn slang_solidity_v2_ast::abi::TupleComponent::hash<__H: core::hash::Hasher>(&self, &mut __H)
 impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::TupleComponent
+pub fn slang_solidity_v2_ast::abi::hash_from_signature(&str) -> [u8; 32]
 pub fn slang_solidity_v2_ast::abi::selector_from_signature(&str) -> u32
 pub type slang_solidity_v2_ast::abi::AbiMutability = slang_solidity_v2_semantic::types::FunctionTypeMutability
 pub mod slang_solidity_v2_ast::ast
@@ -1858,7 +1859,7 @@ impl slang_solidity_v2_ast::ast::EventDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::compute_abi_entry(&self) -> core::option::Option<slang_solidity_v2_ast::abi::AbiEntry>
 pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::compute_canonical_signature(&self) -> core::option::Option<alloc::string::String>
 pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::compute_internal_signature(&self) -> core::option::Option<alloc::string::String>
-pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::compute_selector(&self) -> core::option::Option<u32>
+pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::compute_topic0(&self) -> core::option::Option<[u8; 32]>
 impl slang_solidity_v2_ast::ast::EventDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::enclosing_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 impl slang_solidity_v2_ast::ast::EventDefinitionStruct

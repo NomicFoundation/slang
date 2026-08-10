@@ -209,8 +209,8 @@ impl<'a> BuiltInsResolver<'a> {
                 "selector" => Some(InternalBuiltIn::ErrorSelector),
                 _ => None,
             },
-            Definition::Event(_) => match symbol {
-                "selector" => Some(InternalBuiltIn::EventSelector),
+            Definition::Event(event) => match symbol {
+                "selector" if !event.ir_node.is_anonymous => Some(InternalBuiltIn::EventSelector),
                 _ => None,
             },
             Definition::UserDefinedValueType(_) => match symbol {
@@ -381,9 +381,10 @@ impl<'a> BuiltInsResolver<'a> {
             InternalBuiltIn::MsgSender => Typing::Resolved(self.types.address()),
             InternalBuiltIn::MsgSig => Typing::Resolved(self.types.bytes4()),
             InternalBuiltIn::MsgValue => Typing::Resolved(self.types.uint256()),
-            InternalBuiltIn::ErrorSelector
-            | InternalBuiltIn::EventSelector
-            | InternalBuiltIn::FunctionSelector => Typing::Resolved(self.types.bytes4()),
+            InternalBuiltIn::ErrorSelector | InternalBuiltIn::FunctionSelector => {
+                Typing::Resolved(self.types.bytes4())
+            }
+            InternalBuiltIn::EventSelector => Typing::Resolved(self.types.bytes32()),
             InternalBuiltIn::TxGasPrice => Typing::Resolved(self.types.uint256()),
             InternalBuiltIn::TxOrigin => Typing::Resolved(self.types.address()),
             InternalBuiltIn::TypeName => Typing::Resolved(self.types.string_memory()),

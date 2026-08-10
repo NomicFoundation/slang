@@ -586,6 +586,11 @@ mod events {
     use super::*;
 
     #[test]
+    fn anonymous_selector() -> Result<()> {
+        run("events", "anonymous_selector")
+    }
+
+    #[test]
     fn custom_types() -> Result<()> {
         run("events", "custom_types")
     }

@@ -1922,17 +1922,21 @@ fn test_storage_base_slot_evaluation() {
 
 #[test]
 fn test_event_selector() {
-    // `.selector` on an event name types as `bytes4`.
+    // `.selector` on an event name types as `bytes32`: the event's `topics[0]`.
     let (type_, _) = type_of_expression_in_context("event E(uint a);", "E.selector");
-    assert_eq!(type_, Type::ByteArray(ByteArrayType { width: 4 }));
+    assert_eq!(type_, Type::ByteArray(ByteArrayType { width: 32 }));
 
     // With *overloaded* events the name is ambiguous; we currently resolve the
     // member against the first candidate (both candidates expose `selector`,
-    // so the typing is still `bytes4`). solc reports an ambiguity error here —
+    // so the typing is still `bytes32`). solc reports an ambiguity error here —
     // that diagnostic is part of the SDR[37] validation backlog.
     let (type_, _) =
         type_of_expression_in_context("event E(uint a); event E(bool b);", "E.selector");
-    assert_eq!(type_, Type::ByteArray(ByteArrayType { width: 4 }));
+    assert_eq!(type_, Type::ByteArray(ByteArrayType { width: 32 }));
+
+    // An anonymous event emits no `topics[0]`, so it exposes no `selector`.
+    let (type_, _) = try_type_of_expression_in_context("event E(uint a) anonymous;", "E.selector");
+    assert_eq!(None, type_);
 }
 
 #[test]
