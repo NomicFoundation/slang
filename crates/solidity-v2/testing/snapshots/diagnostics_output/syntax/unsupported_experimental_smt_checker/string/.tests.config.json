@@ -4,10 +4,10 @@
     "expected_solc_divergence": [
       {
         "specifier": {
-          "type": "Till",
-          "till": "0.8.4"
+          "type": "From",
+          "from": "0.8.0"
         },
-        "reason": "Slang is intentionally stricter than solc here: we don't support the `SMTChecker` experimental feature, so we report an error where solc succeeds. From '0.8.4' onwards, solc reports its own deprecation warning, so both agree on failing."
+        "reason": "Slang is intentionally stricter than solc here: we don't support the `SMTChecker` experimental feature, so we always report an error. solc accepts it on every version — silently before '0.8.4', and from '0.8.4' onwards with only a deprecation warning, which is not an error — so solc succeeds while Slang fails throughout."
       }
     ]
   }

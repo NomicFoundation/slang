@@ -1,7 +1,7 @@
 use anyhow::{Result, anyhow};
 use inflector::Inflector;
 use infra_utils::solc::{
-    Binary, CliInput, CliSettings, InputSource, LanguageSelector, render_solc_error,
+    Binary, CliInput, CliSettings, InputSource, LanguageSelector, Severity, render_solc_error,
 };
 use semver::Version;
 use slang_solidity_v2::compilation::FileId;
@@ -9,7 +9,7 @@ use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
-use crate::diagnostics_output::targets::TestTarget;
+use crate::diagnostics_output::targets::{TargetOutcome, TestTarget};
 
 pub(crate) struct SolcTarget {
     binaries: SortedMap<Version, Binary>,
@@ -28,12 +28,12 @@ impl TestTarget for SolcTarget {
         "solc"
     }
 
-    fn collect_diagnostics(
+    fn compile(
         &self,
         files: &SortedMap<FileId, String>,
         version: LanguageVersion,
         evm_target: EvmTarget,
-    ) -> Result<Vec<String>> {
+    ) -> Result<TargetOutcome> {
         let semver_version: Version = version.into();
         let binary = self
             .binaries
@@ -72,13 +72,22 @@ impl TestTarget for SolcTarget {
         };
 
         let output = binary.run(&input)?;
-        let errors = output.errors.unwrap_or_default();
+        let diagnostics = output.errors.unwrap_or_default();
 
-        let rendered = errors
+        // Only error-severity diagnostics decide the status; warnings/info are
+        // rendered but count as success.
+        let compilation_succeeded = !diagnostics
+            .iter()
+            .any(|diagnostic| diagnostic.severity == Severity::Error);
+
+        let rendered = diagnostics
             .into_iter()
-            .map(|error| render_solc_error(&error, &sources).unwrap())
+            .map(|diagnostic| render_solc_error(&diagnostic, &sources).unwrap())
             .collect();
 
-        Ok(rendered)
+        Ok(TargetOutcome {
+            diagnostics: rendered,
+            compilation_succeeded,
+        })
     }
 }

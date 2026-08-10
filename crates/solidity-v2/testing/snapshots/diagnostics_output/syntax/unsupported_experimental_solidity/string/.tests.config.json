@@ -1,0 +1,22 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "Range",
+          "from": "0.8.21",
+          "till": "0.8.22"
+        },
+        "reason": "solc recognizes `pragma experimental solidity` starting in '0.8.21' but emits only `Warning 2264` (not an error), so it succeeds. Slang does not support the feature and reports an error, so they diverge on '0.8.21'."
+      },
+      {
+        "specifier": {
+          "type": "From",
+          "from": "0.8.24"
+        },
+        "reason": "From '0.8.24' solc again emits only `Warning 2264` for `pragma experimental solidity` and succeeds, while Slang keeps rejecting it. On '0.8.22' and '0.8.23' solc additionally raises `UnimplementedFeatureError 6547`, so both fail and agree there."
+      }
+    ]
+  }
+}

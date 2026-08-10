@@ -9,7 +9,7 @@ use slang_solidity_v2::compilation::FileId;
 use slang_solidity_v2_common::collections::{SortedMap, SortedSet};
 use slang_solidity_v2_common::versions::LanguageVersion;
 
-use crate::diagnostics_output::targets::{SlangTarget, SolcTarget, TestTarget};
+use crate::diagnostics_output::targets::{SlangTarget, SolcTarget, TargetOutcome, TestTarget};
 use crate::snapshots::{self, SnapshotOutcome, SnapshotStatus, TestConfig, TestMatrix};
 use crate::utils::multi_part_file::split_multi_file;
 
@@ -51,8 +51,8 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         &test_config,
         &format!("generated/{}", slang_target.name()),
         |version, target| {
-            let errors = slang_target.collect_diagnostics(&files, version, target)?;
-            Ok(make_outcome(version, target, &errors))
+            let outcome = slang_target.compile(&files, version, target)?;
+            Ok(make_outcome(version, target, &outcome))
         },
     )?;
 
@@ -62,8 +62,8 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         &test_config,
         &format!("generated/{}", solc_target.name()),
         |version, target| {
-            let errors = solc_target.collect_diagnostics(&files, version, target)?;
-            Ok(make_outcome(version, target, &errors))
+            let outcome = solc_target.compile(&files, version, target)?;
+            Ok(make_outcome(version, target, &outcome))
         },
     )?;
 
@@ -79,17 +79,19 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
 fn make_outcome(
     version: LanguageVersion,
     target: slang_solidity_v2_common::evm_targets::EvmTarget,
-    errors: &[String],
+    outcome: &TargetOutcome,
 ) -> SnapshotOutcome {
-    let status = if errors.is_empty() {
+    let status = if outcome.compilation_succeeded {
         SnapshotStatus::Success
     } else {
         SnapshotStatus::Failure
     };
 
+    let diagnostics = &outcome.diagnostics;
+
     let mut contents = String::new();
-    writeln!(contents, "Diagnostics: {count}", count = errors.len()).unwrap();
-    for rendered in errors {
+    writeln!(contents, "Diagnostics: {count}", count = diagnostics.len()).unwrap();
+    for rendered in diagnostics {
         writeln!(contents).unwrap();
         writeln!(contents, "{rendered}").unwrap();
     }

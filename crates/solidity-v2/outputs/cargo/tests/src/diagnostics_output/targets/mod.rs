@@ -9,13 +9,23 @@ use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
 pub(crate) use solc::SolcTarget;
 
+/// The outcome of running a target on a single input.
+pub(crate) struct TargetOutcome {
+    /// Every diagnostic, rendered for the snapshot body, regardless of
+    /// severity.
+    pub diagnostics: Vec<String>,
+
+    /// Whether the target considers the input valid.
+    pub compilation_succeeded: bool,
+}
+
 pub(crate) trait TestTarget {
     fn name(&self) -> &'static str;
 
-    fn collect_diagnostics(
+    fn compile(
         &self,
         files: &SortedMap<FileId, String>,
         version: LanguageVersion,
         evm_target: EvmTarget,
-    ) -> Result<Vec<String>>;
+    ) -> Result<TargetOutcome>;
 }
