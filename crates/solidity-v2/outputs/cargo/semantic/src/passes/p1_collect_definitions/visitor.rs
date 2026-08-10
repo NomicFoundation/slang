@@ -479,7 +479,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn leave_catch_clause(&mut self, node: &ir::CatchClause) {
-        if let Some(parameters) = node.parameters() {
+        if let Some(parameters) = &node.parameters {
             // Collect the parameters in the catch declaration and make them
             // available in the body block.
             let body_scope_id = self.binder.scope_id_for_node_id(node.body.id()).unwrap();

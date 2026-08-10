@@ -167,15 +167,7 @@ impl Visitor for Pass<'_> {
         }
     }
 
-    fn leave_clause_error_kind(&mut self, node: &ir::ClauseErrorKind) {
-        self.visit_parameters(&node.parameters);
-    }
-
-    fn leave_clause_panic_kind(&mut self, node: &ir::ClausePanicKind) {
-        self.visit_parameters(&node.parameters);
-    }
-
-    fn leave_clause_low_level_kind(&mut self, node: &ir::ClauseLowLevelKind) {
+    fn leave_catch_clause(&mut self, node: &ir::CatchClause) {
         if let Some(parameters) = &node.parameters {
             self.visit_parameters(parameters);
         }

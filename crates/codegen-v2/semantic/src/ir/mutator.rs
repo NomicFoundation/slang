@@ -310,19 +310,6 @@ impl IrModelMutator {
         });
     }
 
-    pub fn add_choice_type(&mut self, name: &str) {
-        let name: model::Identifier = name.into();
-        self.choices.insert(
-            name.clone(),
-            MutatedChoice {
-                source_name: name,
-                variants: Vec::new(),
-                has_removed_variants: false,
-                is_new: true,
-            },
-        );
-    }
-
     // Adds a synthetic (ie. not referencing any CST nodes) choice type by adding
     // external terminal types as the variants
     pub fn add_enum_type(&mut self, name: &str, variants: &[&str]) {

@@ -79,21 +79,6 @@ pub trait Visitor {
     }
     fn leave_catch_clause(&mut self, _node: &CatchClause) {}
 
-    fn enter_clause_error_kind(&mut self, _node: &ClauseErrorKind) -> bool {
-        true
-    }
-    fn leave_clause_error_kind(&mut self, _node: &ClauseErrorKind) {}
-
-    fn enter_clause_low_level_kind(&mut self, _node: &ClauseLowLevelKind) -> bool {
-        true
-    }
-    fn leave_clause_low_level_kind(&mut self, _node: &ClauseLowLevelKind) {}
-
-    fn enter_clause_panic_kind(&mut self, _node: &ClausePanicKind) -> bool {
-        true
-    }
-    fn leave_clause_panic_kind(&mut self, _node: &ClausePanicKind) {}
-
     fn enter_conditional_expression(&mut self, _node: &ConditionalExpression) -> bool {
         true
     }
@@ -1078,34 +1063,11 @@ pub fn accept_catch_clause(node: &CatchClause, visitor: &mut impl Visitor) {
         return;
     }
     accept_catch_clause_kind(&node.kind(), visitor);
-    accept_block(&node.body(), visitor);
-    visitor.leave_catch_clause(node);
-}
-
-pub fn accept_clause_error_kind(node: &ClauseErrorKind, visitor: &mut impl Visitor) {
-    if !visitor.enter_clause_error_kind(node) {
-        return;
-    }
-    accept_parameters(&node.parameters(), visitor);
-    visitor.leave_clause_error_kind(node);
-}
-
-pub fn accept_clause_low_level_kind(node: &ClauseLowLevelKind, visitor: &mut impl Visitor) {
-    if !visitor.enter_clause_low_level_kind(node) {
-        return;
-    }
     if let Some(ref parameters) = node.parameters() {
         accept_parameters(parameters, visitor);
     }
-    visitor.leave_clause_low_level_kind(node);
-}
-
-pub fn accept_clause_panic_kind(node: &ClausePanicKind, visitor: &mut impl Visitor) {
-    if !visitor.enter_clause_panic_kind(node) {
-        return;
-    }
-    accept_parameters(&node.parameters(), visitor);
-    visitor.leave_clause_panic_kind(node);
+    accept_block(&node.body(), visitor);
+    visitor.leave_catch_clause(node);
 }
 
 pub fn accept_conditional_expression(node: &ConditionalExpression, visitor: &mut impl Visitor) {
@@ -2025,15 +1987,9 @@ pub fn accept_catch_clause_kind(node: &CatchClauseKind, visitor: &mut impl Visit
         return;
     }
     match node {
-        CatchClauseKind::ClauseErrorKind(clause_error_kind) => {
-            accept_clause_error_kind(clause_error_kind, visitor);
-        }
-        CatchClauseKind::ClausePanicKind(clause_panic_kind) => {
-            accept_clause_panic_kind(clause_panic_kind, visitor);
-        }
-        CatchClauseKind::ClauseLowLevelKind(clause_low_level_kind) => {
-            accept_clause_low_level_kind(clause_low_level_kind, visitor);
-        }
+        CatchClauseKind::Error => {}
+        CatchClauseKind::Panic => {}
+        CatchClauseKind::LowLevel => {}
     }
     visitor.leave_catch_clause_kind(node);
 }

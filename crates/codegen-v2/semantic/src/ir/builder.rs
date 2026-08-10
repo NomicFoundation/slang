@@ -138,22 +138,12 @@ fn unify_function_types(mutator: &mut IrModelMutator) {
 }
 
 fn normalize_catch_clauses(mutator: &mut IrModelMutator) {
-    mutator.add_sequence_type("ClauseErrorKind");
-    mutator.add_sequence_field("ClauseErrorKind", "parameters", "Parameters", false);
-
-    mutator.add_sequence_type("ClausePanicKind");
-    mutator.add_sequence_field("ClausePanicKind", "parameters", "Parameters", false);
-
-    mutator.add_sequence_type("ClauseLowLevelKind");
-    mutator.add_sequence_field("ClauseLowLevelKind", "parameters", "Parameters", true);
-
-    mutator.add_choice_type("CatchClauseKind");
-    mutator.add_choice_variant("CatchClauseKind", "ClauseErrorKind");
-    mutator.add_choice_variant("CatchClauseKind", "ClausePanicKind");
-    mutator.add_choice_variant("CatchClauseKind", "ClauseLowLevelKind");
-
-    mutator.insert_sequence_field_before("CatchClause", "kind", "CatchClauseKind", false, "error");
+    // Replace `CatchClauseError` with a plain enum and lift the parameters into `CatchClause`
     mutator.remove_type("CatchClauseError");
+
+    mutator.add_enum_type("CatchClauseKind", &["Error", "Panic", "LowLevel"]);
+    mutator.insert_sequence_field_before("CatchClause", "kind", "CatchClauseKind", false, "body");
+    mutator.insert_sequence_field_before("CatchClause", "parameters", "Parameters", true, "body");
 
     // Remove and add back the clauses collection type to allow a custom builder
     mutator.remove_type("CatchClauses");

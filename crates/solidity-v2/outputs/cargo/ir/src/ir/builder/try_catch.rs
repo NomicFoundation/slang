@@ -1,4 +1,3 @@
-use std::ops::Range;
 use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::structure::{
@@ -59,13 +58,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             };
 
             let (kind, seen) = match &clause.kind {
-                output::CatchClauseKind::ClauseErrorKind(_) => {
-                    (CatchClauseKind::Error, &mut seen_error)
-                }
-                output::CatchClauseKind::ClausePanicKind(_) => {
-                    (CatchClauseKind::Panic, &mut seen_panic)
-                }
-                output::CatchClauseKind::ClauseLowLevelKind(_) => {
+                output::CatchClauseKind::Error => (CatchClauseKind::Error, &mut seen_error),
+                output::CatchClauseKind::Panic => (CatchClauseKind::Panic, &mut seen_panic),
+                output::CatchClauseKind::LowLevel => {
                     (CatchClauseKind::LowLevel, &mut seen_low_level)
                 }
             };
@@ -87,12 +82,17 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let id = self.next_id(output::NodeKind::CatchClause);
         let range = source.calculate_text_range().unwrap_or_default();
         let kind = self.build_catch_clause_kind(source)?;
+        let parameters = source
+            .error
+            .as_ref()
+            .map(|error| self.build_parameters_declaration(&error.parameters));
         let body = self.build_block(&source.body);
 
         Some(Arc::new(output::CatchClauseStruct {
             id,
             range,
             kind,
+            parameters,
             body,
         }))
     }
@@ -102,10 +102,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::CatchClause,
     ) -> Option<output::CatchClauseKind> {
         let Some(error) = &source.error else {
-            let range = source.catch_keyword.calculate_text_range().unwrap();
-            return Some(output::CatchClauseKind::ClauseLowLevelKind(
-                self.build_unboud_clause_low_level_kind(range),
-            ));
+            return Some(output::CatchClauseKind::LowLevel);
         };
 
         let panic_allowed = self.language_version >= LanguageVersion::V0_8_1;
@@ -114,12 +111,8 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|name| self.source.text(name.range.clone()))
         {
-            Some("Error") => {
-                output::CatchClauseKind::ClauseErrorKind(self.build_clause_error_kind(error))
-            }
-            Some("Panic") if panic_allowed => {
-                output::CatchClauseKind::ClausePanicKind(self.build_clause_panic_kind(error))
-            }
+            Some("Error") => output::CatchClauseKind::Error,
+            Some("Panic") if panic_allowed => output::CatchClauseKind::Panic,
             Some(_) => {
                 self.diagnostics.push(
                     self.file_id.to_owned(),
@@ -128,64 +121,8 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                 );
                 return None;
             }
-            None => {
-                output::CatchClauseKind::ClauseLowLevelKind(self.build_clause_low_level_kind(error))
-            }
+            None => output::CatchClauseKind::LowLevel,
         };
         Some(kind)
-    }
-
-    fn build_clause_error_kind(
-        &mut self,
-        source: &input::CatchClauseError,
-    ) -> output::ClauseErrorKind {
-        let id = self.next_id(output::NodeKind::ClauseErrorKind);
-        let range = source.calculate_text_range().unwrap_or_default();
-        let parameters = self.build_parameters_declaration(&source.parameters);
-        Arc::new(output::ClauseErrorKindStruct {
-            id,
-            range,
-            parameters,
-        })
-    }
-
-    fn build_clause_panic_kind(
-        &mut self,
-        source: &input::CatchClauseError,
-    ) -> output::ClausePanicKind {
-        let id = self.next_id(output::NodeKind::ClausePanicKind);
-        let range = source.calculate_text_range().unwrap_or_default();
-        let parameters = self.build_parameters_declaration(&source.parameters);
-        Arc::new(output::ClausePanicKindStruct {
-            id,
-            range,
-            parameters,
-        })
-    }
-
-    fn build_clause_low_level_kind(
-        &mut self,
-        source: &input::CatchClauseError,
-    ) -> output::ClauseLowLevelKind {
-        let id = self.next_id(output::NodeKind::ClauseLowLevelKind);
-        let range = source.calculate_text_range().unwrap_or_default();
-        let parameters = self.build_parameters_declaration(&source.parameters);
-        Arc::new(output::ClauseLowLevelKindStruct {
-            id,
-            range,
-            parameters: Some(parameters),
-        })
-    }
-
-    fn build_unboud_clause_low_level_kind(
-        &mut self,
-        range: Range<usize>,
-    ) -> output::ClauseLowLevelKind {
-        let id = self.next_id(output::NodeKind::ClauseLowLevelKind);
-        Arc::new(output::ClauseLowLevelKindStruct {
-            id,
-            range,
-            parameters: None,
-        })
     }
 }
