@@ -142,34 +142,38 @@ fn test_function_get_type() {
 }
 
 define_fixture!(
-    PublicMapping,
+    MappingGetters,
     file: "main.sol", r#"
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
 contract C {
     mapping(string => uint256) public balances;
+    mapping(string => uint256) internal _allowances;
 }
 "#,
 );
 
 #[test]
-fn test_public_mapping_getter_type() {
-    let unit = PublicMapping::build_compilation_unit();
+fn test_state_variable_getter_type() {
+    let unit = MappingGetters::build_compilation_unit();
 
     let contract = unit
         .find_contract_by_name("C")
         .next()
         .expect("contract C is found");
 
-    let balances = contract
+    let state_variables = contract
         .members()
         .iter()
-        .find_map(|member| match member {
+        .filter_map(|member| match member {
             ast::ContractMember::StateVariableDefinition(state_variable) => Some(state_variable),
             _ => None,
         })
-        .expect("state variable balances is found");
+        .collect::<Vec<_>>();
+    let [balances, allowances] = state_variables.as_slice() else {
+        panic!("expected the contract to declare two state variables");
+    };
 
     let ast::Type::Function(getter) = balances
         .getter_type()
@@ -188,6 +192,17 @@ fn test_public_mapping_getter_type() {
         panic!("expected the key to type as a string");
     };
     assert_eq!(key.location(), ast::DataLocation::Memory);
+
+    let ast::Type::Integer(value) = getter.return_type() else {
+        panic!("expected the getter to return the mapping value");
+    };
+    assert!(!value.is_signed(), "the mapping value is unsigned");
+    assert_eq!(value.bits(), 256, "the mapping value is 256-bit");
+
+    assert!(
+        allowances.getter_type().is_none(),
+        "a non-public state variable has no getter"
+    );
 }
 
 define_fixture!(
