@@ -17,6 +17,10 @@ interface IThing is IERC165 {
 }
 
 abstract contract Implementer is IThing {}
+
+interface IMarker is IERC165 {}
+
+abstract contract MarkerImplementer is IMarker {}
 "#,
 );
 
@@ -44,4 +48,19 @@ fn interface_id_xors_own_selectors_excluding_inherited() {
         panic!("IERC165 base is not an interface");
     };
     assert_eq!(erc165.compute_interface_id(), Some(0x01ff_c9a7)); // supportsInterface(bytes4)
+}
+
+#[test]
+fn interface_id_is_zero_without_own_functions() {
+    let unit = InterfaceIds::build_compilation_unit();
+    let implementer = unit
+        .find_contract_by_name("MarkerImplementer")
+        .next()
+        .expect("MarkerImplementer contract can be found");
+
+    let bases = implementer.linearised_bases();
+    let ContractBase::Interface(marker) = &bases[1] else {
+        panic!("IMarker base is not an interface");
+    };
+    assert_eq!(marker.compute_interface_id(), Some(0));
 }
