@@ -13,6 +13,11 @@ mod assembly_statement {
     }
 
     #[test]
+    fn missing_open_brace() -> Result<()> {
+        run("AssemblyStatement", "missing_open_brace")
+    }
+
+    #[test]
     fn simple() -> Result<()> {
         run("AssemblyStatement", "simple")
     }
