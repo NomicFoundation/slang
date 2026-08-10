@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[resolution/duplicate-event-definition] Error: Event with same name and parameter types defined twice.
+    ╭─[input.sol:12:5]
+    │
+ 12 │     event Duplicated(uint256 b);
+    │     ──────────────┬─────────────  
+    │                   ╰─────────────── Error occurred here.
+────╯
+
+[resolution/duplicate-event-definition] Error: Event with same name and parameter types defined twice.
+    ╭─[input.sol:17:5]
+    │
+ 17 │     event IgnoresIndexed(uint256 indexed a);
+    │     ────────────────────┬───────────────────  
+    │                         ╰───────────────────── Error occurred here.
+────╯
+
+[resolution/duplicate-event-definition] Error: Event with same name and parameter types defined twice.
+    ╭─[input.sol:21:5]
+    │
+ 21 │     event IgnoresAnonymous(address a) anonymous;
+    │     ──────────────────────┬─────────────────────  
+    │                           ╰─────────────────────── Error occurred here.
+────╯

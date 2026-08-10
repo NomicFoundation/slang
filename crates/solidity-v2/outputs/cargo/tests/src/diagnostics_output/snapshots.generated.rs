@@ -108,6 +108,106 @@ mod resolution {
         }
     }
 
+    mod duplicate_event_definition {
+        use super::*;
+
+        #[test]
+        fn contract_members() -> Result<()> {
+            run("resolution/duplicate_event_definition", "contract_members")
+        }
+
+        #[test]
+        fn distinguishable_events() -> Result<()> {
+            run(
+                "resolution/duplicate_event_definition",
+                "distinguishable_events",
+            )
+        }
+
+        #[test]
+        fn free_events() -> Result<()> {
+            run("resolution/duplicate_event_definition", "free_events")
+        }
+
+        #[test]
+        fn inherited() -> Result<()> {
+            run("resolution/duplicate_event_definition", "inherited")
+        }
+
+        #[test]
+        fn library_and_interface() -> Result<()> {
+            run(
+                "resolution/duplicate_event_definition",
+                "library_and_interface",
+            )
+        }
+
+        #[test]
+        fn redeclared_and_duplicated() -> Result<()> {
+            run(
+                "resolution/duplicate_event_definition",
+                "redeclared_and_duplicated",
+            )
+        }
+    }
+
+    mod duplicate_function_definition {
+        use super::*;
+
+        #[test]
+        fn contract_members() -> Result<()> {
+            run(
+                "resolution/duplicate_function_definition",
+                "contract_members",
+            )
+        }
+
+        #[test]
+        fn distinguishable_overloads() -> Result<()> {
+            run(
+                "resolution/duplicate_function_definition",
+                "distinguishable_overloads",
+            )
+        }
+
+        #[test]
+        fn free_functions() -> Result<()> {
+            run("resolution/duplicate_function_definition", "free_functions")
+        }
+
+        #[test]
+        fn library_and_interface() -> Result<()> {
+            run(
+                "resolution/duplicate_function_definition",
+                "library_and_interface",
+            )
+        }
+
+        #[test]
+        fn qualified_import() -> Result<()> {
+            run(
+                "resolution/duplicate_function_definition",
+                "qualified_import",
+            )
+        }
+
+        #[test]
+        fn via_default_import() -> Result<()> {
+            run(
+                "resolution/duplicate_function_definition",
+                "via_default_import",
+            )
+        }
+
+        #[test]
+        fn via_import_alias() -> Result<()> {
+            run(
+                "resolution/duplicate_function_definition",
+                "via_import_alias",
+            )
+        }
+    }
+
     mod expected_function_in_using_directive {
         use super::*;
 
@@ -643,6 +743,11 @@ mod resolution {
                 "resolution/identifier_redeclaration",
                 "inherited_via_interface",
             )
+        }
+
+        #[test]
+        fn library_members() -> Result<()> {
+            run("resolution/identifier_redeclaration", "library_members")
         }
 
         #[test]

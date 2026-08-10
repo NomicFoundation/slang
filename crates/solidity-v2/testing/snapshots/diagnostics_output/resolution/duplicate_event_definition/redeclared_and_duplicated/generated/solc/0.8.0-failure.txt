@@ -1,0 +1,29 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[DeclarationError 9097] Error: Identifier already declared.
+    ╭─[input.sol:14:5]
+    │
+ 14 │ ╭─▶     struct E {
+    ┆ ┆   
+ 16 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
+
+[DeclarationError 9097] Error: Identifier already declared.
+    ╭─[input.sol:22:5]
+    │
+ 22 │     event E(uint256 a);
+    │     ─────────┬─────────  
+    │              ╰─────────── Error occurred here.
+────╯
+
+[DeclarationError 5883] Error: Event with same name and parameter types defined twice.
+    ╭─[input.sol:22:5]
+    │
+ 22 │     event E(uint256 a);
+    │     ─────────┬─────────  
+    │              ╰─────────── Error occurred here.
+────╯

@@ -31,7 +31,9 @@ impl<'a> HierarchyChecker<'a> {
             let Some(slot) = self.members_by_name.get(name) else {
                 continue;
             };
-            if slot.clashes_with(definition) && self.reported.insert(definition.node_id()) {
+            if slot.clashes_with(definition)
+                && self.reported_redeclaration.insert(definition.node_id())
+            {
                 // TODO: should we emit a different diagnostic for SDR[1259]
                 let file_id = self
                     .file_node_mapper

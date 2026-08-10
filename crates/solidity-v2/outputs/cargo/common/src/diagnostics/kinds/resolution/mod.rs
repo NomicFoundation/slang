@@ -1,4 +1,6 @@
 mod built_in_redeclaration;
+mod duplicate_event_definition;
+mod duplicate_function_definition;
 mod external_declaration_shadowing;
 mod identifier_not_found;
 mod identifier_not_function_or_not_unique;
@@ -10,6 +12,8 @@ mod incompatible_built_in_version;
 mod non_free_or_library_function_in_using_directive;
 
 pub use built_in_redeclaration::BuiltInRedeclaration;
+pub use duplicate_event_definition::DuplicateEventDefinition;
+pub use duplicate_function_definition::DuplicateFunctionDefinition;
 pub use external_declaration_shadowing::ExternalDeclarationShadowing;
 pub use identifier_not_found::IdentifierNotFound;
 pub use identifier_not_function_or_not_unique::IdentifierNotFunctionOrNotUnique;
@@ -36,6 +40,12 @@ define_diagnostic_kind! {
         IdentifierNotFound(IdentifierNotFound),
         /// An identifier was declared more than once in the same scope.
         IdentifierRedeclaration(IdentifierRedeclaration),
+        /// Two functions visible under the same name have parameter lists that
+        /// an external call cannot tell apart.
+        DuplicateFunctionDefinition(DuplicateFunctionDefinition),
+        /// Two events visible under the same name have parameter lists that an
+        /// external call cannot tell apart.
+        DuplicateEventDefinition(DuplicateEventDefinition),
         /// A Yul declaration reused the reserved name of a Yul built-in.
         BuiltInRedeclaration(BuiltInRedeclaration),
         /// A Yul variable declaration shadows a declaration (Solidity or

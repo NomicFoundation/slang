@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 1686] Error: Function with same name and parameter types defined twice.
+   ╭─[derived.sol:7:1]
+   │
+ 7 │ ╭─▶ function duplicated(uint256 b) pure returns (uint256) {
+   ┆ ┆   
+ 9 │ ├─▶ }
+   │ │       
+   │ ╰─────── Error occurred here.
+───╯
