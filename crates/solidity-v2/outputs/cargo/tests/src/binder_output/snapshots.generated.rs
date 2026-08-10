@@ -760,6 +760,11 @@ mod expressions {
     }
 
     #[test]
+    fn require_named_args() -> Result<()> {
+        run("expressions", "require_named_args")
+    }
+
+    #[test]
     fn revert_named_args() -> Result<()> {
         run("expressions", "revert_named_args")
     }
