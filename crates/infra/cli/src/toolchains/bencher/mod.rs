@@ -5,15 +5,10 @@ use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 
 // Three modes:
-// 1. dry-run: runs benchmarks locally, uploads to bencher with a dummy key (no dashboard update).
+// 1. dry-run: runs benchmarks locally, without authenticating or uploading anything to bencher.
 // 2. pr-benchmark: uploads to a temporary PR branch in bencher, compares against the base branch
 //    with inline thresholds (percentage), and posts results as a PR comment. Mutually exclusive with dry-run.
 // 3. normal (neither flag): uploads results to the main branch on the bencher dashboard.
-//
-// Use a dummy test key for dry runs:
-// https://github.com/bencherdev/bencher/issues/468
-// Source: https://github.com/bencherdev/bencher/blob/d2895af8c867c83b8fe766a6b84d8ccd4df5c315/tasks/test_api/src/task/test/smoke_test.rs#L27
-const BENCHER_TEST_API_KEY: &str = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhcGlfa2V5IiwiZXhwIjo1OTkzNjQyMTU2LCJpYXQiOjE2OTg2NzQ4NjEsImlzcyI6Imh0dHBzOi8vZGV2ZWwtLWJlbmNoZXIubmV0bGlmeS5hcHAvIiwic3ViIjoibXVyaWVsLmJhZ2dlQG5vd2hlcmUuY29tIiwib3JnIjpudWxsfQ.9z7jmM53TcVzc1inDxTeX9_OR0PQPpZAsKsCE7lWHfo";
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
 pub(crate) enum BencherProject {
@@ -76,14 +71,6 @@ pub(crate) fn run_bench(
          PR benchmarks must upload to bencher for comparison."
     );
 
-    let api_key = if dry_run {
-        BENCHER_TEST_API_KEY.to_string()
-    } else {
-        std::env::var("BENCHER_API_KEY").unwrap_or_else(|_| {
-            panic!("BENCHER_API_KEY is not set. Either perform a '--dry-run', or set it to the project's Bencher API key: https://bencher.dev/console/projects/{project}/keys");
-        })
-    };
-
     let testbed = if GitHub::is_running_in_ci() {
         "ci"
     } else {
@@ -94,15 +81,21 @@ pub(crate) fn run_bench(
         .arg("run")
         .property("--project", project.to_string())
         .property("--adapter", adapter)
-        .property("--testbed", testbed)
-        .secret("BENCHER_API_KEY", api_key);
+        .property("--testbed", testbed);
 
     for (key, value) in bench_env {
         command = command.env(*key, *value);
     }
 
     if dry_run {
+        // A dry run neither authenticates nor saves any data, so no API key is needed.
         command = command.flag("--dry-run");
+    } else {
+        let api_key = std::env::var("BENCHER_API_KEY").unwrap_or_else(|_| {
+            panic!("BENCHER_API_KEY is not set. Either perform a '--dry-run', or set it to the project's Bencher API key: https://bencher.dev/console/projects/{project}/keys");
+        });
+
+        command = command.secret("BENCHER_API_KEY", api_key);
     }
 
     if pr_benchmark {
