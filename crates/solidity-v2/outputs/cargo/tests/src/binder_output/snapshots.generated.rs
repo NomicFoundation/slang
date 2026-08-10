@@ -567,6 +567,11 @@ mod errors {
     }
 
     #[test]
+    fn named_args_alias() -> Result<()> {
+        run("errors", "named_args_alias")
+    }
+
+    #[test]
     fn revert_as_function() -> Result<()> {
         run("errors", "revert_as_function")
     }
@@ -611,8 +616,18 @@ mod events {
     }
 
     #[test]
+    fn named_args_alias() -> Result<()> {
+        run("events", "named_args_alias")
+    }
+
+    #[test]
     fn overload_selection() -> Result<()> {
         run("events", "overload_selection")
+    }
+
+    #[test]
+    fn overload_selection_alias() -> Result<()> {
+        run("events", "overload_selection_alias")
     }
 
     #[test]
@@ -652,6 +667,16 @@ mod expressions {
     #[test]
     fn emit_named_args() -> Result<()> {
         run("expressions", "emit_named_args")
+    }
+
+    #[test]
+    fn event_named_args() -> Result<()> {
+        run("expressions", "event_named_args")
+    }
+
+    #[test]
+    fn event_named_args_alias() -> Result<()> {
+        run("expressions", "event_named_args_alias")
     }
 
     #[test]
