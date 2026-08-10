@@ -696,10 +696,10 @@ impl Pass<'_> {
 
     /// Types a call with named arguments whose operand is (or was
     /// disambiguated to) `type_id`, additionally returning the definition the
-    /// operand resolves to (if any). Only function values and struct
-    /// constructions are callable this way; the user meta type of a function is
-    /// a non-callable declaration reached through a contract/interface type
-    /// name.
+    /// operand resolves to (if any). Only function values, struct constructions
+    /// and error constructions are callable this way; the user meta type of a
+    /// function is a non-callable declaration reached through a
+    /// contract/interface type name.
     fn typing_of_type_called_with_named_arguments(
         &mut self,
         node: &ir::FunctionCallExpression,
@@ -728,6 +728,12 @@ impl Pass<'_> {
                             .expect("struct definitions are handled by type_of_definition");
                         let type_id = self.types.register_type(type_);
                         (Typing::Resolved(type_id), Some(definition_id))
+                    }
+                    Some(Definition::Error(_)) => {
+                        // An error construction has no value type of its own,
+                        // matching the positional form. Return the definition
+                        // so the argument names resolve against its parameters.
+                        (Typing::Unresolved, Some(definition_id))
                     }
                     Some(Definition::Function(_)) => {
                         // Calling a function via a contract/interface type name is
