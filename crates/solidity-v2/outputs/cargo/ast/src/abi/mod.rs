@@ -330,7 +330,7 @@ impl StorageItem {
     }
 }
 
-pub(crate) fn hash_from_signature(signature: &str) -> [u8; 32] {
+pub fn hash_from_signature(signature: &str) -> [u8; 32] {
     Keccak256::digest(signature).into()
 }
 

@@ -30,7 +30,7 @@ fn test_function_selector() {
 }
 
 #[test]
-fn test_events_and_errors_selectors() {
+fn test_event_topics_and_error_selectors() {
     let unit = super::FullAbi::build_compilation_unit();
 
     let test_contract = unit
@@ -38,11 +38,11 @@ fn test_events_and_errors_selectors() {
         .next()
         .expect("Test contract can be found");
 
-    let events = test_contract.events();
-    assert_eq!(events.len(), 1);
-    assert_eq!(events[0].compute_selector(), Some(0xb9b1_0fa6)); // Event(uint256,bytes32)
+    let events = test_contract.linearised_events();
+    assert_eq!(events.len(), 2);
+    assert_eq!(events[0].compute_topic0(), None); // BaseEvent(uint256,string) anonymous
     assert_eq!(
-        events[0].compute_topic(),
+        events[1].compute_topic0(), // Event(uint256,bytes32)
         Some([
             0xb9, 0xb1, 0x0f, 0xa6, 0x33, 0x03, 0x36, 0xbe, 0xe8, 0x83, 0x55, 0x7e, 0x90, 0x6a,
             0xb0, 0xd5, 0xe9, 0x8e, 0xe5, 0x03, 0x06, 0x9e, 0x9c, 0x49, 0x68, 0x9f, 0x95, 0x02,

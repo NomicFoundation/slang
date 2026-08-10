@@ -1,4 +1,4 @@
-use crate::abi::{AbiEntry, AbiEvent, hash_from_signature, selector_from_signature};
+use crate::abi::{AbiEntry, AbiEvent, hash_from_signature};
 use crate::ast::EventDefinitionStruct;
 
 impl EventDefinitionStruct {
@@ -25,12 +25,10 @@ impl EventDefinitionStruct {
         }))
     }
 
-    pub fn compute_selector(&self) -> Option<u32> {
-        self.compute_canonical_signature()
-            .map(|sig| selector_from_signature(&sig))
-    }
-
-    pub fn compute_topic(&self) -> Option<[u8; 32]> {
+    pub fn compute_topic0(&self) -> Option<[u8; 32]> {
+        if self.ir_node.is_anonymous {
+            return None;
+        }
         self.compute_canonical_signature()
             .map(|sig| hash_from_signature(&sig))
     }
