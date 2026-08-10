@@ -72,19 +72,21 @@ impl TestTarget for SolcTarget {
         };
 
         let output = binary.run(&input)?;
-        let errors = output.errors.unwrap_or_default();
+        let diagnostics = output.errors.unwrap_or_default();
 
         // Only error-severity diagnostics decide the status; warnings/info are
         // rendered but count as success.
-        let compilation_succeeded = !errors.iter().any(|error| error.severity == Severity::Error);
+        let compilation_succeeded = !diagnostics
+            .iter()
+            .any(|diagnostic| diagnostic.severity == Severity::Error);
 
-        let diagnostics = errors
+        let rendered = diagnostics
             .into_iter()
-            .map(|error| render_solc_error(&error, &sources).unwrap())
+            .map(|diagnostic| render_solc_error(&diagnostic, &sources).unwrap())
             .collect();
 
         Ok(TargetOutcome {
-            diagnostics,
+            diagnostics: rendered,
             compilation_succeeded,
         })
     }

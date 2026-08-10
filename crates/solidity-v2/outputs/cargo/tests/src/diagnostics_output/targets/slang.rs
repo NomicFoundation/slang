@@ -34,13 +34,13 @@ impl TestTarget for SlangTarget {
 
         let compilation = builder.build();
 
-        let compilation_succeeded = !compilation
-            .diagnostics()
+        let diagnostics: Vec<_> = compilation.diagnostics().iter().collect();
+
+        let compilation_succeeded = !diagnostics
             .iter()
             .any(|diagnostic| diagnostic.severity() == DiagnosticSeverity::Error);
 
-        let diagnostics = compilation
-            .diagnostics()
+        let rendered = diagnostics
             .into_iter()
             .map(|diagnostic| {
                 let file_id = diagnostic.file_id();
@@ -51,7 +51,7 @@ impl TestTarget for SlangTarget {
             .collect();
 
         Ok(TargetOutcome {
-            diagnostics,
+            diagnostics: rendered,
             compilation_succeeded,
         })
     }
