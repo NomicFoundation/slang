@@ -280,7 +280,7 @@ impl Pass<'_> {
             implicit_receiver_type: Some(receiver_type_id),
             parameter_types,
             return_type,
-            visibility: FunctionTypeVisibility::Public,
+            visibility: FunctionTypeVisibility::External,
             mutability: FunctionTypeMutability::View,
             partially_applied: false,
         });

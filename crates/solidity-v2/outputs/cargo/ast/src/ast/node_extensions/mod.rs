@@ -16,6 +16,7 @@ mod function_call_expression;
 mod identifier;
 mod identifier_path;
 mod source_unit;
+mod state_variable_definition;
 mod string_expression;
 
 mod user_defined_operators;

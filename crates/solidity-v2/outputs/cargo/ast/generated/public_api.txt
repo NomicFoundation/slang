@@ -3061,6 +3061,8 @@ pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::compute_select
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::is_externally_visible(&self) -> bool
 impl slang_solidity_v2_ast::ast::StateVariableDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::enclosing_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
+impl slang_solidity_v2_ast::ast::StateVariableDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::getter_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 impl core::clone::Clone for slang_solidity_v2_ast::ast::StateVariableDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::StateVariableDefinitionStruct::clone(&self) -> slang_solidity_v2_ast::ast::StateVariableDefinitionStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::StateVariableDefinitionStruct
