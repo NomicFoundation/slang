@@ -2,7 +2,7 @@ use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::built_ins::InternalBuiltIn;
-use crate::built_ins::specifiers::built_in_specifiers;
+use crate::built_ins::availability_specifiers::built_in_specifiers;
 
 /// Whether `built_in` exists as a usable built-in for the given language version
 /// and EVM target.

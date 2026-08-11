@@ -16,14 +16,6 @@
       },
       {
         "specifier": {
-          "type": "Range",
-          "from": "Homestead",
-          "till": "Constantinople"
-        },
-        "reason": "On pre-Constantinople targets solc warns that the EVM version is deprecated, which counts as a rejection, while slang is silent."
-      },
-      {
-        "specifier": {
           "type": "From",
           "from": "Cancun"
         },

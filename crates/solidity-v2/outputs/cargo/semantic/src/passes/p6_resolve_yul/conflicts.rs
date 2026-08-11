@@ -68,9 +68,8 @@ pub(super) fn find_conflicting_yul_definition(
     // Cancun) is not a built-in here — matching solc, which only rejects the name
     // once the built-in exists.
     //
-    // TODO: solc also reserves names where the built-in isn't available yet
-    // (opcode mnemonics, and target-gated built-ins like `chainid` on pre-fork
-    // targets). Those names are currently accepted; they need a separate
+    // TODO(validation) SDR[1180, 859]: solc also reserves names where the built-in
+    // isn't available yet. Those names are currently accepted; they need a separate
     // reserved-identifier check.
     if let Some(built_in) = BuiltInsResolver::lookup_yul_global(symbol)
         && is_built_in_available(built_in, language_version, evm_target)

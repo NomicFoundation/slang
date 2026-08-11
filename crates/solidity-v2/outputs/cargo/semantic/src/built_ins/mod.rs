@@ -5,14 +5,14 @@ use super::types::{
 };
 
 mod availability;
+#[path = "availability_specifiers.generated.rs"]
+mod availability_specifiers;
 #[path = "internal.generated.rs"]
 mod internal;
-#[path = "specifiers.generated.rs"]
-mod specifiers;
 
 pub(crate) use availability::is_built_in_available;
+pub(crate) use availability_specifiers::built_in_specifiers;
 pub use internal::InternalBuiltIn;
-pub(crate) use specifiers::built_in_specifiers;
 
 pub(crate) struct BuiltInsResolver<'a> {
     binder: &'a Binder,
