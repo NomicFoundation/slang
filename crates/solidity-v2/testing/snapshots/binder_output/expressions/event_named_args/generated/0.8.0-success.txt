@@ -14,11 +14,11 @@ Definitions (8):
 
 References (6):
 - Ref: ["Log" @ input.sol:14:9] -> #5
-- Ref: ["level" @ input.sol:14:14] -> unresolved
-- Ref: ["name" @ input.sol:14:24] -> unresolved
+- Ref: ["level" @ input.sol:14:14] -> #7
+- Ref: ["name" @ input.sol:14:24] -> #6
 - Ref: ["Other" @ input.sol:15:9] -> #1
 - Ref: ["Warn" @ input.sol:15:15] -> #2
-- Ref: ["reason" @ input.sol:15:21] -> unresolved
+- Ref: ["reason" @ input.sol:15:21] -> #3
 
 ------------------------------------------------------------------------
 
@@ -59,14 +59,14 @@ Bindings:
     │         ─┬─  ──┬──     ──┬─  
     │          ╰─────────────────── ref: 5
     │                │         │   
-    │                ╰───────────── unresolved
+    │                ╰───────────── ref: 7
     │                          │   
-    │                          ╰─── unresolved
+    │                          ╰─── ref: 6
  15 │         Other.Warn({reason: "Testing"});
     │         ──┬── ──┬─  ───┬──  
     │           ╰───────────────── ref: 1
     │                 │      │    
     │                 ╰─────────── ref: 2
     │                        │    
-    │                        ╰──── unresolved
+    │                        ╰──── ref: 3
 ────╯

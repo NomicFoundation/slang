@@ -24,8 +24,8 @@ Definitions (6):
 References (4):
 - Ref: ["Log" @ main.sol:1:9] -> #1
 - Ref: ["Renamed" @ main.sol:7:9] -> #4
-- Ref: ["level" @ main.sol:7:18] -> unresolved
-- Ref: ["name" @ main.sol:7:28] -> unresolved
+- Ref: ["level" @ main.sol:7:18] -> #3
+- Ref: ["name" @ main.sol:7:28] -> #2
 
 ------------------------------------------------------------------------
 
@@ -67,7 +67,7 @@ Bindings:
    │         ───┬───  ──┬──     ──┬─  
    │            ╰───────────────────── ref: 4
    │                    │         │   
-   │                    ╰───────────── unresolved
+   │                    ╰───────────── ref: 3
    │                              │   
-   │                              ╰─── unresolved
+   │                              ╰─── ref: 2
 ───╯

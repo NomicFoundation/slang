@@ -16,13 +16,13 @@ Definitions (9):
 References (9):
 - Ref: ["Pair" @ main.sol:3:9] -> #1
 - Ref: ["Flag" @ main.sol:3:26] -> #4
-- Ref: ["Renamed" @ main.sol:7:14] -> unresolved
-- Ref: ["Renamed" @ main.sol:8:14] -> unresolved
-- Ref: ["Renamed" @ main.sol:10:14] -> unresolved
-- Ref: ["x" @ main.sol:10:23] -> unresolved
-- Ref: ["y" @ main.sol:10:29] -> unresolved
-- Ref: ["Renamed" @ main.sol:11:14] -> unresolved
-- Ref: ["flag" @ main.sol:11:23] -> unresolved
+- Ref: ["Renamed" @ main.sol:7:14] -> #1
+- Ref: ["Renamed" @ main.sol:8:14] -> #4
+- Ref: ["Renamed" @ main.sol:10:14] -> #1
+- Ref: ["x" @ main.sol:10:23] -> #2
+- Ref: ["y" @ main.sol:10:29] -> #3
+- Ref: ["Renamed" @ main.sol:11:14] -> #4
+- Ref: ["flag" @ main.sol:11:23] -> #5
 
 ------------------------------------------------------------------------
 
@@ -70,21 +70,21 @@ Bindings:
     │                ╰─── name: 9
   7 │         emit Renamed(1, 2);
     │              ───┬───  
-    │                 ╰───── unresolved
+    │                 ╰───── ref: 1
   8 │         emit Renamed(false);
     │              ───┬───  
-    │                 ╰───── unresolved
+    │                 ╰───── ref: 4
     │ 
  10 │         emit Renamed({x: 1, y: 2});
     │              ───┬───  ┬     ┬  
-    │                 ╰────────────── unresolved
+    │                 ╰────────────── ref: 1
     │                       │     │  
-    │                       ╰──────── unresolved
+    │                       ╰──────── ref: 2
     │                             │  
-    │                             ╰── unresolved
+    │                             ╰── ref: 3
  11 │         emit Renamed({flag: true});
     │              ───┬───  ──┬─  
-    │                 ╰─────────── unresolved
+    │                 ╰─────────── ref: 4
     │                         │   
-    │                         ╰─── unresolved
+    │                         ╰─── ref: 5
 ────╯
