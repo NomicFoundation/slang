@@ -39,7 +39,18 @@ impl<'source> Lexer<'source> {
                 self.brace_depth += 1;
             }
             LexemeKind::YulCloseBrace => {
-                self.brace_depth -= 1;
+                // The brace is unmatched when the assembly block is missing its opening brace
+                // ('assembly }'), in which case it actually closes an enclosing Solidity
+                // construct. Either way, it ends the Yul context.
+                //
+                // TODO(v2): Note that the lexeme is still reported as a 'YulCloseBrace', since
+                // the context has already been morphed by the time we can tell the brace is
+                // unmatched. That is harmless today, because the parser stops at the first
+                // syntax error. Once error recovery is implemented, the parser will keep going
+                // past it, and will need the brace to carry its Solidity kind to close the
+                // enclosing construct. Fixing that requires looking ahead for the opening brace
+                // before morphing to the Yul context.
+                self.brace_depth = self.brace_depth.saturating_sub(1);
                 if self.brace_depth == 0 {
                     self.context = self.context.clone().morph_to_solidity();
                 }
