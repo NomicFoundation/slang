@@ -206,6 +206,79 @@ fn test_state_variable_getter_type() {
 }
 
 define_fixture!(
+    StructGetters,
+    file: "main.sol", r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+contract C {
+    struct Account {
+        uint256 id;
+        mapping(uint256 => uint256) entries;
+        uint256[] history;
+        address owner;
+    }
+
+    Account public account;
+    uint256 public counter;
+}
+"#,
+);
+
+#[test]
+fn test_state_variable_getter_struct_members() {
+    let unit = StructGetters::build_compilation_unit();
+
+    let contract = unit
+        .find_contract_by_name("C")
+        .next()
+        .expect("contract C is found");
+
+    let state_variables = contract
+        .members()
+        .iter()
+        .filter_map(|member| match member {
+            ast::ContractMember::StateVariableDefinition(state_variable) => Some(state_variable),
+            _ => None,
+        })
+        .collect::<Vec<_>>();
+    let [account, counter] = state_variables.as_slice() else {
+        panic!("expected the contract to declare two state variables");
+    };
+
+    let member_names: Vec<String> = account
+        .getter_struct_members()
+        .iter()
+        .map(|member| member.name().name().to_owned())
+        .collect();
+    assert_eq!(
+        member_names,
+        ["id", "owner"],
+        "the mapping and array members are not returned by the getter"
+    );
+
+    let ast::Type::Function(getter) = account
+        .getter_type()
+        .expect("a public state variable has a getter")
+    else {
+        panic!("expected the getter to type as a function");
+    };
+    let ast::Type::Tuple(returned) = getter.return_type() else {
+        panic!("expected the getter to return a tuple");
+    };
+    assert_eq!(
+        returned.types().len(),
+        member_names.len(),
+        "the getter returns one value per returned member"
+    );
+
+    assert!(
+        counter.getter_struct_members().is_empty(),
+        "a getter whose return type is not built from a struct has no members"
+    );
+}
+
+define_fixture!(
     LiteralPlusInteger,
     file: "main.sol", r#"
 // SPDX-License-Identifier: UNLICENSED

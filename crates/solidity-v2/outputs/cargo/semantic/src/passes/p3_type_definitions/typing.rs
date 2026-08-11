@@ -163,14 +163,17 @@ impl Pass<'_> {
         })))
     }
 
+    /// Computes the type of the getter generated for a public state variable,
+    /// together with the struct members its return type is built from.
     pub(super) fn compute_getter_type(
         &mut self,
         receiver_type_id: TypeId,
         definition_id: NodeId,
         type_id: TypeId,
-    ) -> Option<TypeId> {
+    ) -> Option<(TypeId, Vec<NodeId>)> {
         let mut return_type = type_id;
         let mut parameter_types = Vec::new();
+        let mut returned_member_ids = Vec::new();
 
         loop {
             match self.types.get_type_by_id(return_type) {
@@ -239,6 +242,7 @@ impl Pass<'_> {
                                 .register_type_with_data_location(member_type, DataLocation::Memory)
                         };
                         types.push(member_type_id);
+                        returned_member_ids.push(member_id);
                     }
                     return_type = match types.len() {
                         0 => return None,
@@ -284,7 +288,7 @@ impl Pass<'_> {
             mutability: FunctionTypeMutability::View,
             partially_applied: false,
         });
-        Some(self.types.register_type(getter_type))
+        Some((self.types.register_type(getter_type), returned_member_ids))
     }
 
     pub(super) fn visit_parameters(&mut self, parameters: &ir::Parameters) {

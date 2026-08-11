@@ -123,6 +123,9 @@ pub struct ParameterDefinition {
 pub struct StateVariableDefinition {
     pub ir_node: ir::StateVariableDefinition,
     pub getter_type_id: Option<TypeId>,
+    // The struct members the getter's return type is built from, in declaration
+    // order.
+    pub getter_member_ids: Vec<NodeId>,
     // This is the scope the variable is defined in, and is used to change the
     // resolution context in the `CompileConstantEvaluator`.
     pub(crate) enclosing_scope_id: ScopeId,
@@ -460,6 +463,7 @@ impl Definition {
         Self::StateVariable(StateVariableDefinition {
             ir_node: Arc::clone(ir_node),
             getter_type_id: None,
+            getter_member_ids: Vec::new(),
             enclosing_scope_id,
         })
     }
