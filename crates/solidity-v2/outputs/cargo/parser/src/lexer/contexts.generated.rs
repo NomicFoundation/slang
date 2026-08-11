@@ -113,40 +113,73 @@ pub enum PragmaContext {
     Lexeme(LexemeKind),
 }
 
+/// Lookahead pattern guarding `HexLiteral`.
+///
+/// This is its own `Logos` enum so that the pattern is compiled into a DFA at
+/// build time. Building an equivalent `regex::Regex` on first use instead costs
+/// a few hundred thousand instructions per thread, which dominates the cost of
+/// the guard itself.
+#[derive(Logos)]
+enum NotFollowedByHexLiteral {
+    #[regex(r#"((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*)"#)]
+    Matched,
+}
+
+// Kept out of line on purpose: this only runs after a `HexLiteral` match, and
+// inlining the lookahead DFA into the context lexer pushes the whole lexer past
+// the threshold for being inlined into the LALRPOP driver.
+#[inline(never)]
 #[allow(non_snake_case)]
 fn not_followed_by__HexLiteral(
     lex: &mut Lexer<'_, SolidityContext>,
 ) -> FilterResult<LexemeKind, ()> {
-    thread_local! {
-        static PATTERN: regex::Regex =
-            regex::Regex::new(r#"^(((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*))"#).expect("valid not_followed_by pattern");
+    // `logos` only ever attempts a match at the lexer's current position, so an
+    // `Ok` from the very first `next()` is a match anchored at the start of the
+    // remainder, and its span length is the length of that match.
+    let mut lookahead = NotFollowedByHexLiteral::lexer(lex.remainder());
+
+    if matches!(lookahead.next(), Some(Ok(NotFollowedByHexLiteral::Matched))) {
+        lex.bump(lookahead.span().end);
+        FilterResult::Error(())
+    } else {
+        FilterResult::Emit(LexemeKind::HexLiteral)
     }
-    PATTERN.with(|pattern| {
-        if let Some(m) = pattern.find(lex.remainder()) {
-            lex.bump(m.end());
-            FilterResult::Error(())
-        } else {
-            FilterResult::Emit(LexemeKind::HexLiteral)
-        }
-    })
 }
 
+/// Lookahead pattern guarding `DecimalLiteral`.
+///
+/// This is its own `Logos` enum so that the pattern is compiled into a DFA at
+/// build time. Building an equivalent `regex::Regex` on first use instead costs
+/// a few hundred thousand instructions per thread, which dominates the cost of
+/// the guard itself.
+#[derive(Logos)]
+enum NotFollowedByDecimalLiteral {
+    #[regex(r#"((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*)"#)]
+    Matched,
+}
+
+// Kept out of line on purpose: this only runs after a `DecimalLiteral` match, and
+// inlining the lookahead DFA into the context lexer pushes the whole lexer past
+// the threshold for being inlined into the LALRPOP driver.
+#[inline(never)]
 #[allow(non_snake_case)]
 fn not_followed_by__DecimalLiteral(
     lex: &mut Lexer<'_, SolidityContext>,
 ) -> FilterResult<LexemeKind, ()> {
-    thread_local! {
-        static PATTERN: regex::Regex =
-            regex::Regex::new(r#"^(((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*))"#).expect("valid not_followed_by pattern");
+    // `logos` only ever attempts a match at the lexer's current position, so an
+    // `Ok` from the very first `next()` is a match anchored at the start of the
+    // remainder, and its span length is the length of that match.
+    let mut lookahead = NotFollowedByDecimalLiteral::lexer(lex.remainder());
+
+    if matches!(
+        lookahead.next(),
+        Some(Ok(NotFollowedByDecimalLiteral::Matched))
+    ) {
+        lex.bump(lookahead.span().end);
+        FilterResult::Error(())
+    } else {
+        FilterResult::Emit(LexemeKind::DecimalLiteral)
     }
-    PATTERN.with(|pattern| {
-        if let Some(m) = pattern.find(lex.remainder()) {
-            lex.bump(m.end());
-            FilterResult::Error(())
-        } else {
-            FilterResult::Emit(LexemeKind::DecimalLiteral)
-        }
-    })
 }
 
 #[derive(Clone, Debug, Logos)]
@@ -343,38 +376,74 @@ pub enum SolidityContext {
     Lexeme(LexemeKind),
 }
 
+/// Lookahead pattern guarding `YulDecimalLiteral`.
+///
+/// This is its own `Logos` enum so that the pattern is compiled into a DFA at
+/// build time. Building an equivalent `regex::Regex` on first use instead costs
+/// a few hundred thousand instructions per thread, which dominates the cost of
+/// the guard itself.
+#[derive(Logos)]
+enum NotFollowedByYulDecimalLiteral {
+    #[regex(r#"((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*)"#)]
+    Matched,
+}
+
+// Kept out of line on purpose: this only runs after a `YulDecimalLiteral` match, and
+// inlining the lookahead DFA into the context lexer pushes the whole lexer past
+// the threshold for being inlined into the LALRPOP driver.
+#[inline(never)]
 #[allow(non_snake_case)]
 fn not_followed_by__YulDecimalLiteral(
     lex: &mut Lexer<'_, YulContext>,
 ) -> FilterResult<LexemeKind, ()> {
-    thread_local! {
-        static PATTERN: regex::Regex =
-            regex::Regex::new(r#"^(((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*))"#).expect("valid not_followed_by pattern");
+    // `logos` only ever attempts a match at the lexer's current position, so an
+    // `Ok` from the very first `next()` is a match anchored at the start of the
+    // remainder, and its span length is the length of that match.
+    let mut lookahead = NotFollowedByYulDecimalLiteral::lexer(lex.remainder());
+
+    if matches!(
+        lookahead.next(),
+        Some(Ok(NotFollowedByYulDecimalLiteral::Matched))
+    ) {
+        lex.bump(lookahead.span().end);
+        FilterResult::Error(())
+    } else {
+        FilterResult::Emit(LexemeKind::YulDecimalLiteral)
     }
-    PATTERN.with(|pattern| {
-        if let Some(m) = pattern.find(lex.remainder()) {
-            lex.bump(m.end());
-            FilterResult::Error(())
-        } else {
-            FilterResult::Emit(LexemeKind::YulDecimalLiteral)
-        }
-    })
 }
 
+/// Lookahead pattern guarding `YulHexLiteral`.
+///
+/// This is its own `Logos` enum so that the pattern is compiled into a DFA at
+/// build time. Building an equivalent `regex::Regex` on first use instead costs
+/// a few hundred thousand instructions per thread, which dominates the cost of
+/// the guard itself.
+#[derive(Logos)]
+enum NotFollowedByYulHexLiteral {
+    #[regex(r#"((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*)"#)]
+    Matched,
+}
+
+// Kept out of line on purpose: this only runs after a `YulHexLiteral` match, and
+// inlining the lookahead DFA into the context lexer pushes the whole lexer past
+// the threshold for being inlined into the LALRPOP driver.
+#[inline(never)]
 #[allow(non_snake_case)]
 fn not_followed_by__YulHexLiteral(lex: &mut Lexer<'_, YulContext>) -> FilterResult<LexemeKind, ()> {
-    thread_local! {
-        static PATTERN: regex::Regex =
-            regex::Regex::new(r#"^(((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*))"#).expect("valid not_followed_by pattern");
+    // `logos` only ever attempts a match at the lexer's current position, so an
+    // `Ok` from the very first `next()` is a match anchored at the start of the
+    // remainder, and its span length is the length of that match.
+    let mut lookahead = NotFollowedByYulHexLiteral::lexer(lex.remainder());
+
+    if matches!(
+        lookahead.next(),
+        Some(Ok(NotFollowedByYulHexLiteral::Matched))
+    ) {
+        lex.bump(lookahead.span().end);
+        FilterResult::Error(())
+    } else {
+        FilterResult::Emit(LexemeKind::YulHexLiteral)
     }
-    PATTERN.with(|pattern| {
-        if let Some(m) = pattern.find(lex.remainder()) {
-            lex.bump(m.end());
-            FilterResult::Error(())
-        } else {
-            FilterResult::Emit(LexemeKind::YulHexLiteral)
-        }
-    })
 }
 
 #[derive(Clone, Debug, Logos)]

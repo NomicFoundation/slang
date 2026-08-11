@@ -61,22 +61,37 @@ impl<'source> ContextWrapper<'source> {
     {%- for lexeme in context.lexemes %}
     {%- if lexeme.type == "Token" and lexeme.not_followed_by %}
 
+    /// Lookahead pattern guarding `{{ lexeme.kind }}`.
+    ///
+    /// This is its own `Logos` enum so that the pattern is compiled into a DFA at
+    /// build time. Building an equivalent `regex::Regex` on first use instead costs
+    /// a few hundred thousand instructions per thread, which dominates the cost of
+    /// the guard itself.
+    #[derive(Logos)]
+    enum NotFollowedBy{{ lexeme.kind }} {
+        #[regex(r#"{{ lexeme.not_followed_by }}"#)]
+        Matched,
+    }
+
+    // Kept out of line on purpose: this only runs after a `{{ lexeme.kind }}` match, and
+    // inlining the lookahead DFA into the context lexer pushes the whole lexer past
+    // the threshold for being inlined into the LALRPOP driver.
+    #[inline(never)]
     #[allow(non_snake_case)]
     fn not_followed_by__{{ lexeme.kind }}(
         lex: &mut Lexer<'_, {{ context.name }}Context>,
     ) -> FilterResult<LexemeKind, ()> {
-        thread_local! {
-            static PATTERN: regex::Regex =
-                regex::Regex::new(r#"^({{ lexeme.not_followed_by }})"#).expect("valid not_followed_by pattern");
+        // `logos` only ever attempts a match at the lexer's current position, so an
+        // `Ok` from the very first `next()` is a match anchored at the start of the
+        // remainder, and its span length is the length of that match.
+        let mut lookahead = NotFollowedBy{{ lexeme.kind }}::lexer(lex.remainder());
+
+        if matches!(lookahead.next(), Some(Ok(NotFollowedBy{{ lexeme.kind }}::Matched))) {
+            lex.bump(lookahead.span().end);
+            FilterResult::Error(())
+        } else {
+            FilterResult::Emit(LexemeKind::{{ lexeme.kind }})
         }
-        PATTERN.with(|pattern| {
-            if let Some(m) = pattern.find(lex.remainder()) {
-                lex.bump(m.end());
-                FilterResult::Error(())
-            } else {
-                FilterResult::Emit(LexemeKind::{{ lexeme.kind }})
-            }
-        })
     }
     {%- endif %}
     {%- endfor %}
