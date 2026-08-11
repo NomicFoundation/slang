@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[Warning <no-code>] Warning: Support for EVM versions older than constantinople is deprecated and will be removed in the future.
+
+[Warning 5470] Warning: "mcopy" will be promoted to Yul reserved identifier in the future and will not be allowed anymore as an identifier.
+    ╭─[input.sol:12:17]
+    │
+ 12 │             let mcopy := 1
+    │                 ──┬──  
+    │                   ╰──── Error occurred here.
+────╯

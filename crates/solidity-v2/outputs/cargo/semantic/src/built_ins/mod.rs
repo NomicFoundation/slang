@@ -4,9 +4,14 @@ use super::types::{
     TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
 };
 
+mod availability;
+#[path = "availability_specifiers.generated.rs"]
+mod availability_specifiers;
 #[path = "internal.generated.rs"]
 mod internal;
 
+pub(crate) use availability::is_built_in_available;
+pub(crate) use availability_specifiers::built_in_specifiers;
 pub use internal::InternalBuiltIn;
 
 pub(crate) struct BuiltInsResolver<'a> {
