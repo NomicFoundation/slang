@@ -240,27 +240,12 @@ pub type CatchClause = Arc<CatchClauseStruct>;
 pub struct CatchClauseStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
-    pub error: Option<CatchClauseError>,
+    pub kind: CatchClauseKind,
+    pub parameters: Option<Parameters>,
     pub body: Block,
 }
 
 impl CatchClauseStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-}
-
-pub type CatchClauseError = Arc<CatchClauseErrorStruct>;
-
-#[derive(Debug)]
-pub struct CatchClauseErrorStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-    pub name: Option<Identifier>,
-    pub parameters: Parameters,
-}
-
-impl CatchClauseErrorStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
@@ -1642,6 +1627,13 @@ impl AssignmentExpressionOperator {
             AssignmentExpressionOperator::SlashEqual(inner) => inner.unparse(),
         }
     }
+}
+
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+pub enum CatchClauseKind {
+    Error,
+    Panic,
+    LowLevel,
 }
 
 #[derive(Clone, Debug)]

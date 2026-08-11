@@ -3,6 +3,7 @@ mod attributes;
 mod default;
 pub(crate) mod node_id_generator;
 mod pragmas;
+mod try_catch;
 mod yul;
 
 use std::sync::Arc;

@@ -129,12 +129,6 @@ impl TextRange for CatchClauseStruct {
     }
 }
 
-impl TextRange for CatchClauseErrorStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
-    }
-}
-
 impl TextRange for ConditionalExpressionStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.range.clone())
@@ -683,6 +677,18 @@ impl TextRange for AssignmentExpressionOperator {
             AssignmentExpressionOperator::PlusEqual(inner) => inner.calculate_text_range(),
 
             AssignmentExpressionOperator::SlashEqual(inner) => inner.calculate_text_range(),
+        }
+    }
+}
+
+impl TextRange for CatchClauseKind {
+    fn calculate_text_range(&self) -> Option<Range<usize>> {
+        match self {
+            CatchClauseKind::Error => None,
+
+            CatchClauseKind::Panic => None,
+
+            CatchClauseKind::LowLevel => None,
         }
     }
 }

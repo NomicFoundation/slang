@@ -25,7 +25,7 @@ pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_break_statement(&mut se
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_call_options(&mut self, &slang_solidity_v2_ir::ir::CallOptions) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_call_options_expression(&mut self, &slang_solidity_v2_ir::ir::CallOptionsExpression) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_catch_clause(&mut self, &slang_solidity_v2_ir::ir::CatchClause) -> bool
-pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_catch_clause_error(&mut self, &slang_solidity_v2_ir::ir::CatchClauseError) -> bool
+pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_catch_clause_kind(&mut self, &slang_solidity_v2_ir::ir::CatchClauseKind) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_catch_clauses(&mut self, &slang_solidity_v2_ir::ir::CatchClauses) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_conditional_expression(&mut self, &slang_solidity_v2_ir::ir::ConditionalExpression) -> bool
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::enter_constant_definition(&mut self, &slang_solidity_v2_ir::ir::ConstantDefinition) -> bool
@@ -196,7 +196,7 @@ pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_break_statement(&mut se
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_call_options(&mut self, &slang_solidity_v2_ir::ir::CallOptions)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_call_options_expression(&mut self, &slang_solidity_v2_ir::ir::CallOptionsExpression)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_catch_clause(&mut self, &slang_solidity_v2_ir::ir::CatchClause)
-pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_catch_clause_error(&mut self, &slang_solidity_v2_ir::ir::CatchClauseError)
+pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_catch_clause_kind(&mut self, &slang_solidity_v2_ir::ir::CatchClauseKind)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_catch_clauses(&mut self, &slang_solidity_v2_ir::ir::CatchClauses)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_conditional_expression(&mut self, &slang_solidity_v2_ir::ir::ConditionalExpression)
 pub fn slang_solidity_v2_ir::ir::visitor::Visitor::leave_constant_definition(&mut self, &slang_solidity_v2_ir::ir::ConstantDefinition)
@@ -437,7 +437,7 @@ pub fn slang_solidity_v2_ir::ir::visitor::accept_block(&slang_solidity_v2_ir::ir
 pub fn slang_solidity_v2_ir::ir::visitor::accept_break_statement(&slang_solidity_v2_ir::ir::BreakStatement, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_call_options_expression(&slang_solidity_v2_ir::ir::CallOptionsExpression, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_catch_clause(&slang_solidity_v2_ir::ir::CatchClause, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
-pub fn slang_solidity_v2_ir::ir::visitor::accept_catch_clause_error(&slang_solidity_v2_ir::ir::CatchClauseError, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
+pub fn slang_solidity_v2_ir::ir::visitor::accept_catch_clause_kind(&slang_solidity_v2_ir::ir::CatchClauseKind, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_conditional_expression(&slang_solidity_v2_ir::ir::ConditionalExpression, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_constant_definition(&slang_solidity_v2_ir::ir::ConstantDefinition, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
 pub fn slang_solidity_v2_ir::ir::visitor::accept_continue_statement(&slang_solidity_v2_ir::ir::ContinueStatement, &mut impl slang_solidity_v2_ir::ir::visitor::Visitor)
@@ -619,6 +619,25 @@ impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::Assign
 pub fn slang_solidity_v2_ir::ir::AssignmentExpressionOperator::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AssignmentExpressionOperator
 pub fn slang_solidity_v2_ir::ir::AssignmentExpressionOperator::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+pub enum slang_solidity_v2_ir::ir::CatchClauseKind
+pub slang_solidity_v2_ir::ir::CatchClauseKind::Error
+pub slang_solidity_v2_ir::ir::CatchClauseKind::LowLevel
+pub slang_solidity_v2_ir::ir::CatchClauseKind::Panic
+impl core::clone::Clone for slang_solidity_v2_ir::ir::CatchClauseKind
+pub fn slang_solidity_v2_ir::ir::CatchClauseKind::clone(&self) -> slang_solidity_v2_ir::ir::CatchClauseKind
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::CatchClauseKind
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::CatchClauseKind
+pub fn slang_solidity_v2_ir::ir::CatchClauseKind::eq(&self, &slang_solidity_v2_ir::ir::CatchClauseKind) -> bool
+impl core::fmt::Debug for slang_solidity_v2_ir::ir::CatchClauseKind
+pub fn slang_solidity_v2_ir::ir::CatchClauseKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for slang_solidity_v2_ir::ir::CatchClauseKind
+pub fn slang_solidity_v2_ir::ir::CatchClauseKind::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for slang_solidity_v2_ir::ir::CatchClauseKind
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::CatchClauseKind
+impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::CatchClauseKind
+pub fn slang_solidity_v2_ir::ir::CatchClauseKind::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
+impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::CatchClauseKind
+pub fn slang_solidity_v2_ir::ir::CatchClauseKind::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub enum slang_solidity_v2_ir::ir::ContractMember
 pub slang_solidity_v2_ir::ir::ContractMember::ConstantDefinition(slang_solidity_v2_ir::ir::ConstantDefinition)
 pub slang_solidity_v2_ir::ir::ContractMember::EnumDefinition(slang_solidity_v2_ir::ir::EnumDefinition)
@@ -857,172 +876,171 @@ pub fn slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator::calculate_tex
 pub slang_solidity_v2_ir::ir::NodeKind::AbicoderPragma = 0
 pub slang_solidity_v2_ir::ir::NodeKind::AdditiveExpression = 1
 pub slang_solidity_v2_ir::ir::NodeKind::AddressType = 2
-pub slang_solidity_v2_ir::ir::NodeKind::Ampersand = 97
-pub slang_solidity_v2_ir::ir::NodeKind::AmpersandEqual = 98
+pub slang_solidity_v2_ir::ir::NodeKind::Ampersand = 96
+pub slang_solidity_v2_ir::ir::NodeKind::AmpersandEqual = 97
 pub slang_solidity_v2_ir::ir::NodeKind::AndExpression = 3
 pub slang_solidity_v2_ir::ir::NodeKind::ArrayExpression = 4
 pub slang_solidity_v2_ir::ir::NodeKind::ArrayTypeName = 5
 pub slang_solidity_v2_ir::ir::NodeKind::AssemblyStatement = 6
 pub slang_solidity_v2_ir::ir::NodeKind::AssignmentExpression = 7
-pub slang_solidity_v2_ir::ir::NodeKind::Asterisk = 99
-pub slang_solidity_v2_ir::ir::NodeKind::AsteriskEqual = 100
-pub slang_solidity_v2_ir::ir::NodeKind::Bang = 101
-pub slang_solidity_v2_ir::ir::NodeKind::BangEqual = 102
-pub slang_solidity_v2_ir::ir::NodeKind::Bar = 103
-pub slang_solidity_v2_ir::ir::NodeKind::BarEqual = 104
+pub slang_solidity_v2_ir::ir::NodeKind::Asterisk = 98
+pub slang_solidity_v2_ir::ir::NodeKind::AsteriskEqual = 99
+pub slang_solidity_v2_ir::ir::NodeKind::Bang = 100
+pub slang_solidity_v2_ir::ir::NodeKind::BangEqual = 101
+pub slang_solidity_v2_ir::ir::NodeKind::Bar = 102
+pub slang_solidity_v2_ir::ir::NodeKind::BarEqual = 103
 pub slang_solidity_v2_ir::ir::NodeKind::BitwiseAndExpression = 8
 pub slang_solidity_v2_ir::ir::NodeKind::BitwiseOrExpression = 9
 pub slang_solidity_v2_ir::ir::NodeKind::BitwiseXorExpression = 10
 pub slang_solidity_v2_ir::ir::NodeKind::Block = 11
-pub slang_solidity_v2_ir::ir::NodeKind::BoolKeyword = 105
+pub slang_solidity_v2_ir::ir::NodeKind::BoolKeyword = 104
 pub slang_solidity_v2_ir::ir::NodeKind::BreakStatement = 12
-pub slang_solidity_v2_ir::ir::NodeKind::BytesKeyword = 106
-pub slang_solidity_v2_ir::ir::NodeKind::CallDataKeyword = 107
+pub slang_solidity_v2_ir::ir::NodeKind::BytesKeyword = 105
+pub slang_solidity_v2_ir::ir::NodeKind::CallDataKeyword = 106
 pub slang_solidity_v2_ir::ir::NodeKind::CallOptionsExpression = 13
-pub slang_solidity_v2_ir::ir::NodeKind::Caret = 108
-pub slang_solidity_v2_ir::ir::NodeKind::CaretEqual = 109
+pub slang_solidity_v2_ir::ir::NodeKind::Caret = 107
+pub slang_solidity_v2_ir::ir::NodeKind::CaretEqual = 108
 pub slang_solidity_v2_ir::ir::NodeKind::CatchClause = 14
-pub slang_solidity_v2_ir::ir::NodeKind::CatchClauseError = 15
-pub slang_solidity_v2_ir::ir::NodeKind::ConditionalExpression = 16
-pub slang_solidity_v2_ir::ir::NodeKind::ConstantDefinition = 17
-pub slang_solidity_v2_ir::ir::NodeKind::ContinueStatement = 18
-pub slang_solidity_v2_ir::ir::NodeKind::ContractDefinition = 19
-pub slang_solidity_v2_ir::ir::NodeKind::DaysKeyword = 110
-pub slang_solidity_v2_ir::ir::NodeKind::DecimalLiteral = 111
-pub slang_solidity_v2_ir::ir::NodeKind::DecimalNumberExpression = 20
-pub slang_solidity_v2_ir::ir::NodeKind::DeleteKeyword = 112
-pub slang_solidity_v2_ir::ir::NodeKind::DoWhileStatement = 21
-pub slang_solidity_v2_ir::ir::NodeKind::EmitStatement = 22
-pub slang_solidity_v2_ir::ir::NodeKind::EnumDefinition = 23
-pub slang_solidity_v2_ir::ir::NodeKind::Equal = 113
-pub slang_solidity_v2_ir::ir::NodeKind::EqualEqual = 114
-pub slang_solidity_v2_ir::ir::NodeKind::EqualityExpression = 24
-pub slang_solidity_v2_ir::ir::NodeKind::ErrorDefinition = 25
-pub slang_solidity_v2_ir::ir::NodeKind::EtherKeyword = 115
-pub slang_solidity_v2_ir::ir::NodeKind::EventDefinition = 26
-pub slang_solidity_v2_ir::ir::NodeKind::ExperimentalPragma = 27
-pub slang_solidity_v2_ir::ir::NodeKind::ExponentiationExpression = 28
-pub slang_solidity_v2_ir::ir::NodeKind::ExpressionStatement = 29
-pub slang_solidity_v2_ir::ir::NodeKind::FalseKeyword = 116
-pub slang_solidity_v2_ir::ir::NodeKind::FixedKeyword = 117
-pub slang_solidity_v2_ir::ir::NodeKind::ForStatement = 30
-pub slang_solidity_v2_ir::ir::NodeKind::FunctionAttributes = 31
-pub slang_solidity_v2_ir::ir::NodeKind::FunctionCallExpression = 32
-pub slang_solidity_v2_ir::ir::NodeKind::FunctionDefinition = 33
-pub slang_solidity_v2_ir::ir::NodeKind::FunctionType = 34
-pub slang_solidity_v2_ir::ir::NodeKind::FunctionTypeAttributes = 35
-pub slang_solidity_v2_ir::ir::NodeKind::GreaterThan = 118
-pub slang_solidity_v2_ir::ir::NodeKind::GreaterThanEqual = 119
-pub slang_solidity_v2_ir::ir::NodeKind::GreaterThanGreaterThan = 120
-pub slang_solidity_v2_ir::ir::NodeKind::GreaterThanGreaterThanEqual = 121
-pub slang_solidity_v2_ir::ir::NodeKind::GreaterThanGreaterThanGreaterThan = 122
-pub slang_solidity_v2_ir::ir::NodeKind::GreaterThanGreaterThanGreaterThanEqual = 123
-pub slang_solidity_v2_ir::ir::NodeKind::GweiKeyword = 124
-pub slang_solidity_v2_ir::ir::NodeKind::HexLiteral = 125
-pub slang_solidity_v2_ir::ir::NodeKind::HexNumberExpression = 36
-pub slang_solidity_v2_ir::ir::NodeKind::HexStringLiteral = 126
-pub slang_solidity_v2_ir::ir::NodeKind::HoursKeyword = 127
-pub slang_solidity_v2_ir::ir::NodeKind::Identifier = 128
-pub slang_solidity_v2_ir::ir::NodeKind::IfStatement = 37
-pub slang_solidity_v2_ir::ir::NodeKind::ImportDeconstruction = 38
-pub slang_solidity_v2_ir::ir::NodeKind::ImportDeconstructionSymbol = 39
-pub slang_solidity_v2_ir::ir::NodeKind::IndexAccessExpression = 40
-pub slang_solidity_v2_ir::ir::NodeKind::InequalityExpression = 41
-pub slang_solidity_v2_ir::ir::NodeKind::InheritanceType = 42
-pub slang_solidity_v2_ir::ir::NodeKind::IntKeyword = 129
-pub slang_solidity_v2_ir::ir::NodeKind::InterfaceDefinition = 43
-pub slang_solidity_v2_ir::ir::NodeKind::LessThan = 130
-pub slang_solidity_v2_ir::ir::NodeKind::LessThanEqual = 131
-pub slang_solidity_v2_ir::ir::NodeKind::LessThanLessThan = 132
-pub slang_solidity_v2_ir::ir::NodeKind::LessThanLessThanEqual = 133
-pub slang_solidity_v2_ir::ir::NodeKind::LibraryDefinition = 44
-pub slang_solidity_v2_ir::ir::NodeKind::MappingType = 45
-pub slang_solidity_v2_ir::ir::NodeKind::MemberAccessExpression = 46
-pub slang_solidity_v2_ir::ir::NodeKind::MemoryKeyword = 134
-pub slang_solidity_v2_ir::ir::NodeKind::Minus = 135
-pub slang_solidity_v2_ir::ir::NodeKind::MinusEqual = 136
-pub slang_solidity_v2_ir::ir::NodeKind::MinusMinus = 137
-pub slang_solidity_v2_ir::ir::NodeKind::MinutesKeyword = 138
-pub slang_solidity_v2_ir::ir::NodeKind::ModifierInvocation = 47
-pub slang_solidity_v2_ir::ir::NodeKind::MultiTypedDeclaration = 48
-pub slang_solidity_v2_ir::ir::NodeKind::MultiTypedDeclarationElement = 49
-pub slang_solidity_v2_ir::ir::NodeKind::MultiplicativeExpression = 50
-pub slang_solidity_v2_ir::ir::NodeKind::NamedArgument = 51
-pub slang_solidity_v2_ir::ir::NodeKind::NewExpression = 52
-pub slang_solidity_v2_ir::ir::NodeKind::OrExpression = 53
-pub slang_solidity_v2_ir::ir::NodeKind::Parameter = 54
-pub slang_solidity_v2_ir::ir::NodeKind::PathImport = 55
-pub slang_solidity_v2_ir::ir::NodeKind::PayableKeyword = 139
-pub slang_solidity_v2_ir::ir::NodeKind::Percent = 140
-pub slang_solidity_v2_ir::ir::NodeKind::PercentEqual = 141
-pub slang_solidity_v2_ir::ir::NodeKind::Plus = 142
-pub slang_solidity_v2_ir::ir::NodeKind::PlusEqual = 143
-pub slang_solidity_v2_ir::ir::NodeKind::PlusPlus = 144
-pub slang_solidity_v2_ir::ir::NodeKind::PostfixExpression = 56
-pub slang_solidity_v2_ir::ir::NodeKind::PragmaCaret = 145
-pub slang_solidity_v2_ir::ir::NodeKind::PragmaDirective = 57
-pub slang_solidity_v2_ir::ir::NodeKind::PragmaEqual = 146
-pub slang_solidity_v2_ir::ir::NodeKind::PragmaGreaterThan = 147
-pub slang_solidity_v2_ir::ir::NodeKind::PragmaGreaterThanEqual = 148
-pub slang_solidity_v2_ir::ir::NodeKind::PragmaLessThan = 149
-pub slang_solidity_v2_ir::ir::NodeKind::PragmaLessThanEqual = 150
-pub slang_solidity_v2_ir::ir::NodeKind::PragmaTilde = 151
-pub slang_solidity_v2_ir::ir::NodeKind::PrefixExpression = 58
-pub slang_solidity_v2_ir::ir::NodeKind::ReturnStatement = 59
-pub slang_solidity_v2_ir::ir::NodeKind::RevertStatement = 60
-pub slang_solidity_v2_ir::ir::NodeKind::SecondsKeyword = 152
-pub slang_solidity_v2_ir::ir::NodeKind::Semicolon = 153
-pub slang_solidity_v2_ir::ir::NodeKind::ShiftExpression = 61
-pub slang_solidity_v2_ir::ir::NodeKind::SingleTypedDeclaration = 62
-pub slang_solidity_v2_ir::ir::NodeKind::Slash = 154
-pub slang_solidity_v2_ir::ir::NodeKind::SlashEqual = 155
-pub slang_solidity_v2_ir::ir::NodeKind::SourceUnit = 63
-pub slang_solidity_v2_ir::ir::NodeKind::StateVariableAttributes = 64
-pub slang_solidity_v2_ir::ir::NodeKind::StateVariableDefinition = 65
-pub slang_solidity_v2_ir::ir::NodeKind::StorageKeyword = 156
-pub slang_solidity_v2_ir::ir::NodeKind::StringKeyword = 157
-pub slang_solidity_v2_ir::ir::NodeKind::StringLiteral = 158
-pub slang_solidity_v2_ir::ir::NodeKind::StructDefinition = 66
-pub slang_solidity_v2_ir::ir::NodeKind::StructMember = 67
-pub slang_solidity_v2_ir::ir::NodeKind::SuperKeyword = 159
-pub slang_solidity_v2_ir::ir::NodeKind::ThisKeyword = 160
-pub slang_solidity_v2_ir::ir::NodeKind::Tilde = 161
-pub slang_solidity_v2_ir::ir::NodeKind::TrueKeyword = 162
-pub slang_solidity_v2_ir::ir::NodeKind::TryStatement = 68
-pub slang_solidity_v2_ir::ir::NodeKind::TupleExpression = 69
-pub slang_solidity_v2_ir::ir::NodeKind::TupleValue = 70
-pub slang_solidity_v2_ir::ir::NodeKind::TypeExpression = 71
-pub slang_solidity_v2_ir::ir::NodeKind::UfixedKeyword = 163
-pub slang_solidity_v2_ir::ir::NodeKind::UintKeyword = 164
-pub slang_solidity_v2_ir::ir::NodeKind::UncheckedBlock = 72
-pub slang_solidity_v2_ir::ir::NodeKind::UnicodeStringLiteral = 165
-pub slang_solidity_v2_ir::ir::NodeKind::UserDefinedValueTypeDefinition = 73
-pub slang_solidity_v2_ir::ir::NodeKind::UsingDeconstruction = 74
-pub slang_solidity_v2_ir::ir::NodeKind::UsingDeconstructionSymbol = 75
-pub slang_solidity_v2_ir::ir::NodeKind::UsingDirective = 76
-pub slang_solidity_v2_ir::ir::NodeKind::VariableDeclaration = 77
-pub slang_solidity_v2_ir::ir::NodeKind::VariableDeclarationStatement = 78
-pub slang_solidity_v2_ir::ir::NodeKind::VersionPragma = 79
-pub slang_solidity_v2_ir::ir::NodeKind::VersionRange = 80
-pub slang_solidity_v2_ir::ir::NodeKind::VersionSpecifier = 166
-pub slang_solidity_v2_ir::ir::NodeKind::VersionTerm = 81
-pub slang_solidity_v2_ir::ir::NodeKind::WeeksKeyword = 167
-pub slang_solidity_v2_ir::ir::NodeKind::WeiKeyword = 168
-pub slang_solidity_v2_ir::ir::NodeKind::WhileStatement = 82
-pub slang_solidity_v2_ir::ir::NodeKind::YulBlock = 83
-pub slang_solidity_v2_ir::ir::NodeKind::YulBreakStatement = 84
-pub slang_solidity_v2_ir::ir::NodeKind::YulContinueStatement = 85
-pub slang_solidity_v2_ir::ir::NodeKind::YulDefaultCase = 86
-pub slang_solidity_v2_ir::ir::NodeKind::YulForStatement = 87
-pub slang_solidity_v2_ir::ir::NodeKind::YulFunctionCallExpression = 88
-pub slang_solidity_v2_ir::ir::NodeKind::YulFunctionDefinition = 89
-pub slang_solidity_v2_ir::ir::NodeKind::YulIfStatement = 90
-pub slang_solidity_v2_ir::ir::NodeKind::YulLeaveStatement = 91
-pub slang_solidity_v2_ir::ir::NodeKind::YulSwitchStatement = 92
-pub slang_solidity_v2_ir::ir::NodeKind::YulValueCase = 93
-pub slang_solidity_v2_ir::ir::NodeKind::YulVariableAssignmentStatement = 94
-pub slang_solidity_v2_ir::ir::NodeKind::YulVariableDeclarationStatement = 95
-pub slang_solidity_v2_ir::ir::NodeKind::YulVariableDeclarationValue = 96
+pub slang_solidity_v2_ir::ir::NodeKind::ConditionalExpression = 15
+pub slang_solidity_v2_ir::ir::NodeKind::ConstantDefinition = 16
+pub slang_solidity_v2_ir::ir::NodeKind::ContinueStatement = 17
+pub slang_solidity_v2_ir::ir::NodeKind::ContractDefinition = 18
+pub slang_solidity_v2_ir::ir::NodeKind::DaysKeyword = 109
+pub slang_solidity_v2_ir::ir::NodeKind::DecimalLiteral = 110
+pub slang_solidity_v2_ir::ir::NodeKind::DecimalNumberExpression = 19
+pub slang_solidity_v2_ir::ir::NodeKind::DeleteKeyword = 111
+pub slang_solidity_v2_ir::ir::NodeKind::DoWhileStatement = 20
+pub slang_solidity_v2_ir::ir::NodeKind::EmitStatement = 21
+pub slang_solidity_v2_ir::ir::NodeKind::EnumDefinition = 22
+pub slang_solidity_v2_ir::ir::NodeKind::Equal = 112
+pub slang_solidity_v2_ir::ir::NodeKind::EqualEqual = 113
+pub slang_solidity_v2_ir::ir::NodeKind::EqualityExpression = 23
+pub slang_solidity_v2_ir::ir::NodeKind::ErrorDefinition = 24
+pub slang_solidity_v2_ir::ir::NodeKind::EtherKeyword = 114
+pub slang_solidity_v2_ir::ir::NodeKind::EventDefinition = 25
+pub slang_solidity_v2_ir::ir::NodeKind::ExperimentalPragma = 26
+pub slang_solidity_v2_ir::ir::NodeKind::ExponentiationExpression = 27
+pub slang_solidity_v2_ir::ir::NodeKind::ExpressionStatement = 28
+pub slang_solidity_v2_ir::ir::NodeKind::FalseKeyword = 115
+pub slang_solidity_v2_ir::ir::NodeKind::FixedKeyword = 116
+pub slang_solidity_v2_ir::ir::NodeKind::ForStatement = 29
+pub slang_solidity_v2_ir::ir::NodeKind::FunctionAttributes = 30
+pub slang_solidity_v2_ir::ir::NodeKind::FunctionCallExpression = 31
+pub slang_solidity_v2_ir::ir::NodeKind::FunctionDefinition = 32
+pub slang_solidity_v2_ir::ir::NodeKind::FunctionType = 33
+pub slang_solidity_v2_ir::ir::NodeKind::FunctionTypeAttributes = 34
+pub slang_solidity_v2_ir::ir::NodeKind::GreaterThan = 117
+pub slang_solidity_v2_ir::ir::NodeKind::GreaterThanEqual = 118
+pub slang_solidity_v2_ir::ir::NodeKind::GreaterThanGreaterThan = 119
+pub slang_solidity_v2_ir::ir::NodeKind::GreaterThanGreaterThanEqual = 120
+pub slang_solidity_v2_ir::ir::NodeKind::GreaterThanGreaterThanGreaterThan = 121
+pub slang_solidity_v2_ir::ir::NodeKind::GreaterThanGreaterThanGreaterThanEqual = 122
+pub slang_solidity_v2_ir::ir::NodeKind::GweiKeyword = 123
+pub slang_solidity_v2_ir::ir::NodeKind::HexLiteral = 124
+pub slang_solidity_v2_ir::ir::NodeKind::HexNumberExpression = 35
+pub slang_solidity_v2_ir::ir::NodeKind::HexStringLiteral = 125
+pub slang_solidity_v2_ir::ir::NodeKind::HoursKeyword = 126
+pub slang_solidity_v2_ir::ir::NodeKind::Identifier = 127
+pub slang_solidity_v2_ir::ir::NodeKind::IfStatement = 36
+pub slang_solidity_v2_ir::ir::NodeKind::ImportDeconstruction = 37
+pub slang_solidity_v2_ir::ir::NodeKind::ImportDeconstructionSymbol = 38
+pub slang_solidity_v2_ir::ir::NodeKind::IndexAccessExpression = 39
+pub slang_solidity_v2_ir::ir::NodeKind::InequalityExpression = 40
+pub slang_solidity_v2_ir::ir::NodeKind::InheritanceType = 41
+pub slang_solidity_v2_ir::ir::NodeKind::IntKeyword = 128
+pub slang_solidity_v2_ir::ir::NodeKind::InterfaceDefinition = 42
+pub slang_solidity_v2_ir::ir::NodeKind::LessThan = 129
+pub slang_solidity_v2_ir::ir::NodeKind::LessThanEqual = 130
+pub slang_solidity_v2_ir::ir::NodeKind::LessThanLessThan = 131
+pub slang_solidity_v2_ir::ir::NodeKind::LessThanLessThanEqual = 132
+pub slang_solidity_v2_ir::ir::NodeKind::LibraryDefinition = 43
+pub slang_solidity_v2_ir::ir::NodeKind::MappingType = 44
+pub slang_solidity_v2_ir::ir::NodeKind::MemberAccessExpression = 45
+pub slang_solidity_v2_ir::ir::NodeKind::MemoryKeyword = 133
+pub slang_solidity_v2_ir::ir::NodeKind::Minus = 134
+pub slang_solidity_v2_ir::ir::NodeKind::MinusEqual = 135
+pub slang_solidity_v2_ir::ir::NodeKind::MinusMinus = 136
+pub slang_solidity_v2_ir::ir::NodeKind::MinutesKeyword = 137
+pub slang_solidity_v2_ir::ir::NodeKind::ModifierInvocation = 46
+pub slang_solidity_v2_ir::ir::NodeKind::MultiTypedDeclaration = 47
+pub slang_solidity_v2_ir::ir::NodeKind::MultiTypedDeclarationElement = 48
+pub slang_solidity_v2_ir::ir::NodeKind::MultiplicativeExpression = 49
+pub slang_solidity_v2_ir::ir::NodeKind::NamedArgument = 50
+pub slang_solidity_v2_ir::ir::NodeKind::NewExpression = 51
+pub slang_solidity_v2_ir::ir::NodeKind::OrExpression = 52
+pub slang_solidity_v2_ir::ir::NodeKind::Parameter = 53
+pub slang_solidity_v2_ir::ir::NodeKind::PathImport = 54
+pub slang_solidity_v2_ir::ir::NodeKind::PayableKeyword = 138
+pub slang_solidity_v2_ir::ir::NodeKind::Percent = 139
+pub slang_solidity_v2_ir::ir::NodeKind::PercentEqual = 140
+pub slang_solidity_v2_ir::ir::NodeKind::Plus = 141
+pub slang_solidity_v2_ir::ir::NodeKind::PlusEqual = 142
+pub slang_solidity_v2_ir::ir::NodeKind::PlusPlus = 143
+pub slang_solidity_v2_ir::ir::NodeKind::PostfixExpression = 55
+pub slang_solidity_v2_ir::ir::NodeKind::PragmaCaret = 144
+pub slang_solidity_v2_ir::ir::NodeKind::PragmaDirective = 56
+pub slang_solidity_v2_ir::ir::NodeKind::PragmaEqual = 145
+pub slang_solidity_v2_ir::ir::NodeKind::PragmaGreaterThan = 146
+pub slang_solidity_v2_ir::ir::NodeKind::PragmaGreaterThanEqual = 147
+pub slang_solidity_v2_ir::ir::NodeKind::PragmaLessThan = 148
+pub slang_solidity_v2_ir::ir::NodeKind::PragmaLessThanEqual = 149
+pub slang_solidity_v2_ir::ir::NodeKind::PragmaTilde = 150
+pub slang_solidity_v2_ir::ir::NodeKind::PrefixExpression = 57
+pub slang_solidity_v2_ir::ir::NodeKind::ReturnStatement = 58
+pub slang_solidity_v2_ir::ir::NodeKind::RevertStatement = 59
+pub slang_solidity_v2_ir::ir::NodeKind::SecondsKeyword = 151
+pub slang_solidity_v2_ir::ir::NodeKind::Semicolon = 152
+pub slang_solidity_v2_ir::ir::NodeKind::ShiftExpression = 60
+pub slang_solidity_v2_ir::ir::NodeKind::SingleTypedDeclaration = 61
+pub slang_solidity_v2_ir::ir::NodeKind::Slash = 153
+pub slang_solidity_v2_ir::ir::NodeKind::SlashEqual = 154
+pub slang_solidity_v2_ir::ir::NodeKind::SourceUnit = 62
+pub slang_solidity_v2_ir::ir::NodeKind::StateVariableAttributes = 63
+pub slang_solidity_v2_ir::ir::NodeKind::StateVariableDefinition = 64
+pub slang_solidity_v2_ir::ir::NodeKind::StorageKeyword = 155
+pub slang_solidity_v2_ir::ir::NodeKind::StringKeyword = 156
+pub slang_solidity_v2_ir::ir::NodeKind::StringLiteral = 157
+pub slang_solidity_v2_ir::ir::NodeKind::StructDefinition = 65
+pub slang_solidity_v2_ir::ir::NodeKind::StructMember = 66
+pub slang_solidity_v2_ir::ir::NodeKind::SuperKeyword = 158
+pub slang_solidity_v2_ir::ir::NodeKind::ThisKeyword = 159
+pub slang_solidity_v2_ir::ir::NodeKind::Tilde = 160
+pub slang_solidity_v2_ir::ir::NodeKind::TrueKeyword = 161
+pub slang_solidity_v2_ir::ir::NodeKind::TryStatement = 67
+pub slang_solidity_v2_ir::ir::NodeKind::TupleExpression = 68
+pub slang_solidity_v2_ir::ir::NodeKind::TupleValue = 69
+pub slang_solidity_v2_ir::ir::NodeKind::TypeExpression = 70
+pub slang_solidity_v2_ir::ir::NodeKind::UfixedKeyword = 162
+pub slang_solidity_v2_ir::ir::NodeKind::UintKeyword = 163
+pub slang_solidity_v2_ir::ir::NodeKind::UncheckedBlock = 71
+pub slang_solidity_v2_ir::ir::NodeKind::UnicodeStringLiteral = 164
+pub slang_solidity_v2_ir::ir::NodeKind::UserDefinedValueTypeDefinition = 72
+pub slang_solidity_v2_ir::ir::NodeKind::UsingDeconstruction = 73
+pub slang_solidity_v2_ir::ir::NodeKind::UsingDeconstructionSymbol = 74
+pub slang_solidity_v2_ir::ir::NodeKind::UsingDirective = 75
+pub slang_solidity_v2_ir::ir::NodeKind::VariableDeclaration = 76
+pub slang_solidity_v2_ir::ir::NodeKind::VariableDeclarationStatement = 77
+pub slang_solidity_v2_ir::ir::NodeKind::VersionPragma = 78
+pub slang_solidity_v2_ir::ir::NodeKind::VersionRange = 79
+pub slang_solidity_v2_ir::ir::NodeKind::VersionSpecifier = 165
+pub slang_solidity_v2_ir::ir::NodeKind::VersionTerm = 80
+pub slang_solidity_v2_ir::ir::NodeKind::WeeksKeyword = 166
+pub slang_solidity_v2_ir::ir::NodeKind::WeiKeyword = 167
+pub slang_solidity_v2_ir::ir::NodeKind::WhileStatement = 81
+pub slang_solidity_v2_ir::ir::NodeKind::YulBlock = 82
+pub slang_solidity_v2_ir::ir::NodeKind::YulBreakStatement = 83
+pub slang_solidity_v2_ir::ir::NodeKind::YulContinueStatement = 84
+pub slang_solidity_v2_ir::ir::NodeKind::YulDefaultCase = 85
+pub slang_solidity_v2_ir::ir::NodeKind::YulForStatement = 86
+pub slang_solidity_v2_ir::ir::NodeKind::YulFunctionCallExpression = 87
+pub slang_solidity_v2_ir::ir::NodeKind::YulFunctionDefinition = 88
+pub slang_solidity_v2_ir::ir::NodeKind::YulIfStatement = 89
+pub slang_solidity_v2_ir::ir::NodeKind::YulLeaveStatement = 90
+pub slang_solidity_v2_ir::ir::NodeKind::YulSwitchStatement = 91
+pub slang_solidity_v2_ir::ir::NodeKind::YulValueCase = 92
+pub slang_solidity_v2_ir::ir::NodeKind::YulVariableAssignmentStatement = 93
+pub slang_solidity_v2_ir::ir::NodeKind::YulVariableDeclarationStatement = 94
+pub slang_solidity_v2_ir::ir::NodeKind::YulVariableDeclarationValue = 95
 impl slang_solidity_v2_ir::ir::NodeKind
 pub const slang_solidity_v2_ir::ir::NodeKind::COUNT: usize
 impl core::clone::Clone for slang_solidity_v2_ir::ir::NodeKind
@@ -1774,21 +1792,10 @@ impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::CaretS
 pub fn slang_solidity_v2_ir::ir::CaretStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::CaretStruct
 pub fn slang_solidity_v2_ir::ir::CaretStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-pub struct slang_solidity_v2_ir::ir::CatchClauseErrorStruct
-pub slang_solidity_v2_ir::ir::CatchClauseErrorStruct::name: core::option::Option<slang_solidity_v2_ir::ir::Identifier>
-pub slang_solidity_v2_ir::ir::CatchClauseErrorStruct::parameters: slang_solidity_v2_ir::ir::Parameters
-pub slang_solidity_v2_ir::ir::CatchClauseErrorStruct::range: core::ops::range::Range<usize>
-impl slang_solidity_v2_ir::ir::CatchClauseErrorStruct
-pub fn slang_solidity_v2_ir::ir::CatchClauseErrorStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
-impl core::fmt::Debug for slang_solidity_v2_ir::ir::CatchClauseErrorStruct
-pub fn slang_solidity_v2_ir::ir::CatchClauseErrorStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::CatchClauseErrorStruct
-pub fn slang_solidity_v2_ir::ir::CatchClauseErrorStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
-impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::CatchClauseErrorStruct
-pub fn slang_solidity_v2_ir::ir::CatchClauseErrorStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::CatchClauseStruct
 pub slang_solidity_v2_ir::ir::CatchClauseStruct::body: slang_solidity_v2_ir::ir::Block
-pub slang_solidity_v2_ir::ir::CatchClauseStruct::error: core::option::Option<slang_solidity_v2_ir::ir::CatchClauseError>
+pub slang_solidity_v2_ir::ir::CatchClauseStruct::kind: slang_solidity_v2_ir::ir::CatchClauseKind
+pub slang_solidity_v2_ir::ir::CatchClauseStruct::parameters: core::option::Option<slang_solidity_v2_ir::ir::Parameters>
 pub slang_solidity_v2_ir::ir::CatchClauseStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::CatchClauseStruct
 pub fn slang_solidity_v2_ir::ir::CatchClauseStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
@@ -3884,8 +3891,8 @@ impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::CaretE
 pub fn slang_solidity_v2_ir::ir::CaretEqualStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::CaretStruct
 pub fn slang_solidity_v2_ir::ir::CaretStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
-impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::CatchClauseErrorStruct
-pub fn slang_solidity_v2_ir::ir::CatchClauseErrorStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
+impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::CatchClauseKind
+pub fn slang_solidity_v2_ir::ir::CatchClauseKind::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::CatchClauseStruct
 pub fn slang_solidity_v2_ir::ir::CatchClauseStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ConditionalExpressionStruct
@@ -4316,8 +4323,8 @@ impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::CaretEqua
 pub fn slang_solidity_v2_ir::ir::CaretEqualStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::CaretStruct
 pub fn slang_solidity_v2_ir::ir::CaretStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::CatchClauseErrorStruct
-pub fn slang_solidity_v2_ir::ir::CatchClauseErrorStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::CatchClauseKind
+pub fn slang_solidity_v2_ir::ir::CatchClauseKind::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::CatchClauseStruct
 pub fn slang_solidity_v2_ir::ir::CatchClauseStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ConditionalExpressionStruct
@@ -4707,7 +4714,6 @@ pub type slang_solidity_v2_ir::ir::CallOptionsExpression = alloc::sync::Arc<slan
 pub type slang_solidity_v2_ir::ir::Caret = alloc::sync::Arc<slang_solidity_v2_ir::ir::CaretStruct>
 pub type slang_solidity_v2_ir::ir::CaretEqual = alloc::sync::Arc<slang_solidity_v2_ir::ir::CaretEqualStruct>
 pub type slang_solidity_v2_ir::ir::CatchClause = alloc::sync::Arc<slang_solidity_v2_ir::ir::CatchClauseStruct>
-pub type slang_solidity_v2_ir::ir::CatchClauseError = alloc::sync::Arc<slang_solidity_v2_ir::ir::CatchClauseErrorStruct>
 pub type slang_solidity_v2_ir::ir::CatchClauses = alloc::sync::Arc<[slang_solidity_v2_ir::ir::CatchClause]>
 pub type slang_solidity_v2_ir::ir::ConditionalExpression = alloc::sync::Arc<slang_solidity_v2_ir::ir::ConditionalExpressionStruct>
 pub type slang_solidity_v2_ir::ir::ConstantDefinition = alloc::sync::Arc<slang_solidity_v2_ir::ir::ConstantDefinitionStruct>

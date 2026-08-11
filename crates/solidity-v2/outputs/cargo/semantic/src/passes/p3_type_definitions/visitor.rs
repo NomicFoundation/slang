@@ -167,8 +167,10 @@ impl Visitor for Pass<'_> {
         }
     }
 
-    fn leave_catch_clause_error(&mut self, node: &ir::CatchClauseError) {
-        self.visit_parameters(&node.parameters);
+    fn leave_catch_clause(&mut self, node: &ir::CatchClause) {
+        if let Some(parameters) = &node.parameters {
+            self.visit_parameters(parameters);
+        }
     }
 
     fn enter_type_name(&mut self, node: &ir::TypeName) -> bool {
@@ -494,18 +496,6 @@ impl Visitor for Pass<'_> {
     fn leave_emit_statement(&mut self, node: &ir::EmitStatement) {
         let type_id = self.type_of_identifier_path(&node.event, None);
         self.binder.set_node_type(node.id(), type_id);
-    }
-
-    fn enter_catch_clause_error(&mut self, node: &ir::CatchClauseError) -> bool {
-        if let Some(name) = &node.name {
-            let resolution = match name.unparse() {
-                "Error" | "Panic" => Resolution::BuiltIn(InternalBuiltIn::ErrorOrPanic),
-                _ => Resolution::Unresolved,
-            };
-            let reference = Reference::new(Arc::clone(name), resolution);
-            self.binder.insert_reference(reference);
-        }
-        true
     }
 
     fn leave_new_expression(&mut self, node: &ir::NewExpression) {

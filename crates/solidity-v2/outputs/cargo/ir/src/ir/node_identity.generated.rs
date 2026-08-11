@@ -128,12 +128,6 @@ impl NodeIdentity for CatchClauseStruct {
     }
 }
 
-impl NodeIdentity for CatchClauseErrorStruct {
-    fn node_id(&self) -> Option<NodeId> {
-        Some(self.id)
-    }
-}
-
 impl NodeIdentity for ConditionalExpressionStruct {
     fn node_id(&self) -> Option<NodeId> {
         Some(self.id)
@@ -678,6 +672,18 @@ impl NodeIdentity for AssignmentExpressionOperator {
             AssignmentExpressionOperator::PlusEqual(inner) => inner.node_id(),
 
             AssignmentExpressionOperator::SlashEqual(inner) => inner.node_id(),
+        }
+    }
+}
+
+impl NodeIdentity for CatchClauseKind {
+    fn node_id(&self) -> Option<NodeId> {
+        match self {
+            CatchClauseKind::Error => None,
+
+            CatchClauseKind::Panic => None,
+
+            CatchClauseKind::LowLevel => None,
         }
     }
 }

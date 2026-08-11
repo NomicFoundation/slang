@@ -79,11 +79,6 @@ pub trait Visitor {
     }
     fn leave_catch_clause(&mut self, _node: &CatchClause) {}
 
-    fn enter_catch_clause_error(&mut self, _node: &CatchClauseError) -> bool {
-        true
-    }
-    fn leave_catch_clause_error(&mut self, _node: &CatchClauseError) {}
-
     fn enter_conditional_expression(&mut self, _node: &ConditionalExpression) -> bool {
         true
     }
@@ -534,6 +529,11 @@ pub trait Visitor {
         true
     }
     fn leave_assignment_expression_operator(&mut self, _node: &AssignmentExpressionOperator) {}
+
+    fn enter_catch_clause_kind(&mut self, _node: &CatchClauseKind) -> bool {
+        true
+    }
+    fn leave_catch_clause_kind(&mut self, _node: &CatchClauseKind) {}
 
     fn enter_contract_member(&mut self, _node: &ContractMember) -> bool {
         true
@@ -1062,22 +1062,12 @@ pub fn accept_catch_clause(node: &CatchClause, visitor: &mut impl Visitor) {
     if !visitor.enter_catch_clause(node) {
         return;
     }
-    if let Some(ref error) = node.error() {
-        accept_catch_clause_error(error, visitor);
+    accept_catch_clause_kind(&node.kind(), visitor);
+    if let Some(ref parameters) = node.parameters() {
+        accept_parameters(parameters, visitor);
     }
     accept_block(&node.body(), visitor);
     visitor.leave_catch_clause(node);
-}
-
-pub fn accept_catch_clause_error(node: &CatchClauseError, visitor: &mut impl Visitor) {
-    if !visitor.enter_catch_clause_error(node) {
-        return;
-    }
-    if let Some(ref name) = node.name() {
-        visitor.visit_identifier(name);
-    }
-    accept_parameters(&node.parameters(), visitor);
-    visitor.leave_catch_clause_error(node);
 }
 
 pub fn accept_conditional_expression(node: &ConditionalExpression, visitor: &mut impl Visitor) {
@@ -1990,6 +1980,18 @@ pub fn accept_assignment_expression_operator(
         AssignmentExpressionOperator::SlashEqual(_) => {}
     }
     visitor.leave_assignment_expression_operator(node);
+}
+
+pub fn accept_catch_clause_kind(node: &CatchClauseKind, visitor: &mut impl Visitor) {
+    if !visitor.enter_catch_clause_kind(node) {
+        return;
+    }
+    match node {
+        CatchClauseKind::Error => {}
+        CatchClauseKind::Panic => {}
+        CatchClauseKind::LowLevel => {}
+    }
+    visitor.leave_catch_clause_kind(node);
 }
 
 pub fn accept_contract_member(node: &ContractMember, visitor: &mut impl Visitor) {

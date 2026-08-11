@@ -216,7 +216,7 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_break_statement(&mut 
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_call_options(&mut self, &slang_solidity_v2_ast::ast::CallOptions) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_call_options_expression(&mut self, &slang_solidity_v2_ast::ast::CallOptionsExpression) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_catch_clause(&mut self, &slang_solidity_v2_ast::ast::CatchClause) -> bool
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_catch_clause_error(&mut self, &slang_solidity_v2_ast::ast::CatchClauseError) -> bool
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_catch_clause_kind(&mut self, &slang_solidity_v2_ast::ast::CatchClauseKind) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_catch_clauses(&mut self, &slang_solidity_v2_ast::ast::CatchClauses) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_conditional_expression(&mut self, &slang_solidity_v2_ast::ast::ConditionalExpression) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_constant_definition(&mut self, &slang_solidity_v2_ast::ast::ConstantDefinition) -> bool
@@ -387,7 +387,7 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_break_statement(&mut 
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_call_options(&mut self, &slang_solidity_v2_ast::ast::CallOptions)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_call_options_expression(&mut self, &slang_solidity_v2_ast::ast::CallOptionsExpression)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_catch_clause(&mut self, &slang_solidity_v2_ast::ast::CatchClause)
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_catch_clause_error(&mut self, &slang_solidity_v2_ast::ast::CatchClauseError)
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_catch_clause_kind(&mut self, &slang_solidity_v2_ast::ast::CatchClauseKind)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_catch_clauses(&mut self, &slang_solidity_v2_ast::ast::CatchClauses)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_conditional_expression(&mut self, &slang_solidity_v2_ast::ast::ConditionalExpression)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_constant_definition(&mut self, &slang_solidity_v2_ast::ast::ConstantDefinition)
@@ -568,7 +568,7 @@ pub fn slang_solidity_v2_ast::ast::visitor::accept_block(&slang_solidity_v2_ast:
 pub fn slang_solidity_v2_ast::ast::visitor::accept_break_statement(&slang_solidity_v2_ast::ast::BreakStatement, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_call_options_expression(&slang_solidity_v2_ast::ast::CallOptionsExpression, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_catch_clause(&slang_solidity_v2_ast::ast::CatchClause, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
-pub fn slang_solidity_v2_ast::ast::visitor::accept_catch_clause_error(&slang_solidity_v2_ast::ast::CatchClauseError, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
+pub fn slang_solidity_v2_ast::ast::visitor::accept_catch_clause_kind(&slang_solidity_v2_ast::ast::CatchClauseKind, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_conditional_expression(&slang_solidity_v2_ast::ast::ConditionalExpression, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_constant_definition(&slang_solidity_v2_ast::ast::ConstantDefinition, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_continue_statement(&slang_solidity_v2_ast::ast::ContinueStatement, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
@@ -723,6 +723,14 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::AssignmentExpressionOper
 pub fn slang_solidity_v2_ast::ast::AssignmentExpressionOperator::clone(&self) -> slang_solidity_v2_ast::ast::AssignmentExpressionOperator
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AssignmentExpressionOperator
 pub fn slang_solidity_v2_ast::ast::AssignmentExpressionOperator::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub enum slang_solidity_v2_ast::ast::CatchClauseKind
+pub slang_solidity_v2_ast::ast::CatchClauseKind::Error
+pub slang_solidity_v2_ast::ast::CatchClauseKind::LowLevel
+pub slang_solidity_v2_ast::ast::CatchClauseKind::Panic
+impl core::clone::Clone for slang_solidity_v2_ast::ast::CatchClauseKind
+pub fn slang_solidity_v2_ast::ast::CatchClauseKind::clone(&self) -> slang_solidity_v2_ast::ast::CatchClauseKind
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::CatchClauseKind
+pub fn slang_solidity_v2_ast::ast::CatchClauseKind::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub enum slang_solidity_v2_ast::ast::ContractBase
 pub slang_solidity_v2_ast::ast::ContractBase::Contract(slang_solidity_v2_ast::ast::ContractDefinition)
 pub slang_solidity_v2_ast::ast::ContractBase::Interface(slang_solidity_v2_ast::ast::InterfaceDefinition)
@@ -1552,26 +1560,15 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::CaretStruct
 pub fn slang_solidity_v2_ast::ast::CaretStruct::clone(&self) -> slang_solidity_v2_ast::ast::CaretStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::CaretStruct
 pub fn slang_solidity_v2_ast::ast::CaretStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::CatchClauseErrorStruct
-impl slang_solidity_v2_ast::ast::CatchClauseErrorStruct
-pub fn slang_solidity_v2_ast::ast::CatchClauseErrorStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
-pub fn slang_solidity_v2_ast::ast::CatchClauseErrorStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
-pub fn slang_solidity_v2_ast::ast::CatchClauseErrorStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::CatchClauseErrorStruct::name(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Identifier>
-pub fn slang_solidity_v2_ast::ast::CatchClauseErrorStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::ast::CatchClauseErrorStruct::parameters(&self) -> slang_solidity_v2_ast::ast::Parameters
-impl core::clone::Clone for slang_solidity_v2_ast::ast::CatchClauseErrorStruct
-pub fn slang_solidity_v2_ast::ast::CatchClauseErrorStruct::clone(&self) -> slang_solidity_v2_ast::ast::CatchClauseErrorStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::CatchClauseErrorStruct
-pub fn slang_solidity_v2_ast::ast::CatchClauseErrorStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::CatchClauseStruct
 impl slang_solidity_v2_ast::ast::CatchClauseStruct
 pub fn slang_solidity_v2_ast::ast::CatchClauseStruct::body(&self) -> slang_solidity_v2_ast::ast::Block
-pub fn slang_solidity_v2_ast::ast::CatchClauseStruct::error(&self) -> core::option::Option<slang_solidity_v2_ast::ast::CatchClauseError>
 pub fn slang_solidity_v2_ast::ast::CatchClauseStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::ast::CatchClauseStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::CatchClauseStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+pub fn slang_solidity_v2_ast::ast::CatchClauseStruct::kind(&self) -> slang_solidity_v2_ast::ast::CatchClauseKind
 pub fn slang_solidity_v2_ast::ast::CatchClauseStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::CatchClauseStruct::parameters(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Parameters>
 impl core::clone::Clone for slang_solidity_v2_ast::ast::CatchClauseStruct
 pub fn slang_solidity_v2_ast::ast::CatchClauseStruct::clone(&self) -> slang_solidity_v2_ast::ast::CatchClauseStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::CatchClauseStruct
@@ -3832,7 +3829,6 @@ pub fn slang_solidity_v2_ast::ast::create_block(&slang_solidity_v2_ir::ir::nodes
 pub fn slang_solidity_v2_ast::ast::create_break_statement(&slang_solidity_v2_ir::ir::nodes::BreakStatement, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::BreakStatement
 pub fn slang_solidity_v2_ast::ast::create_call_options_expression(&slang_solidity_v2_ir::ir::nodes::CallOptionsExpression, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::CallOptionsExpression
 pub fn slang_solidity_v2_ast::ast::create_catch_clause(&slang_solidity_v2_ir::ir::nodes::CatchClause, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::CatchClause
-pub fn slang_solidity_v2_ast::ast::create_catch_clause_error(&slang_solidity_v2_ir::ir::nodes::CatchClauseError, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::CatchClauseError
 pub fn slang_solidity_v2_ast::ast::create_conditional_expression(&slang_solidity_v2_ir::ir::nodes::ConditionalExpression, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ConditionalExpression
 pub fn slang_solidity_v2_ast::ast::create_constant_definition(&slang_solidity_v2_ir::ir::nodes::ConstantDefinition, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ConstantDefinition
 pub fn slang_solidity_v2_ast::ast::create_continue_statement(&slang_solidity_v2_ir::ir::nodes::ContinueStatement, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ContinueStatement
@@ -3943,7 +3939,6 @@ pub type slang_solidity_v2_ast::ast::CallOptionsExpression = slang_solidity_v2_a
 pub type slang_solidity_v2_ast::ast::Caret = slang_solidity_v2_ast::ast::CaretStruct
 pub type slang_solidity_v2_ast::ast::CaretEqual = slang_solidity_v2_ast::ast::CaretEqualStruct
 pub type slang_solidity_v2_ast::ast::CatchClause = slang_solidity_v2_ast::ast::CatchClauseStruct
-pub type slang_solidity_v2_ast::ast::CatchClauseError = slang_solidity_v2_ast::ast::CatchClauseErrorStruct
 pub type slang_solidity_v2_ast::ast::CatchClauses = slang_solidity_v2_ast::ast::CatchClausesStruct
 pub type slang_solidity_v2_ast::ast::ConditionalExpression = slang_solidity_v2_ast::ast::ConditionalExpressionStruct
 pub type slang_solidity_v2_ast::ast::ConstantDefinition = slang_solidity_v2_ast::ast::ConstantDefinitionStruct

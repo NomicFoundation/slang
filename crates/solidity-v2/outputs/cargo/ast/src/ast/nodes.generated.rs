@@ -648,62 +648,19 @@ impl CatchClauseStruct {
         self.ir_node.id()
     }
 
-    pub fn error(&self) -> Option<CatchClauseError> {
+    pub fn kind(&self) -> CatchClauseKind {
+        create_catch_clause_kind(&self.ir_node.kind, &self.semantic)
+    }
+
+    pub fn parameters(&self) -> Option<Parameters> {
         self.ir_node
-            .error
+            .parameters
             .as_ref()
-            .map(|ir_node| create_catch_clause_error(ir_node, &self.semantic))
+            .map(|ir_node| create_parameters(ir_node, &self.semantic))
     }
 
     pub fn body(&self) -> Block {
         create_block(&self.ir_node.body, &self.semantic)
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &FileId {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
-pub type CatchClauseError = CatchClauseErrorStruct;
-
-#[derive(Clone)]
-pub struct CatchClauseErrorStruct {
-    pub(crate) ir_node: ir::CatchClauseError,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub fn create_catch_clause_error(
-    ir_node: &ir::CatchClauseError,
-    semantic: &Arc<SemanticContext>,
-) -> CatchClauseError {
-    CatchClauseErrorStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    }
-}
-
-impl CatchClauseErrorStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn name(&self) -> Option<Identifier> {
-        self.ir_node
-            .name
-            .as_ref()
-            .map(|ir_node| create_identifier(ir_node, &self.semantic))
-    }
-
-    pub fn parameters(&self) -> Parameters {
-        create_parameters(&self.ir_node.parameters, &self.semantic)
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -4554,6 +4511,26 @@ pub(crate) fn create_assignment_expression_operator(
         ir::AssignmentExpressionOperator::SlashEqual(variant) => {
             AssignmentExpressionOperator::SlashEqual(create_slash_equal(variant, semantic))
         }
+    }
+}
+
+#[derive(Clone)]
+pub enum CatchClauseKind {
+    Error,
+    Panic,
+    LowLevel,
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_catch_clause_kind(
+    ir_node: &ir::CatchClauseKind,
+    semantic: &Arc<SemanticContext>,
+) -> CatchClauseKind {
+    match ir_node {
+        ir::CatchClauseKind::Error => CatchClauseKind::Error,
+        ir::CatchClauseKind::Panic => CatchClauseKind::Panic,
+        ir::CatchClauseKind::LowLevel => CatchClauseKind::LowLevel,
     }
 }
 
