@@ -21,7 +21,7 @@
 //! Both kinds are also compared at file level, over every free function and
 //! event *visible* in a file (see [`check_file_scopes`]).
 
-use slang_solidity_v2_common::collections::{Map, Set};
+use slang_solidity_v2_common::collections::{DefaultWithCapacity, Map, Set};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     DuplicateEventDefinition, DuplicateFunctionDefinition,
@@ -56,7 +56,12 @@ impl<'a> HierarchyChecker<'a> {
         let file_node_mapper = self.file_node_mapper;
         let diagnostics = &mut *self.diagnostics;
 
-        let mut functions_by_name: Map<&'a str, Signatures> = Map::default();
+        // Sized for every member up front: the table is this check's only
+        // sizeable allocation, and growing it from empty rehashes it several
+        // times over for a type of any size. Names that aren't functions leave
+        // some slack, which costs one oversized allocation at most.
+        let mut functions_by_name: Map<&'a str, Signatures> =
+            Map::default_with_capacity(members.len());
         for definition in members {
             if !matches!(definition, Definition::Function(_)) {
                 continue;

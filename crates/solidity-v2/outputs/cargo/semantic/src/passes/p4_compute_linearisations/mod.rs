@@ -5,7 +5,7 @@ mod redeclarations;
 
 use std::sync::Arc;
 
-use slang_solidity_v2_common::collections::{Map, Set};
+use slang_solidity_v2_common::collections::{DefaultWithCapacity, Map, Set};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -168,6 +168,28 @@ impl<'a> HierarchyChecker<'a> {
             _ => None,
         };
 
+        // What the per-name maps below are sized for. Counting means resolving
+        // each base a second time, so it's skipped where neither map can fill:
+        // `members_by_name` only takes a *proper* base's members, and
+        // `abstract_slots` only a non-abstract contract's — leaving a library,
+        // which is neither, to pay nothing for sizing it can't use.
+        let fills_abstract_slots = contract.is_some_and(|contract| !contract.is_abstract);
+        let (inherited_members, hierarchy_members) =
+            if linearised_bases.len() > 1 || fills_abstract_slots {
+                let mut inherited = 0;
+                let mut hierarchy = 0;
+                for base_id in linearised_bases {
+                    let count = members_of(binder, *base_id).len();
+                    hierarchy += count;
+                    if *base_id != definition_id {
+                        inherited += count;
+                    }
+                }
+                (inherited, hierarchy)
+            } else {
+                (0, 0)
+            };
+
         let mut checker = HierarchyChecker {
             binder,
             types,
@@ -177,8 +199,17 @@ impl<'a> HierarchyChecker<'a> {
             reported_duplicate,
             definition_id,
             contract,
-            members_by_name: Map::default(),
-            abstract_slots: Map::default(),
+            // Only a proper base's members are recorded — the head is folded
+            // last, so nothing is ever checked against it — which leaves a type
+            // without bases asking for no capacity at all.
+            members_by_name: Map::default_with_capacity(inherited_members),
+            // The slots are only built for a contract that isn't abstract, so
+            // sizing for any other type would allocate a table nothing fills.
+            abstract_slots: if fills_abstract_slots {
+                Map::default_with_capacity(hierarchy_members)
+            } else {
+                Map::default()
+            },
             events_by_name: Map::default(),
         };
 
@@ -195,13 +226,7 @@ impl<'a> HierarchyChecker<'a> {
     /// `p1`), only with inherited ones.
     fn fold_base(&mut self, base_id: NodeId) {
         let binder = self.binder;
-        let members = match binder.find_definition_by_id(base_id) {
-            Some(Definition::Contract(contract)) => &contract.ir_node.members[..],
-            Some(Definition::Interface(interface)) => &interface.ir_node.members[..],
-            // A library is only ever the (sole) head of its own hierarchy.
-            Some(Definition::Library(library)) => &library.ir_node.members[..],
-            _ => unreachable!("base should be a contract, interface or library"),
-        };
+        let members = members_of(binder, base_id);
         // The head of the linearisation is the type we're computing for; every
         // other entry is one of its proper bases.
         let declared_here = base_id == self.definition_id;
@@ -234,6 +259,17 @@ impl<'a> HierarchyChecker<'a> {
         if !declared_here {
             self.record_members(&member_definitions);
         }
+    }
+}
+
+/// The members a base declares, whichever kind of type it is.
+fn members_of(binder: &Binder, base_id: NodeId) -> &[ir::ContractMember] {
+    match binder.find_definition_by_id(base_id) {
+        Some(Definition::Contract(contract)) => &contract.ir_node.members[..],
+        Some(Definition::Interface(interface)) => &interface.ir_node.members[..],
+        // A library is only ever the (sole) head of its own hierarchy.
+        Some(Definition::Library(library)) => &library.ir_node.members[..],
+        _ => unreachable!("base should be a contract, interface or library"),
     }
 }
 
