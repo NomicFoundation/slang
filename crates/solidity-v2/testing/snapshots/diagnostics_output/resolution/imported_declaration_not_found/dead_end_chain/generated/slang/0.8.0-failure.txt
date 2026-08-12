@@ -2,7 +2,7 @@
 
 Diagnostics: 2
 
-[resolution/imported-declaration-not-found] Error: Declaration not found in imported file.
+[resolution/imported-declaration-not-found] Error: Declaration not found in imported file 'deep.sol'.
    ╭─[lib.sol:4:9]
    │
  4 │ import {Missing} from "./deep.sol";
@@ -10,7 +10,7 @@ Diagnostics: 2
    │            ╰───── Error occurred here.
 ───╯
 
-[resolution/imported-declaration-not-found] Error: Declaration not found in imported file.
+[resolution/imported-declaration-not-found] Error: Declaration not found in imported file 'lib.sol'.
    ╭─[main.sol:6:9]
    │
  6 │ import {Missing} from "./lib.sol";

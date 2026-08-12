@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[resolution/imported-declaration-not-found] Error: Declaration not found in imported file.
+[resolution/imported-declaration-not-found] Error: Declaration not found in imported file 'lib.sol'.
    ╭─[main.sol:5:9]
    │
  5 │ import {Missing as AlsoRenamed} from "lib.sol";

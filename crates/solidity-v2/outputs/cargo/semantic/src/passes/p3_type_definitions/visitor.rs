@@ -120,7 +120,12 @@ impl Visitor for Pass<'_> {
                 // resolve to each other's aliases and to nothing else.
                 let followed = self.binder.follow_symbol_aliases(resolution.clone());
                 if matches!(followed, Resolution::Unresolved) {
-                    self.push_diagnostic(symbol, ImportedDeclarationNotFound);
+                    self.push_diagnostic(
+                        symbol,
+                        ImportedDeclarationNotFound {
+                            imported_file_id: imported_file_id.clone(),
+                        },
+                    );
                 }
                 resolution
             } else {

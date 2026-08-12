@@ -2,10 +2,14 @@ use serde::Serialize;
 
 use crate::diagnostics::extensions::DiagnosticExtensions;
 use crate::diagnostics::severity::DiagnosticSeverity;
+use crate::files::FileId;
 
 /// A symbol in an import deconstruction is not declared in the imported file.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
-pub struct ImportedDeclarationNotFound;
+pub struct ImportedDeclarationNotFound {
+    /// The resolved identifier of the file the import refers to.
+    pub imported_file_id: FileId,
+}
 
 impl DiagnosticExtensions for ImportedDeclarationNotFound {
     fn severity(&self) -> DiagnosticSeverity {
@@ -17,6 +21,9 @@ impl DiagnosticExtensions for ImportedDeclarationNotFound {
     }
 
     fn message(&self) -> String {
-        "Declaration not found in imported file.".to_string()
+        format!(
+            "Declaration not found in imported file '{}'.",
+            self.imported_file_id
+        )
     }
 }

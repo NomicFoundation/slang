@@ -2,7 +2,7 @@
 
 Diagnostics: 2
 
-[resolution/imported-declaration-not-found] Error: Declaration not found in imported file.
+[resolution/imported-declaration-not-found] Error: Declaration not found in imported file 'b.sol'.
    ╭─[a.sol:6:9]
    │
  6 │ import {foo} from "./b.sol";
@@ -10,7 +10,7 @@ Diagnostics: 2
    │          ╰─── Error occurred here.
 ───╯
 
-[resolution/imported-declaration-not-found] Error: Declaration not found in imported file.
+[resolution/imported-declaration-not-found] Error: Declaration not found in imported file 'a.sol'.
    ╭─[b.sol:4:9]
    │
  4 │ import {foo} from "./a.sol";

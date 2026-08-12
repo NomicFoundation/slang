@@ -438,6 +438,7 @@ pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedec
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierRedeclaration::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::resolution::ImportedDeclarationNotFound
+pub slang_solidity_v2_common::diagnostics::kinds::resolution::ImportedDeclarationNotFound::imported_file_id: slang_solidity_v2_common::files::FileId
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::resolution::ImportedDeclarationNotFound
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ImportedDeclarationNotFound::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::resolution::ImportedDeclarationNotFound
 impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::resolution::ImportedDeclarationNotFound
