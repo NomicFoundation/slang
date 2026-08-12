@@ -1,0 +1,19 @@
+{
+  "matrix": {
+    "type": "SingleVersionAllTargets",
+    "version": {
+      "value": "0.8.36",
+      "reason": "Iterating the targets, from Cancun the `mcopy` instruction is reserved."
+    },
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "Range",
+          "from": "Frontier",
+          "till": "Homestead"
+        },
+        "reason": "solc 0.8.36 declines the Frontier target outright ('Invalid EVM version requested'), which counts as a rejection, while slang accepts. Unrelated to `mcopy`."
+      }
+    ]
+  }
+}

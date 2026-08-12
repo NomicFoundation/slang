@@ -45,6 +45,14 @@ mod resolution {
         }
 
         #[test]
+        fn reference_to_unavailable_built_in_name() -> Result<()> {
+            run(
+                "resolution/built_in_redeclaration",
+                "reference_to_unavailable_built_in_name",
+            )
+        }
+
+        #[test]
         fn reserved_after_own_fork() -> Result<()> {
             run(
                 "resolution/built_in_redeclaration",
@@ -65,6 +73,14 @@ mod resolution {
             run(
                 "resolution/built_in_redeclaration",
                 "supersedes_external_shadowing",
+            )
+        }
+
+        #[test]
+        fn undeclared_unavailable_built_in_reference() -> Result<()> {
+            run(
+                "resolution/built_in_redeclaration",
+                "undeclared_unavailable_built_in_reference",
             )
         }
 

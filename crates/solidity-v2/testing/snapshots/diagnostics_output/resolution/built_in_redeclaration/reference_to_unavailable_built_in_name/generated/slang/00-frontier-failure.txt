@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Cancun'.
+    ╭─[input.sol:12:22]
+    │
+ 12 │             let x := mcopy
+    │                      ──┬──  
+    │                        ╰──── Error occurred here.
+────╯
