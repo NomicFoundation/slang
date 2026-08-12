@@ -93,6 +93,8 @@ pub(super) fn find_conflicting_yul_definition(
 
     find_conflict_from_scope(
         binder,
+        language_version,
+        evm_target,
         scope_id,
         symbol,
         new_definition,
@@ -112,6 +114,8 @@ pub(super) fn find_conflicting_yul_definition(
 // not the scope currently being inspected.
 fn find_conflict_from_scope(
     binder: &Binder,
+    language_version: LanguageVersion,
+    evm_target: EvmTarget,
     scope_id: ScopeId,
     symbol: &str,
     new_definition: &Definition,
@@ -127,6 +131,8 @@ fn find_conflict_from_scope(
             .or_else(|| {
                 find_conflict_from_scope(
                     binder,
+                    language_version,
+                    evm_target,
                     yul_block_scope.parent_scope_id,
                     symbol,
                     new_definition,
@@ -142,6 +148,8 @@ fn find_conflict_from_scope(
             .or_else(|| {
                 find_conflict_from_scope(
                     binder,
+                    language_version,
+                    evm_target,
                     yul_function_scope.parent_scope_id,
                     symbol,
                     new_definition,
@@ -155,7 +163,14 @@ fn find_conflict_from_scope(
         // differ only in where the shadow search stops (see
         // `find_shadowed_solidity_declaration`).
         _ if new_definition.is_yul_function() => None,
-        _ => find_shadowed_solidity_declaration(binder, scope_id, symbol, from_function_signature),
+        _ => find_shadowed_solidity_declaration(
+            binder,
+            language_version,
+            evm_target,
+            scope_id,
+            symbol,
+            from_function_signature,
+        ),
     }
 }
 
@@ -175,6 +190,8 @@ fn find_conflict_from_scope(
 // Solidity variable or parameter.
 fn find_shadowed_solidity_declaration(
     binder: &Binder,
+    language_version: LanguageVersion,
+    evm_target: EvmTarget,
     scope_id: ScopeId,
     symbol: &str,
     from_function_signature: bool,
@@ -197,11 +214,14 @@ fn find_shadowed_solidity_declaration(
     } else {
         // A `let` variable may shadow nothing visible from outside the block:
         // any resolved Solidity declaration, or failing that a Solidity built-in
-        // (e.g. `let msg := 1`), is an illegal shadow.
+        // (e.g. `let msg := 1`), is an illegal shadow. A built-in only shadows
+        // once it exists for the current version/target.
+        let shadows_built_in = BuiltInsResolver::lookup_global(symbol)
+            .is_some_and(|built_in| is_built_in_available(built_in, language_version, evm_target));
         let shadows_external = matches!(
             resolution,
             Resolution::Definition(_) | Resolution::Ambiguous(_)
-        ) || BuiltInsResolver::lookup_global(symbol).is_some();
+        ) || shadows_built_in;
         shadows_external.then_some(YulConflict::ExternalDeclarationShadowing)
     }
 }
