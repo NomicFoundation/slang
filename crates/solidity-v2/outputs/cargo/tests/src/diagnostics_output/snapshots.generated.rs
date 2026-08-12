@@ -286,6 +286,22 @@ mod resolution {
         }
 
         #[test]
+        fn yul_variable_shadows_blobhash() -> Result<()> {
+            run(
+                "resolution/external_declaration_shadowing",
+                "yul_variable_shadows_blobhash",
+            )
+        }
+
+        #[test]
+        fn yul_variable_shadows_blobhash_before_introduction() -> Result<()> {
+            run(
+                "resolution/external_declaration_shadowing",
+                "yul_variable_shadows_blobhash_before_introduction",
+            )
+        }
+
+        #[test]
         fn yul_variable_shadows_built_in() -> Result<()> {
             run(
                 "resolution/external_declaration_shadowing",
@@ -298,6 +314,14 @@ mod resolution {
             run(
                 "resolution/external_declaration_shadowing",
                 "yul_variable_shadows_default_import",
+            )
+        }
+
+        #[test]
+        fn yul_variable_shadows_erc7201() -> Result<()> {
+            run(
+                "resolution/external_declaration_shadowing",
+                "yul_variable_shadows_erc7201",
             )
         }
 

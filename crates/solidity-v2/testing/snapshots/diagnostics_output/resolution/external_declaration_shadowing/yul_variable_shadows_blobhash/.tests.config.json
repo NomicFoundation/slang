@@ -1,0 +1,19 @@
+{
+  "matrix": {
+    "type": "SingleVersionAllTargets",
+    "version": {
+      "value": "0.8.24",
+      "reason": "The version that introduces `blobhash` as a Cancun-gated built-in/global; iterating targets shows the pre-Cancun name is free and only rejected from Cancun."
+    },
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "Range",
+          "from": "Frontier",
+          "till": "Homestead"
+        },
+        "reason": "solc 0.8.24 declines the Frontier target outright ('Invalid EVM version requested'), which counts as a rejection, while slang accepts the declaration. Unrelated to `blobhash`."
+      }
+    ]
+  }
+}

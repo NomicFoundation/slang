@@ -1,0 +1,26 @@
+{
+  "matrix": {
+    "type": "SingleVersionAllTargets",
+    "version": {
+      "value": "0.8.23",
+      "reason": "The last version before `blobhash` exists; iterating targets shows the name is free on every target, so the language-version gate alone decides it. Constantinople through Shanghai match solc exactly; the divergences below are all target-support artefacts of 0.8.23, unrelated to `blobhash`."
+    },
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "Range",
+          "from": "Frontier",
+          "till": "Homestead"
+        },
+        "reason": "solc 0.8.23 declines the Frontier target outright ('Invalid EVM version requested'), which counts as a rejection, while slang accepts the declaration. Unrelated to `blobhash`."
+      },
+      {
+        "specifier": {
+          "type": "From",
+          "from": "Cancun"
+        },
+        "reason": "Cancun support only arrives in solc 0.8.24, so 0.8.23 declines these targets with 'Invalid EVM version requested', which counts as a rejection. slang accepts the declaration, which is the point of this test: at 0.8.23 `blobhash` is not a global on any target. The sibling `yul_variable_shadows_blobhash` test pins 0.8.24 and covers the Cancun boundary against a solc that supports it."
+      }
+    ]
+  }
+}
