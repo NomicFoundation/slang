@@ -6,14 +6,15 @@ We have two crates, one for each supported platform:
 
 ## [`cargo`](./cargo/)
 
-The cargo crate contains three benchmark entry points (plus a shared library), each serving its purpose:
+The cargo crate contains four benchmark entry points (plus a shared library), each serving its purpose:
 
 - [`benches/comparison`](./cargo/benches/comparison/main.rs): Runs the parsing process in different libraries for a number of [projects], and track the number of cycles/instructions and memory consumption with callgrind.
 - [`benches/slang`](./cargo/benches/slang/main.rs): Runs different processes, like parsing, binding, cursor, etc. for just a couple of [projects]. It also uses callgrind.
 - [`benches/slang_v2`](./cargo/benches/slang_v2/main.rs): Runs different processes, like parsing, ir_builder, semantic, etc. for just a couple of [projects]. It also uses callgrind.
+- [`benches/slang_v2_wall_clock`](./cargo/benches/slang_v2_wall_clock/main.rs): Measures the v2 pipeline in [wall-clock time](#wall-clock-benchmarks) instead, using `divan`. This is the suite that can see parallelism.
 - [`src/lib.rs`](./cargo/src/lib.rs): This library contains the code that is tested in the benches, and it adds smoke tests to ensure that the libraries being tested (including Slang) are working as expected.
 
-The cargo benchmarks use `valgrind`'s tools [Callgrind and DHAT](#callgrind-and-dhat) to measure
+All of the above except `slang_v2_wall_clock` use `valgrind`'s tools [Callgrind and DHAT](#callgrind-and-dhat) to measure
 individual instructions and track memory usage. This is a very reliable way to measure performance,
 since it's not affected by other processes or external factors. However, it has some details that
 are worth mentioning, they're described in the [Callgrind and DHAT](#callgrind-and-dhat) section.
@@ -37,7 +38,7 @@ For example, the name of the Slang V2, IR builder benchmark over the `merkle_pro
 
 ### Callgrind vs DHAT
 
-Every cargo benchmark always runs [`callgrind`](https://kcachegrind.github.io/html/Home.html) (instructions, cache hits, estimated cycles). It can additionally run [`DHAT`](https://valgrind.org/docs/manual/dh-manual.html) for heap-allocation metrics, but DHAT is much slower, so we don't always run it:
+Every Valgrind-based cargo benchmark (all of them except [`slang_v2_wall_clock`](#wall-clock-benchmarks)) always runs [`callgrind`](https://kcachegrind.github.io/html/Home.html) (instructions, cache hits, estimated cycles). It can additionally run [`DHAT`](https://valgrind.org/docs/manual/dh-manual.html) for heap-allocation metrics, but DHAT is much slower, so we don't always run it:
 
 - On `main` (and plain local / `--dry-run` runs): all three suites run DHAT.
 - On PR benchmarks (`--pr-benchmark`, triggered by the `ci:perf` label): only the `slang_v2` suite runs DHAT (it's fast enough). The slower `slang` (v1) and `comparison` suites run callgrind only.
@@ -46,6 +47,32 @@ Every cargo benchmark always runs [`callgrind`](https://kcachegrind.github.io/ht
 DHAT accuracy depends on its `num-callers` argument (see [`config.rs`](./cargo/src/config.rs)): `comparison` and `slang_v2` use the maximum (`500`) for accurate attribution, while `slang` (v1) is slow enough that it intentionally uses a smaller value (`12`) and accepts less accurate measurements.
 
 Whether DHAT runs on a given PR is therefore a per-suite CI decision: each workflow picks `--pr-benchmark` (fast, Callgrind only) or `--pr-benchmark=full`. `infra perf cargo` just maps the mode to DHAT on/off by setting the `SLANG_PERF_SKIP_DHAT` environment variable on the benchmark process (a CLI flag on the bench binary isn't possible, since `iai-callgrind`'s `main!` owns argument parsing).
+
+### Wall-clock benchmarks
+
+Valgrind's counters are deterministic, which makes them useful for reliably detecting regressions on CI.
+However, they don't work well when analyzing the full picture of a compilation unit with parallel phases.
+
+The [`slang_v2_wall_clock`](./cargo/benches/slang_v2_wall_clock/main.rs) suite covers that gap. It
+uses [`divan`](https://github.com/nvzqz/divan) to measure elapsed time while building a whole
+`CompilationUnit` (parsing, IR building, and semantic analysis behind the public API), plus parsing
+on its own. Alongside each timing it reports throughput (MB/s and files/s), so results stay
+comparable across [projects] of different sizes.
+
+Run it with:
+
+```console
+./scripts/bin/infra perf cargo-wall-clock
+```
+
+Arguments after `--` are forwarded to `divan`, which takes a substring filter and flags such as
+`--sample-count` and `--max-time`:
+
+```console
+./scripts/bin/infra perf cargo-wall-clock -- uniswap --sample-count 50
+```
+
+Because wall time on shared CI runners is too noisy to alert on, this suite is not measured on CI yet.
 
 ## [`npm`](./npm/)
 

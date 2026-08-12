@@ -140,6 +140,7 @@ clap_complete = { version = "4.5.54" }
 console = { version = "0.16.3" }
 controlled-option = { version = "0.4.1" }
 derive-new = { version = "0.7.0" }
+divan = { version = "0.1.21" }
 either = { version = "1.6.0" }
 enumset = { version = "1.1.10" }
 env_logger = { version = "0.11.9" }
