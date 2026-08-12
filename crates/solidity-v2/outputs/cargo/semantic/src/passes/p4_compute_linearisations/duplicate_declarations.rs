@@ -2,9 +2,8 @@
 //! events) whose parameter lists a caller cannot tell apart, so that naming
 //! either of them would be ambiguous.
 //!
-//! Overloading lets same-named functions and events coexist — that much is
-//! settled when they're declared (see the redeclaration checks) — but only
-//! while their parameter lists differ. Two overloads are compared the way a
+//! Overloading lets same-named functions and events coexist but only while
+//! their parameter lists differ. Two overloads are compared the way a
 //! caller sees them, so `memory` and `calldata` are interchangeable (the ABI
 //! encodes both the same way) while `storage` stays distinct, and return
 //! types, mutability, `indexed` and `anonymous` play no part.
@@ -20,6 +19,8 @@
 //!
 //! Both kinds are also compared at file level, over every free function and
 //! event *visible* in a file (see [`check_file_scopes`]).
+
+use std::collections::hash_map::Entry;
 
 use slang_solidity_v2_common::collections::{DefaultWithCapacity, Map, Set};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -40,15 +41,59 @@ use crate::types::{Type, TypeId, TypeRegistry};
 /// one. Stored inline: signatures long enough to spill are rare.
 pub(super) type ParameterTypes = SmallVec<[TypeId; 4]>;
 
-/// The signatures occupying one name so far. Stored inline in the map entry in
-/// the common case of a single declaration per name; only overloaded names
-/// spill to the heap.
+/// The signatures occupying one name that has more than one declaration.
 pub(super) type Signatures = SmallVec<[ParameterTypes; 1]>;
+
+/// The declarations occupying one name so far.
+///
+/// A name with a single declaration duplicates nothing, so its signature is
+/// left uncomputed until a second declaration arrives and makes the comparison
+/// necessary.
+pub(super) enum Overloads<'a> {
+    /// The sole declaration of this name so far, signature not yet computed.
+    Single(&'a Definition),
+    /// Two or more declarations, holding the signatures of those that didn't
+    /// duplicate an earlier one. Boxing keeps the size of the enum at two words
+    /// and it's slightly more efficient than embedding `Signatures` directly.
+    Several(Box<Signatures>),
+}
+
+impl<'a> Overloads<'a> {
+    /// Records `definition` against the declarations already occupying this
+    /// name, reporting whether it duplicates one of them.
+    fn record(
+        &mut self,
+        binder: &Binder,
+        types: &TypeRegistry,
+        definition: &'a Definition,
+    ) -> bool {
+        // The second declaration is what forces the first one's signature.
+        // A declaration whose parameters aren't all typed yields none and takes
+        // no part in the comparison, exactly as if it were never recorded, so
+        // extending by the `Option` leaves the slot empty in that case.
+        if let Self::Single(first) = *self {
+            let mut signatures = Signatures::new();
+            signatures.extend(parameter_types_of(binder, types, first));
+            *self = Self::Several(Box::new(signatures));
+        }
+        let Self::Several(signatures) = self else {
+            unreachable!("a single declaration was promoted just above");
+        };
+        let Some(parameter_types) = parameter_types_of(binder, types, definition) else {
+            return false;
+        };
+        if clashes_with_any(types, signatures, &parameter_types) {
+            return true;
+        }
+        signatures.push(parameter_types);
+        false
+    }
+}
 
 impl<'a> HierarchyChecker<'a> {
     /// Reports this type's own functions that duplicate one declared before
     /// them. Only the declarations written here take part, so this runs for the
-    /// head of the linearisation alone — every type in the hierarchy gets its
+    /// head of the linearisation alone. Every type in the hierarchy gets its
     /// own [`HierarchyChecker`] run, and so its own turn as the head.
     pub(super) fn check_duplicate_functions(&mut self, members: &[&'a Definition]) {
         let binder = self.binder;
@@ -60,22 +105,21 @@ impl<'a> HierarchyChecker<'a> {
         // sizeable allocation, and growing it from empty rehashes it several
         // times over for a type of any size. Names that aren't functions leave
         // some slack, which costs one oversized allocation at most.
-        let mut functions_by_name: Map<&'a str, Signatures> =
+        let mut functions_by_name: Map<&'a str, Overloads<'a>> =
             Map::default_with_capacity(members.len());
         for definition in members {
             if !matches!(definition, Definition::Function(_)) {
                 continue;
             }
-            let Some(parameter_types) = parameter_types_of(binder, types, definition) else {
-                continue;
-            };
-            let signatures = functions_by_name
-                .entry(definition.identifier().unparse())
-                .or_default();
-            if clashes_with_any(types, signatures, &parameter_types) {
-                report_duplicate(definition, file_node_mapper, diagnostics);
-            } else {
-                signatures.push(parameter_types);
+            match functions_by_name.entry(definition.identifier().unparse()) {
+                Entry::Vacant(slot) => {
+                    slot.insert(Overloads::Single(definition));
+                }
+                Entry::Occupied(mut slot) => {
+                    if slot.get_mut().record(binder, types, definition) {
+                        report_duplicate(definition, file_node_mapper, diagnostics);
+                    }
+                }
             }
         }
     }
@@ -97,22 +141,22 @@ impl<'a> HierarchyChecker<'a> {
             if !matches!(definition, Definition::Event(_)) {
                 continue;
             }
-            let Some(parameter_types) = parameter_types_of(binder, types, definition) else {
-                continue;
-            };
-            let signatures = events_by_name
-                .entry(definition.identifier().unparse())
-                .or_default();
-            if !clashes_with_any(types, signatures, &parameter_types) {
-                signatures.push(parameter_types);
-                continue;
-            }
-            // A clash inside a shared base is revisited once per contract
-            // deriving from it, so each declaration is reported only once. The
-            // diagnostic is fully determined by that declaration, so the result
-            // doesn't depend on the order contracts are visited in.
-            if reported.insert(definition.node_id()) {
-                report_duplicate(definition, file_node_mapper, diagnostics);
+            match events_by_name.entry(definition.identifier().unparse()) {
+                Entry::Vacant(slot) => {
+                    slot.insert(Overloads::Single(definition));
+                }
+                // A clash inside a shared base is revisited once per contract
+                // deriving from it, so each declaration is reported only once.
+                // The diagnostic is fully determined by that declaration, so
+                // the result doesn't depend on the order contracts are visited
+                // in.
+                Entry::Occupied(mut slot) => {
+                    if slot.get_mut().record(binder, types, definition)
+                        && reported.insert(definition.node_id())
+                    {
+                        report_duplicate(definition, file_node_mapper, diagnostics);
+                    }
+                }
             }
         }
     }
@@ -124,7 +168,7 @@ impl<'a> HierarchyChecker<'a> {
 /// declaration they ultimately name.
 ///
 /// A clash between two imported declarations is visible from every file
-/// importing both, so declarations already reported are skipped — which also
+/// importing both, so declarations already reported are skipped. This also
 /// keeps the result independent of the order files are visited in.
 pub(super) fn check_file_scopes(
     binder: &Binder,
@@ -150,29 +194,37 @@ pub(super) fn check_file_scopes(
                 declaration_site(binder, file_node_mapper, *definition_id)
             });
 
-            for (index, definition_id) in definition_ids.iter().enumerate() {
-                let definition = binder
-                    .find_definition_by_id(*definition_id)
-                    .expect("visible declaration is registered");
-                let Some(parameter_types) = parameter_types_of(binder, types, definition) else {
-                    continue;
-                };
-                let clashes = definition_ids[..index]
+            // Pre-compute each declaration signature, skipping any for which we
+            // don't have complete typing information.
+            let declarations: SmallVec<[(&Definition, ParameterTypes); 4]> = definition_ids
+                .iter()
+                .filter_map(|definition_id| {
+                    let definition = binder
+                        .find_definition_by_id(*definition_id)
+                        .expect("visible declaration is registered");
+                    Some((definition, parameter_types_of(binder, types, definition)?))
+                })
+                .collect();
+
+            if declarations.len() < 2 {
+                // We may have lost some declarations due to missing typing info.
+                continue;
+            }
+
+            for (index, (definition, parameter_types)) in declarations.iter().enumerate() {
+                let clashes = declarations[..index]
                     .iter()
-                    .filter_map(|earlier_id| binder.find_definition_by_id(*earlier_id))
-                    // Functions only clash with functions and events with
-                    // events; a name shared by both kinds is a redeclaration,
-                    // reported when the file scopes are populated.
-                    .filter(|earlier| earlier.overloads_with(definition))
-                    .any(|earlier| {
-                        parameter_types_of(binder, types, earlier).is_some_and(|earlier_types| {
-                            types.parameter_lists_are_indistinguishable(
-                                &earlier_types,
-                                &parameter_types,
+                    .any(|(earlier, earlier_types)| {
+                        // Functions only clash with functions and events with
+                        // events; a name shared by both kinds is a redeclaration,
+                        // reported when the file scopes are populated.
+                        earlier.overloads_with(definition)
+                            && types.parameter_lists_are_indistinguishable(
+                                earlier_types,
+                                parameter_types,
                             )
-                        })
                     });
-                if clashes && reported.insert(*definition_id) {
+                if clashes && reported.insert(definition.node_id()) {
                     report_duplicate(definition, file_node_mapper, diagnostics);
                 }
             }
@@ -268,9 +320,9 @@ fn parameter_types_of(
             Some(function_type.parameter_types.iter().copied().collect())
         }
         // An event has no type of its own; its parameter types live in its
-        // parameters scope, already registered at `memory` — the location an
-        // ABI-encoded argument is decoded into — so they compare directly.
-        // Neither `indexed` nor `anonymous` reaches a type, so both are ignored.
+        // parameters scope, already registered at `memory` location so they
+        // compare directly.  Neither `indexed` nor `anonymous` reaches a type,
+        // so both are ignored.
         Definition::Event(event) => {
             let Scope::Parameters(parameters_scope) =
                 binder.get_scope_by_id(event.parameters_scope_id)
@@ -288,8 +340,7 @@ fn parameter_types_of(
 }
 
 /// Reports `definition` as a duplicate of an earlier declaration. A function is
-/// reported on its signature — its body plays no part in the clash — and an
-/// event on its whole declaration.
+/// reported on its signature and an event on its whole declaration.
 fn report_duplicate(
     definition: &Definition,
     file_node_mapper: &FileNodeMapper,

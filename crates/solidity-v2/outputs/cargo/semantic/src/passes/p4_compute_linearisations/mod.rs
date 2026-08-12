@@ -12,7 +12,7 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
 
 use self::abstractness::AbstractSlots;
-use self::duplicate_declarations::Signatures;
+use self::duplicate_declarations::Overloads;
 use self::linearisations::compute_linearisations;
 use self::redeclarations::MemberKind;
 use crate::binder::{Binder, Definition};
@@ -141,7 +141,7 @@ struct HierarchyChecker<'a> {
     /// The signatures of the events visible in the hierarchy so far, for the
     /// duplicate-event check. Grouped by name, since only same-named events can
     /// duplicate each other.
-    events_by_name: Map<&'a str, Signatures>,
+    events_by_name: Map<&'a str, Overloads<'a>>,
 }
 
 impl<'a> HierarchyChecker<'a> {
