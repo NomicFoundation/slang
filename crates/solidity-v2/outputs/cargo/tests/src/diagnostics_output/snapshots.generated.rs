@@ -918,6 +918,66 @@ mod resolution {
         }
     }
 
+    mod imported_declaration_not_found {
+        use super::*;
+
+        #[test]
+        fn aliased_symbol() -> Result<()> {
+            run(
+                "resolution/imported_declaration_not_found",
+                "aliased_symbol",
+            )
+        }
+
+        #[test]
+        fn chained_deconstruction() -> Result<()> {
+            run(
+                "resolution/imported_declaration_not_found",
+                "chained_deconstruction",
+            )
+        }
+
+        #[test]
+        fn dead_end_chain() -> Result<()> {
+            run(
+                "resolution/imported_declaration_not_found",
+                "dead_end_chain",
+            )
+        }
+
+        #[test]
+        fn missing_symbol() -> Result<()> {
+            run(
+                "resolution/imported_declaration_not_found",
+                "missing_symbol",
+            )
+        }
+
+        #[test]
+        fn mutual_imports() -> Result<()> {
+            run(
+                "resolution/imported_declaration_not_found",
+                "mutual_imports",
+            )
+        }
+
+        #[test]
+        fn unresolved_file() -> Result<()> {
+            run(
+                "resolution/imported_declaration_not_found",
+                "unresolved_file",
+            )
+        }
+
+        #[test]
+        fn via_default_import() -> Result<()> {
+            run(
+                "resolution/imported_declaration_not_found",
+                "via_default_import",
+            )
+        }
+    }
+
     mod incompatible_built_in_target {
         use super::*;
 

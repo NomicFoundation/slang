@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 2904] Error: Declaration "Missing" not found in "deep.sol" (referenced as "./deep.sol").
+   ╭─[lib.sol:4:1]
+   │
+ 4 │ import {Missing} from "./deep.sol";
+   │ ─────────────────┬─────────────────  
+   │                  ╰─────────────────── Error occurred here.
+───╯
