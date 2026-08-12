@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[ParserError 5568] Error: Cannot use builtin function name "mcopy" as identifier name.
+    ╭─[input.sol:11:17]
+    │
+ 11 │             let mcopy := 1
+    │                 ──┬──  
+    │                   ╰──── Error occurred here.
+────╯
+
+[ParserError 7104] Error: Builtin function "mcopy" must be called.
+    ╭─[input.sol:12:22]
+    │
+ 12 │             let x := mcopy
+    │                      ──┬──  
+    │                        ╰──── Error occurred here.
+────╯

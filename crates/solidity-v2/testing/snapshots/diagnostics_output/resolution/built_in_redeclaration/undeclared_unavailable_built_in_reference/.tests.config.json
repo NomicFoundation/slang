@@ -1,0 +1,9 @@
+{
+  "matrix": {
+    "type": "SingleVersionAllTargets",
+    "version": {
+      "value": "0.8.36",
+      "reason": "Iterating the targets, before Cancun both slang and solc report the built-in is not yet available."
+    }
+  }
+}

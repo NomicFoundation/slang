@@ -1,6 +1,6 @@
 use super::Pass;
 use crate::binder::{Resolution, ScopeId};
-use crate::built_ins::BuiltInsResolver;
+use crate::built_ins::{BuiltInsResolver, is_built_in_available};
 use crate::passes::common::filter_overriden_definitions;
 
 impl Pass<'_> {
@@ -27,16 +27,32 @@ impl Pass<'_> {
         scope_id: ScopeId,
         symbol: &str,
     ) -> Resolution {
-        // Resolve Yul built-ins first, since strictly speaking they are
-        // reserved keywords. If that fails, lookup the symbol in the scope.
-        let resolution: Resolution = BuiltInsResolver::lookup_yul_global(symbol).into();
-        resolution.or_else(|| {
-            filter_overriden_definitions(
-                self.binder,
-                self.types,
-                self.binder.resolve_in_scope(scope_id, symbol),
-            )
-        })
+        let built_in = BuiltInsResolver::lookup_yul_global(symbol);
+
+        // An *available* built-in resolves first, since strictly speaking its
+        // name is a reserved keyword. Declaring it is reported as a built-in
+        // redeclaration, so no user definition can legally be in scope under
+        // that name anyway.
+        if built_in.is_some_and(|built_in| {
+            is_built_in_available(built_in, self.language_version, self.evm_target)
+        }) {
+            return built_in.into();
+        }
+
+        // A built-in that isn't available for the current version/target doesn't
+        // reserve its name, so it must not shadow a user definition: before
+        // Cancun, `let mcopy := 1` is a legal declaration and a later `mcopy`
+        // refers to that variable, not to the built-in.
+        //
+        // Falling back to the unavailable built-in keeps the more precise
+        // "introduced in <version/target>" diagnostic for a reference that has
+        // no declaration in scope.
+        filter_overriden_definitions(
+            self.binder,
+            self.types,
+            self.binder.resolve_in_scope(scope_id, symbol),
+        )
+        .or_else(|| built_in.into())
     }
 
     pub(super) fn resolve_symbol_in_enclosing_solidity_scope(&self, symbol: &str) -> Resolution {
