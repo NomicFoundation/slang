@@ -320,6 +320,24 @@ impl Definition {
         }
     }
 
+    /// The value expression of a constant, in either constant shape: a
+    /// `ConstantDefinition`, or a `public` `constant` state variable. Returns
+    /// `None` for non-constants, and for a constant declared without a value.
+    pub(crate) fn as_constant_value(&self) -> Option<&ir::Expression> {
+        match self {
+            Self::Constant(constant_definition) => constant_definition.ir_node.value.as_ref(),
+            Self::StateVariable(variable_definition)
+                if matches!(
+                    variable_definition.ir_node.attributes.mutability,
+                    ir::StateVariableMutability::Constant
+                ) =>
+            {
+                variable_definition.ir_node.value.as_ref()
+            }
+            _ => None,
+        }
+    }
+
     /// Whether `self` is allowed to share a name with `other` in the same
     /// scope. Only same-kind overloadable definitions may coexist: functions
     /// overload other functions, and events overload other events.

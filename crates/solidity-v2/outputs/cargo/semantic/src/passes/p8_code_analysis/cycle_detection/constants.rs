@@ -8,7 +8,7 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
 use super::{CycleSearchResult, DependencyGraph};
-use crate::binder::{Binder, ConstantDefinition, Definition};
+use crate::binder::Binder;
 use crate::context::FileNodeMapper;
 
 pub(super) fn detect_constant_value_dependency_cycles(
@@ -20,22 +20,28 @@ pub(super) fn detect_constant_value_dependency_cycles(
     for (constant_id, result) in graph.find_all_cycles() {
         match result {
             CycleSearchResult::Cycle { via } => {
-                let constant = constant_definition(binder, constant_id);
-                let via = constant_definition(binder, via);
+                let name = binder
+                    .find_definition_by_id(constant_id)
+                    .unwrap()
+                    .identifier();
+
+                let via_name = binder.find_definition_by_id(via).unwrap().identifier();
+
                 diagnostics.push(
                     file_node_mapper.file_id_from_node_id(constant_id).clone(),
-                    constant.ir_node.range.clone(),
+                    name.range.clone(),
                     CyclicConstantDependency {
-                        name: constant.ir_node.name.unparse().to_owned(),
-                        via: via.ir_node.name.unparse().to_owned(),
+                        name: name.unparse().to_owned(),
+                        via: via_name.unparse().to_owned(),
                     },
                 );
             }
             CycleSearchResult::DepthExceeded { node } => {
-                let constant = constant_definition(binder, node);
+                let name = binder.find_definition_by_id(node).unwrap().identifier();
+
                 diagnostics.push(
                     file_node_mapper.file_id_from_node_id(node).clone(),
-                    constant.ir_node.range.clone(),
+                    name.range.clone(),
                     CyclicDependencyValidatorExhausted,
                 );
             }
@@ -49,17 +55,9 @@ fn build_dependencies(binder: &Binder) -> SortedMap<NodeId, Vec<NodeId>> {
         .definitions()
         .iter()
         .filter_map(|(definition_id, definition)| {
-            let Definition::Constant(constant) = definition else {
-                return None;
-            };
+            let value = definition.as_constant_value()?;
 
-            let dependencies: Vec<NodeId> = constant
-                .ir_node
-                .value
-                .as_ref()
-                .map_or_else(SortedSet::default, |value| {
-                    collect_constant_dependencies(binder, value)
-                })
+            let dependencies: Vec<NodeId> = collect_constant_dependencies(binder, value)
                 .into_iter()
                 .collect();
 
@@ -72,13 +70,6 @@ fn build_dependencies(binder: &Binder) -> SortedMap<NodeId, Vec<NodeId>> {
             Some((*definition_id, dependencies))
         })
         .collect()
-}
-
-fn constant_definition(binder: &Binder, constant_id: NodeId) -> &ConstantDefinition {
-    match binder.find_definition_by_id(constant_id) {
-        Some(Definition::Constant(constant)) => constant,
-        _ => panic!("graph nodes should be constant definitions"),
-    }
 }
 
 fn collect_constant_dependencies(
@@ -113,11 +104,13 @@ impl Visitor for DependencyCollector<'_> {
                     .follow_symbol_aliases(reference.resolution.clone())
             })
             .and_then(|resolution| resolution.as_definition_id())
+            // A constant declared without a value has no outgoing edges, so it
+            // is not a graph node either. Skipping it here keeps every edge
+            // pointing at a node the search can reach.
             .filter(|&id| {
-                matches!(
-                    self.binder.find_definition_by_id(id),
-                    Some(Definition::Constant(_))
-                )
+                self.binder
+                    .find_definition_by_id(id)
+                    .is_some_and(|definition| definition.as_constant_value().is_some())
             })
         {
             self.dependencies.insert(definition_id);
