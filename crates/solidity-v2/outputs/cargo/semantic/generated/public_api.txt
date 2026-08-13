@@ -34,7 +34,7 @@ pub fn slang_solidity_v2_semantic::types::Type::try_from(&slang_solidity_v2_sema
 impl core::fmt::Debug for slang_solidity_v2_semantic::binder::Definition
 pub fn slang_solidity_v2_semantic::binder::Definition::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity_v2_semantic::binder::Resolution
-pub slang_solidity_v2_semantic::binder::Resolution::Ambiguous(alloc::vec::Vec<slang_solidity_v2_common::nodes::NodeId>)
+pub slang_solidity_v2_semantic::binder::Resolution::Ambiguous(alloc::boxed::Box<[slang_solidity_v2_common::nodes::NodeId]>)
 pub slang_solidity_v2_semantic::binder::Resolution::BuiltIn(slang_solidity_v2_semantic::built_ins::InternalBuiltIn)
 pub slang_solidity_v2_semantic::binder::Resolution::Definition(slang_solidity_v2_common::nodes::NodeId)
 pub slang_solidity_v2_semantic::binder::Resolution::Unresolved
@@ -43,6 +43,8 @@ pub fn slang_solidity_v2_semantic::binder::Resolution::clone(&self) -> slang_sol
 impl core::cmp::Eq for slang_solidity_v2_semantic::binder::Resolution
 impl core::cmp::PartialEq for slang_solidity_v2_semantic::binder::Resolution
 pub fn slang_solidity_v2_semantic::binder::Resolution::eq(&self, &slang_solidity_v2_semantic::binder::Resolution) -> bool
+impl core::convert::From<&[slang_solidity_v2_common::nodes::NodeId]> for slang_solidity_v2_semantic::binder::Resolution
+pub fn slang_solidity_v2_semantic::binder::Resolution::from(&[slang_solidity_v2_common::nodes::NodeId]) -> Self
 impl core::convert::From<alloc::vec::Vec<slang_solidity_v2_common::nodes::NodeId>> for slang_solidity_v2_semantic::binder::Resolution
 pub fn slang_solidity_v2_semantic::binder::Resolution::from(alloc::vec::Vec<slang_solidity_v2_common::nodes::NodeId>) -> Self
 impl core::convert::From<core::option::Option<&slang_solidity_v2_common::nodes::NodeId>> for slang_solidity_v2_semantic::binder::Resolution
@@ -51,6 +53,8 @@ impl core::convert::From<core::option::Option<slang_solidity_v2_common::nodes::N
 pub fn slang_solidity_v2_semantic::binder::Resolution::from(core::option::Option<slang_solidity_v2_common::nodes::NodeId>) -> Self
 impl core::convert::From<core::option::Option<slang_solidity_v2_semantic::built_ins::InternalBuiltIn>> for slang_solidity_v2_semantic::binder::Resolution
 pub fn slang_solidity_v2_semantic::binder::Resolution::from(core::option::Option<slang_solidity_v2_semantic::built_ins::InternalBuiltIn>) -> Self
+impl core::convert::From<smallvec::SmallVec<[slang_solidity_v2_common::nodes::NodeId; 4]>> for slang_solidity_v2_semantic::binder::Resolution
+pub fn slang_solidity_v2_semantic::binder::Resolution::from(smallvec::SmallVec<[slang_solidity_v2_common::nodes::NodeId; 4]>) -> Self
 impl core::fmt::Debug for slang_solidity_v2_semantic::binder::Resolution
 pub fn slang_solidity_v2_semantic::binder::Resolution::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::binder::Resolution

@@ -1,6 +1,8 @@
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
+use smallvec::smallvec;
 
+use super::DefinitionIds;
 use crate::built_ins::InternalBuiltIn;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -26,7 +28,7 @@ pub enum Resolution {
     /// apply, as more information is needed (eg. the types of arguments when
     /// the reference is used in a function call, to select the appropriate
     /// overload).
-    Ambiguous(Vec<NodeId>),
+    Ambiguous(Box<[NodeId]>),
     /// The symbol refers to a Solidity built-in of some kind. The possible
     /// variants are encoded in an enum and the behaviour of each is encoded in
     /// the `built_ins.rs` module.
@@ -55,11 +57,11 @@ impl Resolution {
         }
     }
 
-    pub(crate) fn get_definition_ids(&self) -> Vec<NodeId> {
+    pub(crate) fn get_definition_ids(&self) -> DefinitionIds {
         match self {
-            Resolution::Definition(id) => vec![*id],
-            Resolution::Ambiguous(ids) => ids.clone(),
-            _ => Vec::new(),
+            Resolution::Definition(id) => smallvec![*id],
+            Resolution::Ambiguous(ids) => DefinitionIds::from_slice(ids),
+            _ => DefinitionIds::new(),
         }
     }
 
@@ -97,7 +99,37 @@ impl From<Vec<NodeId>> for Resolution {
         match value.len() {
             0 => Resolution::Unresolved,
             1 => Resolution::Definition(value.swap_remove(0)),
-            _ => Resolution::Ambiguous(value),
+            // Takes over the vector's buffer rather than copying it.
+            _ => Resolution::Ambiguous(value.into_boxed_slice()),
+        }
+    }
+}
+
+impl From<DefinitionIds> for Resolution {
+    fn from(mut value: DefinitionIds) -> Self {
+        match value.len() {
+            0 => Resolution::Unresolved,
+            1 => Resolution::Definition(value.swap_remove(0)),
+            // Only an ambiguous result reaches the heap, and it is the rare
+            // case: a name shared by an overload set or by declarations in
+            // several imported files. Keeping it boxed rather than inline
+            // keeps `Resolution` (and so every `Reference` the binder stores)
+            // down to the width of a single pointer plus its length.
+            _ => Resolution::Ambiguous(value.into_vec().into_boxed_slice()),
+        }
+    }
+}
+
+/// Builds a resolution from the definitions a name refers to, borrowing them.
+/// The single-definition case, which is by far the common one, stays a slice
+/// read rather than a copy, so this is preferred over the owning conversions
+/// wherever the definitions are only on loan.
+impl From<&[NodeId]> for Resolution {
+    fn from(value: &[NodeId]) -> Self {
+        match value {
+            [] => Resolution::Unresolved,
+            &[definition_id] => Resolution::Definition(definition_id),
+            _ => Resolution::Ambiguous(value.into()),
         }
     }
 }

@@ -25,8 +25,11 @@ use std::ops::Range;
 use slang_solidity_v2_common::collections::{Map, Set};
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
+use smallvec::smallvec;
 
-use crate::binder::{Binder, DefaultImport, Definition, FileScope, Resolution, Scope, ScopeId};
+use crate::binder::{
+    Binder, DefaultImport, Definition, DefinitionIds, FileScope, Resolution, Scope, ScopeId,
+};
 use crate::passes::common::conflicts::{conflicting_definition, first_conflicting_definition};
 
 // Looks for a previously-registered definition that conflicts with a Solidity
@@ -187,12 +190,12 @@ pub(super) fn find_file_scope_conflicts<'a>(
 // This keeps the unresolvable import a distinct opaque declaration that
 // conflicts with anything else sharing its name (the pre-alias-following
 // behaviour), rather than treating it as compatible with everything.
-fn resolved_targets(binder: &Binder, definition_id: NodeId) -> Vec<NodeId> {
+fn resolved_targets(binder: &Binder, definition_id: NodeId) -> DefinitionIds {
     let targets = binder
         .follow_symbol_aliases(Resolution::Definition(definition_id))
         .get_definition_ids();
     if targets.is_empty() {
-        vec![definition_id]
+        smallvec![definition_id]
     } else {
         targets
     }

@@ -3,6 +3,7 @@ use std::collections::VecDeque;
 use slang_solidity_v2_common::collections::{DefaultWithCapacity, Map, Set};
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
+use smallvec::SmallVec;
 
 use super::built_ins::InternalBuiltIn;
 use super::types::TypeId;
@@ -145,6 +146,14 @@ pub(crate) enum ResolveOptions {
     /// internal lookup.
     Super(NodeId),
 }
+
+/// A group of definitions, identified by their `NodeId`s. Held inline up to a
+/// handful of entries, which covers the sets that occur in practice: the
+/// definitions an ambiguous reference may name, and the working sets built
+/// while resolving one. Used in place of `Vec<NodeId>` and `Set<NodeId>` for
+/// performance reasons; uniqueness, where it matters, is maintained by the code
+/// filling it rather than by the type.
+pub(crate) type DefinitionIds = SmallVec<[NodeId; 4]>;
 
 impl Binder {
     /// Creates a binder with its dominant `NodeId`-keyed maps pre-sized per
@@ -532,7 +541,10 @@ impl Binder {
         // Fast path: with no default imports the file's own scope is the whole
         // search set, so resolve with a single map lookup and no traversal:
         if file_scope.default_imports.is_empty() {
-            return file_scope.lookup_symbol(symbol).collect::<Vec<_>>().into();
+            return file_scope
+                .lookup_symbol(symbol)
+                .collect::<DefinitionIds>()
+                .into();
         }
 
         // Otherwise scan the precomputed transitive default-import closure
@@ -542,7 +554,7 @@ impl Binder {
             "FileScope::default_import_closure should be precomputed"
         );
 
-        let mut found_definitions = Vec::new();
+        let mut found_definitions = DefinitionIds::new();
         for scope_id in &file_scope.default_import_closure {
             let Scope::File(imported_scope) = self.get_scope_by_id(*scope_id) else {
                 unreachable!("default import closure should only contain file scopes");
@@ -579,7 +591,7 @@ impl Binder {
                     }
                 }
             };
-            let mut results = Vec::new();
+            let mut results = DefinitionIds::new();
             for (index, node_id) in linearisations.iter().enumerate() {
                 let Some(base_scope_id) = self.scope_id_for_node_id(*node_id) else {
                     continue;
@@ -620,7 +632,7 @@ impl Binder {
         } else if let Some(definitions) = contract_scope.definitions.get(symbol) {
             // This case shouldn't happen for valid Solidity, as all
             // contracts should have a proper linearisation
-            Resolution::from(definitions.clone())
+            Resolution::from(definitions.as_slice())
         } else {
             Resolution::Unresolved
         }
@@ -675,8 +687,9 @@ impl Binder {
             Scope::Using(using_scope) => using_scope
                 .symbols
                 .get(symbol)
-                .cloned()
-                .map_or(Resolution::Unresolved, Resolution::from),
+                .map_or(Resolution::Unresolved, |definitions| {
+                    Resolution::from(definitions.as_slice())
+                }),
             Scope::YulBlock(yul_block_scope) => yul_block_scope
                 .definitions
                 .get(symbol)
@@ -715,7 +728,9 @@ impl Binder {
         };
         let mut working_set = match resolution {
             Resolution::Definition(id) if is_imported_symbol(id) => vec![id],
-            Resolution::Ambiguous(ids) if ids.iter().copied().any(is_imported_symbol) => ids,
+            Resolution::Ambiguous(ids) if ids.iter().copied().any(is_imported_symbol) => {
+                ids.into_vec()
+            }
             _ => {
                 // Short-circuit if there are no aliases to follow and avoid
                 // unnecessary allocations
@@ -786,8 +801,9 @@ impl Binder {
             Scope::Using(using_scope) => using_scope
                 .symbols
                 .get(symbol)
-                .cloned()
-                .map_or(Resolution::Unresolved, Resolution::from),
+                .map_or(Resolution::Unresolved, |definitions| {
+                    Resolution::from(definitions.as_slice())
+                }),
             Scope::Parameters(parameters_scope) => {
                 parameters_scope.lookup_definition(symbol).into()
             }

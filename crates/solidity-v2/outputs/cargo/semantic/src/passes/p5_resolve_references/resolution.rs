@@ -10,8 +10,8 @@ use slang_solidity_v2_ir::ir;
 
 use super::{Pass, ScopeFrame};
 use crate::binder::{
-    Definition, Reference, Resolution, ResolveOptions, ScopeId, Typing, UsingDirective,
-    UsingOperator,
+    Definition, DefinitionIds, Reference, Resolution, ResolveOptions, ScopeId, Typing,
+    UsingDirective, UsingOperator,
 };
 use crate::built_ins::BuiltInsResolver;
 use crate::passes::common::constant_evaluator::{
@@ -175,7 +175,7 @@ impl Pass<'_> {
         &self,
         receiver_type_id: TypeId,
         symbol: &str,
-        definition_ids: &mut Vec<NodeId>,
+        definition_ids: &mut DefinitionIds,
     ) {
         let active_directives = self.active_using_directives_for_type(receiver_type_id);
         let mut seen_ids = Set::default();

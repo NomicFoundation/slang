@@ -455,7 +455,8 @@ impl Visitor for Pass<'_> {
                                     .or_default()
                                     .extend(definition_ids.iter().copied());
                             }
-                            symbols.insert(symbol_name.unparse().to_string(), definition_ids);
+                            symbols
+                                .insert(symbol_name.unparse().to_string(), definition_ids.to_vec());
                         }
 
                         let scope = Scope::new_using(node.id(), symbols);
