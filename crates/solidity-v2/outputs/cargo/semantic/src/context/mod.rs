@@ -7,7 +7,7 @@ use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_common::utils::strip_string_literal_quotes;
+use slang_solidity_v2_common::utils::strings::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 pub use storage_layout::{StorageLayoutBuilder, StoragePosition, StorageSize};

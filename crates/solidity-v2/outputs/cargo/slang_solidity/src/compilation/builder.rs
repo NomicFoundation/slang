@@ -7,7 +7,7 @@ use slang_solidity_v2_common::diagnostics::kinds::compilation::{
 };
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::files::FileId;
-use slang_solidity_v2_common::utils::strip_string_literal_quotes;
+use slang_solidity_v2_common::utils::strings::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes as cst;
 use slang_solidity_v2_ir::ir::{self, BuildOutput};

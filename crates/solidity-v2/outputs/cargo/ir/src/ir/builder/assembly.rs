@@ -3,7 +3,9 @@ use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateAssemblyFlag;
 use slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidAssemblyDialect;
-use slang_solidity_v2_common::utils::{decode_escape_sequences, strip_string_literal_quotes};
+use slang_solidity_v2_common::utils::strings::{
+    decode_escape_sequences, strip_string_literal_quotes,
+};
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 use slang_solidity_v2_cst::structured_cst::text_range::TextRange;

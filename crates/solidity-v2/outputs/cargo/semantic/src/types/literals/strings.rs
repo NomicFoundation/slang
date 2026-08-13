@@ -1,4 +1,4 @@
-use slang_solidity_v2_common::utils::{
+use slang_solidity_v2_common::utils::strings::{
     decode_escape_sequences, decode_hex_string, strip_string_literal_prefix_and_quotes,
 };
 use slang_solidity_v2_ir::ir;
