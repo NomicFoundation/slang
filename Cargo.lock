@@ -4554,6 +4554,7 @@ dependencies = [
  "solidity_testing_utils",
  "solidity_v2_testing_utils",
  "tar",
+ "tempfile",
 ]
 
 [[package]]

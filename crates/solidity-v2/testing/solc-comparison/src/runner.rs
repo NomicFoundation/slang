@@ -9,7 +9,7 @@ use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, Unr
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use solidity_testing_utils::import_resolver::{ImportRemap, ImportResolver, SourceMap};
+use solidity_testing_utils::import_resolver::{ImportResolver, SourceMap};
 use solidity_v2_testing_utils::reporting::diagnostic;
 
 use crate::test_case::{IsolTestCase, parse_evm_target_name, resolve_evm_target};
@@ -52,7 +52,7 @@ fn default_evm_target(language_version: LanguageVersion) -> EvmTarget {
 
 fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) -> Outcome {
     let files: SortedMap<String, String> = test_case.files.iter().cloned().collect();
-    let config = TestConfig::new(&files, &test_case.remappings);
+    let config = TestConfig::new(&files);
 
     let evm_target = resolve_evm_target(
         test_case.evm_version.as_deref(),
@@ -95,15 +95,14 @@ fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) ->
 /// builder, resolving imports between them.
 ///
 /// Import resolution reuses the shared [`ImportResolver`] (also used by the
-/// sourcify runner): each source is registered under its own name, and any
-/// `ExternalSource: <name>=<path>` remappings become import remaps.
+/// sourcify runner), with each source registered under its own name.
 struct TestConfig {
     files: SortedMap<String, String>,
     resolver: ImportResolver,
 }
 
 impl TestConfig {
-    fn new(files: &SortedMap<String, String>, remappings: &[(String, String)]) -> Self {
+    fn new(files: &SortedMap<String, String>) -> Self {
         let source_maps = files
             .keys()
             .map(|id| SourceMap {
@@ -114,15 +113,10 @@ impl TestConfig {
             })
             .collect();
 
-        let import_remaps = remappings
-            .iter()
-            .map(|(name, path)| ImportRemap::new_from_components(None, name, path))
-            .collect();
-
         Self {
             files: files.clone(),
             resolver: ImportResolver {
-                import_remaps,
+                import_remaps: Vec::new(),
                 source_maps,
             },
         }

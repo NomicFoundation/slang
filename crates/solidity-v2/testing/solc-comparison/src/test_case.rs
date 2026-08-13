@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use anyhow::{Context, Result};
+use anyhow::{Context, Result, bail};
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 
 /// A single semantic test, parsed from the `isoltest` file format into the set
@@ -20,16 +20,13 @@ use slang_solidity_v2_common::evm_targets::EvmTarget;
 ///
 /// where the source region may itself be split into multiple named sources via
 /// `==== Source: <name> ====` delimiters, and may pull in shared fixture files
-/// via `==== ExternalSource: <path> ====` (or `<import name>=<path>`)
+/// via `==== ExternalSource: <path> ====` (or `<source name>=<path>`)
 /// delimiters. The `// ====` block holds settings, and everything after
 /// `// ----` is the (runtime) expectation, which we ignore.
 pub struct IsolTestCase {
     /// All source files making up this test, keyed by their compilation file
     /// id (the source name `solc` would use).
     pub files: Vec<(String, String)>,
-    /// Import remappings declared via `ExternalSource: <name>=<path>`, mapping
-    /// the import string to the resolved file id.
-    pub remappings: Vec<(String, String)>,
     /// The raw `EVMVersion` setting (e.g. `>=byzantium`), if present. Resolved
     /// to a concrete [`EvmTarget`] by the runner, which knows the language
     /// version being used (see [`resolve_evm_target`]).
@@ -55,18 +52,10 @@ impl IsolTestCase {
             .to_owned();
 
         let mut files = Vec::new();
-        let mut remappings = Vec::new();
-        parse_sources(
-            source_region,
-            &default_name,
-            test_path,
-            &mut files,
-            &mut remappings,
-        )?;
+        parse_sources(source_region, &default_name, test_path, &mut files)?;
 
         Ok(Self {
             files,
-            remappings,
             evm_version: evm_version.map(ToOwned::to_owned),
         })
     }
@@ -135,7 +124,6 @@ fn parse_sources(
     default_name: &str,
     test_path: &Path,
     files: &mut Vec<(String, String)>,
-    remappings: &mut Vec<(String, String)>,
 ) -> Result<()> {
     let test_dir = test_path.parent().unwrap_or(Path::new("."));
 
@@ -152,25 +140,49 @@ fn parse_sources(
     let flush = |name: &str, content: &mut String, files: &mut Vec<(String, String)>| {
         if content.trim().is_empty() {
             content.clear();
+            Ok(())
         } else {
-            files.push((name.to_owned(), std::mem::take(content)));
+            push_source(files, name, std::mem::take(content))
         }
     };
 
     for line in region.lines() {
         let trimmed = line.trim();
         if let Some(name) = parse_source_delimiter(trimmed) {
-            flush(&current_name, &mut current_content, files);
+            flush(&current_name, &mut current_content, files)?;
+            // Reject the new name up front, as `isoltest` does when it reads the
+            // delimiter, so a redefinition is caught even when its body is empty
+            // and would never reach `flush`.
+            ensure_undefined(files, name)?;
             current_name = name.to_owned();
         } else if let Some(spec) = parse_external_source_delimiter(trimmed) {
-            load_external_source(spec, test_dir, files, remappings)?;
+            load_external_source(spec, test_dir, files)?;
         } else {
             current_content.push_str(line);
             current_content.push('\n');
         }
     }
 
-    flush(&current_name, &mut current_content, files);
+    flush(&current_name, &mut current_content, files)?;
+
+    Ok(())
+}
+
+/// Registers `content` under the source name `name`.
+///
+/// A test that defines the same source name twice is malformed, and `isoltest`
+/// refuses to run it ("Multiple definitions of test source"). We reject it too.
+fn push_source(files: &mut Vec<(String, String)>, name: &str, content: String) -> Result<()> {
+    ensure_undefined(files, name)?;
+    files.push((name.to_owned(), content));
+
+    Ok(())
+}
+
+fn ensure_undefined(files: &[(String, String)], name: &str) -> Result<()> {
+    if files.iter().any(|(id, _)| id == name) {
+        bail!("multiple definitions of test source {name:?}");
+    }
 
     Ok(())
 }
@@ -187,18 +199,22 @@ fn parse_external_source_delimiter(line: &str) -> Option<&str> {
     Some(inner.trim())
 }
 
-/// Loads a fixture referenced by an `ExternalSource` directive. The spec is
-/// either a bare `<path>` or an `<import name>=<path>` remapping. Paths are
-/// resolved relative to the test file's directory.
+/// Loads a fixture referenced by an `ExternalSource` directive, either a bare
+/// `<path>` or `<source name>=<path>`. The disk path is relative to the test
+/// file's directory, and the spec splits on the *first* `=`, since a fixture's
+/// file name may itself contain one (`a=_external/external.sol=sol`).
+///
+/// The left-hand side is a source *name*, not an import remapping — `isoltest`
+/// stores it as `sources[externalSourceName]` and declares no remappings — so it
+/// must not pre-empt relative resolution.
 fn load_external_source(
     spec: &str,
     test_dir: &Path,
     files: &mut Vec<(String, String)>,
-    remappings: &mut Vec<(String, String)>,
 ) -> Result<()> {
-    let (import_name, relative_path) = match spec.split_once('=') {
-        Some((name, path)) => (Some(name.trim()), path.trim()),
-        None => (None, spec),
+    let (source_name, relative_path) = match spec.split_once('=') {
+        Some((name, path)) => (name.trim(), path.trim()),
+        None => (spec, spec),
     };
 
     let disk_path = test_dir.join(relative_path);
@@ -206,18 +222,7 @@ fn load_external_source(
         format!("Failed to read external source {relative_path:?} (at {disk_path:?})")
     })?;
 
-    // The file id within the compilation is the path as written in the
-    // directive, so that relative imports inside the fixture resolve correctly
-    // and other sources can import it by that path.
-    if !files.iter().any(|(id, _)| id == relative_path) {
-        files.push((relative_path.to_owned(), content));
-    }
-
-    if let Some(import_name) = import_name {
-        remappings.push((import_name.to_owned(), relative_path.to_owned()));
-    }
-
-    Ok(())
+    push_source(files, source_name, content)
 }
 
 /// Resolves the `EVMVersion` setting (e.g. `>=byzantium`, `<constantinople`,
@@ -408,39 +413,153 @@ import \"A\";
 contract B is A {}
 ";
         let mut files = Vec::new();
-        let mut remappings = Vec::new();
-        parse_sources(
-            region,
-            "input.sol",
-            Path::new("/tmp/test.sol"),
-            &mut files,
-            &mut remappings,
-        )
-        .unwrap();
+        parse_sources(region, "input.sol", Path::new("/tmp/test.sol"), &mut files).unwrap();
 
         assert_eq!(files.len(), 2);
         assert_eq!(files[0].0, "A");
         assert!(files[0].1.contains("contract A"));
         assert_eq!(files[1].0, "B");
         assert!(files[1].1.contains("contract B is A"));
-        assert!(remappings.is_empty());
     }
 
     #[test]
     fn implicit_single_source_uses_default_name() {
         let region = "contract C {}\n";
         let mut files = Vec::new();
-        let mut remappings = Vec::new();
-        parse_sources(
-            region,
-            "erc20.sol",
-            Path::new("/tmp/erc20.sol"),
-            &mut files,
-            &mut remappings,
-        )
-        .unwrap();
+        parse_sources(region, "erc20.sol", Path::new("/tmp/erc20.sol"), &mut files).unwrap();
 
         assert_eq!(files.len(), 1);
         assert_eq!(files[0].0, "erc20.sol");
+    }
+
+    /// `ExternalSource: <source name>=<path>` reads the fixture from `<path>`
+    /// but enters it into the compilation under `<source name>`, so a source can
+    /// be named something a relative import would never normalize to.
+    #[test]
+    fn external_source_is_named_by_the_left_hand_side() {
+        let dir = tempfile::tempdir().unwrap();
+        std::fs::create_dir_all(dir.path().join("_fixtures")).unwrap();
+        std::fs::write(
+            dir.path().join("_fixtures/dot_a.sol"),
+            "contract Dot_A {}\n",
+        )
+        .unwrap();
+        std::fs::write(
+            dir.path().join("_fixtures/plain.sol"),
+            "contract Plain {}\n",
+        )
+        .unwrap();
+
+        let region = "\
+==== ExternalSource: ./a.sol=_fixtures/dot_a.sol ====
+==== ExternalSource: _fixtures/plain.sol ====
+contract C {}
+";
+        let mut files = Vec::new();
+        parse_sources(
+            region,
+            "input.sol",
+            &dir.path().join("input.sol"),
+            &mut files,
+        )
+        .unwrap();
+
+        // The remapped fixture is named `./a.sol`, not `_fixtures/dot_a.sol`.
+        assert_eq!(files[0].0, "./a.sol");
+        assert!(files[0].1.contains("contract Dot_A"));
+
+        // A bare directive names the source after the path, as written.
+        assert_eq!(files[1].0, "_fixtures/plain.sol");
+        assert!(files[1].1.contains("contract Plain"));
+
+        assert_eq!(files[2].0, "input.sol");
+    }
+
+    /// A test that defines the same source name twice is malformed; `isoltest`
+    /// refuses to run it, so we refuse to parse it.
+    #[test]
+    fn rejects_a_redefined_source_name() {
+        let parse = |region: &str| {
+            let mut files = Vec::new();
+            parse_sources(region, "input.sol", Path::new("/tmp/input.sol"), &mut files)
+                .map_err(|error| error.to_string())
+        };
+
+        assert_eq!(
+            parse("==== Source: A ====\ncontract A {}\n==== Source: A ====\ncontract A2 {}\n"),
+            Err("multiple definitions of test source \"A\"".to_owned())
+        );
+
+        // Caught even when the redefinition is empty and would never be flushed
+        // — the delimiter alone is the redefinition.
+        assert_eq!(
+            parse("==== Source: A ====\ncontract A {}\n==== Source: A ====\n"),
+            Err("multiple definitions of test source \"A\"".to_owned())
+        );
+
+        // Distinct names are of course fine.
+        assert!(
+            parse("==== Source: A ====\ncontract A {}\n==== Source: B ====\ncontract B {}\n")
+                .is_ok()
+        );
+    }
+
+    /// The same, across the two kinds of delimiter: an external source may not
+    /// take a name a `Source:` block already claimed, in either order.
+    #[test]
+    fn rejects_an_external_source_colliding_with_a_named_source() {
+        let dir = tempfile::tempdir().unwrap();
+        std::fs::write(dir.path().join("ext.sol"), "contract Ext {}\n").unwrap();
+
+        let parse = |region: &str| {
+            let mut files = Vec::new();
+            parse_sources(
+                region,
+                "input.sol",
+                &dir.path().join("input.sol"),
+                &mut files,
+            )
+            .map_err(|error| error.to_string())
+        };
+
+        assert_eq!(
+            parse("==== Source: A ====\ncontract A {}\n==== ExternalSource: A=ext.sol ====\n"),
+            Err("multiple definitions of test source \"A\"".to_owned())
+        );
+        assert_eq!(
+            parse("==== ExternalSource: A=ext.sol ====\n==== Source: A ====\ncontract A {}\n"),
+            Err("multiple definitions of test source \"A\"".to_owned())
+        );
+
+        // Including a bare directive naming the same fixture twice.
+        assert_eq!(
+            parse("==== ExternalSource: ext.sol ====\n==== ExternalSource: ext.sol ====\n"),
+            Err("multiple definitions of test source \"ext.sol\"".to_owned())
+        );
+    }
+
+    /// Fixture file names may contain `=`, so only the first one separates the
+    /// source name from the path (`semanticTests/externalSource/multiple_equals_signs.sol`).
+    #[test]
+    fn external_source_splits_on_the_first_equals_sign() {
+        let dir = tempfile::tempdir().unwrap();
+        std::fs::write(
+            dir.path().join("external.sol=sol"),
+            "contract External {}\n",
+        )
+        .unwrap();
+
+        let region = "==== ExternalSource: a=external.sol=sol ====\ncontract C {}\n";
+        let mut files = Vec::new();
+        parse_sources(
+            region,
+            "input.sol",
+            &dir.path().join("input.sol"),
+            &mut files,
+        )
+        .unwrap();
+
+        assert_eq!(files[0].0, "a");
+        assert!(files[0].1.contains("contract External"));
     }
 }
