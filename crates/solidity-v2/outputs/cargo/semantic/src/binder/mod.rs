@@ -24,7 +24,7 @@ pub use references::{Reference, Resolution};
 use scopes::ContractScope;
 pub(crate) use scopes::{
     DefaultImport, FileScope, OperatorMapping, ParameterDefinition, ParametersScope, Scope,
-    UsingDirective, UsingOperator,
+    ScopeDefinitionIds, UsingDirective, UsingOperator,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -543,10 +543,7 @@ impl Binder {
         // Fast path: with no default imports the file's own scope is the whole
         // search set, so resolve with a single map lookup and no traversal:
         if file_scope.default_imports.is_empty() {
-            return file_scope
-                .lookup_symbol(symbol)
-                .collect::<DefinitionIds>()
-                .into();
+            return Resolution::from(file_scope.lookup_symbol(symbol));
         }
 
         // Otherwise scan the precomputed transitive default-import closure
@@ -561,7 +558,7 @@ impl Binder {
             let Scope::File(imported_scope) = self.get_scope_by_id(*scope_id) else {
                 unreachable!("default import closure should only contain file scopes");
             };
-            found_definitions.extend(imported_scope.lookup_symbol(symbol));
+            found_definitions.extend_from_slice(imported_scope.lookup_symbol(symbol));
         }
         Resolution::from(found_definitions)
     }

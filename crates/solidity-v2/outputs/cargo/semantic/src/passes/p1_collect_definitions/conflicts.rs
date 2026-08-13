@@ -326,6 +326,7 @@ fn find_local_definition_conflicts(
             let imported: Vec<NodeId> = imported_scopes
                 .iter()
                 .flat_map(|scope| scope.lookup_symbol(symbol))
+                .copied()
                 .collect();
             if imported.is_empty() {
                 continue;

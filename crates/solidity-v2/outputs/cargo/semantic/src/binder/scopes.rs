@@ -9,6 +9,12 @@ use smallvec::SmallVec;
 use super::ScopeId;
 use crate::types::TypeId;
 
+/// The definitions a scope holds under one symbol, whether declared in it or
+/// attached to it by a `using` directive. Only overload sets hold more than
+/// one, so a single entry is stored inline: that takes the same room as the
+/// `Vec` it replaces while saving an allocation per symbol.
+pub(crate) type ScopeDefinitionIds = SmallVec<[NodeId; 1]>;
+
 //////////////////////////////////////////////////////////////////////////////
 // Scopes - types
 
@@ -48,7 +54,7 @@ pub(crate) struct ChainedScope {
 pub(crate) struct ContractScope {
     pub(crate) node_id: NodeId,
     pub(crate) file_scope_id: ScopeId,
-    pub(crate) definitions: Map<String, Vec<NodeId>>,
+    pub(crate) definitions: Map<String, ScopeDefinitionIds>,
     pub(crate) using_directives: Vec<UsingDirective>,
 }
 
@@ -60,7 +66,7 @@ pub(crate) struct EnumScope {
 pub(crate) struct FileScope {
     pub(crate) node_id: NodeId,
     pub(crate) file_id: FileId,
-    pub(crate) definitions: Map<String, Vec<NodeId>>,
+    pub(crate) definitions: Map<String, ScopeDefinitionIds>,
     /// Files brought into scope through (unqualified) default imports, in
     /// source order. The same file may appear more than once if imported by
     /// several directives.
@@ -124,7 +130,7 @@ pub(crate) struct StructScope {
 
 pub(crate) struct UsingScope {
     pub(crate) node_id: NodeId,
-    pub(crate) symbols: Map<String, Vec<NodeId>>,
+    pub(crate) symbols: Map<String, ScopeDefinitionIds>,
 }
 
 pub(crate) struct YulBlockScope {
@@ -229,7 +235,7 @@ impl Scope {
         Self::Struct(StructScope::new(node_id))
     }
 
-    pub(crate) fn new_using(node_id: NodeId, symbols: Map<String, Vec<NodeId>>) -> Self {
+    pub(crate) fn new_using(node_id: NodeId, symbols: Map<String, ScopeDefinitionIds>) -> Self {
         Self::Using(UsingScope::new(node_id, symbols))
     }
 
@@ -300,11 +306,10 @@ impl ContractScope {
     }
 
     pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
-        if let Some(definitions) = self.definitions.get_mut(&symbol) {
-            definitions.push(node_id);
-        } else {
-            self.definitions.insert(symbol, vec![node_id]);
-        }
+        // `entry` hashes the symbol once, where looking up and then inserting
+        // hashes it twice for every symbol declared for the first time, which
+        // is the common case.
+        self.definitions.entry(symbol).or_default().push(node_id);
     }
 }
 
@@ -334,24 +339,24 @@ impl FileScope {
     }
 
     pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
-        if let Some(definitions) = self.definitions.get_mut(&symbol) {
-            definitions.push(node_id);
-        } else {
-            self.definitions.insert(symbol, vec![node_id]);
-        }
+        // `entry` hashes the symbol once, where looking up and then inserting
+        // hashes it twice for every symbol declared for the first time, which
+        // is the common case.
+        self.definitions.entry(symbol).or_default().push(node_id);
     }
 
     pub(crate) fn add_default_import(&mut self, file_id: FileId, range: Range<usize>) {
         self.default_imports.push(DefaultImport { file_id, range });
     }
 
-    pub(crate) fn lookup_symbol<'a>(&'a self, symbol: &str) -> impl Iterator<Item = NodeId> + 'a {
+    /// The definitions this file declares under `symbol`, empty when it
+    /// declares none. Returned as a slice so a caller resolving in a single
+    /// file scope can build a `Resolution` without collecting them.
+    pub(crate) fn lookup_symbol(&self, symbol: &str) -> &[NodeId] {
         self.definitions
             .get(symbol)
-            .map(|defs| defs.as_slice())
+            .map(|definitions| definitions.as_slice())
             .unwrap_or_default()
-            .iter()
-            .copied()
     }
 }
 
@@ -430,7 +435,7 @@ impl StructScope {
 }
 
 impl UsingScope {
-    fn new(node_id: NodeId, symbols: Map<String, Vec<NodeId>>) -> Self {
+    fn new(node_id: NodeId, symbols: Map<String, ScopeDefinitionIds>) -> Self {
         Self { node_id, symbols }
     }
 }
