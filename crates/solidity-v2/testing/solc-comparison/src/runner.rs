@@ -4,7 +4,7 @@ use anyhow::Result;
 use infra_utils::solc::default_evm_version;
 use semver::Version;
 use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig};
-use slang_solidity_v2_common::collections::SortedMap;
+use slang_solidity_v2_common::collections::OrderedMap;
 use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::files::FileId;
@@ -51,8 +51,8 @@ fn default_evm_target(language_version: LanguageVersion) -> EvmTarget {
 }
 
 fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) -> Outcome {
-    let files: SortedMap<String, String> = test_case.files.iter().cloned().collect();
-    let config = TestConfig::new(&files);
+    let files = &test_case.files;
+    let config = TestConfig::new(files);
 
     let evm_target = resolve_evm_target(
         test_case.evm_version.as_deref(),
@@ -63,7 +63,7 @@ fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) ->
 
     // Add every source as a root, so files that aren't reachable via imports
     // (e.g. sibling sources in a multi-source test) are still analyzed.
-    for (file_id, _) in &test_case.files {
+    for file_id in files.keys() {
         builder.add_file(FileId::from(file_id.as_str()));
     }
 
@@ -97,12 +97,12 @@ fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) ->
 /// Import resolution reuses the shared [`ImportResolver`] (also used by the
 /// sourcify runner), with each source registered under its own name.
 struct TestConfig {
-    files: SortedMap<String, String>,
+    files: OrderedMap<String, String>,
     resolver: ImportResolver,
 }
 
 impl TestConfig {
-    fn new(files: &SortedMap<String, String>) -> Self {
+    fn new(files: &OrderedMap<String, String>) -> Self {
         let source_maps = files
             .keys()
             .map(|id| SourceMap {

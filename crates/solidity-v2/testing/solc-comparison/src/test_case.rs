@@ -1,6 +1,7 @@
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
+use slang_solidity_v2_common::collections::OrderedMap;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 
 /// A single semantic test, parsed from the `isoltest` file format into the set
@@ -25,8 +26,8 @@ use slang_solidity_v2_common::evm_targets::EvmTarget;
 /// `// ----` is the (runtime) expectation, which we ignore.
 pub struct IsolTestCase {
     /// All source files making up this test, keyed by their compilation file
-    /// id (the source name `solc` would use).
-    pub files: Vec<(String, String)>,
+    /// id (the source name `solc` would use), in declaration order.
+    pub files: OrderedMap<String, String>,
     /// The raw `EVMVersion` setting (e.g. `>=byzantium`), if present. Resolved
     /// to a concrete [`EvmTarget`] by the runner, which knows the language
     /// version being used (see [`resolve_evm_target`]).
@@ -51,8 +52,7 @@ impl IsolTestCase {
             .unwrap_or("input.sol")
             .to_owned();
 
-        let mut files = Vec::new();
-        parse_sources(source_region, &default_name, test_path, &mut files)?;
+        let files = parse_sources(source_region, &default_name, test_path)?;
 
         Ok(Self {
             files,
@@ -123,9 +123,10 @@ fn parse_sources(
     region: &str,
     default_name: &str,
     test_path: &Path,
-    files: &mut Vec<(String, String)>,
-) -> Result<()> {
+) -> Result<OrderedMap<String, String>> {
     let test_dir = test_path.parent().unwrap_or(Path::new("."));
+
+    let mut files = OrderedMap::default();
 
     // The current source starts out named after the file itself, so any content
     // before the first `Source:` delimiter (including a whole undelimited file)
@@ -134,53 +135,54 @@ fn parse_sources(
     let mut current_name = default_name.to_owned();
     let mut current_content = String::new();
 
-    // Emit the accumulated source, unless it's empty — e.g. the region before
-    // the first `Source:` delimiter, which is just whitespace and isn't a real
-    // source. `mem::take` leaves `content` empty for the next source.
-    let flush = |name: &str, content: &mut String, files: &mut Vec<(String, String)>| {
-        if content.trim().is_empty() {
-            content.clear();
-            Ok(())
-        } else {
-            push_source(files, name, std::mem::take(content))
-        }
-    };
-
     for line in region.lines() {
         let trimmed = line.trim();
         if let Some(name) = parse_source_delimiter(trimmed) {
-            flush(&current_name, &mut current_content, files)?;
+            flush(&mut files, &current_name, &mut current_content)?;
             // Reject the new name up front, as `isoltest` does when it reads the
             // delimiter, so a redefinition is caught even when its body is empty
             // and would never reach `flush`.
-            ensure_undefined(files, name)?;
+            ensure_undefined(&files, name)?;
             current_name = name.to_owned();
         } else if let Some(spec) = parse_external_source_delimiter(trimmed) {
-            load_external_source(spec, test_dir, files)?;
+            load_external_source(spec, test_dir, &mut files)?;
         } else {
             current_content.push_str(line);
             current_content.push('\n');
         }
     }
 
-    flush(&current_name, &mut current_content, files)?;
+    flush(&mut files, &current_name, &mut current_content)?;
 
-    Ok(())
+    Ok(files)
+}
+
+/// Emits the accumulated source, unless it's empty — e.g. the region before the
+/// first `Source:` delimiter, which is just whitespace and isn't a real source.
+/// `mem::take` leaves `content` empty for the next source.
+fn flush(files: &mut OrderedMap<String, String>, name: &str, content: &mut String) -> Result<()> {
+    if content.trim().is_empty() {
+        content.clear();
+
+        return Ok(());
+    }
+
+    push_source(files, name, std::mem::take(content))
 }
 
 /// Registers `content` under the source name `name`.
 ///
 /// A test that defines the same source name twice is malformed, and `isoltest`
 /// refuses to run it ("Multiple definitions of test source"). We reject it too.
-fn push_source(files: &mut Vec<(String, String)>, name: &str, content: String) -> Result<()> {
+fn push_source(files: &mut OrderedMap<String, String>, name: &str, content: String) -> Result<()> {
     ensure_undefined(files, name)?;
-    files.push((name.to_owned(), content));
+    files.insert(name.to_owned(), content);
 
     Ok(())
 }
 
-fn ensure_undefined(files: &[(String, String)], name: &str) -> Result<()> {
-    if files.iter().any(|(id, _)| id == name) {
+fn ensure_undefined(files: &OrderedMap<String, String>, name: &str) -> Result<()> {
+    if files.contains_key(name) {
         bail!("multiple definitions of test source {name:?}");
     }
 
@@ -210,7 +212,7 @@ fn parse_external_source_delimiter(line: &str) -> Option<&str> {
 fn load_external_source(
     spec: &str,
     test_dir: &Path,
-    files: &mut Vec<(String, String)>,
+    files: &mut OrderedMap<String, String>,
 ) -> Result<()> {
     let (source_name, relative_path) = match spec.split_once('=') {
         Some((name, path)) => (name.trim(), path.trim()),
@@ -319,6 +321,10 @@ fn line_offsets(contents: &str) -> impl Iterator<Item = (usize, &str)> {
 mod tests {
     use super::*;
 
+    fn source_names(files: &OrderedMap<String, String>) -> Vec<&str> {
+        files.keys().map(String::as_str).collect()
+    }
+
     #[test]
     fn splits_settings_from_source() {
         let contents = "\
@@ -412,24 +418,19 @@ contract A {}
 import \"A\";
 contract B is A {}
 ";
-        let mut files = Vec::new();
-        parse_sources(region, "input.sol", Path::new("/tmp/test.sol"), &mut files).unwrap();
+        let files = parse_sources(region, "input.sol", Path::new("/tmp/test.sol")).unwrap();
 
-        assert_eq!(files.len(), 2);
-        assert_eq!(files[0].0, "A");
-        assert!(files[0].1.contains("contract A"));
-        assert_eq!(files[1].0, "B");
-        assert!(files[1].1.contains("contract B is A"));
+        assert_eq!(vec!["A", "B"], source_names(&files));
+        assert!(files["A"].contains("contract A"));
+        assert!(files["B"].contains("contract B is A"));
     }
 
     #[test]
     fn implicit_single_source_uses_default_name() {
         let region = "contract C {}\n";
-        let mut files = Vec::new();
-        parse_sources(region, "erc20.sol", Path::new("/tmp/erc20.sol"), &mut files).unwrap();
+        let files = parse_sources(region, "erc20.sol", Path::new("/tmp/erc20.sol")).unwrap();
 
-        assert_eq!(files.len(), 1);
-        assert_eq!(files[0].0, "erc20.sol");
+        assert_eq!(vec!["erc20.sol"], source_names(&files));
     }
 
     /// `ExternalSource: <source name>=<path>` reads the fixture from `<path>`
@@ -455,24 +456,17 @@ contract B is A {}
 ==== ExternalSource: _fixtures/plain.sol ====
 contract C {}
 ";
-        let mut files = Vec::new();
-        parse_sources(
-            region,
-            "input.sol",
-            &dir.path().join("input.sol"),
-            &mut files,
-        )
-        .unwrap();
+        let files = parse_sources(region, "input.sol", &dir.path().join("input.sol")).unwrap();
 
-        // The remapped fixture is named `./a.sol`, not `_fixtures/dot_a.sol`.
-        assert_eq!(files[0].0, "./a.sol");
-        assert!(files[0].1.contains("contract Dot_A"));
-
-        // A bare directive names the source after the path, as written.
-        assert_eq!(files[1].0, "_fixtures/plain.sol");
-        assert!(files[1].1.contains("contract Plain"));
-
-        assert_eq!(files[2].0, "input.sol");
+        // Sources keep their declaration order, and the remapped fixture is
+        // named `./a.sol` rather than `_fixtures/dot_a.sol`; a bare directive
+        // names the source after the path, as written.
+        assert_eq!(
+            vec!["./a.sol", "_fixtures/plain.sol", "input.sol"],
+            source_names(&files)
+        );
+        assert!(files["./a.sol"].contains("contract Dot_A"));
+        assert!(files["_fixtures/plain.sol"].contains("contract Plain"));
     }
 
     /// A test that defines the same source name twice is malformed; `isoltest`
@@ -480,8 +474,7 @@ contract C {}
     #[test]
     fn rejects_a_redefined_source_name() {
         let parse = |region: &str| {
-            let mut files = Vec::new();
-            parse_sources(region, "input.sol", Path::new("/tmp/input.sol"), &mut files)
+            parse_sources(region, "input.sol", Path::new("/tmp/input.sol"))
                 .map_err(|error| error.to_string())
         };
 
@@ -512,14 +505,8 @@ contract C {}
         std::fs::write(dir.path().join("ext.sol"), "contract Ext {}\n").unwrap();
 
         let parse = |region: &str| {
-            let mut files = Vec::new();
-            parse_sources(
-                region,
-                "input.sol",
-                &dir.path().join("input.sol"),
-                &mut files,
-            )
-            .map_err(|error| error.to_string())
+            parse_sources(region, "input.sol", &dir.path().join("input.sol"))
+                .map_err(|error| error.to_string())
         };
 
         assert_eq!(
@@ -550,16 +537,9 @@ contract C {}
         .unwrap();
 
         let region = "==== ExternalSource: a=external.sol=sol ====\ncontract C {}\n";
-        let mut files = Vec::new();
-        parse_sources(
-            region,
-            "input.sol",
-            &dir.path().join("input.sol"),
-            &mut files,
-        )
-        .unwrap();
+        let files = parse_sources(region, "input.sol", &dir.path().join("input.sol")).unwrap();
 
-        assert_eq!(files[0].0, "a");
-        assert!(files[0].1.contains("contract External"));
+        assert_eq!(vec!["a", "input.sol"], source_names(&files));
+        assert!(files["a"].contains("contract External"));
     }
 }
