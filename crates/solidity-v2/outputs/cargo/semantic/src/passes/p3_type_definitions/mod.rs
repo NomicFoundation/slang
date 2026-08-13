@@ -150,7 +150,7 @@ impl<'a> Pass<'a> {
                     continue;
                 };
 
-                let Some(getter_type_id) =
+                let Some((getter_type_id, getter_member_ids)) =
                     self.compute_getter_type(receiver_type_id, node_id, type_id)
                 else {
                     continue;
@@ -160,6 +160,7 @@ impl<'a> Pass<'a> {
                     unreachable!("definition is not a state variable");
                 };
                 definition.getter_type_id = Some(getter_type_id);
+                definition.getter_member_ids = getter_member_ids;
             }
         }
     }
