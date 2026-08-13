@@ -7,9 +7,7 @@ use crate::diagnostics::severity::DiagnosticSeverity;
 /// once.
 ///
 /// The kind and its code are deliberately general, but `memory-safe` is for now
-/// the only flag the language defines, so it is the only one this can report
-/// and the message names it outright. Should more flags be added, this should
-/// grow a field carrying the repeated flag rather than a new diagnostic kind.
+/// the only flag the language defines.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct DuplicateAssemblyFlag;
 
@@ -23,6 +21,6 @@ impl DiagnosticExtensions for DuplicateAssemblyFlag {
     }
 
     fn message(&self) -> String {
-        "The assembly flag 'memory-safe' has already been specified.".to_string()
+        "This assembly flag has already been specified.".to_string()
     }
 }
