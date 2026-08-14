@@ -69,7 +69,8 @@ pub(crate) fn filter_overriden_definitions(
                         unreachable!("type of function definition is not a function");
                     };
                     if seen_function_types.iter().any(|seen_function_type| {
-                        types.function_type_overrides(seen_function_type, function_type)
+                        types
+                            .function_type_overrides_in_hierarchy(seen_function_type, function_type)
                     }) {
                         // the function type is overriden by some other previously seen definition
                         continue;
