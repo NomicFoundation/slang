@@ -4154,10 +4154,11 @@ impl core::marker::StructuralPartialEq for slang_solidity_v2_common::terminals::
 impl serde_core::ser::Serialize for slang_solidity_v2_common::terminals::TerminalKind
 pub fn slang_solidity_v2_common::terminals::TerminalKind::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
 pub mod slang_solidity_v2_common::utils
-pub fn slang_solidity_v2_common::utils::decode_escape_sequences(&str) -> alloc::vec::Vec<u8>
-pub fn slang_solidity_v2_common::utils::decode_hex_string(&str) -> alloc::vec::Vec<u8>
-pub fn slang_solidity_v2_common::utils::strip_string_literal_prefix_and_quotes<'a>(&'a str, &str) -> &'a str
-pub fn slang_solidity_v2_common::utils::strip_string_literal_quotes(&str) -> &str
+pub mod slang_solidity_v2_common::utils::strings
+pub fn slang_solidity_v2_common::utils::strings::decode_escape_sequences(&str) -> alloc::vec::Vec<u8>
+pub fn slang_solidity_v2_common::utils::strings::decode_hex_string(&str) -> alloc::vec::Vec<u8>
+pub fn slang_solidity_v2_common::utils::strings::strip_string_literal_prefix_and_quotes<'a>(&'a str, &str) -> &'a str
+pub fn slang_solidity_v2_common::utils::strings::strip_string_literal_quotes(&str) -> &str
 pub mod slang_solidity_v2_common::versions
 pub enum slang_solidity_v2_common::versions::LanguageVersion
 pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_0
