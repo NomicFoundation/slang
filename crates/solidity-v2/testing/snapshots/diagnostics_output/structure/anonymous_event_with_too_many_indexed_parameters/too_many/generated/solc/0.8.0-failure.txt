@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 8598] Error: More than 4 indexed arguments for anonymous event.
+    ╭─[input.sol:7:5]
+    │
+  7 │ ╭─▶     event TooMany(
+    ┆ ┆   
+ 13 │ ├─▶     ) anonymous;
+    │ │                      
+    │ ╰────────────────────── Error occurred here.
+────╯

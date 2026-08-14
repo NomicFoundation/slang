@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[SyntaxError 7026] Error: Inline assembly marked memory-safe multiple times.
+   ╭─[input.sol:7:9]
+   │
+ 7 │         assembly ("memory-safe", "memory-safe") {}
+   │         ─────────────────────┬────────────────────  
+   │                              ╰────────────────────── Error occurred here.
+───╯

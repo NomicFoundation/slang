@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[SyntaxError 3349] Error: The type has to be specified explicitly when attaching specific functions.
+    ╭─[input.sol:12:5]
+    │
+ 12 │     using {L.f} for *;
+    │     ─────────┬────────  
+    │              ╰────────── Error occurred here.
+────╯

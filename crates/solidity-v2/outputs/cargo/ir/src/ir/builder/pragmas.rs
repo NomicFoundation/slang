@@ -5,7 +5,7 @@ use slang_solidity_v2_common::diagnostics::kinds::syntax::{
     UnrecognizedExperimentalFeature, UnsupportedAbicoderV1, UnsupportedExperimentalSmtChecker,
     UnsupportedExperimentalSolidity,
 };
-use slang_solidity_v2_common::utils::strip_string_literal_quotes;
+use slang_solidity_v2_common::utils::strings::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 use slang_solidity_v2_cst::structured_cst::text_range::TextRange;

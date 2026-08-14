@@ -27,6 +27,7 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
     simplify_string_literals(&mut mutator);
     normalize_experimental_feature(&mut mutator);
     normalize_abicoder_version(&mut mutator);
+    normalize_assembly_statement(&mut mutator);
     normalize_yul_terminals(&mut mutator);
     simplify_imports(&mut mutator);
     simplify_parameters(&mut mutator);
@@ -335,10 +336,18 @@ fn simplify_string_literals(mutator: &mut IrModelMutator) {
     mutator.normalize_terminal("YulStringLiteral", "StringLiteral");
     mutator.normalize_terminal("YulHexStringLiteral", "HexStringLiteral");
     mutator.normalize_terminal("PragmaStringLiteral", "StringLiteral");
+}
 
-    // Collapse YulFlagsDeclaration to its inner YulFlags collection.
-    // This preserves AssemblyStatement.flags as optional.
-    mutator.collapse_sequence("YulFlagsDeclaration");
+fn normalize_assembly_statement(mutator: &mut IrModelMutator) {
+    // The dialect label and the flag list are both validated while lowering to
+    // the IR, so neither needs to survive into it. `memory-safe` is the only
+    // flag the language defines, so the whole list reduces to a single boolean;
+    // this is the one place to revisit if more flags are ever added.
+    mutator.remove_type("YulFlags");
+    mutator.remove_type("YulFlagsDeclaration");
+    mutator.remove_sequence_field("AssemblyStatement", "label");
+
+    mutator.insert_sequence_boolean_before("AssemblyStatement", "is_memory_safe", "body");
 }
 
 fn normalize_experimental_feature(mutator: &mut IrModelMutator) {

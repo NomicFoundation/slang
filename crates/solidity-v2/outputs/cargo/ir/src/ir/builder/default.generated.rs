@@ -101,31 +101,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         })
     }
 
-    pub(super) fn build_assembly_statement(
-        &mut self,
-        source: &input::AssemblyStatement,
-    ) -> output::AssemblyStatement {
-        let id = self.next_id(output::NodeKind::AssemblyStatement);
-        let range = source.calculate_text_range().unwrap_or_default();
-        let label = source
-            .label
-            .as_ref()
-            .map(|value| self.build_yul_string_literal(value));
-        let flags = source
-            .flags
-            .as_ref()
-            .map(|value| self.build_yul_flags_declaration(value));
-        let body = self.build_yul_block(&source.body);
-
-        Arc::new(output::AssemblyStatementStruct {
-            id,
-            range,
-            label,
-            flags,
-            body,
-        })
-    }
-
     pub(super) fn build_assignment_expression(
         &mut self,
         source: &input::AssignmentExpression,
@@ -1401,13 +1376,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::VariableDeclarationValue,
     ) -> output::Expression {
         self.build_expression(&source.expression)
-    }
-
-    pub(super) fn build_yul_flags_declaration(
-        &mut self,
-        source: &input::YulFlagsDeclaration,
-    ) -> output::YulFlags {
-        self.build_yul_flags(&source.flags)
     }
 
     pub(super) fn build_yul_parameters_declaration(
@@ -2875,17 +2843,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .elements
             .iter()
             .map(|item| self.build_yul_expression(item))
-            .collect()
-    }
-
-    pub(super) fn build_yul_flags(&mut self, source: &input::YulFlags) -> output::YulFlags {
-        if source.elements.is_empty() {
-            return Arc::default();
-        }
-        source
-            .elements
-            .iter()
-            .map(|item| self.build_yul_string_literal(item))
             .collect()
     }
 

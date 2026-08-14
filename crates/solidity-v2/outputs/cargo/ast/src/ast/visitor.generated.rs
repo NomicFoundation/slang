@@ -866,11 +866,6 @@ pub trait Visitor {
     }
     fn leave_yul_arguments(&mut self, _items: &YulArguments) {}
 
-    fn enter_yul_flags(&mut self, _items: &YulFlags) -> bool {
-        true
-    }
-    fn leave_yul_flags(&mut self, _items: &YulFlags) {}
-
     fn enter_yul_parameters(&mut self, _items: &YulParameters) -> bool {
         true
     }
@@ -986,12 +981,6 @@ pub fn accept_array_type_name(node: &ArrayTypeName, visitor: &mut impl Visitor) 
 pub fn accept_assembly_statement(node: &AssemblyStatement, visitor: &mut impl Visitor) {
     if !visitor.enter_assembly_statement(node) {
         return;
-    }
-    if let Some(ref label) = node.label() {
-        visitor.visit_string_literal(label);
-    }
-    if let Some(ref flags) = node.flags() {
-        accept_yul_flags(flags, visitor);
     }
     accept_yul_block(&node.body(), visitor);
     visitor.leave_assembly_statement(node);
@@ -3091,17 +3080,6 @@ fn accept_yul_arguments(items: &YulArguments, visitor: &mut impl Visitor) {
         accept_yul_expression(&item, visitor);
     }
     visitor.leave_yul_arguments(items);
-}
-
-#[inline]
-fn accept_yul_flags(items: &YulFlags, visitor: &mut impl Visitor) {
-    if !visitor.enter_yul_flags(items) {
-        return;
-    }
-    for item in items.iter() {
-        visitor.visit_string_literal(&item);
-    }
-    visitor.leave_yul_flags(items);
 }
 
 #[inline]

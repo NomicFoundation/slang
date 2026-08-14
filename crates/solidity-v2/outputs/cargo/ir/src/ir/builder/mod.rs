@@ -1,3 +1,4 @@
+mod assembly;
 mod attributes;
 #[path = "default.generated.rs"]
 mod default;

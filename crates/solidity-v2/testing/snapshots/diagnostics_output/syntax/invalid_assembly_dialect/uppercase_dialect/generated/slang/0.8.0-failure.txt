@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/invalid-assembly-dialect] Error: Invalid assembly dialect. Only 'evmasm' is supported.
+   ╭─[input.sol:7:18]
+   │
+ 7 │         assembly "EVMASM" {}
+   │                  ────┬───  
+   │                      ╰───── Error occurred here.
+───╯

@@ -297,18 +297,8 @@ impl AssemblyStatementStruct {
         self.ir_node.id()
     }
 
-    pub fn label(&self) -> Option<StringLiteral> {
-        self.ir_node
-            .label
-            .as_ref()
-            .map(|ir_node| create_string_literal(ir_node, &self.semantic))
-    }
-
-    pub fn flags(&self) -> Option<YulFlags> {
-        self.ir_node
-            .flags
-            .as_ref()
-            .map(|ir_node| create_yul_flags(ir_node, &self.semantic))
+    pub fn is_memory_safe(&self) -> bool {
+        self.ir_node.is_memory_safe
     }
 
     pub fn body(&self) -> YulBlock {
@@ -6721,36 +6711,6 @@ impl YulArgumentsStruct {
         self.ir_nodes
             .iter()
             .map(|ir_node| create_yul_expression(ir_node, &self.semantic))
-    }
-
-    pub fn len(&self) -> usize {
-        self.ir_nodes.len()
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.ir_nodes.is_empty()
-    }
-}
-pub type YulFlags = YulFlagsStruct;
-
-pub(crate) fn create_yul_flags(nodes: &ir::YulFlags, semantic: &Arc<SemanticContext>) -> YulFlags {
-    YulFlagsStruct {
-        ir_nodes: Arc::clone(nodes),
-        semantic: Arc::clone(semantic),
-    }
-}
-
-#[derive(Clone)]
-pub struct YulFlagsStruct {
-    pub(crate) ir_nodes: ir::YulFlags,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-impl YulFlagsStruct {
-    pub fn iter(&self) -> impl Iterator<Item = StringLiteral> + use<'_> {
-        self.ir_nodes
-            .iter()
-            .map(|ir_node| create_string_literal(ir_node, &self.semantic))
     }
 
     pub fn len(&self) -> usize {
