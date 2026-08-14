@@ -1,7 +1,6 @@
 use num_bigint::{BigInt, BigUint};
 use num_rational::BigRational;
 use ruint::aliases::U256;
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     ArrayLengthFractional, ArrayLengthNotConstant, ArrayLengthZero, ConstantArithmeticError,
@@ -9,80 +8,15 @@ use slang_solidity_v2_common::diagnostics::kinds::type_system::{
 };
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_ir::ir::{self, NodeIdGenerator, NodeIdentity};
+use slang_solidity_v2_ir::ir::{self, NodeIdentity};
 
-use super::{TestFile, build_file};
+use super::{Analysis, analyze, analyze_at, diagnostic_kind, find_function};
 use crate::binder::{Binder, Definition, Typing};
-use crate::context::{FileNodeMapper, SemanticContext, SemanticFile};
-use crate::passes::{
-    p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p5_resolve_references,
-};
 use crate::types::{
     ArrayType, ByteArrayType, BytesType, ContractType, DataLocation, FixedSizeArrayType,
     FunctionType, IntegerType, LibraryType, LiteralKind, MappingType, MetaType, StringType,
     StructType, TupleType, Type, TypeId, TypeRegistry, UserMetaType,
 };
-
-struct TypeAnalysis {
-    file: TestFile,
-    binder: Binder,
-    types: TypeRegistry,
-    diagnostics: DiagnosticCollection,
-}
-
-/// Builds and runs every semantic pass over an arbitrary Solidity `source`,
-/// returning the analysis, including any diagnostics produced.
-fn analyze_with_diagnostics(language_version: LanguageVersion, source: &str) -> TypeAnalysis {
-    let mut id_generator = NodeIdGenerator::default();
-    let file = build_file(
-        "test.sol".into(),
-        source,
-        &mut id_generator,
-        language_version,
-    );
-    let files = vec![file];
-
-    let mut binder = Binder::default();
-    let mut types = TypeRegistry::new(language_version);
-    let mut diagnostics = DiagnosticCollection::default();
-    let file_node_mapper = FileNodeMapper::build_from(&files);
-    p1_collect_definitions::run(&files, &mut binder, language_version, &mut diagnostics);
-    p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
-    p3_type_definitions::run(
-        &files,
-        &mut binder,
-        language_version,
-        &mut types,
-        &file_node_mapper,
-        &mut diagnostics,
-    );
-    p5_resolve_references::run(
-        &files,
-        &mut binder,
-        &mut types,
-        &file_node_mapper,
-        &mut diagnostics,
-    );
-
-    TypeAnalysis {
-        file: files.into_iter().next().unwrap(),
-        binder,
-        types,
-        diagnostics,
-    }
-}
-
-/// Builds and runs every semantic pass over an arbitrary Solidity `source`,
-/// asserting that no diagnostics were produced.
-fn analyze(language_version: LanguageVersion, source: &str) -> TypeAnalysis {
-    let analysis = analyze_with_diagnostics(language_version, source);
-    assert!(
-        analysis.diagnostics.is_empty(),
-        "Semantic diagnostics: {:?}",
-        analysis.diagnostics
-    );
-    analysis
-}
 
 /// Recovers the typing recorded for an expression `node`, resolved to a
 /// concrete [`Type`].
@@ -96,45 +30,6 @@ fn recover_expression_type(
         .node_typing(node_id)
         .as_type_id()
         .map(|type_id| types.get_type_by_id(type_id).clone())
-}
-
-/// Finds the function named `name` among a contract's or library's `members`.
-fn find_function<'a>(
-    members: &'a [ir::ContractMember],
-    name: &str,
-) -> Option<&'a ir::FunctionDefinition> {
-    members.iter().find_map(|member| match member {
-        ir::ContractMember::FunctionDefinition(function)
-            if function.name.as_ref().is_some_and(|n| n.unparse() == name) =>
-        {
-            Some(function)
-        }
-        _ => None,
-    })
-}
-
-/// Finds the top-level contract named `name`.
-fn find_contract<'a>(file: &'a TestFile, name: &str) -> &'a ir::ContractDefinition {
-    file.ir_root()
-        .members
-        .iter()
-        .find_map(|member| match member {
-            ir::SourceUnitMember::ContractDefinition(c) if c.name.unparse() == name => Some(c),
-            _ => None,
-        })
-        .unwrap_or_else(|| panic!("contract `{name}` not found"))
-}
-
-/// Finds the top-level library named `name`.
-fn find_library<'a>(file: &'a TestFile, name: &str) -> &'a ir::LibraryDefinition {
-    file.ir_root()
-        .members
-        .iter()
-        .find_map(|member| match member {
-            ir::SourceUnitMember::LibraryDefinition(l) if l.name.unparse() == name => Some(l),
-            _ => None,
-        })
-        .unwrap_or_else(|| panic!("library `{name}` not found"))
 }
 
 /// Collects the recovered type of each expression statement in `body`, in
@@ -188,20 +83,15 @@ fn type_of_expressions(
         "#
     );
 
-    let TypeAnalysis {
-        file,
-        binder,
-        types,
-        ..
-    } = analyze(language_version, &source);
+    let analysis = analyze_at(&source, language_version);
 
-    let contract = find_contract(&file, contract_name);
+    let contract = analysis.find_contract(contract_name);
     let function = find_function(&contract.members, "__test").expect("__test function not found");
     let block = function.body.as_ref().expect("__test has a body");
 
-    let typings = expression_statement_types(block, &binder, &types);
+    let typings = expression_statement_types(block, &analysis.binder, &analysis.types);
 
-    (typings, types)
+    (typings, analysis.types)
 }
 
 /// Convenience wrapper for `type_of_expressions` with a single expression and
@@ -246,27 +136,14 @@ fn register_uint_type(types: &mut TypeRegistry, bits: u32) -> TypeId {
     }))
 }
 
-/// Returns the kind of the single emitted diagnostic, if any. The inputs in
-/// these tests produce at most one diagnostic.
-fn diagnostic_kind(diagnostics: &DiagnosticCollection) -> Option<DiagnosticKind> {
-    assert!(
-        diagnostics.iter().count() <= 1,
-        "expected at most one diagnostic: {diagnostics:?}"
-    );
-    diagnostics.iter().next().map(|d| d.kind().clone())
-}
-
 /// Runs the full pipeline over `source` and returns contract `name`'s folded
 /// storage base slot together with the diagnostic emitted, if any. A rejected base
 /// slot is reported as a diagnostic and leaves `base_slot` unset.
 fn contract_base_slot(source: &str, name: &str) -> (Option<U256>, Option<DiagnosticKind>) {
-    let TypeAnalysis {
-        file,
-        binder,
-        diagnostics,
-        ..
-    } = analyze_with_diagnostics(LanguageVersion::LATEST, source);
-    let contract = find_contract(&file, name);
+    let analysis = Analysis::of_source(source).run();
+    let binder = &analysis.binder;
+    let diagnostics = &analysis.diagnostics;
+    let contract = analysis.find_contract(name);
     let base_slot = match binder
         .find_definition_by_id(contract.id())
         .expect("contract definition is registered")
@@ -274,7 +151,7 @@ fn contract_base_slot(source: &str, name: &str) -> (Option<U256>, Option<Diagnos
         Definition::Contract(contract_definition) => contract_definition.base_slot,
         _ => panic!("expected a contract definition"),
     };
-    (base_slot, diagnostic_kind(&diagnostics))
+    (base_slot, diagnostic_kind(diagnostics))
 }
 
 /// Folds a fixed-size-array length through the real pipeline, returning the
@@ -292,14 +169,12 @@ fn folded_array_length(context: &str, array_type: &str) -> (U256, Option<Diagnos
         "#
     );
 
-    let TypeAnalysis {
-        file,
-        binder,
-        types,
-        diagnostics,
-    } = analyze_with_diagnostics(LanguageVersion::LATEST, &source);
+    let analysis = Analysis::of_source(&source).run();
+    let binder = &analysis.binder;
+    let types = &analysis.types;
+    let diagnostics = &analysis.diagnostics;
 
-    let contract = find_contract(&file, "Test");
+    let contract = analysis.find_contract("Test");
     let state_variable = contract
         .members
         .iter()
@@ -321,17 +196,17 @@ fn folded_array_length(context: &str, array_type: &str) -> (U256, Option<Diagnos
         Type::FixedSizeArray(FixedSizeArrayType { size, .. }) => *size,
         other => panic!("expected a FixedSizeArray type, got {other:?}"),
     };
-    (size, diagnostic_kind(&diagnostics))
+    (size, diagnostic_kind(diagnostics))
 }
 
 /// Collects the `FunctionCallExpression` of each expression statement in the
 /// body of `function` within `contract`, in source order.
 fn call_expressions<'a>(
-    file: &'a TestFile,
+    analysis: &'a Analysis,
     contract: &str,
     function: &str,
 ) -> Vec<&'a ir::FunctionCallExpression> {
-    let c = find_contract(file, contract);
+    let c = analysis.find_contract(contract);
     let f = find_function(&c.members, function).expect("function not found");
     let body = f.body.as_ref().expect("function has a body");
     body.statements
@@ -1100,9 +975,10 @@ fn test_super_keyword_types_as_super() {
         }
         "#;
 
-    let TypeAnalysis { file, binder, .. } = analyze(LanguageVersion::LATEST, source);
+    let analysis = analyze(source);
+    let binder = &analysis.binder;
 
-    let contract = find_contract(&file, "B");
+    let contract = analysis.find_contract("B");
     let function = find_function(&contract.members, "g").expect("g function");
     let body = function.body.as_ref().expect("g has a body");
 
@@ -1349,18 +1225,15 @@ fn test_cast_address_to_library_is_library_typed() {
             }
         }
     "#;
-    let TypeAnalysis {
-        file,
-        binder,
-        types,
-        ..
-    } = analyze(LanguageVersion::LATEST, source);
+    let analysis = analyze(source);
+    let binder = &analysis.binder;
+    let types = &analysis.types;
 
-    let contract = find_contract(&file, "Test");
+    let contract = analysis.find_contract("Test");
     let probe = find_function(&contract.members, "probe").expect("probe function");
     let body = probe.body.as_ref().expect("probe has a body");
 
-    let typings = expression_statement_types(body, &binder, &types);
+    let typings = expression_statement_types(body, binder, types);
     let [cast, comparison] = typings.as_slice() else {
         panic!("expected two expression statements, got {typings:?}");
     };
@@ -1462,18 +1335,15 @@ fn test_this_in_library_is_library_typed() {
         contract Test {}
         "#;
 
-    let TypeAnalysis {
-        file,
-        binder,
-        types,
-        ..
-    } = analyze(LanguageVersion::LATEST, source);
+    let analysis = analyze(source);
+    let binder = &analysis.binder;
+    let types = &analysis.types;
 
-    let library = find_library(&file, "MyLib");
+    let library = analysis.find_library("MyLib");
     let probe = find_function(&library.members, "probe").expect("probe function");
     let body = probe.body.as_ref().expect("probe has a body");
 
-    let typings = expression_statement_types(body, &binder, &types);
+    let typings = expression_statement_types(body, binder, types);
     assert!(
         matches!(typings.as_slice(), [Some(Type::Library(LibraryType { definition_id }))] if definition_id == &library.id()),
         "expected `this` to be typed as the library, got {typings:?}",
@@ -1491,18 +1361,15 @@ fn test_this_inside_contract() {
         contract Test {}
         "#;
 
-    let TypeAnalysis {
-        file,
-        binder,
-        types,
-        ..
-    } = analyze(LanguageVersion::LATEST, source);
+    let analysis = analyze(source);
+    let binder = &analysis.binder;
+    let types = &analysis.types;
 
-    let contract = find_contract(&file, "MyContract");
+    let contract = analysis.find_contract("MyContract");
     let probe = find_function(&contract.members, "probe").expect("probe function");
     let body = probe.body.as_ref().expect("probe has a body");
 
-    let typings = expression_statement_types(body, &binder, &types);
+    let typings = expression_statement_types(body, binder, types);
 
     assert!(
         matches!(typings.as_slice(), [Some(Type::Contract(ContractType { definition_id }))] if definition_id == &contract.id())
@@ -1531,18 +1398,15 @@ fn test_partially_applied_function_does_not_unify_into_array() {
         }
         "#;
 
-    let TypeAnalysis {
-        file,
-        binder,
-        types,
-        ..
-    } = analyze(LanguageVersion::LATEST, source);
+    let analysis = analyze(source);
+    let binder = &analysis.binder;
+    let types = &analysis.types;
 
-    let contract = find_contract(&file, "Test");
+    let contract = analysis.find_contract("Test");
     let function = find_function(&contract.members, "__test").expect("__test function");
     let body = function.body.as_ref().expect("__test has a body");
 
-    let mut typings = expression_statement_types(body, &binder, &types).into_iter();
+    let mut typings = expression_statement_types(body, binder, types).into_iter();
 
     // Control: plain function pointers of the same signature still unify into a
     // fixed-size array.
@@ -1604,18 +1468,15 @@ fn test_partially_applied_function_is_not_convertible() {
         }        
         "#;
 
-    let TypeAnalysis {
-        file,
-        binder,
-        types,
-        ..
-    } = analyze(LanguageVersion::LATEST, source);
+    let analysis = analyze(source);
+    let binder = &analysis.binder;
+    let types = &analysis.types;
 
-    let contract = find_contract(&file, "Test");
+    let contract = analysis.find_contract("Test");
     let function = find_function(&contract.members, "__test").expect("__test function");
     let body = function.body.as_ref().expect("__test has a body");
 
-    let mut typings = expression_statement_types(body, &binder, &types).into_iter();
+    let mut typings = expression_statement_types(body, binder, types).into_iter();
 
     assert!(
         matches!(typings.next(), Some(Some(Type::Boolean))),
@@ -1978,16 +1839,13 @@ fn test_static_library_call_is_not_partially_applied() {
             }
         }
         "#;
-    let TypeAnalysis {
-        file,
-        binder,
-        types,
-        ..
-    } = analyze(LanguageVersion::LATEST, source);
-    let contract = find_contract(&file, "Test");
+    let analysis = analyze(source);
+    let binder = &analysis.binder;
+    let types = &analysis.types;
+    let contract = analysis.find_contract("Test");
     let function = find_function(&contract.members, "__test").expect("__test function");
     let body = function.body.as_ref().expect("__test has a body");
-    let typings = expression_statement_types(body, &binder, &types);
+    let typings = expression_statement_types(body, binder, types);
     assert_eq!(typings, vec![Some(Type::Boolean)]);
 }
 
@@ -2046,7 +1904,6 @@ fn test_explicit_enum_cast() {
 fn test_meta_type_internal_names() {
     // Meta-types print in solc's `type(T)` notation: `type(uint256)` for an
     // elementary type, `type(C.E)` for a named definition.
-    let mut id_generator = NodeIdGenerator::default();
     let source = r#"
         contract C {
             enum E { A }
@@ -2056,24 +1913,14 @@ fn test_meta_type_internal_names() {
             }
         }
     "#;
-    let file = build_file(
-        "test.sol".into(),
-        source,
-        &mut id_generator,
-        LanguageVersion::LATEST,
-    );
-    let files = vec![file];
-    let mut diagnostics = DiagnosticCollection::default();
-    let context = SemanticContext::build_from(
-        LanguageVersion::LATEST,
-        EvmTarget::LATEST,
-        &files,
-        None,
-        &mut diagnostics,
-    );
-    assert!(diagnostics.is_empty(), "{diagnostics:?}");
+    let context = Analysis::of_source(source)
+        .target(EvmTarget::LATEST)
+        .context();
 
-    let contract = find_contract(&files[0], "C");
+    let contract = context
+        .find_contract_by_name("C")
+        .next()
+        .expect("contract `C` not found");
     let function = find_function(&contract.members, "g").expect("g function");
     let body = function.body.as_ref().expect("g has a body");
     let mut expressions = body.statements.iter().filter_map(|stmt| match stmt {
@@ -2189,15 +2036,12 @@ fn test_function_declaration_via_type_name_has_no_mobile_type() {
         }
     "#;
 
-    let TypeAnalysis {
-        file,
-        binder,
-        types,
-        ..
-    } = analyze(LanguageVersion::LATEST, source);
+    let analysis = analyze(source);
+    let binder = &analysis.binder;
+    let types = &analysis.types;
 
     let statement_typings = |contract: &str, function: &str| -> Vec<Typing> {
-        let c = find_contract(&file, contract);
+        let c = analysis.find_contract(contract);
         let f = find_function(&c.members, function).expect("function not found");
         let body = f.body.as_ref().expect("function has a body");
         body.statements
@@ -2286,14 +2130,11 @@ fn test_overloaded_call_operand_narrows_to_selected_overload() {
         }
     "#;
 
-    let TypeAnalysis {
-        file,
-        binder,
-        types,
-        ..
-    } = analyze(LanguageVersion::LATEST, source);
+    let analysis = analyze(source);
+    let binder = &analysis.binder;
+    let types = &analysis.types;
 
-    let calls = call_expressions(&file, "C", "g");
+    let calls = call_expressions(&analysis, "C", "g");
     assert_eq!(calls.len(), 2);
 
     // Recovers the single parameter type of the operand's (now resolved)
@@ -2343,12 +2184,10 @@ fn test_overloaded_declaration_via_type_name_operand_narrows() {
         }
     "#;
 
-    let TypeAnalysis {
-        file,
-        binder,
-        types,
-        diagnostics,
-    } = analyze_with_diagnostics(LanguageVersion::LATEST, source);
+    let analysis = Analysis::of_source(source).run();
+    let binder = &analysis.binder;
+    let types = &analysis.types;
+    let diagnostics = &analysis.diagnostics;
 
     // Both calls are invalid: external functions aren't callable via the type name.
     assert_eq!(
@@ -2357,7 +2196,7 @@ fn test_overloaded_declaration_via_type_name_operand_narrows() {
         "both calls via the contract type name should be rejected"
     );
 
-    let calls = call_expressions(&file, "B", "g");
+    let calls = call_expressions(&analysis, "B", "g");
     assert_eq!(calls.len(), 2);
 
     // The operand narrows to the user meta type of the selected overload's

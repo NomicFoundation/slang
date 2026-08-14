@@ -1,18 +1,10 @@
 use slang_solidity_v2_common::collections::Map;
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind;
-use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_ir::ir::NodeIdGenerator;
 
-use super::build_file;
+use super::{Analyse, Analysis, AnalysisBuilder, analyze};
 use crate::binder::{Binder, Resolution};
-use crate::context::FileNodeMapper;
-use crate::passes::{
-    p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p5_resolve_references,
-    p6_resolve_yul,
-};
 use crate::types::TypeRegistry;
 
 #[test]
@@ -22,33 +14,20 @@ contract Base {}
 contract Test is Base layout at 0 {}
     "###;
 
-    let mut id_generator = NodeIdGenerator::default();
-    let file = build_file(
-        "test.sol".into(),
-        CONTENTS,
-        &mut id_generator,
-        LanguageVersion::LATEST,
-    );
-
-    let files = [file];
-    let mut binder = Binder::default();
-    let mut diagnostics = DiagnosticCollection::default();
-    p1_collect_definitions::run(
-        &files,
-        &mut binder,
-        LanguageVersion::LATEST,
-        &mut diagnostics,
-    );
-    p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
-    assert!(
-        diagnostics.is_empty(),
-        "Semantic diagnostics: {diagnostics:?}"
-    );
+    let binder = analyse_definitions(CONTENTS)
+        .expecting_no_diagnostics()
+        .binder;
 
     // Verify definitions were collected
     assert_eq!(2, binder.definitions().len());
     // Verify linearisations were computed
     assert_eq!(2, binder.linearisations().len());
+}
+
+/// Runs only the definition-collecting and linearising passes, so a failure
+/// can't come from a later pass consuming their output.
+fn analyse_definitions(source: &str) -> AnalysisBuilder<'_> {
+    Analysis::of_source(source).analyse(Analyse::Definitions)
 }
 
 fn get_contract_to_bases_map(binder: &Binder) -> Map<String, Vec<String>> {
@@ -90,28 +69,9 @@ abstract contract B is C {}
 interface A is C {}
 "#;
 
-    let mut id_generator = NodeIdGenerator::default();
-    let file = build_file(
-        "test.sol".into(),
-        CONTENTS,
-        &mut id_generator,
-        LanguageVersion::LATEST,
-    );
-
-    let files = [file];
-    let mut binder = Binder::default();
-    let mut diagnostics = DiagnosticCollection::default();
-    p1_collect_definitions::run(
-        &files,
-        &mut binder,
-        LanguageVersion::LATEST,
-        &mut diagnostics,
-    );
-    p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
-    assert!(
-        diagnostics.is_empty(),
-        "Semantic diagnostics: {diagnostics:?}"
-    );
+    let binder = analyse_definitions(CONTENTS)
+        .expecting_no_diagnostics()
+        .binder;
 
     let contract_to_bases = get_contract_to_bases_map(&binder);
 
@@ -144,28 +104,9 @@ contract D is B {}
 contract B {}
 "#;
 
-    let mut id_generator = NodeIdGenerator::default();
-    let file = build_file(
-        "test.sol".into(),
-        CONTENTS,
-        &mut id_generator,
-        LanguageVersion::LATEST,
-    );
-
-    let files = [file];
-    let mut binder = Binder::default();
-    let mut diagnostics = DiagnosticCollection::default();
-    p1_collect_definitions::run(
-        &files,
-        &mut binder,
-        LanguageVersion::LATEST,
-        &mut diagnostics,
-    );
-    p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
-    assert!(
-        diagnostics.is_empty(),
-        "Semantic diagnostics: {diagnostics:?}"
-    );
+    let binder = analyse_definitions(CONTENTS)
+        .expecting_no_diagnostics()
+        .binder;
 
     let contract_to_bases = get_contract_to_bases_map(&binder);
 
@@ -189,32 +130,12 @@ contract Test is Base, Foo { // Base should resolve to the contract, not the var
 }
 "#;
 
-    let mut id_generator = NodeIdGenerator::default();
-    let file = build_file(
-        "test.sol".into(),
-        CONTENTS,
-        &mut id_generator,
-        LanguageVersion::LATEST,
-    );
-
-    let files = [file];
-    let mut binder = Binder::default();
-    let mut diagnostics = DiagnosticCollection::default();
-    p1_collect_definitions::run(
-        &files,
-        &mut binder,
-        LanguageVersion::LATEST,
-        &mut diagnostics,
-    );
-    assert!(
-        diagnostics.is_empty(),
-        "Semantic diagnostics: {diagnostics:?}"
-    );
-    p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
+    let analysis = analyse_definitions(CONTENTS).run();
 
     // `Foo` is a library which can't be used as a base, so check if the
-    // expected diagnostic was emitted.
-    let emitted: Vec<_> = diagnostics.iter().collect();
+    // expected diagnostic was emitted. Asserting on the exact count also
+    // covers `p1` having reported nothing.
+    let emitted: Vec<_> = analysis.diagnostics.iter().collect();
     assert_eq!(
         emitted.len(),
         1,
@@ -225,7 +146,7 @@ contract Test is Base, Foo { // Base should resolve to the contract, not the var
         DiagnosticKind::TypeSystem(TypeSystemDiagnosticKind::InvalidBase(_))
     ));
 
-    let contract_to_bases = get_contract_to_bases_map(&binder);
+    let contract_to_bases = get_contract_to_bases_map(&analysis.binder);
 
     let mut expected = Map::default();
     expected.insert("Base".to_string(), vec!["Base".to_string()]);
@@ -264,38 +185,15 @@ contract Test is Base {
 }
     "###;
 
-    let mut id_generator = NodeIdGenerator::default();
-    let language_version = LanguageVersion::LATEST;
-    let file = build_file(
-        "test.sol".into(),
-        CONTENTS,
-        &mut id_generator,
-        language_version,
-    );
-
-    let files = [file];
-    let mut binder = Binder::default();
-    let mut types = TypeRegistry::new(language_version);
-
-    let mut diagnostics = DiagnosticCollection::default();
-    p1_collect_definitions::run(&files, &mut binder, language_version, &mut diagnostics);
-    p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
-
-    let types_before = types.iter_types().count();
-    let file_node_mapper = FileNodeMapper::build_from(&files);
-    p3_type_definitions::run(
-        &files,
-        &mut binder,
-        language_version,
-        &mut types,
-        &file_node_mapper,
-        &mut diagnostics,
-    );
-    assert!(
-        diagnostics.is_empty(),
-        "Semantic diagnostics: {diagnostics:?}"
-    );
-    let types_after = types.iter_types().count();
+    // Neither `p1` nor `p2` registers a type, so the baseline is the set of
+    // core types a fresh registry starts with.
+    let types_before = TypeRegistry::new(LanguageVersion::LATEST)
+        .iter_types()
+        .count();
+    let analysis = Analysis::of_source(CONTENTS)
+        .analyse(Analyse::Types)
+        .expecting_no_diagnostics();
+    let types_after = analysis.types.iter_types().count();
 
     // The pass registers new types for: contracts, mappings, structs, enums,
     // function types, getter types, and a `Type::UserMetaType` for each
@@ -340,46 +238,10 @@ contract Test is Base {
 }
     "###;
 
-    let language_version = LanguageVersion::LATEST;
-
-    let mut id_generator = NodeIdGenerator::default();
-    let file = build_file(
-        "test.sol".into(),
-        CONTENTS,
-        &mut id_generator,
-        language_version,
-    );
-
-    let files = [file];
-    let mut binder = Binder::default();
-    let mut types = TypeRegistry::new(language_version);
-
-    let mut diagnostics = DiagnosticCollection::default();
-    p1_collect_definitions::run(&files, &mut binder, language_version, &mut diagnostics);
-    p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
-    let file_node_mapper = FileNodeMapper::build_from(&files);
-    p3_type_definitions::run(
-        &files,
-        &mut binder,
-        language_version,
-        &mut types,
-        &file_node_mapper,
-        &mut diagnostics,
-    );
-    p5_resolve_references::run(
-        &files,
-        &mut binder,
-        &mut types,
-        &file_node_mapper,
-        &mut diagnostics,
-    );
-    assert!(
-        diagnostics.is_empty(),
-        "Semantic diagnostics: {diagnostics:?}"
-    );
+    let analysis = analyze(CONTENTS);
 
     // Verify that references were created and most are resolved
-    let references = binder.references();
+    let references = analysis.binder.references();
     assert!(!references.is_empty(), "expected some references");
 
     let unresolved_count = references
@@ -407,46 +269,12 @@ contract Test {
 }
     "###;
 
-    let mut id_generator = NodeIdGenerator::default();
-    let language_version = LanguageVersion::LATEST;
-    let file = build_file(
-        "test.sol".into(),
-        CONTENTS,
-        &mut id_generator,
-        language_version,
-    );
-
-    let files = [file];
-    let mut binder = Binder::default();
-    let mut types = TypeRegistry::new(language_version);
-    let mut diagnostics = DiagnosticCollection::default();
-    let file_node_mapper = FileNodeMapper::build_from(&files);
-
-    p1_collect_definitions::run(&files, &mut binder, language_version, &mut diagnostics);
-    p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
-    p3_type_definitions::run(
-        &files,
-        &mut binder,
-        language_version,
-        &mut types,
-        &file_node_mapper,
-        &mut diagnostics,
-    );
-    p6_resolve_yul::run(
-        &mut binder,
-        language_version,
-        EvmTarget::LATEST,
-        &types,
-        &file_node_mapper,
-        &mut diagnostics,
-    );
-    assert!(
-        diagnostics.is_empty(),
-        "Semantic diagnostics: {diagnostics:?}"
-    );
+    let analysis = Analysis::of_source(CONTENTS)
+        .analyse(Analyse::Yul)
+        .expecting_no_diagnostics();
 
     // The single `assembly` block was collected in p1.
-    let blocks = binder.assembly_blocks();
+    let blocks = analysis.binder.assembly_blocks();
     assert_eq!(blocks.len(), 1);
     let block = blocks.values().next().unwrap();
 
@@ -457,7 +285,8 @@ contract Test {
         .solidity_references
         .iter()
         .map(|node_id| {
-            binder
+            analysis
+                .binder
                 .find_definition_by_id(*node_id)
                 .unwrap()
                 .identifier()
@@ -469,5 +298,55 @@ contract Test {
     assert_eq!(
         referenced,
         vec!["localVar".to_string(), "stateVar".to_string()]
+    );
+}
+
+/// A symbol imported from a sibling file resolves to the declaration in that
+/// file, which is what [`Analysis::file`] wiring the import paths up buys.
+#[test]
+fn test_imported_symbol_resolves_to_the_declaring_file() {
+    let analysis = Analysis::builder()
+        .file("a.sol", r#"import {C} from "b.sol";"#)
+        .file("b.sol", "contract C {}")
+        .analyse(Analyse::Definitions)
+        .expecting_no_diagnostics();
+
+    let binder = &analysis.binder;
+    let resolve = |file: &str| {
+        let scope_id = binder
+            .scope_id_for_file_id(&file.into())
+            .unwrap_or_else(|| panic!("no file scope for {file}"));
+        binder.follow_symbol_aliases(binder.resolve_in_scope(scope_id, "C"))
+    };
+
+    assert_eq!(
+        resolve("a.sol"),
+        resolve("b.sol"),
+        "the import alias should follow through to `b.sol`'s declaration"
+    );
+    assert!(
+        matches!(resolve("a.sol"), Resolution::Definition(_)),
+        "expected a single declaration"
+    );
+}
+
+/// An import naming no known file stays unresolved, as it would for a file
+/// that isn't there.
+#[test]
+fn test_import_of_an_unknown_file_stays_unresolved() {
+    let analysis = Analysis::builder()
+        .file("a.sol", r#"import {C} from "missing.sol";"#)
+        .analyse(Analyse::Definitions)
+        .expecting_no_diagnostics();
+
+    let scope_id = analysis
+        .binder
+        .scope_id_for_file_id(&"a.sol".into())
+        .expect("no file scope for a.sol");
+    let resolution = analysis.binder.resolve_in_scope(scope_id, "C");
+
+    assert_eq!(
+        Resolution::Unresolved,
+        analysis.binder.follow_symbol_aliases(resolution)
     );
 }
