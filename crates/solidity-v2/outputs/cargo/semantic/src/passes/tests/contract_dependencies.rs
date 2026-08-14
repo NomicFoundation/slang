@@ -9,43 +9,25 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_ir::ir::NodeIdGenerator;
 
-use super::build_file;
+use super::Analysis;
 use crate::binder::Definition;
 use crate::context::SemanticContext;
 
+/// These tests pin Istanbul: the dependency walk is target independent, and
+/// the oldest supported target keeps any target-gated built-in out of the way.
+const TARGET: EvmTarget = EvmTarget::Istanbul;
+
 fn build_context(source: &str) -> SemanticContext {
-    let (context, diagnostics) = build_context_with_diagnostics(source);
-    assert!(
-        diagnostics.is_empty(),
-        "Semantic diagnostics: {diagnostics:?}"
-    );
-    context
+    Analysis::of_source(source).target(TARGET).context()
 }
 
 /// Builds the context without asserting on the diagnostics, for sources
 /// whose dependencies form a cycle.
 fn build_context_with_diagnostics(source: &str) -> (SemanticContext, DiagnosticCollection) {
-    let mut id_generator = NodeIdGenerator::default();
-    let file = build_file(
-        "test.sol".into(),
-        source,
-        &mut id_generator,
-        LanguageVersion::LATEST,
-    );
-
-    let files = [file];
-    let mut diagnostics = DiagnosticCollection::default();
-    let context = SemanticContext::build_from(
-        LanguageVersion::LATEST,
-        EvmTarget::Istanbul,
-        &files,
-        None,
-        &mut diagnostics,
-    );
-    (context, diagnostics)
+    Analysis::of_source(source)
+        .target(TARGET)
+        .context_with_diagnostics()
 }
 
 fn contract_id(context: &SemanticContext, name: &str) -> NodeId {
