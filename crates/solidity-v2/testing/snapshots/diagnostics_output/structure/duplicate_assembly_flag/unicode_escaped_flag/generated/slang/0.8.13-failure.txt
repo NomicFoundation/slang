@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/duplicate-assembly-flag] Error: This assembly flag has already been specified.
+   ╭─[input.sol:7:39]
+   │
+ 7 │         assembly ("\u006demory-safe", "memory-safe") {}
+   │                                       ──────┬──────  
+   │                                             ╰──────── Error occurred here.
+───╯

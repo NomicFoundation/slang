@@ -5,7 +5,7 @@ Diagnostics: 1
 [syntax/invalid-assembly-dialect] Error: Invalid assembly dialect. Only 'evmasm' is supported.
    ╭─[input.sol:7:18]
    │
- 7 │         assembly "evm" {}
-   │                  ──┬──  
-   │                    ╰──── Error occurred here.
+ 7 │         assembly "" {}
+   │                  ─┬  
+   │                   ╰── Error occurred here.
 ───╯

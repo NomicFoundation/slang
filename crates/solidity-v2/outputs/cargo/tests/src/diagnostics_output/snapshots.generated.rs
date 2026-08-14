@@ -1557,12 +1557,32 @@ mod structure {
         run("structure", "abstract_contract_public_constructor")
     }
 
-    #[test]
-    fn anonymous_event_with_too_many_indexed_parameters() -> Result<()> {
-        run(
-            "structure",
-            "anonymous_event_with_too_many_indexed_parameters",
-        )
+    mod anonymous_event_with_too_many_indexed_parameters {
+        use super::*;
+
+        #[test]
+        fn at_limit() -> Result<()> {
+            run(
+                "structure/anonymous_event_with_too_many_indexed_parameters",
+                "at_limit",
+            )
+        }
+
+        #[test]
+        fn non_indexed_parameters() -> Result<()> {
+            run(
+                "structure/anonymous_event_with_too_many_indexed_parameters",
+                "non_indexed_parameters",
+            )
+        }
+
+        #[test]
+        fn too_many() -> Result<()> {
+            run(
+                "structure/anonymous_event_with_too_many_indexed_parameters",
+                "too_many",
+            )
+        }
     }
 
     #[test]
@@ -1785,9 +1805,51 @@ mod structure {
         }
     }
 
-    #[test]
-    fn duplicate_assembly_flag() -> Result<()> {
-        run("structure", "duplicate_assembly_flag")
+    mod duplicate_assembly_flag {
+        use super::*;
+
+        #[test]
+        fn fully_encoded_flag() -> Result<()> {
+            run("structure/duplicate_assembly_flag", "fully_encoded_flag")
+        }
+
+        #[test]
+        fn hex_escaped_flag() -> Result<()> {
+            run("structure/duplicate_assembly_flag", "hex_escaped_flag")
+        }
+
+        #[test]
+        fn line_continuation_in_flag() -> Result<()> {
+            run(
+                "structure/duplicate_assembly_flag",
+                "line_continuation_in_flag",
+            )
+        }
+
+        #[test]
+        fn repeated() -> Result<()> {
+            run("structure/duplicate_assembly_flag", "repeated")
+        }
+
+        #[test]
+        fn repeated_three_times() -> Result<()> {
+            run("structure/duplicate_assembly_flag", "repeated_three_times")
+        }
+
+        #[test]
+        fn repeated_with_dialect() -> Result<()> {
+            run("structure/duplicate_assembly_flag", "repeated_with_dialect")
+        }
+
+        #[test]
+        fn single_flag() -> Result<()> {
+            run("structure/duplicate_assembly_flag", "single_flag")
+        }
+
+        #[test]
+        fn unicode_escaped_flag() -> Result<()> {
+            run("structure/duplicate_assembly_flag", "unicode_escaped_flag")
+        }
     }
 
     #[test]
@@ -1904,9 +1966,32 @@ mod structure {
         run("structure", "enum_with_too_many_members")
     }
 
-    #[test]
-    fn event_with_too_many_indexed_parameters() -> Result<()> {
-        run("structure", "event_with_too_many_indexed_parameters")
+    mod event_with_too_many_indexed_parameters {
+        use super::*;
+
+        #[test]
+        fn at_limit() -> Result<()> {
+            run(
+                "structure/event_with_too_many_indexed_parameters",
+                "at_limit",
+            )
+        }
+
+        #[test]
+        fn non_indexed_parameters() -> Result<()> {
+            run(
+                "structure/event_with_too_many_indexed_parameters",
+                "non_indexed_parameters",
+            )
+        }
+
+        #[test]
+        fn too_many() -> Result<()> {
+            run(
+                "structure/event_with_too_many_indexed_parameters",
+                "too_many",
+            )
+        }
     }
 
     #[test]
@@ -2221,9 +2306,40 @@ mod structure {
         run("structure", "uninitialized_file_level_constant")
     }
 
-    #[test]
-    fn using_for_functions_with_wildcard() -> Result<()> {
-        run("structure", "using_for_functions_with_wildcard")
+    mod using_for_functions_with_wildcard {
+        use super::*;
+
+        #[test]
+        fn at_file_level() -> Result<()> {
+            run(
+                "structure/using_for_functions_with_wildcard",
+                "at_file_level",
+            )
+        }
+
+        #[test]
+        fn functions_for_named_type() -> Result<()> {
+            run(
+                "structure/using_for_functions_with_wildcard",
+                "functions_for_named_type",
+            )
+        }
+
+        #[test]
+        fn inside_contract() -> Result<()> {
+            run(
+                "structure/using_for_functions_with_wildcard",
+                "inside_contract",
+            )
+        }
+
+        #[test]
+        fn library_for_wildcard() -> Result<()> {
+            run(
+                "structure/using_for_functions_with_wildcard",
+                "library_for_wildcard",
+            )
+        }
     }
 
     #[test]
@@ -2404,8 +2520,36 @@ mod syntax {
         use super::*;
 
         #[test]
-        fn encoded_dialect() -> Result<()> {
-            run("syntax/invalid_assembly_dialect", "encoded_dialect")
+        fn dialect_with_whitespace() -> Result<()> {
+            run("syntax/invalid_assembly_dialect", "dialect_with_whitespace")
+        }
+
+        #[test]
+        fn empty_dialect() -> Result<()> {
+            run("syntax/invalid_assembly_dialect", "empty_dialect")
+        }
+
+        #[test]
+        fn encoded_unknown_dialect() -> Result<()> {
+            run("syntax/invalid_assembly_dialect", "encoded_unknown_dialect")
+        }
+
+        #[test]
+        fn fully_encoded_dialect() -> Result<()> {
+            run("syntax/invalid_assembly_dialect", "fully_encoded_dialect")
+        }
+
+        #[test]
+        fn hex_escaped_dialect() -> Result<()> {
+            run("syntax/invalid_assembly_dialect", "hex_escaped_dialect")
+        }
+
+        #[test]
+        fn line_continuation_in_dialect() -> Result<()> {
+            run(
+                "syntax/invalid_assembly_dialect",
+                "line_continuation_in_dialect",
+            )
         }
 
         #[test]
@@ -2414,8 +2558,18 @@ mod syntax {
         }
 
         #[test]
+        fn unicode_escaped_dialect() -> Result<()> {
+            run("syntax/invalid_assembly_dialect", "unicode_escaped_dialect")
+        }
+
+        #[test]
         fn unknown_dialect() -> Result<()> {
             run("syntax/invalid_assembly_dialect", "unknown_dialect")
+        }
+
+        #[test]
+        fn uppercase_dialect() -> Result<()> {
+            run("syntax/invalid_assembly_dialect", "uppercase_dialect")
         }
     }
 
