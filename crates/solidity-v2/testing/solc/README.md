@@ -94,14 +94,14 @@ splitting them up would only cost `nextest` tens of thousands of processes.
         "commit": "c7dfd78e57c5ad7abd485dc1cc13d8f0ab09d431",
         "executed": 1045,
         "passed": 1043,
-        "expected_failures": 0,
-        "unexpected_failures": 2,
-        "failures": [
-            "revertStrings/empty_v1.sol",
-            "revertStrings/function_entry_checks_v1.sol"
-        ]
+        "expected_failures": 2,
+        "unexpected_failures": 0,
+        "failures": []
     }
     ```
+
+    Both of this version's failures are expected, which is why `failures` is
+    empty and `expected_failures` accounts for them — see below.
 
     `executed` and `passed` are derivable from `failures`, but recording them
     makes the diff catch the dataset itself changing size — a version whose test

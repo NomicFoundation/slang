@@ -24,24 +24,265 @@ struct ExpectedCase {
 }
 
 /// Every failure we currently stand behind.
-///
-/// This is deliberately empty: the failures in the generated results file are
-/// pre-existing gaps in `slang`, not decisions — none of them has been triaged
-/// into something we'd defend. Entries land here as that changes.
 const EXPECTED_FAILURES: &[ExpectedFailures] = &[
-    // ExpectedFailures {
-    //     reason: "Explain what slang does differently, and why that is correct.",
-    //     cases: &[
-    //         ExpectedCase {
-    //             test_path: "revertStrings/empty_v1.sol",
-    //             versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_0),
-    //         },
-    //         ExpectedCase {
-    //             test_path: "revertStrings/function_entry_checks_v1.sol",
-    //             versions: LanguageVersionSpecifier::till(LanguageVersion::V0_8_5),
-    //         },
-    //     ],
-    // },
+    ExpectedFailures {
+        reason: r#"`pragma experimental solidity` selects solc's experimental Solidity
+             front-end, slang doesn't support experimental solidity."#,
+        cases: &[
+            ExpectedCase {
+                test_path: "experimental/stub.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_24),
+            },
+            ExpectedCase {
+                test_path: "experimental/type_class.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_24),
+            },
+        ],
+    },
+    ExpectedFailures {
+        reason: r"`pragma abicoder v1` selects solc's original ABI coder, which
+                 slang deliberately does not implement.",
+        cases: &[
+            ExpectedCase {
+                test_path: "abiEncodeDecode/abi_encode_empty_string_v1.sol",
+                versions: LanguageVersionSpecifier::range(
+                    LanguageVersion::V0_8_29,
+                    LanguageVersion::V0_8_36,
+                ),
+            },
+            ExpectedCase {
+                test_path: "abiEncodeDecode/abi_encode_with_selector.sol",
+                versions: LanguageVersionSpecifier::range(
+                    LanguageVersion::V0_8_29,
+                    LanguageVersion::V0_8_36,
+                ),
+            },
+            ExpectedCase {
+                test_path: "abiEncodeDecode/abi_encode_with_signature.sol",
+                versions: LanguageVersionSpecifier::range(
+                    LanguageVersion::V0_8_29,
+                    LanguageVersion::V0_8_36,
+                ),
+            },
+            ExpectedCase {
+                test_path: "abiEncoderV1/abi_encode_empty_string.sol",
+                versions: LanguageVersionSpecifier::range(
+                    LanguageVersion::V0_8_5,
+                    LanguageVersion::V0_8_36,
+                ),
+            },
+            ExpectedCase {
+                test_path: "abiEncoderV1/bool_out_of_bounds.sol",
+                versions: LanguageVersionSpecifier::range(
+                    LanguageVersion::V0_8_5,
+                    LanguageVersion::V0_8_36,
+                ),
+            },
+            ExpectedCase {
+                test_path: "abiEncoderV1/calldata_bytes_bytes32_arrays.sol",
+                versions: LanguageVersionSpecifier::range(
+                    LanguageVersion::V0_8_16,
+                    LanguageVersion::V0_8_36,
+                ),
+            },
+            ExpectedCase {
+                test_path: "abiEncoderV1/cleanup/cleanup.sol",
+                versions: LanguageVersionSpecifier::range(
+                    LanguageVersion::V0_8_5,
+                    LanguageVersion::V0_8_36,
+                ),
+            },
+            ExpectedCase {
+                test_path: "abiEncoderV1/enums.sol",
+                versions: LanguageVersionSpecifier::range(
+                    LanguageVersion::V0_8_5,
+                    LanguageVersion::V0_8_36,
+                ),
+            },
+            ExpectedCase {
+                test_path: "abiEncoderV1/memory_dynamic_array_and_calldata_bytes.sol",
+                versions: LanguageVersionSpecifier::range(
+                    LanguageVersion::V0_8_16,
+                    LanguageVersion::V0_8_36,
+                ),
+            },
+            ExpectedCase {
+                test_path: "abiEncoderV2/abi_encode_v2_in_function_inherited_in_v1_contract.sol",
+                versions: LanguageVersionSpecifier::range(
+                    LanguageVersion::V0_8_5,
+                    LanguageVersion::V0_8_36,
+                ),
+            },
+            ExpectedCase {
+                test_path: "abiEncoderV2/abi_encode_v2_in_modifier_used_in_v1_contract.sol",
+                versions: LanguageVersionSpecifier::range(
+                    LanguageVersion::V0_8_5,
+                    LanguageVersion::V0_8_36,
+                ),
+            },
+            ExpectedCase {
+                test_path: "abicoder/abi_encode_empty_string_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_36),
+            },
+            ExpectedCase {
+                test_path: "abicoder/abi_encode_memory_dynamic_array_and_calldata_bytes_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_36),
+            },
+            ExpectedCase {
+                test_path: "abicoder/abi_encode_v2_in_function_inherited_in_v1_contract.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_36),
+            },
+            ExpectedCase {
+                test_path: "abicoder/abi_encode_v2_in_modifier_used_in_v1_contract.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_36),
+            },
+            ExpectedCase {
+                test_path: "abicoder/abi_encode_with_selector_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_36),
+            },
+            ExpectedCase {
+                test_path: "abicoder/abi_encode_with_signature_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_36),
+            },
+            ExpectedCase {
+                test_path: "abicoder/calldataDecoding/array/calldata_bytes_bytes32_arrays_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_36),
+            },
+            ExpectedCase {
+                test_path: "abicoder/cleanup/bool_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_36),
+            },
+            ExpectedCase {
+                test_path: "abicoder/cleanup/cleanup_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_36),
+            },
+            ExpectedCase {
+                test_path: "abicoder/cleanup/enum_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_36),
+            },
+            ExpectedCase {
+                test_path: "abicoder/validation/array_exceeds_calldatasize_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_36),
+            },
+            ExpectedCase {
+                test_path: "abicoder/validation/array_exceeds_size_limit_for_calldata_types_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_36),
+            },
+            ExpectedCase {
+                test_path: "abiencodedecode/abi_encode_empty_string_v1.sol",
+                versions: LanguageVersionSpecifier::range(
+                    LanguageVersion::V0_8_5,
+                    LanguageVersion::V0_8_29,
+                ),
+            },
+            ExpectedCase {
+                test_path: "abiencodedecode/abi_encode_with_selector.sol",
+                versions: LanguageVersionSpecifier::range(
+                    LanguageVersion::V0_8_1,
+                    LanguageVersion::V0_8_29,
+                ),
+            },
+            ExpectedCase {
+                test_path: "abiencodedecode/abi_encode_with_signature.sol",
+                versions: LanguageVersionSpecifier::range(
+                    LanguageVersion::V0_8_1,
+                    LanguageVersion::V0_8_29,
+                ),
+            },
+            ExpectedCase {
+                test_path: "arithmetics/checked_add_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_5),
+            },
+            ExpectedCase {
+                test_path: "cleanup/bool_conversion_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_5),
+            },
+            ExpectedCase {
+                test_path: "cleanup/cleanup_address_types_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_5),
+            },
+            ExpectedCase {
+                test_path: "cleanup/cleanup_bytes_types_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_5),
+            },
+            ExpectedCase {
+                test_path: "operators/shifts/shift_right_garbled_signed_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_5),
+            },
+            ExpectedCase {
+                test_path: "operators/shifts/shift_right_garbled_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_5),
+            },
+            ExpectedCase {
+                test_path: "operators/shifts/shift_right_negative_lvalue_signextend_int16_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_5),
+            },
+            ExpectedCase {
+                test_path: "operators/shifts/shift_right_negative_lvalue_signextend_int32_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_5),
+            },
+            ExpectedCase {
+                test_path: "operators/shifts/shift_right_negative_lvalue_signextend_int8_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_5),
+            },
+            ExpectedCase {
+                test_path: "revertStrings/calldata_too_short_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_5),
+            },
+            ExpectedCase {
+                test_path: "revertStrings/empty_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_0),
+            },
+            ExpectedCase {
+                test_path: "revertStrings/enum_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_5),
+            },
+            ExpectedCase {
+                test_path: "revertStrings/function_entry_checks_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_0),
+            },
+            ExpectedCase {
+                test_path: "revertStrings/invalid_abi_decoding_calldata_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_5),
+            },
+            ExpectedCase {
+                test_path: "revertStrings/invalid_abi_decoding_memory_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_5),
+            },
+            ExpectedCase {
+                test_path: "types/mapping_enum_key_getter_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_5),
+            },
+            ExpectedCase {
+                test_path: "types/mapping_enum_key_library_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_5),
+            },
+            ExpectedCase {
+                test_path: "types/mapping_enum_key_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_5),
+            },
+            ExpectedCase {
+                test_path: "userDefinedValueType/assembly_access_bytes2_abicoder_v1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_9),
+            },
+            ExpectedCase {
+                test_path: "userDefinedValueType/cleanup_abicoderv1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_8),
+            },
+            ExpectedCase {
+                test_path: "userDefinedValueType/conversion_abicoderv1.sol",
+                versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_8),
+            },
+        ],
+    },
+    ExpectedFailures {
+        reason: r"`EVMVersion: =@future` asks for the next EVM version, which by
+                 definition has not been released. Slang doesn't support this.",
+        cases: &[ExpectedCase {
+            test_path: "isoltestTesting/future_evm_version_smoke_test.sol",
+            versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_35),
+        }],
+    },
 ];
 
 impl ExpectedCase {
