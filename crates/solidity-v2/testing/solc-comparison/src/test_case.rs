@@ -1,6 +1,7 @@
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
+use infra_utils::solc::parse_evm_target_name;
 use slang_solidity_v2_common::collections::OrderedMap;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 
@@ -227,6 +228,20 @@ fn load_external_source(
     push_source(files, source_name, content)
 }
 
+/// `isoltest`'s placeholder for an EVM version that has not been released yet,
+/// written in place of a target name (e.g. `EVMVersion: =@future`).
+pub const FUTURE_EVM_VERSION: &str = "@future";
+
+/// A successfully understood `EVMVersion` setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ParsedTarget {
+    /// The test asks for [`FUTURE_EVM_VERSION`], an EVM version that hasn't
+    /// been released yet, so there is no target to analyze it at.
+    FutureSpec,
+    /// The concrete target to analyze the test at.
+    Target(EvmTarget),
+}
+
 /// Resolves the `EVMVersion` setting (e.g. `>=byzantium`, `<constantinople`,
 /// `istanbul`) to a single concrete [`EvmTarget`] to analyze the test at.
 ///
@@ -239,11 +254,19 @@ fn load_external_source(
 /// doesn't satisfy the constraint (e.g. a hard `<constantinople` upper bound on a
 /// newer default) do we pick the *nearest* satisfying target to the default.
 ///
-/// When no setting is present, or the constraint can't be parsed or satisfied by
-/// any supported target, `default` is used.
-pub fn resolve_evm_target(setting: Option<&str>, default: EvmTarget) -> EvmTarget {
+/// When no setting is present, `default` is used.
+///
+/// [`ParsedTarget::FutureSpec`] means the test asks for an EVM version `slang`
+/// has no target for at all. For now this only covers the [`FUTURE_EVM_VERSION`]
+/// isoltest marker.
+///
+/// Anything else *is* an error: silently falling back on a setting we failed to
+/// understand would analyze the test at the wrong target and quietly bake the
+/// result into the baseline, so a setting `solc` accepts but we don't is treated
+/// as a gap in *this* code.
+pub fn resolve_evm_target(setting: Option<&str>, default: EvmTarget) -> Result<ParsedTarget> {
     let Some(setting) = setting else {
-        return default;
+        return Ok(ParsedTarget::Target(default));
     };
 
     let setting = setting.trim();
@@ -261,9 +284,15 @@ pub fn resolve_evm_target(setting: Option<&str>, default: EvmTarget) -> EvmTarge
         ("=", setting)
     };
 
-    let Some(bound) = parse_evm_target_name(name.trim()) else {
-        return default;
-    };
+    let name = name.trim();
+
+    // `isoltest`'s placeholder for the next, not-yet-released EVM version.
+    if name.eq_ignore_ascii_case(FUTURE_EVM_VERSION) {
+        return Ok(ParsedTarget::FutureSpec);
+    }
+
+    let bound = parse_evm_target_name(name)
+        .with_context(|| format!("Unrecognized EVM target in 'EVMVersion: {setting}'."))?;
 
     let satisfies = |target: EvmTarget| match op {
         ">=" => target >= bound,
@@ -276,13 +305,12 @@ pub fn resolve_evm_target(setting: Option<&str>, default: EvmTarget) -> EvmTarge
     // Prefer the version's own default target when it already satisfies the
     // constraint.
     if satisfies(default) {
-        return default;
+        return Ok(ParsedTarget::Target(default));
     }
 
     // Otherwise pick the supported target satisfying the constraint that sits
     // closest to the default (the nearest above for an unmet lower bound, the
-    // nearest below for an unmet upper bound). Falls back to `default` when
-    // nothing satisfies it (e.g. an unsatisfiable `>osaka`).
+    // nearest below for an unmet upper bound).
     let index_of = |target: EvmTarget| EvmTarget::ALL.iter().position(|t| *t == target);
     let default_index = index_of(default);
     EvmTarget::ALL
@@ -293,16 +321,8 @@ pub fn resolve_evm_target(setting: Option<&str>, default: EvmTarget) -> EvmTarge
             (Some(i), Some(d)) => i.abs_diff(d),
             _ => usize::MAX,
         })
-        .unwrap_or(default)
-}
-
-/// Maps an `EVMVersion` name (as written by `solc`, e.g. `tangerineWhistle`) to
-/// an [`EvmTarget`], case-insensitively.
-pub fn parse_evm_target_name(name: &str) -> Option<EvmTarget> {
-    EvmTarget::ALL
-        .iter()
-        .copied()
-        .find(|target| target.to_string().eq_ignore_ascii_case(name))
+        .map(ParsedTarget::Target)
+        .with_context(|| format!("No supported EVM target satisfies 'EVMVersion: {setting}'."))
 }
 
 /// Yields `(byte offset, line)` for each line in `contents`.
@@ -352,61 +372,75 @@ contract C {}
 
     #[test]
     fn resolves_evm_version_constraints() {
+        let resolve = |setting, default| match resolve_evm_target(setting, default).unwrap() {
+            ParsedTarget::Target(target) => target,
+            ParsedTarget::FutureSpec => panic!("'{setting:?}' should resolve to a concrete target"),
+        };
+
         // No setting: the version's default target is used as-is.
-        assert_eq!(
-            resolve_evm_target(None, EvmTarget::Istanbul),
-            EvmTarget::Istanbul
-        );
+        assert_eq!(resolve(None, EvmTarget::Istanbul), EvmTarget::Istanbul);
 
         // A lower bound the default already satisfies keeps the *version's*
         // default rather than jumping to the newest target ever — the crux of
         // the version-aware fix (a `>=byzantium` test at an Istanbul-default
         // version runs at Istanbul, not Amsterdam).
         assert_eq!(
-            resolve_evm_target(Some(">=byzantium"), EvmTarget::Istanbul),
+            resolve(Some(">=byzantium"), EvmTarget::Istanbul),
             EvmTarget::Istanbul
         );
 
         // If the default is too old for the lower bound, pick the nearest
         // satisfying target above it.
         assert_eq!(
-            resolve_evm_target(Some(">=cancun"), EvmTarget::Istanbul),
+            resolve(Some(">=cancun"), EvmTarget::Istanbul),
             EvmTarget::Cancun
         );
 
         // Upper bounds the default violates resolve to the nearest satisfying
         // target below it.
         assert_eq!(
-            resolve_evm_target(Some("<constantinople"), EvmTarget::Osaka),
+            resolve(Some("<constantinople"), EvmTarget::Osaka),
             EvmTarget::Byzantium
         );
         assert_eq!(
-            resolve_evm_target(Some("<=constantinople"), EvmTarget::Osaka),
+            resolve(Some("<=constantinople"), EvmTarget::Osaka),
             EvmTarget::Constantinople
         );
 
         // Exact constraints resolve to that target regardless of the default.
         assert_eq!(
-            resolve_evm_target(Some("=istanbul"), EvmTarget::Osaka),
+            resolve(Some("=istanbul"), EvmTarget::Osaka),
             EvmTarget::Istanbul
         );
         assert_eq!(
-            resolve_evm_target(Some("istanbul"), EvmTarget::Osaka),
+            resolve(Some("istanbul"), EvmTarget::Osaka),
             EvmTarget::Istanbul
         );
+    }
 
-        // An unsatisfiable constraint (nothing newer than the latest target)
-        // falls back to the default rather than picking a violating target.
-        assert_eq!(
-            resolve_evm_target(Some(">amsterdam"), EvmTarget::Osaka),
-            EvmTarget::Osaka
-        );
+    #[test]
+    fn yields_no_target_for_an_unreleased_evm_version() {
+        // `@future` names an EVM version that doesn't exist yet, so there is
+        // nothing to analyze the test at. That's reported as `FutureSpec` rather
+        // than an error, because it says something about the test rather than
+        // about this code — and the runner turns it into a failing test.
+        for setting in ["=@future", "@future", ">=@future", "=@FUTURE"] {
+            assert_eq!(
+                resolve_evm_target(Some(setting), EvmTarget::Istanbul).unwrap(),
+                ParsedTarget::FutureSpec,
+                "'{setting}' should resolve to no target"
+            );
+        }
+    }
 
-        // Unknown names fall back to the default target.
-        assert_eq!(
-            resolve_evm_target(Some("nonsense"), EvmTarget::Osaka),
-            EvmTarget::Osaka
-        );
+    #[test]
+    fn rejects_evm_version_settings_it_cannot_honor() {
+        // A name we don't know is a gap in *our* table: resolving it to the
+        // default would analyze the test at a target `solc` never used.
+        assert!(resolve_evm_target(Some("nonsense"), EvmTarget::Osaka).is_err());
+
+        // Likewise a well-formed constraint no supported target satisfies.
+        assert!(resolve_evm_target(Some(">amsterdam"), EvmTarget::Osaka).is_err());
     }
 
     #[test]

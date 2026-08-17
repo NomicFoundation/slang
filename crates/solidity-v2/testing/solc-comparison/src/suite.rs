@@ -39,19 +39,23 @@ fn execute(datasets: &Datasets) -> Result<Vec<VersionRun>> {
             let version = dataset.version();
             let test_files = dataset.test_files()?;
 
-            let failures: Vec<Failure> = test_files
+            let outcomes: Vec<Option<Failure>> = test_files
                 .par_iter()
-                .filter_map(
-                    |test_file| match runner::run_test(&test_file.path, version) {
+                .map(|test_file| {
+                    let failure = match runner::run_test(&test_file.path, version)? {
                         Outcome::Passed => None,
                         Outcome::Failed { diagnostics } => Some(Failure {
                             version,
                             test_path: test_file.relative_path.clone(),
                             diagnostics,
                         }),
-                    },
-                )
-                .collect();
+                    };
+
+                    Ok(failure)
+                })
+                .collect::<Result<_>>()?;
+
+            let failures: Vec<Failure> = outcomes.into_iter().flatten().collect();
 
             Ok(VersionRun {
                 version,

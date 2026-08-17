@@ -1,4 +1,5 @@
 use semver::Version;
+use slang_solidity_v2_common::evm_targets::EvmTarget;
 
 /// Returns true if a given `solc` version is known to segfault on a multitude
 /// of parse errors and should be skipped from automated testing.
@@ -48,5 +49,31 @@ pub fn default_evm_version(version: &Version) -> &'static str {
         _ => panic!(
             "Unrecognized solc version '{version}'. Please add it to `default_evm_version()`."
         ),
+    }
+}
+
+/// Maps an `evmVersion` name as written by `solc` (camelCase, e.g.
+/// `tangerineWhistle`) to the corresponding [`EvmTarget`], whose own
+/// `TryFrom<&str>` expects `PascalCase`.
+pub fn parse_evm_target_name(name: &str) -> Option<EvmTarget> {
+    EvmTarget::ALL
+        .iter()
+        .copied()
+        .find(|target| target.to_string().eq_ignore_ascii_case(name))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parses_solc_evm_version_names() {
+        assert_eq!(
+            parse_evm_target_name("tangerineWhistle"),
+            Some(EvmTarget::TangerineWhistle)
+        );
+        assert_eq!(parse_evm_target_name("istanbul"), Some(EvmTarget::Istanbul));
+        assert_eq!(parse_evm_target_name("Istanbul"), Some(EvmTarget::Istanbul));
+        assert_eq!(parse_evm_target_name("nonesuch"), None);
     }
 }

@@ -16,11 +16,13 @@ pub mod test_case;
 
 /// Compiles every semantic test at every supported language version.
 ///
-/// This is deliberately a single test rather than one per case: the ~60k cases
+/// This is deliberately a single test rather than one per case: the ~50k cases
 /// run in a couple of seconds in-process across rayon, so splitting them up
 /// would only cost `nextest` tens of thousands of processes.
+///
+/// Like the other suites that work off a downloaded corpus, the first run clones
+/// `solc`'s repository into `target/`; every run after that is offline.
 #[test]
-#[ignore = "downloads solc's semanticTests; run it with `infra test solc-semantic`"]
 fn solc_semantic_suite() -> anyhow::Result<()> {
     suite::run()
 }

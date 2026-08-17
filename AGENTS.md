@@ -70,17 +70,16 @@ Available binaries in `./bin/`: `cargo`, `node`, `npm`, `npx`, `pnpm`, `gh`, `py
 The project uses a custom `infra` CLI that orchestrates all build operations. Use `--help` on any command or subcommand to discover options:
 
 ```sh
-./scripts/bin/infra --help             # See all available commands
-./scripts/bin/infra setup              # Install all dependencies
-./scripts/bin/infra setup --help       # See setup subcommands (cargo, npm, etc.)
-./scripts/bin/infra check              # Codegen + cargo check + npm check + public API check
-./scripts/bin/infra check --help       # See check subcommands (codegen, cargo, npm, public-api)
-./scripts/bin/infra test               # Run all tests (cargo nextest + jest)
-./scripts/bin/infra test --help        # See test subcommands (cargo, npm, solc-semantic) and passthrough args
-./scripts/bin/infra test solc-semantic # Run the solc semanticTests suite (#[ignore]d, so opt-in only)
-./scripts/bin/infra lint               # Run all linters
-./scripts/bin/infra lint --help        # See lint subcommands (markdownlint, rustfmt, yamllint, actionlint, zizmor, prettier, etc.)
-./scripts/bin/infra ci                 # Full CI run: setup + check + test + lint
+./scripts/bin/infra --help       # See all available commands
+./scripts/bin/infra setup        # Install all dependencies
+./scripts/bin/infra setup --help # See setup subcommands (cargo, npm, etc.)
+./scripts/bin/infra check        # Codegen + cargo check + npm check + public API check
+./scripts/bin/infra check --help # See check subcommands (codegen, cargo, npm, public-api)
+./scripts/bin/infra test         # Run all tests (cargo nextest + jest)
+./scripts/bin/infra test --help  # See test subcommands (cargo, npm) and passthrough args
+./scripts/bin/infra lint         # Run all linters
+./scripts/bin/infra lint --help  # See lint subcommands (markdownlint, rustfmt, yamllint, actionlint, zizmor, prettier, etc.)
+./scripts/bin/infra ci           # Full CI run: setup + check + test + lint
 ```
 
 Always run `infra setup` when initializing a new workspace, to ensure all tools/dependencies are available.
@@ -139,6 +138,7 @@ For testing, we maintain snapshots checked into the repo:
     - Parser: `crates/solidity-v2/testing/snapshots/cst_output/`
     - Binder: `crates/solidity-v2/testing/snapshots/binder_output/`
     - Diagnostics: `crates/solidity-v2/testing/snapshots/diagnostics_output/`
+    - solc semantic tests: `crates/solidity-v2/testing/solc-comparison/results.generated.json`
 
 When source changes cause snapshot mismatches, the test output shows the diff.
 Simply re-run the tests, and they will update the snapshot files on disk automatically.
@@ -208,24 +208,6 @@ Fields:
         }
     }
     ```
-
-## `solc-comparison` baseline
-
-The `solidity_testing_solc_comparison` crate runs slang v2 against solc's
-`libsolidity` semanticTests (a large corpus of known-valid Solidity) to catch
-new validations that accidentally reject valid code. It's a single test over
-the whole `(version, test)` matrix. Because it fetches an external dataset it's
-marked `#[ignore]`, so no plain `cargo test`/`cargo nextest run` reaches for the
-network; running it is an explicit opt-in via `infra test solc-semantic` (which
-passes `--run-ignored all`), and `infra test` drives that as its own step. The
-per-version record — the commit its tests came from, how many executed, passed
-and failed, and which ones failed — is tracked in
-`crates/solidity-v2/testing/solc-comparison/results.generated.json`.
-Like the other snapshot tests, the mode is chosen by the `CI` env var: in CI it
-checks against the committed baseline, run locally it regenerates it. So if you
-intentionally change which tests pass (add a validation, fix the parser, bump
-the supported version), just run the suite locally and commit the regenerated
-`results.generated.json`.
 
 ## Important Gotchas
 

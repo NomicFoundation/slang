@@ -1277,8 +1277,8 @@
   "0.8.35": {
     "commit": "47b9dedda00ef23974eca07c06c97cc1c80088b4",
     "executed": 1646,
-    "passed": 1611,
-    "failed": 35,
+    "passed": 1610,
+    "failed": 36,
     "failures": [
       "abiEncodeDecode/abi_encode_empty_string_v1.sol",
       "abiEncodeDecode/abi_encode_with_selector.sol",
@@ -1298,6 +1298,7 @@
       "experimental/stub.sol",
       "experimental/type_class.sol",
       "externalSource/non_normalized_paths.sol",
+      "isoltestTesting/future_evm_version_smoke_test.sol",
       "operators/shifts/shift_right_garbled_signed_v1.sol",
       "operators/shifts/shift_right_garbled_v1.sol",
       "operators/shifts/shift_right_negative_lvalue_signextend_int16_v1.sol",
@@ -1320,8 +1321,8 @@
   "0.8.36": {
     "commit": "8a079791d9cca7a6c03fd6a8429b93aa3bddefed",
     "executed": 1643,
-    "passed": 1607,
-    "failed": 36,
+    "passed": 1606,
+    "failed": 37,
     "failures": [
       "abicoder/abi_encode_empty_string_v1.sol",
       "abicoder/abi_encode_memory_dynamic_array_and_calldata_bytes_v1.sol",
@@ -1342,6 +1343,7 @@
       "experimental/stub.sol",
       "experimental/type_class.sol",
       "externalSource/non_normalized_paths.sol",
+      "isoltestTesting/future_evm_version_smoke_test.sol",
       "operators/shifts/shift_right_garbled_signed_v1.sol",
       "operators/shifts/shift_right_garbled_v1.sol",
       "operators/shifts/shift_right_negative_lvalue_signextend_int16_v1.sol",

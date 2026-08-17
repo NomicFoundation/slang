@@ -2210,6 +2210,7 @@ dependencies = [
  "serde_json",
  "sha3 0.12.0",
  "similar-asserts 2.0.0",
+ "slang_solidity_v2_common",
  "strum",
  "tera",
  "toml 1.1.4+spec-1.1.0",

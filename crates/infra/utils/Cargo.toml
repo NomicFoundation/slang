@@ -21,6 +21,7 @@ semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 sha3 = { workspace = true }
+slang_solidity_v2_common = { workspace = true }
 similar-asserts = { workspace = true }
 strum = { workspace = true }
 tera = { workspace = true }

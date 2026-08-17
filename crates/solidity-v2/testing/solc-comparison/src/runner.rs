@@ -1,7 +1,7 @@
 use std::path::Path;
 
-use anyhow::Result;
-use infra_utils::solc::default_evm_version;
+use anyhow::{Context, Result};
+use infra_utils::solc::{default_evm_version, parse_evm_target_name};
 use semver::Version;
 use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig};
 use slang_solidity_v2_common::collections::OrderedMap;
@@ -12,7 +12,7 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use solidity_testing_utils::import_resolver::{ImportResolver, SourceMap};
 use solidity_v2_testing_utils::reporting::diagnostic;
 
-use crate::test_case::{IsolTestCase, parse_evm_target_name, resolve_evm_target};
+use crate::test_case::{FUTURE_EVM_VERSION, IsolTestCase, ParsedTarget, resolve_evm_target};
 
 /// The result of running `slang` against a single semantic test.
 pub enum Outcome {
@@ -24,40 +24,52 @@ pub enum Outcome {
 
 /// Parses and runs a single semantic test file located at `test_path`, pinned
 /// to the given `language_version`.
-pub fn run_test(test_path: &Path, language_version: LanguageVersion) -> Outcome {
-    let test_case = match IsolTestCase::parse(test_path) {
-        Ok(test_case) => test_case,
-        Err(error) => {
-            return Outcome::Failed {
-                diagnostics: vec![format!("could not parse test file: {error}")],
-            };
-        }
-    };
+///
+/// A test `slang` rejects is an [`Outcome::Failed`]; an `Err` means the harness
+/// itself couldn't run the test.
+pub fn run_test(test_path: &Path, language_version: LanguageVersion) -> Result<Outcome> {
+    let test_case = IsolTestCase::parse(test_path)?;
 
     if test_case.files.is_empty() {
-        return Outcome::Failed {
+        return Ok(Outcome::Failed {
             diagnostics: vec!["no source files found in test".to_owned()],
-        };
+        });
     }
 
     run_test_case(&test_case, language_version)
+        .with_context(|| format!("Failed to run test: {test_path:?}"))
 }
 
 /// The EVM target `solc` of the given language version defaults to when a test
 /// doesn't specify one.
-fn default_evm_target(language_version: LanguageVersion) -> EvmTarget {
+fn default_evm_target(language_version: LanguageVersion) -> Result<EvmTarget> {
     let version: Version = language_version.into();
-    parse_evm_target_name(default_evm_version(&version)).unwrap_or(EvmTarget::LATEST)
+    let name = default_evm_version(&version);
+
+    parse_evm_target_name(name).with_context(|| {
+        format!("'{name}' is the default EVM version of {version}, but is not a known EVM target.")
+    })
 }
 
-fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) -> Outcome {
+fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) -> Result<Outcome> {
     let files = &test_case.files;
     let config = TestConfig::new(files);
 
-    let evm_target = resolve_evm_target(
+    let resolved = resolve_evm_target(
         test_case.evm_version.as_deref(),
-        default_evm_target(language_version),
-    );
+        default_evm_target(language_version)?,
+    )?;
+
+    let evm_target = match resolved {
+        ParsedTarget::Target(target) => target,
+        ParsedTarget::FutureSpec => {
+            return Ok(Outcome::Failed {
+                diagnostics: vec![format!(
+                    "test requires the unreleased '{FUTURE_EVM_VERSION}' EVM version, which slang has no target for"
+                )],
+            });
+        }
+    };
 
     let mut builder = CompilationBuilder::create(language_version, evm_target, config);
 
@@ -71,7 +83,7 @@ fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) ->
     let diagnostics = unit.diagnostics();
 
     if diagnostics.is_empty() {
-        return Outcome::Passed;
+        return Ok(Outcome::Passed);
     }
 
     let rendered = diagnostics
@@ -86,9 +98,9 @@ fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) ->
         })
         .collect();
 
-    Outcome::Failed {
+    Ok(Outcome::Failed {
         diagnostics: rendered,
-    }
+    })
 }
 
 /// Feeds the in-memory sources of an [`IsolTestCase`] to the `slang` compilation

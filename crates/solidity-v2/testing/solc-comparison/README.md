@@ -11,21 +11,20 @@ release tag and runs slang against them pinned to that same language version.
 
 ## Usage
 
-The whole `(version, test)` matrix is a **single test**, run as part of the
-regular `infra test` (and, in turn, `infra ci`) as its own step.
-
-Because it fetches an external dataset, the test is marked `#[ignore]`: no plain
-`cargo test` or `cargo nextest run` will reach for the network, whether or not
-it goes through `infra`. Running it is always an explicit opt-in.
+The whole `(version, test)` matrix is a **single test**, and runs as part of the
+regular `infra test` (and, in turn, `infra ci`) like any other:
 
 ```sh
-# Run the whole suite (all versions). In CI this checks against the committed
-# baseline; run locally it regenerates it (see "Baseline update mode" below).
-infra test solc-semantic
+infra test cargo solc_semantic_suite
 
 # Check locally without rewriting the baseline (as CI does):
-CI=1 infra test solc-semantic
+CI=1 infra test cargo solc_semantic_suite
 ```
+
+The first run clones `solc`'s repository into `target/solc-comparison/`; every
+run after that is offline and takes a couple of seconds. Nothing else is left
+behind — the per-version checkouts live in a temporary directory for the
+duration of the run.
 
 The run fails if any test **regresses** (fails without being in the baseline) or
 if the baseline is **stale** (a listed pair now passes). This is what makes it a
@@ -34,7 +33,7 @@ printed, so a regression points straight at its cause.
 
 ## How it works
 
-The ~60k `(version, test)` pairs run in a couple of seconds in-process across
+The ~50k `(version, test)` pairs run in a couple of seconds in-process across
 `rayon`, so they're deliberately **one** `#[test]` rather than one test each —
 splitting them up would only cost `nextest` tens of thousands of processes.
 
@@ -70,6 +69,17 @@ splitting them up would only cost `nextest` tens of thousands of processes.
    `CompilationBuilder` pinned to that language version and the resolved EVM
    target (the `EVMVersion` setting if present, else that version's default),
    resolving imports with the shared `solidity_testing_utils` `ImportResolver`.
+
+    A setting we can't honor — an EVM target name we don't know, or a constraint
+    no supported target satisfies — fails the run rather than falling back to the
+    default. Silently analyzing at the wrong target would bake a misleading
+    result into the baseline.
+
+    `isoltest`'s `@future` placeholder is the one exception: it names an EVM
+    version that hasn't been released, so there is no target to analyze at and
+    the _test_ fails rather than the run. That's a fact about the test, not a gap
+    in this code, so it belongs in the divergences below rather than in an error.
+
 4. **Baseline** — everything the run produced is reconciled with
    [`results.generated.json`](./results.generated.json): checked in CI, rewritten
    locally. Each version records the commit its tests came from, how many ran,
