@@ -27,6 +27,28 @@ impl ParametersStruct {
         Some(result)
     }
 
+    pub(crate) fn compute_canonical_signature(&self) -> Option<String> {
+        self.join_parameter_names(|type_id| {
+            Some(type_as_abi_type(&self.semantic, type_id)?.to_string())
+        })
+    }
+
+    pub(crate) fn compute_internal_signature(&self) -> Option<String> {
+        self.join_parameter_names(|type_id| Some(self.semantic.type_internal_name(type_id)))
+    }
+
+    pub(crate) fn compute_library_signature(&self) -> Option<String> {
+        self.join_parameter_names(|type_id| self.semantic.type_library_name(type_id))
+    }
+
+    fn join_parameter_names(&self, type_name: impl Fn(TypeId) -> Option<String>) -> Option<String> {
+        let mut result = Vec::new();
+        for type_id in self.parameter_types_iter() {
+            result.push(type_name(type_id?)?);
+        }
+        Some(result.join(","))
+    }
+
     fn parameter_types_iter(&self) -> impl Iterator<Item = Option<TypeId>> + '_ {
         self.ir_nodes.iter().map(|parameter| {
             self.semantic
@@ -34,22 +56,5 @@ impl ParametersStruct {
                 .node_typing(parameter.id())
                 .as_type_id()
         })
-    }
-
-    pub(crate) fn compute_canonical_signature(&self) -> Option<String> {
-        let mut result = Vec::new();
-        for type_id in self.parameter_types_iter() {
-            let abi_type = type_as_abi_type(&self.semantic, type_id?)?;
-            result.push(abi_type.to_string());
-        }
-        Some(result.join(","))
-    }
-
-    pub(crate) fn compute_internal_signature(&self) -> Option<String> {
-        let mut result = Vec::new();
-        for type_id in self.parameter_types_iter() {
-            result.push(self.semantic.type_internal_name(type_id?));
-        }
-        Some(result.join(","))
     }
 }

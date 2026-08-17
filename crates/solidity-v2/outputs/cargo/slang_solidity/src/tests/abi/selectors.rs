@@ -70,3 +70,82 @@ fn test_selectors_for_functions_with_tuple_parameters() {
     // g()
     assert_eq!(functions[1].compute_selector(), Some(0xe217_9b8e_u32));
 }
+
+#[test]
+fn test_library_function_selectors() {
+    let unit = super::LibraryAbi::build_compilation_unit();
+
+    let functions = fixtures::find_library(&unit, "L").functions();
+    let [
+        struct_storage,
+        array_storage,
+        encodable,
+        internal,
+        user_defined_value,
+    ] = functions.as_slice()
+    else {
+        panic!("expected the library to declare five functions");
+    };
+
+    assert_eq!(struct_storage.compute_selector(), Some(0x1f5b_11f0_u32)); // f(L.S storage,uint256)
+    assert_eq!(array_storage.compute_selector(), Some(0xc6bf_d994_u32)); // g(uint256[] storage)
+    assert_eq!(encodable.compute_selector(), Some(0xcb97_492a_u32)); // h(uint256)
+    assert_eq!(internal.compute_selector(), None);
+    assert_eq!(user_defined_value.compute_selector(), Some(0xdb66_c1de_u32)); // j(uint64)
+}
+
+#[test]
+fn test_library_function_selector_signatures() {
+    let unit = super::LibraryAbi::build_compilation_unit();
+
+    let functions = fixtures::find_library(&unit, "L").functions();
+    let [
+        struct_storage,
+        array_storage,
+        encodable,
+        _,
+        user_defined_value,
+    ] = functions.as_slice()
+    else {
+        panic!("expected the library to declare five functions");
+    };
+
+    // The canonical form has no spelling for a storage reference to a struct
+    // holding a mapping, which is why the library form exists.
+    assert_eq!(
+        struct_storage.compute_selector_signature(),
+        Some("f(L.S storage,uint256)".to_string())
+    );
+    assert_eq!(struct_storage.compute_canonical_signature(), None);
+
+    assert_eq!(
+        array_storage.compute_selector_signature(),
+        Some("g(uint256[] storage)".to_string())
+    );
+
+    // An encodable library member still selects on the canonical form.
+    assert_eq!(
+        encodable.compute_selector_signature(),
+        Some("h(uint256)".to_string())
+    );
+    assert_eq!(
+        encodable.compute_canonical_signature(),
+        Some("h(uint256)".to_string())
+    );
+
+    assert_eq!(
+        user_defined_value.compute_selector_signature(),
+        Some("j(uint64)".to_string())
+    );
+
+    let unit = super::FullAbi::build_compilation_unit();
+    let test_contract = unit
+        .find_contract_by_name("Test")
+        .next()
+        .expect("Test contract can be found");
+    let functions = test_contract.linearised_functions();
+    assert_eq!(
+        functions[2].compute_selector_signature(),
+        Some("foo(uint256)".to_string())
+    );
+}

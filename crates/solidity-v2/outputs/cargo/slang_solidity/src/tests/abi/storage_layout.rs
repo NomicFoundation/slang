@@ -323,3 +323,32 @@ fn test_oversized_base_slot_has_no_layout() {
         .expect("contract can be found");
     assert!(contract.compute_abi().is_none());
 }
+
+// A struct declared inside a contract is laid out under its scope-qualified
+// name, the same spelling a library selector hashes.
+define_fixture!(
+    NestedStructLayout,
+    file: "main.sol", r#"
+contract C {
+    struct Inner {
+        uint256 a;
+    }
+
+    Inner nested;
+}
+"#,
+);
+
+#[test]
+fn test_nested_struct_lays_out_under_its_qualified_name() {
+    let unit = NestedStructLayout::build_compilation_unit();
+    let contract = unit
+        .find_contract_by_name("C")
+        .next()
+        .expect("contract can be found");
+    let contract_abi = contract.compute_abi().expect("can compute ABI");
+    let layout = contract_abi.storage_layout();
+
+    assert_eq!(layout.len(), 1);
+    assert_layout_item_eq!(layout[0], "nested", uint!(0_U256), 0, "C.Inner");
+}
