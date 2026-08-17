@@ -208,6 +208,11 @@ impl Visitor for Pass<'_> {
                 let true_mobile = self.types.compute_mobile_type(true_type_id);
                 let false_mobile = self.types.compute_mobile_type(false_type_id);
                 match (true_mobile, false_mobile) {
+                    (Some(true_mobile), Some(false_mobile))
+                        if self.alias_same_source_unit(true_mobile, false_mobile) =>
+                    {
+                        Some(true_mobile)
+                    }
                     (Some(true_mobile), Some(false_mobile)) => {
                         self.types.common_type(true_mobile, false_mobile)
                     }

@@ -1,5 +1,6 @@
 use ruint::aliases::{U160, U256};
 use slang_solidity_v2_common::diagnostics::kinds::type_system::CannotCallViaContractTypeName;
+use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
@@ -283,6 +284,25 @@ impl Pass<'_> {
             ),
             _ => false,
         }
+    }
+
+    /// Whether both types alias one imported source unit, which solc treats as
+    /// one module type (`ModuleType::operator==`).
+    pub(super) fn alias_same_source_unit(&self, left: TypeId, right: TypeId) -> bool {
+        self.aliased_source_unit(left)
+            .is_some_and(|file_id| self.aliased_source_unit(right) == Some(file_id))
+    }
+
+    fn aliased_source_unit(&self, type_id: TypeId) -> Option<&FileId> {
+        let Type::UserMetaType(UserMetaType { definition_id }) = self.types.get_type_by_id(type_id)
+        else {
+            return None;
+        };
+        let Some(Definition::Import(import)) = self.binder.find_definition_by_id(*definition_id)
+        else {
+            return None;
+        };
+        import.resolved_file_id.as_ref()
     }
 
     pub(super) fn typing_of_resolution_as_contract_member(
