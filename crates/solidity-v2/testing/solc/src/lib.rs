@@ -4,12 +4,14 @@
 //!
 //! The building blocks live in submodules: fetching each version's tests
 //! ([`dataset`]), parsing the `isoltest` format ([`mod@test_case`]), picking the
-//! EVM target to analyze at ([`evm_target`]), running slang ([`runner`]), and the
-//! checked-in per-version record ([`results`]). [`suite::run`] ties them
-//! together, and the whole matrix runs as the single test below.
+//! EVM target to analyze at ([`evm_target`]), running slang ([`runner`]), the
+//! failures we stand behind ([`expected_failures`]), and the checked-in
+//! per-version record ([`results`]). [`suite::run`] ties them together, and the
+//! whole matrix runs as the single test below.
 
 pub mod dataset;
 pub mod evm_target;
+pub mod expected_failures;
 pub mod results;
 pub mod runner;
 pub mod suite;

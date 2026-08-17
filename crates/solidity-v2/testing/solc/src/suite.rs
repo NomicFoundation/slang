@@ -3,12 +3,13 @@ use infra_utils::codegen::CodegenFileSystem;
 use rayon::prelude::*;
 
 use crate::dataset::Datasets;
-use crate::results::{Failure, TestResults, VersionRun};
+use crate::expected_failures;
+use crate::results::{AllFailures, Failure, SplitFailures, TestResults, VersionRun};
 use crate::runner::{self, Outcome};
 
 /// Fetches every supported version's semantic tests, compiles all of them, and
 /// writes the result out through [`CodegenFileSystem`] — which rewrites the
-/// checked-in files locally, and asserts they still match in CI.
+/// checked-in file locally, and asserts it still matches in CI.
 pub fn run() -> Result<()> {
     let datasets = Datasets::create()?;
 
@@ -18,18 +19,24 @@ pub fn run() -> Result<()> {
 
     let runs = execute(&datasets)?;
 
-    // This step only prints new diagnostics, but the test fails or passes
-    // on the write below, checking that the results stay the same.
+    // Split the runs into those that match the expected failures
+    // and those that don't.
+    let (runs, stale_check) = expected_failures::split_and_check(runs);
+
     report_new_failures(&previous, &runs);
 
     let results: TestResults = runs.into_iter().collect();
     report_summary(&results);
 
-    results.write(&mut CodegenFileSystem::default())
+    results.write(&mut CodegenFileSystem::default())?;
+
+    // Errors are reported at the end of the function, to
+    // guarantee the snapshot test file is written.
+    stale_check
 }
 
 /// Compiles every test in every dataset.
-fn execute(datasets: &Datasets) -> Result<Vec<VersionRun>> {
+fn execute(datasets: &Datasets) -> Result<Vec<VersionRun<AllFailures>>> {
     // Roughly 1,600 tests across ~37 versions, each entirely independent, so
     // the whole matrix fans out across rayon.
     datasets
@@ -55,13 +62,11 @@ fn execute(datasets: &Datasets) -> Result<Vec<VersionRun>> {
                 })
                 .collect::<Result<_>>()?;
 
-            let failures: Vec<Failure> = outcomes.into_iter().flatten().collect();
-
             Ok(VersionRun {
                 version,
                 commit: dataset.commit_sha().to_owned(),
                 executed: test_files.len(),
-                failures,
+                failures: AllFailures(outcomes.into_iter().flatten().collect()),
             })
         })
         .collect()
@@ -72,10 +77,12 @@ fn execute(datasets: &Datasets) -> Result<Vec<VersionRun>> {
 /// numbers are recorded per version in the checked-in results either way.
 fn report_summary(results: &TestResults) {
     println!(
-        "Compiled {executed} semantic test(s): {passed} passed, {failed} failed.",
+        "Compiled {executed} semantic test(s): {passed} passed, \
+         {unexpected} unexpected failure(s), {expected} expected.",
         executed = results.executed(),
         passed = results.passed(),
-        failed = results.failed(),
+        unexpected = results.unexpected_failures(),
+        expected = results.expected_failures(),
     );
 }
 
@@ -87,10 +94,10 @@ const MAX_REPORTED_FAILURES: usize = 10;
 /// Prints the diagnostics behind each failure that isn't already checked in.
 ///
 /// Note that an old failure that is now passing is not reported here.
-fn report_new_failures(previous: &TestResults, runs: &[VersionRun]) {
+fn report_new_failures(previous: &TestResults, runs: &[VersionRun<SplitFailures>]) {
     let new_failures: Vec<&Failure> = runs
         .iter()
-        .flat_map(|run| &run.failures)
+        .flat_map(|run| &run.failures.unexpected)
         .filter(|failure| !previous.contains_failure(failure.version, &failure.test_path))
         .collect();
 

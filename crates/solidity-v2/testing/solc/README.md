@@ -27,8 +27,9 @@ behind — the per-version checkouts live in a temporary directory for the
 duration of the run.
 
 The run fails if any test **regresses** (fails without being in the baseline) or
-if the baseline is **stale** (a listed pair now passes). This is what makes it a
-CI regression guard. The diagnostics behind the first few newly-failing tests are
+if the baseline is **stale** — a listed pair now passes, or an
+[expected failure](#expected-failures) does. This is what makes it a CI
+regression guard. The diagnostics behind the first few newly-failing tests are
 printed, so a regression points straight at its cause.
 
 ## How it works
@@ -80,7 +81,8 @@ splitting them up would only cost `nextest` tens of thousands of processes.
     `isoltest`'s `@future` placeholder is the one exception: it names an EVM
     version that hasn't been released, so there is no target to analyze at and
     the _test_ fails rather than the run. That's a fact about the test, not a gap
-    in this code, so it belongs in the divergences below rather than in an error.
+    in this code, so it belongs in the expected failures below rather than in an
+    error.
 
 4. **Baseline** — everything the run produced is reconciled with
    [`results.generated.json`](./results.generated.json): checked in CI, rewritten
@@ -88,16 +90,49 @@ splitting them up would only cost `nextest` tens of thousands of processes.
    how many passed and failed, and which ones failed:
 
     ```json
-    "0.8.7": {
-        "commit": "6da8b019757383bcc85be6a3f7ecc2fb4c65f5f2",
-        "executed": 1205,
-        "passed": 1203,
-        "failed": 2,
-        "failures": ["experimental/stub.sol", "experimental/type_class.sol"]
+    "0.8.0": {
+        "commit": "c7dfd78e57c5ad7abd485dc1cc13d8f0ab09d431",
+        "executed": 1045,
+        "passed": 1043,
+        "expected_failures": 0,
+        "unexpected_failures": 2,
+        "failures": [
+            "revertStrings/empty_v1.sol",
+            "revertStrings/function_entry_checks_v1.sol"
+        ]
     }
     ```
 
     `executed` and `passed` are derivable from `failures`, but recording them
     makes the diff catch the dataset itself changing size — a version whose test
     count moves is worth noticing, and would otherwise be invisible whenever the
-    new tests happen to pass.
+    new tests happen to pass. `expected_failures` counts the ones declared in
+    [`src/expected_failures.rs`](./src/expected_failures.rs), which are left out
+    of `failures`, so the tally stays
+    `executed == passed + expected_failures + unexpected_failures`.
+
+## Expected failures
+
+A failure we actually stand behind (slang deliberately stricter or looser than
+`solc`) goes in [`src/expected_failures.rs`](./src/expected_failures.rs)
+instead, next to its reason.
+
+Entries are grouped by that reason rather than by test, since one deliberate
+difference usually covers a set of them. Each case names **one** test file —
+never a directory — and the `LanguageVersionSpecifier` range it fails over:
+
+```rust
+ExpectedFailures {
+    reason: "Explain what slang does differently, and why that is correct.",
+    cases: &[
+        ExpectedCase {
+            test_path: "revertStrings/empty_v1.sol",
+            versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_0),
+        },
+        ExpectedCase {
+            test_path: "revertStrings/something_that_fails_until_0_8_5.sol",
+            versions: LanguageVersionSpecifier::till(LanguageVersion::V0_8_5),
+        },
+    ],
+}
+```
