@@ -694,3 +694,138 @@ fn test_conditional_expression_get_type() {
         assert_eq!(integer.bits(), 256, "element is 256-bit");
     }
 }
+
+define_fixture!(
+    LibraryTypes,
+    file: "main.sol", r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+library L {
+    uint256 public constant PUBLIC_CONSTANT = 21;
+
+    modifier guard() { _; }
+
+    function f(bytes calldata b) external pure returns (bytes calldata) { return b; }
+    function g(uint256 x) internal pure returns (uint256) { return x; }
+}
+"#,
+);
+
+#[test]
+fn test_library_state_variable_getter_type() {
+    let unit = LibraryTypes::build_compilation_unit();
+    let library = fixtures::find_library(&unit, "L");
+
+    let state_variables = library.state_variables();
+    let [constant] = state_variables.as_slice() else {
+        panic!("only the public constant is a state variable");
+    };
+
+    let ast::Type::Function(getter) = constant
+        .getter_type()
+        .expect("a public library constant has a getter")
+    else {
+        panic!("expected the getter to type as a function");
+    };
+    assert!(
+        getter.parameter_types().is_empty(),
+        "a constant getter takes no parameter"
+    );
+    let ast::Type::Integer(value) = getter.return_type() else {
+        panic!("expected the getter to return the constant's value");
+    };
+    assert_eq!(value.bits(), 256);
+}
+
+#[test]
+fn test_function_externalized_type() {
+    let unit = LibraryTypes::build_compilation_unit();
+    let library = fixtures::find_library(&unit, "L");
+
+    let functions = library.functions();
+    let [f, g] = functions.as_slice() else {
+        panic!("expected two functions: the modifier is not one");
+    };
+
+    let ast::Type::Function(externalized) = f
+        .externalized_type()
+        .expect("an externally visible function has an externalized type")
+    else {
+        panic!("expected the externalized type to be a function");
+    };
+    assert_eq!(
+        externalized.visibility(),
+        ast::FunctionTypeVisibility::External
+    );
+
+    let parameter_types = externalized.parameter_types();
+    let [parameter] = parameter_types.as_slice() else {
+        panic!("expected the function to take one parameter");
+    };
+    let ast::Type::Bytes(parameter) = parameter else {
+        panic!("expected the parameter to type as bytes");
+    };
+    assert_eq!(parameter.location(), ast::DataLocation::Memory);
+
+    let ast::Type::Bytes(returned) = externalized.return_type() else {
+        panic!("expected the function to return bytes");
+    };
+    assert_eq!(returned.location(), ast::DataLocation::Memory);
+
+    assert!(
+        g.externalized_type().is_none(),
+        "an internal function is never dispatched"
+    );
+
+    let unit = fixtures::Counter::build_compilation_unit();
+    let ownable = unit
+        .find_contract_by_name("Ownable")
+        .next()
+        .expect("contract Ownable is found");
+    let modifiers = ownable.modifiers();
+    let [modifier] = modifiers.as_slice() else {
+        panic!("expected Ownable to declare one modifier");
+    };
+    assert!(
+        modifier.externalized_type().is_none(),
+        "a modifier is never dispatched"
+    );
+}
+
+define_fixture!(
+    NamelessExternals,
+    file: "main.sol", r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+contract C {
+    fallback() external {}
+    receive() external payable {}
+}
+"#,
+);
+
+#[test]
+fn test_nameless_external_function_has_no_externalized_type() {
+    let unit = NamelessExternals::build_compilation_unit();
+
+    let contract = unit
+        .find_contract_by_name("C")
+        .next()
+        .expect("can find contract C");
+
+    let functions = contract.functions();
+    let [fallback, receive] = functions.as_slice() else {
+        panic!("expected the fallback and the receive");
+    };
+
+    assert!(
+        fallback.externalized_type().is_none(),
+        "a fallback carries no name to select on"
+    );
+    assert!(
+        receive.externalized_type().is_none(),
+        "a receive carries no name to select on"
+    );
+}

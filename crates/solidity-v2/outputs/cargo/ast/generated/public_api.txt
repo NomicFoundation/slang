@@ -2007,6 +2007,8 @@ pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::compute_selector(&s
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::is_externally_visible(&self) -> bool
 impl slang_solidity_v2_ast::ast::FunctionDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::enclosing_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
+impl slang_solidity_v2_ast::ast::FunctionDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::externalized_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 impl core::clone::Clone for slang_solidity_v2_ast::ast::FunctionDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::FunctionDefinitionStruct::clone(&self) -> slang_solidity_v2_ast::ast::FunctionDefinitionStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::FunctionDefinitionStruct
@@ -2416,6 +2418,9 @@ pub struct slang_solidity_v2_ast::ast::LibraryDefinitionStruct
 impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
+impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
+pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::state_variables(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::StateVariableDefinition>
 impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::get_text_range(&self) -> &core::ops::range::Range<usize>

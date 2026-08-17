@@ -5,7 +5,7 @@ use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, Scope, ScopeId};
 use crate::context::{FileNodeMapper, SemanticFile};
-use crate::types::{ContractType, Type, TypeId, TypeRegistry, UserMetaType};
+use crate::types::{ContractType, LibraryType, Type, TypeId, TypeRegistry, UserMetaType};
 
 mod resolution;
 mod typing;
@@ -125,16 +125,24 @@ impl<'a> Pass<'a> {
 
     fn type_getters_from(&mut self, source_unit: &ir::SourceUnit) {
         for source_unit_member in source_unit.members.iter() {
-            let ir::SourceUnitMember::ContractDefinition(contract_definition) = source_unit_member
-            else {
-                continue;
+            let (receiver_type, members) = match source_unit_member {
+                ir::SourceUnitMember::ContractDefinition(contract_definition) => (
+                    Type::Contract(ContractType {
+                        definition_id: contract_definition.id(),
+                    }),
+                    &contract_definition.members,
+                ),
+                ir::SourceUnitMember::LibraryDefinition(library_definition) => (
+                    Type::Library(LibraryType {
+                        definition_id: library_definition.id(),
+                    }),
+                    &library_definition.members,
+                ),
+                _ => continue,
             };
-            let receiver_type_id = self.types.register_type(Type::Contract(ContractType {
-                definition_id: contract_definition.id(),
-            }));
-            for contract_member in contract_definition.members.iter() {
-                let ir::ContractMember::StateVariableDefinition(state_var_definition) =
-                    contract_member
+            let receiver_type_id = self.types.register_type(receiver_type);
+            for member in members.iter() {
+                let ir::ContractMember::StateVariableDefinition(state_var_definition) = member
                 else {
                     continue;
                 };

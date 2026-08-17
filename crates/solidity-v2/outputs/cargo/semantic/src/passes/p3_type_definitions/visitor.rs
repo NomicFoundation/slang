@@ -150,6 +150,15 @@ impl Visitor for Pass<'_> {
         let type_id = self.type_of_function_definition(node, self.current_receiver_type);
         self.binder.set_node_type(node.id(), type_id);
 
+        if let Some(externalized_type_id) =
+            type_id.and_then(|type_id| self.compute_externalized_type(node, type_id))
+        {
+            let Definition::Function(definition) = self.binder.get_definition_mut(node.id()) else {
+                unreachable!("definition is not a function");
+            };
+            definition.externalized_type_id = Some(externalized_type_id);
+        }
+
         if !matches!(node.kind, ir::FunctionKind::Modifier) && node.name.is_some() {
             // for non-modifier *named* functions, fill-in parameter types in
             // parameters scope for overload disambiguation in p5
