@@ -6,9 +6,8 @@ checking that all of this **valid** Solidity still compiles without slang
 emitting any error diagnostics.
 
 It does this for **every Solidity version slang v2 supports** (0.8.0 up to the
-latest): for each version it downloads the semantic tests from that version's
-`solc` release tag and runs slang against them pinned to that same language
-version.
+latest): for each version it reads the semantic tests from that version's `solc`
+release tag and runs slang against them pinned to that same language version.
 
 ## Usage
 
@@ -39,16 +38,28 @@ The ~60k `(version, test)` pairs run in a couple of seconds in-process across
 `rayon`, so they're deliberately **one** `#[test]` rather than one test each —
 splitting them up would only cost `nextest` tens of thousands of processes.
 
-1. **Fetch** — for every supported version (`LanguageVersion::ALL`), download the
-   `argotorg/solidity` tarball at that version's release tag (e.g. `v0.8.20`) and
-   extract the `semanticTests/` tree into `target/solc-comparison/<tag>/`.
+1. **Fetch** — a single bare clone of `argotorg/solidity`, kept at
+   `target/solc-comparison/solidity.git`, serves every version. Each version's
+   `semanticTests/` tree is checked out of it at that version's release tag (e.g.
+   `v0.8.20`). The first run clones; every run after that is offline.
 
-    **Tags are mutable, so we pin the commit.** Each tarball's `pax_global_header`
-    carries the commit SHA the tag resolved to; we record it per version in the
-    results file below and check it on every run. If a tag is later re-pointed at
-    a different commit, the run fails loudly rather than silently testing against
-    changed content. (A git commit SHA is itself a content hash, so this subsumes
-    a separate checksum — no extra download needed.)
+    One clone rather than a snapshot per tag: the tags share nearly all of their
+    content, so a delta-compressed pack is smaller than 37 separate archives
+    would be, and — unlike a partial (`--filter=blob:none`) clone — it holds
+    every blob, so reading any tag afterwards needs no network at all. Release
+    tags are immutable, so the only thing that triggers a fetch is a tag the
+    local clone doesn't have yet.
+
+    **The checkouts go to a temporary directory**, removed when the run ends. Only
+    the clone is worth keeping between runs (it's the part that would otherwise be
+    re-downloaded, and it's what CI caches); re-checking out all 37 versions from
+    it takes well under a second, which isn't worth a few hundred megabytes of
+    cached scratch space.
+
+    **Tags are mutable in principle, so we pin the commit.** Each version records
+    the commit its tag resolved to in the results file below, so if one is ever
+    re-pointed the change lands in the diff right next to the counts it
+    invalidates.
 
 2. **Parse** — each test file is in the `isoltest` format.
    We parse out the sources and the `EVMVersion` setting; the runtime

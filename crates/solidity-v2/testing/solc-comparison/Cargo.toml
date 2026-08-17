@@ -10,7 +10,6 @@ path = "src/lib.rs"
 
 [dependencies]
 anyhow = { workspace = true }
-flate2 = { workspace = true }
 infra_utils = { workspace = true }
 rayon = { workspace = true }
 semver = { workspace = true }
@@ -20,9 +19,6 @@ slang_solidity_v2 = { workspace = true }
 slang_solidity_v2_common = { workspace = true }
 solidity_testing_utils = { workspace = true }
 solidity_v2_testing_utils = { workspace = true }
-tar = { workspace = true }
-
-[dev-dependencies]
 tempfile = { workspace = true }
 
 [lints]

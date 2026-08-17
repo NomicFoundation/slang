@@ -1,38 +1,158 @@
-use std::ffi::OsStr;
 use std::fs;
-use std::io::Read;
-use std::path::{Component, Path, PathBuf};
+use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result, bail};
-use flate2::read::GzDecoder;
-use infra_utils::http::{DownloadResult, request_download};
+use infra_utils::commands::Command;
 use infra_utils::paths::{FileWalker, PathExtensions};
 use rayon::prelude::*;
-use semver::Version;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use tar::{Archive, EntryType};
+use tempfile::TempDir;
+
+const REPOSITORY_URL: &str = "https://github.com/argotorg/solidity.git";
 
 const SEMANTIC_TESTS_PATH: &str = "test/libsolidity/semanticTests";
 
 /// The `solc` release tag for a language version (e.g. `v0.8.20`).
-pub(crate) fn release_tag(version: LanguageVersion) -> String {
-    format!("v{version}", version = Version::from(version))
+fn release_tag(version: LanguageVersion) -> String {
+    format!("v{version}")
 }
 
-/// The cache directory holding every version's extracted `semanticTests` tree,
-/// as `<cache>/v<version>/semanticTests/...`.
-pub fn cache_dir() -> PathBuf {
-    Path::repo_path("target/solc-comparison")
+/// A cloned bare solidity repository under the `target/` directory.
+struct Repository {
+    directory: PathBuf,
+}
+
+impl Repository {
+    /// Clones `solc`'s repository, unless the cache already holds it.
+    fn clone_or_reuse() -> Result<Self> {
+        let repository = Self {
+            directory: Path::repo_path("target/solc-comparison/solidity.git"),
+        };
+
+        if !repository.directory.join("HEAD").is_file() {
+            println!(
+                "Cloning {REPOSITORY_URL} into {directory:?}",
+                directory = repository.directory
+            );
+
+            fs::create_dir_all(repository.directory.unwrap_parent())?;
+
+            Command::new("git")
+                .arg("clone")
+                .flag("--bare")
+                .flag("--quiet")
+                .arg(REPOSITORY_URL)
+                .arg(repository.directory.unwrap_str())
+                .evaluate()
+                .with_context(|| format!("Failed to clone {REPOSITORY_URL}"))?;
+        }
+
+        let missing: Vec<String> = LanguageVersion::ALL
+            .iter()
+            .map(|&version| release_tag(version))
+            .filter(|tag| repository.resolve_tag(tag).is_err())
+            .collect();
+
+        if !missing.is_empty() {
+            println!("Fetching tags missing from the local clone: {missing:?}");
+
+            repository
+                .git()
+                .arg("fetch")
+                .flag("--tags")
+                .flag("--quiet")
+                .evaluate()
+                .context("Failed to fetch tags")?;
+        }
+
+        Ok(repository)
+    }
+
+    /// A `git` invocation against the clone. `--git-dir` rather than a working
+    /// directory, since a bare clone has no work tree of its own.
+    ///
+    /// Checkouts honor the host's gitconfig, where `core.autocrlf=true` (which
+    /// Git for Windows writes into the system config by default) would
+    /// CRLF-convert the tests and silently change what the suite parses, so
+    /// mask both config files off.
+    fn git(&self) -> Command {
+        Command::new("git")
+            .env("GIT_CONFIG_GLOBAL", "/dev/null")
+            .env("GIT_CONFIG_SYSTEM", "/dev/null")
+            .property("--git-dir", self.directory.unwrap_str())
+    }
+
+    /// The commit a release tag points at. Annotated tags are objects in their
+    /// own right, hence `^{commit}`.
+    fn resolve_tag(&self, tag: &str) -> Result<String> {
+        let commit_sha = self
+            .git()
+            .arg("rev-parse")
+            .flag("--verify")
+            .flag("--quiet")
+            .arg(format!("{tag}^{{commit}}"))
+            .evaluate()
+            .with_context(|| format!("Failed to resolve tag '{tag}' in the local clone."))?
+            .trim()
+            .to_owned();
+
+        if commit_sha.is_empty() {
+            bail!("Tag '{tag}' does not exist in the local clone.");
+        }
+
+        Ok(commit_sha)
+    }
+
+    /// Checks the `semanticTests` tree out at `tag`, leaving it at `root`.
+    fn checkout_semantic_tests(&self, tag: &str, root: &Path) -> Result<()> {
+        let parent = root.unwrap_parent();
+        fs::create_dir_all(parent)?;
+
+        // `git checkout` needs a work tree, and writes an index that a bare
+        // repository has no useful place for. Both are scratch: it reproduces
+        // the path as it is in the repository, so what we want ends up nested
+        // under `test/libsolidity/`, and every version runs concurrently so they
+        // must not share an index. A directory of its own gives each version
+        // both, and takes the leftovers with it when it drops.
+        //
+        // It sits next to `root` so that moving the tests out below is a rename
+        // within one filesystem rather than a cross-device copy.
+        let scratch = tempfile::Builder::new()
+            .prefix(".checkout-")
+            .tempdir_in(parent)
+            .context("Failed to create a scratch directory for the checkout")?;
+
+        self.git()
+            .property("--work-tree", scratch.path().unwrap_str())
+            .env("GIT_INDEX_FILE", scratch.path().join("index").unwrap_str())
+            .arg("checkout")
+            .arg(tag)
+            .flag("--")
+            .arg(SEMANTIC_TESTS_PATH)
+            .evaluate()
+            .with_context(|| {
+                format!("Failed to check '{SEMANTIC_TESTS_PATH}' out of tag '{tag}'")
+            })?;
+
+        let checked_out = scratch.path().join(SEMANTIC_TESTS_PATH);
+        fs::rename(&checked_out, root)
+            .with_context(|| format!("Failed to move {checked_out:?} to {root:?}"))?;
+
+        Ok(())
+    }
 }
 
 /// A local, on-disk copy of the `libsolidity` semantic tests for one version.
+///
+/// Only ever handed out as a reference, by [`Datasets::versions`]: `root` points
+/// into a temporary directory that [`Datasets`] owns and deletes on drop, so a
+/// `Dataset` that outlived it would name files that are no longer there.
 pub struct Dataset {
     /// The Solidity version these tests come from.
     version: LanguageVersion,
-    /// The extracted `semanticTests` tree for this version.
+    /// The checked-out `semanticTests` tree for this version.
     root: PathBuf,
-    /// The commit the tag resolved to when fetched (from the tarball's
-    /// `pax_global_header`), or empty if a legacy cache didn't record it.
+    /// The commit this version's release tag resolves to.
     commit_sha: String,
 }
 
@@ -45,65 +165,23 @@ pub struct TestFile {
 }
 
 impl Dataset {
-    /// Ensures the semantic tests for `version` are available locally,
-    /// downloading and extracting them from the matching `solc` release tag if
-    /// necessary, and returns a handle to the extracted tree, carrying the
-    /// commit SHA the tag resolved to. That SHA is recorded alongside the
-    /// version's results, so a re-pointed tag shows up in the diff next to the
-    /// counts it invalidates.
-    pub fn fetch(version: LanguageVersion) -> Result<Self> {
+    /// Checks the semantic tests for `version` out of `repository` at that
+    /// version's release tag, into `parent`, and returns a handle to the tree
+    /// carrying the commit the tag resolved to.
+    fn checkout(repository: &Repository, version: LanguageVersion, parent: &Path) -> Result<Self> {
         let tag = release_tag(version);
-        let version_dir = cache_dir().join(&tag);
-        let root = version_dir.join("semanticTests");
-        let sha_path = version_dir.join(".commit-sha");
+        let root = parent.join(&tag);
 
-        if is_populated(&root) {
-            let commit_sha = sha_path
-                .read_to_string()
-                .map(|s| s.trim().to_owned())
-                .unwrap_or_default();
-            if commit_sha.is_empty() {
-                bail!(
-                    "cached semantic tests at {root:?} are missing their recorded commit SHA \
-                     ({sha_path:?}); delete the directory and re-run to re-download."
-                );
-            }
-            return Ok(Self {
-                version,
-                root,
-                commit_sha,
-            });
+        let commit_sha = repository.resolve_tag(&tag)?;
+
+        repository.checkout_semantic_tests(&tag, &root)?;
+
+        if !is_populated(&root) {
+            bail!(
+                "Checkout completed but no semantic tests were found under {root:?}. \
+                 The tag '{tag}' may not contain '{SEMANTIC_TESTS_PATH}'."
+            );
         }
-
-        let url = format!("https://codeload.github.com/argotorg/solidity/tar.gz/{tag}");
-        let commit_sha = match request_download(&url) {
-            DownloadResult::Ok(response) => {
-                println!("Downloading semantic tests from {url}");
-                let commit_sha = extract_semantic_tests(response, &root)?;
-
-                if !is_populated(&root) {
-                    bail!(
-                        "Extraction completed but no semantic tests were found under {root:?}. \
-                         The tag '{tag}' may not contain '{SEMANTIC_TESTS_PATH}'."
-                    );
-                }
-                commit_sha
-            }
-            DownloadResult::NotModified => {
-                unreachable!("`request_download` never revalidates, so it cannot report 304");
-            }
-            DownloadResult::Error(error) => {
-                bail!("Failed to download semantic tests from {url}: {error}");
-            }
-        };
-
-        // The commit SHA is our only defense against a re-pointed tag, so a
-        // download that didn't yield one is a hard error rather than something
-        // we quietly tolerate.
-        if commit_sha.is_empty() {
-            bail!("Downloaded tarball for tag '{tag}' carried no commit SHA in its pax header.");
-        }
-        sha_path.write_string(&commit_sha)?;
 
         Ok(Self {
             version,
@@ -144,102 +222,49 @@ impl Dataset {
     }
 }
 
-/// Fetches every supported version's semantic tests. Only a cold cache
-/// actually hits the network.
-pub fn fetch_all_versions() -> Result<Vec<Dataset>> {
-    // Downloads are independent and I/O-bound; fetching ~three dozen tarballs
-    // one at a time dominates a cold-cache run, so fan them out across rayon.
-    LanguageVersion::ALL
-        .par_iter()
-        .map(|&version| Dataset::fetch(version))
-        .collect()
+/// Every supported version's semantic tests, checked out for the duration of one
+/// run.
+pub struct Datasets {
+    /// Deletes the checkouts on drop, so it has to outlive every [`Dataset`]
+    /// below, all of which point into it.
+    _directory: TempDir,
+    versions: Vec<Dataset>,
+}
+
+impl Datasets {
+    /// Makes every supported version's semantic tests available locally: clones
+    /// `solc`'s repository if the cache doesn't already hold it, then checks
+    /// each version's tests out of it. Only a missing or incomplete clone
+    /// actually hits the network.
+    pub fn create() -> Result<Self> {
+        let repository = Repository::clone_or_reuse()?;
+
+        let directory = tempfile::Builder::new()
+            .prefix("slang-solc-comparison-")
+            .tempdir()
+            .context("Failed to create a temporary directory for the checkouts")?;
+
+        // Checking a tag out is CPU- and I/O-bound and each version writes to its
+        // own directory (and its own index), while the clone is only ever read,
+        // so the versions fan out across rayon.
+        let versions = LanguageVersion::ALL
+            .par_iter()
+            .map(|&version| Dataset::checkout(&repository, version, directory.path()))
+            .collect::<Result<Vec<_>>>()?;
+
+        Ok(Self {
+            _directory: directory,
+            versions,
+        })
+    }
+
+    pub fn versions(&self) -> &[Dataset] {
+        &self.versions
+    }
 }
 
 fn is_populated(root: &Path) -> bool {
     root.is_dir() && fs::read_dir(root).is_ok_and(|mut entries| entries.next().is_some())
-}
-
-/// Extracts the `semanticTests/` tree into `root` and returns the commit SHA the
-/// tarball was built from (read from its `pax_global_header`, empty if absent).
-fn extract_semantic_tests(reader: impl Read, root: &Path) -> Result<String> {
-    let decoder = GzDecoder::new(reader);
-    let mut archive = Archive::new(decoder);
-
-    let mut commit_sha = String::new();
-    let mut extracted = 0usize;
-    for entry in archive.entries()? {
-        let mut entry = entry?;
-
-        // GitHub archives lead with a pax global header whose `comment` record
-        // is the commit SHA the tag resolved to.
-        if entry.header().entry_type() == EntryType::XGlobalHeader {
-            let mut header = String::new();
-            entry.read_to_string(&mut header).ok();
-            if let Some(sha) = parse_pax_comment(&header) {
-                commit_sha = sha;
-            }
-            continue;
-        }
-
-        let entry_path = entry.path()?.into_owned();
-
-        let Some(relative) = strip_to_semantic_tests(&entry_path) else {
-            continue;
-        };
-
-        // `relative` comes from the archive, and we're about to join it onto
-        // `root`. A `..` or absolute component would escape the cache directory,
-        // so refuse to unpack rather than trusting the tarball.
-        if !is_contained_relative(&relative) {
-            bail!("Refusing to unpack entry with a non-relative path: {entry_path:?}");
-        }
-
-        let dest = root.join(relative);
-        if entry.header().entry_type().is_dir() {
-            continue;
-        }
-
-        fs::create_dir_all(dest.unwrap_parent())?;
-        entry
-            .unpack(&dest)
-            .with_context(|| format!("Failed to unpack entry into {dest:?}"))?;
-        extracted += 1;
-    }
-
-    println!("Extracted {extracted} file(s) into {root:?}");
-    Ok(commit_sha)
-}
-
-/// Extracts the `comment=<sha>` value from a pax header's records (each record
-/// is `"<len> key=value\n"`).
-fn parse_pax_comment(header: &str) -> Option<String> {
-    let start = header.find("comment=")? + "comment=".len();
-    let value = header[start..].lines().next()?.trim();
-    (!value.is_empty()).then(|| value.to_owned())
-}
-
-/// Whether `path` stays inside whatever directory it is joined onto: every
-/// component must be an ordinary name, ruling out `..` (which escapes upwards)
-/// and root/prefix components (which discard the base path entirely).
-fn is_contained_relative(path: &Path) -> bool {
-    path.components()
-        .all(|component| matches!(component, Component::Normal(_)))
-}
-
-/// Returns the portion of `path` after the `test/libsolidity/semanticTests`
-/// segment, if present.
-fn strip_to_semantic_tests(path: &Path) -> Option<PathBuf> {
-    // GitHub tarballs nest everything under a top-level directory, so the
-    // anchor sits at an unknown depth. Match it component-wise (rather than as a
-    // substring, which could match inside a file name) and keep what follows.
-    let anchor: Vec<&OsStr> = Path::new(SEMANTIC_TESTS_PATH).iter().collect();
-    let components: Vec<&OsStr> = path.iter().collect();
-    let anchor_end = components
-        .windows(anchor.len())
-        .position(|window| window == anchor.as_slice())?
-        + anchor.len();
-    let relative: PathBuf = components[anchor_end..].iter().collect();
-    (!relative.as_os_str().is_empty()).then_some(relative)
 }
 
 #[cfg(test)]
@@ -250,42 +275,5 @@ mod tests {
     fn builds_solc_release_tags() {
         assert_eq!(release_tag(LanguageVersion::V0_8_0), "v0.8.0");
         assert_eq!(release_tag(LanguageVersion::V0_8_20), "v0.8.20");
-    }
-
-    #[test]
-    fn strips_to_semantic_tests() {
-        // A real tarball entry: top-level dir, the anchor, then the test path.
-        assert_eq!(
-            strip_to_semantic_tests(Path::new(
-                "solidity-0.8.20/test/libsolidity/semanticTests/various/erc20.sol"
-            )),
-            Some(PathBuf::from("various/erc20.sol"))
-        );
-
-        // Sibling trees under `libsolidity` (e.g. syntaxTests) are not matched.
-        assert_eq!(
-            strip_to_semantic_tests(Path::new(
-                "solidity-0.8.20/test/libsolidity/syntaxTests/x.sol"
-            )),
-            None
-        );
-
-        // The anchor directory itself, with nothing after it, yields nothing.
-        assert_eq!(
-            strip_to_semantic_tests(Path::new("solidity-0.8.20/test/libsolidity/semanticTests")),
-            None
-        );
-    }
-
-    #[test]
-    fn rejects_paths_escaping_the_cache_directory() {
-        assert!(is_contained_relative(Path::new("various/erc20.sol")));
-
-        // `..` climbs out of the destination, and an absolute path replaces it.
-        assert!(!is_contained_relative(Path::new("../../etc/passwd")));
-        assert!(!is_contained_relative(Path::new(
-            "various/../../escaped.sol"
-        )));
-        assert!(!is_contained_relative(Path::new("/etc/passwd")));
     }
 }

@@ -43,9 +43,9 @@ pub struct TestResults {
 /// when we compiled them.
 ///
 /// Pinning the commit is what keeps the tally meaningful — solc's release tags
-/// are mutable, and the `pax_global_header` of each tarball tells us what the
-/// tag actually resolved to. If one is ever re-pointed, the change lands right
-/// next to the counts it invalidates rather than in a separate file.
+/// are mutable in principle, so we record what each one actually resolved to.
+/// If one is ever re-pointed, the change lands right next to the counts it
+/// invalidates rather than in a separate file.
 ///
 /// `executed` and `passed` are redundant with `failures`, but recording them
 /// means the diff also catches the dataset itself changing size — a version

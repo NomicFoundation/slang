@@ -2,7 +2,7 @@ use anyhow::Result;
 use infra_utils::codegen::CodegenFileSystem;
 use rayon::prelude::*;
 
-use crate::dataset::{self, Dataset};
+use crate::dataset::Datasets;
 use crate::results::{Failure, TestResults, VersionRun};
 use crate::runner::{self, Outcome};
 
@@ -10,7 +10,7 @@ use crate::runner::{self, Outcome};
 /// writes the result out through [`CodegenFileSystem`] — which rewrites the
 /// checked-in files locally, and asserts they still match in CI.
 pub fn run() -> Result<()> {
-    let datasets = dataset::fetch_all_versions()?;
+    let datasets = Datasets::create()?;
 
     // Loaded before we write, so we can point at *why* anything newly fails
     // (the checked-in file only records which `(version, test)` pairs do).
@@ -29,10 +29,11 @@ pub fn run() -> Result<()> {
 }
 
 /// Compiles every test in every dataset.
-fn execute(datasets: &[Dataset]) -> Result<Vec<VersionRun>> {
+fn execute(datasets: &Datasets) -> Result<Vec<VersionRun>> {
     // Roughly 1,600 tests across ~37 versions, each entirely independent, so
     // the whole matrix fans out across rayon.
     datasets
+        .versions()
         .par_iter()
         .map(|dataset| {
             let version = dataset.version();
