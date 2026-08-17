@@ -13,7 +13,9 @@ members = [
     "crates/codegen/spec",
 
     "crates/codegen-v2/cst",
+    "crates/codegen-v2/generator",
     "crates/codegen-v2/parser",
+    "crates/codegen-v2/runner",
     "crates/codegen-v2/semantic",
 
     "crates/infra/cli",
@@ -73,7 +75,9 @@ codegen_runner = { path = "crates/codegen/runner", version = "1.3.8" }
 codegen_spec = { path = "crates/codegen/spec", version = "1.3.8" }
 
 codegen_v2_cst = { path = "crates/codegen-v2/cst", version = "1.3.8" }
+codegen_v2_generator = { path = "crates/codegen-v2/generator", version = "1.3.8" }
 codegen_v2_parser = { path = "crates/codegen-v2/parser", version = "1.3.8" }
+codegen_v2_runner = { path = "crates/codegen-v2/runner", version = "1.3.8" }
 codegen_v2_semantic = { path = "crates/codegen-v2/semantic", version = "1.3.8" }
 
 infra_cli = { path = "crates/infra/cli", version = "1.3.8" }

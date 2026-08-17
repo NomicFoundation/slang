@@ -11,8 +11,9 @@ use crate::paths::{PathExtensions, PrivatePathExtensions};
 pub struct CodegenRuntime;
 
 impl CodegenRuntime {
+    /// Returning `None` skips the template, leaving it to the other codegen runners.
     pub fn render_templates_in_place<'c>(
-        context_for: impl Fn(&Path) -> &'c tera::Context + Sync,
+        context_for: impl Fn(&Path) -> Option<&'c tera::Context> + Sync,
     ) -> Result<()> {
         let repo_root = Path::repo_root();
         let tera = TeraWrapper::new(&repo_root)?;
@@ -31,8 +32,12 @@ impl CodegenRuntime {
         );
 
         all_templates.par_iter().try_for_each(|template_path| {
+            let Some(context) = context_for(template_path) else {
+                return Ok(());
+            };
+
             let generated_path = Self::get_in_place_path(template_path);
-            let rendered = tera.render(template_path, context_for(template_path))?;
+            let rendered = tera.render(template_path, context)?;
 
             let mut fs = CodegenFileSystem::default();
             fs.write_file_formatted(&generated_path, rendered)

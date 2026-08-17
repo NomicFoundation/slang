@@ -1,0 +1,19 @@
+[package]
+name = "codegen_v2_generator"
+description = "Generates the runtime model used to render codegen templates."
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+codegen_v2_cst = { workspace = true }
+codegen_v2_parser = { workspace = true }
+codegen_v2_semantic = { workspace = true }
+indexmap = { workspace = true }
+language_v2_definition = { workspace = true }
+semver = { workspace = true }
+serde = { workspace = true }
+
+[lints]
+workspace = true
