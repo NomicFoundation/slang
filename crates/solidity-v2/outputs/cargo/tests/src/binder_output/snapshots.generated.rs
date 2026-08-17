@@ -887,6 +887,16 @@ mod imports {
     }
 
     #[test]
+    fn conditional_alias_import() -> Result<()> {
+        run("imports", "conditional_alias_import")
+    }
+
+    #[test]
+    fn conditional_alias_import_distinct_files() -> Result<()> {
+        run("imports", "conditional_alias_import_distinct_files")
+    }
+
+    #[test]
     fn deconstruction() -> Result<()> {
         run("imports", "deconstruction")
     }

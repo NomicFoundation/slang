@@ -789,6 +789,12 @@ fn test_conditional_expression_unresolved_when_branches_incompatible() {
     // involving one is unresolved.
     let (type_, _) = try_type_of_expression("true ? 0.5 : 1");
     assert_eq!(type_, None);
+
+    // Two distinct user meta-types with no imported source unit behind
+    // them: enum name pairs stay unresolved.
+    let (type_, _) =
+        try_type_of_expression_in_context("enum E1 { A } enum E2 { B }", "true ? E1 : E2");
+    assert_eq!(type_, None);
 }
 
 #[test]

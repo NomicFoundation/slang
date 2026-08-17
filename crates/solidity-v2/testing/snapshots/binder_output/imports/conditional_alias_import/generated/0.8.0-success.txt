@@ -1,0 +1,52 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["K" @ lib.sol:1:18] (constant, type: uint256)
+- Def: #2 ["A" @ main.sol:1:23] (import)
+- Def: #3 ["B" @ main.sol:2:23] (import)
+- Def: #4 ["pick" @ main.sol:4:10] (function, type: function () returns uint256)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["A" @ main.sol:5:20] -> #2
+- Ref: ["B" @ main.sol:5:24] -> #3
+- Ref: ["K" @ main.sol:5:27] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[lib.sol:1:1]
+   │
+ 1 │ uint256 constant K = 1;
+   │                  ┬  
+   │                  ╰── name: 1
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ import "./lib.sol" as A;
+   │                       ┬  
+   │                       ╰── name: 2
+ 2 │ import "./lib.sol" as B;
+   │                       ┬  
+   │                       ╰── name: 3
+   │ 
+ 4 │ function pick() pure returns (uint256) {
+   │          ──┬─  
+   │            ╰─── name: 4
+ 5 │     return (true ? A : B).K;
+   │                    ┬   ┬  ┬  
+   │                    ╰───────── ref: 2
+   │                        │  │  
+   │                        ╰───── ref: 3
+   │                           │  
+   │                           ╰── ref: 1
+───╯
