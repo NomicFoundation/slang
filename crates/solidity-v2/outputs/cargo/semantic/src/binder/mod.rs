@@ -3,6 +3,7 @@ use std::collections::VecDeque;
 use slang_solidity_v2_common::collections::{DefaultWithCapacity, Map, Set};
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
+use smallvec::{SmallVec, smallvec};
 
 use super::built_ins::InternalBuiltIn;
 use super::types::TypeId;
@@ -16,12 +17,14 @@ mod scopes;
 pub(crate) use assembly::AssemblyBlock;
 pub(crate) use capacities::BinderCapacities;
 pub use definitions::Definition;
-pub(crate) use definitions::{ContractDefinition, InterfaceDefinition, StructDefinition};
+pub(crate) use definitions::{
+    ContractDefinition, InterfaceDefinition, ResolvedDefinitions, StructDefinition,
+};
 pub use references::{Reference, Resolution};
 use scopes::ContractScope;
 pub(crate) use scopes::{
     DefaultImport, FileScope, OperatorMapping, ParameterDefinition, ParametersScope, Scope,
-    UsingDirective, UsingOperator,
+    ScopeDefinitionIds, UsingDirective, UsingOperator,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -145,6 +148,14 @@ pub(crate) enum ResolveOptions {
     /// internal lookup.
     Super(NodeId),
 }
+
+/// A group of definitions, identified by their `NodeId`s. Held inline up to a
+/// handful of entries, which covers the sets that occur in practice: the
+/// definitions an ambiguous reference may name, and the working sets built
+/// while resolving one. Used in place of `Vec<NodeId>` and `Set<NodeId>` for
+/// performance reasons; uniqueness, where it matters, is maintained by the code
+/// filling it rather than by the type.
+pub(crate) type DefinitionIds = SmallVec<[NodeId; 4]>;
 
 impl Binder {
     /// Creates a binder with its dominant `NodeId`-keyed maps pre-sized per
@@ -532,7 +543,7 @@ impl Binder {
         // Fast path: with no default imports the file's own scope is the whole
         // search set, so resolve with a single map lookup and no traversal:
         if file_scope.default_imports.is_empty() {
-            return file_scope.lookup_symbol(symbol).collect::<Vec<_>>().into();
+            return Resolution::from(file_scope.lookup_symbol(symbol));
         }
 
         // Otherwise scan the precomputed transitive default-import closure
@@ -542,12 +553,12 @@ impl Binder {
             "FileScope::default_import_closure should be precomputed"
         );
 
-        let mut found_definitions = Vec::new();
+        let mut found_definitions = DefinitionIds::new();
         for scope_id in &file_scope.default_import_closure {
             let Scope::File(imported_scope) = self.get_scope_by_id(*scope_id) else {
                 unreachable!("default import closure should only contain file scopes");
             };
-            found_definitions.extend(imported_scope.lookup_symbol(symbol));
+            found_definitions.extend_from_slice(imported_scope.lookup_symbol(symbol));
         }
         Resolution::from(found_definitions)
     }
@@ -579,7 +590,7 @@ impl Binder {
                     }
                 }
             };
-            let mut results = Vec::new();
+            let mut results = DefinitionIds::new();
             for (index, node_id) in linearisations.iter().enumerate() {
                 let Some(base_scope_id) = self.scope_id_for_node_id(*node_id) else {
                     continue;
@@ -620,7 +631,7 @@ impl Binder {
         } else if let Some(definitions) = contract_scope.definitions.get(symbol) {
             // This case shouldn't happen for valid Solidity, as all
             // contracts should have a proper linearisation
-            Resolution::from(definitions.clone())
+            Resolution::from(definitions.as_slice())
         } else {
             Resolution::Unresolved
         }
@@ -675,8 +686,9 @@ impl Binder {
             Scope::Using(using_scope) => using_scope
                 .symbols
                 .get(symbol)
-                .cloned()
-                .map_or(Resolution::Unresolved, Resolution::from),
+                .map_or(Resolution::Unresolved, |definitions| {
+                    Resolution::from(definitions.as_slice())
+                }),
             Scope::YulBlock(yul_block_scope) => yul_block_scope
                 .definitions
                 .get(symbol)
@@ -700,41 +712,48 @@ impl Binder {
         }
     }
 
-    // If the resolution points to definitions that are symbols aliases (eg.
-    // import deconstruction symbols) this function will recursively follow them
-    // and return an appropriate resulting resolution. Ambiguities and missing
-    // definitions can occur along the followed aliases, so there is no
-    // guarantee that a `Resolved` resolution will yield another `Resolved`
-    // resolution.
-    pub(crate) fn follow_symbol_aliases(&self, resolution: Resolution) -> Resolution {
-        let is_imported_symbol = |id| {
-            matches!(
-                self.find_definition_by_id(id),
-                Some(Definition::ImportedSymbol(_))
-            )
-        };
-        let mut working_set = match resolution {
-            Resolution::Definition(id) if is_imported_symbol(id) => vec![id],
-            Resolution::Ambiguous(ids) if ids.iter().copied().any(is_imported_symbol) => ids,
-            _ => {
-                // Short-circuit if there are no aliases to follow and avoid
-                // unnecessary allocations
-                return resolution;
-            }
-        };
+    /// Precompute `resolved_definitions` for every `ImportedSymbolDefinition`: the
+    /// declaration(s) the symbol ultimately names, with any intermediate aliases
+    /// followed.
+    ///
+    /// `imported_symbol_ids` are the `Definition::ImportedSymbol` node ids,
+    /// gathered by the caller as it declared them.
+    ///
+    /// Must run once every file scope is populated and the default-import
+    /// closures are in place, since following an alias resolves symbols in
+    /// other files' scopes.
+    pub(crate) fn precompute_imported_symbol_definitions(
+        &mut self,
+        imported_symbol_ids: &[NodeId],
+    ) {
+        for &imported_symbol_id in imported_symbol_ids {
+            let definitions = self.find_imported_symbol_definitions(imported_symbol_id);
+            let Definition::ImportedSymbol(imported_symbol) =
+                self.get_definition_mut(imported_symbol_id)
+            else {
+                unreachable!("Definition {imported_symbol_id:?} is not an imported symbol");
+            };
+            imported_symbol.resolved_definitions = definitions;
+        }
+    }
 
-        // TODO: since this function uses the results from other resolution
-        // functions, we making more allocations than necessary; it may be worth
-        // it to try and avoid them by returning iterators from the delegated
-        // resolution functions
-        let mut found_ids = Vec::new();
-        let mut seen_ids = Set::default();
+    /// Resolves the import chain starting at `imported_symbol_id` down to the
+    /// declaration(s) it names, by resolving each symbol in the scope of the
+    /// file it was imported from. A symbol that resolves to nothing, or whose
+    /// chain closes a cycle, yields no targets.
+    fn find_imported_symbol_definitions(&self, imported_symbol_id: NodeId) -> ResolvedDefinitions {
+        let mut working_set: DefinitionIds = smallvec![imported_symbol_id];
+        let mut found_ids = ResolvedDefinitions::new();
+        // Using a `SmallVec` here rather than a `Set` as the number of walked
+        // IDs is expected to be small and a linear scan is cheaper than hashing
+        let mut seen_ids = DefinitionIds::new();
 
         while let Some(definition_id) = working_set.pop() {
-            if !seen_ids.insert(definition_id) {
+            if seen_ids.contains(&definition_id) {
                 // we already processed this definition
                 continue;
             }
+            seen_ids.push(definition_id);
             let Some(definition) = self.find_definition_by_id(definition_id) else {
                 unreachable!("Definition {definition_id:?} does not exist");
             };
@@ -747,10 +766,11 @@ impl Binder {
                 else {
                     continue;
                 };
-                working_set.extend(
-                    self.resolve_in_scope(scope_id, &imported_symbol.symbol)
-                        .get_definition_ids(),
-                );
+                match self.resolve_in_scope(scope_id, &imported_symbol.symbol) {
+                    Resolution::Definition(id) => working_set.push(id),
+                    Resolution::Ambiguous(ids) => working_set.extend(ids),
+                    Resolution::Unresolved | Resolution::BuiltIn(_) => {}
+                }
             } else {
                 found_ids.push(definition_id);
             }
@@ -759,7 +779,77 @@ impl Binder {
         // reverse the result to maintain the original ordering, since we
         // resolved from last to first in the loop above
         found_ids.reverse();
-        Resolution::from(found_ids)
+        found_ids
+    }
+
+    /// The declarations `definition_id` ultimately names when it is an imported
+    /// symbol, or `None` when it is any other kind of definition (or no
+    /// definition at all). An imported symbol that resolves to nothing yields
+    /// an empty slice, which is distinct from `None`.
+    pub(crate) fn imported_symbol_definitions(
+        &self,
+        definition_id: NodeId,
+    ) -> Option<&ResolvedDefinitions> {
+        match self.find_definition_by_id(definition_id) {
+            Some(Definition::ImportedSymbol(imported_symbol)) => {
+                Some(&imported_symbol.resolved_definitions)
+            }
+            _ => None,
+        }
+    }
+
+    // If the resolution points to definitions that are symbols aliases (eg.
+    // import deconstruction symbols) this function will replace them with the
+    // declarations they name and return an appropriate resulting resolution.
+    // Ambiguities and missing definitions can occur along the followed aliases,
+    // so there is no guarantee that a `Resolved` resolution will yield another
+    // `Resolved` resolution.
+    pub(crate) fn follow_symbol_aliases(&self, resolution: Resolution) -> Resolution {
+        match resolution {
+            Resolution::Definition(id) => match self.imported_symbol_definitions(id) {
+                // Rebuilding from the precomputed targets is a slice read: the
+                // chain was already walked in
+                // `precompute_imported_symbol_definitions`.
+                Some(targets) => Resolution::from(targets.as_slice()),
+                None => resolution,
+            },
+            Resolution::Ambiguous(ref ids) => {
+                if !ids
+                    .iter()
+                    .any(|&id| self.imported_symbol_definitions(id).is_some())
+                {
+                    // No imported symbol to substitute, so the declarations
+                    // already are the answer. Skip rebuilding the set, which
+                    // is not free even when it changes nothing: it scans for
+                    // duplicates and allocates a fresh payload.
+                    return resolution;
+                }
+
+                // Each alias contributes its targets in its own place, so the
+                // surviving declarations keep the order they resolved in.
+                // Duplicates are dropped, since the same declaration can be
+                // reached both directly and through an alias.
+                let mut found_ids = DefinitionIds::with_capacity(ids.len());
+                let mut push_unique = |id: NodeId| {
+                    if !found_ids.contains(&id) {
+                        found_ids.push(id);
+                    }
+                };
+
+                for &id in ids {
+                    match self.imported_symbol_definitions(id) {
+                        Some(targets) => {
+                            for target_id in targets {
+                                push_unique(*target_id);
+                            }
+                        }
+                        None => push_unique(id),
+                    }
+                }
+                Resolution::from(found_ids)
+            }
+            Resolution::Unresolved | Resolution::BuiltIn(_) => resolution,
+        }
     }
 
     // Resolution in this function is strictly limited to the given scope, and
@@ -786,8 +876,9 @@ impl Binder {
             Scope::Using(using_scope) => using_scope
                 .symbols
                 .get(symbol)
-                .cloned()
-                .map_or(Resolution::Unresolved, Resolution::from),
+                .map_or(Resolution::Unresolved, |definitions| {
+                    Resolution::from(definitions.as_slice())
+                }),
             Scope::Parameters(parameters_scope) => {
                 parameters_scope.lookup_definition(symbol).into()
             }

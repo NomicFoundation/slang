@@ -125,6 +125,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                 symbol.name.unparse().to_owned(),
                 imported_file_id.clone(),
             );
+            self.imported_symbol_ids.push(symbol.id());
             self.insert_definition_in_current_scope(definition);
         }
 

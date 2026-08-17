@@ -4,6 +4,7 @@ use ruint::aliases::U256;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
+use smallvec::SmallVec;
 
 use super::ScopeId;
 use crate::types::{
@@ -91,11 +92,24 @@ pub struct ImportDefinition {
     pub resolved_file_id: Option<FileId>,
 }
 
+/// The declarations an imported symbol resolves to, empty when it resolves to
+/// none. Stored inline: all but an imported overload set names a single
+/// declaration, and this is held on every imported symbol, so spilling to the
+/// heap for the common case would cost more than it saves.
+pub(crate) type ResolvedDefinitions = SmallVec<[NodeId; 1]>;
+
 #[derive(Debug)]
 pub struct ImportedSymbolDefinition {
     pub ir_node: ir::ImportDeconstructionSymbol,
     pub symbol: String,
     pub resolved_file_id: Option<FileId>,
+    /// The declarations this symbol ultimately names, with any intermediate
+    /// imports already followed, in resolution order. Empty until
+    /// `precompute_imported_symbol_definitions` runs at the end of
+    /// `p1_collect_definitions`, and also afterwards when the symbol resolves
+    /// to nothing (the import path didn't name a file, the imported file
+    /// doesn't declare the symbol, or the chain of imports closes a cycle).
+    pub(crate) resolved_definitions: ResolvedDefinitions,
 }
 
 #[derive(Debug)]
@@ -434,6 +448,7 @@ impl Definition {
             ir_node: Arc::clone(ir_node),
             symbol,
             resolved_file_id,
+            resolved_definitions: ResolvedDefinitions::new(),
         })
     }
 

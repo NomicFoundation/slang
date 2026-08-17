@@ -3,7 +3,7 @@ use std::sync::Arc;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
-use crate::binder::{Binder, Definition, Reference, Resolution, ScopeId, Typing};
+use crate::binder::{Binder, Definition, DefinitionIds, Reference, Resolution, ScopeId, Typing};
 use crate::types::{FunctionType, Type, TypeRegistry};
 
 /// Resolves an `IdentifierPath` starting from the given scope, creating
@@ -60,7 +60,7 @@ pub(crate) fn filter_overriden_definitions(
         return resolution;
     };
     let mut seen_function_types: Vec<&FunctionType> = Vec::new();
-    let mut filtered_definitions = Vec::new();
+    let mut filtered_definitions = DefinitionIds::new();
     for definition_id in definition_ids {
         match binder.find_definition_by_id(definition_id).unwrap() {
             Definition::Function(_) => {

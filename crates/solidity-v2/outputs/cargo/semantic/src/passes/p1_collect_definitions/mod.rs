@@ -28,14 +28,29 @@ pub fn run(
     language_version: LanguageVersion,
     diagnostics: &mut DiagnosticCollection,
 ) {
+    // Import aliases are noted as they are declared, so that the alias
+    // resolution below doesn't have to look for them among all definitions.
+    let mut imported_symbol_ids = Vec::new();
     for file in files {
-        Pass::visit_file(file, binder, language_version, diagnostics);
+        Pass::visit_file(
+            file,
+            binder,
+            language_version,
+            diagnostics,
+            &mut imported_symbol_ids,
+        );
     }
 
     // The default-import graph is now final. Precompute each file's transitive
     // import closure once, so later passes resolve file-scope symbols with a
     // flat scan instead of re-walking the graph on every lookup.
     binder.precompute_default_import_closures();
+
+    // Every file scope is populated, so each import alias can now be followed
+    // to the declaration(s) it names. Resolve them all once here, so the later
+    // passes (and the redeclaration checks just below) read the targets off the
+    // alias instead of re-walking the chain on every query.
+    binder.precompute_imported_symbol_definitions(&imported_symbol_ids);
 
     // Once every file scope is populated and the import closures are in place,
     // detect redeclaration clashes at file scope. These are handled here
@@ -76,6 +91,10 @@ struct Pass<'a, F: SemanticFile> {
     binder: &'a mut Binder,
     language_version: LanguageVersion,
     diagnostics: &'a mut DiagnosticCollection,
+    // Accumulates the node ids of the import aliases declared while visiting,
+    // across all the files of the compilation unit, for `run` to resolve once
+    // every file scope is populated.
+    imported_symbol_ids: &'a mut Vec<NodeId>,
 }
 
 impl<'a, F: SemanticFile> Pass<'a, F> {
@@ -84,6 +103,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
         binder: &'a mut Binder,
         language_version: LanguageVersion,
         diagnostics: &'a mut DiagnosticCollection,
+        imported_symbol_ids: &'a mut Vec<NodeId>,
     ) {
         let mut pass = Self {
             current_file: file,
@@ -94,6 +114,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
             binder,
             language_version,
             diagnostics,
+            imported_symbol_ids,
         };
         ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
         assert!(pass.scope_stack.is_empty());

@@ -270,7 +270,7 @@ impl ReferenceCollector<'_> {
         };
         let definition_ids = match &resolution {
             Resolution::Definition(id) => std::slice::from_ref(id),
-            Resolution::Ambiguous(ids) => ids.as_slice(),
+            Resolution::Ambiguous(ids) => ids,
             _ => return,
         };
         let Some(operand_id) = node.operand.node_id() else {
@@ -317,7 +317,7 @@ impl ReferenceCollector<'_> {
         };
         let definition_ids = match &resolution {
             Resolution::Definition(id) => std::slice::from_ref(id),
-            Resolution::Ambiguous(ids) => ids.as_slice(),
+            Resolution::Ambiguous(ids) => ids,
             _ => return,
         };
         for &definition_id in definition_ids {

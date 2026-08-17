@@ -11,7 +11,8 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 
 use super::Pass;
 use crate::binder::{
-    Definition, OperatorMapping, Reference, Resolution, Scope, Typing, UsingDirective,
+    Definition, OperatorMapping, Reference, Resolution, Scope, ScopeDefinitionIds, Typing,
+    UsingDirective,
 };
 use crate::built_ins::InternalBuiltIn;
 use crate::types::{ContractType, DataLocation, EnumType, InterfaceType, LibraryType, Type};
@@ -453,9 +454,12 @@ impl Visitor for Pass<'_> {
                                 operators
                                     .entry(operator.into())
                                     .or_default()
-                                    .extend(definition_ids.iter().copied());
+                                    .extend_from_slice(&definition_ids);
                             }
-                            symbols.insert(symbol_name.unparse().to_string(), definition_ids);
+                            symbols.insert(
+                                symbol_name.unparse().to_string(),
+                                ScopeDefinitionIds::from_slice(&definition_ids),
+                            );
                         }
 
                         let scope = Scope::new_using(node.id(), symbols);

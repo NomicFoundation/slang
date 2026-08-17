@@ -26,8 +26,10 @@ use slang_solidity_v2_common::collections::{Map, Set};
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 
-use crate::binder::{Binder, DefaultImport, Definition, FileScope, Resolution, Scope, ScopeId};
-use crate::passes::common::conflicts::{conflicting_definition, first_conflicting_definition};
+use crate::binder::{Binder, DefaultImport, Definition, FileScope, Scope, ScopeId};
+use crate::passes::common::conflicts::{
+    conflicting_definition, first_conflicting_definition, underlying_declarations,
+};
 
 // Looks for a previously-registered definition that conflicts with a Solidity
 // `new_definition` being declared under `symbol` in `scope_id`, returning the
@@ -177,40 +179,19 @@ pub(super) fn find_file_scope_conflicts<'a>(
     conflicts
 }
 
-// Follows any import aliases starting at `definition_id` and returns the
-// underlying declaration(s) it ultimately refers to. A non-import definition
-// resolves to itself.
-//
-// An imported symbol whose target cannot be resolved — because the import
-// path didn't resolve to a file (which gets its own diagnostic), or because
-// the imported file doesn't declare the symbol — also falls back to itself.
-// This keeps the unresolvable import a distinct opaque declaration that
-// conflicts with anything else sharing its name (the pre-alias-following
-// behaviour), rather than treating it as compatible with everything.
-fn resolved_targets(binder: &Binder, definition_id: NodeId) -> Vec<NodeId> {
-    let targets = binder
-        .follow_symbol_aliases(Resolution::Definition(definition_id))
-        .get_definition_ids();
-    if targets.is_empty() {
-        vec![definition_id]
-    } else {
-        targets
-    }
-}
-
 // Whether declaring `new_id` under the same name as the already-visible
 // `existing_id` is a redeclaration, resolving both through any import aliases
 // first. They may legally coexist when every underlying declaration pair is
 // either the very same declaration (an idempotent re-import) or a legal
 // overload, as decided by the shared `conflicting_definition` primitive.
 fn aliased_definitions_conflict(binder: &Binder, existing_id: NodeId, new_id: NodeId) -> bool {
-    let existing_targets = resolved_targets(binder, existing_id);
+    let existing_declarations = underlying_declarations(binder, existing_id);
 
-    resolved_targets(binder, new_id).iter().any(|&new| {
+    underlying_declarations(binder, new_id).iter().any(|&new| {
         let new_definition = binder
             .find_definition_by_id(new)
             .expect("definition is registered");
-        existing_targets
+        existing_declarations
             .iter()
             // The same underlying declaration reached through both names is
             // not a conflict.
@@ -345,6 +326,7 @@ fn find_local_definition_conflicts(
             let imported: Vec<NodeId> = imported_scopes
                 .iter()
                 .flat_map(|scope| scope.lookup_symbol(symbol))
+                .copied()
                 .collect();
             if imported.is_empty() {
                 continue;
