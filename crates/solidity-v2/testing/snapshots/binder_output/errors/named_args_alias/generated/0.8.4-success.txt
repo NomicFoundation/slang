@@ -1,0 +1,61 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Failure" @ lib.sol:1:7] (error)
+- Def: #2 ["name" @ lib.sol:1:22] (parameter, type: string memory)
+- Def: #3 ["level" @ lib.sol:1:33] (parameter, type: uint256)
+- Def: #4 ["Renamed" @ main.sol:1:20] (imported symbol)
+- Def: #5 ["Test" @ main.sol:3:10] (contract)
+- Def: #6 ["test" @ main.sol:4:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["Failure" @ main.sol:1:9] -> #1
+- Ref: ["Renamed" @ main.sol:5:16] -> #4
+- Ref: ["level" @ main.sol:5:25] -> #3
+- Ref: ["name" @ main.sol:5:35] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[lib.sol:1:1]
+   │
+ 1 │ error Failure(string name, uint level);
+   │       ───┬───        ──┬─       ──┬──  
+   │          ╰───────────────────────────── name: 1
+   │                        │          │    
+   │                        ╰─────────────── name: 2
+   │                                   │    
+   │                                   ╰──── name: 3
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ import {Failure as Renamed} from "./lib.sol";
+   │         ───┬───    ───┬───  
+   │            ╰──────────────── ref: 1
+   │                       │     
+   │                       ╰───── name: 4
+   │ 
+ 3 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 5
+ 4 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 6
+ 5 │         revert Renamed({level: 1, name: "Testing"});
+   │                ───┬───  ──┬──     ──┬─  
+   │                   ╰───────────────────── ref: 4
+   │                           │         │   
+   │                           ╰───────────── ref: 3
+   │                                     │   
+   │                                     ╰─── ref: 2
+───╯

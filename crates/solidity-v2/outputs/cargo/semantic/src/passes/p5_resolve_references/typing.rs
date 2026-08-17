@@ -697,9 +697,10 @@ impl Pass<'_> {
     /// Types a call with named arguments whose operand is (or was
     /// disambiguated to) `type_id`, additionally returning the definition the
     /// operand resolves to (if any). Only function values, struct constructions
-    /// and error constructions are callable this way; the user meta type of a
-    /// function is a non-callable declaration reached through a
-    /// contract/interface type name.
+    /// and error constructions are callable this way; the user meta types of a
+    /// function and of an event are non-callable declarations, reached through
+    /// a contract/interface type name and outside an `emit` statement
+    /// respectively.
     fn typing_of_type_called_with_named_arguments(
         &mut self,
         node: &ir::FunctionCallExpression,
@@ -733,6 +734,14 @@ impl Pass<'_> {
                         // An error construction has no value type of its own,
                         // matching the positional form. Return the definition
                         // so the argument names resolve against its parameters.
+                        (Typing::Unresolved, Some(definition_id))
+                    }
+                    Some(Definition::Event(_)) => {
+                        // Likewise, an event invocation has no value type of
+                        // its own; return the definition so the argument names
+                        // resolve against its parameters.
+                        // TODO(validation) SDR[950]: an event invocation has
+                        // to be prefixed by `emit`.
                         (Typing::Unresolved, Some(definition_id))
                     }
                     Some(Definition::Function(_)) => {

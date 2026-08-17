@@ -369,6 +369,20 @@ impl Pass<'_> {
         }
     }
 
+    /// The resolution of the declaration named by the reference at
+    /// `identifier_node_id`, with symbol aliases followed.
+    pub(super) fn followed_resolution_of_reference(
+        &self,
+        identifier_node_id: NodeId,
+    ) -> Option<Resolution> {
+        self.binder
+            .find_reference_by_identifier_node_id(identifier_node_id)
+            .map(|reference| {
+                self.binder
+                    .follow_symbol_aliases(reference.resolution.clone())
+            })
+    }
+
     pub(super) fn resolve_named_arguments(
         &mut self,
         named_arguments: &[ir::NamedArgument],
