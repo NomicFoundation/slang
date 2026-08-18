@@ -209,7 +209,10 @@ impl Visitor for Pass<'_> {
                 let false_mobile = self.types.compute_mobile_type(false_type_id);
                 match (true_mobile, false_mobile) {
                     (Some(true_mobile), Some(false_mobile))
-                        if self.alias_same_source_unit(true_mobile, false_mobile) =>
+                        if self.import_module_types_resolve_to_same_file(
+                            true_mobile,
+                            false_mobile,
+                        ) =>
                     {
                         Some(true_mobile)
                     }
