@@ -10,12 +10,7 @@ impl LibraryDefinitionStruct {
     pub fn functions(&self) -> Vec<FunctionDefinition> {
         self.members()
             .iter_function_definitions()
-            .filter(|function| {
-                matches!(
-                    function.kind(),
-                    FunctionKind::Regular | FunctionKind::Fallback | FunctionKind::Receive
-                )
-            })
+            .filter(|function| matches!(function.kind(), FunctionKind::Regular))
             .collect()
     }
 }

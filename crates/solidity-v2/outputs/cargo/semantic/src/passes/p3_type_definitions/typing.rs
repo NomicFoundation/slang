@@ -192,7 +192,7 @@ impl Pass<'_> {
     /// together with the struct members its return type is built from.
     pub(super) fn compute_getter_type(
         &mut self,
-        receiver_type_id: TypeId,
+        receiver_type_id: Option<TypeId>,
         definition_id: NodeId,
         type_id: TypeId,
     ) -> Option<(TypeId, Vec<NodeId>)> {
@@ -306,7 +306,7 @@ impl Pass<'_> {
 
         let getter_type = Type::Function(FunctionType {
             definition_id: Some(definition_id),
-            implicit_receiver_type: Some(receiver_type_id),
+            implicit_receiver_type: receiver_type_id,
             parameter_types,
             return_type,
             visibility: FunctionTypeVisibility::External,
