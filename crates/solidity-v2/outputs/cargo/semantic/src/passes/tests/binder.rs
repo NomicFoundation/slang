@@ -3,9 +3,15 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
-use super::{Analyse, Analysis, AnalysisBuilder};
+use super::{Analyse, Analysis, AnalysisBuilder, only_diagnostic};
 use crate::binder::{Binder, Resolution};
 use crate::types::TypeRegistry;
+
+/// Runs only the definition-collecting and linearising passes, so a failure
+/// can't come from a later pass consuming their output.
+fn analyse_definitions(source: &str) -> AnalysisBuilder<'_> {
+    Analysis::of_source(source).analyse(Analyse::Definitions)
+}
 
 #[test]
 fn test_collect_definitions_and_linearise_contracts() {
@@ -21,12 +27,6 @@ contract Test is Base layout at 0 {}
     assert_eq!(2, binder.definitions().len());
     // Verify linearisations were computed
     assert_eq!(2, binder.linearisations().len());
-}
-
-/// Runs only the definition-collecting and linearising passes, so a failure
-/// can't come from a later pass consuming their output.
-fn analyse_definitions(source: &str) -> AnalysisBuilder<'_> {
-    Analysis::of_source(source).analyse(Analyse::Definitions)
 }
 
 fn get_contract_to_bases_map(binder: &Binder) -> Map<String, Vec<String>> {
@@ -129,17 +129,11 @@ contract Test is Base, Foo { // Base should resolve to the contract, not the var
 
     let analysis = analyse_definitions(CONTENTS).run();
 
-    // `Foo` is a library which can't be used as a base, so check if the
-    // expected diagnostic was emitted. Asserting on the exact count also
+    // `Foo` is a library which can't be used as a base, so the expected
+    // diagnostic should be the only one: `only_diagnostic` asserting that also
     // covers `p1` having reported nothing.
-    let emitted: Vec<_> = analysis.diagnostics.iter().collect();
-    assert_eq!(
-        emitted.len(),
-        1,
-        "expected one diagnostic, got: {emitted:?}"
-    );
     assert!(matches!(
-        emitted[0].kind(),
+        only_diagnostic(&analysis.diagnostics).kind(),
         DiagnosticKind::TypeSystem(TypeSystemDiagnosticKind::InvalidBase(_))
     ));
 
