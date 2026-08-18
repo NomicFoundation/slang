@@ -113,18 +113,12 @@ impl CargoWorkspace {
 }
 
 pub trait CargoWorkspaceCommands {
-    /// Adds the CI build flags for a correctness gate run via plain `cargo`
-    /// (`check`, `clippy`, `rustdoc`, and the `cargo test --doc` doctest run,
-    /// which `nextest` does not cover and which takes plain-cargo flags — not
-    /// [`Self::add_nextest_build_rustflags`]).
+    /// Adds the CI build flags for a correctness gate run (`check`, `clippy`,
+    /// `rustdoc`, and the test suite). These keep the default `dev`/`test`
+    /// profile, the same one used locally, so that debug assertions and
+    /// overflow checks are enabled in CI as well.
     #[must_use]
     fn add_build_rustflags(self) -> Self;
-
-    /// Like [`Self::add_build_rustflags`], but for the `cargo nextest` test run.
-    /// `nextest` selects the Cargo profile via `--cargo-profile` (plain
-    /// `--profile` is reserved for its own profiles).
-    #[must_use]
-    fn add_nextest_build_rustflags(self) -> Self;
 
     /// Adds the CI build flags for a shipped/optimized artifact (e.g. the WASM
     /// package). Builds under `release`, where assertions are intentionally
@@ -140,18 +134,7 @@ impl CargoWorkspaceCommands for Command {
             return self;
         }
 
-        // __FAST_TEST_PROFILE__ (keep in sync with '.cargo/config.toml')
-        add_ci_rustflags(self.property("--profile", "fast-test"))
-    }
-
-    fn add_nextest_build_rustflags(self) -> Self {
-        if !GitHub::is_running_in_ci() {
-            // Nothing to add locally:
-            return self;
-        }
-
-        // __FAST_TEST_PROFILE__ (keep in sync with '.cargo/config.toml')
-        add_ci_rustflags(self.property("--cargo-profile", "fast-test"))
+        add_ci_rustflags(self)
     }
 
     fn add_release_build_rustflags(self) -> Self {
