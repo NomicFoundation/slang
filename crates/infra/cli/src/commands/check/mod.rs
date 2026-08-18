@@ -3,6 +3,7 @@ use clap::{Parser, ValueEnum};
 use infra_utils::cargo::CargoWorkspaceCommands;
 use infra_utils::commands::Command;
 use infra_utils::terminal::Terminal;
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use crate::toolchains::wasm::WasmPackage;
 use crate::utils::{ClapExtensions, OrderedCommand};
@@ -47,10 +48,14 @@ impl OrderedCommand for CheckCommand {
 }
 
 fn check_codegen() {
-    Command::new("cargo")
-        .arg("run")
-        .property("--bin", "codegen_runner")
-        .run();
+    ["codegen_runner", "codegen_v2_runner"]
+        .into_par_iter()
+        .for_each(|runner_bin| {
+            Command::new("cargo")
+                .arg("run")
+                .property("--bin", runner_bin)
+                .run();
+        });
 }
 
 fn check_cargo() {

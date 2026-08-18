@@ -1,6 +1,6 @@
 [package]
-name = "codegen_runner"
-description = "Generates the artifacts required to use slang."
+name = "codegen_v2_runner"
+description = "Generates the artifacts required to use slang v2."
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true
@@ -8,11 +8,9 @@ publish = false
 
 [dependencies]
 anyhow = { workspace = true }
-codegen_generator = { workspace = true }
-codegen_spec = { workspace = true }
+codegen_v2_generator = { workspace = true }
 infra_utils = { workspace = true }
-rayon = { workspace = true }
-solidity_language = { workspace = true }
+solidity_v2_language = { workspace = true }
 tera = { workspace = true }
 
 [lints]
