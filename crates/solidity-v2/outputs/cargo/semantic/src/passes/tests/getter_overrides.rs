@@ -1,8 +1,6 @@
 //! Tests that a public state variable's getter overrides a same-named function
 //! inherited from a base contract, so `linearised_functions` drops it.
 
-use slang_solidity_v2_common::evm_targets::EvmTarget;
-
 use super::{Analyse, Analysis};
 use crate::context::SemanticContext;
 
@@ -10,7 +8,6 @@ use crate::context::SemanticContext;
 /// overriding doesn't depend on the EVM target, so this runs on the latest.
 fn build_context(source: &str) -> SemanticContext {
     Analysis::of_source(source)
-        .target(EvmTarget::LATEST)
         .analyse(Analyse::Context)
         .run()
         .expect_no_diagnostics()

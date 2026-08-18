@@ -7,14 +7,12 @@ mod literals;
 mod meta_types;
 mod overloads;
 
-use ruint::aliases::U256;
-use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdentity};
 
-use super::{Analyse, Analysis, diagnostic_kind, find_function};
-use crate::binder::{Binder, Definition};
-use crate::types::{FixedSizeArrayType, IntegerType, Type, TypeId, TypeRegistry};
+use super::{Analyse, Analysis, find_function};
+use crate::binder::Binder;
+use crate::types::{Type, TypeRegistry};
 
 /// Recovers the typing recorded for an expression `node`, resolved to a
 /// concrete [`Type`].
@@ -48,23 +46,10 @@ fn expression_statement_types(
         .collect()
 }
 
-/// Wraps `members` in the synthesized `Test` contract every source in this
-/// module is built around, so the tests agree on what surrounds the code under
-/// test.
-fn test_contract(members: &str) -> String {
-    format!(
-        r#"
-        contract Test {{
-            {members}
-        }}
-        "#
-    )
-}
-
 /// Configures the typing of one or more expressions. Each is wrapped in a
 /// no-op expression statement inside the body of a `__test()` function of a
-/// [`test_contract`], so a typing comes back for every one of them, in the
-/// order they were given. Defaults to the latest language version and to no
+/// synthesized `Test` contract, so a typing comes back for every one of them,
+/// in the order they were given. Defaults to the latest language version and to no
 /// contract members beyond `__test()` itself.
 ///
 /// Reach for [`expression`] instead of [`expressions`] when a single one will
@@ -114,15 +99,17 @@ impl<'a> ExpressionTyping<'a> {
             .map(|expr| format!("{expr};"))
             .collect::<Vec<_>>()
             .join("\n");
-        let source = test_contract(&format!(
+        let source = format!(
             r#"
-            {members}
-            function __test() internal {{
-                {expression_statements}
+            contract Test {{
+                {members}
+                function __test() internal {{
+                    {expression_statements}
+                }}
             }}
             "#,
             members = self.members.unwrap_or(""),
-        ));
+        );
 
         let analysis = Analysis::of_source(&source)
             .version(self.language_version)
@@ -160,89 +147,4 @@ impl<'a> ExpressionTyping<'a> {
             types,
         )
     }
-}
-
-fn register_uint_type(types: &mut TypeRegistry, bits: u32) -> TypeId {
-    types.register_type(Type::Integer(IntegerType {
-        is_signed: false,
-        bits,
-    }))
-}
-
-/// Runs the full pipeline over `source` and returns contract `name`'s folded
-/// storage base slot together with the diagnostic emitted, if any. A rejected base
-/// slot is reported as a diagnostic and leaves `base_slot` unset.
-fn contract_base_slot(source: &str, name: &str) -> (Option<U256>, Option<DiagnosticKind>) {
-    let analysis = Analysis::of_source(source).run();
-    let binder = analysis.binder();
-    let diagnostics = &analysis.diagnostics;
-    let contract = analysis.find_contract(name);
-    let base_slot = match binder
-        .find_definition_by_id(contract.id())
-        .expect("contract definition is registered")
-    {
-        Definition::Contract(contract_definition) => contract_definition.base_slot,
-        _ => panic!("expected a contract definition"),
-    };
-    (base_slot, diagnostic_kind(diagnostics))
-}
-
-/// Folds a fixed-size-array length through the real pipeline, returning the
-/// computed `FixedSizeArrayType.size` together with the diagnostic emitted, if any.
-/// `members` holds any contract-level constants the length references;
-/// `array_type` is the variable type (e.g. `"uint256[10 / B]"`). A rejected
-/// length reads back as `0`, same as a length that genuinely folds to `0`.
-fn folded_array_length(members: &str, array_type: &str) -> (U256, Option<DiagnosticKind>) {
-    let source = test_contract(&format!("{members}\n{array_type} sized_array;"));
-
-    let analysis = Analysis::of_source(&source).run();
-    let binder = analysis.binder();
-    let types = analysis.types();
-    let diagnostics = &analysis.diagnostics;
-
-    let contract = analysis.find_contract("Test");
-    let state_variable = contract
-        .members
-        .iter()
-        .find_map(|member| match member {
-            ir::ContractMember::StateVariableDefinition(state_variable)
-                if state_variable.name.unparse() == "sized_array" =>
-            {
-                Some(state_variable)
-            }
-            _ => None,
-        })
-        .expect("`sized_array` state variable not found");
-
-    let type_id = binder
-        .node_typing(state_variable.id())
-        .as_type_id()
-        .expect("state variable has a resolved type");
-    let size = match types.get_type_by_id(type_id) {
-        Type::FixedSizeArray(FixedSizeArrayType { size, .. }) => *size,
-        other => panic!("expected a FixedSizeArray type, got {other:?}"),
-    };
-    (size, diagnostic_kind(diagnostics))
-}
-
-/// Collects the `FunctionCallExpression` of each expression statement in the
-/// body of `function` within `contract`, in source order.
-fn call_expressions<'a>(
-    analysis: &'a Analysis,
-    contract: &str,
-    function: &str,
-) -> Vec<&'a ir::FunctionCallExpression> {
-    let c = analysis.find_contract(contract);
-    let f = find_function(&c.members, function).expect("function not found");
-    let body = f.body.as_ref().expect("function has a body");
-    body.statements
-        .iter()
-        .filter_map(|stmt| match stmt {
-            ir::Statement::ExpressionStatement(s) => match &s.expression {
-                ir::Expression::FunctionCallExpression(call) => Some(call),
-                _ => None,
-            },
-            _ => None,
-        })
-        .collect()
 }

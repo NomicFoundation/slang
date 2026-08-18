@@ -216,13 +216,13 @@ fn test_meta_type_internal_names() {
         .expect("contract `C` not found");
     let function = find_function(&contract.members, "g").expect("g function");
     let body = function.body.as_ref().expect("g has a body");
-    let mut expressions = body.statements.iter().filter_map(|stmt| match stmt {
+    let mut nodes = body.statements.iter().filter_map(|stmt| match stmt {
         ir::Statement::ExpressionStatement(s) => Some(&s.expression),
         _ => None,
     });
 
     // `uint(1)`: the call operand `uint` carries the elementary meta-type.
-    let cast = expressions.next().expect("cast statement");
+    let cast = nodes.next().expect("cast statement");
     let ir::Expression::FunctionCallExpression(call) = cast else {
         panic!("expected a function call expression");
     };
@@ -235,7 +235,7 @@ fn test_meta_type_internal_names() {
     assert_eq!(context.type_internal_name(uint_meta_id), "type(uint256)");
 
     // `E`: the bare enum name carries the user meta-type.
-    let enum_expression = expressions.next().expect("enum statement");
+    let enum_expression = nodes.next().expect("enum statement");
     let enum_node_id = enum_expression.node_id().expect("expression has a node id");
     let enum_meta_id = context
         .binder()
@@ -340,10 +340,9 @@ fn test_function_declaration_via_type_name_has_no_mobile_type() {
     let types = analysis.types();
 
     let statement_typings = |contract: &str, function: &str| -> Vec<Typing> {
-        let c = analysis.find_contract(contract);
-        let f = find_function(&c.members, function).expect("function not found");
-        let body = f.body.as_ref().expect("function has a body");
-        body.statements
+        analysis
+            .function_body(contract, function)
+            .statements
             .iter()
             .filter_map(|stmt| match stmt {
                 ir::Statement::ExpressionStatement(s) => {

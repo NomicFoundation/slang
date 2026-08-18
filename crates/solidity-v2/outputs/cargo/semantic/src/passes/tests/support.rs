@@ -14,8 +14,8 @@
 //! later one consuming its output.
 
 use slang_solidity_v2_common::collections::Map;
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
+use slang_solidity_v2_common::diagnostics::{Diagnostic, DiagnosticCollection};
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -280,8 +280,7 @@ enum Output {
     Context(SemanticContext),
 }
 
-/// The result of running the pipeline over one or more sources: everything the
-/// passes produced, owned so tests can keep mutating the registry.
+/// The result of running the pipeline over one or more sources.
 pub(super) struct Analysis {
     files: Vec<TestFile>,
     output: Output,
@@ -409,6 +408,33 @@ impl Analysis {
             _ => None,
         })
     }
+
+    /// The members of the contract or library named `name`, for tests that
+    /// don't care which of the two declared it.
+    pub(super) fn find_members(&self, name: &str) -> &[ir::ContractMember] {
+        self.find_unique("contract or library", name, |member| match member {
+            ir::SourceUnitMember::ContractDefinition(contract)
+                if contract.name.unparse() == name =>
+            {
+                Some(&contract.members)
+            }
+            ir::SourceUnitMember::LibraryDefinition(library) if library.name.unparse() == name => {
+                Some(&library.members)
+            }
+            _ => None,
+        })
+    }
+
+    /// The body of `function`, declared by the contract or library `owner`.
+    /// This is the way into a function's statements: a test should not have to
+    /// spell out the walk from a source unit down to a block.
+    pub(super) fn function_body(&self, owner: &str, function: &str) -> &ir::Block {
+        find_function(self.find_members(owner), function)
+            .unwrap_or_else(|| panic!("no function `{function}` in `{owner}`"))
+            .body
+            .as_ref()
+            .unwrap_or_else(|| panic!("`{owner}.{function}` has no body"))
+    }
 }
 
 /// Finds the function named `name` among a contract's or library's `members`.
@@ -437,6 +463,18 @@ pub(super) fn diagnostic_kind(diagnostics: &DiagnosticCollection) -> Option<Diag
         "expected a single diagnostic: {diagnostics:?}"
     );
     Some(first.kind().clone())
+}
+
+/// The single diagnostic in `diagnostics`, for tests that assert on more of it
+/// than its kind. Panics unless there is exactly one; reach for
+/// [`diagnostic_kind`] where reporting nothing is also a valid outcome.
+pub(super) fn only_diagnostic(diagnostics: &DiagnosticCollection) -> &Diagnostic {
+    let mut iter = diagnostics.iter();
+    let first = iter.next();
+    let (Some(first), None) = (first, iter.next()) else {
+        panic!("expected a single diagnostic: {diagnostics:?}");
+    };
+    first
 }
 
 // Tests for the scaffolding itself. This module only compiles under `cfg(test)`
@@ -481,6 +519,22 @@ fn test_the_context_level_still_exposes_the_binder_and_types() {
     // only from the full one.
     assert_eq!("C", full.find_contract("C").name.unparse());
     assert_eq!(1, full.context().all_contracts().count());
+}
+
+/// A function body is reachable by name whether a contract or a library
+/// declares it, so a test doesn't pick the lookup based on the owner's kind.
+#[test]
+fn test_function_bodies_are_found_in_contracts_and_libraries() {
+    let analysis = Analysis::of_source(
+        "contract C { function f() internal { 1; } }
+         library L { function g() internal { 1; 2; } }",
+    )
+    .analyse(Analyse::Definitions)
+    .run()
+    .expect_no_diagnostics();
+
+    assert_eq!(1, analysis.function_body("C", "f").statements.len());
+    assert_eq!(2, analysis.function_body("L", "g").statements.len());
 }
 
 /// Only [`Analyse::Context`] computes a context, so asking a prefix for one

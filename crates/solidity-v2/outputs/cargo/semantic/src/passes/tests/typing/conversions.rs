@@ -6,11 +6,18 @@ use num_bigint::{BigInt, BigUint};
 use num_rational::BigRational;
 use ruint::aliases::U256;
 
-use super::{expression, register_uint_type};
+use super::expression;
 use crate::types::{
     ByteArrayType, DataLocation, FixedSizeArrayType, IntegerType, LiteralKind, MappingType,
-    StringType, TupleType, Type,
+    StringType, TupleType, Type, TypeId, TypeRegistry,
 };
+
+fn register_uint_type(types: &mut TypeRegistry, bits: u32) -> TypeId {
+    types.register_type(Type::Integer(IntegerType {
+        is_signed: false,
+        bits,
+    }))
+}
 
 #[test]
 fn test_implicit_conversion_uses_literal_value() {

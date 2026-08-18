@@ -4,9 +4,30 @@
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdentity};
 
-use super::{Analysis, call_expressions, expression};
+use super::{Analysis, expression};
 use crate::binder::Typing;
 use crate::types::{FunctionType, IntegerType, Type, TypeId, UserMetaType};
+
+/// Collects the `FunctionCallExpression` of each expression statement in the
+/// body of `function` within `contract`, in source order.
+fn call_expressions<'a>(
+    analysis: &'a Analysis,
+    contract: &str,
+    function: &str,
+) -> Vec<&'a ir::FunctionCallExpression> {
+    analysis
+        .function_body(contract, function)
+        .statements
+        .iter()
+        .filter_map(|stmt| match stmt {
+            ir::Statement::ExpressionStatement(s) => match &s.expression {
+                ir::Expression::FunctionCallExpression(call) => Some(call),
+                _ => None,
+            },
+            _ => None,
+        })
+        .collect()
+}
 
 #[test]
 fn test_overload_resolution_unsigned_to_signed_argument_is_version_gated() {

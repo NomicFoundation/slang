@@ -3,12 +3,24 @@
 
 use slang_solidity_v2_ir::ir::{self};
 
-use super::{Analysis, expression, expression_statement_types, expressions, find_function};
+use super::{Analysis, expression, expression_statement_types, expressions};
 use crate::binder::Typing;
 use crate::types::{
     ByteArrayType, BytesType, ContractType, DataLocation, IntegerType, LibraryType, StringType,
     TupleType, Type,
 };
+
+/// The recovered type of each expression statement in the body of `function`,
+/// declared by the contract or library `owner`, in source order. This is what
+/// a test wants when it writes its own source rather than letting
+/// [`ExpressionTyping`] synthesize one.
+fn statement_types(analysis: &Analysis, owner: &str, function: &str) -> Vec<Option<Type>> {
+    expression_statement_types(
+        analysis.function_body(owner, function),
+        analysis.binder(),
+        analysis.types(),
+    )
+}
 
 #[test]
 fn test_super_keyword_types_as_super() {
@@ -24,12 +36,8 @@ fn test_super_keyword_types_as_super() {
         "#;
 
     let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
-    let binder = analysis.binder();
 
-    let contract = analysis.find_contract("B");
-    let function = find_function(&contract.members, "g").expect("g function");
-    let body = function.body.as_ref().expect("g has a body");
-
+    let body = analysis.function_body("B", "g");
     let statement = body.statements.first().expect("g has a statement");
     let ir::Statement::ExpressionStatement(expression_statement) = statement else {
         panic!("expected an expression statement");
@@ -45,7 +53,10 @@ fn test_super_keyword_types_as_super() {
     };
 
     assert!(
-        matches!(binder.node_typing(super_keyword.id()), Typing::Super),
+        matches!(
+            analysis.binder().node_typing(super_keyword.id()),
+            Typing::Super
+        ),
         "`super` should be typed as `Typing::Super`"
     );
 }
@@ -212,14 +223,7 @@ fn test_cast_address_to_library_is_library_typed() {
         }
     "#;
     let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
-    let binder = analysis.binder();
-    let types = analysis.types();
-
-    let contract = analysis.find_contract("Test");
-    let probe = find_function(&contract.members, "probe").expect("probe function");
-    let body = probe.body.as_ref().expect("probe has a body");
-
-    let typings = expression_statement_types(body, binder, types);
+    let typings = statement_types(&analysis, "Test", "probe");
     let [cast, comparison] = typings.as_slice() else {
         panic!("expected two expression statements, got {typings:?}");
     };
@@ -324,14 +328,8 @@ fn test_this_in_library_is_library_typed() {
         "#;
 
     let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
-    let binder = analysis.binder();
-    let types = analysis.types();
-
     let library = analysis.find_library("MyLib");
-    let probe = find_function(&library.members, "probe").expect("probe function");
-    let body = probe.body.as_ref().expect("probe has a body");
-
-    let typings = expression_statement_types(body, binder, types);
+    let typings = statement_types(&analysis, "MyLib", "probe");
     assert!(
         matches!(typings.as_slice(), [Some(Type::Library(LibraryType { definition_id }))] if definition_id == &library.id()),
         "expected `this` to be typed as the library, got {typings:?}",
@@ -350,14 +348,8 @@ fn test_this_inside_contract() {
         "#;
 
     let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
-    let binder = analysis.binder();
-    let types = analysis.types();
-
     let contract = analysis.find_contract("MyContract");
-    let probe = find_function(&contract.members, "probe").expect("probe function");
-    let body = probe.body.as_ref().expect("probe has a body");
-
-    let typings = expression_statement_types(body, binder, types);
+    let typings = statement_types(&analysis, "MyContract", "probe");
 
     assert!(
         matches!(typings.as_slice(), [Some(Type::Contract(ContractType { definition_id }))] if definition_id == &contract.id())
@@ -387,14 +379,7 @@ fn test_partially_applied_function_does_not_unify_into_array() {
         "#;
 
     let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
-    let binder = analysis.binder();
-    let types = analysis.types();
-
-    let contract = analysis.find_contract("Test");
-    let function = find_function(&contract.members, "__test").expect("__test function");
-    let body = function.body.as_ref().expect("__test has a body");
-
-    let mut typings = expression_statement_types(body, binder, types).into_iter();
+    let mut typings = statement_types(&analysis, "Test", "__test").into_iter();
 
     // Control: plain function pointers of the same signature still unify into a
     // fixed-size array.
@@ -457,14 +442,7 @@ fn test_partially_applied_function_is_not_convertible() {
         "#;
 
     let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
-    let binder = analysis.binder();
-    let types = analysis.types();
-
-    let contract = analysis.find_contract("Test");
-    let function = find_function(&contract.members, "__test").expect("__test function");
-    let body = function.body.as_ref().expect("__test has a body");
-
-    let mut typings = expression_statement_types(body, binder, types).into_iter();
+    let mut typings = statement_types(&analysis, "Test", "__test").into_iter();
 
     assert!(
         matches!(typings.next(), Some(Some(Type::Boolean))),
@@ -559,11 +537,6 @@ fn test_static_library_call_is_not_partially_applied() {
         }
         "#;
     let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
-    let binder = analysis.binder();
-    let types = analysis.types();
-    let contract = analysis.find_contract("Test");
-    let function = find_function(&contract.members, "__test").expect("__test function");
-    let body = function.body.as_ref().expect("__test has a body");
-    let typings = expression_statement_types(body, binder, types);
+    let typings = statement_types(&analysis, "Test", "__test");
     assert_eq!(typings, vec![Some(Type::Boolean)]);
 }

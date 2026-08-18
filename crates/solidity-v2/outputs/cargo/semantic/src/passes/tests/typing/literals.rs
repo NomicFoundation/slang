@@ -5,13 +5,80 @@
 use num_bigint::{BigInt, BigUint};
 use num_rational::BigRational;
 use ruint::aliases::U256;
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     ArrayLengthFractional, ArrayLengthNotConstant, ArrayLengthZero, ConstantArithmeticError,
     IncompatibleConstantOperator, StorageLayoutBaseNotConstant,
 };
+use slang_solidity_v2_ir::ir;
 
-use super::{contract_base_slot, expression, folded_array_length};
-use crate::types::{LiteralKind, Type};
+use super::super::{Analysis, diagnostic_kind};
+use super::expression;
+use crate::binder::Definition;
+use crate::types::{FixedSizeArrayType, LiteralKind, Type};
+
+/// Runs the full pipeline over `source` and returns contract `name`'s folded
+/// storage base slot together with the diagnostic emitted, if any. A rejected base
+/// slot is reported as a diagnostic and leaves `base_slot` unset.
+fn contract_base_slot(source: &str, name: &str) -> (Option<U256>, Option<DiagnosticKind>) {
+    let analysis = Analysis::of_source(source).run();
+    let binder = analysis.binder();
+    let diagnostics = &analysis.diagnostics;
+    let contract = analysis.find_contract(name);
+    let base_slot = match binder
+        .find_definition_by_id(contract.id())
+        .expect("contract definition is registered")
+    {
+        Definition::Contract(contract_definition) => contract_definition.base_slot,
+        _ => panic!("expected a contract definition"),
+    };
+    (base_slot, diagnostic_kind(diagnostics))
+}
+
+/// Folds a fixed-size-array length through the real pipeline, returning the
+/// computed `FixedSizeArrayType.size` together with the diagnostic emitted, if any.
+/// `members` holds any contract-level constants the length references;
+/// `array_type` is the variable type (e.g. `"uint256[10 / B]"`). A rejected
+/// length reads back as `0`, same as a length that genuinely folds to `0`.
+fn folded_array_length(members: &str, array_type: &str) -> (U256, Option<DiagnosticKind>) {
+    let source = format!(
+        r#"
+        contract Test {{
+            {members}
+            {array_type} sized_array;
+        }}
+        "#
+    );
+
+    let analysis = Analysis::of_source(&source).run();
+    let binder = analysis.binder();
+    let types = analysis.types();
+    let diagnostics = &analysis.diagnostics;
+
+    let contract = analysis.find_contract("Test");
+    let state_variable = contract
+        .members
+        .iter()
+        .find_map(|member| match member {
+            ir::ContractMember::StateVariableDefinition(state_variable)
+                if state_variable.name.unparse() == "sized_array" =>
+            {
+                Some(state_variable)
+            }
+            _ => None,
+        })
+        .expect("`sized_array` state variable not found");
+
+    let type_id = binder
+        .node_typing(state_variable.id())
+        .as_type_id()
+        .expect("state variable has a resolved type");
+    let size = match types.get_type_by_id(type_id) {
+        Type::FixedSizeArray(FixedSizeArrayType { size, .. }) => *size,
+        other => panic!("expected a FixedSizeArray type, got {other:?}"),
+    };
+    (size, diagnostic_kind(diagnostics))
+}
 
 #[test]
 fn test_value_bearing_integer_literal_types() {
