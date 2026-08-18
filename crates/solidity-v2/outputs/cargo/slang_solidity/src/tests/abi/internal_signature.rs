@@ -165,3 +165,30 @@ fn test_library_signature_unwraps_a_user_defined_value_type_under_an_array() {
         Some("m(mapping(uint256 => L.U) storage)".to_string())
     );
 }
+
+define_fixture!(
+    AliasedLibraryType,
+    file: "main.sol", r#"
+import {L as M} from "library.sol";
+
+library U {
+    function f(M.S storage s) external view returns (uint256) { return s.a; }
+}
+"#,
+    file: "library.sol", r#"
+library L {
+    struct S { uint256 a; }
+}
+"#,
+);
+
+#[test]
+fn test_library_signature_names_an_aliased_type_at_its_declaration() {
+    let unit = AliasedLibraryType::build_compilation_unit();
+    let functions = fixtures::find_library(&unit, "U").functions();
+
+    assert_eq!(
+        functions[0].compute_library_signature(),
+        Some("f(L.S storage)".to_string())
+    );
+}

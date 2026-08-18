@@ -267,14 +267,13 @@ impl SemanticContext {
             .find_definition_by_id(definition_id)
             .unwrap()
             .identifier()
-            .unparse()
-            .to_string();
+            .unparse();
         match self.binder.enclosing_definition_node_id(definition_id) {
             Some(enclosing) => format!(
                 "{scope}.{name}",
                 scope = self.definition_canonical_name(enclosing)
             ),
-            None => name,
+            None => name.to_string(),
         }
     }
 
