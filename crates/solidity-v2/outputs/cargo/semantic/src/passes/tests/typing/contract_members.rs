@@ -1,13 +1,9 @@
 //! Typing of members reached through a contract, library or interface:
 //! `this`/`super`, getters, data locations, and external signatures.
 
-use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self};
 
-use super::{
-    Analysis, expression_statement_types, find_function, try_type_of_expression_in_context,
-    type_of_expression, type_of_expression_in_context, type_of_expressions,
-};
+use super::{Analysis, expression, expression_statement_types, expressions, find_function};
 use crate::binder::Typing;
 use crate::types::{
     ByteArrayType, BytesType, ContractType, DataLocation, IntegerType, LibraryType, StringType,
@@ -65,19 +61,16 @@ fn test_data_locations_of_state_variable_and_getter_accesses() {
     //  - `t.foo()` — external call to the auto-generated getter of `Foo foo`.
     //    `Foo` has a single returnable field (`bytes xs`), so the getter
     //    returns just `bytes`, again in memory.
-    let (typings, _) = type_of_expressions(
-        LanguageVersion::LATEST,
-        None,
-        Some(
+    let (typings, _) = expressions(&["bs", "foo.xs", "t.bs()", "t.foo()"])
+        .with_members(
             r#"
             struct Foo { bytes xs; }
             bytes public bs;
             Foo public foo;
             Test t;
             "#,
-        ),
-        &["bs", "foo.xs", "t.bs()", "t.foo()"],
-    );
+        )
+        .into_types();
     let expected = vec![
         Some(Type::Bytes(BytesType {
             location: DataLocation::Storage,
@@ -111,31 +104,28 @@ fn test_external_signature_relocates_parameters_and_results() {
     //    carries no location of its own, so the relocation has to reach each
     //    element separately: the `bytes calldata` result becomes memory while
     //    the results that were not in calldata keep their declared type.
-    let (typings, types) = type_of_expressions(
-        LanguageVersion::LATEST,
-        None,
-        Some(
-            r#"
-            bytes bs;
-            function echo(bytes calldata xs) external pure returns (bytes calldata) { return xs; }
-            function keep(bytes calldata xs) internal pure returns (bytes calldata) { return xs; }
-            function split(bytes calldata xs)
-                external
-                pure
-                returns (bytes calldata, string memory, uint)
-            {
-                return (xs, "", 1);
-            }
-            "#,
-        ),
-        &[
-            "keep",
-            "this.echo",
-            "this.echo(bs)",
-            "this.echo(bs)[0]",
-            "this.split(bs)",
-        ],
-    );
+    let (typings, types) = expressions(&[
+        "keep",
+        "this.echo",
+        "this.echo(bs)",
+        "this.echo(bs)[0]",
+        "this.split(bs)",
+    ])
+    .with_members(
+        r#"
+        bytes bs;
+        function echo(bytes calldata xs) external pure returns (bytes calldata) { return xs; }
+        function keep(bytes calldata xs) internal pure returns (bytes calldata) { return xs; }
+        function split(bytes calldata xs)
+            external
+            pure
+            returns (bytes calldata, string memory, uint)
+        {
+            return (xs, "", 1);
+        }
+        "#,
+    )
+    .into_types();
     let [
         internal_reference,
         external_reference,
@@ -249,14 +239,15 @@ fn test_cast_address_to_library_is_library_typed() {
 fn test_getter_of_struct_with_function_member() {
     // The auto-generated getter of a public struct state variable returns a
     // tuple of its value-type fields.
-    let (getter_type, types) = type_of_expression_in_context(
-        r#"
-        struct S { uint a; function() external fn; }
-        S public s;
-        Test other;
-        "#,
-        "other.s()",
-    );
+    let (getter_type, types) = expression("other.s()")
+        .with_members(
+            r#"
+            struct S { uint a; function() external fn; }
+            S public s;
+            Test other;
+            "#,
+        )
+        .into_resolved_type();
 
     let Type::Tuple(TupleType { types: elements }) = getter_type else {
         panic!("expected the getter to return a tuple, got {getter_type:?}");
@@ -285,15 +276,16 @@ fn test_getter_of_struct_with_function_member() {
 fn test_getter_of_struct_with_struct_member() {
     // The auto-generated getter of a public struct state variable returns a
     // tuple of its value-type fields.
-    let (getter_type, types) = type_of_expression_in_context(
-        r#"
-        struct P { bool a; }
-        struct S { P p; uint a; }
-        S public s;
-        Test other;
-        "#,
-        "other.s()",
-    );
+    let (getter_type, types) = expression("other.s()")
+        .with_members(
+            r#"
+            struct P { bool a; }
+            struct S { P p; uint a; }
+            S public s;
+            Test other;
+            "#,
+        )
+        .into_resolved_type();
 
     let Type::Tuple(TupleType { types: elements }) = getter_type else {
         panic!("expected the getter to return a tuple, got {getter_type:?}");
@@ -497,27 +489,33 @@ fn test_partially_applied_function_is_not_convertible() {
 
 #[test]
 fn reference_type_constant_is_indexable() {
-    let (element_type, _types) =
-        type_of_expression_in_context(r#"bytes constant B = hex"1234";"#, "B[0]");
+    let (element_type, _types) = expression("B[0]")
+        .with_members(r#"bytes constant B = hex"1234";"#)
+        .into_resolved_type();
     assert_eq!(element_type, Type::ByteArray(ByteArrayType { width: 1 }));
 }
 
 #[test]
 fn test_event_selector() {
     // `.selector` on an event name types as `bytes32`: the event's `topics[0]`.
-    let (type_, _) = type_of_expression_in_context("event E(uint a);", "E.selector");
+    let (type_, _) = expression("E.selector")
+        .with_members("event E(uint a);")
+        .into_resolved_type();
     assert_eq!(type_, Type::ByteArray(ByteArrayType { width: 32 }));
 
     // With *overloaded* events the name is ambiguous; we currently resolve the
     // member against the first candidate (both candidates expose `selector`,
     // so the typing is still `bytes32`). solc reports an ambiguity error here —
     // that diagnostic is part of the SDR[37] validation backlog.
-    let (type_, _) =
-        type_of_expression_in_context("event E(uint a); event E(bool b);", "E.selector");
+    let (type_, _) = expression("E.selector")
+        .with_members("event E(uint a); event E(bool b);")
+        .into_resolved_type();
     assert_eq!(type_, Type::ByteArray(ByteArrayType { width: 32 }));
 
     // An anonymous event emits no `topics[0]`, so it exposes no `selector`.
-    let (type_, _) = try_type_of_expression_in_context("event E(uint a) anonymous;", "E.selector");
+    let (type_, _) = expression("E.selector")
+        .with_members("event E(uint a) anonymous;")
+        .into_type();
     assert_eq!(None, type_);
 }
 
@@ -526,7 +524,7 @@ fn test_bytes_and_string_concat_typing() {
     // `concat` resolves as a member of the *meta-type* of `bytes`/`string`,
     // and the two built-ins stay distinct: `bytes.concat` yields
     // `bytes memory` while `string.concat` yields `string memory`.
-    let (type_, _) = type_of_expression(r#"bytes.concat(hex"01", hex"02")"#);
+    let (type_, _) = expression(r#"bytes.concat(hex"01", hex"02")"#).into_resolved_type();
     assert_eq!(
         type_,
         Type::Bytes(BytesType {
@@ -534,7 +532,7 @@ fn test_bytes_and_string_concat_typing() {
         })
     );
 
-    let (type_, _) = type_of_expression(r#"string.concat("a", "b")"#);
+    let (type_, _) = expression(r#"string.concat("a", "b")"#).into_resolved_type();
     assert_eq!(
         type_,
         Type::String(StringType {

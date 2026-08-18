@@ -334,7 +334,7 @@ impl Analysis {
     /// The registry, for tests that go on to register types of their own.
     /// Panics under [`Analyse::Context`], which keeps its registry inside the
     /// context; use [`Self::types`] there.
-    pub(super) fn into_types(self) -> TypeRegistry {
+    pub(super) fn into_type_registry(self) -> TypeRegistry {
         match self.output {
             Output::Prefix { types, .. } => types,
             Output::Context(_) => panic!("`Analyse::Context` owns its type registry"),

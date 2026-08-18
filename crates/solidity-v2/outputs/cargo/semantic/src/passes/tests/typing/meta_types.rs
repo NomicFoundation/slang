@@ -3,13 +3,9 @@
 
 use ruint::aliases::U256;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
-use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdentity};
 
-use super::{
-    Analyse, Analysis, find_function, try_type_of_expression_in_context, type_of_expression,
-    type_of_expression_in_context, type_of_expressions,
-};
+use super::{Analyse, Analysis, expression, expressions, find_function};
 use crate::binder::Typing;
 use crate::types::{
     ArrayType, ByteArrayType, DataLocation, FixedSizeArrayType, IntegerType, MetaType, StructType,
@@ -20,7 +16,7 @@ use crate::types::{
 fn test_index_access_on_elementary_meta_type_yields_array_meta_type() {
     // Control: indexing the meta-type of an elementary type (`uint[]`) yields
     // the meta-type of an array of that elementary type.
-    let (meta, types) = type_of_expression("uint[]");
+    let (meta, types) = expression("uint[]").into_resolved_type();
 
     let Type::MetaType(MetaType { type_id: array_id }) = meta else {
         panic!("expected the `uint[]` expression to be a MetaType, got {meta:?}");
@@ -43,12 +39,12 @@ fn test_index_access_on_elementary_meta_type_yields_array_meta_type() {
 fn test_index_access_on_elementary_meta_type_with_literal_index_yields_fixed_size_array() {
     // A number literal index is the array's length, whether written directly,
     // folded from literal arithmetic, or written in hex.
-    let expressions = ["uint[3]", "uint[1 + 2]", "uint[0x3]"];
-    let (typings, types) = type_of_expressions(LanguageVersion::LATEST, None, None, &expressions);
+    let inputs = ["uint[3]", "uint[1 + 2]", "uint[0x3]"];
+    let (typings, types) = expressions(&inputs).into_types();
 
-    for (expression, typing) in expressions.iter().zip(&typings) {
+    for (input, typing) in inputs.iter().zip(&typings) {
         let Some(Type::MetaType(MetaType { type_id: array_id })) = typing else {
-            panic!("expected `{expression}` to be a MetaType, got {typing:?}");
+            panic!("expected `{input}` to be a MetaType, got {typing:?}");
         };
         let Type::FixedSizeArray(FixedSizeArrayType {
             element_type,
@@ -57,11 +53,11 @@ fn test_index_access_on_elementary_meta_type_with_literal_index_yields_fixed_siz
         }) = types.get_type_by_id(*array_id).clone()
         else {
             panic!(
-                "expected `{expression}` to wrap a FixedSizeArray, got {:?}",
+                "expected `{input}` to wrap a FixedSizeArray, got {:?}",
                 types.get_type_by_id(*array_id)
             );
         };
-        assert_eq!(size, U256::from(3), "`{expression}` has length 3");
+        assert_eq!(size, U256::from(3), "`{input}` has length 3");
         assert_eq!(element_type, types.uint256());
         assert_eq!(location, DataLocation::Memory);
     }
@@ -71,9 +67,11 @@ fn test_index_access_on_elementary_meta_type_with_literal_index_yields_fixed_siz
 fn test_index_access_on_elementary_meta_type_with_non_literal_index_is_unresolved() {
     // Only a literal is a length in expression position, so neither a constant
     // nor a cast is one (matches solc error 3940).
-    for expression in ["uint[N]", "uint[uint8(3)]"] {
-        let (typing, _) = try_type_of_expression_in_context("uint constant N = 3;", expression);
-        assert_eq!(typing, None, "`{expression}` is not a valid array length");
+    for input in ["uint[N]", "uint[uint8(3)]"] {
+        let (typing, _) = expression(input)
+            .with_members("uint constant N = 3;")
+            .into_type();
+        assert_eq!(typing, None, "`{input}` is not a valid array length");
     }
 }
 
@@ -81,7 +79,9 @@ fn test_index_access_on_elementary_meta_type_with_non_literal_index_is_unresolve
 fn test_index_access_on_user_meta_type_yields_array_meta_type() {
     // `MyStruct[]` is a *type expression*: indexing the user meta-type of a
     // struct produces the meta-type of an array whose element is that struct.
-    let (meta, types) = type_of_expression_in_context("struct MyStruct { uint a; }", "MyStruct[]");
+    let (meta, types) = expression("MyStruct[]")
+        .with_members("struct MyStruct { uint a; }")
+        .into_resolved_type();
 
     let Type::MetaType(MetaType { type_id: array_id }) = meta else {
         panic!("expected the `MyStruct[]` expression to be a MetaType, got {meta:?}");
@@ -111,7 +111,9 @@ fn test_index_access_on_user_meta_type_yields_array_meta_type() {
 
 #[test]
 fn test_index_access_on_user_meta_type_with_literal_index_yields_fixed_size_array() {
-    let (meta, types) = type_of_expression_in_context("struct MyStruct { uint a; }", "MyStruct[3]");
+    let (meta, types) = expression("MyStruct[3]")
+        .with_members("struct MyStruct { uint a; }")
+        .into_resolved_type();
 
     let Type::MetaType(MetaType { type_id: array_id }) = meta else {
         panic!("expected the `MyStruct[3]` expression to be a MetaType, got {meta:?}");
@@ -143,16 +145,22 @@ fn test_index_access_on_user_meta_type_with_literal_index_yields_fixed_size_arra
 fn test_user_meta_type_built_in_members() {
     // Built-in members of a *type name* resolve through its meta-type: errors
     // expose `selector`, and UDVTs expose `wrap`/`unwrap`.
-    let (type_, _) = type_of_expression_in_context("error Err(uint x);", "Err.selector");
+    let (type_, _) = expression("Err.selector")
+        .with_members("error Err(uint x);")
+        .into_resolved_type();
     assert_eq!(type_, Type::ByteArray(ByteArrayType { width: 4 }));
 
-    let (type_, _) = type_of_expression_in_context("type T is uint256;", "T.wrap(1)");
+    let (type_, _) = expression("T.wrap(1)")
+        .with_members("type T is uint256;")
+        .into_resolved_type();
     assert!(
         matches!(type_, Type::UserDefinedValue(_)),
         "expected `T.wrap(1)` to type as the UDVT, got {type_:?}",
     );
 
-    let (type_, _) = type_of_expression_in_context("type T is uint256;", "T.unwrap(T.wrap(1))");
+    let (type_, _) = expression("T.unwrap(T.wrap(1))")
+        .with_members("type T is uint256;")
+        .into_resolved_type();
     assert_eq!(
         type_,
         Type::Integer(IntegerType {
@@ -166,7 +174,9 @@ fn test_user_meta_type_built_in_members() {
 fn test_explicit_enum_cast() {
     // Explicit conversion from an integer to an enum is valid Solidity and
     // types as the enum.
-    let (type_, _) = type_of_expression_in_context("enum E { A, B }", "E(1)");
+    let (type_, _) = expression("E(1)")
+        .with_members("enum E { A, B }")
+        .into_resolved_type();
     assert!(
         matches!(type_, Type::Enum(_)),
         "expected `E(1)` to type as the enum, got {type_:?}",
@@ -174,7 +184,9 @@ fn test_explicit_enum_cast() {
 
     // User defined value types are not castable by name: conversion goes
     // through `wrap`/`unwrap`.
-    let (type_, _) = try_type_of_expression_in_context("type T is uint256;", "T(1)");
+    let (type_, _) = expression("T(1)")
+        .with_members("type T is uint256;")
+        .into_type();
     assert_eq!(type_, None);
 }
 
@@ -237,8 +249,9 @@ fn test_meta_type_internal_names() {
 fn test_abi_decode_tuple_of_types() {
     // Multi-element `abi.decode` types as the tuple of the *decoded* value
     // types, unwrapping each element's meta-type.
-    let (decoded, types) =
-        type_of_expression_in_context("bytes b; struct S { uint a; }", "abi.decode(b, (uint, S))");
+    let (decoded, types) = expression("abi.decode(b, (uint, S))")
+        .with_members("bytes b; struct S { uint a; }")
+        .into_resolved_type();
     let Type::Tuple(TupleType { types: element_ids }) = decoded else {
         panic!("expected a tuple type, got {decoded:?}");
     };
@@ -250,17 +263,22 @@ fn test_abi_decode_tuple_of_types() {
     );
 
     // A tuple element that is not a type name doesn't decode.
-    let (decoded, _) = try_type_of_expression_in_context("bytes b;", "abi.decode(b, (uint, 5))");
+    let (decoded, _) = expression("abi.decode(b, (uint, 5))")
+        .with_members("bytes b;")
+        .into_type();
     assert_eq!(decoded, None);
 
     // A nested tuple element is not a type name, so it doesn't decode either
     // (matching solc, which rejects `abi.decode(b, (uint, (bool, bool)))`).
-    let (decoded, _) =
-        try_type_of_expression_in_context("bytes b;", "abi.decode(b, (uint, (bool, bool)))");
+    let (decoded, _) = expression("abi.decode(b, (uint, (bool, bool)))")
+        .with_members("bytes b;")
+        .into_type();
     assert_eq!(decoded, None);
 
     // Neither does a second argument that is not a type or tuple of types.
-    let (decoded, _) = try_type_of_expression_in_context("bytes b; uint x;", "abi.decode(b, x)");
+    let (decoded, _) = expression("abi.decode(b, x)")
+        .with_members("bytes b; uint x;")
+        .into_type();
     assert_eq!(decoded, None);
 }
 
@@ -270,7 +288,7 @@ fn test_tuple_of_type_names_is_a_tuple_of_meta_types() {
     // itself): `(uint, bool)` types as `Tuple(type(uint256), type(bool))`.
     // This matches solc, which rejects a nested tuple element (it is not a
     // type name) — see `test_abi_decode_tuple_of_types`.
-    let (type_, registry) = type_of_expression("(uint, bool)");
+    let (type_, registry) = expression("(uint, bool)").into_resolved_type();
     let Type::Tuple(TupleType { types: element_ids }) = type_ else {
         panic!("expected `(uint, bool)` to type as a tuple, got {type_:?}");
     };

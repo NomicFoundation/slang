@@ -4,10 +4,7 @@
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdentity};
 
-use super::{
-    Analysis, call_expressions, try_type_of_expression_in_context, type_of_expression_in_context,
-    type_of_expressions,
-};
+use super::{Analysis, call_expressions, expression};
 use crate::binder::Typing;
 use crate::types::{FunctionType, IntegerType, Type, TypeId, UserMetaType};
 
@@ -22,10 +19,12 @@ fn test_overload_resolution_unsigned_to_signed_argument_is_version_gated() {
     ";
 
     // 0.8.0: `uint8` -> `int16` is allowed, so the `int16` overload matches.
-    let (typings, _) =
-        type_of_expressions(LanguageVersion::V0_8_0, None, Some(setup), &["pick(u)"]);
+    let (typing, _) = expression("pick(u)")
+        .with_members(setup)
+        .version(LanguageVersion::V0_8_0)
+        .into_type();
     assert_eq!(
-        typings.into_iter().next().unwrap(),
+        typing,
         Some(Type::Integer(IntegerType {
             is_signed: false,
             bits: 8,
@@ -33,9 +32,11 @@ fn test_overload_resolution_unsigned_to_signed_argument_is_version_gated() {
     );
 
     // 0.8.1: `uint8` -> `int16` is rejected, so neither overload matches.
-    let (typings, _) =
-        type_of_expressions(LanguageVersion::V0_8_1, None, Some(setup), &["pick(u)"]);
-    assert_eq!(typings.into_iter().next().unwrap(), None);
+    let (typing, _) = expression("pick(u)")
+        .with_members(setup)
+        .version(LanguageVersion::V0_8_1)
+        .into_type();
+    assert_eq!(typing, None);
 }
 
 #[test]
@@ -44,7 +45,9 @@ fn test_overload_resolution_widens_byte_array_argument() {
         function pick(bytes32 a) internal pure returns (uint8) { a; return 1; }
         function pick(string memory a) internal pure returns (uint16) { a; return 2; }
     ";
-    let (type_, _) = type_of_expression_in_context(setup, "pick(bytes20(0))");
+    let (type_, _) = expression("pick(bytes20(0))")
+        .with_members(setup)
+        .into_resolved_type();
     assert_eq!(
         type_,
         Type::Integer(IntegerType {
@@ -60,7 +63,9 @@ fn test_overload_resolution_rejects_byte_array_narrowing() {
         function pick(bytes20 a) internal pure returns (uint8) { a; return 1; }
         function pick(string memory a) internal pure returns (uint16) { a; return 2; }
     ";
-    let (type_, _) = try_type_of_expression_in_context(setup, "pick(bytes32(0))");
+    let (type_, _) = expression("pick(bytes32(0))")
+        .with_members(setup)
+        .into_type();
     // Neither overload matches: `bytes32` does not convert to `bytes20` nor
     // to `string`. The call is unresolved.
     assert_eq!(type_, None);
@@ -74,7 +79,7 @@ fn test_meta_type_argument_does_not_match_overloads() {
         function f(uint x) internal pure returns (bool) { return x > 0; }
         function f(bool x) internal pure returns (uint) { return x ? 1 : 0; }
     "#;
-    let (type_, _) = try_type_of_expression_in_context(context, "f(uint)");
+    let (type_, _) = expression("f(uint)").with_members(context).into_type();
     assert_eq!(type_, None);
 }
 

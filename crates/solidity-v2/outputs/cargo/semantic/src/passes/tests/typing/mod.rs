@@ -48,86 +48,118 @@ fn expression_statement_types(
         .collect()
 }
 
-/// Wraps each expression in a no-op expression statement inside the body of an
-/// `__test()` function of a synthesized `Test` contract, runs every semantic
-/// pass, and returns the typing recorded for each expression (in input order)
-/// along with the populated type registry. Non-`Resolved` typings come back
-/// as `None`.
-///
-/// `contract_context` is optional contract-level setup — state variables,
-/// nested struct definitions, sibling member functions, etc. — inserted
-/// before the `__test()` definition.
-fn type_of_expressions(
-    language_version: LanguageVersion,
-    contract_name: Option<&str>,
-    contract_context: Option<&str>,
-    expressions: &[&str],
-) -> (Vec<Option<Type>>, TypeRegistry) {
-    let context_block = contract_context.unwrap_or("");
-    let contract_name = contract_name.unwrap_or("Test");
-    let expression_statements = expressions
-        .iter()
-        .map(|expr| format!("{expr};"))
-        .collect::<Vec<_>>()
-        .join("\n");
-    let source = format!(
+/// Wraps `members` in the synthesized `Test` contract every source in this
+/// module is built around, so the tests agree on what surrounds the code under
+/// test.
+fn test_contract(members: &str) -> String {
+    format!(
         r#"
-        contract {contract_name} {{
-            {context_block}
+        contract Test {{
+            {members}
+        }}
+        "#
+    )
+}
+
+/// Configures the typing of one or more expressions. Each is wrapped in a
+/// no-op expression statement inside the body of a `__test()` function of a
+/// [`test_contract`], so a typing comes back for every one of them, in the
+/// order they were given. Defaults to the latest language version and to no
+/// contract members beyond `__test()` itself.
+///
+/// Reach for [`expression`] instead of [`expressions`] when a single one will
+/// do, which is the common case.
+struct ExpressionTyping<'a> {
+    expressions: Vec<&'a str>,
+    members: Option<&'a str>,
+    language_version: LanguageVersion,
+}
+
+/// Starts configuring the typing of a single `expr`.
+fn expression(expr: &str) -> ExpressionTyping<'_> {
+    expressions(&[expr])
+}
+
+/// Starts configuring the typing of several expressions, which share one
+/// `__test()` body and hence one scope.
+fn expressions<'a>(expressions: &[&'a str]) -> ExpressionTyping<'a> {
+    ExpressionTyping {
+        expressions: expressions.to_vec(),
+        members: None,
+        language_version: LanguageVersion::LATEST,
+    }
+}
+
+impl<'a> ExpressionTyping<'a> {
+    /// Contract-level setup the expressions resolve against: state variables,
+    /// nested struct definitions, sibling member functions, etc. It is
+    /// inserted ahead of the `__test()` definition.
+    fn with_members(mut self, members: &'a str) -> Self {
+        self.members = Some(members);
+        self
+    }
+
+    fn version(mut self, language_version: LanguageVersion) -> Self {
+        self.language_version = language_version;
+        self
+    }
+
+    /// The typing of every expression, in the order they were given, together
+    /// with the registry the passes populated. An expression whose typing
+    /// isn't `Resolved` comes back as `None`.
+    fn into_types(self) -> (Vec<Option<Type>>, TypeRegistry) {
+        let expression_statements = self
+            .expressions
+            .iter()
+            .map(|expr| format!("{expr};"))
+            .collect::<Vec<_>>()
+            .join("\n");
+        let source = test_contract(&format!(
+            r#"
+            {members}
             function __test() internal {{
                 {expression_statements}
             }}
-        }}
-        "#
-    );
+            "#,
+            members = self.members.unwrap_or(""),
+        ));
 
-    let analysis = Analysis::of_source(&source)
-        .version(language_version)
-        .run()
-        .expect_no_diagnostics();
+        let analysis = Analysis::of_source(&source)
+            .version(self.language_version)
+            .run()
+            .expect_no_diagnostics();
 
-    let contract = analysis.find_contract(contract_name);
-    let function = find_function(&contract.members, "__test").expect("__test function not found");
-    let block = function.body.as_ref().expect("__test has a body");
+        let contract = analysis.find_contract("Test");
+        let function =
+            find_function(&contract.members, "__test").expect("__test function not found");
+        let block = function.body.as_ref().expect("__test has a body");
 
-    let typings = expression_statement_types(block, analysis.binder(), analysis.types());
+        let typings = expression_statement_types(block, analysis.binder(), analysis.types());
 
-    (typings, analysis.into_types())
-}
+        (typings, analysis.into_type_registry())
+    }
 
-/// Convenience wrapper for `type_of_expressions` with a single expression and
-/// no contract context. Panics if the typing didn't resolve.
-fn type_of_expression(expr: &str) -> (Type, TypeRegistry) {
-    let (expr_type, types) = try_type_of_expression(expr);
-    (
-        expr_type.expect("expected resolved type for expression"),
-        types,
-    )
-}
+    /// [`Self::into_types`] for a lone expression. Panics unless exactly one
+    /// was given, so a caller can't quietly assert on the first of several.
+    fn into_type(self) -> (Option<Type>, TypeRegistry) {
+        assert_eq!(
+            1,
+            self.expressions.len(),
+            "`into_type` needs exactly one expression"
+        );
+        let (typings, types) = self.into_types();
+        let typing = typings.into_iter().next().expect("one expression");
+        (typing, types)
+    }
 
-/// Convenience wrapper for `type_of_expressions` with a single expression and
-/// no contract context. Returns `None` if the typing didn't resolve.
-fn try_type_of_expression(expr: &str) -> (Option<Type>, TypeRegistry) {
-    let (typings, types) = type_of_expressions(LanguageVersion::LATEST, None, None, &[expr]);
-    let typing = typings.into_iter().next().expect("at least one expression");
-    (typing, types)
-}
-
-/// Like `type_of_expression`, but with contract-level setup (state variables,
-/// member functions, …) inserted before the `__test()` function.
-fn type_of_expression_in_context(context: &str, expr: &str) -> (Type, TypeRegistry) {
-    let (expr_type, types) = try_type_of_expression_in_context(context, expr);
-    (
-        expr_type.expect("expected resolved type for expression"),
-        types,
-    )
-}
-
-fn try_type_of_expression_in_context(context: &str, expr: &str) -> (Option<Type>, TypeRegistry) {
-    let (typings, types) =
-        type_of_expressions(LanguageVersion::LATEST, None, Some(context), &[expr]);
-    let typing = typings.into_iter().next().expect("at least one expression");
-    (typing, types)
+    /// [`Self::into_type`], panicking if the expression didn't resolve to a type.
+    fn into_resolved_type(self) -> (Type, TypeRegistry) {
+        let (typing, types) = self.into_type();
+        (
+            typing.expect("expected resolved type for expression"),
+            types,
+        )
+    }
 }
 
 fn register_uint_type(types: &mut TypeRegistry, bits: u32) -> TypeId {
@@ -157,18 +189,11 @@ fn contract_base_slot(source: &str, name: &str) -> (Option<U256>, Option<Diagnos
 
 /// Folds a fixed-size-array length through the real pipeline, returning the
 /// computed `FixedSizeArrayType.size` together with the diagnostic emitted, if any.
-/// `context` holds any contract-level constants the length references;
+/// `members` holds any contract-level constants the length references;
 /// `array_type` is the variable type (e.g. `"uint256[10 / B]"`). A rejected
 /// length reads back as `0`, same as a length that genuinely folds to `0`.
-fn folded_array_length(context: &str, array_type: &str) -> (U256, Option<DiagnosticKind>) {
-    let source = format!(
-        r#"
-        contract Test {{
-            {context}
-            {array_type} sized_array;
-        }}
-        "#
-    );
+fn folded_array_length(members: &str, array_type: &str) -> (U256, Option<DiagnosticKind>) {
+    let source = test_contract(&format!("{members}\n{array_type} sized_array;"));
 
     let analysis = Analysis::of_source(&source).run();
     let binder = analysis.binder();
