@@ -7,7 +7,7 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdentity};
 
 use super::{
-    Analysis, analyze, find_function, try_type_of_expression_in_context, type_of_expression,
+    Analyse, Analysis, find_function, try_type_of_expression_in_context, type_of_expression,
     type_of_expression_in_context, type_of_expressions,
 };
 use crate::binder::Typing;
@@ -193,7 +193,10 @@ fn test_meta_type_internal_names() {
     "#;
     let context = Analysis::of_source(source)
         .target(EvmTarget::LATEST)
-        .context();
+        .analyse(Analyse::Context)
+        .run()
+        .expect_no_diagnostics()
+        .into_context();
 
     let contract = context
         .find_contract_by_name("C")
@@ -314,9 +317,9 @@ fn test_function_declaration_via_type_name_has_no_mobile_type() {
         }
     "#;
 
-    let analysis = analyze(source);
-    let binder = &analysis.binder;
-    let types = &analysis.types;
+    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let binder = analysis.binder();
+    let types = analysis.types();
 
     let statement_typings = |contract: &str, function: &str| -> Vec<Typing> {
         let c = analysis.find_contract(contract);

@@ -3,7 +3,7 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
-use super::{Analyse, Analysis, AnalysisBuilder, analyze};
+use super::{Analyse, Analysis, AnalysisBuilder};
 use crate::binder::{Binder, Resolution};
 use crate::types::TypeRegistry;
 
@@ -14,9 +14,8 @@ contract Base {}
 contract Test is Base layout at 0 {}
     "###;
 
-    let binder = analyse_definitions(CONTENTS)
-        .expecting_no_diagnostics()
-        .binder;
+    let analysis = analyse_definitions(CONTENTS).run().expect_no_diagnostics();
+    let binder = analysis.binder();
 
     // Verify definitions were collected
     assert_eq!(2, binder.definitions().len());
@@ -69,11 +68,10 @@ abstract contract B is C {}
 interface A is C {}
 "#;
 
-    let binder = analyse_definitions(CONTENTS)
-        .expecting_no_diagnostics()
-        .binder;
+    let analysis = analyse_definitions(CONTENTS).run().expect_no_diagnostics();
+    let binder = analysis.binder();
 
-    let contract_to_bases = get_contract_to_bases_map(&binder);
+    let contract_to_bases = get_contract_to_bases_map(binder);
 
     let mut expected = Map::default();
     expected.insert(
@@ -104,11 +102,10 @@ contract D is B {}
 contract B {}
 "#;
 
-    let binder = analyse_definitions(CONTENTS)
-        .expecting_no_diagnostics()
-        .binder;
+    let analysis = analyse_definitions(CONTENTS).run().expect_no_diagnostics();
+    let binder = analysis.binder();
 
-    let contract_to_bases = get_contract_to_bases_map(&binder);
+    let contract_to_bases = get_contract_to_bases_map(binder);
 
     let mut expected = Map::default();
     expected.insert("D".to_string(), vec!["D".to_string(), "B".to_string()]);
@@ -146,7 +143,7 @@ contract Test is Base, Foo { // Base should resolve to the contract, not the var
         DiagnosticKind::TypeSystem(TypeSystemDiagnosticKind::InvalidBase(_))
     ));
 
-    let contract_to_bases = get_contract_to_bases_map(&analysis.binder);
+    let contract_to_bases = get_contract_to_bases_map(analysis.binder());
 
     let mut expected = Map::default();
     expected.insert("Base".to_string(), vec!["Base".to_string()]);
@@ -192,8 +189,9 @@ contract Test is Base {
         .count();
     let analysis = Analysis::of_source(CONTENTS)
         .analyse(Analyse::Types)
-        .expecting_no_diagnostics();
-    let types_after = analysis.types.iter_types().count();
+        .run()
+        .expect_no_diagnostics();
+    let types_after = analysis.types().iter_types().count();
 
     // The pass registers new types for: contracts, mappings, structs, enums,
     // function types, getter types, and a `Type::UserMetaType` for each
@@ -235,10 +233,10 @@ contract Test is Base {
 }
     "###;
 
-    let analysis = analyze(CONTENTS);
+    let analysis = Analysis::of_source(CONTENTS).run().expect_no_diagnostics();
 
     // Verify that references were created and most are resolved
-    let references = analysis.binder.references();
+    let references = analysis.binder().references();
     assert!(!references.is_empty(), "expected some references");
 
     let unresolved_count = references
@@ -268,10 +266,11 @@ contract Test {
 
     let analysis = Analysis::of_source(CONTENTS)
         .analyse(Analyse::Yul)
-        .expecting_no_diagnostics();
+        .run()
+        .expect_no_diagnostics();
 
     // The single `assembly` block was collected in p1.
-    let blocks = analysis.binder.assembly_blocks();
+    let blocks = analysis.binder().assembly_blocks();
     assert_eq!(blocks.len(), 1);
     let block = blocks.values().next().unwrap();
 
@@ -283,7 +282,7 @@ contract Test {
         .iter()
         .map(|node_id| {
             analysis
-                .binder
+                .binder()
                 .find_definition_by_id(*node_id)
                 .unwrap()
                 .identifier()
@@ -306,9 +305,10 @@ fn test_imported_symbol_resolves_to_the_declaring_file() {
         .file("a.sol", r#"import {C} from "b.sol";"#)
         .file("b.sol", "contract C {}")
         .analyse(Analyse::Definitions)
-        .expecting_no_diagnostics();
+        .run()
+        .expect_no_diagnostics();
 
-    let binder = &analysis.binder;
+    let binder = analysis.binder();
     let resolve = |file: &str| {
         let scope_id = binder
             .scope_id_for_file_id(&file.into())
@@ -334,16 +334,17 @@ fn test_import_of_an_unknown_file_stays_unresolved() {
     let analysis = Analysis::builder()
         .file("a.sol", r#"import {C} from "missing.sol";"#)
         .analyse(Analyse::Definitions)
-        .expecting_no_diagnostics();
+        .run()
+        .expect_no_diagnostics();
 
     let scope_id = analysis
-        .binder
+        .binder()
         .scope_id_for_file_id(&"a.sol".into())
         .expect("no file scope for a.sol");
-    let resolution = analysis.binder.resolve_in_scope(scope_id, "C");
+    let resolution = analysis.binder().resolve_in_scope(scope_id, "C");
 
     assert_eq!(
         Resolution::Unresolved,
-        analysis.binder.follow_symbol_aliases(resolution)
+        analysis.binder().follow_symbol_aliases(resolution)
     );
 }

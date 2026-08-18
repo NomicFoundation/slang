@@ -12,7 +12,7 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdentity};
 
-use super::{Analysis, analyze, analyze_at, diagnostic_kind, find_function};
+use super::{Analyse, Analysis, diagnostic_kind, find_function};
 use crate::binder::{Binder, Definition};
 use crate::types::{FixedSizeArrayType, IntegerType, Type, TypeId, TypeRegistry};
 
@@ -81,15 +81,18 @@ fn type_of_expressions(
         "#
     );
 
-    let analysis = analyze_at(&source, language_version);
+    let analysis = Analysis::of_source(&source)
+        .version(language_version)
+        .run()
+        .expect_no_diagnostics();
 
     let contract = analysis.find_contract(contract_name);
     let function = find_function(&contract.members, "__test").expect("__test function not found");
     let block = function.body.as_ref().expect("__test has a body");
 
-    let typings = expression_statement_types(block, &analysis.binder, &analysis.types);
+    let typings = expression_statement_types(block, analysis.binder(), analysis.types());
 
-    (typings, analysis.types)
+    (typings, analysis.into_types())
 }
 
 /// Convenience wrapper for `type_of_expressions` with a single expression and
@@ -139,7 +142,7 @@ fn register_uint_type(types: &mut TypeRegistry, bits: u32) -> TypeId {
 /// slot is reported as a diagnostic and leaves `base_slot` unset.
 fn contract_base_slot(source: &str, name: &str) -> (Option<U256>, Option<DiagnosticKind>) {
     let analysis = Analysis::of_source(source).run();
-    let binder = &analysis.binder;
+    let binder = analysis.binder();
     let diagnostics = &analysis.diagnostics;
     let contract = analysis.find_contract(name);
     let base_slot = match binder
@@ -168,8 +171,8 @@ fn folded_array_length(context: &str, array_type: &str) -> (U256, Option<Diagnos
     );
 
     let analysis = Analysis::of_source(&source).run();
-    let binder = &analysis.binder;
-    let types = &analysis.types;
+    let binder = analysis.binder();
+    let types = analysis.types();
     let diagnostics = &analysis.diagnostics;
 
     let contract = analysis.find_contract("Test");

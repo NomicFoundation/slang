@@ -3,7 +3,7 @@
 
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 
-use super::Analysis;
+use super::{Analyse, Analysis};
 use crate::context::SemanticContext;
 
 /// Builds a `SemanticContext` over `source`, asserting no diagnostics. Getter
@@ -11,7 +11,10 @@ use crate::context::SemanticContext;
 fn build_context(source: &str) -> SemanticContext {
     Analysis::of_source(source)
         .target(EvmTarget::LATEST)
-        .context()
+        .analyse(Analyse::Context)
+        .run()
+        .expect_no_diagnostics()
+        .into_context()
 }
 
 /// The names of the named functions in `contract`'s linearised function list.

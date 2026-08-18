@@ -5,7 +5,7 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self};
 
 use super::{
-    analyze, expression_statement_types, find_function, try_type_of_expression_in_context,
+    Analysis, expression_statement_types, find_function, try_type_of_expression_in_context,
     type_of_expression, type_of_expression_in_context, type_of_expressions,
 };
 use crate::binder::Typing;
@@ -27,8 +27,8 @@ fn test_super_keyword_types_as_super() {
         }
         "#;
 
-    let analysis = analyze(source);
-    let binder = &analysis.binder;
+    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let binder = analysis.binder();
 
     let contract = analysis.find_contract("B");
     let function = find_function(&contract.members, "g").expect("g function");
@@ -221,9 +221,9 @@ fn test_cast_address_to_library_is_library_typed() {
             }
         }
     "#;
-    let analysis = analyze(source);
-    let binder = &analysis.binder;
-    let types = &analysis.types;
+    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let binder = analysis.binder();
+    let types = analysis.types();
 
     let contract = analysis.find_contract("Test");
     let probe = find_function(&contract.members, "probe").expect("probe function");
@@ -331,9 +331,9 @@ fn test_this_in_library_is_library_typed() {
         contract Test {}
         "#;
 
-    let analysis = analyze(source);
-    let binder = &analysis.binder;
-    let types = &analysis.types;
+    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let binder = analysis.binder();
+    let types = analysis.types();
 
     let library = analysis.find_library("MyLib");
     let probe = find_function(&library.members, "probe").expect("probe function");
@@ -357,9 +357,9 @@ fn test_this_inside_contract() {
         contract Test {}
         "#;
 
-    let analysis = analyze(source);
-    let binder = &analysis.binder;
-    let types = &analysis.types;
+    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let binder = analysis.binder();
+    let types = analysis.types();
 
     let contract = analysis.find_contract("MyContract");
     let probe = find_function(&contract.members, "probe").expect("probe function");
@@ -394,9 +394,9 @@ fn test_partially_applied_function_does_not_unify_into_array() {
         }
         "#;
 
-    let analysis = analyze(source);
-    let binder = &analysis.binder;
-    let types = &analysis.types;
+    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let binder = analysis.binder();
+    let types = analysis.types();
 
     let contract = analysis.find_contract("Test");
     let function = find_function(&contract.members, "__test").expect("__test function");
@@ -464,9 +464,9 @@ fn test_partially_applied_function_is_not_convertible() {
         }        
         "#;
 
-    let analysis = analyze(source);
-    let binder = &analysis.binder;
-    let types = &analysis.types;
+    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let binder = analysis.binder();
+    let types = analysis.types();
 
     let contract = analysis.find_contract("Test");
     let function = find_function(&contract.members, "__test").expect("__test function");
@@ -560,9 +560,9 @@ fn test_static_library_call_is_not_partially_applied() {
             }
         }
         "#;
-    let analysis = analyze(source);
-    let binder = &analysis.binder;
-    let types = &analysis.types;
+    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let binder = analysis.binder();
+    let types = analysis.types();
     let contract = analysis.find_contract("Test");
     let function = find_function(&contract.members, "__test").expect("__test function");
     let body = function.body.as_ref().expect("__test has a body");
