@@ -11,7 +11,7 @@
 <a id=__codelineno-1-5 name=__codelineno-1-5 href=#__codelineno-1-5></a>]
 </code></pre></div><p>You can also match a node's textual content using a string literal. For example, this pattern would match a <a href=../../../solidity-grammar/05-expressions/01-base-expressions/ ><code>MultiplicativeExpression</code></a> with a <code>*</code> operator (for clarity):</p><div class=highlight><pre><span></span><code><a id=__codelineno-2-1 name=__codelineno-2-1 href=#__codelineno-2-1></a>[<span class=nc>MultiplicativeExpression</span>
 <a id=__codelineno-2-2 name=__codelineno-2-2 href=#__codelineno-2-2></a>  <span class=nf>left_operand:</span> [<span class=o>_</span>]
-<a id=__codelineno-2-3 name=__codelineno-2-3 href=#__codelineno-2-3></a>  <span class=nf>operator:</span> [<span class=c>&quot;*&quot;</span>]
+<a id=__codelineno-2-3 name=__codelineno-2-3 href=#__codelineno-2-3></a>  <span class=nf>operator:</span> [<span class=c>"*"</span>]
 <a id=__codelineno-2-4 name=__codelineno-2-4 href=#__codelineno-2-4></a>  <span class=nf>right_operand:</span> [<span class=o>_</span>]
 <a id=__codelineno-2-5 name=__codelineno-2-5 href=#__codelineno-2-5></a>]
 </code></pre></div><p>If you don't care about the kind of a node, you can use an underscore <code>_</code>, which matches any kind. For example, this pattern will match a <a href=../../../solidity-grammar/05-expressions/01-base-expressions/ ><code>MultiplicativeExpression</code></a> node with any two children with any kind, as long as one of them is labeled <code>left_operand</code>:</p><div class=highlight><pre><span></span><code><a id=__codelineno-3-1 name=__codelineno-3-1 href=#__codelineno-3-1></a>[<span class=nc>MultiplicativeExpression</span>
@@ -67,15 +67,15 @@
 <a id=__codelineno-10-7 name=__codelineno-10-7 href=#__codelineno-10-7></a>  ]
 <a id=__codelineno-10-8 name=__codelineno-10-8 href=#__codelineno-10-8></a>]
 </code></pre></div><p>This pattern would match a set of possible keyword terminals, capturing them as <code>@keyword</code>:</p><div class=highlight><pre><span></span><code><a id=__codelineno-11-1 name=__codelineno-11-1 href=#__codelineno-11-1></a><span class=err>@</span><span class=nv>keyword</span> (
-<a id=__codelineno-11-2 name=__codelineno-11-2 href=#__codelineno-11-2></a>    [<span class=c>&quot;break&quot;</span>]
-<a id=__codelineno-11-3 name=__codelineno-11-3 href=#__codelineno-11-3></a>  <span class=nf>|</span> [<span class=c>&quot;delete&quot;</span>]
-<a id=__codelineno-11-4 name=__codelineno-11-4 href=#__codelineno-11-4></a>  <span class=nf>|</span> [<span class=c>&quot;else&quot;</span>]
-<a id=__codelineno-11-5 name=__codelineno-11-5 href=#__codelineno-11-5></a>  <span class=nf>|</span> [<span class=c>&quot;for&quot;</span>]
-<a id=__codelineno-11-6 name=__codelineno-11-6 href=#__codelineno-11-6></a>  <span class=nf>|</span> [<span class=c>&quot;function&quot;</span>]
-<a id=__codelineno-11-7 name=__codelineno-11-7 href=#__codelineno-11-7></a>  <span class=nf>|</span> [<span class=c>&quot;if&quot;</span>]
-<a id=__codelineno-11-8 name=__codelineno-11-8 href=#__codelineno-11-8></a>  <span class=nf>|</span> [<span class=c>&quot;return&quot;</span>]
-<a id=__codelineno-11-9 name=__codelineno-11-9 href=#__codelineno-11-9></a>  <span class=nf>|</span> [<span class=c>&quot;try&quot;</span>]
-<a id=__codelineno-11-10 name=__codelineno-11-10 href=#__codelineno-11-10></a>  <span class=nf>|</span> [<span class=c>&quot;while&quot;</span>]
+<a id=__codelineno-11-2 name=__codelineno-11-2 href=#__codelineno-11-2></a>    [<span class=c>"break"</span>]
+<a id=__codelineno-11-3 name=__codelineno-11-3 href=#__codelineno-11-3></a>  <span class=nf>|</span> [<span class=c>"delete"</span>]
+<a id=__codelineno-11-4 name=__codelineno-11-4 href=#__codelineno-11-4></a>  <span class=nf>|</span> [<span class=c>"else"</span>]
+<a id=__codelineno-11-5 name=__codelineno-11-5 href=#__codelineno-11-5></a>  <span class=nf>|</span> [<span class=c>"for"</span>]
+<a id=__codelineno-11-6 name=__codelineno-11-6 href=#__codelineno-11-6></a>  <span class=nf>|</span> [<span class=c>"function"</span>]
+<a id=__codelineno-11-7 name=__codelineno-11-7 href=#__codelineno-11-7></a>  <span class=nf>|</span> [<span class=c>"if"</span>]
+<a id=__codelineno-11-8 name=__codelineno-11-8 href=#__codelineno-11-8></a>  <span class=nf>|</span> [<span class=c>"return"</span>]
+<a id=__codelineno-11-9 name=__codelineno-11-9 href=#__codelineno-11-9></a>  <span class=nf>|</span> [<span class=c>"try"</span>]
+<a id=__codelineno-11-10 name=__codelineno-11-10 href=#__codelineno-11-10></a>  <span class=nf>|</span> [<span class=c>"while"</span>]
 <a id=__codelineno-11-11 name=__codelineno-11-11 href=#__codelineno-11-11></a>)
 </code></pre></div><h2 id=adjacency>Adjacency<a class=headerlink href=#adjacency title="Permanent link">#</a></h2><p>By using the adjacency operator <code>.</code> you can constrain a pattern to only match the first or the last child nodes.</p><p>For example, the following pattern would match only the first parameter declaration in a function definition:</p><div class=highlight><pre><span></span><code><a id=__codelineno-12-1 name=__codelineno-12-1 href=#__codelineno-12-1></a>[<span class=nc>FunctionDefinition</span>
 <a id=__codelineno-12-2 name=__codelineno-12-2 href=#__codelineno-12-2></a>  [<span class=nc>ParametersDeclaration</span>
