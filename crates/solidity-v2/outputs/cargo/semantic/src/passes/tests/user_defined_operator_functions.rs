@@ -2,7 +2,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 use slang_solidity_v2_ir::ir::{self};
 
-use super::analyze;
+use super::Analysis;
 
 /// Collects the node ids of every expression kind that can invoke a
 /// user-defined operator, in source order.
@@ -39,7 +39,7 @@ impl Visitor for OperatorExpressions {
 /// to, in source order. `None` for expressions that resolve to no
 /// user-defined operator function.
 fn operator_resolutions(source: &str) -> Vec<Option<String>> {
-    let analysis = analyze(source);
+    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
     let mut collector = OperatorExpressions::default();
     for source_unit in analysis.source_units() {
         ir::visitor::accept_source_unit(source_unit, &mut collector);
@@ -49,11 +49,11 @@ fn operator_resolutions(source: &str) -> Vec<Option<String>> {
         .iter()
         .map(|node_id| {
             analysis
-                .binder
+                .binder()
                 .resolved_operator_function(*node_id)
                 .map(|definition_id| {
                     analysis
-                        .binder
+                        .binder()
                         .find_definition_by_id(definition_id)
                         .unwrap()
                         .identifier()

@@ -5,8 +5,8 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdentity};
 
 use super::{
-    Analysis, analyze, call_expressions, try_type_of_expression_in_context,
-    type_of_expression_in_context, type_of_expressions,
+    Analysis, call_expressions, try_type_of_expression_in_context, type_of_expression_in_context,
+    type_of_expressions,
 };
 use crate::binder::Typing;
 use crate::types::{FunctionType, IntegerType, Type, TypeId, UserMetaType};
@@ -95,9 +95,9 @@ fn test_overloaded_call_operand_narrows_to_selected_overload() {
         }
     "#;
 
-    let analysis = analyze(source);
-    let binder = &analysis.binder;
-    let types = &analysis.types;
+    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let binder = analysis.binder();
+    let types = analysis.types();
 
     let calls = call_expressions(&analysis, "C", "g");
     assert_eq!(calls.len(), 2);
@@ -150,8 +150,8 @@ fn test_overloaded_declaration_via_type_name_operand_narrows() {
     "#;
 
     let analysis = Analysis::of_source(source).run();
-    let binder = &analysis.binder;
-    let types = &analysis.types;
+    let binder = analysis.binder();
+    let types = analysis.types();
     let diagnostics = &analysis.diagnostics;
 
     // Both calls are invalid: external functions aren't callable via the type name.

@@ -50,7 +50,7 @@ fn test_follow_aliases_keeps_a_repeated_definition_in_its_first_position() {
         .file("d.sol", "contract C {}")
         .file("c.sol", r#"import {C} from "b.sol";"#)
         .run();
-    let binder = &analysis.binder;
+    let binder = analysis.binder();
 
     let c_in_b = definition_at_file_scope(binder, "b.sol", "C");
     let c_in_d = definition_at_file_scope(binder, "d.sol", "C");
@@ -93,7 +93,7 @@ fn test_follow_aliases_substitutes_a_target_in_place() {
         .file("c.sol", r#"import {C} from "b.sol";"#)
         .file("d.sol", "contract C {}")
         .run();
-    let binder = &analysis.binder;
+    let binder = analysis.binder();
 
     let c_in_b = definition_at_file_scope(binder, "b.sol", "C");
     let c_in_d = definition_at_file_scope(binder, "d.sol", "C");

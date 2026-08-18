@@ -1,9 +1,17 @@
-//! Shared scaffolding for the pass unit tests: building files, running a
-//! prefix of the pipeline over them, and locating definitions in the result.
+//! Shared scaffolding for the pass unit tests: building files, running the
+//! pipeline over them, and locating definitions in the result.
 //!
-//! Tests should reach for the narrowest constructor that runs the passes they
-//! need, so a failure points at the pass that caused it rather than at a later
-//! one consuming its output.
+//! Every test starts from [`Analysis::builder`] (or [`Analysis::of_source`]
+//! for the single-file case), says how far to take the pipeline with
+//! [`AnalysisBuilder::analyse`], and ends at [`AnalysisBuilder::run`],
+//! optionally chaining [`Analysis::expect_no_diagnostics`]. There is
+//! deliberately no second way in: a suite that wants a particular combination
+//! often enough should name it in a local helper over this builder rather than
+//! grow one of its own.
+//!
+//! Tests should stop at the narrowest [`Analyse`] level that runs the passes
+//! they need, so a failure points at the pass that caused it rather than at a
+//! later one consuming its output.
 
 use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -136,14 +144,19 @@ pub(super) enum Analyse {
     References,
     /// … through `p6`: Yul definitions and references.
     Yul,
+    /// The whole pipeline, run the way the real one is, which additionally
+    /// makes [`Analysis::context`] available. The passes past `p6` only ever
+    /// derive from a complete analysis, so there is no prefix to stop at
+    /// between here and [`Self::Yul`].
+    Context,
 }
 
 /// Configures an [`Analysis`]: the files to analyse and the settings to
 /// analyse them under. Defaults to the latest language version and EVM target,
 /// and to running every pass up to [`Analyse::References`].
 ///
-/// Reach for [`analyze`] instead when one file at the defaults will do, which
-/// is the common case.
+/// Reach for [`Analysis::of_source`] instead of [`Analysis::builder`] when a
+/// single file will do, which is the common case.
 pub(super) struct AnalysisBuilder<'a> {
     sources: Vec<(&'a str, &'a str)>,
     language_version: LanguageVersion,
@@ -159,9 +172,7 @@ impl<'a> AnalysisBuilder<'a> {
         self
     }
 
-    /// Private for now: `analyze_at` is the only caller. Widen it when a test
-    /// needs a version together with something else the builder configures.
-    fn version(mut self, language_version: LanguageVersion) -> Self {
+    pub(super) fn version(mut self, language_version: LanguageVersion) -> Self {
         self.language_version = language_version;
         self
     }
@@ -178,54 +189,102 @@ impl<'a> AnalysisBuilder<'a> {
 
     /// Runs the passes, without asserting on the diagnostics.
     pub(super) fn run(self) -> Analysis {
-        Analysis::of_files(
-            build_files(&self.sources, self.language_version),
-            self.language_version,
-            self.evm_target,
-            self.analyse,
-        )
-    }
+        assert!(
+            !self.sources.is_empty(),
+            "an analysis needs at least one file"
+        );
 
-    /// [`Self::run`], asserting that no pass reported a diagnostic.
-    pub(super) fn expecting_no_diagnostics(self) -> Analysis {
-        self.run().expect_no_diagnostics()
-    }
-
-    /// Runs *every* pass and returns the resulting [`SemanticContext`], for
-    /// tests that assert on what the later passes derive rather than on the
-    /// binder directly. `Analyse` doesn't apply: the context is always built
-    /// from the full pipeline.
-    pub(super) fn context_with_diagnostics(self) -> (SemanticContext, DiagnosticCollection) {
         let files = build_files(&self.sources, self.language_version);
         let mut diagnostics = DiagnosticCollection::default();
-        let context = SemanticContext::build_from(
-            self.language_version,
-            self.evm_target,
-            &files,
-            None,
-            &mut diagnostics,
-        );
-        (context, diagnostics)
+
+        let output = if self.analyse == Analyse::Context {
+            // The full pipeline is the real one, so run it through the same
+            // entry point production does rather than restating its pass list.
+            Output::Context(SemanticContext::build_from(
+                self.language_version,
+                self.evm_target,
+                &files,
+                None,
+                &mut diagnostics,
+            ))
+        } else {
+            self.run_prefix(&files, &mut diagnostics)
+        };
+
+        Analysis {
+            files,
+            output,
+            diagnostics,
+        }
     }
 
-    /// [`Self::context_with_diagnostics`], asserting that no pass reported a
-    /// diagnostic.
-    pub(super) fn context(self) -> SemanticContext {
-        let (context, diagnostics) = self.context_with_diagnostics();
-        assert!(
-            diagnostics.is_empty(),
-            "Semantic diagnostics: {diagnostics:?}"
-        );
-        context
+    /// Runs the passes up to [`Self::analyse`], in the same order the real
+    /// pipeline does. Only for levels short of [`Analyse::Context`]: the
+    /// passes past `p6` derive from a complete analysis, so a prefix of them
+    /// is not a thing to ask for.
+    fn run_prefix(&self, files: &[TestFile], diagnostics: &mut DiagnosticCollection) -> Output {
+        let mut binder = Binder::default();
+        let mut types = TypeRegistry::new(self.language_version);
+        let file_node_mapper = FileNodeMapper::build_from(files);
+
+        p1_collect_definitions::run(files, &mut binder, self.language_version, diagnostics);
+        p2_linearise_contracts::run(files, &mut binder, diagnostics);
+        if self.analyse >= Analyse::Types {
+            p3_type_definitions::run(
+                files,
+                &mut binder,
+                self.language_version,
+                &mut types,
+                &file_node_mapper,
+                diagnostics,
+            );
+        }
+        if self.analyse >= Analyse::References {
+            // `p4` runs for its hierarchy diagnostics; the `ContractData` it
+            // computes is only consumed by `p7`/`p8`, which these tests stop
+            // short of.
+            drop(p4_compute_linearisations::run(
+                &binder,
+                &types,
+                &file_node_mapper,
+                diagnostics,
+            ));
+            p5_resolve_references::run(
+                files,
+                &mut binder,
+                &mut types,
+                &file_node_mapper,
+                diagnostics,
+            );
+        }
+        if self.analyse >= Analyse::Yul {
+            p6_resolve_yul::run(
+                &mut binder,
+                self.language_version,
+                self.evm_target,
+                &types,
+                &file_node_mapper,
+                diagnostics,
+            );
+        }
+
+        Output::Prefix { binder, types }
     }
+}
+
+/// What the passes left behind, which depends on how far the pipeline was
+/// taken: a prefix hands back the pieces it filled in, while the full pipeline
+/// assembles them into a [`SemanticContext`] and keeps them there.
+enum Output {
+    Prefix { binder: Binder, types: TypeRegistry },
+    Context(SemanticContext),
 }
 
 /// The result of running the pipeline over one or more sources: everything the
 /// passes produced, owned so tests can keep mutating the registry.
 pub(super) struct Analysis {
     files: Vec<TestFile>,
-    pub(super) binder: Binder,
-    pub(super) types: TypeRegistry,
+    output: Output,
     pub(super) diagnostics: DiagnosticCollection,
 }
 
@@ -247,77 +306,58 @@ impl Analysis {
         Self::builder().file("test.sol", source)
     }
 
-    fn of_files(
-        files: Vec<TestFile>,
-        language_version: LanguageVersion,
-        evm_target: EvmTarget,
-        analyse: Analyse,
-    ) -> Self {
-        assert!(!files.is_empty(), "an analysis needs at least one file");
-
-        let mut binder = Binder::default();
-        let mut types = TypeRegistry::new(language_version);
-        let mut diagnostics = DiagnosticCollection::default();
-        let file_node_mapper = FileNodeMapper::build_from(&files);
-
-        p1_collect_definitions::run(&files, &mut binder, language_version, &mut diagnostics);
-        p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
-        if analyse >= Analyse::Types {
-            p3_type_definitions::run(
-                &files,
-                &mut binder,
-                language_version,
-                &mut types,
-                &file_node_mapper,
-                &mut diagnostics,
-            );
-        }
-        if analyse >= Analyse::References {
-            // `p4` runs for its hierarchy diagnostics; the `ContractData` it
-            // computes is only consumed by `p7`/`p8`, which these tests stop
-            // short of.
-            drop(p4_compute_linearisations::run(
-                &binder,
-                &types,
-                &file_node_mapper,
-                &mut diagnostics,
-            ));
-            p5_resolve_references::run(
-                &files,
-                &mut binder,
-                &mut types,
-                &file_node_mapper,
-                &mut diagnostics,
-            );
-        }
-        if analyse >= Analyse::Yul {
-            p6_resolve_yul::run(
-                &mut binder,
-                language_version,
-                evm_target,
-                &types,
-                &file_node_mapper,
-                &mut diagnostics,
-            );
-        }
-
-        Self {
-            files,
-            binder,
-            types,
-            diagnostics,
-        }
-    }
-
     /// Panics if any pass reported a diagnostic. Tests that expect one should
     /// inspect [`Self::diagnostics`] instead.
-    fn expect_no_diagnostics(self) -> Self {
+    pub(super) fn expect_no_diagnostics(self) -> Self {
         assert!(
             self.diagnostics.is_empty(),
             "Semantic diagnostics: {:?}",
             self.diagnostics
         );
         self
+    }
+
+    pub(super) fn binder(&self) -> &Binder {
+        match &self.output {
+            Output::Prefix { binder, .. } => binder,
+            Output::Context(context) => context.binder(),
+        }
+    }
+
+    pub(super) fn types(&self) -> &TypeRegistry {
+        match &self.output {
+            Output::Prefix { types, .. } => types,
+            Output::Context(context) => context.types(),
+        }
+    }
+
+    /// The registry, for tests that go on to register types of their own.
+    /// Panics under [`Analyse::Context`], which keeps its registry inside the
+    /// context; use [`Self::types`] there.
+    pub(super) fn into_types(self) -> TypeRegistry {
+        match self.output {
+            Output::Prefix { types, .. } => types,
+            Output::Context(_) => panic!("`Analyse::Context` owns its type registry"),
+        }
+    }
+
+    /// What the passes past `p6` derived. Panics unless the analysis ran
+    /// [`Analyse::Context`], the only level that computes it.
+    pub(super) fn context(&self) -> &SemanticContext {
+        match &self.output {
+            Output::Context(context) => context,
+            Output::Prefix { .. } => panic!("a context needs `Analyse::Context`"),
+        }
+    }
+
+    /// [`Self::context`], handed over so a helper can return it on its own.
+    /// Any diagnostic the passes reported is dropped, so callers that care
+    /// must either assert on it first or keep the [`Analysis`] around.
+    pub(super) fn into_context(self) -> SemanticContext {
+        match self.output {
+            Output::Context(context) => context,
+            Output::Prefix { .. } => panic!("a context needs `Analyse::Context`"),
+        }
     }
 
     /// The IR of every file analysed, in the order they were added, for tests
@@ -371,19 +411,6 @@ impl Analysis {
     }
 }
 
-/// Runs every pass over `source` up to references, asserting none of them
-/// reported a diagnostic. This is what most tests want.
-pub(super) fn analyze(source: &str) -> Analysis {
-    Analysis::of_source(source).expecting_no_diagnostics()
-}
-
-/// [`analyze`] at a specific language version, for version-gated behaviour.
-pub(super) fn analyze_at(source: &str, language_version: LanguageVersion) -> Analysis {
-    Analysis::of_source(source)
-        .version(language_version)
-        .expecting_no_diagnostics()
-}
-
 /// Finds the function named `name` among a contract's or library's `members`.
 pub(super) fn find_function<'a>(
     members: &'a [ir::ContractMember],
@@ -422,11 +449,49 @@ fn test_lookups_span_every_file() {
         .file("a.sol", "contract A {}")
         .file("b.sol", "library B {}")
         .analyse(Analyse::Definitions)
-        .expecting_no_diagnostics();
+        .run()
+        .expect_no_diagnostics();
 
     assert_eq!(2, analysis.source_units().count());
     assert_eq!("A", analysis.find_contract("A").name.unparse());
     assert_eq!("B", analysis.find_library("B").name.unparse());
+}
+
+/// The binder and the registry read back the same either way, so a test can
+/// move up to [`Analyse::Context`] without rewriting what it asserts.
+#[test]
+fn test_the_context_level_still_exposes_the_binder_and_types() {
+    const CONTENTS: &str = "contract C { uint256 public x; }";
+
+    let prefix = Analysis::of_source(CONTENTS).run().expect_no_diagnostics();
+    let full = Analysis::of_source(CONTENTS)
+        .analyse(Analyse::Context)
+        .run()
+        .expect_no_diagnostics();
+
+    assert_eq!(
+        prefix.binder().definitions().len(),
+        full.binder().definitions().len()
+    );
+    assert_eq!(
+        prefix.types().iter_types().count(),
+        full.types().iter_types().count()
+    );
+    // The IR lookups work at either level too, and the context is reachable
+    // only from the full one.
+    assert_eq!("C", full.find_contract("C").name.unparse());
+    assert_eq!(1, full.context().all_contracts().count());
+}
+
+/// Only [`Analyse::Context`] computes a context, so asking a prefix for one
+/// fails rather than handing back something the later passes never filled in.
+#[test]
+#[should_panic(expected = "a context needs `Analyse::Context`")]
+fn test_a_prefix_analysis_has_no_context() {
+    Analysis::of_source("contract C {}")
+        .analyse(Analyse::Yul)
+        .run()
+        .context();
 }
 
 /// A name declared by two files has no single answer, so asking for it fails
