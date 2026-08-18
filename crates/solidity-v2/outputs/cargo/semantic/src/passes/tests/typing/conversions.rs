@@ -6,10 +6,7 @@ use num_bigint::{BigInt, BigUint};
 use num_rational::BigRational;
 use ruint::aliases::U256;
 
-use super::{
-    register_uint_type, try_type_of_expression, try_type_of_expression_in_context,
-    type_of_expression, type_of_expression_in_context,
-};
+use super::{expression, register_uint_type};
 use crate::types::{
     ByteArrayType, DataLocation, FixedSizeArrayType, IntegerType, LiteralKind, MappingType,
     StringType, TupleType, Type,
@@ -17,7 +14,7 @@ use crate::types::{
 
 #[test]
 fn test_implicit_conversion_uses_literal_value() {
-    let (_, mut types) = type_of_expression("0");
+    let (_, mut types) = expression("0").into_resolved_type();
 
     let int8 = types.register_type(Type::Integer(IntegerType {
         is_signed: true,
@@ -85,7 +82,7 @@ fn test_implicit_conversion_uses_literal_value() {
 
 #[test]
 fn test_hex_literal_to_byte_array_conversion() {
-    let (_, mut types) = type_of_expression("0");
+    let (_, mut types) = expression("0").into_resolved_type();
 
     let bytes1 = types.register_type(Type::ByteArray(ByteArrayType { width: 1 }));
     let bytes2 = types.register_type(Type::ByteArray(ByteArrayType { width: 2 }));
@@ -143,7 +140,7 @@ fn test_hex_literal_to_byte_array_conversion() {
 #[test]
 fn test_conditional_expression_unifies_branch_types() {
     // Both branches reify to uint8 — common type is uint8.
-    let (type_, _) = type_of_expression("true ? 1 : 2");
+    let (type_, _) = expression("true ? 1 : 2").into_resolved_type();
     assert_eq!(
         type_,
         Type::Integer(IntegerType {
@@ -153,7 +150,7 @@ fn test_conditional_expression_unifies_branch_types() {
     );
 
     // uint8 (1) widens to uint16 (256).
-    let (type_, _) = type_of_expression("true ? 1 : 256");
+    let (type_, _) = expression("true ? 1 : 256").into_resolved_type();
     assert_eq!(
         type_,
         Type::Integer(IntegerType {
@@ -163,7 +160,7 @@ fn test_conditional_expression_unifies_branch_types() {
     );
 
     // int8 (-1) and int8 (1) — common type is int8.
-    let (type_, _) = type_of_expression("true ? -1 : -128");
+    let (type_, _) = expression("true ? -1 : -128").into_resolved_type();
     assert_eq!(
         type_,
         Type::Integer(IntegerType {
@@ -173,7 +170,7 @@ fn test_conditional_expression_unifies_branch_types() {
     );
 
     // Both branches are string literals — both reify to `string memory`.
-    let (type_, _) = type_of_expression(r#"true ? "abc" : "x""#);
+    let (type_, _) = expression(r#"true ? "abc" : "x""#).into_resolved_type();
     assert_eq!(
         type_,
         Type::String(StringType {
@@ -186,19 +183,19 @@ fn test_conditional_expression_unifies_branch_types() {
 fn test_conditional_expression_unresolved_when_branches_incompatible() {
     // uint8 (1) and int8 (-1): neither converts to the other at the same
     // bit width, so unification fails and the conditional is unresolved.
-    let (type_, _) = try_type_of_expression("true ? 1 : -1");
+    let (type_, _) = expression("true ? 1 : -1").into_type();
     assert_eq!(type_, None);
 
     // A non-reducing rational has no `reified` type yet, so any conditional
     // involving one is unresolved.
-    let (type_, _) = try_type_of_expression("true ? 0.5 : 1");
+    let (type_, _) = expression("true ? 0.5 : 1").into_type();
     assert_eq!(type_, None);
 }
 
 #[test]
 fn test_array_literal_unifies_element_types() {
     // Homogeneous uint8 elements.
-    let (expr_type, types) = type_of_expression("[1, 2, 3]");
+    let (expr_type, types) = expression("[1, 2, 3]").into_resolved_type();
     let Type::FixedSizeArray(FixedSizeArrayType {
         element_type,
         size,
@@ -212,7 +209,7 @@ fn test_array_literal_unifies_element_types() {
     assert_eq!(element_type, types.uint8());
 
     // Mixed widths widen to the largest required.
-    let (expr_type, mut types) = type_of_expression("[1, 256, 3]");
+    let (expr_type, mut types) = expression("[1, 256, 3]").into_resolved_type();
     let Type::FixedSizeArray(FixedSizeArrayType {
         element_type, size, ..
     }) = expr_type
@@ -223,7 +220,7 @@ fn test_array_literal_unifies_element_types() {
     assert_eq!(element_type, register_uint_type(&mut types, 16));
 
     // Negative values force the result to a signed type.
-    let (expr_type, mut types) = type_of_expression("[-1, -2]");
+    let (expr_type, mut types) = expression("[-1, -2]").into_resolved_type();
     let Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) = expr_type else {
         panic!("expected FixedSizeArray, got {expr_type:?}");
     };
@@ -236,7 +233,7 @@ fn test_array_literal_unifies_element_types() {
     );
 
     // String literal arrays reify each element to `string memory`.
-    let (expr_type, types) = type_of_expression(r#"["abc", "x"]"#);
+    let (expr_type, types) = expression(r#"["abc", "x"]"#).into_resolved_type();
     let Type::FixedSizeArray(FixedSizeArrayType {
         element_type, size, ..
     }) = expr_type
@@ -250,32 +247,32 @@ fn test_array_literal_unifies_element_types() {
 #[test]
 fn test_array_literal_unresolved_when_elements_incompatible() {
     // uint8 (1) and int8 (-1) cannot be unified (same bit width, opposite sign).
-    let (type_, _) = try_type_of_expression("[1, -1]");
+    let (type_, _) = expression("[1, -1]").into_type();
     assert_eq!(type_, None);
 
     // Non-reducing rationals don't reify yet — array unification fails.
-    let (type_, _) = try_type_of_expression("[0.5, 1]");
+    let (type_, _) = expression("[0.5, 1]").into_type();
     assert_eq!(type_, None);
 }
 
 #[test]
 fn test_conditional_expression_unifies_byte_arrays() {
-    let (expr_type, types) = type_of_expression("true ? bytes32(0) : bytes32(1)");
+    let (expr_type, types) = expression("true ? bytes32(0) : bytes32(1)").into_resolved_type();
     assert_eq!(expr_type, *types.get_type_by_id(types.bytes32()));
 }
 
 #[test]
 fn test_conditional_expression_widens_byte_arrays() {
-    let (expr_type, types) = type_of_expression("true ? bytes20(0) : bytes32(0)");
+    let (expr_type, types) = expression("true ? bytes20(0) : bytes32(0)").into_resolved_type();
     assert_eq!(expr_type, *types.get_type_by_id(types.bytes32()));
 
-    let (expr_type, types) = type_of_expression("true ? bytes32(0) : bytes20(0)");
+    let (expr_type, types) = expression("true ? bytes32(0) : bytes20(0)").into_resolved_type();
     assert_eq!(expr_type, *types.get_type_by_id(types.bytes32()));
 }
 
 #[test]
 fn test_array_literal_unifies_byte_array_elements() {
-    let (expr_type, types) = type_of_expression("[bytes32(0), bytes32(1)]");
+    let (expr_type, types) = expression("[bytes32(0), bytes32(1)]").into_resolved_type();
     let Type::FixedSizeArray(FixedSizeArrayType {
         element_type,
         size,
@@ -291,7 +288,7 @@ fn test_array_literal_unifies_byte_array_elements() {
 
 #[test]
 fn test_array_literal_unifies_byte_array_and_literal_zero() {
-    let (expr_type, types) = type_of_expression("[bytes32(0), 0]");
+    let (expr_type, types) = expression("[bytes32(0), 0]").into_resolved_type();
     let Type::FixedSizeArray(FixedSizeArrayType {
         element_type,
         size,
@@ -307,7 +304,7 @@ fn test_array_literal_unifies_byte_array_and_literal_zero() {
 
 #[test]
 fn test_conditional_expression_does_not_unify_byte_array_and_literal_zero() {
-    let (type_, _) = try_type_of_expression("true ? bytes32(0) : 0");
+    let (type_, _) = expression("true ? bytes32(0) : 0").into_type();
     assert_eq!(type_, None);
 }
 
@@ -315,13 +312,13 @@ fn test_conditional_expression_does_not_unify_byte_array_and_literal_zero() {
 fn test_array_literal_does_not_unify_when_literal_is_first_and_byte_array_follows() {
     // The first element of the array is used to find the common type
     // Matches solc behaviour
-    let (type_, _) = try_type_of_expression("[0, bytes32(0)]");
+    let (type_, _) = expression("[0, bytes32(0)]").into_type();
     assert_eq!(type_, None);
 }
 
 #[test]
 fn test_array_literal_widens_past_first_element_integer_type() {
-    let (expr_type, mut types) = type_of_expression("[uint8(0), 256]");
+    let (expr_type, mut types) = expression("[uint8(0), 256]").into_resolved_type();
     let Type::FixedSizeArray(FixedSizeArrayType {
         element_type, size, ..
     }) = expr_type
@@ -334,7 +331,7 @@ fn test_array_literal_widens_past_first_element_integer_type() {
 
 #[test]
 fn test_array_literal_unifies_byte_array_and_matching_hex_literal() {
-    let (expr_type, types) = type_of_expression("[bytes1(0x01), 0x01]");
+    let (expr_type, types) = expression("[bytes1(0x01), 0x01]").into_resolved_type();
     let Type::FixedSizeArray(FixedSizeArrayType {
         element_type, size, ..
     }) = expr_type
@@ -347,25 +344,24 @@ fn test_array_literal_unifies_byte_array_and_matching_hex_literal() {
 
 #[test]
 fn test_conditional_expression_loses_hex_literal_specialness() {
-    let (type_, _) = try_type_of_expression("true ? bytes1(0x01) : 0x01");
+    let (type_, _) = expression("true ? bytes1(0x01) : 0x01").into_type();
     assert_eq!(type_, None);
 }
 
 #[test]
 fn test_conditional_expression_widens_literal_to_concrete_integer() {
-    let (expr_type, types) = type_of_expression("true ? uint256(0) : 0");
+    let (expr_type, types) = expression("true ? uint256(0) : 0").into_resolved_type();
     assert_eq!(expr_type, *types.get_type_by_id(types.uint256()));
 
-    let (expr_type, types) = type_of_expression("true ? 0 : uint256(0)");
+    let (expr_type, types) = expression("true ? 0 : uint256(0)").into_resolved_type();
     assert_eq!(expr_type, *types.get_type_by_id(types.uint256()));
 }
 
 #[test]
 fn test_conditional_expression_unifies_mappings() {
-    let (expr_type, types) = try_type_of_expression_in_context(
-        "mapping(uint => uint) m1; mapping(uint => uint) m2;",
-        "true ? m1 : m2",
-    );
+    let (expr_type, types) = expression("true ? m1 : m2")
+        .with_members("mapping(uint => uint) m1; mapping(uint => uint) m2;")
+        .into_type();
     let Some(Type::Mapping(MappingType {
         key_type_id,
         value_type_id,
@@ -379,7 +375,7 @@ fn test_conditional_expression_unifies_mappings() {
 
 #[test]
 fn test_conditional_expression_unifies_literal_tuples() {
-    let (expr_type, types) = type_of_expression("true ? (1, 2) : (3, 4)");
+    let (expr_type, types) = expression("true ? (1, 2) : (3, 4)").into_resolved_type();
     let Type::Tuple(TupleType { types: tuple_types }) = expr_type else {
         panic!("expected Tuple, got {expr_type:?}");
     };
@@ -406,7 +402,7 @@ fn test_conditional_expression_with_function_call_tuple() {
         // Symmetric: the concrete branch on the right also unifies.
         "true ? (3, 4) : pair()",
     ] {
-        let (expr_type, types) = type_of_expression_in_context(ctx, expr);
+        let (expr_type, types) = expression(expr).with_members(ctx).into_resolved_type();
         let Type::Tuple(TupleType { types: tuple_types }) = expr_type else {
             panic!("expected Tuple for `{expr}`, got {expr_type:?}");
         };
@@ -419,46 +415,44 @@ fn test_conditional_expression_with_function_call_tuple() {
     // on the left, element 1 on the right), so neither converts to the other
     // (matches solc error 1080).
     let expr = "true ? (uint256(1), uint128(2)) : (uint128(3), uint256(4))";
-    let (expr_type, _) = try_type_of_expression(expr);
+    let (expr_type, _) = expression(expr).into_type();
     assert!(expr_type.is_none());
 }
 
 #[test]
 fn test_mappings_only_unify_on_equal_elements() {
     // Mappings must match on key and value types
-    let (expr_type, _) = try_type_of_expression_in_context(
-        "mapping(uint => int128) m1; mapping(uint => int256) m2;",
-        "true ? m1 : m2",
-    );
+    let (expr_type, _) = expression("true ? m1 : m2")
+        .with_members("mapping(uint => int128) m1; mapping(uint => int256) m2;")
+        .into_type();
     assert_eq!(None, expr_type);
 }
 
 #[test]
 fn test_array_literal_rejects_mapping_element() {
-    let (type_, _) = try_type_of_expression_in_context(
-        "mapping(uint => uint) m1; mapping(uint => uint) m2;",
-        "[m1, m2]",
-    );
+    let (type_, _) = expression("[m1, m2]")
+        .with_members("mapping(uint => uint) m1; mapping(uint => uint) m2;")
+        .into_type();
     assert_eq!(type_, None);
 }
 
 #[test]
 fn test_array_literal_does_not_unify_byte_array_and_non_zero_literal() {
-    let (type_, _) = try_type_of_expression("[bytes32(0), 1]");
+    let (type_, _) = expression("[bytes32(0), 1]").into_type();
     assert_eq!(type_, None);
 }
 
 #[test]
 fn test_bitwise_or_widens_byte_arrays() {
-    let (expr_type, types) = type_of_expression("bytes20(0) | bytes32(0)");
+    let (expr_type, types) = expression("bytes20(0) | bytes32(0)").into_resolved_type();
     assert_eq!(expr_type, *types.get_type_by_id(types.bytes32()));
 
-    let (expr_type, types) = type_of_expression("bytes32(0) | bytes20(0)");
+    let (expr_type, types) = expression("bytes32(0) | bytes20(0)").into_resolved_type();
     assert_eq!(expr_type, *types.get_type_by_id(types.bytes32()));
 }
 
 #[test]
 fn test_conditional_expression_unifies_booleans() {
-    let (type_, _) = type_of_expression("true ? true : false");
+    let (type_, _) = expression("true ? true : false").into_resolved_type();
     assert_eq!(type_, Type::Boolean);
 }

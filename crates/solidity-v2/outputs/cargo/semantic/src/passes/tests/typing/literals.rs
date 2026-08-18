@@ -10,12 +10,12 @@ use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     IncompatibleConstantOperator, StorageLayoutBaseNotConstant,
 };
 
-use super::{contract_base_slot, folded_array_length, try_type_of_expression, type_of_expression};
+use super::{contract_base_slot, expression, folded_array_length};
 use crate::types::{LiteralKind, Type};
 
 #[test]
 fn test_value_bearing_integer_literal_types() {
-    let (type_, _) = type_of_expression("127");
+    let (type_, _) = expression("127").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -23,7 +23,7 @@ fn test_value_bearing_integer_literal_types() {
         })
     );
 
-    let (type_, _) = type_of_expression("-128");
+    let (type_, _) = expression("-128").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -33,7 +33,7 @@ fn test_value_bearing_integer_literal_types() {
 
     // Hex literals carry source byte width as `HexInteger`, distinct from
     // decimal `Integer` so the byte-array conversion rule can fire.
-    let (type_, _) = type_of_expression("0xff");
+    let (type_, _) = expression("0xff").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::HexInteger {
@@ -43,7 +43,7 @@ fn test_value_bearing_integer_literal_types() {
     );
 
     // Source byte width is preserved across leading zeros.
-    let (type_, _) = type_of_expression("0x0012");
+    let (type_, _) = expression("0x0012").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::HexInteger {
@@ -53,7 +53,7 @@ fn test_value_bearing_integer_literal_types() {
     );
 
     // Folding a hex literal demotes it to a plain `Integer` (provenance lost).
-    let (type_, _) = type_of_expression("0x10 + 0");
+    let (type_, _) = expression("0x10 + 0").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -65,7 +65,7 @@ fn test_value_bearing_integer_literal_types() {
 #[test]
 fn test_binary_arithmetic_folds_to_narrowed_literal() {
     // Addition.
-    let (type_, _) = type_of_expression("1 + 1");
+    let (type_, _) = expression("1 + 1").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -74,7 +74,7 @@ fn test_binary_arithmetic_folds_to_narrowed_literal() {
     );
 
     // Multiplication.
-    let (type_, _) = type_of_expression("3 * 4");
+    let (type_, _) = expression("3 * 4").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -83,7 +83,7 @@ fn test_binary_arithmetic_folds_to_narrowed_literal() {
     );
 
     // Power.
-    let (type_, _) = type_of_expression("2 ** 10");
+    let (type_, _) = expression("2 ** 10").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -92,7 +92,7 @@ fn test_binary_arithmetic_folds_to_narrowed_literal() {
     );
 
     // Shift.
-    let (type_, _) = type_of_expression("1 << 32");
+    let (type_, _) = expression("1 << 32").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -101,7 +101,7 @@ fn test_binary_arithmetic_folds_to_narrowed_literal() {
     );
 
     // Reducible rational arithmetic normalises back to an integer.
-    let (type_, _) = type_of_expression("1.5 * 2");
+    let (type_, _) = expression("1.5 * 2").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -110,7 +110,7 @@ fn test_binary_arithmetic_folds_to_narrowed_literal() {
     );
 
     // Non-reducing rational division stays rational.
-    let (type_, _) = type_of_expression("5 / 2");
+    let (type_, _) = expression("5 / 2").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Rational {
@@ -119,7 +119,7 @@ fn test_binary_arithmetic_folds_to_narrowed_literal() {
     );
 
     // Negation of a folded constant.
-    let (type_, _) = type_of_expression("-(1 + 1)");
+    let (type_, _) = expression("-(1 + 1)").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -131,7 +131,7 @@ fn test_binary_arithmetic_folds_to_narrowed_literal() {
 #[test]
 fn test_binary_bitwise_folds_to_literal() {
     // OR
-    let (type_, _) = type_of_expression("1 | 2");
+    let (type_, _) = expression("1 | 2").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -140,7 +140,7 @@ fn test_binary_bitwise_folds_to_literal() {
     );
 
     // AND
-    let (type_, _) = type_of_expression("12 & 10");
+    let (type_, _) = expression("12 & 10").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -149,7 +149,7 @@ fn test_binary_bitwise_folds_to_literal() {
     );
 
     // XOR
-    let (type_, _) = type_of_expression("6 ^ 3");
+    let (type_, _) = expression("6 ^ 3").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -159,7 +159,7 @@ fn test_binary_bitwise_folds_to_literal() {
 
     // Folding hex operands demotes the result to a plain `Integer`
     // (mirroring the additive folding behaviour).
-    let (type_, _) = type_of_expression("0xf0 | 0x0f");
+    let (type_, _) = expression("0xf0 | 0x0f").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -169,7 +169,7 @@ fn test_binary_bitwise_folds_to_literal() {
 
     // Bitwise AND with a negative literal: BigInt uses arbitrary-precision
     // two's-complement, so `-1 & 0xff` masks to the low byte.
-    let (type_, _) = type_of_expression("(-1) & 0xff");
+    let (type_, _) = expression("(-1) & 0xff").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -178,7 +178,7 @@ fn test_binary_bitwise_folds_to_literal() {
     );
 
     // Bitwise OR of a folded constant feeds further folding.
-    let (type_, _) = type_of_expression("(1 | 2) ^ 4");
+    let (type_, _) = expression("(1 | 2) ^ 4").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -190,7 +190,7 @@ fn test_binary_bitwise_folds_to_literal() {
 #[test]
 fn test_bitwise_not_folds_to_literal() {
     // ~x = -x - 1 (two's complement on an infinite-precision integer).
-    let (type_, _) = type_of_expression("~1");
+    let (type_, _) = expression("~1").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -198,7 +198,7 @@ fn test_bitwise_not_folds_to_literal() {
         })
     );
 
-    let (type_, _) = type_of_expression("~0");
+    let (type_, _) = expression("~0").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -207,7 +207,7 @@ fn test_bitwise_not_folds_to_literal() {
     );
 
     // Double-complement returns to the original value.
-    let (type_, _) = type_of_expression("~(-1)");
+    let (type_, _) = expression("~(-1)").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -216,7 +216,7 @@ fn test_bitwise_not_folds_to_literal() {
     );
 
     // Folding `~hex` demotes the result to a plain `Integer`.
-    let (type_, _) = type_of_expression("~0xff");
+    let (type_, _) = expression("~0xff").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -225,7 +225,7 @@ fn test_bitwise_not_folds_to_literal() {
     );
 
     // `~` of a folded constant.
-    let (type_, _) = type_of_expression("~(1 | 2)");
+    let (type_, _) = expression("~(1 | 2)").into_resolved_type();
     assert_eq!(
         type_,
         Type::Literal(LiteralKind::Integer {
@@ -237,73 +237,73 @@ fn test_bitwise_not_folds_to_literal() {
 #[test]
 fn test_bitwise_operations_unresolved_for_rationals() {
     // Bitwise binary operators don't apply to non-reducing rationals.
-    let (type_, _) = try_type_of_expression("1.5 | 1");
+    let (type_, _) = expression("1.5 | 1").into_type();
     assert_eq!(type_, None);
 
-    let (type_, _) = try_type_of_expression("1 & 0.5");
+    let (type_, _) = expression("1 & 0.5").into_type();
     assert_eq!(type_, None);
 
-    let (type_, _) = try_type_of_expression("0.5 ^ 0.25");
+    let (type_, _) = expression("0.5 ^ 0.25").into_type();
     assert_eq!(type_, None);
 
     // Likewise for the unary bitwise NOT.
-    let (type_, _) = try_type_of_expression("~0.5");
+    let (type_, _) = expression("~0.5").into_type();
     assert_eq!(type_, None);
 }
 
 #[test]
 fn test_string_literal_byte_count_with_escapes() {
     // Plain ASCII: one byte per char.
-    let (type_, _) = type_of_expression(r#""abc""#);
+    let (type_, _) = expression(r#""abc""#).into_resolved_type();
     assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 3 }));
 
     // Each `\n`, `\t`, etc. decodes to a single byte.
-    let (type_, _) = type_of_expression(r#""\n\t\\""#);
+    let (type_, _) = expression(r#""\n\t\\""#).into_resolved_type();
     assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 3 }));
 
     // `\xNN` escapes decode to one byte each, regardless of the 4-char source
     // length per escape.
-    let (type_, _) = type_of_expression(r#""\x41\x42""#);
+    let (type_, _) = expression(r#""\x41\x42""#).into_resolved_type();
     assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 2 }));
 
     // Line continuations (`\<newline>`) decode to nothing.
-    let (type_, _) = type_of_expression("\"a\\\nb\"");
+    let (type_, _) = expression("\"a\\\nb\"").into_resolved_type();
     assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 2 }));
 
     // Concatenated string literals: byte counts add up across pieces.
-    let (type_, _) = type_of_expression(r#""abc" "de""#);
+    let (type_, _) = expression(r#""abc" "de""#).into_resolved_type();
     assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 5 }));
 }
 
 #[test]
 fn test_unicode_string_literal_byte_count() {
     // ASCII unicode-string literal: one byte per char.
-    let (type_, _) = type_of_expression(r#"unicode"abc""#);
+    let (type_, _) = expression(r#"unicode"abc""#).into_resolved_type();
     assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 3 }));
 
     // Multi-byte UTF-8 passes through with its full byte length:
     // `€` is 3 bytes in UTF-8.
-    let (type_, _) = type_of_expression(r#"unicode"€""#);
+    let (type_, _) = expression(r#"unicode"€""#).into_resolved_type();
     assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 3 }));
 
     // `\uNNNN` escapes decode to their UTF-8 byte length:
     // `\u20AC` (€) → 3 bytes, `\u00A2` (¢) → 2 bytes, `\u0024` ($) → 1 byte.
-    let (type_, _) = type_of_expression(r#"unicode"\u20AC\u00A2\u0024""#);
+    let (type_, _) = expression(r#"unicode"\u20AC\u00A2\u0024""#).into_resolved_type();
     assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 6 }));
 }
 
 #[test]
 fn test_hex_string_literal_byte_count() {
     // Pairs of hex digits, no separators: one byte per pair.
-    let (type_, _) = type_of_expression(r#"hex"414243""#);
+    let (type_, _) = expression(r#"hex"414243""#).into_resolved_type();
     assert_eq!(type_, Type::Literal(LiteralKind::HexString { bytes: 3 }));
 
     // Underscore separators don't contribute to the decoded length.
-    let (type_, _) = type_of_expression(r#"hex"41_42""#);
+    let (type_, _) = expression(r#"hex"41_42""#).into_resolved_type();
     assert_eq!(type_, Type::Literal(LiteralKind::HexString { bytes: 2 }));
 
     // Concatenated hex string literals: byte counts add up across pieces.
-    let (type_, _) = type_of_expression(r#"hex"4142" hex"43""#);
+    let (type_, _) = expression(r#"hex"4142" hex"43""#).into_resolved_type();
     assert_eq!(type_, Type::Literal(LiteralKind::HexString { bytes: 3 }));
 }
 
