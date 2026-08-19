@@ -617,10 +617,12 @@ impl Visitor for Pass<'_> {
                 if let Some(Resolution::Ambiguous(definition_ids)) = &event_resolution {
                     let argument_typings =
                         self.collect_positional_argument_typings(positional_arguments);
-                    let candidate = self.lookup_event_matching_positional_arguments(
+                    let overload_match = self.lookup_event_matching_positional_arguments(
                         definition_ids,
                         &argument_typings,
                     );
+                    let candidate =
+                        self.select_event_overload(node.event.last().unwrap(), overload_match);
                     if let Some(candidate) = candidate {
                         // update resolved definition
                         self.binder
@@ -633,10 +635,12 @@ impl Visitor for Pass<'_> {
                 let definition_id = match &event_resolution {
                     Some(Resolution::Ambiguous(definition_ids)) => {
                         let argument_typings = self.collect_named_argument_typings(named_arguments);
-                        let candidate = self.lookup_event_matching_named_arguments(
+                        let overload_match = self.lookup_event_matching_named_arguments(
                             definition_ids,
                             &argument_typings,
                         );
+                        let candidate =
+                            self.select_event_overload(node.event.last().unwrap(), overload_match);
                         if let Some(candidate) = candidate {
                             // update resolved definition
                             self.binder.fixup_reference(

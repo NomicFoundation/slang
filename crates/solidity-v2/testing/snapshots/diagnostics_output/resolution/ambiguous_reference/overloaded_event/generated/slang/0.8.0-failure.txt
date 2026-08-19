@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/ambiguous-reference] Error: No unique declaration found for 'E'.
+    ╭─[input.sol:16:14]
+    │
+ 16 │         emit E({u: 2, s: "abc"});
+    │              ┬  
+    │              ╰── Error occurred here.
+────╯

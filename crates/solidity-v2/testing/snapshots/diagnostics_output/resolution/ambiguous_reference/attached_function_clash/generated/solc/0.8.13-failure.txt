@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 6675] Error: Member "f" not unique after argument-dependent lookup in struct S memory.
+    ╭─[b.sol:12:16]
+    │
+ 12 │         return g().f();
+    │                ──┬──  
+    │                  ╰──── Error occurred here.
+────╯

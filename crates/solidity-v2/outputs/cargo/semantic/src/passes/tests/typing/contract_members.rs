@@ -1,6 +1,7 @@
 //! Typing of members reached through a contract, library or interface:
 //! `this`/`super`, getters, data locations, and external signatures.
 
+use slang_solidity_v2_common::diagnostics::kinds::resolution::AmbiguousReference;
 use slang_solidity_v2_ir::ir::{self};
 
 use super::{Analysis, expression, expression_statement_types, expressions};
@@ -481,12 +482,19 @@ fn test_event_selector() {
         .into_resolved_type();
     assert_eq!(type_, Type::ByteArray(ByteArrayType { width: 32 }));
 
-    // Overloaded events leave the name ambiguous, and a member access is a
-    // value position, so nothing can narrow it down.
-    let (type_, _) = expression("E.selector")
-        .with_members("event E(uint a); event E(bool b);")
-        .into_type();
-    assert_eq!(None, type_);
+    // With *overloaded* events the name is ambiguous, and nothing narrows it
+    // down: the member access uses it as a value rather than calling it.
+    assert_eq!(
+        Some(
+            AmbiguousReference {
+                name: "E".to_owned()
+            }
+            .into()
+        ),
+        expression("E.selector")
+            .with_members("event E(uint a); event E(bool b);")
+            .into_diagnostic(),
+    );
 
     // An anonymous event emits no `topics[0]`, so it exposes no `selector`.
     let (type_, _) = expression("E.selector")
