@@ -1,62 +1,8 @@
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
-use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
+use slang_solidity_v2_ir::ir::{self};
 
-use super::{TestFile, build_file};
-use crate::binder::Binder;
-use crate::context::FileNodeMapper;
-use crate::passes::{
-    p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p5_resolve_references,
-};
-use crate::types::TypeRegistry;
-
-/// Runs the semantic passes over `source`, asserting that no diagnostics
-/// were produced.
-fn analyze(source: &str) -> (TestFile, Binder) {
-    let mut id_generator = NodeIdGenerator::default();
-    let file = build_file(
-        "test.sol".into(),
-        source,
-        &mut id_generator,
-        LanguageVersion::LATEST,
-    );
-    let files = vec![file];
-
-    let mut binder = Binder::default();
-    let mut types = TypeRegistry::new(LanguageVersion::LATEST);
-    let mut diagnostics = DiagnosticCollection::default();
-    let file_node_mapper = FileNodeMapper::build_from(&files);
-    p1_collect_definitions::run(
-        &files,
-        &mut binder,
-        LanguageVersion::LATEST,
-        &mut diagnostics,
-    );
-    p2_linearise_contracts::run(&files, &mut binder, &mut diagnostics);
-    p3_type_definitions::run(
-        &files,
-        &mut binder,
-        LanguageVersion::LATEST,
-        &mut types,
-        &file_node_mapper,
-        &mut diagnostics,
-    );
-    p5_resolve_references::run(
-        &files,
-        &mut binder,
-        &mut types,
-        &file_node_mapper,
-        &mut diagnostics,
-    );
-    assert!(
-        diagnostics.is_empty(),
-        "Semantic diagnostics: {diagnostics:?}"
-    );
-
-    (files.into_iter().next().unwrap(), binder)
-}
+use super::Analysis;
 
 /// Collects the node ids of every expression kind that can invoke a
 /// user-defined operator, in source order.
@@ -93,17 +39,21 @@ impl Visitor for OperatorExpressions {
 /// to, in source order. `None` for expressions that resolve to no
 /// user-defined operator function.
 fn operator_resolutions(source: &str) -> Vec<Option<String>> {
-    let (file, binder) = analyze(source);
+    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
     let mut collector = OperatorExpressions::default();
-    ir::visitor::accept_source_unit(&file.ir_root, &mut collector);
+    for source_unit in analysis.source_units() {
+        ir::visitor::accept_source_unit(source_unit, &mut collector);
+    }
     collector
         .ids
         .iter()
         .map(|node_id| {
-            binder
+            analysis
+                .binder()
                 .resolved_operator_function(*node_id)
                 .map(|definition_id| {
-                    binder
+                    analysis
+                        .binder()
                         .find_definition_by_id(definition_id)
                         .unwrap()
                         .identifier()
