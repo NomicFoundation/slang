@@ -127,7 +127,7 @@
       "groupName": "node"
     },
     {
-      "description": "pnpm: keep the npm-side pins (packageManager + engines.pnpm) and the Hermit pnpm pin in lockstep, so a bump always lands in one PR. Must come after per-manager grouping rules so this groupName takes precedence.",
+      "description": "pnpm: group the npm-side pins (packageManager + engines.pnpm) with the Hermit pnpm pin so both move in one PR whenever the Hermit index can keep up. Often it can't — hermit-packages trails npm by several minors (Aug 2026: npm pins on 11.21.0, newest Hermit package 11.13.1, pinned 11.7.0), so most PRs bump the npm pins alone and the Hermit pin lags. Unlike the node case below, that lag is harmless: pnpm's managePackageManagerVersions default makes the Hermit binary self-install the exact packageManager version, so engine-strict checks the npm pin and never the Hermit one. The Hermit pin is only the bootstrap floor. Must come after per-manager grouping rules so this groupName takes precedence.",
       "matchManagers": ["hermit", "npm"],
       "matchPackageNames": ["pnpm"],
       "groupName": "pnpm"
