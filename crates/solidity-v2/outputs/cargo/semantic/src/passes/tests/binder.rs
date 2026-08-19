@@ -302,7 +302,7 @@ contract Test is Base {
     // type-naming definition (the two contracts, the struct, and the enum),
     // plus one externalized function type: `foo` is `public`, so its external
     // form is a distinct type, while `bar` is already `external` and takes no
-    // calldata, so its external form interns back to its declared type.
+    // calldata, so its external form is its declared type.
     let registered_types = types_after - types_before;
     assert_eq!(registered_types, 12);
 }

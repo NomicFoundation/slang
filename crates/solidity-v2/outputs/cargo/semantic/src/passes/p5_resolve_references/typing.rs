@@ -289,34 +289,34 @@ impl Pass<'_> {
         &mut self,
         resolution: &Resolution,
     ) -> Typing {
-        // Check if the target is a state variable, and if it has a getter
+        // Check if the target is a state variable with a getter or a function
+        // with an externalized type; the member is accessed through that type.
         if let Resolution::Definition(definition_id) = resolution
-            && let Definition::StateVariable(state_var_definition) =
-                self.binder.find_definition_by_id(*definition_id).unwrap()
-            && let Some(getter_type_id) = state_var_definition.getter_type_id
+            && let Some(member_type_id) =
+                match self.binder.find_definition_by_id(*definition_id).unwrap() {
+                    Definition::StateVariable(state_var_definition) => {
+                        state_var_definition.getter_type_id
+                    }
+                    Definition::Function(function_definition) => {
+                        function_definition.externalized_type_id
+                    }
+                    _ => None,
+                }
         {
-            return Typing::Resolved(getter_type_id);
+            return Typing::Resolved(member_type_id);
         }
 
         let mut typing = self.typing_of_resolution(resolution);
-        let resolved_type = typing
-            .as_type_id()
-            .map(|type_id| self.types.get_type_by_id(type_id));
 
-        if let Some(Type::Function(function_type)) = resolved_type {
-            // If the resolved type is a function and the operand is either
-            // `this` or something of an address type, the function is being
-            // used as an external function. If the member is a *public*
-            // function, change the expression typing to indicate the
-            // external access.
-            if function_type.is_externally_visible() {
-                let external_function_type =
-                    self.types.externalize_function_type(function_type.clone());
-                let type_id_with_external_visibility = self
-                    .types
-                    .register_type(Type::Function(external_function_type));
-                typing = Typing::Resolved(type_id_with_external_visibility);
-            }
+        // If the resolved type is a function and the operand is either
+        // `this` or something of an address type, the function is being
+        // used as an external function: change the expression typing to
+        // indicate the external access.
+        if let Some(type_id) = typing.as_type_id()
+            && let Type::Function(function_type) = self.types.get_type_by_id(type_id)
+            && function_type.is_externally_visible()
+        {
+            typing = Typing::Resolved(self.types.externalize_function_type(type_id));
         }
 
         typing

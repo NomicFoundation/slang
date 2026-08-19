@@ -468,13 +468,38 @@ impl TypeRegistry {
         type_id
     }
 
+    // Whether `externalize_type` maps a type to itself: nothing in it is
+    // calldata-located.
+    fn is_externalized(&self, type_id: TypeId) -> bool {
+        match self.get_type_by_id(type_id) {
+            Type::Tuple(TupleType { types }) => types
+                .iter()
+                .all(|element_type_id| self.is_externalized(*element_type_id)),
+            type_ => !type_
+                .data_location()
+                .is_some_and(|location| location == DataLocation::Calldata),
+        }
+    }
+
     // Changes a function type to have external visibility and its parameters and
-    // results normalized for that (ie. `calldata` location is changed to `memory`)
-    pub(crate) fn externalize_function_type(
-        &mut self,
-        function_type: FunctionType,
-    ) -> FunctionType {
-        FunctionType {
+    // results normalized for that (ie. `calldata` location is changed to `memory`),
+    // returning the interned result's id, which is the input itself when the
+    // type already has that shape.
+    pub(crate) fn externalize_function_type(&mut self, type_id: TypeId) -> TypeId {
+        let Type::Function(function_type) = self.get_type_by_id(type_id) else {
+            unreachable!("can only externalize a function type");
+        };
+        if matches!(function_type.visibility, FunctionTypeVisibility::External)
+            && function_type
+                .parameter_types
+                .iter()
+                .all(|parameter_type_id| self.is_externalized(*parameter_type_id))
+            && self.is_externalized(function_type.return_type)
+        {
+            return type_id;
+        }
+        let function_type = function_type.clone();
+        let externalized_function_type = FunctionType {
             visibility: FunctionTypeVisibility::External,
             parameter_types: function_type
                 .parameter_types
@@ -483,7 +508,8 @@ impl TypeRegistry {
                 .collect(),
             return_type: self.externalize_type(function_type.return_type),
             ..function_type
-        }
+        };
+        self.register_type(Type::Function(externalized_function_type))
     }
 
     // Marks a function type as partially applied:

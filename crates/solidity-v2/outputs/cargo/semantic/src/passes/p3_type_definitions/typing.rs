@@ -180,12 +180,7 @@ impl Pass<'_> {
         {
             return None;
         }
-        let function_type = function_type.clone();
-        let externalized_function_type = self.types.externalize_function_type(function_type);
-        Some(
-            self.types
-                .register_type(Type::Function(externalized_function_type)),
-        )
+        Some(self.types.externalize_function_type(type_id))
     }
 
     /// Computes the type of the getter generated for a public state variable,
