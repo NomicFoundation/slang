@@ -599,6 +599,9 @@ impl Binder {
                 }
             };
             let mut results = DefinitionIds::new();
+            // How many of `results` the most derived base that declares the
+            // symbol at all contributed; they are a prefix, in that order.
+            let mut most_derived_count = 0;
             for (index, node_id) in linearisations.iter().enumerate() {
                 let Some(base_scope_id) = self.scope_id_for_node_id(*node_id) else {
                     continue;
@@ -634,7 +637,26 @@ impl Binder {
                         results.push(*definition_id);
                     }
                 }
+                if most_derived_count == 0 {
+                    most_derived_count = results.len();
+                }
             }
+
+            // A bare name whose most derived candidate is a state variable
+            // denotes it, hiding same-named functions inherited from a base.
+            // Those stay reachable qualified or externally, which resolve
+            // under the other options. Only the bases are dropped, so a name
+            // redeclared within one contract stays ambiguous.
+            if matches!(options, ResolveOptions::Internal)
+                && let Some(definition_id) = results.first()
+                && matches!(
+                    self.definitions.get(definition_id),
+                    Some(Definition::StateVariable(_) | Definition::Constant(_))
+                )
+            {
+                results.truncate(most_derived_count);
+            }
+
             Resolution::from(results)
         } else if let Some(definitions) = contract_scope.definitions.get(symbol) {
             // This case shouldn't happen for valid Solidity, as all

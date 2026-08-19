@@ -493,14 +493,12 @@ fn test_event_selector() {
         .into_resolved_type();
     assert_eq!(type_, Type::ByteArray(ByteArrayType { width: 32 }));
 
-    // With *overloaded* events the name is ambiguous; we currently resolve the
-    // member against the first candidate (both candidates expose `selector`,
-    // so the typing is still `bytes32`). solc reports an ambiguity error here —
-    // that diagnostic is part of the SDR[37] validation backlog.
+    // Overloaded events leave the name ambiguous, and a member access is a
+    // value position, so nothing can narrow it down.
     let (type_, _) = expression("E.selector")
         .with_members("event E(uint a); event E(bool b);")
-        .into_resolved_type();
-    assert_eq!(type_, Type::ByteArray(ByteArrayType { width: 32 }));
+        .into_type();
+    assert_eq!(None, type_);
 
     // An anonymous event emits no `topics[0]`, so it exposes no `selector`.
     let (type_, _) = expression("E.selector")

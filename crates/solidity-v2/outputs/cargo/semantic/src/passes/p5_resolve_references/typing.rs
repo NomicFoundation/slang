@@ -24,7 +24,20 @@ impl Pass<'_> {
         )
     }
 
-    pub(super) fn typing_of_expression(&self, node: &ir::Expression) -> Typing {
+    /// The typing of `node` where its value is used, which is everywhere but
+    /// the callee of a call. Nothing can select from an overload set here, so
+    /// one that reaches this point is sunk to `Unresolved` rather than handed
+    /// on undetermined.
+    pub(super) fn typing_of_expression(&mut self, node: &ir::Expression) -> Typing {
+        match self.typing_of_callee_expression(node) {
+            Typing::Undetermined(_) => Typing::Unresolved,
+            typing => typing,
+        }
+    }
+
+    /// The typing `node` registered, which for a callee may be the whole
+    /// overload set: the call's arguments are what select from it.
+    pub(super) fn typing_of_callee_expression(&self, node: &ir::Expression) -> Typing {
         // Every expression variant registers its typing in the binder during
         // the pass, so we simply look it up by `NodeId`.
         let node_id = node
@@ -68,13 +81,12 @@ impl Pass<'_> {
     pub(super) fn record_comparison_common_operand_type(
         &mut self,
         node_id: NodeId,
-        left_operand: &ir::Expression,
-        right_operand: &ir::Expression,
+        left_typing: &Typing,
+        right_typing: &Typing,
     ) {
-        let common = self
-            .typing_of_expression(left_operand)
+        let common = left_typing
             .as_type_id()
-            .zip(self.typing_of_expression(right_operand).as_type_id())
+            .zip(right_typing.as_type_id())
             .and_then(|(left, right)| self.types.common_operand_type(left, right));
         self.binder.set_common_operand_type(node_id, common);
     }
@@ -85,15 +97,15 @@ impl Pass<'_> {
     /// operand types.
     pub(super) fn type_of_binary_operator_expression<F>(
         &mut self,
-        left_operand: &ir::Expression,
-        right_operand: &ir::Expression,
+        left_typing: &Typing,
+        right_typing: &Typing,
         op: F,
     ) -> Option<TypeId>
     where
         F: FnOnce(&Number, &Number) -> Option<Number>,
     {
-        let left_type_id = self.typing_of_expression(left_operand).as_type_id()?;
-        let right_type_id = self.typing_of_expression(right_operand).as_type_id()?;
+        let left_type_id = left_typing.as_type_id()?;
+        let right_type_id = right_typing.as_type_id()?;
 
         // If both operands are number constants, fold them using the given operator.
         if let (Some(left_value), Some(right_value)) = (
@@ -117,12 +129,13 @@ impl Pass<'_> {
     pub(super) fn type_of_prefix_expression(
         &mut self,
         node: &ir::PrefixExpression,
+        operand_typing: &Typing,
     ) -> Option<TypeId> {
         match node.operator {
             ir::PrefixExpressionOperator::Minus(_) | ir::PrefixExpressionOperator::Tilde(_) => {
                 // Fold `-<constant>` or `~<constant>` by operating on the
                 // operand's known number value.
-                let operand_type_id = self.typing_of_expression(&node.operand).as_type_id()?;
+                let operand_type_id = operand_typing.as_type_id()?;
                 if let Some(value) = self.types.number_value_of_type_id(operand_type_id) {
                     let result = match node.operator {
                         ir::PrefixExpressionOperator::Minus(_) => value.negate(),
@@ -139,9 +152,7 @@ impl Pass<'_> {
                 }
             }
             ir::PrefixExpressionOperator::PlusPlus(_)
-            | ir::PrefixExpressionOperator::MinusMinus(_) => {
-                self.typing_of_expression(&node.operand).as_type_id()
-            }
+            | ir::PrefixExpressionOperator::MinusMinus(_) => operand_typing.as_type_id(),
             ir::PrefixExpressionOperator::Bang(_) => {
                 // TODO(validation) SDR[49]: check that the operand is boolean
                 Some(self.types.boolean())
@@ -193,7 +204,7 @@ impl Pass<'_> {
     /// The length an array index denotes, or `None` unless it is a non-negative
     /// integer literal that fits a `U256`. The value is taken from the
     /// expression type to benefit from the constant folding of literals.
-    fn literal_array_size(&self, size: &ir::Expression) -> Option<U256> {
+    fn literal_array_size(&mut self, size: &ir::Expression) -> Option<U256> {
         let type_id = self.typing_of_expression(size).as_type_id()?;
         let value = self.types.number_value_of_type_id(type_id)?;
         U256::try_from(value.as_integer()?).ok()
@@ -220,15 +231,15 @@ impl Pass<'_> {
 
     pub(super) fn type_of_left_typed_binary_operator_expression<F>(
         &mut self,
-        left_operand: &ir::Expression,
-        right_operand: &ir::Expression,
+        left_typing: &Typing,
+        right_typing: &Typing,
         op: F,
     ) -> Option<TypeId>
     where
         F: FnOnce(&Number, &Number) -> Option<Number>,
     {
-        let left_type_id = self.typing_of_expression(left_operand).as_type_id()?;
-        let right_type_id = self.typing_of_expression(right_operand).as_type_id()?;
+        let left_type_id = left_typing.as_type_id()?;
+        let right_type_id = right_typing.as_type_id()?;
 
         let left_value = self.types.number_value_of_type_id(left_type_id);
         let right_value = self.types.number_value_of_type_id(right_type_id);
@@ -339,7 +350,7 @@ impl Pass<'_> {
     /// Returns the typing of the *receiver* of a call — the operand of the
     /// member access being called (eg. for `a.f(...)`, the typing of `a`).
     /// Returns `None` when the call target is not a member access.
-    fn type_id_of_value_receiver(&self, operand: &ir::Expression) -> Option<TypeId> {
+    fn type_id_of_value_receiver(&mut self, operand: &ir::Expression) -> Option<TypeId> {
         if let ir::Expression::MemberAccessExpression(member_access_expression) = operand {
             let type_id = self
                 .typing_of_expression(&member_access_expression.operand)
@@ -468,7 +479,7 @@ impl Pass<'_> {
     }
 
     pub(super) fn collect_positional_argument_typings(
-        &self,
+        &mut self,
         arguments: &[ir::Expression],
     ) -> Vec<Typing> {
         arguments
@@ -482,7 +493,7 @@ impl Pass<'_> {
         node: &ir::FunctionCallExpression,
         arguments: &[ir::Expression],
     ) -> Typing {
-        let operand_typing = self.typing_of_expression(&node.operand);
+        let operand_typing = self.typing_of_callee_expression(&node.operand);
         let argument_typings = self.collect_positional_argument_typings(arguments);
 
         match operand_typing {
@@ -541,12 +552,12 @@ impl Pass<'_> {
     /// typing (so querying the operand yields the selected overload rather than
     /// the ambiguous `Undetermined` set) are updated.
     fn fixup_operand_expression(&mut self, operand: &ir::Expression, candidate_type_id: TypeId) {
-        if let (Some(reference_node_id), Some(definition_id)) = (
-            reference_node_id_for_expression(operand),
+        if let (Some(identifier), Some(definition_id)) = (
+            reference_identifier_for_expression(operand),
             self.candidate_definition_id(candidate_type_id),
         ) {
             self.binder
-                .fixup_reference(reference_node_id, Resolution::Definition(definition_id));
+                .fixup_reference(identifier.id(), Resolution::Definition(definition_id));
         }
 
         if let Some(operand_node_id) = operand.node_id() {
@@ -624,7 +635,7 @@ impl Pass<'_> {
     }
 
     pub(super) fn collect_named_argument_typings(
-        &self,
+        &mut self,
         arguments: &[ir::NamedArgument],
     ) -> Vec<(String, Typing)> {
         arguments
@@ -643,7 +654,7 @@ impl Pass<'_> {
         node: &ir::FunctionCallExpression,
         arguments: &[ir::NamedArgument],
     ) -> Typing {
-        let operand_typing = self.typing_of_expression(&node.operand);
+        let operand_typing = self.typing_of_callee_expression(&node.operand);
 
         let (typing, definition_id) = match operand_typing {
             Typing::Unresolved | Typing::This(_) | Typing::Super => {
@@ -766,14 +777,14 @@ impl Pass<'_> {
     }
 }
 
-// Given an expression node that resolves to a reference, return the node ID of
-// the identifier of the reference. If the expression cannot be traced back to a
+// Given an expression node that resolves to a reference, return the identifier
+// the reference was made through. If the expression cannot be traced back to a
 // single reference, return `None`.
-fn reference_node_id_for_expression(node: &ir::Expression) -> Option<NodeId> {
+fn reference_identifier_for_expression(node: &ir::Expression) -> Option<&ir::Identifier> {
     match &node {
-        ir::Expression::MemberAccessExpression(f) => Some(f.member.id()),
-        ir::Expression::Identifier(f) => Some(f.id()),
-        ir::Expression::CallOptionsExpression(f) => reference_node_id_for_expression(&f.operand),
+        ir::Expression::MemberAccessExpression(f) => Some(&f.member),
+        ir::Expression::Identifier(f) => Some(f),
+        ir::Expression::CallOptionsExpression(f) => reference_identifier_for_expression(&f.operand),
         _ => None,
     }
 }
