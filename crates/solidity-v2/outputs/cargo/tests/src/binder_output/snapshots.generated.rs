@@ -1087,6 +1087,11 @@ mod scoping {
     }
 
     #[test]
+    fn public_variable_and_inherited_function() -> Result<()> {
+        run("scoping", "public_variable_and_inherited_function")
+    }
+
+    #[test]
     fn redeclared_contracts() -> Result<()> {
         run("scoping", "redeclared_contracts")
     }

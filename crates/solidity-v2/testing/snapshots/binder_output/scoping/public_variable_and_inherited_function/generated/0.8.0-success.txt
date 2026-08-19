@@ -1,0 +1,93 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (10):
+- Def: #1 ["A" @ input.sol:8:10] (contract)
+- Def: #2 ["x" @ input.sol:9:14] (function, type: function (uint256) returns uint256)
+- Def: #3 ["B" @ input.sol:14:10] (contract)
+- Def: #4 ["x" @ input.sol:15:20] (state var, type: uint256)
+- Def: #5 ["value" @ input.sol:17:14] (function, type: function () returns uint256)
+- Def: #6 ["callee" @ input.sol:21:14] (function, type: function () returns uint256)
+- Def: #7 ["qualified" @ input.sol:25:14] (function, type: function () returns uint256)
+- Def: #8 ["external_call" @ input.sol:29:14] (function, type: function () returns uint256)
+- Def: #9 ["assembly_use" @ input.sol:33:14] (function, type: function () returns void)
+- Def: #10 ["y" @ input.sol:35:17] (yul variable)
+
+------------------------------------------------------------------------
+
+References (8):
+- Ref: ["A" @ input.sol:14:15] -> #1
+- Ref: ["x" @ input.sol:18:16] -> #4
+- Ref: ["x" @ input.sol:22:16] -> #4
+- Ref: ["A" @ input.sol:26:16] -> #1
+- Ref: ["x" @ input.sol:26:18] -> #2
+- Ref: ["x" @ input.sol:30:21] -> #2
+- Ref: ["x" @ input.sol:35:22] -> #4
+- Ref: ["slot" @ input.sol:35:24] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  8 │ contract A {
+    │          ┬  
+    │          ╰── name: 1
+  9 │     function x(uint256) public pure returns (uint256) {
+    │              ┬  
+    │              ╰── name: 2
+    │ 
+ 14 │ contract B is A {
+    │          ┬    ┬  
+    │          ╰─────── name: 3
+    │               │  
+    │               ╰── ref: 1
+ 15 │     uint256 public x;
+    │                    ┬  
+    │                    ╰── name: 4
+    │ 
+ 17 │     function value() internal view returns (uint256) {
+    │              ──┬──  
+    │                ╰──── name: 5
+ 18 │         return x;
+    │                ┬  
+    │                ╰── ref: 4
+    │ 
+ 21 │     function callee() internal view returns (uint256) {
+    │              ───┬──  
+    │                 ╰──── name: 6
+ 22 │         return x(1);
+    │                ┬  
+    │                ╰── ref: 4
+    │ 
+ 25 │     function qualified() internal pure returns (uint256) {
+    │              ────┬────  
+    │                  ╰────── name: 7
+ 26 │         return A.x(1);
+    │                ┬ ┬  
+    │                ╰──── ref: 1
+    │                  │  
+    │                  ╰── ref: 2
+    │ 
+ 29 │     function external_call() external view returns (uint256) {
+    │              ──────┬──────  
+    │                    ╰──────── name: 8
+ 30 │         return this.x(1);
+    │                     ┬  
+    │                     ╰── ref: 2
+    │ 
+ 33 │     function assembly_use() internal pure {
+    │              ──────┬─────  
+    │                    ╰─────── name: 9
+    │ 
+ 35 │             let y := x.slot
+    │                 ┬    ┬ ──┬─  
+    │                 ╰──────────── name: 10
+    │                      │   │   
+    │                      ╰─────── ref: 4
+    │                          │   
+    │                          ╰─── built-in
+────╯

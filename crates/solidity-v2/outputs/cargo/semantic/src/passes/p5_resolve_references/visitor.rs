@@ -185,12 +185,14 @@ impl Visitor for Pass<'_> {
 
     fn leave_assignment_expression(&mut self, node: &ir::AssignmentExpression) {
         let type_id = self.typing_of_expression(&node.left_operand).as_type_id();
+        self.typing_of_expression(&node.right_operand);
         // TODO(validation) SDR[59]: check that the type of right_operand can be applied
         // to the left by means of the operator
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_conditional_expression(&mut self, node: &ir::ConditionalExpression) {
+        self.typing_of_expression(&node.operand);
         let true_type_id = self
             .typing_of_expression(&node.true_expression)
             .as_type_id();
@@ -233,106 +235,93 @@ impl Visitor for Pass<'_> {
 
     fn leave_equality_expression(&mut self, node: &ir::EqualityExpression) {
         // TODO(validation) SDR[55]: check that both operands have a compatible type
-        self.record_comparison_common_operand_type(
-            node.id(),
-            &node.left_operand,
-            &node.right_operand,
-        );
+        let left = self.typing_of_expression(&node.left_operand);
+        let right = self.typing_of_expression(&node.right_operand);
+        self.record_comparison_common_operand_type(node.id(), &left, &right);
         self.binder
             .set_node_type(node.id(), Some(self.types.boolean()));
-        self.resolve_operator_function(node.id(), (&node.operator).into(), &node.left_operand, 2);
+        self.resolve_operator_function(node.id(), (&node.operator).into(), left.as_type_id(), 2);
     }
 
     fn leave_inequality_expression(&mut self, node: &ir::InequalityExpression) {
         // TODO(validation) SDR[55]: check that both operands have a compatible type
-        self.record_comparison_common_operand_type(
-            node.id(),
-            &node.left_operand,
-            &node.right_operand,
-        );
+        let left = self.typing_of_expression(&node.left_operand);
+        let right = self.typing_of_expression(&node.right_operand);
+        self.record_comparison_common_operand_type(node.id(), &left, &right);
         self.binder
             .set_node_type(node.id(), Some(self.types.boolean()));
-        self.resolve_operator_function(node.id(), (&node.operator).into(), &node.left_operand, 2);
+        self.resolve_operator_function(node.id(), (&node.operator).into(), left.as_type_id(), 2);
     }
 
     fn leave_bitwise_or_expression(&mut self, node: &ir::BitwiseOrExpression) {
-        let type_id = self.type_of_binary_operator_expression(
-            &node.left_operand,
-            &node.right_operand,
-            |l, r| l.bit_or(r),
-        );
+        let left = self.typing_of_expression(&node.left_operand);
+        let right = self.typing_of_expression(&node.right_operand);
+        let type_id = self.type_of_binary_operator_expression(&left, &right, |l, r| l.bit_or(r));
         self.binder.set_node_type(node.id(), type_id);
-        self.resolve_operator_function(node.id(), UsingOperator::Bar, &node.left_operand, 2);
+        self.resolve_operator_function(node.id(), UsingOperator::Bar, left.as_type_id(), 2);
     }
 
     fn leave_bitwise_xor_expression(&mut self, node: &ir::BitwiseXorExpression) {
-        let type_id = self.type_of_binary_operator_expression(
-            &node.left_operand,
-            &node.right_operand,
-            |l, r| l.bit_xor(r),
-        );
+        let left = self.typing_of_expression(&node.left_operand);
+        let right = self.typing_of_expression(&node.right_operand);
+        let type_id = self.type_of_binary_operator_expression(&left, &right, |l, r| l.bit_xor(r));
         self.binder.set_node_type(node.id(), type_id);
-        self.resolve_operator_function(node.id(), UsingOperator::Caret, &node.left_operand, 2);
+        self.resolve_operator_function(node.id(), UsingOperator::Caret, left.as_type_id(), 2);
     }
 
     fn leave_bitwise_and_expression(&mut self, node: &ir::BitwiseAndExpression) {
-        let type_id = self.type_of_binary_operator_expression(
-            &node.left_operand,
-            &node.right_operand,
-            |l, r| l.bit_and(r),
-        );
+        let left = self.typing_of_expression(&node.left_operand);
+        let right = self.typing_of_expression(&node.right_operand);
+        let type_id = self.type_of_binary_operator_expression(&left, &right, |l, r| l.bit_and(r));
         self.binder.set_node_type(node.id(), type_id);
-        self.resolve_operator_function(node.id(), UsingOperator::Ampersand, &node.left_operand, 2);
+        self.resolve_operator_function(node.id(), UsingOperator::Ampersand, left.as_type_id(), 2);
     }
 
     fn leave_shift_expression(&mut self, node: &ir::ShiftExpression) {
         // TODO(validation) SDR[54]: check that the left operand is an integer and the
         // right operand is an _unsigned_ integer
-        let type_id = self.type_of_left_typed_binary_operator_expression(
-            &node.left_operand,
-            &node.right_operand,
-            |l, r| match &node.operator {
+        let left = self.typing_of_expression(&node.left_operand);
+        let right = self.typing_of_expression(&node.right_operand);
+        let type_id = self.type_of_left_typed_binary_operator_expression(&left, &right, |l, r| {
+            match &node.operator {
                 ir::ShiftExpressionOperator::LessThanLessThan(_) => l.shl(r),
                 ir::ShiftExpressionOperator::GreaterThanGreaterThan(_) => l.shr(r),
                 ir::ShiftExpressionOperator::GreaterThanGreaterThanGreaterThan(_) => None,
-            },
-        );
+            }
+        });
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_additive_expression(&mut self, node: &ir::AdditiveExpression) {
-        let type_id = self.type_of_binary_operator_expression(
-            &node.left_operand,
-            &node.right_operand,
-            |l, r| match &node.operator {
+        let left = self.typing_of_expression(&node.left_operand);
+        let right = self.typing_of_expression(&node.right_operand);
+        let type_id =
+            self.type_of_binary_operator_expression(&left, &right, |l, r| match &node.operator {
                 ir::AdditiveExpressionOperator::Plus(_) => Some(l.add(r)),
                 ir::AdditiveExpressionOperator::Minus(_) => Some(l.sub(r)),
-            },
-        );
+            });
         self.binder.set_node_type(node.id(), type_id);
-        self.resolve_operator_function(node.id(), (&node.operator).into(), &node.left_operand, 2);
+        self.resolve_operator_function(node.id(), (&node.operator).into(), left.as_type_id(), 2);
     }
 
     fn leave_multiplicative_expression(&mut self, node: &ir::MultiplicativeExpression) {
-        let type_id = self.type_of_binary_operator_expression(
-            &node.left_operand,
-            &node.right_operand,
-            |l, r| match &node.operator {
+        let left = self.typing_of_expression(&node.left_operand);
+        let right = self.typing_of_expression(&node.right_operand);
+        let type_id =
+            self.type_of_binary_operator_expression(&left, &right, |l, r| match &node.operator {
                 ir::MultiplicativeExpressionOperator::Asterisk(_) => Some(l.mul(r)),
                 ir::MultiplicativeExpressionOperator::Slash(_) => l.div(r),
                 ir::MultiplicativeExpressionOperator::Percent(_) => l.rem(r),
-            },
-        );
+            });
         self.binder.set_node_type(node.id(), type_id);
-        self.resolve_operator_function(node.id(), (&node.operator).into(), &node.left_operand, 2);
+        self.resolve_operator_function(node.id(), (&node.operator).into(), left.as_type_id(), 2);
     }
 
     fn leave_exponentiation_expression(&mut self, node: &ir::ExponentiationExpression) {
-        let type_id = self.type_of_left_typed_binary_operator_expression(
-            &node.left_operand,
-            &node.right_operand,
-            |l, r| l.pow(r),
-        );
+        let left = self.typing_of_expression(&node.left_operand);
+        let right = self.typing_of_expression(&node.right_operand);
+        let type_id =
+            self.type_of_left_typed_binary_operator_expression(&left, &right, |l, r| l.pow(r));
         self.binder.set_node_type(node.id(), type_id);
     }
 
@@ -343,32 +332,28 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_prefix_expression(&mut self, node: &ir::PrefixExpression) {
-        let type_id = self.type_of_prefix_expression(node);
+        let operand = self.typing_of_expression(&node.operand);
+        let type_id = self.type_of_prefix_expression(node, &operand);
         self.binder.set_node_type(node.id(), type_id);
         if let Ok(operator) = UsingOperator::try_from(&node.operator) {
-            self.resolve_operator_function(node.id(), operator, &node.operand, 1);
+            self.resolve_operator_function(node.id(), operator, operand.as_type_id(), 1);
         }
     }
 
     fn leave_tuple_expression(&mut self, node: &ir::TupleExpression) {
         let typing = if node.items.len() == 1 {
-            node.items
-                .first()
-                .unwrap()
-                .expression
-                .as_ref()
-                .map_or(Typing::Unresolved, |expression| {
-                    self.typing_of_expression(expression)
-                })
+            match &node.items.first().unwrap().expression {
+                Some(expression) => self.typing_of_expression(expression),
+                None => Typing::Unresolved,
+            }
         } else {
             let mut types = Vec::new();
             for item in node.items.iter() {
-                let type_id = item
-                    .expression
-                    .as_ref()
-                    .and_then(|expression| self.typing_of_expression(expression).as_type_id())
-                    .unwrap_or(self.types.void());
-                types.push(type_id);
+                let type_id = match &item.expression {
+                    Some(expression) => self.typing_of_expression(expression).as_type_id(),
+                    None => None,
+                };
+                types.push(type_id.unwrap_or(self.types.void()));
             }
             let type_id = self.types.register_type(Type::Tuple(TupleType { types }));
             Typing::Resolved(type_id)
@@ -571,7 +556,9 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_call_options_expression(&mut self, node: &ir::CallOptionsExpression) {
-        let operand_typing = self.typing_of_expression(&node.operand);
+        // `foo{value: 3}` partially applies but is still a callee, so an
+        // overload set has to survive to the enclosing call.
+        let operand_typing = self.typing_of_callee_expression(&node.operand);
 
         // Pre-applying call options (eg. `foo{value: 3}`) partially applies the
         // function.
@@ -630,10 +617,11 @@ impl Visitor for Pass<'_> {
                 if let Some(Resolution::Ambiguous(definition_ids)) = &event_resolution {
                     let argument_typings =
                         self.collect_positional_argument_typings(positional_arguments);
-                    if let Some(candidate) = self.lookup_event_matching_positional_arguments(
+                    let candidate = self.lookup_event_matching_positional_arguments(
                         definition_ids,
                         &argument_typings,
-                    ) {
+                    );
+                    if let Some(candidate) = candidate {
                         // update resolved definition
                         self.binder
                             .fixup_reference(event_reference_id, Resolution::Definition(candidate));
@@ -677,9 +665,39 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_variable_declaration_statement(&mut self, node: &ir::VariableDeclarationStatement) {
+        // The initialiser's value is bound to the declared variable(s).
+        match &node.target {
+            ir::VariableDeclarationTarget::SingleTypedDeclaration(declaration) => {
+                if let Some(value) = &declaration.value {
+                    self.typing_of_expression(value);
+                }
+            }
+            ir::VariableDeclarationTarget::MultiTypedDeclaration(declaration) => {
+                self.typing_of_expression(&declaration.value);
+            }
+        }
+
         // update the scope so further resolutions can access this variable definition
         self.replace_scope_for_node_id(node.id());
         // NOTE: ensure following code does not need to perform resolution
+    }
+
+    fn leave_return_statement(&mut self, node: &ir::ReturnStatement) {
+        if let Some(expression) = &node.expression {
+            self.typing_of_expression(expression);
+        }
+    }
+
+    fn leave_expression_statement(&mut self, node: &ir::ExpressionStatement) {
+        self.typing_of_expression(&node.expression);
+    }
+
+    fn leave_if_statement(&mut self, node: &ir::IfStatement) {
+        self.typing_of_expression(&node.condition);
+    }
+
+    fn leave_while_statement(&mut self, node: &ir::WhileStatement) {
+        self.typing_of_expression(&node.condition);
     }
 
     fn enter_yul_block(&mut self, _node: &ir::YulBlock) -> bool {
