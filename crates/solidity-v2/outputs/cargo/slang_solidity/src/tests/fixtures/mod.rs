@@ -4,7 +4,7 @@ use slang_solidity_v2_common::evm_targets::EvmTarget;
 
 use crate::ast::{Definition, LibraryDefinition};
 use crate::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit, FileId};
-use crate::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
+use crate::diagnostics::kinds::compilation::UnresolvedImport;
 use crate::utils::LanguageVersion;
 
 mod counter;
@@ -45,23 +45,11 @@ macro_rules! define_fixture {
     };
 }
 
-struct FixtureBuildConfig<'a> {
-    files: &'a [FixtureFile],
-}
+struct FixtureBuildConfig;
 
-impl CompilationBuilderConfig for FixtureBuildConfig<'_> {
-    fn read_file(&mut self, file_id: &FileId) -> Result<String, MissingFile> {
-        self.files
-            .iter()
-            .find(|file| file.id == *file_id)
-            .map(|file| file.contents.to_owned())
-            .ok_or_else(|| MissingFile {
-                reason: "Fixture file not found".to_string(),
-            })
-    }
-
+impl CompilationBuilderConfig for FixtureBuildConfig {
     fn resolve_import(
-        &mut self,
+        &self,
         _source_file_id: &FileId,
         import_path: &str,
     ) -> Result<FileId, UnresolvedImport> {
@@ -72,11 +60,13 @@ impl CompilationBuilderConfig for FixtureBuildConfig<'_> {
 pub(super) fn build_compilation_unit_from_fixture(files: &[FixtureFile]) -> Arc<CompilationUnit> {
     let version = LanguageVersion::LATEST;
     let target = EvmTarget::LATEST;
-    let mut builder = CompilationBuilder::create(version, target, FixtureBuildConfig { files });
+    let mut builder = CompilationBuilder::create(version, target, FixtureBuildConfig);
 
-    for file in files {
-        builder.add_file(file.id.clone());
-    }
+    builder.add_files(
+        files
+            .iter()
+            .map(|file| (file.id.clone(), file.contents.to_owned())),
+    );
 
     let unit = builder.build();
 

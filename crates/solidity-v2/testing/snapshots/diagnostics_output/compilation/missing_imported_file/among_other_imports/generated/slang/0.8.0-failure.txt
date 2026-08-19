@@ -3,9 +3,9 @@
 Diagnostics: 1
 
 [compilation/missing-imported-file] Error: Imported file is missing: lib/missing.sol
-   ╭─[main.sol:4:8]
+   ╭─[main.sol:7:8]
    │
- 4 │ import "lib/missing.sol";
+ 7 │ import "lib/missing.sol";
    │        ────────┬────────  
    │                ╰────────── Error occurred here.
 ───╯

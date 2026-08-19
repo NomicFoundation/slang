@@ -1,7 +1,7 @@
 use anyhow::Result;
 use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig, FileId};
 use slang_solidity_v2_common::collections::SortedMap;
-use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
+use slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport;
 use slang_solidity_v2_common::diagnostics::{DiagnosticExtensions, DiagnosticSeverity};
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
@@ -23,14 +23,8 @@ impl TestTarget for SlangTarget {
         version: LanguageVersion,
         evm_target: EvmTarget,
     ) -> Result<TargetOutcome> {
-        let config = TestConfig {
-            files: files.clone(),
-        };
-        let mut builder = CompilationBuilder::create(version, evm_target, config);
-
-        for file in files.keys() {
-            builder.add_file(file.clone());
-        }
+        let mut builder = CompilationBuilder::create(version, evm_target, TestConfig);
+        builder.add_files(files.clone());
 
         let compilation = builder.build();
 
@@ -57,19 +51,11 @@ impl TestTarget for SlangTarget {
     }
 }
 
-struct TestConfig {
-    files: SortedMap<FileId, String>,
-}
+struct TestConfig;
 
 impl CompilationBuilderConfig for TestConfig {
-    fn read_file(&mut self, file_id: &FileId) -> Result<String, MissingFile> {
-        self.files.get(file_id).cloned().ok_or_else(|| MissingFile {
-            reason: "File not found.".to_string(),
-        })
-    }
-
     fn resolve_import(
-        &mut self,
+        &self,
         source_file_id: &FileId,
         import_path: &str,
     ) -> Result<FileId, UnresolvedImport> {
