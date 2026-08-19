@@ -4113,7 +4113,6 @@ dependencies = [
  "lalrpop",
  "lalrpop-util",
  "logos",
- "regex",
  "slang_solidity_v2_common",
  "slang_solidity_v2_cst",
  "strum",
