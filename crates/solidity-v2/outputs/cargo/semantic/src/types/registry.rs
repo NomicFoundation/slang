@@ -712,6 +712,32 @@ impl TypeRegistry {
         Some(element_type_id)
     }
 
+    /// Returns true if a function type overrides another within the hierarchy
+    /// the two were resolved from, which is the only place overriding happens.
+    ///
+    /// Only contract and interface members carry an implicit receiver, so free
+    /// and library functions never override anything, even when they share a
+    /// signature: two of them attached to the same type by different `using`
+    /// directives are competing candidates, not an override pair.
+    ///
+    /// Carrying a receiver is the whole test: the two do *not* have to be
+    /// declared in contracts that derive from one another. A resolution only
+    /// ever gathers members from a single contract's linearisation, and yields
+    /// them most-derived first, so a later candidate sharing a signature is
+    /// shadowed by an earlier one whether it was declared in a base or in a
+    /// sibling of one. `super.f()` in a contract whose two bases both declare
+    /// `f` relies on that, and requiring a derives-from relationship would
+    /// report it as ambiguous.
+    pub(crate) fn function_type_overrides_in_hierarchy(
+        &self,
+        ftype: &FunctionType,
+        other: &FunctionType,
+    ) -> bool {
+        ftype.implicit_receiver_type.is_some()
+            && other.implicit_receiver_type.is_some()
+            && self.function_type_overrides(ftype, other)
+    }
+
     // Returns true if a function type overrides another
     pub(crate) fn function_type_overrides(
         &self,
