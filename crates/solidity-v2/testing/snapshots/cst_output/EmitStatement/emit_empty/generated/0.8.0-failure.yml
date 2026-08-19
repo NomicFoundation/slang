@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/emit/emit_empty.sol │ 0..100
+  2  │                                                                                                      │ 101..101
+  3  │ contract C {                                                                                         │ 102..114
+  4  │   function f() public {                                                                              │ 115..138
+  5  │     emit;                                                                                            │ 139..148
+  6  │   }                                                                                                  │ 149..152
+  7  │ }                                                                                                    │ 153..154
+
+Errors: # 1 total
+  - >
+    [syntax/unexpected-terminal] Error: Unexpected Semicolon. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/EmitStatement/emit_empty/input.sol:5:9]
+       │
+     5 │     emit;
+       │         ┬  
+       │         ╰── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []
