@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 2144] Error: No matching declaration found after variable lookup.
+    ╭─[input.sol:16:15]
+    │
+ 16 │         takes(f);
+    │               ┬  
+    │               ╰── Error occurred here.
+────╯

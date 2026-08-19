@@ -15,6 +15,20 @@ Parse errors:
    │          ┬  
    │          ╰── Error occurred here.
 ───╯
+[resolution/ambiguous-reference] Error: No unique declaration found for 'k'.
+   ╭─[input.sol:9:9]
+   │
+ 9 │         k;
+   │         ┬  
+   │         ╰── Error occurred here.
+───╯
+[resolution/ambiguous-reference] Error: No unique declaration found for 'x'.
+    ╭─[input.sol:10:9]
+    │
+ 10 │         x;
+    │         ┬  
+    │         ╰── Error occurred here.
+────╯
 
 ------------------------------------------------------------------------
 

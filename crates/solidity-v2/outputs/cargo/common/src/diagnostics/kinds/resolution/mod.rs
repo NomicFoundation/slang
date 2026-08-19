@@ -1,3 +1,5 @@
+mod ambiguous_reference;
+mod ambiguous_yul_reference;
 mod built_in_redeclaration;
 mod duplicate_event_definition;
 mod duplicate_function_definition;
@@ -11,6 +13,8 @@ mod incompatible_built_in_target;
 mod incompatible_built_in_version;
 mod non_free_or_library_function_in_using_directive;
 
+pub use ambiguous_reference::AmbiguousReference;
+pub use ambiguous_yul_reference::AmbiguousYulReference;
 pub use built_in_redeclaration::BuiltInRedeclaration;
 pub use duplicate_event_definition::DuplicateEventDefinition;
 pub use duplicate_function_definition::DuplicateFunctionDefinition;
@@ -54,6 +58,12 @@ define_diagnostic_kind! {
         /// A symbol in an import deconstruction is not declared in the
         /// imported file.
         ImportedDeclarationNotFound(ImportedDeclarationNotFound),
+        /// A reference matches more than one declaration, and neither the call
+        /// arguments nor the context narrow it down to a single one.
+        AmbiguousReference(AmbiguousReference),
+        /// A Yul identifier matches more than one declaration, which Yul cannot
+        /// disambiguate.
+        AmbiguousYulReference(AmbiguousYulReference),
 
         /// A symbol in a `using {...} for` directive did not resolve to a
         /// unique function.

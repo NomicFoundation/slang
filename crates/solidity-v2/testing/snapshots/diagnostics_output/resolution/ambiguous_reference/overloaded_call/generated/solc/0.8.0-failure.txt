@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4487] Error: No unique declaration found after argument-dependent lookup.
+    ╭─[input.sol:16:16]
+    │
+ 16 │         return f(1);
+    │                ┬  
+    │                ╰── Error occurred here.
+────╯

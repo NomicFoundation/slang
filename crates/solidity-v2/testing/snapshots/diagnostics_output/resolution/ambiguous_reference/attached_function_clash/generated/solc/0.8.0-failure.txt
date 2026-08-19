@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[ParserError 7858] Error: Expected pragma, import directive or contract/interface/library/struct/enum/constant/function definition.
+   ╭─[a.sol:8:1]
+   │
+ 8 │ using {f} for S global;
+   │ ──┬──  
+   │   ╰──── Error occurred here.
+───╯
+
+[ParserError 2314] Error: Expected identifier but got '{'
+   ╭─[b.sol:9:11]
+   │
+ 9 │     using {f} for S;
+   │           ┬  
+   │           ╰── Error occurred here.
+───╯

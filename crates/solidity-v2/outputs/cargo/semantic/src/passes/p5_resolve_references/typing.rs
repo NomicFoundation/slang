@@ -1,10 +1,12 @@
 use ruint::aliases::{U160, U256};
+use slang_solidity_v2_common::diagnostics::kinds::resolution::AmbiguousReference;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::CannotCallViaContractTypeName;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
 
 use super::Pass;
+use super::disambiguation::OverloadMatch;
 use crate::binder::{Definition, Resolution, Typing};
 use crate::passes::common::node_location;
 use crate::types::{
@@ -30,7 +32,10 @@ impl Pass<'_> {
     /// on undetermined.
     pub(super) fn typing_of_expression(&mut self, node: &ir::Expression) -> Typing {
         match self.typing_of_callee_expression(node) {
-            Typing::Undetermined(_) => Typing::Unresolved,
+            Typing::Undetermined(_) => {
+                self.report_ambiguous_reference(node);
+                Typing::Unresolved
+            }
             typing => typing,
         }
     }
@@ -44,6 +49,60 @@ impl Pass<'_> {
             .node_id()
             .expect("expression should have a NodeId to look up its typing");
         self.binder.node_typing(node_id)
+    }
+
+    /// Narrows an overload lookup for a call down to the selected candidate,
+    /// reporting the call's operand when several candidates accept the
+    /// arguments. The selected candidate is returned either way, so an
+    /// ambiguous call can still be typed and its reference still points
+    /// somewhere.
+    pub(super) fn select_overload<T>(
+        &mut self,
+        operand: &ir::Expression,
+        overload_match: OverloadMatch<T>,
+    ) -> Option<T> {
+        self.select_overload_candidate(reference_identifier_for_expression(operand), overload_match)
+    }
+
+    /// [`Self::select_overload`] for an emitted event, whose name is an
+    /// identifier path rather than an expression.
+    pub(super) fn select_event_overload<T>(
+        &mut self,
+        identifier: &ir::Identifier,
+        overload_match: OverloadMatch<T>,
+    ) -> Option<T> {
+        self.select_overload_candidate(Some(identifier), overload_match)
+    }
+
+    fn select_overload_candidate<T>(
+        &mut self,
+        identifier: Option<&ir::Identifier>,
+        overload_match: OverloadMatch<T>,
+    ) -> Option<T> {
+        match overload_match {
+            OverloadMatch::None => None,
+            OverloadMatch::Unique(selected) => Some(selected),
+            OverloadMatch::Ambiguous(selected) => {
+                if let Some(identifier) = identifier {
+                    self.report_ambiguous_identifier(identifier);
+                }
+                Some(selected)
+            }
+        }
+    }
+
+    /// Reports `node` as a reference that matched more than one declaration.
+    fn report_ambiguous_reference(&mut self, node: &ir::Expression) {
+        if let Some(identifier) = reference_identifier_for_expression(node) {
+            self.report_ambiguous_identifier(identifier);
+        }
+    }
+
+    /// The diagnostic is located at the identifier the reference was made
+    /// through, which is also where its name comes from.
+    fn report_ambiguous_identifier(&mut self, identifier: &ir::Identifier) {
+        let name = identifier.unparse().to_owned();
+        self.push_diagnostic(identifier, AmbiguousReference { name });
     }
 
     pub(super) fn type_of_elementary_type(elementary_type: &ir::ElementaryType) -> Type {
@@ -523,11 +582,12 @@ impl Pass<'_> {
             ),
             Typing::Undetermined(type_ids) => {
                 let receiver_type_id = self.type_id_of_value_receiver(&node.operand);
-                let candidate = self.lookup_function_matching_positional_arguments(
+                let overload_match = self.lookup_function_matching_positional_arguments(
                     &type_ids,
                     &argument_typings,
                     receiver_type_id,
                 );
+                let candidate = self.select_overload(&node.operand, overload_match);
 
                 if let Some(candidate_type_id) = candidate {
                     // The operand disambiguates to the selected overload, even
@@ -667,11 +727,12 @@ impl Pass<'_> {
             Typing::Undetermined(type_ids) => {
                 let receiver_type_id = self.type_id_of_value_receiver(&node.operand);
                 let argument_typings = self.collect_named_argument_typings(arguments);
-                let candidate = self.lookup_function_matching_named_arguments(
+                let overload_match = self.lookup_function_matching_named_arguments(
                     &type_ids,
                     &argument_typings,
                     receiver_type_id,
                 );
+                let candidate = self.select_overload(&node.operand, overload_match);
 
                 if let Some(candidate_type_id) = candidate {
                     // The operand disambiguates to the selected overload, even

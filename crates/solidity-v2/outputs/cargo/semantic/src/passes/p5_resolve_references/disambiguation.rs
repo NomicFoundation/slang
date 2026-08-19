@@ -4,6 +4,29 @@ use super::Pass;
 use crate::binder::{Definition, ParameterDefinition, Scope, Typing};
 use crate::types::{FunctionType, Type, TypeId, UserMetaType};
 
+/// The outcome of selecting one overload out of a set of candidates.
+pub(super) enum OverloadMatch<T> {
+    /// No candidate accepts the call's arguments.
+    None,
+    /// Exactly one candidate accepts the call's arguments.
+    Unique(T),
+    /// Several candidates accept the call's arguments, so the call doesn't
+    /// determine which declaration is meant. The first one is kept anyway, so
+    /// the call can still be typed and the reference still points somewhere.
+    Ambiguous(T),
+}
+
+impl<T> OverloadMatch<T> {
+    fn from_matches(matches: Vec<T>) -> Self {
+        let is_ambiguous = matches.len() > 1;
+        match matches.into_iter().next() {
+            None => Self::None,
+            Some(selected) if is_ambiguous => Self::Ambiguous(selected),
+            Some(selected) => Self::Unique(selected),
+        }
+    }
+}
+
 /// Disambiguation functions that require typing (aka overload resolution)
 impl Pass<'_> {
     fn get_function_definition_parameters(
@@ -73,22 +96,21 @@ impl Pass<'_> {
         }
     }
 
-    /// Finds the first overload candidate in `type_ids` whose parameter list
-    /// is compatible with the call's arguments. The receiver/arity handling is
-    /// shared between call styles; `parameters_match` checks the (possibly
-    /// receiver-adjusted) parameter list against the actual arguments, given
-    /// whether the call crosses an external boundary.
-    // TODO(validation) SDR[1108]: solc requires the compatible overload to be *unique*;
-    // this selects the first compatible candidate instead of erroring on
-    // ambiguous calls.
+    /// Finds the overload candidates in `type_ids` whose parameter list is
+    /// compatible with the call's arguments. The compatible overload has to be
+    /// unique, so all the candidates are considered rather than stopping at the
+    /// first match. The receiver/arity handling is shared between call styles;
+    /// `parameters_match` checks the (possibly receiver-adjusted) parameter
+    /// list against the actual arguments, given whether the call crosses an
+    /// external boundary.
     fn lookup_function_matching_arguments(
         &self,
         type_ids: &[TypeId],
         argument_count: usize,
         receiver_type_id: Option<TypeId>,
         parameters_match: impl Fn(&[ParameterDefinition], bool) -> bool,
-    ) -> Option<TypeId> {
-        type_ids.iter().copied().find(|type_id| {
+    ) -> OverloadMatch<TypeId> {
+        let matches = type_ids.iter().copied().filter(|type_id| {
             let Some(function_type) = self.candidate_function_type(*type_id) else {
                 return false;
             };
@@ -136,7 +158,8 @@ impl Pass<'_> {
             } else {
                 false
             }
-        })
+        });
+        OverloadMatch::from_matches(matches.collect())
     }
 
     pub(super) fn lookup_function_matching_positional_arguments(
@@ -144,7 +167,7 @@ impl Pass<'_> {
         type_ids: &[TypeId],
         argument_typings: &[Typing],
         receiver_type_id: Option<TypeId>,
-    ) -> Option<TypeId> {
+    ) -> OverloadMatch<TypeId> {
         self.lookup_function_matching_arguments(
             type_ids,
             argument_typings.len(),
@@ -202,7 +225,7 @@ impl Pass<'_> {
         type_ids: &[TypeId],
         argument_typings: &[(String, Typing)],
         receiver_type_id: Option<TypeId>,
-    ) -> Option<TypeId> {
+    ) -> OverloadMatch<TypeId> {
         self.lookup_function_matching_arguments(
             type_ids,
             argument_typings.len(),
@@ -268,7 +291,8 @@ impl Pass<'_> {
         &self,
         definition_ids: &[NodeId],
         argument_typings: &[Typing],
-    ) -> Option<NodeId> {
+    ) -> OverloadMatch<NodeId> {
+        let mut matches = Vec::new();
         for definition_id in definition_ids {
             let Some(parameters) = self.get_event_definition_parameters(*definition_id) else {
                 continue;
@@ -276,18 +300,19 @@ impl Pass<'_> {
             if parameters.len() == argument_typings.len() {
                 // argument count matches, check that all types are implicitly convertible
                 if self.parameters_match_positional_arguments(parameters, argument_typings, false) {
-                    return Some(*definition_id);
+                    matches.push(*definition_id);
                 }
             }
         }
-        None
+        OverloadMatch::from_matches(matches)
     }
 
     pub(super) fn lookup_event_matching_named_arguments(
         &self,
         definition_ids: &[NodeId],
         argument_typings: &[(String, Typing)],
-    ) -> Option<NodeId> {
+    ) -> OverloadMatch<NodeId> {
+        let mut matches = Vec::new();
         for definition_id in definition_ids {
             let Some(parameters) = self.get_event_definition_parameters(*definition_id) else {
                 continue;
@@ -301,10 +326,10 @@ impl Pass<'_> {
             if parameters.len() == argument_typings.len() {
                 // argument count matches, check that all types are implicitly convertible
                 if self.parameters_match_named_arguments(parameters, argument_typings, false) {
-                    return Some(*definition_id);
+                    matches.push(*definition_id);
                 }
             }
         }
-        None
+        OverloadMatch::from_matches(matches)
     }
 }
