@@ -332,7 +332,7 @@ pub trait slang_solidity_v2_semantic::context::SemanticFile
 pub fn slang_solidity_v2_semantic::context::SemanticFile::id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_semantic::context::SemanticFile::ir_root(&self) -> &slang_solidity_v2_ir::ir::nodes::SourceUnit
 pub fn slang_solidity_v2_semantic::context::SemanticFile::resolved_import_by_node_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&slang_solidity_v2_common::files::FileId>
-pub fn slang_solidity_v2_semantic::context::extract_import_paths_from_source_unit(&slang_solidity_v2_ir::ir::nodes::SourceUnit) -> alloc::vec::Vec<(slang_solidity_v2_common::nodes::NodeId, alloc::string::String)>
+pub fn slang_solidity_v2_semantic::context::extract_import_paths_from_source_unit(&slang_solidity_v2_ir::ir::nodes::SourceUnit) -> alloc::vec::Vec<(slang_solidity_v2_common::nodes::NodeId, alloc::string::String, core::ops::range::Range<usize>)>
 pub mod slang_solidity_v2_semantic::types
 pub mod slang_solidity_v2_semantic::types::literals
 pub fn slang_solidity_v2_semantic::types::literals::value_of_hex_string_literals(&[slang_solidity_v2_ir::ir::nodes::HexStringLiteral]) -> alloc::vec::Vec<u8>

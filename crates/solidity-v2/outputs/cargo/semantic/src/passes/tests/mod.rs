@@ -97,8 +97,8 @@ fn build_files(sources: &[(&str, &str)], language_version: LanguageVersion) -> V
 
             file.resolved_imports = extract_import_paths_from_source_unit(&file.ir_root)
                 .into_iter()
-                .filter(|(_, path)| sources.iter().any(|(name, _)| name == path))
-                .map(|(node_id, path)| (node_id, path.as_str().into()))
+                .filter(|(_, path, _)| sources.iter().any(|(name, _)| name == path))
+                .map(|(node_id, path, _)| (node_id, path.as_str().into()))
                 .collect();
 
             file

@@ -70,7 +70,7 @@ pub fn build_files(
             let import_paths = extract_import_paths_from_source_unit(&ir_root);
             let resolved_imports = import_paths
                 .iter()
-                .map(|(node_id, import_path)| {
+                .map(|(node_id, import_path, _)| {
                     let resolved_file_id = project
                         .import_resolver
                         .resolve_import(file_id, import_path)

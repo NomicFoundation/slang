@@ -15,7 +15,8 @@ pub mod slang_solidity_v2::compilation
 pub use slang_solidity_v2::compilation::FileId
 pub struct slang_solidity_v2::compilation::CompilationBuilder<C: slang_solidity_v2::compilation::CompilationBuilderConfig>
 impl<C: slang_solidity_v2::compilation::CompilationBuilderConfig> slang_solidity_v2::compilation::CompilationBuilder<C>
-pub fn slang_solidity_v2::compilation::CompilationBuilder<C>::add_file(&mut self, slang_solidity_v2_common::files::FileId)
+pub fn slang_solidity_v2::compilation::CompilationBuilder<C>::add_file(&mut self, slang_solidity_v2_common::files::FileId, alloc::string::String)
+pub fn slang_solidity_v2::compilation::CompilationBuilder<C>::add_files(&mut self, impl core::iter::traits::collect::IntoIterator<Item = (slang_solidity_v2_common::files::FileId, alloc::string::String)>)
 pub fn slang_solidity_v2::compilation::CompilationBuilder<C>::build(self) -> slang_solidity_v2::compilation::CompilationUnit
 pub fn slang_solidity_v2::compilation::CompilationBuilder<C>::create(slang_solidity_v2_common::versions::version::LanguageVersion, slang_solidity_v2_common::evm_targets::target::EvmTarget, C) -> slang_solidity_v2::compilation::CompilationBuilder<C>
 pub struct slang_solidity_v2::compilation::CompilationUnit
@@ -35,8 +36,7 @@ impl slang_solidity_v2::compilation::FileStruct
 pub fn slang_solidity_v2::compilation::FileStruct::ast(&self) -> slang_solidity_v2_ast::ast::nodes::SourceUnit
 pub fn slang_solidity_v2::compilation::FileStruct::id(&self) -> &slang_solidity_v2_common::files::FileId
 pub trait slang_solidity_v2::compilation::CompilationBuilderConfig
-pub fn slang_solidity_v2::compilation::CompilationBuilderConfig::read_file(&mut self, &slang_solidity_v2_common::files::FileId) -> core::result::Result<alloc::string::String, slang_solidity_v2_common::diagnostics::kinds::compilation::missing_file::MissingFile>
-pub fn slang_solidity_v2::compilation::CompilationBuilderConfig::resolve_import(&mut self, &slang_solidity_v2_common::files::FileId, &str) -> core::result::Result<slang_solidity_v2_common::files::FileId, slang_solidity_v2_common::diagnostics::kinds::compilation::unresolved_import::UnresolvedImport>
+pub fn slang_solidity_v2::compilation::CompilationBuilderConfig::resolve_import(&self, &slang_solidity_v2_common::files::FileId, &str) -> core::result::Result<slang_solidity_v2_common::files::FileId, slang_solidity_v2_common::diagnostics::kinds::compilation::unresolved_import::UnresolvedImport>
 pub type slang_solidity_v2::compilation::File = alloc::sync::Arc<slang_solidity_v2::compilation::FileStruct>
 pub mod slang_solidity_v2::diagnostics
 pub use slang_solidity_v2::diagnostics::Diagnostic
