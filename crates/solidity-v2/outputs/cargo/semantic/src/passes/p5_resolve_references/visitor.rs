@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use slang_solidity_v2_common::collections::{DefaultWithCapacity, Set};
+use slang_solidity_v2_common::diagnostics::kinds::resolution::MemberNotFound;
 use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
@@ -411,6 +412,15 @@ impl Visitor for Pass<'_> {
 
         // Store the typing
         self.binder.set_node_typing(node.id(), typing);
+
+        // A member the operand's type does not provide. An operand that did
+        // not resolve is already reported, so it is not reported again here.
+        if matches!(resolution, Resolution::Unresolved)
+            && !matches!(operand_typing, Typing::Unresolved)
+        {
+            let name = node.member.unparse().to_owned();
+            self.push_diagnostic(&node.member, MemberNotFound { name });
+        }
 
         // And create the reference for the member identifier.
         let reference = Reference::new(Arc::clone(&node.member), resolution);

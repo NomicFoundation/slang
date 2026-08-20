@@ -1151,6 +1151,20 @@ mod resolution {
         }
     }
 
+    mod member_not_found {
+        use super::*;
+
+        #[test]
+        fn missing_member() -> Result<()> {
+            run("resolution/member_not_found", "missing_member")
+        }
+
+        #[test]
+        fn no_overload_accepts() -> Result<()> {
+            run("resolution/member_not_found", "no_overload_accepts")
+        }
+    }
+
     mod no_matching_callable_declaration {
         use super::*;
 
