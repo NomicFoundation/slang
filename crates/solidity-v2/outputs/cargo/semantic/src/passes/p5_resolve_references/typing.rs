@@ -30,6 +30,7 @@ impl Pass<'_> {
     /// the callee of a call. Nothing can select from an overload set here, so
     /// one that reaches this point is sunk to `Unresolved` rather than handed
     /// on undetermined.
+    #[inline]
     pub(super) fn typing_of_expression(&mut self, node: &ir::Expression) -> Typing {
         match self.typing_of_callee_expression(node) {
             Typing::Undetermined(_) => {
@@ -92,6 +93,10 @@ impl Pass<'_> {
     }
 
     /// Reports `node` as a reference that matched more than one declaration.
+    /// Kept out of line so that reporting, which is rare, does not stop
+    /// [`Self::typing_of_expression`] from inlining into its many callers.
+    #[cold]
+    #[inline(never)]
     fn report_ambiguous_reference(&mut self, node: &ir::Expression) {
         if let Some(identifier) = reference_identifier_for_expression(node) {
             self.report_ambiguous_identifier(identifier);
