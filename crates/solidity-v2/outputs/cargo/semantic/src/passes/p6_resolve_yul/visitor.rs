@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use slang_solidity_v2_common::diagnostics::kinds::resolution::AmbiguousYulReference;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
@@ -170,6 +171,13 @@ impl Visitor for Pass<'_> {
             // identifier named after a Yul built-in.
             self.resolve_symbol_in_enclosing_solidity_scope(identifier.unparse())
         };
+
+        // Yul performs no overload resolution, so a name matching several
+        // declarations can't be narrowed down, not even when it's being called.
+        if matches!(resolution, Resolution::Ambiguous(_)) {
+            self.push_diagnostic(identifier, AmbiguousYulReference);
+        }
+
         self.record_solidity_reference(&resolution);
         let reference = Reference::new(Arc::clone(identifier), resolution.clone());
         self.binder.insert_reference(reference);

@@ -242,19 +242,15 @@ impl Pass<'_> {
         &mut self,
         node_id: NodeId,
         operator: UsingOperator,
-        operand: &ir::Expression,
+        operand_type_id: Option<TypeId>,
         operand_count: usize,
     ) {
-        let Some(operand_type_id) =
-            self.typing_of_expression(operand)
-                .as_type_id()
-                .filter(|&type_id| {
-                    matches!(
-                        self.types.get_type_by_id(type_id),
-                        Type::UserDefinedValue(_)
-                    )
-                })
-        else {
+        let Some(operand_type_id) = operand_type_id.filter(|&type_id| {
+            matches!(
+                self.types.get_type_by_id(type_id),
+                Type::UserDefinedValue(_)
+            )
+        }) else {
             return;
         };
 
