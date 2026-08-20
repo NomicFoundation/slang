@@ -639,7 +639,8 @@ impl Binder {
             // Those stay reachable qualified or externally, which resolve
             // under the other options. Only the bases are dropped, so a name
             // redeclared within one contract stays ambiguous.
-            if matches!(options, ResolveOptions::Internal)
+            if results.len() > most_derived_count
+                && matches!(options, ResolveOptions::Internal)
                 && let Some(definition_id) = results.first()
                 && matches!(
                     self.definitions.get(definition_id),

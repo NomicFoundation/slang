@@ -17,12 +17,13 @@ pub(super) enum OverloadMatch<T> {
 }
 
 impl<T> OverloadMatch<T> {
-    fn from_matches(matches: Vec<T>) -> Self {
-        let is_ambiguous = matches.len() > 1;
-        match matches.into_iter().next() {
-            None => Self::None,
-            Some(selected) if is_ambiguous => Self::Ambiguous(selected),
-            Some(selected) => Self::Unique(selected),
+    /// Draws only as far as it takes to tell one candidate from several: the
+    /// rest cannot change the outcome, and the first is kept either way.
+    fn from_matches(mut matches: impl Iterator<Item = T>) -> Self {
+        match (matches.next(), matches.next()) {
+            (None, _) => Self::None,
+            (Some(selected), None) => Self::Unique(selected),
+            (Some(selected), Some(_)) => Self::Ambiguous(selected),
         }
     }
 }
@@ -110,7 +111,7 @@ impl Pass<'_> {
         receiver_type_id: Option<TypeId>,
         parameters_match: impl Fn(&[ParameterDefinition], bool) -> bool,
     ) -> OverloadMatch<TypeId> {
-        let matches = type_ids.iter().copied().filter(|type_id| {
+        OverloadMatch::from_matches(type_ids.iter().copied().filter(|type_id| {
             let Some(function_type) = self.candidate_function_type(*type_id) else {
                 return false;
             };
@@ -158,8 +159,7 @@ impl Pass<'_> {
             } else {
                 false
             }
-        });
-        OverloadMatch::from_matches(matches.collect())
+        }))
     }
 
     pub(super) fn lookup_function_matching_positional_arguments(
@@ -292,19 +292,14 @@ impl Pass<'_> {
         definition_ids: &[NodeId],
         argument_typings: &[Typing],
     ) -> OverloadMatch<NodeId> {
-        let mut matches = Vec::new();
-        for definition_id in definition_ids {
+        OverloadMatch::from_matches(definition_ids.iter().copied().filter(|definition_id| {
             let Some(parameters) = self.get_event_definition_parameters(*definition_id) else {
-                continue;
+                return false;
             };
-            if parameters.len() == argument_typings.len() {
-                // argument count matches, check that all types are implicitly convertible
-                if self.parameters_match_positional_arguments(parameters, argument_typings, false) {
-                    matches.push(*definition_id);
-                }
-            }
-        }
-        OverloadMatch::from_matches(matches)
+            // argument count matches, check that all types are implicitly convertible
+            parameters.len() == argument_typings.len()
+                && self.parameters_match_positional_arguments(parameters, argument_typings, false)
+        }))
     }
 
     pub(super) fn lookup_event_matching_named_arguments(
@@ -312,24 +307,15 @@ impl Pass<'_> {
         definition_ids: &[NodeId],
         argument_typings: &[(String, Typing)],
     ) -> OverloadMatch<NodeId> {
-        let mut matches = Vec::new();
-        for definition_id in definition_ids {
+        OverloadMatch::from_matches(definition_ids.iter().copied().filter(|definition_id| {
             let Some(parameters) = self.get_event_definition_parameters(*definition_id) else {
-                continue;
+                return false;
             };
-
-            if parameters.iter().any(|parameter| parameter.name.is_none()) {
-                // cannot match if any parameter is unnamed
-                continue;
-            }
-
-            if parameters.len() == argument_typings.len() {
+            // cannot match if any parameter is unnamed
+            parameters.iter().all(|parameter| parameter.name.is_some())
                 // argument count matches, check that all types are implicitly convertible
-                if self.parameters_match_named_arguments(parameters, argument_typings, false) {
-                    matches.push(*definition_id);
-                }
-            }
-        }
-        OverloadMatch::from_matches(matches)
+                && parameters.len() == argument_typings.len()
+                && self.parameters_match_named_arguments(parameters, argument_typings, false)
+        }))
     }
 }
