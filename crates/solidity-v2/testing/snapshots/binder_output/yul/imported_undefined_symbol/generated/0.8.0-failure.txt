@@ -8,8 +8,6 @@ Parse errors:
    │                      ──────┬──────  
    │                            ╰──────── Error occurred here.
 ───╯
-[compilation/missing-file] Error: File not found
-   ─[slots.sol:0:0]
 
 ------------------------------------------------------------------------
 

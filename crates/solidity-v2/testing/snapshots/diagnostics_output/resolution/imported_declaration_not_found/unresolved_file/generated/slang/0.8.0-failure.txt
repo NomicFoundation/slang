@@ -1,9 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Diagnostics: 2
-
-[compilation/missing-file] Error: File not found.
-   ─[does-not-exist.sol:0:0]
+Diagnostics: 1
 
 [compilation/missing-imported-file] Error: Imported file is missing: does-not-exist.sol
    ╭─[main.sol:6:23]

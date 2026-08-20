@@ -4,7 +4,7 @@ use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig, FileId};
 use slang_solidity_v2_common::collections::SortedMap;
-use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
+use slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport;
 
 use super::report::binder_report;
 use super::report_data::ReportData;
@@ -12,19 +12,11 @@ use crate::snapshots::{self, SnapshotOutcome, SnapshotStatus, TestConfig, TestMa
 use crate::utils::multi_part_file::split_multi_file;
 use crate::utils::path_resolver;
 
-struct CompilationConfig {
-    files: SortedMap<FileId, String>,
-}
+struct ImportResolver;
 
-impl CompilationBuilderConfig for CompilationConfig {
-    fn read_file(&mut self, file_id: &FileId) -> Result<String, MissingFile> {
-        self.files.get(file_id).cloned().ok_or_else(|| MissingFile {
-            reason: "File not found".to_string(),
-        })
-    }
-
+impl CompilationBuilderConfig for ImportResolver {
     fn resolve_import(
-        &mut self,
+        &self,
         source_file_id: &FileId,
         import_path: &str,
     ) -> Result<FileId, UnresolvedImport> {
@@ -70,18 +62,8 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         &test_config,
         "generated",
         |version, target| {
-            let compilation_config = CompilationConfig {
-                files: files.clone(),
-            };
-            let mut builder = CompilationBuilder::create(version, target, compilation_config);
-
-            // While `builder.add_file()` recursively adds dependencies, so adding
-            // the root file would be enough, we don't want to depend on the
-            // ordering of the parts in `input.sol`. Calling `add_file()` on files
-            // already added is idempotent, so to be sure we add all parts.
-            for file in files.keys() {
-                builder.add_file(file.clone());
-            }
+            let mut builder = CompilationBuilder::create(version, target, ImportResolver);
+            builder.add_files(files.clone());
 
             let compilation = builder.build();
             let report_data = ReportData::prepare(&compilation, &files);

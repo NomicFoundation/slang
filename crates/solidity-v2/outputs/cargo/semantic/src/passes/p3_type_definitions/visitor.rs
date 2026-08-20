@@ -115,7 +115,8 @@ impl Visitor for Pass<'_> {
                     .resolve_in_scope(scope_id, symbol.name.unparse());
                 // Only report the symbol when there was a scope to search in the
                 // first place: an import whose file didn't resolve, or resolved to
-                // a file we couldn't read, is already reported on its own.
+                // a file that is not part of the compilation, is already reported
+                // on its own.
                 // Follow any aliases before deciding, since the symbol may be
                 // re-exported by a further import, and mutually importing files
                 // resolve to each other's aliases and to nothing else.
