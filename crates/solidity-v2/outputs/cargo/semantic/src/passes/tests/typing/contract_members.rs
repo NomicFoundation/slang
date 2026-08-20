@@ -1,9 +1,13 @@
 //! Typing of members reached through a contract, library or interface:
 //! `this`/`super`, getters, data locations, and external signatures.
 
-use slang_solidity_v2_common::diagnostics::kinds::resolution::AmbiguousReference;
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
+use slang_solidity_v2_common::diagnostics::kinds::resolution::{
+    AmbiguousReference, MemberNotFound, NoMatchingCallableDeclaration,
+};
 use slang_solidity_v2_ir::ir::{self};
 
+use super::super::diagnostic_kinds;
 use super::{Analysis, expression, expression_statement_types, expressions};
 use crate::binder::Typing;
 use crate::types::{
@@ -442,7 +446,15 @@ fn test_partially_applied_function_is_not_convertible() {
         }        
         "#;
 
-    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let analysis = Analysis::of_source(source).run();
+    // The two non-convertible arguments match no overload of their call.
+    assert_eq!(
+        vec![
+            DiagnosticKind::from(NoMatchingCallableDeclaration),
+            DiagnosticKind::from(NoMatchingCallableDeclaration)
+        ],
+        diagnostic_kinds(&analysis.diagnostics)
+    );
     let mut typings = statement_types(&analysis, "Test", "__test").into_iter();
 
     assert!(
@@ -497,10 +509,17 @@ fn test_event_selector() {
     );
 
     // An anonymous event emits no `topics[0]`, so it exposes no `selector`.
-    let (type_, _) = expression("E.selector")
-        .with_members("event E(uint a) anonymous;")
-        .into_type();
-    assert_eq!(None, type_);
+    assert_eq!(
+        Some(
+            MemberNotFound {
+                name: "selector".to_owned()
+            }
+            .into()
+        ),
+        expression("E.selector")
+            .with_members("event E(uint a) anonymous;")
+            .into_diagnostic(),
+    );
 }
 
 #[test]

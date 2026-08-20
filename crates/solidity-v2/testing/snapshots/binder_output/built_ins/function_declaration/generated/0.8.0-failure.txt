@@ -1,5 +1,30 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+[resolution/member-not-found] Error: Member 'address' not found or not visible after argument-dependent lookup.
+    ╭─[input.sol:16:15]
+    │
+ 16 │         C.ext.address; // not ok
+    │               ───┬───  
+    │                  ╰───── Error occurred here.
+────╯
+[resolution/member-not-found] Error: Member 'address' not found or not visible after argument-dependent lookup.
+    ╭─[input.sol:22:13]
+    │
+ 22 │         I.i.address; // not ok
+    │             ───┬───  
+    │                ╰───── Error occurred here.
+────╯
+[resolution/member-not-found] Error: Member 'address' not found or not visible after argument-dependent lookup.
+    ╭─[input.sol:25:15]
+    │
+ 25 │         C.pub.address; // not ok
+    │               ───┬───  
+    │                  ╰───── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
 Definitions (10):
 - Def: #1 ["I" @ input.sol:1:11] (interface)
 - Def: #2 ["i" @ input.sol:2:14] (function, type: function () returns void)
