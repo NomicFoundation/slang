@@ -3,6 +3,10 @@
 // Remove this override when we upgrade.
 #![allow(clippy::self_named_module_files)]
 
+// HACK(survey): keeps the dependency edge (and Cargo.lock) intact while the
+// alias-conditional scan temporarily replaces the v1/v2 parser comparison.
+use solidity_v2_testing_utils as _;
+
 mod command;
 mod events;
 mod reporting;
