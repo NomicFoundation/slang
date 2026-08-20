@@ -3,7 +3,7 @@
 
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
-    AmbiguousReference, NoMatchingCallableDeclaration,
+    AmbiguousReference, MemberNotFound, NoMatchingCallableDeclaration,
 };
 use slang_solidity_v2_ir::ir;
 
@@ -520,10 +520,17 @@ fn test_event_selector() {
     );
 
     // An anonymous event emits no `topics[0]`, so it exposes no `selector`.
-    let (type_, _) = expression("E.selector")
-        .with_members("event E(uint a) anonymous;")
-        .into_type();
-    assert_eq!(None, type_);
+    assert_eq!(
+        Some(
+            MemberNotFound {
+                name: "selector".to_owned()
+            }
+            .into()
+        ),
+        expression("E.selector")
+            .with_members("event E(uint a) anonymous;")
+            .into_diagnostic(),
+    );
 }
 
 #[test]

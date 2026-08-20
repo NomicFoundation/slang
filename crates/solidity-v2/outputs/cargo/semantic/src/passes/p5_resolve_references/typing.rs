@@ -1,6 +1,6 @@
 use ruint::aliases::{U160, U256};
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
-    AmbiguousReference, NoMatchingCallableDeclaration,
+    AmbiguousReference, MemberNotFound, NoMatchingCallableDeclaration,
 };
 use slang_solidity_v2_common::diagnostics::kinds::type_system::CannotCallViaContractTypeName;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -55,23 +55,38 @@ impl Pass<'_> {
     }
 
     /// Narrows an overload lookup for a call down to the selected candidate,
-    /// reporting the call's operand when several candidates accept the
-    /// arguments. The selected candidate is returned either way, so an
-    /// ambiguous call can still be typed and its reference still points
-    /// somewhere.
+    /// reporting when the arguments select none or several of them. A
+    /// candidate is returned whenever there is one, so an ambiguous call can
+    /// still be typed and its reference still points somewhere.
     pub(super) fn select_overload<T>(
         &mut self,
         operand: &ir::Expression,
         overload_match: OverloadMatch<T>,
     ) -> Option<T> {
-        // A member that no overload accepts is reported against the operand's
-        // type rather than the name, and is not handled yet.
-        let report_no_match = !matches!(operand, ir::Expression::MemberAccessExpression(_));
-        self.select_overload_candidate(
-            reference_identifier_for_expression(operand),
-            overload_match,
-            report_no_match,
-        )
+        let identifier = reference_identifier_for_expression(operand);
+        match overload_match {
+            OverloadMatch::None => {
+                if let Some(identifier) = identifier {
+                    // Ruled out by the arguments: on a member that reads as
+                    // the operand's type not providing it, on a bare name as
+                    // a failed declaration lookup.
+                    if matches!(operand, ir::Expression::MemberAccessExpression(_)) {
+                        let name = identifier.unparse().to_owned();
+                        self.push_diagnostic(identifier, MemberNotFound { name });
+                    } else {
+                        self.push_diagnostic(identifier, NoMatchingCallableDeclaration);
+                    }
+                }
+                None
+            }
+            OverloadMatch::Unique(selected) => Some(selected),
+            OverloadMatch::Ambiguous(selected) => {
+                if let Some(identifier) = identifier {
+                    self.report_ambiguous_identifier(identifier);
+                }
+                Some(selected)
+            }
+        }
     }
 
     /// [`Self::select_overload`] for an emitted event, whose name is an
@@ -81,27 +96,14 @@ impl Pass<'_> {
         identifier: &ir::Identifier,
         overload_match: OverloadMatch<T>,
     ) -> Option<T> {
-        self.select_overload_candidate(Some(identifier), overload_match, true)
-    }
-
-    fn select_overload_candidate<T>(
-        &mut self,
-        identifier: Option<&ir::Identifier>,
-        overload_match: OverloadMatch<T>,
-        report_no_match: bool,
-    ) -> Option<T> {
         match overload_match {
             OverloadMatch::None => {
-                if report_no_match && let Some(identifier) = identifier {
-                    self.push_diagnostic(identifier, NoMatchingCallableDeclaration);
-                }
+                self.push_diagnostic(identifier, NoMatchingCallableDeclaration);
                 None
             }
             OverloadMatch::Unique(selected) => Some(selected),
             OverloadMatch::Ambiguous(selected) => {
-                if let Some(identifier) = identifier {
-                    self.report_ambiguous_identifier(identifier);
-                }
+                self.report_ambiguous_identifier(identifier);
                 Some(selected)
             }
         }
