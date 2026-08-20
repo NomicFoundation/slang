@@ -1,5 +1,7 @@
 use ruint::aliases::{U160, U256};
-use slang_solidity_v2_common::diagnostics::kinds::resolution::AmbiguousReference;
+use slang_solidity_v2_common::diagnostics::kinds::resolution::{
+    AmbiguousReference, NoMatchingCallableDeclaration,
+};
 use slang_solidity_v2_common::diagnostics::kinds::type_system::CannotCallViaContractTypeName;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -62,7 +64,14 @@ impl Pass<'_> {
         operand: &ir::Expression,
         overload_match: OverloadMatch<T>,
     ) -> Option<T> {
-        self.select_overload_candidate(reference_identifier_for_expression(operand), overload_match)
+        // A member that no overload accepts is reported against the operand's
+        // type rather than the name, and is not handled yet.
+        let report_no_match = !matches!(operand, ir::Expression::MemberAccessExpression(_));
+        self.select_overload_candidate(
+            reference_identifier_for_expression(operand),
+            overload_match,
+            report_no_match,
+        )
     }
 
     /// [`Self::select_overload`] for an emitted event, whose name is an
@@ -72,16 +81,22 @@ impl Pass<'_> {
         identifier: &ir::Identifier,
         overload_match: OverloadMatch<T>,
     ) -> Option<T> {
-        self.select_overload_candidate(Some(identifier), overload_match)
+        self.select_overload_candidate(Some(identifier), overload_match, true)
     }
 
     fn select_overload_candidate<T>(
         &mut self,
         identifier: Option<&ir::Identifier>,
         overload_match: OverloadMatch<T>,
+        report_no_match: bool,
     ) -> Option<T> {
         match overload_match {
-            OverloadMatch::None => None,
+            OverloadMatch::None => {
+                if report_no_match && let Some(identifier) = identifier {
+                    self.push_diagnostic(identifier, NoMatchingCallableDeclaration);
+                }
+                None
+            }
             OverloadMatch::Unique(selected) => Some(selected),
             OverloadMatch::Ambiguous(selected) => {
                 if let Some(identifier) = identifier {

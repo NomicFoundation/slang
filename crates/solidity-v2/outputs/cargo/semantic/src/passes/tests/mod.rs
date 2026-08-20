@@ -8,5 +8,6 @@ mod typing;
 mod user_defined_operator_functions;
 
 use support::{
-    Analyse, Analysis, AnalysisBuilder, diagnostic_kind, find_function, only_diagnostic,
+    Analyse, Analysis, AnalysisBuilder, diagnostic_kind, diagnostic_kinds, find_function,
+    only_diagnostic,
 };
