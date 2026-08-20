@@ -57,3 +57,32 @@ contract Test is ITest, Base {
 }
 "#,
 );
+
+define_fixture!(
+    LibraryAbi,
+    file: "main.sol", r#"
+library L {
+    struct S { mapping(uint => uint) m; }
+    type U is uint64;
+
+    function f(S storage s, uint x) external returns (uint) {}
+    function g(uint[] storage xs) public {}
+    function h(uint x) external pure returns (uint) {}
+    function i(uint x) internal pure returns (uint) {}
+    function j(U u) external pure {}
+}
+"#,
+);
+
+define_fixture!(
+    LibraryUdvtAbi,
+    file: "main.sol", r#"
+library L {
+    type U is uint64;
+
+    function k(U[] memory xs) external pure {}
+    function q(U[2] memory xs) external pure {}
+    function m(mapping(uint256 => U) storage x) external {}
+}
+"#,
+);

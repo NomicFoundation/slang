@@ -2045,7 +2045,7 @@ fn test_explicit_enum_cast() {
 #[test]
 fn test_meta_type_internal_names() {
     // Meta-types print in solc's `type(T)` notation: `type(uint256)` for an
-    // elementary type, `type(E)` for a named definition.
+    // elementary type, `type(C.E)` for a named definition.
     let mut id_generator = NodeIdGenerator::default();
     let source = r#"
         contract C {
@@ -2102,7 +2102,7 @@ fn test_meta_type_internal_names() {
         .node_typing(enum_node_id)
         .as_type_id()
         .expect("enum name is typed");
-    assert_eq!(context.type_internal_name(enum_meta_id), "type(E)");
+    assert_eq!(context.type_internal_name(enum_meta_id), "type(C.E)");
 }
 
 #[test]

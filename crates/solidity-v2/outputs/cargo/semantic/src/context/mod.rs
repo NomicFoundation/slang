@@ -18,9 +18,10 @@ use crate::passes::{
     p5_resolve_references, p6_resolve_yul, p7_contract_properties, p8_code_analysis,
 };
 use crate::types::{
-    ArraySliceType, ArrayType, ByteArrayType, ContractType, EnumType, FixedPointNumberType,
-    FixedSizeArrayType, IntegerType, InterfaceType, LibraryType, MappingType, MetaType, StructType,
-    TupleType, Type, TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
+    ArraySliceType, ArrayType, ByteArrayType, ContractType, DataLocation, EnumType,
+    FixedPointNumberType, FixedSizeArrayType, IntegerType, InterfaceType, LibraryType, MappingType,
+    MetaType, StructType, TupleType, Type, TypeId, TypeRegistry, UserDefinedValueType,
+    UserMetaType,
 };
 
 mod contract_data;
@@ -258,13 +259,22 @@ impl SemanticContext {
         reference.resolution.as_definition_id()
     }
 
+    /// Qualifies a nested definition with its enclosing scope, as solc's
+    /// `canonicalName` does: `L.S`, `C.E`.
     pub(crate) fn definition_canonical_name(&self, definition_id: NodeId) -> String {
-        self.binder
+        let name = self
+            .binder
             .find_definition_by_id(definition_id)
             .unwrap()
             .identifier()
-            .unparse()
-            .to_string()
+            .unparse();
+        match self.binder.enclosing_definition_node_id(definition_id) {
+            Some(enclosing) => format!(
+                "{scope}.{name}",
+                scope = self.definition_canonical_name(enclosing)
+            ),
+            None => name.to_string(),
+        }
     }
 
     pub fn type_internal_name(&self, type_id: TypeId) -> String {
@@ -340,6 +350,50 @@ impl SemanticContext {
         }
     }
 
+    pub fn type_library_name(&self, type_id: TypeId) -> Option<String> {
+        let mut name = self.type_library_element_name(type_id)?;
+        if self.types.get_type_by_id(type_id).data_location() == Some(DataLocation::Storage) {
+            name.push_str(" storage");
+        }
+        Some(name)
+    }
+
+    /// A user-defined value type is spelled as the type it wraps, under an
+    /// array as well as on its own. A mapping keeps the wrapper's name
+    /// (matching solc, which has no ABI spelling for one).
+    fn type_library_element_name(&self, type_id: TypeId) -> Option<String> {
+        let name = match self.types.get_type_by_id(type_id) {
+            Type::UserDefinedValue(UserDefinedValueType { definition_id }) => {
+                self.type_internal_name(self.user_defined_value_target_type_id(*definition_id)?)
+            }
+            Type::Array(ArrayType { element_type, .. }) => {
+                format!(
+                    "{element}[]",
+                    element = self.type_library_element_name(*element_type)?
+                )
+            }
+            Type::FixedSizeArray(FixedSizeArrayType {
+                element_type, size, ..
+            }) => {
+                format!(
+                    "{element}[{size}]",
+                    element = self.type_library_element_name(*element_type)?
+                )
+            }
+            _ => self.type_internal_name(type_id),
+        };
+        Some(name)
+    }
+
+    fn user_defined_value_target_type_id(&self, definition_id: NodeId) -> Option<TypeId> {
+        let Definition::UserDefinedValueType(user_defined_value) =
+            self.binder.find_definition_by_id(definition_id)?
+        else {
+            return None;
+        };
+        user_defined_value.target_type_id
+    }
+
     pub(crate) const ADDRESS_BYTE_SIZE: usize = 20;
     pub(crate) const SELECTOR_SIZE: usize = 4;
 
@@ -411,17 +465,11 @@ impl SemanticContext {
                 visited_structs.remove(definition_id);
                 Some(Slots(builder.slots_used()?))
             }
-            Type::UserDefinedValue(UserDefinedValueType { definition_id }) => {
-                let Definition::UserDefinedValueType(user_defined_value) =
-                    self.binder.find_definition_by_id(*definition_id)?
-                else {
-                    return None;
-                };
-                self.storage_size_of_type_id_impl(
-                    user_defined_value.target_type_id?,
+            Type::UserDefinedValue(UserDefinedValueType { definition_id }) => self
+                .storage_size_of_type_id_impl(
+                    self.user_defined_value_target_type_id(*definition_id)?,
                     visited_structs,
-                )
-            }
+                ),
 
             Type::ArraySlice(_)
             | Type::Library(_)

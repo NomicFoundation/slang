@@ -4,7 +4,7 @@ use crate::abi::{
     AbiConstructor, AbiEntry, AbiFallback, AbiFunction, AbiMutability, AbiReceive,
     selector_from_signature,
 };
-use crate::ast::{FunctionDefinitionStruct, FunctionVisibility};
+use crate::ast::{Definition, FunctionDefinitionStruct, FunctionVisibility};
 
 impl FunctionDefinitionStruct {
     pub fn is_externally_visible(&self) -> bool {
@@ -89,11 +89,30 @@ impl FunctionDefinitionStruct {
         Some(format!("{name}({parameters})"))
     }
 
+    /// Returns the signature for this function using library type names for
+    /// parameters: scope-qualified internal names, a trailing ` storage` on
+    /// storage references, and a user-defined value type unwrapped to its
+    /// underlying type — none of which the canonical form can spell.
+    pub fn compute_library_signature(&self) -> Option<String> {
+        let name = self.ir_node.name.as_ref()?.unparse();
+        let parameters = self.parameters().compute_library_signature()?;
+        Some(format!("{name}({parameters})"))
+    }
+
+    /// Returns the signature a selector is hashed from: the library form for a
+    /// library member, the canonical form otherwise.
+    pub fn compute_selector_signature(&self) -> Option<String> {
+        match self.enclosing_definition() {
+            Some(Definition::Library(_)) => self.compute_library_signature(),
+            _ => self.compute_canonical_signature(),
+        }
+    }
+
     pub fn compute_selector(&self) -> Option<u32> {
         if !self.is_externally_visible() {
             return None;
         }
-        self.compute_canonical_signature()
+        self.compute_selector_signature()
             .map(|sig| selector_from_signature(&sig))
     }
 }
