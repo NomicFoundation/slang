@@ -1,10 +1,15 @@
 //! Typing of members reached through a contract, library or interface:
 //! `this`/`super`, getters, data locations, and external signatures.
 
-use slang_solidity_v2_common::diagnostics::kinds::resolution::AmbiguousReference;
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
+use slang_solidity_v2_common::diagnostics::kinds::resolution::{
+    AmbiguousReference, NoMatchingCallableDeclaration,
+};
 use slang_solidity_v2_ir::ir;
 
-use super::{Analyse, Analysis, expression, expression_statement_types, expressions};
+use super::{
+    Analyse, Analysis, diagnostic_kinds, expression, expression_statement_types, expressions,
+};
 use crate::binder::Typing;
 use crate::types::{
     ByteArrayType, BytesType, ContractType, DataLocation, IntegerType, LibraryType, StringType,
@@ -452,9 +457,15 @@ fn test_partially_applied_function_is_not_convertible() {
         }        
         "#;
 
-    let analysis = Analysis::of_source(source)
-        .run(Analyse::References)
-        .expect_no_diagnostics();
+    let analysis = Analysis::of_source(source).run(Analyse::References);
+    // The two non-convertible arguments match no overload of their call.
+    assert_eq!(
+        vec![
+            DiagnosticKind::from(NoMatchingCallableDeclaration),
+            DiagnosticKind::from(NoMatchingCallableDeclaration)
+        ],
+        diagnostic_kinds(&analysis.diagnostics)
+    );
     let mut typings = statement_types(&analysis, "Test", "__test").into_iter();
 
     assert!(

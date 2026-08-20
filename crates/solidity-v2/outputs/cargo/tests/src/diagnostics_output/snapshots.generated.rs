@@ -72,6 +72,14 @@ mod resolution {
         }
 
         #[test]
+        fn overloaded_event_selector() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_event_selector",
+            )
+        }
+
+        #[test]
         fn overloaded_function_as_value() -> Result<()> {
             run(
                 "resolution/ambiguous_reference",
@@ -1268,6 +1276,34 @@ mod resolution {
         #[test]
         fn event_selector() -> Result<()> {
             run("resolution/incompatible_built_in_version", "event_selector")
+        }
+    }
+
+    mod no_matching_callable_declaration {
+        use super::*;
+
+        #[test]
+        fn named_arguments() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "named_arguments",
+            )
+        }
+
+        #[test]
+        fn overloaded_event() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "overloaded_event",
+            )
+        }
+
+        #[test]
+        fn positional_arguments() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "positional_arguments",
+            )
         }
     }
 }

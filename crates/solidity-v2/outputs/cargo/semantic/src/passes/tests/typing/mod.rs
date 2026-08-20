@@ -11,7 +11,7 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdentity};
 
-use super::{Analyse, Analysis, diagnostic_kind, find_function};
+use super::{Analyse, Analysis, diagnostic_kind, diagnostic_kinds, find_function};
 use crate::binder::Binder;
 use crate::types::{Type, TypeRegistry};
 

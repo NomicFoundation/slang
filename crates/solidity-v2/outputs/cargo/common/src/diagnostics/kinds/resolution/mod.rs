@@ -11,6 +11,7 @@ mod identifier_redeclaration;
 mod imported_declaration_not_found;
 mod incompatible_built_in_target;
 mod incompatible_built_in_version;
+mod no_matching_callable_declaration;
 mod non_free_or_library_function_in_using_directive;
 
 pub use ambiguous_reference::AmbiguousReference;
@@ -26,6 +27,7 @@ pub use identifier_redeclaration::IdentifierRedeclaration;
 pub use imported_declaration_not_found::ImportedDeclarationNotFound;
 pub use incompatible_built_in_target::IncompatibleBuiltInTarget;
 pub use incompatible_built_in_version::IncompatibleBuiltInVersion;
+pub use no_matching_callable_declaration::NoMatchingCallableDeclaration;
 pub use non_free_or_library_function_in_using_directive::NonFreeOrLibraryFunctionInUsingDirective;
 use serde::Serialize;
 
@@ -64,6 +66,8 @@ define_diagnostic_kind! {
         /// A Yul identifier matches more than one declaration, which Yul cannot
         /// disambiguate.
         AmbiguousYulReference(AmbiguousYulReference),
+        /// No overload of a call's operand accepts the arguments given.
+        NoMatchingCallableDeclaration(NoMatchingCallableDeclaration),
 
         /// A symbol in a `using {...} for` directive did not resolve to a
         /// unique function.

@@ -467,6 +467,15 @@ pub(super) fn diagnostic_kind(diagnostics: &DiagnosticCollection) -> Option<Diag
     Some(first.kind().clone())
 }
 
+/// The kind of every diagnostic in `diagnostics`, in the order reported, for
+/// tests expecting more than one.
+pub(super) fn diagnostic_kinds(diagnostics: &DiagnosticCollection) -> Vec<DiagnosticKind> {
+    diagnostics
+        .iter()
+        .map(|diagnostic| diagnostic.kind().clone())
+        .collect()
+}
+
 /// The single diagnostic in `diagnostics`, for tests that assert on more of it
 /// than its kind. Panics unless there is exactly one; reach for
 /// [`diagnostic_kind`] where reporting nothing is also a valid outcome.
