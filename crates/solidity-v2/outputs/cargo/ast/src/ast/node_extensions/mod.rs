@@ -13,9 +13,10 @@ pub use contract_base::ContractBase;
 
 mod expression;
 mod function_call_expression;
+mod function_definition;
 mod identifier;
 mod identifier_path;
-mod interface_members;
+mod library_definition;
 mod source_unit;
 mod state_variable_definition;
 mod string_expression;

@@ -163,11 +163,31 @@ impl Pass<'_> {
         })))
     }
 
+    /// Computes the type an externally visible function is dispatched through,
+    /// or `None` if it is never dispatched by selector. Only a `Regular`
+    /// function is: a constructor, fallback or receive carries no name to
+    /// select on.
+    pub(super) fn compute_externalized_type(
+        &mut self,
+        function_definition: &ir::FunctionDefinition,
+        type_id: TypeId,
+    ) -> Option<TypeId> {
+        let Type::Function(function_type) = self.types.get_type_by_id(type_id) else {
+            unreachable!("function definition is not typed as a function");
+        };
+        if !function_type.is_externally_visible()
+            || !matches!(function_definition.kind, ir::FunctionKind::Regular)
+        {
+            return None;
+        }
+        Some(self.types.externalize_function_type(type_id))
+    }
+
     /// Computes the type of the getter generated for a public state variable,
     /// together with the struct members its return type is built from.
     pub(super) fn compute_getter_type(
         &mut self,
-        receiver_type_id: TypeId,
+        receiver_type_id: Option<TypeId>,
         definition_id: NodeId,
         type_id: TypeId,
     ) -> Option<(TypeId, Vec<NodeId>)> {
@@ -281,7 +301,7 @@ impl Pass<'_> {
 
         let getter_type = Type::Function(FunctionType {
             definition_id: Some(definition_id),
-            implicit_receiver_type: Some(receiver_type_id),
+            implicit_receiver_type: receiver_type_id,
             parameter_types,
             return_type,
             visibility: FunctionTypeVisibility::External,

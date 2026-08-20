@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 
+use crate::ast::{Definition, LibraryDefinition};
 use crate::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit, FileId};
 use crate::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
 use crate::utils::LanguageVersion;
@@ -86,6 +87,16 @@ pub(super) fn build_compilation_unit_from_fixture(files: &[FixtureFile]) -> Arc<
     );
 
     Arc::new(unit)
+}
+
+pub(super) fn find_library(unit: &CompilationUnit, name: &str) -> LibraryDefinition {
+    unit.all_definitions()
+        .filter_map(|definition| match definition {
+            Definition::Library(library) => Some(library),
+            _ => None,
+        })
+        .find(|library| library.name().name() == name)
+        .unwrap_or_else(|| panic!("library `{name}` is declared"))
 }
 
 // Fixture build tests

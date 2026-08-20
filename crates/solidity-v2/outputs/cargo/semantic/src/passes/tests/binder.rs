@@ -299,9 +299,12 @@ contract Test is Base {
 
     // The pass registers new types for: contracts, mappings, structs, enums,
     // function types, getter types, and a `Type::UserMetaType` for each
-    // type-naming definition (the two contracts, the struct, and the enum).
+    // type-naming definition (the two contracts, the struct, and the enum),
+    // plus one externalized function type: `foo` is `public`, so its external
+    // form is a distinct type, while `bar` is already `external` and takes no
+    // calldata, so its external form is its declared type.
     let registered_types = types_after - types_before;
-    assert_eq!(registered_types, 11);
+    assert_eq!(registered_types, 12);
 }
 
 #[test]
