@@ -7,6 +7,7 @@ publish = false
 
 [dependencies]
 anyhow = { workspace = true }
+divan = { workspace = true }
 gungraun = { workspace = true }
 Inflector = { workspace = true }
 infra_utils = { workspace = true }
@@ -14,6 +15,7 @@ semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 slang_solidity = { workspace = true, features = ["__private_backend_api", "__private_testing_utils"] }
+slang_solidity_v2 = { workspace = true }
 slang_solidity_v2_ast = { workspace = true }
 slang_solidity_v2_common = { workspace = true }
 slang_solidity_v2_cst = { workspace = true }
@@ -39,6 +41,12 @@ harness = false
 
 [[bench]]
 name = "slang_v2"
+harness = false
+
+# Wall-clock (`divan`) counterpart of the `slang_v2` suite above. See the
+# module docs in `benches/slang_v2_wall_clock/main.rs` for why both exist.
+[[bench]]
+name = "slang_v2_wall_clock"
 harness = false
 
 [lints]

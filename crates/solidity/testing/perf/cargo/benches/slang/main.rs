@@ -22,6 +22,7 @@ use tests::slang::query::setup as query_setup;
 
 mod __dependencies_used_in_lib__ {
     use anyhow as _;
+    use divan as _;
     use inflector as _;
     use infra_utils as _;
     use paste as _;
@@ -29,6 +30,7 @@ mod __dependencies_used_in_lib__ {
     use serde as _;
     use serde_json as _;
     use slang_solidity as _;
+    use slang_solidity_v2 as _;
     use slang_solidity_v2_ast as _;
     use slang_solidity_v2_common as _;
     use slang_solidity_v2_cst as _;
