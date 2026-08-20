@@ -738,15 +738,10 @@ impl TypeRegistry {
         Some(element_type_id)
     }
 
-    // Returns true if two parameter lists are indistinguishable once normalised
-    // for an external call, ie. the two declarations they belong to could not be
-    // told apart by a caller naming either of them.
-    //
-    // Normalisation only reaches the data location: `memory` and `calldata` are
-    // interchangeable because the ABI encodes both the same way, while
-    // `storage` stays distinct (a storage pointer is a different kind of
-    // argument altogether). This is the same relation as the one relaxing
-    // external overrides, applied to both lists in either direction.
+    // Returns true if two parameter lists are indistinguishable for the purpose
+    // of detecting duplicate declarations.  This is done normalising the types
+    // for an external call, even though for the duplicate check the visibility
+    // plays no part.
     pub(crate) fn parameter_lists_are_indistinguishable(
         &self,
         left: &[TypeId],

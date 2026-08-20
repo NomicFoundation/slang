@@ -6,7 +6,11 @@ function f(uint256 a) pure returns (uint256) {
     return a;
 }
 
-function g(uint256 a) pure returns (uint256) {
+// --- path: other.sol
+// SPDX-License-Identifier: MIT
+pragma solidity *;
+
+function f(uint256 a) pure returns (uint256) {
     return a + 1;
 }
 
@@ -15,13 +19,12 @@ function g(uint256 a) pure returns (uint256) {
 pragma solidity *;
 
 // A qualified import binds one name to the whole file, so the declarations it
-// holds never join the importing file's overload sets — not even the two
-// indistinguishable ones below.
+// holds never join the importing file's set.
 import "./declarations.sol" as ns;
-import {f as aliased} from "./declarations.sol";
+import "./other.sol";
 
 contract C {
     function callThem() public pure returns (uint256) {
-        return ns.f(1) + ns.g(2) + aliased(3);
+        return ns.f(1) + f(1);
     }
 }

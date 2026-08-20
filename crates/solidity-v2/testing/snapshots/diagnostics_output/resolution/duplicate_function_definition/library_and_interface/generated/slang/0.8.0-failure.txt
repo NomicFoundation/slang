@@ -11,9 +11,9 @@ Diagnostics: 2
 ───╯
 
 [resolution/duplicate-function-definition] Error: Function with same name and parameter types defined twice.
-    ╭─[input.sol:21:5]
+    ╭─[input.sol:22:5]
     │
- 21 │     function duplicated(address b) external returns (bool);
+ 22 │     function duplicated(address b) external returns (bool);
     │     ───────────────────────────┬───────────────────────────  
     │                                ╰───────────────────────────── Error occurred here.
 ────╯

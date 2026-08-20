@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[resolution/duplicate-function-definition] Error: Function with same name and parameter types defined twice.
+   ╭─[s2.sol:6:1]
+   │
+ 6 │ function f() pure returns (uint256) {
+   │ ──────────────────┬─────────────────  
+   │                   ╰─────────────────── Error occurred here.
+───╯
+
+[resolution/duplicate-function-definition] Error: Function with same name and parameter types defined twice.
+    ╭─[s2.sol:10:1]
+    │
+ 10 │ function g() pure returns (uint256) {
+    │ ──────────────────┬─────────────────  
+    │                   ╰─────────────────── Error occurred here.
+────╯

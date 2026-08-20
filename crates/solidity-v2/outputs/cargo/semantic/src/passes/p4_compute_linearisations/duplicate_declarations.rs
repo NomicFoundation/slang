@@ -60,13 +60,17 @@ pub(super) enum Overloads<'a> {
 
 impl<'a> Overloads<'a> {
     /// Records `definition` against the declarations already occupying this
-    /// name, reporting whether it duplicates one of them.
+    /// name. Returns true if it duplicates one of them.
     fn record(
         &mut self,
         binder: &Binder,
         types: &TypeRegistry,
         definition: &'a Definition,
     ) -> bool {
+        let Some(parameter_types) = parameter_types_of(binder, types, definition) else {
+            return false;
+        };
+
         // The second declaration is what forces the first one's signature.
         // A declaration whose parameters aren't all typed yields none and takes
         // no part in the comparison, exactly as if it were never recorded, so
@@ -79,22 +83,22 @@ impl<'a> Overloads<'a> {
         let Self::Several(signatures) = self else {
             unreachable!("a single declaration was promoted just above");
         };
-        let Some(parameter_types) = parameter_types_of(binder, types, definition) else {
-            return false;
-        };
         if clashes_with_any(types, signatures, &parameter_types) {
             return true;
         }
         signatures.push(parameter_types);
+
+        // No duplication; the signature type is unique
         false
     }
 }
 
 impl<'a> HierarchyChecker<'a> {
     /// Reports this type's own functions that duplicate one declared before
-    /// them. Only the declarations written here take part, so this runs for the
-    /// head of the linearisation alone. Every type in the hierarchy gets its
-    /// own [`HierarchyChecker`] run, and so its own turn as the head.
+    /// them. Only the declarations written at the type being checked take part,
+    /// so this runs for the head of the linearisation alone. Every type in the
+    /// hierarchy gets its own [`HierarchyChecker`] run, and so its own turn as
+    /// the head.
     pub(super) fn check_duplicate_functions(&mut self, members: &[&'a Definition]) {
         let binder = self.binder;
         let types = self.types;
@@ -179,7 +183,7 @@ pub(super) fn check_file_scopes(
     let mut reported: Set<NodeId> = Set::default();
 
     for file_scope in binder.file_scopes() {
-        let mut visible: Map<&str, Vec<NodeId>> = Map::default();
+        let mut visible: Map<&str, SmallVec<[NodeId; 1]>> = Map::default();
         collect_visible_declarations(binder, file_scope, &mut visible);
 
         for definition_ids in visible.values_mut() {
@@ -237,14 +241,19 @@ pub(super) fn check_file_scopes(
 fn collect_visible_declarations<'a>(
     binder: &'a Binder,
     file_scope: &'a FileScope,
-    visible: &mut Map<&'a str, Vec<NodeId>>,
+    visible: &mut Map<&'a str, SmallVec<[NodeId; 1]>>,
 ) {
-    // The closure is only precomputed for files that do have unqualified
-    // imports; without any, a file sees just its own declarations.
-    if file_scope.default_import_closure.is_empty() {
+    // If there are no default imports a file sees just its own declarations.
+    if file_scope.default_imports.is_empty() {
         record_declarations(binder, file_scope, visible);
         return;
     }
+    // Otherwise the transitive default-import closure should be precomputed.
+    assert!(
+        !file_scope.default_import_closure.is_empty(),
+        "FileScope::default_import_closure should be precomputed"
+    );
+
     for scope_id in &file_scope.default_import_closure {
         let Scope::File(imported_scope) = binder.get_scope_by_id(*scope_id) else {
             unreachable!("the import closure only holds file scopes");
@@ -259,7 +268,7 @@ fn collect_visible_declarations<'a>(
 fn record_declarations<'a>(
     binder: &'a Binder,
     file_scope: &'a FileScope,
-    visible: &mut Map<&'a str, Vec<NodeId>>,
+    visible: &mut Map<&'a str, SmallVec<[NodeId; 1]>>,
 ) {
     for (symbol, definition_ids) in &file_scope.definitions {
         for definition_id in definition_ids {

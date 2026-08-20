@@ -143,6 +143,11 @@ mod resolution {
         }
 
         #[test]
+        fn multiple_files() -> Result<()> {
+            run("resolution/duplicate_event_definition", "multiple_files")
+        }
+
+        #[test]
         fn redeclared_and_duplicated() -> Result<()> {
             run(
                 "resolution/duplicate_event_definition",
@@ -153,6 +158,14 @@ mod resolution {
 
     mod duplicate_function_definition {
         use super::*;
+
+        #[test]
+        fn circular_imports() -> Result<()> {
+            run(
+                "resolution/duplicate_function_definition",
+                "circular_imports",
+            )
+        }
 
         #[test]
         fn contract_members() -> Result<()> {
@@ -181,6 +194,11 @@ mod resolution {
                 "resolution/duplicate_function_definition",
                 "library_and_interface",
             )
+        }
+
+        #[test]
+        fn multiple() -> Result<()> {
+            run("resolution/duplicate_function_definition", "multiple")
         }
 
         #[test]

@@ -267,7 +267,6 @@ fn members_of(binder: &Binder, base_id: NodeId) -> &[ir::ContractMember] {
     match binder.find_definition_by_id(base_id) {
         Some(Definition::Contract(contract)) => &contract.ir_node.members[..],
         Some(Definition::Interface(interface)) => &interface.ir_node.members[..],
-        // A library is only ever the (sole) head of its own hierarchy.
         Some(Definition::Library(library)) => &library.ir_node.members[..],
         _ => unreachable!("base should be a contract, interface or library"),
     }

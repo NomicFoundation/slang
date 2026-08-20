@@ -10,7 +10,8 @@ library L {
         return a + 1;
     }
 
-    function ok(bytes32 a) internal pure returns (bytes32) {
+    // Ok, valid overload
+    function duplicated(bytes32 a) internal pure returns (bytes32) {
         return a;
     }
 }
@@ -20,5 +21,6 @@ interface I {
 
     function duplicated(address b) external returns (bool);
 
-    function ok(address a, uint256 b) external returns (bool);
+    // Ok, valid overload
+    function duplicated(address a, uint256 b) external returns (bool);
 }

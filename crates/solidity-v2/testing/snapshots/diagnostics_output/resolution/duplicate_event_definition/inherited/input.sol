@@ -27,4 +27,4 @@ contract RightParent {
     event FromParents(uint256 a, uint256 indexed b);
 }
 
-contract Diamond is LeftParent, RightParent {}
+contract Join is LeftParent, RightParent {}

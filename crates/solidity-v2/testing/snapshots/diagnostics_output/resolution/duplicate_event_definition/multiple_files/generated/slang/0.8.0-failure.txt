@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.22'.
+   ╭─[a.sol:4:1]
+   │
+ 4 │ event E();
+   │ ─────┬────  
+   │      ╰────── Error occurred here.
+───╯
+
+[resolution/duplicate-event-definition] Error: Event with same name and parameter types defined twice.
+   ╭─[b.sol:6:1]
+   │
+ 6 │ event E();
+   │ ─────┬────  
+   │      ╰────── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.22'.
+   ╭─[b.sol:6:1]
+   │
+ 6 │ event E();
+   │ ─────┬────  
+   │      ╰────── Error occurred here.
+───╯
