@@ -5,6 +5,7 @@ mod array_length_too_large;
 mod array_length_zero;
 mod cannot_call_via_contract_type_name;
 mod constant_arithmetic_error;
+mod expression_not_callable;
 mod fallback_function_mutability;
 mod fallback_function_signature;
 mod incompatible_constant_operator;
@@ -21,6 +22,7 @@ pub use array_length_too_large::ArrayLengthTooLarge;
 pub use array_length_zero::ArrayLengthZero;
 pub use cannot_call_via_contract_type_name::CannotCallViaContractTypeName;
 pub use constant_arithmetic_error::ConstantArithmeticError;
+pub use expression_not_callable::ExpressionNotCallable;
 pub use fallback_function_mutability::FallbackFunctionMutability;
 pub use fallback_function_signature::FallbackFunctionSignature;
 pub use incompatible_constant_operator::IncompatibleConstantOperator;
@@ -79,5 +81,7 @@ define_diagnostic_kind! {
         /// A function is called through a contract/interface type name (eg.
         /// `C.f()`) rather than through an instance.
         CannotCallViaContractTypeName(CannotCallViaContractTypeName),
+        /// The callee of a call is not callable.
+        ExpressionNotCallable(ExpressionNotCallable),
     }
 }

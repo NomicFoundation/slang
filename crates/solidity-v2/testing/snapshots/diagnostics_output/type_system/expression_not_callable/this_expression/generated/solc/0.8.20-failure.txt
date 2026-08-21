@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 5704] Error: This expression is not callable.
+    ╭─[input.sol:11:13]
+    │
+ 11 │         try this() {} catch Error(string memory) {}
+    │             ───┬──  
+    │                ╰──── Error occurred here.
+────╯
