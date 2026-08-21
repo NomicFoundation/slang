@@ -1,18 +1,16 @@
 use std::path::Path;
 
 use anyhow::{Context, Result};
-use infra_utils::solc::{default_evm_version, parse_evm_target_name};
-use semver::Version;
 use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig};
 use slang_solidity_v2_common::collections::OrderedMap;
 use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
-use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use solidity_testing_utils::import_resolver::{ImportResolver, SourceMap};
 use solidity_v2_testing_utils::reporting::diagnostic;
 
-use crate::test_case::{FUTURE_EVM_VERSION, IsolTestCase, ParsedTarget, resolve_evm_target};
+use crate::evm_target::{FUTURE_EVM_VERSION, ParsedTarget, default_evm_target, resolve_evm_target};
+use crate::test_case::IsolTestCase;
 
 /// The result of running `slang` against a single semantic test.
 pub enum Outcome {
@@ -38,17 +36,6 @@ pub fn run_test(test_path: &Path, language_version: LanguageVersion) -> Result<O
 
     run_test_case(&test_case, language_version)
         .with_context(|| format!("Failed to run test: {test_path:?}"))
-}
-
-/// The EVM target `solc` of the given language version defaults to when a test
-/// doesn't specify one.
-fn default_evm_target(language_version: LanguageVersion) -> Result<EvmTarget> {
-    let version: Version = language_version.into();
-    let name = default_evm_version(&version);
-
-    parse_evm_target_name(name).with_context(|| {
-        format!("'{name}' is the default EVM version of {version}, but is not a known EVM target.")
-    })
 }
 
 fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) -> Result<Outcome> {

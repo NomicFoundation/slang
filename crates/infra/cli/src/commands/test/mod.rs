@@ -46,6 +46,7 @@ fn test_cargo(passthrough: impl IntoIterator<Item = impl Into<String>>) {
 
     Command::new("cargo")
         .args(["nextest", "run"])
+        .flag("--workspace")
         .flag("--all-features")
         .flag("--tests")
         .flag("--lib")
@@ -53,7 +54,6 @@ fn test_cargo(passthrough: impl IntoIterator<Item = impl Into<String>>) {
         .flag("--examples")
         .flag("--no-fail-fast")
         .add_build_rustflags()
-        .flag("--workspace")
         .args(passthrough)
         .run();
 }
