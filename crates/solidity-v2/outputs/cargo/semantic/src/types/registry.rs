@@ -685,6 +685,11 @@ impl TypeRegistry {
             //
             // Matches solc behaviour
             Type::Function(function_type) if function_type.partially_applied => None,
+            // A type name denotes a type rather than a value, so it doesn't
+            // have a mobile type.
+            //
+            // Matches solc behaviour, except for module types
+            Type::MetaType(_) | Type::UserMetaType(_) => None,
             _ => Some(type_id),
         }
     }

@@ -303,6 +303,14 @@ fn test_tuple_of_type_names_is_a_tuple_of_meta_types() {
 }
 
 #[test]
+fn test_type_name_has_no_mobile_type() {
+    // A type name denotes a type rather than a value, so nothing reconciles
+    // two of them.
+    let (type_, _) = expression("E + E").with_members("enum E { A }").into_type();
+    assert_eq!(type_, None);
+}
+
+#[test]
 fn test_function_declaration_via_type_name_has_no_mobile_type() {
     // A function reached through a contract/interface *type name* (`C.g`) is a
     // non-value declaration with no mobile type — only good for `.selector` —
