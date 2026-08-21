@@ -1,0 +1,43 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 5
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.22'.
+   ╭─[input.sol:5:1]
+   │
+ 5 │ event Ok(uint256 a);
+   │ ──────────┬─────────  
+   │           ╰─────────── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.22'.
+   ╭─[input.sol:6:1]
+   │
+ 6 │ event Ok(uint256 a, address b);
+   │ ───────────────┬───────────────  
+   │                ╰───────────────── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.22'.
+   ╭─[input.sol:9:1]
+   │
+ 9 │ event Duplicated(uint256 a);
+   │ ──────────────┬─────────────  
+   │               ╰─────────────── Error occurred here.
+───╯
+
+[resolution/duplicate-event-definition] Error: Event with same name and parameter types defined twice.
+    ╭─[input.sol:10:1]
+    │
+ 10 │ event Duplicated(uint256 indexed a);
+    │ ──────────────────┬─────────────────  
+    │                   ╰─────────────────── Error occurred here.
+────╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.22'.
+    ╭─[input.sol:10:1]
+    │
+ 10 │ event Duplicated(uint256 indexed a);
+    │ ──────────────────┬─────────────────  
+    │                   ╰─────────────────── Error occurred here.
+────╯

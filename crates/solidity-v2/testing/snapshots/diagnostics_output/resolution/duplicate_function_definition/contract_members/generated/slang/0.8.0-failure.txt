@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[resolution/duplicate-function-definition] Error: Function with same name and parameter types defined twice.
+    ╭─[input.sol:23:5]
+    │
+ 23 │     function duplicated(uint256 b) internal pure returns (uint256) {
+    │     ───────────────────────────────┬───────────────────────────────  
+    │                                    ╰───────────────────────────────── Error occurred here.
+────╯
+
+[resolution/duplicate-function-definition] Error: Function with same name and parameter types defined twice.
+    ╭─[input.sol:32:5]
+    │
+ 32 │     function ignoresResults(uint256 a) internal view returns (bool) {
+    │     ────────────────────────────────┬───────────────────────────────  
+    │                                     ╰───────────────────────────────── Error occurred here.
+────╯
+
+[resolution/duplicate-function-definition] Error: Function with same name and parameter types defined twice.
+    ╭─[input.sol:41:5]
+    │
+ 41 │     function ignoresLocation(uint256[] memory a) public pure returns (uint256) {
+    │     ─────────────────────────────────────┬─────────────────────────────────────  
+    │                                          ╰─────────────────────────────────────── Error occurred here.
+────╯
+
+[resolution/duplicate-function-definition] Error: Function with same name and parameter types defined twice.
+    ╭─[input.sol:51:5]
+    │
+ 51 │     function ignoresVisibility(uint256[] memory a) internal pure returns (uint256) {
+    │     ───────────────────────────────────────┬───────────────────────────────────────  
+    │                                            ╰───────────────────────────────────────── Error occurred here.
+────╯

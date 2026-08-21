@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/duplicate-function-definition] Error: Function with same name and parameter types defined twice.
+   ╭─[declarations.sol:8:1]
+   │
+ 8 │ function g() pure returns (uint256) {
+   │ ──────────────────┬─────────────────  
+   │                   ╰─────────────────── Error occurred here.
+───╯

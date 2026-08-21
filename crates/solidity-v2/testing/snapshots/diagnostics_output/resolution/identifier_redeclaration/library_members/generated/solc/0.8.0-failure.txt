@@ -1,0 +1,39 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[DeclarationError 2333] Error: Identifier already declared.
+    ╭─[input.sol:13:5]
+    │
+ 13 │ ╭─▶     enum Shape {
+    ┆ ┆   
+ 16 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
+
+[DeclarationError 2333] Error: Identifier already declared.
+    ╭─[input.sol:21:5]
+    │
+ 21 │ ╭─▶     function LIMIT() internal pure returns (uint256) {
+    ┆ ┆   
+ 23 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
+
+[DeclarationError 2333] Error: Identifier already declared.
+    ╭─[input.sol:28:5]
+    │
+ 28 │     function Signal() internal pure {}
+    │     ─────────────────┬────────────────  
+    │                      ╰────────────────── Error occurred here.
+────╯
+
+[DeclarationError 2333] Error: Identifier already declared.
+    ╭─[input.sol:35:5]
+    │
+ 35 │     function guarded() internal pure {}
+    │     ─────────────────┬─────────────────  
+    │                      ╰─────────────────── Error occurred here.
+────╯

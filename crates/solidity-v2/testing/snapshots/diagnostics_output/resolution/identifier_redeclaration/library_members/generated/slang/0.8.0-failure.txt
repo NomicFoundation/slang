@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[resolution/identifier-redeclaration] Error: Identifier already declared.
+    ╭─[input.sol:13:10]
+    │
+ 13 │     enum Shape {
+    │          ──┬──  
+    │            ╰──── Error occurred here.
+────╯
+
+[resolution/identifier-redeclaration] Error: Identifier already declared.
+    ╭─[input.sol:21:14]
+    │
+ 21 │     function LIMIT() internal pure returns (uint256) {
+    │              ──┬──  
+    │                ╰──── Error occurred here.
+────╯
+
+[resolution/identifier-redeclaration] Error: Identifier already declared.
+    ╭─[input.sol:28:14]
+    │
+ 28 │     function Signal() internal pure {}
+    │              ───┬──  
+    │                 ╰──── Error occurred here.
+────╯
+
+[resolution/identifier-redeclaration] Error: Identifier already declared.
+    ╭─[input.sol:35:14]
+    │
+ 35 │     function guarded() internal pure {}
+    │              ───┬───  
+    │                 ╰───── Error occurred here.
+────╯

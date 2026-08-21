@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[DeclarationError 5883] Error: Event with same name and parameter types defined twice.
+    ╭─[input.sol:16:5]
+    │
+ 16 │     event FromBase(uint256 indexed a);
+    │     ─────────────────┬────────────────  
+    │                      ╰────────────────── Error occurred here.
+────╯
+
+[DeclarationError 5883] Error: Event with same name and parameter types defined twice.
+    ╭─[input.sol:17:5]
+    │
+ 17 │     event FromInterface(uint256 a) anonymous;
+    │     ────────────────────┬────────────────────  
+    │                         ╰────────────────────── Error occurred here.
+────╯
+
+[DeclarationError 5883] Error: Event with same name and parameter types defined twice.
+    ╭─[input.sol:27:5]
+    │
+ 27 │     event FromParents(uint256 a, uint256 indexed b);
+    │     ────────────────────────┬───────────────────────  
+    │                             ╰───────────────────────── Error occurred here.
+────╯

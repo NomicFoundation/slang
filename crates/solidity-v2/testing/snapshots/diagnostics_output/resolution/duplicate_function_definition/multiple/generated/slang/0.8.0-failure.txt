@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[resolution/duplicate-function-definition] Error: Function with same name and parameter types defined twice.
+   ╭─[input.sol:9:1]
+   │
+ 9 │ function repeated() pure returns (uint256) {
+   │ ─────────────────────┬─────────────────────  
+   │                      ╰─────────────────────── Error occurred here.
+───╯
+
+[resolution/duplicate-function-definition] Error: Function with same name and parameter types defined twice.
+    ╭─[input.sol:13:1]
+    │
+ 13 │ function repeated() pure returns (uint256) {
+    │ ─────────────────────┬─────────────────────  
+    │                      ╰─────────────────────── Error occurred here.
+────╯
+
+[resolution/duplicate-function-definition] Error: Function with same name and parameter types defined twice.
+    ╭─[input.sol:24:5]
+    │
+ 24 │     function mixedLocations(uint256[] memory a) public pure returns (uint256) {
+    │     ─────────────────────────────────────┬────────────────────────────────────  
+    │                                          ╰────────────────────────────────────── Error occurred here.
+────╯
+
+[resolution/duplicate-function-definition] Error: Function with same name and parameter types defined twice.
+    ╭─[input.sol:28:5]
+    │
+ 28 │     function mixedLocations(uint256[] calldata a) external pure returns (uint256) {
+    │     ───────────────────────────────────────┬──────────────────────────────────────  
+    │                                            ╰──────────────────────────────────────── Error occurred here.
+────╯

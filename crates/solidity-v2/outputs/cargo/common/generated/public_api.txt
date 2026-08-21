@@ -276,6 +276,8 @@ pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImpo
 pub mod slang_solidity_v2_common::diagnostics::kinds::resolution
 pub enum slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
 pub slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::BuiltInRedeclaration(slang_solidity_v2_common::diagnostics::kinds::resolution::BuiltInRedeclaration)
+pub slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::DuplicateEventDefinition(slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition)
+pub slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::DuplicateFunctionDefinition(slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition)
 pub slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::ExternalDeclarationShadowing(slang_solidity_v2_common::diagnostics::kinds::resolution::ExternalDeclarationShadowing)
 pub slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::IdentifierNotFound(slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound)
 pub slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::IdentifierNotFunctionOrNotUnique(slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFunctionOrNotUnique)
@@ -292,6 +294,10 @@ impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::reso
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind) -> bool
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::BuiltInRedeclaration> for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::BuiltInRedeclaration) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition> for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition> for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::ExternalDeclarationShadowing> for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::ExternalDeclarationShadowing) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound> for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
@@ -341,6 +347,44 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::BuiltInRedeclaration::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::BuiltInRedeclaration::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::BuiltInRedeclaration::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition> for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition> for slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::resolution::ExternalDeclarationShadowing
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::resolution::ExternalDeclarationShadowing
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ExternalDeclarationShadowing::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::resolution::ExternalDeclarationShadowing
@@ -2981,6 +3025,10 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::compilati
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::BuiltInRedeclaration> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::BuiltInRedeclaration) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::ExternalDeclarationShadowing> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::resolution::ExternalDeclarationShadowing) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::resolution::IdentifierNotFound> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -3329,6 +3377,14 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::BuiltInRedeclaration::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::BuiltInRedeclaration::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::BuiltInRedeclaration::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateEventDefinition::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::DuplicateFunctionDefinition::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::resolution::ExternalDeclarationShadowing
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ExternalDeclarationShadowing::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::resolution::ExternalDeclarationShadowing::message(&self) -> alloc::string::String

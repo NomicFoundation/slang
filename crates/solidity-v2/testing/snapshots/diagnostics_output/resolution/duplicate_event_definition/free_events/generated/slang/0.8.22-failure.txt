@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/duplicate-event-definition] Error: Event with same name and parameter types defined twice.
+    ╭─[input.sol:10:1]
+    │
+ 10 │ event Duplicated(uint256 indexed a);
+    │ ──────────────────┬─────────────────  
+    │                   ╰─────────────────── Error occurred here.
+────╯

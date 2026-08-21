@@ -471,6 +471,14 @@ impl Binder {
 
     // File scope resolution context
 
+    /// Every file scope, in the order the files were visited.
+    pub(crate) fn file_scopes(&self) -> impl Iterator<Item = &FileScope> {
+        self.scopes.iter().filter_map(|scope| match scope {
+            Scope::File(file_scope) => Some(file_scope),
+            _ => None,
+        })
+    }
+
     pub(crate) fn get_file_scope(&self, file_id: &FileId) -> &FileScope {
         self.scopes_by_file_id
             .get(file_id)

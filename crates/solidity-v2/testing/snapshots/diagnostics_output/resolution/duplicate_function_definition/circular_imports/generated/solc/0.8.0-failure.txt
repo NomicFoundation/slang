@@ -1,0 +1,33 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[DeclarationError 1686] Error: Function with same name and parameter types defined twice.
+   ╭─[s1.sol:6:1]
+   │
+ 6 │ ╭─▶ function f() pure returns (uint256) {
+   ┆ ┆   
+ 8 │ ├─▶ }
+   │ │       
+   │ ╰─────── Error occurred here.
+───╯
+
+[DeclarationError 1686] Error: Function with same name and parameter types defined twice.
+   ╭─[s2.sol:6:1]
+   │
+ 6 │ ╭─▶ function f() pure returns (uint256) {
+   ┆ ┆   
+ 8 │ ├─▶ }
+   │ │       
+   │ ╰─────── Error occurred here.
+───╯
+
+[DeclarationError 1686] Error: Function with same name and parameter types defined twice.
+    ╭─[s2.sol:10:1]
+    │
+ 10 │ ╭─▶ function g() pure returns (uint256) {
+    ┆ ┆   
+ 12 │ ├─▶ }
+    │ │       
+    │ ╰─────── Error occurred here.
+────╯

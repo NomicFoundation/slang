@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[resolution/identifier-redeclaration] Error: Identifier already declared.
+    ╭─[input.sol:14:12]
+    │
+ 14 │     struct E {
+    │            ┬  
+    │            ╰── Error occurred here.
+────╯
+
+[resolution/duplicate-event-definition] Error: Event with same name and parameter types defined twice.
+    ╭─[input.sol:22:5]
+    │
+ 22 │     event E(uint256 a);
+    │     ─────────┬─────────  
+    │              ╰─────────── Error occurred here.
+────╯
+
+[resolution/identifier-redeclaration] Error: Identifier already declared.
+    ╭─[input.sol:22:11]
+    │
+ 22 │     event E(uint256 a);
+    │           ┬  
+    │           ╰── Error occurred here.
+────╯
