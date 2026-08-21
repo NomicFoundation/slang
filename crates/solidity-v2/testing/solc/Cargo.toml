@@ -1,5 +1,5 @@
 [package]
-name = "solidity_testing_solc_comparison"
+name = "solidity_v2_testing_solc"
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true

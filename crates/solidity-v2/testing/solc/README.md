@@ -1,4 +1,4 @@
-# `solidity_testing_solc_comparison`
+# `solidity_v2_testing_solc`
 
 Runs **slang (v2)** against `solc`'s own [`libsolidity` semantic test
 suite](https://github.com/argotorg/solidity/tree/develop/test/libsolidity/semanticTests),

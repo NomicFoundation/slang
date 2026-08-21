@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use slang_solidity_v2_common::collections::{SortedMap, SortedSet};
 use slang_solidity_v2_common::versions::LanguageVersion;
 
-const CRATE_NAME: &str = "solidity_testing_solc_comparison";
+const CRATE_NAME: &str = "solidity_v2_testing_solc";
 const RESULTS_FILE: &str = "results.generated.json";
 
 /// A single `(version, test)` pair that slang didn't compile cleanly.
