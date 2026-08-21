@@ -779,6 +779,14 @@ fn test_conditional_expression_unifies_branch_types() {
 }
 
 #[test]
+fn test_type_name_has_no_mobile_type() {
+    // A type name denotes a type rather than a value, so nothing reconciles
+    // two of them.
+    let (type_, _) = try_type_of_expression_in_context("enum E { A }", "E + E");
+    assert_eq!(type_, None);
+}
+
+#[test]
 fn test_conditional_expression_unresolved_when_branches_incompatible() {
     // uint8 (1) and int8 (-1): neither converts to the other at the same
     // bit width, so unification fails and the conditional is unresolved.
