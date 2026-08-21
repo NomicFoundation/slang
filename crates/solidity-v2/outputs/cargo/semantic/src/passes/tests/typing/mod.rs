@@ -11,7 +11,7 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdentity};
 
-use super::support::{self, Analyse, Analysis, diagnostic_kind};
+use super::support::{self, Analyse, Analysis, diagnostic_kind, diagnostic_kinds};
 use crate::binder::Binder;
 use crate::types::{Type, TypeRegistry};
 
@@ -144,19 +144,15 @@ impl<'a> ExpressionTyping<'a> {
     }
 
     fn into_type_and_diagnostic(self) -> (Option<Type>, Option<DiagnosticKind>) {
-        assert_eq!(
-            1,
-            self.expressions.len(),
-            "`into_type_and_diagnostic` needs exactly one expression"
-        );
-        let analysis = self.run();
-        let typings = expression_statement_types(
-            analysis.function_body("Test", "__test"),
-            analysis.binder(),
-            analysis.types(),
-        );
-        let typing = typings.into_iter().next().expect("one expression");
+        let (typing, analysis) = self.into_type_and_analysis();
         (typing, diagnostic_kind(&analysis.diagnostics))
+    }
+
+    /// [`Self::into_type_and_diagnostic`] for tests expecting more than one
+    /// diagnostic, in the order [`diagnostic_kinds`] gives them.
+    fn into_type_and_diagnostics(self) -> (Option<Type>, Vec<DiagnosticKind>) {
+        let (typing, analysis) = self.into_type_and_analysis();
+        (typing, diagnostic_kinds(&analysis.diagnostics))
     }
 
     /// [`Self::into_type`], panicking if the expression didn't resolve to a type.
@@ -173,5 +169,24 @@ impl<'a> ExpressionTyping<'a> {
     /// being diagnosed is the point. Panics if more than one was reported.
     fn into_diagnostic(self) -> Option<DiagnosticKind> {
         diagnostic_kind(&self.run().diagnostics)
+    }
+
+    /// The typing of a lone expression together with the analysis that
+    /// produced it, for the terminals that go on to inspect its diagnostics.
+    /// Panics unless exactly one expression was given.
+    fn into_type_and_analysis(self) -> (Option<Type>, Analysis) {
+        assert_eq!(
+            1,
+            self.expressions.len(),
+            "a typing with diagnostics needs exactly one expression"
+        );
+        let analysis = self.run();
+        let typings = expression_statement_types(
+            analysis.function_body("Test", "__test"),
+            analysis.binder(),
+            analysis.types(),
+        );
+        let typing = typings.into_iter().next().expect("one expression");
+        (typing, analysis)
     }
 }

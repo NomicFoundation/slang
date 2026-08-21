@@ -4,10 +4,12 @@ mod array_length_not_constant;
 mod array_length_too_large;
 mod array_length_zero;
 mod cannot_call_via_contract_type_name;
+mod conditional_branch_without_mobile_type;
 mod constant_arithmetic_error;
 mod expression_not_callable;
 mod fallback_function_mutability;
 mod fallback_function_signature;
+mod incompatible_conditional_branches;
 mod incompatible_constant_operator;
 mod invalid_base;
 mod receive_function_parameters;
@@ -21,10 +23,12 @@ pub use array_length_not_constant::ArrayLengthNotConstant;
 pub use array_length_too_large::ArrayLengthTooLarge;
 pub use array_length_zero::ArrayLengthZero;
 pub use cannot_call_via_contract_type_name::CannotCallViaContractTypeName;
+pub use conditional_branch_without_mobile_type::ConditionalBranchWithoutMobileType;
 pub use constant_arithmetic_error::ConstantArithmeticError;
 pub use expression_not_callable::ExpressionNotCallable;
 pub use fallback_function_mutability::FallbackFunctionMutability;
 pub use fallback_function_signature::FallbackFunctionSignature;
+pub use incompatible_conditional_branches::IncompatibleConditionalBranches;
 pub use incompatible_constant_operator::IncompatibleConstantOperator;
 pub use invalid_base::InvalidBase;
 pub use receive_function_parameters::ReceiveFunctionParameters;
@@ -83,5 +87,9 @@ define_diagnostic_kind! {
         CannotCallViaContractTypeName(CannotCallViaContractTypeName),
         /// The callee of a call is not callable.
         ExpressionNotCallable(ExpressionNotCallable),
+        /// A conditional's branch has no mobile type, so it denotes no value.
+        ConditionalBranchWithoutMobileType(ConditionalBranchWithoutMobileType),
+        /// The two branches of a conditional have no common type.
+        IncompatibleConditionalBranches(IncompatibleConditionalBranches),
     }
 }

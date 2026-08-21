@@ -194,31 +194,7 @@ impl Visitor for Pass<'_> {
 
     fn leave_conditional_expression(&mut self, node: &ir::ConditionalExpression) {
         self.typing_of_expression(&node.operand);
-        let true_type_id = self
-            .typing_of_expression(&node.true_expression)
-            .as_type_id();
-        let false_type_id = self
-            .typing_of_expression(&node.false_expression)
-            .as_type_id();
-
-        // TODO(validation) SDR[47]: both true_expression and false_expression should
-        // have the compatible types
-        //
-        // The ternary takes the mobile type of both branches before computing
-        // their common type.
-        let type_id = match (true_type_id, false_type_id) {
-            (Some(true_type_id), Some(false_type_id)) => {
-                let true_mobile = self.types.compute_mobile_type(true_type_id);
-                let false_mobile = self.types.compute_mobile_type(false_type_id);
-                match (true_mobile, false_mobile) {
-                    (Some(true_mobile), Some(false_mobile)) => {
-                        self.types.common_type(true_mobile, false_mobile)
-                    }
-                    _ => None,
-                }
-            }
-            _ => None,
-        };
+        let type_id = self.type_of_conditional_expression(node);
         self.binder.set_node_type(node.id(), type_id);
     }
 

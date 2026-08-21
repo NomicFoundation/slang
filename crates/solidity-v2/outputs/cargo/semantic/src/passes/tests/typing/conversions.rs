@@ -5,6 +5,9 @@
 use num_bigint::{BigInt, BigUint};
 use num_rational::BigRational;
 use ruint::aliases::U256;
+use slang_solidity_v2_common::diagnostics::kinds::type_system::{
+    ConditionalBranchWithoutMobileType, IncompatibleConditionalBranches,
+};
 
 use super::expression;
 use crate::types::{
@@ -187,16 +190,80 @@ fn test_conditional_expression_unifies_branch_types() {
 }
 
 #[test]
-fn test_conditional_expression_unresolved_when_branches_incompatible() {
+fn test_conditional_expression_rejects_incompatible_branches() {
     // uint8 (1) and int8 (-1): neither converts to the other at the same
-    // bit width, so unification fails and the conditional is unresolved.
-    let (type_, _) = expression("true ? 1 : -1").into_type();
-    assert_eq!(type_, None);
+    // bit width.
+    assert_eq!(
+        expression("true ? 1 : -1").into_type_and_diagnostics(),
+        (None, vec![IncompatibleConditionalBranches.into()])
+    );
 
-    // A non-reducing rational has no `reified` type yet, so any conditional
-    // involving one is unresolved.
-    let (type_, _) = expression("true ? 0.5 : 1").into_type();
-    assert_eq!(type_, None);
+    // A non-reducing rational has no common type with an integer literal.
+    assert_eq!(
+        expression("true ? 0.5 : 1").into_type_and_diagnostics(),
+        (None, vec![IncompatibleConditionalBranches.into()])
+    );
+}
+
+#[test]
+fn test_conditional_expression_rejects_branch_without_mobile_type() {
+    // Both branches are reported, even when they name the same type.
+    assert_eq!(
+        expression("true ? E : E")
+            .with_members("enum E { A }")
+            .into_type_and_diagnostics(),
+        (
+            None,
+            vec![
+                ConditionalBranchWithoutMobileType.into(),
+                ConditionalBranchWithoutMobileType.into()
+            ]
+        )
+    );
+    assert_eq!(
+        expression("true ? E : uint8(1)")
+            .with_members("enum E { A }")
+            .into_type_and_diagnostics(),
+        (None, vec![ConditionalBranchWithoutMobileType.into()])
+    );
+    assert_eq!(
+        expression("true ? uint8(1) : E")
+            .with_members("enum E { A }")
+            .into_type_and_diagnostics(),
+        (None, vec![ConditionalBranchWithoutMobileType.into()])
+    );
+
+    // An elementary type keyword names a type as well.
+    assert_eq!(
+        expression("true ? uint : uint").into_type_and_diagnostics(),
+        (
+            None,
+            vec![
+                ConditionalBranchWithoutMobileType.into(),
+                ConditionalBranchWithoutMobileType.into()
+            ]
+        )
+    );
+
+    // A tuple has a mobile type only if all of its elements do.
+    assert_eq!(
+        expression("true ? (uint, bool) : (uint, bool)").into_type_and_diagnostics(),
+        (
+            None,
+            vec![
+                ConditionalBranchWithoutMobileType.into(),
+                ConditionalBranchWithoutMobileType.into()
+            ]
+        )
+    );
+
+    // A partially applied function has no mobile type either.
+    assert_eq!(
+        expression("true ? this.foo : this.foo{gas: 4}")
+            .with_members("function foo() external {}")
+            .into_type_and_diagnostics(),
+        (None, vec![ConditionalBranchWithoutMobileType.into()])
+    );
 }
 
 #[test]
@@ -311,8 +378,10 @@ fn test_array_literal_unifies_byte_array_and_literal_zero() {
 
 #[test]
 fn test_conditional_expression_does_not_unify_byte_array_and_literal_zero() {
-    let (type_, _) = expression("true ? bytes32(0) : 0").into_type();
-    assert_eq!(type_, None);
+    assert_eq!(
+        expression("true ? bytes32(0) : 0").into_type_and_diagnostics(),
+        (None, vec![IncompatibleConditionalBranches.into()])
+    );
 }
 
 #[test]
@@ -351,8 +420,10 @@ fn test_array_literal_unifies_byte_array_and_matching_hex_literal() {
 
 #[test]
 fn test_conditional_expression_loses_hex_literal_specialness() {
-    let (type_, _) = expression("true ? bytes1(0x01) : 0x01").into_type();
-    assert_eq!(type_, None);
+    assert_eq!(
+        expression("true ? bytes1(0x01) : 0x01").into_type_and_diagnostics(),
+        (None, vec![IncompatibleConditionalBranches.into()])
+    );
 }
 
 #[test]
@@ -419,20 +490,23 @@ fn test_conditional_expression_with_function_call_tuple() {
     }
 
     // No common type: each tuple is "wider" in a different position (element 0
-    // on the left, element 1 on the right), so neither converts to the other
-    // (matches solc error 1080).
-    let expr = "true ? (uint256(1), uint128(2)) : (uint128(3), uint256(4))";
-    let (expr_type, _) = expression(expr).into_type();
-    assert!(expr_type.is_none());
+    // on the left, element 1 on the right), so neither converts to the other.
+    assert_eq!(
+        expression("true ? (uint256(1), uint128(2)) : (uint128(3), uint256(4))")
+            .into_type_and_diagnostics(),
+        (None, vec![IncompatibleConditionalBranches.into()])
+    );
 }
 
 #[test]
 fn test_mappings_only_unify_on_equal_elements() {
     // Mappings must match on key and value types
-    let (expr_type, _) = expression("true ? m1 : m2")
-        .with_members("mapping(uint => int128) m1; mapping(uint => int256) m2;")
-        .into_type();
-    assert_eq!(None, expr_type);
+    assert_eq!(
+        expression("true ? m1 : m2")
+            .with_members("mapping(uint => int128) m1; mapping(uint => int256) m2;")
+            .into_type_and_diagnostics(),
+        (None, vec![IncompatibleConditionalBranches.into()])
+    );
 }
 
 #[test]

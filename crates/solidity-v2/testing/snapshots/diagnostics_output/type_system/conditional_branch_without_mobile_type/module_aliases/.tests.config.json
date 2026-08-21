@@ -1,0 +1,14 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "From",
+          "from": "0.8.0"
+        },
+        "reason": "solc gives every module a mobile type and treats two aliases of one source unit as one module, so it accepts the conditional on every version. Slang gives no module a mobile type."
+      }
+    ]
+  }
+}

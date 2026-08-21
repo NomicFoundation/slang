@@ -3,7 +3,8 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     AmbiguousReference, MemberNotFound, NoMatchingCallableDeclaration,
 };
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    CannotCallViaContractTypeName, ExpressionNotCallable,
+    CannotCallViaContractTypeName, ConditionalBranchWithoutMobileType, ExpressionNotCallable,
+    IncompatibleConditionalBranches,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -155,6 +156,32 @@ impl Pass<'_> {
     pub(super) fn type_of_definition(&self, definition_id: NodeId) -> Option<Type> {
         let definition = self.binder.find_definition_by_id(definition_id)?;
         definition.try_into().ok()
+    }
+
+    /// The ternary takes the mobile type of both branches before computing
+    /// their common type.
+    pub(super) fn type_of_conditional_expression(
+        &mut self,
+        node: &ir::ConditionalExpression,
+    ) -> Option<TypeId> {
+        let true_mobile = self.mobile_type_of_conditional_branch(&node.true_expression);
+        let false_mobile = self.mobile_type_of_conditional_branch(&node.false_expression);
+        let common = self.types.common_type(true_mobile?, false_mobile?);
+        if common.is_none() {
+            self.push_diagnostic(node, IncompatibleConditionalBranches);
+        }
+        common
+    }
+
+    /// The mobile type of one conditional branch, reporting a branch that has
+    /// none.
+    fn mobile_type_of_conditional_branch(&mut self, branch: &ir::Expression) -> Option<TypeId> {
+        let type_id = self.typing_of_expression(branch).as_type_id()?;
+        let mobile = self.types.compute_mobile_type(type_id);
+        if mobile.is_none() {
+            self.push_diagnostic(branch, ConditionalBranchWithoutMobileType);
+        }
+        mobile
     }
 
     /// Records the common type both operands of a comparison reconcile to
