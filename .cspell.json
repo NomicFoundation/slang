@@ -6,6 +6,7 @@
   "ignoreWords": [
     // Alphabetically sorted list of "allowed" words to ignore:
     "abicoder",
+    "argotorg",
     "callgrind",
     "codecopy",
     "codegen",
@@ -23,8 +24,10 @@
     "inheritdoc",
     "instanceof",
     "ipfs",
+    "isoltest",
     "jumpi",
     "lalrpop",
+    "libsolidity",
     "linenums",
     "merkle",
     "metaslang",
