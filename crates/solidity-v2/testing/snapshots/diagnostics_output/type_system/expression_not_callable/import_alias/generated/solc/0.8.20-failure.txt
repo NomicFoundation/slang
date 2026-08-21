@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 5704] Error: This expression is not callable.
+    ╭─[b.sol:12:17]
+    │
+ 12 │     uint256 a = A(1000);
+    │                 ───┬───  
+    │                    ╰───── Error occurred here.
+────╯

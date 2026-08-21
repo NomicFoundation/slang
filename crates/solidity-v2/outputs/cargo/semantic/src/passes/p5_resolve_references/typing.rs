@@ -2,7 +2,9 @@ use ruint::aliases::{U160, U256};
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     AmbiguousReference, MemberNotFound, NoMatchingCallableDeclaration,
 };
-use slang_solidity_v2_common::diagnostics::kinds::type_system::CannotCallViaContractTypeName;
+use slang_solidity_v2_common::diagnostics::kinds::type_system::{
+    CannotCallViaContractTypeName, ExpressionNotCallable,
+};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
@@ -10,6 +12,7 @@ use slang_solidity_v2_ir::ir::NodeIdentity;
 use super::Pass;
 use super::disambiguation::OverloadMatch;
 use crate::binder::{Definition, Resolution, Typing};
+use crate::built_ins::BuiltInCallError;
 use crate::passes::common::node_location;
 use crate::types::{
     AddressType, ArraySliceType, ArrayType, ContractType, DataLocation, FixedSizeArrayType,
@@ -575,8 +578,14 @@ impl Pass<'_> {
         let argument_typings = self.collect_positional_argument_typings(arguments);
 
         match operand_typing {
-            Typing::Unresolved | Typing::This(_) | Typing::Super => {
-                // `this` and `super` are not callable
+            Typing::Unresolved => {
+                // The callee failed to resolve, which is already reported: it
+                // is only uncallable as a consequence.
+                Typing::Unresolved
+            }
+            Typing::This(_) | Typing::Super => {
+                // `this` and `super` name a contract instance, not a callable
+                self.report_operand_not_callable(node);
                 Typing::Unresolved
             }
             Typing::NewExpression(type_id) => {
@@ -590,9 +599,18 @@ impl Pass<'_> {
                     _ => Typing::Unresolved,
                 }
             }
-            Typing::BuiltIn(built_in) => self
-                .built_ins_resolver()
-                .typing_of_function_call(&built_in, &argument_typings),
+            Typing::BuiltIn(built_in) => {
+                match self
+                    .built_ins_resolver()
+                    .type_of_function_call(&built_in, &argument_typings)
+                {
+                    Ok(type_id) => Typing::Resolved(type_id),
+                    Err(error) => {
+                        self.report_built_in_call_error(node, error);
+                        Typing::Unresolved
+                    }
+                }
+            }
 
             Typing::Resolved(type_id) => self.typing_of_type_called_with_positional_arguments(
                 node,
@@ -648,7 +666,9 @@ impl Pass<'_> {
     /// Types a call whose operand is (or was disambiguated to) `type_id`: a
     /// function value is an actual call, a meta type is a cast (or a struct
     /// construction), and the user meta type of a function is a non-callable
-    /// declaration reached through a contract/interface type name.
+    /// declaration reached through a contract/interface type name. Anything
+    /// else, including a modifier and the alias of an imported file, is not
+    /// callable at all.
     fn typing_of_type_called_with_positional_arguments(
         &mut self,
         node: &ir::FunctionCallExpression,
@@ -656,7 +676,19 @@ impl Pass<'_> {
         argument_typings: &[Typing],
     ) -> Typing {
         match self.types.get_type_by_id(type_id) {
-            Type::Function(FunctionType { return_type, .. }) => Typing::Resolved(*return_type),
+            Type::Function(FunctionType {
+                definition_id,
+                return_type,
+                ..
+            }) => {
+                let (definition_id, return_type) = (*definition_id, *return_type);
+                if self.is_modifier_definition(definition_id) {
+                    self.report_operand_not_callable(node);
+                    Typing::Unresolved
+                } else {
+                    Typing::Resolved(return_type)
+                }
+            }
             Type::MetaType(MetaType {
                 type_id: target_type_id,
             }) => {
@@ -702,12 +734,41 @@ impl Pass<'_> {
                             .push(file_id, range, CannotCallViaContractTypeName);
                         Typing::Unresolved
                     }
+                    Some(Definition::Import(_)) => {
+                        // The alias of an imported file names a namespace, not
+                        // a callable.
+                        self.report_operand_not_callable(node);
+                        Typing::Unresolved
+                    }
+                    Some(Definition::Event(_)) => {
+                        // TODO: an event invocation has to be prefixed by
+                        // `emit`. The name *is* callable, so this is not a
+                        // callability error. OTOH we don't have a `Type`
+                        // variant for events to be able to type this yet. See
+                        // SDR[950].
+                        Typing::Unresolved
+                    }
+                    Some(Definition::Error(_)) => {
+                        // TODO: An error construction has no value type of its own,
+                        // except as an assertion parameter. Similar to the
+                        // event case, we don't have a `Type` variant to
+                        // represent the error yet.
+                        Typing::Unresolved
+                    }
+                    Some(Definition::UserDefinedValueType(_)) => {
+                        // TODO(validation): a UDVT is callable syntactically
+                        // but not castable by name, so this is a disallowed
+                        // conversion rather than a callability error.
+                        Typing::Unresolved
+                    }
 
                     _ => Typing::Unresolved,
                 }
             }
             _ => {
-                // TODO(validation) SDR[41]: the operand did not resolve to a function
+                // The operand is a value of some other type, which is not
+                // callable (eg. `1(2)`, or a mapping, which is indexed).
+                self.report_operand_not_callable(node);
                 Typing::Unresolved
             }
         }
@@ -736,8 +797,14 @@ impl Pass<'_> {
         let operand_typing = self.typing_of_callee_expression(&node.operand);
 
         let (typing, definition_id) = match operand_typing {
-            Typing::Unresolved | Typing::This(_) | Typing::Super => {
-                // `this` and `super` are not callable
+            Typing::Unresolved => {
+                // The callee failed to resolve, which is already reported: it
+                // is only uncallable as a consequence.
+                (Typing::Unresolved, None)
+            }
+            Typing::This(_) | Typing::Super => {
+                // `this` and `super` name a contract instance, not a callable
+                self.report_operand_not_callable(node);
                 (Typing::Unresolved, None)
             }
             Typing::Resolved(type_id) => {
@@ -791,7 +858,8 @@ impl Pass<'_> {
     /// and error constructions are callable this way; the user meta types of a
     /// function and of an event are non-callable declarations, reached through
     /// a contract/interface type name and outside an `emit` statement
-    /// respectively.
+    /// respectively. Anything else, including a modifier and the alias of an
+    /// imported file, is not callable at all.
     fn typing_of_type_called_with_named_arguments(
         &mut self,
         node: &ir::FunctionCallExpression,
@@ -802,7 +870,17 @@ impl Pass<'_> {
                 definition_id,
                 return_type,
                 ..
-            }) => (Typing::Resolved(*return_type), *definition_id),
+            }) => {
+                let (definition_id, return_type) = (*definition_id, *return_type);
+                if self.is_modifier_definition(definition_id) {
+                    self.report_operand_not_callable(node);
+                    // The definition is still returned so the argument names
+                    // resolve against the modifier's parameters.
+                    (Typing::Unresolved, definition_id)
+                } else {
+                    (Typing::Resolved(return_type), definition_id)
+                }
+            }
             Type::MetaType(_) => {
                 // This is a cast to the given type and is not valid with named arguments
                 (Typing::Unresolved, None)
@@ -822,17 +900,17 @@ impl Pass<'_> {
                         (Typing::Resolved(type_id), Some(definition_id))
                     }
                     Some(Definition::Error(_)) => {
-                        // An error construction has no value type of its own,
-                        // matching the positional form. Return the definition
-                        // so the argument names resolve against its parameters.
+                        // TODO: An error construction has no value type of its
+                        // own, matching the positional form. Return the
+                        // definition so the argument names resolve against its
+                        // parameters.
                         (Typing::Unresolved, Some(definition_id))
                     }
                     Some(Definition::Event(_)) => {
-                        // Likewise, an event invocation has no value type of
+                        // TODO: Likewise, an event invocation has no value type of
                         // its own; return the definition so the argument names
-                        // resolve against its parameters.
-                        // TODO(validation) SDR[950]: an event invocation has
-                        // to be prefixed by `emit`.
+                        // resolve against its parameters.  See SDR[950]: an
+                        // event invocation has to be prefixed by `emit`.
                         (Typing::Unresolved, Some(definition_id))
                     }
                     Some(Definition::Function(_)) => {
@@ -845,15 +923,50 @@ impl Pass<'_> {
                             .push(file_id, range, CannotCallViaContractTypeName);
                         (Typing::Unresolved, Some(definition_id))
                     }
-
-                    _ => (Typing::Unresolved, None),
+                    _ => {
+                        // Anything else is not callable through named arguments.
+                        self.report_operand_not_callable(node);
+                        (Typing::Unresolved, None)
+                    }
                 }
             }
             _ => {
-                // TODO(validation) SDR[41]: the operand did not resolve to a function
+                // The operand is a value of some other type, which is not
+                // callable (eg. `3({a: 1})`).
+                self.report_operand_not_callable(node);
                 (Typing::Unresolved, None)
             }
         }
+    }
+
+    /// Reports the callee of a call as not callable.
+    fn report_operand_not_callable(&mut self, node: &ir::FunctionCallExpression) {
+        let (file_id, range) = node_location(node, self.file_node_mapper);
+        self.diagnostics.push(file_id, range, ExpressionNotCallable);
+    }
+
+    /// Reports a built-in call that produced no result type, at the call site.
+    /// The failures that carry no diagnostic are silent by design: either the
+    /// check is not implemented yet, or what the call depends on already
+    /// reported its own failure.
+    fn report_built_in_call_error(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        error: BuiltInCallError,
+    ) {
+        match error {
+            BuiltInCallError::Diagnostic(kind) => self.push_diagnostic(node, kind),
+            BuiltInCallError::NotReportedYet | BuiltInCallError::UnresolvedDependency => {}
+        }
+    }
+
+    /// Whether `definition_id` is a modifier. A modifier has a function type so
+    /// that its invocation can be checked against its parameters, but it is not
+    /// callable from an expression.
+    fn is_modifier_definition(&self, definition_id: Option<NodeId>) -> bool {
+        definition_id
+            .and_then(|definition_id| self.binder.find_definition_by_id(definition_id))
+            .is_some_and(|definition| matches!(definition, Definition::Modifier(_)))
     }
 }
 
