@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/conditional-branch-without-mobile-type] Error: Invalid mobile type in conditional branch.
+   ╭─[input.sol:7:16]
+   │
+ 7 │     return c ? E : E.A;
+   │                ┬  
+   │                ╰── Error occurred here.
+───╯

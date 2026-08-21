@@ -3341,6 +3341,26 @@ mod type_system {
         }
     }
 
+    mod conditional_branch_without_mobile_type {
+        use super::*;
+
+        #[test]
+        fn module_aliases() -> Result<()> {
+            run(
+                "type_system/conditional_branch_without_mobile_type",
+                "module_aliases",
+            )
+        }
+
+        #[test]
+        fn type_name_branch() -> Result<()> {
+            run(
+                "type_system/conditional_branch_without_mobile_type",
+                "type_name_branch",
+            )
+        }
+    }
+
     #[test]
     fn fallback_function_mutability() -> Result<()> {
         run("type_system", "fallback_function_mutability")
@@ -3349,6 +3369,18 @@ mod type_system {
     #[test]
     fn fallback_function_signature() -> Result<()> {
         run("type_system", "fallback_function_signature")
+    }
+
+    mod incompatible_conditional_branches {
+        use super::*;
+
+        #[test]
+        fn integer_sign_branches() -> Result<()> {
+            run(
+                "type_system/incompatible_conditional_branches",
+                "integer_sign_branches",
+            )
+        }
     }
 
     mod invalid_base {

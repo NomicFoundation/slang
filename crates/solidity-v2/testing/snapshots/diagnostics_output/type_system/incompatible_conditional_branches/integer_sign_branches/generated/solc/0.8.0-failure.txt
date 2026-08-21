@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 1080] Error: True expression's type uint8 does not match false expression's type int8.
+   ╭─[input.sol:6:16]
+   │
+ 6 │         return true ? 1 : -1;
+   │                ──────┬──────  
+   │                      ╰──────── Error occurred here.
+───╯

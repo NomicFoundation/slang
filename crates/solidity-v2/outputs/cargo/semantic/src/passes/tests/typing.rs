@@ -4,7 +4,8 @@ use ruint::aliases::U256;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    ArrayLengthFractional, ArrayLengthNotConstant, ArrayLengthZero, ConstantArithmeticError,
+    ArrayLengthFractional, ArrayLengthNotConstant, ArrayLengthZero,
+    ConditionalBranchWithoutMobileType, ConstantArithmeticError, IncompatibleConditionalBranches,
     IncompatibleConstantOperator, StorageLayoutBaseNotConstant,
 };
 use slang_solidity_v2_common::evm_targets::EvmTarget;
@@ -155,29 +156,18 @@ fn expression_statement_types(
         .collect()
 }
 
+/// The contract every synthesized expression source is wrapped in.
+const TEST_CONTRACT: &str = "Test";
+
 /// Wraps each expression in a no-op expression statement inside the body of an
-/// `__test()` function of a synthesized `Test` contract, runs every semantic
-/// pass, and returns the typing recorded for each expression (in input order)
-/// along with the populated type registry. Non-`Resolved` typings come back
-/// as `None`.
-///
-/// `contract_context` is optional contract-level setup — state variables,
-/// nested struct definitions, sibling member functions, etc. — inserted
-/// before the `__test()` definition.
-fn type_of_expressions(
-    language_version: LanguageVersion,
-    contract_name: Option<&str>,
-    contract_context: Option<&str>,
-    expressions: &[&str],
-) -> (Vec<Option<Type>>, TypeRegistry) {
-    let context_block = contract_context.unwrap_or("");
-    let contract_name = contract_name.unwrap_or("Test");
+/// `__test()` function of a synthesized contract, preceded by `context_block`.
+fn expression_source(contract_name: &str, context_block: &str, expressions: &[&str]) -> String {
     let expression_statements = expressions
         .iter()
         .map(|expr| format!("{expr};"))
         .collect::<Vec<_>>()
         .join("\n");
-    let source = format!(
+    format!(
         r#"
         contract {contract_name} {{
             {context_block}
@@ -186,22 +176,34 @@ fn type_of_expressions(
             }}
         }}
         "#
-    );
+    )
+}
 
-    let TypeAnalysis {
-        file,
-        binder,
-        types,
-        ..
-    } = analyze(language_version, &source);
-
-    let contract = find_contract(&file, contract_name);
+/// The typing recorded for each of `__test()`'s expression statements, in
+/// input order. Non-`Resolved` typings come back as `None`.
+fn expression_typings(analysis: &TypeAnalysis, contract_name: &str) -> Vec<Option<Type>> {
+    let contract = find_contract(&analysis.file, contract_name);
     let function = find_function(&contract.members, "__test").expect("__test function not found");
     let block = function.body.as_ref().expect("__test has a body");
 
-    let typings = expression_statement_types(block, &binder, &types);
+    expression_statement_types(block, &analysis.binder, &analysis.types)
+}
 
-    (typings, types)
+/// Runs every semantic pass over the expressions' synthesized source and
+/// returns their typings along with the populated type registry.
+fn type_of_expressions(
+    language_version: LanguageVersion,
+    contract_name: Option<&str>,
+    contract_context: Option<&str>,
+    expressions: &[&str],
+) -> (Vec<Option<Type>>, TypeRegistry) {
+    let contract_name = contract_name.unwrap_or(TEST_CONTRACT);
+    let source = expression_source(contract_name, contract_context.unwrap_or(""), expressions);
+
+    let analysis = analyze(language_version, &source);
+    let typings = expression_typings(&analysis, contract_name);
+
+    (typings, analysis.types)
 }
 
 /// Convenience wrapper for `type_of_expressions` with a single expression and
@@ -239,6 +241,27 @@ fn try_type_of_expression_in_context(context: &str, expr: &str) -> (Option<Type>
     (typing, types)
 }
 
+/// Like `try_type_of_expression_in_context`, but keeps the diagnostics that
+/// `analyze` asserts the absence of.
+fn type_and_diagnostics_of_expression_in_context(
+    context: &str,
+    expr: &str,
+) -> (Option<Type>, Vec<DiagnosticKind>) {
+    let source = expression_source(TEST_CONTRACT, context, &[expr]);
+    let analysis = analyze_with_diagnostics(LanguageVersion::LATEST, &source);
+    let typing = expression_typings(&analysis, TEST_CONTRACT)
+        .into_iter()
+        .next()
+        .expect("at least one expression");
+    (typing, diagnostic_kinds(&analysis.diagnostics))
+}
+
+/// Convenience wrapper for `type_and_diagnostics_of_expression_in_context`
+/// with no contract context.
+fn type_and_diagnostics_of_expression(expr: &str) -> (Option<Type>, Vec<DiagnosticKind>) {
+    type_and_diagnostics_of_expression_in_context("", expr)
+}
+
 fn register_uint_type(types: &mut TypeRegistry, bits: u32) -> TypeId {
     types.register_type(Type::Integer(IntegerType {
         is_signed: false,
@@ -246,14 +269,20 @@ fn register_uint_type(types: &mut TypeRegistry, bits: u32) -> TypeId {
     }))
 }
 
+/// The kind of every emitted diagnostic, in the collection's order.
+fn diagnostic_kinds(diagnostics: &DiagnosticCollection) -> Vec<DiagnosticKind> {
+    diagnostics.iter().map(|d| d.kind().clone()).collect()
+}
+
 /// Returns the kind of the single emitted diagnostic, if any. The inputs in
 /// these tests produce at most one diagnostic.
 fn diagnostic_kind(diagnostics: &DiagnosticCollection) -> Option<DiagnosticKind> {
+    let kinds = diagnostic_kinds(diagnostics);
     assert!(
-        diagnostics.iter().count() <= 1,
+        kinds.len() <= 1,
         "expected at most one diagnostic: {diagnostics:?}"
     );
-    diagnostics.iter().next().map(|d| d.kind().clone())
+    kinds.into_iter().next()
 }
 
 /// Runs the full pipeline over `source` and returns contract `name`'s folded
@@ -779,16 +808,83 @@ fn test_conditional_expression_unifies_branch_types() {
 }
 
 #[test]
-fn test_conditional_expression_unresolved_when_branches_incompatible() {
+fn test_conditional_expression_rejects_incompatible_branches() {
     // uint8 (1) and int8 (-1): neither converts to the other at the same
-    // bit width, so unification fails and the conditional is unresolved.
-    let (type_, _) = try_type_of_expression("true ? 1 : -1");
-    assert_eq!(type_, None);
+    // bit width.
+    assert_eq!(
+        type_and_diagnostics_of_expression("true ? 1 : -1"),
+        (None, vec![IncompatibleConditionalBranches.into()])
+    );
 
-    // A non-reducing rational has no `reified` type yet, so any conditional
-    // involving one is unresolved.
-    let (type_, _) = try_type_of_expression("true ? 0.5 : 1");
+    // A non-reducing rational has no common type with an integer literal.
+    assert_eq!(
+        type_and_diagnostics_of_expression("true ? 0.5 : 1"),
+        (None, vec![IncompatibleConditionalBranches.into()])
+    );
+}
+
+#[test]
+fn test_type_name_has_no_mobile_type() {
+    // A type name denotes a type rather than a value, so nothing reconciles
+    // two of them.
+    let (type_, _) = try_type_of_expression_in_context("enum E { A }", "E + E");
     assert_eq!(type_, None);
+}
+
+#[test]
+fn test_conditional_expression_rejects_branch_without_mobile_type() {
+    // Both branches are reported, even when they name the same type.
+    assert_eq!(
+        type_and_diagnostics_of_expression_in_context("enum E { A }", "true ? E : E"),
+        (
+            None,
+            vec![
+                ConditionalBranchWithoutMobileType.into(),
+                ConditionalBranchWithoutMobileType.into()
+            ]
+        )
+    );
+    assert_eq!(
+        type_and_diagnostics_of_expression_in_context("enum E { A }", "true ? E : uint8(1)"),
+        (None, vec![ConditionalBranchWithoutMobileType.into()])
+    );
+    assert_eq!(
+        type_and_diagnostics_of_expression_in_context("enum E { A }", "true ? uint8(1) : E"),
+        (None, vec![ConditionalBranchWithoutMobileType.into()])
+    );
+
+    // An elementary type keyword names a type as well.
+    assert_eq!(
+        type_and_diagnostics_of_expression("true ? uint : uint"),
+        (
+            None,
+            vec![
+                ConditionalBranchWithoutMobileType.into(),
+                ConditionalBranchWithoutMobileType.into()
+            ]
+        )
+    );
+
+    // A tuple has a mobile type only if all of its elements do.
+    assert_eq!(
+        type_and_diagnostics_of_expression("true ? (uint, bool) : (uint, bool)"),
+        (
+            None,
+            vec![
+                ConditionalBranchWithoutMobileType.into(),
+                ConditionalBranchWithoutMobileType.into()
+            ]
+        )
+    );
+
+    // A partially applied function has no mobile type either.
+    assert_eq!(
+        type_and_diagnostics_of_expression_in_context(
+            "function foo() external {}",
+            "true ? this.foo : this.foo{gas: 4}"
+        ),
+        (None, vec![ConditionalBranchWithoutMobileType.into()])
+    );
 }
 
 #[test]
@@ -903,8 +999,10 @@ fn test_array_literal_unifies_byte_array_and_literal_zero() {
 
 #[test]
 fn test_conditional_expression_does_not_unify_byte_array_and_literal_zero() {
-    let (type_, _) = try_type_of_expression("true ? bytes32(0) : 0");
-    assert_eq!(type_, None);
+    assert_eq!(
+        type_and_diagnostics_of_expression("true ? bytes32(0) : 0"),
+        (None, vec![IncompatibleConditionalBranches.into()])
+    );
 }
 
 #[test]
@@ -943,8 +1041,10 @@ fn test_array_literal_unifies_byte_array_and_matching_hex_literal() {
 
 #[test]
 fn test_conditional_expression_loses_hex_literal_specialness() {
-    let (type_, _) = try_type_of_expression("true ? bytes1(0x01) : 0x01");
-    assert_eq!(type_, None);
+    assert_eq!(
+        type_and_diagnostics_of_expression("true ? bytes1(0x01) : 0x01"),
+        (None, vec![IncompatibleConditionalBranches.into()])
+    );
 }
 
 #[test]
@@ -1012,21 +1112,25 @@ fn test_conditional_expression_with_function_call_tuple() {
     }
 
     // No common type: each tuple is "wider" in a different position (element 0
-    // on the left, element 1 on the right), so neither converts to the other
-    // (matches solc error 1080).
-    let expr = "true ? (uint256(1), uint128(2)) : (uint128(3), uint256(4))";
-    let (expr_type, _) = try_type_of_expression(expr);
-    assert!(expr_type.is_none());
+    // on the left, element 1 on the right), so neither converts to the other.
+    assert_eq!(
+        type_and_diagnostics_of_expression(
+            "true ? (uint256(1), uint128(2)) : (uint128(3), uint256(4))"
+        ),
+        (None, vec![IncompatibleConditionalBranches.into()])
+    );
 }
 
 #[test]
 fn test_mappings_only_unify_on_equal_elements() {
     // Mappings must match on key and value types
-    let (expr_type, _) = try_type_of_expression_in_context(
-        "mapping(uint => int128) m1; mapping(uint => int256) m2;",
-        "true ? m1 : m2",
+    assert_eq!(
+        type_and_diagnostics_of_expression_in_context(
+            "mapping(uint => int128) m1; mapping(uint => int256) m2;",
+            "true ? m1 : m2"
+        ),
+        (None, vec![IncompatibleConditionalBranches.into()])
     );
-    assert_eq!(None, expr_type);
 }
 
 #[test]
