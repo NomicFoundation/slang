@@ -113,8 +113,18 @@ impl CargoWorkspace {
 }
 
 pub trait CargoWorkspaceCommands {
+    /// Adds the CI build flags for a correctness gate run (`check`, `clippy`,
+    /// `rustdoc`, and the test suite). These keep the default `dev`/`test`
+    /// profile, the same one used locally, so that debug assertions and
+    /// overflow checks are enabled in CI as well.
     #[must_use]
     fn add_build_rustflags(self) -> Self;
+
+    /// Adds the CI build flags for a shipped/optimized artifact (e.g. the WASM
+    /// package). Builds under `release`, where assertions are intentionally
+    /// disabled.
+    #[must_use]
+    fn add_release_build_rustflags(self) -> Self;
 }
 
 impl CargoWorkspaceCommands for Command {
@@ -124,35 +134,50 @@ impl CargoWorkspaceCommands for Command {
             return self;
         }
 
-        // Using `$RUSTFLAGS' or '--' overrides any rustflags from `.cargo/config.toml'.
-        // Using this syntax instead, as it is concatenated with the existing flags:
-        self.flag("--release")
-            .property(
-                "--config",
-                format!(
-                    "build.rustflags = {rustflags}",
-                    rustflags = serde_json::to_string(&[
-                        // Deny any warnings in CI:
-                        "-Dwarnings",
-                        // Lint against leftover `dbg/todo!` macros in CI:
-                        "-Wclippy::dbg_macro",
-                        "-Wclippy::todo"
-                    ])
-                    .unwrap(),
-                ),
-            )
-            // Rustdoc requires specifying RUSTDOCFLAGS, instead:
-            // See <https://github.com/rust-lang/cargo/issues/8424#issuecomment-1070988443>.
-            .property(
-                "--config",
-                format!(
-                    "build.rustdocflags = {rustdocflags}",
-                    rustdocflags = serde_json::to_string(&[
-                        // Deny any warnings in CI:
-                        "-Dwarnings"
-                    ])
-                    .unwrap(),
-                ),
-            )
+        add_ci_rustflags(self)
     }
+
+    fn add_release_build_rustflags(self) -> Self {
+        if !GitHub::is_running_in_ci() {
+            // Nothing to add locally:
+            return self;
+        }
+
+        add_ci_rustflags(self.flag("--release"))
+    }
+}
+
+/// Appends the CI-only rustflags (deny warnings, lint against leftover
+/// `dbg!`/`todo!`) shared by every CI build, regardless of profile.
+fn add_ci_rustflags(command: Command) -> Command {
+    // Using `$RUSTFLAGS' or '--' overrides any rustflags from `.cargo/config.toml'.
+    // Using this syntax instead, as it is concatenated with the existing flags:
+    command
+        .property(
+            "--config",
+            format!(
+                "build.rustflags = {rustflags}",
+                rustflags = serde_json::to_string(&[
+                    // Deny any warnings in CI:
+                    "-Dwarnings",
+                    // Lint against leftover `dbg/todo!` macros in CI:
+                    "-Wclippy::dbg_macro",
+                    "-Wclippy::todo"
+                ])
+                .unwrap(),
+            ),
+        )
+        // Rustdoc requires specifying RUSTDOCFLAGS, instead:
+        // See <https://github.com/rust-lang/cargo/issues/8424#issuecomment-1070988443>.
+        .property(
+            "--config",
+            format!(
+                "build.rustdocflags = {rustdocflags}",
+                rustdocflags = serde_json::to_string(&[
+                    // Deny any warnings in CI:
+                    "-Dwarnings"
+                ])
+                .unwrap(),
+            ),
+        )
 }

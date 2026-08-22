@@ -30,7 +30,7 @@ impl WasmPackage {
             .property("--target", WASM_TARGET)
             .property("--package", WASM_CRATE)
             .flag("--all-features")
-            .add_build_rustflags()
+            .add_release_build_rustflags()
             .run();
 
         let profile = if GitHub::is_running_in_ci() {
