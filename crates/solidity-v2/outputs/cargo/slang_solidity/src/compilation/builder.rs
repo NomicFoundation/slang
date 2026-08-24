@@ -10,7 +10,7 @@ use slang_solidity_v2_cst::structured_cst::nodes as cst;
 use slang_solidity_v2_ir::ir::{self, BuildOutput};
 use slang_solidity_v2_parser::{ParseOutput, Parser};
 use slang_solidity_v2_semantic::context::{
-    SemanticContext, SemanticFile, extract_import_paths_from_source_unit,
+    SemanticContext, SemanticFile, SourceUnitImport, extract_imports_from_source_unit,
 };
 
 use super::file::InternalFile;
@@ -35,7 +35,7 @@ pub trait CompilationBuilderConfig {
     /// Resolving to a file that was never added to the builder yields a
     /// [`MissingImportedFile`] diagnostic instead.
     fn resolve_import(
-        &self,
+        &mut self,
         source_file_id: &FileId,
         import_path: &str,
     ) -> Result<FileId, UnresolvedImport>;
@@ -108,7 +108,7 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
         let CompilationBuilder {
             language_version,
             evm_target,
-            config,
+            mut config,
 
             sources,
         } = self;
@@ -116,8 +116,12 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
         let mut diagnostics = DiagnosticCollection::default();
 
         let parsed_files = parse_files(sources, language_version, &mut diagnostics);
-        let (files, id_generator) =
-            build_ir(&config, parsed_files, language_version, &mut diagnostics);
+        let (files, id_generator) = build_ir(
+            &mut config,
+            parsed_files,
+            language_version,
+            &mut diagnostics,
+        );
 
         let semantic = SemanticContext::build_from(
             language_version,
@@ -161,7 +165,7 @@ fn parse_files(
 /// Because the full set of files is known up front, an import resolving outside
 /// of it is reported here, rather than being discovered while loading files.
 fn build_ir<C: CompilationBuilderConfig>(
-    config: &C,
+    config: &mut C,
     parsed_files: Vec<ParsedFile>,
     language_version: LanguageVersion,
     diagnostics: &mut DiagnosticCollection,
@@ -197,13 +201,16 @@ fn build_ir<C: CompilationBuilderConfig>(
             diagnostics.extend(ir_diagnostics);
 
             let mut file = InternalFile::new(file_id, ir_root);
-            for (node_id, import_path, path_range) in
-                extract_import_paths_from_source_unit(file.ir_root())
+            for SourceUnitImport {
+                node_id,
+                path,
+                range,
+            } in extract_imports_from_source_unit(file.ir_root())
             {
-                let imported_file_id = match config.resolve_import(file.id(), &import_path) {
+                let imported_file_id = match config.resolve_import(file.id(), &path) {
                     Ok(imported_file_id) => imported_file_id,
                     Err(unresolved_import) => {
-                        diagnostics.push(file.id().clone(), path_range, unresolved_import);
+                        diagnostics.push(file.id().clone(), range, unresolved_import);
                         continue;
                     }
                 };
@@ -211,7 +218,7 @@ fn build_ir<C: CompilationBuilderConfig>(
                 if !known_files.contains(&imported_file_id) {
                     diagnostics.push(
                         file.id().clone(),
-                        path_range,
+                        range,
                         MissingImportedFile {
                             imported_file_id: imported_file_id.clone(),
                         },

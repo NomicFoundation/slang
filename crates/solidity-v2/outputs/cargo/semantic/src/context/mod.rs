@@ -42,12 +42,22 @@ pub trait SemanticFile {
     fn resolved_import_by_node_id(&self, node_id: NodeId) -> Option<&FileId>;
 }
 
-/// Collects the import paths declared in a source unit, as tuples of the node
-/// declaring the import, the path it names, and the range of the path literal
-/// in the file's source text.
-pub fn extract_import_paths_from_source_unit(
+/// One import declared by a source unit, as collected by
+/// [`extract_imports_from_source_unit`].
+#[derive(Clone, Debug)]
+pub struct SourceUnitImport {
+    /// The IR node declaring the import.
+    pub node_id: NodeId,
+    /// The path the import names, with the surrounding quotes stripped.
+    pub path: String,
+    /// The range of the path literal in the file's source text.
+    pub range: Range<usize>,
+}
+
+/// Collects the imports declared in a source unit.
+pub fn extract_imports_from_source_unit(
     source_unit: &ir::SourceUnit,
-) -> Vec<(NodeId, String, Range<usize>)> {
+) -> Vec<SourceUnitImport> {
     let mut import_paths = Vec::new();
 
     for member in source_unit.members.iter() {
@@ -60,8 +70,11 @@ pub fn extract_import_paths_from_source_unit(
                 (import_deconstruction.id(), &import_deconstruction.path)
             }
         };
-        let import_path = strip_string_literal_quotes(path.unparse()).to_owned();
-        import_paths.push((node_id, import_path, path.range.clone()));
+        import_paths.push(SourceUnitImport {
+            node_id,
+            path: strip_string_literal_quotes(path.unparse()).to_owned(),
+            range: path.range.clone(),
+        });
     }
     import_paths
 }

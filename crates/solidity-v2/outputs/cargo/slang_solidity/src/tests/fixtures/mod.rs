@@ -49,7 +49,7 @@ struct FixtureBuildConfig;
 
 impl CompilationBuilderConfig for FixtureBuildConfig {
     fn resolve_import(
-        &self,
+        &mut self,
         _source_file_id: &FileId,
         import_path: &str,
     ) -> Result<FileId, UnresolvedImport> {

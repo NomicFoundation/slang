@@ -5,7 +5,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
 use slang_solidity_v2_semantic::binder::{self, Resolution};
 use slang_solidity_v2_semantic::context::{
-    SemanticContext, SemanticFile, extract_import_paths_from_source_unit,
+    SemanticContext, SemanticFile, extract_imports_from_source_unit,
 };
 
 use crate::dataset::SolidityProject;
@@ -67,15 +67,15 @@ pub fn build_files(
         .into_iter()
         .zip(project.sources.keys())
         .map(|(ir_root, file_id)| {
-            let import_paths = extract_import_paths_from_source_unit(&ir_root);
+            let import_paths = extract_imports_from_source_unit(&ir_root);
             let resolved_imports = import_paths
                 .iter()
-                .map(|(node_id, import_path, _)| {
+                .map(|import| {
                     let resolved_file_id = project
                         .import_resolver
-                        .resolve_import(file_id, import_path)
+                        .resolve_import(file_id, &import.path)
                         .expect("files to be resolved");
-                    (*node_id, resolved_file_id.into())
+                    (import.node_id, resolved_file_id.into())
                 })
                 .collect();
             File {

@@ -16,7 +16,7 @@ struct ImportResolver;
 
 impl CompilationBuilderConfig for ImportResolver {
     fn resolve_import(
-        &self,
+        &mut self,
         source_file_id: &FileId,
         import_path: &str,
     ) -> Result<FileId, UnresolvedImport> {

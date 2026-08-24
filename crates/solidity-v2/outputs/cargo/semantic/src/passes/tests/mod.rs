@@ -12,7 +12,7 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
 use slang_solidity_v2_parser::{ParseOutput, Parser};
 
-use crate::context::{SemanticFile, extract_import_paths_from_source_unit};
+use crate::context::{SemanticFile, extract_imports_from_source_unit};
 
 struct TestFile {
     id: FileId,
@@ -95,10 +95,10 @@ fn build_files(sources: &[(&str, &str)], language_version: LanguageVersion) -> V
                 language_version,
             );
 
-            file.resolved_imports = extract_import_paths_from_source_unit(&file.ir_root)
+            file.resolved_imports = extract_imports_from_source_unit(&file.ir_root)
                 .into_iter()
-                .filter(|(_, path, _)| sources.iter().any(|(name, _)| name == path))
-                .map(|(node_id, path, _)| (node_id, path.as_str().into()))
+                .filter(|import| sources.iter().any(|(name, _)| *name == import.path))
+                .map(|import| (import.node_id, import.path.as_str().into()))
                 .collect();
 
             file

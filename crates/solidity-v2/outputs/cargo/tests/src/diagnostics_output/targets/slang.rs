@@ -55,7 +55,7 @@ struct TestConfig;
 
 impl CompilationBuilderConfig for TestConfig {
     fn resolve_import(
-        &self,
+        &mut self,
         source_file_id: &FileId,
         import_path: &str,
     ) -> Result<FileId, UnresolvedImport> {
