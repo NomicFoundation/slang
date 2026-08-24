@@ -1,9 +1,10 @@
-name: "benchmark_cargo_wall_clock_smoke"
+name: "benchmark_cargo_slang_v2_wall_clock_smoke"
 
-# The wall-clock benchmarks ('infra perf cargo-wall-clock') are meant for local
-# comparisons only: they measure wall time (too noisy on shared runners) and
-# report nothing to the Bencher dashboard, so CI never runs them for real.
-# This workflow only smoke-builds the benchmark binary, to keep it compiling.
+# The wall-clock benchmarks ('infra perf cargo slang-v2-wall-clock') are meant
+# for local comparisons only: they measure wall time (too noisy on shared
+# runners) and report nothing to the Bencher dashboard, so CI never runs them
+# for real. This workflow only smoke-builds the benchmark binary, to keep it
+# compiling.
 
 on:
   # Run on every pull request:
@@ -40,5 +41,5 @@ jobs:
           setup-tools: "cargo"
           sfw-optional: "true"
 
-      - name: "Smoke Test > infra perf cargo-wall-clock --smoke"
-        run: "./scripts/bin/infra perf cargo-wall-clock --smoke"
+      - name: "Smoke Test > infra perf cargo --smoke slang-v2-wall-clock"
+        run: "./scripts/bin/infra perf cargo --smoke slang-v2-wall-clock"

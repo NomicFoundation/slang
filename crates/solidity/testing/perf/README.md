@@ -62,14 +62,14 @@ comparable across [projects] of different sizes.
 Run it with:
 
 ```console
-./scripts/bin/infra perf cargo-wall-clock
+./scripts/bin/infra perf cargo slang-v2-wall-clock
 ```
 
 Arguments after `--` are forwarded to `divan`, which takes a substring filter and flags such as
 `--sample-count` and `--max-time`:
 
 ```console
-./scripts/bin/infra perf cargo-wall-clock -- uniswap --sample-count 50
+./scripts/bin/infra perf cargo slang-v2-wall-clock -- uniswap --sample-count 50
 ```
 
 Because wall time on shared CI runners is too noisy to alert on, this suite is not measured on CI yet.

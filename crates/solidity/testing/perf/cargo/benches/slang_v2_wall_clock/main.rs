@@ -58,11 +58,11 @@ const MAX_TIME_SECS: u64 = 10;
 /// Builds a whole [`slang_solidity_v2::compilation::CompilationUnit`]: parsing,
 /// IR building, and semantic analysis.
 #[divan::bench(args = PROJECTS, max_time = MAX_TIME_SECS)]
-fn compilation_unit(bencher: Bencher<'_, '_>, project_name: &str) {
-    let project = tests::slang_v2::compilation_unit::setup(project_name);
+fn full_compilation(bencher: Bencher<'_, '_>, project_name: &str) {
+    let project = tests::slang_v2::full_compilation::setup(project_name);
 
     with_throughput_counters(bencher, project)
-        .bench(|| black_box(tests::slang_v2::compilation_unit::run(black_box(project))));
+        .bench(|| black_box(tests::slang_v2::full_compilation::run(black_box(project))));
 }
 
 /// Parses every source of the project into a CST, without any of the later

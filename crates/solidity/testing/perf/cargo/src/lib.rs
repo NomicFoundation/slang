@@ -126,12 +126,12 @@ mod unit_tests {
         );
 
         define_payload_test_and_assert_count_eq!(
-            compilation_unit,
+            full_compilation,
             count_concrete_contracts,
             super::CONCRETE_CONTRACT_COUNT
         );
         define_payload_test_and_assert_count_eq!(
-            compilation_unit,
+            full_compilation,
             count_resolved_references,
             super::RESOLVED_REFERENCES_COUNT
         );
