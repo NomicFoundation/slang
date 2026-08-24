@@ -1,12 +1,10 @@
 use std::path::Path;
 
 use anyhow::{Context, Result};
-use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig};
-use slang_solidity_v2_common::collections::OrderedMap;
-use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
+use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use solidity_testing_utils::import_resolver::{ImportResolver, SourceMap};
+use solidity_v2_testing_utils::compilation;
 use solidity_v2_testing_utils::reporting::diagnostic;
 
 use crate::evm_target::{FUTURE_EVM_VERSION, ParsedTarget, default_evm_target, resolve_evm_target};
@@ -39,8 +37,12 @@ pub fn run_test(test_path: &Path, language_version: LanguageVersion) -> Result<O
 }
 
 fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) -> Result<Outcome> {
-    let files = &test_case.files;
-    let config = TestConfig::new(files);
+    // The test's sources, keyed the way the compilation refers to them.
+    let files: SortedMap<FileId, String> = test_case
+        .files
+        .iter()
+        .map(|(name, contents)| (FileId::from(name.as_str()), contents.clone()))
+        .collect();
 
     let resolved = resolve_evm_target(
         test_case.evm_version.as_deref(),
@@ -58,15 +60,7 @@ fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) ->
         }
     };
 
-    let mut builder = CompilationBuilder::create(language_version, evm_target, config);
-
-    // Add every source as a root, so files that aren't reachable via imports
-    // (e.g. sibling sources in a multi-source test) are still analyzed.
-    for file_id in files.keys() {
-        builder.add_file(FileId::from(file_id.as_str()));
-    }
-
-    let unit = builder.build();
+    let unit = compilation::compile(&files, language_version, evm_target);
     let diagnostics = unit.diagnostics();
 
     if diagnostics.is_empty() {
@@ -77,10 +71,7 @@ fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) ->
         .iter()
         .map(|diagnostic| {
             let file_id = diagnostic.file_id();
-            let source = files
-                .get(file_id.as_str())
-                .map(String::as_str)
-                .unwrap_or_default();
+            let source = files.get(file_id).map(String::as_str).unwrap_or_default();
             diagnostic::render(diagnostic, file_id.as_str(), source, false)
         })
         .collect();
@@ -88,60 +79,4 @@ fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) ->
     Ok(Outcome::Failed {
         diagnostics: rendered,
     })
-}
-
-/// Feeds the in-memory sources of an [`IsolTestCase`] to the `slang` compilation
-/// builder, resolving imports between them.
-///
-/// Import resolution reuses the shared [`ImportResolver`] (also used by the
-/// sourcify runner), with each source registered under its own name.
-struct TestConfig {
-    files: OrderedMap<String, String>,
-    resolver: ImportResolver,
-}
-
-impl TestConfig {
-    fn new(files: &OrderedMap<String, String>) -> Self {
-        let source_maps = files
-            .keys()
-            .map(|id| SourceMap {
-                // Our source names are already the "virtual" paths that imports
-                // refer to, so the id and virtual path are the same.
-                source_id: id.clone(),
-                virtual_path: id.clone(),
-            })
-            .collect();
-
-        Self {
-            files: files.clone(),
-            resolver: ImportResolver {
-                import_remaps: Vec::new(),
-                source_maps,
-            },
-        }
-    }
-}
-
-impl CompilationBuilderConfig for TestConfig {
-    fn read_file(&mut self, file_id: &FileId) -> Result<String, MissingFile> {
-        self.files
-            .get(file_id.as_str())
-            .cloned()
-            .ok_or_else(|| MissingFile {
-                reason: format!("no source registered for '{file_id}'"),
-            })
-    }
-
-    fn resolve_import(
-        &mut self,
-        source_file_id: &FileId,
-        import_path: &str,
-    ) -> Result<FileId, UnresolvedImport> {
-        self.resolver
-            .resolve_import(source_file_id.as_str(), import_path)
-            .map(FileId::from)
-            .ok_or_else(|| UnresolvedImport {
-                reason: format!("could not resolve import '{import_path}'"),
-            })
-    }
 }

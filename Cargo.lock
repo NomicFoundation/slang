@@ -4571,9 +4571,7 @@ dependencies = [
  "semver 1.0.28",
  "serde",
  "serde_json",
- "slang_solidity_v2",
  "slang_solidity_v2_common",
- "solidity_testing_utils",
  "solidity_v2_testing_utils",
  "tempfile",
 ]
