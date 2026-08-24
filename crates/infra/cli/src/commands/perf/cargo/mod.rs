@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use anyhow::Result;
+use anyhow::{Result, ensure};
 use clap::{Parser, Subcommand, ValueEnum};
 use infra_utils::commands::Command;
 use infra_utils::paths::{FileWalker, PathExtensions};
@@ -48,6 +48,20 @@ enum Benches {
     Comparison,
     /// Performs the slang v2 benchmarks
     SlangV2,
+    /// Performs the wall-clock ('divan') benchmarks of the slang v2 pipeline
+    ///
+    /// Unlike its sibling suites, this one is not measured under Valgrind, so
+    /// its numbers are wall time rather than deterministic counters, and
+    /// nothing is reported to the Bencher dashboard: wall time on shared
+    /// runners is too noisy to alert on.
+    SlangV2WallClock {
+        /// Arguments forwarded to 'divan', after '--'.
+        ///
+        /// Accepts a substring filter and flags such as '--sample-count' or
+        /// '--max-time'. Pass '--help' to see everything 'divan' supports.
+        #[arg(last = true, allow_hyphen_values = true)]
+        divan_args: Vec<String>,
+    },
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, ValueEnum)]
@@ -59,8 +73,29 @@ enum PrBenchmarkMode {
     Full,
 }
 
+/// The package holding every cargo benchmark suite.
+const PACKAGE: &str = "solidity_testing_perf_cargo";
+
 impl CargoController {
     pub fn execute(&self) -> Result<()> {
+        match &self.bench {
+            Benches::Comparison => self.run_gungraun_suite("comparison", BencherProject::CargoCmp),
+            Benches::Slang => self.run_gungraun_suite("slang", BencherProject::CargoSlang),
+            Benches::SlangV2 => self.run_gungraun_suite("slang_v2", BencherProject::CargoSlangV2),
+            Benches::SlangV2WallClock { divan_args } => {
+                ensure!(
+                    self.pr_benchmark.is_none(),
+                    "'--pr-benchmark' does not apply to 'slang-v2-wall-clock', which reports nothing to the Bencher dashboard."
+                );
+
+                Self::run_divan_suite("slang_v2_wall_clock", divan_args, self.smoke);
+
+                Ok(())
+            }
+        }
+    }
+
+    fn run_gungraun_suite(&self, bench_name: &str, bencher_project: BencherProject) -> Result<()> {
         if !self.no_deps {
             if !self.no_apt_deps {
                 binaries::install_valgrind()?;
@@ -70,17 +105,9 @@ impl CargoController {
             binaries::install_bencher_cli()?;
         }
 
-        let package = "solidity_testing_perf_cargo";
-
-        let (bench_name, bencher_project) = match self.bench {
-            Benches::Comparison => ("comparison", BencherProject::CargoCmp),
-            Benches::Slang => ("slang", BencherProject::CargoSlang),
-            Benches::SlangV2 => ("slang_v2", BencherProject::CargoSlangV2),
-        };
-
         if self.smoke {
             Command::new("cargo")
-                .args(["build", "--package", package, "--bench", bench_name])
+                .args(["build", "--package", PACKAGE, "--bench", bench_name])
                 .run();
             // Verify gprof2dot is installed (used by generate_callgraph after full benchmarks).
             PipEnv::run("gprof2dot").arg("--help").run();
@@ -89,17 +116,32 @@ impl CargoController {
 
         // Bencher supports multiple languages/frameworks: https://bencher.dev/docs/explanation/adapters/
         // We currently only have one benchmark suite (Rust/gungraun), but we can add more here in the future.
-        self.run_gungraun_bench(package, bench_name, bencher_project);
+        self.run_gungraun_bench(bench_name, bencher_project);
         Ok(())
     }
 
-    fn run_gungraun_bench(
-        &self,
-        package_name: &str,
-        bench_name: &str,
-        bencher_project: BencherProject,
-    ) {
-        let test_runner = format!("cargo bench --package {package_name} --bench {bench_name}");
+    /// Runs a wall-clock suite: no Valgrind, no external deps to install, and
+    /// no upload step, so none of the bencher-related flags apply here.
+    fn run_divan_suite(bench_name: &str, divan_args: &[String], smoke: bool) {
+        if smoke {
+            Command::new("cargo")
+                .args(["build", "--package", PACKAGE, "--bench", bench_name])
+                .run();
+
+            return;
+        }
+
+        // 'cargo bench' builds with the 'bench' profile (optimized), which is
+        // what wall-clock measurements need.
+        Command::new("cargo")
+            .args(["bench", "--package", PACKAGE, "--bench", bench_name])
+            .arg("--")
+            .args(divan_args)
+            .run();
+    }
+
+    fn run_gungraun_bench(&self, bench_name: &str, bencher_project: BencherProject) {
+        let test_runner = format!("cargo bench --package {PACKAGE} --bench {bench_name}");
 
         // gungraun's metrics come from valgrind's simulation, so they're deterministic: any change reflects a
         // real code change, not noise.
@@ -158,7 +200,7 @@ impl CargoController {
         );
 
         let reports_dir = Path::repo_path("target/gungraun")
-            .join(package_name)
+            .join(PACKAGE)
             .join(bench_name);
 
         Self::generate_callgraph(reports_dir.clone());

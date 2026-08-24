@@ -1,0 +1,45 @@
+name: "benchmark_cargo_slang_v2_wall_clock_smoke"
+
+# The wall-clock benchmarks ('infra perf cargo slang-v2-wall-clock') are meant
+# for local comparisons only: they measure wall time (too noisy on shared
+# runners) and report nothing to the Bencher dashboard, so CI never runs them
+# for real. This workflow only smoke-builds the benchmark binary, to keep it
+# compiling.
+
+on:
+  # Run on every pull request:
+  pull_request:
+    types:
+      - "opened"
+      - "synchronize"
+      - "reopened"
+
+permissions: {}
+
+# Cancel stale runs for the same pull request:
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref_name }}"
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    permissions:
+      contents: "read"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
+
+      - name: "Setup"
+        uses: "./.github/actions/common-setup"
+        with:
+          setup-tools: "cargo"
+          sfw-optional: "true"
+
+      - name: "Smoke Test > infra perf cargo --smoke slang-v2-wall-clock"
+        run: "./scripts/bin/infra perf cargo --smoke slang-v2-wall-clock"
