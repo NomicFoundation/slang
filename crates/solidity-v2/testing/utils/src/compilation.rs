@@ -12,7 +12,7 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use crate::path_resolver;
 
 /// Compiles `files` at the given language version and EVM target, resolving
-/// imports between them.
+/// imports between them the way `solc` does.
 ///
 /// Every source is added as a root, so a source that is not imported gets
 /// analyzed too.
@@ -54,8 +54,6 @@ impl CompilationBuilderConfig for InMemoryHost {
         source_file_id: &FileId,
         import_path: &str,
     ) -> Result<FileId, UnresolvedImport> {
-        path_resolver::resolve_import(source_file_id, import_path).ok_or_else(|| UnresolvedImport {
-            reason: "Unresolved import.".to_string(),
-        })
+        Ok(path_resolver::resolve_import(source_file_id, import_path))
     }
 }
