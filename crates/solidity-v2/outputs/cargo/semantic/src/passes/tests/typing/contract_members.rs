@@ -1,7 +1,7 @@
 //! Typing of members reached through a contract, library or interface:
 //! `this`/`super`, getters, data locations, and external signatures.
 
-use slang_solidity_v2_ir::ir::{self};
+use slang_solidity_v2_ir::ir;
 
 use super::{Analysis, expression, expression_statement_types, expressions};
 use crate::binder::Typing;

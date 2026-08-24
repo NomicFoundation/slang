@@ -295,7 +295,7 @@ contract Test {
 }
 
 /// A symbol imported from a sibling file resolves to the declaration in that
-/// file, which is what [`Analysis::file`] wiring the import paths up buys.
+/// file, which is what [`AnalysisBuilder::file`] wiring the import paths up buys.
 #[test]
 fn test_imported_symbol_resolves_to_the_declaring_file() {
     let analysis = Analysis::builder()

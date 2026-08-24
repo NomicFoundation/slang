@@ -9,7 +9,7 @@ use slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDepend
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::nodes::NodeId;
 
-use super::{Analyse, Analysis, AnalysisBuilder, only_diagnostic};
+use super::{Analyse, Analysis, only_diagnostic};
 use crate::binder::Definition;
 use crate::context::SemanticContext;
 
@@ -17,19 +17,19 @@ use crate::context::SemanticContext;
 /// the oldest supported target keeps any target-gated built-in out of the way.
 const TARGET: EvmTarget = EvmTarget::Istanbul;
 
-/// dependencies form a cycle. The whole [`Analysis`] comes back so the test
-/// can reach both the context and what was reported building it.
-fn analyse(source: &str) -> AnalysisBuilder<'_> {
+/// Runs the pipeline to compute a `SemanticContext`. The full `Analysis` is
+/// returned so callers can assert on diagnostics if required.
+fn analyse(source: &str) -> Analysis {
     Analysis::of_source(source)
         .target(TARGET)
         .analyse(Analyse::Context)
+        .run()
 }
 
 fn build_context(source: &str) -> SemanticContext {
-    analyse(source).run().expect_no_diagnostics().into_context()
+    analyse(source).expect_no_diagnostics().into_context()
 }
 
-/// Runs the pipeline without asserting on the diagnostics, for sources whose
 fn contract_id(context: &SemanticContext, name: &str) -> NodeId {
     context
         .find_contract_by_name(name)
@@ -420,7 +420,7 @@ fn code_access_records_a_deployed_dependency_for_the_library() {
                 return type(L).creationCode;
             }
         }";
-    let analysis = analyse(source).run();
+    let analysis = analyse(source);
     let context = analysis.context();
     // The self dependency is reported as a cycle at the code access.
     let diagnostic = only_diagnostic(&analysis.diagnostics);
@@ -478,7 +478,7 @@ fn a_constant_embedding_the_reader_records_a_self_dependency() {
         contract A {
             function f() public pure returns (bytes memory) { return B.CODE; }
         }";
-    let analysis = analyse(source).run();
+    let analysis = analyse(source);
     let context = analysis.context();
     // The self dependency is reported as a cycle at the code access.
     let diagnostic = only_diagnostic(&analysis.diagnostics);
