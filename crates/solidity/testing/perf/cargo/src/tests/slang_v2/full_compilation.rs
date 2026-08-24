@@ -8,7 +8,7 @@
 use slang_solidity_v2::compilation::{
     CompilationBuilder, CompilationBuilderConfig, CompilationUnit, FileId,
 };
-use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
+use slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport;
 
 use crate::dataset::SolidityProject;
 use crate::tests::slang_v2::common::{parse_evm_target, parse_version};
@@ -31,9 +31,12 @@ pub fn run(project: Input) -> Output {
     // matches the workload of the per-stage benchmarks in this directory, which
     // all operate on the full source list, and it mirrors consumers that
     // already know their complete file set up front (e.g. a build tool).
-    for file_id in project.sources.keys() {
-        builder.add_file(file_id.as_str().into());
-    }
+    builder.add_files(
+        project
+            .sources
+            .iter()
+            .map(|(file_id, contents)| (FileId::from(file_id.as_str()), contents.clone())),
+    );
 
     let unit = builder.build();
 
@@ -50,25 +53,15 @@ pub fn test(project: Input) -> Output {
     run(project)
 }
 
-/// Serves the builder callbacks entirely from the project's in-memory sources,
-/// so that benchmarks never touch the filesystem.
+/// Resolves the project's imports entirely from its in-memory metadata, so that
+/// benchmarks never touch the filesystem.
 struct ProjectConfig {
     project: &'static SolidityProject,
 }
 
 impl CompilationBuilderConfig for ProjectConfig {
-    fn read_file(&mut self, file_id: &FileId) -> Result<String, MissingFile> {
-        self.project
-            .sources
-            .get(file_id.as_str())
-            .cloned()
-            .ok_or_else(|| MissingFile {
-                reason: format!("'{file_id}' is not part of this project"),
-            })
-    }
-
     fn resolve_import(
-        &mut self,
+        &self,
         source_file_id: &FileId,
         import_path: &str,
     ) -> Result<FileId, UnresolvedImport> {

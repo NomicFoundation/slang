@@ -3,7 +3,7 @@ use std::path::Path;
 use anyhow::{Context, Result};
 use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig};
 use slang_solidity_v2_common::collections::OrderedMap;
-use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
+use slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use solidity_testing_utils::import_resolver::{ImportResolver, SourceMap};
@@ -60,11 +60,13 @@ fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) ->
 
     let mut builder = CompilationBuilder::create(language_version, evm_target, config);
 
-    // Add every source as a root, so files that aren't reachable via imports
-    // (e.g. sibling sources in a multi-source test) are still analyzed.
-    for file_id in files.keys() {
-        builder.add_file(FileId::from(file_id.as_str()));
-    }
+    // Add every source, so files that aren't reachable via imports (e.g.
+    // sibling sources in a multi-source test) are still analyzed.
+    builder.add_files(
+        files
+            .iter()
+            .map(|(file_id, contents)| (FileId::from(file_id.as_str()), contents.clone())),
+    );
 
     let unit = builder.build();
     let diagnostics = unit.diagnostics();
@@ -90,13 +92,12 @@ fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) ->
     })
 }
 
-/// Feeds the in-memory sources of an [`IsolTestCase`] to the `slang` compilation
-/// builder, resolving imports between them.
+/// Resolves the imports between the in-memory sources of an [`IsolTestCase`]
+/// for the `slang` compilation builder.
 ///
 /// Import resolution reuses the shared [`ImportResolver`] (also used by the
 /// sourcify runner), with each source registered under its own name.
 struct TestConfig {
-    files: OrderedMap<String, String>,
     resolver: ImportResolver,
 }
 
@@ -113,7 +114,6 @@ impl TestConfig {
             .collect();
 
         Self {
-            files: files.clone(),
             resolver: ImportResolver {
                 import_remaps: Vec::new(),
                 source_maps,
@@ -123,17 +123,8 @@ impl TestConfig {
 }
 
 impl CompilationBuilderConfig for TestConfig {
-    fn read_file(&mut self, file_id: &FileId) -> Result<String, MissingFile> {
-        self.files
-            .get(file_id.as_str())
-            .cloned()
-            .ok_or_else(|| MissingFile {
-                reason: format!("no source registered for '{file_id}'"),
-            })
-    }
-
     fn resolve_import(
-        &mut self,
+        &self,
         source_file_id: &FileId,
         import_path: &str,
     ) -> Result<FileId, UnresolvedImport> {
