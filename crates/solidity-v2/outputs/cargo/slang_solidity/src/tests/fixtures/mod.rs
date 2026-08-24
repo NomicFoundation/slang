@@ -3,7 +3,7 @@ use std::sync::Arc;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 
 use crate::ast::{Definition, LibraryDefinition};
-use crate::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit, FileId};
+use crate::compilation::{CompilationUnit, FileId, ImportResolver};
 use crate::diagnostics::kinds::compilation::UnresolvedImport;
 use crate::utils::LanguageVersion;
 
@@ -45,9 +45,9 @@ macro_rules! define_fixture {
     };
 }
 
-struct FixtureBuildConfig;
+struct FixtureImportResolver;
 
-impl CompilationBuilderConfig for FixtureBuildConfig {
+impl ImportResolver for FixtureImportResolver {
     fn resolve_import(
         &mut self,
         _source_file_id: &FileId,
@@ -58,17 +58,14 @@ impl CompilationBuilderConfig for FixtureBuildConfig {
 }
 
 pub(super) fn build_compilation_unit_from_fixture(files: &[FixtureFile]) -> Arc<CompilationUnit> {
-    let version = LanguageVersion::LATEST;
-    let target = EvmTarget::LATEST;
-    let mut builder = CompilationBuilder::create(version, target, FixtureBuildConfig);
-
-    builder.add_files(
+    let unit = CompilationUnit::create(
+        LanguageVersion::LATEST,
+        EvmTarget::LATEST,
         files
             .iter()
             .map(|file| (file.id.clone(), file.contents.to_owned())),
+        FixtureImportResolver,
     );
-
-    let unit = builder.build();
 
     assert!(
         unit.diagnostics().is_empty(),

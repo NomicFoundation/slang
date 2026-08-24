@@ -55,9 +55,7 @@ pub struct SourceUnitImport {
 }
 
 /// Collects the imports declared in a source unit.
-pub fn extract_imports_from_source_unit(
-    source_unit: &ir::SourceUnit,
-) -> Vec<SourceUnitImport> {
+pub fn extract_imports_from_source_unit(source_unit: &ir::SourceUnit) -> Vec<SourceUnitImport> {
     let mut import_paths = Vec::new();
 
     for member in source_unit.members.iter() {

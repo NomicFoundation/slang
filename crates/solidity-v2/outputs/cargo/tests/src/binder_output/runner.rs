@@ -2,7 +2,7 @@ use anyhow::{Result, ensure};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
-use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig, FileId};
+use slang_solidity_v2::compilation::{CompilationUnit, FileId, ImportResolver};
 use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport;
 
@@ -12,9 +12,9 @@ use crate::snapshots::{self, SnapshotOutcome, SnapshotStatus, TestConfig, TestMa
 use crate::utils::multi_part_file::split_multi_file;
 use crate::utils::path_resolver;
 
-struct ImportResolver;
+struct TestImportResolver;
 
-impl CompilationBuilderConfig for ImportResolver {
+impl ImportResolver for TestImportResolver {
     fn resolve_import(
         &mut self,
         source_file_id: &FileId,
@@ -62,10 +62,8 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         &test_config,
         "generated",
         |version, target| {
-            let mut builder = CompilationBuilder::create(version, target, ImportResolver);
-            builder.add_files(files.clone());
-
-            let compilation = builder.build();
+            let compilation =
+                CompilationUnit::create(version, target, files.clone(), TestImportResolver);
             let report_data = ReportData::prepare(&compilation, &files);
 
             let status = if report_data.all_resolved() {

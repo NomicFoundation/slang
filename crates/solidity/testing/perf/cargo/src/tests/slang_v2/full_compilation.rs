@@ -3,11 +3,9 @@
 //! The sibling modules in this directory each measure one pipeline stage in
 //! isolation. This one instead drives the whole pipeline the way consumers do:
 //! parsing, IR building, and semantic analysis, all behind
-//! `CompilationBuilder::build()`.
+//! `CompilationUnit::create()`.
 
-use slang_solidity_v2::compilation::{
-    CompilationBuilder, CompilationBuilderConfig, CompilationUnit, FileId,
-};
+use slang_solidity_v2::compilation::{CompilationUnit, FileId, ImportResolver};
 use slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport;
 
 use crate::dataset::SolidityProject;
@@ -21,24 +19,19 @@ pub fn setup(project: &str) -> Input {
 }
 
 pub fn run(project: Input) -> Output {
-    let mut builder = CompilationBuilder::create(
-        parse_version(project),
-        parse_evm_target(project),
-        ProjectConfig { project },
-    );
-
-    // Add every source of the project, rather than just its entrypoint. This
+    // Pass every source of the project, rather than just its entrypoint. This
     // matches the workload of the per-stage benchmarks in this directory, which
     // all operate on the full source list, and it mirrors consumers that
     // already know their complete file set up front (e.g. a build tool).
-    builder.add_files(
+    let unit = CompilationUnit::create(
+        parse_version(project),
+        parse_evm_target(project),
         project
             .sources
             .iter()
             .map(|(file_id, contents)| (FileId::from(file_id.as_str()), contents.clone())),
+        ProjectImportResolver { project },
     );
-
-    let unit = builder.build();
 
     assert!(
         unit.diagnostics().is_empty(),
@@ -55,11 +48,11 @@ pub fn test(project: Input) -> Output {
 
 /// Resolves the project's imports entirely from its in-memory metadata, so that
 /// benchmarks never touch the filesystem.
-struct ProjectConfig {
+struct ProjectImportResolver {
     project: &'static SolidityProject,
 }
 
-impl CompilationBuilderConfig for ProjectConfig {
+impl ImportResolver for ProjectImportResolver {
     fn resolve_import(
         &mut self,
         source_file_id: &FileId,

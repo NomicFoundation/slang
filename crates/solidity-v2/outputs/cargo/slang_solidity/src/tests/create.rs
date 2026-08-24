@@ -1,13 +1,13 @@
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 
-use crate::compilation::{CompilationBuilder, CompilationBuilderConfig, FileId};
+use crate::compilation::{CompilationUnit, FileId, ImportResolver};
 use crate::diagnostics::kinds::compilation::UnresolvedImport;
 use crate::utils::LanguageVersion;
 
 /// Resolves every import path to a file of the same name.
-struct TestConfig;
+struct TestImportResolver;
 
-impl CompilationBuilderConfig for TestConfig {
+impl ImportResolver for TestImportResolver {
     fn resolve_import(
         &mut self,
         _source_file_id: &FileId,
@@ -17,8 +17,13 @@ impl CompilationBuilderConfig for TestConfig {
     }
 }
 
-fn builder() -> CompilationBuilder<TestConfig> {
-    CompilationBuilder::create(LanguageVersion::LATEST, EvmTarget::LATEST, TestConfig)
+fn compile(sources: impl IntoIterator<Item = (FileId, String)>) -> CompilationUnit {
+    CompilationUnit::create(
+        LanguageVersion::LATEST,
+        EvmTarget::LATEST,
+        sources,
+        TestImportResolver,
+    )
 }
 
 fn contract(name: &str, imports: &[&str]) -> String {
@@ -33,17 +38,13 @@ fn contract(name: &str, imports: &[&str]) -> String {
 }
 
 #[test]
-fn builds_every_file_that_was_added() {
-    let mut builder = builder();
-
-    builder.add_files([
+fn compiles_every_source_it_is_given() {
+    let unit = compile([
         ("main.sol".into(), contract("Main", &["lib.sol"])),
         ("lib.sol".into(), contract("Lib", &[])),
+        // Not imported by anything, but still part of the compilation.
+        ("extra.sol".into(), contract("Extra", &[])),
     ]);
-    // Not imported by anything, but still part of the compilation.
-    builder.add_file("extra.sol".into(), contract("Extra", &[]));
-
-    let unit = builder.build();
 
     assert!(unit.diagnostics().is_empty(), "{:#?}", unit.diagnostics());
 
@@ -58,13 +59,11 @@ fn builds_every_file_that_was_added() {
 }
 
 #[test]
-fn adding_a_file_twice_replaces_its_contents() {
-    let mut builder = builder();
-
-    builder.add_file("main.sol".into(), contract("Stale", &[]));
-    builder.add_file("main.sol".into(), contract("Fresh", &[]));
-
-    let unit = builder.build();
+fn the_last_contents_given_for_a_file_id_win() {
+    let unit = compile([
+        ("main.sol".into(), contract("Stale", &[])),
+        ("main.sol".into(), contract("Fresh", &[])),
+    ]);
 
     assert!(unit.diagnostics().is_empty(), "{:#?}", unit.diagnostics());
     assert_eq!(unit.files().count(), 1);

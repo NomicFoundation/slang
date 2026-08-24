@@ -1,5 +1,5 @@
 use anyhow::Result;
-use slang_solidity_v2::compilation::{CompilationBuilder, CompilationBuilderConfig, FileId};
+use slang_solidity_v2::compilation::{CompilationUnit, FileId, ImportResolver};
 use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport;
 use slang_solidity_v2_common::diagnostics::{DiagnosticExtensions, DiagnosticSeverity};
@@ -23,10 +23,8 @@ impl TestTarget for SlangTarget {
         version: LanguageVersion,
         evm_target: EvmTarget,
     ) -> Result<TargetOutcome> {
-        let mut builder = CompilationBuilder::create(version, evm_target, TestConfig);
-        builder.add_files(files.clone());
-
-        let compilation = builder.build();
+        let compilation =
+            CompilationUnit::create(version, evm_target, files.clone(), TestImportResolver);
 
         let diagnostics: Vec<_> = compilation.diagnostics().iter().collect();
 
@@ -51,9 +49,9 @@ impl TestTarget for SlangTarget {
     }
 }
 
-struct TestConfig;
+struct TestImportResolver;
 
-impl CompilationBuilderConfig for TestConfig {
+impl ImportResolver for TestImportResolver {
     fn resolve_import(
         &mut self,
         source_file_id: &FileId,

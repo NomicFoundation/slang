@@ -16,9 +16,9 @@ use slang_solidity_v2_semantic::context::{
 use super::file::InternalFile;
 use super::unit::CompilationUnit;
 
-/// User-provided callbacks necessary for the `CompilationBuilder` to perform its job.
-pub trait CompilationBuilderConfig {
-    /// Callback used by this builder to resolve an import path.
+/// User-provided callback necessary for [`CompilationUnit::create`] to perform its job.
+pub trait ImportResolver {
+    /// Callback used by the compilation to resolve an import path.
     /// For example, if a source file contains the following statement:
     ///
     /// ```solidity
@@ -32,7 +32,7 @@ pub trait CompilationBuilderConfig {
     /// and returning its ID. The returned [`UnresolvedImport`] is surfaced as a
     /// compilation diagnostic on the [`CompilationUnit`].
     ///
-    /// Resolving to a file that was never added to the builder yields a
+    /// Resolving to a file that is not part of the compilation yields a
     /// [`MissingImportedFile`] diagnostic instead.
     fn resolve_import(
         &mut self,
@@ -41,83 +41,34 @@ pub trait CompilationBuilderConfig {
     ) -> Result<FileId, UnresolvedImport>;
 }
 
-/// A builder for creating compilation units.
-///
-/// Collects the source files that make up a compilation, then turns them into a
-/// [`CompilationUnit`] in [`build()`](CompilationBuilder::build). Adding files
-/// only records them; all of the work (parsing, IR building, semantic analysis)
-/// happens in `build()`, and every problem it runs into is reported as a
-/// diagnostic on the resulting unit.
-pub struct CompilationBuilder<C: CompilationBuilderConfig> {
-    language_version: LanguageVersion,
-    evm_target: EvmTarget,
-    config: C,
-
-    sources: SortedMap<FileId, String>,
-}
-
-/// One source file, parsed.
-struct ParsedFile {
-    file_id: FileId,
-    contents: String,
-    source_unit: cst::SourceUnit,
-}
-
-impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
-    /// Creates a new compilation builder for the specified language version,
-    /// EVM target, and resolver callbacks.
+impl CompilationUnit {
+    /// Compiles the given source files into a [`CompilationUnit`].
+    ///
+    /// The caller is responsible for providing every file that takes part in
+    /// the compilation, including the transitive imports of the files they care
+    /// about. An import that resolves to a file which was not provided is
+    /// reported as a [`MissingImportedFile`] diagnostic on the returned unit.
+    ///
+    /// Providing the same file ID more than once keeps the last contents given
+    /// for it.
+    ///
+    /// All of the work — parsing, IR building, semantic analysis — happens
+    /// here, and every problem it runs into is reported as a diagnostic on the
+    /// returned unit. Parse errors, unresolvable imports, and missing imported
+    /// files are all collected this way — see [`CompilationUnit::diagnostics`].
     pub fn create(
         language_version: LanguageVersion,
         evm_target: EvmTarget,
-        config: C,
-    ) -> CompilationBuilder<C> {
-        CompilationBuilder {
-            language_version,
-            evm_target,
-            config,
-
-            sources: SortedMap::default(),
-        }
-    }
-
-    /// Adds a source file, and its contents, to the compilation unit.
-    ///
-    /// The user is responsible for providing every file that takes part in the
-    /// compilation, including the transitive imports of the files they care
-    /// about. An import that resolves to a file which was not added is reported
-    /// as a [`MissingImportedFile`] diagnostic on the resulting unit.
-    ///
-    /// Adding a file that has already been added replaces its contents.
-    pub fn add_file(&mut self, file_id: FileId, contents: String) {
-        self.sources.insert(file_id, contents);
-    }
-
-    /// Adds several source files at once. Equivalent to calling
-    /// [`add_file()`](CompilationBuilder::add_file) on each of them.
-    pub fn add_files(&mut self, files: impl IntoIterator<Item = (FileId, String)>) {
-        self.sources.extend(files);
-    }
-
-    /// Consumes the source files added so far, and returns the final
-    /// compilation unit.
-    ///
-    /// Parse errors, unresolvable imports, and missing imported files are all
-    /// collected as diagnostics on the returned [`CompilationUnit`] — see
-    /// [`CompilationUnit::diagnostics`].
-    pub fn build(self) -> CompilationUnit {
-        let CompilationBuilder {
-            language_version,
-            evm_target,
-            mut config,
-
-            sources,
-        } = self;
+        sources: impl IntoIterator<Item = (FileId, String)>,
+        mut resolver: impl ImportResolver,
+    ) -> CompilationUnit {
+        let sources: SortedMap<FileId, String> = sources.into_iter().collect();
 
         let mut diagnostics = DiagnosticCollection::default();
 
         let parsed_files = parse_files(sources, language_version, &mut diagnostics);
         let (files, id_generator) = build_ir(
-            &mut config,
+            &mut resolver,
             parsed_files,
             language_version,
             &mut diagnostics,
@@ -131,8 +82,15 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
             &mut diagnostics,
         );
 
-        CompilationUnit::create(language_version, evm_target, files, semantic, diagnostics)
+        CompilationUnit::from_parts(language_version, evm_target, files, semantic, diagnostics)
     }
+}
+
+/// One source file, parsed.
+struct ParsedFile {
+    file_id: FileId,
+    contents: String,
+    source_unit: cst::SourceUnit,
 }
 
 /// Parses every source file.
@@ -164,8 +122,8 @@ fn parse_files(
 ///
 /// Because the full set of files is known up front, an import resolving outside
 /// of it is reported here, rather than being discovered while loading files.
-fn build_ir<C: CompilationBuilderConfig>(
-    config: &mut C,
+fn build_ir<R: ImportResolver>(
+    resolver: &mut R,
     parsed_files: Vec<ParsedFile>,
     language_version: LanguageVersion,
     diagnostics: &mut DiagnosticCollection,
@@ -207,7 +165,7 @@ fn build_ir<C: CompilationBuilderConfig>(
                 range,
             } in extract_imports_from_source_unit(file.ir_root())
             {
-                let imported_file_id = match config.resolve_import(file.id(), &path) {
+                let imported_file_id = match resolver.resolve_import(file.id(), &path) {
                     Ok(imported_file_id) => imported_file_id,
                     Err(unresolved_import) => {
                         diagnostics.push(file.id().clone(), range, unresolved_import);

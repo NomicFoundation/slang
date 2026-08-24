@@ -20,7 +20,9 @@ pub struct CompilationUnit {
 }
 
 impl CompilationUnit {
-    pub(super) fn create(
+    /// Assembles a unit from the outputs of the compilation pipeline. The
+    /// public entry point is [`CompilationUnit::create`].
+    pub(super) fn from_parts(
         language_version: LanguageVersion,
         evm_target: EvmTarget,
         files: Vec<InternalFile>,
