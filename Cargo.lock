@@ -4585,6 +4585,7 @@ dependencies = [
  "ariadne",
  "semver 1.0.28",
  "slang_solidity",
+ "slang_solidity_v2",
  "slang_solidity_v2_common",
  "slang_solidity_v2_cst",
  "slang_solidity_v2_parser",
