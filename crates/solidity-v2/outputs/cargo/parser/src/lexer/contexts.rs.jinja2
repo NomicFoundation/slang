@@ -60,6 +60,8 @@ impl<'source> ContextWrapper<'source> {
 {% for context in model.parser.lexer.contexts %}
     {%- for lexeme in context.lexemes %}
     {%- if lexeme.type == "Token" and lexeme.not_followed_by %}
+    {# TODO: Most not_followed_by patterns are the same, in the future it may
+       be worth it to deduplicate them and generate unique instances. #}
 
     /// Lookahead pattern guarding `{{ lexeme.kind }}`.
     ///
