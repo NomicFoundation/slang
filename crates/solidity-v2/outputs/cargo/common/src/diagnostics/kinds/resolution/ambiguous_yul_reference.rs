@@ -7,7 +7,9 @@ use crate::diagnostics::severity::DiagnosticSeverity;
 /// performs no overload resolution, so the reference cannot be narrowed down
 /// even when it is being called with arguments.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
-pub struct AmbiguousYulReference;
+pub struct AmbiguousYulReference {
+    pub name: String,
+}
 
 impl DiagnosticExtensions for AmbiguousYulReference {
     fn severity(&self) -> DiagnosticSeverity {
@@ -19,7 +21,9 @@ impl DiagnosticExtensions for AmbiguousYulReference {
     }
 
     fn message(&self) -> String {
-        "Multiple matching identifiers. Resolving overloaded identifiers is not supported."
-            .to_owned()
+        format!(
+            "Multiple matching identifiers for '{}'. Resolving overloaded identifiers is not supported.",
+            self.name
+        )
     }
 }

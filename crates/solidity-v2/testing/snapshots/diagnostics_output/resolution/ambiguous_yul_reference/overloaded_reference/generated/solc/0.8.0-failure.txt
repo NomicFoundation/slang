@@ -3,9 +3,9 @@
 Diagnostics: 1
 
 [DeclarationError 4718] Error: Multiple matching identifiers. Resolving overloaded identifiers is not supported.
-    ╭─[input.sol:14:22]
+    ╭─[input.sol:12:22]
     │
- 14 │             let x := f
+ 12 │             let x := f
     │                      ┬  
     │                      ╰── Error occurred here.
 ────╯

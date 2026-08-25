@@ -2,10 +2,10 @@
 
 Diagnostics: 1
 
-[resolution/ambiguous-yul-reference] Error: Multiple matching identifiers. Resolving overloaded identifiers is not supported.
-    ╭─[input.sol:14:22]
+[resolution/ambiguous-yul-reference] Error: Multiple matching identifiers for 'f'. Resolving overloaded identifiers is not supported.
+    ╭─[input.sol:12:22]
     │
- 14 │             let x := f
+ 12 │             let x := f
     │                      ┬  
     │                      ╰── Error occurred here.
 ────╯

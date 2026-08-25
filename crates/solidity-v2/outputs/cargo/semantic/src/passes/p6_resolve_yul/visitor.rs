@@ -175,7 +175,12 @@ impl Visitor for Pass<'_> {
         // Yul performs no overload resolution, so a name matching several
         // declarations can't be narrowed down, not even when it's being called.
         if matches!(resolution, Resolution::Ambiguous(_)) {
-            self.push_diagnostic(identifier, AmbiguousYulReference);
+            self.push_diagnostic(
+                identifier,
+                AmbiguousYulReference {
+                    name: identifier.unparse().to_string(),
+                },
+            );
         }
 
         self.record_solidity_reference(&resolution);
