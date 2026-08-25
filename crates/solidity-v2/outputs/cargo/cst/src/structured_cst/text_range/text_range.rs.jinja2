@@ -3,7 +3,6 @@
 #![allow(clippy::wildcard_imports)]
 
 use std::ops::Range;
-use std::rc::Rc;
 
 use crate::structured_cst::nodes::*;
 
@@ -22,7 +21,7 @@ impl<T: TextRange> TextRange for Option<T> {
     }
 }
 
-impl<T: TextRange> TextRange for Rc<T> {
+impl<T: TextRange> TextRange for Box<T> {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         (**self).calculate_text_range()
     }

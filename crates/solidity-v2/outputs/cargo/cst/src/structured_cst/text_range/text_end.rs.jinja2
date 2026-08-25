@@ -2,8 +2,6 @@
 
 #![allow(clippy::wildcard_imports)]
 
-use std::rc::Rc;
-
 use crate::structured_cst::nodes::*;
 
 /// A trait for CST nodes that can report the end offset of their text range.
@@ -18,7 +16,7 @@ impl<T: TextEnd> TextEnd for Option<T> {
     }
 }
 
-impl<T: TextEnd> TextEnd for Rc<T> {
+impl<T: TextEnd> TextEnd for Box<T> {
     fn calculate_text_end(&self) -> Option<usize> {
         (**self).calculate_text_end()
     }

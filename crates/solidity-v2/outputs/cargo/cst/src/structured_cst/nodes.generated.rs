@@ -6,7 +6,6 @@
 #![allow(clippy::too_many_arguments)]
 
 use std::ops::Range;
-use std::rc::Rc;
 
 // TODO(v2):
 // - (perf) don't use terminals that are not needed
@@ -24,9 +23,9 @@ use std::rc::Rc;
 //
 // Sequences:
 //
-// Note: All sequences are wrapped in Rc, this keeps sizes down and avoids recursive types
+// Note: All sequences are wrapped in Box, this keeps sizes down and avoids recursive types
 
-pub type AbicoderPragma = Rc<AbicoderPragmaStruct>;
+pub type AbicoderPragma = Box<AbicoderPragmaStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct AbicoderPragmaStruct {
@@ -38,13 +37,13 @@ pub fn new_abicoder_pragma(
     abicoder_keyword: AbicoderKeyword,
     version: AbicoderVersion,
 ) -> AbicoderPragma {
-    Rc::new(AbicoderPragmaStruct {
+    Box::new(AbicoderPragmaStruct {
         abicoder_keyword,
         version,
     })
 }
 
-pub type AdditiveExpression = Rc<AdditiveExpressionStruct>;
+pub type AdditiveExpression = Box<AdditiveExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct AdditiveExpressionStruct {
@@ -58,14 +57,14 @@ pub fn new_additive_expression(
     expression_additive_expression_operator: Expression_AdditiveExpression_Operator,
     right_operand: Expression,
 ) -> AdditiveExpression {
-    Rc::new(AdditiveExpressionStruct {
+    Box::new(AdditiveExpressionStruct {
         left_operand,
         expression_additive_expression_operator,
         right_operand,
     })
 }
 
-pub type AddressType = Rc<AddressTypeStruct>;
+pub type AddressType = Box<AddressTypeStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct AddressTypeStruct {
@@ -77,13 +76,13 @@ pub fn new_address_type(
     address_keyword: AddressKeyword,
     payable_keyword: Option<PayableKeyword>,
 ) -> AddressType {
-    Rc::new(AddressTypeStruct {
+    Box::new(AddressTypeStruct {
         address_keyword,
         payable_keyword,
     })
 }
 
-pub type AndExpression = Rc<AndExpressionStruct>;
+pub type AndExpression = Box<AndExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct AndExpressionStruct {
@@ -97,14 +96,14 @@ pub fn new_and_expression(
     operator: AmpersandAmpersand,
     right_operand: Expression,
 ) -> AndExpression {
-    Rc::new(AndExpressionStruct {
+    Box::new(AndExpressionStruct {
         left_operand,
         operator,
         right_operand,
     })
 }
 
-pub type ArrayExpression = Rc<ArrayExpressionStruct>;
+pub type ArrayExpression = Box<ArrayExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ArrayExpressionStruct {
@@ -118,14 +117,14 @@ pub fn new_array_expression(
     items: ArrayValues,
     close_bracket: CloseBracket,
 ) -> ArrayExpression {
-    Rc::new(ArrayExpressionStruct {
+    Box::new(ArrayExpressionStruct {
         open_bracket,
         items,
         close_bracket,
     })
 }
 
-pub type ArrayTypeName = Rc<ArrayTypeNameStruct>;
+pub type ArrayTypeName = Box<ArrayTypeNameStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ArrayTypeNameStruct {
@@ -141,7 +140,7 @@ pub fn new_array_type_name(
     index: Option<Expression>,
     close_bracket: CloseBracket,
 ) -> ArrayTypeName {
-    Rc::new(ArrayTypeNameStruct {
+    Box::new(ArrayTypeNameStruct {
         operand,
         open_bracket,
         index,
@@ -149,7 +148,7 @@ pub fn new_array_type_name(
     })
 }
 
-pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
+pub type AssemblyStatement = Box<AssemblyStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct AssemblyStatementStruct {
@@ -165,7 +164,7 @@ pub fn new_assembly_statement(
     flags: Option<YulFlagsDeclaration>,
     body: YulBlock,
 ) -> AssemblyStatement {
-    Rc::new(AssemblyStatementStruct {
+    Box::new(AssemblyStatementStruct {
         assembly_keyword,
         label,
         flags,
@@ -173,7 +172,7 @@ pub fn new_assembly_statement(
     })
 }
 
-pub type AssignmentExpression = Rc<AssignmentExpressionStruct>;
+pub type AssignmentExpression = Box<AssignmentExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct AssignmentExpressionStruct {
@@ -187,14 +186,14 @@ pub fn new_assignment_expression(
     expression_assignment_expression_operator: Expression_AssignmentExpression_Operator,
     right_operand: Expression,
 ) -> AssignmentExpression {
-    Rc::new(AssignmentExpressionStruct {
+    Box::new(AssignmentExpressionStruct {
         left_operand,
         expression_assignment_expression_operator,
         right_operand,
     })
 }
 
-pub type BitwiseAndExpression = Rc<BitwiseAndExpressionStruct>;
+pub type BitwiseAndExpression = Box<BitwiseAndExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct BitwiseAndExpressionStruct {
@@ -208,14 +207,14 @@ pub fn new_bitwise_and_expression(
     operator: Ampersand,
     right_operand: Expression,
 ) -> BitwiseAndExpression {
-    Rc::new(BitwiseAndExpressionStruct {
+    Box::new(BitwiseAndExpressionStruct {
         left_operand,
         operator,
         right_operand,
     })
 }
 
-pub type BitwiseOrExpression = Rc<BitwiseOrExpressionStruct>;
+pub type BitwiseOrExpression = Box<BitwiseOrExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct BitwiseOrExpressionStruct {
@@ -229,14 +228,14 @@ pub fn new_bitwise_or_expression(
     operator: Bar,
     right_operand: Expression,
 ) -> BitwiseOrExpression {
-    Rc::new(BitwiseOrExpressionStruct {
+    Box::new(BitwiseOrExpressionStruct {
         left_operand,
         operator,
         right_operand,
     })
 }
 
-pub type BitwiseXorExpression = Rc<BitwiseXorExpressionStruct>;
+pub type BitwiseXorExpression = Box<BitwiseXorExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct BitwiseXorExpressionStruct {
@@ -250,14 +249,14 @@ pub fn new_bitwise_xor_expression(
     operator: Caret,
     right_operand: Expression,
 ) -> BitwiseXorExpression {
-    Rc::new(BitwiseXorExpressionStruct {
+    Box::new(BitwiseXorExpressionStruct {
         left_operand,
         operator,
         right_operand,
     })
 }
 
-pub type Block = Rc<BlockStruct>;
+pub type Block = Box<BlockStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct BlockStruct {
@@ -267,14 +266,14 @@ pub struct BlockStruct {
 }
 
 pub fn new_block(open_brace: OpenBrace, statements: Statements, close_brace: CloseBrace) -> Block {
-    Rc::new(BlockStruct {
+    Box::new(BlockStruct {
         open_brace,
         statements,
         close_brace,
     })
 }
 
-pub type BreakStatement = Rc<BreakStatementStruct>;
+pub type BreakStatement = Box<BreakStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct BreakStatementStruct {
@@ -283,13 +282,13 @@ pub struct BreakStatementStruct {
 }
 
 pub fn new_break_statement(break_keyword: BreakKeyword, semicolon: Semicolon) -> BreakStatement {
-    Rc::new(BreakStatementStruct {
+    Box::new(BreakStatementStruct {
         break_keyword,
         semicolon,
     })
 }
 
-pub type CallOptionsExpression = Rc<CallOptionsExpressionStruct>;
+pub type CallOptionsExpression = Box<CallOptionsExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct CallOptionsExpressionStruct {
@@ -305,7 +304,7 @@ pub fn new_call_options_expression(
     options: CallOptions,
     close_brace: CloseBrace,
 ) -> CallOptionsExpression {
-    Rc::new(CallOptionsExpressionStruct {
+    Box::new(CallOptionsExpressionStruct {
         operand,
         open_brace,
         options,
@@ -313,7 +312,7 @@ pub fn new_call_options_expression(
     })
 }
 
-pub type CatchClause = Rc<CatchClauseStruct>;
+pub type CatchClause = Box<CatchClauseStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct CatchClauseStruct {
@@ -327,14 +326,14 @@ pub fn new_catch_clause(
     error: Option<CatchClauseError>,
     body: Block,
 ) -> CatchClause {
-    Rc::new(CatchClauseStruct {
+    Box::new(CatchClauseStruct {
         catch_keyword,
         error,
         body,
     })
 }
 
-pub type CatchClauseError = Rc<CatchClauseErrorStruct>;
+pub type CatchClauseError = Box<CatchClauseErrorStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct CatchClauseErrorStruct {
@@ -346,10 +345,10 @@ pub fn new_catch_clause_error(
     name: Option<Identifier>,
     parameters: ParametersDeclaration,
 ) -> CatchClauseError {
-    Rc::new(CatchClauseErrorStruct { name, parameters })
+    Box::new(CatchClauseErrorStruct { name, parameters })
 }
 
-pub type ConditionalExpression = Rc<ConditionalExpressionStruct>;
+pub type ConditionalExpression = Box<ConditionalExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ConditionalExpressionStruct {
@@ -367,7 +366,7 @@ pub fn new_conditional_expression(
     colon: Colon,
     false_expression: Expression,
 ) -> ConditionalExpression {
-    Rc::new(ConditionalExpressionStruct {
+    Box::new(ConditionalExpressionStruct {
         operand,
         question_mark,
         true_expression,
@@ -376,7 +375,7 @@ pub fn new_conditional_expression(
     })
 }
 
-pub type ConstantDefinition = Rc<ConstantDefinitionStruct>;
+pub type ConstantDefinition = Box<ConstantDefinitionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ConstantDefinitionStruct {
@@ -396,7 +395,7 @@ pub fn new_constant_definition(
     value: Expression,
     semicolon: Semicolon,
 ) -> ConstantDefinition {
-    Rc::new(ConstantDefinitionStruct {
+    Box::new(ConstantDefinitionStruct {
         type_name,
         constant_keyword,
         name,
@@ -406,7 +405,7 @@ pub fn new_constant_definition(
     })
 }
 
-pub type ConstructorDefinition = Rc<ConstructorDefinitionStruct>;
+pub type ConstructorDefinition = Box<ConstructorDefinitionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ConstructorDefinitionStruct {
@@ -422,7 +421,7 @@ pub fn new_constructor_definition(
     attributes: ConstructorAttributes,
     body: Block,
 ) -> ConstructorDefinition {
-    Rc::new(ConstructorDefinitionStruct {
+    Box::new(ConstructorDefinitionStruct {
         constructor_keyword,
         parameters,
         attributes,
@@ -430,7 +429,7 @@ pub fn new_constructor_definition(
     })
 }
 
-pub type ContinueStatement = Rc<ContinueStatementStruct>;
+pub type ContinueStatement = Box<ContinueStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ContinueStatementStruct {
@@ -442,13 +441,13 @@ pub fn new_continue_statement(
     continue_keyword: ContinueKeyword,
     semicolon: Semicolon,
 ) -> ContinueStatement {
-    Rc::new(ContinueStatementStruct {
+    Box::new(ContinueStatementStruct {
         continue_keyword,
         semicolon,
     })
 }
 
-pub type ContractDefinition = Rc<ContractDefinitionStruct>;
+pub type ContractDefinition = Box<ContractDefinitionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ContractDefinitionStruct {
@@ -470,7 +469,7 @@ pub fn new_contract_definition(
     members: ContractMembers,
     close_brace: CloseBrace,
 ) -> ContractDefinition {
-    Rc::new(ContractDefinitionStruct {
+    Box::new(ContractDefinitionStruct {
         abstract_keyword,
         contract_keyword,
         name,
@@ -481,7 +480,7 @@ pub fn new_contract_definition(
     })
 }
 
-pub type DecimalNumberExpression = Rc<DecimalNumberExpressionStruct>;
+pub type DecimalNumberExpression = Box<DecimalNumberExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct DecimalNumberExpressionStruct {
@@ -493,10 +492,10 @@ pub fn new_decimal_number_expression(
     literal: DecimalLiteral,
     unit: Option<NumberUnit>,
 ) -> DecimalNumberExpression {
-    Rc::new(DecimalNumberExpressionStruct { literal, unit })
+    Box::new(DecimalNumberExpressionStruct { literal, unit })
 }
 
-pub type DoWhileStatement = Rc<DoWhileStatementStruct>;
+pub type DoWhileStatement = Box<DoWhileStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct DoWhileStatementStruct {
@@ -518,7 +517,7 @@ pub fn new_do_while_statement(
     close_paren: CloseParen,
     semicolon: Semicolon,
 ) -> DoWhileStatement {
-    Rc::new(DoWhileStatementStruct {
+    Box::new(DoWhileStatementStruct {
         do_keyword,
         body,
         while_keyword,
@@ -529,7 +528,7 @@ pub fn new_do_while_statement(
     })
 }
 
-pub type ElseBranch = Rc<ElseBranchStruct>;
+pub type ElseBranch = Box<ElseBranchStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ElseBranchStruct {
@@ -538,10 +537,10 @@ pub struct ElseBranchStruct {
 }
 
 pub fn new_else_branch(else_keyword: ElseKeyword, body: Statement) -> ElseBranch {
-    Rc::new(ElseBranchStruct { else_keyword, body })
+    Box::new(ElseBranchStruct { else_keyword, body })
 }
 
-pub type EmitStatement = Rc<EmitStatementStruct>;
+pub type EmitStatement = Box<EmitStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct EmitStatementStruct {
@@ -557,7 +556,7 @@ pub fn new_emit_statement(
     arguments: ArgumentsDeclaration,
     semicolon: Semicolon,
 ) -> EmitStatement {
-    Rc::new(EmitStatementStruct {
+    Box::new(EmitStatementStruct {
         emit_keyword,
         event,
         arguments,
@@ -565,7 +564,7 @@ pub fn new_emit_statement(
     })
 }
 
-pub type EnumDefinition = Rc<EnumDefinitionStruct>;
+pub type EnumDefinition = Box<EnumDefinitionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct EnumDefinitionStruct {
@@ -583,7 +582,7 @@ pub fn new_enum_definition(
     members: EnumMembers,
     close_brace: CloseBrace,
 ) -> EnumDefinition {
-    Rc::new(EnumDefinitionStruct {
+    Box::new(EnumDefinitionStruct {
         enum_keyword,
         name,
         open_brace,
@@ -592,7 +591,7 @@ pub fn new_enum_definition(
     })
 }
 
-pub type EqualityExpression = Rc<EqualityExpressionStruct>;
+pub type EqualityExpression = Box<EqualityExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct EqualityExpressionStruct {
@@ -606,14 +605,14 @@ pub fn new_equality_expression(
     expression_equality_expression_operator: Expression_EqualityExpression_Operator,
     right_operand: Expression,
 ) -> EqualityExpression {
-    Rc::new(EqualityExpressionStruct {
+    Box::new(EqualityExpressionStruct {
         left_operand,
         expression_equality_expression_operator,
         right_operand,
     })
 }
 
-pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
+pub type ErrorDefinition = Box<ErrorDefinitionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ErrorDefinitionStruct {
@@ -629,7 +628,7 @@ pub fn new_error_definition(
     members: ErrorParametersDeclaration,
     semicolon: Semicolon,
 ) -> ErrorDefinition {
-    Rc::new(ErrorDefinitionStruct {
+    Box::new(ErrorDefinitionStruct {
         error_keyword,
         name,
         members,
@@ -637,7 +636,7 @@ pub fn new_error_definition(
     })
 }
 
-pub type ErrorParameter = Rc<ErrorParameterStruct>;
+pub type ErrorParameter = Box<ErrorParameterStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ErrorParameterStruct {
@@ -646,10 +645,10 @@ pub struct ErrorParameterStruct {
 }
 
 pub fn new_error_parameter(type_name: TypeName, name: Option<Identifier>) -> ErrorParameter {
-    Rc::new(ErrorParameterStruct { type_name, name })
+    Box::new(ErrorParameterStruct { type_name, name })
 }
 
-pub type ErrorParametersDeclaration = Rc<ErrorParametersDeclarationStruct>;
+pub type ErrorParametersDeclaration = Box<ErrorParametersDeclarationStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ErrorParametersDeclarationStruct {
@@ -663,14 +662,14 @@ pub fn new_error_parameters_declaration(
     parameters: ErrorParameters,
     close_paren: CloseParen,
 ) -> ErrorParametersDeclaration {
-    Rc::new(ErrorParametersDeclarationStruct {
+    Box::new(ErrorParametersDeclarationStruct {
         open_paren,
         parameters,
         close_paren,
     })
 }
 
-pub type EventDefinition = Rc<EventDefinitionStruct>;
+pub type EventDefinition = Box<EventDefinitionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct EventDefinitionStruct {
@@ -688,7 +687,7 @@ pub fn new_event_definition(
     anonymous_keyword: Option<AnonymousKeyword>,
     semicolon: Semicolon,
 ) -> EventDefinition {
-    Rc::new(EventDefinitionStruct {
+    Box::new(EventDefinitionStruct {
         event_keyword,
         name,
         parameters,
@@ -697,7 +696,7 @@ pub fn new_event_definition(
     })
 }
 
-pub type EventParameter = Rc<EventParameterStruct>;
+pub type EventParameter = Box<EventParameterStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct EventParameterStruct {
@@ -711,14 +710,14 @@ pub fn new_event_parameter(
     indexed_keyword: Option<IndexedKeyword>,
     name: Option<Identifier>,
 ) -> EventParameter {
-    Rc::new(EventParameterStruct {
+    Box::new(EventParameterStruct {
         type_name,
         indexed_keyword,
         name,
     })
 }
 
-pub type EventParametersDeclaration = Rc<EventParametersDeclarationStruct>;
+pub type EventParametersDeclaration = Box<EventParametersDeclarationStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct EventParametersDeclarationStruct {
@@ -732,14 +731,14 @@ pub fn new_event_parameters_declaration(
     parameters: EventParameters,
     close_paren: CloseParen,
 ) -> EventParametersDeclaration {
-    Rc::new(EventParametersDeclarationStruct {
+    Box::new(EventParametersDeclarationStruct {
         open_paren,
         parameters,
         close_paren,
     })
 }
 
-pub type ExperimentalPragma = Rc<ExperimentalPragmaStruct>;
+pub type ExperimentalPragma = Box<ExperimentalPragmaStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ExperimentalPragmaStruct {
@@ -751,13 +750,13 @@ pub fn new_experimental_pragma(
     experimental_keyword: ExperimentalKeyword,
     feature: ExperimentalFeature,
 ) -> ExperimentalPragma {
-    Rc::new(ExperimentalPragmaStruct {
+    Box::new(ExperimentalPragmaStruct {
         experimental_keyword,
         feature,
     })
 }
 
-pub type ExponentiationExpression = Rc<ExponentiationExpressionStruct>;
+pub type ExponentiationExpression = Box<ExponentiationExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ExponentiationExpressionStruct {
@@ -771,14 +770,14 @@ pub fn new_exponentiation_expression(
     operator: AsteriskAsterisk,
     right_operand: Expression,
 ) -> ExponentiationExpression {
-    Rc::new(ExponentiationExpressionStruct {
+    Box::new(ExponentiationExpressionStruct {
         left_operand,
         operator,
         right_operand,
     })
 }
 
-pub type ExpressionStatement = Rc<ExpressionStatementStruct>;
+pub type ExpressionStatement = Box<ExpressionStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ExpressionStatementStruct {
@@ -790,13 +789,13 @@ pub fn new_expression_statement(
     expression: Expression,
     semicolon: Semicolon,
 ) -> ExpressionStatement {
-    Rc::new(ExpressionStatementStruct {
+    Box::new(ExpressionStatementStruct {
         expression,
         semicolon,
     })
 }
 
-pub type FallbackFunctionDefinition = Rc<FallbackFunctionDefinitionStruct>;
+pub type FallbackFunctionDefinition = Box<FallbackFunctionDefinitionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct FallbackFunctionDefinitionStruct {
@@ -814,7 +813,7 @@ pub fn new_fallback_function_definition(
     returns: Option<ReturnsDeclaration>,
     body: FunctionBody,
 ) -> FallbackFunctionDefinition {
-    Rc::new(FallbackFunctionDefinitionStruct {
+    Box::new(FallbackFunctionDefinitionStruct {
         fallback_keyword,
         parameters,
         attributes,
@@ -823,7 +822,7 @@ pub fn new_fallback_function_definition(
     })
 }
 
-pub type ForStatement = Rc<ForStatementStruct>;
+pub type ForStatement = Box<ForStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ForStatementStruct {
@@ -845,7 +844,7 @@ pub fn new_for_statement(
     close_paren: CloseParen,
     body: Statement,
 ) -> ForStatement {
-    Rc::new(ForStatementStruct {
+    Box::new(ForStatementStruct {
         for_keyword,
         open_paren,
         initialization,
@@ -856,7 +855,7 @@ pub fn new_for_statement(
     })
 }
 
-pub type FunctionCallExpression = Rc<FunctionCallExpressionStruct>;
+pub type FunctionCallExpression = Box<FunctionCallExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct FunctionCallExpressionStruct {
@@ -868,10 +867,10 @@ pub fn new_function_call_expression(
     operand: Expression,
     arguments: ArgumentsDeclaration,
 ) -> FunctionCallExpression {
-    Rc::new(FunctionCallExpressionStruct { operand, arguments })
+    Box::new(FunctionCallExpressionStruct { operand, arguments })
 }
 
-pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
+pub type FunctionDefinition = Box<FunctionDefinitionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct FunctionDefinitionStruct {
@@ -891,7 +890,7 @@ pub fn new_function_definition(
     returns: Option<ReturnsDeclaration>,
     body: FunctionBody,
 ) -> FunctionDefinition {
-    Rc::new(FunctionDefinitionStruct {
+    Box::new(FunctionDefinitionStruct {
         function_keyword,
         name,
         parameters,
@@ -901,7 +900,7 @@ pub fn new_function_definition(
     })
 }
 
-pub type FunctionType = Rc<FunctionTypeStruct>;
+pub type FunctionType = Box<FunctionTypeStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct FunctionTypeStruct {
@@ -917,7 +916,7 @@ pub fn new_function_type(
     attributes: FunctionTypeAttributes,
     returns: Option<ReturnsDeclaration>,
 ) -> FunctionType {
-    Rc::new(FunctionTypeStruct {
+    Box::new(FunctionTypeStruct {
         function_keyword,
         parameters,
         attributes,
@@ -925,7 +924,7 @@ pub fn new_function_type(
     })
 }
 
-pub type HexNumberExpression = Rc<HexNumberExpressionStruct>;
+pub type HexNumberExpression = Box<HexNumberExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct HexNumberExpressionStruct {
@@ -933,10 +932,10 @@ pub struct HexNumberExpressionStruct {
 }
 
 pub fn new_hex_number_expression(literal: HexLiteral) -> HexNumberExpression {
-    Rc::new(HexNumberExpressionStruct { literal })
+    Box::new(HexNumberExpressionStruct { literal })
 }
 
-pub type IfStatement = Rc<IfStatementStruct>;
+pub type IfStatement = Box<IfStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct IfStatementStruct {
@@ -956,7 +955,7 @@ pub fn new_if_statement(
     body: Statement,
     else_branch: Option<ElseBranch>,
 ) -> IfStatement {
-    Rc::new(IfStatementStruct {
+    Box::new(IfStatementStruct {
         if_keyword,
         open_paren,
         condition,
@@ -966,7 +965,7 @@ pub fn new_if_statement(
     })
 }
 
-pub type ImportAlias = Rc<ImportAliasStruct>;
+pub type ImportAlias = Box<ImportAliasStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ImportAliasStruct {
@@ -975,13 +974,13 @@ pub struct ImportAliasStruct {
 }
 
 pub fn new_import_alias(as_keyword: AsKeyword, identifier: Identifier) -> ImportAlias {
-    Rc::new(ImportAliasStruct {
+    Box::new(ImportAliasStruct {
         as_keyword,
         identifier,
     })
 }
 
-pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
+pub type ImportDeconstruction = Box<ImportDeconstructionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ImportDeconstructionStruct {
@@ -999,7 +998,7 @@ pub fn new_import_deconstruction(
     from_keyword: FromKeyword,
     path: StringLiteral,
 ) -> ImportDeconstruction {
-    Rc::new(ImportDeconstructionStruct {
+    Box::new(ImportDeconstructionStruct {
         open_brace,
         symbols,
         close_brace,
@@ -1008,7 +1007,7 @@ pub fn new_import_deconstruction(
     })
 }
 
-pub type ImportDeconstructionSymbol = Rc<ImportDeconstructionSymbolStruct>;
+pub type ImportDeconstructionSymbol = Box<ImportDeconstructionSymbolStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ImportDeconstructionSymbolStruct {
@@ -1020,10 +1019,10 @@ pub fn new_import_deconstruction_symbol(
     name: Identifier,
     alias: Option<ImportAlias>,
 ) -> ImportDeconstructionSymbol {
-    Rc::new(ImportDeconstructionSymbolStruct { name, alias })
+    Box::new(ImportDeconstructionSymbolStruct { name, alias })
 }
 
-pub type ImportDirective = Rc<ImportDirectiveStruct>;
+pub type ImportDirective = Box<ImportDirectiveStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ImportDirectiveStruct {
@@ -1037,14 +1036,14 @@ pub fn new_import_directive(
     clause: ImportClause,
     semicolon: Semicolon,
 ) -> ImportDirective {
-    Rc::new(ImportDirectiveStruct {
+    Box::new(ImportDirectiveStruct {
         import_keyword,
         clause,
         semicolon,
     })
 }
 
-pub type IndexAccessEnd = Rc<IndexAccessEndStruct>;
+pub type IndexAccessEnd = Box<IndexAccessEndStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct IndexAccessEndStruct {
@@ -1053,10 +1052,10 @@ pub struct IndexAccessEndStruct {
 }
 
 pub fn new_index_access_end(colon: Colon, end: Option<Expression>) -> IndexAccessEnd {
-    Rc::new(IndexAccessEndStruct { colon, end })
+    Box::new(IndexAccessEndStruct { colon, end })
 }
 
-pub type IndexAccessExpression = Rc<IndexAccessExpressionStruct>;
+pub type IndexAccessExpression = Box<IndexAccessExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct IndexAccessExpressionStruct {
@@ -1074,7 +1073,7 @@ pub fn new_index_access_expression(
     end: Option<IndexAccessEnd>,
     close_bracket: CloseBracket,
 ) -> IndexAccessExpression {
-    Rc::new(IndexAccessExpressionStruct {
+    Box::new(IndexAccessExpressionStruct {
         operand,
         open_bracket,
         start,
@@ -1083,7 +1082,7 @@ pub fn new_index_access_expression(
     })
 }
 
-pub type InequalityExpression = Rc<InequalityExpressionStruct>;
+pub type InequalityExpression = Box<InequalityExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct InequalityExpressionStruct {
@@ -1097,14 +1096,14 @@ pub fn new_inequality_expression(
     expression_inequality_expression_operator: Expression_InequalityExpression_Operator,
     right_operand: Expression,
 ) -> InequalityExpression {
-    Rc::new(InequalityExpressionStruct {
+    Box::new(InequalityExpressionStruct {
         left_operand,
         expression_inequality_expression_operator,
         right_operand,
     })
 }
 
-pub type InheritanceSpecifier = Rc<InheritanceSpecifierStruct>;
+pub type InheritanceSpecifier = Box<InheritanceSpecifierStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct InheritanceSpecifierStruct {
@@ -1116,10 +1115,10 @@ pub fn new_inheritance_specifier(
     is_keyword: IsKeyword,
     types: InheritanceTypes,
 ) -> InheritanceSpecifier {
-    Rc::new(InheritanceSpecifierStruct { is_keyword, types })
+    Box::new(InheritanceSpecifierStruct { is_keyword, types })
 }
 
-pub type InheritanceType = Rc<InheritanceTypeStruct>;
+pub type InheritanceType = Box<InheritanceTypeStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct InheritanceTypeStruct {
@@ -1131,13 +1130,13 @@ pub fn new_inheritance_type(
     type_name: IdentifierPath,
     arguments: Option<ArgumentsDeclaration>,
 ) -> InheritanceType {
-    Rc::new(InheritanceTypeStruct {
+    Box::new(InheritanceTypeStruct {
         type_name,
         arguments,
     })
 }
 
-pub type InterfaceDefinition = Rc<InterfaceDefinitionStruct>;
+pub type InterfaceDefinition = Box<InterfaceDefinitionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct InterfaceDefinitionStruct {
@@ -1157,7 +1156,7 @@ pub fn new_interface_definition(
     members: InterfaceMembers,
     close_brace: CloseBrace,
 ) -> InterfaceDefinition {
-    Rc::new(InterfaceDefinitionStruct {
+    Box::new(InterfaceDefinitionStruct {
         interface_keyword,
         name,
         inheritance,
@@ -1167,7 +1166,7 @@ pub fn new_interface_definition(
     })
 }
 
-pub type LibraryDefinition = Rc<LibraryDefinitionStruct>;
+pub type LibraryDefinition = Box<LibraryDefinitionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct LibraryDefinitionStruct {
@@ -1185,7 +1184,7 @@ pub fn new_library_definition(
     members: LibraryMembers,
     close_brace: CloseBrace,
 ) -> LibraryDefinition {
-    Rc::new(LibraryDefinitionStruct {
+    Box::new(LibraryDefinitionStruct {
         library_keyword,
         name,
         open_brace,
@@ -1194,7 +1193,7 @@ pub fn new_library_definition(
     })
 }
 
-pub type MappingKey = Rc<MappingKeyStruct>;
+pub type MappingKey = Box<MappingKeyStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct MappingKeyStruct {
@@ -1203,10 +1202,10 @@ pub struct MappingKeyStruct {
 }
 
 pub fn new_mapping_key(key_type: MappingKeyType, name: Option<Identifier>) -> MappingKey {
-    Rc::new(MappingKeyStruct { key_type, name })
+    Box::new(MappingKeyStruct { key_type, name })
 }
 
-pub type MappingType = Rc<MappingTypeStruct>;
+pub type MappingType = Box<MappingTypeStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct MappingTypeStruct {
@@ -1226,7 +1225,7 @@ pub fn new_mapping_type(
     value_type: MappingValue,
     close_paren: CloseParen,
 ) -> MappingType {
-    Rc::new(MappingTypeStruct {
+    Box::new(MappingTypeStruct {
         mapping_keyword,
         open_paren,
         key_type,
@@ -1236,7 +1235,7 @@ pub fn new_mapping_type(
     })
 }
 
-pub type MappingValue = Rc<MappingValueStruct>;
+pub type MappingValue = Box<MappingValueStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct MappingValueStruct {
@@ -1245,10 +1244,10 @@ pub struct MappingValueStruct {
 }
 
 pub fn new_mapping_value(type_name: TypeName, name: Option<Identifier>) -> MappingValue {
-    Rc::new(MappingValueStruct { type_name, name })
+    Box::new(MappingValueStruct { type_name, name })
 }
 
-pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
+pub type MemberAccessExpression = Box<MemberAccessExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct MemberAccessExpressionStruct {
@@ -1262,14 +1261,14 @@ pub fn new_member_access_expression(
     period: Period,
     member: IdentifierPathElement,
 ) -> MemberAccessExpression {
-    Rc::new(MemberAccessExpressionStruct {
+    Box::new(MemberAccessExpressionStruct {
         operand,
         period,
         member,
     })
 }
 
-pub type ModifierDefinition = Rc<ModifierDefinitionStruct>;
+pub type ModifierDefinition = Box<ModifierDefinitionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ModifierDefinitionStruct {
@@ -1287,7 +1286,7 @@ pub fn new_modifier_definition(
     attributes: ModifierAttributes,
     body: FunctionBody,
 ) -> ModifierDefinition {
-    Rc::new(ModifierDefinitionStruct {
+    Box::new(ModifierDefinitionStruct {
         modifier_keyword,
         name,
         parameters,
@@ -1296,7 +1295,7 @@ pub fn new_modifier_definition(
     })
 }
 
-pub type ModifierInvocation = Rc<ModifierInvocationStruct>;
+pub type ModifierInvocation = Box<ModifierInvocationStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ModifierInvocationStruct {
@@ -1308,10 +1307,10 @@ pub fn new_modifier_invocation(
     name: IdentifierPath,
     arguments: Option<ArgumentsDeclaration>,
 ) -> ModifierInvocation {
-    Rc::new(ModifierInvocationStruct { name, arguments })
+    Box::new(ModifierInvocationStruct { name, arguments })
 }
 
-pub type MultiTypedDeclaration = Rc<MultiTypedDeclarationStruct>;
+pub type MultiTypedDeclaration = Box<MultiTypedDeclarationStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct MultiTypedDeclarationStruct {
@@ -1327,7 +1326,7 @@ pub fn new_multi_typed_declaration(
     close_paren: CloseParen,
     value: VariableDeclarationValue,
 ) -> MultiTypedDeclaration {
-    Rc::new(MultiTypedDeclarationStruct {
+    Box::new(MultiTypedDeclarationStruct {
         open_paren,
         elements,
         close_paren,
@@ -1335,7 +1334,7 @@ pub fn new_multi_typed_declaration(
     })
 }
 
-pub type MultiTypedDeclarationElement = Rc<MultiTypedDeclarationElementStruct>;
+pub type MultiTypedDeclarationElement = Box<MultiTypedDeclarationElementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct MultiTypedDeclarationElementStruct {
@@ -1345,10 +1344,10 @@ pub struct MultiTypedDeclarationElementStruct {
 pub fn new_multi_typed_declaration_element(
     member: Option<VariableDeclaration>,
 ) -> MultiTypedDeclarationElement {
-    Rc::new(MultiTypedDeclarationElementStruct { member })
+    Box::new(MultiTypedDeclarationElementStruct { member })
 }
 
-pub type MultiplicativeExpression = Rc<MultiplicativeExpressionStruct>;
+pub type MultiplicativeExpression = Box<MultiplicativeExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct MultiplicativeExpressionStruct {
@@ -1362,14 +1361,14 @@ pub fn new_multiplicative_expression(
     expression_multiplicative_expression_operator: Expression_MultiplicativeExpression_Operator,
     right_operand: Expression,
 ) -> MultiplicativeExpression {
-    Rc::new(MultiplicativeExpressionStruct {
+    Box::new(MultiplicativeExpressionStruct {
         left_operand,
         expression_multiplicative_expression_operator,
         right_operand,
     })
 }
 
-pub type NamedArgument = Rc<NamedArgumentStruct>;
+pub type NamedArgument = Box<NamedArgumentStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct NamedArgumentStruct {
@@ -1379,10 +1378,10 @@ pub struct NamedArgumentStruct {
 }
 
 pub fn new_named_argument(name: Identifier, colon: Colon, value: Expression) -> NamedArgument {
-    Rc::new(NamedArgumentStruct { name, colon, value })
+    Box::new(NamedArgumentStruct { name, colon, value })
 }
 
-pub type NamedArgumentGroup = Rc<NamedArgumentGroupStruct>;
+pub type NamedArgumentGroup = Box<NamedArgumentGroupStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct NamedArgumentGroupStruct {
@@ -1396,14 +1395,14 @@ pub fn new_named_argument_group(
     arguments: NamedArguments,
     close_brace: CloseBrace,
 ) -> NamedArgumentGroup {
-    Rc::new(NamedArgumentGroupStruct {
+    Box::new(NamedArgumentGroupStruct {
         open_brace,
         arguments,
         close_brace,
     })
 }
 
-pub type NamedArgumentsDeclaration = Rc<NamedArgumentsDeclarationStruct>;
+pub type NamedArgumentsDeclaration = Box<NamedArgumentsDeclarationStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct NamedArgumentsDeclarationStruct {
@@ -1417,14 +1416,14 @@ pub fn new_named_arguments_declaration(
     arguments: NamedArgumentGroup,
     close_paren: CloseParen,
 ) -> NamedArgumentsDeclaration {
-    Rc::new(NamedArgumentsDeclarationStruct {
+    Box::new(NamedArgumentsDeclarationStruct {
         open_paren,
         arguments,
         close_paren,
     })
 }
 
-pub type NamedImport = Rc<NamedImportStruct>;
+pub type NamedImport = Box<NamedImportStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct NamedImportStruct {
@@ -1440,7 +1439,7 @@ pub fn new_named_import(
     from_keyword: FromKeyword,
     path: StringLiteral,
 ) -> NamedImport {
-    Rc::new(NamedImportStruct {
+    Box::new(NamedImportStruct {
         asterisk,
         alias,
         from_keyword,
@@ -1448,7 +1447,7 @@ pub fn new_named_import(
     })
 }
 
-pub type NewExpression = Rc<NewExpressionStruct>;
+pub type NewExpression = Box<NewExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct NewExpressionStruct {
@@ -1457,13 +1456,13 @@ pub struct NewExpressionStruct {
 }
 
 pub fn new_new_expression(new_keyword: NewKeyword, type_name: TypeName) -> NewExpression {
-    Rc::new(NewExpressionStruct {
+    Box::new(NewExpressionStruct {
         new_keyword,
         type_name,
     })
 }
 
-pub type OrExpression = Rc<OrExpressionStruct>;
+pub type OrExpression = Box<OrExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct OrExpressionStruct {
@@ -1477,14 +1476,14 @@ pub fn new_or_expression(
     operator: BarBar,
     right_operand: Expression,
 ) -> OrExpression {
-    Rc::new(OrExpressionStruct {
+    Box::new(OrExpressionStruct {
         left_operand,
         operator,
         right_operand,
     })
 }
 
-pub type OverridePathsDeclaration = Rc<OverridePathsDeclarationStruct>;
+pub type OverridePathsDeclaration = Box<OverridePathsDeclarationStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct OverridePathsDeclarationStruct {
@@ -1498,14 +1497,14 @@ pub fn new_override_paths_declaration(
     paths: OverridePaths,
     close_paren: CloseParen,
 ) -> OverridePathsDeclaration {
-    Rc::new(OverridePathsDeclarationStruct {
+    Box::new(OverridePathsDeclarationStruct {
         open_paren,
         paths,
         close_paren,
     })
 }
 
-pub type OverrideSpecifier = Rc<OverrideSpecifierStruct>;
+pub type OverrideSpecifier = Box<OverrideSpecifierStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct OverrideSpecifierStruct {
@@ -1517,13 +1516,13 @@ pub fn new_override_specifier(
     override_keyword: OverrideKeyword,
     overridden: Option<OverridePathsDeclaration>,
 ) -> OverrideSpecifier {
-    Rc::new(OverrideSpecifierStruct {
+    Box::new(OverrideSpecifierStruct {
         override_keyword,
         overridden,
     })
 }
 
-pub type Parameter = Rc<ParameterStruct>;
+pub type Parameter = Box<ParameterStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ParameterStruct {
@@ -1537,14 +1536,14 @@ pub fn new_parameter(
     storage_location: Option<StorageLocation>,
     name: Option<Identifier>,
 ) -> Parameter {
-    Rc::new(ParameterStruct {
+    Box::new(ParameterStruct {
         type_name,
         storage_location,
         name,
     })
 }
 
-pub type ParametersDeclaration = Rc<ParametersDeclarationStruct>;
+pub type ParametersDeclaration = Box<ParametersDeclarationStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ParametersDeclarationStruct {
@@ -1558,14 +1557,14 @@ pub fn new_parameters_declaration(
     parameters: Parameters,
     close_paren: CloseParen,
 ) -> ParametersDeclaration {
-    Rc::new(ParametersDeclarationStruct {
+    Box::new(ParametersDeclarationStruct {
         open_paren,
         parameters,
         close_paren,
     })
 }
 
-pub type PathImport = Rc<PathImportStruct>;
+pub type PathImport = Box<PathImportStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PathImportStruct {
@@ -1574,10 +1573,10 @@ pub struct PathImportStruct {
 }
 
 pub fn new_path_import(path: StringLiteral, alias: Option<ImportAlias>) -> PathImport {
-    Rc::new(PathImportStruct { path, alias })
+    Box::new(PathImportStruct { path, alias })
 }
 
-pub type PositionalArgumentsDeclaration = Rc<PositionalArgumentsDeclarationStruct>;
+pub type PositionalArgumentsDeclaration = Box<PositionalArgumentsDeclarationStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PositionalArgumentsDeclarationStruct {
@@ -1591,14 +1590,14 @@ pub fn new_positional_arguments_declaration(
     arguments: PositionalArguments,
     close_paren: CloseParen,
 ) -> PositionalArgumentsDeclaration {
-    Rc::new(PositionalArgumentsDeclarationStruct {
+    Box::new(PositionalArgumentsDeclarationStruct {
         open_paren,
         arguments,
         close_paren,
     })
 }
 
-pub type PostfixExpression = Rc<PostfixExpressionStruct>;
+pub type PostfixExpression = Box<PostfixExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PostfixExpressionStruct {
@@ -1610,13 +1609,13 @@ pub fn new_postfix_expression(
     operand: Expression,
     expression_postfix_expression_operator: Expression_PostfixExpression_Operator,
 ) -> PostfixExpression {
-    Rc::new(PostfixExpressionStruct {
+    Box::new(PostfixExpressionStruct {
         operand,
         expression_postfix_expression_operator,
     })
 }
 
-pub type PragmaDirective = Rc<PragmaDirectiveStruct>;
+pub type PragmaDirective = Box<PragmaDirectiveStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PragmaDirectiveStruct {
@@ -1630,14 +1629,14 @@ pub fn new_pragma_directive(
     pragma: Pragma,
     semicolon: PragmaSemicolon,
 ) -> PragmaDirective {
-    Rc::new(PragmaDirectiveStruct {
+    Box::new(PragmaDirectiveStruct {
         pragma_keyword,
         pragma,
         semicolon,
     })
 }
 
-pub type PrefixExpression = Rc<PrefixExpressionStruct>;
+pub type PrefixExpression = Box<PrefixExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PrefixExpressionStruct {
@@ -1649,13 +1648,13 @@ pub fn new_prefix_expression(
     expression_prefix_expression_operator: Expression_PrefixExpression_Operator,
     operand: Expression,
 ) -> PrefixExpression {
-    Rc::new(PrefixExpressionStruct {
+    Box::new(PrefixExpressionStruct {
         expression_prefix_expression_operator,
         operand,
     })
 }
 
-pub type ReceiveFunctionDefinition = Rc<ReceiveFunctionDefinitionStruct>;
+pub type ReceiveFunctionDefinition = Box<ReceiveFunctionDefinitionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ReceiveFunctionDefinitionStruct {
@@ -1671,7 +1670,7 @@ pub fn new_receive_function_definition(
     attributes: ReceiveFunctionAttributes,
     body: FunctionBody,
 ) -> ReceiveFunctionDefinition {
-    Rc::new(ReceiveFunctionDefinitionStruct {
+    Box::new(ReceiveFunctionDefinitionStruct {
         receive_keyword,
         parameters,
         attributes,
@@ -1679,7 +1678,7 @@ pub fn new_receive_function_definition(
     })
 }
 
-pub type ReturnStatement = Rc<ReturnStatementStruct>;
+pub type ReturnStatement = Box<ReturnStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ReturnStatementStruct {
@@ -1693,14 +1692,14 @@ pub fn new_return_statement(
     expression: Option<Expression>,
     semicolon: Semicolon,
 ) -> ReturnStatement {
-    Rc::new(ReturnStatementStruct {
+    Box::new(ReturnStatementStruct {
         return_keyword,
         expression,
         semicolon,
     })
 }
 
-pub type ReturnsDeclaration = Rc<ReturnsDeclarationStruct>;
+pub type ReturnsDeclaration = Box<ReturnsDeclarationStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ReturnsDeclarationStruct {
@@ -1712,13 +1711,13 @@ pub fn new_returns_declaration(
     returns_keyword: ReturnsKeyword,
     variables: ParametersDeclaration,
 ) -> ReturnsDeclaration {
-    Rc::new(ReturnsDeclarationStruct {
+    Box::new(ReturnsDeclarationStruct {
         returns_keyword,
         variables,
     })
 }
 
-pub type RevertStatement = Rc<RevertStatementStruct>;
+pub type RevertStatement = Box<RevertStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct RevertStatementStruct {
@@ -1734,7 +1733,7 @@ pub fn new_revert_statement(
     arguments: ArgumentsDeclaration,
     semicolon: Semicolon,
 ) -> RevertStatement {
-    Rc::new(RevertStatementStruct {
+    Box::new(RevertStatementStruct {
         revert_keyword,
         error,
         arguments,
@@ -1742,7 +1741,7 @@ pub fn new_revert_statement(
     })
 }
 
-pub type ShiftExpression = Rc<ShiftExpressionStruct>;
+pub type ShiftExpression = Box<ShiftExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ShiftExpressionStruct {
@@ -1756,14 +1755,14 @@ pub fn new_shift_expression(
     expression_shift_expression_operator: Expression_ShiftExpression_Operator,
     right_operand: Expression,
 ) -> ShiftExpression {
-    Rc::new(ShiftExpressionStruct {
+    Box::new(ShiftExpressionStruct {
         left_operand,
         expression_shift_expression_operator,
         right_operand,
     })
 }
 
-pub type SingleTypedDeclaration = Rc<SingleTypedDeclarationStruct>;
+pub type SingleTypedDeclaration = Box<SingleTypedDeclarationStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct SingleTypedDeclarationStruct {
@@ -1775,10 +1774,10 @@ pub fn new_single_typed_declaration(
     declaration: VariableDeclaration,
     value: Option<VariableDeclarationValue>,
 ) -> SingleTypedDeclaration {
-    Rc::new(SingleTypedDeclarationStruct { declaration, value })
+    Box::new(SingleTypedDeclarationStruct { declaration, value })
 }
 
-pub type SourceUnit = Rc<SourceUnitStruct>;
+pub type SourceUnit = Box<SourceUnitStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct SourceUnitStruct {
@@ -1786,10 +1785,10 @@ pub struct SourceUnitStruct {
 }
 
 pub fn new_source_unit(members: SourceUnitMembers) -> SourceUnit {
-    Rc::new(SourceUnitStruct { members })
+    Box::new(SourceUnitStruct { members })
 }
 
-pub type StateVariableDefinition = Rc<StateVariableDefinitionStruct>;
+pub type StateVariableDefinition = Box<StateVariableDefinitionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct StateVariableDefinitionStruct {
@@ -1807,7 +1806,7 @@ pub fn new_state_variable_definition(
     value: Option<StateVariableDefinitionValue>,
     semicolon: Semicolon,
 ) -> StateVariableDefinition {
-    Rc::new(StateVariableDefinitionStruct {
+    Box::new(StateVariableDefinitionStruct {
         type_name,
         attributes,
         name,
@@ -1816,7 +1815,7 @@ pub fn new_state_variable_definition(
     })
 }
 
-pub type StateVariableDefinitionValue = Rc<StateVariableDefinitionValueStruct>;
+pub type StateVariableDefinitionValue = Box<StateVariableDefinitionValueStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct StateVariableDefinitionValueStruct {
@@ -1828,10 +1827,10 @@ pub fn new_state_variable_definition_value(
     equal: Equal,
     value: Expression,
 ) -> StateVariableDefinitionValue {
-    Rc::new(StateVariableDefinitionValueStruct { equal, value })
+    Box::new(StateVariableDefinitionValueStruct { equal, value })
 }
 
-pub type StorageLayoutSpecifier = Rc<StorageLayoutSpecifierStruct>;
+pub type StorageLayoutSpecifier = Box<StorageLayoutSpecifierStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct StorageLayoutSpecifierStruct {
@@ -1845,14 +1844,14 @@ pub fn new_storage_layout_specifier(
     at_keyword: AtKeyword,
     expression: Expression,
 ) -> StorageLayoutSpecifier {
-    Rc::new(StorageLayoutSpecifierStruct {
+    Box::new(StorageLayoutSpecifierStruct {
         layout_keyword,
         at_keyword,
         expression,
     })
 }
 
-pub type StructDefinition = Rc<StructDefinitionStruct>;
+pub type StructDefinition = Box<StructDefinitionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct StructDefinitionStruct {
@@ -1870,7 +1869,7 @@ pub fn new_struct_definition(
     members: StructMembers,
     close_brace: CloseBrace,
 ) -> StructDefinition {
-    Rc::new(StructDefinitionStruct {
+    Box::new(StructDefinitionStruct {
         struct_keyword,
         name,
         open_brace,
@@ -1879,7 +1878,7 @@ pub fn new_struct_definition(
     })
 }
 
-pub type StructMember = Rc<StructMemberStruct>;
+pub type StructMember = Box<StructMemberStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct StructMemberStruct {
@@ -1893,14 +1892,14 @@ pub fn new_struct_member(
     name: Identifier,
     semicolon: Semicolon,
 ) -> StructMember {
-    Rc::new(StructMemberStruct {
+    Box::new(StructMemberStruct {
         type_name,
         name,
         semicolon,
     })
 }
 
-pub type TryStatement = Rc<TryStatementStruct>;
+pub type TryStatement = Box<TryStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct TryStatementStruct {
@@ -1918,7 +1917,7 @@ pub fn new_try_statement(
     body: Block,
     catch_clauses: CatchClauses,
 ) -> TryStatement {
-    Rc::new(TryStatementStruct {
+    Box::new(TryStatementStruct {
         try_keyword,
         expression,
         returns,
@@ -1927,7 +1926,7 @@ pub fn new_try_statement(
     })
 }
 
-pub type TupleExpression = Rc<TupleExpressionStruct>;
+pub type TupleExpression = Box<TupleExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct TupleExpressionStruct {
@@ -1941,14 +1940,14 @@ pub fn new_tuple_expression(
     items: TupleValues,
     close_paren: CloseParen,
 ) -> TupleExpression {
-    Rc::new(TupleExpressionStruct {
+    Box::new(TupleExpressionStruct {
         open_paren,
         items,
         close_paren,
     })
 }
 
-pub type TupleValue = Rc<TupleValueStruct>;
+pub type TupleValue = Box<TupleValueStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct TupleValueStruct {
@@ -1956,10 +1955,10 @@ pub struct TupleValueStruct {
 }
 
 pub fn new_tuple_value(expression: Option<Expression>) -> TupleValue {
-    Rc::new(TupleValueStruct { expression })
+    Box::new(TupleValueStruct { expression })
 }
 
-pub type TypeExpression = Rc<TypeExpressionStruct>;
+pub type TypeExpression = Box<TypeExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct TypeExpressionStruct {
@@ -1975,7 +1974,7 @@ pub fn new_type_expression(
     type_name: TypeName,
     close_paren: CloseParen,
 ) -> TypeExpression {
-    Rc::new(TypeExpressionStruct {
+    Box::new(TypeExpressionStruct {
         type_keyword,
         open_paren,
         type_name,
@@ -1983,7 +1982,7 @@ pub fn new_type_expression(
     })
 }
 
-pub type UncheckedBlock = Rc<UncheckedBlockStruct>;
+pub type UncheckedBlock = Box<UncheckedBlockStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct UncheckedBlockStruct {
@@ -1992,13 +1991,13 @@ pub struct UncheckedBlockStruct {
 }
 
 pub fn new_unchecked_block(unchecked_keyword: UncheckedKeyword, block: Block) -> UncheckedBlock {
-    Rc::new(UncheckedBlockStruct {
+    Box::new(UncheckedBlockStruct {
         unchecked_keyword,
         block,
     })
 }
 
-pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruct>;
+pub type UserDefinedValueTypeDefinition = Box<UserDefinedValueTypeDefinitionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct UserDefinedValueTypeDefinitionStruct {
@@ -2016,7 +2015,7 @@ pub fn new_user_defined_value_type_definition(
     value_type: ElementaryType,
     semicolon: Semicolon,
 ) -> UserDefinedValueTypeDefinition {
-    Rc::new(UserDefinedValueTypeDefinitionStruct {
+    Box::new(UserDefinedValueTypeDefinitionStruct {
         type_keyword,
         name,
         is_keyword,
@@ -2025,7 +2024,7 @@ pub fn new_user_defined_value_type_definition(
     })
 }
 
-pub type UsingAlias = Rc<UsingAliasStruct>;
+pub type UsingAlias = Box<UsingAliasStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct UsingAliasStruct {
@@ -2034,13 +2033,13 @@ pub struct UsingAliasStruct {
 }
 
 pub fn new_using_alias(as_keyword: AsKeyword, operator: UsingOperator) -> UsingAlias {
-    Rc::new(UsingAliasStruct {
+    Box::new(UsingAliasStruct {
         as_keyword,
         operator,
     })
 }
 
-pub type UsingDeconstruction = Rc<UsingDeconstructionStruct>;
+pub type UsingDeconstruction = Box<UsingDeconstructionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct UsingDeconstructionStruct {
@@ -2054,14 +2053,14 @@ pub fn new_using_deconstruction(
     symbols: UsingDeconstructionSymbols,
     close_brace: CloseBrace,
 ) -> UsingDeconstruction {
-    Rc::new(UsingDeconstructionStruct {
+    Box::new(UsingDeconstructionStruct {
         open_brace,
         symbols,
         close_brace,
     })
 }
 
-pub type UsingDeconstructionSymbol = Rc<UsingDeconstructionSymbolStruct>;
+pub type UsingDeconstructionSymbol = Box<UsingDeconstructionSymbolStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct UsingDeconstructionSymbolStruct {
@@ -2073,10 +2072,10 @@ pub fn new_using_deconstruction_symbol(
     name: IdentifierPath,
     alias: Option<UsingAlias>,
 ) -> UsingDeconstructionSymbol {
-    Rc::new(UsingDeconstructionSymbolStruct { name, alias })
+    Box::new(UsingDeconstructionSymbolStruct { name, alias })
 }
 
-pub type UsingDirective = Rc<UsingDirectiveStruct>;
+pub type UsingDirective = Box<UsingDirectiveStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct UsingDirectiveStruct {
@@ -2096,7 +2095,7 @@ pub fn new_using_directive(
     global_keyword: Option<GlobalKeyword>,
     semicolon: Semicolon,
 ) -> UsingDirective {
-    Rc::new(UsingDirectiveStruct {
+    Box::new(UsingDirectiveStruct {
         using_keyword,
         clause,
         for_keyword,
@@ -2106,7 +2105,7 @@ pub fn new_using_directive(
     })
 }
 
-pub type VariableDeclaration = Rc<VariableDeclarationStruct>;
+pub type VariableDeclaration = Box<VariableDeclarationStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct VariableDeclarationStruct {
@@ -2120,14 +2119,14 @@ pub fn new_variable_declaration(
     storage_location: Option<StorageLocation>,
     name: Identifier,
 ) -> VariableDeclaration {
-    Rc::new(VariableDeclarationStruct {
+    Box::new(VariableDeclarationStruct {
         type_name,
         storage_location,
         name,
     })
 }
 
-pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
+pub type VariableDeclarationStatement = Box<VariableDeclarationStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct VariableDeclarationStatementStruct {
@@ -2139,10 +2138,10 @@ pub fn new_variable_declaration_statement(
     target: VariableDeclarationTarget,
     semicolon: Semicolon,
 ) -> VariableDeclarationStatement {
-    Rc::new(VariableDeclarationStatementStruct { target, semicolon })
+    Box::new(VariableDeclarationStatementStruct { target, semicolon })
 }
 
-pub type VariableDeclarationValue = Rc<VariableDeclarationValueStruct>;
+pub type VariableDeclarationValue = Box<VariableDeclarationValueStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct VariableDeclarationValueStruct {
@@ -2154,10 +2153,10 @@ pub fn new_variable_declaration_value(
     equal: Equal,
     expression: Expression,
 ) -> VariableDeclarationValue {
-    Rc::new(VariableDeclarationValueStruct { equal, expression })
+    Box::new(VariableDeclarationValueStruct { equal, expression })
 }
 
-pub type VersionPragma = Rc<VersionPragmaStruct>;
+pub type VersionPragma = Box<VersionPragmaStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct VersionPragmaStruct {
@@ -2169,13 +2168,13 @@ pub fn new_version_pragma(
     solidity_keyword: SolidityKeyword,
     sets: VersionExpressionSets,
 ) -> VersionPragma {
-    Rc::new(VersionPragmaStruct {
+    Box::new(VersionPragmaStruct {
         solidity_keyword,
         sets,
     })
 }
 
-pub type VersionRange = Rc<VersionRangeStruct>;
+pub type VersionRange = Box<VersionRangeStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct VersionRangeStruct {
@@ -2189,10 +2188,10 @@ pub fn new_version_range(
     minus: PragmaMinus,
     end: VersionLiteral,
 ) -> VersionRange {
-    Rc::new(VersionRangeStruct { start, minus, end })
+    Box::new(VersionRangeStruct { start, minus, end })
 }
 
-pub type VersionTerm = Rc<VersionTermStruct>;
+pub type VersionTerm = Box<VersionTermStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct VersionTermStruct {
@@ -2201,10 +2200,10 @@ pub struct VersionTermStruct {
 }
 
 pub fn new_version_term(operator: Option<VersionOperator>, literal: VersionLiteral) -> VersionTerm {
-    Rc::new(VersionTermStruct { operator, literal })
+    Box::new(VersionTermStruct { operator, literal })
 }
 
-pub type WhileStatement = Rc<WhileStatementStruct>;
+pub type WhileStatement = Box<WhileStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct WhileStatementStruct {
@@ -2222,7 +2221,7 @@ pub fn new_while_statement(
     close_paren: CloseParen,
     body: Statement,
 ) -> WhileStatement {
-    Rc::new(WhileStatementStruct {
+    Box::new(WhileStatementStruct {
         while_keyword,
         open_paren,
         condition,
@@ -2231,7 +2230,7 @@ pub fn new_while_statement(
     })
 }
 
-pub type YulBlock = Rc<YulBlockStruct>;
+pub type YulBlock = Box<YulBlockStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulBlockStruct {
@@ -2245,14 +2244,14 @@ pub fn new_yul_block(
     statements: YulStatements,
     close_brace: YulCloseBrace,
 ) -> YulBlock {
-    Rc::new(YulBlockStruct {
+    Box::new(YulBlockStruct {
         open_brace,
         statements,
         close_brace,
     })
 }
 
-pub type YulBreakStatement = Rc<YulBreakStatementStruct>;
+pub type YulBreakStatement = Box<YulBreakStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulBreakStatementStruct {
@@ -2260,10 +2259,10 @@ pub struct YulBreakStatementStruct {
 }
 
 pub fn new_yul_break_statement(break_keyword: YulBreakKeyword) -> YulBreakStatement {
-    Rc::new(YulBreakStatementStruct { break_keyword })
+    Box::new(YulBreakStatementStruct { break_keyword })
 }
 
-pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
+pub type YulContinueStatement = Box<YulContinueStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulContinueStatementStruct {
@@ -2271,10 +2270,10 @@ pub struct YulContinueStatementStruct {
 }
 
 pub fn new_yul_continue_statement(continue_keyword: YulContinueKeyword) -> YulContinueStatement {
-    Rc::new(YulContinueStatementStruct { continue_keyword })
+    Box::new(YulContinueStatementStruct { continue_keyword })
 }
 
-pub type YulDefaultCase = Rc<YulDefaultCaseStruct>;
+pub type YulDefaultCase = Box<YulDefaultCaseStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulDefaultCaseStruct {
@@ -2283,13 +2282,13 @@ pub struct YulDefaultCaseStruct {
 }
 
 pub fn new_yul_default_case(default_keyword: YulDefaultKeyword, body: YulBlock) -> YulDefaultCase {
-    Rc::new(YulDefaultCaseStruct {
+    Box::new(YulDefaultCaseStruct {
         default_keyword,
         body,
     })
 }
 
-pub type YulFlagsDeclaration = Rc<YulFlagsDeclarationStruct>;
+pub type YulFlagsDeclaration = Box<YulFlagsDeclarationStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulFlagsDeclarationStruct {
@@ -2303,14 +2302,14 @@ pub fn new_yul_flags_declaration(
     flags: YulFlags,
     close_paren: YulCloseParen,
 ) -> YulFlagsDeclaration {
-    Rc::new(YulFlagsDeclarationStruct {
+    Box::new(YulFlagsDeclarationStruct {
         open_paren,
         flags,
         close_paren,
     })
 }
 
-pub type YulForStatement = Rc<YulForStatementStruct>;
+pub type YulForStatement = Box<YulForStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulForStatementStruct {
@@ -2328,7 +2327,7 @@ pub fn new_yul_for_statement(
     iterator: YulBlock,
     body: YulBlock,
 ) -> YulForStatement {
-    Rc::new(YulForStatementStruct {
+    Box::new(YulForStatementStruct {
         for_keyword,
         initialization,
         condition,
@@ -2337,7 +2336,7 @@ pub fn new_yul_for_statement(
     })
 }
 
-pub type YulFunctionCallExpression = Rc<YulFunctionCallExpressionStruct>;
+pub type YulFunctionCallExpression = Box<YulFunctionCallExpressionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulFunctionCallExpressionStruct {
@@ -2353,7 +2352,7 @@ pub fn new_yul_function_call_expression(
     arguments: YulArguments,
     close_paren: YulCloseParen,
 ) -> YulFunctionCallExpression {
-    Rc::new(YulFunctionCallExpressionStruct {
+    Box::new(YulFunctionCallExpressionStruct {
         operand,
         open_paren,
         arguments,
@@ -2361,7 +2360,7 @@ pub fn new_yul_function_call_expression(
     })
 }
 
-pub type YulFunctionDefinition = Rc<YulFunctionDefinitionStruct>;
+pub type YulFunctionDefinition = Box<YulFunctionDefinitionStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulFunctionDefinitionStruct {
@@ -2379,7 +2378,7 @@ pub fn new_yul_function_definition(
     returns: Option<YulReturnsDeclaration>,
     body: YulBlock,
 ) -> YulFunctionDefinition {
-    Rc::new(YulFunctionDefinitionStruct {
+    Box::new(YulFunctionDefinitionStruct {
         function_keyword,
         name,
         parameters,
@@ -2388,7 +2387,7 @@ pub fn new_yul_function_definition(
     })
 }
 
-pub type YulIfStatement = Rc<YulIfStatementStruct>;
+pub type YulIfStatement = Box<YulIfStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulIfStatementStruct {
@@ -2402,14 +2401,14 @@ pub fn new_yul_if_statement(
     condition: YulExpression,
     body: YulBlock,
 ) -> YulIfStatement {
-    Rc::new(YulIfStatementStruct {
+    Box::new(YulIfStatementStruct {
         if_keyword,
         condition,
         body,
     })
 }
 
-pub type YulLeaveStatement = Rc<YulLeaveStatementStruct>;
+pub type YulLeaveStatement = Box<YulLeaveStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulLeaveStatementStruct {
@@ -2417,10 +2416,10 @@ pub struct YulLeaveStatementStruct {
 }
 
 pub fn new_yul_leave_statement(leave_keyword: YulLeaveKeyword) -> YulLeaveStatement {
-    Rc::new(YulLeaveStatementStruct { leave_keyword })
+    Box::new(YulLeaveStatementStruct { leave_keyword })
 }
 
-pub type YulParametersDeclaration = Rc<YulParametersDeclarationStruct>;
+pub type YulParametersDeclaration = Box<YulParametersDeclarationStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulParametersDeclarationStruct {
@@ -2434,14 +2433,14 @@ pub fn new_yul_parameters_declaration(
     parameters: YulParameters,
     close_paren: YulCloseParen,
 ) -> YulParametersDeclaration {
-    Rc::new(YulParametersDeclarationStruct {
+    Box::new(YulParametersDeclarationStruct {
         open_paren,
         parameters,
         close_paren,
     })
 }
 
-pub type YulReturnsDeclaration = Rc<YulReturnsDeclarationStruct>;
+pub type YulReturnsDeclaration = Box<YulReturnsDeclarationStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulReturnsDeclarationStruct {
@@ -2453,13 +2452,13 @@ pub fn new_yul_returns_declaration(
     minus_greater_than: YulMinusGreaterThan,
     variables: YulVariableNames,
 ) -> YulReturnsDeclaration {
-    Rc::new(YulReturnsDeclarationStruct {
+    Box::new(YulReturnsDeclarationStruct {
         minus_greater_than,
         variables,
     })
 }
 
-pub type YulSwitchStatement = Rc<YulSwitchStatementStruct>;
+pub type YulSwitchStatement = Box<YulSwitchStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulSwitchStatementStruct {
@@ -2473,14 +2472,14 @@ pub fn new_yul_switch_statement(
     expression: YulExpression,
     cases: YulSwitchCases,
 ) -> YulSwitchStatement {
-    Rc::new(YulSwitchStatementStruct {
+    Box::new(YulSwitchStatementStruct {
         switch_keyword,
         expression,
         cases,
     })
 }
 
-pub type YulValueCase = Rc<YulValueCaseStruct>;
+pub type YulValueCase = Box<YulValueCaseStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulValueCaseStruct {
@@ -2494,14 +2493,14 @@ pub fn new_yul_value_case(
     value: YulLiteral,
     body: YulBlock,
 ) -> YulValueCase {
-    Rc::new(YulValueCaseStruct {
+    Box::new(YulValueCaseStruct {
         case_keyword,
         value,
         body,
     })
 }
 
-pub type YulVariableAssignmentStatement = Rc<YulVariableAssignmentStatementStruct>;
+pub type YulVariableAssignmentStatement = Box<YulVariableAssignmentStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulVariableAssignmentStatementStruct {
@@ -2515,14 +2514,14 @@ pub fn new_yul_variable_assignment_statement(
     assignment: YulColonEqual,
     expression: YulExpression,
 ) -> YulVariableAssignmentStatement {
-    Rc::new(YulVariableAssignmentStatementStruct {
+    Box::new(YulVariableAssignmentStatementStruct {
         variables,
         assignment,
         expression,
     })
 }
 
-pub type YulVariableDeclarationStatement = Rc<YulVariableDeclarationStatementStruct>;
+pub type YulVariableDeclarationStatement = Box<YulVariableDeclarationStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulVariableDeclarationStatementStruct {
@@ -2536,14 +2535,14 @@ pub fn new_yul_variable_declaration_statement(
     variables: YulVariableNames,
     value: Option<YulVariableDeclarationValue>,
 ) -> YulVariableDeclarationStatement {
-    Rc::new(YulVariableDeclarationStatementStruct {
+    Box::new(YulVariableDeclarationStatementStruct {
         let_keyword,
         variables,
         value,
     })
 }
 
-pub type YulVariableDeclarationValue = Rc<YulVariableDeclarationValueStruct>;
+pub type YulVariableDeclarationValue = Box<YulVariableDeclarationValueStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulVariableDeclarationValueStruct {
@@ -2555,7 +2554,7 @@ pub fn new_yul_variable_declaration_value(
     assignment: YulColonEqual,
     expression: YulExpression,
 ) -> YulVariableDeclarationValue {
-    Rc::new(YulVariableDeclarationValueStruct {
+    Box::new(YulVariableDeclarationValueStruct {
         assignment,
         expression,
     })

@@ -2,8 +2,6 @@
 //!
 //! They shouldn't be used outside of the parser, and should be transformed into AST nodes.
 
-use std::rc::Rc;
-
 use slang_solidity_v2_common::diagnostics::kinds::syntax::ExpectedArrayLengthExpression;
 use slang_solidity_v2_cst::structured_cst::nodes::{
     CloseBracket, ElementaryType, Expression, FunctionType, FunctionTypeAttribute,
@@ -176,7 +174,7 @@ pub(crate) fn new_expression_identifier_path(identifier_path: IdentifierPath) ->
 /// We find and split the attributes from the function type as needed
 /// TODO(v2) fail gracefully if a wrong attribute is found
 pub(crate) fn extract_extra_attributes(
-    fun_type: FunctionType,
+    fun_type: FunctionTypeStruct,
 ) -> (FunctionType, Vec<StateVariableAttribute>) {
     // Move all matching attributes to extra_attributes if duplicate_found, else only the first occurrence
     let mut seen_visibility = false;
@@ -187,7 +185,7 @@ pub(crate) fn extract_extra_attributes(
         parameters,
         attributes,
         returns,
-    } = Rc::unwrap_or_clone(fun_type);
+    } = fun_type;
     let mut vec = attributes.elements;
 
     let extracted = vec.extract_if(.., |attr| {
