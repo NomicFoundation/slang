@@ -192,7 +192,7 @@ string-interner = { version = "0.20.0", features = [
     "backends",
 ] }
 strum = { version = "0.28.0", features = ["derive"] }
-syn = { version = "2.0.117", features = [
+syn = { version = "3.0.0", features = [
     "fold",
     "full",
     "extra-traits",
