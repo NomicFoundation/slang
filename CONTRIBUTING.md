@@ -47,6 +47,12 @@ To ensure consistency, and a good experience for first-time developers, all buil
 
 You can access all such commands (from the hermit environment) by just running the `infra` script, which just refers to `$REPO_ROOT/scripts/bin/infra`. If this is your first time contributing, we recommend starting with `infra --help` to familiarize yourself with its capabilities.
 
+## Task Runner
+
+Linting is orchestrated by [Task](https://taskfile.dev), a task runner installed through Hermit like any other tool, so `task` is available on the `$PATH` of an activated environment (or as `$REPO_ROOT/bin/task`). Start with `task --list` to see what is available.
+
+The root `$REPO_ROOT/Taskfile.yml` only wires up the files under `$REPO_ROOT/scripts/tasks/`, one per command group, which is where the tasks themselves live.
+
 ## Versioning and Publishing
 
 We manage versioning through [changesets](https://github.com/changesets/changesets). Each pull request can describe what user facing changes it is introducing, and include this information as a "changeset" markdown file along with source changes. These changeset files are analyzed and used to create another pull request to bump the repository version and update dependencies.

@@ -61,9 +61,9 @@ v1 and v2 implementations coexist in the same `main` branch.
 ./bin/npm install             # NOT: npm install
 ```
 
-Available binaries in `./bin/`: `cargo`, `node`, `npm`, `npx`, `pnpm`, `gh`, `python3`, `pip`, and more.
+Available binaries in `./bin/`: `cargo`, `node`, `npm`, `npx`, `pnpm`, `gh`, `python3`, `pip`, `task`, and more.
 
-**Don't run linters/formatters directly**, but always use `./scripts/bin/infra lint` to ensure consistent configuration and versions.
+**Don't run linters/formatters directly**, but always use `./bin/task lint` to ensure consistent configuration and versions.
 
 ## Build & Development Commands
 
@@ -77,14 +77,18 @@ The project uses a custom `infra` CLI that orchestrates all build operations. Us
 ./scripts/bin/infra check --help # See check subcommands (codegen, cargo, npm, public-api)
 ./scripts/bin/infra test         # Run all tests (cargo nextest + jest)
 ./scripts/bin/infra test --help  # See test subcommands (cargo, npm) and passthrough args
-./scripts/bin/infra lint         # Run all linters
-./scripts/bin/infra lint --help  # See lint subcommands (markdownlint, rustfmt, yamllint, actionlint, zizmor, prettier, etc.)
 ./scripts/bin/infra ci           # Full CI run: setup + check + test + lint
 ```
 
 Always run `infra setup` when initializing a new workspace, to ensure all tools/dependencies are available.
 
-Individual lint subcommands can be run for quick checks (e.g., `./scripts/bin/infra lint yamllint` for YAML files, `./scripts/bin/infra lint rustfmt` for Rust formatting).
+Linting is orchestrated by [`task`](https://taskfile.dev) instead, defined in `$REPO_ROOT/Taskfile.yml`:
+
+```sh
+./bin/task --list       # See all available tasks
+./bin/task lint         # Run all linters, in parallel
+./bin/task lint:rustfmt # Run a single linter
+```
 
 You can also use `nextest` directly for faster iteration on Rust tests:
 

@@ -1,0 +1,106 @@
+version: "3"
+
+vars:
+  CARGO_CI_FLAGS:
+    sh: "scripts/tasks/_utils/rustflags.sh"
+
+tasks:
+  "default":
+    desc: "Run all linters."
+    deps:
+      - "cargo"
+      - "mkdocs"
+      - "cspell"
+      - "prettier"
+      - "markdown-link-check"
+      - "markdown-lint"
+      - "rustfmt"
+      - "shellcheck"
+      - "tsc"
+      - "yamllint"
+      - "actionlint"
+      - "zizmor"
+      - "typedoc"
+
+  "cargo":
+    desc: "Run the 'cargo' linters. They reuse the same target directory lock, so they cannot overlap."
+    cmds:
+      - task: "clippy"
+      - task: "rustdoc"
+      - task: "rustdoc-test"
+
+  "clippy":
+    desc: "Run 'cargo clippy' to check for any Rust lints."
+    cmds:
+      - "cargo clippy --workspace --all-features --all-targets --no-deps {{.CARGO_CI_FLAGS}}"
+
+  "rustdoc":
+    desc: "Run 'cargo doc' to generate Rustdoc documentation and check for any broken links."
+    cmds:
+      - "cargo doc --workspace --all-features --no-deps --document-private-items {{.CARGO_CI_FLAGS}}"
+
+  "rustdoc-test":
+    desc: "Run 'cargo test --doc' to ensure code in rustdoc comments is valid."
+    cmds:
+      - "cargo test --doc --workspace --all-features --no-fail-fast {{.CARGO_CI_FLAGS}}"
+
+  "rustfmt":
+    desc: "Format all Rust source files."
+    cmds:
+      - "cargo-fmt +${RUST_NIGHTLY_VERSION:?} --all --verbose {{if env `CI`}}--check{{end}}"
+
+  "mkdocs":
+    desc: "Check mkdocs documentation for any build issues or broken links."
+    dir: "documentation"
+    cmds:
+      - "python3 -m pipenv run mkdocs build --clean --strict"
+
+  "cspell":
+    desc: "Check for spelling issues in Markdown files."
+    cmds:
+      - "cspell lint --show-context --show-suggestions --dot --gitignore"
+
+  "prettier":
+    desc: "Format all non-Rust source files."
+    cmds:
+      - "prettier {{if env `CI`}}--check{{else}}--write{{end}} ."
+
+  "markdown-link-check":
+    desc: "Check for broken links in Markdown files."
+    cmds:
+      - "scripts/tasks/_utils/list-files.sh ':(glob)**/*.md' | scripts/tasks/_utils/xargs-batch.sh markdown-link-check --config .markdown-link-check.json"
+
+  "markdown-lint":
+    desc: "Check for violations in Markdown files."
+    cmds:
+      - "scripts/tasks/_utils/list-files.sh ':(glob)**/*.md' | scripts/tasks/_utils/xargs-batch.sh markdownlint --dot {{if not (env `CI`)}}--fix{{end}}"
+
+  "shellcheck":
+    desc: "Check for violations in Bash files."
+    cmds:
+      - "scripts/tasks/_utils/list-files.sh ':(glob)scripts/**' ':(glob,exclude)scripts/**/Taskfile.yml' | scripts/tasks/_utils/xargs-batch.sh shellcheck"
+
+  "tsc":
+    desc: "Check for type errors in TypeScript files."
+    cmds:
+      - "tsc --build tsconfig.json"
+
+  "yamllint":
+    desc: "Check for violations issues in Yaml files."
+    cmds:
+      - "scripts/tasks/_utils/list-files.sh ':(glob)**/*.yml' ':(glob)**/*.yaml' ':(glob,exclude)pnpm-lock.yaml' | scripts/tasks/_utils/xargs-batch.sh python3 -m pipenv run yamllint --strict --config-file .yamllint.yml"
+
+  "actionlint":
+    desc: "Lint GitHub Actions workflow files."
+    cmds:
+      - "actionlint"
+
+  "zizmor":
+    desc: "Audit GitHub Actions workflows/actions for security issues."
+    cmds:
+      - "zizmor {{if env `CI`}}--format github{{else}}--offline{{end}} .github"
+
+  "typedoc":
+    desc: "Check for violations in TypeScript documentation files."
+    cmds:
+      - "scripts/tasks/_utils/list-files.sh ':(glob)**/typedoc.mjs' | xargs -0 -r -n 1 typedoc --options"

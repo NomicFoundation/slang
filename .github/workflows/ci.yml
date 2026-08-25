@@ -58,12 +58,12 @@ jobs:
       - name: "infra test"
         run: "./scripts/bin/infra test"
 
-      - name: "infra lint"
+      - name: "task lint"
         # GH_TOKEN lets zizmor run its online audits (known-vulnerabilities,
         # tag→SHA resolution); without it zizmor falls back to offline.
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-        run: "./scripts/bin/infra lint"
+        run: "./bin/task lint"
 
       # On main pushes, warm the dependency and cargo-target caches with the perf
       # toolchain (bencher_cli, gungraun-runner, and the bench binaries) so
@@ -163,7 +163,7 @@ jobs:
         with:
           runCmd: "./scripts/bin/infra setup pipenv"
 
-      - name: "infra lint mkdocs"
+      - name: "task lint:mkdocs"
         uses: "./.github/actions/devcontainer/run"
         with:
-          runCmd: "./scripts/bin/infra lint mkdocs"
+          runCmd: "./bin/task lint:mkdocs"

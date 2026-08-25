@@ -1,0 +1,12 @@
+version: "3"
+
+# Tasks run in parallel, so prefix each line with the task it came from, to keep the
+# interleaved output attributable:
+output: "prefixed"
+
+set:
+  - "nounset"
+  - "pipefail"
+
+includes:
+  lint: "./scripts/tasks/lint/Taskfile.yml"

@@ -7,8 +7,6 @@ use std::path::{Path, PathBuf};
 use std::process::{Child, Command as StdCommand, ExitStatus, Output, Stdio};
 
 use anyhow::{Context, Result, bail};
-use itertools::Itertools;
-use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use crate::github::GitHub;
 use crate::paths::{PathExtensions, PrivatePathExtensions};
@@ -120,24 +118,6 @@ impl Command {
 
     pub fn run(&self) {
         GitHub::collapse_group(format!("$ {self}"), || run_with_defaults(self));
-    }
-
-    /// A quick replacement for `xargs`.
-    /// Splits files into smaller chunks, so that we don't exceed the maximum command line length.
-    pub fn run_xargs(&self, files: impl IntoIterator<Item = PathBuf>) {
-        const CHUNK_SIZE: usize = 50;
-
-        GitHub::collapse_group(format!("$ {self}"), || {
-            files
-                .into_iter()
-                .map(|file| file.unwrap_str().to_owned())
-                .chunks(CHUNK_SIZE)
-                .into_iter()
-                .map(|chunk| chunk.collect_vec())
-                .collect_vec()
-                .into_par_iter()
-                .for_each(|batch| run_with_defaults(&self.clone().args(batch)));
-        });
     }
 }
 
