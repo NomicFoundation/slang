@@ -1,9 +1,10 @@
+use slang_solidity_v2_common::diagnostics::kinds::resolution::AmbiguousReference;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
+use super::{Analyse, Analysis, diagnostic_kind};
 use crate::binder::{Binder, Resolution};
-use crate::passes::tests::{Analyse, Analysis};
 use crate::types::{
     ContractType, FunctionType, FunctionTypeMutability, FunctionTypeVisibility, Type, TypeId,
     TypeRegistry,
@@ -67,9 +68,18 @@ contract C {
 }
     "###;
 
-    let analysis = Analysis::of_source(SOURCE)
-        .run(Analyse::References)
-        .expect_no_diagnostics();
+    // `s.f` names the overload set as a value, which is itself reported; the
+    // resolution behind it is what this test is about.
+    let analysis = Analysis::of_source(SOURCE).run(Analyse::References);
+    assert_eq!(
+        Some(
+            AmbiguousReference {
+                name: "f".to_owned()
+            }
+            .into()
+        ),
+        diagnostic_kind(&analysis.diagnostics),
+    );
 
     // The `f` in the `using {f} for S` clause resolves to the free function,
     // and the `f` in `s.f` sees both attached candidates.

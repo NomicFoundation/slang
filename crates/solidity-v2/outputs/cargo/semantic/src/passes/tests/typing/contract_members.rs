@@ -1,6 +1,7 @@
 //! Typing of members reached through a contract, library or interface:
 //! `this`/`super`, getters, data locations, and external signatures.
 
+use slang_solidity_v2_common::diagnostics::kinds::resolution::AmbiguousReference;
 use slang_solidity_v2_ir::ir;
 
 use super::{Analyse, Analysis, expression, expression_statement_types, expressions};
@@ -493,14 +494,19 @@ fn test_event_selector() {
         .into_resolved_type();
     assert_eq!(type_, Type::ByteArray(ByteArrayType { width: 32 }));
 
-    // With *overloaded* events the name is ambiguous; we currently resolve the
-    // member against the first candidate (both candidates expose `selector`,
-    // so the typing is still `bytes32`). solc reports an ambiguity error here —
-    // that diagnostic is part of the SDR[37] validation backlog.
-    let (type_, _) = expression("E.selector")
-        .with_members("event E(uint a); event E(bool b);")
-        .into_resolved_type();
-    assert_eq!(type_, Type::ByteArray(ByteArrayType { width: 32 }));
+    // With *overloaded* events the name is ambiguous, and nothing narrows it
+    // down: the member access uses it as a value rather than calling it.
+    assert_eq!(
+        Some(
+            AmbiguousReference {
+                name: "E".to_owned()
+            }
+            .into()
+        ),
+        expression("E.selector")
+            .with_members("event E(uint a); event E(bool b);")
+            .into_diagnostic(),
+    );
 
     // An anonymous event emits no `topics[0]`, so it exposes no `selector`.
     let (type_, _) = expression("E.selector")

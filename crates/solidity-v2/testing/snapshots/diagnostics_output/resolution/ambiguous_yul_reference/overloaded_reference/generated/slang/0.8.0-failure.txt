@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/ambiguous-yul-reference] Error: Multiple matching identifiers for 'f'. Resolving overloaded identifiers is not supported.
+    ╭─[input.sol:12:22]
+    │
+ 12 │             let x := f
+    │                      ┬  
+    │                      ╰── Error occurred here.
+────╯

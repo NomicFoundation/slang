@@ -7,10 +7,11 @@ mod literals;
 mod meta_types;
 mod overloads;
 
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdentity};
 
-use super::{Analyse, Analysis, find_function};
+use super::{Analyse, Analysis, diagnostic_kind, find_function};
 use crate::binder::Binder;
 use crate::types::{Type, TypeRegistry};
 
@@ -89,10 +90,9 @@ impl<'a> ExpressionTyping<'a> {
         self
     }
 
-    /// The typing of every expression, in the order they were given, together
-    /// with the registry the passes populated. An expression whose typing
-    /// isn't `Resolved` comes back as `None`.
-    fn into_types(self) -> (Vec<Option<Type>>, TypeRegistry) {
+    /// Runs the passes over the synthesized source, without asserting on the
+    /// diagnostics.
+    fn run(&self) -> Analysis {
         let expression_statements = self
             .expressions
             .iter()
@@ -111,17 +111,21 @@ impl<'a> ExpressionTyping<'a> {
             members = self.members.unwrap_or(""),
         );
 
-        let analysis = Analysis::of_source(&source)
+        Analysis::of_source(&source)
             .version(self.language_version)
             .run(Analyse::References)
-            .expect_no_diagnostics();
+    }
 
-        let contract = analysis.find_contract("Test");
-        let function =
-            find_function(&contract.members, "__test").expect("__test function not found");
-        let block = function.body.as_ref().expect("__test has a body");
-
-        let typings = expression_statement_types(block, analysis.binder(), analysis.types());
+    /// The typing of every expression, in the order they were given, together
+    /// with the registry the passes populated. An expression whose typing
+    /// isn't `Resolved` comes back as `None`.
+    fn into_types(self) -> (Vec<Option<Type>>, TypeRegistry) {
+        let analysis = self.run().expect_no_diagnostics();
+        let typings = expression_statement_types(
+            analysis.function_body("Test", "__test"),
+            analysis.binder(),
+            analysis.types(),
+        );
 
         (typings, analysis.into_type_registry())
     }
@@ -146,5 +150,12 @@ impl<'a> ExpressionTyping<'a> {
             typing.expect("expected resolved type for expression"),
             types,
         )
+    }
+
+    /// The diagnostic the passes reported for the expressions, if any. Unlike
+    /// the typing terminals this one doesn't assert the passes were quiet:
+    /// being diagnosed is the point. Panics if more than one was reported.
+    fn into_diagnostic(self) -> Option<DiagnosticKind> {
+        diagnostic_kind(&self.run().diagnostics)
     }
 }
