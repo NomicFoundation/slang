@@ -1,3 +1,4 @@
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use slang_solidity_v2_common::collections::{Set, SortedMap};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::compilation::{
@@ -32,6 +33,17 @@ impl CompilationUnit {
     /// here, and every problem it runs into is reported as a diagnostic on the
     /// returned unit. Parse errors, unresolvable imports, and missing imported
     /// files are all collected this way — see [`CompilationUnit::diagnostics`].
+    ///
+    /// Parsing runs in parallel on [`rayon`]'s global thread pool. The result
+    /// does not depend on how large that pool is, so this is only ever a
+    /// question of speed; to bound it, call this inside
+    /// [`rayon::ThreadPool::install`] on a pool of your own.
+    // TODO(wasm): `rayon` falls back to the calling
+    // thread for its *implicit* global pool — which is why this already builds
+    // for `wasm32-wasip1`, but a pool built
+    // explicitly errors instead. Revisit this, and consider gating `rayon`
+    // behind a feature so the scheduler stays out of that build, if v2 gains a
+    // wasm interface.
     pub fn create<'s, S, R>(config: Configuration<S, R>) -> CompilationUnit
     where
         S: IntoIterator<Item = (FileId, &'s str)>,
@@ -95,28 +107,61 @@ struct ParsedFile<'s> {
     source_unit: cst::SourceUnit,
 }
 
-/// Parses every source file.
+/// Parses every source file, in parallel over [`rayon`]'s global thread pool.
+///
+/// The result must stay sorted by [`FileId`], since [`build_ir`] hands out node
+/// ids by walking it — hence the `Vec` and the *indexed* `unzip`, which fills
+/// the output by input position rather than by whoever finishes first.
+///
+/// TODO(v2): giving each file an independent node-id space would free this
+/// phase to schedule as it likes. It'll be necessary once IR building is parallelized.
 fn parse_files<'s>(
     sources: SortedMap<FileId, &'s str>,
     language_version: LanguageVersion,
     diagnostics: &mut DiagnosticCollection,
 ) -> Vec<ParsedFile<'s>> {
-    sources
-        .into_iter()
-        .map(|(file_id, contents)| {
-            let ParseOutput {
-                source_unit,
-                diagnostics: parse_diagnostics,
-            } = Parser::parse(&file_id, contents, language_version);
-            diagnostics.extend(parse_diagnostics);
+    let parse =
+        |(file_id, contents): (FileId, &'s str)| parse_file(file_id, contents, language_version);
 
-            ParsedFile {
-                file_id,
-                contents,
-                source_unit,
-            }
-        })
-        .collect()
+    // Using rayon's parallel iterator has some costs that are
+    // not worth it when a single file is being processed.
+    let (parsed_files, per_file_diagnostics): (Vec<_>, Vec<_>) = if sources.len() < 2 {
+        sources.into_iter().map(parse).unzip()
+    } else {
+        // Through a `Vec` because that is the only route rayon guarantees as an
+        // indexed parallel iterator, which is what fills `unzip`'s output by
+        // input position.
+        // See the TODO in this function, this requirement should go
+        // once order is relaxed.
+        Vec::from_iter(sources).into_par_iter().map(parse).unzip()
+    };
+
+    for parse_diagnostics in per_file_diagnostics {
+        diagnostics.extend(parse_diagnostics);
+    }
+
+    parsed_files
+}
+
+/// Parses one source file, returning its diagnostics rather than pushing them
+/// into a shared collection, so that it can run on any thread.
+fn parse_file(
+    file_id: FileId,
+    contents: &str,
+    language_version: LanguageVersion,
+) -> (ParsedFile<'_>, DiagnosticCollection) {
+    let ParseOutput {
+        source_unit,
+        diagnostics,
+    } = Parser::parse(&file_id, contents, language_version);
+
+    let parsed_file = ParsedFile {
+        file_id,
+        contents,
+        source_unit,
+    };
+
+    (parsed_file, diagnostics)
 }
 
 /// Lowers every parsed file into its IR representation, resolving the import

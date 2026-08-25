@@ -59,3 +59,11 @@ fn the_last_contents_given_for_a_file_id_win() {
         .collect();
     assert_eq!(contract_names, ["Fresh"]);
 }
+
+#[test]
+fn compiles_an_empty_source_list() {
+    let unit = compile([]);
+
+    assert!(unit.diagnostics().is_empty(), "{:#?}", unit.diagnostics());
+    assert_eq!(unit.files().count(), 0);
+}
