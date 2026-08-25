@@ -2637,7 +2637,7 @@ IdentifierPathNoRevert: IdentifierPath = {
 // Since they also share a prefix (`(,,,`) we need to have a common prefix rule to avoid reduce/reduce conflicts.
 MultiTypedDeclarationElements: MultiTypedDeclarationElements = {
     <prefix: TuplePrefix> <differentiator: VariableDeclaration> <typed_tuple_deconstruction_element: (Comma <Separated<Comma, <MultiTypedDeclarationElement>>>)?>  => {
-        let mut elements = vec![new_multi_typed_declaration_element(None); prefix];
+        let mut elements: Vec<_> = (0..prefix).map(|_| new_multi_typed_declaration_element(None)).collect();
         elements.push(new_multi_typed_declaration_element(Some(differentiator)));
         elements.extend(typed_tuple_deconstruction_element.unwrap_or(vec![]));
         new_multi_typed_declaration_elements(elements)
@@ -3628,11 +3628,11 @@ TupleValues: TupleValues = {
     <prefix: TuplePrefix> => {
         // We need to add an extra empty element here, since the trailing comma indicates
         // an additional empty tuple value.
-        let elements = vec![new_tuple_value(None); prefix + 1];
+        let elements = (0..=prefix).map(|_| new_tuple_value(None)).collect();
         new_tuple_values(elements)
     },
     <prefix: TuplePrefix> <differentiator: Expression> <tuple_value: (Comma <Separated<Comma, <TupleValue>>>)?>  => {
-        let mut elements = vec![new_tuple_value(None); prefix];
+        let mut elements: Vec<_> = (0..prefix).map(|_| new_tuple_value(None)).collect();
         elements.push(new_tuple_value(Some(differentiator)));
         elements.extend(tuple_value.unwrap_or(vec![]));
         new_tuple_values(elements)

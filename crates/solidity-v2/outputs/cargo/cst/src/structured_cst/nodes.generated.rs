@@ -5,6 +5,10 @@
 #![allow(unused_variables)]
 #![allow(clippy::too_many_arguments)]
 
+//! Nodes deliberately don't derive [`Clone`]: a node owns its children, so
+//! cloning one deep-copies its whole subtree — an unbounded cost at a call site
+//! that reads like a cheap one.
+
 use std::ops::Range;
 
 // TODO(v2):
@@ -27,7 +31,7 @@ use std::ops::Range;
 
 pub type AbicoderPragma = Box<AbicoderPragmaStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AbicoderPragmaStruct {
     pub abicoder_keyword: AbicoderKeyword,
     pub version: AbicoderVersion,
@@ -45,7 +49,7 @@ pub fn new_abicoder_pragma(
 
 pub type AdditiveExpression = Box<AdditiveExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AdditiveExpressionStruct {
     pub left_operand: Expression,
     pub expression_additive_expression_operator: Expression_AdditiveExpression_Operator,
@@ -66,7 +70,7 @@ pub fn new_additive_expression(
 
 pub type AddressType = Box<AddressTypeStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AddressTypeStruct {
     pub address_keyword: AddressKeyword,
     pub payable_keyword: Option<PayableKeyword>,
@@ -84,7 +88,7 @@ pub fn new_address_type(
 
 pub type AndExpression = Box<AndExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AndExpressionStruct {
     pub left_operand: Expression,
     pub operator: AmpersandAmpersand,
@@ -105,7 +109,7 @@ pub fn new_and_expression(
 
 pub type ArrayExpression = Box<ArrayExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ArrayExpressionStruct {
     pub open_bracket: OpenBracket,
     pub items: ArrayValues,
@@ -126,7 +130,7 @@ pub fn new_array_expression(
 
 pub type ArrayTypeName = Box<ArrayTypeNameStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ArrayTypeNameStruct {
     pub operand: TypeName,
     pub open_bracket: OpenBracket,
@@ -150,7 +154,7 @@ pub fn new_array_type_name(
 
 pub type AssemblyStatement = Box<AssemblyStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AssemblyStatementStruct {
     pub assembly_keyword: AssemblyKeyword,
     pub label: Option<YulStringLiteral>,
@@ -174,7 +178,7 @@ pub fn new_assembly_statement(
 
 pub type AssignmentExpression = Box<AssignmentExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AssignmentExpressionStruct {
     pub left_operand: Expression,
     pub expression_assignment_expression_operator: Expression_AssignmentExpression_Operator,
@@ -195,7 +199,7 @@ pub fn new_assignment_expression(
 
 pub type BitwiseAndExpression = Box<BitwiseAndExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct BitwiseAndExpressionStruct {
     pub left_operand: Expression,
     pub operator: Ampersand,
@@ -216,7 +220,7 @@ pub fn new_bitwise_and_expression(
 
 pub type BitwiseOrExpression = Box<BitwiseOrExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct BitwiseOrExpressionStruct {
     pub left_operand: Expression,
     pub operator: Bar,
@@ -237,7 +241,7 @@ pub fn new_bitwise_or_expression(
 
 pub type BitwiseXorExpression = Box<BitwiseXorExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct BitwiseXorExpressionStruct {
     pub left_operand: Expression,
     pub operator: Caret,
@@ -258,7 +262,7 @@ pub fn new_bitwise_xor_expression(
 
 pub type Block = Box<BlockStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct BlockStruct {
     pub open_brace: OpenBrace,
     pub statements: Statements,
@@ -275,7 +279,7 @@ pub fn new_block(open_brace: OpenBrace, statements: Statements, close_brace: Clo
 
 pub type BreakStatement = Box<BreakStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct BreakStatementStruct {
     pub break_keyword: BreakKeyword,
     pub semicolon: Semicolon,
@@ -290,7 +294,7 @@ pub fn new_break_statement(break_keyword: BreakKeyword, semicolon: Semicolon) ->
 
 pub type CallOptionsExpression = Box<CallOptionsExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct CallOptionsExpressionStruct {
     pub operand: Expression,
     pub open_brace: OpenBrace,
@@ -314,7 +318,7 @@ pub fn new_call_options_expression(
 
 pub type CatchClause = Box<CatchClauseStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct CatchClauseStruct {
     pub catch_keyword: CatchKeyword,
     pub error: Option<CatchClauseError>,
@@ -335,7 +339,7 @@ pub fn new_catch_clause(
 
 pub type CatchClauseError = Box<CatchClauseErrorStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct CatchClauseErrorStruct {
     pub name: Option<Identifier>,
     pub parameters: ParametersDeclaration,
@@ -350,7 +354,7 @@ pub fn new_catch_clause_error(
 
 pub type ConditionalExpression = Box<ConditionalExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ConditionalExpressionStruct {
     pub operand: Expression,
     pub question_mark: QuestionMark,
@@ -377,7 +381,7 @@ pub fn new_conditional_expression(
 
 pub type ConstantDefinition = Box<ConstantDefinitionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ConstantDefinitionStruct {
     pub type_name: TypeName,
     pub constant_keyword: ConstantKeyword,
@@ -407,7 +411,7 @@ pub fn new_constant_definition(
 
 pub type ConstructorDefinition = Box<ConstructorDefinitionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ConstructorDefinitionStruct {
     pub constructor_keyword: ConstructorKeyword,
     pub parameters: ParametersDeclaration,
@@ -431,7 +435,7 @@ pub fn new_constructor_definition(
 
 pub type ContinueStatement = Box<ContinueStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ContinueStatementStruct {
     pub continue_keyword: ContinueKeyword,
     pub semicolon: Semicolon,
@@ -449,7 +453,7 @@ pub fn new_continue_statement(
 
 pub type ContractDefinition = Box<ContractDefinitionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ContractDefinitionStruct {
     pub abstract_keyword: Option<AbstractKeyword>,
     pub contract_keyword: ContractKeyword,
@@ -482,7 +486,7 @@ pub fn new_contract_definition(
 
 pub type DecimalNumberExpression = Box<DecimalNumberExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct DecimalNumberExpressionStruct {
     pub literal: DecimalLiteral,
     pub unit: Option<NumberUnit>,
@@ -497,7 +501,7 @@ pub fn new_decimal_number_expression(
 
 pub type DoWhileStatement = Box<DoWhileStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct DoWhileStatementStruct {
     pub do_keyword: DoKeyword,
     pub body: Statement,
@@ -530,7 +534,7 @@ pub fn new_do_while_statement(
 
 pub type ElseBranch = Box<ElseBranchStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ElseBranchStruct {
     pub else_keyword: ElseKeyword,
     pub body: Statement,
@@ -542,7 +546,7 @@ pub fn new_else_branch(else_keyword: ElseKeyword, body: Statement) -> ElseBranch
 
 pub type EmitStatement = Box<EmitStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct EmitStatementStruct {
     pub emit_keyword: EmitKeyword,
     pub event: IdentifierPath,
@@ -566,7 +570,7 @@ pub fn new_emit_statement(
 
 pub type EnumDefinition = Box<EnumDefinitionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct EnumDefinitionStruct {
     pub enum_keyword: EnumKeyword,
     pub name: Identifier,
@@ -593,7 +597,7 @@ pub fn new_enum_definition(
 
 pub type EqualityExpression = Box<EqualityExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct EqualityExpressionStruct {
     pub left_operand: Expression,
     pub expression_equality_expression_operator: Expression_EqualityExpression_Operator,
@@ -614,7 +618,7 @@ pub fn new_equality_expression(
 
 pub type ErrorDefinition = Box<ErrorDefinitionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ErrorDefinitionStruct {
     pub error_keyword: ErrorKeyword,
     pub name: Identifier,
@@ -638,7 +642,7 @@ pub fn new_error_definition(
 
 pub type ErrorParameter = Box<ErrorParameterStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ErrorParameterStruct {
     pub type_name: TypeName,
     pub name: Option<Identifier>,
@@ -650,7 +654,7 @@ pub fn new_error_parameter(type_name: TypeName, name: Option<Identifier>) -> Err
 
 pub type ErrorParametersDeclaration = Box<ErrorParametersDeclarationStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ErrorParametersDeclarationStruct {
     pub open_paren: OpenParen,
     pub parameters: ErrorParameters,
@@ -671,7 +675,7 @@ pub fn new_error_parameters_declaration(
 
 pub type EventDefinition = Box<EventDefinitionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct EventDefinitionStruct {
     pub event_keyword: EventKeyword,
     pub name: Identifier,
@@ -698,7 +702,7 @@ pub fn new_event_definition(
 
 pub type EventParameter = Box<EventParameterStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct EventParameterStruct {
     pub type_name: TypeName,
     pub indexed_keyword: Option<IndexedKeyword>,
@@ -719,7 +723,7 @@ pub fn new_event_parameter(
 
 pub type EventParametersDeclaration = Box<EventParametersDeclarationStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct EventParametersDeclarationStruct {
     pub open_paren: OpenParen,
     pub parameters: EventParameters,
@@ -740,7 +744,7 @@ pub fn new_event_parameters_declaration(
 
 pub type ExperimentalPragma = Box<ExperimentalPragmaStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ExperimentalPragmaStruct {
     pub experimental_keyword: ExperimentalKeyword,
     pub feature: ExperimentalFeature,
@@ -758,7 +762,7 @@ pub fn new_experimental_pragma(
 
 pub type ExponentiationExpression = Box<ExponentiationExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ExponentiationExpressionStruct {
     pub left_operand: Expression,
     pub operator: AsteriskAsterisk,
@@ -779,7 +783,7 @@ pub fn new_exponentiation_expression(
 
 pub type ExpressionStatement = Box<ExpressionStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ExpressionStatementStruct {
     pub expression: Expression,
     pub semicolon: Semicolon,
@@ -797,7 +801,7 @@ pub fn new_expression_statement(
 
 pub type FallbackFunctionDefinition = Box<FallbackFunctionDefinitionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct FallbackFunctionDefinitionStruct {
     pub fallback_keyword: FallbackKeyword,
     pub parameters: ParametersDeclaration,
@@ -824,7 +828,7 @@ pub fn new_fallback_function_definition(
 
 pub type ForStatement = Box<ForStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ForStatementStruct {
     pub for_keyword: ForKeyword,
     pub open_paren: OpenParen,
@@ -857,7 +861,7 @@ pub fn new_for_statement(
 
 pub type FunctionCallExpression = Box<FunctionCallExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct FunctionCallExpressionStruct {
     pub operand: Expression,
     pub arguments: ArgumentsDeclaration,
@@ -872,7 +876,7 @@ pub fn new_function_call_expression(
 
 pub type FunctionDefinition = Box<FunctionDefinitionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct FunctionDefinitionStruct {
     pub function_keyword: FunctionKeyword,
     pub name: FunctionName,
@@ -902,7 +906,7 @@ pub fn new_function_definition(
 
 pub type FunctionType = Box<FunctionTypeStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct FunctionTypeStruct {
     pub function_keyword: FunctionKeyword,
     pub parameters: ParametersDeclaration,
@@ -926,7 +930,7 @@ pub fn new_function_type(
 
 pub type HexNumberExpression = Box<HexNumberExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct HexNumberExpressionStruct {
     pub literal: HexLiteral,
 }
@@ -937,7 +941,7 @@ pub fn new_hex_number_expression(literal: HexLiteral) -> HexNumberExpression {
 
 pub type IfStatement = Box<IfStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct IfStatementStruct {
     pub if_keyword: IfKeyword,
     pub open_paren: OpenParen,
@@ -967,7 +971,7 @@ pub fn new_if_statement(
 
 pub type ImportAlias = Box<ImportAliasStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ImportAliasStruct {
     pub as_keyword: AsKeyword,
     pub identifier: Identifier,
@@ -982,7 +986,7 @@ pub fn new_import_alias(as_keyword: AsKeyword, identifier: Identifier) -> Import
 
 pub type ImportDeconstruction = Box<ImportDeconstructionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ImportDeconstructionStruct {
     pub open_brace: OpenBrace,
     pub symbols: ImportDeconstructionSymbols,
@@ -1009,7 +1013,7 @@ pub fn new_import_deconstruction(
 
 pub type ImportDeconstructionSymbol = Box<ImportDeconstructionSymbolStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ImportDeconstructionSymbolStruct {
     pub name: Identifier,
     pub alias: Option<ImportAlias>,
@@ -1024,7 +1028,7 @@ pub fn new_import_deconstruction_symbol(
 
 pub type ImportDirective = Box<ImportDirectiveStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ImportDirectiveStruct {
     pub import_keyword: ImportKeyword,
     pub clause: ImportClause,
@@ -1045,7 +1049,7 @@ pub fn new_import_directive(
 
 pub type IndexAccessEnd = Box<IndexAccessEndStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct IndexAccessEndStruct {
     pub colon: Colon,
     pub end: Option<Expression>,
@@ -1057,7 +1061,7 @@ pub fn new_index_access_end(colon: Colon, end: Option<Expression>) -> IndexAcces
 
 pub type IndexAccessExpression = Box<IndexAccessExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct IndexAccessExpressionStruct {
     pub operand: Expression,
     pub open_bracket: OpenBracket,
@@ -1084,7 +1088,7 @@ pub fn new_index_access_expression(
 
 pub type InequalityExpression = Box<InequalityExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct InequalityExpressionStruct {
     pub left_operand: Expression,
     pub expression_inequality_expression_operator: Expression_InequalityExpression_Operator,
@@ -1105,7 +1109,7 @@ pub fn new_inequality_expression(
 
 pub type InheritanceSpecifier = Box<InheritanceSpecifierStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct InheritanceSpecifierStruct {
     pub is_keyword: IsKeyword,
     pub types: InheritanceTypes,
@@ -1120,7 +1124,7 @@ pub fn new_inheritance_specifier(
 
 pub type InheritanceType = Box<InheritanceTypeStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct InheritanceTypeStruct {
     pub type_name: IdentifierPath,
     pub arguments: Option<ArgumentsDeclaration>,
@@ -1138,7 +1142,7 @@ pub fn new_inheritance_type(
 
 pub type InterfaceDefinition = Box<InterfaceDefinitionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct InterfaceDefinitionStruct {
     pub interface_keyword: InterfaceKeyword,
     pub name: Identifier,
@@ -1168,7 +1172,7 @@ pub fn new_interface_definition(
 
 pub type LibraryDefinition = Box<LibraryDefinitionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct LibraryDefinitionStruct {
     pub library_keyword: LibraryKeyword,
     pub name: Identifier,
@@ -1195,7 +1199,7 @@ pub fn new_library_definition(
 
 pub type MappingKey = Box<MappingKeyStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct MappingKeyStruct {
     pub key_type: MappingKeyType,
     pub name: Option<Identifier>,
@@ -1207,7 +1211,7 @@ pub fn new_mapping_key(key_type: MappingKeyType, name: Option<Identifier>) -> Ma
 
 pub type MappingType = Box<MappingTypeStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct MappingTypeStruct {
     pub mapping_keyword: MappingKeyword,
     pub open_paren: OpenParen,
@@ -1237,7 +1241,7 @@ pub fn new_mapping_type(
 
 pub type MappingValue = Box<MappingValueStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct MappingValueStruct {
     pub type_name: TypeName,
     pub name: Option<Identifier>,
@@ -1249,7 +1253,7 @@ pub fn new_mapping_value(type_name: TypeName, name: Option<Identifier>) -> Mappi
 
 pub type MemberAccessExpression = Box<MemberAccessExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct MemberAccessExpressionStruct {
     pub operand: Expression,
     pub period: Period,
@@ -1270,7 +1274,7 @@ pub fn new_member_access_expression(
 
 pub type ModifierDefinition = Box<ModifierDefinitionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ModifierDefinitionStruct {
     pub modifier_keyword: ModifierKeyword,
     pub name: Identifier,
@@ -1297,7 +1301,7 @@ pub fn new_modifier_definition(
 
 pub type ModifierInvocation = Box<ModifierInvocationStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ModifierInvocationStruct {
     pub name: IdentifierPath,
     pub arguments: Option<ArgumentsDeclaration>,
@@ -1312,7 +1316,7 @@ pub fn new_modifier_invocation(
 
 pub type MultiTypedDeclaration = Box<MultiTypedDeclarationStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct MultiTypedDeclarationStruct {
     pub open_paren: OpenParen,
     pub elements: MultiTypedDeclarationElements,
@@ -1336,7 +1340,7 @@ pub fn new_multi_typed_declaration(
 
 pub type MultiTypedDeclarationElement = Box<MultiTypedDeclarationElementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct MultiTypedDeclarationElementStruct {
     pub member: Option<VariableDeclaration>,
 }
@@ -1349,7 +1353,7 @@ pub fn new_multi_typed_declaration_element(
 
 pub type MultiplicativeExpression = Box<MultiplicativeExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct MultiplicativeExpressionStruct {
     pub left_operand: Expression,
     pub expression_multiplicative_expression_operator: Expression_MultiplicativeExpression_Operator,
@@ -1370,7 +1374,7 @@ pub fn new_multiplicative_expression(
 
 pub type NamedArgument = Box<NamedArgumentStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct NamedArgumentStruct {
     pub name: Identifier,
     pub colon: Colon,
@@ -1383,7 +1387,7 @@ pub fn new_named_argument(name: Identifier, colon: Colon, value: Expression) -> 
 
 pub type NamedArgumentGroup = Box<NamedArgumentGroupStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct NamedArgumentGroupStruct {
     pub open_brace: OpenBrace,
     pub arguments: NamedArguments,
@@ -1404,7 +1408,7 @@ pub fn new_named_argument_group(
 
 pub type NamedArgumentsDeclaration = Box<NamedArgumentsDeclarationStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct NamedArgumentsDeclarationStruct {
     pub open_paren: OpenParen,
     pub arguments: NamedArgumentGroup,
@@ -1425,7 +1429,7 @@ pub fn new_named_arguments_declaration(
 
 pub type NamedImport = Box<NamedImportStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct NamedImportStruct {
     pub asterisk: Asterisk,
     pub alias: ImportAlias,
@@ -1449,7 +1453,7 @@ pub fn new_named_import(
 
 pub type NewExpression = Box<NewExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct NewExpressionStruct {
     pub new_keyword: NewKeyword,
     pub type_name: TypeName,
@@ -1464,7 +1468,7 @@ pub fn new_new_expression(new_keyword: NewKeyword, type_name: TypeName) -> NewEx
 
 pub type OrExpression = Box<OrExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct OrExpressionStruct {
     pub left_operand: Expression,
     pub operator: BarBar,
@@ -1485,7 +1489,7 @@ pub fn new_or_expression(
 
 pub type OverridePathsDeclaration = Box<OverridePathsDeclarationStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct OverridePathsDeclarationStruct {
     pub open_paren: OpenParen,
     pub paths: OverridePaths,
@@ -1506,7 +1510,7 @@ pub fn new_override_paths_declaration(
 
 pub type OverrideSpecifier = Box<OverrideSpecifierStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct OverrideSpecifierStruct {
     pub override_keyword: OverrideKeyword,
     pub overridden: Option<OverridePathsDeclaration>,
@@ -1524,7 +1528,7 @@ pub fn new_override_specifier(
 
 pub type Parameter = Box<ParameterStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ParameterStruct {
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
@@ -1545,7 +1549,7 @@ pub fn new_parameter(
 
 pub type ParametersDeclaration = Box<ParametersDeclarationStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ParametersDeclarationStruct {
     pub open_paren: OpenParen,
     pub parameters: Parameters,
@@ -1566,7 +1570,7 @@ pub fn new_parameters_declaration(
 
 pub type PathImport = Box<PathImportStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PathImportStruct {
     pub path: StringLiteral,
     pub alias: Option<ImportAlias>,
@@ -1578,7 +1582,7 @@ pub fn new_path_import(path: StringLiteral, alias: Option<ImportAlias>) -> PathI
 
 pub type PositionalArgumentsDeclaration = Box<PositionalArgumentsDeclarationStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PositionalArgumentsDeclarationStruct {
     pub open_paren: OpenParen,
     pub arguments: PositionalArguments,
@@ -1599,7 +1603,7 @@ pub fn new_positional_arguments_declaration(
 
 pub type PostfixExpression = Box<PostfixExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PostfixExpressionStruct {
     pub operand: Expression,
     pub expression_postfix_expression_operator: Expression_PostfixExpression_Operator,
@@ -1617,7 +1621,7 @@ pub fn new_postfix_expression(
 
 pub type PragmaDirective = Box<PragmaDirectiveStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PragmaDirectiveStruct {
     pub pragma_keyword: PragmaKeyword,
     pub pragma: Pragma,
@@ -1638,7 +1642,7 @@ pub fn new_pragma_directive(
 
 pub type PrefixExpression = Box<PrefixExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PrefixExpressionStruct {
     pub expression_prefix_expression_operator: Expression_PrefixExpression_Operator,
     pub operand: Expression,
@@ -1656,7 +1660,7 @@ pub fn new_prefix_expression(
 
 pub type ReceiveFunctionDefinition = Box<ReceiveFunctionDefinitionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ReceiveFunctionDefinitionStruct {
     pub receive_keyword: ReceiveKeyword,
     pub parameters: ParametersDeclaration,
@@ -1680,7 +1684,7 @@ pub fn new_receive_function_definition(
 
 pub type ReturnStatement = Box<ReturnStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ReturnStatementStruct {
     pub return_keyword: ReturnKeyword,
     pub expression: Option<Expression>,
@@ -1701,7 +1705,7 @@ pub fn new_return_statement(
 
 pub type ReturnsDeclaration = Box<ReturnsDeclarationStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ReturnsDeclarationStruct {
     pub returns_keyword: ReturnsKeyword,
     pub variables: ParametersDeclaration,
@@ -1719,7 +1723,7 @@ pub fn new_returns_declaration(
 
 pub type RevertStatement = Box<RevertStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct RevertStatementStruct {
     pub revert_keyword: RevertKeyword,
     pub error: IdentifierPath,
@@ -1743,7 +1747,7 @@ pub fn new_revert_statement(
 
 pub type ShiftExpression = Box<ShiftExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ShiftExpressionStruct {
     pub left_operand: Expression,
     pub expression_shift_expression_operator: Expression_ShiftExpression_Operator,
@@ -1764,7 +1768,7 @@ pub fn new_shift_expression(
 
 pub type SingleTypedDeclaration = Box<SingleTypedDeclarationStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct SingleTypedDeclarationStruct {
     pub declaration: VariableDeclaration,
     pub value: Option<VariableDeclarationValue>,
@@ -1779,7 +1783,7 @@ pub fn new_single_typed_declaration(
 
 pub type SourceUnit = Box<SourceUnitStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct SourceUnitStruct {
     pub members: SourceUnitMembers,
 }
@@ -1790,7 +1794,7 @@ pub fn new_source_unit(members: SourceUnitMembers) -> SourceUnit {
 
 pub type StateVariableDefinition = Box<StateVariableDefinitionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct StateVariableDefinitionStruct {
     pub type_name: TypeName,
     pub attributes: StateVariableAttributes,
@@ -1817,7 +1821,7 @@ pub fn new_state_variable_definition(
 
 pub type StateVariableDefinitionValue = Box<StateVariableDefinitionValueStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct StateVariableDefinitionValueStruct {
     pub equal: Equal,
     pub value: Expression,
@@ -1832,7 +1836,7 @@ pub fn new_state_variable_definition_value(
 
 pub type StorageLayoutSpecifier = Box<StorageLayoutSpecifierStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct StorageLayoutSpecifierStruct {
     pub layout_keyword: LayoutKeyword,
     pub at_keyword: AtKeyword,
@@ -1853,7 +1857,7 @@ pub fn new_storage_layout_specifier(
 
 pub type StructDefinition = Box<StructDefinitionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct StructDefinitionStruct {
     pub struct_keyword: StructKeyword,
     pub name: Identifier,
@@ -1880,7 +1884,7 @@ pub fn new_struct_definition(
 
 pub type StructMember = Box<StructMemberStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct StructMemberStruct {
     pub type_name: TypeName,
     pub name: Identifier,
@@ -1901,7 +1905,7 @@ pub fn new_struct_member(
 
 pub type TryStatement = Box<TryStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct TryStatementStruct {
     pub try_keyword: TryKeyword,
     pub expression: Expression,
@@ -1928,7 +1932,7 @@ pub fn new_try_statement(
 
 pub type TupleExpression = Box<TupleExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct TupleExpressionStruct {
     pub open_paren: OpenParen,
     pub items: TupleValues,
@@ -1949,7 +1953,7 @@ pub fn new_tuple_expression(
 
 pub type TupleValue = Box<TupleValueStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct TupleValueStruct {
     pub expression: Option<Expression>,
 }
@@ -1960,7 +1964,7 @@ pub fn new_tuple_value(expression: Option<Expression>) -> TupleValue {
 
 pub type TypeExpression = Box<TypeExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct TypeExpressionStruct {
     pub type_keyword: TypeKeyword,
     pub open_paren: OpenParen,
@@ -1984,7 +1988,7 @@ pub fn new_type_expression(
 
 pub type UncheckedBlock = Box<UncheckedBlockStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct UncheckedBlockStruct {
     pub unchecked_keyword: UncheckedKeyword,
     pub block: Block,
@@ -1999,7 +2003,7 @@ pub fn new_unchecked_block(unchecked_keyword: UncheckedKeyword, block: Block) ->
 
 pub type UserDefinedValueTypeDefinition = Box<UserDefinedValueTypeDefinitionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct UserDefinedValueTypeDefinitionStruct {
     pub type_keyword: TypeKeyword,
     pub name: Identifier,
@@ -2026,7 +2030,7 @@ pub fn new_user_defined_value_type_definition(
 
 pub type UsingAlias = Box<UsingAliasStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct UsingAliasStruct {
     pub as_keyword: AsKeyword,
     pub operator: UsingOperator,
@@ -2041,7 +2045,7 @@ pub fn new_using_alias(as_keyword: AsKeyword, operator: UsingOperator) -> UsingA
 
 pub type UsingDeconstruction = Box<UsingDeconstructionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct UsingDeconstructionStruct {
     pub open_brace: OpenBrace,
     pub symbols: UsingDeconstructionSymbols,
@@ -2062,7 +2066,7 @@ pub fn new_using_deconstruction(
 
 pub type UsingDeconstructionSymbol = Box<UsingDeconstructionSymbolStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct UsingDeconstructionSymbolStruct {
     pub name: IdentifierPath,
     pub alias: Option<UsingAlias>,
@@ -2077,7 +2081,7 @@ pub fn new_using_deconstruction_symbol(
 
 pub type UsingDirective = Box<UsingDirectiveStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct UsingDirectiveStruct {
     pub using_keyword: UsingKeyword,
     pub clause: UsingClause,
@@ -2107,7 +2111,7 @@ pub fn new_using_directive(
 
 pub type VariableDeclaration = Box<VariableDeclarationStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct VariableDeclarationStruct {
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
@@ -2128,7 +2132,7 @@ pub fn new_variable_declaration(
 
 pub type VariableDeclarationStatement = Box<VariableDeclarationStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct VariableDeclarationStatementStruct {
     pub target: VariableDeclarationTarget,
     pub semicolon: Semicolon,
@@ -2143,7 +2147,7 @@ pub fn new_variable_declaration_statement(
 
 pub type VariableDeclarationValue = Box<VariableDeclarationValueStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct VariableDeclarationValueStruct {
     pub equal: Equal,
     pub expression: Expression,
@@ -2158,7 +2162,7 @@ pub fn new_variable_declaration_value(
 
 pub type VersionPragma = Box<VersionPragmaStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct VersionPragmaStruct {
     pub solidity_keyword: SolidityKeyword,
     pub sets: VersionExpressionSets,
@@ -2176,7 +2180,7 @@ pub fn new_version_pragma(
 
 pub type VersionRange = Box<VersionRangeStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct VersionRangeStruct {
     pub start: VersionLiteral,
     pub minus: PragmaMinus,
@@ -2193,7 +2197,7 @@ pub fn new_version_range(
 
 pub type VersionTerm = Box<VersionTermStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct VersionTermStruct {
     pub operator: Option<VersionOperator>,
     pub literal: VersionLiteral,
@@ -2205,7 +2209,7 @@ pub fn new_version_term(operator: Option<VersionOperator>, literal: VersionLiter
 
 pub type WhileStatement = Box<WhileStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct WhileStatementStruct {
     pub while_keyword: WhileKeyword,
     pub open_paren: OpenParen,
@@ -2232,7 +2236,7 @@ pub fn new_while_statement(
 
 pub type YulBlock = Box<YulBlockStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulBlockStruct {
     pub open_brace: YulOpenBrace,
     pub statements: YulStatements,
@@ -2253,7 +2257,7 @@ pub fn new_yul_block(
 
 pub type YulBreakStatement = Box<YulBreakStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulBreakStatementStruct {
     pub break_keyword: YulBreakKeyword,
 }
@@ -2264,7 +2268,7 @@ pub fn new_yul_break_statement(break_keyword: YulBreakKeyword) -> YulBreakStatem
 
 pub type YulContinueStatement = Box<YulContinueStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulContinueStatementStruct {
     pub continue_keyword: YulContinueKeyword,
 }
@@ -2275,7 +2279,7 @@ pub fn new_yul_continue_statement(continue_keyword: YulContinueKeyword) -> YulCo
 
 pub type YulDefaultCase = Box<YulDefaultCaseStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulDefaultCaseStruct {
     pub default_keyword: YulDefaultKeyword,
     pub body: YulBlock,
@@ -2290,7 +2294,7 @@ pub fn new_yul_default_case(default_keyword: YulDefaultKeyword, body: YulBlock) 
 
 pub type YulFlagsDeclaration = Box<YulFlagsDeclarationStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulFlagsDeclarationStruct {
     pub open_paren: YulOpenParen,
     pub flags: YulFlags,
@@ -2311,7 +2315,7 @@ pub fn new_yul_flags_declaration(
 
 pub type YulForStatement = Box<YulForStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulForStatementStruct {
     pub for_keyword: YulForKeyword,
     pub initialization: YulBlock,
@@ -2338,7 +2342,7 @@ pub fn new_yul_for_statement(
 
 pub type YulFunctionCallExpression = Box<YulFunctionCallExpressionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulFunctionCallExpressionStruct {
     pub operand: YulExpression,
     pub open_paren: YulOpenParen,
@@ -2362,7 +2366,7 @@ pub fn new_yul_function_call_expression(
 
 pub type YulFunctionDefinition = Box<YulFunctionDefinitionStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulFunctionDefinitionStruct {
     pub function_keyword: YulFunctionKeyword,
     pub name: YulIdentifier,
@@ -2389,7 +2393,7 @@ pub fn new_yul_function_definition(
 
 pub type YulIfStatement = Box<YulIfStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulIfStatementStruct {
     pub if_keyword: YulIfKeyword,
     pub condition: YulExpression,
@@ -2410,7 +2414,7 @@ pub fn new_yul_if_statement(
 
 pub type YulLeaveStatement = Box<YulLeaveStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulLeaveStatementStruct {
     pub leave_keyword: YulLeaveKeyword,
 }
@@ -2421,7 +2425,7 @@ pub fn new_yul_leave_statement(leave_keyword: YulLeaveKeyword) -> YulLeaveStatem
 
 pub type YulParametersDeclaration = Box<YulParametersDeclarationStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulParametersDeclarationStruct {
     pub open_paren: YulOpenParen,
     pub parameters: YulParameters,
@@ -2442,7 +2446,7 @@ pub fn new_yul_parameters_declaration(
 
 pub type YulReturnsDeclaration = Box<YulReturnsDeclarationStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulReturnsDeclarationStruct {
     pub minus_greater_than: YulMinusGreaterThan,
     pub variables: YulVariableNames,
@@ -2460,7 +2464,7 @@ pub fn new_yul_returns_declaration(
 
 pub type YulSwitchStatement = Box<YulSwitchStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulSwitchStatementStruct {
     pub switch_keyword: YulSwitchKeyword,
     pub expression: YulExpression,
@@ -2481,7 +2485,7 @@ pub fn new_yul_switch_statement(
 
 pub type YulValueCase = Box<YulValueCaseStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulValueCaseStruct {
     pub case_keyword: YulCaseKeyword,
     pub value: YulLiteral,
@@ -2502,7 +2506,7 @@ pub fn new_yul_value_case(
 
 pub type YulVariableAssignmentStatement = Box<YulVariableAssignmentStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulVariableAssignmentStatementStruct {
     pub variables: YulPaths,
     pub assignment: YulColonEqual,
@@ -2523,7 +2527,7 @@ pub fn new_yul_variable_assignment_statement(
 
 pub type YulVariableDeclarationStatement = Box<YulVariableDeclarationStatementStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulVariableDeclarationStatementStruct {
     pub let_keyword: YulLetKeyword,
     pub variables: YulVariableNames,
@@ -2544,7 +2548,7 @@ pub fn new_yul_variable_declaration_statement(
 
 pub type YulVariableDeclarationValue = Box<YulVariableDeclarationValueStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulVariableDeclarationValueStruct {
     pub assignment: YulColonEqual,
     pub expression: YulExpression,
@@ -2565,7 +2569,7 @@ pub fn new_yul_variable_declaration_value(
 //
 // Note: We create a constructor function for each variant
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum AbicoderVersion {
     AbicoderV1Keyword(AbicoderV1Keyword),
     AbicoderV2Keyword(AbicoderV2Keyword),
@@ -2579,7 +2583,7 @@ pub fn new_abicoder_version_abicoder_v2_keyword(element: AbicoderV2Keyword) -> A
     AbicoderVersion::AbicoderV2Keyword(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum ArgumentsDeclaration {
     PositionalArgumentsDeclaration(PositionalArgumentsDeclaration),
     NamedArgumentsDeclaration(NamedArgumentsDeclaration),
@@ -2597,7 +2601,7 @@ pub fn new_arguments_declaration_named_arguments_declaration(
     ArgumentsDeclaration::NamedArgumentsDeclaration(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum ConstructorAttribute {
     ModifierInvocation(ModifierInvocation),
     InternalKeyword(InternalKeyword),
@@ -2625,7 +2629,7 @@ pub fn new_constructor_attribute_public_keyword(element: PublicKeyword) -> Const
     ConstructorAttribute::PublicKeyword(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum ContractMember {
     UsingDirective(UsingDirective),
     FunctionDefinition(FunctionDefinition),
@@ -2699,7 +2703,7 @@ pub fn new_contract_member_state_variable_definition(
     ContractMember::StateVariableDefinition(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum ContractSpecifier {
     InheritanceSpecifier(InheritanceSpecifier),
     StorageLayoutSpecifier(StorageLayoutSpecifier),
@@ -2717,7 +2721,7 @@ pub fn new_contract_specifier_storage_layout_specifier(
     ContractSpecifier::StorageLayoutSpecifier(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum ElementaryType {
     BoolKeyword(BoolKeyword),
     StringKeyword(StringKeyword),
@@ -2761,7 +2765,7 @@ pub fn new_elementary_type_ufixed_keyword(element: UfixedKeyword) -> ElementaryT
     ElementaryType::UfixedKeyword(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum ExperimentalFeature {
     ABIEncoderV2Keyword(ABIEncoderV2Keyword),
     SMTCheckerKeyword(SMTCheckerKeyword),
@@ -2791,7 +2795,7 @@ pub fn new_experimental_feature_pragma_string_literal(
     ExperimentalFeature::PragmaStringLiteral(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum Expression {
     AssignmentExpression(AssignmentExpression),
     ConditionalExpression(ConditionalExpression),
@@ -2960,7 +2964,7 @@ pub fn new_expression_identifier(element: Identifier) -> Expression {
     Expression::Identifier(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum Expression_AdditiveExpression_Operator {
     Minus(Minus),
     Plus(Plus),
@@ -2978,7 +2982,7 @@ pub fn new_expression_additive_expression_operator_plus(
     Expression_AdditiveExpression_Operator::Plus(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum Expression_AssignmentExpression_Operator {
     AmpersandEqual(AmpersandEqual),
     AsteriskEqual(AsteriskEqual),
@@ -3066,7 +3070,7 @@ pub fn new_expression_assignment_expression_operator_slash_equal(
     Expression_AssignmentExpression_Operator::SlashEqual(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum Expression_EqualityExpression_Operator {
     BangEqual(BangEqual),
     EqualEqual(EqualEqual),
@@ -3084,7 +3088,7 @@ pub fn new_expression_equality_expression_operator_equal_equal(
     Expression_EqualityExpression_Operator::EqualEqual(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum Expression_InequalityExpression_Operator {
     GreaterThan(GreaterThan),
     GreaterThanEqual(GreaterThanEqual),
@@ -3116,7 +3120,7 @@ pub fn new_expression_inequality_expression_operator_less_than_equal(
     Expression_InequalityExpression_Operator::LessThanEqual(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum Expression_MultiplicativeExpression_Operator {
     Asterisk(Asterisk),
     Percent(Percent),
@@ -3141,7 +3145,7 @@ pub fn new_expression_multiplicative_expression_operator_slash(
     Expression_MultiplicativeExpression_Operator::Slash(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum Expression_PostfixExpression_Operator {
     MinusMinus(MinusMinus),
     PlusPlus(PlusPlus),
@@ -3159,7 +3163,7 @@ pub fn new_expression_postfix_expression_operator_plus_plus(
     Expression_PostfixExpression_Operator::PlusPlus(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum Expression_PrefixExpression_Operator {
     Bang(Bang),
     DeleteKeyword(DeleteKeyword),
@@ -3205,7 +3209,7 @@ pub fn new_expression_prefix_expression_operator_tilde(
     Expression_PrefixExpression_Operator::Tilde(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum Expression_ShiftExpression_Operator {
     GreaterThanGreaterThan(GreaterThanGreaterThan),
     GreaterThanGreaterThanGreaterThan(GreaterThanGreaterThanGreaterThan),
@@ -3230,7 +3234,7 @@ pub fn new_expression_shift_expression_operator_less_than_less_than(
     Expression_ShiftExpression_Operator::LessThanLessThan(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum FallbackFunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
@@ -3283,7 +3287,7 @@ pub fn new_fallback_function_attribute_virtual_keyword(
     FallbackFunctionAttribute::VirtualKeyword(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum ForStatementCondition {
     ExpressionStatement(ExpressionStatement),
     Semicolon(Semicolon),
@@ -3299,7 +3303,7 @@ pub fn new_for_statement_condition_semicolon(element: Semicolon) -> ForStatement
     ForStatementCondition::Semicolon(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum ForStatementInitialization {
     VariableDeclarationStatement(VariableDeclarationStatement),
     ExpressionStatement(ExpressionStatement),
@@ -3324,7 +3328,7 @@ pub fn new_for_statement_initialization_semicolon(
     ForStatementInitialization::Semicolon(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum FunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
@@ -3380,7 +3384,7 @@ pub fn new_function_attribute_virtual_keyword(element: VirtualKeyword) -> Functi
     FunctionAttribute::VirtualKeyword(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum FunctionBody {
     Block(Block),
     Semicolon(Semicolon),
@@ -3394,7 +3398,7 @@ pub fn new_function_body_semicolon(element: Semicolon) -> FunctionBody {
     FunctionBody::Semicolon(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum FunctionName {
     Identifier(Identifier),
     FallbackKeyword(FallbackKeyword),
@@ -3413,7 +3417,7 @@ pub fn new_function_name_receive_keyword(element: ReceiveKeyword) -> FunctionNam
     FunctionName::ReceiveKeyword(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum FunctionTypeAttribute {
     InternalKeyword(InternalKeyword),
     ExternalKeyword(ExternalKeyword),
@@ -3460,7 +3464,7 @@ pub fn new_function_type_attribute_payable_keyword(
     FunctionTypeAttribute::PayableKeyword(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum IdentifierPathElement {
     Identifier(Identifier),
     AddressKeyword(AddressKeyword),
@@ -3476,7 +3480,7 @@ pub fn new_identifier_path_element_address_keyword(
     IdentifierPathElement::AddressKeyword(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum ImportClause {
     PathImport(PathImport),
     NamedImport(NamedImport),
@@ -3495,7 +3499,7 @@ pub fn new_import_clause_import_deconstruction(element: ImportDeconstruction) ->
     ImportClause::ImportDeconstruction(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum MappingKeyType {
     ElementaryType(ElementaryType),
     IdentifierPath(IdentifierPath),
@@ -3509,7 +3513,7 @@ pub fn new_mapping_key_type_identifier_path(element: IdentifierPath) -> MappingK
     MappingKeyType::IdentifierPath(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum ModifierAttribute {
     OverrideSpecifier(OverrideSpecifier),
     VirtualKeyword(VirtualKeyword),
@@ -3523,7 +3527,7 @@ pub fn new_modifier_attribute_virtual_keyword(element: VirtualKeyword) -> Modifi
     ModifierAttribute::VirtualKeyword(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum NumberUnit {
     WeiKeyword(WeiKeyword),
     GweiKeyword(GweiKeyword),
@@ -3567,7 +3571,7 @@ pub fn new_number_unit_weeks_keyword(element: WeeksKeyword) -> NumberUnit {
     NumberUnit::WeeksKeyword(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum Pragma {
     VersionPragma(VersionPragma),
     AbicoderPragma(AbicoderPragma),
@@ -3586,7 +3590,7 @@ pub fn new_pragma_experimental_pragma(element: ExperimentalPragma) -> Pragma {
     Pragma::ExperimentalPragma(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum ReceiveFunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
@@ -3625,7 +3629,7 @@ pub fn new_receive_function_attribute_virtual_keyword(
     ReceiveFunctionAttribute::VirtualKeyword(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum SourceUnitMember {
     PragmaDirective(PragmaDirective),
     ImportDirective(ImportDirective),
@@ -3698,7 +3702,7 @@ pub fn new_source_unit_member_constant_definition(element: ConstantDefinition) -
     SourceUnitMember::ConstantDefinition(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum StateVariableAttribute {
     OverrideSpecifier(OverrideSpecifier),
     ConstantKeyword(ConstantKeyword),
@@ -3751,7 +3755,7 @@ pub fn new_state_variable_attribute_transient_keyword(
     StateVariableAttribute::TransientKeyword(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum Statement {
     IfStatement(IfStatement),
     ForStatement(ForStatement),
@@ -3832,7 +3836,7 @@ pub fn new_statement_expression_statement(element: ExpressionStatement) -> State
     Statement::ExpressionStatement(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum StorageLocation {
     MemoryKeyword(MemoryKeyword),
     StorageKeyword(StorageKeyword),
@@ -3851,7 +3855,7 @@ pub fn new_storage_location_call_data_keyword(element: CallDataKeyword) -> Stora
     StorageLocation::CallDataKeyword(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum StringExpression {
     StringLiterals(StringLiterals),
     HexStringLiterals(HexStringLiterals),
@@ -3872,7 +3876,7 @@ pub fn new_string_expression_unicode_string_literals(
     StringExpression::UnicodeStringLiterals(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum TypeName {
     ArrayTypeName(ArrayTypeName),
     FunctionType(FunctionType),
@@ -3901,7 +3905,7 @@ pub fn new_type_name_identifier_path(element: IdentifierPath) -> TypeName {
     TypeName::IdentifierPath(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum UsingClause {
     IdentifierPath(IdentifierPath),
     UsingDeconstruction(UsingDeconstruction),
@@ -3915,7 +3919,7 @@ pub fn new_using_clause_using_deconstruction(element: UsingDeconstruction) -> Us
     UsingClause::UsingDeconstruction(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum UsingOperator {
     Ampersand(Ampersand),
     Asterisk(Asterisk),
@@ -3994,7 +3998,7 @@ pub fn new_using_operator_tilde(element: Tilde) -> UsingOperator {
     UsingOperator::Tilde(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum UsingTarget {
     TypeName(TypeName),
     Asterisk(Asterisk),
@@ -4008,7 +4012,7 @@ pub fn new_using_target_asterisk(element: Asterisk) -> UsingTarget {
     UsingTarget::Asterisk(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum VariableDeclarationTarget {
     SingleTypedDeclaration(SingleTypedDeclaration),
     MultiTypedDeclaration(MultiTypedDeclaration),
@@ -4026,7 +4030,7 @@ pub fn new_variable_declaration_target_multi_typed_declaration(
     VariableDeclarationTarget::MultiTypedDeclaration(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum VersionExpression {
     VersionRange(VersionRange),
     VersionTerm(VersionTerm),
@@ -4040,7 +4044,7 @@ pub fn new_version_expression_version_term(element: VersionTerm) -> VersionExpre
     VersionExpression::VersionTerm(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum VersionLiteral {
     SimpleVersionLiteral(SimpleVersionLiteral),
     PragmaStringLiteral(PragmaStringLiteral),
@@ -4054,7 +4058,7 @@ pub fn new_version_literal_pragma_string_literal(element: PragmaStringLiteral) -
     VersionLiteral::PragmaStringLiteral(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum VersionOperator {
     PragmaCaret(PragmaCaret),
     PragmaTilde(PragmaTilde),
@@ -4097,7 +4101,7 @@ pub fn new_version_operator_pragma_greater_than_equal(
     VersionOperator::PragmaGreaterThanEqual(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum YulExpression {
     YulFunctionCallExpression(YulFunctionCallExpression),
     YulLiteral(YulLiteral),
@@ -4118,7 +4122,7 @@ pub fn new_yul_expression_yul_path(element: YulPath) -> YulExpression {
     YulExpression::YulPath(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum YulLiteral {
     YulTrueKeyword(YulTrueKeyword),
     YulFalseKeyword(YulFalseKeyword),
@@ -4152,7 +4156,7 @@ pub fn new_yul_literal_yul_string_literal(element: YulStringLiteral) -> YulLiter
     YulLiteral::YulStringLiteral(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum YulStatement {
     YulBlock(YulBlock),
     YulFunctionDefinition(YulFunctionDefinition),
@@ -4215,7 +4219,7 @@ pub fn new_yul_statement_yul_expression(element: YulExpression) -> YulStatement 
     YulStatement::YulExpression(element)
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum YulSwitchCase {
     YulDefaultCase(YulDefaultCase),
     YulValueCase(YulValueCase),
@@ -4234,7 +4238,7 @@ pub fn new_yul_switch_case_yul_value_case(element: YulValueCase) -> YulSwitchCas
 //
 // TODO(v2): consider using a transparent representation
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ArrayValues {
     pub elements: Vec<Expression>,
 }
@@ -4243,7 +4247,7 @@ pub fn new_array_values(elements: Vec<Expression>) -> ArrayValues {
     ArrayValues { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct CallOptions {
     pub elements: Vec<NamedArgument>,
 }
@@ -4252,7 +4256,7 @@ pub fn new_call_options(elements: Vec<NamedArgument>) -> CallOptions {
     CallOptions { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct CatchClauses {
     pub elements: Vec<CatchClause>,
 }
@@ -4261,7 +4265,7 @@ pub fn new_catch_clauses(elements: Vec<CatchClause>) -> CatchClauses {
     CatchClauses { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ConstructorAttributes {
     pub elements: Vec<ConstructorAttribute>,
 }
@@ -4270,7 +4274,7 @@ pub fn new_constructor_attributes(elements: Vec<ConstructorAttribute>) -> Constr
     ConstructorAttributes { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ContractMembers {
     pub elements: Vec<ContractMember>,
 }
@@ -4279,7 +4283,7 @@ pub fn new_contract_members(elements: Vec<ContractMember>) -> ContractMembers {
     ContractMembers { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ContractSpecifiers {
     pub elements: Vec<ContractSpecifier>,
 }
@@ -4288,7 +4292,7 @@ pub fn new_contract_specifiers(elements: Vec<ContractSpecifier>) -> ContractSpec
     ContractSpecifiers { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct EnumMembers {
     pub elements: Vec<Identifier>,
 }
@@ -4297,7 +4301,7 @@ pub fn new_enum_members(elements: Vec<Identifier>) -> EnumMembers {
     EnumMembers { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ErrorParameters {
     pub elements: Vec<ErrorParameter>,
 }
@@ -4306,7 +4310,7 @@ pub fn new_error_parameters(elements: Vec<ErrorParameter>) -> ErrorParameters {
     ErrorParameters { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct EventParameters {
     pub elements: Vec<EventParameter>,
 }
@@ -4315,7 +4319,7 @@ pub fn new_event_parameters(elements: Vec<EventParameter>) -> EventParameters {
     EventParameters { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct FallbackFunctionAttributes {
     pub elements: Vec<FallbackFunctionAttribute>,
 }
@@ -4326,7 +4330,7 @@ pub fn new_fallback_function_attributes(
     FallbackFunctionAttributes { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct FunctionAttributes {
     pub elements: Vec<FunctionAttribute>,
 }
@@ -4335,7 +4339,7 @@ pub fn new_function_attributes(elements: Vec<FunctionAttribute>) -> FunctionAttr
     FunctionAttributes { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct FunctionTypeAttributes {
     pub elements: Vec<FunctionTypeAttribute>,
 }
@@ -4346,7 +4350,7 @@ pub fn new_function_type_attributes(
     FunctionTypeAttributes { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct HexStringLiterals {
     pub elements: Vec<HexStringLiteral>,
 }
@@ -4355,7 +4359,7 @@ pub fn new_hex_string_literals(elements: Vec<HexStringLiteral>) -> HexStringLite
     HexStringLiterals { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct IdentifierPath {
     pub elements: Vec<IdentifierPathElement>,
 }
@@ -4364,7 +4368,7 @@ pub fn new_identifier_path(elements: Vec<IdentifierPathElement>) -> IdentifierPa
     IdentifierPath { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ImportDeconstructionSymbols {
     pub elements: Vec<ImportDeconstructionSymbol>,
 }
@@ -4375,7 +4379,7 @@ pub fn new_import_deconstruction_symbols(
     ImportDeconstructionSymbols { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct InheritanceTypes {
     pub elements: Vec<InheritanceType>,
 }
@@ -4384,7 +4388,7 @@ pub fn new_inheritance_types(elements: Vec<InheritanceType>) -> InheritanceTypes
     InheritanceTypes { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct InterfaceMembers {
     pub elements: Vec<ContractMember>,
 }
@@ -4393,7 +4397,7 @@ pub fn new_interface_members(elements: Vec<ContractMember>) -> InterfaceMembers 
     InterfaceMembers { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct LibraryMembers {
     pub elements: Vec<ContractMember>,
 }
@@ -4402,7 +4406,7 @@ pub fn new_library_members(elements: Vec<ContractMember>) -> LibraryMembers {
     LibraryMembers { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ModifierAttributes {
     pub elements: Vec<ModifierAttribute>,
 }
@@ -4411,7 +4415,7 @@ pub fn new_modifier_attributes(elements: Vec<ModifierAttribute>) -> ModifierAttr
     ModifierAttributes { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct MultiTypedDeclarationElements {
     pub elements: Vec<MultiTypedDeclarationElement>,
 }
@@ -4422,7 +4426,7 @@ pub fn new_multi_typed_declaration_elements(
     MultiTypedDeclarationElements { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct NamedArguments {
     pub elements: Vec<NamedArgument>,
 }
@@ -4431,7 +4435,7 @@ pub fn new_named_arguments(elements: Vec<NamedArgument>) -> NamedArguments {
     NamedArguments { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct OverridePaths {
     pub elements: Vec<IdentifierPath>,
 }
@@ -4440,7 +4444,7 @@ pub fn new_override_paths(elements: Vec<IdentifierPath>) -> OverridePaths {
     OverridePaths { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Parameters {
     pub elements: Vec<Parameter>,
 }
@@ -4449,7 +4453,7 @@ pub fn new_parameters(elements: Vec<Parameter>) -> Parameters {
     Parameters { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PositionalArguments {
     pub elements: Vec<Expression>,
 }
@@ -4458,7 +4462,7 @@ pub fn new_positional_arguments(elements: Vec<Expression>) -> PositionalArgument
     PositionalArguments { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ReceiveFunctionAttributes {
     pub elements: Vec<ReceiveFunctionAttribute>,
 }
@@ -4469,7 +4473,7 @@ pub fn new_receive_function_attributes(
     ReceiveFunctionAttributes { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct SimpleVersionLiteral {
     pub elements: Vec<VersionSpecifier>,
 }
@@ -4478,7 +4482,7 @@ pub fn new_simple_version_literal(elements: Vec<VersionSpecifier>) -> SimpleVers
     SimpleVersionLiteral { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct SourceUnitMembers {
     pub elements: Vec<SourceUnitMember>,
 }
@@ -4487,7 +4491,7 @@ pub fn new_source_unit_members(elements: Vec<SourceUnitMember>) -> SourceUnitMem
     SourceUnitMembers { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct StateVariableAttributes {
     pub elements: Vec<StateVariableAttribute>,
 }
@@ -4498,7 +4502,7 @@ pub fn new_state_variable_attributes(
     StateVariableAttributes { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Statements {
     pub elements: Vec<Statement>,
 }
@@ -4507,7 +4511,7 @@ pub fn new_statements(elements: Vec<Statement>) -> Statements {
     Statements { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct StringLiterals {
     pub elements: Vec<StringLiteral>,
 }
@@ -4516,7 +4520,7 @@ pub fn new_string_literals(elements: Vec<StringLiteral>) -> StringLiterals {
     StringLiterals { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct StructMembers {
     pub elements: Vec<StructMember>,
 }
@@ -4525,7 +4529,7 @@ pub fn new_struct_members(elements: Vec<StructMember>) -> StructMembers {
     StructMembers { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct TupleValues {
     pub elements: Vec<TupleValue>,
 }
@@ -4534,7 +4538,7 @@ pub fn new_tuple_values(elements: Vec<TupleValue>) -> TupleValues {
     TupleValues { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct UnicodeStringLiterals {
     pub elements: Vec<UnicodeStringLiteral>,
 }
@@ -4543,7 +4547,7 @@ pub fn new_unicode_string_literals(elements: Vec<UnicodeStringLiteral>) -> Unico
     UnicodeStringLiterals { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct UsingDeconstructionSymbols {
     pub elements: Vec<UsingDeconstructionSymbol>,
 }
@@ -4554,7 +4558,7 @@ pub fn new_using_deconstruction_symbols(
     UsingDeconstructionSymbols { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct VersionExpressionSet {
     pub elements: Vec<VersionExpression>,
 }
@@ -4563,7 +4567,7 @@ pub fn new_version_expression_set(elements: Vec<VersionExpression>) -> VersionEx
     VersionExpressionSet { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct VersionExpressionSets {
     pub elements: Vec<VersionExpressionSet>,
 }
@@ -4572,7 +4576,7 @@ pub fn new_version_expression_sets(elements: Vec<VersionExpressionSet>) -> Versi
     VersionExpressionSets { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulArguments {
     pub elements: Vec<YulExpression>,
 }
@@ -4581,7 +4585,7 @@ pub fn new_yul_arguments(elements: Vec<YulExpression>) -> YulArguments {
     YulArguments { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulFlags {
     pub elements: Vec<YulStringLiteral>,
 }
@@ -4590,7 +4594,7 @@ pub fn new_yul_flags(elements: Vec<YulStringLiteral>) -> YulFlags {
     YulFlags { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulParameters {
     pub elements: Vec<YulIdentifier>,
 }
@@ -4599,7 +4603,7 @@ pub fn new_yul_parameters(elements: Vec<YulIdentifier>) -> YulParameters {
     YulParameters { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulPath {
     pub elements: Vec<YulIdentifier>,
 }
@@ -4608,7 +4612,7 @@ pub fn new_yul_path(elements: Vec<YulIdentifier>) -> YulPath {
     YulPath { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulPaths {
     pub elements: Vec<YulPath>,
 }
@@ -4617,7 +4621,7 @@ pub fn new_yul_paths(elements: Vec<YulPath>) -> YulPaths {
     YulPaths { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulStatements {
     pub elements: Vec<YulStatement>,
 }
@@ -4626,7 +4630,7 @@ pub fn new_yul_statements(elements: Vec<YulStatement>) -> YulStatements {
     YulStatements { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulSwitchCases {
     pub elements: Vec<YulSwitchCase>,
 }
@@ -4635,7 +4639,7 @@ pub fn new_yul_switch_cases(elements: Vec<YulSwitchCase>) -> YulSwitchCases {
     YulSwitchCases { elements }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulVariableNames {
     pub elements: Vec<YulIdentifier>,
 }
@@ -4650,7 +4654,7 @@ pub fn new_yul_variable_names(elements: Vec<YulIdentifier>) -> YulVariableNames 
 // Note: _source is unused on the constructor methods, but kept for uniformity with other constructors
 // and because it may be needed in the future
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ABIEncoderV2Keyword {
     pub range: Range<usize>,
 }
@@ -4659,7 +4663,7 @@ pub fn new_abi_encoder_v2_keyword(range: Range<usize>, _source: &str) -> ABIEnco
     ABIEncoderV2Keyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AbicoderKeyword {
     pub range: Range<usize>,
 }
@@ -4668,7 +4672,7 @@ pub fn new_abicoder_keyword(range: Range<usize>, _source: &str) -> AbicoderKeywo
     AbicoderKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AbicoderV1Keyword {
     pub range: Range<usize>,
 }
@@ -4677,7 +4681,7 @@ pub fn new_abicoder_v1_keyword(range: Range<usize>, _source: &str) -> AbicoderV1
     AbicoderV1Keyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AbicoderV2Keyword {
     pub range: Range<usize>,
 }
@@ -4686,7 +4690,7 @@ pub fn new_abicoder_v2_keyword(range: Range<usize>, _source: &str) -> AbicoderV2
     AbicoderV2Keyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AbstractKeyword {
     pub range: Range<usize>,
 }
@@ -4695,7 +4699,7 @@ pub fn new_abstract_keyword(range: Range<usize>, _source: &str) -> AbstractKeywo
     AbstractKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AddressKeyword {
     pub range: Range<usize>,
 }
@@ -4704,7 +4708,7 @@ pub fn new_address_keyword(range: Range<usize>, _source: &str) -> AddressKeyword
     AddressKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AfterKeyword {
     pub range: Range<usize>,
 }
@@ -4713,7 +4717,7 @@ pub fn new_after_keyword(range: Range<usize>, _source: &str) -> AfterKeyword {
     AfterKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AliasKeyword {
     pub range: Range<usize>,
 }
@@ -4722,7 +4726,7 @@ pub fn new_alias_keyword(range: Range<usize>, _source: &str) -> AliasKeyword {
     AliasKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Ampersand {
     pub range: Range<usize>,
 }
@@ -4731,7 +4735,7 @@ pub fn new_ampersand(range: Range<usize>, _source: &str) -> Ampersand {
     Ampersand { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AmpersandAmpersand {
     pub range: Range<usize>,
 }
@@ -4740,7 +4744,7 @@ pub fn new_ampersand_ampersand(range: Range<usize>, _source: &str) -> AmpersandA
     AmpersandAmpersand { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AmpersandEqual {
     pub range: Range<usize>,
 }
@@ -4749,7 +4753,7 @@ pub fn new_ampersand_equal(range: Range<usize>, _source: &str) -> AmpersandEqual
     AmpersandEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AnonymousKeyword {
     pub range: Range<usize>,
 }
@@ -4758,7 +4762,7 @@ pub fn new_anonymous_keyword(range: Range<usize>, _source: &str) -> AnonymousKey
     AnonymousKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ApplyKeyword {
     pub range: Range<usize>,
 }
@@ -4767,7 +4771,7 @@ pub fn new_apply_keyword(range: Range<usize>, _source: &str) -> ApplyKeyword {
     ApplyKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AsKeyword {
     pub range: Range<usize>,
 }
@@ -4776,7 +4780,7 @@ pub fn new_as_keyword(range: Range<usize>, _source: &str) -> AsKeyword {
     AsKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AssemblyKeyword {
     pub range: Range<usize>,
 }
@@ -4785,7 +4789,7 @@ pub fn new_assembly_keyword(range: Range<usize>, _source: &str) -> AssemblyKeywo
     AssemblyKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Asterisk {
     pub range: Range<usize>,
 }
@@ -4794,7 +4798,7 @@ pub fn new_asterisk(range: Range<usize>, _source: &str) -> Asterisk {
     Asterisk { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AsteriskAsterisk {
     pub range: Range<usize>,
 }
@@ -4803,7 +4807,7 @@ pub fn new_asterisk_asterisk(range: Range<usize>, _source: &str) -> AsteriskAste
     AsteriskAsterisk { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AsteriskEqual {
     pub range: Range<usize>,
 }
@@ -4812,7 +4816,7 @@ pub fn new_asterisk_equal(range: Range<usize>, _source: &str) -> AsteriskEqual {
     AsteriskEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AtKeyword {
     pub range: Range<usize>,
 }
@@ -4821,7 +4825,7 @@ pub fn new_at_keyword(range: Range<usize>, _source: &str) -> AtKeyword {
     AtKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct AutoKeyword {
     pub range: Range<usize>,
 }
@@ -4830,7 +4834,7 @@ pub fn new_auto_keyword(range: Range<usize>, _source: &str) -> AutoKeyword {
     AutoKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Bang {
     pub range: Range<usize>,
 }
@@ -4839,7 +4843,7 @@ pub fn new_bang(range: Range<usize>, _source: &str) -> Bang {
     Bang { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct BangEqual {
     pub range: Range<usize>,
 }
@@ -4848,7 +4852,7 @@ pub fn new_bang_equal(range: Range<usize>, _source: &str) -> BangEqual {
     BangEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Bar {
     pub range: Range<usize>,
 }
@@ -4857,7 +4861,7 @@ pub fn new_bar(range: Range<usize>, _source: &str) -> Bar {
     Bar { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct BarBar {
     pub range: Range<usize>,
 }
@@ -4866,7 +4870,7 @@ pub fn new_bar_bar(range: Range<usize>, _source: &str) -> BarBar {
     BarBar { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct BarEqual {
     pub range: Range<usize>,
 }
@@ -4875,7 +4879,7 @@ pub fn new_bar_equal(range: Range<usize>, _source: &str) -> BarEqual {
     BarEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct BoolKeyword {
     pub range: Range<usize>,
 }
@@ -4884,7 +4888,7 @@ pub fn new_bool_keyword(range: Range<usize>, _source: &str) -> BoolKeyword {
     BoolKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct BreakKeyword {
     pub range: Range<usize>,
 }
@@ -4893,7 +4897,7 @@ pub fn new_break_keyword(range: Range<usize>, _source: &str) -> BreakKeyword {
     BreakKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ByteKeyword {
     pub range: Range<usize>,
 }
@@ -4902,7 +4906,7 @@ pub fn new_byte_keyword(range: Range<usize>, _source: &str) -> ByteKeyword {
     ByteKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct BytesKeyword {
     pub range: Range<usize>,
 }
@@ -4911,7 +4915,7 @@ pub fn new_bytes_keyword(range: Range<usize>, _source: &str) -> BytesKeyword {
     BytesKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct CallDataKeyword {
     pub range: Range<usize>,
 }
@@ -4920,7 +4924,7 @@ pub fn new_call_data_keyword(range: Range<usize>, _source: &str) -> CallDataKeyw
     CallDataKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Caret {
     pub range: Range<usize>,
 }
@@ -4929,7 +4933,7 @@ pub fn new_caret(range: Range<usize>, _source: &str) -> Caret {
     Caret { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct CaretEqual {
     pub range: Range<usize>,
 }
@@ -4938,7 +4942,7 @@ pub fn new_caret_equal(range: Range<usize>, _source: &str) -> CaretEqual {
     CaretEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct CaseKeyword {
     pub range: Range<usize>,
 }
@@ -4947,7 +4951,7 @@ pub fn new_case_keyword(range: Range<usize>, _source: &str) -> CaseKeyword {
     CaseKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct CatchKeyword {
     pub range: Range<usize>,
 }
@@ -4956,7 +4960,7 @@ pub fn new_catch_keyword(range: Range<usize>, _source: &str) -> CatchKeyword {
     CatchKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct CloseBrace {
     pub range: Range<usize>,
 }
@@ -4965,7 +4969,7 @@ pub fn new_close_brace(range: Range<usize>, _source: &str) -> CloseBrace {
     CloseBrace { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct CloseBracket {
     pub range: Range<usize>,
 }
@@ -4974,7 +4978,7 @@ pub fn new_close_bracket(range: Range<usize>, _source: &str) -> CloseBracket {
     CloseBracket { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct CloseParen {
     pub range: Range<usize>,
 }
@@ -4983,7 +4987,7 @@ pub fn new_close_paren(range: Range<usize>, _source: &str) -> CloseParen {
     CloseParen { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Colon {
     pub range: Range<usize>,
 }
@@ -4992,7 +4996,7 @@ pub fn new_colon(range: Range<usize>, _source: &str) -> Colon {
     Colon { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Comma {
     pub range: Range<usize>,
 }
@@ -5001,7 +5005,7 @@ pub fn new_comma(range: Range<usize>, _source: &str) -> Comma {
     Comma { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ConstantKeyword {
     pub range: Range<usize>,
 }
@@ -5010,7 +5014,7 @@ pub fn new_constant_keyword(range: Range<usize>, _source: &str) -> ConstantKeywo
     ConstantKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ConstructorKeyword {
     pub range: Range<usize>,
 }
@@ -5019,7 +5023,7 @@ pub fn new_constructor_keyword(range: Range<usize>, _source: &str) -> Constructo
     ConstructorKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ContinueKeyword {
     pub range: Range<usize>,
 }
@@ -5028,7 +5032,7 @@ pub fn new_continue_keyword(range: Range<usize>, _source: &str) -> ContinueKeywo
     ContinueKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ContractKeyword {
     pub range: Range<usize>,
 }
@@ -5037,7 +5041,7 @@ pub fn new_contract_keyword(range: Range<usize>, _source: &str) -> ContractKeywo
     ContractKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct CopyOfKeyword {
     pub range: Range<usize>,
 }
@@ -5046,7 +5050,7 @@ pub fn new_copy_of_keyword(range: Range<usize>, _source: &str) -> CopyOfKeyword 
     CopyOfKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct DaysKeyword {
     pub range: Range<usize>,
 }
@@ -5055,7 +5059,7 @@ pub fn new_days_keyword(range: Range<usize>, _source: &str) -> DaysKeyword {
     DaysKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct DecimalLiteral {
     pub range: Range<usize>,
 }
@@ -5064,7 +5068,7 @@ pub fn new_decimal_literal(range: Range<usize>, _source: &str) -> DecimalLiteral
     DecimalLiteral { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct DefaultKeyword {
     pub range: Range<usize>,
 }
@@ -5073,7 +5077,7 @@ pub fn new_default_keyword(range: Range<usize>, _source: &str) -> DefaultKeyword
     DefaultKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct DefineKeyword {
     pub range: Range<usize>,
 }
@@ -5082,7 +5086,7 @@ pub fn new_define_keyword(range: Range<usize>, _source: &str) -> DefineKeyword {
     DefineKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct DeleteKeyword {
     pub range: Range<usize>,
 }
@@ -5091,7 +5095,7 @@ pub fn new_delete_keyword(range: Range<usize>, _source: &str) -> DeleteKeyword {
     DeleteKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct DoKeyword {
     pub range: Range<usize>,
 }
@@ -5100,7 +5104,7 @@ pub fn new_do_keyword(range: Range<usize>, _source: &str) -> DoKeyword {
     DoKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ElseKeyword {
     pub range: Range<usize>,
 }
@@ -5109,7 +5113,7 @@ pub fn new_else_keyword(range: Range<usize>, _source: &str) -> ElseKeyword {
     ElseKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct EmitKeyword {
     pub range: Range<usize>,
 }
@@ -5118,7 +5122,7 @@ pub fn new_emit_keyword(range: Range<usize>, _source: &str) -> EmitKeyword {
     EmitKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct EnumKeyword {
     pub range: Range<usize>,
 }
@@ -5127,7 +5131,7 @@ pub fn new_enum_keyword(range: Range<usize>, _source: &str) -> EnumKeyword {
     EnumKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Equal {
     pub range: Range<usize>,
 }
@@ -5136,7 +5140,7 @@ pub fn new_equal(range: Range<usize>, _source: &str) -> Equal {
     Equal { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct EqualEqual {
     pub range: Range<usize>,
 }
@@ -5145,7 +5149,7 @@ pub fn new_equal_equal(range: Range<usize>, _source: &str) -> EqualEqual {
     EqualEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct EqualGreaterThan {
     pub range: Range<usize>,
 }
@@ -5154,7 +5158,7 @@ pub fn new_equal_greater_than(range: Range<usize>, _source: &str) -> EqualGreate
     EqualGreaterThan { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ErrorKeyword {
     pub range: Range<usize>,
 }
@@ -5163,7 +5167,7 @@ pub fn new_error_keyword(range: Range<usize>, _source: &str) -> ErrorKeyword {
     ErrorKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct EtherKeyword {
     pub range: Range<usize>,
 }
@@ -5172,7 +5176,7 @@ pub fn new_ether_keyword(range: Range<usize>, _source: &str) -> EtherKeyword {
     EtherKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct EventKeyword {
     pub range: Range<usize>,
 }
@@ -5181,7 +5185,7 @@ pub fn new_event_keyword(range: Range<usize>, _source: &str) -> EventKeyword {
     EventKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ExperimentalKeyword {
     pub range: Range<usize>,
 }
@@ -5190,7 +5194,7 @@ pub fn new_experimental_keyword(range: Range<usize>, _source: &str) -> Experimen
     ExperimentalKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ExternalKeyword {
     pub range: Range<usize>,
 }
@@ -5199,7 +5203,7 @@ pub fn new_external_keyword(range: Range<usize>, _source: &str) -> ExternalKeywo
     ExternalKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct FallbackKeyword {
     pub range: Range<usize>,
 }
@@ -5208,7 +5212,7 @@ pub fn new_fallback_keyword(range: Range<usize>, _source: &str) -> FallbackKeywo
     FallbackKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct FalseKeyword {
     pub range: Range<usize>,
 }
@@ -5217,7 +5221,7 @@ pub fn new_false_keyword(range: Range<usize>, _source: &str) -> FalseKeyword {
     FalseKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct FinalKeyword {
     pub range: Range<usize>,
 }
@@ -5226,7 +5230,7 @@ pub fn new_final_keyword(range: Range<usize>, _source: &str) -> FinalKeyword {
     FinalKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct FixedKeyword {
     pub range: Range<usize>,
 }
@@ -5235,7 +5239,7 @@ pub fn new_fixed_keyword(range: Range<usize>, _source: &str) -> FixedKeyword {
     FixedKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ForKeyword {
     pub range: Range<usize>,
 }
@@ -5244,7 +5248,7 @@ pub fn new_for_keyword(range: Range<usize>, _source: &str) -> ForKeyword {
     ForKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct FromKeyword {
     pub range: Range<usize>,
 }
@@ -5253,7 +5257,7 @@ pub fn new_from_keyword(range: Range<usize>, _source: &str) -> FromKeyword {
     FromKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct FunctionKeyword {
     pub range: Range<usize>,
 }
@@ -5262,7 +5266,7 @@ pub fn new_function_keyword(range: Range<usize>, _source: &str) -> FunctionKeywo
     FunctionKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct GlobalKeyword {
     pub range: Range<usize>,
 }
@@ -5271,7 +5275,7 @@ pub fn new_global_keyword(range: Range<usize>, _source: &str) -> GlobalKeyword {
     GlobalKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct GreaterThan {
     pub range: Range<usize>,
 }
@@ -5280,7 +5284,7 @@ pub fn new_greater_than(range: Range<usize>, _source: &str) -> GreaterThan {
     GreaterThan { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct GreaterThanEqual {
     pub range: Range<usize>,
 }
@@ -5289,7 +5293,7 @@ pub fn new_greater_than_equal(range: Range<usize>, _source: &str) -> GreaterThan
     GreaterThanEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct GreaterThanGreaterThan {
     pub range: Range<usize>,
 }
@@ -5298,7 +5302,7 @@ pub fn new_greater_than_greater_than(range: Range<usize>, _source: &str) -> Grea
     GreaterThanGreaterThan { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct GreaterThanGreaterThanEqual {
     pub range: Range<usize>,
 }
@@ -5310,7 +5314,7 @@ pub fn new_greater_than_greater_than_equal(
     GreaterThanGreaterThanEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct GreaterThanGreaterThanGreaterThan {
     pub range: Range<usize>,
 }
@@ -5322,7 +5326,7 @@ pub fn new_greater_than_greater_than_greater_than(
     GreaterThanGreaterThanGreaterThan { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct GreaterThanGreaterThanGreaterThanEqual {
     pub range: Range<usize>,
 }
@@ -5334,7 +5338,7 @@ pub fn new_greater_than_greater_than_greater_than_equal(
     GreaterThanGreaterThanGreaterThanEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct GweiKeyword {
     pub range: Range<usize>,
 }
@@ -5343,7 +5347,7 @@ pub fn new_gwei_keyword(range: Range<usize>, _source: &str) -> GweiKeyword {
     GweiKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct HexKeyword {
     pub range: Range<usize>,
 }
@@ -5352,7 +5356,7 @@ pub fn new_hex_keyword(range: Range<usize>, _source: &str) -> HexKeyword {
     HexKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct HexLiteral {
     pub range: Range<usize>,
 }
@@ -5361,7 +5365,7 @@ pub fn new_hex_literal(range: Range<usize>, _source: &str) -> HexLiteral {
     HexLiteral { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct HexStringLiteral {
     pub range: Range<usize>,
 }
@@ -5370,7 +5374,7 @@ pub fn new_hex_string_literal(range: Range<usize>, _source: &str) -> HexStringLi
     HexStringLiteral { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct HoursKeyword {
     pub range: Range<usize>,
 }
@@ -5379,7 +5383,7 @@ pub fn new_hours_keyword(range: Range<usize>, _source: &str) -> HoursKeyword {
     HoursKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Identifier {
     pub range: Range<usize>,
 }
@@ -5388,7 +5392,7 @@ pub fn new_identifier(range: Range<usize>, _source: &str) -> Identifier {
     Identifier { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct IfKeyword {
     pub range: Range<usize>,
 }
@@ -5397,7 +5401,7 @@ pub fn new_if_keyword(range: Range<usize>, _source: &str) -> IfKeyword {
     IfKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ImmutableKeyword {
     pub range: Range<usize>,
 }
@@ -5406,7 +5410,7 @@ pub fn new_immutable_keyword(range: Range<usize>, _source: &str) -> ImmutableKey
     ImmutableKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ImplementsKeyword {
     pub range: Range<usize>,
 }
@@ -5415,7 +5419,7 @@ pub fn new_implements_keyword(range: Range<usize>, _source: &str) -> ImplementsK
     ImplementsKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ImportKeyword {
     pub range: Range<usize>,
 }
@@ -5424,7 +5428,7 @@ pub fn new_import_keyword(range: Range<usize>, _source: &str) -> ImportKeyword {
     ImportKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct InKeyword {
     pub range: Range<usize>,
 }
@@ -5433,7 +5437,7 @@ pub fn new_in_keyword(range: Range<usize>, _source: &str) -> InKeyword {
     InKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct IndexedKeyword {
     pub range: Range<usize>,
 }
@@ -5442,7 +5446,7 @@ pub fn new_indexed_keyword(range: Range<usize>, _source: &str) -> IndexedKeyword
     IndexedKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct InlineKeyword {
     pub range: Range<usize>,
 }
@@ -5451,7 +5455,7 @@ pub fn new_inline_keyword(range: Range<usize>, _source: &str) -> InlineKeyword {
     InlineKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct IntKeyword {
     pub range: Range<usize>,
 }
@@ -5460,7 +5464,7 @@ pub fn new_int_keyword(range: Range<usize>, _source: &str) -> IntKeyword {
     IntKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct InterfaceKeyword {
     pub range: Range<usize>,
 }
@@ -5469,7 +5473,7 @@ pub fn new_interface_keyword(range: Range<usize>, _source: &str) -> InterfaceKey
     InterfaceKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct InternalKeyword {
     pub range: Range<usize>,
 }
@@ -5478,7 +5482,7 @@ pub fn new_internal_keyword(range: Range<usize>, _source: &str) -> InternalKeywo
     InternalKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct IsKeyword {
     pub range: Range<usize>,
 }
@@ -5487,7 +5491,7 @@ pub fn new_is_keyword(range: Range<usize>, _source: &str) -> IsKeyword {
     IsKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct LayoutKeyword {
     pub range: Range<usize>,
 }
@@ -5496,7 +5500,7 @@ pub fn new_layout_keyword(range: Range<usize>, _source: &str) -> LayoutKeyword {
     LayoutKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct LessThan {
     pub range: Range<usize>,
 }
@@ -5505,7 +5509,7 @@ pub fn new_less_than(range: Range<usize>, _source: &str) -> LessThan {
     LessThan { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct LessThanEqual {
     pub range: Range<usize>,
 }
@@ -5514,7 +5518,7 @@ pub fn new_less_than_equal(range: Range<usize>, _source: &str) -> LessThanEqual 
     LessThanEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct LessThanLessThan {
     pub range: Range<usize>,
 }
@@ -5523,7 +5527,7 @@ pub fn new_less_than_less_than(range: Range<usize>, _source: &str) -> LessThanLe
     LessThanLessThan { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct LessThanLessThanEqual {
     pub range: Range<usize>,
 }
@@ -5532,7 +5536,7 @@ pub fn new_less_than_less_than_equal(range: Range<usize>, _source: &str) -> Less
     LessThanLessThanEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct LetKeyword {
     pub range: Range<usize>,
 }
@@ -5541,7 +5545,7 @@ pub fn new_let_keyword(range: Range<usize>, _source: &str) -> LetKeyword {
     LetKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct LibraryKeyword {
     pub range: Range<usize>,
 }
@@ -5550,7 +5554,7 @@ pub fn new_library_keyword(range: Range<usize>, _source: &str) -> LibraryKeyword
     LibraryKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct MacroKeyword {
     pub range: Range<usize>,
 }
@@ -5559,7 +5563,7 @@ pub fn new_macro_keyword(range: Range<usize>, _source: &str) -> MacroKeyword {
     MacroKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct MappingKeyword {
     pub range: Range<usize>,
 }
@@ -5568,7 +5572,7 @@ pub fn new_mapping_keyword(range: Range<usize>, _source: &str) -> MappingKeyword
     MappingKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct MatchKeyword {
     pub range: Range<usize>,
 }
@@ -5577,7 +5581,7 @@ pub fn new_match_keyword(range: Range<usize>, _source: &str) -> MatchKeyword {
     MatchKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct MemoryKeyword {
     pub range: Range<usize>,
 }
@@ -5586,7 +5590,7 @@ pub fn new_memory_keyword(range: Range<usize>, _source: &str) -> MemoryKeyword {
     MemoryKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Minus {
     pub range: Range<usize>,
 }
@@ -5595,7 +5599,7 @@ pub fn new_minus(range: Range<usize>, _source: &str) -> Minus {
     Minus { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct MinusEqual {
     pub range: Range<usize>,
 }
@@ -5604,7 +5608,7 @@ pub fn new_minus_equal(range: Range<usize>, _source: &str) -> MinusEqual {
     MinusEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct MinusMinus {
     pub range: Range<usize>,
 }
@@ -5613,7 +5617,7 @@ pub fn new_minus_minus(range: Range<usize>, _source: &str) -> MinusMinus {
     MinusMinus { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct MinutesKeyword {
     pub range: Range<usize>,
 }
@@ -5622,7 +5626,7 @@ pub fn new_minutes_keyword(range: Range<usize>, _source: &str) -> MinutesKeyword
     MinutesKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ModifierKeyword {
     pub range: Range<usize>,
 }
@@ -5631,7 +5635,7 @@ pub fn new_modifier_keyword(range: Range<usize>, _source: &str) -> ModifierKeywo
     ModifierKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct MutableKeyword {
     pub range: Range<usize>,
 }
@@ -5640,7 +5644,7 @@ pub fn new_mutable_keyword(range: Range<usize>, _source: &str) -> MutableKeyword
     MutableKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct NewKeyword {
     pub range: Range<usize>,
 }
@@ -5649,7 +5653,7 @@ pub fn new_new_keyword(range: Range<usize>, _source: &str) -> NewKeyword {
     NewKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct NullKeyword {
     pub range: Range<usize>,
 }
@@ -5658,7 +5662,7 @@ pub fn new_null_keyword(range: Range<usize>, _source: &str) -> NullKeyword {
     NullKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct OfKeyword {
     pub range: Range<usize>,
 }
@@ -5667,7 +5671,7 @@ pub fn new_of_keyword(range: Range<usize>, _source: &str) -> OfKeyword {
     OfKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct OpenBrace {
     pub range: Range<usize>,
 }
@@ -5676,7 +5680,7 @@ pub fn new_open_brace(range: Range<usize>, _source: &str) -> OpenBrace {
     OpenBrace { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct OpenBracket {
     pub range: Range<usize>,
 }
@@ -5685,7 +5689,7 @@ pub fn new_open_bracket(range: Range<usize>, _source: &str) -> OpenBracket {
     OpenBracket { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct OpenParen {
     pub range: Range<usize>,
 }
@@ -5694,7 +5698,7 @@ pub fn new_open_paren(range: Range<usize>, _source: &str) -> OpenParen {
     OpenParen { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct OverrideKeyword {
     pub range: Range<usize>,
 }
@@ -5703,7 +5707,7 @@ pub fn new_override_keyword(range: Range<usize>, _source: &str) -> OverrideKeywo
     OverrideKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PartialKeyword {
     pub range: Range<usize>,
 }
@@ -5712,7 +5716,7 @@ pub fn new_partial_keyword(range: Range<usize>, _source: &str) -> PartialKeyword
     PartialKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PayableKeyword {
     pub range: Range<usize>,
 }
@@ -5721,7 +5725,7 @@ pub fn new_payable_keyword(range: Range<usize>, _source: &str) -> PayableKeyword
     PayableKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Percent {
     pub range: Range<usize>,
 }
@@ -5730,7 +5734,7 @@ pub fn new_percent(range: Range<usize>, _source: &str) -> Percent {
     Percent { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PercentEqual {
     pub range: Range<usize>,
 }
@@ -5739,7 +5743,7 @@ pub fn new_percent_equal(range: Range<usize>, _source: &str) -> PercentEqual {
     PercentEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Period {
     pub range: Range<usize>,
 }
@@ -5748,7 +5752,7 @@ pub fn new_period(range: Range<usize>, _source: &str) -> Period {
     Period { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Plus {
     pub range: Range<usize>,
 }
@@ -5757,7 +5761,7 @@ pub fn new_plus(range: Range<usize>, _source: &str) -> Plus {
     Plus { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PlusEqual {
     pub range: Range<usize>,
 }
@@ -5766,7 +5770,7 @@ pub fn new_plus_equal(range: Range<usize>, _source: &str) -> PlusEqual {
     PlusEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PlusPlus {
     pub range: Range<usize>,
 }
@@ -5775,7 +5779,7 @@ pub fn new_plus_plus(range: Range<usize>, _source: &str) -> PlusPlus {
     PlusPlus { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PragmaBarBar {
     pub range: Range<usize>,
 }
@@ -5784,7 +5788,7 @@ pub fn new_pragma_bar_bar(range: Range<usize>, _source: &str) -> PragmaBarBar {
     PragmaBarBar { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PragmaCaret {
     pub range: Range<usize>,
 }
@@ -5793,7 +5797,7 @@ pub fn new_pragma_caret(range: Range<usize>, _source: &str) -> PragmaCaret {
     PragmaCaret { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PragmaEqual {
     pub range: Range<usize>,
 }
@@ -5802,7 +5806,7 @@ pub fn new_pragma_equal(range: Range<usize>, _source: &str) -> PragmaEqual {
     PragmaEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PragmaGreaterThan {
     pub range: Range<usize>,
 }
@@ -5811,7 +5815,7 @@ pub fn new_pragma_greater_than(range: Range<usize>, _source: &str) -> PragmaGrea
     PragmaGreaterThan { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PragmaGreaterThanEqual {
     pub range: Range<usize>,
 }
@@ -5820,7 +5824,7 @@ pub fn new_pragma_greater_than_equal(range: Range<usize>, _source: &str) -> Prag
     PragmaGreaterThanEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PragmaKeyword {
     pub range: Range<usize>,
 }
@@ -5829,7 +5833,7 @@ pub fn new_pragma_keyword(range: Range<usize>, _source: &str) -> PragmaKeyword {
     PragmaKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PragmaLessThan {
     pub range: Range<usize>,
 }
@@ -5838,7 +5842,7 @@ pub fn new_pragma_less_than(range: Range<usize>, _source: &str) -> PragmaLessTha
     PragmaLessThan { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PragmaLessThanEqual {
     pub range: Range<usize>,
 }
@@ -5847,7 +5851,7 @@ pub fn new_pragma_less_than_equal(range: Range<usize>, _source: &str) -> PragmaL
     PragmaLessThanEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PragmaMinus {
     pub range: Range<usize>,
 }
@@ -5856,7 +5860,7 @@ pub fn new_pragma_minus(range: Range<usize>, _source: &str) -> PragmaMinus {
     PragmaMinus { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PragmaPeriod {
     pub range: Range<usize>,
 }
@@ -5865,7 +5869,7 @@ pub fn new_pragma_period(range: Range<usize>, _source: &str) -> PragmaPeriod {
     PragmaPeriod { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PragmaSemicolon {
     pub range: Range<usize>,
 }
@@ -5874,7 +5878,7 @@ pub fn new_pragma_semicolon(range: Range<usize>, _source: &str) -> PragmaSemicol
     PragmaSemicolon { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PragmaStringLiteral {
     pub range: Range<usize>,
 }
@@ -5883,7 +5887,7 @@ pub fn new_pragma_string_literal(range: Range<usize>, _source: &str) -> PragmaSt
     PragmaStringLiteral { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PragmaTilde {
     pub range: Range<usize>,
 }
@@ -5892,7 +5896,7 @@ pub fn new_pragma_tilde(range: Range<usize>, _source: &str) -> PragmaTilde {
     PragmaTilde { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PrivateKeyword {
     pub range: Range<usize>,
 }
@@ -5901,7 +5905,7 @@ pub fn new_private_keyword(range: Range<usize>, _source: &str) -> PrivateKeyword
     PrivateKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PromiseKeyword {
     pub range: Range<usize>,
 }
@@ -5910,7 +5914,7 @@ pub fn new_promise_keyword(range: Range<usize>, _source: &str) -> PromiseKeyword
     PromiseKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PublicKeyword {
     pub range: Range<usize>,
 }
@@ -5919,7 +5923,7 @@ pub fn new_public_keyword(range: Range<usize>, _source: &str) -> PublicKeyword {
     PublicKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct PureKeyword {
     pub range: Range<usize>,
 }
@@ -5928,7 +5932,7 @@ pub fn new_pure_keyword(range: Range<usize>, _source: &str) -> PureKeyword {
     PureKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct QuestionMark {
     pub range: Range<usize>,
 }
@@ -5937,7 +5941,7 @@ pub fn new_question_mark(range: Range<usize>, _source: &str) -> QuestionMark {
     QuestionMark { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ReceiveKeyword {
     pub range: Range<usize>,
 }
@@ -5946,7 +5950,7 @@ pub fn new_receive_keyword(range: Range<usize>, _source: &str) -> ReceiveKeyword
     ReceiveKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ReferenceKeyword {
     pub range: Range<usize>,
 }
@@ -5955,7 +5959,7 @@ pub fn new_reference_keyword(range: Range<usize>, _source: &str) -> ReferenceKey
     ReferenceKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct RelocatableKeyword {
     pub range: Range<usize>,
 }
@@ -5964,7 +5968,7 @@ pub fn new_relocatable_keyword(range: Range<usize>, _source: &str) -> Relocatabl
     RelocatableKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ReturnKeyword {
     pub range: Range<usize>,
 }
@@ -5973,7 +5977,7 @@ pub fn new_return_keyword(range: Range<usize>, _source: &str) -> ReturnKeyword {
     ReturnKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ReturnsKeyword {
     pub range: Range<usize>,
 }
@@ -5982,7 +5986,7 @@ pub fn new_returns_keyword(range: Range<usize>, _source: &str) -> ReturnsKeyword
     ReturnsKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct RevertKeyword {
     pub range: Range<usize>,
 }
@@ -5991,7 +5995,7 @@ pub fn new_revert_keyword(range: Range<usize>, _source: &str) -> RevertKeyword {
     RevertKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct SMTCheckerKeyword {
     pub range: Range<usize>,
 }
@@ -6000,7 +6004,7 @@ pub fn new_smt_checker_keyword(range: Range<usize>, _source: &str) -> SMTChecker
     SMTCheckerKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct SealedKeyword {
     pub range: Range<usize>,
 }
@@ -6009,7 +6013,7 @@ pub fn new_sealed_keyword(range: Range<usize>, _source: &str) -> SealedKeyword {
     SealedKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct SecondsKeyword {
     pub range: Range<usize>,
 }
@@ -6018,7 +6022,7 @@ pub fn new_seconds_keyword(range: Range<usize>, _source: &str) -> SecondsKeyword
     SecondsKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Semicolon {
     pub range: Range<usize>,
 }
@@ -6027,7 +6031,7 @@ pub fn new_semicolon(range: Range<usize>, _source: &str) -> Semicolon {
     Semicolon { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct SizeOfKeyword {
     pub range: Range<usize>,
 }
@@ -6036,7 +6040,7 @@ pub fn new_size_of_keyword(range: Range<usize>, _source: &str) -> SizeOfKeyword 
     SizeOfKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Slash {
     pub range: Range<usize>,
 }
@@ -6045,7 +6049,7 @@ pub fn new_slash(range: Range<usize>, _source: &str) -> Slash {
     Slash { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct SlashEqual {
     pub range: Range<usize>,
 }
@@ -6054,7 +6058,7 @@ pub fn new_slash_equal(range: Range<usize>, _source: &str) -> SlashEqual {
     SlashEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct SolidityKeyword {
     pub range: Range<usize>,
 }
@@ -6063,7 +6067,7 @@ pub fn new_solidity_keyword(range: Range<usize>, _source: &str) -> SolidityKeywo
     SolidityKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct StaticKeyword {
     pub range: Range<usize>,
 }
@@ -6072,7 +6076,7 @@ pub fn new_static_keyword(range: Range<usize>, _source: &str) -> StaticKeyword {
     StaticKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct StorageKeyword {
     pub range: Range<usize>,
 }
@@ -6081,7 +6085,7 @@ pub fn new_storage_keyword(range: Range<usize>, _source: &str) -> StorageKeyword
     StorageKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct StringKeyword {
     pub range: Range<usize>,
 }
@@ -6090,7 +6094,7 @@ pub fn new_string_keyword(range: Range<usize>, _source: &str) -> StringKeyword {
     StringKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct StringLiteral {
     pub range: Range<usize>,
 }
@@ -6099,7 +6103,7 @@ pub fn new_string_literal(range: Range<usize>, _source: &str) -> StringLiteral {
     StringLiteral { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct StructKeyword {
     pub range: Range<usize>,
 }
@@ -6108,7 +6112,7 @@ pub fn new_struct_keyword(range: Range<usize>, _source: &str) -> StructKeyword {
     StructKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct SuperKeyword {
     pub range: Range<usize>,
 }
@@ -6117,7 +6121,7 @@ pub fn new_super_keyword(range: Range<usize>, _source: &str) -> SuperKeyword {
     SuperKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct SupportsKeyword {
     pub range: Range<usize>,
 }
@@ -6126,7 +6130,7 @@ pub fn new_supports_keyword(range: Range<usize>, _source: &str) -> SupportsKeywo
     SupportsKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct SwitchKeyword {
     pub range: Range<usize>,
 }
@@ -6135,7 +6139,7 @@ pub fn new_switch_keyword(range: Range<usize>, _source: &str) -> SwitchKeyword {
     SwitchKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ThisKeyword {
     pub range: Range<usize>,
 }
@@ -6144,7 +6148,7 @@ pub fn new_this_keyword(range: Range<usize>, _source: &str) -> ThisKeyword {
     ThisKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ThrowKeyword {
     pub range: Range<usize>,
 }
@@ -6153,7 +6157,7 @@ pub fn new_throw_keyword(range: Range<usize>, _source: &str) -> ThrowKeyword {
     ThrowKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Tilde {
     pub range: Range<usize>,
 }
@@ -6162,7 +6166,7 @@ pub fn new_tilde(range: Range<usize>, _source: &str) -> Tilde {
     Tilde { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct TransientKeyword {
     pub range: Range<usize>,
 }
@@ -6171,7 +6175,7 @@ pub fn new_transient_keyword(range: Range<usize>, _source: &str) -> TransientKey
     TransientKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct TrueKeyword {
     pub range: Range<usize>,
 }
@@ -6180,7 +6184,7 @@ pub fn new_true_keyword(range: Range<usize>, _source: &str) -> TrueKeyword {
     TrueKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct TryKeyword {
     pub range: Range<usize>,
 }
@@ -6189,7 +6193,7 @@ pub fn new_try_keyword(range: Range<usize>, _source: &str) -> TryKeyword {
     TryKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct TypeDefKeyword {
     pub range: Range<usize>,
 }
@@ -6198,7 +6202,7 @@ pub fn new_type_def_keyword(range: Range<usize>, _source: &str) -> TypeDefKeywor
     TypeDefKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct TypeKeyword {
     pub range: Range<usize>,
 }
@@ -6207,7 +6211,7 @@ pub fn new_type_keyword(range: Range<usize>, _source: &str) -> TypeKeyword {
     TypeKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct TypeOfKeyword {
     pub range: Range<usize>,
 }
@@ -6216,7 +6220,7 @@ pub fn new_type_of_keyword(range: Range<usize>, _source: &str) -> TypeOfKeyword 
     TypeOfKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct UfixedKeyword {
     pub range: Range<usize>,
 }
@@ -6225,7 +6229,7 @@ pub fn new_ufixed_keyword(range: Range<usize>, _source: &str) -> UfixedKeyword {
     UfixedKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct UintKeyword {
     pub range: Range<usize>,
 }
@@ -6234,7 +6238,7 @@ pub fn new_uint_keyword(range: Range<usize>, _source: &str) -> UintKeyword {
     UintKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct UncheckedKeyword {
     pub range: Range<usize>,
 }
@@ -6243,7 +6247,7 @@ pub fn new_unchecked_keyword(range: Range<usize>, _source: &str) -> UncheckedKey
     UncheckedKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct UnicodeStringLiteral {
     pub range: Range<usize>,
 }
@@ -6252,7 +6256,7 @@ pub fn new_unicode_string_literal(range: Range<usize>, _source: &str) -> Unicode
     UnicodeStringLiteral { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct UsingKeyword {
     pub range: Range<usize>,
 }
@@ -6261,7 +6265,7 @@ pub fn new_using_keyword(range: Range<usize>, _source: &str) -> UsingKeyword {
     UsingKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct VarKeyword {
     pub range: Range<usize>,
 }
@@ -6270,7 +6274,7 @@ pub fn new_var_keyword(range: Range<usize>, _source: &str) -> VarKeyword {
     VarKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct VersionSpecifier {
     pub range: Range<usize>,
 }
@@ -6279,7 +6283,7 @@ pub fn new_version_specifier(range: Range<usize>, _source: &str) -> VersionSpeci
     VersionSpecifier { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct ViewKeyword {
     pub range: Range<usize>,
 }
@@ -6288,7 +6292,7 @@ pub fn new_view_keyword(range: Range<usize>, _source: &str) -> ViewKeyword {
     ViewKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct VirtualKeyword {
     pub range: Range<usize>,
 }
@@ -6297,7 +6301,7 @@ pub fn new_virtual_keyword(range: Range<usize>, _source: &str) -> VirtualKeyword
     VirtualKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct WeeksKeyword {
     pub range: Range<usize>,
 }
@@ -6306,7 +6310,7 @@ pub fn new_weeks_keyword(range: Range<usize>, _source: &str) -> WeeksKeyword {
     WeeksKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct WeiKeyword {
     pub range: Range<usize>,
 }
@@ -6315,7 +6319,7 @@ pub fn new_wei_keyword(range: Range<usize>, _source: &str) -> WeiKeyword {
     WeiKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct WhileKeyword {
     pub range: Range<usize>,
 }
@@ -6324,7 +6328,7 @@ pub fn new_while_keyword(range: Range<usize>, _source: &str) -> WhileKeyword {
     WhileKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YearsKeyword {
     pub range: Range<usize>,
 }
@@ -6333,7 +6337,7 @@ pub fn new_years_keyword(range: Range<usize>, _source: &str) -> YearsKeyword {
     YearsKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulBreakKeyword {
     pub range: Range<usize>,
 }
@@ -6342,7 +6346,7 @@ pub fn new_yul_break_keyword(range: Range<usize>, _source: &str) -> YulBreakKeyw
     YulBreakKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulCaseKeyword {
     pub range: Range<usize>,
 }
@@ -6351,7 +6355,7 @@ pub fn new_yul_case_keyword(range: Range<usize>, _source: &str) -> YulCaseKeywor
     YulCaseKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulCloseBrace {
     pub range: Range<usize>,
 }
@@ -6360,7 +6364,7 @@ pub fn new_yul_close_brace(range: Range<usize>, _source: &str) -> YulCloseBrace 
     YulCloseBrace { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulCloseParen {
     pub range: Range<usize>,
 }
@@ -6369,7 +6373,7 @@ pub fn new_yul_close_paren(range: Range<usize>, _source: &str) -> YulCloseParen 
     YulCloseParen { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulColonEqual {
     pub range: Range<usize>,
 }
@@ -6378,7 +6382,7 @@ pub fn new_yul_colon_equal(range: Range<usize>, _source: &str) -> YulColonEqual 
     YulColonEqual { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulComma {
     pub range: Range<usize>,
 }
@@ -6387,7 +6391,7 @@ pub fn new_yul_comma(range: Range<usize>, _source: &str) -> YulComma {
     YulComma { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulContinueKeyword {
     pub range: Range<usize>,
 }
@@ -6396,7 +6400,7 @@ pub fn new_yul_continue_keyword(range: Range<usize>, _source: &str) -> YulContin
     YulContinueKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulDecimalLiteral {
     pub range: Range<usize>,
 }
@@ -6405,7 +6409,7 @@ pub fn new_yul_decimal_literal(range: Range<usize>, _source: &str) -> YulDecimal
     YulDecimalLiteral { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulDefaultKeyword {
     pub range: Range<usize>,
 }
@@ -6414,7 +6418,7 @@ pub fn new_yul_default_keyword(range: Range<usize>, _source: &str) -> YulDefault
     YulDefaultKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulFalseKeyword {
     pub range: Range<usize>,
 }
@@ -6423,7 +6427,7 @@ pub fn new_yul_false_keyword(range: Range<usize>, _source: &str) -> YulFalseKeyw
     YulFalseKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulForKeyword {
     pub range: Range<usize>,
 }
@@ -6432,7 +6436,7 @@ pub fn new_yul_for_keyword(range: Range<usize>, _source: &str) -> YulForKeyword 
     YulForKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulFunctionKeyword {
     pub range: Range<usize>,
 }
@@ -6441,7 +6445,7 @@ pub fn new_yul_function_keyword(range: Range<usize>, _source: &str) -> YulFuncti
     YulFunctionKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulHexKeyword {
     pub range: Range<usize>,
 }
@@ -6450,7 +6454,7 @@ pub fn new_yul_hex_keyword(range: Range<usize>, _source: &str) -> YulHexKeyword 
     YulHexKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulHexLiteral {
     pub range: Range<usize>,
 }
@@ -6459,7 +6463,7 @@ pub fn new_yul_hex_literal(range: Range<usize>, _source: &str) -> YulHexLiteral 
     YulHexLiteral { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulHexStringLiteral {
     pub range: Range<usize>,
 }
@@ -6468,7 +6472,7 @@ pub fn new_yul_hex_string_literal(range: Range<usize>, _source: &str) -> YulHexS
     YulHexStringLiteral { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulIdentifier {
     pub range: Range<usize>,
 }
@@ -6477,7 +6481,7 @@ pub fn new_yul_identifier(range: Range<usize>, _source: &str) -> YulIdentifier {
     YulIdentifier { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulIfKeyword {
     pub range: Range<usize>,
 }
@@ -6486,7 +6490,7 @@ pub fn new_yul_if_keyword(range: Range<usize>, _source: &str) -> YulIfKeyword {
     YulIfKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulLeaveKeyword {
     pub range: Range<usize>,
 }
@@ -6495,7 +6499,7 @@ pub fn new_yul_leave_keyword(range: Range<usize>, _source: &str) -> YulLeaveKeyw
     YulLeaveKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulLetKeyword {
     pub range: Range<usize>,
 }
@@ -6504,7 +6508,7 @@ pub fn new_yul_let_keyword(range: Range<usize>, _source: &str) -> YulLetKeyword 
     YulLetKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulMinusGreaterThan {
     pub range: Range<usize>,
 }
@@ -6513,7 +6517,7 @@ pub fn new_yul_minus_greater_than(range: Range<usize>, _source: &str) -> YulMinu
     YulMinusGreaterThan { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulOpenBrace {
     pub range: Range<usize>,
 }
@@ -6522,7 +6526,7 @@ pub fn new_yul_open_brace(range: Range<usize>, _source: &str) -> YulOpenBrace {
     YulOpenBrace { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulOpenParen {
     pub range: Range<usize>,
 }
@@ -6531,7 +6535,7 @@ pub fn new_yul_open_paren(range: Range<usize>, _source: &str) -> YulOpenParen {
     YulOpenParen { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulPeriod {
     pub range: Range<usize>,
 }
@@ -6540,7 +6544,7 @@ pub fn new_yul_period(range: Range<usize>, _source: &str) -> YulPeriod {
     YulPeriod { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulStringLiteral {
     pub range: Range<usize>,
 }
@@ -6549,7 +6553,7 @@ pub fn new_yul_string_literal(range: Range<usize>, _source: &str) -> YulStringLi
     YulStringLiteral { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulSuperKeyword {
     pub range: Range<usize>,
 }
@@ -6558,7 +6562,7 @@ pub fn new_yul_super_keyword(range: Range<usize>, _source: &str) -> YulSuperKeyw
     YulSuperKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulSwitchKeyword {
     pub range: Range<usize>,
 }
@@ -6567,7 +6571,7 @@ pub fn new_yul_switch_keyword(range: Range<usize>, _source: &str) -> YulSwitchKe
     YulSwitchKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulThisKeyword {
     pub range: Range<usize>,
 }
@@ -6576,7 +6580,7 @@ pub fn new_yul_this_keyword(range: Range<usize>, _source: &str) -> YulThisKeywor
     YulThisKeyword { range }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct YulTrueKeyword {
     pub range: Range<usize>,
 }
