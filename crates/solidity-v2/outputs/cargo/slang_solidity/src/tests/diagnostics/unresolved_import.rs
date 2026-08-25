@@ -1,6 +1,4 @@
-//! Tests what the compilation pipeline reports when the host declines to
-//! resolve an import — the `UnresolvedImport` path, which the snapshot
-//! harnesses never reach since they resolve the way `solc` does.
+//! Tests specifically for builder configurations that don't resolve every import
 
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 
@@ -10,12 +8,12 @@ use crate::diagnostics::{DiagnosticExtensions, DiagnosticSeverity};
 use crate::utils::LanguageVersion;
 
 /// Serves one file and declines every import out of it.
-struct DecliningHost {
+struct DecliningBuilderConfig {
     name: &'static str,
     contents: &'static str,
 }
 
-impl CompilationBuilderConfig for DecliningHost {
+impl CompilationBuilderConfig for DecliningBuilderConfig {
     fn read_file(&mut self, file_id: &FileId) -> Result<String, MissingFile> {
         if file_id.as_str() == self.name {
             Ok(self.contents.to_owned())
@@ -41,7 +39,7 @@ fn compile(name: &'static str, contents: &'static str) -> CompilationUnit {
     let mut builder = CompilationBuilder::create(
         LanguageVersion::LATEST,
         EvmTarget::LATEST,
-        DecliningHost { name, contents },
+        DecliningBuilderConfig { name, contents },
     );
     builder.add_file(name.into());
 
@@ -64,7 +62,7 @@ fn declined_import_is_reported_as_unresolved() {
     assert_eq!("compilation/unresolved-import", diagnostic.code());
     assert_eq!(DiagnosticSeverity::Error, diagnostic.severity());
 
-    // The host's reason is carried through verbatim.
+    // The builder config's reason is carried through verbatim.
     assert_eq!(
         "no remapping covers '@scope/pkg/foo.sol'",
         diagnostic.message()

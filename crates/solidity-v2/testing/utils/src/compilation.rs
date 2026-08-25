@@ -11,8 +11,7 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::path_resolver;
 
-/// Compiles `files` at the given language version and EVM target, resolving
-/// imports between them the way `solc` does.
+/// Compiles `files` at the given language version and EVM target.
 ///
 /// Every source is added as a root, so a source that is not imported gets
 /// analyzed too.
@@ -24,7 +23,7 @@ pub fn compile(
     let mut builder = CompilationBuilder::create(
         version,
         target,
-        InMemoryHost {
+        InMemoryConfig {
             files: files.clone(),
         },
     );
@@ -38,11 +37,11 @@ pub fn compile(
 
 /// Serves the sources it was given; anything else is reported as a missing file
 /// rather than a harness error.
-struct InMemoryHost {
+struct InMemoryConfig {
     files: SortedMap<FileId, String>,
 }
 
-impl CompilationBuilderConfig for InMemoryHost {
+impl CompilationBuilderConfig for InMemoryConfig {
     fn read_file(&mut self, file_id: &FileId) -> Result<String, MissingFile> {
         self.files.get(file_id).cloned().ok_or_else(|| MissingFile {
             reason: "File not found.".to_string(),
