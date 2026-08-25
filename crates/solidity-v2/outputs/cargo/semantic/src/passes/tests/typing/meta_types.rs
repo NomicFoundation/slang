@@ -205,8 +205,7 @@ fn test_meta_type_internal_names() {
     "#;
     let context = Analysis::of_source(source)
         .target(EvmTarget::LATEST)
-        .analyse(Analyse::Context)
-        .run()
+        .run(Analyse::Context)
         .expect_no_diagnostics()
         .into_context();
 
@@ -335,7 +334,9 @@ fn test_function_declaration_via_type_name_has_no_mobile_type() {
         }
     "#;
 
-    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let analysis = Analysis::of_source(source)
+        .run(Analyse::References)
+        .expect_no_diagnostics();
     let binder = analysis.binder();
     let types = analysis.types();
 

@@ -113,7 +113,7 @@ impl<'a> ExpressionTyping<'a> {
 
         let analysis = Analysis::of_source(&source)
             .version(self.language_version)
-            .run()
+            .run(Analyse::References)
             .expect_no_diagnostics();
 
         let contract = analysis.find_contract("Test");

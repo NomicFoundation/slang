@@ -8,8 +8,7 @@ use crate::context::SemanticContext;
 /// overriding doesn't depend on the EVM target, so this runs on the latest.
 fn build_context(source: &str) -> SemanticContext {
     Analysis::of_source(source)
-        .analyse(Analyse::Context)
-        .run()
+        .run(Analyse::Context)
         .expect_no_diagnostics()
         .into_context()
 }

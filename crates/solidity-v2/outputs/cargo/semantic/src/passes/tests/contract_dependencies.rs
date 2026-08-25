@@ -22,8 +22,7 @@ const TARGET: EvmTarget = EvmTarget::Istanbul;
 fn analyse(source: &str) -> Analysis {
     Analysis::of_source(source)
         .target(TARGET)
-        .analyse(Analyse::Context)
-        .run()
+        .run(Analyse::Context)
 }
 
 fn build_context(source: &str) -> SemanticContext {

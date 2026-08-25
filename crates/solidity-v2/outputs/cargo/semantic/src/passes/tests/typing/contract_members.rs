@@ -3,7 +3,7 @@
 
 use slang_solidity_v2_ir::ir;
 
-use super::{Analysis, expression, expression_statement_types, expressions};
+use super::{Analyse, Analysis, expression, expression_statement_types, expressions};
 use crate::binder::Typing;
 use crate::types::{
     ByteArrayType, BytesType, ContractType, DataLocation, IntegerType, LibraryType, StringType,
@@ -35,7 +35,9 @@ fn test_super_keyword_types_as_super() {
         }
         "#;
 
-    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let analysis = Analysis::of_source(source)
+        .run(Analyse::References)
+        .expect_no_diagnostics();
 
     let body = analysis.function_body("B", "g");
     let statement = body.statements.first().expect("g has a statement");
@@ -222,7 +224,9 @@ fn test_cast_address_to_library_is_library_typed() {
             }
         }
     "#;
-    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let analysis = Analysis::of_source(source)
+        .run(Analyse::References)
+        .expect_no_diagnostics();
     let typings = statement_types(&analysis, "Test", "probe");
     let [cast, comparison] = typings.as_slice() else {
         panic!("expected two expression statements, got {typings:?}");
@@ -327,7 +331,9 @@ fn test_this_in_library_is_library_typed() {
         contract Test {}
         "#;
 
-    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let analysis = Analysis::of_source(source)
+        .run(Analyse::References)
+        .expect_no_diagnostics();
     let library = analysis.find_library("MyLib");
     let typings = statement_types(&analysis, "MyLib", "probe");
     assert!(
@@ -347,7 +353,9 @@ fn test_this_inside_contract() {
         contract Test {}
         "#;
 
-    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let analysis = Analysis::of_source(source)
+        .run(Analyse::References)
+        .expect_no_diagnostics();
     let contract = analysis.find_contract("MyContract");
     let typings = statement_types(&analysis, "MyContract", "probe");
 
@@ -378,7 +386,9 @@ fn test_partially_applied_function_does_not_unify_into_array() {
         }
         "#;
 
-    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let analysis = Analysis::of_source(source)
+        .run(Analyse::References)
+        .expect_no_diagnostics();
     let mut typings = statement_types(&analysis, "Test", "__test").into_iter();
 
     // Control: plain function pointers of the same signature still unify into a
@@ -441,7 +451,9 @@ fn test_partially_applied_function_is_not_convertible() {
         }        
         "#;
 
-    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let analysis = Analysis::of_source(source)
+        .run(Analyse::References)
+        .expect_no_diagnostics();
     let mut typings = statement_types(&analysis, "Test", "__test").into_iter();
 
     assert!(
@@ -536,7 +548,9 @@ fn test_static_library_call_is_not_partially_applied() {
             }
         }
         "#;
-    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let analysis = Analysis::of_source(source)
+        .run(Analyse::References)
+        .expect_no_diagnostics();
     let typings = statement_types(&analysis, "Test", "__test");
     assert_eq!(typings, vec![Some(Type::Boolean)]);
 }

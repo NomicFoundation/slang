@@ -12,7 +12,7 @@ use slang_solidity_v2_common::diagnostics::kinds::type_system::{
 };
 use slang_solidity_v2_ir::ir;
 
-use super::super::{Analysis, diagnostic_kind};
+use super::super::{Analyse, Analysis, diagnostic_kind};
 use super::expression;
 use crate::binder::Definition;
 use crate::types::{FixedSizeArrayType, LiteralKind, Type};
@@ -21,7 +21,7 @@ use crate::types::{FixedSizeArrayType, LiteralKind, Type};
 /// storage base slot together with the diagnostic emitted, if any. A rejected base
 /// slot is reported as a diagnostic and leaves `base_slot` unset.
 fn contract_base_slot(source: &str, name: &str) -> (Option<U256>, Option<DiagnosticKind>) {
-    let analysis = Analysis::of_source(source).run();
+    let analysis = Analysis::of_source(source).run(Analyse::References);
     let binder = analysis.binder();
     let diagnostics = &analysis.diagnostics;
     let contract = analysis.find_contract(name);
@@ -50,7 +50,7 @@ fn folded_array_length(members: &str, array_type: &str) -> (U256, Option<Diagnos
         "#
     );
 
-    let analysis = Analysis::of_source(&source).run();
+    let analysis = Analysis::of_source(&source).run(Analyse::References);
     let binder = analysis.binder();
     let types = analysis.types();
     let diagnostics = &analysis.diagnostics;

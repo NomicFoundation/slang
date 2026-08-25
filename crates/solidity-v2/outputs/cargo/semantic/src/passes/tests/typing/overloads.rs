@@ -4,7 +4,7 @@
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdentity};
 
-use super::{Analysis, expression};
+use super::{Analyse, Analysis, expression};
 use crate::binder::Typing;
 use crate::types::{FunctionType, IntegerType, Type, TypeId, UserMetaType};
 
@@ -121,7 +121,9 @@ fn test_overloaded_call_operand_narrows_to_selected_overload() {
         }
     "#;
 
-    let analysis = Analysis::of_source(source).run().expect_no_diagnostics();
+    let analysis = Analysis::of_source(source)
+        .run(Analyse::References)
+        .expect_no_diagnostics();
     let binder = analysis.binder();
     let types = analysis.types();
 
@@ -175,7 +177,7 @@ fn test_overloaded_declaration_via_type_name_operand_narrows() {
         }
     "#;
 
-    let analysis = Analysis::of_source(source).run();
+    let analysis = Analysis::of_source(source).run(Analyse::References);
     let binder = analysis.binder();
     let types = analysis.types();
     let diagnostics = &analysis.diagnostics;

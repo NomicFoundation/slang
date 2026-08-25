@@ -37,7 +37,6 @@ fn test_follow_aliases_keeps_a_repeated_definition_in_its_first_position() {
     // `d.sol`, and re-exported by `c.sol` as an alias of `b.sol`'s. The import
     // order puts `d.sol`'s declaration between the two that name `b.sol`'s.
     let analysis = Analysis::builder()
-        .analyse(Analyse::Definitions)
         .file(
             "a.sol",
             r#"
@@ -49,7 +48,7 @@ fn test_follow_aliases_keeps_a_repeated_definition_in_its_first_position() {
         .file("b.sol", "contract C {}")
         .file("d.sol", "contract C {}")
         .file("c.sol", r#"import {C} from "b.sol";"#)
-        .run();
+        .run(Analyse::Definitions);
     let binder = analysis.binder();
 
     let c_in_b = definition_at_file_scope(binder, "b.sol", "C");
@@ -81,7 +80,6 @@ fn test_follow_aliases_keeps_a_repeated_definition_in_its_first_position() {
 #[test]
 fn test_follow_aliases_substitutes_a_target_in_place() {
     let analysis = Analysis::builder()
-        .analyse(Analyse::Definitions)
         .file(
             "a.sol",
             r#"
@@ -92,7 +90,7 @@ fn test_follow_aliases_substitutes_a_target_in_place() {
         .file("b.sol", "contract C {}")
         .file("c.sol", r#"import {C} from "b.sol";"#)
         .file("d.sol", "contract C {}")
-        .run();
+        .run(Analyse::Definitions);
     let binder = analysis.binder();
 
     let c_in_b = definition_at_file_scope(binder, "b.sol", "C");

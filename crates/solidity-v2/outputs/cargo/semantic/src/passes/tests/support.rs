@@ -2,18 +2,17 @@
 //! pipeline over them, and locating definitions in the result.
 //!
 //! Every test starts from [`Analysis::builder`] (or [`Analysis::of_source`]
-//! for the single-file case), says how far to take the pipeline with
-//! [`AnalysisBuilder::analyse`], and ends at [`AnalysisBuilder::run`],
-//! optionally chaining [`Analysis::expect_no_diagnostics`]. There is
-//! deliberately no second way in: a suite that wants a particular combination
-//! often enough should name it in a local helper over this builder rather than
-//! grow one of its own.
+//! for the single-file case) and ends at [`AnalysisBuilder::run`], which says
+//! how far to take the pipeline, optionally chaining
+//! [`Analysis::expect_no_diagnostics`]. There is deliberately no second way in:
+//! a suite that wants a particular combination often enough should name it in a
+//! local helper over this builder rather than grow one of its own.
 //!
 //! Tests should stop at the narrowest [`Analyse`] level that runs the passes
 //! they need, so a failure points at the pass that caused it rather than at a
 //! later one consuming its output.
 
-use slang_solidity_v2_common::collections::Map;
+use slang_solidity_v2_common::collections::{Map, Set};
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::{Diagnostic, DiagnosticCollection};
 use slang_solidity_v2_common::evm_targets::EvmTarget;
@@ -104,6 +103,11 @@ fn build_file(
 fn build_files(sources: &[(&str, &str)], language_version: LanguageVersion) -> Vec<TestFile> {
     let mut id_generator = NodeIdGenerator::default();
 
+    let mut seen = Set::default();
+    if let Some((first_duplicate, _)) = sources.iter().find(|(name, _)| !seen.insert(name)) {
+        panic!("The file {first_duplicate} is duplicated in the source set");
+    }
+
     sources
         .iter()
         .map(|(name, contents)| {
@@ -152,8 +156,7 @@ pub(super) enum Analyse {
 }
 
 /// Configures an [`Analysis`]: the files to analyse and the settings to
-/// analyse them under. Defaults to the latest language version and EVM target,
-/// and to running every pass up to [`Analyse::References`].
+/// analyse them under. Defaults to the latest language version and EVM target.
 ///
 /// Reach for [`Analysis::of_source`] instead of [`Analysis::builder`] when a
 /// single file will do, which is the common case.
@@ -161,7 +164,6 @@ pub(super) struct AnalysisBuilder<'a> {
     sources: Vec<(&'a str, &'a str)>,
     language_version: LanguageVersion,
     evm_target: EvmTarget,
-    analyse: Analyse,
 }
 
 impl<'a> AnalysisBuilder<'a> {
@@ -182,13 +184,9 @@ impl<'a> AnalysisBuilder<'a> {
         self
     }
 
-    pub(super) fn analyse(mut self, analyse: Analyse) -> Self {
-        self.analyse = analyse;
-        self
-    }
-
-    /// Runs the passes, without asserting on the diagnostics.
-    pub(super) fn run(self) -> Analysis {
+    /// Runs the passes up to and including `analyse`, without asserting on the
+    /// diagnostics.
+    pub(super) fn run(self, analyse: Analyse) -> Analysis {
         assert!(
             !self.sources.is_empty(),
             "an analysis needs at least one file"
@@ -197,7 +195,7 @@ impl<'a> AnalysisBuilder<'a> {
         let files = build_files(&self.sources, self.language_version);
         let mut diagnostics = DiagnosticCollection::default();
 
-        let output = if self.analyse == Analyse::Context {
+        let output = if analyse == Analyse::Context {
             // The full pipeline is the real one, so run it through the same
             // entry point production does rather than restating its pass list.
             Output::Context(SemanticContext::build_from(
@@ -208,7 +206,7 @@ impl<'a> AnalysisBuilder<'a> {
                 &mut diagnostics,
             ))
         } else {
-            self.run_prefix(&files, &mut diagnostics)
+            self.run_prefix(analyse, &files, &mut diagnostics)
         };
 
         Analysis {
@@ -218,18 +216,23 @@ impl<'a> AnalysisBuilder<'a> {
         }
     }
 
-    /// Runs the passes up to [`Self::analyse`], in the same order the real
-    /// pipeline does. Only for levels short of [`Analyse::Context`]: the
-    /// passes past `p6` derive from a complete analysis, so a prefix of them
-    /// is not a thing to ask for.
-    fn run_prefix(&self, files: &[TestFile], diagnostics: &mut DiagnosticCollection) -> Output {
+    /// Runs the passes up to `analyse`, in the same order the real pipeline
+    /// does. Only for levels short of [`Analyse::Context`]: the passes past
+    /// `p6` derive from a complete analysis, so a prefix of them is not a thing
+    /// to ask for.
+    fn run_prefix(
+        &self,
+        analyse: Analyse,
+        files: &[TestFile],
+        diagnostics: &mut DiagnosticCollection,
+    ) -> Output {
         let mut binder = Binder::default();
         let mut types = TypeRegistry::new(self.language_version);
         let file_node_mapper = FileNodeMapper::build_from(files);
 
         p1_collect_definitions::run(files, &mut binder, self.language_version, diagnostics);
         p2_linearise_contracts::run(files, &mut binder, diagnostics);
-        if self.analyse >= Analyse::Types {
+        if analyse >= Analyse::Types {
             p3_type_definitions::run(
                 files,
                 &mut binder,
@@ -239,7 +242,7 @@ impl<'a> AnalysisBuilder<'a> {
                 diagnostics,
             );
         }
-        if self.analyse >= Analyse::References {
+        if analyse >= Analyse::References {
             // `p4` runs for its hierarchy diagnostics; the `ContractData` it
             // computes is only consumed by `p7`/`p8`, which these tests stop
             // short of.
@@ -257,7 +260,7 @@ impl<'a> AnalysisBuilder<'a> {
                 diagnostics,
             );
         }
-        if self.analyse >= Analyse::Yul {
+        if analyse >= Analyse::Yul {
             p6_resolve_yul::run(
                 &mut binder,
                 self.language_version,
@@ -296,7 +299,6 @@ impl Analysis {
             sources: Vec::new(),
             language_version: LanguageVersion::LATEST,
             evm_target: EvmTarget::LATEST,
-            analyse: Analyse::References,
         }
     }
 
@@ -486,8 +488,7 @@ fn test_lookups_span_every_file() {
     let analysis = Analysis::builder()
         .file("a.sol", "contract A {}")
         .file("b.sol", "library B {}")
-        .analyse(Analyse::Definitions)
-        .run()
+        .run(Analyse::Definitions)
         .expect_no_diagnostics();
 
     assert_eq!(2, analysis.source_units().count());
@@ -501,10 +502,11 @@ fn test_lookups_span_every_file() {
 fn test_the_context_level_still_exposes_the_binder_and_types() {
     const CONTENTS: &str = "contract C { uint256 public x; }";
 
-    let prefix = Analysis::of_source(CONTENTS).run().expect_no_diagnostics();
+    let prefix = Analysis::of_source(CONTENTS)
+        .run(Analyse::References)
+        .expect_no_diagnostics();
     let full = Analysis::of_source(CONTENTS)
-        .analyse(Analyse::Context)
-        .run()
+        .run(Analyse::Context)
         .expect_no_diagnostics();
 
     assert_eq!(
@@ -529,8 +531,7 @@ fn test_function_bodies_are_found_in_contracts_and_libraries() {
         "contract C { function f() internal { 1; } }
          library L { function g() internal { 1; 2; } }",
     )
-    .analyse(Analyse::Definitions)
-    .run()
+    .run(Analyse::Definitions)
     .expect_no_diagnostics();
 
     assert_eq!(1, analysis.function_body("C", "f").statements.len());
@@ -543,8 +544,7 @@ fn test_function_bodies_are_found_in_contracts_and_libraries() {
 #[should_panic(expected = "a context needs `Analyse::Context`")]
 fn test_a_prefix_analysis_has_no_context() {
     Analysis::of_source("contract C {}")
-        .analyse(Analyse::Yul)
-        .run()
+        .run(Analyse::Yul)
         .context();
 }
 
@@ -556,7 +556,6 @@ fn test_a_name_declared_by_two_files_is_rejected() {
     Analysis::builder()
         .file("a.sol", "contract C {}")
         .file("b.sol", "contract C {}")
-        .analyse(Analyse::Definitions)
-        .run()
+        .run(Analyse::Definitions)
         .find_contract("C");
 }

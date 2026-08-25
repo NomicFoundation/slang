@@ -3,15 +3,9 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
-use super::{Analyse, Analysis, AnalysisBuilder, only_diagnostic};
+use super::{Analyse, Analysis, only_diagnostic};
 use crate::binder::{Binder, Resolution};
 use crate::types::TypeRegistry;
-
-/// Runs only the definition-collecting and linearising passes, so a failure
-/// can't come from a later pass consuming their output.
-fn analyse_definitions(source: &str) -> AnalysisBuilder<'_> {
-    Analysis::of_source(source).analyse(Analyse::Definitions)
-}
 
 #[test]
 fn test_collect_definitions_and_linearise_contracts() {
@@ -20,7 +14,9 @@ contract Base {}
 contract Test is Base layout at 0 {}
     "###;
 
-    let analysis = analyse_definitions(CONTENTS).run().expect_no_diagnostics();
+    let analysis = Analysis::of_source(CONTENTS)
+        .run(Analyse::Definitions)
+        .expect_no_diagnostics();
     let binder = analysis.binder();
 
     // Verify definitions were collected
@@ -68,7 +64,9 @@ abstract contract B is C {}
 interface A is C {}
 "#;
 
-    let analysis = analyse_definitions(CONTENTS).run().expect_no_diagnostics();
+    let analysis = Analysis::of_source(CONTENTS)
+        .run(Analyse::Definitions)
+        .expect_no_diagnostics();
     let binder = analysis.binder();
 
     let contract_to_bases = get_contract_to_bases_map(binder);
@@ -102,7 +100,9 @@ contract D is B {}
 contract B {}
 "#;
 
-    let analysis = analyse_definitions(CONTENTS).run().expect_no_diagnostics();
+    let analysis = Analysis::of_source(CONTENTS)
+        .run(Analyse::Definitions)
+        .expect_no_diagnostics();
     let binder = analysis.binder();
 
     let contract_to_bases = get_contract_to_bases_map(binder);
@@ -127,7 +127,7 @@ contract Test is Base, Foo { // Base should resolve to the contract, not the var
 }
 "#;
 
-    let analysis = analyse_definitions(CONTENTS).run();
+    let analysis = Analysis::of_source(CONTENTS).run(Analyse::Definitions);
 
     // `Foo` is a library which can't be used as a base, so the expected
     // diagnostic should be the only one: `only_diagnostic` asserting that also
@@ -182,8 +182,7 @@ contract Test is Base {
         .iter_types()
         .count();
     let analysis = Analysis::of_source(CONTENTS)
-        .analyse(Analyse::Types)
-        .run()
+        .run(Analyse::Types)
         .expect_no_diagnostics();
     let types_after = analysis.types().iter_types().count();
 
@@ -230,7 +229,9 @@ contract Test is Base {
 }
     "###;
 
-    let analysis = Analysis::of_source(CONTENTS).run().expect_no_diagnostics();
+    let analysis = Analysis::of_source(CONTENTS)
+        .run(Analyse::References)
+        .expect_no_diagnostics();
 
     // Verify that references were created and most are resolved
     let references = analysis.binder().references();
@@ -262,8 +263,7 @@ contract Test {
     "###;
 
     let analysis = Analysis::of_source(CONTENTS)
-        .analyse(Analyse::Yul)
-        .run()
+        .run(Analyse::Yul)
         .expect_no_diagnostics();
 
     // The single `assembly` block was collected in p1.
@@ -301,8 +301,7 @@ fn test_imported_symbol_resolves_to_the_declaring_file() {
     let analysis = Analysis::builder()
         .file("a.sol", r#"import {C} from "b.sol";"#)
         .file("b.sol", "contract C {}")
-        .analyse(Analyse::Definitions)
-        .run()
+        .run(Analyse::Definitions)
         .expect_no_diagnostics();
 
     let binder = analysis.binder();
@@ -330,8 +329,7 @@ fn test_imported_symbol_resolves_to_the_declaring_file() {
 fn test_import_of_an_unknown_file_stays_unresolved() {
     let analysis = Analysis::builder()
         .file("a.sol", r#"import {C} from "missing.sol";"#)
-        .analyse(Analyse::Definitions)
-        .run()
+        .run(Analyse::Definitions)
         .expect_no_diagnostics();
 
     let scope_id = analysis
