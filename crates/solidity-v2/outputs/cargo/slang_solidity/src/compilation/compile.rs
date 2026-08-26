@@ -1,6 +1,8 @@
 use slang_solidity_v2_common::collections::{Set, SortedMap};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
-use slang_solidity_v2_common::diagnostics::kinds::compilation::MissingImportedFile;
+use slang_solidity_v2_common::diagnostics::kinds::compilation::{
+    DuplicatedFileId, MissingImportedFile,
+};
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes as cst;
@@ -23,7 +25,8 @@ impl CompilationUnit {
     /// reported as a [`MissingImportedFile`] diagnostic on the returned unit.
     ///
     /// Providing the same file ID more than once keeps the last contents given
-    /// for it.
+    /// for it, and reports a [`DuplicatedFileId`] diagnostic for each
+    /// repetition.
     ///
     /// All of the work — parsing, IR building, semantic analysis — happens
     /// here, and every problem it runs into is reported as a diagnostic on the
@@ -41,9 +44,9 @@ impl CompilationUnit {
             mut resolver,
         } = config;
 
-        let sources: SortedMap<FileId, String> = sources.into_iter().collect();
-
         let mut diagnostics = DiagnosticCollection::default();
+
+        let sources = collect_sources(sources, &mut diagnostics);
 
         let parsed_files = parse_files(sources, language_version, &mut diagnostics);
         let (files, id_generator) = build_ir(
@@ -63,6 +66,26 @@ impl CompilationUnit {
 
         CompilationUnit::from_parts(language_version, evm_target, files, semantic, diagnostics)
     }
+}
+
+/// Collects the given sources by file ID, keeping the last contents given for
+/// an ID and reporting every repetition as a [`DuplicatedFileId`] diagnostic.
+fn collect_sources(
+    sources: impl IntoIterator<Item = (FileId, String)>,
+    diagnostics: &mut DiagnosticCollection,
+) -> SortedMap<FileId, String> {
+    let mut collected = SortedMap::default();
+
+    for (file_id, contents) in sources {
+        if collected.insert(file_id.clone(), contents).is_some() {
+            // TODO(v2): We should consider a proper way to report diagnostics
+            // that don't belong to a specific range, or even a specific file.
+            // For now, we report it at the start of the file.
+            diagnostics.push(file_id.clone(), 0..0, DuplicatedFileId { file_id });
+        }
+    }
+
+    collected
 }
 
 /// One source file, parsed.

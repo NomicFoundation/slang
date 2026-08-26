@@ -1,6 +1,7 @@
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 
 use crate::compilation::{CompilationUnit, Configuration, FileId, ImportResolver};
+use crate::diagnostics::DiagnosticExtensions;
 use crate::diagnostics::kinds::compilation::UnresolvedImport;
 use crate::utils::LanguageVersion;
 
@@ -65,7 +66,23 @@ fn the_last_contents_given_for_a_file_id_win() {
         ("main.sol".into(), contract("Fresh", &[])),
     ]);
 
-    assert!(unit.diagnostics().is_empty(), "{:#?}", unit.diagnostics());
+    // The repetition is reported, and the compilation proceeds with the last
+    // contents given for the ID.
+    let diagnostics: Vec<_> = unit.diagnostics().iter().collect();
+    assert_eq!(
+        1,
+        diagnostics.len(),
+        "expected exactly the duplicated file ID, but found: {diagnostics:#?}"
+    );
+
+    let diagnostic = diagnostics[0];
+    assert_eq!("compilation/duplicated-file-id", diagnostic.code());
+    assert_eq!("main.sol", diagnostic.file_id().as_str());
+    assert_eq!(
+        "Source file provided more than once: main.sol",
+        diagnostic.message()
+    );
+
     assert_eq!(unit.files().count(), 1);
 
     let contract_names: Vec<String> = unit

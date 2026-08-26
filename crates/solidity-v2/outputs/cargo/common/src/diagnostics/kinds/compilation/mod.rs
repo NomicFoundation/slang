@@ -1,6 +1,8 @@
+mod duplicated_file_id;
 mod missing_imported_file;
 mod unresolved_import;
 
+pub use duplicated_file_id::DuplicatedFileId;
 pub use missing_imported_file::MissingImportedFile;
 use serde::Serialize;
 pub use unresolved_import::UnresolvedImport;
@@ -20,5 +22,8 @@ define_diagnostic_kind! {
         /// An `import` directive resolved to a file that is not part of the
         /// compilation.
         MissingImportedFile(MissingImportedFile),
+        /// The same file ID was provided more than once in the compilation's
+        /// sources.
+        DuplicatedFileId(DuplicatedFileId),
     }
 }
