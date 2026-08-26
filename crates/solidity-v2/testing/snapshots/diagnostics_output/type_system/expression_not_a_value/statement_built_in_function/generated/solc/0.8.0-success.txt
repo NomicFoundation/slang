@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[Warning 6133] Warning: Statement has no effect.
+   ╭─[input.sol:8:5]
+   │
+ 8 │     keccak256;
+   │     ────┬────  
+   │         ╰────── Error occurred here.
+───╯

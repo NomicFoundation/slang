@@ -3825,6 +3825,26 @@ mod type_system {
         use super::*;
 
         #[test]
+        fn built_in_function() -> Result<()> {
+            run("type_system/expression_not_a_value", "built_in_function")
+        }
+
+        #[test]
+        fn built_in_namespace() -> Result<()> {
+            run("type_system/expression_not_a_value", "built_in_namespace")
+        }
+
+        #[test]
+        fn call_argument() -> Result<()> {
+            run("type_system/expression_not_a_value", "call_argument")
+        }
+
+        #[test]
+        fn condition() -> Result<()> {
+            run("type_system/expression_not_a_value", "condition")
+        }
+
+        #[test]
         fn conditional_elementary_type_name_branches() -> Result<()> {
             run(
                 "type_system/expression_not_a_value",
@@ -3849,8 +3869,70 @@ mod type_system {
         }
 
         #[test]
+        fn modifier_placeholder() -> Result<()> {
+            run("type_system/expression_not_a_value", "modifier_placeholder")
+        }
+
+        #[test]
         fn module_aliases() -> Result<()> {
             run("type_system/expression_not_a_value", "module_aliases")
+        }
+
+        #[test]
+        fn operator_operand() -> Result<()> {
+            run("type_system/expression_not_a_value", "operator_operand")
+        }
+
+        #[test]
+        fn statement_address_transfer() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "statement_address_transfer",
+            )
+        }
+
+        #[test]
+        fn statement_array_pop() -> Result<()> {
+            run("type_system/expression_not_a_value", "statement_array_pop")
+        }
+
+        #[test]
+        fn statement_built_in_function() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "statement_built_in_function",
+            )
+        }
+
+        #[test]
+        fn statement_built_in_member() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "statement_built_in_member",
+            )
+        }
+
+        #[test]
+        fn statement_built_in_namespace() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "statement_built_in_namespace",
+            )
+        }
+
+        #[test]
+        fn statement_super() -> Result<()> {
+            run("type_system/expression_not_a_value", "statement_super")
+        }
+
+        #[test]
+        fn super_reference() -> Result<()> {
+            run("type_system/expression_not_a_value", "super_reference")
+        }
+
+        #[test]
+        fn uncalled_new() -> Result<()> {
+            run("type_system/expression_not_a_value", "uncalled_new")
         }
     }
 

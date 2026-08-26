@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/expression-not-a-value] Error: An uncalled 'new' expression cannot be used as a value.
+    ╭─[input.sol:10:21]
+    │
+ 10 │     Other flagged = new Other;
+    │                     ────┬────  
+    │                         ╰────── Error occurred here.
+────╯

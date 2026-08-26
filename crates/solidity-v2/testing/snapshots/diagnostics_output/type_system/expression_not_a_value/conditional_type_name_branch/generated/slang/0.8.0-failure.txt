@@ -2,7 +2,7 @@
 
 Diagnostics: 4
 
-[type-system/expression-not-a-value] Error: This expression denotes a type or declaration, not a value.
+[type-system/expression-not-a-value] Error: This expression denoting a type or module cannot be used as a value.
    ╭─[input.sol:8:16]
    │
  8 │     return c ? E : E.A;
@@ -10,7 +10,7 @@ Diagnostics: 4
    │                ╰── Error occurred here.
 ───╯
 
-[type-system/expression-not-a-value] Error: This expression denotes a type or declaration, not a value.
+[type-system/expression-not-a-value] Error: This expression denoting a type or module cannot be used as a value.
     ╭─[input.sol:13:27]
     │
  13 │     return c ? uint8(1) : E;
@@ -18,7 +18,7 @@ Diagnostics: 4
     │                           ╰── Error occurred here.
 ────╯
 
-[type-system/expression-not-a-value] Error: This expression denotes a type or declaration, not a value.
+[type-system/expression-not-a-value] Error: This expression denoting a type or module cannot be used as a value.
     ╭─[input.sol:19:16]
     │
  19 │     return c ? E : E;
@@ -26,7 +26,7 @@ Diagnostics: 4
     │                ╰── Error occurred here.
 ────╯
 
-[type-system/expression-not-a-value] Error: This expression denotes a type or declaration, not a value.
+[type-system/expression-not-a-value] Error: This expression denoting a type or module cannot be used as a value.
     ╭─[input.sol:19:20]
     │
  19 │     return c ? E : E;

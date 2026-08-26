@@ -26,7 +26,7 @@ pub use array_length_too_large::ArrayLengthTooLarge;
 pub use array_length_zero::ArrayLengthZero;
 pub use cannot_call_via_contract_type_name::CannotCallViaContractTypeName;
 pub use constant_arithmetic_error::ConstantArithmeticError;
-pub use expression_not_a_value::ExpressionNotAValue;
+pub use expression_not_a_value::{ExpressionNotAValue, NotAValueKind};
 pub use expression_not_callable::ExpressionNotCallable;
 pub use fallback_function_mutability::FallbackFunctionMutability;
 pub use fallback_function_signature::FallbackFunctionSignature;
@@ -91,7 +91,8 @@ define_diagnostic_kind! {
         CannotCallViaContractTypeName(CannotCallViaContractTypeName),
         /// The callee of a call is not callable.
         ExpressionNotCallable(ExpressionNotCallable),
-        /// An expression naming a type or declaration is used as a value.
+        /// An expression in a position that requires a value names a built-in,
+        /// `super`, or an uncalled `new` instead. Its `kind` says which.
         ExpressionNotAValue(ExpressionNotAValue),
         /// A partially applied function is used as a value rather than called.
         PartiallyAppliedFunctionUsedAsValue(PartiallyAppliedFunctionUsedAsValue),

@@ -702,15 +702,12 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_expression_statement(&mut self, node: &ir::ExpressionStatement) {
-        // A modifier's placeholder (`_`) is the one built-in that is a statement
-        // rather than a value, so it is exempt from requiring one here.
-        if matches!(
-            self.raw_typing_of_expression(&node.expression),
-            Typing::BuiltIn(InternalBuiltIn::ModifierUnderscore)
-        ) {
-            return;
-        }
-        self.check_type_of_value_expression(&node.expression);
+        // A statement consumes nothing, so naming something other than a value
+        // is allowed here: a modifier's `_` placeholder is a statement in its
+        // own right, and `super;` or `data.pop;` are accepted as statements
+        // with no effect. So this only checks the expression, without requiring
+        // it to be a value.
+        self.check_typing_of_expression(&node.expression);
     }
 
     fn leave_if_statement(&mut self, node: &ir::IfStatement) {

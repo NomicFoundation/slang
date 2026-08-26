@@ -4,7 +4,8 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
 };
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     CannotCallViaContractTypeName, ExpressionNotAValue, ExpressionNotCallable,
-    IncompatibleConditionalBranches, LiteralTooLarge, PartiallyAppliedFunctionUsedAsValue,
+    IncompatibleConditionalBranches, LiteralTooLarge, NotAValueKind,
+    PartiallyAppliedFunctionUsedAsValue,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -72,13 +73,28 @@ impl Pass<'_> {
         node: &ir::Expression,
     ) -> Option<TypeId> {
         match self.check_typing_of_expression(node) {
-            Typing::BuiltIn(_) | Typing::NewExpression(_) | Typing::Super => {
-                // TODO(validation): report that the expression names a built-in,
-                // a base contract or a contract creation rather than a value.
+            Typing::BuiltIn(_) => {
+                self.report_expression_not_a_value(node, NotAValueKind::BuiltIn);
+                None
+            }
+            Typing::Super => {
+                self.report_expression_not_a_value(node, NotAValueKind::Super);
+                None
+            }
+            Typing::NewExpression(_) => {
+                self.report_expression_not_a_value(node, NotAValueKind::UncalledNew);
                 None
             }
             typing => typing.as_type_id(),
         }
+    }
+
+    /// Reports `node` as naming something other than a value. Kept out of line
+    /// for the same reason as [`Self::report_ambiguous_reference`].
+    #[cold]
+    #[inline(never)]
+    fn report_expression_not_a_value(&mut self, node: &ir::Expression, kind: NotAValueKind) {
+        self.push_diagnostic(node, ExpressionNotAValue { kind });
     }
 
     /// Narrows an overload lookup for a call down to the selected candidate,
@@ -204,7 +220,12 @@ impl Pass<'_> {
         match self.types.compute_mobile_type(type_id) {
             Ok(mobile) => Some(mobile),
             Err(NoMobileType::NotAValue) => {
-                self.push_diagnostic(branch, ExpressionNotAValue);
+                self.push_diagnostic(
+                    branch,
+                    ExpressionNotAValue {
+                        kind: NotAValueKind::TypeOrModule,
+                    },
+                );
                 None
             }
             Err(NoMobileType::PartiallyAppliedFunction) => {

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 2271] Error: Operator + not compatible with types int_const 1 and tx
+   ╭─[input.sol:8:20]
+   │
+ 8 │     uint flagged = 1 + tx;
+   │                    ───┬──  
+   │                       ╰──── Error occurred here.
+───╯
