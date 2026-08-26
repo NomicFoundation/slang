@@ -3,7 +3,6 @@ use codegen_generator::RuntimeModel;
 use codegen_spec::Spec;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
-use infra_utils::paths::PathExtensions;
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use solidity_language::SolidityDefinition;
 
@@ -43,17 +42,5 @@ fn generate_tera_templates() -> Result<()> {
     let mut context = tera::Context::new();
     context.insert("model", &model);
 
-    CodegenRuntime::render_templates_in_place(|template_path| {
-        match template_path.strip_repo_root().unwrap() {
-            // Process V1 templates:
-            p if p.starts_with("crates/language/") => Some(&context),
-            p if p.starts_with("crates/solidity/") => Some(&context),
-
-            // Ignore V2 templates:
-            p if p.starts_with("crates/language-v2/") => None,
-            p if p.starts_with("crates/solidity-v2/") => None,
-
-            _ => panic!("Cannot categorize template: {template_path:?}"),
-        }
-    })
+    CodegenRuntime::V1Templates.render_templates(&context)
 }
