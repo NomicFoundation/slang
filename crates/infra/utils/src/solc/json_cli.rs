@@ -4,7 +4,8 @@
 use std::collections::BTreeMap;
 use std::path::PathBuf;
 
-use serde::{Deserialize, Serialize};
+use serde::de::Error as _;
+use serde::{Deserialize, Deserializer, Serialize};
 use strum::Display;
 
 #[derive(Debug, Serialize)]
@@ -60,10 +61,29 @@ pub struct Error {
 #[serde(rename_all = "camelCase")]
 pub struct SourceLocation {
     pub file: PathBuf,
-    /// 0-based character index
-    pub start: usize,
-    /// 0-based character index
-    pub end: usize,
+    /// 0-based character index, or `None` when the diagnostic refers to the
+    /// file as a whole rather than a span within it. Those are reported as
+    /// `-1`, e.g. the warning about a missing SPDX license identifier.
+    #[serde(deserialize_with = "deserialize_offset")]
+    pub start: Option<usize>,
+    /// 0-based character index. See [`SourceLocation::start`].
+    #[serde(deserialize_with = "deserialize_offset")]
+    pub end: Option<usize>,
+}
+
+fn deserialize_offset<'de, D: Deserializer<'de>>(
+    deserializer: D,
+) -> Result<Option<usize>, D::Error> {
+    // `-1` is the only negative offset with a meaning: the diagnostic refers to
+    // the whole file. Any other negative value is something we don't model.
+    match i64::deserialize(deserializer)? {
+        -1 => Ok(None),
+        offset => usize::try_from(offset).map(Some).map_err(|_| {
+            D::Error::custom(format!(
+                "unexpected negative source location offset: {offset}"
+            ))
+        }),
+    }
 }
 
 #[derive(Display, Debug, Deserialize, Eq, Ord, PartialEq, PartialOrd)]

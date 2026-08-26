@@ -1267,6 +1267,15 @@ mod resolution {
     }
 }
 
+mod runner {
+    use super::*;
+
+    #[test]
+    fn diagnostic_without_source_span() -> Result<()> {
+        run("runner", "diagnostic_without_source_span")
+    }
+}
+
 mod semantic {
     use super::*;
 

@@ -21,12 +21,16 @@ pub fn render_solc_error(error: &Error, sources: &BTreeMap<String, String>) -> R
     };
 
     let source_id = source_location.file.unwrap_string();
+
+    // Diagnostics about the file as a whole have no span to point at, so
+    // render just the header and the file name (matching `solc`'s own format).
+    let (Some(start), Some(end)) = (source_location.start, source_location.end) else {
+        return Ok(format!("[{code}] {kind}: {message}\n--> {source_id}"));
+    };
+
     let source = sources.get(&source_id).unwrap();
 
     let range = {
-        let start = source_location.start;
-        let end = source_location.end;
-
         let start_chars = source[..start].chars().count();
         let end_chars = start_chars + source[start..end].chars().count();
 
