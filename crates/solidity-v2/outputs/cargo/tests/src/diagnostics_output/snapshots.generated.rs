@@ -11,14 +11,14 @@ mod compilation {
         use super::*;
 
         #[test]
+        fn escapes_root() -> Result<()> {
+            run("compilation/missing_imported_file", "escapes_root")
+        }
+
+        #[test]
         fn simple() -> Result<()> {
             run("compilation/missing_imported_file", "simple")
         }
-    }
-
-    #[test]
-    fn unresolved_import() -> Result<()> {
-        run("compilation", "unresolved_import")
     }
 }
 

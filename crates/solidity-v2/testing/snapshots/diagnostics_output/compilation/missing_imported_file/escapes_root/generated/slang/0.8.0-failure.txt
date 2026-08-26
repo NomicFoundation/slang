@@ -1,11 +1,14 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Diagnostics: 1
+Diagnostics: 2
 
-[compilation/unresolved-import] Error: Unresolved import.
-   ╭─[input.sol:5:8]
+[compilation/missing-imported-file] Error: Imported file is missing: oops.sol
+   ╭─[input.sol:6:8]
    │
- 5 │ import "../../oops.sol";
+ 6 │ import "../../oops.sol";
    │        ────────┬───────  
    │                ╰───────── Error occurred here.
 ───╯
+
+[compilation/missing-file] Error: File not found.
+   ─[oops.sol:0:0]
