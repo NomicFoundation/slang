@@ -2,7 +2,7 @@
 
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 
-use crate::compilation::{CompilationUnit, FileId, ImportResolver};
+use crate::compilation::{CompilationUnit, Configuration, FileId, ImportResolver};
 use crate::diagnostics::kinds::compilation::UnresolvedImport;
 use crate::diagnostics::{DiagnosticExtensions, DiagnosticSeverity};
 use crate::utils::LanguageVersion;
@@ -23,12 +23,12 @@ impl ImportResolver for DecliningImportResolver {
 }
 
 fn compile(name: &'static str, contents: &'static str) -> CompilationUnit {
-    CompilationUnit::create(
-        LanguageVersion::LATEST,
-        EvmTarget::LATEST,
-        [(name.into(), contents.into())],
-        DecliningImportResolver,
-    )
+    CompilationUnit::create(Configuration {
+        language_version: LanguageVersion::LATEST,
+        evm_target: EvmTarget::LATEST,
+        sources: [(name.into(), contents.into())],
+        resolver: DecliningImportResolver,
+    })
 }
 
 #[test]

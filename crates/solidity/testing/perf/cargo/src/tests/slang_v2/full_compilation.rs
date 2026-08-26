@@ -5,7 +5,7 @@
 //! parsing, IR building, and semantic analysis, all behind
 //! `CompilationUnit::create()`.
 
-use slang_solidity_v2::compilation::{CompilationUnit, FileId, ImportResolver};
+use slang_solidity_v2::compilation::{CompilationUnit, Configuration, FileId, ImportResolver};
 use slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport;
 
 use crate::dataset::SolidityProject;
@@ -23,15 +23,15 @@ pub fn run(project: Input) -> Output {
     // matches the workload of the per-stage benchmarks in this directory, which
     // all operate on the full source list, and it mirrors consumers that
     // already know their complete file set up front (e.g. a build tool).
-    let unit = CompilationUnit::create(
-        parse_version(project),
-        parse_evm_target(project),
-        project
+    let unit = CompilationUnit::create(Configuration {
+        language_version: parse_version(project),
+        evm_target: parse_evm_target(project),
+        sources: project
             .sources
             .iter()
             .map(|(file_id, contents)| (FileId::from(file_id.as_str()), contents.clone())),
-        ProjectImportResolver { project },
-    );
+        resolver: ProjectImportResolver { project },
+    });
 
     assert!(
         unit.diagnostics().is_empty(),

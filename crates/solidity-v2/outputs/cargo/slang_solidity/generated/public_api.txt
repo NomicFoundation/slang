@@ -26,7 +26,12 @@ pub fn slang_solidity_v2::compilation::CompilationUnit::files(&self) -> impl cor
 pub fn slang_solidity_v2::compilation::CompilationUnit::find_contract_by_name<'a, 'b>(&'a self, &'b str) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::nodes::ContractDefinition> + use<'a> where 'b: 'a
 pub fn slang_solidity_v2::compilation::CompilationUnit::language_version(&self) -> slang_solidity_v2_common::versions::version::LanguageVersion
 impl slang_solidity_v2::compilation::CompilationUnit
-pub fn slang_solidity_v2::compilation::CompilationUnit::create(slang_solidity_v2_common::versions::version::LanguageVersion, slang_solidity_v2_common::evm_targets::target::EvmTarget, impl core::iter::traits::collect::IntoIterator<Item = (slang_solidity_v2_common::files::FileId, alloc::string::String)>, impl slang_solidity_v2::compilation::ImportResolver) -> slang_solidity_v2::compilation::CompilationUnit
+pub fn slang_solidity_v2::compilation::CompilationUnit::create<S, R>(slang_solidity_v2::compilation::Configuration<S, R>) -> slang_solidity_v2::compilation::CompilationUnit where S: core::iter::traits::collect::IntoIterator<Item = (slang_solidity_v2_common::files::FileId, alloc::string::String)>, R: slang_solidity_v2::compilation::ImportResolver
+pub struct slang_solidity_v2::compilation::Configuration<S, R>
+pub slang_solidity_v2::compilation::Configuration::evm_target: slang_solidity_v2_common::evm_targets::target::EvmTarget
+pub slang_solidity_v2::compilation::Configuration::language_version: slang_solidity_v2_common::versions::version::LanguageVersion
+pub slang_solidity_v2::compilation::Configuration::resolver: R
+pub slang_solidity_v2::compilation::Configuration::sources: S
 pub struct slang_solidity_v2::compilation::FileStruct
 impl slang_solidity_v2::compilation::FileStruct
 pub fn slang_solidity_v2::compilation::FileStruct::ast(&self) -> slang_solidity_v2_ast::ast::nodes::SourceUnit

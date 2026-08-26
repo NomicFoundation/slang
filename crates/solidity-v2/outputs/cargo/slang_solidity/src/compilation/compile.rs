@@ -1,9 +1,6 @@
 use slang_solidity_v2_common::collections::{Set, SortedMap};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
-use slang_solidity_v2_common::diagnostics::kinds::compilation::{
-    MissingImportedFile, UnresolvedImport,
-};
-use slang_solidity_v2_common::evm_targets::EvmTarget;
+use slang_solidity_v2_common::diagnostics::kinds::compilation::MissingImportedFile;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes as cst;
@@ -13,33 +10,9 @@ use slang_solidity_v2_semantic::context::{
     SemanticContext, SemanticFile, SourceUnitImport, extract_imports_from_source_unit,
 };
 
+use super::configuration::{Configuration, ImportResolver};
 use super::file::InternalFile;
 use super::unit::CompilationUnit;
-
-/// User-provided callback necessary for [`CompilationUnit::create`] to perform its job.
-pub trait ImportResolver {
-    /// Callback used by the compilation to resolve an import path.
-    /// For example, if a source file contains the following statement:
-    ///
-    /// ```solidity
-    /// import {Foo} from "foo.sol";
-    /// ```
-    ///
-    /// Then the API will invoke the callback with the value `foo.sol` (the
-    /// contents of the string literal, with the surrounding quotes stripped).
-    ///
-    /// The user is responsible for resolving it to a file in the compilation,
-    /// and returning its ID. The returned [`UnresolvedImport`] is surfaced as a
-    /// compilation diagnostic on the [`CompilationUnit`].
-    ///
-    /// Resolving to a file that is not part of the compilation yields a
-    /// [`MissingImportedFile`] diagnostic instead.
-    fn resolve_import(
-        &mut self,
-        source_file_id: &FileId,
-        import_path: &str,
-    ) -> Result<FileId, UnresolvedImport>;
-}
 
 impl CompilationUnit {
     /// Compiles the given source files into a [`CompilationUnit`].
@@ -56,12 +29,18 @@ impl CompilationUnit {
     /// here, and every problem it runs into is reported as a diagnostic on the
     /// returned unit. Parse errors, unresolvable imports, and missing imported
     /// files are all collected this way — see [`CompilationUnit::diagnostics`].
-    pub fn create(
-        language_version: LanguageVersion,
-        evm_target: EvmTarget,
-        sources: impl IntoIterator<Item = (FileId, String)>,
-        mut resolver: impl ImportResolver,
-    ) -> CompilationUnit {
+    pub fn create<S, R>(config: Configuration<S, R>) -> CompilationUnit
+    where
+        S: IntoIterator<Item = (FileId, String)>,
+        R: ImportResolver,
+    {
+        let Configuration {
+            language_version,
+            evm_target,
+            sources,
+            mut resolver,
+        } = config;
+
         let sources: SortedMap<FileId, String> = sources.into_iter().collect();
 
         let mut diagnostics = DiagnosticCollection::default();

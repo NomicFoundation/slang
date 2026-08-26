@@ -1,6 +1,6 @@
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 
-use crate::compilation::{CompilationUnit, FileId, ImportResolver};
+use crate::compilation::{CompilationUnit, Configuration, FileId, ImportResolver};
 use crate::diagnostics::kinds::compilation::UnresolvedImport;
 use crate::utils::LanguageVersion;
 
@@ -18,12 +18,12 @@ impl ImportResolver for TestImportResolver {
 }
 
 fn compile(sources: impl IntoIterator<Item = (FileId, String)>) -> CompilationUnit {
-    CompilationUnit::create(
-        LanguageVersion::LATEST,
-        EvmTarget::LATEST,
+    CompilationUnit::create(Configuration {
+        language_version: LanguageVersion::LATEST,
+        evm_target: EvmTarget::LATEST,
         sources,
-        TestImportResolver,
-    )
+        resolver: TestImportResolver,
+    })
 }
 
 fn contract(name: &str, imports: &[&str]) -> String {

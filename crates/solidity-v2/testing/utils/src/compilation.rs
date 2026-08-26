@@ -1,6 +1,6 @@
 //! Compiles a fixed set of in-memory sources, shared by the v2 test harnesses.
 
-use slang_solidity_v2::compilation::{CompilationUnit, ImportResolver};
+use slang_solidity_v2::compilation::{CompilationUnit, Configuration, ImportResolver};
 use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
@@ -15,10 +15,15 @@ use crate::path_resolver;
 /// analyzed too.
 pub fn compile(
     files: &SortedMap<FileId, String>,
-    version: LanguageVersion,
-    target: EvmTarget,
+    language_version: LanguageVersion,
+    evm_target: EvmTarget,
 ) -> CompilationUnit {
-    CompilationUnit::create(version, target, files.clone(), InMemoryResolver)
+    CompilationUnit::create(Configuration {
+        language_version,
+        evm_target,
+        sources: files.clone(),
+        resolver: InMemoryResolver,
+    })
 }
 
 struct InMemoryResolver;
