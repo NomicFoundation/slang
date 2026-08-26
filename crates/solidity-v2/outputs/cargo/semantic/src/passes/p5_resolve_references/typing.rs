@@ -34,9 +34,8 @@ impl Pass<'_> {
     }
 
     /// The typing registered for `node`, checking nothing: an overload set is
-    /// handed on undetermined, so a callee can still select from it. Every
-    /// expression registers its typing during the pass, so this is a plain
-    /// lookup and repeating it for the same node reports nothing twice.
+    /// handed on undetermined, so a callee can still select from it. This is a
+    /// plain lookup for the typing each expression registers during the pass.
     #[inline]
     pub(super) fn raw_typing_of_expression(&self, node: &ir::Expression) -> Typing {
         // Every expression variant registers its typing in the binder during
@@ -379,8 +378,17 @@ impl Pass<'_> {
         array: &ir::ArrayExpression,
     ) -> Option<TypeId> {
         let mut item_type_ids: Vec<TypeId> = Vec::with_capacity(array.items.len());
+        let mut all_typed = true;
         for item in array.items.iter() {
-            item_type_ids.push(self.check_type_of_value_expression(item)?);
+            if let Some(item_type_id) = self.check_type_of_value_expression(item) {
+                item_type_ids.push(item_type_id);
+            } else {
+                all_typed = false;
+            }
+        }
+        if !all_typed {
+            // Some array element failed to type as a value
+            return None;
         }
         let element_type = self.types.type_of_array_literal(&item_type_ids)?;
         Some(
@@ -871,17 +879,17 @@ impl Pass<'_> {
         }
     }
 
-    pub(super) fn collect_named_argument_types(
+    pub(super) fn collect_named_argument_types<'a>(
         &mut self,
-        arguments: &[ir::NamedArgument],
-    ) -> Option<Vec<(String, TypeId)>> {
+        arguments: &'a [ir::NamedArgument],
+    ) -> Option<Vec<(&'a str, TypeId)>> {
         // As in `collect_positional_argument_types`, every argument is checked
         // before the result is folded.
         let mut types = Vec::with_capacity(arguments.len());
         let mut all_typed = true;
         for argument in arguments {
             match self.check_type_of_value_expression(&argument.value) {
-                Some(type_id) => types.push((argument.name.unparse().to_string(), type_id)),
+                Some(type_id) => types.push((argument.name.unparse(), type_id)),
                 None => all_typed = false,
             }
         }

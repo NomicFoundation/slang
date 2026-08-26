@@ -110,9 +110,19 @@ impl Visitor for Pass<'_> {
 
     fn leave_for_statement(&mut self, node: &ir::ForStatement) {
         // The initialisation and the condition are expression statements, so
-        // they already require a value; the iterator is only reached here.
+        // they are already handled by [`Self::leave_expression_statement`],
+        // which does not require a value. That is right for the initialisation
+        // but not for the condition. Keep in sync.
+        // __SLANG_EXPRESSION_STATEMENT_TYPE__
+        //
+        // TODO(validation): the condition does require a value, of a type
+        // convertible to boolean. Caveat: using
+        // `check_type_of_value_expression` here would report an ambiguous
+        // reference a second time, since the expression statement it is written
+        // as has already checked (and reported) the same node.
         if let Some(iterator) = &node.iterator {
-            self.check_type_of_value_expression(iterator);
+            // Check that the iterator expression type resolves unambiguously
+            self.check_typing_of_expression(iterator);
         }
         self.leave_scope_for_node_id(node.id());
     }
@@ -669,11 +679,21 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_revert_statement(&mut self, node: &ir::RevertStatement) {
-        if let ir::ArgumentsDeclaration::NamedArguments(named_arguments) = &node.arguments {
-            let definition_id = self
-                .followed_resolution_of_reference(node.error.last().unwrap().id())
-                .and_then(|resolution| resolution.as_definition_id());
-            self.resolve_named_arguments(named_arguments, definition_id);
+        match &node.arguments {
+            ir::ArgumentsDeclaration::PositionalArguments(positional_arguments) => {
+                // Collect the argument types to ensure all of them type to a value
+                // TODO(validation): check that the types match the error definition
+                self.collect_positional_argument_types(positional_arguments);
+            }
+            ir::ArgumentsDeclaration::NamedArguments(named_arguments) => {
+                // Collect the argument types to ensure all of them type to a value
+                // TODO(validation): check that the types match the error definition
+                self.collect_named_argument_types(named_arguments);
+                let definition_id = self
+                    .followed_resolution_of_reference(node.error.last().unwrap().id())
+                    .and_then(|resolution| resolution.as_definition_id());
+                self.resolve_named_arguments(named_arguments, definition_id);
+            }
         }
     }
 
@@ -707,6 +727,9 @@ impl Visitor for Pass<'_> {
         // own right, and `super;` or `data.pop;` are accepted as statements
         // with no effect. So this only checks the expression, without requiring
         // it to be a value.
+        // NOTE: initializer and condition of a for statement are expression
+        // statements, so keep the behaviour in sync with
+        // [`Self::leave_for_statement`]. __SLANG_EXPRESSION_STATEMENT_TYPE__
         self.check_typing_of_expression(&node.expression);
     }
 

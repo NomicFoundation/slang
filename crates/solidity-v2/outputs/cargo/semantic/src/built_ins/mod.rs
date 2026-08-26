@@ -495,6 +495,11 @@ impl<'a> BuiltInsResolver<'a> {
         built_in: &InternalBuiltIn,
         argument_types: Option<&[TypeId]>,
     ) -> Result<TypeId, BuiltInCallError> {
+        // If any of the arguments failed to type, we don't attempt to resolve
+        // the built-in call.
+        let Some(argument_types) = argument_types else {
+            return Err(BuiltInCallError::UnresolvedDependency);
+        };
         let type_id = match built_in {
             InternalBuiltIn::AbiDecode => self.type_of_abi_decode(argument_types)?,
             InternalBuiltIn::AbiEncode => self.types.bytes_memory(),
@@ -511,9 +516,8 @@ impl<'a> BuiltInsResolver<'a> {
             InternalBuiltIn::AddressTransfer => self.types.void(),
             InternalBuiltIn::ArrayPush(type_id) => {
                 // `push()` yields a reference to the new element, `push(v)`
-                // yields nothing. A missing type list means there was an
-                // argument, so it is the latter.
-                if argument_types.is_some_and(<[TypeId]>::is_empty) {
+                // yields nothing.
+                if argument_types.is_empty() {
                     *type_id
                 } else {
                     self.types.void()
@@ -568,22 +572,17 @@ impl<'a> BuiltInsResolver<'a> {
 
     fn type_of_abi_decode(
         &mut self,
-        argument_types: Option<&[TypeId]>,
+        argument_types: &[TypeId],
     ) -> Result<TypeId, BuiltInCallError> {
-        let Some(argument_types) = argument_types else {
-            return Err(BuiltInCallError::UnresolvedDependency);
-        };
         // TODO(validation): report an error when `abi.decode` is not given
         // exactly two arguments.
-        if argument_types.len() != 2 {
+        let [_, type_id] = argument_types else {
             return Err(BuiltInCallError::NotReportedYet);
-        }
-        // The second argument's own type failed to resolve.
-        let type_id = argument_types[1];
+        };
 
         // `abi.decode(data, (T))`: a single-element tuple collapses to the
         // meta-type of `T`, which decodes to `T` itself.
-        if let Some(decoded) = self.type_denoted_by_meta_type(type_id) {
+        if let Some(decoded) = self.type_denoted_by_meta_type(*type_id) {
             return Ok(decoded);
         }
 
@@ -591,7 +590,7 @@ impl<'a> BuiltInsResolver<'a> {
         // the tuple of the types they denote. Note a *nested* tuple element is
         // not a type name and does not decode (matching solc, which rejects
         // eg. `abi.decode(data, (uint, (bool, bool)))`).
-        if let Type::Tuple(TupleType { types }) = self.types.get_type_by_id(type_id) {
+        if let Type::Tuple(TupleType { types }) = self.types.get_type_by_id(*type_id) {
             let element_ids = types.clone();
             let mut decoded = Vec::with_capacity(element_ids.len());
             for element_id in element_ids {

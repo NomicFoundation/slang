@@ -220,7 +220,7 @@ impl Pass<'_> {
     pub(super) fn lookup_function_matching_named_arguments(
         &self,
         type_ids: &[TypeId],
-        argument_types: &[(String, TypeId)],
+        argument_types: &[(&str, TypeId)],
         receiver_type_id: Option<TypeId>,
     ) -> OverloadMatch<TypeId> {
         self.lookup_function_matching_arguments(
@@ -241,7 +241,7 @@ impl Pass<'_> {
     fn parameters_match_named_arguments(
         &self,
         parameters: &[ParameterDefinition],
-        argument_types: &[(String, TypeId)],
+        argument_types: &[(&str, TypeId)],
         external_call: bool,
     ) -> bool {
         argument_types.iter().all(|(argument_name, argument_type)| {
@@ -296,7 +296,7 @@ impl Pass<'_> {
     pub(super) fn lookup_event_matching_named_arguments(
         &self,
         definition_ids: &[NodeId],
-        argument_types: &[(String, TypeId)],
+        argument_types: &[(&str, TypeId)],
     ) -> OverloadMatch<NodeId> {
         OverloadMatch::from_matches(definition_ids.iter().copied().filter(|definition_id| {
             let Some(parameters) = self.get_event_definition_parameters(*definition_id) else {
