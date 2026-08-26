@@ -14,9 +14,9 @@ Definitions (16):
 - Def: #11 ["uy" @ input.sol:11:44] (parameter, type: uint256)
 - Def: #12 ["ix" @ input.sol:11:55] (parameter, type: int256)
 - Def: #13 ["iy" @ input.sol:11:66] (parameter, type: int256)
-- Def: #14 ["testConvertible" @ input.sol:16:14] (function, type: function (uint160, uint160) returns void)
-- Def: #15 ["ux" @ input.sol:16:38] (parameter, type: uint160)
-- Def: #16 ["uy" @ input.sol:16:50] (parameter, type: uint160)
+- Def: #14 ["testConvertible" @ input.sol:16:14] (function, type: function (int160, int160) returns void)
+- Def: #15 ["ux" @ input.sol:16:37] (parameter, type: int160)
+- Def: #16 ["uy" @ input.sol:16:48] (parameter, type: int160)
 
 ------------------------------------------------------------------------
 
@@ -39,13 +39,13 @@ References (26):
 - Ref: ["add" @ input.sol:13:20] -> #5
 - Ref: ["ix" @ input.sol:13:24] -> #12
 - Ref: ["Lib" @ input.sol:17:9] -> #1
-- Ref: ["add" @ input.sol:17:13] -> #2
+- Ref: ["add" @ input.sol:17:13] -> #5
 - Ref: ["ux" @ input.sol:17:17] -> #15
 - Ref: ["uy" @ input.sol:17:21] -> #16
 - Ref: ["ux" @ input.sol:18:9] -> #15
-- Ref: ["add" @ input.sol:18:12] -> #2
+- Ref: ["add" @ input.sol:18:12] -> #5
 - Ref: ["uy" @ input.sol:18:16] -> #16
-- Ref: ["add" @ input.sol:18:20] -> #2
+- Ref: ["add" @ input.sol:18:20] -> #5
 - Ref: ["ux" @ input.sol:18:24] -> #15
 
 ------------------------------------------------------------------------
@@ -92,7 +92,7 @@ Bindings:
   8 │     using Lib for int256;
     │           ─┬─  
     │            ╰─── ref: 1
-  9 │     using Lib for uint160;
+  9 │     using Lib for int160;
     │           ─┬─  
     │            ╰─── ref: 1
     │ 
@@ -130,18 +130,18 @@ Bindings:
     │                         │  
     │                         ╰── ref: 12
     │ 
- 16 │     function testConvertible(uint160 ux, uint160 uy) internal {
-    │              ───────┬───────         ─┬          ─┬  
-    │                     ╰──────────────────────────────── name: 14
-    │                                       │           │  
-    │                                       ╰────────────── name: 15
-    │                                                   │  
-    │                                                   ╰── name: 16
+ 16 │     function testConvertible(int160 ux, int160 uy) internal {
+    │              ───────┬───────        ─┬         ─┬  
+    │                     ╰────────────────────────────── name: 14
+    │                                      │          │  
+    │                                      ╰───────────── name: 15
+    │                                                 │  
+    │                                                 ╰── name: 16
  17 │         Lib.add(ux, uy);
     │         ─┬─ ─┬─ ─┬  ─┬  
     │          ╰────────────── ref: 1
     │              │   │   │  
-    │              ╰────────── ref: 2
+    │              ╰────────── ref: 5
     │                  │   │  
     │                  ╰────── ref: 15
     │                      │  
@@ -150,11 +150,11 @@ Bindings:
     │         ─┬ ─┬─ ─┬  ─┬─ ─┬  
     │          ╰───────────────── ref: 15
     │             │   │   │   │  
-    │             ╰────────────── ref: 2
+    │             ╰────────────── ref: 5
     │                 │   │   │  
     │                 ╰────────── ref: 16
     │                     │   │  
-    │                     ╰────── ref: 2
+    │                     ╰────── ref: 5
     │                         │  
     │                         ╰── ref: 15
 ────╯

@@ -1,6 +1,14 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Diagnostics: 1
+Diagnostics: 2
+
+[resolution/ambiguous-reference] Error: No unique declaration found for 'g'.
+    ╭─[consumer.sol:11:16]
+    │
+ 11 │         return g();
+    │                ┬  
+    │                ╰── Error occurred here.
+────╯
 
 [resolution/duplicate-function-definition] Error: Function with same name and parameter types defined twice.
    ╭─[declarations.sol:8:1]

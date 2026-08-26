@@ -40,6 +40,7 @@
     "nonterminal",
     "nonterminals",
     "pipenv",
+    "remappings",
     "rustup",
     "sourcify",
     "struct",

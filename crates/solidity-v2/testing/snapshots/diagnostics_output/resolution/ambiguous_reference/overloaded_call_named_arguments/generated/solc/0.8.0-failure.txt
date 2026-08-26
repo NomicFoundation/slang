@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4487] Error: No unique declaration found after argument-dependent lookup.
+    ╭─[input.sol:14:9]
+    │
+ 14 │         f({x: 1, y: "abc", z: true});
+    │         ┬  
+    │         ╰── Error occurred here.
+────╯

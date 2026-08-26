@@ -2,29 +2,14 @@ use anyhow::{Result, ensure};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
-use slang_solidity_v2::compilation::{CompilationUnit, FileId, ImportResolver};
+use slang_solidity_v2::compilation::FileId;
 use slang_solidity_v2_common::collections::SortedMap;
-use slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport;
+use solidity_v2_testing_utils::compilation;
 
 use super::report::binder_report;
 use super::report_data::ReportData;
 use crate::snapshots::{self, SnapshotOutcome, SnapshotStatus, TestConfig, TestMatrix};
 use crate::utils::multi_part_file::split_multi_file;
-use crate::utils::path_resolver;
-
-struct TestImportResolver;
-
-impl ImportResolver for TestImportResolver {
-    fn resolve_import(
-        &mut self,
-        source_file_id: &FileId,
-        import_path: &str,
-    ) -> Result<FileId, UnresolvedImport> {
-        path_resolver::resolve_import(source_file_id, import_path).ok_or_else(|| UnresolvedImport {
-            reason: "Unresolved import".to_string(),
-        })
-    }
-}
 
 pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
     let test_dir = CargoWorkspace::locate_source_crate("solidity_v2_testing_snapshots")?
@@ -62,8 +47,7 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         &test_config,
         "generated",
         |version, target| {
-            let compilation =
-                CompilationUnit::create(version, target, files.clone(), TestImportResolver);
+            let compilation = compilation::compile(&files, version, target);
             let report_data = ReportData::prepare(&compilation, &files);
 
             let status = if report_data.all_resolved() {

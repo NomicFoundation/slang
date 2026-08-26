@@ -68,7 +68,9 @@ splitting them up would only cost `nextest` tens of thousands of processes.
 3. **Run** — each `(version, test)` pair compiles with the slang v2
    `CompilationUnit::create` pinned to that language version and the resolved EVM
    target (the `EVMVersion` setting if present, else that version's default),
-   resolving imports with the shared `solidity_testing_utils` `ImportResolver`.
+   resolving imports with the shared `solidity_v2_testing_utils` `path_resolver`,
+   which follows the rules `solc` applies to a standard JSON input with no
+   remappings.
 
     A setting we can't honor — an EVM target name we don't know, or a constraint
     no supported target satisfies — fails the run rather than falling back to the

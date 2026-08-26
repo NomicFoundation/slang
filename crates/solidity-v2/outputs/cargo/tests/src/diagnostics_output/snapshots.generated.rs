@@ -16,19 +16,86 @@ mod compilation {
         }
 
         #[test]
+        fn escapes_root() -> Result<()> {
+            run("compilation/missing_imported_file", "escapes_root")
+        }
+
+        #[test]
         fn simple() -> Result<()> {
             run("compilation/missing_imported_file", "simple")
         }
-    }
-
-    #[test]
-    fn unresolved_import() -> Result<()> {
-        run("compilation", "unresolved_import")
     }
 }
 
 mod resolution {
     use super::*;
+
+    mod ambiguous_reference {
+        use super::*;
+
+        #[test]
+        fn attached_function_clash() -> Result<()> {
+            run("resolution/ambiguous_reference", "attached_function_clash")
+        }
+
+        #[test]
+        fn member_call_not_unique() -> Result<()> {
+            run("resolution/ambiguous_reference", "member_call_not_unique")
+        }
+
+        #[test]
+        fn member_not_unique() -> Result<()> {
+            run("resolution/ambiguous_reference", "member_not_unique")
+        }
+
+        #[test]
+        fn member_via_contract_name() -> Result<()> {
+            run("resolution/ambiguous_reference", "member_via_contract_name")
+        }
+
+        #[test]
+        fn overloaded_call() -> Result<()> {
+            run("resolution/ambiguous_reference", "overloaded_call")
+        }
+
+        #[test]
+        fn overloaded_call_named_arguments() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_call_named_arguments",
+            )
+        }
+
+        #[test]
+        fn overloaded_event() -> Result<()> {
+            run("resolution/ambiguous_reference", "overloaded_event")
+        }
+
+        #[test]
+        fn overloaded_function_as_value() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_function_as_value",
+            )
+        }
+
+        #[test]
+        fn public_variable_shadows_base_function() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "public_variable_shadows_base_function",
+            )
+        }
+    }
+
+    mod ambiguous_yul_reference {
+        use super::*;
+
+        #[test]
+        fn overloaded_reference() -> Result<()> {
+            run("resolution/ambiguous_yul_reference", "overloaded_reference")
+        }
+    }
 
     mod built_in_redeclaration {
         use super::*;

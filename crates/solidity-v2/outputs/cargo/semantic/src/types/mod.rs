@@ -285,13 +285,14 @@ impl ImplicitlyConvertible<FunctionTypeVisibility> for FunctionTypeVisibility {
     fn implicitly_convertible_to(&self, target: Self) -> bool {
         matches!(
             (self, target),
-            // public can convert to public, external or internal (if called
-            // internally)
+            // public converts to public or internal. It does *not* convert to
+            // external: a public function reached externally (through `this` or
+            // a contract reference) is already externalised at the point of
+            // access, so a value still carrying `Public` here is a plain
+            // reference, which denotes the internal function.
             (
                 FunctionTypeVisibility::Public,
-                FunctionTypeVisibility::Public
-                    | FunctionTypeVisibility::Internal
-                    | FunctionTypeVisibility::External,
+                FunctionTypeVisibility::Public | FunctionTypeVisibility::Internal,
             )
                 // private converts to private or internal
                 | (

@@ -1,14 +1,13 @@
 use anyhow::Result;
-use slang_solidity_v2::compilation::{CompilationUnit, FileId, ImportResolver};
+use slang_solidity_v2::compilation::FileId;
 use slang_solidity_v2_common::collections::SortedMap;
-use slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport;
 use slang_solidity_v2_common::diagnostics::{DiagnosticExtensions, DiagnosticSeverity};
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
+use solidity_v2_testing_utils::compilation;
 use solidity_v2_testing_utils::reporting::diagnostic;
 
 use crate::diagnostics_output::targets::{TargetOutcome, TestTarget};
-use crate::utils::path_resolver;
 
 pub(crate) struct SlangTarget;
 
@@ -23,8 +22,7 @@ impl TestTarget for SlangTarget {
         version: LanguageVersion,
         evm_target: EvmTarget,
     ) -> Result<TargetOutcome> {
-        let compilation =
-            CompilationUnit::create(version, evm_target, files.clone(), TestImportResolver);
+        let compilation = compilation::compile(files, version, evm_target);
 
         let diagnostics: Vec<_> = compilation.diagnostics().iter().collect();
 
@@ -45,20 +43,6 @@ impl TestTarget for SlangTarget {
         Ok(TargetOutcome {
             diagnostics: rendered,
             compilation_succeeded,
-        })
-    }
-}
-
-struct TestImportResolver;
-
-impl ImportResolver for TestImportResolver {
-    fn resolve_import(
-        &mut self,
-        source_file_id: &FileId,
-        import_path: &str,
-    ) -> Result<FileId, UnresolvedImport> {
-        path_resolver::resolve_import(source_file_id, import_path).ok_or_else(|| UnresolvedImport {
-            reason: "Unresolved import.".to_string(),
         })
     }
 }
