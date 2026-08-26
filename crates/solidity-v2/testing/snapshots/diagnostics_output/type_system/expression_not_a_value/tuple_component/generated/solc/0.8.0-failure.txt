@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 7407] Error: Type tuple(abi,tx) is not implicitly convertible to expected type tuple(uint256,bool).
+    ╭─[input.sol:10:21]
+    │
+ 10 │     (left, right) = (abi, tx);
+    │                     ────┬────  
+    │                         ╰────── Error occurred here.
+────╯

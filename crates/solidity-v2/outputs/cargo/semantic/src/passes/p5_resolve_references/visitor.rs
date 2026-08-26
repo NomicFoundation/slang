@@ -63,6 +63,14 @@ impl Visitor for Pass<'_> {
         false
     }
 
+    fn leave_inheritance_type(&mut self, node: &ir::InheritanceType) {
+        // The arguments of a base contract (eg. `is Base(1)`) are its
+        // constructor's, so they are values.
+        if let Some(arguments) = &node.arguments {
+            self.check_argument_values(arguments);
+        }
+    }
+
     fn enter_interface_definition(&mut self, node: &ir::InterfaceDefinition) -> bool {
         self.enter_scope_for_node_id(node.id());
         true
@@ -92,6 +100,28 @@ impl Visitor for Pass<'_> {
 
     fn leave_function_definition(&mut self, node: &ir::FunctionDefinition) {
         self.leave_scope_for_node_id(node.id());
+    }
+
+    fn leave_modifier_invocation(&mut self, node: &ir::ModifierInvocation) {
+        // Both a modifier's arguments and, on a constructor, a base
+        // constructor's are values.
+        if let Some(arguments) = &node.arguments {
+            self.check_argument_values(arguments);
+        }
+    }
+
+    fn leave_state_variable_definition(&mut self, node: &ir::StateVariableDefinition) {
+        // The initialiser's value is bound to the declared variable, as in
+        // `leave_variable_declaration_statement`.
+        if let Some(value) = &node.value {
+            self.check_type_of_value_expression(value);
+        }
+    }
+
+    fn leave_constant_definition(&mut self, node: &ir::ConstantDefinition) {
+        if let Some(value) = &node.value {
+            self.check_type_of_value_expression(value);
+        }
     }
 
     fn enter_block(&mut self, node: &ir::Block) -> bool {
@@ -575,6 +605,12 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_call_options_expression(&mut self, node: &ir::CallOptionsExpression) {
+        // Each option is passed to the call (eg. the ether `foo{value: 3}`
+        // sends), so it is a value.
+        for option in node.options.iter() {
+            self.check_type_of_value_expression(&option.value);
+        }
+
         // `foo{value: 3}` partially applies but is still a callee, so an
         // overload set has to survive to the enclosing call.
         let operand_typing = self.raw_typing_of_expression(&node.operand);

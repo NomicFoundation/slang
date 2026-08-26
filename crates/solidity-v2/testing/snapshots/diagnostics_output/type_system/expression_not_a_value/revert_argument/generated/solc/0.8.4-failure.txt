@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 9553] Error: Invalid type for argument in function call. Invalid implicit conversion from abi to uint256 requested.
+    ╭─[input.sol:10:20]
+    │
+ 10 │     revert Flagged(abi);
+    │                    ─┬─  
+    │                     ╰─── Error occurred here.
+────╯
+
+[TypeError 9553] Error: Invalid type for argument in function call. Invalid implicit conversion from tx to uint256 requested.
+    ╭─[input.sol:14:28]
+    │
+ 14 │     revert Flagged({value: tx});
+    │                            ─┬  
+    │                             ╰── Error occurred here.
+────╯

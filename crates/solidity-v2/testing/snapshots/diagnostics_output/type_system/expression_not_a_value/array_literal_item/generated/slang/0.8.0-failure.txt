@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[type-system/expression-not-a-value] Error: This built-in cannot be used as a value.
+   ╭─[input.sol:9:31]
+   │
+ 9 │     uint[2] memory flagged = [abi, tx];
+   │                               ─┬─  
+   │                                ╰─── Error occurred here.
+───╯
+
+[type-system/expression-not-a-value] Error: This built-in cannot be used as a value.
+   ╭─[input.sol:9:36]
+   │
+ 9 │     uint[2] memory flagged = [abi, tx];
+   │                                    ─┬  
+   │                                     ╰── Error occurred here.
+───╯

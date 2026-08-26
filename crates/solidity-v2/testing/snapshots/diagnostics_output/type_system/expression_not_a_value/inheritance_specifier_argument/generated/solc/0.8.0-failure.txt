@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9827] Error: Invalid type for argument in constructor call. Invalid implicit conversion from abi to uint256 requested.
+    ╭─[input.sol:11:23]
+    │
+ 11 │ contract Test is Base(abi) {}
+    │                       ─┬─  
+    │                        ╰─── Error occurred here.
+────╯

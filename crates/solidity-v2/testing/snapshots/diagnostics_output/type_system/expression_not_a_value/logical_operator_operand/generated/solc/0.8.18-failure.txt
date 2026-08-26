@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[TypeError 2271] Error: Built-in binary operator && cannot be applied to types abi and tx.
+   ╭─[input.sol:8:23]
+   │
+ 8 │     bool flaggedAnd = abi && tx;
+   │                       ────┬────  
+   │                           ╰────── Error occurred here.
+───╯
+
+[TypeError 9574] Error: Type abi is not implicitly convertible to expected type bool.
+   ╭─[input.sol:8:5]
+   │
+ 8 │     bool flaggedAnd = abi && tx;
+   │     ─────────────┬─────────────  
+   │                  ╰─────────────── Error occurred here.
+───╯
+
+[TypeError 2271] Error: Built-in binary operator || cannot be applied to types block and msg.
+   ╭─[input.sol:9:22]
+   │
+ 9 │     bool flaggedOr = block || msg;
+   │                      ──────┬─────  
+   │                            ╰─────── Error occurred here.
+───╯
+
+[TypeError 9574] Error: Type block is not implicitly convertible to expected type bool.
+   ╭─[input.sol:9:5]
+   │
+ 9 │     bool flaggedOr = block || msg;
+   │     ──────────────┬──────────────  
+   │                   ╰──────────────── Error occurred here.
+───╯

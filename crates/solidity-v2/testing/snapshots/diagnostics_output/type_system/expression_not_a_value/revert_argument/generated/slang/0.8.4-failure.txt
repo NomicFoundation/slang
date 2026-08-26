@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[type-system/expression-not-a-value] Error: This built-in cannot be used as a value.
+    ╭─[input.sol:10:20]
+    │
+ 10 │     revert Flagged(abi);
+    │                    ─┬─  
+    │                     ╰─── Error occurred here.
+────╯
+
+[type-system/expression-not-a-value] Error: This built-in cannot be used as a value.
+    ╭─[input.sol:14:28]
+    │
+ 14 │     revert Flagged({value: tx});
+    │                            ─┬  
+    │                             ╰── Error occurred here.
+────╯

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/expression-not-a-value] Error: This built-in cannot be used as a value.
+    ╭─[input.sol:11:18]
+    │
+ 11 │     take({value: abi});
+    │                  ─┬─  
+    │                   ╰─── Error occurred here.
+────╯
