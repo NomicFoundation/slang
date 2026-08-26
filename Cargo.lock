@@ -4061,16 +4061,10 @@ name = "slang_solidity"
 version = "1.3.8"
 dependencies = [
  "ariadne",
- "indexmap 2.14.0",
  "metaslang_bindings",
  "metaslang_cst",
- "num-bigint",
- "num-integer",
- "num-traits",
- "paste",
  "semver 1.0.28",
  "serde",
- "sha3 0.12.0",
  "strum",
  "thiserror 2.0.20",
 ]

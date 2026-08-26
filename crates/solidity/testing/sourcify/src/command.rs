@@ -63,8 +63,6 @@ pub struct TestOptions {
 pub enum CheckBinderMode {
     None,
     V1,
-    V2,
-    Compare,
 }
 
 #[derive(Debug, Parser)]

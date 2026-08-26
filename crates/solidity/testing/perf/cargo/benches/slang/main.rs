@@ -8,12 +8,9 @@ use slang_solidity::compilation::CompilationUnit;
 use solidity_testing_perf_cargo::config::benchmark_config_with_num_callers;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
 use solidity_testing_perf_cargo::tests;
-use solidity_testing_perf_cargo::tests::slang::binder_v2_run::BuiltSemanticAnalysis;
 use solidity_testing_perf_cargo::tests::slang::bindings_build::BuiltBindingGraph;
 // Local aliases for the setup functions, so the generated benchmark ID reads
 // `parser_setup("weighted_pool")` instead of `tests :: slang :: parser :: setup("weighted_pool")`.
-use tests::slang::binder_v2_cleanup::setup as binder_v2_cleanup_setup;
-use tests::slang::binder_v2_run::setup as binder_v2_run_setup;
 use tests::slang::bindings_build::setup as bindings_build_setup;
 use tests::slang::bindings_resolve::setup as bindings_resolve_setup;
 use tests::slang::cursor::setup as cursor_setup;
@@ -139,37 +136,9 @@ mod bindings_group {
 }
 use bindings_group::bindings;
 
-mod v2_binder_group {
-    use super::{
-        BuiltSemanticAnalysis, CompilationUnit, Rc, binder_v2_cleanup_setup, binder_v2_run_setup,
-        black_box, library_benchmark, library_benchmark_group, tests,
-    };
-
-    bench_projects! {
-        #[library_benchmark(setup = binder_v2_run_setup)]
-        pub fn run(unit: Rc<CompilationUnit>) -> BuiltSemanticAnalysis {
-            black_box(tests::slang::binder_v2_run::run(black_box(unit)))
-        }
-    }
-
-    bench_projects! {
-        #[library_benchmark(setup = binder_v2_cleanup_setup)]
-        pub fn cleanup(unit: BuiltSemanticAnalysis) {
-            black_box(unit);
-        }
-    }
-
-    library_benchmark_group!(
-        name = v2_binder;
-        // __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
-        benchmarks = run, cleanup,
-    );
-}
-use v2_binder_group::v2_binder;
-
 main!(
     // Slang v1 is quite slow, so we use a smaller `num-callers` value
     // and live with not so accurate DHAT measurements.
     config = benchmark_config_with_num_callers(12);
-    library_benchmark_groups = cst, bindings, v2_binder,
+    library_benchmark_groups = cst, bindings,
 );
