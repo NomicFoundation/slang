@@ -1,11 +1,8 @@
 use std::sync::Arc;
 
-use slang_solidity_v2_common::evm_targets::EvmTarget;
-
 use crate::ast::{Definition, LibraryDefinition};
-use crate::compilation::{CompilationUnit, Configuration, FileId, ImportResolver};
-use crate::diagnostics::kinds::compilation::UnresolvedImport;
-use crate::utils::LanguageVersion;
+use crate::compilation::{CompilationUnit, FileId};
+use crate::tests::support;
 
 mod counter;
 
@@ -45,25 +42,8 @@ macro_rules! define_fixture {
     };
 }
 
-struct FixtureImportResolver;
-
-impl ImportResolver for FixtureImportResolver {
-    fn resolve_import(
-        &mut self,
-        _source_file_id: &FileId,
-        import_path: &str,
-    ) -> Result<FileId, UnresolvedImport> {
-        Ok(import_path.into())
-    }
-}
-
 pub(super) fn build_compilation_unit_from_fixture(files: &[FixtureFile]) -> Arc<CompilationUnit> {
-    let unit = CompilationUnit::create(Configuration {
-        language_version: LanguageVersion::LATEST,
-        evm_target: EvmTarget::LATEST,
-        sources: files.iter().map(|file| (file.id.clone(), file.contents)),
-        resolver: FixtureImportResolver,
-    });
+    let unit = support::compile(files.iter().map(|file| (file.id.clone(), file.contents)));
 
     assert!(
         unit.diagnostics().is_empty(),
