@@ -1,0 +1,67 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["TestBase" @ input.sol:1:10] (contract)
+- Def: #2 ["g" @ input.sol:2:12] (function, type: function () returns uint256)
+- Def: #3 ["Test" @ input.sol:7:10] (contract)
+- Def: #4 ["g" @ input.sol:8:12] (function, type: function () returns uint256)
+- Def: #5 ["parenthesised" @ input.sol:12:12] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (7):
+- Ref: ["TestBase" @ input.sol:7:18] -> #1
+- Ref: ["g" @ input.sol:15:11] -> #2
+- Ref: ["g" @ input.sol:16:13] -> #2
+- Ref: ["abi" @ input.sol:18:5] -> built-in
+- Ref: ["encode" @ input.sol:18:9] -> built-in
+- Ref: ["abi" @ input.sol:19:6] -> built-in
+- Ref: ["encode" @ input.sol:19:11] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract TestBase {
+    │          ────┬───  
+    │              ╰───── name: 1
+  2 │   function g() public pure virtual returns (uint) {
+    │            ┬  
+    │            ╰── name: 2
+    │ 
+  7 │ contract Test is TestBase {
+    │          ──┬─    ────┬───  
+    │            ╰─────────────── name: 3
+    │                      │     
+    │                      ╰───── ref: 1
+  8 │   function g() public pure override returns (uint) {
+    │            ┬  
+    │            ╰── name: 4
+    │ 
+ 12 │   function parenthesised() public pure {
+    │            ──────┬──────  
+    │                  ╰──────── name: 5
+    │ 
+ 15 │     super.g();
+    │           ┬  
+    │           ╰── ref: 2
+ 16 │     (super).g();
+    │             ┬  
+    │             ╰── ref: 2
+    │ 
+ 18 │     abi.encode(uint(1));
+    │     ─┬─ ───┬──  
+    │      ╰────────── built-in
+    │            │    
+    │            ╰──── built-in
+ 19 │     (abi).encode(uint(1));
+    │      ─┬─  ───┬──  
+    │       ╰─────────── built-in
+    │              │    
+    │              ╰──── built-in
+────╯

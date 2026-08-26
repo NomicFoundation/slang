@@ -790,6 +790,11 @@ mod expressions {
     }
 
     #[test]
+    fn parenthesised_operand() -> Result<()> {
+        run("expressions", "parenthesised_operand")
+    }
+
+    #[test]
     fn require_named_args() -> Result<()> {
         run("expressions", "require_named_args")
     }

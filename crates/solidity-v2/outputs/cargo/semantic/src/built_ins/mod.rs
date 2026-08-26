@@ -493,10 +493,10 @@ impl<'a> BuiltInsResolver<'a> {
     pub(crate) fn type_of_function_call(
         &mut self,
         built_in: &InternalBuiltIn,
-        argument_typings: &[Typing],
+        argument_types: Option<&[TypeId]>,
     ) -> Result<TypeId, BuiltInCallError> {
         let type_id = match built_in {
-            InternalBuiltIn::AbiDecode => self.type_of_abi_decode(argument_typings)?,
+            InternalBuiltIn::AbiDecode => self.type_of_abi_decode(argument_types)?,
             InternalBuiltIn::AbiEncode => self.types.bytes_memory(),
             InternalBuiltIn::AbiEncodeCall => self.types.bytes_memory(),
             InternalBuiltIn::AbiEncodePacked => self.types.bytes_memory(),
@@ -510,7 +510,10 @@ impl<'a> BuiltInsResolver<'a> {
             InternalBuiltIn::AddressStaticcall => self.types.boolean_bytes_tuple(),
             InternalBuiltIn::AddressTransfer => self.types.void(),
             InternalBuiltIn::ArrayPush(type_id) => {
-                if argument_typings.is_empty() {
+                // `push()` yields a reference to the new element, `push(v)`
+                // yields nothing. A missing type list means there was an
+                // argument, so it is the latter.
+                if argument_types.is_some_and(<[TypeId]>::is_empty) {
                     *type_id
                 } else {
                     self.types.void()
@@ -565,21 +568,22 @@ impl<'a> BuiltInsResolver<'a> {
 
     fn type_of_abi_decode(
         &mut self,
-        argument_typings: &[Typing],
+        argument_types: Option<&[TypeId]>,
     ) -> Result<TypeId, BuiltInCallError> {
+        let Some(argument_types) = argument_types else {
+            return Err(BuiltInCallError::UnresolvedDependency);
+        };
         // TODO(validation): report an error when `abi.decode` is not given
         // exactly two arguments.
-        if argument_typings.len() != 2 {
+        if argument_types.len() != 2 {
             return Err(BuiltInCallError::NotReportedYet);
         }
         // The second argument's own type failed to resolve.
-        let Typing::Resolved(type_id) = &argument_typings[1] else {
-            return Err(BuiltInCallError::UnresolvedDependency);
-        };
+        let type_id = argument_types[1];
 
         // `abi.decode(data, (T))`: a single-element tuple collapses to the
         // meta-type of `T`, which decodes to `T` itself.
-        if let Some(decoded) = self.type_denoted_by_meta_type(*type_id) {
+        if let Some(decoded) = self.type_denoted_by_meta_type(type_id) {
             return Ok(decoded);
         }
 
@@ -587,7 +591,7 @@ impl<'a> BuiltInsResolver<'a> {
         // the tuple of the types they denote. Note a *nested* tuple element is
         // not a type name and does not decode (matching solc, which rejects
         // eg. `abi.decode(data, (uint, (bool, bool)))`).
-        if let Type::Tuple(TupleType { types }) = self.types.get_type_by_id(*type_id) {
+        if let Type::Tuple(TupleType { types }) = self.types.get_type_by_id(type_id) {
             let element_ids = types.clone();
             let mut decoded = Vec::with_capacity(element_ids.len());
             for element_id in element_ids {
