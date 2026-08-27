@@ -26,11 +26,12 @@ run after that is offline and takes a couple of seconds. Nothing else is left
 behind — the per-version checkouts live in a temporary directory for the
 duration of the run.
 
-The run fails if any test **regresses** (fails without being in the baseline) or
-if the baseline is **stale** — a listed pair now passes, or an
-[expected failure](#expected-failures) does. This is what makes it a CI
-regression guard. The diagnostics behind the first few newly-failing tests are
-printed, so a regression points straight at its cause.
+The run fails if **any** test fails without being an
+[expected failure](#expected-failures), and separately if the checked-in results
+are **stale** (a listed pair now passes, or an expected failure does). The
+results file is written before either check, so a red run still leaves an
+up-to-date record of what's left. The diagnostics behind the first few
+newly-failing tests are printed, so a regression points straight at its cause.
 
 ## How it works
 

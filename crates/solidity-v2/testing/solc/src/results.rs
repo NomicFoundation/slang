@@ -9,7 +9,7 @@ use slang_solidity_v2_common::collections::{SortedMap, SortedSet};
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 const CRATE_NAME: &str = "solidity_v2_testing_solc";
-const RESULTS_FILE: &str = "results.generated.json";
+pub const RESULTS_FILE: &str = "results.generated.json";
 
 /// A single `(version, test)` pair that slang didn't compile cleanly.
 pub struct Failure {
@@ -59,8 +59,7 @@ impl<F> VersionRun<F> {
     }
 }
 
-/// What a whole run produced, per version. Checking this in is what turns it
-/// into the baseline the next run is held to.
+/// What a whole run produced, per version.
 #[derive(Default, Serialize, Deserialize)]
 #[serde(transparent)]
 pub struct TestResults {

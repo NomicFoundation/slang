@@ -1,15 +1,17 @@
-use anyhow::Result;
+use anyhow::{Result, bail};
 use infra_utils::codegen::CodegenFileSystem;
 use rayon::prelude::*;
 
 use crate::dataset::Datasets;
 use crate::expected_failures;
-use crate::results::{AllFailures, Failure, SplitFailures, TestResults, VersionRun};
+use crate::results::{AllFailures, Failure, RESULTS_FILE, SplitFailures, TestResults, VersionRun};
 use crate::runner::{self, Outcome};
 
-/// Fetches every supported version's semantic tests, compiles all of them, and
+/// Fetches every supported version's semantic tests, compiles all of them,
 /// writes the result out through [`CodegenFileSystem`] — which rewrites the
-/// checked-in file locally, and asserts it still matches in CI.
+/// checked-in file locally, and asserts it still matches in CI — and then holds
+/// the run to it: any test slang rejected that isn't an expected failure fails
+/// this suite.
 pub fn run() -> Result<()> {
     let datasets = Datasets::create()?;
 
@@ -28,11 +30,25 @@ pub fn run() -> Result<()> {
     let results: TestResults = runs.into_iter().collect();
     report_summary(&results);
 
+    // Written before the error are reported.
     results.write(&mut CodegenFileSystem::default())?;
 
     // Errors are reported at the end of the function, to
     // guarantee the snapshot test file is written.
-    stale_check
+    stale_check?;
+
+    let unexpected = results.unexpected_failures();
+
+    if unexpected > 0 {
+        bail!(
+            "slang rejected {unexpected} semantic test(s) that `solc` compiles. Each \
+             one is either a gap to fix, or a difference we stand behind and \
+             should declare in `src/expected_failures.rs`; they are listed per \
+             version in `{RESULTS_FILE}`."
+        );
+    }
+
+    Ok(())
 }
 
 /// Compiles every test in every dataset.
