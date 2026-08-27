@@ -7,11 +7,12 @@ use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::syntax::IncompatibleSyntaxVersion;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::versions::{LanguageVersion, LanguageVersionSpecifier};
-use slang_solidity_v2_cst::structured_cst::TextRange;
-use slang_solidity_v2_cst::structured_cst::nodes::*;
+
+use crate::structured_cst::TextRange;
+use crate::structured_cst::nodes::*;
 
 /// Validate that all nodes in the given `SourceUnit` are valid for the given language version.
-pub fn validate_syntax_version(
+pub fn validate(
     root: &SourceUnit,
     version: LanguageVersion,
     file_id: &FileId,

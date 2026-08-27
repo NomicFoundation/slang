@@ -206,8 +206,9 @@ Fields:
 
     Both variants accept an optional `expected_solc_divergence` list,
     declaring where slang and solc are expected to disagree on the status
-    (success/failure) of a snapshot — for diagnostics where Slang is
-    intentionally stricter/looser than solc. Each entry has a `reason`, and a
+    (`success`/`warning`/`failure`) of a snapshot — for diagnostics where Slang
+    is intentionally stricter/looser than solc, or where one of them reports
+    something the other doesn't model at all. Each entry has a `reason`, and a
     `specifier` ( `EvmTargetSpecifier` or `LanguageVersionSpecifier`).
 
     ```json

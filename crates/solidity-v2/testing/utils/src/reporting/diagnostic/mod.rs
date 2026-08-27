@@ -26,19 +26,20 @@ pub trait RenderDiagnostic {
 }
 
 pub fn render<D: RenderDiagnostic>(
-    error: &D,
+    diagnostic: &D,
     source_id: &str,
     source: &str,
     with_color: bool,
 ) -> String {
     use ariadne::{Color, Config, Label, Report, ReportKind, Source};
 
-    let (kind, color) = match error.severity() {
+    let (kind, color) = match diagnostic.severity() {
         DiagnosticSeverity::Error => (ReportKind::Error, Color::Red),
+        DiagnosticSeverity::Warning => (ReportKind::Warning, Color::Yellow),
     };
 
-    let message = error.message();
-    let code = error.code();
+    let message = diagnostic.message();
+    let code = diagnostic.code();
 
     if source.is_empty() {
         return match code {
@@ -54,8 +55,8 @@ pub fn render<D: RenderDiagnostic>(
     // TODO(v2): Once https://github.com/zesterer/ariadne/pull/159 is released we should be able to
     // move to a newer version of ariadne and use IndexType::Byte, to avoid this conversion.
     let range = {
-        let start = source[..error.text_range().start].chars().count();
-        let end = source[..error.text_range().end].chars().count();
+        let start = source[..diagnostic.text_range().start].chars().count();
+        let end = source[..diagnostic.text_range().end].chars().count();
         start..end
     };
 
@@ -65,7 +66,7 @@ pub fn render<D: RenderDiagnostic>(
         .with_label(
             Label::new((source_id, range))
                 .with_color(color)
-                .with_message("Error occurred here."),
+                .with_message(format!("{:?} occurred here.", diagnostic.severity())),
         );
     if let Some(code) = code {
         report = report.with_code(code);

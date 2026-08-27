@@ -3287,6 +3287,28 @@ mod syntax {
         run("syntax", "library_inheritance")
     }
 
+    mod missing_version_pragma {
+        use super::*;
+
+        #[test]
+        fn imported_file_does_not_count() -> Result<()> {
+            run(
+                "syntax/missing_version_pragma",
+                "imported_file_does_not_count",
+            )
+        }
+
+        #[test]
+        fn no_pragma() -> Result<()> {
+            run("syntax/missing_version_pragma", "no_pragma")
+        }
+
+        #[test]
+        fn only_other_pragmas() -> Result<()> {
+            run("syntax/missing_version_pragma", "only_other_pragmas")
+        }
+    }
+
     #[test]
     fn more_than_one_inheritance_list() -> Result<()> {
         run("syntax", "more_than_one_inheritance_list")

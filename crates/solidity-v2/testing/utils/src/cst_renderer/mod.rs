@@ -3,7 +3,7 @@
 //! ## Output format
 //!
 //! - **`Source:`** — annotated source lines with byte ranges.
-//! - **`Error:`** (failure) — rendered diagnostic output.
+//! - **`Diagnostics:`** — rendered diagnostic output, when the parse reported any.
 //! - **`Tree:`** (successful parser) — nested CST structure with inline previews and byte ranges.
 //!
 //! ## Symbol legend
@@ -42,10 +42,7 @@ pub(crate) fn format_label_kind(label: &str, kind: &str) -> String {
 }
 
 /// Render a parse result (success or failure) to YAML format.
-///
-/// Returns a tuple of (`is_success`, `rendered_output`), where `is_success` is true if
-/// `result` had no errors.
-pub fn render(source: &str, source_id: &str, result: &ParseOutput) -> (bool, String) {
+pub fn render(source: &str, source_id: &str, result: &ParseOutput) -> String {
     let mut w = String::new();
 
     // Write the source code
@@ -57,12 +54,12 @@ pub fn render(source: &str, source_id: &str, result: &ParseOutput) -> (bool, Str
         diagnostics,
     } = result;
 
-    let errors: Vec<String> = diagnostics
+    let rendered: Vec<String> = diagnostics
         .iter()
         .map(|e| diagnostic::render(e, source_id, source, false))
         .collect();
 
-    let is_success = !write_errors(&mut w, &errors).unwrap();
+    write_diagnostics(&mut w, &rendered).unwrap();
 
     // Write the Tree
     writeln!(&mut w, "Tree:").unwrap();
@@ -72,7 +69,7 @@ pub fn render(source: &str, source_id: &str, result: &ParseOutput) -> (bool, Str
         w.push_str(&frag);
     }
 
-    (is_success, w)
+    w
 }
 
 /// Helper to accumulate rendered children, merge their ranges,
@@ -213,19 +210,19 @@ fn render_preview(source: &str, range: &Range<usize>) -> String {
     }
 }
 
-fn write_errors(w: &mut String, errors: &Vec<String>) -> Result<bool, std::fmt::Error> {
-    if errors.is_empty() {
-        return Ok(false);
+fn write_diagnostics(w: &mut String, rendered: &[String]) -> Result<(), std::fmt::Error> {
+    if rendered.is_empty() {
+        return Ok(());
     }
 
-    writeln!(w, "Errors: # {count} total", count = errors.len())?;
+    writeln!(w, "Errors: # {count} total", count = rendered.len())?;
 
-    for error in errors {
+    for diagnostic in rendered {
         writeln!(w, "  - >")?;
-        for line in error.lines() {
+        for line in diagnostic.lines() {
             writeln!(w, "    {line}")?;
         }
     }
 
-    Ok(true)
+    Ok(())
 }

@@ -18,6 +18,8 @@ license = "MIT"
 keywords = ["CST"]
 categories = ["compilers", "CST"]
 
+[dependencies]
+slang_solidity_v2_common = { workspace = true }
 
 [lints]
 workspace = true

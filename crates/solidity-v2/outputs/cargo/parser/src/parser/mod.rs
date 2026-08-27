@@ -8,12 +8,11 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::{
     SourceUnit, new_source_unit, new_source_unit_members,
 };
+use slang_solidity_v2_cst::validation::validate_cst;
 
 use crate::lexer::{LexemeKind, Lexer};
-use crate::parser::validation::validate_syntax_version;
 
 mod parser_helpers;
-mod validation;
 
 lalrpop_mod!(
     // Since this is generated code that we don't track, we rather not check for formatting
@@ -73,30 +72,31 @@ impl Parser {
             file_id,
             diagnostics: DiagnosticCollection::default(),
         };
-        let result = parser.parse(&mut ctx, lexer);
-        match result {
+
+        let source_unit = match parser.parse(&mut ctx, lexer) {
             Ok(source_unit) => {
-                // TODO(v2): these tests should really go through 'CompilationUnit' once it is ready.
-                // This way, we won't have to call individual validation APIs.
-                // All errors should be collected during the compilation unit construction.
-                validate_syntax_version(
+                // Run CST validation, only if the parser succeeds in producing a full tree:
+                validate_cst(
                     &source_unit,
-                    language_version,
                     file_id,
+                    language_version,
                     &mut ctx.diagnostics,
                 );
-                ParseOutput {
-                    source_unit,
-                    diagnostics: ctx.diagnostics,
-                }
+
+                source_unit
             }
             Err(e) => {
                 convert_parse_error(file_id, &mut ctx.diagnostics, e);
-                ParseOutput {
-                    source_unit: new_source_unit(new_source_unit_members(vec![])),
-                    diagnostics: ctx.diagnostics,
-                }
+
+                // Parser has no error recovery yet, and returns the first error it finds without a tree.
+                // Create an empty source unit as a fallback:
+                new_source_unit(new_source_unit_members(vec![]))
             }
+        };
+
+        ParseOutput {
+            source_unit,
+            diagnostics: ctx.diagnostics,
         }
     }
 }
