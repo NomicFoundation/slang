@@ -73,6 +73,12 @@ pub enum Typing {
 }
 
 impl Typing {
+    /// Handed back by the typing lookups for a node that has none registered,
+    /// so they can borrow instead of building an owned `Typing` per miss. Also
+    /// serves a pass that sinks a typing to `Unresolved` while returning a
+    /// borrow.
+    pub(crate) const UNRESOLVED: Self = Self::Unresolved;
+
     /// Returns the resolved `TypeId`, if any.
     pub fn as_type_id(&self) -> Option<TypeId> {
         match self {
@@ -415,18 +421,21 @@ impl Binder {
         self.get_scope_by_id(scope_id).get_using_directives()
     }
 
-    pub fn node_typing(&self, node_id: NodeId) -> Typing {
+    /// The typing registered for `node_id`, borrowed: a `Typing` is 32 bytes
+    /// and owns a `Vec` when it holds an overload set, and this is looked up on
+    /// nearly every expression. Callers that need to keep one clone it.
+    pub fn node_typing(&self, node_id: NodeId) -> &Typing {
         self.node_typing
             .get(&node_id)
-            .cloned()
-            .unwrap_or(Typing::Unresolved)
+            .unwrap_or(&Typing::UNRESOLVED)
     }
 
-    pub fn common_operand_typing(&self, node_id: NodeId) -> Typing {
+    /// The common operand typing recorded for the comparison at `node_id`,
+    /// borrowed for the same reason as [`Self::node_typing`].
+    pub fn common_operand_typing(&self, node_id: NodeId) -> &Typing {
         self.common_operand_typing
             .get(&node_id)
-            .cloned()
-            .unwrap_or(Typing::Unresolved)
+            .unwrap_or(&Typing::UNRESOLVED)
     }
 
     pub(crate) fn set_node_type(&mut self, node_id: NodeId, type_id: Option<TypeId>) {

@@ -145,7 +145,7 @@ fn test_overloaded_call_operand_narrows_to_selected_overload() {
     let sole_parameter_type = |call: &ir::FunctionCallExpression| -> TypeId {
         let node_id = call.operand.node_id().expect("operand has a node id");
         let type_id = match binder.node_typing(node_id) {
-            Typing::Resolved(type_id) => type_id,
+            &Typing::Resolved(type_id) => type_id,
             other => panic!("operand should be narrowed to a single overload, got {other:?}"),
         };
         let Type::Function(FunctionType {
@@ -208,7 +208,7 @@ fn test_overloaded_declaration_via_type_name_operand_narrows() {
     let selected_definition = |call: &ir::FunctionCallExpression| {
         let node_id = call.operand.node_id().expect("operand has a node id");
         match binder.node_typing(node_id) {
-            Typing::Resolved(type_id) => match types.get_type_by_id(type_id) {
+            &Typing::Resolved(type_id) => match types.get_type_by_id(type_id) {
                 Type::UserMetaType(UserMetaType { definition_id }) => *definition_id,
                 other => panic!("operand should be a declaration meta type, got {other:?}"),
             },

@@ -105,7 +105,7 @@ fn check_fallback_function(
     // The mutability and signature can be extracted from the function's type,
     // computed during type definition. A function definition always types to a
     // function type.
-    let Typing::Resolved(type_id) = binder.node_typing(node.id()) else {
+    let &Typing::Resolved(type_id) = binder.node_typing(node.id()) else {
         unreachable!("fallback function definition is not typed");
     };
     let Type::Function(function_type) = types.get_type_by_id(type_id) else {

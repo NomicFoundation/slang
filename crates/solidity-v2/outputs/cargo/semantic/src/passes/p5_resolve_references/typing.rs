@@ -1,4 +1,5 @@
 use ruint::aliases::{U160, U256};
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     AmbiguousReference, MemberNotFound, NoMatchingCallableDeclaration,
 };
@@ -13,8 +14,9 @@ use slang_solidity_v2_ir::ir::NodeIdentity;
 
 use super::Pass;
 use super::disambiguation::OverloadMatch;
-use crate::binder::{Definition, Resolution, Typing};
+use crate::binder::{Binder, Definition, Resolution, Typing};
 use crate::built_ins::BuiltInCallError;
+use crate::context::FileNodeMapper;
 use crate::passes::common::node_location;
 use crate::types::{
     AddressType, ArraySliceType, ArrayType, ContractType, DataLocation, ErrorType, EventType,
@@ -33,17 +35,24 @@ impl Pass<'_> {
         )
     }
 
-    /// The typing registered for `node`, checking nothing: an overload set is
-    /// handed on undetermined, so a callee can still select from it. This is a
-    /// plain lookup for the typing each expression registers during the pass.
-    #[inline]
-    pub(super) fn raw_typing_of_expression(&self, node: &ir::Expression) -> Typing {
+    /// The typing registered for `node`, borrowed out of `binder`. Takes the
+    /// binder alone rather than the whole pass, so that a caller which also
+    /// reports can hold this borrow and `diagnostics` at the same time.
+    fn typing_of_expression_in<'a>(binder: &'a Binder, node: &ir::Expression) -> &'a Typing {
         // Every expression variant registers its typing in the binder during
         // the pass, so we simply look it up by `NodeId`.
         let node_id = node
             .node_id()
             .expect("expression should have a NodeId to look up its typing");
-        self.binder.node_typing(node_id)
+        binder.node_typing(node_id)
+    }
+
+    /// The typing registered for `node`, checking nothing: an overload set is
+    /// handed on undetermined, so a callee can still select from it. This is a
+    /// plain lookup for the typing each expression registers during the pass.
+    #[inline]
+    pub(super) fn raw_typing_of_expression(&self, node: &ir::Expression) -> &Typing {
+        Self::typing_of_expression_in(self.binder, node)
     }
 
     /// The typing of `node` where nothing can select from an overload set, so
@@ -52,39 +61,46 @@ impl Pass<'_> {
     /// name something other than a value, so a position that requires one
     /// should use [`Self::check_type_of_value_expression`] instead.
     #[inline]
-    pub(super) fn check_typing_of_expression(&mut self, node: &ir::Expression) -> Typing {
-        match self.raw_typing_of_expression(node) {
-            Typing::Undetermined(_) => {
-                self.report_ambiguous_reference(node);
-                Typing::Unresolved
-            }
-            typing => typing,
+    pub(super) fn check_typing_of_expression(&mut self, node: &ir::Expression) -> &Typing {
+        // The returned typing is borrowed out of `binder` while reporting takes
+        // `diagnostics`, so both are reached as separate fields to keep the
+        // borrows disjoint. Going through `Self::raw_typing_of_expression`
+        // would borrow the whole pass instead, and conflict.
+        let typing = Self::typing_of_expression_in(self.binder, node);
+        if matches!(typing, Typing::Undetermined(_)) {
+            Self::report_ambiguous_reference(self.diagnostics, self.file_node_mapper, node);
+            return &Typing::UNRESOLVED;
         }
+        typing
     }
 
-    /// The type of `node` in a position that requires a value. On top of
-    /// [`Self::check_typing_of_expression`], the typings that name something
-    /// which is not a value have no type here: a built-in (a namespace such as
-    /// `abi`, or a built-in function), `super`, and an uncalled `new`.
+    /// The type of `node` in a position that requires a value. Reports the
+    /// overload set [`Self::check_typing_of_expression`] does, and on top of it
+    /// the typings that name something which is not a value: a built-in (a
+    /// namespace such as `abi`, or a built-in function), `super`, and an
+    /// uncalled `new`.
     #[inline]
     pub(super) fn check_type_of_value_expression(
         &mut self,
         node: &ir::Expression,
     ) -> Option<TypeId> {
-        match self.check_typing_of_expression(node) {
-            Typing::BuiltIn(_) => {
-                self.report_expression_not_a_value(node, NotAValueKind::BuiltIn);
+        // The typing is matched down to a `Copy` outcome first, which releases
+        // the borrow of `binder` it came from and lets the reporting below take
+        // the pass mutably.
+        let outcome = match self.check_typing_of_expression(node) {
+            Typing::Resolved(type_id) | Typing::This(type_id) => Ok(Some(*type_id)),
+            // An overload set has already been reported and sunk above.
+            Typing::Unresolved | Typing::Undetermined(_) => Ok(None),
+            Typing::BuiltIn(_) => Err(NotAValueKind::BuiltIn),
+            Typing::Super => Err(NotAValueKind::Super),
+            Typing::NewExpression(_) => Err(NotAValueKind::UncalledNew),
+        };
+        match outcome {
+            Ok(type_id) => type_id,
+            Err(kind) => {
+                self.report_expression_not_a_value(node, kind);
                 None
             }
-            Typing::Super => {
-                self.report_expression_not_a_value(node, NotAValueKind::Super);
-                None
-            }
-            Typing::NewExpression(_) => {
-                self.report_expression_not_a_value(node, NotAValueKind::UncalledNew);
-                None
-            }
-            typing => typing.as_type_id(),
         }
     }
 
@@ -146,7 +162,11 @@ impl Pass<'_> {
             }
             OverloadMatch::Unique(selected) => Some(selected),
             OverloadMatch::Ambiguous(selected) => {
-                self.report_ambiguous_identifier(identifier);
+                Self::report_ambiguous_identifier(
+                    self.diagnostics,
+                    self.file_node_mapper,
+                    identifier,
+                );
                 Some(selected)
             }
         }
@@ -166,7 +186,11 @@ impl Pass<'_> {
             }
             OverloadMatch::Unique(selected) => Some(selected),
             OverloadMatch::Ambiguous(selected) => {
-                self.report_ambiguous_identifier(identifier);
+                Self::report_ambiguous_identifier(
+                    self.diagnostics,
+                    self.file_node_mapper,
+                    identifier,
+                );
                 Some(selected)
             }
         }
@@ -176,19 +200,31 @@ impl Pass<'_> {
     /// Kept out of line so that reporting, which is rare, does not stop
     /// [`Self::check_typing_of_expression`] from inlining into its many
     /// callers.
+    ///
+    /// Takes the two fields it needs rather than the pass, so that a caller
+    /// holding a typing borrowed out of `binder` can still report.
     #[cold]
     #[inline(never)]
-    fn report_ambiguous_reference(&mut self, node: &ir::Expression) {
+    fn report_ambiguous_reference(
+        diagnostics: &mut DiagnosticCollection,
+        file_node_mapper: &FileNodeMapper,
+        node: &ir::Expression,
+    ) {
         if let Some(identifier) = reference_identifier_for_expression(node) {
-            self.report_ambiguous_identifier(identifier);
+            Self::report_ambiguous_identifier(diagnostics, file_node_mapper, identifier);
         }
     }
 
     /// The diagnostic is located at the identifier the reference was made
     /// through, which is also where its name comes from.
-    fn report_ambiguous_identifier(&mut self, identifier: &ir::Identifier) {
+    fn report_ambiguous_identifier(
+        diagnostics: &mut DiagnosticCollection,
+        file_node_mapper: &FileNodeMapper,
+        identifier: &ir::Identifier,
+    ) {
+        let (file_id, range) = node_location(identifier, file_node_mapper);
         let name = identifier.unparse().to_owned();
-        self.push_diagnostic(identifier, AmbiguousReference { name });
+        diagnostics.push(file_id, range, AmbiguousReference { name });
     }
 
     pub(super) fn type_of_elementary_type(elementary_type: &ir::ElementaryType) -> Type {
@@ -472,11 +508,13 @@ impl Pass<'_> {
         match resolution {
             Resolution::Unresolved => Typing::Unresolved,
             Resolution::BuiltIn(built_in) => self.built_ins_resolver().typing_of(built_in),
-            Resolution::Definition(definition_id) => self.binder.node_typing(*definition_id),
+            Resolution::Definition(definition_id) => {
+                self.binder.node_typing(*definition_id).clone()
+            }
             Resolution::Ambiguous(definitions) => {
                 let mut type_ids = Vec::new();
                 for definition_id in definitions {
-                    if let Typing::Resolved(type_id) = self.binder.node_typing(*definition_id) {
+                    if let &Typing::Resolved(type_id) = self.binder.node_typing(*definition_id) {
                         type_ids.push(type_id);
                     }
                 }
@@ -695,7 +733,7 @@ impl Pass<'_> {
         node: &ir::FunctionCallExpression,
         arguments: &[ir::Expression],
     ) -> Typing {
-        let operand_typing = self.raw_typing_of_expression(&node.operand);
+        let operand_typing = self.raw_typing_of_expression(&node.operand).clone();
         let argument_types = self.collect_positional_argument_types(arguments);
 
         match operand_typing {
@@ -928,7 +966,7 @@ impl Pass<'_> {
         node: &ir::FunctionCallExpression,
         arguments: &[ir::NamedArgument],
     ) -> Typing {
-        let operand_typing = self.raw_typing_of_expression(&node.operand);
+        let operand_typing = self.raw_typing_of_expression(&node.operand).clone();
         let argument_types = self.collect_named_argument_types(arguments);
 
         let (typing, definition_id) = match operand_typing {

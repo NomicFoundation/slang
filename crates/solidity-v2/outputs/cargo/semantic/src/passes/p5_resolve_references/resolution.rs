@@ -216,7 +216,7 @@ impl Pass<'_> {
             return false;
         }
 
-        let Typing::Resolved(definition_type_id) = self.binder.node_typing(definition_id) else {
+        let &Typing::Resolved(definition_type_id) = self.binder.node_typing(definition_id) else {
             // definition type cannot be resolved
             return false;
         };
@@ -288,7 +288,7 @@ impl Pass<'_> {
         let Some(Definition::Function(_)) = self.binder.find_definition_by_id(definition_id) else {
             return false;
         };
-        let Typing::Resolved(definition_type_id) = self.binder.node_typing(definition_id) else {
+        let &Typing::Resolved(definition_type_id) = self.binder.node_typing(definition_id) else {
             return false;
         };
         let Type::Function(function_type) = self.types.get_type_by_id(definition_type_id) else {

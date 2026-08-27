@@ -75,7 +75,7 @@ pub fn slang_solidity_v2_semantic::binder::Typing::fmt(&self, &mut core::fmt::Fo
 pub struct slang_solidity_v2_semantic::binder::Binder
 impl slang_solidity_v2_semantic::binder::Binder
 pub fn slang_solidity_v2_semantic::binder::Binder::assembly_block_referenced_definitions(&self, slang_solidity_v2_common::nodes::NodeId) -> &[slang_solidity_v2_common::nodes::NodeId]
-pub fn slang_solidity_v2_semantic::binder::Binder::common_operand_typing(&self, slang_solidity_v2_common::nodes::NodeId) -> slang_solidity_v2_semantic::binder::Typing
+pub fn slang_solidity_v2_semantic::binder::Binder::common_operand_typing(&self, slang_solidity_v2_common::nodes::NodeId) -> &slang_solidity_v2_semantic::binder::Typing
 pub fn slang_solidity_v2_semantic::binder::Binder::definitions(&self) -> &slang_solidity_v2_common::collections::aliases::Map<slang_solidity_v2_common::nodes::NodeId, slang_solidity_v2_semantic::binder::Definition>
 pub fn slang_solidity_v2_semantic::binder::Binder::enclosing_definition_node_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 pub fn slang_solidity_v2_semantic::binder::Binder::find_definition_by_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&slang_solidity_v2_semantic::binder::Definition>
@@ -83,7 +83,7 @@ pub fn slang_solidity_v2_semantic::binder::Binder::find_definition_by_identifier
 pub fn slang_solidity_v2_semantic::binder::Binder::find_reference_by_identifier_node_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&slang_solidity_v2_semantic::binder::Reference>
 pub fn slang_solidity_v2_semantic::binder::Binder::get_linearised_bases(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&alloc::vec::Vec<slang_solidity_v2_common::nodes::NodeId>>
 pub fn slang_solidity_v2_semantic::binder::Binder::get_references_by_definition_id(&self, slang_solidity_v2_common::nodes::NodeId) -> alloc::vec::Vec<slang_solidity_v2_common::nodes::NodeId>
-pub fn slang_solidity_v2_semantic::binder::Binder::node_typing(&self, slang_solidity_v2_common::nodes::NodeId) -> slang_solidity_v2_semantic::binder::Typing
+pub fn slang_solidity_v2_semantic::binder::Binder::node_typing(&self, slang_solidity_v2_common::nodes::NodeId) -> &slang_solidity_v2_semantic::binder::Typing
 pub fn slang_solidity_v2_semantic::binder::Binder::references(&self) -> &slang_solidity_v2_common::collections::aliases::Map<slang_solidity_v2_common::nodes::NodeId, slang_solidity_v2_semantic::binder::Reference>
 pub fn slang_solidity_v2_semantic::binder::Binder::resolved_operator_function(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl core::default::Default for slang_solidity_v2_semantic::binder::Binder

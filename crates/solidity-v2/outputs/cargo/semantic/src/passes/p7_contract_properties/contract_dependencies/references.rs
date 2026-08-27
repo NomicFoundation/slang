@@ -83,7 +83,7 @@ fn new_expression_target(
     types: &TypeRegistry,
     node: &ir::NewExpression,
 ) -> Option<NodeId> {
-    let Typing::NewExpression(type_id) = binder.node_typing(node.id()) else {
+    let &Typing::NewExpression(type_id) = binder.node_typing(node.id()) else {
         return None;
     };
     // A library cannot be created, so only a contract is a target here.
@@ -108,7 +108,7 @@ fn code_access_target(
         return None;
     }
     let operand_id = node.operand.node_id()?;
-    let Typing::BuiltIn(InternalBuiltIn::Type(type_id)) = binder.node_typing(operand_id) else {
+    let &Typing::BuiltIn(InternalBuiltIn::Type(type_id)) = binder.node_typing(operand_id) else {
         return None;
     };
     // A library is deployed too, so its code can be read the same way.
@@ -284,7 +284,7 @@ impl ReferenceCollector<'_> {
                         node.id(),
                         definition_id,
                         &function.ir_node,
-                        &operand_typing,
+                        operand_typing,
                     );
                 }
                 // A constant's value is compiled into the referencing unit,
