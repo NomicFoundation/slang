@@ -8,13 +8,14 @@ use crate::codegen::CodegenFileSystem;
 use crate::codegen::tera::TeraWrapper;
 use crate::paths::{PathExtensions, PrivatePathExtensions};
 
-pub struct CodegenRuntime;
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum CodegenRuntime {
+    V1Templates,
+    V2Templates,
+}
 
 impl CodegenRuntime {
-    /// Returning `None` skips the template, leaving it to the other codegen runners.
-    pub fn render_templates_in_place<'c>(
-        context_for: impl Fn(&Path) -> Option<&'c tera::Context> + Sync,
-    ) -> Result<()> {
+    pub fn render_templates(self, context: &tera::Context) -> Result<()> {
         let repo_root = Path::repo_root();
         let tera = TeraWrapper::new(&repo_root)?;
 
@@ -24,6 +25,7 @@ impl CodegenRuntime {
             // Templates starting with underscore only define shared components. They are still
             // loaded above (which is what registers those components), but never rendered alone.
             !path.unwrap_name().starts_with('_'))
+            .filter(|path| self == Self::get_template_owner(path))
             .collect::<Vec<_>>();
 
         assert!(
@@ -32,11 +34,7 @@ impl CodegenRuntime {
         );
 
         all_templates.par_iter().try_for_each(|template_path| {
-            let Some(context) = context_for(template_path) else {
-                return Ok(());
-            };
-
-            let generated_path = Self::get_in_place_path(template_path);
+            let generated_path = Self::get_generated_path(template_path);
             let rendered = tera.render(template_path, context)?;
 
             let mut fs = CodegenFileSystem::default();
@@ -44,7 +42,23 @@ impl CodegenRuntime {
         })
     }
 
-    fn get_in_place_path(template_path: &Path) -> PathBuf {
+    fn get_template_owner(template_path: &Path) -> Self {
+        let template_path = template_path.strip_repo_root().unwrap();
+
+        if template_path.starts_with("crates/language/")
+            || template_path.starts_with("crates/solidity/")
+        {
+            Self::V1Templates
+        } else if template_path.starts_with("crates/language-v2/")
+            || template_path.starts_with("crates/solidity-v2/")
+        {
+            Self::V2Templates
+        } else {
+            panic!("Cannot categorize template: {template_path:?}");
+        }
+    }
+
+    fn get_generated_path(template_path: &Path) -> PathBuf {
         assert_eq!(template_path.extension(), Some(OsStr::new("jinja2")));
 
         let template_path = template_path.with_extension("");
