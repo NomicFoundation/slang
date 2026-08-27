@@ -9,8 +9,6 @@ use crate::events::{Events, SingleTestOutcome, TestCaseOutcome};
 use crate::sourcify::{Contract, ContractArchive, Manifest};
 
 mod binder_v1_check;
-mod binder_v2_check;
-mod compare_binders;
 mod parser_v1_check;
 mod parser_v2_check;
 mod version_inference_check;
@@ -80,12 +78,6 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
                     CheckBinderMode::V1 => {
                         v1_test_outcome = binder_v1_check::run(contract, &unit, events);
                     }
-                    CheckBinderMode::V2 => {
-                        v1_test_outcome = binder_v2_check::run(contract, &unit, events);
-                    }
-                    CheckBinderMode::Compare => {
-                        v1_test_outcome = compare_binders::run(contract, &unit, events);
-                    }
                 }
             }
 
@@ -153,17 +145,12 @@ fn uses_exotic_parser_bug(contract: &Contract) -> bool {
 enum BindingError {
     UnresolvedReference(Cursor),
     UnboundIdentifier(Cursor),
-    MissingDefinition(Cursor),
-    MissingReference(Cursor),
 }
 
 impl Diagnostic for BindingError {
     fn text_range(&self) -> TextRange {
         let cursor = match self {
-            Self::UnboundIdentifier(cursor)
-            | Self::UnresolvedReference(cursor)
-            | Self::MissingDefinition(cursor)
-            | Self::MissingReference(cursor) => cursor,
+            Self::UnboundIdentifier(cursor) | Self::UnresolvedReference(cursor) => cursor,
         };
         cursor.text_range()
     }
@@ -183,18 +170,6 @@ impl Diagnostic for BindingError {
             Self::UnboundIdentifier(cursor) => {
                 format!(
                     "Missing identifier or definition for `{symbol}`",
-                    symbol = cursor.node().unparse()
-                )
-            }
-            Self::MissingDefinition(cursor) => {
-                format!(
-                    "Definition for `{symbol}` not found in new binder",
-                    symbol = cursor.node().unparse()
-                )
-            }
-            Self::MissingReference(cursor) => {
-                format!(
-                    "Reference for `{symbol}` not found in new binder",
                     symbol = cursor.node().unparse()
                 )
             }

@@ -23,8 +23,6 @@ on:
         options:
           - "none"
           - "v1"
-          - "v2"
-          - "compare"
   workflow_call:
     inputs:
       chain_id:

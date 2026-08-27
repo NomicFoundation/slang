@@ -44,7 +44,3 @@ pub mod cst;
 pub mod diagnostic;
 pub mod parser;
 pub mod utils;
-
-#[cfg(feature = "__private_backend_api")]
-#[doc(hidden)]
-pub mod backend;

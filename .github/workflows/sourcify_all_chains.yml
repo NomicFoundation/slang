@@ -16,8 +16,6 @@ on:
         options:
           - "none"
           - "v1"
-          - "v2"
-          - "compare"
 
 permissions: {}
 

@@ -28,7 +28,7 @@ Each cargo benchmark identifier has the shape:
 `{file}::{group}::{function} <project>:(<arguments>)`
 
 - `{file}` is the bench binary: `slang`, `slang_v2`, or `comparison`.
-- `{group}` is one of `cst`, `bindings`, or `v2_binder` for `slang`; `pipeline` for `slang_v2`; or `parsers` for `comparison`.
+- `{group}` is one of `cst` or `bindings` for `slang`; `pipeline` for `slang_v2`; or `parsers` for `comparison`.
 - `{function}` is the pipeline stage (`parser`, `cursor`, `query`, `bindings_build`, …) for `slang` / `slang_v2`, or the parser implementation (`slang`, `slang_v2`, `solar`, `tree_sitter`) for `comparison`.
 - `<project>` is one of the entries in [`projects.json`](./projects.json), attached as a `#[bench::<project>("<project>")]` attribute on the function. Functions only list the projects they actually support; in `comparison`, that's how per-parser exclusions (e.g., tree-sitter cannot parse `uniswap`) are expressed.
 

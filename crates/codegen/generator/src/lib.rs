@@ -1,14 +1,12 @@
 mod ast;
 mod bindings;
-mod ir;
 mod kinds;
 mod parser;
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
-use ir::builders::{GenericModel, build_ir_models};
 use language_definition::model::Language;
 use semver::Version;
 use serde::Serialize;
@@ -29,8 +27,6 @@ pub struct RuntimeModel {
     bindings: BindingsModel,
     kinds: KindsModel,
     parser: ParserModel,
-
-    ir_languages: BTreeMap<String, GenericModel>,
 }
 
 impl RuntimeModel {
@@ -45,8 +41,6 @@ impl RuntimeModel {
             bindings: BindingsModel::from_language(language)?,
             parser: ParserModel::from_language(language),
             kinds: KindsModel::from_language(language),
-
-            ir_languages: build_ir_models(language),
         })
     }
 }
