@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function testAddress(address recipient) public {
         bytes memory x1;

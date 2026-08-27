@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     uint256 add;
 

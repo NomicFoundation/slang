@@ -30,6 +30,7 @@ fn statement_types(analysis: &Analysis, owner: &str, function: &str) -> Vec<Opti
 #[test]
 fn test_super_keyword_types_as_super() {
     let source = r#"
+        pragma solidity *;
         contract A {
             function f() public virtual {}
         }
@@ -219,6 +220,7 @@ fn test_cast_address_to_library_is_library_typed() {
     // yields a value of the library type, which can then be compared against
     // another library value.
     let source = r#"
+        pragma solidity *;
         library MyLib {
             function f() public pure returns (uint) { return 1; }
         }
@@ -328,6 +330,7 @@ fn test_this_in_library_is_library_typed() {
     // `this` inside a library function is valid Solidity and has the library
     // type
     let source = r#"
+        pragma solidity *;
         library MyLib {
             function probe() internal view {
                 this;
@@ -350,6 +353,7 @@ fn test_this_in_library_is_library_typed() {
 #[test]
 fn test_this_inside_contract() {
     let source = r#"
+        pragma solidity *;
         contract MyContract {
             function probe() internal view {
                 this;
@@ -374,6 +378,7 @@ fn test_partially_applied_function_does_not_unify_into_array() {
     // `L.inc` is attached to `uint` via `using for`, so `t.inc` binds the
     // receiver and becomes a partially applied function with no mobile type.
     let source = r#"
+        pragma solidity *;
         library L {
             function inc(uint x) internal pure returns (uint) { return x + 1; }
         }
@@ -432,6 +437,7 @@ fn test_partially_applied_function_does_not_unify_into_array() {
 #[test]
 fn test_partially_applied_function_is_not_convertible() {
     let source = r#"
+        pragma solidity *;
         library L {
             function inc(uint x) internal pure {}
         }
@@ -567,6 +573,7 @@ fn test_static_library_call_is_not_partially_applied() {
     // is not a value receiver, so it must not bind the first parameter as a
     // partial application.
     let source = r#"
+        pragma solidity *;
         library L {
             function f(uint x) internal pure returns (bool) { return x > 0; }
         }

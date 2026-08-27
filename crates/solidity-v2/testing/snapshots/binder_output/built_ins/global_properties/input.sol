@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function testTx() public {
         address origin = tx.origin;

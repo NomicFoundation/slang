@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function test() internal {
         process({ rcpt: tx.origin, qty: 1 });

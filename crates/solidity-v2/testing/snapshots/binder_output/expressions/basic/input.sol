@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function playground() public returns (int) {
         int x = 1;

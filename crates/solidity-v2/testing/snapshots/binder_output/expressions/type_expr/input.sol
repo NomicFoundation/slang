@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     enum Answer { Yes, No }
     function testFunc() public {

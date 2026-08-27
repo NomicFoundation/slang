@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Lib {
     struct Value {
         int x;

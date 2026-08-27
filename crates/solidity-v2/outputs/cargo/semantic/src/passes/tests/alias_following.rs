@@ -40,14 +40,33 @@ fn test_follow_aliases_keeps_a_repeated_definition_in_its_first_position() {
         .file(
             "a.sol",
             r#"
+            pragma solidity *;
             import "b.sol";
             import "d.sol";
             import "c.sol";
             "#,
         )
-        .file("b.sol", "contract C {}")
-        .file("d.sol", "contract C {}")
-        .file("c.sol", r#"import {C} from "b.sol";"#)
+        .file(
+            "b.sol",
+            r#"
+            pragma solidity *;
+            contract C {}
+            "#,
+        )
+        .file(
+            "d.sol",
+            r#"
+            pragma solidity *;
+            contract C {}
+            "#,
+        )
+        .file(
+            "c.sol",
+            r#"
+            pragma solidity *;
+            import {C} from "b.sol";
+            "#,
+        )
         .run(Analyse::Definitions);
     let binder = analysis.binder();
 
@@ -83,13 +102,32 @@ fn test_follow_aliases_substitutes_a_target_in_place() {
         .file(
             "a.sol",
             r#"
+            pragma solidity *;
             import "c.sol";
             import "d.sol";
             "#,
         )
-        .file("b.sol", "contract C {}")
-        .file("c.sol", r#"import {C} from "b.sol";"#)
-        .file("d.sol", "contract C {}")
+        .file(
+            "b.sol",
+            r#"
+            pragma solidity *;
+            contract C {}
+            "#,
+        )
+        .file(
+            "c.sol",
+            r#"
+            pragma solidity *;
+            import {C} from "b.sol";
+            "#,
+        )
+        .file(
+            "d.sol",
+            r#"
+            pragma solidity *;
+            contract C {}
+            "#,
+        )
         .run(Analyse::Definitions);
     let binder = analysis.binder();
 

@@ -2,23 +2,23 @@
 
 Parse errors:
 [semantic/cyclic-inheritance] Error: Circular inheritance is not allowed.
-   ╭─[input.sol:1:1]
-   │
- 1 │ contract A is A {} // this should bind even though it makes no sense
-   │ ─────────┬────────  
-   │          ╰────────── Error occurred here.
-───╯
-[semantic/cyclic-inheritance] Error: Circular inheritance is not allowed.
    ╭─[input.sol:3:1]
    │
- 3 │ contract B is C {} // this should bind even though it makes no sense
+ 3 │ contract A is A {} // this should bind even though it makes no sense
    │ ─────────┬────────  
    │          ╰────────── Error occurred here.
 ───╯
 [semantic/cyclic-inheritance] Error: Circular inheritance is not allowed.
-   ╭─[input.sol:4:1]
+   ╭─[input.sol:5:1]
    │
- 4 │ contract C is B {} // this should bind even though it makes no sense
+ 5 │ contract B is C {} // this should bind even though it makes no sense
+   │ ─────────┬────────  
+   │          ╰────────── Error occurred here.
+───╯
+[semantic/cyclic-inheritance] Error: Circular inheritance is not allowed.
+   ╭─[input.sol:6:1]
+   │
+ 6 │ contract C is B {} // this should bind even though it makes no sense
    │ ─────────┬────────  
    │          ╰────────── Error occurred here.
 ───╯
@@ -26,16 +26,16 @@ Parse errors:
 ------------------------------------------------------------------------
 
 Definitions (3):
-- Def: #1 ["A" @ input.sol:1:10] (contract)
-- Def: #2 ["B" @ input.sol:3:10] (contract)
-- Def: #3 ["C" @ input.sol:4:10] (contract)
+- Def: #1 ["A" @ input.sol:3:10] (contract)
+- Def: #2 ["B" @ input.sol:5:10] (contract)
+- Def: #3 ["C" @ input.sol:6:10] (contract)
 
 ------------------------------------------------------------------------
 
 References (3):
-- Ref: ["A" @ input.sol:1:15] -> #1
-- Ref: ["C" @ input.sol:3:15] -> #3
-- Ref: ["B" @ input.sol:4:15] -> #2
+- Ref: ["A" @ input.sol:3:15] -> #1
+- Ref: ["C" @ input.sol:5:15] -> #3
+- Ref: ["B" @ input.sol:6:15] -> #2
 
 ------------------------------------------------------------------------
 
@@ -46,18 +46,18 @@ Unbound identifiers (0):
 Bindings: 
    ╭─[input.sol:1:1]
    │
- 1 │ contract A is A {} // this should bind even though it makes no sense
+ 3 │ contract A is A {} // this should bind even though it makes no sense
    │          ┬    ┬  
    │          ╰─────── name: 1
    │               │  
    │               ╰── ref: 1
    │ 
- 3 │ contract B is C {} // this should bind even though it makes no sense
+ 5 │ contract B is C {} // this should bind even though it makes no sense
    │          ┬    ┬  
    │          ╰─────── name: 2
    │               │  
    │               ╰── ref: 3
- 4 │ contract C is B {} // this should bind even though it makes no sense
+ 6 │ contract C is B {} // this should bind even though it makes no sense
    │          ┬    ┬  
    │          ╰─────── name: 3
    │               │  

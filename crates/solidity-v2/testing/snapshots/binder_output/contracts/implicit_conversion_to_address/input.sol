@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library FooUtils {
     function nop(address) internal {}
 }

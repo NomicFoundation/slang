@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Lib {
     function to160(uint256) internal returns (uint160) {}
 }

@@ -1,21 +1,21 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (6):
-- Def: #1 ["Test" @ input.sol:1:10] (contract)
-- Def: #2 ["test_new" @ input.sol:2:14] (function, type: function () returns uint256)
-- Def: #3 ["Container" @ input.sol:7:10] (contract)
-- Def: #4 ["Resource" @ input.sol:8:12] (struct)
-- Def: #5 ["value" @ input.sol:9:14] (struct member, type: uint256)
-- Def: #6 ["cell" @ input.sol:12:14] (function, type: function () returns Resource memory)
+- Def: #1 ["Test" @ input.sol:3:10] (contract)
+- Def: #2 ["test_new" @ input.sol:4:14] (function, type: function () returns uint256)
+- Def: #3 ["Container" @ input.sol:9:10] (contract)
+- Def: #4 ["Resource" @ input.sol:10:12] (struct)
+- Def: #5 ["value" @ input.sol:11:14] (struct member, type: uint256)
+- Def: #6 ["cell" @ input.sol:14:14] (function, type: function () returns Resource memory)
 
 ------------------------------------------------------------------------
 
 References (5):
-- Ref: ["Container" @ input.sol:3:20] -> #3
-- Ref: ["cell" @ input.sol:3:32] -> #6
-- Ref: ["value" @ input.sol:3:39] -> #5
-- Ref: ["Resource" @ input.sol:12:37] -> #4
-- Ref: ["Resource" @ input.sol:13:16] -> #4
+- Ref: ["Container" @ input.sol:5:20] -> #3
+- Ref: ["cell" @ input.sol:5:32] -> #6
+- Ref: ["value" @ input.sol:5:39] -> #5
+- Ref: ["Resource" @ input.sol:14:37] -> #4
+- Ref: ["Resource" @ input.sol:15:16] -> #4
 
 ------------------------------------------------------------------------
 
@@ -26,13 +26,13 @@ Unbound identifiers (0):
 Bindings: 
     ╭─[input.sol:1:1]
     │
-  1 │ contract Test {
+  3 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 1
-  2 │     function test_new() public returns (uint) {
+  4 │     function test_new() public returns (uint) {
     │              ────┬───  
     │                  ╰───── name: 2
-  3 │         return new Container().cell().value;
+  5 │         return new Container().cell().value;
     │                    ────┬────   ──┬─   ──┬──  
     │                        ╰───────────────────── ref: 3
     │                                  │      │    
@@ -40,22 +40,22 @@ Bindings:
     │                                         │    
     │                                         ╰──── ref: 5
     │ 
-  7 │ contract Container {
+  9 │ contract Container {
     │          ────┬────  
     │              ╰────── name: 3
-  8 │     struct Resource {
+ 10 │     struct Resource {
     │            ────┬───  
     │                ╰───── name: 4
-  9 │         uint value;
+ 11 │         uint value;
     │              ──┬──  
     │                ╰──── name: 5
     │ 
- 12 │     function cell() public returns (Resource memory) {
+ 14 │     function cell() public returns (Resource memory) {
     │              ──┬─                   ────┬───  
     │                ╰────────────────────────────── name: 6
     │                                         │     
     │                                         ╰───── ref: 4
- 13 │         return Resource(1);
+ 15 │         return Resource(1);
     │                ────┬───  
     │                    ╰───── ref: 4
 ────╯

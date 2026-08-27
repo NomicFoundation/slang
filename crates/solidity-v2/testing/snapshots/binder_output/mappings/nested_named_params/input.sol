@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     struct A {
         mapping(bytes32 value => uint256) positions;

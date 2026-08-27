@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Lib {
     uint private constant X = 1;
     uint public constant Y = 2;

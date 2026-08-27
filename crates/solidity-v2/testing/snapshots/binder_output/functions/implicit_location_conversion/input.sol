@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Utils {
     struct Point {
         uint x;

@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract CustomArrays {
     struct Value {
         uint value;

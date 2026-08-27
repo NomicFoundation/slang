@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Lib {
     using Math for *;
     function test(uint x) internal {

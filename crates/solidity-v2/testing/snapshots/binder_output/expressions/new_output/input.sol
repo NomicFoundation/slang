@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function test_new() public returns (uint) {
         return new Container().cell().value;

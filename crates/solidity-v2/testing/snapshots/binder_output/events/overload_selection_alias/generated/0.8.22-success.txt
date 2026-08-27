@@ -1,28 +1,28 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (9):
-- Def: #1 ["Pair" @ lib.sol:1:7] (event)
-- Def: #2 ["x" @ lib.sol:1:17] (parameter, type: uint256)
-- Def: #3 ["y" @ lib.sol:1:25] (parameter, type: uint256)
-- Def: #4 ["Flag" @ lib.sol:2:7] (event)
-- Def: #5 ["flag" @ lib.sol:2:17] (parameter, type: bool)
-- Def: #6 ["Renamed" @ main.sol:3:17] (imported symbol)
-- Def: #7 ["Renamed" @ main.sol:3:34] (imported symbol)
-- Def: #8 ["Test" @ main.sol:5:10] (contract)
-- Def: #9 ["test" @ main.sol:6:14] (function, type: function () returns void)
+- Def: #1 ["Pair" @ lib.sol:3:7] (event)
+- Def: #2 ["x" @ lib.sol:3:17] (parameter, type: uint256)
+- Def: #3 ["y" @ lib.sol:3:25] (parameter, type: uint256)
+- Def: #4 ["Flag" @ lib.sol:4:7] (event)
+- Def: #5 ["flag" @ lib.sol:4:17] (parameter, type: bool)
+- Def: #6 ["Renamed" @ main.sol:5:17] (imported symbol)
+- Def: #7 ["Renamed" @ main.sol:5:34] (imported symbol)
+- Def: #8 ["Test" @ main.sol:7:10] (contract)
+- Def: #9 ["test" @ main.sol:8:14] (function, type: function () returns void)
 
 ------------------------------------------------------------------------
 
 References (9):
-- Ref: ["Pair" @ main.sol:3:9] -> #1
-- Ref: ["Flag" @ main.sol:3:26] -> #4
-- Ref: ["Renamed" @ main.sol:7:14] -> #1
-- Ref: ["Renamed" @ main.sol:8:14] -> #4
-- Ref: ["Renamed" @ main.sol:10:14] -> #1
-- Ref: ["x" @ main.sol:10:23] -> #2
-- Ref: ["y" @ main.sol:10:29] -> #3
-- Ref: ["Renamed" @ main.sol:11:14] -> #4
-- Ref: ["flag" @ main.sol:11:23] -> #5
+- Ref: ["Pair" @ main.sol:5:9] -> #1
+- Ref: ["Flag" @ main.sol:5:26] -> #4
+- Ref: ["Renamed" @ main.sol:9:14] -> #1
+- Ref: ["Renamed" @ main.sol:10:14] -> #4
+- Ref: ["Renamed" @ main.sol:12:14] -> #1
+- Ref: ["x" @ main.sol:12:23] -> #2
+- Ref: ["y" @ main.sol:12:29] -> #3
+- Ref: ["Renamed" @ main.sol:13:14] -> #4
+- Ref: ["flag" @ main.sol:13:23] -> #5
 
 ------------------------------------------------------------------------
 
@@ -33,14 +33,14 @@ Unbound identifiers (0):
 Bindings: 
    ╭─[lib.sol:1:1]
    │
- 1 │ event Pair(uint x, uint y);
+ 3 │ event Pair(uint x, uint y);
    │       ──┬─      ┬       ┬  
    │         ╰────────────────── name: 1
    │                 │       │  
    │                 ╰────────── name: 2
    │                         │  
    │                         ╰── name: 3
- 2 │ event Flag(bool flag);
+ 4 │ event Flag(bool flag);
    │       ──┬─      ──┬─  
    │         ╰───────────── name: 4
    │                   │   
@@ -52,7 +52,7 @@ Bindings:
 Bindings: 
     ╭─[main.sol:1:1]
     │
-  3 │ import {Pair as Renamed, Flag as Renamed} from "./lib.sol";
+  5 │ import {Pair as Renamed, Flag as Renamed} from "./lib.sol";
     │         ──┬─    ───┬───  ──┬─    ───┬───  
     │           ╰─────────────────────────────── ref: 1
     │                    │       │        │     
@@ -62,27 +62,27 @@ Bindings:
     │                                     │     
     │                                     ╰───── name: 7
     │ 
-  5 │ contract Test {
+  7 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 8
-  6 │     function test() internal {
+  8 │     function test() internal {
     │              ──┬─  
     │                ╰─── name: 9
-  7 │         emit Renamed(1, 2);
+  9 │         emit Renamed(1, 2);
     │              ───┬───  
     │                 ╰───── ref: 1
-  8 │         emit Renamed(false);
+ 10 │         emit Renamed(false);
     │              ───┬───  
     │                 ╰───── ref: 4
     │ 
- 10 │         emit Renamed({x: 1, y: 2});
+ 12 │         emit Renamed({x: 1, y: 2});
     │              ───┬───  ┬     ┬  
     │                 ╰────────────── ref: 1
     │                       │     │  
     │                       ╰──────── ref: 2
     │                             │  
     │                             ╰── ref: 3
- 11 │         emit Renamed({flag: true});
+ 13 │         emit Renamed({flag: true});
     │              ───┬───  ──┬─  
     │                 ╰─────────── ref: 4
     │                         │   

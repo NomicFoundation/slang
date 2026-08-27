@@ -1,3 +1,5 @@
+pragma solidity *;
+
 import { slot } from "./slots.sol";  // even if undefined, the local def should have 2 references
 
 contract Foo {

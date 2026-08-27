@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Base {
     uint constant BASE_SIZE = 4;
 }

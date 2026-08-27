@@ -25,6 +25,7 @@ use crate::define_fixture;
 define_fixture!(
     Eip712,
     file: "main.sol", r#"
+pragma solidity *;
 import {Person as P} from "person.sol";
 
 contract C {
@@ -36,6 +37,7 @@ contract C {
 }
 "#,
     file: "person.sol", r#"
+pragma solidity *;
 struct Person {
     string name;
     address wallet;

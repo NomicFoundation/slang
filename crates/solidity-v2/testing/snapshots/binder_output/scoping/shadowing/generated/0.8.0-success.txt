@@ -1,23 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (9):
-- Def: #1 ["foo" @ input.sol:1:10] (function, type: function () returns void)
-- Def: #2 ["bar" @ input.sol:2:10] (function, type: function () returns void)
-- Def: #3 ["Base" @ input.sol:4:10] (contract)
-- Def: #4 ["bar" @ input.sol:5:14] (function, type: function () returns void)
-- Def: #5 ["Test" @ input.sol:8:10] (contract)
-- Def: #6 ["x" @ input.sol:9:9] (state var, type: int256)
-- Def: #7 ["test" @ input.sol:11:14] (function, type: function (int256) returns void)
-- Def: #8 ["x" @ input.sol:11:23] (parameter, type: int256)
-- Def: #9 ["foo" @ input.sol:17:14] (function, type: function () returns void)
+- Def: #1 ["foo" @ input.sol:3:10] (function, type: function () returns void)
+- Def: #2 ["bar" @ input.sol:4:10] (function, type: function () returns void)
+- Def: #3 ["Base" @ input.sol:6:10] (contract)
+- Def: #4 ["bar" @ input.sol:7:14] (function, type: function () returns void)
+- Def: #5 ["Test" @ input.sol:10:10] (contract)
+- Def: #6 ["x" @ input.sol:11:9] (state var, type: int256)
+- Def: #7 ["test" @ input.sol:13:14] (function, type: function (int256) returns void)
+- Def: #8 ["x" @ input.sol:13:23] (parameter, type: int256)
+- Def: #9 ["foo" @ input.sol:19:14] (function, type: function () returns void)
 
 ------------------------------------------------------------------------
 
 References (4):
-- Ref: ["Base" @ input.sol:8:18] -> #3
-- Ref: ["foo" @ input.sol:12:9] -> #9
-- Ref: ["bar" @ input.sol:13:9] -> #4
-- Ref: ["x" @ input.sol:14:9] -> #8
+- Ref: ["Base" @ input.sol:10:18] -> #3
+- Ref: ["foo" @ input.sol:14:9] -> #9
+- Ref: ["bar" @ input.sol:15:9] -> #4
+- Ref: ["x" @ input.sol:16:9] -> #8
 
 ------------------------------------------------------------------------
 
@@ -28,45 +28,45 @@ Unbound identifiers (0):
 Bindings: 
     ╭─[input.sol:1:1]
     │
-  1 │ function foo() {}
+  3 │ function foo() {}
     │          ─┬─  
     │           ╰─── name: 1
-  2 │ function bar() {}
+  4 │ function bar() {}
     │          ─┬─  
     │           ╰─── name: 2
     │ 
-  4 │ contract Base {
+  6 │ contract Base {
     │          ──┬─  
     │            ╰─── name: 3
-  5 │     function bar() public {}
+  7 │     function bar() public {}
     │              ─┬─  
     │               ╰─── name: 4
     │ 
-  8 │ contract Test is Base {
+ 10 │ contract Test is Base {
     │          ──┬─    ──┬─  
     │            ╰─────────── name: 5
     │                    │   
     │                    ╰─── ref: 3
-  9 │     int x;
+ 11 │     int x;
     │         ┬  
     │         ╰── name: 6
     │ 
- 11 │     function test(int x) public {
+ 13 │     function test(int x) public {
     │              ──┬─     ┬  
     │                ╰───────── name: 7
     │                       │  
     │                       ╰── name: 8
- 12 │         foo();
+ 14 │         foo();
     │         ─┬─  
     │          ╰─── ref: 9
- 13 │         bar();
+ 15 │         bar();
     │         ─┬─  
     │          ╰─── ref: 4
- 14 │         x;
+ 16 │         x;
     │         ┬  
     │         ╰── ref: 8
     │ 
- 17 │     function foo() internal {}
+ 19 │     function foo() internal {}
     │              ─┬─  
     │               ╰─── name: 9
 ────╯

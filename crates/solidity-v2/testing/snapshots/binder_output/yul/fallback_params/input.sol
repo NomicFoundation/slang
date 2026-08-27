@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     fallback(bytes calldata input) external payable returns (bytes memory output) {
         assembly {

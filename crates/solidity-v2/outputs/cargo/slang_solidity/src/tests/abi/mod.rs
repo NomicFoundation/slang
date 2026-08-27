@@ -12,6 +12,7 @@ use crate::define_fixture;
 define_fixture!(
     AbiWithTuples,
     file: "main.sol", r#"
+pragma solidity *;
 contract Test {
     struct S { uint a; uint[] b; T[] c; }
     struct T { uint x; uint y; }
@@ -61,6 +62,7 @@ contract Test is ITest, Base {
 define_fixture!(
     LibraryAbi,
     file: "main.sol", r#"
+pragma solidity *;
 library L {
     struct S { mapping(uint => uint) m; }
     type U is uint64;
@@ -77,6 +79,7 @@ library L {
 define_fixture!(
     LibraryUdvtAbi,
     file: "main.sol", r#"
+pragma solidity *;
 library L {
     type U is uint64;
 

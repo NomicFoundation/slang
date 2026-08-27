@@ -2,16 +2,16 @@
 
 Parse errors:
 [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
-   ╭─[lib.sol:1:1]
+   ╭─[lib.sol:3:1]
    │
- 1 │ error Failure(string name, uint level);
+ 3 │ error Failure(string name, uint level);
    │ ───────────────────┬───────────────────  
    │                    ╰───────────────────── Error occurred here.
 ───╯
 [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
-   ╭─[main.sol:5:9]
+   ╭─[main.sol:7:9]
    │
- 5 │         revert Renamed({level: 1, name: "Testing"});
+ 7 │         revert Renamed({level: 1, name: "Testing"});
    │         ──────────────────────┬─────────────────────  
    │                               ╰─────────────────────── Error occurred here.
 ───╯
@@ -19,20 +19,20 @@ Parse errors:
 ------------------------------------------------------------------------
 
 Definitions (6):
-- Def: #1 ["Failure" @ lib.sol:1:7] (error)
-- Def: #2 ["name" @ lib.sol:1:22] (parameter, type: string memory)
-- Def: #3 ["level" @ lib.sol:1:33] (parameter, type: uint256)
-- Def: #4 ["Renamed" @ main.sol:1:20] (imported symbol)
-- Def: #5 ["Test" @ main.sol:3:10] (contract)
-- Def: #6 ["test" @ main.sol:4:14] (function, type: function () returns void)
+- Def: #1 ["Failure" @ lib.sol:3:7] (error)
+- Def: #2 ["name" @ lib.sol:3:22] (parameter, type: string memory)
+- Def: #3 ["level" @ lib.sol:3:33] (parameter, type: uint256)
+- Def: #4 ["Renamed" @ main.sol:3:20] (imported symbol)
+- Def: #5 ["Test" @ main.sol:5:10] (contract)
+- Def: #6 ["test" @ main.sol:6:14] (function, type: function () returns void)
 
 ------------------------------------------------------------------------
 
 References (4):
-- Ref: ["Failure" @ main.sol:1:9] -> #1
-- Ref: ["Renamed" @ main.sol:5:16] -> #4
-- Ref: ["level" @ main.sol:5:25] -> #3
-- Ref: ["name" @ main.sol:5:35] -> #2
+- Ref: ["Failure" @ main.sol:3:9] -> #1
+- Ref: ["Renamed" @ main.sol:7:16] -> #4
+- Ref: ["level" @ main.sol:7:25] -> #3
+- Ref: ["name" @ main.sol:7:35] -> #2
 
 ------------------------------------------------------------------------
 
@@ -43,7 +43,7 @@ Unbound identifiers (0):
 Bindings: 
    ╭─[lib.sol:1:1]
    │
- 1 │ error Failure(string name, uint level);
+ 3 │ error Failure(string name, uint level);
    │       ───┬───        ──┬─       ──┬──  
    │          ╰───────────────────────────── name: 1
    │                        │          │    
@@ -57,19 +57,19 @@ Bindings:
 Bindings: 
    ╭─[main.sol:1:1]
    │
- 1 │ import {Failure as Renamed} from "./lib.sol";
+ 3 │ import {Failure as Renamed} from "./lib.sol";
    │         ───┬───    ───┬───  
    │            ╰──────────────── ref: 1
    │                       │     
    │                       ╰───── name: 4
    │ 
- 3 │ contract Test {
+ 5 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 5
- 4 │     function test() public {
+ 6 │     function test() public {
    │              ──┬─  
    │                ╰─── name: 6
- 5 │         revert Renamed({level: 1, name: "Testing"});
+ 7 │         revert Renamed({level: 1, name: "Testing"});
    │                ───┬───  ──┬──     ──┬─  
    │                   ╰───────────────────── ref: 4
    │                           │         │   

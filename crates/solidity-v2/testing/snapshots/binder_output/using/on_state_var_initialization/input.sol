@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Lib {
     function nop(uint256 x) public returns (uint256) { return x; }
 }

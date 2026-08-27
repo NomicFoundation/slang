@@ -1,3 +1,5 @@
+pragma solidity *;
+
 interface IFoo {
     function foo() external returns (uint, uint);
 }

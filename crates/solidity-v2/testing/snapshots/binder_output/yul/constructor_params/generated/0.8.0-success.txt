@@ -1,14 +1,14 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (3):
-- Def: #1 ["Test" @ input.sol:1:10] (contract)
-- Def: #2 ["x" @ input.sol:2:23] (parameter, type: uint256)
-- Def: #3 ["y" @ input.sol:4:17] (yul variable)
+- Def: #1 ["Test" @ input.sol:3:10] (contract)
+- Def: #2 ["x" @ input.sol:4:23] (parameter, type: uint256)
+- Def: #3 ["y" @ input.sol:6:17] (yul variable)
 
 ------------------------------------------------------------------------
 
 References (1):
-- Ref: ["x" @ input.sol:4:22] -> #2
+- Ref: ["x" @ input.sol:6:22] -> #2
 
 ------------------------------------------------------------------------
 
@@ -19,14 +19,14 @@ Unbound identifiers (0):
 Bindings: 
    ╭─[input.sol:1:1]
    │
- 1 │ contract Test {
+ 3 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 1
- 2 │     constructor (uint x) {
+ 4 │     constructor (uint x) {
    │                       ┬  
    │                       ╰── name: 2
    │ 
- 4 │             let y := x
+ 6 │             let y := x
    │                 ┬    ┬  
    │                 ╰─────── name: 3
    │                      │  

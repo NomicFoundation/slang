@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Mapping {
     mapping(address => uint256) public myMap;
 

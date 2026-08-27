@@ -6,6 +6,7 @@ use crate::define_fixture;
 define_fixture!(
     StorageLayout,
     file: "main.sol", r#"
+pragma solidity *;
 struct S {
     int32 x;
     bool y;
@@ -139,6 +140,7 @@ fn test_transient_and_custom_storage_layout() {
 define_fixture!(
     PerfectlyPackedStruct,
     file: "main.sol", r#"
+pragma solidity *;
 struct PerfectFit {
     uint128 a;
     uint128 b;
@@ -192,6 +194,7 @@ fn test_erc7201_storage_layout() {
 define_fixture!(
     HugeArray,
     file: "main.sol", r#"
+pragma solidity *;
 contract C {
     uint256 a;
     uint256[2 ** 64] b;
@@ -226,6 +229,7 @@ fn test_huge_array_shifts_following_slot() {
 define_fixture!(
     MaxLegalArray,
     file: "main.sol", r#"
+pragma solidity *;
 contract C {
     uint256[2 ** 256 - 1] x;
 }
@@ -257,6 +261,7 @@ fn test_max_length_array_lays_out() {
 define_fixture!(
     OversizedStruct,
     file: "main.sol", r#"
+pragma solidity *;
 struct Oversized {
     uint256[2 ** 256 - 1] a;
     uint256 b;
@@ -283,6 +288,7 @@ fn test_oversized_struct_has_no_layout() {
 define_fixture!(
     OversizedArrayOfStruct,
     file: "main.sol", r#"
+pragma solidity *;
 struct Big {
     uint256[2 ** 255] x;
 }
@@ -308,6 +314,7 @@ fn test_oversized_array_of_struct_has_no_layout() {
 define_fixture!(
     OversizedBaseSlot,
     file: "main.sol", r#"
+pragma solidity *;
 contract C layout at 1 {
     uint256[2 ** 256 - 1] x;
 }
@@ -329,6 +336,7 @@ fn test_oversized_base_slot_has_no_layout() {
 define_fixture!(
     NestedStructLayout,
     file: "main.sol", r#"
+pragma solidity *;
 contract C {
     struct Inner {
         uint256 a;

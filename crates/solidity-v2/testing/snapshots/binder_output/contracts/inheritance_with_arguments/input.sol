@@ -1,3 +1,5 @@
+pragma solidity *;
+
 uint constant BASE = 42;
 
 contract Base {

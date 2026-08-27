@@ -6,6 +6,7 @@ use crate::{ast, define_fixture};
 define_fixture!(
     YulLiterals,
     file: "main.sol", r#"
+pragma solidity *;
 contract Test {
     function f() public pure {
         assembly {

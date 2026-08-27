@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract AssemblyLoops {
     function yul_for_loop() public returns (uint256 z) {
         assembly {

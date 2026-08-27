@@ -2,9 +2,9 @@
 
 Parse errors:
 [syntax/unexpected-terminal] Error: Unexpected YulPeriod. One of YulBreakKeyword, YulCloseBrace, YulColonEqual, YulComma, YulContinueKeyword, YulDecimalLiteral, YulFalseKeyword, YulForKeyword, YulFunctionKeyword, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulIfKeyword, YulLeaveKeyword, YulLetKeyword, YulOpenBrace, YulStringLiteral, YulSwitchKeyword, YulTrueKeyword was expected
-   ╭─[input.sol:4:18]
+   ╭─[input.sol:6:18]
    │
- 4 │             let x.y.z := 0
+ 6 │             let x.y.z := 0
    │                  ┬  
    │                  ╰── Error occurred here.
 ───╯

@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Lib {
     function push(bytes memory, uint x) internal returns (bytes memory) {}
 }

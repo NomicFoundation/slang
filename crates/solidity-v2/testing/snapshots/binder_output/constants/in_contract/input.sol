@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Constants {
     enum Direction { NORTH, SOUTH, EAST, WEST }
 

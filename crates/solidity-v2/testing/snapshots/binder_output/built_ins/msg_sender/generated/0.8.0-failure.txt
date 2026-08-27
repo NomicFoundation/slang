@@ -2,16 +2,16 @@
 
 Parse errors:
 [resolution/member-not-found] Error: Member 'transfer' not found or not visible after argument-dependent lookup.
-   ╭─[input.sol:4:20]
+   ╭─[input.sol:6:20]
    │
- 4 │         msg.sender.transfer(amount);
+ 6 │         msg.sender.transfer(amount);
    │                    ────┬───  
    │                        ╰───── Error occurred here.
 ───╯
 [resolution/member-not-found] Error: Member 'send' not found or not visible after argument-dependent lookup.
-   ╭─[input.sol:5:28]
+   ╭─[input.sol:7:28]
    │
- 5 │         require(msg.sender.send(amount));
+ 7 │         require(msg.sender.send(amount));
    │                            ──┬─  
    │                              ╰─── Error occurred here.
 ───╯
@@ -19,22 +19,22 @@ Parse errors:
 ------------------------------------------------------------------------
 
 Definitions (3):
-- Def: #1 ["Test" @ input.sol:1:10] (contract)
-- Def: #2 ["test" @ input.sol:2:14] (function, type: function (uint256) returns void)
-- Def: #3 ["amount" @ input.sol:2:24] (parameter, type: uint256)
+- Def: #1 ["Test" @ input.sol:3:10] (contract)
+- Def: #2 ["test" @ input.sol:4:14] (function, type: function (uint256) returns void)
+- Def: #3 ["amount" @ input.sol:4:24] (parameter, type: uint256)
 
 ------------------------------------------------------------------------
 
 References (9):
-- Ref: ["msg" @ input.sol:4:9] -> built-in
-- Ref: ["sender" @ input.sol:4:13] -> built-in
-- Ref: ["transfer" @ input.sol:4:20] -> unresolved
-- Ref: ["amount" @ input.sol:4:29] -> #3
-- Ref: ["require" @ input.sol:5:9] -> built-in
-- Ref: ["msg" @ input.sol:5:17] -> built-in
-- Ref: ["sender" @ input.sol:5:21] -> built-in
-- Ref: ["send" @ input.sol:5:28] -> unresolved
-- Ref: ["amount" @ input.sol:5:33] -> #3
+- Ref: ["msg" @ input.sol:6:9] -> built-in
+- Ref: ["sender" @ input.sol:6:13] -> built-in
+- Ref: ["transfer" @ input.sol:6:20] -> unresolved
+- Ref: ["amount" @ input.sol:6:29] -> #3
+- Ref: ["require" @ input.sol:7:9] -> built-in
+- Ref: ["msg" @ input.sol:7:17] -> built-in
+- Ref: ["sender" @ input.sol:7:21] -> built-in
+- Ref: ["send" @ input.sol:7:28] -> unresolved
+- Ref: ["amount" @ input.sol:7:33] -> #3
 
 ------------------------------------------------------------------------
 
@@ -45,16 +45,16 @@ Unbound identifiers (0):
 Bindings: 
    ╭─[input.sol:1:1]
    │
- 1 │ contract Test {
+ 3 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 1
- 2 │     function test(uint amount) public {
+ 4 │     function test(uint amount) public {
    │              ──┬─      ───┬──  
    │                ╰─────────────── name: 2
    │                           │    
    │                           ╰──── name: 3
    │ 
- 4 │         msg.sender.transfer(amount);
+ 6 │         msg.sender.transfer(amount);
    │         ─┬─ ───┬── ────┬─── ───┬──  
    │          ╰────────────────────────── built-in
    │                │       │       │    
@@ -63,7 +63,7 @@ Bindings:
    │                        ╰──────────── unresolved
    │                                │    
    │                                ╰──── ref: 3
- 5 │         require(msg.sender.send(amount));
+ 7 │         require(msg.sender.send(amount));
    │         ───┬─── ─┬─ ───┬── ──┬─ ───┬──  
    │            ╰──────────────────────────── built-in
    │                  │     │     │     │    

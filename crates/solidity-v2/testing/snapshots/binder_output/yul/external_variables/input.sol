@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     uint d;
     function test(uint a) public returns (uint b) {

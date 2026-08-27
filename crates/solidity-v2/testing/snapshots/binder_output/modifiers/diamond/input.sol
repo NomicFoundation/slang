@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Base {
     modifier foo virtual { _; }
 }

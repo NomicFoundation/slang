@@ -2,9 +2,9 @@
 
 Parse errors:
 [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.22'.
-   ╭─[lib.sol:1:1]
+   ╭─[lib.sol:3:1]
    │
- 1 │ event Log(string name, uint level);
+ 3 │ event Log(string name, uint level);
    │ ─────────────────┬─────────────────  
    │                  ╰─────────────────── Error occurred here.
 ───╯
@@ -12,20 +12,20 @@ Parse errors:
 ------------------------------------------------------------------------
 
 Definitions (6):
-- Def: #1 ["Log" @ lib.sol:1:7] (event)
-- Def: #2 ["name" @ lib.sol:1:18] (parameter, type: string memory)
-- Def: #3 ["level" @ lib.sol:1:29] (parameter, type: uint256)
-- Def: #4 ["Renamed" @ main.sol:1:16] (imported symbol)
-- Def: #5 ["Test" @ main.sol:3:10] (contract)
-- Def: #6 ["test" @ main.sol:4:14] (function, type: function () returns void)
+- Def: #1 ["Log" @ lib.sol:3:7] (event)
+- Def: #2 ["name" @ lib.sol:3:18] (parameter, type: string memory)
+- Def: #3 ["level" @ lib.sol:3:29] (parameter, type: uint256)
+- Def: #4 ["Renamed" @ main.sol:3:16] (imported symbol)
+- Def: #5 ["Test" @ main.sol:5:10] (contract)
+- Def: #6 ["test" @ main.sol:6:14] (function, type: function () returns void)
 
 ------------------------------------------------------------------------
 
 References (4):
-- Ref: ["Log" @ main.sol:1:9] -> #1
-- Ref: ["Renamed" @ main.sol:5:14] -> #4
-- Ref: ["level" @ main.sol:5:23] -> #3
-- Ref: ["name" @ main.sol:5:33] -> #2
+- Ref: ["Log" @ main.sol:3:9] -> #1
+- Ref: ["Renamed" @ main.sol:7:14] -> #4
+- Ref: ["level" @ main.sol:7:23] -> #3
+- Ref: ["name" @ main.sol:7:33] -> #2
 
 ------------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ Unbound identifiers (0):
 Bindings: 
    ╭─[lib.sol:1:1]
    │
- 1 │ event Log(string name, uint level);
+ 3 │ event Log(string name, uint level);
    │       ─┬─        ──┬─       ──┬──  
    │        ╰─────────────────────────── name: 1
    │                    │          │    
@@ -50,19 +50,19 @@ Bindings:
 Bindings: 
    ╭─[main.sol:1:1]
    │
- 1 │ import {Log as Renamed} from "./lib.sol";
+ 3 │ import {Log as Renamed} from "./lib.sol";
    │         ─┬─    ───┬───  
    │          ╰────────────── ref: 1
    │                   │     
    │                   ╰───── name: 4
    │ 
- 3 │ contract Test {
+ 5 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 5
- 4 │     function test() public {
+ 6 │     function test() public {
    │              ──┬─  
    │                ╰─── name: 6
- 5 │         emit Renamed({level: 1, name: "Testing"});
+ 7 │         emit Renamed({level: 1, name: "Testing"});
    │              ───┬───  ──┬──     ──┬─  
    │                 ╰───────────────────── ref: 4
    │                         │         │   

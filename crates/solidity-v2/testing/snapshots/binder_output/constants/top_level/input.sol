@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Constants {
     function test() public {
         assert(MY_DIRECTION != Direction.NORTH);

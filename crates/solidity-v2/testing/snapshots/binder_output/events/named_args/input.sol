@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     enum Severity { Info, Error }
 

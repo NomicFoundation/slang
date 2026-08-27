@@ -1,3 +1,5 @@
+pragma solidity *;
+
 function first(uint[] memory values) returns (uint) {
     return values[0];
 }

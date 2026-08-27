@@ -1,3 +1,5 @@
+pragma solidity *;
+
 abstract contract Ownable {
     address internal owner;
     address default_visibility;

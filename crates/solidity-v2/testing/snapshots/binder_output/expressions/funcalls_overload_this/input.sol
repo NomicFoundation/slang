@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract TestBase {
   function add(int, int) public returns (int) {}
 

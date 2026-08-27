@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function testBytes() public {
         bytes memory b1;

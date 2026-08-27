@@ -1,3 +1,5 @@
+pragma solidity *;
+
 interface Foo {
     function add(address) external returns (int);
     function add(int, int) external returns (int);

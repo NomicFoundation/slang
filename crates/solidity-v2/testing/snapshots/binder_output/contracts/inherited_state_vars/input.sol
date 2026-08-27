@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Base {
     int in_base;
 }

@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     struct Foo {
         bytes value;

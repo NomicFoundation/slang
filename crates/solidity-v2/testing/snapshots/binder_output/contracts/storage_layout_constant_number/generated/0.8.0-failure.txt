@@ -2,9 +2,9 @@
 
 Parse errors:
 [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
-   ╭─[input.sol:1:12]
+   ╭─[input.sol:3:12]
    │
- 1 │ contract C layout at 0xAAAA {
+ 3 │ contract C layout at 0xAAAA {
    │            ────────┬───────  
    │                    ╰───────── Error occurred here.
 ───╯
@@ -12,7 +12,7 @@ Parse errors:
 ------------------------------------------------------------------------
 
 Definitions (1):
-- Def: #1 ["C" @ input.sol:1:10] (contract)
+- Def: #1 ["C" @ input.sol:3:10] (contract)
 
 ------------------------------------------------------------------------
 
@@ -27,7 +27,7 @@ Unbound identifiers (0):
 Bindings: 
    ╭─[input.sol:1:1]
    │
- 1 │ contract C layout at 0xAAAA {
+ 3 │ contract C layout at 0xAAAA {
    │          ┬  
    │          ╰── name: 1
 ───╯

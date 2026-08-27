@@ -78,6 +78,7 @@ fn test_compute_internal_signature() {
 define_fixture!(
     NestedKeyGetter,
     file: "main.sol", r#"
+pragma solidity *;
 contract C {
     enum E { A }
 
@@ -169,6 +170,7 @@ fn test_library_signature_unwraps_a_user_defined_value_type_under_an_array() {
 define_fixture!(
     AliasedLibraryType,
     file: "main.sol", r#"
+pragma solidity *;
 import {L as M} from "library.sol";
 
 library U {
@@ -176,6 +178,7 @@ library U {
 }
 "#,
     file: "library.sol", r#"
+pragma solidity *;
 library L {
     struct S { uint256 a; }
 }

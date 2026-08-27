@@ -1,36 +1,36 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (15):
-- Def: #1 ["DataFeed" @ input.sol:1:11] (interface)
-- Def: #2 ["getData" @ input.sol:1:31] (function, type: function (address) returns uint256)
-- Def: #3 ["token" @ input.sol:1:47] (parameter, type: address)
-- Def: #4 ["value" @ input.sol:1:77] (parameter, type: uint256)
-- Def: #5 ["FeedConsumer" @ input.sol:3:10] (contract)
-- Def: #6 ["feed" @ input.sol:4:14] (state var, type: DataFeed)
-- Def: #7 ["errorCount" @ input.sol:5:10] (state var, type: uint256)
-- Def: #8 ["lastValue" @ input.sol:6:10] (state var, type: uint256)
-- Def: #9 ["rate" @ input.sol:7:14] (function, type: function (address) returns (uint256, bool))
-- Def: #10 ["token" @ input.sol:7:27] (parameter, type: address)
-- Def: #11 ["value" @ input.sol:7:55] (parameter, type: uint256)
-- Def: #12 ["success" @ input.sol:7:67] (parameter, type: bool)
-- Def: #13 ["last_reason" @ input.sol:8:23] (variable, type: string memory)
-- Def: #14 ["v" @ input.sol:9:47] (parameter, type: uint256)
-- Def: #15 ["reason" @ input.sol:12:37] (parameter, type: string memory)
+- Def: #1 ["DataFeed" @ input.sol:3:11] (interface)
+- Def: #2 ["getData" @ input.sol:3:31] (function, type: function (address) returns uint256)
+- Def: #3 ["token" @ input.sol:3:47] (parameter, type: address)
+- Def: #4 ["value" @ input.sol:3:77] (parameter, type: uint256)
+- Def: #5 ["FeedConsumer" @ input.sol:5:10] (contract)
+- Def: #6 ["feed" @ input.sol:6:14] (state var, type: DataFeed)
+- Def: #7 ["errorCount" @ input.sol:7:10] (state var, type: uint256)
+- Def: #8 ["lastValue" @ input.sol:8:10] (state var, type: uint256)
+- Def: #9 ["rate" @ input.sol:9:14] (function, type: function (address) returns (uint256, bool))
+- Def: #10 ["token" @ input.sol:9:27] (parameter, type: address)
+- Def: #11 ["value" @ input.sol:9:55] (parameter, type: uint256)
+- Def: #12 ["success" @ input.sol:9:67] (parameter, type: bool)
+- Def: #13 ["last_reason" @ input.sol:10:23] (variable, type: string memory)
+- Def: #14 ["v" @ input.sol:11:47] (parameter, type: uint256)
+- Def: #15 ["reason" @ input.sol:14:37] (parameter, type: string memory)
 
 ------------------------------------------------------------------------
 
 References (11):
-- Ref: ["DataFeed" @ input.sol:4:5] -> #1
-- Ref: ["feed" @ input.sol:9:13] -> #6
-- Ref: ["getData" @ input.sol:9:18] -> #2
-- Ref: ["token" @ input.sol:9:26] -> #10
-- Ref: ["lastValue" @ input.sol:10:13] -> #8
-- Ref: ["v" @ input.sol:10:25] -> #14
-- Ref: ["v" @ input.sol:11:21] -> #14
-- Ref: ["last_reason" @ input.sol:13:13] -> #13
-- Ref: ["reason" @ input.sol:13:27] -> #15
-- Ref: ["errorCount" @ input.sol:14:13] -> #7
-- Ref: ["errorCount" @ input.sol:17:13] -> #7
+- Ref: ["DataFeed" @ input.sol:6:5] -> #1
+- Ref: ["feed" @ input.sol:11:13] -> #6
+- Ref: ["getData" @ input.sol:11:18] -> #2
+- Ref: ["token" @ input.sol:11:26] -> #10
+- Ref: ["lastValue" @ input.sol:12:13] -> #8
+- Ref: ["v" @ input.sol:12:25] -> #14
+- Ref: ["v" @ input.sol:13:21] -> #14
+- Ref: ["last_reason" @ input.sol:15:13] -> #13
+- Ref: ["reason" @ input.sol:15:27] -> #15
+- Ref: ["errorCount" @ input.sol:16:13] -> #7
+- Ref: ["errorCount" @ input.sol:19:13] -> #7
 
 ------------------------------------------------------------------------
 
@@ -41,7 +41,7 @@ Unbound identifiers (0):
 Bindings: 
     ╭─[input.sol:1:1]
     │
-  1 │ interface DataFeed { function getData(address token) external returns (uint value); }
+  3 │ interface DataFeed { function getData(address token) external returns (uint value); }
     │           ────┬───            ───┬───         ──┬──                         ──┬──  
     │               ╰──────────────────────────────────────────────────────────────────── name: 1
     │                                  │              │                             │    
@@ -51,21 +51,21 @@ Bindings:
     │                                                                               │    
     │                                                                               ╰──── name: 4
     │ 
-  3 │ contract FeedConsumer {
+  5 │ contract FeedConsumer {
     │          ──────┬─────  
     │                ╰─────── name: 5
-  4 │     DataFeed feed;
+  6 │     DataFeed feed;
     │     ────┬─── ──┬─  
     │         ╰────────── ref: 1
     │                │   
     │                ╰─── name: 6
-  5 │     uint errorCount;
+  7 │     uint errorCount;
     │          ─────┬────  
     │               ╰────── name: 7
-  6 │     uint lastValue;
+  8 │     uint lastValue;
     │          ────┬────  
     │              ╰────── name: 8
-  7 │     function rate(address token) public returns (uint value, bool success) {
+  9 │     function rate(address token) public returns (uint value, bool success) {
     │              ──┬─         ──┬──                       ──┬──       ───┬───  
     │                ╰─────────────────────────────────────────────────────────── name: 9
     │                             │                           │            │     
@@ -74,10 +74,10 @@ Bindings:
     │                                                         ╰────────────────── name: 11
     │                                                                      │     
     │                                                                      ╰───── name: 12
-  8 │         string memory last_reason;
+ 10 │         string memory last_reason;
     │                       ─────┬─────  
     │                            ╰─────── name: 13
-  9 │         try feed.getData(token) returns (uint v) {
+ 11 │         try feed.getData(token) returns (uint v) {
     │             ──┬─ ───┬─── ──┬──                ┬  
     │               ╰────────────────────────────────── ref: 6
     │                     │      │                  │  
@@ -86,27 +86,27 @@ Bindings:
     │                            ╰───────────────────── ref: 10
     │                                               │  
     │                                               ╰── name: 14
- 10 │             lastValue = v;
+ 12 │             lastValue = v;
     │             ────┬────   ┬  
     │                 ╰────────── ref: 8
     │                         │  
     │                         ╰── ref: 14
- 11 │             return (v, true);
+ 13 │             return (v, true);
     │                     ┬  
     │                     ╰── ref: 14
- 12 │         } catch Error(string memory reason) {
+ 14 │         } catch Error(string memory reason) {
     │                                     ───┬──  
     │                                        ╰──── name: 15
- 13 │             last_reason = reason;
+ 15 │             last_reason = reason;
     │             ─────┬─────   ───┬──  
     │                  ╰──────────────── ref: 13
     │                              │    
     │                              ╰──── ref: 15
- 14 │             errorCount++;
+ 16 │             errorCount++;
     │             ─────┬────  
     │                  ╰────── ref: 7
     │ 
- 17 │             errorCount++;
+ 19 │             errorCount++;
     │             ─────┬────  
     │                  ╰────── ref: 7
 ────╯

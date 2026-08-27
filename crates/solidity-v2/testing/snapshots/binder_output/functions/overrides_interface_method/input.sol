@@ -1,3 +1,5 @@
+pragma solidity *;
+
 interface IERC1155Receiver {
     function onERC1155Received(
                                address operator,

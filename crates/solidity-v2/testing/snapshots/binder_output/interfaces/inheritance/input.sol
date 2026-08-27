@@ -1,3 +1,5 @@
+pragma solidity *;
+
 interface Counter {
     enum Type { up, down }
     function count() external returns (uint);

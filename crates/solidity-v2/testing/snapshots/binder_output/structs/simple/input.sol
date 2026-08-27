@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract CrowdFunding {
     struct Campaign {
         address payable beneficiary;

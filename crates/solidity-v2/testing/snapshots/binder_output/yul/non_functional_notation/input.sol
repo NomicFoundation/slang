@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function test() internal {
         // this is valid in Solidity < 0.5.0 only

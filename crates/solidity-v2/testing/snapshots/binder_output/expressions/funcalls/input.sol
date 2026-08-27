@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     int y;
     function someFunc(int x) public returns (int) {

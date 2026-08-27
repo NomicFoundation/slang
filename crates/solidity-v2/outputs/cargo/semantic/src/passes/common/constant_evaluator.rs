@@ -766,7 +766,7 @@ mod tests {
 
     fn parse_expression(input: &str) -> ir::Expression {
         // NB. the declaration is only a harness to contain the expression
-        let source = format!("uint constant x = {input};");
+        let source = format!("pragma solidity *;\nuint constant x = {input};");
         let version = LanguageVersion::LATEST;
 
         let ParseOutput {
@@ -796,14 +796,17 @@ mod tests {
             "IR builder diagnostics: {diagnostics:?}"
         );
 
-        let member = ir_root.members.first().expect("no source unit members");
-        match member {
-            ir::SourceUnitMember::ConstantDefinition(definition) => definition
-                .value
-                .clone()
-                .expect("constant definition has no value expression"),
-            _ => panic!("expected a ConstantDefinition"),
-        }
+        ir_root
+            .members
+            .iter()
+            .find_map(|member| match member {
+                ir::SourceUnitMember::ConstantDefinition(definition) => Some(definition),
+                _ => None,
+            })
+            .expect("expected a ConstantDefinition")
+            .value
+            .clone()
+            .expect("constant definition has no value expression")
     }
 
     // `context` is given as a list of constants defined as:

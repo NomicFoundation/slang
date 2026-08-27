@@ -1,15 +1,15 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (3):
-- Def: #1 ["Test" @ input.sol:1:10] (contract)
-- Def: #2 ["foo" @ input.sol:2:10] (state var, type: uint256)
-- Def: #3 ["test" @ input.sol:3:14] (function, type: function () returns void)
+- Def: #1 ["Test" @ input.sol:3:10] (contract)
+- Def: #2 ["foo" @ input.sol:4:10] (state var, type: uint256)
+- Def: #3 ["test" @ input.sol:5:14] (function, type: function () returns void)
 
 ------------------------------------------------------------------------
 
 References (2):
-- Ref: ["Test" @ input.sol:4:9] -> #1
-- Ref: ["foo" @ input.sol:4:14] -> #2
+- Ref: ["Test" @ input.sol:6:9] -> #1
+- Ref: ["foo" @ input.sol:6:14] -> #2
 
 ------------------------------------------------------------------------
 
@@ -20,16 +20,16 @@ Unbound identifiers (0):
 Bindings: 
    ╭─[input.sol:1:1]
    │
- 1 │ contract Test {
+ 3 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 1
- 2 │     uint foo;
+ 4 │     uint foo;
    │          ─┬─  
    │           ╰─── name: 2
- 3 │     function test() public {
+ 5 │     function test() public {
    │              ──┬─  
    │                ╰─── name: 3
- 4 │         Test.foo;
+ 6 │         Test.foo;
    │         ──┬─ ─┬─  
    │           ╰─────── ref: 1
    │               │   

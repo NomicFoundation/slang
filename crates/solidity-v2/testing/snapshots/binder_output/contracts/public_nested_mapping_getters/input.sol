@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function test(TokenState tokenState) public {
         tokenState.nested_maps(1, 1).balance;

@@ -1,3 +1,5 @@
+pragma solidity *;
+
 interface External {
     struct Data { uint value; }
     function sample() external payable returns (Data memory);

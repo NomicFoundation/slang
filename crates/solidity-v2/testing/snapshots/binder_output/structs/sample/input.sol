@@ -1,3 +1,5 @@
+pragma solidity *;
+
 struct Funder {
     address addr;
     uint amount;

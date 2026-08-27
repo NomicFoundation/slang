@@ -1,4 +1,6 @@
 // --- path: main.sol
+pragma solidity *;
+
 import "./other.sol" as other;
 
 function foo() returns (int) {
@@ -6,6 +8,8 @@ function foo() returns (int) {
 }
 
 // --- path: other.sol
+pragma solidity *;
+
 function bar() pure returns (int) {
     return 1;
 }

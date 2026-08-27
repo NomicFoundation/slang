@@ -1,4 +1,6 @@
 // ---- path: main.sol
+pragma solidity *;
+
 import {foo} from "other.sol";
 
 library Lib {
@@ -20,6 +22,8 @@ function bar(uint a) {
 }
 
 // ---- path: other.sol
+pragma solidity *;
+
 function foo(uint a) pure returns (uint) {
     return a;
 }

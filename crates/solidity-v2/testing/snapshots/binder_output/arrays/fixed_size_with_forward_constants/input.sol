@@ -2,6 +2,8 @@
 // length reads back as 0. `E` is declared before its use, but its value
 // refers to `N` past the use site, so the chain is rejected as well.
 
+pragma solidity *;
+
 uint256 constant P = 7;
 uint256 constant E = N;
 

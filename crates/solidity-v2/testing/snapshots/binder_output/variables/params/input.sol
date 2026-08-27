@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Foo {
     function bar(uint z) public returns (uint) {
         return z + 1;

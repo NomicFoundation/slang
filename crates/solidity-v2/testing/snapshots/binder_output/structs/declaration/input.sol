@@ -1,3 +1,5 @@
+pragma solidity *;
+
 struct TopLevelStruct {
   int x;
 }

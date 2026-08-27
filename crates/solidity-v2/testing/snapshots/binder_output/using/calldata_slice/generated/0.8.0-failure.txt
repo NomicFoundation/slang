@@ -2,9 +2,9 @@
 
 Parse errors:
 [resolution/member-not-found] Error: Member 'firstByte' not found or not visible after argument-dependent lookup.
-    ╭─[input.sol:26:26]
+    ╭─[input.sol:28:26]
     │
- 26 │         return data[1:3].firstByte();
+ 28 │         return data[1:3].firstByte();
     │                          ────┬────  
     │                              ╰────── Error occurred here.
 ────╯
@@ -12,30 +12,30 @@ Parse errors:
 ------------------------------------------------------------------------
 
 Definitions (11):
-- Def: #1 ["L" @ input.sol:9:9] (library)
-- Def: #2 ["firstByte" @ input.sol:10:14] (function, type: function (bytes calldata) returns bytes1)
-- Def: #3 ["b" @ input.sol:10:39] (parameter, type: bytes calldata)
-- Def: #4 ["TypeSpecific" @ input.sol:15:10] (contract)
-- Def: #5 ["whole" @ input.sol:19:14] (function, type: function (bytes calldata) returns bytes1)
-- Def: #6 ["data" @ input.sol:19:35] (parameter, type: bytes calldata)
-- Def: #7 ["slice" @ input.sol:25:14] (function, type: function (bytes calldata) returns bytes1)
-- Def: #8 ["data" @ input.sol:25:35] (parameter, type: bytes calldata)
-- Def: #9 ["Wildcard" @ input.sol:30:10] (contract)
-- Def: #10 ["slice" @ input.sol:34:14] (function, type: function (bytes calldata) returns bytes1)
-- Def: #11 ["data" @ input.sol:34:35] (parameter, type: bytes calldata)
+- Def: #1 ["L" @ input.sol:11:9] (library)
+- Def: #2 ["firstByte" @ input.sol:12:14] (function, type: function (bytes calldata) returns bytes1)
+- Def: #3 ["b" @ input.sol:12:39] (parameter, type: bytes calldata)
+- Def: #4 ["TypeSpecific" @ input.sol:17:10] (contract)
+- Def: #5 ["whole" @ input.sol:21:14] (function, type: function (bytes calldata) returns bytes1)
+- Def: #6 ["data" @ input.sol:21:35] (parameter, type: bytes calldata)
+- Def: #7 ["slice" @ input.sol:27:14] (function, type: function (bytes calldata) returns bytes1)
+- Def: #8 ["data" @ input.sol:27:35] (parameter, type: bytes calldata)
+- Def: #9 ["Wildcard" @ input.sol:32:10] (contract)
+- Def: #10 ["slice" @ input.sol:36:14] (function, type: function (bytes calldata) returns bytes1)
+- Def: #11 ["data" @ input.sol:36:35] (parameter, type: bytes calldata)
 
 ------------------------------------------------------------------------
 
 References (9):
-- Ref: ["b" @ input.sol:11:16] -> #3
-- Ref: ["L" @ input.sol:16:11] -> #1
-- Ref: ["data" @ input.sol:20:16] -> #6
-- Ref: ["firstByte" @ input.sol:20:21] -> #2
-- Ref: ["data" @ input.sol:26:16] -> #8
-- Ref: ["firstByte" @ input.sol:26:26] -> unresolved
-- Ref: ["L" @ input.sol:31:11] -> #1
-- Ref: ["data" @ input.sol:35:16] -> #11
-- Ref: ["firstByte" @ input.sol:35:26] -> #2
+- Ref: ["b" @ input.sol:13:16] -> #3
+- Ref: ["L" @ input.sol:18:11] -> #1
+- Ref: ["data" @ input.sol:22:16] -> #6
+- Ref: ["firstByte" @ input.sol:22:21] -> #2
+- Ref: ["data" @ input.sol:28:16] -> #8
+- Ref: ["firstByte" @ input.sol:28:26] -> unresolved
+- Ref: ["L" @ input.sol:33:11] -> #1
+- Ref: ["data" @ input.sol:37:16] -> #11
+- Ref: ["firstByte" @ input.sol:37:26] -> #2
 
 ------------------------------------------------------------------------
 
@@ -46,60 +46,60 @@ Unbound identifiers (0):
 Bindings: 
     ╭─[input.sol:1:1]
     │
-  9 │ library L {
+ 11 │ library L {
     │         ┬  
     │         ╰── name: 1
- 10 │     function firstByte(bytes calldata b) internal pure returns (bytes1) {
+ 12 │     function firstByte(bytes calldata b) internal pure returns (bytes1) {
     │              ────┬────                ┬  
     │                  ╰─────────────────────── name: 2
     │                                       │  
     │                                       ╰── name: 3
- 11 │         return b[0];
+ 13 │         return b[0];
     │                ┬  
     │                ╰── ref: 3
     │ 
- 15 │ contract TypeSpecific {
+ 17 │ contract TypeSpecific {
     │          ──────┬─────  
     │                ╰─────── name: 4
- 16 │     using L for bytes;
+ 18 │     using L for bytes;
     │           ┬  
     │           ╰── ref: 1
     │ 
- 19 │     function whole(bytes calldata data) external pure returns (bytes1) {
+ 21 │     function whole(bytes calldata data) external pure returns (bytes1) {
     │              ──┬──                ──┬─  
     │                ╰──────────────────────── name: 5
     │                                     │   
     │                                     ╰─── name: 6
- 20 │         return data.firstByte();
+ 22 │         return data.firstByte();
     │                ──┬─ ────┬────  
     │                  ╰───────────── ref: 6
     │                         │      
     │                         ╰────── ref: 2
     │ 
- 25 │     function slice(bytes calldata data) external pure returns (bytes1) {
+ 27 │     function slice(bytes calldata data) external pure returns (bytes1) {
     │              ──┬──                ──┬─  
     │                ╰──────────────────────── name: 7
     │                                     │   
     │                                     ╰─── name: 8
- 26 │         return data[1:3].firstByte();
+ 28 │         return data[1:3].firstByte();
     │                ──┬─      ────┬────  
     │                  ╰────────────────── ref: 8
     │                              │      
     │                              ╰────── unresolved
     │ 
- 30 │ contract Wildcard {
+ 32 │ contract Wildcard {
     │          ────┬───  
     │              ╰───── name: 9
- 31 │     using L for *;
+ 33 │     using L for *;
     │           ┬  
     │           ╰── ref: 1
     │ 
- 34 │     function slice(bytes calldata data) external pure returns (bytes1) {
+ 36 │     function slice(bytes calldata data) external pure returns (bytes1) {
     │              ──┬──                ──┬─  
     │                ╰──────────────────────── name: 10
     │                                     │   
     │                                     ╰─── name: 11
- 35 │         return data[1:3].firstByte();
+ 37 │         return data[1:3].firstByte();
     │                ──┬─      ────┬────  
     │                  ╰────────────────── ref: 11
     │                              │      

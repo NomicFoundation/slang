@@ -1,4 +1,6 @@
 // --- path: main.sol
+pragma solidity *;
+
 import {A} from "lib.sol";
 import {B as C} from "lib.sol";
 
@@ -9,5 +11,7 @@ contract Test {
 }
 
 // --- path: lib.sol
+pragma solidity *;
+
 uint256 constant A = 3;
 uint256 constant B = 5;

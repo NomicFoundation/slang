@@ -101,6 +101,7 @@ impl<'a> ExpressionTyping<'a> {
             .join("\n");
         let source = format!(
             r#"
+            pragma solidity *;
             contract Test {{
                 {members}
                 function __test() internal {{

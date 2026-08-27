@@ -1,3 +1,5 @@
+pragma solidity *;
+
 uint constant k = 1;
 bool constant k = true;
 

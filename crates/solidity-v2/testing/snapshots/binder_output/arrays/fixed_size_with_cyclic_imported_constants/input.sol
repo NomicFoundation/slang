@@ -3,6 +3,8 @@
 // sizes still fold, since evaluation does not depend on the file processing
 // order. solc instead cuts the cycle in file-name order and rejects the
 // reference crossing the cut edge (here: `N` used in b.sol).
+pragma solidity *;
+
 import {K} from "b.sol";
 
 uint256 constant N = 3;
@@ -12,6 +14,8 @@ contract A {
 }
 
 // --- path: b.sol
+pragma solidity *;
+
 import {N} from "a.sol";
 
 uint256 constant K = 5;

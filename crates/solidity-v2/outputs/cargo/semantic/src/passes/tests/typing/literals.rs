@@ -20,7 +20,8 @@ use crate::types::{FixedSizeArrayType, LiteralKind, Type};
 /// storage base slot together with the diagnostic emitted, if any. A rejected base
 /// slot is reported as a diagnostic and leaves `base_slot` unset.
 fn contract_base_slot(source: &str, name: &str) -> (Option<U256>, Option<DiagnosticKind>) {
-    let analysis = Analysis::of_source(source).run(Analyse::References);
+    let source = format!("pragma solidity *;\n{source}");
+    let analysis = Analysis::of_source(&source).run(Analyse::References);
     let binder = analysis.binder();
     let diagnostics = &analysis.diagnostics;
     let contract = analysis.find_contract(name);
@@ -42,6 +43,7 @@ fn contract_base_slot(source: &str, name: &str) -> (Option<U256>, Option<Diagnos
 fn folded_array_length(members: &str, array_type: &str) -> (U256, Option<DiagnosticKind>) {
     let source = format!(
         r#"
+        pragma solidity *;
         contract Test {{
             {members}
             {array_type} sized_array;

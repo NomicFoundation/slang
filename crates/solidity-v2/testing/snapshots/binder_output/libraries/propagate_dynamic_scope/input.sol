@@ -1,3 +1,5 @@
+pragma solidity *;
+
 interface IERC20Upgradable {
     function allowance(address owner) external returns (uint256);
 }

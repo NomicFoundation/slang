@@ -1,3 +1,5 @@
+pragma solidity *;
+
 struct Counter {
     uint value;
 }

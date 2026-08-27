@@ -1,3 +1,5 @@
+pragma solidity *;
+
 error TopLevelError(int x, int y);
 
 contract Test {

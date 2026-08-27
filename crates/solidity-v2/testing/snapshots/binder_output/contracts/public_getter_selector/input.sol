@@ -1,3 +1,5 @@
+pragma solidity *;
+
 interface Face {
     function x() external view returns (uint);
 }

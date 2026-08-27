@@ -1,3 +1,5 @@
+pragma solidity *;
+
 interface Counter {
     function count() external returns (uint);
 }

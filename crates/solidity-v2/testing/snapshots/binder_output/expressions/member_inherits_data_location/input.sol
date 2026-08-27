@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Checkpoints {
     struct Trace224 {
         Checkpoint224[] _checkpoints;

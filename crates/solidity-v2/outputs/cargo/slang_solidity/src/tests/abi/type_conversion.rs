@@ -8,6 +8,7 @@ use crate::define_fixture;
 define_fixture!(
     TypeConversion,
     file: "main.sol", r#"
+pragma solidity *;
 contract C {
     type Id is uint64;
     enum Color { Red, Green, Blue }

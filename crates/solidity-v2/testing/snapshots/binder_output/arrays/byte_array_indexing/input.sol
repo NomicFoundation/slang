@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Utils {
     function nop(bytes1) internal {}
 }

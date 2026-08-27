@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract AssemblyVariable {
     function yul_let() public returns (uint256 z) {
         assembly {

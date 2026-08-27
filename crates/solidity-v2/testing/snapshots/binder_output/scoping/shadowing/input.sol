@@ -1,3 +1,5 @@
+pragma solidity *;
+
 function foo() {}
 function bar() {}
 

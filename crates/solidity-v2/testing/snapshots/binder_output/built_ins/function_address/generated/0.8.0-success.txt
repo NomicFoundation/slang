@@ -1,15 +1,15 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (3):
-- Def: #1 ["C" @ input.sol:1:10] (contract)
-- Def: #2 ["g" @ input.sol:2:14] (function, type: function () returns void)
-- Def: #3 ["f" @ input.sol:4:14] (function, type: function () returns address)
+- Def: #1 ["C" @ input.sol:3:10] (contract)
+- Def: #2 ["g" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #3 ["f" @ input.sol:6:14] (function, type: function () returns address)
 
 ------------------------------------------------------------------------
 
 References (2):
-- Ref: ["g" @ input.sol:5:21] -> #2
-- Ref: ["address" @ input.sol:5:23] -> built-in
+- Ref: ["g" @ input.sol:7:21] -> #2
+- Ref: ["address" @ input.sol:7:23] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -20,17 +20,17 @@ Unbound identifiers (0):
 Bindings: 
    ╭─[input.sol:1:1]
    │
- 1 │ contract C {
+ 3 │ contract C {
    │          ┬  
    │          ╰── name: 1
- 2 │     function g() external {}
+ 4 │     function g() external {}
    │              ┬  
    │              ╰── name: 2
    │ 
- 4 │     function f() external returns (address) {
+ 6 │     function f() external returns (address) {
    │              ┬  
    │              ╰── name: 3
- 5 │         return this.g.address;
+ 7 │         return this.g.address;
    │                     ┬ ───┬───  
    │                     ╰────────── ref: 2
    │                          │     

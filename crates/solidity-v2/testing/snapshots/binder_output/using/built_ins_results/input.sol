@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     using Utils for bytes32;
     function test(bytes memory x) public pure {

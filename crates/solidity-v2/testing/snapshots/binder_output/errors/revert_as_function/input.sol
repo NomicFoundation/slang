@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function testBuiltIn() public {
         revert("error");

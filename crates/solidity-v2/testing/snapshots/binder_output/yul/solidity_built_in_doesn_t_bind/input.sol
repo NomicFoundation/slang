@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function test() public {
         ripemd160(); // should bind correctly (Solidity context)

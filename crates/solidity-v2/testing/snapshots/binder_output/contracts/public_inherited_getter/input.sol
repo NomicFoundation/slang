@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract RegistrarAccess {
     Root root;
     function test() public {

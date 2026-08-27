@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     using Utils for uint;
 

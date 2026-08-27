@@ -52,7 +52,9 @@ fn library_id(context: &SemanticContext, name: &str) -> NodeId {
 
 #[test]
 fn new_expression_records_the_dependency() {
-    let source = "contract C { constructor() { new D(); } }
+    let source = "
+        pragma solidity *;
+        contract C { constructor() { new D(); } }
         contract D {}";
     let context = build_context(source);
 
@@ -68,7 +70,9 @@ fn new_expression_records_the_dependency() {
 fn the_first_reference_wins() {
     // The initializer runs at creation, which is traversed before the
     // deployed entry points, so its expression is the recorded one.
-    let source = "contract C {
+    let source = "
+        pragma solidity *;
+        contract C {
             D d = new D();
             function f() public { new D(); }
         }
@@ -85,7 +89,9 @@ fn the_first_reference_wins() {
 
 #[test]
 fn definitions_without_dependencies_have_no_entry() {
-    let source = "contract A { function f() public { new B(); } }
+    let source = "
+        pragma solidity *;
+        contract A { function f() public { new B(); } }
         contract B {}";
     let context = build_context(source);
 
@@ -104,7 +110,9 @@ fn definitions_without_dependencies_have_no_entry() {
 
 #[test]
 fn programs_without_contract_references_have_no_dependencies() {
-    let source = "contract A { function f() public {} }
+    let source = "
+        pragma solidity *;
+        contract A { function f() public {} }
         contract B is A {}";
     let context = build_context(source);
 
@@ -115,7 +123,9 @@ fn programs_without_contract_references_have_no_dependencies() {
 
 #[test]
 fn constructor_dependency_is_creation_only() {
-    let source = "contract C { constructor() { new D(); } }
+    let source = "
+        pragma solidity *;
+        contract C { constructor() { new D(); } }
         contract D {}";
     let context = build_context(source);
 
@@ -128,7 +138,9 @@ fn constructor_dependency_is_creation_only() {
 
 #[test]
 fn public_function_dependency_is_deployed_only() {
-    let source = "contract C { function f() public { new D(); } }
+    let source = "
+        pragma solidity *;
+        contract C { function f() public { new D(); } }
         contract D {}";
     let context = build_context(source);
 
@@ -144,7 +156,9 @@ fn an_abstract_contract_has_dependencies() {
     // An abstract contract is never deployed, but its code is still walked.
     // Its initializer runs at creation and its entry points after deployment,
     // exactly as for any other contract.
-    let source = "abstract contract A {
+    let source = "
+        pragma solidity *;
+        abstract contract A {
             D d = new D();
             function f() public { new E(); }
             function g() public virtual;
@@ -163,7 +177,9 @@ fn an_abstract_contract_has_dependencies() {
 
 #[test]
 fn dependency_reachable_from_both_phases_is_in_both_maps() {
-    let source = "contract C {
+    let source = "
+        pragma solidity *;
+        contract C {
             D d = new D();
             function f() public { new D(); }
         }
@@ -191,7 +207,9 @@ fn dependency_reachable_from_both_phases_is_in_both_maps() {
 fn function_value_taken_at_creation_seeds_the_deployed_walk() {
     // The deployed code never names `helper`, but its pointer is stored
     // during creation and can be dispatched after deployment.
-    let source = "function helper() { new B(); }
+    let source = "
+        pragma solidity *;
+        function helper() { new B(); }
         contract A {
             function() internal ptr;
             constructor() { ptr = helper; }
@@ -209,7 +227,9 @@ fn function_value_taken_at_creation_seeds_the_deployed_walk() {
 
 #[test]
 fn function_value_taken_after_deployment_stays_out_of_the_creation_map() {
-    let source = "function helper() { new B(); }
+    let source = "
+        pragma solidity *;
+        function helper() { new B(); }
         contract A {
             function() internal ptr;
             function run() public { ptr = helper; ptr(); }
@@ -227,7 +247,9 @@ fn function_value_taken_after_deployment_stays_out_of_the_creation_map() {
 #[test]
 fn qualified_modifier_invocation_runs_the_named_modifier() {
     // `A.m` runs A's modifier even though C overrides it.
-    let source = "contract A {
+    let source = "
+        pragma solidity *;
+        contract A {
             modifier m() virtual { new B(); _; }
         }
         contract C is A {
@@ -247,7 +269,9 @@ fn qualified_modifier_invocation_runs_the_named_modifier() {
 fn qualified_modifier_invocation_skips_the_override() {
     // The override never runs under a qualified invocation, so the
     // `new B()` inside it is unreachable.
-    let source = "contract A {
+    let source = "
+        pragma solidity *;
+        contract A {
             modifier m() virtual { _; }
         }
         contract C is A {
@@ -264,7 +288,9 @@ fn qualified_modifier_invocation_skips_the_override() {
 fn initializers_run_before_the_constructor() {
     // The constructor is declared first, but initializers run first, so
     // the initializer's expression is the recorded one.
-    let source = "contract C {
+    let source = "
+        pragma solidity *;
+        contract C {
             constructor() { new D(); }
             D d = new D();
         }
@@ -282,7 +308,9 @@ fn initializers_run_before_the_constructor() {
 #[test]
 fn virtual_call_resolves_against_the_most_derived_contract() {
     // A runs its own f. C runs the override, which has no reference.
-    let source = "contract A {
+    let source = "
+        pragma solidity *;
+        contract A {
             function f() public virtual { new B(); }
             function g() public { f(); }
         }
@@ -303,7 +331,9 @@ fn virtual_call_resolves_against_the_most_derived_contract() {
 #[test]
 fn super_call_skips_bodiless_declarations() {
     // C.f has no body, so `super.f()` in D runs B.f.
-    let source = "abstract contract B {
+    let source = "
+        pragma solidity *;
+        abstract contract B {
             function f() public virtual { new E(); }
         }
         abstract contract C {
@@ -323,7 +353,9 @@ fn super_call_skips_bodiless_declarations() {
 
 #[test]
 fn internal_library_call_embeds_into_the_caller() {
-    let source = "library L {
+    let source = "
+        pragma solidity *;
+        library L {
             function g() internal { new B(); }
         }
         contract A {
@@ -342,7 +374,9 @@ fn internal_library_call_embeds_into_the_caller() {
 fn public_library_call_does_not_embed() {
     // The call is a delegatecall into the deployed library, so only the
     // library itself embeds B.
-    let source = "library L {
+    let source = "
+        pragma solidity *;
+        library L {
             function g() public { new B(); }
         }
         contract A {
@@ -361,7 +395,9 @@ fn public_library_call_does_not_embed() {
 
 #[test]
 fn attached_function_on_a_contract_value_embeds_into_the_caller() {
-    let source = "library L {
+    let source = "
+        pragma solidity *;
+        library L {
             function g(C self) internal { new B(); }
         }
         contract C {
@@ -379,7 +415,9 @@ fn attached_function_on_a_contract_value_embeds_into_the_caller() {
 
 #[test]
 fn attached_free_function_on_a_contract_value_is_followed() {
-    let source = "function g(C self) { new B(); }
+    let source = "
+        pragma solidity *;
+        function g(C self) { new B(); }
         contract C {
             using {g} for C;
             function f(C other) public { other.g(); }
@@ -395,7 +433,9 @@ fn attached_free_function_on_a_contract_value_is_followed() {
 
 #[test]
 fn attached_function_on_an_interface_value_is_followed() {
-    let source = "interface I {}
+    let source = "
+        pragma solidity *;
+        interface I {}
         library L {
             function g(I self) internal { new B(); }
         }
@@ -414,7 +454,9 @@ fn attached_function_on_an_interface_value_is_followed() {
 
 #[test]
 fn code_access_records_a_deployed_dependency_for_the_library() {
-    let source = "library L {
+    let source = "
+        pragma solidity *;
+        library L {
             function f() public pure returns (bytes memory) {
                 return type(L).creationCode;
             }
@@ -444,7 +486,9 @@ fn constant_is_followed_through_bare_name_and_member_access() {
     // E reads its own constant by bare name, A reads the library's constant
     // as a member. Both compile the value in and depend on D. The library
     // itself does not, since nothing of its own reaches the constant.
-    let source = "library B {
+    let source = "
+        pragma solidity *;
+        library B {
             bytes constant CODE = type(D).creationCode;
         }
         contract A {
@@ -471,7 +515,9 @@ fn constant_is_followed_through_bare_name_and_member_access() {
 fn a_constant_embedding_the_reader_records_a_self_dependency() {
     // The library constant's value compiles into f, so A's deployed code
     // embeds A's own creation code.
-    let source = "library B {
+    let source = "
+        pragma solidity *;
+        library B {
             bytes constant CODE = type(A).creationCode;
         }
         contract A {
@@ -500,7 +546,9 @@ fn a_constant_embedding_the_reader_records_a_self_dependency() {
 fn a_base_constant_is_followed_through_the_base_name() {
     // The constant has no getter, so nothing seeds it. Derived reads it
     // through the base name, which compiles the value in.
-    let source = "contract Base {
+    let source = "
+        pragma solidity *;
+        contract Base {
             bytes internal constant CODE = type(D).creationCode;
         }
         contract Derived is Base {
@@ -523,7 +571,9 @@ fn a_base_constant_is_followed_through_the_base_name() {
 fn a_public_constant_is_followed_through_the_type_name() {
     // Reading the constant through the library name compiles the value
     // into f.
-    let source = "library B {
+    let source = "
+        pragma solidity *;
+        library B {
             bytes public constant CODE = type(D).creationCode;
         }
         contract A {
@@ -542,7 +592,9 @@ fn a_public_constant_is_followed_through_the_type_name() {
 fn a_storage_variable_read_through_the_base_name_is_not_followed() {
     // Base.x reads storage. The initializer runs at creation and is not
     // part of g's code, so the dependency stays in the creation map only.
-    let source = "contract Base {
+    let source = "
+        pragma solidity *;
+        contract Base {
             bytes x = type(D).creationCode;
         }
         contract Derived is Base {
@@ -567,7 +619,9 @@ fn a_getter_call_on_a_contract_value_is_not_followed() {
     // The getter body runs in B's deployed code, so B embeds D. A only
     // makes an external call and receives the value at runtime, so its
     // bytecode embeds nothing.
-    let source = "contract B {
+    let source = "
+        pragma solidity *;
+        contract B {
             bytes public constant CODE = type(D).creationCode;
         }
         contract A {
@@ -591,7 +645,9 @@ fn a_getter_call_on_a_contract_value_is_not_followed() {
 fn public_constant_is_a_deployed_entry_point() {
     // Nothing references the constant. Its getter returns the value, so the
     // value is still part of the deployed code.
-    let source = "contract B {
+    let source = "
+        pragma solidity *;
+        contract B {
             bytes public constant CODE = type(D).creationCode;
         }
         contract D {}";
@@ -607,7 +663,9 @@ fn public_constant_is_a_deployed_entry_point() {
 
 #[test]
 fn constant_without_a_getter_is_not_an_entry_point() {
-    let source = "contract B {
+    let source = "
+        pragma solidity *;
+        contract B {
             bytes constant CODE = type(D).creationCode;
             bytes internal constant OTHER = type(D).creationCode;
         }
@@ -620,7 +678,9 @@ fn constant_without_a_getter_is_not_an_entry_point() {
 #[test]
 fn an_inherited_public_constant_is_an_entry_point() {
     // Both contracts serve the constant's selector.
-    let source = "contract Base {
+    let source = "
+        pragma solidity *;
+        contract Base {
             bytes public constant CODE = type(D).creationCode;
         }
         contract Derived is Base {}
@@ -637,7 +697,9 @@ fn an_inherited_public_constant_is_an_entry_point() {
 
 #[test]
 fn a_library_public_constant_is_a_deployed_entry_point() {
-    let source = "library L {
+    let source = "
+        pragma solidity *;
+        library L {
             bytes public constant CODE = type(D).creationCode;
         }
         contract D {}";
@@ -654,7 +716,9 @@ fn a_library_public_constant_is_a_deployed_entry_point() {
 fn a_library_constant_without_a_getter_is_not_an_entry_point() {
     // The value is compiled only into referencing units, and nothing
     // references it.
-    let source = "library L {
+    let source = "
+        pragma solidity *;
+        library L {
             bytes internal constant CODE = type(L).creationCode;
         }";
     let context = build_context(source);
@@ -666,7 +730,9 @@ fn a_library_constant_without_a_getter_is_not_an_entry_point() {
 fn a_constant_overriding_a_function_is_an_entry_point() {
     // The constant's getter serves x's selector in B, so its value is part
     // of B's deployed code.
-    let source = "abstract contract Base {
+    let source = "
+        pragma solidity *;
+        abstract contract Base {
             function x() external pure virtual returns (bytes memory);
         }
         contract B is Base {
@@ -685,7 +751,9 @@ fn a_constant_overriding_a_function_is_an_entry_point() {
 fn a_function_overridden_by_a_constant_stays_out() {
     // The getter serves x's selector in B, so Base.x's body is not part of
     // B's deployed code.
-    let source = "contract Base {
+    let source = "
+        pragma solidity *;
+        contract Base {
             function x() external virtual returns (bytes memory) {
                 return type(D).creationCode;
             }
@@ -707,7 +775,9 @@ fn a_function_overridden_by_a_constant_stays_out() {
 
 #[test]
 fn user_defined_operator_function_is_followed() {
-    let source = "type Int is int256;
+    let source = "
+        pragma solidity *;
+        type Int is int256;
         function add(Int, Int) pure returns (Int) {
             bytes memory code = type(B).creationCode;
             code;
@@ -737,7 +807,9 @@ fn a_base_constructor_wins_over_a_derived_initializer() {
     // Every creation unit joins one queue, so Base's constructor is walked
     // before Mid's initializer. solc visits every base's initializers before
     // any constructor body and records Mid's own initializer instead.
-    let source = "contract Base { constructor() { new D(); } }
+    let source = "
+        pragma solidity *;
+        contract Base { constructor() { new D(); } }
         contract Mid is Base { D d = new D(); }
         contract D {}";
     let context = build_context(source);
@@ -755,7 +827,9 @@ fn an_entry_point_earlier_by_name_wins() {
     // Deployed entry points come from the linearised function list, which is
     // sorted by name, so `alpha` is walked before `zebra`. solc walks the
     // external interface in declaration order and records `zebra`'s `new B`.
-    let source = "contract A {
+    let source = "
+        pragma solidity *;
+        contract A {
             function zebra() public { new B(); }
             function alpha() public pure returns (bytes memory) { return type(B).creationCode; }
         }
@@ -774,7 +848,9 @@ fn an_unnamed_entry_point_wins_over_a_named_one() {
     // The linearised function list puts the unnamed fallback and receive
     // before the named functions. solc walks the external interface first
     // and only then the fallback, so it records `f`'s code access.
-    let source = "contract A {
+    let source = "
+        pragma solidity *;
+        contract A {
             fallback() external { new B(); }
             function f() public pure returns (bytes memory) { return type(B).creationCode; }
         }
@@ -793,7 +869,9 @@ fn a_units_own_reference_wins_over_the_constant_it_uses() {
     // A unit's own references are recorded before the constants it uses are
     // walked. solc compiles a constant in where it is used, so it records
     // the access inside `K` for both.
-    let source = "bytes constant K = type(B).creationCode;
+    let source = "
+        pragma solidity *;
+        bytes constant K = type(B).creationCode;
         contract A {
             function f() public pure returns (bytes memory) {
                 bytes memory value = K;

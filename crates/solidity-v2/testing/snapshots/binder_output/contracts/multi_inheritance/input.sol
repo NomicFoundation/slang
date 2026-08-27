@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Base1 {
     function base1() public returns (int) { return 1; }
 }

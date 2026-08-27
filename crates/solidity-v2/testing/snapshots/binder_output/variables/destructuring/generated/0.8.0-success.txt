@@ -1,35 +1,35 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (10):
-- Def: #1 ["Test" @ input.sol:1:9] (library)
-- Def: #2 ["Choice" @ input.sol:2:10] (enum)
-- Def: #3 ["Yes" @ input.sol:2:19] (enum member of Choice)
-- Def: #4 ["No" @ input.sol:2:24] (enum member of Choice)
-- Def: #5 ["test" @ input.sol:4:14] (function, type: function () returns void)
-- Def: #6 ["x" @ input.sol:5:14] (variable, type: int256)
-- Def: #7 ["y" @ input.sol:5:21] (variable, type: int256)
-- Def: #8 ["z" @ input.sol:6:14] (variable, type: int256)
-- Def: #9 ["w" @ input.sol:6:23] (variable, type: int256)
-- Def: #10 ["c" @ input.sol:9:19] (variable, type: Choice)
+- Def: #1 ["Test" @ input.sol:3:9] (library)
+- Def: #2 ["Choice" @ input.sol:4:10] (enum)
+- Def: #3 ["Yes" @ input.sol:4:19] (enum member of Choice)
+- Def: #4 ["No" @ input.sol:4:24] (enum member of Choice)
+- Def: #5 ["test" @ input.sol:6:14] (function, type: function () returns void)
+- Def: #6 ["x" @ input.sol:7:14] (variable, type: int256)
+- Def: #7 ["y" @ input.sol:7:21] (variable, type: int256)
+- Def: #8 ["z" @ input.sol:8:14] (variable, type: int256)
+- Def: #9 ["w" @ input.sol:8:23] (variable, type: int256)
+- Def: #10 ["c" @ input.sol:11:19] (variable, type: Choice)
 
 ------------------------------------------------------------------------
 
 References (15):
-- Ref: ["assert" @ input.sol:7:9] -> built-in
-- Ref: ["x" @ input.sol:7:16] -> #6
-- Ref: ["z" @ input.sol:7:21] -> #8
-- Ref: ["assert" @ input.sol:8:9] -> built-in
-- Ref: ["y" @ input.sol:8:16] -> #7
-- Ref: ["w" @ input.sol:8:20] -> #9
-- Ref: ["Choice" @ input.sol:9:12] -> #2
-- Ref: ["Choice" @ input.sol:9:25] -> #2
-- Ref: ["Yes" @ input.sol:9:32] -> #3
-- Ref: ["Choice" @ input.sol:9:37] -> #2
-- Ref: ["No" @ input.sol:9:44] -> #4
-- Ref: ["assert" @ input.sol:11:9] -> built-in
-- Ref: ["c" @ input.sol:11:16] -> #10
-- Ref: ["Choice" @ input.sol:11:21] -> #2
-- Ref: ["No" @ input.sol:11:28] -> #4
+- Ref: ["assert" @ input.sol:9:9] -> built-in
+- Ref: ["x" @ input.sol:9:16] -> #6
+- Ref: ["z" @ input.sol:9:21] -> #8
+- Ref: ["assert" @ input.sol:10:9] -> built-in
+- Ref: ["y" @ input.sol:10:16] -> #7
+- Ref: ["w" @ input.sol:10:20] -> #9
+- Ref: ["Choice" @ input.sol:11:12] -> #2
+- Ref: ["Choice" @ input.sol:11:25] -> #2
+- Ref: ["Yes" @ input.sol:11:32] -> #3
+- Ref: ["Choice" @ input.sol:11:37] -> #2
+- Ref: ["No" @ input.sol:11:44] -> #4
+- Ref: ["assert" @ input.sol:13:9] -> built-in
+- Ref: ["c" @ input.sol:13:16] -> #10
+- Ref: ["Choice" @ input.sol:13:21] -> #2
+- Ref: ["No" @ input.sol:13:28] -> #4
 
 ------------------------------------------------------------------------
 
@@ -40,10 +40,10 @@ Unbound identifiers (0):
 Bindings: 
     ╭─[input.sol:1:1]
     │
-  1 │ library Test {
+  3 │ library Test {
     │         ──┬─  
     │           ╰─── name: 1
-  2 │     enum Choice { Yes, No }
+  4 │     enum Choice { Yes, No }
     │          ───┬──   ─┬─  ─┬  
     │             ╰────────────── name: 2
     │                    │    │  
@@ -51,34 +51,34 @@ Bindings:
     │                         │  
     │                         ╰── name: 4
     │ 
-  4 │     function test() public {
+  6 │     function test() public {
     │              ──┬─  
     │                ╰─── name: 5
-  5 │         (int x, int y) = (1, 2);
+  7 │         (int x, int y) = (1, 2);
     │              ┬      ┬  
     │              ╰───────── name: 6
     │                     │  
     │                     ╰── name: 7
-  6 │         (int z, , int w) = (1, 2, 3);
+  8 │         (int z, , int w) = (1, 2, 3);
     │              ┬        ┬  
     │              ╰─────────── name: 8
     │                       │  
     │                       ╰── name: 9
-  7 │         assert(x == z);
+  9 │         assert(x == z);
     │         ───┬── ┬    ┬  
     │            ╰─────────── built-in
     │                │    │  
     │                ╰─────── ref: 6
     │                     │  
     │                     ╰── ref: 8
-  8 │         assert(y < w);
+ 10 │         assert(y < w);
     │         ───┬── ┬   ┬  
     │            ╰────────── built-in
     │                │   │  
     │                ╰────── ref: 7
     │                    │  
     │                    ╰── ref: 9
-  9 │         (, Choice c) = (Choice.Yes, Choice.No);
+ 11 │         (, Choice c) = (Choice.Yes, Choice.No);
     │            ───┬── ┬     ───┬── ─┬─  ───┬── ─┬  
     │               ╰──────────────────────────────── ref: 2
     │                   │        │    │      │    │  
@@ -92,7 +92,7 @@ Bindings:
     │                                             │  
     │                                             ╰── ref: 4
     │ 
- 11 │         assert(c == Choice.No);
+ 13 │         assert(c == Choice.No);
     │         ───┬── ┬    ───┬── ─┬  
     │            ╰─────────────────── built-in
     │                │       │    │  

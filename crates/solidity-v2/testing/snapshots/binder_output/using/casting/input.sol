@@ -1,3 +1,5 @@
+pragma solidity *;
+
 interface IERC20 {
 }
 library SafeERC20 {

@@ -153,6 +153,7 @@ contract MyContract {
 #[test]
 fn test_build_ir_contract_inheritance_and_storage_layout() {
     const CONTENTS: &str = r###"
+pragma solidity *;
 contract Base {}
 contract Test is Base layout at 0 {}
     "###;
@@ -183,7 +184,7 @@ contract Test is Base layout at 0 {}
 
     let sentinel_node_id = id_generator.next_id_of(ir::NodeKind::SourceUnit);
 
-    assert_eq!(2, ir_root.members.len());
+    assert_eq!(3, ir_root.members.len());
     assert!(ir_root.id() < sentinel_node_id);
 
     assert!(
@@ -191,10 +192,10 @@ contract Test is Base layout at 0 {}
         "IR builder diagnostics: {diagnostics:?}"
     );
 
-    assert_eq!(2, ir_root.members.len());
+    expect_variant!(&ir_root.members[0], ir::SourceUnitMember::PragmaDirective);
 
     let base_contract = expect_variant!(
-        &ir_root.members[0],
+        &ir_root.members[1],
         ir::SourceUnitMember::ContractDefinition
     );
     assert_eq!("Base", base_contract.name.unparse());
@@ -204,7 +205,7 @@ contract Test is Base layout at 0 {}
     assert!(base_contract.name.id() < sentinel_node_id);
 
     let test_contract = expect_variant!(
-        &ir_root.members[1],
+        &ir_root.members[2],
         ir::SourceUnitMember::ContractDefinition
     );
     assert_eq!("Test", test_contract.name.unparse());
@@ -226,6 +227,7 @@ contract Test is Base layout at 0 {}
 #[test]
 fn test_build_ir_distinguishes_index_access_and_slice() {
     const CONTENTS: &str = r###"
+pragma solidity *;
 contract Test {
     function test(bytes calldata a) public pure {
         a[1];
@@ -264,7 +266,7 @@ contract Test {
     );
 
     let contract = expect_variant!(
-        &ir_root.members[0],
+        &ir_root.members[1],
         ir::SourceUnitMember::ContractDefinition
     );
     let function = expect_variant!(&contract.members[0], ir::ContractMember::FunctionDefinition);

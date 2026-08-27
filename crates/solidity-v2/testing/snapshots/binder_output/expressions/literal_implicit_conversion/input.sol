@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Lib {
     function sig(uint, bytes4) internal returns (uint) {}
     function sig(uint, string memory) internal returns (uint) {}

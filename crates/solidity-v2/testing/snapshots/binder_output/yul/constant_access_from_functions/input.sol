@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract InContracts {
     uint256 private constant CONTRACT_CONST = 1;
 

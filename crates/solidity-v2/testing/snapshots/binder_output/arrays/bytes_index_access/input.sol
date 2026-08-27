@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Utils {
     function foo(bytes memory x) internal {}
     function foo(bytes1 x) internal {}

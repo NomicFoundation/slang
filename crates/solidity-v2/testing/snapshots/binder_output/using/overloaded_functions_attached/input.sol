@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Lib {
     function add(uint256 x, uint256 y) internal returns (uint256) { return x + y; }
     function add(int256 x, int256 y) internal returns (int256) { return x + y; }

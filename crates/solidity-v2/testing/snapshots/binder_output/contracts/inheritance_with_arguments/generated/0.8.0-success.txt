@@ -1,15 +1,15 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (3):
-- Def: #1 ["BASE" @ input.sol:1:15] (constant, type: uint256)
-- Def: #2 ["Base" @ input.sol:3:10] (contract)
-- Def: #3 ["Derived" @ input.sol:7:10] (contract)
+- Def: #1 ["BASE" @ input.sol:3:15] (constant, type: uint256)
+- Def: #2 ["Base" @ input.sol:5:10] (contract)
+- Def: #3 ["Derived" @ input.sol:9:10] (contract)
 
 ------------------------------------------------------------------------
 
 References (2):
-- Ref: ["Base" @ input.sol:7:21] -> #2
-- Ref: ["BASE" @ input.sol:7:26] -> #1
+- Ref: ["Base" @ input.sol:9:21] -> #2
+- Ref: ["BASE" @ input.sol:9:26] -> #1
 
 ------------------------------------------------------------------------
 
@@ -20,15 +20,15 @@ Unbound identifiers (0):
 Bindings: 
    ╭─[input.sol:1:1]
    │
- 1 │ uint constant BASE = 42;
+ 3 │ uint constant BASE = 42;
    │               ──┬─  
    │                 ╰─── name: 1
    │ 
- 3 │ contract Base {
+ 5 │ contract Base {
    │          ──┬─  
    │            ╰─── name: 2
    │ 
- 7 │ contract Derived is Base(BASE) {}
+ 9 │ contract Derived is Base(BASE) {}
    │          ───┬───    ──┬─ ──┬─  
    │             ╰────────────────── name: 3
    │                       │    │   

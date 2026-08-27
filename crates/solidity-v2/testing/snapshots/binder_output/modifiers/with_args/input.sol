@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract FunctionModifier {
     address public owner;
 

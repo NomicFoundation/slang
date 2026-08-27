@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function testPayable(address payable rcpt) public {
         rcpt.transfer(1);

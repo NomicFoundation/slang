@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library MyLib {
     enum Choice { One, Two }
     struct Book { string author; }

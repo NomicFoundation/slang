@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Address {
     function sendValue(address payable recipient) internal {}
 }

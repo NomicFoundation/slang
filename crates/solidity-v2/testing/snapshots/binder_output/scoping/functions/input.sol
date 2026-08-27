@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Sample {
     function test() public returns (int) {
         return from_sample() + top_level() + MyLib.from_lib();
