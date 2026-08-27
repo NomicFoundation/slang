@@ -14,7 +14,6 @@ tasks:
       - "prettier"
       - "markdown-link-check"
       - "markdown-lint"
-      - "rustfmt"
       - "shellcheck"
       - "tsc"
       - "yamllint"
@@ -23,11 +22,12 @@ tasks:
       - "typedoc"
 
   "cargo":
-    desc: "Run the 'cargo' linters. They reuse the same target directory lock, so they cannot overlap."
+    desc: "Run the 'cargo' linters (serially). They reuse the same target directory lock, and can modify the same files, so they cannot overlap."
     cmds:
       - task: "clippy"
       - task: "rustdoc"
       - task: "rustdoc-test"
+      - task: "rustfmt"
 
   "clippy":
     desc: "Run 'cargo clippy' to check for any Rust lints."
