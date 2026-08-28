@@ -1,0 +1,98 @@
+use slang_solidity_v2_common::evm_targets::EvmTarget;
+
+use crate::compilation::{CompilationUnit, Configuration, FileId, ImportResolver};
+use crate::diagnostics::DiagnosticExtensions;
+use crate::diagnostics::kinds::compilation::UnresolvedImport;
+use crate::utils::LanguageVersion;
+
+/// Resolves every import path to a file of the same name.
+struct TestImportResolver;
+
+impl ImportResolver for TestImportResolver {
+    fn resolve_import(
+        &mut self,
+        _source_file_id: &FileId,
+        import_path: &str,
+    ) -> Result<FileId, UnresolvedImport> {
+        Ok(import_path.into())
+    }
+}
+
+fn compile<'s>(sources: impl IntoIterator<Item = (FileId, &'s str)>) -> CompilationUnit {
+    CompilationUnit::create(Configuration {
+        language_version: LanguageVersion::LATEST,
+        evm_target: EvmTarget::LATEST,
+        sources,
+        resolver: TestImportResolver,
+    })
+}
+
+fn contract(name: &str, imports: &[&str]) -> String {
+    use std::fmt::Write;
+
+    let imports = imports.iter().fold(String::new(), |mut text, path| {
+        writeln!(text, "import \"{path}\";").unwrap();
+        text
+    });
+
+    format!("pragma solidity ^0.8.0;\n{imports}\ncontract {name} {{}}\n")
+}
+
+#[test]
+fn compiles_every_source_it_is_given() {
+    let main = contract("Main", &["lib.sol"]);
+    let lib = contract("Lib", &[]);
+    let extra = contract("Extra", &[]);
+    let unit = compile([
+        ("main.sol".into(), main.as_str()),
+        ("lib.sol".into(), lib.as_str()),
+        // Not imported by anything, but still part of the compilation.
+        ("extra.sol".into(), extra.as_str()),
+    ]);
+
+    assert!(unit.diagnostics().is_empty(), "{:#?}", unit.diagnostics());
+
+    // `files()` yields the files sorted by ID, but that order is not part of
+    // the API, so sort here and assert on the set of files instead.
+    let mut file_ids: Vec<String> = unit
+        .files()
+        .map(|file| file.id().as_str().to_owned())
+        .collect();
+    file_ids.sort();
+    assert_eq!(file_ids, ["extra.sol", "lib.sol", "main.sol"]);
+}
+
+#[test]
+fn the_last_contents_given_for_a_file_id_win() {
+    let stale = contract("Stale", &[]);
+    let fresh = contract("Fresh", &[]);
+    let unit = compile([
+        ("main.sol".into(), stale.as_str()),
+        ("main.sol".into(), fresh.as_str()),
+    ]);
+
+    // The repetition is reported, and the compilation proceeds with the last
+    // contents given for the ID.
+    let diagnostics: Vec<_> = unit.diagnostics().iter().collect();
+    assert_eq!(
+        1,
+        diagnostics.len(),
+        "expected exactly the duplicated file ID, but found: {diagnostics:#?}"
+    );
+
+    let diagnostic = diagnostics[0];
+    assert_eq!("compilation/duplicated-file-id", diagnostic.code());
+    assert_eq!("main.sol", diagnostic.file_id().as_str());
+    assert_eq!(
+        "Source file provided more than once: main.sol",
+        diagnostic.message()
+    );
+
+    assert_eq!(unit.files().count(), 1);
+
+    let contract_names: Vec<String> = unit
+        .all_contracts()
+        .map(|contract| contract.name().name().to_owned())
+        .collect();
+    assert_eq!(contract_names, ["Fresh"]);
+}

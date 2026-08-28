@@ -1,3 +1,5 @@
+use std::ops::Range;
+
 pub use contract_data::ContractReference;
 pub(crate) use contract_data::{ContractData, ContractLinearisations};
 pub(crate) use file_node_mapper::FileNodeMapper;
@@ -40,26 +42,37 @@ pub trait SemanticFile {
     fn resolved_import_by_node_id(&self, node_id: NodeId) -> Option<&FileId>;
 }
 
-pub fn extract_import_paths_from_source_unit(
-    source_unit: &ir::SourceUnit,
-) -> Vec<(NodeId, String)> {
+/// One import declared by a source unit, as collected by
+/// [`extract_imports_from_source_unit`].
+#[derive(Clone, Debug)]
+pub struct SourceUnitImport {
+    /// The IR node declaring the import.
+    pub node_id: NodeId,
+    /// The path the import names, with the surrounding quotes stripped.
+    pub path: String,
+    /// The range of the path literal in the file's source text.
+    pub range: Range<usize>,
+}
+
+/// Collects the imports declared in a source unit.
+pub fn extract_imports_from_source_unit(source_unit: &ir::SourceUnit) -> Vec<SourceUnitImport> {
     let mut import_paths = Vec::new();
 
     for member in source_unit.members.iter() {
         let ir::SourceUnitMember::ImportClause(import_clause) = member else {
             continue;
         };
-        let (node_id, path_string_literal) = match import_clause {
-            ir::ImportClause::PathImport(path_import) => {
-                (path_import.id(), path_import.path.unparse())
+        let (node_id, path) = match import_clause {
+            ir::ImportClause::PathImport(path_import) => (path_import.id(), &path_import.path),
+            ir::ImportClause::ImportDeconstruction(import_deconstruction) => {
+                (import_deconstruction.id(), &import_deconstruction.path)
             }
-            ir::ImportClause::ImportDeconstruction(import_deconstruction) => (
-                import_deconstruction.id(),
-                import_deconstruction.path.unparse(),
-            ),
         };
-        let import_path = strip_string_literal_quotes(path_string_literal).to_owned();
-        import_paths.push((node_id, import_path));
+        import_paths.push(SourceUnitImport {
+            node_id,
+            path: strip_string_literal_quotes(path.unparse()).to_owned(),
+            range: path.range.clone(),
+        });
     }
     import_paths
 }

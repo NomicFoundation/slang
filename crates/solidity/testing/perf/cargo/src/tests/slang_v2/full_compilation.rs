@@ -3,12 +3,10 @@
 //! The sibling modules in this directory each measure one pipeline stage in
 //! isolation. This one instead drives the whole pipeline the way consumers do:
 //! parsing, IR building, and semantic analysis, all behind
-//! `CompilationBuilder::build()`.
+//! `CompilationUnit::create()`.
 
-use slang_solidity_v2::compilation::{
-    CompilationBuilder, CompilationBuilderConfig, CompilationUnit, FileId,
-};
-use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
+use slang_solidity_v2::compilation::{CompilationUnit, Configuration, FileId, ImportResolver};
+use slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport;
 
 use crate::dataset::SolidityProject;
 use crate::tests::slang_v2::common::{parse_evm_target, parse_version};
@@ -21,21 +19,19 @@ pub fn setup(project: &str) -> Input {
 }
 
 pub fn run(project: Input) -> Output {
-    let mut builder = CompilationBuilder::create(
-        parse_version(project),
-        parse_evm_target(project),
-        ProjectConfig { project },
-    );
-
-    // Add every source of the project, rather than just its entrypoint. This
+    // Pass every source of the project, rather than just its entrypoint. This
     // matches the workload of the per-stage benchmarks in this directory, which
     // all operate on the full source list, and it mirrors consumers that
     // already know their complete file set up front (e.g. a build tool).
-    for file_id in project.sources.keys() {
-        builder.add_file(file_id.as_str().into());
-    }
-
-    let unit = builder.build();
+    let unit = CompilationUnit::create(Configuration {
+        language_version: parse_version(project),
+        evm_target: parse_evm_target(project),
+        sources: project
+            .sources
+            .iter()
+            .map(|(file_id, contents)| (FileId::from(file_id.as_str()), contents.as_str())),
+        resolver: ProjectImportResolver { project },
+    });
 
     assert!(
         unit.diagnostics().is_empty(),
@@ -50,23 +46,13 @@ pub fn test(project: Input) -> Output {
     run(project)
 }
 
-/// Serves the builder callbacks entirely from the project's in-memory sources,
-/// so that benchmarks never touch the filesystem.
-struct ProjectConfig {
+/// Resolves the project's imports entirely from its in-memory metadata, so that
+/// benchmarks never touch the filesystem.
+struct ProjectImportResolver {
     project: &'static SolidityProject,
 }
 
-impl CompilationBuilderConfig for ProjectConfig {
-    fn read_file(&mut self, file_id: &FileId) -> Result<String, MissingFile> {
-        self.project
-            .sources
-            .get(file_id.as_str())
-            .cloned()
-            .ok_or_else(|| MissingFile {
-                reason: format!("'{file_id}' is not part of this project"),
-            })
-    }
-
+impl ImportResolver for ProjectImportResolver {
     fn resolve_import(
         &mut self,
         source_file_id: &FileId,

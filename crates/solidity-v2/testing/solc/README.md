@@ -66,7 +66,7 @@ splitting them up would only cost `nextest` tens of thousands of processes.
    loads the fixture at `<path>` but names the source unit after the left-hand
    side, which is a source _name_ and not an import remapping.
 3. **Run** — each `(version, test)` pair compiles with the slang v2
-   `CompilationBuilder` pinned to that language version and the resolved EVM
+   `CompilationUnit::create` pinned to that language version and the resolved EVM
    target (the `EVMVersion` setting if present, else that version's default),
    resolving imports with the shared `solidity_v2_testing_utils` `path_resolver`,
    which follows the rules `solc` applies to a standard JSON input with no

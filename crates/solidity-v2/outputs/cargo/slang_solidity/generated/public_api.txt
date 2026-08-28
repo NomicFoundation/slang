@@ -13,11 +13,6 @@ pub use slang_solidity_v2::ast::NodeId
 pub use slang_solidity_v2::ast::TypeId
 pub mod slang_solidity_v2::compilation
 pub use slang_solidity_v2::compilation::FileId
-pub struct slang_solidity_v2::compilation::CompilationBuilder<C: slang_solidity_v2::compilation::CompilationBuilderConfig>
-impl<C: slang_solidity_v2::compilation::CompilationBuilderConfig> slang_solidity_v2::compilation::CompilationBuilder<C>
-pub fn slang_solidity_v2::compilation::CompilationBuilder<C>::add_file(&mut self, slang_solidity_v2_common::files::FileId)
-pub fn slang_solidity_v2::compilation::CompilationBuilder<C>::build(self) -> slang_solidity_v2::compilation::CompilationUnit
-pub fn slang_solidity_v2::compilation::CompilationBuilder<C>::create(slang_solidity_v2_common::versions::version::LanguageVersion, slang_solidity_v2_common::evm_targets::target::EvmTarget, C) -> slang_solidity_v2::compilation::CompilationBuilder<C>
 pub struct slang_solidity_v2::compilation::CompilationUnit
 impl slang_solidity_v2::compilation::CompilationUnit
 pub fn slang_solidity_v2::compilation::CompilationUnit::all_contracts(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::nodes::ContractDefinition> + use<'_>
@@ -30,13 +25,19 @@ pub fn slang_solidity_v2::compilation::CompilationUnit::file(&self, &slang_solid
 pub fn slang_solidity_v2::compilation::CompilationUnit::files(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2::compilation::File> + '_
 pub fn slang_solidity_v2::compilation::CompilationUnit::find_contract_by_name<'a, 'b>(&'a self, &'b str) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::nodes::ContractDefinition> + use<'a> where 'b: 'a
 pub fn slang_solidity_v2::compilation::CompilationUnit::language_version(&self) -> slang_solidity_v2_common::versions::version::LanguageVersion
+impl slang_solidity_v2::compilation::CompilationUnit
+pub fn slang_solidity_v2::compilation::CompilationUnit::create<'s, S, R>(slang_solidity_v2::compilation::Configuration<S, R>) -> slang_solidity_v2::compilation::CompilationUnit where S: core::iter::traits::collect::IntoIterator<Item = (slang_solidity_v2_common::files::FileId, &'s str)>, R: slang_solidity_v2::compilation::ImportResolver
+pub struct slang_solidity_v2::compilation::Configuration<S, R>
+pub slang_solidity_v2::compilation::Configuration::evm_target: slang_solidity_v2_common::evm_targets::target::EvmTarget
+pub slang_solidity_v2::compilation::Configuration::language_version: slang_solidity_v2_common::versions::version::LanguageVersion
+pub slang_solidity_v2::compilation::Configuration::resolver: R
+pub slang_solidity_v2::compilation::Configuration::sources: S
 pub struct slang_solidity_v2::compilation::FileStruct
 impl slang_solidity_v2::compilation::FileStruct
 pub fn slang_solidity_v2::compilation::FileStruct::ast(&self) -> slang_solidity_v2_ast::ast::nodes::SourceUnit
 pub fn slang_solidity_v2::compilation::FileStruct::id(&self) -> &slang_solidity_v2_common::files::FileId
-pub trait slang_solidity_v2::compilation::CompilationBuilderConfig
-pub fn slang_solidity_v2::compilation::CompilationBuilderConfig::read_file(&mut self, &slang_solidity_v2_common::files::FileId) -> core::result::Result<alloc::string::String, slang_solidity_v2_common::diagnostics::kinds::compilation::missing_file::MissingFile>
-pub fn slang_solidity_v2::compilation::CompilationBuilderConfig::resolve_import(&mut self, &slang_solidity_v2_common::files::FileId, &str) -> core::result::Result<slang_solidity_v2_common::files::FileId, slang_solidity_v2_common::diagnostics::kinds::compilation::unresolved_import::UnresolvedImport>
+pub trait slang_solidity_v2::compilation::ImportResolver
+pub fn slang_solidity_v2::compilation::ImportResolver::resolve_import(&mut self, &slang_solidity_v2_common::files::FileId, &str) -> core::result::Result<slang_solidity_v2_common::files::FileId, slang_solidity_v2_common::diagnostics::kinds::compilation::unresolved_import::UnresolvedImport>
 pub type slang_solidity_v2::compilation::File = alloc::sync::Arc<slang_solidity_v2::compilation::FileStruct>
 pub mod slang_solidity_v2::diagnostics
 pub use slang_solidity_v2::diagnostics::Diagnostic

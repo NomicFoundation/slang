@@ -2,28 +2,15 @@
 
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 
-use crate::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit, FileId};
-use crate::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
+use crate::compilation::{CompilationUnit, Configuration, FileId, ImportResolver};
+use crate::diagnostics::kinds::compilation::UnresolvedImport;
 use crate::diagnostics::{DiagnosticExtensions, DiagnosticSeverity};
 use crate::utils::LanguageVersion;
 
 /// Serves one file and declines every import out of it.
-struct DecliningBuilderConfig {
-    name: &'static str,
-    contents: &'static str,
-}
+struct DecliningImportResolver;
 
-impl CompilationBuilderConfig for DecliningBuilderConfig {
-    fn read_file(&mut self, file_id: &FileId) -> Result<String, MissingFile> {
-        if file_id.as_str() == self.name {
-            Ok(self.contents.to_owned())
-        } else {
-            Err(MissingFile {
-                reason: format!("no file '{file_id}'"),
-            })
-        }
-    }
-
+impl ImportResolver for DecliningImportResolver {
     fn resolve_import(
         &mut self,
         _source_file_id: &FileId,
@@ -36,14 +23,12 @@ impl CompilationBuilderConfig for DecliningBuilderConfig {
 }
 
 fn compile(name: &'static str, contents: &'static str) -> CompilationUnit {
-    let mut builder = CompilationBuilder::create(
-        LanguageVersion::LATEST,
-        EvmTarget::LATEST,
-        DecliningBuilderConfig { name, contents },
-    );
-    builder.add_file(name.into());
-
-    builder.build()
+    CompilationUnit::create(Configuration {
+        language_version: LanguageVersion::LATEST,
+        evm_target: EvmTarget::LATEST,
+        sources: [(name.into(), contents)],
+        resolver: DecliningImportResolver,
+    })
 }
 
 #[test]

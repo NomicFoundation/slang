@@ -24,7 +24,7 @@ use slang_solidity_v2_parser::{ParseOutput, Parser};
 
 use crate::binder::Binder;
 use crate::context::{
-    FileNodeMapper, SemanticContext, SemanticFile, extract_import_paths_from_source_unit,
+    FileNodeMapper, SemanticContext, SemanticFile, extract_imports_from_source_unit,
 };
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_compute_linearisations,
@@ -118,10 +118,10 @@ fn build_files(sources: &[(&str, &str)], language_version: LanguageVersion) -> V
                 language_version,
             );
 
-            file.resolved_imports = extract_import_paths_from_source_unit(&file.ir_root)
+            file.resolved_imports = extract_imports_from_source_unit(&file.ir_root)
                 .into_iter()
-                .filter(|(_, path)| sources.iter().any(|(name, _)| name == path))
-                .map(|(node_id, path)| (node_id, path.as_str().into()))
+                .filter(|import| sources.iter().any(|(name, _)| name == &import.path))
+                .map(|import| (import.node_id, import.path.as_str().into()))
                 .collect();
 
             file

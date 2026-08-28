@@ -11,6 +11,11 @@ mod compilation {
         use super::*;
 
         #[test]
+        fn among_other_imports() -> Result<()> {
+            run("compilation/missing_imported_file", "among_other_imports")
+        }
+
+        #[test]
         fn escapes_root() -> Result<()> {
             run("compilation/missing_imported_file", "escapes_root")
         }

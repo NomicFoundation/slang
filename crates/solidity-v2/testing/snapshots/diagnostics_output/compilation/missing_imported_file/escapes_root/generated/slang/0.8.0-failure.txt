@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Diagnostics: 2
+Diagnostics: 1
 
 [compilation/missing-imported-file] Error: Imported file is missing: oops.sol
    ╭─[input.sol:6:8]
@@ -9,6 +9,3 @@ Diagnostics: 2
    │        ────────┬───────  
    │                ╰───────── Error occurred here.
 ───╯
-
-[compilation/missing-file] Error: File not found.
-   ─[oops.sol:0:0]

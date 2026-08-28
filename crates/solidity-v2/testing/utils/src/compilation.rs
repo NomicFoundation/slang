@@ -1,10 +1,8 @@
 //! Compiles a fixed set of in-memory sources, shared by the v2 test harnesses.
 
-use slang_solidity_v2::compilation::{
-    CompilationBuilder, CompilationBuilderConfig, CompilationUnit,
-};
+use slang_solidity_v2::compilation::{CompilationUnit, Configuration, ImportResolver};
 use slang_solidity_v2_common::collections::SortedMap;
-use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
+use slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::versions::LanguageVersion;
@@ -17,37 +15,22 @@ use crate::path_resolver;
 /// analyzed too.
 pub fn compile(
     files: &SortedMap<FileId, String>,
-    version: LanguageVersion,
-    target: EvmTarget,
+    language_version: LanguageVersion,
+    evm_target: EvmTarget,
 ) -> CompilationUnit {
-    let mut builder = CompilationBuilder::create(
-        version,
-        target,
-        InMemoryConfig {
-            files: files.clone(),
-        },
-    );
-
-    for file_id in files.keys() {
-        builder.add_file(file_id.clone());
-    }
-
-    builder.build()
+    CompilationUnit::create(Configuration {
+        language_version,
+        evm_target,
+        sources: files
+            .iter()
+            .map(|(file_id, contents)| (file_id.clone(), contents.as_str())),
+        resolver: InMemoryResolver,
+    })
 }
 
-/// Serves the sources it was given; anything else is reported as a missing file
-/// rather than a harness error.
-struct InMemoryConfig {
-    files: SortedMap<FileId, String>,
-}
+struct InMemoryResolver;
 
-impl CompilationBuilderConfig for InMemoryConfig {
-    fn read_file(&mut self, file_id: &FileId) -> Result<String, MissingFile> {
-        self.files.get(file_id).cloned().ok_or_else(|| MissingFile {
-            reason: "File not found.".to_string(),
-        })
-    }
-
+impl ImportResolver for InMemoryResolver {
     fn resolve_import(
         &mut self,
         source_file_id: &FileId,
