@@ -437,13 +437,13 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
         parser_helpers::new_type_name_index_access_path(iap, l, ctx);
         new_state_variable_definition(type_name, attributes, name, value,
         semicolon)
-    }, <type_name: FunctionTypeInternalNoReturn> <special_attributes:
+    }, <mut function_type: FunctionTypeInternalNoReturn> <special_attributes:
     (<SpecialStateVariableAttribute> <StateVariableAttributes>)?> <name:
     Identifier> <value: (StateVariableDefinitionValue)?> <semicolon:
     Semicolon> =>
     {
-        let (function_type, mut extra_attributes) =
-        parser_helpers::extract_extra_attributes(*type_name); if let
+        let mut extra_attributes =
+        parser_helpers::extract_extra_attributes(&mut function_type); if let
         Some(special_attributes) = special_attributes
         {
             extra_attributes.push(special_attributes.0);

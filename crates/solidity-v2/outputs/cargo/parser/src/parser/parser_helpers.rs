@@ -4,13 +4,13 @@
 
 use slang_solidity_v2_common::diagnostics::kinds::syntax::ExpectedArrayLengthExpression;
 use slang_solidity_v2_cst::structured_cst::nodes::{
-    CloseBracket, ElementaryType, Expression, FunctionType, FunctionTypeAttribute,
-    FunctionTypeStruct, IdentifierPath, IdentifierPathElement, IndexAccessEnd, OpenBracket, Period,
+    CloseBracket, ElementaryType, Expression, FunctionTypeAttribute, FunctionTypeStruct,
+    IdentifierPath, IdentifierPathElement, IndexAccessEnd, OpenBracket, Period,
     StateVariableAttribute, TypeName, new_array_type_name, new_expression_elementary_type,
     new_expression_identifier, new_expression_index_access_expression,
-    new_expression_member_access_expression, new_function_type, new_function_type_attributes,
-    new_index_access_expression, new_member_access_expression, new_type_name_array_type_name,
-    new_type_name_elementary_type, new_type_name_identifier_path,
+    new_expression_member_access_expression, new_index_access_expression,
+    new_member_access_expression, new_type_name_array_type_name, new_type_name_elementary_type,
+    new_type_name_identifier_path,
 };
 
 use crate::parser::GrammarCtx;
@@ -174,21 +174,13 @@ pub(crate) fn new_expression_identifier_path(identifier_path: IdentifierPath) ->
 /// We find and split the attributes from the function type as needed
 /// TODO(v2) fail gracefully if a wrong attribute is found
 pub(crate) fn extract_extra_attributes(
-    fun_type: FunctionTypeStruct,
-) -> (FunctionType, Vec<StateVariableAttribute>) {
+    fun_type: &mut FunctionTypeStruct,
+) -> Vec<StateVariableAttribute> {
     // Move all matching attributes to extra_attributes if duplicate_found, else only the first occurrence
     let mut seen_visibility = false;
     let mut duplicate_found = false;
 
-    let FunctionTypeStruct {
-        function_keyword,
-        parameters,
-        attributes,
-        returns,
-    } = fun_type;
-    let mut vec = attributes.elements;
-
-    let extracted = vec.extract_if(.., |attr| {
+    let extracted = fun_type.attributes.elements.extract_if(.., |attr| {
         if duplicate_found {
             // After the first duplicate is found, all matching attributes are extracted
             true
@@ -213,7 +205,7 @@ pub(crate) fn extract_extra_attributes(
         }
     });
 
-    let extra_attributes: Vec<StateVariableAttribute> = extracted
+    extracted
         .filter_map(|attr| {
             match attr {
                 FunctionTypeAttribute::InternalKeyword(terminal) => {
@@ -232,14 +224,5 @@ pub(crate) fn extract_extra_attributes(
                 }
             }
         })
-        .collect();
-
-    let new_fun_type = new_function_type(
-        function_keyword,
-        parameters,
-        new_function_type_attributes(vec),
-        returns,
-    );
-
-    (new_fun_type, extra_attributes)
+        .collect()
 }
