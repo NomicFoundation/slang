@@ -15,7 +15,7 @@ mkdocs-material = "==9.6.11"
 mkdocs-minify-plugin = "==0.8.0"
 mkdocs-pymdownx-material-extras = "==2.8"
 
-# Used by 'infra lint':
+# Used by 'task lint:yamllint':
 yamllint = "==1.38.0"
 
 # Used by 'infra perf cargo':

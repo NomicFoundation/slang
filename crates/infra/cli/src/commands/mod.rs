@@ -44,9 +44,7 @@ pub enum AppCommand {
     ///
     /// Running this command without any args will test everything.
     Test(TestController),
-    /// Run linters for formatting, spelling, broken links, and other issues.
-    ///
-    /// Running this command without any args will lint everything.
+    /// Report the 'task' command that runs linters instead.
     Lint(LintController),
     /// Perform a full CI run locally, by running 'setup', 'check', 'test', and 'lint' (in that order).
     Ci(CiController),
@@ -74,7 +72,7 @@ impl AppCommand {
             AppCommand::Setup(controller) => controller.execute()?,
             AppCommand::Check(controller) => controller.execute()?,
             AppCommand::Test(controller) => controller.execute(),
-            AppCommand::Lint(controller) => controller.execute()?,
+            AppCommand::Lint(_) => LintController::execute()?,
             AppCommand::Ci(controller) => controller.execute()?,
             AppCommand::Run(controller) => controller.execute(),
             AppCommand::Watch(controller) => controller.execute()?,

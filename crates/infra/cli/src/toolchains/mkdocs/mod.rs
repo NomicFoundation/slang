@@ -11,10 +11,6 @@ use crate::utils::DryRun;
 pub struct Mkdocs;
 
 impl Mkdocs {
-    pub fn check() {
-        mkdocs().arg("build").flag("--clean").flag("--strict").run();
-    }
-
     pub fn watch() {
         // _MKDOCS_WATCH_PORT_ | keep in sync with the port number defined in "$REPO_ROOT/.devcontainer/devcontainer.json"
         const PORT: usize = 5353;

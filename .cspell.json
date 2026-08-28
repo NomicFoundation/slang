@@ -45,6 +45,7 @@
     "sourcify",
     "struct",
     "structs",
+    "taskfile",
     "tera",
     "ufixed",
     "unshift",

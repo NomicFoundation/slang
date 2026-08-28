@@ -126,6 +126,7 @@ impl CargoWorkspaceCommands for Command {
 
         // Using `$RUSTFLAGS' or '--' overrides any rustflags from `.cargo/config.toml'.
         // Using this syntax instead, as it is concatenated with the existing flags:
+        // __RUST_CI_FLAGS_OVERRIDES__ (keep in sync)
         self.flag("--release")
             .property(
                 "--config",
