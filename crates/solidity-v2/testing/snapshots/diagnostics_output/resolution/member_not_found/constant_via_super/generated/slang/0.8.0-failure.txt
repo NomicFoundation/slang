@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/member-not-found] Error: Member 'X' not found or not visible after argument-dependent lookup.
+    ╭─[input.sol:13:22]
+    │
+ 13 │         return super.X;
+    │                      ┬  
+    │                      ╰── Error occurred here.
+────╯

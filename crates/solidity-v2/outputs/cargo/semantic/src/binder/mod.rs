@@ -631,7 +631,13 @@ impl Binder {
                         ResolveOptions::This(_) | ResolveOptions::External => {
                             definition.is_externally_visible()
                         }
-                        ResolveOptions::Super(_) => definition.is_internally_visible(),
+                        // `super` reaches the functions of the bases, and
+                        // nothing else: not state variables, constants, or
+                        // type definitions.
+                        ResolveOptions::Super(_) => {
+                            matches!(definition, Definition::Function(_))
+                                && definition.is_internally_visible()
+                        }
                     };
                     if visible {
                         results.push(*definition_id);

@@ -1296,11 +1296,21 @@ mod resolution {
         }
 
         #[test]
+        fn constant_via_super() -> Result<()> {
+            run("resolution/member_not_found", "constant_via_super")
+        }
+
+        #[test]
         fn creation_code_on_abstract_contract() -> Result<()> {
             run(
                 "resolution/member_not_found",
                 "creation_code_on_abstract_contract",
             )
+        }
+
+        #[test]
+        fn event_via_super() -> Result<()> {
+            run("resolution/member_not_found", "event_via_super")
         }
 
         #[test]
@@ -1392,6 +1402,14 @@ mod resolution {
         }
 
         #[test]
+        fn public_state_variable_via_super() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "public_state_variable_via_super",
+            )
+        }
+
+        #[test]
         fn push_on_memory_array() -> Result<()> {
             run("resolution/member_not_found", "push_on_memory_array")
         }
@@ -1410,6 +1428,11 @@ mod resolution {
                 "resolution/member_not_found",
                 "selector_on_internal_function",
             )
+        }
+
+        #[test]
+        fn state_variable_via_super() -> Result<()> {
+            run("resolution/member_not_found", "state_variable_via_super")
         }
     }
 
