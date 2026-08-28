@@ -4,8 +4,11 @@
 #![allow(unused_variables)]
 #![allow(clippy::too_many_arguments)]
 
+//! Nodes deliberately don't derive [`Clone`]: a node owns its children, so
+//! cloning one deep-copies its whole subtree — an unbounded cost at a call site
+//! that reads like a cheap one.
+
 use std::ops::Range;
-use std::rc::Rc;
 
 
 // TODO(v2):
@@ -25,11 +28,11 @@ use std::rc::Rc;
 //
 // Sequences:
 //
-// Note: All sequences are wrapped in Rc, this keeps sizes down and avoids recursive types
+// Note: All sequences are wrapped in Box, this keeps sizes down and avoids recursive types
 {% for parent_type, sequence in target.sequences %}
-  pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
+  pub type {{ parent_type }} = Box<{{ parent_type }}Struct>;
 
-  #[derive(Clone, Debug, PartialEq)]
+  #[derive(Debug, PartialEq)]
   pub struct {{ parent_type }}Struct {
     {%- for field in sequence.fields %}
       pub {{ field.label | snake_case }}:
@@ -44,7 +47,7 @@ use std::rc::Rc;
   pub fn new_{{ parent_type | snake_case }}({% for field in sequence.fields -%}
       {{ field.label | snake_case }}: {% if field.is_optional %}Option<{% endif %}{{ field.field_type.name }}{% if field.is_optional %}>{% endif %},
     {%- endfor %}) -> {{ parent_type }} {
-      Rc::new({{ parent_type }}Struct {
+      Box::new({{ parent_type }}Struct {
         {%- for field in sequence.fields %}
           {{ field.label | snake_case }},
         {%- endfor -%}
@@ -58,7 +61,7 @@ use std::rc::Rc;
 //
 // Note: We create a constructor function for each variant
 {% for parent_type, choice in target.choices %}
-  #[derive(Clone, Debug, PartialEq)]
+  #[derive(Debug, PartialEq)]
   pub enum {{ parent_type }} {
     {% for variant in choice.variants -%}
       {{ variant.variant_type.name }}({{ variant.variant_type.name }}),
@@ -77,7 +80,7 @@ use std::rc::Rc;
 //
 // TODO(v2): consider using a transparent representation
 {% for parent_type, collection in target.collections %}
-  #[derive(Clone, Debug, PartialEq)]
+  #[derive(Debug, PartialEq)]
   pub struct {{ parent_type }} {
       pub elements: Vec<{{ collection.item_type.name }}>,
   }
@@ -94,7 +97,7 @@ use std::rc::Rc;
 // Note: _source is unused on the constructor methods, but kept for uniformity with other constructors
 // and because it may be needed in the future
 {% for parent_type in target.terminals %}
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
   pub struct {{ parent_type }} {
     pub range: Range<usize>,
   }

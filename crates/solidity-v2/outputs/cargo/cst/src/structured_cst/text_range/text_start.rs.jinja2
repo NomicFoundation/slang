@@ -2,8 +2,6 @@
 
 #![allow(clippy::wildcard_imports)]
 
-use std::rc::Rc;
-
 use crate::structured_cst::nodes::*;
 
 /// A trait for CST nodes that can report the start offset of their text range.
@@ -18,7 +16,7 @@ impl<T: TextStart> TextStart for Option<T> {
     }
 }
 
-impl<T: TextStart> TextStart for Rc<T> {
+impl<T: TextStart> TextStart for Box<T> {
     fn calculate_text_start(&self) -> Option<usize> {
         (**self).calculate_text_start()
     }

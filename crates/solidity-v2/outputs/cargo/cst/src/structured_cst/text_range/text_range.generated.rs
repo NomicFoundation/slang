@@ -3,7 +3,6 @@
 #![allow(clippy::wildcard_imports)]
 
 use std::ops::Range;
-use std::rc::Rc;
 
 use super::text_end::TextEnd;
 use super::text_start::TextStart;
@@ -21,7 +20,7 @@ impl<T: TextRange> TextRange for Option<T> {
     }
 }
 
-impl<T: TextRange> TextRange for Rc<T> {
+impl<T: TextRange> TextRange for Box<T> {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         (**self).calculate_text_range()
     }
