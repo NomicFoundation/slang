@@ -1,7 +1,9 @@
+use slang_solidity_v2_common::nodes::NodeId;
+
 use super::binder::{Binder, Definition, Typing};
 use super::types::{
-    AddressType, ArrayType, BytesType, DataLocation, LiteralKind, MetaType, TupleType, Type,
-    TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
+    AddressType, ArrayType, BytesType, ContractType, DataLocation, LiteralKind, MetaType,
+    TupleType, Type, TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
 };
 
 mod availability;
@@ -138,6 +140,13 @@ impl<'a> BuiltInsResolver<'a> {
         }
     }
 
+    fn is_abstract_contract(&self, definition_id: NodeId) -> bool {
+        matches!(
+            self.binder.find_definition_by_id(definition_id),
+            Some(Definition::Contract(contract)) if contract.ir_node.is_abstract
+        )
+    }
+
     pub(crate) fn lookup_member_of(
         &self,
         built_in: &InternalBuiltIn,
@@ -171,7 +180,17 @@ impl<'a> BuiltInsResolver<'a> {
                 _ => None,
             },
             InternalBuiltIn::Type(type_id) => match self.types.get_type_by_id(*type_id) {
-                Type::Contract(_) | Type::Library(_) => match symbol {
+                Type::Contract(ContractType { definition_id }) => {
+                    let is_abstract = self.is_abstract_contract(*definition_id);
+                    match symbol {
+                        "name" => Some(InternalBuiltIn::TypeName),
+                        // An abstract contract has no bytecode of its own.
+                        "creationCode" if !is_abstract => Some(InternalBuiltIn::TypeCreationCode),
+                        "runtimeCode" if !is_abstract => Some(InternalBuiltIn::TypeRuntimeCode),
+                        _ => None,
+                    }
+                }
+                Type::Library(_) => match symbol {
                     "name" => Some(InternalBuiltIn::TypeName),
                     "creationCode" => Some(InternalBuiltIn::TypeCreationCode),
                     "runtimeCode" => Some(InternalBuiltIn::TypeRuntimeCode),
