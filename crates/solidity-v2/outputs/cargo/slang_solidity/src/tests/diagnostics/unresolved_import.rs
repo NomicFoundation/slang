@@ -26,7 +26,7 @@ fn compile(name: &'static str, contents: &'static str) -> CompilationUnit {
     CompilationUnit::create(Configuration {
         language_version: LanguageVersion::LATEST,
         evm_target: EvmTarget::LATEST,
-        sources: [(name.into(), contents.into())],
+        sources: [(name.into(), contents)],
         resolver: DecliningImportResolver,
     })
 }

@@ -32,9 +32,9 @@ impl CompilationUnit {
     /// here, and every problem it runs into is reported as a diagnostic on the
     /// returned unit. Parse errors, unresolvable imports, and missing imported
     /// files are all collected this way — see [`CompilationUnit::diagnostics`].
-    pub fn create<S, R>(config: Configuration<S, R>) -> CompilationUnit
+    pub fn create<'s, S, R>(config: Configuration<S, R>) -> CompilationUnit
     where
-        S: IntoIterator<Item = (FileId, String)>,
+        S: IntoIterator<Item = (FileId, &'s str)>,
         R: ImportResolver,
     {
         let Configuration {
@@ -46,7 +46,7 @@ impl CompilationUnit {
 
         let mut diagnostics = DiagnosticCollection::default();
 
-        let sources = collect_sources(sources, &mut diagnostics);
+        let sources = collect_sources(sources.into_iter(), &mut diagnostics);
 
         let parsed_files = parse_files(sources, language_version, &mut diagnostics);
         let (files, id_generator) = build_ir(
@@ -70,10 +70,10 @@ impl CompilationUnit {
 
 /// Collects the given sources by file ID, keeping the last contents given for
 /// an ID and reporting every repetition as a [`DuplicatedFileId`] diagnostic.
-fn collect_sources(
-    sources: impl IntoIterator<Item = (FileId, String)>,
+fn collect_sources<'s>(
+    sources: impl Iterator<Item = (FileId, &'s str)>,
     diagnostics: &mut DiagnosticCollection,
-) -> SortedMap<FileId, String> {
+) -> SortedMap<FileId, &'s str> {
     let mut collected = SortedMap::default();
 
     for (file_id, contents) in sources {
@@ -89,25 +89,25 @@ fn collect_sources(
 }
 
 /// One source file, parsed.
-struct ParsedFile {
+struct ParsedFile<'s> {
     file_id: FileId,
-    contents: String,
+    contents: &'s str,
     source_unit: cst::SourceUnit,
 }
 
 /// Parses every source file.
-fn parse_files(
-    sources: SortedMap<FileId, String>,
+fn parse_files<'s>(
+    sources: SortedMap<FileId, &'s str>,
     language_version: LanguageVersion,
     diagnostics: &mut DiagnosticCollection,
-) -> Vec<ParsedFile> {
+) -> Vec<ParsedFile<'s>> {
     sources
         .into_iter()
         .map(|(file_id, contents)| {
             let ParseOutput {
                 source_unit,
                 diagnostics: parse_diagnostics,
-            } = Parser::parse(&file_id, &contents, language_version);
+            } = Parser::parse(&file_id, contents, language_version);
             diagnostics.extend(parse_diagnostics);
 
             ParsedFile {
@@ -126,7 +126,7 @@ fn parse_files(
 /// of it is reported here, rather than being discovered while loading files.
 fn build_ir<R: ImportResolver>(
     resolver: &mut R,
-    parsed_files: Vec<ParsedFile>,
+    parsed_files: Vec<ParsedFile<'_>>,
     language_version: LanguageVersion,
     diagnostics: &mut DiagnosticCollection,
 ) -> (Vec<InternalFile>, ir::NodeIdGenerator) {

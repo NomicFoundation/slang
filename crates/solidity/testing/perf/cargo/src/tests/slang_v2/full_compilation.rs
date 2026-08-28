@@ -29,7 +29,7 @@ pub fn run(project: Input) -> Output {
         sources: project
             .sources
             .iter()
-            .map(|(file_id, contents)| (FileId::from(file_id.as_str()), contents.clone())),
+            .map(|(file_id, contents)| (FileId::from(file_id.as_str()), contents.as_str())),
         resolver: ProjectImportResolver { project },
     });
 

@@ -18,7 +18,7 @@ impl ImportResolver for TestImportResolver {
     }
 }
 
-fn compile(sources: impl IntoIterator<Item = (FileId, String)>) -> CompilationUnit {
+fn compile<'s>(sources: impl IntoIterator<Item = (FileId, &'s str)>) -> CompilationUnit {
     CompilationUnit::create(Configuration {
         language_version: LanguageVersion::LATEST,
         evm_target: EvmTarget::LATEST,
@@ -40,11 +40,14 @@ fn contract(name: &str, imports: &[&str]) -> String {
 
 #[test]
 fn compiles_every_source_it_is_given() {
+    let main = contract("Main", &["lib.sol"]);
+    let lib = contract("Lib", &[]);
+    let extra = contract("Extra", &[]);
     let unit = compile([
-        ("main.sol".into(), contract("Main", &["lib.sol"])),
-        ("lib.sol".into(), contract("Lib", &[])),
+        ("main.sol".into(), main.as_str()),
+        ("lib.sol".into(), lib.as_str()),
         // Not imported by anything, but still part of the compilation.
-        ("extra.sol".into(), contract("Extra", &[])),
+        ("extra.sol".into(), extra.as_str()),
     ]);
 
     assert!(unit.diagnostics().is_empty(), "{:#?}", unit.diagnostics());
@@ -61,9 +64,11 @@ fn compiles_every_source_it_is_given() {
 
 #[test]
 fn the_last_contents_given_for_a_file_id_win() {
+    let stale = contract("Stale", &[]);
+    let fresh = contract("Fresh", &[]);
     let unit = compile([
-        ("main.sol".into(), contract("Stale", &[])),
-        ("main.sol".into(), contract("Fresh", &[])),
+        ("main.sol".into(), stale.as_str()),
+        ("main.sol".into(), fresh.as_str()),
     ]);
 
     // The repetition is reported, and the compilation proceeds with the last

@@ -61,9 +61,7 @@ pub(super) fn build_compilation_unit_from_fixture(files: &[FixtureFile]) -> Arc<
     let unit = CompilationUnit::create(Configuration {
         language_version: LanguageVersion::LATEST,
         evm_target: EvmTarget::LATEST,
-        sources: files
-            .iter()
-            .map(|file| (file.id.clone(), file.contents.to_owned())),
+        sources: files.iter().map(|file| (file.id.clone(), file.contents)),
         resolver: FixtureImportResolver,
     });
 

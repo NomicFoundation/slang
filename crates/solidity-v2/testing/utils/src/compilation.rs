@@ -21,7 +21,9 @@ pub fn compile(
     CompilationUnit::create(Configuration {
         language_version,
         evm_target,
-        sources: files.clone(),
+        sources: files
+            .iter()
+            .map(|(file_id, contents)| (file_id.clone(), contents.as_str())),
         resolver: InMemoryResolver,
     })
 }
