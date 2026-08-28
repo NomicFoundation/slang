@@ -2,6 +2,8 @@ use std::hint::black_box;
 use std::sync::Arc;
 use std::thread;
 
+use slang_solidity_v2_ir::ir;
+
 use crate::ast::NodeId;
 use crate::compilation::{CompilationUnit, FileId};
 use crate::diagnostics::Diagnostic;
@@ -109,33 +111,57 @@ fn borrow_sources(sources: &[(FileId, String)]) -> impl Iterator<Item = (FileId,
         .map(|(file_id, contents)| (file_id.clone(), contents.as_str()))
 }
 
-/// Everything about a unit that a caller can observe.
+/// Everything a caller can observe about a unit: the diagnostics, the binder's
+/// definitions, and each file's full IR tree.
 struct Observable {
-    files: Vec<(String, NodeId)>,
+    files: Vec<(String, ir::SourceUnit)>,
     definitions: Vec<NodeId>,
     diagnostics: Vec<Diagnostic>,
 }
 
 impl Observable {
+    /// Every collection is sorted on the way in: the unit's accessors don't
+    /// promise an iteration order, so what gets compared is the contents,
+    /// never the order they happen to come out in today.
     fn from_compilation_unit(unit: &CompilationUnit) -> Self {
+        let mut files: Vec<(String, ir::SourceUnit)> = unit
+            .files()
+            .map(|file| (file.id().as_str().to_owned(), Arc::clone(file.ir_root())))
+            .collect();
+        files.sort_by(|(left, _), (right, _)| left.cmp(right));
+
+        let mut definitions: Vec<NodeId> = unit
+            .all_definitions()
+            .map(|definition| definition.node_id())
+            .collect();
+        definitions.sort_unstable();
+
         Self {
-            files: unit
-                .files()
-                .map(|file| (file.id().as_str().to_owned(), file.ast().node_id()))
-                .collect(),
-            definitions: unit
-                .all_definitions()
-                .map(|definition| definition.node_id())
-                .collect(),
-            // Via `iter()`, which sorts: compares the diagnostics, not their storage order.
+            files,
+            definitions,
+            // Via `iter()`, which sorts.
             diagnostics: unit.diagnostics().iter().cloned().collect(),
         }
     }
 
-    /// Compared field by field rather than as a whole, so a failure names which
-    /// part diverged instead of dumping the entire unit twice.
+    /// Compared field by field — and the IR file by file — rather than as a
+    /// whole, so a failure names which part diverged instead of dumping the
+    /// entire unit twice.
     fn assert_same(&self, expected: &Self, context: &str) {
-        assert_eq!(self.files, expected.files, "files diverged {context}");
+        let names = |observed: &Self| -> Vec<String> {
+            observed
+                .files
+                .iter()
+                .map(|(name, _)| name.clone())
+                .collect()
+        };
+        assert_eq!(names(self), names(expected), "files diverged {context}");
+        for ((name, ir_root), (_, expected_ir_root)) in self.files.iter().zip(&expected.files) {
+            assert_eq!(
+                ir_root, expected_ir_root,
+                "the IR of '{name}' diverged {context}"
+            );
+        }
         assert_eq!(
             self.definitions, expected.definitions,
             "definition node ids diverged {context}"
@@ -148,7 +174,7 @@ impl Observable {
 }
 
 /// Source files are parsed in parallel, so the size of the pool must not change
-/// what comes out — not the file order, not the node ids, not the diagnostics.
+/// what comes out.
 #[test]
 fn build_output_is_independent_of_the_thread_count() {
     let sources = mixed_sources();

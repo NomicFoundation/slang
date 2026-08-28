@@ -577,8 +577,12 @@ impl slang_solidity_v2_ir::ir::AdditiveExpressionOperator
 pub fn slang_solidity_v2_ir::ir::AdditiveExpressionOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::AdditiveExpressionOperator
 pub fn slang_solidity_v2_ir::ir::AdditiveExpressionOperator::clone(&self) -> slang_solidity_v2_ir::ir::AdditiveExpressionOperator
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::AdditiveExpressionOperator
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::AdditiveExpressionOperator
+pub fn slang_solidity_v2_ir::ir::AdditiveExpressionOperator::eq(&self, &slang_solidity_v2_ir::ir::AdditiveExpressionOperator) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::AdditiveExpressionOperator
 pub fn slang_solidity_v2_ir::ir::AdditiveExpressionOperator::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::AdditiveExpressionOperator
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::AdditiveExpressionOperator
 pub fn slang_solidity_v2_ir::ir::AdditiveExpressionOperator::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AdditiveExpressionOperator
@@ -588,8 +592,12 @@ pub slang_solidity_v2_ir::ir::ArgumentsDeclaration::NamedArguments(slang_solidit
 pub slang_solidity_v2_ir::ir::ArgumentsDeclaration::PositionalArguments(slang_solidity_v2_ir::ir::PositionalArguments)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::ArgumentsDeclaration
 pub fn slang_solidity_v2_ir::ir::ArgumentsDeclaration::clone(&self) -> slang_solidity_v2_ir::ir::ArgumentsDeclaration
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ArgumentsDeclaration
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ArgumentsDeclaration
+pub fn slang_solidity_v2_ir::ir::ArgumentsDeclaration::eq(&self, &slang_solidity_v2_ir::ir::ArgumentsDeclaration) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ArgumentsDeclaration
 pub fn slang_solidity_v2_ir::ir::ArgumentsDeclaration::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ArgumentsDeclaration
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ArgumentsDeclaration
 pub fn slang_solidity_v2_ir::ir::ArgumentsDeclaration::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ArgumentsDeclaration
@@ -611,8 +619,12 @@ impl slang_solidity_v2_ir::ir::AssignmentExpressionOperator
 pub fn slang_solidity_v2_ir::ir::AssignmentExpressionOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::AssignmentExpressionOperator
 pub fn slang_solidity_v2_ir::ir::AssignmentExpressionOperator::clone(&self) -> slang_solidity_v2_ir::ir::AssignmentExpressionOperator
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::AssignmentExpressionOperator
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::AssignmentExpressionOperator
+pub fn slang_solidity_v2_ir::ir::AssignmentExpressionOperator::eq(&self, &slang_solidity_v2_ir::ir::AssignmentExpressionOperator) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::AssignmentExpressionOperator
 pub fn slang_solidity_v2_ir::ir::AssignmentExpressionOperator::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::AssignmentExpressionOperator
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::AssignmentExpressionOperator
 pub fn slang_solidity_v2_ir::ir::AssignmentExpressionOperator::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AssignmentExpressionOperator
@@ -648,8 +660,12 @@ pub slang_solidity_v2_ir::ir::ContractMember::UserDefinedValueTypeDefinition(sla
 pub slang_solidity_v2_ir::ir::ContractMember::UsingDirective(slang_solidity_v2_ir::ir::UsingDirective)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::ContractMember
 pub fn slang_solidity_v2_ir::ir::ContractMember::clone(&self) -> slang_solidity_v2_ir::ir::ContractMember
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ContractMember
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ContractMember
+pub fn slang_solidity_v2_ir::ir::ContractMember::eq(&self, &slang_solidity_v2_ir::ir::ContractMember) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ContractMember
 pub fn slang_solidity_v2_ir::ir::ContractMember::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ContractMember
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ContractMember
 pub fn slang_solidity_v2_ir::ir::ContractMember::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ContractMember
@@ -665,8 +681,12 @@ pub slang_solidity_v2_ir::ir::ElementaryType::UfixedKeyword(slang_solidity_v2_ir
 pub slang_solidity_v2_ir::ir::ElementaryType::UintKeyword(slang_solidity_v2_ir::ir::UintKeyword)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::ElementaryType
 pub fn slang_solidity_v2_ir::ir::ElementaryType::clone(&self) -> slang_solidity_v2_ir::ir::ElementaryType
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ElementaryType
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ElementaryType
+pub fn slang_solidity_v2_ir::ir::ElementaryType::eq(&self, &slang_solidity_v2_ir::ir::ElementaryType) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ElementaryType
 pub fn slang_solidity_v2_ir::ir::ElementaryType::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ElementaryType
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ElementaryType
 pub fn slang_solidity_v2_ir::ir::ElementaryType::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ElementaryType
@@ -678,8 +698,12 @@ impl slang_solidity_v2_ir::ir::EqualityExpressionOperator
 pub fn slang_solidity_v2_ir::ir::EqualityExpressionOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::EqualityExpressionOperator
 pub fn slang_solidity_v2_ir::ir::EqualityExpressionOperator::clone(&self) -> slang_solidity_v2_ir::ir::EqualityExpressionOperator
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::EqualityExpressionOperator
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::EqualityExpressionOperator
+pub fn slang_solidity_v2_ir::ir::EqualityExpressionOperator::eq(&self, &slang_solidity_v2_ir::ir::EqualityExpressionOperator) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::EqualityExpressionOperator
 pub fn slang_solidity_v2_ir::ir::EqualityExpressionOperator::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::EqualityExpressionOperator
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::EqualityExpressionOperator
 pub fn slang_solidity_v2_ir::ir::EqualityExpressionOperator::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::EqualityExpressionOperator
@@ -740,8 +764,12 @@ pub slang_solidity_v2_ir::ir::Expression::TupleExpression(slang_solidity_v2_ir::
 pub slang_solidity_v2_ir::ir::Expression::TypeExpression(slang_solidity_v2_ir::ir::TypeExpression)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::Expression
 pub fn slang_solidity_v2_ir::ir::Expression::clone(&self) -> slang_solidity_v2_ir::ir::Expression
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::Expression
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::Expression
+pub fn slang_solidity_v2_ir::ir::Expression::eq(&self, &slang_solidity_v2_ir::ir::Expression) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::Expression
 pub fn slang_solidity_v2_ir::ir::Expression::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::Expression
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::Expression
 pub fn slang_solidity_v2_ir::ir::Expression::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::Expression
@@ -751,8 +779,12 @@ pub slang_solidity_v2_ir::ir::ForStatementCondition::ExpressionStatement(slang_s
 pub slang_solidity_v2_ir::ir::ForStatementCondition::Semicolon(slang_solidity_v2_ir::ir::Semicolon)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::ForStatementCondition
 pub fn slang_solidity_v2_ir::ir::ForStatementCondition::clone(&self) -> slang_solidity_v2_ir::ir::ForStatementCondition
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ForStatementCondition
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ForStatementCondition
+pub fn slang_solidity_v2_ir::ir::ForStatementCondition::eq(&self, &slang_solidity_v2_ir::ir::ForStatementCondition) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ForStatementCondition
 pub fn slang_solidity_v2_ir::ir::ForStatementCondition::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ForStatementCondition
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ForStatementCondition
 pub fn slang_solidity_v2_ir::ir::ForStatementCondition::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ForStatementCondition
@@ -763,8 +795,12 @@ pub slang_solidity_v2_ir::ir::ForStatementInitialization::Semicolon(slang_solidi
 pub slang_solidity_v2_ir::ir::ForStatementInitialization::VariableDeclarationStatement(slang_solidity_v2_ir::ir::VariableDeclarationStatement)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::ForStatementInitialization
 pub fn slang_solidity_v2_ir::ir::ForStatementInitialization::clone(&self) -> slang_solidity_v2_ir::ir::ForStatementInitialization
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ForStatementInitialization
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ForStatementInitialization
+pub fn slang_solidity_v2_ir::ir::ForStatementInitialization::eq(&self, &slang_solidity_v2_ir::ir::ForStatementInitialization) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ForStatementInitialization
 pub fn slang_solidity_v2_ir::ir::ForStatementInitialization::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ForStatementInitialization
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ForStatementInitialization
 pub fn slang_solidity_v2_ir::ir::ForStatementInitialization::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ForStatementInitialization
@@ -835,8 +871,12 @@ pub slang_solidity_v2_ir::ir::ImportClause::ImportDeconstruction(slang_solidity_
 pub slang_solidity_v2_ir::ir::ImportClause::PathImport(slang_solidity_v2_ir::ir::PathImport)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::ImportClause
 pub fn slang_solidity_v2_ir::ir::ImportClause::clone(&self) -> slang_solidity_v2_ir::ir::ImportClause
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ImportClause
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ImportClause
+pub fn slang_solidity_v2_ir::ir::ImportClause::eq(&self, &slang_solidity_v2_ir::ir::ImportClause) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ImportClause
 pub fn slang_solidity_v2_ir::ir::ImportClause::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ImportClause
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ImportClause
 pub fn slang_solidity_v2_ir::ir::ImportClause::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ImportClause
@@ -850,8 +890,12 @@ impl slang_solidity_v2_ir::ir::InequalityExpressionOperator
 pub fn slang_solidity_v2_ir::ir::InequalityExpressionOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::InequalityExpressionOperator
 pub fn slang_solidity_v2_ir::ir::InequalityExpressionOperator::clone(&self) -> slang_solidity_v2_ir::ir::InequalityExpressionOperator
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::InequalityExpressionOperator
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::InequalityExpressionOperator
+pub fn slang_solidity_v2_ir::ir::InequalityExpressionOperator::eq(&self, &slang_solidity_v2_ir::ir::InequalityExpressionOperator) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::InequalityExpressionOperator
 pub fn slang_solidity_v2_ir::ir::InequalityExpressionOperator::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::InequalityExpressionOperator
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::InequalityExpressionOperator
 pub fn slang_solidity_v2_ir::ir::InequalityExpressionOperator::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::InequalityExpressionOperator
@@ -864,8 +908,12 @@ impl slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator
 pub fn slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator
 pub fn slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator::clone(&self) -> slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator
+pub fn slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator::eq(&self, &slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator
 pub fn slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator
 pub fn slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::MultiplicativeExpressionOperator
@@ -1065,8 +1113,12 @@ impl slang_solidity_v2_ir::ir::NumberUnit
 pub fn slang_solidity_v2_ir::ir::NumberUnit::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::NumberUnit
 pub fn slang_solidity_v2_ir::ir::NumberUnit::clone(&self) -> slang_solidity_v2_ir::ir::NumberUnit
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::NumberUnit
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::NumberUnit
+pub fn slang_solidity_v2_ir::ir::NumberUnit::eq(&self, &slang_solidity_v2_ir::ir::NumberUnit) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::NumberUnit
 pub fn slang_solidity_v2_ir::ir::NumberUnit::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::NumberUnit
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::NumberUnit
 pub fn slang_solidity_v2_ir::ir::NumberUnit::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::NumberUnit
@@ -1078,8 +1130,12 @@ impl slang_solidity_v2_ir::ir::PostfixExpressionOperator
 pub fn slang_solidity_v2_ir::ir::PostfixExpressionOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::PostfixExpressionOperator
 pub fn slang_solidity_v2_ir::ir::PostfixExpressionOperator::clone(&self) -> slang_solidity_v2_ir::ir::PostfixExpressionOperator
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::PostfixExpressionOperator
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::PostfixExpressionOperator
+pub fn slang_solidity_v2_ir::ir::PostfixExpressionOperator::eq(&self, &slang_solidity_v2_ir::ir::PostfixExpressionOperator) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::PostfixExpressionOperator
 pub fn slang_solidity_v2_ir::ir::PostfixExpressionOperator::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::PostfixExpressionOperator
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::PostfixExpressionOperator
 pub fn slang_solidity_v2_ir::ir::PostfixExpressionOperator::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::PostfixExpressionOperator
@@ -1090,8 +1146,12 @@ pub slang_solidity_v2_ir::ir::Pragma::ExperimentalPragma(slang_solidity_v2_ir::i
 pub slang_solidity_v2_ir::ir::Pragma::VersionPragma(slang_solidity_v2_ir::ir::VersionPragma)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::Pragma
 pub fn slang_solidity_v2_ir::ir::Pragma::clone(&self) -> slang_solidity_v2_ir::ir::Pragma
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::Pragma
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::Pragma
+pub fn slang_solidity_v2_ir::ir::Pragma::eq(&self, &slang_solidity_v2_ir::ir::Pragma) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::Pragma
 pub fn slang_solidity_v2_ir::ir::Pragma::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::Pragma
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::Pragma
 pub fn slang_solidity_v2_ir::ir::Pragma::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::Pragma
@@ -1107,8 +1167,12 @@ impl slang_solidity_v2_ir::ir::PrefixExpressionOperator
 pub fn slang_solidity_v2_ir::ir::PrefixExpressionOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::PrefixExpressionOperator
 pub fn slang_solidity_v2_ir::ir::PrefixExpressionOperator::clone(&self) -> slang_solidity_v2_ir::ir::PrefixExpressionOperator
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::PrefixExpressionOperator
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::PrefixExpressionOperator
+pub fn slang_solidity_v2_ir::ir::PrefixExpressionOperator::eq(&self, &slang_solidity_v2_ir::ir::PrefixExpressionOperator) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::PrefixExpressionOperator
 pub fn slang_solidity_v2_ir::ir::PrefixExpressionOperator::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::PrefixExpressionOperator
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::PrefixExpressionOperator
 pub fn slang_solidity_v2_ir::ir::PrefixExpressionOperator::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::PrefixExpressionOperator
@@ -1121,8 +1185,12 @@ impl slang_solidity_v2_ir::ir::ShiftExpressionOperator
 pub fn slang_solidity_v2_ir::ir::ShiftExpressionOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::ShiftExpressionOperator
 pub fn slang_solidity_v2_ir::ir::ShiftExpressionOperator::clone(&self) -> slang_solidity_v2_ir::ir::ShiftExpressionOperator
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ShiftExpressionOperator
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ShiftExpressionOperator
+pub fn slang_solidity_v2_ir::ir::ShiftExpressionOperator::eq(&self, &slang_solidity_v2_ir::ir::ShiftExpressionOperator) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ShiftExpressionOperator
 pub fn slang_solidity_v2_ir::ir::ShiftExpressionOperator::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ShiftExpressionOperator
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ShiftExpressionOperator
 pub fn slang_solidity_v2_ir::ir::ShiftExpressionOperator::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ShiftExpressionOperator
@@ -1143,8 +1211,12 @@ pub slang_solidity_v2_ir::ir::SourceUnitMember::UserDefinedValueTypeDefinition(s
 pub slang_solidity_v2_ir::ir::SourceUnitMember::UsingDirective(slang_solidity_v2_ir::ir::UsingDirective)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::SourceUnitMember
 pub fn slang_solidity_v2_ir::ir::SourceUnitMember::clone(&self) -> slang_solidity_v2_ir::ir::SourceUnitMember
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::SourceUnitMember
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::SourceUnitMember
+pub fn slang_solidity_v2_ir::ir::SourceUnitMember::eq(&self, &slang_solidity_v2_ir::ir::SourceUnitMember) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::SourceUnitMember
 pub fn slang_solidity_v2_ir::ir::SourceUnitMember::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::SourceUnitMember
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::SourceUnitMember
 pub fn slang_solidity_v2_ir::ir::SourceUnitMember::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::SourceUnitMember
@@ -1206,8 +1278,12 @@ pub slang_solidity_v2_ir::ir::Statement::VariableDeclarationStatement(slang_soli
 pub slang_solidity_v2_ir::ir::Statement::WhileStatement(slang_solidity_v2_ir::ir::WhileStatement)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::Statement
 pub fn slang_solidity_v2_ir::ir::Statement::clone(&self) -> slang_solidity_v2_ir::ir::Statement
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::Statement
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::Statement
+pub fn slang_solidity_v2_ir::ir::Statement::eq(&self, &slang_solidity_v2_ir::ir::Statement) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::Statement
 pub fn slang_solidity_v2_ir::ir::Statement::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::Statement
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::Statement
 pub fn slang_solidity_v2_ir::ir::Statement::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::Statement
@@ -1220,8 +1296,12 @@ impl slang_solidity_v2_ir::ir::StorageLocation
 pub fn slang_solidity_v2_ir::ir::StorageLocation::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::StorageLocation
 pub fn slang_solidity_v2_ir::ir::StorageLocation::clone(&self) -> slang_solidity_v2_ir::ir::StorageLocation
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::StorageLocation
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::StorageLocation
+pub fn slang_solidity_v2_ir::ir::StorageLocation::eq(&self, &slang_solidity_v2_ir::ir::StorageLocation) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::StorageLocation
 pub fn slang_solidity_v2_ir::ir::StorageLocation::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::StorageLocation
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::StorageLocation
 pub fn slang_solidity_v2_ir::ir::StorageLocation::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::StorageLocation
@@ -1232,8 +1312,12 @@ pub slang_solidity_v2_ir::ir::StringExpression::StringLiterals(slang_solidity_v2
 pub slang_solidity_v2_ir::ir::StringExpression::UnicodeStringLiterals(slang_solidity_v2_ir::ir::UnicodeStringLiterals)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::StringExpression
 pub fn slang_solidity_v2_ir::ir::StringExpression::clone(&self) -> slang_solidity_v2_ir::ir::StringExpression
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::StringExpression
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::StringExpression
+pub fn slang_solidity_v2_ir::ir::StringExpression::eq(&self, &slang_solidity_v2_ir::ir::StringExpression) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::StringExpression
 pub fn slang_solidity_v2_ir::ir::StringExpression::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::StringExpression
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::StringExpression
 pub fn slang_solidity_v2_ir::ir::StringExpression::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::StringExpression
@@ -1246,8 +1330,12 @@ pub slang_solidity_v2_ir::ir::TypeName::IdentifierPath(slang_solidity_v2_ir::ir:
 pub slang_solidity_v2_ir::ir::TypeName::MappingType(slang_solidity_v2_ir::ir::MappingType)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::TypeName
 pub fn slang_solidity_v2_ir::ir::TypeName::clone(&self) -> slang_solidity_v2_ir::ir::TypeName
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::TypeName
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::TypeName
+pub fn slang_solidity_v2_ir::ir::TypeName::eq(&self, &slang_solidity_v2_ir::ir::TypeName) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::TypeName
 pub fn slang_solidity_v2_ir::ir::TypeName::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::TypeName
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::TypeName
 pub fn slang_solidity_v2_ir::ir::TypeName::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::TypeName
@@ -1257,8 +1345,12 @@ pub slang_solidity_v2_ir::ir::UsingClause::IdentifierPath(slang_solidity_v2_ir::
 pub slang_solidity_v2_ir::ir::UsingClause::UsingDeconstruction(slang_solidity_v2_ir::ir::UsingDeconstruction)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::UsingClause
 pub fn slang_solidity_v2_ir::ir::UsingClause::clone(&self) -> slang_solidity_v2_ir::ir::UsingClause
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::UsingClause
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::UsingClause
+pub fn slang_solidity_v2_ir::ir::UsingClause::eq(&self, &slang_solidity_v2_ir::ir::UsingClause) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::UsingClause
 pub fn slang_solidity_v2_ir::ir::UsingClause::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::UsingClause
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::UsingClause
 pub fn slang_solidity_v2_ir::ir::UsingClause::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::UsingClause
@@ -1283,8 +1375,12 @@ impl slang_solidity_v2_ir::ir::UsingOperator
 pub fn slang_solidity_v2_ir::ir::UsingOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::UsingOperator
 pub fn slang_solidity_v2_ir::ir::UsingOperator::clone(&self) -> slang_solidity_v2_ir::ir::UsingOperator
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::UsingOperator
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::UsingOperator
+pub fn slang_solidity_v2_ir::ir::UsingOperator::eq(&self, &slang_solidity_v2_ir::ir::UsingOperator) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::UsingOperator
 pub fn slang_solidity_v2_ir::ir::UsingOperator::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::UsingOperator
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::UsingOperator
 pub fn slang_solidity_v2_ir::ir::UsingOperator::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::UsingOperator
@@ -1294,8 +1390,12 @@ pub slang_solidity_v2_ir::ir::UsingTarget::Asterisk(slang_solidity_v2_ir::ir::As
 pub slang_solidity_v2_ir::ir::UsingTarget::TypeName(slang_solidity_v2_ir::ir::TypeName)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::UsingTarget
 pub fn slang_solidity_v2_ir::ir::UsingTarget::clone(&self) -> slang_solidity_v2_ir::ir::UsingTarget
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::UsingTarget
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::UsingTarget
+pub fn slang_solidity_v2_ir::ir::UsingTarget::eq(&self, &slang_solidity_v2_ir::ir::UsingTarget) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::UsingTarget
 pub fn slang_solidity_v2_ir::ir::UsingTarget::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::UsingTarget
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::UsingTarget
 pub fn slang_solidity_v2_ir::ir::UsingTarget::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::UsingTarget
@@ -1305,8 +1405,12 @@ pub slang_solidity_v2_ir::ir::VariableDeclarationTarget::MultiTypedDeclaration(s
 pub slang_solidity_v2_ir::ir::VariableDeclarationTarget::SingleTypedDeclaration(slang_solidity_v2_ir::ir::SingleTypedDeclaration)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::VariableDeclarationTarget
 pub fn slang_solidity_v2_ir::ir::VariableDeclarationTarget::clone(&self) -> slang_solidity_v2_ir::ir::VariableDeclarationTarget
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::VariableDeclarationTarget
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::VariableDeclarationTarget
+pub fn slang_solidity_v2_ir::ir::VariableDeclarationTarget::eq(&self, &slang_solidity_v2_ir::ir::VariableDeclarationTarget) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::VariableDeclarationTarget
 pub fn slang_solidity_v2_ir::ir::VariableDeclarationTarget::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::VariableDeclarationTarget
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::VariableDeclarationTarget
 pub fn slang_solidity_v2_ir::ir::VariableDeclarationTarget::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::VariableDeclarationTarget
@@ -1316,8 +1420,12 @@ pub slang_solidity_v2_ir::ir::VersionExpression::VersionRange(slang_solidity_v2_
 pub slang_solidity_v2_ir::ir::VersionExpression::VersionTerm(slang_solidity_v2_ir::ir::VersionTerm)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::VersionExpression
 pub fn slang_solidity_v2_ir::ir::VersionExpression::clone(&self) -> slang_solidity_v2_ir::ir::VersionExpression
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::VersionExpression
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::VersionExpression
+pub fn slang_solidity_v2_ir::ir::VersionExpression::eq(&self, &slang_solidity_v2_ir::ir::VersionExpression) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::VersionExpression
 pub fn slang_solidity_v2_ir::ir::VersionExpression::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::VersionExpression
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::VersionExpression
 pub fn slang_solidity_v2_ir::ir::VersionExpression::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::VersionExpression
@@ -1327,8 +1435,12 @@ pub slang_solidity_v2_ir::ir::VersionLiteral::SimpleVersionLiteral(slang_solidit
 pub slang_solidity_v2_ir::ir::VersionLiteral::StringLiteral(slang_solidity_v2_ir::ir::StringLiteral)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::VersionLiteral
 pub fn slang_solidity_v2_ir::ir::VersionLiteral::clone(&self) -> slang_solidity_v2_ir::ir::VersionLiteral
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::VersionLiteral
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::VersionLiteral
+pub fn slang_solidity_v2_ir::ir::VersionLiteral::eq(&self, &slang_solidity_v2_ir::ir::VersionLiteral) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::VersionLiteral
 pub fn slang_solidity_v2_ir::ir::VersionLiteral::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::VersionLiteral
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::VersionLiteral
 pub fn slang_solidity_v2_ir::ir::VersionLiteral::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::VersionLiteral
@@ -1345,8 +1457,12 @@ impl slang_solidity_v2_ir::ir::VersionOperator
 pub fn slang_solidity_v2_ir::ir::VersionOperator::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::VersionOperator
 pub fn slang_solidity_v2_ir::ir::VersionOperator::clone(&self) -> slang_solidity_v2_ir::ir::VersionOperator
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::VersionOperator
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::VersionOperator
+pub fn slang_solidity_v2_ir::ir::VersionOperator::eq(&self, &slang_solidity_v2_ir::ir::VersionOperator) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::VersionOperator
 pub fn slang_solidity_v2_ir::ir::VersionOperator::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::VersionOperator
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::VersionOperator
 pub fn slang_solidity_v2_ir::ir::VersionOperator::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::VersionOperator
@@ -1357,8 +1473,12 @@ pub slang_solidity_v2_ir::ir::YulExpression::YulLiteral(slang_solidity_v2_ir::ir
 pub slang_solidity_v2_ir::ir::YulExpression::YulPath(slang_solidity_v2_ir::ir::YulPath)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::YulExpression
 pub fn slang_solidity_v2_ir::ir::YulExpression::clone(&self) -> slang_solidity_v2_ir::ir::YulExpression
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::YulExpression
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::YulExpression
+pub fn slang_solidity_v2_ir::ir::YulExpression::eq(&self, &slang_solidity_v2_ir::ir::YulExpression) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulExpression
 pub fn slang_solidity_v2_ir::ir::YulExpression::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::YulExpression
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulExpression
 pub fn slang_solidity_v2_ir::ir::YulExpression::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulExpression
@@ -1374,8 +1494,12 @@ impl slang_solidity_v2_ir::ir::YulLiteral
 pub fn slang_solidity_v2_ir::ir::YulLiteral::unparse(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ir::ir::YulLiteral
 pub fn slang_solidity_v2_ir::ir::YulLiteral::clone(&self) -> slang_solidity_v2_ir::ir::YulLiteral
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::YulLiteral
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::YulLiteral
+pub fn slang_solidity_v2_ir::ir::YulLiteral::eq(&self, &slang_solidity_v2_ir::ir::YulLiteral) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulLiteral
 pub fn slang_solidity_v2_ir::ir::YulLiteral::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::YulLiteral
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulLiteral
 pub fn slang_solidity_v2_ir::ir::YulLiteral::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulLiteral
@@ -1394,8 +1518,12 @@ pub slang_solidity_v2_ir::ir::YulStatement::YulVariableAssignmentStatement(slang
 pub slang_solidity_v2_ir::ir::YulStatement::YulVariableDeclarationStatement(slang_solidity_v2_ir::ir::YulVariableDeclarationStatement)
 impl core::clone::Clone for slang_solidity_v2_ir::ir::YulStatement
 pub fn slang_solidity_v2_ir::ir::YulStatement::clone(&self) -> slang_solidity_v2_ir::ir::YulStatement
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::YulStatement
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::YulStatement
+pub fn slang_solidity_v2_ir::ir::YulStatement::eq(&self, &slang_solidity_v2_ir::ir::YulStatement) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulStatement
 pub fn slang_solidity_v2_ir::ir::YulStatement::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::YulStatement
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulStatement
 pub fn slang_solidity_v2_ir::ir::YulStatement::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulStatement
@@ -1405,8 +1533,12 @@ pub slang_solidity_v2_ir::ir::AbicoderPragmaStruct::range: core::ops::range::Ran
 pub slang_solidity_v2_ir::ir::AbicoderPragmaStruct::version: slang_solidity_v2_ir::ir::AbicoderVersion
 impl slang_solidity_v2_ir::ir::AbicoderPragmaStruct
 pub fn slang_solidity_v2_ir::ir::AbicoderPragmaStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::AbicoderPragmaStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::AbicoderPragmaStruct
+pub fn slang_solidity_v2_ir::ir::AbicoderPragmaStruct::eq(&self, &slang_solidity_v2_ir::ir::AbicoderPragmaStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::AbicoderPragmaStruct
 pub fn slang_solidity_v2_ir::ir::AbicoderPragmaStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::AbicoderPragmaStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::AbicoderPragmaStruct
 pub fn slang_solidity_v2_ir::ir::AbicoderPragmaStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AbicoderPragmaStruct
@@ -1418,8 +1550,12 @@ pub slang_solidity_v2_ir::ir::AdditiveExpressionStruct::range: core::ops::range:
 pub slang_solidity_v2_ir::ir::AdditiveExpressionStruct::right_operand: slang_solidity_v2_ir::ir::Expression
 impl slang_solidity_v2_ir::ir::AdditiveExpressionStruct
 pub fn slang_solidity_v2_ir::ir::AdditiveExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::AdditiveExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::AdditiveExpressionStruct
+pub fn slang_solidity_v2_ir::ir::AdditiveExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::AdditiveExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::AdditiveExpressionStruct
 pub fn slang_solidity_v2_ir::ir::AdditiveExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::AdditiveExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::AdditiveExpressionStruct
 pub fn slang_solidity_v2_ir::ir::AdditiveExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AdditiveExpressionStruct
@@ -1429,8 +1565,12 @@ pub slang_solidity_v2_ir::ir::AddressTypeStruct::is_payable: bool
 pub slang_solidity_v2_ir::ir::AddressTypeStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::AddressTypeStruct
 pub fn slang_solidity_v2_ir::ir::AddressTypeStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::AddressTypeStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::AddressTypeStruct
+pub fn slang_solidity_v2_ir::ir::AddressTypeStruct::eq(&self, &slang_solidity_v2_ir::ir::AddressTypeStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::AddressTypeStruct
 pub fn slang_solidity_v2_ir::ir::AddressTypeStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::AddressTypeStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::AddressTypeStruct
 pub fn slang_solidity_v2_ir::ir::AddressTypeStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AddressTypeStruct
@@ -1475,8 +1615,12 @@ pub slang_solidity_v2_ir::ir::AndExpressionStruct::range: core::ops::range::Rang
 pub slang_solidity_v2_ir::ir::AndExpressionStruct::right_operand: slang_solidity_v2_ir::ir::Expression
 impl slang_solidity_v2_ir::ir::AndExpressionStruct
 pub fn slang_solidity_v2_ir::ir::AndExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::AndExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::AndExpressionStruct
+pub fn slang_solidity_v2_ir::ir::AndExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::AndExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::AndExpressionStruct
 pub fn slang_solidity_v2_ir::ir::AndExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::AndExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::AndExpressionStruct
 pub fn slang_solidity_v2_ir::ir::AndExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AndExpressionStruct
@@ -1486,8 +1630,12 @@ pub slang_solidity_v2_ir::ir::ArrayExpressionStruct::items: slang_solidity_v2_ir
 pub slang_solidity_v2_ir::ir::ArrayExpressionStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::ArrayExpressionStruct
 pub fn slang_solidity_v2_ir::ir::ArrayExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ArrayExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ArrayExpressionStruct
+pub fn slang_solidity_v2_ir::ir::ArrayExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::ArrayExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ArrayExpressionStruct
 pub fn slang_solidity_v2_ir::ir::ArrayExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ArrayExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ArrayExpressionStruct
 pub fn slang_solidity_v2_ir::ir::ArrayExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ArrayExpressionStruct
@@ -1498,8 +1646,12 @@ pub slang_solidity_v2_ir::ir::ArrayTypeNameStruct::operand: slang_solidity_v2_ir
 pub slang_solidity_v2_ir::ir::ArrayTypeNameStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::ArrayTypeNameStruct
 pub fn slang_solidity_v2_ir::ir::ArrayTypeNameStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ArrayTypeNameStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ArrayTypeNameStruct
+pub fn slang_solidity_v2_ir::ir::ArrayTypeNameStruct::eq(&self, &slang_solidity_v2_ir::ir::ArrayTypeNameStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ArrayTypeNameStruct
 pub fn slang_solidity_v2_ir::ir::ArrayTypeNameStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ArrayTypeNameStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ArrayTypeNameStruct
 pub fn slang_solidity_v2_ir::ir::ArrayTypeNameStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ArrayTypeNameStruct
@@ -1510,8 +1662,12 @@ pub slang_solidity_v2_ir::ir::AssemblyStatementStruct::is_memory_safe: bool
 pub slang_solidity_v2_ir::ir::AssemblyStatementStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::AssemblyStatementStruct
 pub fn slang_solidity_v2_ir::ir::AssemblyStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::AssemblyStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::AssemblyStatementStruct
+pub fn slang_solidity_v2_ir::ir::AssemblyStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::AssemblyStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::AssemblyStatementStruct
 pub fn slang_solidity_v2_ir::ir::AssemblyStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::AssemblyStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::AssemblyStatementStruct
 pub fn slang_solidity_v2_ir::ir::AssemblyStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AssemblyStatementStruct
@@ -1523,8 +1679,12 @@ pub slang_solidity_v2_ir::ir::AssignmentExpressionStruct::range: core::ops::rang
 pub slang_solidity_v2_ir::ir::AssignmentExpressionStruct::right_operand: slang_solidity_v2_ir::ir::Expression
 impl slang_solidity_v2_ir::ir::AssignmentExpressionStruct
 pub fn slang_solidity_v2_ir::ir::AssignmentExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::AssignmentExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::AssignmentExpressionStruct
+pub fn slang_solidity_v2_ir::ir::AssignmentExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::AssignmentExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::AssignmentExpressionStruct
 pub fn slang_solidity_v2_ir::ir::AssignmentExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::AssignmentExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::AssignmentExpressionStruct
 pub fn slang_solidity_v2_ir::ir::AssignmentExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::AssignmentExpressionStruct
@@ -1637,8 +1797,12 @@ pub slang_solidity_v2_ir::ir::BitwiseAndExpressionStruct::range: core::ops::rang
 pub slang_solidity_v2_ir::ir::BitwiseAndExpressionStruct::right_operand: slang_solidity_v2_ir::ir::Expression
 impl slang_solidity_v2_ir::ir::BitwiseAndExpressionStruct
 pub fn slang_solidity_v2_ir::ir::BitwiseAndExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::BitwiseAndExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::BitwiseAndExpressionStruct
+pub fn slang_solidity_v2_ir::ir::BitwiseAndExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::BitwiseAndExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::BitwiseAndExpressionStruct
 pub fn slang_solidity_v2_ir::ir::BitwiseAndExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::BitwiseAndExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::BitwiseAndExpressionStruct
 pub fn slang_solidity_v2_ir::ir::BitwiseAndExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::BitwiseAndExpressionStruct
@@ -1649,8 +1813,12 @@ pub slang_solidity_v2_ir::ir::BitwiseOrExpressionStruct::range: core::ops::range
 pub slang_solidity_v2_ir::ir::BitwiseOrExpressionStruct::right_operand: slang_solidity_v2_ir::ir::Expression
 impl slang_solidity_v2_ir::ir::BitwiseOrExpressionStruct
 pub fn slang_solidity_v2_ir::ir::BitwiseOrExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::BitwiseOrExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::BitwiseOrExpressionStruct
+pub fn slang_solidity_v2_ir::ir::BitwiseOrExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::BitwiseOrExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::BitwiseOrExpressionStruct
 pub fn slang_solidity_v2_ir::ir::BitwiseOrExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::BitwiseOrExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::BitwiseOrExpressionStruct
 pub fn slang_solidity_v2_ir::ir::BitwiseOrExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::BitwiseOrExpressionStruct
@@ -1661,8 +1829,12 @@ pub slang_solidity_v2_ir::ir::BitwiseXorExpressionStruct::range: core::ops::rang
 pub slang_solidity_v2_ir::ir::BitwiseXorExpressionStruct::right_operand: slang_solidity_v2_ir::ir::Expression
 impl slang_solidity_v2_ir::ir::BitwiseXorExpressionStruct
 pub fn slang_solidity_v2_ir::ir::BitwiseXorExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::BitwiseXorExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::BitwiseXorExpressionStruct
+pub fn slang_solidity_v2_ir::ir::BitwiseXorExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::BitwiseXorExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::BitwiseXorExpressionStruct
 pub fn slang_solidity_v2_ir::ir::BitwiseXorExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::BitwiseXorExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::BitwiseXorExpressionStruct
 pub fn slang_solidity_v2_ir::ir::BitwiseXorExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::BitwiseXorExpressionStruct
@@ -1672,8 +1844,12 @@ pub slang_solidity_v2_ir::ir::BlockStruct::range: core::ops::range::Range<usize>
 pub slang_solidity_v2_ir::ir::BlockStruct::statements: slang_solidity_v2_ir::ir::Statements
 impl slang_solidity_v2_ir::ir::BlockStruct
 pub fn slang_solidity_v2_ir::ir::BlockStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::BlockStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::BlockStruct
+pub fn slang_solidity_v2_ir::ir::BlockStruct::eq(&self, &slang_solidity_v2_ir::ir::BlockStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::BlockStruct
 pub fn slang_solidity_v2_ir::ir::BlockStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::BlockStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::BlockStruct
 pub fn slang_solidity_v2_ir::ir::BlockStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::BlockStruct
@@ -1699,8 +1875,12 @@ pub struct slang_solidity_v2_ir::ir::BreakStatementStruct
 pub slang_solidity_v2_ir::ir::BreakStatementStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::BreakStatementStruct
 pub fn slang_solidity_v2_ir::ir::BreakStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::BreakStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::BreakStatementStruct
+pub fn slang_solidity_v2_ir::ir::BreakStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::BreakStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::BreakStatementStruct
 pub fn slang_solidity_v2_ir::ir::BreakStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::BreakStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::BreakStatementStruct
 pub fn slang_solidity_v2_ir::ir::BreakStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::BreakStatementStruct
@@ -1749,8 +1929,12 @@ pub slang_solidity_v2_ir::ir::CallOptionsExpressionStruct::options: slang_solidi
 pub slang_solidity_v2_ir::ir::CallOptionsExpressionStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::CallOptionsExpressionStruct
 pub fn slang_solidity_v2_ir::ir::CallOptionsExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::CallOptionsExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::CallOptionsExpressionStruct
+pub fn slang_solidity_v2_ir::ir::CallOptionsExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::CallOptionsExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::CallOptionsExpressionStruct
 pub fn slang_solidity_v2_ir::ir::CallOptionsExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::CallOptionsExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::CallOptionsExpressionStruct
 pub fn slang_solidity_v2_ir::ir::CallOptionsExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::CallOptionsExpressionStruct
@@ -1796,8 +1980,12 @@ pub slang_solidity_v2_ir::ir::CatchClauseStruct::parameters: core::option::Optio
 pub slang_solidity_v2_ir::ir::CatchClauseStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::CatchClauseStruct
 pub fn slang_solidity_v2_ir::ir::CatchClauseStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::CatchClauseStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::CatchClauseStruct
+pub fn slang_solidity_v2_ir::ir::CatchClauseStruct::eq(&self, &slang_solidity_v2_ir::ir::CatchClauseStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::CatchClauseStruct
 pub fn slang_solidity_v2_ir::ir::CatchClauseStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::CatchClauseStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::CatchClauseStruct
 pub fn slang_solidity_v2_ir::ir::CatchClauseStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::CatchClauseStruct
@@ -1809,8 +1997,12 @@ pub slang_solidity_v2_ir::ir::ConditionalExpressionStruct::range: core::ops::ran
 pub slang_solidity_v2_ir::ir::ConditionalExpressionStruct::true_expression: slang_solidity_v2_ir::ir::Expression
 impl slang_solidity_v2_ir::ir::ConditionalExpressionStruct
 pub fn slang_solidity_v2_ir::ir::ConditionalExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ConditionalExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ConditionalExpressionStruct
+pub fn slang_solidity_v2_ir::ir::ConditionalExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::ConditionalExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ConditionalExpressionStruct
 pub fn slang_solidity_v2_ir::ir::ConditionalExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ConditionalExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ConditionalExpressionStruct
 pub fn slang_solidity_v2_ir::ir::ConditionalExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ConditionalExpressionStruct
@@ -1823,8 +2015,12 @@ pub slang_solidity_v2_ir::ir::ConstantDefinitionStruct::value: core::option::Opt
 pub slang_solidity_v2_ir::ir::ConstantDefinitionStruct::visibility: core::option::Option<slang_solidity_v2_ir::ir::StateVariableVisibility>
 impl slang_solidity_v2_ir::ir::ConstantDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::ConstantDefinitionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ConstantDefinitionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ConstantDefinitionStruct
+pub fn slang_solidity_v2_ir::ir::ConstantDefinitionStruct::eq(&self, &slang_solidity_v2_ir::ir::ConstantDefinitionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ConstantDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::ConstantDefinitionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ConstantDefinitionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ConstantDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::ConstantDefinitionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ConstantDefinitionStruct
@@ -1833,8 +2029,12 @@ pub struct slang_solidity_v2_ir::ir::ContinueStatementStruct
 pub slang_solidity_v2_ir::ir::ContinueStatementStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::ContinueStatementStruct
 pub fn slang_solidity_v2_ir::ir::ContinueStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ContinueStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ContinueStatementStruct
+pub fn slang_solidity_v2_ir::ir::ContinueStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::ContinueStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ContinueStatementStruct
 pub fn slang_solidity_v2_ir::ir::ContinueStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ContinueStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ContinueStatementStruct
 pub fn slang_solidity_v2_ir::ir::ContinueStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ContinueStatementStruct
@@ -1848,8 +2048,12 @@ pub slang_solidity_v2_ir::ir::ContractDefinitionStruct::range: core::ops::range:
 pub slang_solidity_v2_ir::ir::ContractDefinitionStruct::storage_layout: core::option::Option<slang_solidity_v2_ir::ir::Expression>
 impl slang_solidity_v2_ir::ir::ContractDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::ContractDefinitionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ContractDefinitionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ContractDefinitionStruct
+pub fn slang_solidity_v2_ir::ir::ContractDefinitionStruct::eq(&self, &slang_solidity_v2_ir::ir::ContractDefinitionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ContractDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::ContractDefinitionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ContractDefinitionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ContractDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::ContractDefinitionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ContractDefinitionStruct
@@ -1895,8 +2099,12 @@ pub slang_solidity_v2_ir::ir::DecimalNumberExpressionStruct::range: core::ops::r
 pub slang_solidity_v2_ir::ir::DecimalNumberExpressionStruct::unit: core::option::Option<slang_solidity_v2_ir::ir::NumberUnit>
 impl slang_solidity_v2_ir::ir::DecimalNumberExpressionStruct
 pub fn slang_solidity_v2_ir::ir::DecimalNumberExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::DecimalNumberExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::DecimalNumberExpressionStruct
+pub fn slang_solidity_v2_ir::ir::DecimalNumberExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::DecimalNumberExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::DecimalNumberExpressionStruct
 pub fn slang_solidity_v2_ir::ir::DecimalNumberExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::DecimalNumberExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::DecimalNumberExpressionStruct
 pub fn slang_solidity_v2_ir::ir::DecimalNumberExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::DecimalNumberExpressionStruct
@@ -1924,8 +2132,12 @@ pub slang_solidity_v2_ir::ir::DoWhileStatementStruct::condition: slang_solidity_
 pub slang_solidity_v2_ir::ir::DoWhileStatementStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::DoWhileStatementStruct
 pub fn slang_solidity_v2_ir::ir::DoWhileStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::DoWhileStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::DoWhileStatementStruct
+pub fn slang_solidity_v2_ir::ir::DoWhileStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::DoWhileStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::DoWhileStatementStruct
 pub fn slang_solidity_v2_ir::ir::DoWhileStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::DoWhileStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::DoWhileStatementStruct
 pub fn slang_solidity_v2_ir::ir::DoWhileStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::DoWhileStatementStruct
@@ -1936,8 +2148,12 @@ pub slang_solidity_v2_ir::ir::EmitStatementStruct::event: slang_solidity_v2_ir::
 pub slang_solidity_v2_ir::ir::EmitStatementStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::EmitStatementStruct
 pub fn slang_solidity_v2_ir::ir::EmitStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::EmitStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::EmitStatementStruct
+pub fn slang_solidity_v2_ir::ir::EmitStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::EmitStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::EmitStatementStruct
 pub fn slang_solidity_v2_ir::ir::EmitStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::EmitStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::EmitStatementStruct
 pub fn slang_solidity_v2_ir::ir::EmitStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::EmitStatementStruct
@@ -1948,8 +2164,12 @@ pub slang_solidity_v2_ir::ir::EnumDefinitionStruct::name: slang_solidity_v2_ir::
 pub slang_solidity_v2_ir::ir::EnumDefinitionStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::EnumDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::EnumDefinitionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::EnumDefinitionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::EnumDefinitionStruct
+pub fn slang_solidity_v2_ir::ir::EnumDefinitionStruct::eq(&self, &slang_solidity_v2_ir::ir::EnumDefinitionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::EnumDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::EnumDefinitionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::EnumDefinitionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::EnumDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::EnumDefinitionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::EnumDefinitionStruct
@@ -1995,8 +2215,12 @@ pub slang_solidity_v2_ir::ir::EqualityExpressionStruct::range: core::ops::range:
 pub slang_solidity_v2_ir::ir::EqualityExpressionStruct::right_operand: slang_solidity_v2_ir::ir::Expression
 impl slang_solidity_v2_ir::ir::EqualityExpressionStruct
 pub fn slang_solidity_v2_ir::ir::EqualityExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::EqualityExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::EqualityExpressionStruct
+pub fn slang_solidity_v2_ir::ir::EqualityExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::EqualityExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::EqualityExpressionStruct
 pub fn slang_solidity_v2_ir::ir::EqualityExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::EqualityExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::EqualityExpressionStruct
 pub fn slang_solidity_v2_ir::ir::EqualityExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::EqualityExpressionStruct
@@ -2007,8 +2231,12 @@ pub slang_solidity_v2_ir::ir::ErrorDefinitionStruct::parameters: slang_solidity_
 pub slang_solidity_v2_ir::ir::ErrorDefinitionStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::ErrorDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::ErrorDefinitionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ErrorDefinitionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ErrorDefinitionStruct
+pub fn slang_solidity_v2_ir::ir::ErrorDefinitionStruct::eq(&self, &slang_solidity_v2_ir::ir::ErrorDefinitionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ErrorDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::ErrorDefinitionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ErrorDefinitionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ErrorDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::ErrorDefinitionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ErrorDefinitionStruct
@@ -2037,8 +2265,12 @@ pub slang_solidity_v2_ir::ir::EventDefinitionStruct::parameters: slang_solidity_
 pub slang_solidity_v2_ir::ir::EventDefinitionStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::EventDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::EventDefinitionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::EventDefinitionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::EventDefinitionStruct
+pub fn slang_solidity_v2_ir::ir::EventDefinitionStruct::eq(&self, &slang_solidity_v2_ir::ir::EventDefinitionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::EventDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::EventDefinitionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::EventDefinitionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::EventDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::EventDefinitionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::EventDefinitionStruct
@@ -2048,8 +2280,12 @@ pub slang_solidity_v2_ir::ir::ExperimentalPragmaStruct::feature: slang_solidity_
 pub slang_solidity_v2_ir::ir::ExperimentalPragmaStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::ExperimentalPragmaStruct
 pub fn slang_solidity_v2_ir::ir::ExperimentalPragmaStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ExperimentalPragmaStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ExperimentalPragmaStruct
+pub fn slang_solidity_v2_ir::ir::ExperimentalPragmaStruct::eq(&self, &slang_solidity_v2_ir::ir::ExperimentalPragmaStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ExperimentalPragmaStruct
 pub fn slang_solidity_v2_ir::ir::ExperimentalPragmaStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ExperimentalPragmaStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ExperimentalPragmaStruct
 pub fn slang_solidity_v2_ir::ir::ExperimentalPragmaStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ExperimentalPragmaStruct
@@ -2060,8 +2296,12 @@ pub slang_solidity_v2_ir::ir::ExponentiationExpressionStruct::range: core::ops::
 pub slang_solidity_v2_ir::ir::ExponentiationExpressionStruct::right_operand: slang_solidity_v2_ir::ir::Expression
 impl slang_solidity_v2_ir::ir::ExponentiationExpressionStruct
 pub fn slang_solidity_v2_ir::ir::ExponentiationExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ExponentiationExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ExponentiationExpressionStruct
+pub fn slang_solidity_v2_ir::ir::ExponentiationExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::ExponentiationExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ExponentiationExpressionStruct
 pub fn slang_solidity_v2_ir::ir::ExponentiationExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ExponentiationExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ExponentiationExpressionStruct
 pub fn slang_solidity_v2_ir::ir::ExponentiationExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ExponentiationExpressionStruct
@@ -2071,8 +2311,12 @@ pub slang_solidity_v2_ir::ir::ExpressionStatementStruct::expression: slang_solid
 pub slang_solidity_v2_ir::ir::ExpressionStatementStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::ExpressionStatementStruct
 pub fn slang_solidity_v2_ir::ir::ExpressionStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ExpressionStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ExpressionStatementStruct
+pub fn slang_solidity_v2_ir::ir::ExpressionStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::ExpressionStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ExpressionStatementStruct
 pub fn slang_solidity_v2_ir::ir::ExpressionStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ExpressionStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ExpressionStatementStruct
 pub fn slang_solidity_v2_ir::ir::ExpressionStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ExpressionStatementStruct
@@ -2120,8 +2364,12 @@ pub slang_solidity_v2_ir::ir::ForStatementStruct::iterator: core::option::Option
 pub slang_solidity_v2_ir::ir::ForStatementStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::ForStatementStruct
 pub fn slang_solidity_v2_ir::ir::ForStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ForStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ForStatementStruct
+pub fn slang_solidity_v2_ir::ir::ForStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::ForStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ForStatementStruct
 pub fn slang_solidity_v2_ir::ir::ForStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ForStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ForStatementStruct
 pub fn slang_solidity_v2_ir::ir::ForStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ForStatementStruct
@@ -2136,8 +2384,12 @@ pub slang_solidity_v2_ir::ir::FunctionAttributesStruct::range: core::ops::range:
 pub slang_solidity_v2_ir::ir::FunctionAttributesStruct::visibility: slang_solidity_v2_ir::ir::FunctionVisibility
 impl slang_solidity_v2_ir::ir::FunctionAttributesStruct
 pub fn slang_solidity_v2_ir::ir::FunctionAttributesStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::FunctionAttributesStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::FunctionAttributesStruct
+pub fn slang_solidity_v2_ir::ir::FunctionAttributesStruct::eq(&self, &slang_solidity_v2_ir::ir::FunctionAttributesStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::FunctionAttributesStruct
 pub fn slang_solidity_v2_ir::ir::FunctionAttributesStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::FunctionAttributesStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::FunctionAttributesStruct
 pub fn slang_solidity_v2_ir::ir::FunctionAttributesStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::FunctionAttributesStruct
@@ -2148,8 +2400,12 @@ pub slang_solidity_v2_ir::ir::FunctionCallExpressionStruct::operand: slang_solid
 pub slang_solidity_v2_ir::ir::FunctionCallExpressionStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::FunctionCallExpressionStruct
 pub fn slang_solidity_v2_ir::ir::FunctionCallExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::FunctionCallExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::FunctionCallExpressionStruct
+pub fn slang_solidity_v2_ir::ir::FunctionCallExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::FunctionCallExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::FunctionCallExpressionStruct
 pub fn slang_solidity_v2_ir::ir::FunctionCallExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::FunctionCallExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::FunctionCallExpressionStruct
 pub fn slang_solidity_v2_ir::ir::FunctionCallExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::FunctionCallExpressionStruct
@@ -2167,8 +2423,12 @@ pub fn slang_solidity_v2_ir::ir::FunctionDefinitionStruct::id(&self) -> slang_so
 impl slang_solidity_v2_ir::ir::FunctionDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::FunctionDefinitionStruct::is_externally_visible(&self) -> bool
 pub fn slang_solidity_v2_ir::ir::FunctionDefinitionStruct::signature_text_range(&self) -> core::ops::range::Range<usize>
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::FunctionDefinitionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::FunctionDefinitionStruct
+pub fn slang_solidity_v2_ir::ir::FunctionDefinitionStruct::eq(&self, &slang_solidity_v2_ir::ir::FunctionDefinitionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::FunctionDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::FunctionDefinitionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::FunctionDefinitionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::FunctionDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::FunctionDefinitionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::FunctionDefinitionStruct
@@ -2179,8 +2439,12 @@ pub slang_solidity_v2_ir::ir::FunctionTypeAttributesStruct::range: core::ops::ra
 pub slang_solidity_v2_ir::ir::FunctionTypeAttributesStruct::visibility: slang_solidity_v2_ir::ir::FunctionVisibility
 impl slang_solidity_v2_ir::ir::FunctionTypeAttributesStruct
 pub fn slang_solidity_v2_ir::ir::FunctionTypeAttributesStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::FunctionTypeAttributesStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::FunctionTypeAttributesStruct
+pub fn slang_solidity_v2_ir::ir::FunctionTypeAttributesStruct::eq(&self, &slang_solidity_v2_ir::ir::FunctionTypeAttributesStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::FunctionTypeAttributesStruct
 pub fn slang_solidity_v2_ir::ir::FunctionTypeAttributesStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::FunctionTypeAttributesStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::FunctionTypeAttributesStruct
 pub fn slang_solidity_v2_ir::ir::FunctionTypeAttributesStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::FunctionTypeAttributesStruct
@@ -2192,8 +2456,12 @@ pub slang_solidity_v2_ir::ir::FunctionTypeStruct::range: core::ops::range::Range
 pub slang_solidity_v2_ir::ir::FunctionTypeStruct::returns: core::option::Option<slang_solidity_v2_ir::ir::Parameters>
 impl slang_solidity_v2_ir::ir::FunctionTypeStruct
 pub fn slang_solidity_v2_ir::ir::FunctionTypeStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::FunctionTypeStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::FunctionTypeStruct
+pub fn slang_solidity_v2_ir::ir::FunctionTypeStruct::eq(&self, &slang_solidity_v2_ir::ir::FunctionTypeStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::FunctionTypeStruct
 pub fn slang_solidity_v2_ir::ir::FunctionTypeStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::FunctionTypeStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::FunctionTypeStruct
 pub fn slang_solidity_v2_ir::ir::FunctionTypeStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::FunctionTypeStruct
@@ -2340,8 +2608,12 @@ pub slang_solidity_v2_ir::ir::HexNumberExpressionStruct::literal: slang_solidity
 pub slang_solidity_v2_ir::ir::HexNumberExpressionStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::HexNumberExpressionStruct
 pub fn slang_solidity_v2_ir::ir::HexNumberExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::HexNumberExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::HexNumberExpressionStruct
+pub fn slang_solidity_v2_ir::ir::HexNumberExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::HexNumberExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::HexNumberExpressionStruct
 pub fn slang_solidity_v2_ir::ir::HexNumberExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::HexNumberExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::HexNumberExpressionStruct
 pub fn slang_solidity_v2_ir::ir::HexNumberExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::HexNumberExpressionStruct
@@ -2406,8 +2678,12 @@ pub slang_solidity_v2_ir::ir::IfStatementStruct::else_branch: core::option::Opti
 pub slang_solidity_v2_ir::ir::IfStatementStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::IfStatementStruct
 pub fn slang_solidity_v2_ir::ir::IfStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::IfStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::IfStatementStruct
+pub fn slang_solidity_v2_ir::ir::IfStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::IfStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::IfStatementStruct
 pub fn slang_solidity_v2_ir::ir::IfStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::IfStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::IfStatementStruct
 pub fn slang_solidity_v2_ir::ir::IfStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::IfStatementStruct
@@ -2418,8 +2694,12 @@ pub slang_solidity_v2_ir::ir::ImportDeconstructionStruct::range: core::ops::rang
 pub slang_solidity_v2_ir::ir::ImportDeconstructionStruct::symbols: slang_solidity_v2_ir::ir::ImportDeconstructionSymbols
 impl slang_solidity_v2_ir::ir::ImportDeconstructionStruct
 pub fn slang_solidity_v2_ir::ir::ImportDeconstructionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ImportDeconstructionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ImportDeconstructionStruct
+pub fn slang_solidity_v2_ir::ir::ImportDeconstructionStruct::eq(&self, &slang_solidity_v2_ir::ir::ImportDeconstructionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ImportDeconstructionStruct
 pub fn slang_solidity_v2_ir::ir::ImportDeconstructionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ImportDeconstructionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ImportDeconstructionStruct
 pub fn slang_solidity_v2_ir::ir::ImportDeconstructionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ImportDeconstructionStruct
@@ -2430,8 +2710,12 @@ pub slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct::name: slang_soli
 pub slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct
 pub fn slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct
+pub fn slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct::eq(&self, &slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct
 pub fn slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct
 pub fn slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ImportDeconstructionSymbolStruct
@@ -2444,8 +2728,12 @@ pub slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::range: core::ops::ran
 pub slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::start: core::option::Option<slang_solidity_v2_ir::ir::Expression>
 impl slang_solidity_v2_ir::ir::IndexAccessExpressionStruct
 pub fn slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::IndexAccessExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::IndexAccessExpressionStruct
+pub fn slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::IndexAccessExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::IndexAccessExpressionStruct
 pub fn slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::IndexAccessExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::IndexAccessExpressionStruct
 pub fn slang_solidity_v2_ir::ir::IndexAccessExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::IndexAccessExpressionStruct
@@ -2457,8 +2745,12 @@ pub slang_solidity_v2_ir::ir::InequalityExpressionStruct::range: core::ops::rang
 pub slang_solidity_v2_ir::ir::InequalityExpressionStruct::right_operand: slang_solidity_v2_ir::ir::Expression
 impl slang_solidity_v2_ir::ir::InequalityExpressionStruct
 pub fn slang_solidity_v2_ir::ir::InequalityExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::InequalityExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::InequalityExpressionStruct
+pub fn slang_solidity_v2_ir::ir::InequalityExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::InequalityExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::InequalityExpressionStruct
 pub fn slang_solidity_v2_ir::ir::InequalityExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::InequalityExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::InequalityExpressionStruct
 pub fn slang_solidity_v2_ir::ir::InequalityExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::InequalityExpressionStruct
@@ -2469,8 +2761,12 @@ pub slang_solidity_v2_ir::ir::InheritanceTypeStruct::range: core::ops::range::Ra
 pub slang_solidity_v2_ir::ir::InheritanceTypeStruct::type_name: slang_solidity_v2_ir::ir::IdentifierPath
 impl slang_solidity_v2_ir::ir::InheritanceTypeStruct
 pub fn slang_solidity_v2_ir::ir::InheritanceTypeStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::InheritanceTypeStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::InheritanceTypeStruct
+pub fn slang_solidity_v2_ir::ir::InheritanceTypeStruct::eq(&self, &slang_solidity_v2_ir::ir::InheritanceTypeStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::InheritanceTypeStruct
 pub fn slang_solidity_v2_ir::ir::InheritanceTypeStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::InheritanceTypeStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::InheritanceTypeStruct
 pub fn slang_solidity_v2_ir::ir::InheritanceTypeStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::InheritanceTypeStruct
@@ -2500,8 +2796,12 @@ pub slang_solidity_v2_ir::ir::InterfaceDefinitionStruct::name: slang_solidity_v2
 pub slang_solidity_v2_ir::ir::InterfaceDefinitionStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::InterfaceDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::InterfaceDefinitionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::InterfaceDefinitionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::InterfaceDefinitionStruct
+pub fn slang_solidity_v2_ir::ir::InterfaceDefinitionStruct::eq(&self, &slang_solidity_v2_ir::ir::InterfaceDefinitionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::InterfaceDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::InterfaceDefinitionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::InterfaceDefinitionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::InterfaceDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::InterfaceDefinitionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::InterfaceDefinitionStruct
@@ -2580,8 +2880,12 @@ pub slang_solidity_v2_ir::ir::LibraryDefinitionStruct::name: slang_solidity_v2_i
 pub slang_solidity_v2_ir::ir::LibraryDefinitionStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::LibraryDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::LibraryDefinitionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::LibraryDefinitionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::LibraryDefinitionStruct
+pub fn slang_solidity_v2_ir::ir::LibraryDefinitionStruct::eq(&self, &slang_solidity_v2_ir::ir::LibraryDefinitionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::LibraryDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::LibraryDefinitionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::LibraryDefinitionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::LibraryDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::LibraryDefinitionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::LibraryDefinitionStruct
@@ -2592,8 +2896,12 @@ pub slang_solidity_v2_ir::ir::MappingTypeStruct::range: core::ops::range::Range<
 pub slang_solidity_v2_ir::ir::MappingTypeStruct::value_type: slang_solidity_v2_ir::ir::Parameter
 impl slang_solidity_v2_ir::ir::MappingTypeStruct
 pub fn slang_solidity_v2_ir::ir::MappingTypeStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::MappingTypeStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::MappingTypeStruct
+pub fn slang_solidity_v2_ir::ir::MappingTypeStruct::eq(&self, &slang_solidity_v2_ir::ir::MappingTypeStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::MappingTypeStruct
 pub fn slang_solidity_v2_ir::ir::MappingTypeStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::MappingTypeStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::MappingTypeStruct
 pub fn slang_solidity_v2_ir::ir::MappingTypeStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::MappingTypeStruct
@@ -2604,8 +2912,12 @@ pub slang_solidity_v2_ir::ir::MemberAccessExpressionStruct::operand: slang_solid
 pub slang_solidity_v2_ir::ir::MemberAccessExpressionStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::MemberAccessExpressionStruct
 pub fn slang_solidity_v2_ir::ir::MemberAccessExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::MemberAccessExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::MemberAccessExpressionStruct
+pub fn slang_solidity_v2_ir::ir::MemberAccessExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::MemberAccessExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::MemberAccessExpressionStruct
 pub fn slang_solidity_v2_ir::ir::MemberAccessExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::MemberAccessExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::MemberAccessExpressionStruct
 pub fn slang_solidity_v2_ir::ir::MemberAccessExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::MemberAccessExpressionStruct
@@ -2701,8 +3013,12 @@ pub slang_solidity_v2_ir::ir::ModifierInvocationStruct::name: slang_solidity_v2_
 pub slang_solidity_v2_ir::ir::ModifierInvocationStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::ModifierInvocationStruct
 pub fn slang_solidity_v2_ir::ir::ModifierInvocationStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ModifierInvocationStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ModifierInvocationStruct
+pub fn slang_solidity_v2_ir::ir::ModifierInvocationStruct::eq(&self, &slang_solidity_v2_ir::ir::ModifierInvocationStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ModifierInvocationStruct
 pub fn slang_solidity_v2_ir::ir::ModifierInvocationStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ModifierInvocationStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ModifierInvocationStruct
 pub fn slang_solidity_v2_ir::ir::ModifierInvocationStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ModifierInvocationStruct
@@ -2712,8 +3028,12 @@ pub slang_solidity_v2_ir::ir::MultiTypedDeclarationElementStruct::member: core::
 pub slang_solidity_v2_ir::ir::MultiTypedDeclarationElementStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::MultiTypedDeclarationElementStruct
 pub fn slang_solidity_v2_ir::ir::MultiTypedDeclarationElementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::MultiTypedDeclarationElementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::MultiTypedDeclarationElementStruct
+pub fn slang_solidity_v2_ir::ir::MultiTypedDeclarationElementStruct::eq(&self, &slang_solidity_v2_ir::ir::MultiTypedDeclarationElementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::MultiTypedDeclarationElementStruct
 pub fn slang_solidity_v2_ir::ir::MultiTypedDeclarationElementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::MultiTypedDeclarationElementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::MultiTypedDeclarationElementStruct
 pub fn slang_solidity_v2_ir::ir::MultiTypedDeclarationElementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::MultiTypedDeclarationElementStruct
@@ -2724,8 +3044,12 @@ pub slang_solidity_v2_ir::ir::MultiTypedDeclarationStruct::range: core::ops::ran
 pub slang_solidity_v2_ir::ir::MultiTypedDeclarationStruct::value: slang_solidity_v2_ir::ir::Expression
 impl slang_solidity_v2_ir::ir::MultiTypedDeclarationStruct
 pub fn slang_solidity_v2_ir::ir::MultiTypedDeclarationStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::MultiTypedDeclarationStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::MultiTypedDeclarationStruct
+pub fn slang_solidity_v2_ir::ir::MultiTypedDeclarationStruct::eq(&self, &slang_solidity_v2_ir::ir::MultiTypedDeclarationStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::MultiTypedDeclarationStruct
 pub fn slang_solidity_v2_ir::ir::MultiTypedDeclarationStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::MultiTypedDeclarationStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::MultiTypedDeclarationStruct
 pub fn slang_solidity_v2_ir::ir::MultiTypedDeclarationStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::MultiTypedDeclarationStruct
@@ -2737,8 +3061,12 @@ pub slang_solidity_v2_ir::ir::MultiplicativeExpressionStruct::range: core::ops::
 pub slang_solidity_v2_ir::ir::MultiplicativeExpressionStruct::right_operand: slang_solidity_v2_ir::ir::Expression
 impl slang_solidity_v2_ir::ir::MultiplicativeExpressionStruct
 pub fn slang_solidity_v2_ir::ir::MultiplicativeExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::MultiplicativeExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::MultiplicativeExpressionStruct
+pub fn slang_solidity_v2_ir::ir::MultiplicativeExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::MultiplicativeExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::MultiplicativeExpressionStruct
 pub fn slang_solidity_v2_ir::ir::MultiplicativeExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::MultiplicativeExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::MultiplicativeExpressionStruct
 pub fn slang_solidity_v2_ir::ir::MultiplicativeExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::MultiplicativeExpressionStruct
@@ -2749,8 +3077,12 @@ pub slang_solidity_v2_ir::ir::NamedArgumentStruct::range: core::ops::range::Rang
 pub slang_solidity_v2_ir::ir::NamedArgumentStruct::value: slang_solidity_v2_ir::ir::Expression
 impl slang_solidity_v2_ir::ir::NamedArgumentStruct
 pub fn slang_solidity_v2_ir::ir::NamedArgumentStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::NamedArgumentStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::NamedArgumentStruct
+pub fn slang_solidity_v2_ir::ir::NamedArgumentStruct::eq(&self, &slang_solidity_v2_ir::ir::NamedArgumentStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::NamedArgumentStruct
 pub fn slang_solidity_v2_ir::ir::NamedArgumentStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::NamedArgumentStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::NamedArgumentStruct
 pub fn slang_solidity_v2_ir::ir::NamedArgumentStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::NamedArgumentStruct
@@ -2760,8 +3092,12 @@ pub slang_solidity_v2_ir::ir::NewExpressionStruct::range: core::ops::range::Rang
 pub slang_solidity_v2_ir::ir::NewExpressionStruct::type_name: slang_solidity_v2_ir::ir::TypeName
 impl slang_solidity_v2_ir::ir::NewExpressionStruct
 pub fn slang_solidity_v2_ir::ir::NewExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::NewExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::NewExpressionStruct
+pub fn slang_solidity_v2_ir::ir::NewExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::NewExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::NewExpressionStruct
 pub fn slang_solidity_v2_ir::ir::NewExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::NewExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::NewExpressionStruct
 pub fn slang_solidity_v2_ir::ir::NewExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::NewExpressionStruct
@@ -2789,8 +3125,12 @@ pub slang_solidity_v2_ir::ir::OrExpressionStruct::range: core::ops::range::Range
 pub slang_solidity_v2_ir::ir::OrExpressionStruct::right_operand: slang_solidity_v2_ir::ir::Expression
 impl slang_solidity_v2_ir::ir::OrExpressionStruct
 pub fn slang_solidity_v2_ir::ir::OrExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::OrExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::OrExpressionStruct
+pub fn slang_solidity_v2_ir::ir::OrExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::OrExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::OrExpressionStruct
 pub fn slang_solidity_v2_ir::ir::OrExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::OrExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::OrExpressionStruct
 pub fn slang_solidity_v2_ir::ir::OrExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::OrExpressionStruct
@@ -2803,8 +3143,12 @@ pub slang_solidity_v2_ir::ir::ParameterStruct::storage_location: core::option::O
 pub slang_solidity_v2_ir::ir::ParameterStruct::type_name: slang_solidity_v2_ir::ir::TypeName
 impl slang_solidity_v2_ir::ir::ParameterStruct
 pub fn slang_solidity_v2_ir::ir::ParameterStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ParameterStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ParameterStruct
+pub fn slang_solidity_v2_ir::ir::ParameterStruct::eq(&self, &slang_solidity_v2_ir::ir::ParameterStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ParameterStruct
 pub fn slang_solidity_v2_ir::ir::ParameterStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ParameterStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ParameterStruct
 pub fn slang_solidity_v2_ir::ir::ParameterStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ParameterStruct
@@ -2815,8 +3159,12 @@ pub slang_solidity_v2_ir::ir::PathImportStruct::path: slang_solidity_v2_ir::ir::
 pub slang_solidity_v2_ir::ir::PathImportStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::PathImportStruct
 pub fn slang_solidity_v2_ir::ir::PathImportStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::PathImportStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::PathImportStruct
+pub fn slang_solidity_v2_ir::ir::PathImportStruct::eq(&self, &slang_solidity_v2_ir::ir::PathImportStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::PathImportStruct
 pub fn slang_solidity_v2_ir::ir::PathImportStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::PathImportStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::PathImportStruct
 pub fn slang_solidity_v2_ir::ir::PathImportStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::PathImportStruct
@@ -2929,8 +3277,12 @@ pub slang_solidity_v2_ir::ir::PostfixExpressionStruct::operator: slang_solidity_
 pub slang_solidity_v2_ir::ir::PostfixExpressionStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::PostfixExpressionStruct
 pub fn slang_solidity_v2_ir::ir::PostfixExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::PostfixExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::PostfixExpressionStruct
+pub fn slang_solidity_v2_ir::ir::PostfixExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::PostfixExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::PostfixExpressionStruct
 pub fn slang_solidity_v2_ir::ir::PostfixExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::PostfixExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::PostfixExpressionStruct
 pub fn slang_solidity_v2_ir::ir::PostfixExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::PostfixExpressionStruct
@@ -2957,8 +3309,12 @@ pub slang_solidity_v2_ir::ir::PragmaDirectiveStruct::pragma: slang_solidity_v2_i
 pub slang_solidity_v2_ir::ir::PragmaDirectiveStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::PragmaDirectiveStruct
 pub fn slang_solidity_v2_ir::ir::PragmaDirectiveStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::PragmaDirectiveStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::PragmaDirectiveStruct
+pub fn slang_solidity_v2_ir::ir::PragmaDirectiveStruct::eq(&self, &slang_solidity_v2_ir::ir::PragmaDirectiveStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::PragmaDirectiveStruct
 pub fn slang_solidity_v2_ir::ir::PragmaDirectiveStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::PragmaDirectiveStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::PragmaDirectiveStruct
 pub fn slang_solidity_v2_ir::ir::PragmaDirectiveStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::PragmaDirectiveStruct
@@ -3071,8 +3427,12 @@ pub slang_solidity_v2_ir::ir::PrefixExpressionStruct::operator: slang_solidity_v
 pub slang_solidity_v2_ir::ir::PrefixExpressionStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::PrefixExpressionStruct
 pub fn slang_solidity_v2_ir::ir::PrefixExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::PrefixExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::PrefixExpressionStruct
+pub fn slang_solidity_v2_ir::ir::PrefixExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::PrefixExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::PrefixExpressionStruct
 pub fn slang_solidity_v2_ir::ir::PrefixExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::PrefixExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::PrefixExpressionStruct
 pub fn slang_solidity_v2_ir::ir::PrefixExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::PrefixExpressionStruct
@@ -3082,8 +3442,12 @@ pub slang_solidity_v2_ir::ir::ReturnStatementStruct::expression: core::option::O
 pub slang_solidity_v2_ir::ir::ReturnStatementStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::ReturnStatementStruct
 pub fn slang_solidity_v2_ir::ir::ReturnStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ReturnStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ReturnStatementStruct
+pub fn slang_solidity_v2_ir::ir::ReturnStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::ReturnStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ReturnStatementStruct
 pub fn slang_solidity_v2_ir::ir::ReturnStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ReturnStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ReturnStatementStruct
 pub fn slang_solidity_v2_ir::ir::ReturnStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ReturnStatementStruct
@@ -3094,8 +3458,12 @@ pub slang_solidity_v2_ir::ir::RevertStatementStruct::error: slang_solidity_v2_ir
 pub slang_solidity_v2_ir::ir::RevertStatementStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::RevertStatementStruct
 pub fn slang_solidity_v2_ir::ir::RevertStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::RevertStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::RevertStatementStruct
+pub fn slang_solidity_v2_ir::ir::RevertStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::RevertStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::RevertStatementStruct
 pub fn slang_solidity_v2_ir::ir::RevertStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::RevertStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::RevertStatementStruct
 pub fn slang_solidity_v2_ir::ir::RevertStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::RevertStatementStruct
@@ -3141,8 +3509,12 @@ pub slang_solidity_v2_ir::ir::ShiftExpressionStruct::range: core::ops::range::Ra
 pub slang_solidity_v2_ir::ir::ShiftExpressionStruct::right_operand: slang_solidity_v2_ir::ir::Expression
 impl slang_solidity_v2_ir::ir::ShiftExpressionStruct
 pub fn slang_solidity_v2_ir::ir::ShiftExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::ShiftExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::ShiftExpressionStruct
+pub fn slang_solidity_v2_ir::ir::ShiftExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::ShiftExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ShiftExpressionStruct
 pub fn slang_solidity_v2_ir::ir::ShiftExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::ShiftExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ShiftExpressionStruct
 pub fn slang_solidity_v2_ir::ir::ShiftExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::ShiftExpressionStruct
@@ -3153,8 +3525,12 @@ pub slang_solidity_v2_ir::ir::SingleTypedDeclarationStruct::range: core::ops::ra
 pub slang_solidity_v2_ir::ir::SingleTypedDeclarationStruct::value: core::option::Option<slang_solidity_v2_ir::ir::Expression>
 impl slang_solidity_v2_ir::ir::SingleTypedDeclarationStruct
 pub fn slang_solidity_v2_ir::ir::SingleTypedDeclarationStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::SingleTypedDeclarationStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::SingleTypedDeclarationStruct
+pub fn slang_solidity_v2_ir::ir::SingleTypedDeclarationStruct::eq(&self, &slang_solidity_v2_ir::ir::SingleTypedDeclarationStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::SingleTypedDeclarationStruct
 pub fn slang_solidity_v2_ir::ir::SingleTypedDeclarationStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::SingleTypedDeclarationStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::SingleTypedDeclarationStruct
 pub fn slang_solidity_v2_ir::ir::SingleTypedDeclarationStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::SingleTypedDeclarationStruct
@@ -3198,8 +3574,12 @@ pub slang_solidity_v2_ir::ir::SourceUnitStruct::members: slang_solidity_v2_ir::i
 pub slang_solidity_v2_ir::ir::SourceUnitStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::SourceUnitStruct
 pub fn slang_solidity_v2_ir::ir::SourceUnitStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::SourceUnitStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::SourceUnitStruct
+pub fn slang_solidity_v2_ir::ir::SourceUnitStruct::eq(&self, &slang_solidity_v2_ir::ir::SourceUnitStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::SourceUnitStruct
 pub fn slang_solidity_v2_ir::ir::SourceUnitStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::SourceUnitStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::SourceUnitStruct
 pub fn slang_solidity_v2_ir::ir::SourceUnitStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::SourceUnitStruct
@@ -3211,8 +3591,12 @@ pub slang_solidity_v2_ir::ir::StateVariableAttributesStruct::range: core::ops::r
 pub slang_solidity_v2_ir::ir::StateVariableAttributesStruct::visibility: slang_solidity_v2_ir::ir::StateVariableVisibility
 impl slang_solidity_v2_ir::ir::StateVariableAttributesStruct
 pub fn slang_solidity_v2_ir::ir::StateVariableAttributesStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::StateVariableAttributesStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::StateVariableAttributesStruct
+pub fn slang_solidity_v2_ir::ir::StateVariableAttributesStruct::eq(&self, &slang_solidity_v2_ir::ir::StateVariableAttributesStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::StateVariableAttributesStruct
 pub fn slang_solidity_v2_ir::ir::StateVariableAttributesStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::StateVariableAttributesStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::StateVariableAttributesStruct
 pub fn slang_solidity_v2_ir::ir::StateVariableAttributesStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::StateVariableAttributesStruct
@@ -3225,8 +3609,12 @@ pub slang_solidity_v2_ir::ir::StateVariableDefinitionStruct::type_name: slang_so
 pub slang_solidity_v2_ir::ir::StateVariableDefinitionStruct::value: core::option::Option<slang_solidity_v2_ir::ir::Expression>
 impl slang_solidity_v2_ir::ir::StateVariableDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::StateVariableDefinitionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::StateVariableDefinitionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::StateVariableDefinitionStruct
+pub fn slang_solidity_v2_ir::ir::StateVariableDefinitionStruct::eq(&self, &slang_solidity_v2_ir::ir::StateVariableDefinitionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::StateVariableDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::StateVariableDefinitionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::StateVariableDefinitionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::StateVariableDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::StateVariableDefinitionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::StateVariableDefinitionStruct
@@ -3289,8 +3677,12 @@ pub slang_solidity_v2_ir::ir::StructDefinitionStruct::name: slang_solidity_v2_ir
 pub slang_solidity_v2_ir::ir::StructDefinitionStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::StructDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::StructDefinitionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::StructDefinitionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::StructDefinitionStruct
+pub fn slang_solidity_v2_ir::ir::StructDefinitionStruct::eq(&self, &slang_solidity_v2_ir::ir::StructDefinitionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::StructDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::StructDefinitionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::StructDefinitionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::StructDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::StructDefinitionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::StructDefinitionStruct
@@ -3301,8 +3693,12 @@ pub slang_solidity_v2_ir::ir::StructMemberStruct::range: core::ops::range::Range
 pub slang_solidity_v2_ir::ir::StructMemberStruct::type_name: slang_solidity_v2_ir::ir::TypeName
 impl slang_solidity_v2_ir::ir::StructMemberStruct
 pub fn slang_solidity_v2_ir::ir::StructMemberStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::StructMemberStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::StructMemberStruct
+pub fn slang_solidity_v2_ir::ir::StructMemberStruct::eq(&self, &slang_solidity_v2_ir::ir::StructMemberStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::StructMemberStruct
 pub fn slang_solidity_v2_ir::ir::StructMemberStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::StructMemberStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::StructMemberStruct
 pub fn slang_solidity_v2_ir::ir::StructMemberStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::StructMemberStruct
@@ -3383,8 +3779,12 @@ pub slang_solidity_v2_ir::ir::TryStatementStruct::range: core::ops::range::Range
 pub slang_solidity_v2_ir::ir::TryStatementStruct::returns: core::option::Option<slang_solidity_v2_ir::ir::Parameters>
 impl slang_solidity_v2_ir::ir::TryStatementStruct
 pub fn slang_solidity_v2_ir::ir::TryStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::TryStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::TryStatementStruct
+pub fn slang_solidity_v2_ir::ir::TryStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::TryStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::TryStatementStruct
 pub fn slang_solidity_v2_ir::ir::TryStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::TryStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::TryStatementStruct
 pub fn slang_solidity_v2_ir::ir::TryStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::TryStatementStruct
@@ -3396,8 +3796,12 @@ impl slang_solidity_v2_ir::ir::TupleExpressionStruct
 pub fn slang_solidity_v2_ir::ir::TupleExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl slang_solidity_v2_ir::ir::TupleExpressionStruct
 pub fn slang_solidity_v2_ir::ir::TupleExpressionStruct::is_empty_tuple(&self) -> bool
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::TupleExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::TupleExpressionStruct
+pub fn slang_solidity_v2_ir::ir::TupleExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::TupleExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::TupleExpressionStruct
 pub fn slang_solidity_v2_ir::ir::TupleExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::TupleExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::TupleExpressionStruct
 pub fn slang_solidity_v2_ir::ir::TupleExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::TupleExpressionStruct
@@ -3407,8 +3811,12 @@ pub slang_solidity_v2_ir::ir::TupleValueStruct::expression: core::option::Option
 pub slang_solidity_v2_ir::ir::TupleValueStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::TupleValueStruct
 pub fn slang_solidity_v2_ir::ir::TupleValueStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::TupleValueStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::TupleValueStruct
+pub fn slang_solidity_v2_ir::ir::TupleValueStruct::eq(&self, &slang_solidity_v2_ir::ir::TupleValueStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::TupleValueStruct
 pub fn slang_solidity_v2_ir::ir::TupleValueStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::TupleValueStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::TupleValueStruct
 pub fn slang_solidity_v2_ir::ir::TupleValueStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::TupleValueStruct
@@ -3418,8 +3826,12 @@ pub slang_solidity_v2_ir::ir::TypeExpressionStruct::range: core::ops::range::Ran
 pub slang_solidity_v2_ir::ir::TypeExpressionStruct::type_name: slang_solidity_v2_ir::ir::TypeName
 impl slang_solidity_v2_ir::ir::TypeExpressionStruct
 pub fn slang_solidity_v2_ir::ir::TypeExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::TypeExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::TypeExpressionStruct
+pub fn slang_solidity_v2_ir::ir::TypeExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::TypeExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::TypeExpressionStruct
 pub fn slang_solidity_v2_ir::ir::TypeExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::TypeExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::TypeExpressionStruct
 pub fn slang_solidity_v2_ir::ir::TypeExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::TypeExpressionStruct
@@ -3465,8 +3877,12 @@ pub slang_solidity_v2_ir::ir::UncheckedBlockStruct::block: slang_solidity_v2_ir:
 pub slang_solidity_v2_ir::ir::UncheckedBlockStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::UncheckedBlockStruct
 pub fn slang_solidity_v2_ir::ir::UncheckedBlockStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::UncheckedBlockStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::UncheckedBlockStruct
+pub fn slang_solidity_v2_ir::ir::UncheckedBlockStruct::eq(&self, &slang_solidity_v2_ir::ir::UncheckedBlockStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::UncheckedBlockStruct
 pub fn slang_solidity_v2_ir::ir::UncheckedBlockStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::UncheckedBlockStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::UncheckedBlockStruct
 pub fn slang_solidity_v2_ir::ir::UncheckedBlockStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::UncheckedBlockStruct
@@ -3495,8 +3911,12 @@ pub slang_solidity_v2_ir::ir::UserDefinedValueTypeDefinitionStruct::range: core:
 pub slang_solidity_v2_ir::ir::UserDefinedValueTypeDefinitionStruct::value_type: slang_solidity_v2_ir::ir::ElementaryType
 impl slang_solidity_v2_ir::ir::UserDefinedValueTypeDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::UserDefinedValueTypeDefinitionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::UserDefinedValueTypeDefinitionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::UserDefinedValueTypeDefinitionStruct
+pub fn slang_solidity_v2_ir::ir::UserDefinedValueTypeDefinitionStruct::eq(&self, &slang_solidity_v2_ir::ir::UserDefinedValueTypeDefinitionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::UserDefinedValueTypeDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::UserDefinedValueTypeDefinitionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::UserDefinedValueTypeDefinitionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::UserDefinedValueTypeDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::UserDefinedValueTypeDefinitionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::UserDefinedValueTypeDefinitionStruct
@@ -3506,8 +3926,12 @@ pub slang_solidity_v2_ir::ir::UsingDeconstructionStruct::range: core::ops::range
 pub slang_solidity_v2_ir::ir::UsingDeconstructionStruct::symbols: slang_solidity_v2_ir::ir::UsingDeconstructionSymbols
 impl slang_solidity_v2_ir::ir::UsingDeconstructionStruct
 pub fn slang_solidity_v2_ir::ir::UsingDeconstructionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::UsingDeconstructionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::UsingDeconstructionStruct
+pub fn slang_solidity_v2_ir::ir::UsingDeconstructionStruct::eq(&self, &slang_solidity_v2_ir::ir::UsingDeconstructionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::UsingDeconstructionStruct
 pub fn slang_solidity_v2_ir::ir::UsingDeconstructionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::UsingDeconstructionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::UsingDeconstructionStruct
 pub fn slang_solidity_v2_ir::ir::UsingDeconstructionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::UsingDeconstructionStruct
@@ -3518,8 +3942,12 @@ pub slang_solidity_v2_ir::ir::UsingDeconstructionSymbolStruct::name: slang_solid
 pub slang_solidity_v2_ir::ir::UsingDeconstructionSymbolStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::UsingDeconstructionSymbolStruct
 pub fn slang_solidity_v2_ir::ir::UsingDeconstructionSymbolStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::UsingDeconstructionSymbolStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::UsingDeconstructionSymbolStruct
+pub fn slang_solidity_v2_ir::ir::UsingDeconstructionSymbolStruct::eq(&self, &slang_solidity_v2_ir::ir::UsingDeconstructionSymbolStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::UsingDeconstructionSymbolStruct
 pub fn slang_solidity_v2_ir::ir::UsingDeconstructionSymbolStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::UsingDeconstructionSymbolStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::UsingDeconstructionSymbolStruct
 pub fn slang_solidity_v2_ir::ir::UsingDeconstructionSymbolStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::UsingDeconstructionSymbolStruct
@@ -3531,8 +3959,12 @@ pub slang_solidity_v2_ir::ir::UsingDirectiveStruct::range: core::ops::range::Ran
 pub slang_solidity_v2_ir::ir::UsingDirectiveStruct::target: slang_solidity_v2_ir::ir::UsingTarget
 impl slang_solidity_v2_ir::ir::UsingDirectiveStruct
 pub fn slang_solidity_v2_ir::ir::UsingDirectiveStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::UsingDirectiveStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::UsingDirectiveStruct
+pub fn slang_solidity_v2_ir::ir::UsingDirectiveStruct::eq(&self, &slang_solidity_v2_ir::ir::UsingDirectiveStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::UsingDirectiveStruct
 pub fn slang_solidity_v2_ir::ir::UsingDirectiveStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::UsingDirectiveStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::UsingDirectiveStruct
 pub fn slang_solidity_v2_ir::ir::UsingDirectiveStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::UsingDirectiveStruct
@@ -3542,8 +3974,12 @@ pub slang_solidity_v2_ir::ir::VariableDeclarationStatementStruct::range: core::o
 pub slang_solidity_v2_ir::ir::VariableDeclarationStatementStruct::target: slang_solidity_v2_ir::ir::VariableDeclarationTarget
 impl slang_solidity_v2_ir::ir::VariableDeclarationStatementStruct
 pub fn slang_solidity_v2_ir::ir::VariableDeclarationStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::VariableDeclarationStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::VariableDeclarationStatementStruct
+pub fn slang_solidity_v2_ir::ir::VariableDeclarationStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::VariableDeclarationStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::VariableDeclarationStatementStruct
 pub fn slang_solidity_v2_ir::ir::VariableDeclarationStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::VariableDeclarationStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::VariableDeclarationStatementStruct
 pub fn slang_solidity_v2_ir::ir::VariableDeclarationStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::VariableDeclarationStatementStruct
@@ -3555,8 +3991,12 @@ pub slang_solidity_v2_ir::ir::VariableDeclarationStruct::storage_location: core:
 pub slang_solidity_v2_ir::ir::VariableDeclarationStruct::type_name: slang_solidity_v2_ir::ir::TypeName
 impl slang_solidity_v2_ir::ir::VariableDeclarationStruct
 pub fn slang_solidity_v2_ir::ir::VariableDeclarationStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::VariableDeclarationStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::VariableDeclarationStruct
+pub fn slang_solidity_v2_ir::ir::VariableDeclarationStruct::eq(&self, &slang_solidity_v2_ir::ir::VariableDeclarationStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::VariableDeclarationStruct
 pub fn slang_solidity_v2_ir::ir::VariableDeclarationStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::VariableDeclarationStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::VariableDeclarationStruct
 pub fn slang_solidity_v2_ir::ir::VariableDeclarationStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::VariableDeclarationStruct
@@ -3566,8 +4006,12 @@ pub slang_solidity_v2_ir::ir::VersionPragmaStruct::range: core::ops::range::Rang
 pub slang_solidity_v2_ir::ir::VersionPragmaStruct::sets: slang_solidity_v2_ir::ir::VersionExpressionSets
 impl slang_solidity_v2_ir::ir::VersionPragmaStruct
 pub fn slang_solidity_v2_ir::ir::VersionPragmaStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::VersionPragmaStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::VersionPragmaStruct
+pub fn slang_solidity_v2_ir::ir::VersionPragmaStruct::eq(&self, &slang_solidity_v2_ir::ir::VersionPragmaStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::VersionPragmaStruct
 pub fn slang_solidity_v2_ir::ir::VersionPragmaStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::VersionPragmaStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::VersionPragmaStruct
 pub fn slang_solidity_v2_ir::ir::VersionPragmaStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::VersionPragmaStruct
@@ -3578,8 +4022,12 @@ pub slang_solidity_v2_ir::ir::VersionRangeStruct::range: core::ops::range::Range
 pub slang_solidity_v2_ir::ir::VersionRangeStruct::start: slang_solidity_v2_ir::ir::VersionLiteral
 impl slang_solidity_v2_ir::ir::VersionRangeStruct
 pub fn slang_solidity_v2_ir::ir::VersionRangeStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::VersionRangeStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::VersionRangeStruct
+pub fn slang_solidity_v2_ir::ir::VersionRangeStruct::eq(&self, &slang_solidity_v2_ir::ir::VersionRangeStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::VersionRangeStruct
 pub fn slang_solidity_v2_ir::ir::VersionRangeStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::VersionRangeStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::VersionRangeStruct
 pub fn slang_solidity_v2_ir::ir::VersionRangeStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::VersionRangeStruct
@@ -3608,8 +4056,12 @@ pub slang_solidity_v2_ir::ir::VersionTermStruct::operator: core::option::Option<
 pub slang_solidity_v2_ir::ir::VersionTermStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::VersionTermStruct
 pub fn slang_solidity_v2_ir::ir::VersionTermStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::VersionTermStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::VersionTermStruct
+pub fn slang_solidity_v2_ir::ir::VersionTermStruct::eq(&self, &slang_solidity_v2_ir::ir::VersionTermStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::VersionTermStruct
 pub fn slang_solidity_v2_ir::ir::VersionTermStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::VersionTermStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::VersionTermStruct
 pub fn slang_solidity_v2_ir::ir::VersionTermStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::VersionTermStruct
@@ -3654,8 +4106,12 @@ pub slang_solidity_v2_ir::ir::WhileStatementStruct::condition: slang_solidity_v2
 pub slang_solidity_v2_ir::ir::WhileStatementStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::WhileStatementStruct
 pub fn slang_solidity_v2_ir::ir::WhileStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::WhileStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::WhileStatementStruct
+pub fn slang_solidity_v2_ir::ir::WhileStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::WhileStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::WhileStatementStruct
 pub fn slang_solidity_v2_ir::ir::WhileStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::WhileStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::WhileStatementStruct
 pub fn slang_solidity_v2_ir::ir::WhileStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::WhileStatementStruct
@@ -3665,8 +4121,12 @@ pub slang_solidity_v2_ir::ir::YulBlockStruct::range: core::ops::range::Range<usi
 pub slang_solidity_v2_ir::ir::YulBlockStruct::statements: slang_solidity_v2_ir::ir::YulStatements
 impl slang_solidity_v2_ir::ir::YulBlockStruct
 pub fn slang_solidity_v2_ir::ir::YulBlockStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::YulBlockStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::YulBlockStruct
+pub fn slang_solidity_v2_ir::ir::YulBlockStruct::eq(&self, &slang_solidity_v2_ir::ir::YulBlockStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulBlockStruct
 pub fn slang_solidity_v2_ir::ir::YulBlockStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::YulBlockStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulBlockStruct
 pub fn slang_solidity_v2_ir::ir::YulBlockStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulBlockStruct
@@ -3675,8 +4135,12 @@ pub struct slang_solidity_v2_ir::ir::YulBreakStatementStruct
 pub slang_solidity_v2_ir::ir::YulBreakStatementStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::YulBreakStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulBreakStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::YulBreakStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::YulBreakStatementStruct
+pub fn slang_solidity_v2_ir::ir::YulBreakStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::YulBreakStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulBreakStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulBreakStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::YulBreakStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulBreakStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulBreakStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulBreakStatementStruct
@@ -3685,8 +4149,12 @@ pub struct slang_solidity_v2_ir::ir::YulContinueStatementStruct
 pub slang_solidity_v2_ir::ir::YulContinueStatementStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::YulContinueStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulContinueStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::YulContinueStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::YulContinueStatementStruct
+pub fn slang_solidity_v2_ir::ir::YulContinueStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::YulContinueStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulContinueStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulContinueStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::YulContinueStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulContinueStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulContinueStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulContinueStatementStruct
@@ -3696,8 +4164,12 @@ pub slang_solidity_v2_ir::ir::YulDefaultCaseStruct::body: slang_solidity_v2_ir::
 pub slang_solidity_v2_ir::ir::YulDefaultCaseStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::YulDefaultCaseStruct
 pub fn slang_solidity_v2_ir::ir::YulDefaultCaseStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::YulDefaultCaseStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::YulDefaultCaseStruct
+pub fn slang_solidity_v2_ir::ir::YulDefaultCaseStruct::eq(&self, &slang_solidity_v2_ir::ir::YulDefaultCaseStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulDefaultCaseStruct
 pub fn slang_solidity_v2_ir::ir::YulDefaultCaseStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::YulDefaultCaseStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulDefaultCaseStruct
 pub fn slang_solidity_v2_ir::ir::YulDefaultCaseStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulDefaultCaseStruct
@@ -3710,8 +4182,12 @@ pub slang_solidity_v2_ir::ir::YulForStatementStruct::iterator: slang_solidity_v2
 pub slang_solidity_v2_ir::ir::YulForStatementStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::YulForStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulForStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::YulForStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::YulForStatementStruct
+pub fn slang_solidity_v2_ir::ir::YulForStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::YulForStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulForStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulForStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::YulForStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulForStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulForStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulForStatementStruct
@@ -3722,8 +4198,12 @@ pub slang_solidity_v2_ir::ir::YulFunctionCallExpressionStruct::operand: slang_so
 pub slang_solidity_v2_ir::ir::YulFunctionCallExpressionStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::YulFunctionCallExpressionStruct
 pub fn slang_solidity_v2_ir::ir::YulFunctionCallExpressionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::YulFunctionCallExpressionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::YulFunctionCallExpressionStruct
+pub fn slang_solidity_v2_ir::ir::YulFunctionCallExpressionStruct::eq(&self, &slang_solidity_v2_ir::ir::YulFunctionCallExpressionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulFunctionCallExpressionStruct
 pub fn slang_solidity_v2_ir::ir::YulFunctionCallExpressionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::YulFunctionCallExpressionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulFunctionCallExpressionStruct
 pub fn slang_solidity_v2_ir::ir::YulFunctionCallExpressionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulFunctionCallExpressionStruct
@@ -3736,8 +4216,12 @@ pub slang_solidity_v2_ir::ir::YulFunctionDefinitionStruct::range: core::ops::ran
 pub slang_solidity_v2_ir::ir::YulFunctionDefinitionStruct::returns: core::option::Option<slang_solidity_v2_ir::ir::YulVariableNames>
 impl slang_solidity_v2_ir::ir::YulFunctionDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::YulFunctionDefinitionStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::YulFunctionDefinitionStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::YulFunctionDefinitionStruct
+pub fn slang_solidity_v2_ir::ir::YulFunctionDefinitionStruct::eq(&self, &slang_solidity_v2_ir::ir::YulFunctionDefinitionStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulFunctionDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::YulFunctionDefinitionStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::YulFunctionDefinitionStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulFunctionDefinitionStruct
 pub fn slang_solidity_v2_ir::ir::YulFunctionDefinitionStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulFunctionDefinitionStruct
@@ -3748,8 +4232,12 @@ pub slang_solidity_v2_ir::ir::YulIfStatementStruct::condition: slang_solidity_v2
 pub slang_solidity_v2_ir::ir::YulIfStatementStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::YulIfStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulIfStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::YulIfStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::YulIfStatementStruct
+pub fn slang_solidity_v2_ir::ir::YulIfStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::YulIfStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulIfStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulIfStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::YulIfStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulIfStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulIfStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulIfStatementStruct
@@ -3758,8 +4246,12 @@ pub struct slang_solidity_v2_ir::ir::YulLeaveStatementStruct
 pub slang_solidity_v2_ir::ir::YulLeaveStatementStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::YulLeaveStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulLeaveStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::YulLeaveStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::YulLeaveStatementStruct
+pub fn slang_solidity_v2_ir::ir::YulLeaveStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::YulLeaveStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulLeaveStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulLeaveStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::YulLeaveStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulLeaveStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulLeaveStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulLeaveStatementStruct
@@ -3771,8 +4263,12 @@ pub slang_solidity_v2_ir::ir::YulSwitchStatementStruct::range: core::ops::range:
 pub slang_solidity_v2_ir::ir::YulSwitchStatementStruct::value_cases: slang_solidity_v2_ir::ir::YulValueCases
 impl slang_solidity_v2_ir::ir::YulSwitchStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulSwitchStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::YulSwitchStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::YulSwitchStatementStruct
+pub fn slang_solidity_v2_ir::ir::YulSwitchStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::YulSwitchStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulSwitchStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulSwitchStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::YulSwitchStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulSwitchStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulSwitchStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulSwitchStatementStruct
@@ -3783,8 +4279,12 @@ pub slang_solidity_v2_ir::ir::YulValueCaseStruct::range: core::ops::range::Range
 pub slang_solidity_v2_ir::ir::YulValueCaseStruct::value: slang_solidity_v2_ir::ir::YulLiteral
 impl slang_solidity_v2_ir::ir::YulValueCaseStruct
 pub fn slang_solidity_v2_ir::ir::YulValueCaseStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::YulValueCaseStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::YulValueCaseStruct
+pub fn slang_solidity_v2_ir::ir::YulValueCaseStruct::eq(&self, &slang_solidity_v2_ir::ir::YulValueCaseStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulValueCaseStruct
 pub fn slang_solidity_v2_ir::ir::YulValueCaseStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::YulValueCaseStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulValueCaseStruct
 pub fn slang_solidity_v2_ir::ir::YulValueCaseStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulValueCaseStruct
@@ -3795,8 +4295,12 @@ pub slang_solidity_v2_ir::ir::YulVariableAssignmentStatementStruct::range: core:
 pub slang_solidity_v2_ir::ir::YulVariableAssignmentStatementStruct::variables: slang_solidity_v2_ir::ir::YulPaths
 impl slang_solidity_v2_ir::ir::YulVariableAssignmentStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulVariableAssignmentStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::YulVariableAssignmentStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::YulVariableAssignmentStatementStruct
+pub fn slang_solidity_v2_ir::ir::YulVariableAssignmentStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::YulVariableAssignmentStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulVariableAssignmentStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulVariableAssignmentStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::YulVariableAssignmentStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulVariableAssignmentStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulVariableAssignmentStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulVariableAssignmentStatementStruct
@@ -3807,8 +4311,12 @@ pub slang_solidity_v2_ir::ir::YulVariableDeclarationStatementStruct::value: core
 pub slang_solidity_v2_ir::ir::YulVariableDeclarationStatementStruct::variables: slang_solidity_v2_ir::ir::YulVariableNames
 impl slang_solidity_v2_ir::ir::YulVariableDeclarationStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulVariableDeclarationStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::YulVariableDeclarationStatementStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::YulVariableDeclarationStatementStruct
+pub fn slang_solidity_v2_ir::ir::YulVariableDeclarationStatementStruct::eq(&self, &slang_solidity_v2_ir::ir::YulVariableDeclarationStatementStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulVariableDeclarationStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulVariableDeclarationStatementStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::YulVariableDeclarationStatementStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulVariableDeclarationStatementStruct
 pub fn slang_solidity_v2_ir::ir::YulVariableDeclarationStatementStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulVariableDeclarationStatementStruct
@@ -3818,8 +4326,12 @@ pub slang_solidity_v2_ir::ir::YulVariableDeclarationValueStruct::expression: sla
 pub slang_solidity_v2_ir::ir::YulVariableDeclarationValueStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::YulVariableDeclarationValueStruct
 pub fn slang_solidity_v2_ir::ir::YulVariableDeclarationValueStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_ir::ir::YulVariableDeclarationValueStruct
+impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::YulVariableDeclarationValueStruct
+pub fn slang_solidity_v2_ir::ir::YulVariableDeclarationValueStruct::eq(&self, &slang_solidity_v2_ir::ir::YulVariableDeclarationValueStruct) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::YulVariableDeclarationValueStruct
 pub fn slang_solidity_v2_ir::ir::YulVariableDeclarationValueStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_ir::ir::YulVariableDeclarationValueStruct
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::YulVariableDeclarationValueStruct
 pub fn slang_solidity_v2_ir::ir::YulVariableDeclarationValueStruct::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::YulVariableDeclarationValueStruct
