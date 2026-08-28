@@ -1391,10 +1391,18 @@ mod resolution {
         use super::*;
 
         #[test]
-        fn named_arguments() -> Result<()> {
+        fn named_arguments_incompatible_types() -> Result<()> {
             run(
                 "resolution/no_matching_callable_declaration",
-                "named_arguments",
+                "named_arguments_incompatible_types",
+            )
+        }
+
+        #[test]
+        fn named_arguments_unknown_name() -> Result<()> {
+            run(
+                "resolution/no_matching_callable_declaration",
+                "named_arguments_unknown_name",
             )
         }
 
