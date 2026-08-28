@@ -1038,6 +1038,8 @@ pub slang_solidity_v2_ast::ast::Type::ByteArray(slang_solidity_v2_ast::ast::Byte
 pub slang_solidity_v2_ast::ast::Type::Bytes(slang_solidity_v2_ast::ast::BytesType)
 pub slang_solidity_v2_ast::ast::Type::Contract(slang_solidity_v2_ast::ast::ContractType)
 pub slang_solidity_v2_ast::ast::Type::Enum(slang_solidity_v2_ast::ast::EnumType)
+pub slang_solidity_v2_ast::ast::Type::Error(slang_solidity_v2_ast::ast::ErrorType)
+pub slang_solidity_v2_ast::ast::Type::Event(slang_solidity_v2_ast::ast::EventType)
 pub slang_solidity_v2_ast::ast::Type::FixedPointNumber(slang_solidity_v2_ast::ast::FixedPointNumberType)
 pub slang_solidity_v2_ast::ast::Type::FixedSizeArray(slang_solidity_v2_ast::ast::FixedSizeArrayType)
 pub slang_solidity_v2_ast::ast::Type::Function(slang_solidity_v2_ast::ast::FunctionType)
@@ -1821,6 +1823,11 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::ErrorDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ErrorDefinitionStruct::clone(&self) -> slang_solidity_v2_ast::ast::ErrorDefinitionStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::ErrorDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ErrorDefinitionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub struct slang_solidity_v2_ast::ast::ErrorType
+impl slang_solidity_v2_ast::ast::ErrorType
+pub fn slang_solidity_v2_ast::ast::ErrorType::definition(&self) -> slang_solidity_v2_ast::ast::Definition
+impl core::clone::Clone for slang_solidity_v2_ast::ast::ErrorType
+pub fn slang_solidity_v2_ast::ast::ErrorType::clone(&self) -> slang_solidity_v2_ast::ast::ErrorType
 pub struct slang_solidity_v2_ast::ast::EtherKeywordStruct
 impl slang_solidity_v2_ast::ast::EtherKeywordStruct
 pub fn slang_solidity_v2_ast::ast::EtherKeywordStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
@@ -1855,6 +1862,11 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::EventDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::clone(&self) -> slang_solidity_v2_ast::ast::EventDefinitionStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::EventDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::EventDefinitionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub struct slang_solidity_v2_ast::ast::EventType
+impl slang_solidity_v2_ast::ast::EventType
+pub fn slang_solidity_v2_ast::ast::EventType::definition(&self) -> slang_solidity_v2_ast::ast::Definition
+impl core::clone::Clone for slang_solidity_v2_ast::ast::EventType
+pub fn slang_solidity_v2_ast::ast::EventType::clone(&self) -> slang_solidity_v2_ast::ast::EventType
 pub struct slang_solidity_v2_ast::ast::ExperimentalPragmaStruct
 impl slang_solidity_v2_ast::ast::ExperimentalPragmaStruct
 pub fn slang_solidity_v2_ast::ast::ExperimentalPragmaStruct::feature(&self) -> slang_solidity_v2_ast::ast::ExperimentalFeature

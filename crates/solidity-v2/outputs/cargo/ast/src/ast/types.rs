@@ -23,6 +23,8 @@ pub enum Type {
     Bytes(BytesType),
     Contract(ContractType),
     Enum(EnumType),
+    Error(ErrorType),
+    Event(EventType),
     FixedSizeArray(FixedSizeArrayType),
     FixedPointNumber(FixedPointNumberType),
     Function(FunctionType),
@@ -77,6 +79,8 @@ define_type_variant!(Array);
 define_type_variant!(ArraySlice);
 define_type_variant!(Contract);
 define_type_variant!(Enum);
+define_type_variant!(Error);
+define_type_variant!(Event);
 define_type_variant!(FixedSizeArray);
 define_type_variant!(Function);
 define_type_variant!(Interface);
@@ -120,6 +124,8 @@ impl Type {
             types::Type::Bytes(inner) => Self::Bytes(BytesType { inner }),
             types::Type::Contract(inner) => Self::Contract(ContractType { inner, semantic }),
             types::Type::Enum(inner) => Self::Enum(EnumType { inner, semantic }),
+            types::Type::Error(inner) => Self::Error(ErrorType { inner, semantic }),
+            types::Type::Event(inner) => Self::Event(EventType { inner, semantic }),
             types::Type::FixedSizeArray(inner) => {
                 Self::FixedSizeArray(FixedSizeArrayType { inner, semantic })
             }
@@ -230,6 +236,20 @@ impl EnumType {
     pub fn definition(&self) -> Definition {
         Definition::try_create(self.inner.definition_id, &self.semantic)
             .expect("invalid enum definition")
+    }
+}
+
+impl ErrorType {
+    pub fn definition(&self) -> Definition {
+        Definition::try_create(self.inner.definition_id, &self.semantic)
+            .expect("invalid error definition")
+    }
+}
+
+impl EventType {
+    pub fn definition(&self) -> Definition {
+        Definition::try_create(self.inner.definition_id, &self.semantic)
+            .expect("invalid event definition")
     }
 }
 

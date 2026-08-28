@@ -3,6 +3,7 @@
 
 mod contract_members;
 mod conversions;
+mod errors_and_events;
 mod literals;
 mod meta_types;
 mod overloads;

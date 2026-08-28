@@ -289,6 +289,8 @@ impl Pass<'_> {
                 // invalid types
                 Type::Library(_)
                 | Type::ArraySlice(_)
+                | Type::Error(_)
+                | Type::Event(_)
                 | Type::Literal(_)
                 | Type::MetaType(_)
                 | Type::Tuple(_)

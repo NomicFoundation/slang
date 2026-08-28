@@ -562,7 +562,8 @@ impl Definition {
 impl TryFrom<&Definition> for Type {
     type Error = ();
 
-    fn try_from(definition: &Definition) -> Result<Self, Self::Error> {
+    // `Self::Error` is now ambiguous, so the `Result` is denoted with the actual type `()`
+    fn try_from(definition: &Definition) -> Result<Self, ()> {
         let definition_id = definition.node_id();
         match definition {
             Definition::Contract(_) => Ok(Type::Contract(ContractType { definition_id })),

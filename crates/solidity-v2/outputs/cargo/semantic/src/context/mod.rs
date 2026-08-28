@@ -20,9 +20,9 @@ use crate::passes::{
     p5_resolve_references, p6_resolve_yul, p7_contract_properties, p8_code_analysis,
 };
 use crate::types::{
-    ArraySliceType, ArrayType, ByteArrayType, ContractType, DataLocation, EnumType,
-    FixedPointNumberType, FixedSizeArrayType, IntegerType, InterfaceType, LibraryType, MappingType,
-    MetaType, StructType, TupleType, Type, TypeId, TypeRegistry, UserDefinedValueType,
+    ArraySliceType, ArrayType, ByteArrayType, ContractType, DataLocation, EnumType, ErrorType,
+    EventType, FixedPointNumberType, FixedSizeArrayType, IntegerType, InterfaceType, LibraryType,
+    MappingType, MetaType, StructType, TupleType, Type, TypeId, TypeRegistry, UserDefinedValueType,
     UserMetaType,
 };
 
@@ -352,6 +352,12 @@ impl SemanticContext {
             | Type::UserDefinedValue(UserDefinedValueType { definition_id }) => {
                 self.definition_canonical_name(*definition_id)
             }
+            Type::Error(ErrorType { definition_id }) => {
+                format!("error({})", self.definition_canonical_name(*definition_id))
+            }
+            Type::Event(EventType { definition_id }) => {
+                format!("event({})", self.definition_canonical_name(*definition_id))
+            }
             // Meta-types print in solc's `type(T)` notation.
             Type::MetaType(MetaType { type_id }) => {
                 format!("type({})", self.type_internal_name(*type_id))
@@ -485,6 +491,8 @@ impl SemanticContext {
                 ),
 
             Type::ArraySlice(_)
+            | Type::Error(_)
+            | Type::Event(_)
             | Type::Library(_)
             | Type::Literal(_)
             | Type::MetaType(_)

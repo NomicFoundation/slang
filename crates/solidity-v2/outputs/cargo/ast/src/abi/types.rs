@@ -213,7 +213,9 @@ fn abi_type_from_ast_type(value: &AstType, visited_structs: &mut Set<NodeId>) ->
         AstType::UserDefinedValue(udvt) => {
             abi_type_from_ast_type(&udvt.target_type()?, visited_structs)
         }
-        AstType::Library(_)
+        AstType::Error(_)
+        | AstType::Event(_)
+        | AstType::Library(_)
         | AstType::Literal(_)
         | AstType::Mapping(_)
         | AstType::MetaType(_)

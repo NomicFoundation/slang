@@ -29,6 +29,10 @@ pub enum Type {
     Bytes(BytesType),
     Contract(ContractType),
     Enum(EnumType),
+    /// The type of an error instantiation, eg. `E(1)` in `revert E(1)`.
+    Error(ErrorType),
+    /// The type of an event invocation, eg. `E(1)` in `emit E(1)`.
+    Event(EventType),
     FixedPointNumber(FixedPointNumberType),
     FixedSizeArray(FixedSizeArrayType),
     Function(FunctionType),
@@ -86,6 +90,16 @@ pub struct ContractType {
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct EnumType {
+    pub definition_id: NodeId,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct ErrorType {
+    pub definition_id: NodeId,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct EventType {
     pub definition_id: NodeId,
 }
 
@@ -433,6 +447,9 @@ impl Type {
             // Meta-types are not real values and can never be returned.
             | Type::MetaType(_)
             | Type::UserMetaType(_)
+            // Neither are error/event instantiations.
+            | Type::Error(_)
+            | Type::Event(_)
             | Type::Void => false,
         }
     }
