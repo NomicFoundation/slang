@@ -31,7 +31,7 @@ pub(super) fn compile<'s>(sources: impl IntoIterator<Item = (FileId, &'s str)>) 
 }
 
 /// Renders a minimal contract of the given name that imports the given paths.
-pub(super) fn contract(name: &str, imports: &[&str]) -> String {
+pub(super) fn file_with_empty_contract(name: &str, imports: &[&str]) -> String {
     use std::fmt::Write;
 
     let imports = imports.iter().fold(String::new(), |mut text, path| {

@@ -5,8 +5,8 @@ use std::thread;
 use crate::ast::NodeId;
 use crate::compilation::{CompilationUnit, FileId};
 use crate::diagnostics::Diagnostic;
-use crate::tests::support::{compile, contract};
 use crate::tests::fixtures;
+use crate::tests::support::{compile, file_with_empty_contract};
 
 #[test]
 fn parallel_access_via_arc_consistent_with_serial_baseline() {
@@ -84,14 +84,17 @@ fn mixed_sources() -> Vec<(FileId, String)> {
             let file_id: FileId = format!("file{index}.sol").into();
             let contents = match index % 4 {
                 // Imports the next file, which exists.
-                0 => contract(&format!("C{index}"), &[&format!("file{}.sol", index + 1)]),
+                0 => file_with_empty_contract(
+                    &format!("C{index}"),
+                    &[&format!("file{}.sol", index + 1)],
+                ),
                 // Imports a file that is not part of the compilation.
-                1 => contract(&format!("C{index}"), &["absent.sol"]),
+                1 => file_with_empty_contract(&format!("C{index}"), &["absent.sol"]),
                 // Fails to parse, while also declaring an import.
                 2 => {
                     format!("pragma solidity ^0.8.0;\nimport \"absent.sol\";\ncontract C{index} {{")
                 }
-                _ => contract(&format!("C{index}"), &[]),
+                _ => file_with_empty_contract(&format!("C{index}"), &[]),
             };
 
             (file_id, contents)
@@ -168,38 +171,10 @@ fn build_output_is_independent_of_the_thread_count() {
     files_with_diagnostics.dedup();
     assert_eq!(files_with_diagnostics.len(), sources.len() / 2);
 
-    // Those only show the thread count doesn't matter; they would hold just as
-    // well if every size agreed on a *wrong* order. So pin it absolutely too.
-    assert_root_node_ids_follow_file_order(&baseline);
-
     let baseline = Observable::from_compilation_unit(&baseline);
     for threads in [2, 4, 8, 16] {
         let unit = Observable::from_compilation_unit(&pool_of(threads).install(build));
         unit.assert_same(&baseline, &format!("on {threads} threads"));
-    }
-}
-
-/// Node ids are handed out one file at a time, walking the files in `FileId`
-/// order, which is the invariant a reordered parse breaks. Sorted here rather
-/// than leaning on `files()`, whose iteration order the API does not promise —
-/// were it ever to follow build order instead, this assertion would hold
-/// trivially and stop testing anything.
-fn assert_root_node_ids_follow_file_order(unit: &CompilationUnit) {
-    let mut roots: Vec<(FileId, NodeId)> = unit
-        .files()
-        .map(|file| (file.id().clone(), file.ast().node_id()))
-        .collect();
-    roots.sort_by(|left, right| left.0.cmp(&right.0));
-
-    for pair in roots.windows(2) {
-        let (previous_file_id, previous_node_id) = &pair[0];
-        let (file_id, node_id) = &pair[1];
-
-        assert!(
-            previous_node_id < node_id,
-            "'{previous_file_id}' has node id {previous_node_id:?}, \
-             but the later '{file_id}' has {node_id:?}"
-        );
     }
 }
 

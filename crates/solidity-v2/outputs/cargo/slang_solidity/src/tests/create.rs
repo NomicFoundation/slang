@@ -1,11 +1,11 @@
-use super::support::{compile, contract};
+use super::support::{compile, file_with_empty_contract};
 use crate::diagnostics::DiagnosticExtensions;
 
 #[test]
 fn compiles_every_source_it_is_given() {
-    let main = contract("Main", &["lib.sol"]);
-    let lib = contract("Lib", &[]);
-    let extra = contract("Extra", &[]);
+    let main = file_with_empty_contract("Main", &["lib.sol"]);
+    let lib = file_with_empty_contract("Lib", &[]);
+    let extra = file_with_empty_contract("Extra", &[]);
     let unit = compile([
         ("main.sol".into(), main.as_str()),
         ("lib.sol".into(), lib.as_str()),
@@ -27,8 +27,8 @@ fn compiles_every_source_it_is_given() {
 
 #[test]
 fn the_last_contents_given_for_a_file_id_win() {
-    let stale = contract("Stale", &[]);
-    let fresh = contract("Fresh", &[]);
+    let stale = file_with_empty_contract("Stale", &[]);
+    let fresh = file_with_empty_contract("Fresh", &[]);
     let unit = compile([
         ("main.sol".into(), stale.as_str()),
         ("main.sol".into(), fresh.as_str()),
