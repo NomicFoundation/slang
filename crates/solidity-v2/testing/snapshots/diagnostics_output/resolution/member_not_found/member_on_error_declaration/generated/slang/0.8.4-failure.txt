@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/member-not-found] Error: Member 'amount' not found or not visible after argument-dependent lookup.
+   ╭─[input.sol:9:11]
+   │
+ 9 │         E.amount;
+   │           ───┬──  
+   │              ╰──── Error occurred here.
+───╯

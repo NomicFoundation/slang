@@ -1283,13 +1283,107 @@ mod resolution {
         use super::*;
 
         #[test]
+        fn address_on_internal_function() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "address_on_internal_function",
+            )
+        }
+
+        #[test]
+        fn concat_on_bytes_value() -> Result<()> {
+            run("resolution/member_not_found", "concat_on_bytes_value")
+        }
+
+        #[test]
+        fn external_function_via_super() -> Result<()> {
+            run("resolution/member_not_found", "external_function_via_super")
+        }
+
+        #[test]
+        fn internal_function_on_contract_instance() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "internal_function_on_contract_instance",
+            )
+        }
+
+        #[test]
+        fn length_on_calldata_slice() -> Result<()> {
+            run("resolution/member_not_found", "length_on_calldata_slice")
+        }
+
+        #[test]
+        fn member_not_found_via_super() -> Result<()> {
+            run("resolution/member_not_found", "member_not_found_via_super")
+        }
+
+        #[test]
+        fn member_on_error_declaration() -> Result<()> {
+            run("resolution/member_not_found", "member_on_error_declaration")
+        }
+
+        #[test]
+        fn member_on_function_value() -> Result<()> {
+            run("resolution/member_not_found", "member_on_function_value")
+        }
+
+        #[test]
+        fn min_on_contract_meta_type() -> Result<()> {
+            run("resolution/member_not_found", "min_on_contract_meta_type")
+        }
+
+        #[test]
+        fn missing_function_in_library() -> Result<()> {
+            run("resolution/member_not_found", "missing_function_in_library")
+        }
+
+        #[test]
         fn missing_member() -> Result<()> {
             run("resolution/member_not_found", "missing_member")
         }
 
         #[test]
+        fn missing_member_in_module() -> Result<()> {
+            run("resolution/member_not_found", "missing_member_in_module")
+        }
+
+        #[test]
+        fn name_on_integer_meta_type() -> Result<()> {
+            run("resolution/member_not_found", "name_on_integer_meta_type")
+        }
+
+        #[test]
         fn no_overload_accepts() -> Result<()> {
             run("resolution/member_not_found", "no_overload_accepts")
+        }
+
+        #[test]
+        fn pop_on_calldata_slice() -> Result<()> {
+            run("resolution/member_not_found", "pop_on_calldata_slice")
+        }
+
+        #[test]
+        fn pop_on_fixed_size_array() -> Result<()> {
+            run("resolution/member_not_found", "pop_on_fixed_size_array")
+        }
+
+        #[test]
+        fn pop_on_string() -> Result<()> {
+            run("resolution/member_not_found", "pop_on_string")
+        }
+
+        #[test]
+        fn pop_on_value_type() -> Result<()> {
+            run("resolution/member_not_found", "pop_on_value_type")
+        }
+
+        #[test]
+        fn selector_on_internal_function() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "selector_on_internal_function",
+            )
         }
     }
 

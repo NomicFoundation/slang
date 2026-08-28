@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9582] Error: Member "length" not found or not visible after argument-dependent lookup in uint256[] calldata slice.
+   ╭─[input.sol:7:16]
+   │
+ 7 │         return data[1:2].length;
+   │                ────────┬───────  
+   │                        ╰───────── Error occurred here.
+───╯

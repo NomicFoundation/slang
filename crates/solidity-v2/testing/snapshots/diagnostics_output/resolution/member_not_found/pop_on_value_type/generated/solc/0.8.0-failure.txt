@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9582] Error: Member "pop" not found or not visible after argument-dependent lookup in uint256.
+   ╭─[input.sol:8:9]
+   │
+ 8 │         value.pop();
+   │         ────┬────  
+   │             ╰────── Error occurred here.
+───╯

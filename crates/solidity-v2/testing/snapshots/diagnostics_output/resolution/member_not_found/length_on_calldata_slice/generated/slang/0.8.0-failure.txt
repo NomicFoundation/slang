@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/member-not-found] Error: Member 'length' not found or not visible after argument-dependent lookup.
+   ╭─[input.sol:7:26]
+   │
+ 7 │         return data[1:2].length;
+   │                          ───┬──  
+   │                             ╰──── Error occurred here.
+───╯
