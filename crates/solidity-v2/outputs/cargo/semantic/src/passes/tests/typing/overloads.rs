@@ -55,11 +55,11 @@ fn test_overload_resolution_unsigned_to_signed_argument_is_version_gated() {
 
     // 0.8.1: `uint8` -> `int16` is rejected, so neither overload matches.
     assert_eq!(
-        Some(NoMatchingCallableDeclaration.into()),
+        (None, Some(NoMatchingCallableDeclaration.into())),
         expression("pick(u)")
             .with_members(setup)
             .version(LanguageVersion::V0_8_1)
-            .into_diagnostic(),
+            .into_type_and_diagnostic(),
     );
 }
 

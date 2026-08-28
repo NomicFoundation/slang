@@ -2,7 +2,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
-use super::{Analyse, Analysis};
+use super::support::{Analyse, Analysis};
 
 /// Collects the node ids of every expression kind that can invoke a
 /// user-defined operator, in source order.

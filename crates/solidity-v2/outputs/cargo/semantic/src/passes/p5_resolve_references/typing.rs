@@ -63,27 +63,25 @@ impl Pass<'_> {
         operand: &ir::Expression,
         overload_match: OverloadMatch<T>,
     ) -> Option<T> {
-        let identifier = reference_identifier_for_expression(operand);
+        let Some(identifier) = reference_identifier_for_expression(operand) else {
+            unreachable!("Overloaded operand cannot be traced back to identifier");
+        };
         match overload_match {
             OverloadMatch::None => {
-                if let Some(identifier) = identifier {
-                    // Ruled out by the arguments: on a member that reads as
-                    // the operand's type not providing it, on a bare name as
-                    // a failed declaration lookup.
-                    if matches!(operand, ir::Expression::MemberAccessExpression(_)) {
-                        let name = identifier.unparse().to_owned();
-                        self.push_diagnostic(identifier, MemberNotFound { name });
-                    } else {
-                        self.push_diagnostic(identifier, NoMatchingCallableDeclaration);
-                    }
+                // Ruled out by the arguments: on a member that reads as
+                // the operand's type not providing it, on a bare name as
+                // a failed declaration lookup.
+                if matches!(operand, ir::Expression::MemberAccessExpression(_)) {
+                    let name = identifier.unparse().to_owned();
+                    self.push_diagnostic(identifier, MemberNotFound { name });
+                } else {
+                    self.push_diagnostic(identifier, NoMatchingCallableDeclaration);
                 }
                 None
             }
             OverloadMatch::Unique(selected) => Some(selected),
             OverloadMatch::Ambiguous(selected) => {
-                if let Some(identifier) = identifier {
-                    self.report_ambiguous_identifier(identifier);
-                }
+                self.report_ambiguous_identifier(identifier);
                 Some(selected)
             }
         }

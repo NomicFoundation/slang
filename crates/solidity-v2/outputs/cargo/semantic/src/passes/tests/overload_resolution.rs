@@ -3,7 +3,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
-use super::{Analyse, Analysis, diagnostic_kind};
+use super::support::{Analyse, Analysis, diagnostic_kind};
 use crate::binder::{Binder, Resolution};
 use crate::types::{
     ContractType, FunctionType, FunctionTypeMutability, FunctionTypeVisibility, Type, TypeId,

@@ -467,8 +467,8 @@ pub(super) fn diagnostic_kind(diagnostics: &DiagnosticCollection) -> Option<Diag
     Some(first.kind().clone())
 }
 
-/// The kind of every diagnostic in `diagnostics`, in the order reported, for
-/// tests expecting more than one.
+/// The kind of every diagnostic in `diagnostics`, ordered by `Diagnostic` (ie.
+/// file+location+kind), for tests expecting more than one.
 pub(super) fn diagnostic_kinds(diagnostics: &DiagnosticCollection) -> Vec<DiagnosticKind> {
     diagnostics
         .iter()

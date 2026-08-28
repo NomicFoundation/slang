@@ -5,7 +5,8 @@ use ruint::aliases::U256;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_ir::ir::{self, NodeIdentity};
 
-use super::{Analyse, Analysis, expression, expressions, find_function};
+use super::support::find_function;
+use super::{Analyse, Analysis, expression, expressions};
 use crate::binder::Typing;
 use crate::types::{
     ArrayType, ByteArrayType, DataLocation, FixedSizeArrayType, IntegerType, MetaType, StructType,

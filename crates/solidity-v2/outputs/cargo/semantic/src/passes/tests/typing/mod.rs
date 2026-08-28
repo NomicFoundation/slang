@@ -11,7 +11,7 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdentity};
 
-use super::{Analyse, Analysis, diagnostic_kind, diagnostic_kinds, find_function};
+use super::support::{self, Analyse, Analysis, diagnostic_kind};
 use crate::binder::Binder;
 use crate::types::{Type, TypeRegistry};
 
@@ -141,6 +141,22 @@ impl<'a> ExpressionTyping<'a> {
         let (typings, types) = self.into_types();
         let typing = typings.into_iter().next().expect("one expression");
         (typing, types)
+    }
+
+    fn into_type_and_diagnostic(self) -> (Option<Type>, Option<DiagnosticKind>) {
+        assert_eq!(
+            1,
+            self.expressions.len(),
+            "`into_type_and_diagnostic` needs exactly one expression"
+        );
+        let analysis = self.run();
+        let typings = expression_statement_types(
+            analysis.function_body("Test", "__test"),
+            analysis.binder(),
+            analysis.types(),
+        );
+        let typing = typings.into_iter().next().expect("one expression");
+        (typing, diagnostic_kind(&analysis.diagnostics))
     }
 
     /// [`Self::into_type`], panicking if the expression didn't resolve to a type.

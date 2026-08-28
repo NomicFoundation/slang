@@ -7,9 +7,8 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
 };
 use slang_solidity_v2_ir::ir;
 
-use super::{
-    Analyse, Analysis, diagnostic_kinds, expression, expression_statement_types, expressions,
-};
+use super::support::diagnostic_kinds;
+use super::{Analyse, Analysis, expression, expression_statement_types, expressions};
 use crate::binder::Typing;
 use crate::types::{
     ByteArrayType, BytesType, ContractType, DataLocation, IntegerType, LibraryType, StringType,
@@ -508,28 +507,34 @@ fn test_event_selector() {
     // With *overloaded* events the name is ambiguous, and nothing narrows it
     // down: the member access uses it as a value rather than calling it.
     assert_eq!(
-        Some(
-            AmbiguousReference {
-                name: "E".to_owned()
-            }
-            .into()
+        (
+            None,
+            Some(
+                AmbiguousReference {
+                    name: "E".to_owned()
+                }
+                .into()
+            )
         ),
         expression("E.selector")
             .with_members("event E(uint a); event E(bool b);")
-            .into_diagnostic(),
+            .into_type_and_diagnostic(),
     );
 
     // An anonymous event emits no `topics[0]`, so it exposes no `selector`.
     assert_eq!(
-        Some(
-            MemberNotFound {
-                name: "selector".to_owned()
-            }
-            .into()
+        (
+            None,
+            Some(
+                MemberNotFound {
+                    name: "selector".to_owned()
+                }
+                .into()
+            )
         ),
         expression("E.selector")
             .with_members("event E(uint a) anonymous;")
-            .into_diagnostic(),
+            .into_type_and_diagnostic(),
     );
 }
 
