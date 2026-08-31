@@ -32,6 +32,9 @@ num-bigint = { workspace = true }
 num-rational = { workspace = true }
 ruint = { workspace = true }
 serde_json = { workspace = true }
+slang_solidity_v2_ir = { workspace = true, features = [
+  "__private_testing_utils",
+] }
 
 [lints]
 workspace = true
