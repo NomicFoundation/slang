@@ -497,26 +497,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         })
     }
 
-    pub(super) fn build_inheritance_type(
-        &mut self,
-        source: &input::InheritanceType,
-    ) -> output::InheritanceType {
-        let id = self.next_id(output::NodeKind::InheritanceType);
-        let range = source.calculate_text_range().unwrap_or_default();
-        let type_name = self.build_identifier_path(&source.type_name);
-        let arguments = source
-            .arguments
-            .as_ref()
-            .map(|value| self.build_arguments_declaration(value));
-
-        Arc::new(output::InheritanceTypeStruct {
-            id,
-            range,
-            type_name,
-            arguments,
-        })
-    }
-
     pub(super) fn build_interface_definition(
         &mut self,
         source: &input::InterfaceDefinition,
@@ -570,26 +550,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             range,
             operand,
             member,
-        })
-    }
-
-    pub(super) fn build_modifier_invocation(
-        &mut self,
-        source: &input::ModifierInvocation,
-    ) -> output::ModifierInvocation {
-        let id = self.next_id(output::NodeKind::ModifierInvocation);
-        let range = source.calculate_text_range().unwrap_or_default();
-        let name = self.build_identifier_path(&source.name);
-        let arguments = source
-            .arguments
-            .as_ref()
-            .map(|value| self.build_arguments_declaration(value));
-
-        Arc::new(output::ModifierInvocationStruct {
-            id,
-            range,
-            name,
-            arguments,
         })
     }
 
