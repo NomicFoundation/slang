@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 2249] Error: Constant variables with non-literal values cannot be forward referenced from inline assembly.
+    ╭─[main.sol:11:22]
+    │
+ 11 │             let x := K
+    │                      ┬  
+    │                      ╰── Error occurred here.
+────╯

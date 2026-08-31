@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[structure/uninitialized-constant] Error: Uninitialized "constant" variable.
+   ╭─[input.sol:7:5]
+   │
+ 7 │     uint256 public constant K;
+   │     ─────────────┬────────────  
+   │                  ╰────────────── Error occurred here.
+───╯

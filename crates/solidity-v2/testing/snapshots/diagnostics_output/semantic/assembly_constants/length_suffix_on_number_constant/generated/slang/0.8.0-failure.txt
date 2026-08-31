@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/yul-suffix-on-constant] Error: Suffixes cannot be used on constant variables.
+    ╭─[input.sol:11:24]
+    │
+ 11 │             let x := K.length
+    │                        ───┬──  
+    │                           ╰──── Error occurred here.
+────╯

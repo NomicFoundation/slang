@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[semantic/yul-assignment-to-constant] Error: Constant variables cannot be assigned to.
+    ╭─[input.sol:14:13]
+    │
+ 14 │             A, B := g()
+    │             ┬  
+    │             ╰── Error occurred here.
+────╯
+
+[semantic/yul-assignment-to-constant] Error: Constant variables cannot be assigned to.
+    ╭─[input.sol:14:16]
+    │
+ 14 │             A, B := g()
+    │                ┬  
+    │                ╰── Error occurred here.
+────╯
