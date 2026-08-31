@@ -1,0 +1,62 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Foo" @ input.sol:1:10] (contract)
+- Def: #2 ["bar" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["a" @ input.sol:4:15] (variable, type: fixed128x18)
+- Def: #4 ["b" @ input.sol:5:16] (variable, type: ufixed128x18)
+- Def: #5 ["c" @ input.sol:6:21] (variable, type: fixed128x18)
+- Def: #6 ["d" @ input.sol:7:19] (variable, type: ufixed8x0)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["a" @ input.sol:6:25] -> #3
+- Ref: ["a" @ input.sol:8:9] -> #3
+- Ref: ["b" @ input.sol:9:9] -> #4
+- Ref: ["c" @ input.sol:10:9] -> #5
+- Ref: ["d" @ input.sol:11:9] -> #6
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Foo {
+    │          ─┬─  
+    │           ╰─── name: 1
+  2 │     function bar() public pure {
+    │              ─┬─  
+    │               ╰─── name: 2
+    │ 
+  4 │         fixed a = 0.5;
+    │               ┬  
+    │               ╰── name: 3
+  5 │         ufixed b = 0.5;
+    │                ┬  
+    │                ╰── name: 4
+  6 │         fixed128x18 c = a;
+    │                     ┬   ┬  
+    │                     ╰────── name: 5
+    │                         │  
+    │                         ╰── ref: 3
+  7 │         ufixed8x0 d = 1;
+    │                   ┬  
+    │                   ╰── name: 6
+  8 │         a;
+    │         ┬  
+    │         ╰── ref: 3
+  9 │         b;
+    │         ┬  
+    │         ╰── ref: 4
+ 10 │         c;
+    │         ┬  
+    │         ╰── ref: 5
+ 11 │         d;
+    │         ┬  
+    │         ╰── ref: 6
+────╯

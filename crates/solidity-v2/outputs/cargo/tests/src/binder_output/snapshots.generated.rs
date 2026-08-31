@@ -1393,6 +1393,11 @@ mod variables {
     }
 
     #[test]
+    fn fixed_point_types() -> Result<()> {
+        run("variables", "fixed_point_types")
+    }
+
+    #[test]
     fn incomplete_type_name() -> Result<()> {
         run("variables", "incomplete_type_name")
     }
