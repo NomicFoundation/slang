@@ -30,7 +30,7 @@ pub fn run() -> Result<()> {
     let results: TestResults = runs.into_iter().collect();
     report_summary(&results);
 
-    // Written before the error are reported.
+    // Written before any error is reported.
     results.write(&mut CodegenFileSystem::default())?;
 
     // Errors are reported at the end of the function, to

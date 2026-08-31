@@ -97,19 +97,21 @@ splitting them up would only cost `nextest` tens of thousands of processes.
         "passed": 1043,
         "expected_failures": 2,
         "unexpected_failures": 0,
-        "failures": []
+        "unexpected_failures_paths": []
     }
     ```
 
-    Both of this version's failures are expected, which is why `failures` is
-    empty and `expected_failures` accounts for them — see below.
+    Both of this version's failures are expected, which is why
+    `unexpected_failures_paths` is empty and `expected_failures` accounts for
+    them — see below.
 
-    `executed` and `passed` are derivable from `failures`, but recording them
-    makes the diff catch the dataset itself changing size — a version whose test
-    count moves is worth noticing, and would otherwise be invisible whenever the
-    new tests happen to pass. `expected_failures` counts the ones declared in
+    `executed` and `passed` are derivable from `unexpected_failures_paths`, but
+    recording them makes the diff catch the dataset itself changing size — a
+    version whose test count moves is worth noticing, and would otherwise be
+    invisible whenever the new tests happen to pass. `expected_failures` counts
+    the ones declared in
     [`src/expected_failures.rs`](./src/expected_failures.rs), which are left out
-    of `failures`, so the tally stays
+    of `unexpected_failures_paths`, so the tally stays
     `executed == passed + expected_failures + unexpected_failures`.
 
 ## Expected failures
