@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9582] Error: Member "min" not found or not visible after argument-dependent lookup in type(contract Other).
+   ╭─[input.sol:9:16]
+   │
+ 9 │         return type(Other).min;
+   │                ───────┬───────  
+   │                       ╰───────── Error occurred here.
+───╯

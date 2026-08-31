@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9582] Error: Member "f" not found or not visible after argument-dependent lookup in function () pure returns (uint8).
+    ╭─[input.sol:11:9]
+    │
+ 11 │         f.f();
+    │         ─┬─  
+    │          ╰─── Error occurred here.
+────╯

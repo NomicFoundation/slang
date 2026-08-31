@@ -3,8 +3,8 @@
 
 use slang_solidity_v2_common::nodes::NodeId;
 
+use super::support::{Analyse, Analysis};
 use crate::binder::{Binder, Resolution};
-use crate::passes::tests::{Analyse, Analysis};
 
 /// Resolves `symbol` at the file scope of `file_name`.
 fn resolve_at_file_scope(binder: &Binder, file_name: &str, symbol: &str) -> Resolution {

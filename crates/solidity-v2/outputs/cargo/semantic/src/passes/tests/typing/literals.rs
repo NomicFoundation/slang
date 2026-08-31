@@ -12,8 +12,7 @@ use slang_solidity_v2_common::diagnostics::kinds::type_system::{
 };
 use slang_solidity_v2_ir::ir;
 
-use super::super::{Analyse, Analysis, diagnostic_kind};
-use super::expression;
+use super::{Analyse, Analysis, diagnostic_kind, expression};
 use crate::binder::Definition;
 use crate::types::{FixedSizeArrayType, LiteralKind, Type};
 

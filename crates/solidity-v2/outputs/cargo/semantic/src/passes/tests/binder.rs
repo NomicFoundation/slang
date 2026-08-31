@@ -3,7 +3,7 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
-use super::{Analyse, Analysis, only_diagnostic};
+use super::support::{Analyse, Analysis, only_diagnostic};
 use crate::binder::{Binder, Resolution};
 use crate::types::TypeRegistry;
 

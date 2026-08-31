@@ -1,7 +1,7 @@
 //! Tests that a public state variable's getter overrides a same-named function
 //! inherited from a base contract, so `linearised_functions` drops it.
 
-use super::{Analyse, Analysis};
+use super::support::{Analyse, Analysis};
 use crate::context::SemanticContext;
 
 /// Builds a `SemanticContext` over `source`, asserting no diagnostics. Getter

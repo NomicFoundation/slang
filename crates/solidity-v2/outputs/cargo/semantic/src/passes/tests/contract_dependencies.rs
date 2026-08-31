@@ -9,7 +9,7 @@ use slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDepend
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::nodes::NodeId;
 
-use super::{Analyse, Analysis, only_diagnostic};
+use super::support::{Analyse, Analysis, only_diagnostic};
 use crate::binder::Definition;
 use crate::context::SemanticContext;
 

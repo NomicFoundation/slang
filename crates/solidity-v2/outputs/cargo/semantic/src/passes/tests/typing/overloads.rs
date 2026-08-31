@@ -1,6 +1,7 @@
 //! Selecting an overload from the call's arguments, and the operand typing
 //! that follows from the selection.
 
+use slang_solidity_v2_common::diagnostics::kinds::resolution::NoMatchingCallableDeclaration;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdentity};
 
@@ -53,11 +54,13 @@ fn test_overload_resolution_unsigned_to_signed_argument_is_version_gated() {
     );
 
     // 0.8.1: `uint8` -> `int16` is rejected, so neither overload matches.
-    let (typing, _) = expression("pick(u)")
-        .with_members(setup)
-        .version(LanguageVersion::V0_8_1)
-        .into_type();
-    assert_eq!(typing, None);
+    assert_eq!(
+        (None, Some(NoMatchingCallableDeclaration.into())),
+        expression("pick(u)")
+            .with_members(setup)
+            .version(LanguageVersion::V0_8_1)
+            .into_type_and_diagnostic(),
+    );
 }
 
 #[test]
@@ -84,12 +87,14 @@ fn test_overload_resolution_rejects_byte_array_narrowing() {
         function pick(bytes20 a) internal pure returns (uint8) { a; return 1; }
         function pick(string memory a) internal pure returns (uint16) { a; return 2; }
     ";
-    let (type_, _) = expression("pick(bytes32(0))")
-        .with_members(setup)
-        .into_type();
     // Neither overload matches: `bytes32` does not convert to `bytes20` nor
-    // to `string`. The call is unresolved.
-    assert_eq!(type_, None);
+    // to `string`.
+    assert_eq!(
+        Some(NoMatchingCallableDeclaration.into()),
+        expression("pick(bytes32(0))")
+            .with_members(setup)
+            .into_diagnostic(),
+    );
 }
 
 #[test]
@@ -100,8 +105,12 @@ fn test_meta_type_argument_does_not_match_overloads() {
         function f(uint x) internal pure returns (bool) { return x > 0; }
         function f(bool x) internal pure returns (uint) { return x ? 1 : 0; }
     "#;
-    let (type_, _) = expression("f(uint)").with_members(context).into_type();
-    assert_eq!(type_, None);
+    assert_eq!(
+        Some(NoMatchingCallableDeclaration.into()),
+        expression("f(uint)")
+            .with_members(context)
+            .into_diagnostic(),
+    );
 }
 
 #[test]

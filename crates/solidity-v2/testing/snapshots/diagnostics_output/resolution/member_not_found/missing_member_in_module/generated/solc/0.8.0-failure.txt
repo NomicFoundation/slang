@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9582] Error: Member "nope" not found or not visible after argument-dependent lookup in module "other.sol".
+   ╭─[input.sol:8:9]
+   │
+ 8 │         other.nope();
+   │         ─────┬────  
+   │              ╰────── Error occurred here.
+───╯

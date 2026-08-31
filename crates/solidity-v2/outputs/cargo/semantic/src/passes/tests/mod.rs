@@ -6,5 +6,3 @@ mod overload_resolution;
 mod support;
 mod typing;
 mod user_defined_operator_functions;
-
-use support::{Analyse, Analysis, diagnostic_kind, find_function, only_diagnostic};
