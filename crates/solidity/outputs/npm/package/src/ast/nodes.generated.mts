@@ -9031,10 +9031,7 @@ export class StorageLocation {
  */
 export class ForStatementInitialization {
   private readonly fetch: () =>
-    | TupleDeconstructionStatement
-    | VariableDeclarationStatement
-    | ExpressionStatement
-    | TerminalNode = once(() => {
+    TupleDeconstructionStatement | VariableDeclarationStatement | ExpressionStatement | TerminalNode = once(() => {
     const variant = wasm.ast.Selectors.choice(this.cst);
 
     if (variant.isTerminalNode()) {
@@ -9070,10 +9067,7 @@ export class ForStatementInitialization {
    * Returns the child node that has the label `variant`.
    */
   public get variant():
-    | TupleDeconstructionStatement
-    | VariableDeclarationStatement
-    | ExpressionStatement
-    | TerminalNode {
+    TupleDeconstructionStatement | VariableDeclarationStatement | ExpressionStatement | TerminalNode {
     return this.fetch();
   }
 }
@@ -9407,11 +9401,7 @@ export class NumberUnit {
  */
 export class StringExpression {
   private readonly fetch: () =>
-    | StringLiteral
-    | StringLiterals
-    | HexStringLiteral
-    | HexStringLiterals
-    | UnicodeStringLiterals = once(() => {
+    StringLiteral | StringLiterals | HexStringLiteral | HexStringLiterals | UnicodeStringLiterals = once(() => {
     const variant = wasm.ast.Selectors.choice(this.cst);
 
     switch (variant.kind) {
