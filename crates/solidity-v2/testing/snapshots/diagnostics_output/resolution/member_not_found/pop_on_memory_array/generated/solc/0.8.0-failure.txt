@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4994] Error: Member "pop" is not available in uint256[] memory outside of storage.
+    ╭─[input.sol:10:9]
+    │
+ 10 │         memory_array.pop();
+    │         ────────┬───────  
+    │                 ╰───────── Error occurred here.
+────╯

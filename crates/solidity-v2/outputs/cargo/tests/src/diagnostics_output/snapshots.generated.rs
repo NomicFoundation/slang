@@ -1377,6 +1377,11 @@ mod resolution {
         }
 
         #[test]
+        fn pop_on_memory_array() -> Result<()> {
+            run("resolution/member_not_found", "pop_on_memory_array")
+        }
+
+        #[test]
         fn pop_on_string() -> Result<()> {
             run("resolution/member_not_found", "pop_on_string")
         }
@@ -1384,6 +1389,11 @@ mod resolution {
         #[test]
         fn pop_on_value_type() -> Result<()> {
             run("resolution/member_not_found", "pop_on_value_type")
+        }
+
+        #[test]
+        fn push_on_memory_array() -> Result<()> {
+            run("resolution/member_not_found", "push_on_memory_array")
         }
 
         #[test]
