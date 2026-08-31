@@ -11,6 +11,7 @@ mod multiple_mutability_specifiers;
 mod multiple_override_specifiers;
 mod multiple_virtual_specifiers;
 mod multiple_visibility_specifiers;
+mod named_arguments_not_allowed;
 mod unexpected_eof;
 mod unexpected_terminal;
 mod unrecognized_experimental_feature;
@@ -31,6 +32,7 @@ pub use multiple_mutability_specifiers::MultipleMutabilitySpecifiers;
 pub use multiple_override_specifiers::MultipleOverrideSpecifiers;
 pub use multiple_virtual_specifiers::MultipleVirtualSpecifiers;
 pub use multiple_visibility_specifiers::MultipleVisibilitySpecifiers;
+pub use named_arguments_not_allowed::NamedArgumentsNotAllowed;
 use serde::Serialize;
 pub use unexpected_eof::UnexpectedEof;
 pub use unexpected_terminal::UnexpectedTerminal;
@@ -70,6 +72,9 @@ define_diagnostic_kind! {
         InvalidVisibility(InvalidVisibility),
         /// More than one visibility specifier was provided on a definition.
         MultipleVisibilitySpecifiers(MultipleVisibilitySpecifiers),
+
+        /// Named arguments were used where only positional arguments are allowed.
+        NamedArgumentsNotAllowed(NamedArgumentsNotAllowed),
 
         /// More than one `virtual` specifier was provided on a definition.
         MultipleVirtualSpecifiers(MultipleVirtualSpecifiers),

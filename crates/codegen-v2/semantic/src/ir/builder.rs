@@ -24,6 +24,7 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
     flatten_state_variable_attributes(&mut mutator);
     transmute_constant_state_variables(&mut mutator);
     collapse_redundant_node_types(&mut mutator);
+    restrict_invocation_arguments(&mut mutator);
     simplify_string_literals(&mut mutator);
     normalize_experimental_feature(&mut mutator);
     normalize_abicoder_version(&mut mutator);
@@ -330,6 +331,15 @@ fn collapse_redundant_node_types(mutator: &mut IrModelMutator) {
     mutator.remove_type("NamedArgumentsDeclaration");
     mutator.add_choice_variant("ArgumentsDeclaration", "PositionalArguments");
     mutator.add_choice_variant("ArgumentsDeclaration", "NamedArguments");
+}
+
+fn restrict_invocation_arguments(mutator: &mut IrModelMutator) {
+    // Modifier invocations and base constructor calls only accept positional
+    // arguments; named ones are rejected while lowering to the IR.
+    for type_name in ["ModifierInvocation", "InheritanceType"] {
+        mutator.remove_sequence_field(type_name, "arguments");
+        mutator.add_sequence_field(type_name, "arguments", "PositionalArguments", true);
+    }
 }
 
 fn simplify_string_literals(mutator: &mut IrModelMutator) {

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/named-arguments-not-allowed] Error: Named arguments are not allowed here.
+    ╭─[input.sol:13:35]
+    │
+ 13 │     function named() public tagged({value: 2}) {}
+    │                                   ──────┬─────  
+    │                                         ╰─────── Error occurred here.
+────╯

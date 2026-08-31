@@ -733,7 +733,7 @@ pub struct InheritanceTypeStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub type_name: IdentifierPath,
-    pub arguments: Option<ArgumentsDeclaration>,
+    pub arguments: Option<PositionalArguments>,
 }
 
 impl InheritanceTypeStruct {
@@ -819,7 +819,7 @@ pub struct ModifierInvocationStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub name: IdentifierPath,
-    pub arguments: Option<ArgumentsDeclaration>,
+    pub arguments: Option<PositionalArguments>,
 }
 
 impl ModifierInvocationStruct {

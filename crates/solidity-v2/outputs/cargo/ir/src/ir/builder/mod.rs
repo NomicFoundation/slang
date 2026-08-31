@@ -15,7 +15,7 @@ use slang_solidity_v2_common::diagnostics::kinds::structure::{
     StorageLayoutForAbstractContract, UninitializedConstant,
 };
 use slang_solidity_v2_common::diagnostics::kinds::syntax::{
-    MoreThanOneInheritanceList, MoreThanOneStorageLayout,
+    MoreThanOneInheritanceList, MoreThanOneStorageLayout, NamedArgumentsNotAllowed,
 };
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::versions::LanguageVersion;
@@ -437,6 +437,70 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                 }
             }
             _ => self.default_build_contract_member(source),
+        }
+    }
+
+    fn build_modifier_invocation(
+        &mut self,
+        source: &input::ModifierInvocation,
+    ) -> output::ModifierInvocation {
+        let id = self.next_id(output::NodeKind::ModifierInvocation);
+        let range = source.calculate_text_range().unwrap_or_default();
+        let name = self.build_identifier_path(&source.name);
+        let arguments = source
+            .arguments
+            .as_ref()
+            .map(|arguments| self.build_positional_only_arguments(arguments));
+
+        Arc::new(output::ModifierInvocationStruct {
+            id,
+            range,
+            name,
+            arguments,
+        })
+    }
+
+    fn build_inheritance_type(
+        &mut self,
+        source: &input::InheritanceType,
+    ) -> output::InheritanceType {
+        let id = self.next_id(output::NodeKind::InheritanceType);
+        let range = source.calculate_text_range().unwrap_or_default();
+        let type_name = self.build_identifier_path(&source.type_name);
+        let arguments = source
+            .arguments
+            .as_ref()
+            .map(|arguments| self.build_positional_only_arguments(arguments));
+
+        Arc::new(output::InheritanceTypeStruct {
+            id,
+            range,
+            type_name,
+            arguments,
+        })
+    }
+
+    /// Builds an argument list for a position that only accepts positional
+    /// arguments. Named arguments are reported and their values are kept in
+    /// source order, so the expressions are still analysed.
+    fn build_positional_only_arguments(
+        &mut self,
+        source: &input::ArgumentsDeclaration,
+    ) -> output::PositionalArguments {
+        match source {
+            input::ArgumentsDeclaration::PositionalArgumentsDeclaration(positional) => {
+                self.build_positional_arguments(&positional.arguments)
+            }
+            input::ArgumentsDeclaration::NamedArgumentsDeclaration(named) => {
+                self.report(named, NamedArgumentsNotAllowed);
+                named
+                    .arguments
+                    .arguments
+                    .elements
+                    .iter()
+                    .map(|named_argument| self.build_expression(&named_argument.value))
+                    .collect()
+            }
         }
     }
 

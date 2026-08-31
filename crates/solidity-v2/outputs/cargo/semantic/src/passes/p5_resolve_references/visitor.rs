@@ -29,9 +29,7 @@ impl Visitor for Pass<'_> {
     fn enter_contract_definition(&mut self, node: &ir::ContractDefinition) -> bool {
         // Push the contract scope to visit the contract members
         self.enter_scope_for_node_id(node.id());
-        for member in node.members.iter() {
-            ir::visitor::accept_contract_member(member, self);
-        }
+        ir::visitor::accept_contract_members(&node.members, self);
         self.leave_scope_for_node_id(node.id());
 
         // But any reference in the inheritance types and the storage layout
@@ -44,9 +42,7 @@ impl Visitor for Pass<'_> {
         // `is_foreign_contract` has to be able to see which contract is being
         // defined, even while names resolve outside of it.
         self.enter_structural_scope_for_node_id(node.id());
-        for inheritance_type in node.inheritance_types.iter() {
-            ir::visitor::accept_inheritance_type(inheritance_type, self);
-        }
+        ir::visitor::accept_inheritance_types(&node.inheritance_types, self);
         self.leave_scope_for_node_id(node.id());
         if let Some(ref storage_layout) = node.storage_layout {
             // TODO(validation) SDR[56]: check that the expression is not binding constant variables up until 0.8.31
