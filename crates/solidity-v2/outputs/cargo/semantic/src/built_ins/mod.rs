@@ -25,6 +25,7 @@ pub(crate) enum BuiltInCallError {
     Diagnostic(DiagnosticKind),
     /// The call is invalid, but no diagnostic is implemented for it yet. The
     /// `TODO(validation)` comment at each site tracks what is missing.
+    // TODO: remove when proper diagnostics are implemented
     NotReportedYet,
     /// A type the call depends on failed to resolve. That failure is reported
     /// where it happens, and the call has no result type only as a

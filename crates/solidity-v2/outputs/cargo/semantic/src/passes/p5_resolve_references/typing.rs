@@ -734,12 +734,6 @@ impl Pass<'_> {
                             .push(file_id, range, CannotCallViaContractTypeName);
                         Typing::Unresolved
                     }
-                    Some(Definition::Import(_)) => {
-                        // The alias of an imported file names a namespace, not
-                        // a callable.
-                        self.report_operand_not_callable(node);
-                        Typing::Unresolved
-                    }
                     Some(Definition::Event(_)) => {
                         // TODO: an event invocation has to be prefixed by
                         // `emit`. The name *is* callable, so this is not a
@@ -752,17 +746,26 @@ impl Pass<'_> {
                         // TODO: An error construction has no value type of its own,
                         // except as an assertion parameter. Similar to the
                         // event case, we don't have a `Type` variant to
-                        // represent the error yet.
+                        // represent the error yet. See SDR[1504]
                         Typing::Unresolved
                     }
                     Some(Definition::UserDefinedValueType(_)) => {
-                        // TODO(validation): a UDVT is callable syntactically
-                        // but not castable by name, so this is a disallowed
-                        // conversion rather than a callability error.
+                        // TODO(validation) SDR[1698]: a UDVT is callable
+                        // syntactically but not castable by name, so this is a
+                        // disallowed conversion rather than a callability
+                        // error.
                         Typing::Unresolved
                     }
-
-                    _ => Typing::Unresolved,
+                    Some(_) => {
+                        // Report any other definitions as expression not
+                        // callable. In practice only path imports can ever
+                        // reach here, but it's a safe default.
+                        self.report_operand_not_callable(node);
+                        Typing::Unresolved
+                    }
+                    None => {
+                        unreachable!("Invalid user meta type; not linking a definition");
+                    }
                 }
             }
             _ => {
@@ -923,10 +926,16 @@ impl Pass<'_> {
                             .push(file_id, range, CannotCallViaContractTypeName);
                         (Typing::Unresolved, Some(definition_id))
                     }
-                    _ => {
-                        // Anything else is not callable through named arguments.
+                    Some(_) => {
+                        // Report any other definitions as expression not
+                        // callable through named arguments. In practice only
+                        // path imports can ever reach here, but it's a safe
+                        // default.
                         self.report_operand_not_callable(node);
                         (Typing::Unresolved, None)
+                    }
+                    None => {
+                        unreachable!("Invalid user meta type; not linking a definition");
                     }
                 }
             }
