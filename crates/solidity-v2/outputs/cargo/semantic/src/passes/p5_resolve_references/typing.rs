@@ -63,9 +63,8 @@ impl Pass<'_> {
         operand: &ir::Expression,
         overload_match: OverloadMatch<T>,
     ) -> Option<T> {
-        let Some(identifier) = reference_identifier_for_expression(operand) else {
-            unreachable!("Overloaded operand cannot be traced back to identifier");
-        };
+        let identifier = reference_identifier_for_expression(operand)
+            .expect("Overloaded operand cannot be traced back to identifier");
         match overload_match {
             OverloadMatch::None => {
                 // Ruled out by the arguments: on a member that reads as
