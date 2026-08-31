@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 7615] Error: Only direct number constants and references to such constants are supported by inline assembly.
+    ╭─[input.sol:11:22]
+    │
+ 11 │             let x := K
+    │                      ┬  
+    │                      ╰── Error occurred here.
+────╯

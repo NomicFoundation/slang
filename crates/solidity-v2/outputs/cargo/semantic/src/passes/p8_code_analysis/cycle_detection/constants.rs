@@ -96,22 +96,12 @@ struct DependencyCollector<'a> {
 
 impl Visitor for DependencyCollector<'_> {
     fn visit_identifier(&mut self, node: &ir::Identifier) {
+        // A constant declared without a value has no outgoing edges, so it
+        // is not a graph node either. Skipping it here keeps every edge
+        // pointing at a node the search can reach.
         if let Some(definition_id) = self
             .binder
-            .find_reference_by_identifier_node_id(node.id())
-            .map(|reference| {
-                self.binder
-                    .follow_symbol_aliases(reference.resolution.clone())
-            })
-            .and_then(|resolution| resolution.as_definition_id())
-            // A constant declared without a value has no outgoing edges, so it
-            // is not a graph node either. Skipping it here keeps every edge
-            // pointing at a node the search can reach.
-            .filter(|&id| {
-                self.binder
-                    .find_definition_by_id(id)
-                    .is_some_and(|definition| definition.as_constant_value().is_some())
-            })
+            .find_constant_definition_by_identifier_node_id(node.id())
         {
             self.dependencies.insert(definition_id);
         }

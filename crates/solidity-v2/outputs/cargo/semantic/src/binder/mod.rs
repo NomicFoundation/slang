@@ -3,6 +3,7 @@ use std::collections::VecDeque;
 use slang_solidity_v2_common::collections::{DefaultWithCapacity, Map, Set};
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_ir::ir;
 use smallvec::{SmallVec, smallvec};
 
 use super::built_ins::InternalBuiltIn;
@@ -262,6 +263,23 @@ impl Binder {
         self.definitions_by_identifier
             .get(&node_id)
             .and_then(|definition_id| self.definitions.get(definition_id))
+    }
+
+    /// The value of `definition_id` if it is an initialized constant.
+    pub(crate) fn constant_value(&self, definition_id: NodeId) -> Option<&ir::Expression> {
+        self.find_definition_by_id(definition_id)?
+            .as_constant_value()
+    }
+
+    /// The initialized constant the reference at `node_id` points at, if any.
+    pub(crate) fn find_constant_definition_by_identifier_node_id(
+        &self,
+        node_id: NodeId,
+    ) -> Option<NodeId> {
+        self.find_reference_by_identifier_node_id(node_id)
+            .map(|reference| self.follow_symbol_aliases(reference.resolution.clone()))
+            .and_then(|resolution| resolution.as_definition_id())
+            .filter(|definition_id| self.constant_value(*definition_id).is_some())
     }
 
     pub(crate) fn get_definition_mut(&mut self, node_id: NodeId) -> &mut Definition {

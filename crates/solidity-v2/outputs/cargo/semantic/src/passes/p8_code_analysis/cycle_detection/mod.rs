@@ -48,6 +48,7 @@ enum CycleSearchResult {
 }
 
 impl DependencyGraph {
+    // __SLANG_CONSTANT_CYCLE_MAX_DEPTH__ keep in sync with `find_root_constant`
     const MAX_DEPTH: usize = 256;
 
     fn new(edges: SortedMap<NodeId, Vec<NodeId>>) -> Self {

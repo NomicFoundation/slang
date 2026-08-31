@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/yul-assignment-to-constant] Error: Constant variables cannot be assigned to.
+    ╭─[input.sol:10:13]
+    │
+ 10 │             K.slot := 1
+    │             ┬  
+    │             ╰── Error occurred here.
+────╯

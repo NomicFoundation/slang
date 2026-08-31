@@ -1,0 +1,18 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "target": {
+      "value": "Istanbul",
+      "reason": "Using the latest EVM target supported by solc '0.8.0', to avoid triggering any additional 'Evm Version not supported' errors when comparing outputs."
+    },
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "From",
+          "from": "0.8.0"
+        },
+        "reason": "solc processes this import cycle with main.sol first, so the constant in lib.sol is not yet annotated and 2249 rejects the read. slang's forward reference test is same file only, so it accepts."
+      }
+    ]
+  }
+}

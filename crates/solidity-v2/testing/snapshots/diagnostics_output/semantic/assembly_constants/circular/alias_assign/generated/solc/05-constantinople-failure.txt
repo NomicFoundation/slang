@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 3558] Error: Constant variable is circular.
+    ╭─[input.sol:12:13]
+    │
+ 12 │             A := 1
+    │             ┬  
+    │             ╰── Error occurred here.
+────╯
