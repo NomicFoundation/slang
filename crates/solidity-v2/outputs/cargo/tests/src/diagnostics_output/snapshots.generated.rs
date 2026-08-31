@@ -1296,6 +1296,14 @@ mod resolution {
         }
 
         #[test]
+        fn creation_code_on_abstract_contract() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "creation_code_on_abstract_contract",
+            )
+        }
+
+        #[test]
         fn external_function_via_super() -> Result<()> {
             run("resolution/member_not_found", "external_function_via_super")
         }
@@ -1376,6 +1384,14 @@ mod resolution {
         #[test]
         fn pop_on_value_type() -> Result<()> {
             run("resolution/member_not_found", "pop_on_value_type")
+        }
+
+        #[test]
+        fn runtime_code_on_abstract_contract() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "runtime_code_on_abstract_contract",
+            )
         }
 
         #[test]
