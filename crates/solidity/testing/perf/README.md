@@ -59,7 +59,12 @@ uses [`divan`](https://github.com/nvzqz/divan) to measure elapsed time while bui
 on its own. Alongside each timing it reports throughput (MB/s and files/s), so results stay
 comparable across [projects] of different sizes.
 
-Run it with:
+The suite also has a `thread_scaling` group, which runs one project on `rayon` pools of 1, 2, 4, 8,
+and 16 threads. The `1` row is the single-thread baseline the others should be read against, so this is
+where to check whether a newly parallel stage pays off — and whether more threads eventually start
+costing more than they save.
+
+Run them with:
 
 ```console
 ./scripts/bin/infra perf cargo slang-v2-wall-clock

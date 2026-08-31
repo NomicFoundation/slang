@@ -17,6 +17,8 @@ pub use super::kinds::NodeKind;
   pub type {{ parent_type }} = Arc<{{ parent_type }}Struct>;
 
   #[derive(Debug)]
+  {# IR nodes are deeply recursive, so we don't expose equality checks by default. #}
+  #[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
   pub struct {{ parent_type }}Struct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -63,6 +65,8 @@ pub use super::kinds::NodeKind;
     #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
   {%- else -%}
     #[derive(Clone, Debug)]
+    {# IR nodes are deeply recursive, so we don't expose equality checks by default. #}
+    #[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
   {%- endif %}
   pub enum {{ parent_type }} {
     {% for variant in choice.variants -%}

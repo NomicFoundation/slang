@@ -8,6 +8,7 @@ mod __dependencies_used_in_benches__ {
     use divan as _;
     use gungraun as _;
     use infra_utils as _;
+    use rayon as _;
 }
 
 #[cfg(test)]

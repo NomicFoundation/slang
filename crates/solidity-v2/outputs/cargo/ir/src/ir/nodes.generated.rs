@@ -16,6 +16,7 @@ pub use super::kinds::NodeKind;
 pub type AbicoderPragma = Arc<AbicoderPragmaStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct AbicoderPragmaStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -31,6 +32,7 @@ impl AbicoderPragmaStruct {
 pub type AdditiveExpression = Arc<AdditiveExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct AdditiveExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -48,6 +50,7 @@ impl AdditiveExpressionStruct {
 pub type AddressType = Arc<AddressTypeStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct AddressTypeStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -63,6 +66,7 @@ impl AddressTypeStruct {
 pub type AndExpression = Arc<AndExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct AndExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -79,6 +83,7 @@ impl AndExpressionStruct {
 pub type ArrayExpression = Arc<ArrayExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct ArrayExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -94,6 +99,7 @@ impl ArrayExpressionStruct {
 pub type ArrayTypeName = Arc<ArrayTypeNameStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct ArrayTypeNameStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -110,6 +116,7 @@ impl ArrayTypeNameStruct {
 pub type AssemblyStatement = Arc<AssemblyStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct AssemblyStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -126,6 +133,7 @@ impl AssemblyStatementStruct {
 pub type AssignmentExpression = Arc<AssignmentExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct AssignmentExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -143,6 +151,7 @@ impl AssignmentExpressionStruct {
 pub type BitwiseAndExpression = Arc<BitwiseAndExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct BitwiseAndExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -159,6 +168,7 @@ impl BitwiseAndExpressionStruct {
 pub type BitwiseOrExpression = Arc<BitwiseOrExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct BitwiseOrExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -175,6 +185,7 @@ impl BitwiseOrExpressionStruct {
 pub type BitwiseXorExpression = Arc<BitwiseXorExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct BitwiseXorExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -191,6 +202,7 @@ impl BitwiseXorExpressionStruct {
 pub type Block = Arc<BlockStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct BlockStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -206,6 +218,7 @@ impl BlockStruct {
 pub type BreakStatement = Arc<BreakStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct BreakStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -220,6 +233,7 @@ impl BreakStatementStruct {
 pub type CallOptionsExpression = Arc<CallOptionsExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct CallOptionsExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -236,6 +250,7 @@ impl CallOptionsExpressionStruct {
 pub type CatchClause = Arc<CatchClauseStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct CatchClauseStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -253,6 +268,7 @@ impl CatchClauseStruct {
 pub type ConditionalExpression = Arc<ConditionalExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct ConditionalExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -270,6 +286,7 @@ impl ConditionalExpressionStruct {
 pub type ConstantDefinition = Arc<ConstantDefinitionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct ConstantDefinitionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -288,6 +305,7 @@ impl ConstantDefinitionStruct {
 pub type ContinueStatement = Arc<ContinueStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct ContinueStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -302,6 +320,7 @@ impl ContinueStatementStruct {
 pub type ContractDefinition = Arc<ContractDefinitionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct ContractDefinitionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -321,6 +340,7 @@ impl ContractDefinitionStruct {
 pub type DecimalNumberExpression = Arc<DecimalNumberExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct DecimalNumberExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -337,6 +357,7 @@ impl DecimalNumberExpressionStruct {
 pub type DoWhileStatement = Arc<DoWhileStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct DoWhileStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -353,6 +374,7 @@ impl DoWhileStatementStruct {
 pub type EmitStatement = Arc<EmitStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct EmitStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -369,6 +391,7 @@ impl EmitStatementStruct {
 pub type EnumDefinition = Arc<EnumDefinitionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct EnumDefinitionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -385,6 +408,7 @@ impl EnumDefinitionStruct {
 pub type EqualityExpression = Arc<EqualityExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct EqualityExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -402,6 +426,7 @@ impl EqualityExpressionStruct {
 pub type ErrorDefinition = Arc<ErrorDefinitionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct ErrorDefinitionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -418,6 +443,7 @@ impl ErrorDefinitionStruct {
 pub type EventDefinition = Arc<EventDefinitionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct EventDefinitionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -435,6 +461,7 @@ impl EventDefinitionStruct {
 pub type ExperimentalPragma = Arc<ExperimentalPragmaStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct ExperimentalPragmaStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -450,6 +477,7 @@ impl ExperimentalPragmaStruct {
 pub type ExponentiationExpression = Arc<ExponentiationExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct ExponentiationExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -466,6 +494,7 @@ impl ExponentiationExpressionStruct {
 pub type ExpressionStatement = Arc<ExpressionStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct ExpressionStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -481,6 +510,7 @@ impl ExpressionStatementStruct {
 pub type ForStatement = Arc<ForStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct ForStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -499,6 +529,7 @@ impl ForStatementStruct {
 pub type FunctionAttributes = Arc<FunctionAttributesStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct FunctionAttributesStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -519,6 +550,7 @@ impl FunctionAttributesStruct {
 pub type FunctionCallExpression = Arc<FunctionCallExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct FunctionCallExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -535,6 +567,7 @@ impl FunctionCallExpressionStruct {
 pub type FunctionDefinition = Arc<FunctionDefinitionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct FunctionDefinitionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -555,6 +588,7 @@ impl FunctionDefinitionStruct {
 pub type FunctionType = Arc<FunctionTypeStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct FunctionTypeStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -572,6 +606,7 @@ impl FunctionTypeStruct {
 pub type FunctionTypeAttributes = Arc<FunctionTypeAttributesStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct FunctionTypeAttributesStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -588,6 +623,7 @@ impl FunctionTypeAttributesStruct {
 pub type HexNumberExpression = Arc<HexNumberExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct HexNumberExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -603,6 +639,7 @@ impl HexNumberExpressionStruct {
 pub type IfStatement = Arc<IfStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct IfStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -620,6 +657,7 @@ impl IfStatementStruct {
 pub type ImportDeconstruction = Arc<ImportDeconstructionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct ImportDeconstructionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -636,6 +674,7 @@ impl ImportDeconstructionStruct {
 pub type ImportDeconstructionSymbol = Arc<ImportDeconstructionSymbolStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct ImportDeconstructionSymbolStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -652,6 +691,7 @@ impl ImportDeconstructionSymbolStruct {
 pub type IndexAccessExpression = Arc<IndexAccessExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct IndexAccessExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -670,6 +710,7 @@ impl IndexAccessExpressionStruct {
 pub type InequalityExpression = Arc<InequalityExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct InequalityExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -687,6 +728,7 @@ impl InequalityExpressionStruct {
 pub type InheritanceType = Arc<InheritanceTypeStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct InheritanceTypeStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -703,6 +745,7 @@ impl InheritanceTypeStruct {
 pub type InterfaceDefinition = Arc<InterfaceDefinitionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct InterfaceDefinitionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -720,6 +763,7 @@ impl InterfaceDefinitionStruct {
 pub type LibraryDefinition = Arc<LibraryDefinitionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct LibraryDefinitionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -736,6 +780,7 @@ impl LibraryDefinitionStruct {
 pub type MappingType = Arc<MappingTypeStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct MappingTypeStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -752,6 +797,7 @@ impl MappingTypeStruct {
 pub type MemberAccessExpression = Arc<MemberAccessExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct MemberAccessExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -768,6 +814,7 @@ impl MemberAccessExpressionStruct {
 pub type ModifierInvocation = Arc<ModifierInvocationStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct ModifierInvocationStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -784,6 +831,7 @@ impl ModifierInvocationStruct {
 pub type MultiTypedDeclaration = Arc<MultiTypedDeclarationStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct MultiTypedDeclarationStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -800,6 +848,7 @@ impl MultiTypedDeclarationStruct {
 pub type MultiTypedDeclarationElement = Arc<MultiTypedDeclarationElementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct MultiTypedDeclarationElementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -815,6 +864,7 @@ impl MultiTypedDeclarationElementStruct {
 pub type MultiplicativeExpression = Arc<MultiplicativeExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct MultiplicativeExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -832,6 +882,7 @@ impl MultiplicativeExpressionStruct {
 pub type NamedArgument = Arc<NamedArgumentStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct NamedArgumentStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -848,6 +899,7 @@ impl NamedArgumentStruct {
 pub type NewExpression = Arc<NewExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct NewExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -863,6 +915,7 @@ impl NewExpressionStruct {
 pub type OrExpression = Arc<OrExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct OrExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -879,6 +932,7 @@ impl OrExpressionStruct {
 pub type Parameter = Arc<ParameterStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct ParameterStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -897,6 +951,7 @@ impl ParameterStruct {
 pub type PathImport = Arc<PathImportStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct PathImportStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -913,6 +968,7 @@ impl PathImportStruct {
 pub type PostfixExpression = Arc<PostfixExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct PostfixExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -929,6 +985,7 @@ impl PostfixExpressionStruct {
 pub type PragmaDirective = Arc<PragmaDirectiveStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct PragmaDirectiveStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -944,6 +1001,7 @@ impl PragmaDirectiveStruct {
 pub type PrefixExpression = Arc<PrefixExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct PrefixExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -960,6 +1018,7 @@ impl PrefixExpressionStruct {
 pub type ReturnStatement = Arc<ReturnStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct ReturnStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -975,6 +1034,7 @@ impl ReturnStatementStruct {
 pub type RevertStatement = Arc<RevertStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct RevertStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -991,6 +1051,7 @@ impl RevertStatementStruct {
 pub type ShiftExpression = Arc<ShiftExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct ShiftExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1008,6 +1069,7 @@ impl ShiftExpressionStruct {
 pub type SingleTypedDeclaration = Arc<SingleTypedDeclarationStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct SingleTypedDeclarationStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1024,6 +1086,7 @@ impl SingleTypedDeclarationStruct {
 pub type SourceUnit = Arc<SourceUnitStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct SourceUnitStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1039,6 +1102,7 @@ impl SourceUnitStruct {
 pub type StateVariableAttributes = Arc<StateVariableAttributesStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct StateVariableAttributesStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1056,6 +1120,7 @@ impl StateVariableAttributesStruct {
 pub type StateVariableDefinition = Arc<StateVariableDefinitionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct StateVariableDefinitionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1074,6 +1139,7 @@ impl StateVariableDefinitionStruct {
 pub type StructDefinition = Arc<StructDefinitionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct StructDefinitionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1090,6 +1156,7 @@ impl StructDefinitionStruct {
 pub type StructMember = Arc<StructMemberStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct StructMemberStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1106,6 +1173,7 @@ impl StructMemberStruct {
 pub type TryStatement = Arc<TryStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct TryStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1124,6 +1192,7 @@ impl TryStatementStruct {
 pub type TupleExpression = Arc<TupleExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct TupleExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1139,6 +1208,7 @@ impl TupleExpressionStruct {
 pub type TupleValue = Arc<TupleValueStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct TupleValueStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1154,6 +1224,7 @@ impl TupleValueStruct {
 pub type TypeExpression = Arc<TypeExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct TypeExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1169,6 +1240,7 @@ impl TypeExpressionStruct {
 pub type UncheckedBlock = Arc<UncheckedBlockStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct UncheckedBlockStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1184,6 +1256,7 @@ impl UncheckedBlockStruct {
 pub type UserDefinedValueTypeDefinition = Arc<UserDefinedValueTypeDefinitionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct UserDefinedValueTypeDefinitionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1200,6 +1273,7 @@ impl UserDefinedValueTypeDefinitionStruct {
 pub type UsingDeconstruction = Arc<UsingDeconstructionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct UsingDeconstructionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1215,6 +1289,7 @@ impl UsingDeconstructionStruct {
 pub type UsingDeconstructionSymbol = Arc<UsingDeconstructionSymbolStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct UsingDeconstructionSymbolStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1231,6 +1306,7 @@ impl UsingDeconstructionSymbolStruct {
 pub type UsingDirective = Arc<UsingDirectiveStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct UsingDirectiveStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1248,6 +1324,7 @@ impl UsingDirectiveStruct {
 pub type VariableDeclaration = Arc<VariableDeclarationStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct VariableDeclarationStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1265,6 +1342,7 @@ impl VariableDeclarationStruct {
 pub type VariableDeclarationStatement = Arc<VariableDeclarationStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct VariableDeclarationStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1280,6 +1358,7 @@ impl VariableDeclarationStatementStruct {
 pub type VersionPragma = Arc<VersionPragmaStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct VersionPragmaStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1295,6 +1374,7 @@ impl VersionPragmaStruct {
 pub type VersionRange = Arc<VersionRangeStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct VersionRangeStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1311,6 +1391,7 @@ impl VersionRangeStruct {
 pub type VersionTerm = Arc<VersionTermStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct VersionTermStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1327,6 +1408,7 @@ impl VersionTermStruct {
 pub type WhileStatement = Arc<WhileStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct WhileStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1343,6 +1425,7 @@ impl WhileStatementStruct {
 pub type YulBlock = Arc<YulBlockStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct YulBlockStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1358,6 +1441,7 @@ impl YulBlockStruct {
 pub type YulBreakStatement = Arc<YulBreakStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct YulBreakStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1372,6 +1456,7 @@ impl YulBreakStatementStruct {
 pub type YulContinueStatement = Arc<YulContinueStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct YulContinueStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1386,6 +1471,7 @@ impl YulContinueStatementStruct {
 pub type YulDefaultCase = Arc<YulDefaultCaseStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct YulDefaultCaseStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1401,6 +1487,7 @@ impl YulDefaultCaseStruct {
 pub type YulForStatement = Arc<YulForStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct YulForStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1419,6 +1506,7 @@ impl YulForStatementStruct {
 pub type YulFunctionCallExpression = Arc<YulFunctionCallExpressionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct YulFunctionCallExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1435,6 +1523,7 @@ impl YulFunctionCallExpressionStruct {
 pub type YulFunctionDefinition = Arc<YulFunctionDefinitionStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct YulFunctionDefinitionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1453,6 +1542,7 @@ impl YulFunctionDefinitionStruct {
 pub type YulIfStatement = Arc<YulIfStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct YulIfStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1469,6 +1559,7 @@ impl YulIfStatementStruct {
 pub type YulLeaveStatement = Arc<YulLeaveStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct YulLeaveStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1483,6 +1574,7 @@ impl YulLeaveStatementStruct {
 pub type YulSwitchStatement = Arc<YulSwitchStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct YulSwitchStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1500,6 +1592,7 @@ impl YulSwitchStatementStruct {
 pub type YulValueCase = Arc<YulValueCaseStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct YulValueCaseStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1516,6 +1609,7 @@ impl YulValueCaseStruct {
 pub type YulVariableAssignmentStatement = Arc<YulVariableAssignmentStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct YulVariableAssignmentStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1532,6 +1626,7 @@ impl YulVariableAssignmentStatementStruct {
 pub type YulVariableDeclarationStatement = Arc<YulVariableDeclarationStatementStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct YulVariableDeclarationStatementStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1548,6 +1643,7 @@ impl YulVariableDeclarationStatementStruct {
 pub type YulVariableDeclarationValue = Arc<YulVariableDeclarationValueStruct>;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub struct YulVariableDeclarationValueStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
@@ -1571,6 +1667,7 @@ pub enum AbicoderVersion {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum AdditiveExpressionOperator {
     Minus(Minus),
     Plus(Plus),
@@ -1586,12 +1683,14 @@ impl AdditiveExpressionOperator {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum ArgumentsDeclaration {
     PositionalArguments(PositionalArguments),
     NamedArguments(NamedArguments),
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum AssignmentExpressionOperator {
     AmpersandEqual(AmpersandEqual),
     AsteriskEqual(AsteriskEqual),
@@ -1636,6 +1735,7 @@ pub enum CatchClauseKind {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum ContractMember {
     UsingDirective(UsingDirective),
     FunctionDefinition(FunctionDefinition),
@@ -1649,6 +1749,7 @@ pub enum ContractMember {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum ElementaryType {
     BoolKeyword(BoolKeyword),
     StringKeyword(StringKeyword),
@@ -1661,6 +1762,7 @@ pub enum ElementaryType {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum EqualityExpressionOperator {
     BangEqual(BangEqual),
     EqualEqual(EqualEqual),
@@ -1684,6 +1786,7 @@ pub enum ExperimentalFeature {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum Expression {
     AssignmentExpression(AssignmentExpression),
     ConditionalExpression(ConditionalExpression),
@@ -1721,12 +1824,14 @@ pub enum Expression {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum ForStatementCondition {
     ExpressionStatement(ExpressionStatement),
     Semicolon(Semicolon),
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum ForStatementInitialization {
     VariableDeclarationStatement(VariableDeclarationStatement),
     ExpressionStatement(ExpressionStatement),
@@ -1759,12 +1864,14 @@ pub enum FunctionVisibility {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum ImportClause {
     PathImport(PathImport),
     ImportDeconstruction(ImportDeconstruction),
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum InequalityExpressionOperator {
     GreaterThan(GreaterThan),
     GreaterThanEqual(GreaterThanEqual),
@@ -1784,6 +1891,7 @@ impl InequalityExpressionOperator {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum MultiplicativeExpressionOperator {
     Asterisk(Asterisk),
     Percent(Percent),
@@ -1801,6 +1909,7 @@ impl MultiplicativeExpressionOperator {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum NumberUnit {
     WeiKeyword(WeiKeyword),
     GweiKeyword(GweiKeyword),
@@ -1828,6 +1937,7 @@ impl NumberUnit {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum PostfixExpressionOperator {
     MinusMinus(MinusMinus),
     PlusPlus(PlusPlus),
@@ -1843,6 +1953,7 @@ impl PostfixExpressionOperator {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum Pragma {
     VersionPragma(VersionPragma),
     AbicoderPragma(AbicoderPragma),
@@ -1850,6 +1961,7 @@ pub enum Pragma {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum PrefixExpressionOperator {
     Bang(Bang),
     DeleteKeyword(DeleteKeyword),
@@ -1873,6 +1985,7 @@ impl PrefixExpressionOperator {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum ShiftExpressionOperator {
     GreaterThanGreaterThan(GreaterThanGreaterThan),
     GreaterThanGreaterThanGreaterThan(GreaterThanGreaterThanGreaterThan),
@@ -1890,6 +2003,7 @@ impl ShiftExpressionOperator {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum SourceUnitMember {
     PragmaDirective(PragmaDirective),
     ImportClause(ImportClause),
@@ -1922,6 +2036,7 @@ pub enum StateVariableVisibility {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum Statement {
     IfStatement(IfStatement),
     ForStatement(ForStatement),
@@ -1941,6 +2056,7 @@ pub enum Statement {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum StorageLocation {
     MemoryKeyword(MemoryKeyword),
     StorageKeyword(StorageKeyword),
@@ -1958,6 +2074,7 @@ impl StorageLocation {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum StringExpression {
     StringLiterals(StringLiterals),
     HexStringLiterals(HexStringLiterals),
@@ -1965,6 +2082,7 @@ pub enum StringExpression {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum TypeName {
     ArrayTypeName(ArrayTypeName),
     FunctionType(FunctionType),
@@ -1974,12 +2092,14 @@ pub enum TypeName {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum UsingClause {
     IdentifierPath(IdentifierPath),
     UsingDeconstruction(UsingDeconstruction),
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum UsingOperator {
     Ampersand(Ampersand),
     Asterisk(Asterisk),
@@ -2021,30 +2141,35 @@ impl UsingOperator {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum UsingTarget {
     TypeName(TypeName),
     Asterisk(Asterisk),
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum VariableDeclarationTarget {
     SingleTypedDeclaration(SingleTypedDeclaration),
     MultiTypedDeclaration(MultiTypedDeclaration),
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum VersionExpression {
     VersionRange(VersionRange),
     VersionTerm(VersionTerm),
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum VersionLiteral {
     SimpleVersionLiteral(SimpleVersionLiteral),
     StringLiteral(StringLiteral),
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum VersionOperator {
     PragmaCaret(PragmaCaret),
     PragmaTilde(PragmaTilde),
@@ -2070,6 +2195,7 @@ impl VersionOperator {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum YulExpression {
     YulFunctionCallExpression(YulFunctionCallExpression),
     YulLiteral(YulLiteral),
@@ -2077,6 +2203,7 @@ pub enum YulExpression {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum YulLiteral {
     TrueKeyword(TrueKeyword),
     FalseKeyword(FalseKeyword),
@@ -2100,6 +2227,7 @@ impl YulLiteral {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
 pub enum YulStatement {
     YulBlock(YulBlock),
     YulFunctionDefinition(YulFunctionDefinition),

@@ -75,6 +75,42 @@ fn parser(bencher: Bencher<'_, '_>, project_name: &str) {
         .bench(|| black_box(tests::slang_v2::parser::run(black_box(project))));
 }
 
+/// How the pipeline scales with the size of the thread pool it is given.
+///
+/// The benchmarks above take every core; these pin one project to pools of
+/// increasing size, so a stage that fails to scale — or that starts costing more
+/// than it saves — shows up instead of being averaged away.
+mod thread_scaling {
+    use divan::{Bencher, black_box};
+
+    use super::{MAX_TIME_SECS, with_throughput_counters};
+    use crate::tests;
+
+    /// One of the larger multi-file projects; a single-file one would have
+    /// nothing to spread.
+    // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
+    const PROJECT: &str = "uniswap";
+
+    /// `1` is the serial baseline the other rows should be read against.
+    const THREAD_COUNTS: [usize; 5] = [1, 2, 4, 8, 16];
+
+    /// Deliberately the same public entry point as the benchmark above, not a
+    /// stand-in: one that re-implements the pipeline can drift from it silently,
+    /// and then reports a speedup nobody gets.
+    #[divan::bench(args = THREAD_COUNTS, max_time = MAX_TIME_SECS)]
+    fn full_compilation(bencher: Bencher<'_, '_>, threads: usize) {
+        let project = tests::slang_v2::full_compilation::setup(PROJECT);
+        let pool = rayon::ThreadPoolBuilder::new()
+            .num_threads(threads)
+            .build()
+            .expect("thread pool builds");
+
+        with_throughput_counters(bencher, project).bench(|| {
+            pool.install(|| black_box(tests::slang_v2::full_compilation::run(black_box(project))))
+        });
+    }
+}
+
 /// Reports bytes and files processed per second, so that results remain
 /// comparable across projects of very different sizes.
 fn with_throughput_counters<'a, 'b>(

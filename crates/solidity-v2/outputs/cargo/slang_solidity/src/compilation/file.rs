@@ -64,4 +64,9 @@ impl FileStruct {
     pub fn ast(&self) -> ast::SourceUnit {
         ast::create_source_unit(&self.file.ir_root, &self.semantic)
     }
+
+    #[cfg(test)]
+    pub(crate) fn ir_root(&self) -> &ir::SourceUnit {
+        &self.file.ir_root
+    }
 }

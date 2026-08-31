@@ -97,6 +97,17 @@ You can also use `nextest` directly for faster iteration on Rust tests:
 ./bin/cargo nextest run [FILTERS]         # Run tests that match specific filters (test names or file patterns)
 ```
 
+## Parallelism (v2)
+
+`CompilationUnit::create()` parses source files in parallel over `rayon`'s ambient thread pool
+(the caller's installed pool, or the global one otherwise); IR building and semantic analysis are
+still sequential. `Concurrency::Inline` in the `Configuration` pins the whole compilation to the
+calling thread instead. One invariant holds it together: **output must not depend on the
+concurrency choice.** Files are lowered to IR in `FileId` order, and that is what makes node ids
+stable — so the parse phase has to hand them back in that order, which is why it collects from an
+_indexed_ parallel iterator. `slang_solidity/src/tests/thread_safety.rs` guards this, both across
+pool sizes and across concurrent builds.
+
 ## Code Generation
 
 Many source files are auto-generated, and are either under a `/generated/` directory, or have `*.generated.*` in their name.

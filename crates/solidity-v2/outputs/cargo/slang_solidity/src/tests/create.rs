@@ -1,48 +1,11 @@
-use slang_solidity_v2_common::evm_targets::EvmTarget;
-
-use crate::compilation::{CompilationUnit, Configuration, FileId, ImportResolver};
+use super::support::{compile, file_with_empty_contract};
 use crate::diagnostics::DiagnosticExtensions;
-use crate::diagnostics::kinds::compilation::UnresolvedImport;
-use crate::utils::LanguageVersion;
-
-/// Resolves every import path to a file of the same name.
-struct TestImportResolver;
-
-impl ImportResolver for TestImportResolver {
-    fn resolve_import(
-        &mut self,
-        _source_file_id: &FileId,
-        import_path: &str,
-    ) -> Result<FileId, UnresolvedImport> {
-        Ok(import_path.into())
-    }
-}
-
-fn compile<'s>(sources: impl IntoIterator<Item = (FileId, &'s str)>) -> CompilationUnit {
-    CompilationUnit::create(Configuration {
-        language_version: LanguageVersion::LATEST,
-        evm_target: EvmTarget::LATEST,
-        sources,
-        resolver: TestImportResolver,
-    })
-}
-
-fn contract(name: &str, imports: &[&str]) -> String {
-    use std::fmt::Write;
-
-    let imports = imports.iter().fold(String::new(), |mut text, path| {
-        writeln!(text, "import \"{path}\";").unwrap();
-        text
-    });
-
-    format!("pragma solidity ^0.8.0;\n{imports}\ncontract {name} {{}}\n")
-}
 
 #[test]
 fn compiles_every_source_it_is_given() {
-    let main = contract("Main", &["lib.sol"]);
-    let lib = contract("Lib", &[]);
-    let extra = contract("Extra", &[]);
+    let main = file_with_empty_contract("Main", &["lib.sol"]);
+    let lib = file_with_empty_contract("Lib", &[]);
+    let extra = file_with_empty_contract("Extra", &[]);
     let unit = compile([
         ("main.sol".into(), main.as_str()),
         ("lib.sol".into(), lib.as_str()),
@@ -64,8 +27,8 @@ fn compiles_every_source_it_is_given() {
 
 #[test]
 fn the_last_contents_given_for_a_file_id_win() {
-    let stale = contract("Stale", &[]);
-    let fresh = contract("Fresh", &[]);
+    let stale = file_with_empty_contract("Stale", &[]);
+    let fresh = file_with_empty_contract("Fresh", &[]);
     let unit = compile([
         ("main.sol".into(), stale.as_str()),
         ("main.sol".into(), fresh.as_str()),
@@ -95,4 +58,12 @@ fn the_last_contents_given_for_a_file_id_win() {
         .map(|contract| contract.name().name().to_owned())
         .collect();
     assert_eq!(contract_names, ["Fresh"]);
+}
+
+#[test]
+fn compiles_an_empty_source_list() {
+    let unit = compile([]);
+
+    assert!(unit.diagnostics().is_empty(), "{:#?}", unit.diagnostics());
+    assert_eq!(unit.files().count(), 0);
 }

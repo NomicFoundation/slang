@@ -21,6 +21,7 @@ mod __dependencies_used_in_lib__ {
     use inflector as _;
     use infra_utils as _;
     use paste as _;
+    use rayon as _;
     use semver as _;
     use serde as _;
     use serde_json as _;
