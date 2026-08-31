@@ -7,6 +7,10 @@ mod cyclic_inheritance;
 mod linearisation_impossible;
 mod recursive_struct;
 mod recursive_struct_validator_exhausted;
+mod yul_assignment_to_constant;
+mod yul_forward_referenced_constant;
+mod yul_suffix_on_constant;
+mod yul_unsupported_constant;
 
 pub use bytecode_dependency_validator_exhausted::BytecodeDependencyValidatorExhausted;
 pub use cyclic_bytecode_dependency::CyclicBytecodeDependency;
@@ -18,6 +22,10 @@ pub use linearisation_impossible::LinearisationImpossible;
 pub use recursive_struct::RecursiveStruct;
 pub use recursive_struct_validator_exhausted::RecursiveStructValidatorExhausted;
 use serde::Serialize;
+pub use yul_assignment_to_constant::YulAssignmentToConstant;
+pub use yul_forward_referenced_constant::YulForwardReferencedConstant;
+pub use yul_suffix_on_constant::YulSuffixOnConstant;
+pub use yul_unsupported_constant::YulUnsupportedConstant;
 
 use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
@@ -52,5 +60,15 @@ define_diagnostic_kind! {
         /// Recursive-struct detection gave up on a by-value path longer than
         /// its depth limit.
         RecursiveStructValidatorExhausted(RecursiveStructValidatorExhausted),
+        /// An assembly assignment targets a constant.
+        YulAssignmentToConstant(YulAssignmentToConstant),
+        /// An assembly reference reads a constant that is declared later in
+        /// the same file and whose value is not a literal.
+        YulForwardReferencedConstant(YulForwardReferencedConstant),
+        /// An assembly reference accesses a constant through a suffix.
+        YulSuffixOnConstant(YulSuffixOnConstant),
+        /// An assembly reference reads a constant that is not a direct number
+        /// constant.
+        YulUnsupportedConstant(YulUnsupportedConstant),
     }
 }

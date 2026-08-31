@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 6617] Error: The suffixes .offset and .slot can only be used on non-constant storage variables.
+    ╭─[input.sol:11:22]
+    │
+ 11 │             let x := K.length
+    │                      ────┬───  
+    │                          ╰───── Error occurred here.
+────╯

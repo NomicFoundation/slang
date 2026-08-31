@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 8349] Error: Initial value for constant variable has to be compile-time constant.
+   ╭─[input.sol:6:26]
+   │
+ 6 │     uint256 constant K = x;
+   │                          ┬  
+   │                          ╰── Error occurred here.
+───╯
+
+[TypeError 7615] Error: Only direct number constants and references to such constants are supported by inline assembly.
+    ╭─[input.sol:10:22]
+    │
+ 10 │             let y := K
+    │                      ┬  
+    │                      ╰── Error occurred here.
+────╯

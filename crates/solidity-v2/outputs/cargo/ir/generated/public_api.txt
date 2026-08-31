@@ -724,6 +724,8 @@ pub slang_solidity_v2_ir::ir::Expression::ThisKeyword(slang_solidity_v2_ir::ir::
 pub slang_solidity_v2_ir::ir::Expression::TrueKeyword(slang_solidity_v2_ir::ir::TrueKeyword)
 pub slang_solidity_v2_ir::ir::Expression::TupleExpression(slang_solidity_v2_ir::ir::TupleExpression)
 pub slang_solidity_v2_ir::ir::Expression::TypeExpression(slang_solidity_v2_ir::ir::TypeExpression)
+impl slang_solidity_v2_ir::ir::Expression
+pub fn slang_solidity_v2_ir::ir::Expression::is_literal(&self) -> bool
 impl core::clone::Clone for slang_solidity_v2_ir::ir::Expression
 pub fn slang_solidity_v2_ir::ir::Expression::clone(&self) -> slang_solidity_v2_ir::ir::Expression
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::Expression

@@ -15,6 +15,7 @@ use crate::passes::common::node_location;
 use crate::types::TypeRegistry;
 
 mod conflicts;
+mod reference_checks;
 mod resolution;
 mod structure_checks;
 mod visitor;
