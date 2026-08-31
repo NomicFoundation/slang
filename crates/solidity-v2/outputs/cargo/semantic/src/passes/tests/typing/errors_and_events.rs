@@ -2,6 +2,8 @@
 //! of their own type rather than of the meta-type of the declaration they name,
 //! which is what lets a member reached through one fail to resolve.
 
+use slang_solidity_v2_common::diagnostics::kinds::resolution::MemberNotFound;
+
 use super::{Analyse, Analysis, expression, expression_statement_types};
 use crate::binder::Definition;
 use crate::types::{ErrorType, EventType, Type};
@@ -122,28 +124,39 @@ fn test_event_type_carries_its_declaration() {
 
 #[test]
 fn test_no_members_on_an_error_instantiation() {
-    // `selector` belongs to the declaration, not to an instantiation of it.
-    // The lookup finding nothing is what a member-not-found check reports;
-    // before these types existed the operand was `Unresolved` and any such
-    // check was suppressed.
-    let (typing, _types) = expression("E(1).amount")
-        .with_members("error E(uint256 amount);")
-        .into_type();
-
-    assert!(
-        typing.is_none(),
-        "expected no member on an error instantiation, got {typing:?}",
+    // Members belong to the declaration, not to an instantiation of it.
+    // Before these types existed the operand was `Unresolved` and the
+    // member-not-found check was suppressed.
+    assert_eq!(
+        (
+            None,
+            Some(
+                MemberNotFound {
+                    name: "amount".to_owned()
+                }
+                .into()
+            )
+        ),
+        expression("E(1).amount")
+            .with_members("error E(uint256 amount);")
+            .into_type_and_diagnostic(),
     );
 }
 
 #[test]
 fn test_no_members_on_an_event_invocation() {
-    let (typing, _types) = expression("E(1).amount")
-        .with_members("event E(uint256 amount);")
-        .into_type();
-
-    assert!(
-        typing.is_none(),
-        "expected no member on an event invocation, got {typing:?}",
+    assert_eq!(
+        (
+            None,
+            Some(
+                MemberNotFound {
+                    name: "amount".to_owned()
+                }
+                .into()
+            )
+        ),
+        expression("E(1).amount")
+            .with_members("event E(uint256 amount);")
+            .into_type_and_diagnostic(),
     );
 }

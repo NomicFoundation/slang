@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/member-not-found] Error: Member 'selector' not found or not visible after argument-dependent lookup.
+   ╭─[input.sol:9:21]
+   │
+ 9 │         return E(1).selector;
+   │                     ────┬───  
+   │                         ╰───── Error occurred here.
+───╯

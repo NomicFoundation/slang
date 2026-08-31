@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
+   ╭─[input.sol:4:1]
+   │
+ 4 │ error E(uint256 amount);
+   │ ────────────┬───────────  
+   │             ╰───────────── Error occurred here.
+───╯
+
+[resolution/member-not-found] Error: Member 'selector' not found or not visible after argument-dependent lookup.
+   ╭─[input.sol:9:21]
+   │
+ 9 │         return E(1).selector;
+   │                     ────┬───  
+   │                         ╰───── Error occurred here.
+───╯
+
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.4'.
+    ╭─[input.sol:13:18]
+    │
+ 13 │         return E.selector;
+    │                  ────┬───  
+    │                      ╰───── Error occurred here.
+────╯

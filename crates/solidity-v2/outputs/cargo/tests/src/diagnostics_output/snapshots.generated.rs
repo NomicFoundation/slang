@@ -1377,6 +1377,14 @@ mod resolution {
         }
 
         #[test]
+        fn parameter_on_error_instantiation() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "parameter_on_error_instantiation",
+            )
+        }
+
+        #[test]
         fn pop_on_calldata_slice() -> Result<()> {
             run("resolution/member_not_found", "pop_on_calldata_slice")
         }
@@ -1419,6 +1427,30 @@ mod resolution {
             run(
                 "resolution/member_not_found",
                 "runtime_code_on_abstract_contract",
+            )
+        }
+
+        #[test]
+        fn selector_on_error_instantiation() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "selector_on_error_instantiation",
+            )
+        }
+
+        #[test]
+        fn selector_on_error_instantiation_with_named_arguments() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "selector_on_error_instantiation_with_named_arguments",
+            )
+        }
+
+        #[test]
+        fn selector_on_event_invocation() -> Result<()> {
+            run(
+                "resolution/member_not_found",
+                "selector_on_event_invocation",
             )
         }
 
