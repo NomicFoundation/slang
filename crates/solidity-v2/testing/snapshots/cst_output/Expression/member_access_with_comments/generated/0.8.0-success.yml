@@ -1,0 +1,107 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // SPDX-License-Identifier: MIT                                                    │ 0..31
+  2  │ pragma solidity ^0.8.0;                                                            │ 32..55
+  3  │                                                                                    │ 56..56
+  4  │ contract C {                                                                       │ 57..69
+  5  │     struct Inner {                                                                 │ 70..88
+  6  │         uint256 c;                                                                 │ 89..107
+  7  │     }                                                                              │ 108..113
+  8  │                                                                                    │ 114..114
+  9  │     struct Outer {                                                                 │ 115..133
+  10 │         Inner b;                                                                   │ 134..150
+  11 │     }                                                                              │ 151..156
+  12 │                                                                                    │ 157..157
+  13 │     Outer a;                                                                       │ 158..170
+  14 │                                                                                    │ 171..171
+  15 │     // The periods of a member access chain are recovered from the source, so any  │ 172..253
+  16 │     // trivia in between (which can contain periods of its own) has to be skipped. │ 254..336
+  17 │     function f() public view returns (uint256) {                                   │ 337..385
+  18 │         return a /* .x */ . /* .y */ b // .z                                       │ 386..430
+  19 │             .c;                                                                    │ 431..446
+  20 │     }                                                                              │ 447..452
+  21 │ }                                                                                  │ 453..454
+
+Tree:
+  - (root꞉ SourceUnit): # "pragma solidity ^0.8.0;\n\ncontract C {\n    struct I..." (32..454)
+      - (members꞉ SourceUnitMembers): # "pragma solidity ^0.8.0;\n\ncontract C {\n    struct I..." (32..454)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity ^0.8.0;" (32..55)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (32..38)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity ^0.8.0" (39..54)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (39..47)
+                  - (sets꞉ VersionExpressionSets): # "^0.8.0" (48..54)
+                      - (item꞉ VersionExpressionSet): # "^0.8.0" (48..54)
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm): # "^0.8.0" (48..54)
+                              - (operator꞉ VersionOperator) ► (pragma_caret꞉ PragmaCaret): "^" # (48..49)
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral): # "0.8.0" (49..54)
+                                  - (item꞉ VersionSpecifier): "0" # (49..50)
+                                  - (item꞉ VersionSpecifier): "8" # (51..52)
+                                  - (item꞉ VersionSpecifier): "0" # (53..54)
+              - (semicolon꞉ PragmaSemicolon): ";" # (54..55)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    struct Inner {\n        uint256 c;..." (57..454)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (57..65)
+              - (name꞉ Identifier): "C" # (66..67)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (68..69)
+              - (members꞉ ContractMembers): # "struct Inner {\n        uint256 c;\n    }\n\n    struc..." (74..452)
+                  - (item꞉ ContractMember) ► (struct_definition꞉ StructDefinition): # "struct Inner {\n        uint256 c;\n    }" (74..113)
+                      - (struct_keyword꞉ StructKeyword): "struct" # (74..80)
+                      - (name꞉ Identifier): "Inner" # (81..86)
+                      - (open_brace꞉ OpenBrace): "{" # (87..88)
+                      - (members꞉ StructMembers): # "uint256 c;" (97..107)
+                          - (item꞉ StructMember): # "uint256 c;" (97..107)
+                              - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (97..104)
+                              - (name꞉ Identifier): "c" # (105..106)
+                              - (semicolon꞉ Semicolon): ";" # (106..107)
+                      - (close_brace꞉ CloseBrace): "}" # (112..113)
+                  - (item꞉ ContractMember) ► (struct_definition꞉ StructDefinition): # "struct Outer {\n        Inner b;\n    }" (119..156)
+                      - (struct_keyword꞉ StructKeyword): "struct" # (119..125)
+                      - (name꞉ Identifier): "Outer" # (126..131)
+                      - (open_brace꞉ OpenBrace): "{" # (132..133)
+                      - (members꞉ StructMembers): # "Inner b;" (142..150)
+                          - (item꞉ StructMember): # "Inner b;" (142..150)
+                              - (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath): # "Inner" (142..147)
+                                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Inner" # (142..147)
+                              - (name꞉ Identifier): "b" # (148..149)
+                              - (semicolon꞉ Semicolon): ";" # (149..150)
+                      - (close_brace꞉ CloseBrace): "}" # (155..156)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "Outer a;" (162..170)
+                      - (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath): # "Outer" (162..167)
+                          - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Outer" # (162..167)
+                      - (attributes꞉ StateVariableAttributes): []
+                      - (name꞉ Identifier): "a" # (168..169)
+                      - (semicolon꞉ Semicolon): ";" # (169..170)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() public view returns (uint256) {\n     ..." (341..452)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (341..349)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (350..351)
+                      - (parameters꞉ ParametersDeclaration): # "()" (351..353)
+                          - (open_paren꞉ OpenParen): "(" # (351..352)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (352..353)
+                      - (attributes꞉ FunctionAttributes): # "public view" (354..365)
+                          - (item꞉ FunctionAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (354..360)
+                          - (item꞉ FunctionAttribute) ► (view_keyword꞉ ViewKeyword): "view" # (361..365)
+                      - (returns꞉ ReturnsDeclaration): # "returns (uint256)" (366..383)
+                          - (returns_keyword꞉ ReturnsKeyword): "returns" # (366..373)
+                          - (variables꞉ ParametersDeclaration): # "(uint256)" (374..383)
+                              - (open_paren꞉ OpenParen): "(" # (374..375)
+                              - (parameters꞉ Parameters): # "uint256" (375..382)
+                                  - (item꞉ Parameter): # "uint256" (375..382)
+                                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (375..382)
+                              - (close_paren꞉ CloseParen): ")" # (382..383)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        return a /* .x */ . /* .y */ b // .z\n   ..." (384..452)
+                          - (open_brace꞉ OpenBrace): "{" # (384..385)
+                          - (statements꞉ Statements): # "return a /* .x */ . /* .y */ b // .z\n            ...." (394..446)
+                              - (item꞉ Statement) ► (return_statement꞉ ReturnStatement): # "return a /* .x */ . /* .y */ b // .z\n            ...." (394..446)
+                                  - (return_keyword꞉ ReturnKeyword): "return" # (394..400)
+                                  - (expression꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "a /* .x */ . /* .y */ b // .z\n            .c" (401..445)
+                                      - (operand꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "a /* .x */ . /* .y */ b" (401..424)
+                                          - (operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (401..402)
+                                          - (period꞉ Period): "." # (412..413)
+                                          - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "b" # (423..424)
+                                      - (period꞉ Period): "." # (443..444)
+                                      - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "c" # (444..445)
+                                  - (semicolon꞉ Semicolon): ";" # (445..446)
+                          - (close_brace꞉ CloseBrace): "}" # (451..452)
+              - (close_brace꞉ CloseBrace): "}" # (453..454)
