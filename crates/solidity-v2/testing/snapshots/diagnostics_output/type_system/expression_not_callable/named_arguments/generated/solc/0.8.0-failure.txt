@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 5704] Error: Type is not callable
+    ╭─[input.sol:16:9]
+    │
+ 16 │         3({a: 1, x: true});
+    │         ─────────┬────────  
+    │                  ╰────────── Error occurred here.
+────╯

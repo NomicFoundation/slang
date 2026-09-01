@@ -3600,6 +3600,50 @@ mod type_system {
         }
     }
 
+    mod expression_not_callable {
+        use super::*;
+
+        #[test]
+        fn built_in_object() -> Result<()> {
+            run("type_system/expression_not_callable", "built_in_object")
+        }
+
+        #[test]
+        fn enum_value() -> Result<()> {
+            run("type_system/expression_not_callable", "enum_value")
+        }
+
+        #[test]
+        fn import_alias() -> Result<()> {
+            run("type_system/expression_not_callable", "import_alias")
+        }
+
+        #[test]
+        fn integer_literal() -> Result<()> {
+            run("type_system/expression_not_callable", "integer_literal")
+        }
+
+        #[test]
+        fn mapping() -> Result<()> {
+            run("type_system/expression_not_callable", "mapping")
+        }
+
+        #[test]
+        fn modifier() -> Result<()> {
+            run("type_system/expression_not_callable", "modifier")
+        }
+
+        #[test]
+        fn named_arguments() -> Result<()> {
+            run("type_system/expression_not_callable", "named_arguments")
+        }
+
+        #[test]
+        fn this_expression() -> Result<()> {
+            run("type_system/expression_not_callable", "this_expression")
+        }
+    }
+
     #[test]
     fn fallback_function_mutability() -> Result<()> {
         run("type_system", "fallback_function_mutability")

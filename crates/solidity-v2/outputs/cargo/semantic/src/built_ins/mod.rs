@@ -1,3 +1,5 @@
+use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
+use slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable;
 use slang_solidity_v2_common::nodes::NodeId;
 
 use super::binder::{Binder, Definition, Typing};
@@ -15,6 +17,21 @@ mod internal;
 pub(crate) use availability::is_built_in_available;
 pub(crate) use availability_specifiers::built_in_specifiers;
 pub use internal::InternalBuiltIn;
+
+/// Reason why a call to a built-in has no result type.
+#[derive(Debug)]
+pub(crate) enum BuiltInCallError {
+    /// The call is invalid, and this is the diagnostic to report for it.
+    Diagnostic(DiagnosticKind),
+    /// The call is invalid, but no diagnostic is implemented for it yet. The
+    /// `TODO(validation)` comment at each site tracks what is missing.
+    // TODO: remove when proper diagnostics are implemented
+    NotReportedYet,
+    /// A type the call depends on failed to resolve. That failure is reported
+    /// where it happens, and the call has no result type only as a
+    /// consequence, so reporting again here would just cascade.
+    UnresolvedDependency,
+}
 
 pub(crate) struct BuiltInsResolver<'a> {
     binder: &'a Binder,
@@ -471,100 +488,58 @@ impl<'a> BuiltInsResolver<'a> {
         }
     }
 
-    #[allow(clippy::too_many_lines)]
-    pub(crate) fn typing_of_function_call(
+    /// The result type of a call to `built_in`, or why it has none.
+    pub(crate) fn type_of_function_call(
         &mut self,
         built_in: &InternalBuiltIn,
         argument_typings: &[Typing],
-    ) -> Typing {
-        match built_in {
-            InternalBuiltIn::AbiDecode => {
-                if argument_typings.len() != 2 {
-                    return Typing::Unresolved;
-                }
-                let Typing::Resolved(type_id) = &argument_typings[1] else {
-                    return Typing::Unresolved;
-                };
-
-                // `abi.decode(data, (T))`: a single-element tuple collapses to the
-                // meta-type of `T`, which decodes to `T` itself.
-                if let Some(decoded) = self.type_denoted_by_meta_type(*type_id) {
-                    return Typing::Resolved(decoded);
-                }
-
-                // `abi.decode(data, (T1, T2, ...))`: a tuple of meta-types decodes to
-                // the tuple of the types they denote. Note a *nested* tuple element is
-                // not a type name and does not decode (matching solc, which rejects
-                // eg. `abi.decode(data, (uint, (bool, bool)))`).
-                if let Type::Tuple(TupleType { types }) = self.types.get_type_by_id(*type_id) {
-                    let element_ids = types.clone();
-                    let mut decoded = Vec::with_capacity(element_ids.len());
-                    for element_id in element_ids {
-                        let Some(element) = self.type_denoted_by_meta_type(element_id) else {
-                            // TODO(validation) SDR[42]: report an error when a tuple
-                            // element is not a type name (eg. `abi.decode(b, (uint, 5))`).
-                            return Typing::Unresolved;
-                        };
-                        decoded.push(element);
-                    }
-                    return Typing::Resolved(
-                        self.types
-                            .register_type(Type::Tuple(TupleType { types: decoded })),
-                    );
-                }
-
-                // TODO(validation) SDR[42]: report an error when the second argument
-                // is not a type or a tuple of types.
-                Typing::Unresolved
-            }
-            InternalBuiltIn::AbiEncode => Typing::Resolved(self.types.bytes_memory()),
-            InternalBuiltIn::AbiEncodeCall => Typing::Resolved(self.types.bytes_memory()),
-            InternalBuiltIn::AbiEncodePacked => Typing::Resolved(self.types.bytes_memory()),
-            InternalBuiltIn::AbiEncodeWithSelector => Typing::Resolved(self.types.bytes_memory()),
-            InternalBuiltIn::AbiEncodeWithSignature => Typing::Resolved(self.types.bytes_memory()),
-            InternalBuiltIn::Addmod => Typing::Resolved(self.types.uint256()),
-            InternalBuiltIn::AddressCall => Typing::Resolved(self.types.boolean_bytes_tuple()),
-            InternalBuiltIn::AddressCallcode => Typing::Resolved(self.types.boolean_bytes_tuple()),
-            InternalBuiltIn::AddressDelegatecall => {
-                Typing::Resolved(self.types.boolean_bytes_tuple())
-            }
-            InternalBuiltIn::AddressStaticcall => {
-                Typing::Resolved(self.types.boolean_bytes_tuple())
-            }
+    ) -> Result<TypeId, BuiltInCallError> {
+        let type_id = match built_in {
+            InternalBuiltIn::AbiDecode => self.type_of_abi_decode(argument_typings)?,
+            InternalBuiltIn::AbiEncode => self.types.bytes_memory(),
+            InternalBuiltIn::AbiEncodeCall => self.types.bytes_memory(),
+            InternalBuiltIn::AbiEncodePacked => self.types.bytes_memory(),
+            InternalBuiltIn::AbiEncodeWithSelector => self.types.bytes_memory(),
+            InternalBuiltIn::AbiEncodeWithSignature => self.types.bytes_memory(),
+            InternalBuiltIn::Addmod => self.types.uint256(),
+            InternalBuiltIn::AddressCall => self.types.boolean_bytes_tuple(),
+            InternalBuiltIn::AddressCallcode => self.types.boolean_bytes_tuple(),
+            InternalBuiltIn::AddressDelegatecall => self.types.boolean_bytes_tuple(),
+            InternalBuiltIn::AddressSend => self.types.boolean(),
+            InternalBuiltIn::AddressStaticcall => self.types.boolean_bytes_tuple(),
+            InternalBuiltIn::AddressTransfer => self.types.void(),
             InternalBuiltIn::ArrayPush(type_id) => {
                 if argument_typings.is_empty() {
-                    Typing::Resolved(*type_id)
+                    *type_id
                 } else {
-                    Typing::Resolved(self.types.void())
+                    self.types.void()
                 }
             }
-            InternalBuiltIn::ArrayPop => Typing::Resolved(self.types.void()),
-            InternalBuiltIn::Assert => Typing::Resolved(self.types.void()),
-            InternalBuiltIn::Blobhash => Typing::Resolved(self.types.bytes32()),
-            InternalBuiltIn::Blockhash => Typing::Resolved(self.types.bytes32()),
-            InternalBuiltIn::BytesConcat => Typing::Resolved(self.types.bytes_memory()),
-            InternalBuiltIn::Ecrecover => Typing::Resolved(self.types.address()),
-            InternalBuiltIn::Erc7201 => Typing::Resolved(self.types.uint256()),
-            InternalBuiltIn::Gasleft => Typing::Resolved(self.types.uint256()),
-            InternalBuiltIn::Keccak256 => Typing::Resolved(self.types.bytes32()),
-            InternalBuiltIn::Mulmod => Typing::Resolved(self.types.uint256()),
-            InternalBuiltIn::Require => Typing::Resolved(self.types.void()),
-            InternalBuiltIn::Revert => Typing::Resolved(self.types.void()),
-            InternalBuiltIn::Ripemd160 => Typing::Resolved(self.types.bytes20()),
-            InternalBuiltIn::Selfdestruct => Typing::Resolved(self.types.void()),
-            InternalBuiltIn::Sha256 => Typing::Resolved(self.types.bytes32()),
-            InternalBuiltIn::StringConcat => Typing::Resolved(self.types.string_memory()),
+            InternalBuiltIn::ArrayPop => self.types.void(),
+            InternalBuiltIn::Assert => self.types.void(),
+            InternalBuiltIn::Blobhash => self.types.bytes32(),
+            InternalBuiltIn::Blockhash => self.types.bytes32(),
+            InternalBuiltIn::BytesConcat => self.types.bytes_memory(),
+            InternalBuiltIn::Ecrecover => self.types.address(),
+            InternalBuiltIn::Erc7201 => self.types.uint256(),
+            InternalBuiltIn::Gasleft => self.types.uint256(),
+            InternalBuiltIn::Keccak256 => self.types.bytes32(),
+            InternalBuiltIn::Mulmod => self.types.uint256(),
+            InternalBuiltIn::Require => self.types.void(),
+            InternalBuiltIn::Revert => self.types.void(),
+            InternalBuiltIn::Ripemd160 => self.types.bytes20(),
+            InternalBuiltIn::Selfdestruct => self.types.void(),
+            InternalBuiltIn::Sha256 => self.types.bytes32(),
+            InternalBuiltIn::StringConcat => self.types.string_memory(),
             InternalBuiltIn::Unwrap(definition_id) => {
                 let Some(Definition::UserDefinedValueType(udvt)) =
                     self.binder.find_definition_by_id(*definition_id)
                 else {
                     unreachable!("definition bound to unwrap built-in is not a UDVT");
                 };
-                if let Some(target_type_id) = udvt.target_type_id {
-                    Typing::Resolved(target_type_id)
-                } else {
-                    Typing::Unresolved
-                }
+                // The UDVT's underlying type failed to resolve.
+                udvt.target_type_id
+                    .ok_or(BuiltInCallError::UnresolvedDependency)?
             }
             InternalBuiltIn::Wrap(definition_id) => {
                 let Some(Definition::UserDefinedValueType(_)) =
@@ -572,17 +547,64 @@ impl<'a> BuiltInsResolver<'a> {
                 else {
                     unreachable!("definition bound to wrap built-in is not a UDVT");
                 };
-                Typing::Resolved(self.types.register_type(Type::UserDefinedValue(
-                    UserDefinedValueType {
+                self.types
+                    .register_type(Type::UserDefinedValue(UserDefinedValueType {
                         definition_id: *definition_id,
-                    },
-                )))
+                    }))
             }
             _ => {
-                // other built-ins cannot be called
-                Typing::Unresolved
+                // Other built-ins are not functions: a namespace such as `abi`
+                // or `msg`, or a name for a type or a value. None of them can
+                // be called.
+                return Err(BuiltInCallError::Diagnostic(ExpressionNotCallable.into()));
             }
+        };
+        Ok(type_id)
+    }
+
+    fn type_of_abi_decode(
+        &mut self,
+        argument_typings: &[Typing],
+    ) -> Result<TypeId, BuiltInCallError> {
+        // TODO(validation): report an error when `abi.decode` is not given
+        // exactly two arguments.
+        if argument_typings.len() != 2 {
+            return Err(BuiltInCallError::NotReportedYet);
         }
+        // The second argument's own type failed to resolve.
+        let Typing::Resolved(type_id) = &argument_typings[1] else {
+            return Err(BuiltInCallError::UnresolvedDependency);
+        };
+
+        // `abi.decode(data, (T))`: a single-element tuple collapses to the
+        // meta-type of `T`, which decodes to `T` itself.
+        if let Some(decoded) = self.type_denoted_by_meta_type(*type_id) {
+            return Ok(decoded);
+        }
+
+        // `abi.decode(data, (T1, T2, ...))`: a tuple of meta-types decodes to
+        // the tuple of the types they denote. Note a *nested* tuple element is
+        // not a type name and does not decode (matching solc, which rejects
+        // eg. `abi.decode(data, (uint, (bool, bool)))`).
+        if let Type::Tuple(TupleType { types }) = self.types.get_type_by_id(*type_id) {
+            let element_ids = types.clone();
+            let mut decoded = Vec::with_capacity(element_ids.len());
+            for element_id in element_ids {
+                let Some(element) = self.type_denoted_by_meta_type(element_id) else {
+                    // TODO(validation) SDR[42]: report an error when a tuple
+                    // element is not a type name (eg. `abi.decode(b, (uint, 5))`).
+                    return Err(BuiltInCallError::NotReportedYet);
+                };
+                decoded.push(element);
+            }
+            return Ok(self
+                .types
+                .register_type(Type::Tuple(TupleType { types: decoded })));
+        }
+
+        // TODO(validation) SDR[42]: report an error when the second argument
+        // is not a type or a tuple of types.
+        Err(BuiltInCallError::NotReportedYet)
     }
 
     /// Returns the value type a meta-type denotes: `type(T)` unwraps to `T`,

@@ -18,10 +18,6 @@ contract B is A {
         return x;
     }
 
-    function callee() internal view returns (uint256) {
-        return x(1);
-    }
-
     function qualified() internal pure returns (uint256) {
         return A.x(1);
     }
