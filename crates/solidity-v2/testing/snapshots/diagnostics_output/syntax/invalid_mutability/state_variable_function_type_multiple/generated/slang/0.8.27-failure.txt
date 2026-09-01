@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[syntax/invalid-mutability] Error: Invalid mutability for this definition. Expected 'ConstantKeyword' or 'ImmutableKeyword' or 'TransientKeyword'.
+   ╭─[input.sol:7:32]
+   │
+ 7 │     function() internal public payable pure external x;
+   │                                ───┬───  
+   │                                   ╰───── Error occurred here.
+───╯
+
+[syntax/invalid-mutability] Error: Invalid mutability for this definition. Expected 'ConstantKeyword' or 'ImmutableKeyword' or 'TransientKeyword'.
+   ╭─[input.sol:7:40]
+   │
+ 7 │     function() internal public payable pure external x;
+   │                                        ──┬─  
+   │                                          ╰─── Error occurred here.
+───╯
+
+[syntax/invalid-visibility] Error: Invalid visibility for this definition. Expected 'PublicKeyword' or 'InternalKeyword' or 'PrivateKeyword'.
+   ╭─[input.sol:7:45]
+   │
+ 7 │     function() internal public payable pure external x;
+   │                                             ────┬───  
+   │                                                 ╰───── Error occurred here.
+───╯

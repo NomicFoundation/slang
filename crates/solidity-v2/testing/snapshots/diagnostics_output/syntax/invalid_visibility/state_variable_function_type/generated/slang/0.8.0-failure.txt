@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/invalid-visibility] Error: Invalid visibility for this definition. Expected 'PublicKeyword' or 'InternalKeyword' or 'PrivateKeyword'.
+   ╭─[input.sol:8:32]
+   │
+ 8 │     function() internal public external x;
+   │                                ────┬───  
+   │                                    ╰───── Error occurred here.
+───╯

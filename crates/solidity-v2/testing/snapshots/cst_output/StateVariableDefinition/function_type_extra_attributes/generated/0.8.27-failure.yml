@@ -1,0 +1,147 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                     │ 0..12
+  2  │     // The attributes of a function type without a return are greedily parsed,   │ 13..91
+  3  │     // so the ones that follow a repeated visibility belong to the state         │ 92..164
+  4  │     // variable. Those that are not valid there are reported as errors.          │ 165..236
+  5  │     function() internal public x;                                                │ 237..270
+  6  │     function() internal public payable y;                                        │ 271..312
+  7  │     function() internal public external z;                                       │ 313..355
+  8  │     function() internal public view constant w = f;                              │ 356..407
+  9  │     function() internal external v;                                              │ 408..443
+  10 │     function() internal public pure u;                                           │ 444..482
+  11 │ }                                                                                │ 483..484
+
+Errors: # 5 total
+  - >
+    [syntax/invalid-mutability] Error: Invalid mutability for this definition. Expected 'ConstantKeyword' or 'ImmutableKeyword' or 'TransientKeyword'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/StateVariableDefinition/function_type_extra_attributes/input.sol:6:32]
+       │
+     6 │     function() internal public payable y;
+       │                                ───┬───  
+       │                                   ╰───── Error occurred here.
+    ───╯
+  - >
+    [syntax/invalid-visibility] Error: Invalid visibility for this definition. Expected 'PublicKeyword' or 'InternalKeyword' or 'PrivateKeyword'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/StateVariableDefinition/function_type_extra_attributes/input.sol:7:32]
+       │
+     7 │     function() internal public external z;
+       │                                ────┬───  
+       │                                    ╰───── Error occurred here.
+    ───╯
+  - >
+    [syntax/invalid-mutability] Error: Invalid mutability for this definition. Expected 'ConstantKeyword' or 'ImmutableKeyword' or 'TransientKeyword'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/StateVariableDefinition/function_type_extra_attributes/input.sol:8:32]
+       │
+     8 │     function() internal public view constant w = f;
+       │                                ──┬─  
+       │                                  ╰─── Error occurred here.
+    ───╯
+  - >
+    [syntax/invalid-visibility] Error: Invalid visibility for this definition. Expected 'PublicKeyword' or 'InternalKeyword' or 'PrivateKeyword'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/StateVariableDefinition/function_type_extra_attributes/input.sol:9:25]
+       │
+     9 │     function() internal external v;
+       │                         ────┬───  
+       │                             ╰───── Error occurred here.
+    ───╯
+  - >
+    [syntax/invalid-mutability] Error: Invalid mutability for this definition. Expected 'ConstantKeyword' or 'ImmutableKeyword' or 'TransientKeyword'.
+        ╭─[crates/solidity-v2/testing/snapshots/cst_output/StateVariableDefinition/function_type_extra_attributes/input.sol:10:32]
+        │
+     10 │     function() internal public pure u;
+        │                                ──┬─  
+        │                                  ╰─── Error occurred here.
+    ────╯
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    // The attributes of a function t..." (0..484)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    // The attributes of a function t..." (0..484)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    // The attributes of a function t..." (0..484)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function() internal public x;\n    function() inter..." (241..482)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function() internal public x;" (241..270)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function() internal" (241..260)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (241..249)
+                          - (parameters꞉ ParametersDeclaration): # "()" (249..251)
+                              - (open_paren꞉ OpenParen): "(" # (249..250)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (250..251)
+                          - (attributes꞉ FunctionTypeAttributes): # "internal" (252..260)
+                              - (item꞉ FunctionTypeAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (252..260)
+                      - (attributes꞉ StateVariableAttributes): # "public" (261..267)
+                          - (item꞉ StateVariableAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (261..267)
+                      - (name꞉ Identifier): "x" # (268..269)
+                      - (semicolon꞉ Semicolon): ";" # (269..270)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function() internal public payable y;" (275..312)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function() internal" (275..294)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (275..283)
+                          - (parameters꞉ ParametersDeclaration): # "()" (283..285)
+                              - (open_paren꞉ OpenParen): "(" # (283..284)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (284..285)
+                          - (attributes꞉ FunctionTypeAttributes): # "internal" (286..294)
+                              - (item꞉ FunctionTypeAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (286..294)
+                      - (attributes꞉ StateVariableAttributes): # "public" (295..301)
+                          - (item꞉ StateVariableAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (295..301)
+                      - (name꞉ Identifier): "y" # (310..311)
+                      - (semicolon꞉ Semicolon): ";" # (311..312)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function() internal public external z;" (317..355)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function() internal" (317..336)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (317..325)
+                          - (parameters꞉ ParametersDeclaration): # "()" (325..327)
+                              - (open_paren꞉ OpenParen): "(" # (325..326)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (326..327)
+                          - (attributes꞉ FunctionTypeAttributes): # "internal" (328..336)
+                              - (item꞉ FunctionTypeAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (328..336)
+                      - (attributes꞉ StateVariableAttributes): # "public" (337..343)
+                          - (item꞉ StateVariableAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (337..343)
+                      - (name꞉ Identifier): "z" # (353..354)
+                      - (semicolon꞉ Semicolon): ";" # (354..355)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function() internal public view constant w = f;" (360..407)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function() internal" (360..379)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (360..368)
+                          - (parameters꞉ ParametersDeclaration): # "()" (368..370)
+                              - (open_paren꞉ OpenParen): "(" # (368..369)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (369..370)
+                          - (attributes꞉ FunctionTypeAttributes): # "internal" (371..379)
+                              - (item꞉ FunctionTypeAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (371..379)
+                      - (attributes꞉ StateVariableAttributes): # "public view constant" (380..400)
+                          - (item꞉ StateVariableAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (380..386)
+                          - (item꞉ StateVariableAttribute) ► (constant_keyword꞉ ConstantKeyword): "constant" # (392..400)
+                      - (name꞉ Identifier): "w" # (401..402)
+                      - (value꞉ StateVariableDefinitionValue): # "= f" (403..406)
+                          - (equal꞉ Equal): "=" # (403..404)
+                          - (value꞉ Expression) ► (identifier꞉ Identifier): "f" # (405..406)
+                      - (semicolon꞉ Semicolon): ";" # (406..407)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function() internal external v;" (412..443)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function() internal" (412..431)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (412..420)
+                          - (parameters꞉ ParametersDeclaration): # "()" (420..422)
+                              - (open_paren꞉ OpenParen): "(" # (420..421)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (421..422)
+                          - (attributes꞉ FunctionTypeAttributes): # "internal" (423..431)
+                              - (item꞉ FunctionTypeAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (423..431)
+                      - (attributes꞉ StateVariableAttributes): []
+                      - (name꞉ Identifier): "v" # (441..442)
+                      - (semicolon꞉ Semicolon): ";" # (442..443)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function() internal public pure u;" (448..482)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function() internal" (448..467)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (448..456)
+                          - (parameters꞉ ParametersDeclaration): # "()" (456..458)
+                              - (open_paren꞉ OpenParen): "(" # (456..457)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (457..458)
+                          - (attributes꞉ FunctionTypeAttributes): # "internal" (459..467)
+                              - (item꞉ FunctionTypeAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (459..467)
+                      - (attributes꞉ StateVariableAttributes): # "public" (468..474)
+                          - (item꞉ StateVariableAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (468..474)
+                      - (name꞉ Identifier): "u" # (480..481)
+                      - (semicolon꞉ Semicolon): ";" # (481..482)
+              - (close_brace꞉ CloseBrace): "}" # (483..484)

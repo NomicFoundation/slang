@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 2314] Error: Expected identifier but got 'payable'
+   ╭─[input.sol:7:32]
+   │
+ 7 │     function() internal public payable pure external x;
+   │                                ───┬───  
+   │                                   ╰───── Error occurred here.
+───╯

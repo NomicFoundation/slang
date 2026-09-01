@@ -1847,6 +1847,11 @@ mod state_variable_definition {
     use super::*;
 
     #[test]
+    fn function_type_extra_attributes() -> Result<()> {
+        run("StateVariableDefinition", "function_type_extra_attributes")
+    }
+
+    #[test]
     fn transient() -> Result<()> {
         run("StateVariableDefinition", "transient")
     }
