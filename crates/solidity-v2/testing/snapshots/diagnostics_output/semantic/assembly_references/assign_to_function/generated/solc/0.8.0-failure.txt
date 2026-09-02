@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 1990] Error: Only local variables can be assigned to in inline assembly.
+   ╭─[input.sol:9:13]
+   │
+ 9 │             g := 1
+   │             ┬  
+   │             ╰── Error occurred here.
+───╯

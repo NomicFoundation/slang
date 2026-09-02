@@ -4728,10 +4728,10 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                 BuiltInScope(
                     name = Suffix,
                     definitions = [
-                        BuiltInDefinition(name = YulAddressField),
+                        BuiltInDefinition(name = YulAddressField, enabled = From("0.8.10")),
                         BuiltInDefinition(name = YulLengthField),
                         BuiltInDefinition(name = YulOffset),
-                        BuiltInDefinition(name = YulSelector),
+                        BuiltInDefinition(name = YulSelector, enabled = From("0.8.10")),
                         BuiltInDefinition(name = YulSlot)
                     ]
                 )

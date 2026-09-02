@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/yul-internal-function-pointer-suffix] Error: Only external function pointers support ".selector" and ".address".
+    ╭─[input.sol:10:25]
+    │
+ 10 │             let t := fp.address
+    │                         ───┬───  
+    │                            ╰───── Error occurred here.
+────╯

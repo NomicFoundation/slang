@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::resolution::AmbiguousYulReference;
+use slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
@@ -207,11 +208,18 @@ impl Visitor for Pass<'_> {
 
         // any remaining identifiers cannot be resolved, but we still want to
         // emit a reference for each of them
+        let mut has_multiple_suffixes = false;
         for identifier in item_iter {
+            has_multiple_suffixes = true;
             self.binder.insert_reference(Reference::new(
                 Arc::clone(identifier),
                 Resolution::Unresolved,
             ));
+        }
+
+        // Report an issue if there is more than one suffix.
+        if has_multiple_suffixes {
+            self.push_diagnostic(items, YulMultipleSuffixes);
         }
 
         false

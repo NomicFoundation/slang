@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/yul-unsupported-suffix] Error: The suffix is not supported by this variable or type.
+    ╭─[main.sol:10:24]
+    │
+ 10 │             let t := M.K
+    │                        ┬  
+    │                        ╰── Error occurred here.
+────╯
