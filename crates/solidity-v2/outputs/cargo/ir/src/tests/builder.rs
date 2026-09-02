@@ -31,7 +31,7 @@ contract MyContract {
         "Parser diagnostics: {diagnostics:?}"
     );
 
-    let mut id_generator = ir::NodeIdGenerator::default();
+    let mut id_generator = super::single_file_id_generator();
 
     let ir::BuildOutput {
         ir_root,
@@ -122,7 +122,7 @@ contract MyContract {
         "Parser diagnostics: {diagnostics:?}"
     );
 
-    let mut id_generator = ir::NodeIdGenerator::default();
+    let mut id_generator = super::single_file_id_generator();
     let ir::BuildOutput { diagnostics, .. } = ir::build(
         &"test.sol".into(),
         &source_unit,
@@ -169,7 +169,7 @@ contract Test is Base layout at 0 {}
         "Parser diagnostics: {diagnostics:?}"
     );
 
-    let mut id_generator = ir::NodeIdGenerator::default();
+    let mut id_generator = super::single_file_id_generator();
 
     let ir::BuildOutput {
         ir_root,
@@ -247,7 +247,7 @@ contract Test {
         "Parser diagnostics: {diagnostics:?}"
     );
 
-    let mut id_generator = ir::NodeIdGenerator::default();
+    let mut id_generator = super::single_file_id_generator();
 
     let ir::BuildOutput {
         ir_root,

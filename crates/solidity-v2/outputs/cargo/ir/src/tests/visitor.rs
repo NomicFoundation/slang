@@ -87,7 +87,7 @@ contract Counter is Ownable {
         "Parser diagnostics: {diagnostics:?}"
     );
 
-    let mut id_generator = ir::NodeIdGenerator::default();
+    let mut id_generator = super::single_file_id_generator();
 
     let ir::BuildOutput {
         ir_root,

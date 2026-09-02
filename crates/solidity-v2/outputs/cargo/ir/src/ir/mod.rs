@@ -17,7 +17,7 @@ mod node_extensions;
 pub use node_extensions::{VersionPragmaComponentExtensions, VersionPragmaSpecifierExtensions};
 
 mod builder;
-pub use builder::node_id_generator::{NodeIdGenerator, NodeKindHistogram};
+pub use builder::node_id_generator::{NodeIdGenerator, NodeIdGroups, NodeKindHistogram};
 pub use builder::{BuildOutput, build_source_unit as build};
 
 mod source;
