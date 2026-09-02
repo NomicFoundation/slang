@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/expression-not-an-lvalue] Error: Expression has to be an lvalue.
+    ╭─[input.sol:10:5]
+    │
+ 10 │     g = f;
+    │     ┬  
+    │     ╰── Error occurred here.
+────╯
