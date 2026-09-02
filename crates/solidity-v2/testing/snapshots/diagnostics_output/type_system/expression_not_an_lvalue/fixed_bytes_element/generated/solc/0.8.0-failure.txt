@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4360] Error: Single bytes in fixed bytes arrays cannot be modified.
+    ╭─[input.sol:10:5]
+    │
+ 10 │     word[0] = 0x01;
+    │     ───┬───  
+    │        ╰───── Error occurred here.
+────╯

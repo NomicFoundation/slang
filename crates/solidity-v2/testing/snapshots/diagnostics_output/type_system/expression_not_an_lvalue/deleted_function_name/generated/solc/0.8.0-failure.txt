@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4247] Error: Expression has to be an lvalue.
+   ╭─[input.sol:8:12]
+   │
+ 8 │     delete f;
+   │            ┬  
+   │            ╰── Error occurred here.
+───╯

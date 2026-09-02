@@ -6,6 +6,7 @@ mod array_length_zero;
 mod cannot_call_via_contract_type_name;
 mod constant_arithmetic_error;
 mod expression_not_a_value;
+mod expression_not_an_lvalue;
 mod expression_not_callable;
 mod fallback_function_mutability;
 mod fallback_function_signature;
@@ -18,6 +19,7 @@ mod receive_function_parameters;
 mod storage_layout_base_non_integer;
 mod storage_layout_base_not_constant;
 mod storage_layout_base_out_of_range;
+mod write_to_constant;
 
 pub use array_length_fractional::ArrayLengthFractional;
 pub use array_length_negative::ArrayLengthNegative;
@@ -27,6 +29,7 @@ pub use array_length_zero::ArrayLengthZero;
 pub use cannot_call_via_contract_type_name::CannotCallViaContractTypeName;
 pub use constant_arithmetic_error::ConstantArithmeticError;
 pub use expression_not_a_value::{ExpressionNotAValue, NotAValueKind};
+pub use expression_not_an_lvalue::ExpressionNotAnLValue;
 pub use expression_not_callable::ExpressionNotCallable;
 pub use fallback_function_mutability::FallbackFunctionMutability;
 pub use fallback_function_signature::FallbackFunctionSignature;
@@ -40,6 +43,7 @@ use serde::Serialize;
 pub use storage_layout_base_non_integer::StorageLayoutBaseNonInteger;
 pub use storage_layout_base_not_constant::StorageLayoutBaseNotConstant;
 pub use storage_layout_base_out_of_range::StorageLayoutBaseOutOfRange;
+pub use write_to_constant::WriteToConstant;
 
 use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
@@ -100,5 +104,10 @@ define_diagnostic_kind! {
         LiteralTooLarge(LiteralTooLarge),
         /// The two branches of a conditional have no common type.
         IncompatibleConditionalBranches(IncompatibleConditionalBranches),
+        /// An expression in a position that is written to does not denote a
+        /// writable storage location.
+        ExpressionNotAnLValue(ExpressionNotAnLValue),
+        /// A `constant` declaration is written to.
+        WriteToConstant(WriteToConstant),
     }
 }

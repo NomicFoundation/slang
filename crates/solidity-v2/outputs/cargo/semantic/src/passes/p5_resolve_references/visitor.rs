@@ -230,7 +230,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_assignment_expression(&mut self, node: &ir::AssignmentExpression) {
-        let type_id = self.check_type_of_value_expression(&node.left_operand);
+        let type_id = self.check_type_of_lvalue_expression(&node.left_operand);
         self.check_type_of_value_expression(&node.right_operand);
         // TODO(validation) SDR[59]: check that the type of right_operand can be applied
         // to the left by means of the operator
@@ -352,13 +352,26 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_postfix_expression(&mut self, node: &ir::PostfixExpression) {
+        // `++` and `--` write back to their operand, which therefore has to be
+        // a location.
         // TODO(validation) SDR[52]: check that the operand is an integer
-        let type_id = self.check_type_of_value_expression(&node.operand);
+        let type_id = self.check_type_of_lvalue_expression(&node.operand);
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_prefix_expression(&mut self, node: &ir::PrefixExpression) {
-        let operand = self.check_type_of_value_expression(&node.operand);
+        // `delete`, `++` and `--` write to their operand, which therefore has
+        // to be a location; the other prefix operators only read it.
+        let operand = if matches!(
+            node.operator,
+            ir::PrefixExpressionOperator::DeleteKeyword(_)
+                | ir::PrefixExpressionOperator::PlusPlus(_)
+                | ir::PrefixExpressionOperator::MinusMinus(_)
+        ) {
+            self.check_type_of_lvalue_expression(&node.operand)
+        } else {
+            self.check_type_of_value_expression(&node.operand)
+        };
         let type_id = self.type_of_prefix_expression(node, operand);
         self.binder.set_node_type(node.id(), type_id);
         if let Ok(operator) = UsingOperator::try_from(&node.operator) {
