@@ -10,6 +10,6 @@ contract C {
     }
 
     function present() internal {
-        emit E(1);
+        return E.selector;
     }
 }

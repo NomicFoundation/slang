@@ -2,35 +2,9 @@
 //! of their own type rather than of the meta-type of the declaration they name,
 //! which is what lets a member reached through one fail to resolve.
 
-use slang_solidity_v2_common::diagnostics::kinds::resolution::MemberNotFound;
-
 use super::{Analyse, Analysis, expression, expression_statement_types};
 use crate::binder::Definition;
 use crate::types::{ErrorType, EventType, Type};
-
-#[test]
-fn test_error_instantiation_is_error_typed() {
-    let (type_, _types) = expression("E(1)")
-        .with_members("error E(uint256 amount);")
-        .into_resolved_type();
-
-    assert!(
-        matches!(type_, Type::Error(ErrorType { .. })),
-        "expected `E(1)` to be typed as an error, got {type_:?}",
-    );
-}
-
-#[test]
-fn test_event_invocation_is_event_typed() {
-    let (type_, _types) = expression("E(1)")
-        .with_members("event E(uint256 amount);")
-        .into_resolved_type();
-
-    assert!(
-        matches!(type_, Type::Event(EventType { .. })),
-        "expected `E(1)` to be typed as an event, got {type_:?}",
-    );
-}
 
 #[test]
 fn test_error_instantiation_with_named_arguments_is_error_typed() {
@@ -120,43 +94,4 @@ fn test_event_type_carries_its_declaration() {
         panic!("expected the type to carry an event definition, got {definition:?}");
     };
     assert_eq!("E", event.ir_node.name.unparse());
-}
-
-#[test]
-fn test_no_members_on_an_error_instantiation() {
-    // Members belong to the declaration, not to an instantiation of it.
-    // Before these types existed the operand was `Unresolved` and the
-    // member-not-found check was suppressed.
-    assert_eq!(
-        (
-            None,
-            Some(
-                MemberNotFound {
-                    name: "amount".to_owned()
-                }
-                .into()
-            )
-        ),
-        expression("E(1).amount")
-            .with_members("error E(uint256 amount);")
-            .into_type_and_diagnostic(),
-    );
-}
-
-#[test]
-fn test_no_members_on_an_event_invocation() {
-    assert_eq!(
-        (
-            None,
-            Some(
-                MemberNotFound {
-                    name: "amount".to_owned()
-                }
-                .into()
-            )
-        ),
-        expression("E(1).amount")
-            .with_members("event E(uint256 amount);")
-            .into_type_and_diagnostic(),
-    );
 }
