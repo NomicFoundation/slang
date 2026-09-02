@@ -101,12 +101,14 @@ You can also use `nextest` directly for faster iteration on Rust tests:
 
 `CompilationUnit::create()` parses source files in parallel over `rayon`'s ambient thread pool
 (the caller's installed pool, or the global one otherwise); IR building and semantic analysis are
-still sequential. `Concurrency::Inline` in the `Configuration` pins the whole compilation to the
-calling thread instead. One invariant holds it together: **output must not depend on the
-concurrency choice.** Files are lowered to IR in `FileId` order, and that is what makes node ids
-stable — so the parse phase has to hand them back in that order, which is why it collects from an
-_indexed_ parallel iterator. `slang_solidity/src/tests/thread_safety.rs` guards this, both across
-pool sizes and across concurrent builds.
+still sequential. Fewer than two sources skip `rayon` altogether and parse on the calling thread,
+where the scheduling overhead isn't worth it. There is no knob on the `Configuration` to opt out:
+to bound or serialize the work, call `create()` inside `rayon::ThreadPool::install` on a pool of
+your own. One invariant holds it together: **output must not depend on the concurrency choice.**
+Files are lowered to IR in `FileId` order, and that is what makes node ids stable — so the parse
+phase has to hand them back in that order, which is why it collects from an _indexed_ parallel
+iterator. `crates/solidity-v2/outputs/cargo/slang_solidity/src/tests/thread_safety.rs` guards
+this, both across pool sizes and across concurrent builds.
 
 ## Code Generation
 
