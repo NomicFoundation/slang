@@ -4,7 +4,7 @@
 
 Slang is a modular Solidity compiler tooling suite built by the Nomic Foundation. It provides a full-fidelity concrete syntax tree (CST) parser, semantic analysis, and binding computation for Solidity source code. It is **not** a replacement for solc — it focuses on code analysis and developer tooling, not bytecode generation.
 
-- **Language**: Rust workspace (60 crates) with TypeScript/npm bindings via WASM
+- **Language**: Rust workspace (48 crates) with TypeScript/npm bindings via WASM
 - **Supports**: Solidity versions 0.4.11 to latest 0.8.+
 - **Published as**: `slang_solidity` (crates.io), `@nomicfoundation/slang` (npm)
 
@@ -35,19 +35,25 @@ crates/
 │   │   ├── npm/package/    npm package (@nomicfoundation/slang)
 │   │   └── spec/           Language specification generator
 │   └── testing/            Snapshots, perf, solc compat, sourcify tests
-├── solidity-v2/
-│   ├── inputs/language/
-│   │   └── src/definition.rs   Grammar definition (LALRPOP-based v2 parser)
-│   ├── outputs/
-│   │   └── cargo/
-│   │       ├── common/     Shared types (slang_solidity_v2_common)
-│   │       ├── cst/        CST node types (slang_solidity_v2_cst)
-│   │       ├── parser/     LALRPOP-generated parser (slang_solidity_v2_parser)
-│   │       └── tests/      V2 integration tests
-│   └── testing/
-│       ├── snapshots/      CST output golden files (cst_output/)
-│       └── utils/          Test utilities and V1 comparison tooling
-└── documentation/      MkDocs documentation site
+└── solidity-v2/
+    ├── inputs/language/
+    │   └── src/definition.rs   Grammar definition (LALRPOP-based v2 parser)
+    ├── outputs/
+    │   └── cargo/
+    │       ├── common/         Versions, EVM targets, diagnostics (slang_solidity_v2_common)
+    │       ├── cst/            CST node types (slang_solidity_v2_cst)
+    │       ├── parser/         LALRPOP-generated parser (slang_solidity_v2_parser)
+    │       ├── ir/             CST lowered into the IR analysis runs on (slang_solidity_v2_ir)
+    │       ├── semantic/       Binder, type system, analysis passes (slang_solidity_v2_semantic)
+    │       ├── ast/            Public AST/type/ABI surface (slang_solidity_v2_ast)
+    │       ├── slang_solidity/ Public API: `CompilationUnit` (slang_solidity_v2)
+    │       └── tests/          Snapshot test runners (V2 integration tests)
+    └── testing/
+        ├── snapshots/          Golden files: cst_output/, binder_output/, diagnostics_output/
+        ├── solc/               solc comparison suite (results.generated.json)
+        └── utils/              Test utilities and V1 comparison tooling
+
+documentation/          MkDocs documentation site (at the repo root, not under crates/)
 ```
 
 v1 and v2 implementations coexist in the same `main` branch.
