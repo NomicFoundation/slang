@@ -339,7 +339,8 @@ pub(crate) fn smallest_integer_type_to_fit(value: &BigInt) -> Option<Type> {
     let bits = integer_bits_required(value, is_signed);
 
     if bits > 256 {
-        // TODO(validation) SDR[1740]: the integers don't fit in the EVM
+        // TODO(validation) SDR[1740]: the integers don't fit in the EVM. Only a
+        // conditional branch reports this so far, as `LiteralTooLarge`.
         return None;
     }
     let bits = bits.next_multiple_of(8).max(8);

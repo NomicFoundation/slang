@@ -44,6 +44,17 @@ pub struct TypeRegistry {
     void_type_id: TypeId,
 }
 
+/// Why a type has no mobile type.
+pub(crate) enum NoMobileType {
+    /// A type name or a declaration (a module, or a function declaration
+    /// reached through a contract type name) rather than a value.
+    NotAValue,
+    /// A function with a bound first argument or pre-applied call options.
+    PartiallyAppliedFunction,
+    /// A number literal no EVM type can hold.
+    LiteralTooLarge,
+}
+
 impl TypeRegistry {
     #[allow(clippy::similar_names)]
     pub(crate) fn new(language_version: LanguageVersion) -> Self {
@@ -662,47 +673,44 @@ impl TypeRegistry {
         self.register_type(type_with_location)
     }
 
-    /// Computes the mobile type of `type_id` and returns its `TypeId`.
-    pub(crate) fn compute_mobile_type(&mut self, type_id: TypeId) -> Option<TypeId> {
+    /// Computes the mobile type of `type_id` and returns its `TypeId`, or why
+    /// it has none.
+    pub(crate) fn compute_mobile_type(&mut self, type_id: TypeId) -> Result<TypeId, NoMobileType> {
         match self.get_type_by_id(type_id).clone() {
             Type::Literal(kind) => {
-                let mobile = kind.mobile_type()?;
-                Some(self.register_type(mobile))
+                let mobile = kind.mobile_type().ok_or(NoMobileType::LiteralTooLarge)?;
+                Ok(self.register_type(mobile))
             }
             // A calldata slice decays to the array it slices — this is what lets
             // `bytes calldata b = data[:3];` type-check. Mirrors solc's
             // `ArraySliceType::mobileType`.
-            Type::ArraySlice(ArraySliceType { array_type_id }) => Some(array_type_id),
+            Type::ArraySlice(ArraySliceType { array_type_id }) => Ok(array_type_id),
             Type::Tuple(TupleType { types: element_ids }) => {
-                let mobile_ids: Option<Vec<TypeId>> = element_ids
+                let mobile_ids = element_ids
                     .iter()
                     .map(|id| self.compute_mobile_type(*id))
-                    .collect();
-                Some(self.register_type(Type::Tuple(TupleType { types: mobile_ids? })))
+                    .collect::<Result<Vec<_>, _>>()?;
+                Ok(self.register_type(Type::Tuple(TupleType { types: mobile_ids })))
             }
-            // A partially applied function (bound first argument or pre-applied
-            // call options) doesn't have a mobile type.
-            //
             // Matches solc behaviour
-            Type::Function(function_type) if function_type.partially_applied => None,
-            // A type name denotes a type rather than a value, so it doesn't
-            // have a mobile type.
-            //
+            Type::Function(function_type) if function_type.partially_applied => {
+                Err(NoMobileType::PartiallyAppliedFunction)
+            }
             // Matches solc behaviour, except for module types
-            Type::MetaType(_) | Type::UserMetaType(_) => None,
-            _ => Some(type_id),
+            Type::MetaType(_) | Type::UserMetaType(_) => Err(NoMobileType::NotAValue),
+            _ => Ok(type_id),
         }
     }
 
     /// The type both operands can convert into. It takes the mobile type of one
     /// side and checks whether the *raw* other side implicitly converts into it.
     pub(crate) fn common_type(&mut self, left: TypeId, right: TypeId) -> Option<TypeId> {
-        if let Some(left_mobile) = self.compute_mobile_type(left)
+        if let Ok(left_mobile) = self.compute_mobile_type(left)
             && self.implicitly_convertible_to(right, left_mobile)
         {
             return Some(left_mobile);
         }
-        if let Some(right_mobile) = self.compute_mobile_type(right)
+        if let Ok(right_mobile) = self.compute_mobile_type(right)
             && self.implicitly_convertible_to(left, right_mobile)
         {
             return Some(right_mobile);
@@ -723,7 +731,7 @@ impl TypeRegistry {
             // TODO(validation) SDR[750]: Error if the element type can't be an array element
             return None;
         }
-        let mut element_type_id = self.compute_mobile_type(*first_id)?;
+        let mut element_type_id = self.compute_mobile_type(*first_id).ok()?;
         for &item_type_id in rest {
             if self.implicitly_convertible_to(item_type_id, element_type_id) {
                 // Item already fits the accumulator
@@ -733,7 +741,7 @@ impl TypeRegistry {
                 // TODO(validation) SDR[750]: Error if the element type can't be an array element
                 return None;
             }
-            let item_mobile_type_id = self.compute_mobile_type(item_type_id)?;
+            let item_mobile_type_id = self.compute_mobile_type(item_type_id).ok()?;
             if !self.implicitly_convertible_to(element_type_id, item_mobile_type_id) {
                 // TODO(validation) SDR[1741,1353]: types are not compatible
                 return None;

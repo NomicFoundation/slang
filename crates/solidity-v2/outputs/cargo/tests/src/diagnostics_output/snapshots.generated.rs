@@ -3623,23 +3623,20 @@ mod type_system {
         }
     }
 
-    mod conditional_branch_without_mobile_type {
+    mod expression_not_a_value {
         use super::*;
 
         #[test]
-        fn module_aliases() -> Result<()> {
+        fn conditional_type_name_branch() -> Result<()> {
             run(
-                "type_system/conditional_branch_without_mobile_type",
-                "module_aliases",
+                "type_system/expression_not_a_value",
+                "conditional_type_name_branch",
             )
         }
 
         #[test]
-        fn type_name_branch() -> Result<()> {
-            run(
-                "type_system/conditional_branch_without_mobile_type",
-                "type_name_branch",
-            )
+        fn module_aliases() -> Result<()> {
+            run("type_system/expression_not_a_value", "module_aliases")
         }
     }
 

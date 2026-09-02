@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[type-system/conditional-branch-without-mobile-type] Error: Invalid mobile type in conditional branch.
+[type-system/expression-not-a-value] Error: This expression denotes a type or declaration, not a value.
    ╭─[input.sol:7:16]
    │
  7 │     return c ? E : E.A;

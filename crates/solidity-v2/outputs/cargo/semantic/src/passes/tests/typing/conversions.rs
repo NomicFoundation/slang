@@ -6,7 +6,7 @@ use num_bigint::{BigInt, BigUint};
 use num_rational::BigRational;
 use ruint::aliases::U256;
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    ConditionalBranchWithoutMobileType, IncompatibleConditionalBranches,
+    ExpressionNotAValue, IncompatibleConditionalBranches, PartiallyAppliedFunctionUsedAsValue,
 };
 
 use super::expression;
@@ -214,23 +214,20 @@ fn test_conditional_expression_rejects_branch_without_mobile_type() {
             .into_type_and_diagnostics(),
         (
             None,
-            vec![
-                ConditionalBranchWithoutMobileType.into(),
-                ConditionalBranchWithoutMobileType.into()
-            ]
+            vec![ExpressionNotAValue.into(), ExpressionNotAValue.into()]
         )
     );
     assert_eq!(
         expression("true ? E : uint8(1)")
             .with_members("enum E { A }")
             .into_type_and_diagnostics(),
-        (None, vec![ConditionalBranchWithoutMobileType.into()])
+        (None, vec![ExpressionNotAValue.into()])
     );
     assert_eq!(
         expression("true ? uint8(1) : E")
             .with_members("enum E { A }")
             .into_type_and_diagnostics(),
-        (None, vec![ConditionalBranchWithoutMobileType.into()])
+        (None, vec![ExpressionNotAValue.into()])
     );
 
     // An elementary type keyword names a type as well.
@@ -238,10 +235,7 @@ fn test_conditional_expression_rejects_branch_without_mobile_type() {
         expression("true ? uint : uint").into_type_and_diagnostics(),
         (
             None,
-            vec![
-                ConditionalBranchWithoutMobileType.into(),
-                ConditionalBranchWithoutMobileType.into()
-            ]
+            vec![ExpressionNotAValue.into(), ExpressionNotAValue.into()]
         )
     );
 
@@ -250,10 +244,7 @@ fn test_conditional_expression_rejects_branch_without_mobile_type() {
         expression("true ? (uint, bool) : (uint, bool)").into_type_and_diagnostics(),
         (
             None,
-            vec![
-                ConditionalBranchWithoutMobileType.into(),
-                ConditionalBranchWithoutMobileType.into()
-            ]
+            vec![ExpressionNotAValue.into(), ExpressionNotAValue.into()]
         )
     );
 
@@ -262,7 +253,7 @@ fn test_conditional_expression_rejects_branch_without_mobile_type() {
         expression("true ? this.foo : this.foo{gas: 4}")
             .with_members("function foo() external {}")
             .into_type_and_diagnostics(),
-        (None, vec![ConditionalBranchWithoutMobileType.into()])
+        (None, vec![PartiallyAppliedFunctionUsedAsValue.into()])
     );
 }
 
