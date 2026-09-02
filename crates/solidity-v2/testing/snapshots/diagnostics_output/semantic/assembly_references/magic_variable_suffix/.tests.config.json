@@ -1,0 +1,18 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "target": {
+      "value": "Istanbul",
+      "reason": "Using the latest EVM target supported by solc '0.8.0', to avoid triggering any additional 'Evm Version not supported' errors when comparing outputs."
+    },
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "From",
+          "from": "0.8.0"
+        },
+        "reason": "solc resolves the Solidity globals and rejects the suffixes on them. slang does not look up Solidity globals from inline assembly yet, so the references stay unresolved and nothing is reported."
+      }
+    ]
+  }
+}

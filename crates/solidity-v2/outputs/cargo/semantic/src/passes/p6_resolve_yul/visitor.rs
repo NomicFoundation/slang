@@ -1,10 +1,12 @@
 use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::resolution::AmbiguousYulReference;
+use slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
 use super::Pass;
+use super::reference_checks::AccessKind;
 use super::structure_checks::YulForLoopClause;
 use crate::binder::{Definition, Reference, Resolution, Scope};
 
@@ -157,7 +159,7 @@ impl Visitor for Pass<'_> {
         // Only the paths on the left are assigned to, so visit them and the
         // assigned expression separately.
         for path in node.variables.iter() {
-            self.resolve_yul_path(path, true);
+            self.resolve_yul_path(path, AccessKind::Write);
         }
         ir::visitor::accept_yul_expression(&node.expression, self);
 
@@ -166,7 +168,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_yul_path(&mut self, items: &ir::YulPath) -> bool {
-        self.resolve_yul_path(items, false);
+        self.resolve_yul_path(items, AccessKind::Read);
 
         // We already visited our children
         false
@@ -175,16 +177,21 @@ impl Visitor for Pass<'_> {
 
 impl Pass<'_> {
     // Resolves the identifiers of a Yul path and records a reference for each
-    // one. `is_lvalue` says whether the path is assigned to.
-    fn resolve_yul_path(&mut self, items: &ir::YulPath, is_lvalue: bool) {
+    // one.
+    fn resolve_yul_path(&mut self, items: &ir::YulPath, access: AccessKind) {
         if items.is_empty() {
             return;
         }
 
-        let mut item_iter = items.iter();
+        let mut item_iter = items.iter().peekable();
 
         let identifier = item_iter.next().expect("items is not empty");
         let suffix = item_iter.next();
+
+        // A path holds a name and at most one suffix.
+        if item_iter.peek().is_some() {
+            self.push_diagnostic(items, YulMultipleSuffixes);
+        }
 
         let resolution = if suffix.is_none() {
             let scope_id = self.current_scope_id();
@@ -213,13 +220,16 @@ impl Pass<'_> {
         let reference = Reference::new(Arc::clone(identifier), resolution.clone());
         self.binder.insert_reference(reference);
 
-        self.check_solidity_reference(identifier, &resolution, suffix, is_lvalue);
+        let suffix = suffix.map(|suffix| {
+            let suffix_resolution = self.resolve_yul_suffix(suffix.unparse(), &resolution);
+            self.record_solidity_reference(&suffix_resolution);
+            Reference::new(Arc::clone(suffix), suffix_resolution)
+        });
+
+        self.check_solidity_reference(identifier, &resolution, suffix.as_ref(), access);
 
         if let Some(suffix) = suffix {
-            let resolution = self.resolve_yul_suffix(suffix.unparse(), &resolution);
-            self.record_solidity_reference(&resolution);
-            let reference = Reference::new(Arc::clone(suffix), resolution);
-            self.binder.insert_reference(reference);
+            self.binder.insert_reference(suffix);
         }
 
         // any remaining identifiers cannot be resolved, but we still want to

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/yul-assignment-to-non-variable] Error: Only local variables can be assigned to in inline assembly.
+   ╭─[input.sol:7:13]
+   │
+ 7 │             C := 1
+   │             ┬  
+   │             ╰── Error occurred here.
+───╯

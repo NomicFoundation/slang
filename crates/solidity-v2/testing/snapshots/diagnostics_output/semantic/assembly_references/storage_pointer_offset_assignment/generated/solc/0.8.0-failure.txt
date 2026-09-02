@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9739] Error: Only .slot can be assigned to.
+    ╭─[input.sol:10:13]
+    │
+ 10 │             y.offset := 2
+    │             ────┬───  
+    │                 ╰───── Error occurred here.
+────╯

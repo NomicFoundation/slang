@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4656] Error: State variables only support ".slot" and ".offset".
+   ╭─[input.sol:9:22]
+   │
+ 9 │             let t := x.length
+   │                      ────┬───  
+   │                          ╰───── Error occurred here.
+───╯
