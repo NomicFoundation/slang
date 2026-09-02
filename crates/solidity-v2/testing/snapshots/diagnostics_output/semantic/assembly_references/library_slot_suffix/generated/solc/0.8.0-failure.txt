@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 7944] Error: The suffixes ".offset", ".slot" and ".length" can only be used with variables.
+   ╭─[input.sol:9:22]
+   │
+ 9 │             let t := L.slot
+   │                      ───┬──  
+   │                         ╰──── Error occurred here.
+───╯

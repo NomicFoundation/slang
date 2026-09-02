@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 8198] Error: Identifier "M" not found.
+   ╭─[main.sol:9:22]
+   │
+ 9 │             let t := M
+   │                      ┬  
+   │                      ╰── Error occurred here.
+───╯

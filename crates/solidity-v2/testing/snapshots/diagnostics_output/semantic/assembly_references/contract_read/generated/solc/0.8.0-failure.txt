@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4977] Error: Expected a library.
+   ╭─[input.sol:7:22]
+   │
+ 7 │             let t := C
+   │                      ┬  
+   │                      ╰── Error occurred here.
+───╯

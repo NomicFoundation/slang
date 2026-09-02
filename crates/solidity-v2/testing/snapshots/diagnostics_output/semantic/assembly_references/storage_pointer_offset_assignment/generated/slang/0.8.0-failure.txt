@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/yul-assignment-to-offset] Error: Only ".slot" can be assigned to.
+    ╭─[input.sol:10:15]
+    │
+ 10 │             y.offset := 2
+    │               ───┬──  
+    │                  ╰──── Error occurred here.
+────╯

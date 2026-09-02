@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 8198] Error: Identifier "fp.selector" not found.
+    ╭─[input.sol:10:22]
+    │
+ 10 │             let t := fp.selector
+    │                      ─────┬─────  
+    │                           ╰─────── Error occurred here.
+────╯

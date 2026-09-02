@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/yul-calldata-array-access] Error: Call data elements cannot be accessed directly. Use ".offset" and ".length" to access the calldata offset and length of this array and then use "calldatacopy".
+   ╭─[input.sol:7:22]
+   │
+ 7 │             let t := s
+   │                      ┬  
+   │                      ╰── Error occurred here.
+───╯
