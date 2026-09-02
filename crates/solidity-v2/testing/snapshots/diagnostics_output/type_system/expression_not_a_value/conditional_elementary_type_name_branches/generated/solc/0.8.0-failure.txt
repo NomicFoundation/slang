@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 6359] Error: Return argument type type(uint256) is not implicitly convertible to expected type (type of first return variable) uint256.
+   ╭─[input.sol:6:12]
+   │
+ 6 │     return c ? uint : uint;
+   │            ───────┬───────  
+   │                   ╰───────── Error occurred here.
+───╯

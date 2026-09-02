@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/literal-too-large] Error: This literal does not fit any EVM type.
+   ╭─[input.sol:7:16]
+   │
+ 7 │     return c ? 2**9999 : 1;
+   │                ───┬───  
+   │                   ╰───── Error occurred here.
+───╯

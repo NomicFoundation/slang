@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 5992] Error: Return argument type tuple(type(uint256),type(bool)) is not implicitly convertible to expected type tuple(uint256,bool).
+   ╭─[input.sol:7:12]
+   │
+ 7 │     return c ? (uint, bool) : (uint, bool);
+   │            ───────────────┬───────────────  
+   │                           ╰───────────────── Error occurred here.
+───╯
