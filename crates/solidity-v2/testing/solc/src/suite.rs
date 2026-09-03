@@ -4,7 +4,7 @@ use rayon::prelude::*;
 
 use crate::dataset::Datasets;
 use crate::expected_failures;
-use crate::results::{AllFailures, Failure, SplitFailures, TestResults, VersionRun};
+use crate::results::{Failure, TestResults, VersionRun};
 use crate::runner::{self, Outcome};
 
 /// Fetches every supported version's semantic tests, compiles all of them,
@@ -19,11 +19,14 @@ pub fn run() -> Result<()> {
     // (the checked-in file only records which `(version, test)` pairs do).
     let previous = TestResults::load()?;
 
-    let runs = execute(&datasets)?;
+    let mut runs = execute(&datasets)?;
 
-    // Split the runs into those that match the expected failures
-    // and those that don't.
-    let (runs, stale_check) = expected_failures::split_and_check(runs);
+    // Checked before the split, which is what drops the expected failures from
+    // the runs — the paths this reads are gone afterwards.
+    let stale_check = expected_failures::check_stale(&runs);
+
+    // Counts the failures we stand behind, leaving only the ones we don't.
+    expected_failures::split(&mut runs);
 
     report_new_failures(&previous, &runs);
 
@@ -56,9 +59,9 @@ pub fn run() -> Result<()> {
 
 /// Renders one block per unexpected failure: the version it ran at, the test's
 /// path, and the diagnostics slang reported for it.
-fn render_unexpected_failures(runs: &[VersionRun<SplitFailures>]) -> Vec<String> {
+fn render_unexpected_failures(runs: &[VersionRun]) -> Vec<String> {
     runs.iter()
-        .flat_map(|run| &run.failures.unexpected)
+        .flat_map(|run| &run.unexpected_failures)
         .map(|failure| {
             format!(
                 "- [{version}] {test_path}\n{diagnostics}",
@@ -71,7 +74,7 @@ fn render_unexpected_failures(runs: &[VersionRun<SplitFailures>]) -> Vec<String>
 }
 
 /// Compiles every test in every dataset.
-fn execute(datasets: &Datasets) -> Result<Vec<VersionRun<AllFailures>>> {
+fn execute(datasets: &Datasets) -> Result<Vec<VersionRun>> {
     // Roughly 1,600 tests across ~37 versions, each entirely independent, so
     // the whole matrix fans out across rayon.
     datasets
@@ -101,7 +104,8 @@ fn execute(datasets: &Datasets) -> Result<Vec<VersionRun<AllFailures>>> {
                 version,
                 commit: dataset.commit_sha().to_owned(),
                 executed: test_files.len(),
-                failures: AllFailures(outcomes.into_iter().flatten().collect()),
+                unexpected_failures: outcomes.into_iter().flatten().collect(),
+                expected_failures: None,
             })
         })
         .collect()
@@ -129,10 +133,10 @@ const MAX_REPORTED_FAILURES: usize = 10;
 /// Prints the diagnostics behind each failure that isn't already checked in.
 ///
 /// Note that an old failure that is now passing is not reported here.
-fn report_new_failures(previous: &TestResults, runs: &[VersionRun<SplitFailures>]) {
+fn report_new_failures(previous: &TestResults, runs: &[VersionRun]) {
     let new_failures: Vec<&Failure> = runs
         .iter()
-        .flat_map(|run| &run.failures.unexpected)
+        .flat_map(|run| &run.unexpected_failures)
         .filter(|failure| !previous.contains_failure(failure.version, &failure.test_path))
         .collect();
 

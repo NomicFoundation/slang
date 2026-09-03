@@ -22,41 +22,26 @@ pub struct Failure {
 /// Everything one version's run produced. Unlike [`VersionResults`] this also
 /// carries the diagnostics behind each failure, which are reported but not
 /// checked in — they're far too noisy for a file we diff.
-///
-/// `F` is how the failures are stored, we use it to differentiate
-/// between all the failures, vs the filtered ones according to the
-/// expected list.
-pub struct VersionRun<F> {
+pub struct VersionRun {
     pub version: LanguageVersion,
     /// The commit this version's release tag resolved to when it was fetched.
     pub commit: String,
     /// How many tests ran, whether they passed or not.
     pub executed: usize,
-    pub failures: F,
-}
-
-/// Represents all of slang failures.
-pub struct AllFailures(pub Vec<Failure>);
-
-/// Some failures are expected, this tracks those against the ones
-/// that are not expected.
-pub struct SplitFailures {
-    /// The failures we don't expect.
-    pub unexpected: Vec<Failure>,
-    /// The failures we expect.
-    pub expected: usize,
-}
-
-impl<F> VersionRun<F> {
-    /// Rebuilds this run with its failures in another state.
-    pub fn map_failures<G>(self, transform: impl FnOnce(F) -> G) -> VersionRun<G> {
-        VersionRun {
-            version: self.version,
-            commit: self.commit,
-            executed: self.executed,
-            failures: transform(self.failures),
-        }
-    }
+    /// The failures we don't stand behind. Until
+    /// [`expected_failures::split`] has run this holds *every* failing test in
+    /// the run.
+    ///
+    /// [`expected_failures::split`]: crate::expected_failures::split
+    pub unexpected_failures: Vec<Failure>,
+    /// How many failures an [`expected_failures`] case accounts for. Counting
+    /// them rather than keeping their paths.
+    ///
+    /// `None` until [`expected_failures::split`] has run.
+    ///
+    /// [`expected_failures`]: crate::expected_failures
+    /// [`expected_failures::split`]: crate::expected_failures::split
+    pub expected_failures: Option<usize>,
 }
 
 /// What a whole run produced, per version.
@@ -153,25 +138,24 @@ impl TestResults {
     }
 }
 
-impl FromIterator<VersionRun<SplitFailures>> for TestResults {
-    fn from_iter<I: IntoIterator<Item = VersionRun<SplitFailures>>>(runs: I) -> Self {
+impl FromIterator<VersionRun> for TestResults {
+    fn from_iter<I: IntoIterator<Item = VersionRun>>(runs: I) -> Self {
         let versions = runs
             .into_iter()
             .map(|run| {
-                let SplitFailures {
-                    unexpected,
-                    expected,
-                } = run.failures;
-
-                let unexpected_failures = unexpected.len();
+                let unexpected_failures = run.unexpected_failures.len();
+                let expected_failures = run
+                    .expected_failures
+                    .expect("expected failures should be set after splitting");
 
                 let results = VersionResults {
                     commit: run.commit,
                     executed: run.executed,
-                    passed: run.executed - unexpected_failures - expected,
-                    expected_failures: expected,
+                    passed: run.executed - unexpected_failures - expected_failures,
+                    expected_failures,
                     unexpected_failures,
-                    unexpected_failures_paths: unexpected
+                    unexpected_failures_paths: run
+                        .unexpected_failures
                         .into_iter()
                         .map(|failure| failure.test_path)
                         .collect(),

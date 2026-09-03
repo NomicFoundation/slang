@@ -1,7 +1,7 @@
 use anyhow::{Result, bail};
 use slang_solidity_v2_common::versions::{LanguageVersion, LanguageVersionSpecifier};
 
-use crate::results::{AllFailures, SplitFailures, VersionRun};
+use crate::results::VersionRun;
 
 /// A set of expected failures that share one justification.
 struct ExpectedFailures {
@@ -29,57 +29,19 @@ impl ExpectedCase {
     }
 }
 
-/// Splits each run's expected failures out into a count, which keeps them out
-/// of the generated results file.
-///
-/// Also check that every expected failure is still failing.
-///
-/// Return the new runs and a `Result` containing the error, if any.
-pub fn split_and_check(
-    runs: Vec<VersionRun<AllFailures>>,
-) -> (Vec<VersionRun<SplitFailures>>, Result<()>) {
-    split_and_check_against(EXPECTED_FAILURES, runs)
+/// Fails when a declared case no longer describes a failing test, so that a
+/// case outliving the divergence it stands for is caught rather than silently
+/// ignored.
+pub fn check_stale(runs: &[VersionRun]) -> Result<()> {
+    check_stale_against(EXPECTED_FAILURES, runs)
 }
 
-fn split_and_check_against(
-    table: &[ExpectedFailures],
-    runs: Vec<VersionRun<AllFailures>>,
-) -> (Vec<VersionRun<SplitFailures>>, Result<()>) {
-    let stale_result = check_stale(table, &runs);
+fn check_stale_against(table: &[ExpectedFailures], runs: &[VersionRun]) -> Result<()> {
+    assert!(
+        runs.iter().all(|run| run.expected_failures.is_none()),
+        "the expected failures have already been split out of these runs",
+    );
 
-    let runs = runs
-        .into_iter()
-        .map(|run| {
-            let version = run.version;
-
-            run.map_failures(|all| split_failures(table, version, all))
-        })
-        .collect();
-
-    (runs, stale_result)
-}
-
-fn split_failures(
-    table: &[ExpectedFailures],
-    version: LanguageVersion,
-    AllFailures(mut unexpected): AllFailures,
-) -> SplitFailures {
-    let failed = unexpected.len();
-
-    unexpected.retain(|failure| {
-        !table
-            .iter()
-            .flat_map(|expected| expected.cases)
-            .any(|case| case.matches(version, &failure.test_path))
-    });
-
-    SplitFailures {
-        expected: failed - unexpected.len(),
-        unexpected,
-    }
-}
-
-fn check_stale(table: &[ExpectedFailures], runs: &[VersionRun<AllFailures>]) -> Result<()> {
     let mut stale = Vec::new();
 
     for expected in table {
@@ -88,8 +50,7 @@ fn check_stale(table: &[ExpectedFailures], runs: &[VersionRun<AllFailures>]) -> 
                 .iter()
                 .filter(|run| case.versions.contains(run.version))
                 .filter(|run| {
-                    !run.failures
-                        .0
+                    !run.unexpected_failures
                         .iter()
                         .any(|failure| failure.test_path == case.test_path)
                 })
@@ -119,6 +80,32 @@ fn check_stale(table: &[ExpectedFailures], runs: &[VersionRun<AllFailures>]) -> 
     );
 }
 
+/// Moves each run's expected failures out of its `unexpected_failures` and into
+/// its `expected_failures` count.
+pub fn split(runs: &mut [VersionRun]) {
+    split_against(EXPECTED_FAILURES, runs);
+}
+
+fn split_against(table: &[ExpectedFailures], runs: &mut [VersionRun]) {
+    for run in runs {
+        assert!(
+            run.expected_failures.is_none(),
+            "the expected failures have already been split out of this run",
+        );
+
+        let failed = run.unexpected_failures.len();
+
+        run.unexpected_failures.retain(|failure| {
+            !table
+                .iter()
+                .flat_map(|expected| expected.cases)
+                .any(|case| case.matches(run.version, &failure.test_path))
+        });
+
+        run.expected_failures = Some(failed - run.unexpected_failures.len());
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -133,44 +120,41 @@ mod tests {
     }];
 
     /// One version's run, with the tests that failed at it.
-    fn run(version: LanguageVersion, failing: &[&str]) -> VersionRun<AllFailures> {
+    fn run(version: LanguageVersion, failing: &[&str]) -> VersionRun {
         VersionRun {
             version,
             commit: "0000000".to_owned(),
             executed: failing.len(),
-            failures: AllFailures(
-                failing
-                    .iter()
-                    .map(|path| Failure {
-                        version,
-                        test_path: (*path).to_owned(),
-                        diagnostics: Vec::new(),
-                    })
-                    .collect(),
-            ),
+            unexpected_failures: failing
+                .iter()
+                .map(|path| Failure {
+                    version,
+                    test_path: (*path).to_owned(),
+                    diagnostics: Vec::new(),
+                })
+                .collect(),
+            expected_failures: None,
         }
     }
 
     /// The paths still left unexpected.
-    fn unexpected(run: &VersionRun<SplitFailures>) -> Vec<&str> {
-        run.failures
-            .unexpected
+    fn unexpected(run: &VersionRun) -> Vec<&str> {
+        run.unexpected_failures
             .iter()
             .map(|failure| failure.test_path.as_str())
             .collect()
     }
 
-    /// An expected failure is counted under `expected` and dropped from
-    /// `unexpected`; every other failure stays.
+    /// An expected failure is counted under `expected_failures` and dropped
+    /// from `unexpected_failures`; every other failure stays.
     #[test]
     fn expected_failures_are_split_from_the_rest() {
-        let runs = vec![run(LanguageVersion::V0_8_0, &["a.sol", "b.sol"])];
+        let mut runs = vec![run(LanguageVersion::V0_8_0, &["a.sol", "b.sol"])];
 
-        let (runs, stale) = split_and_check_against(TABLE, runs);
+        check_stale_against(TABLE, &runs).unwrap();
+        split_against(TABLE, &mut runs);
 
-        stale.unwrap();
-
-        assert_eq!(runs[0].failures.expected, 1);
+        assert_eq!(runs[0].expected_failures, Some(1));
         assert_eq!(unexpected(&runs[0]), ["b.sol"]);
     }
 
@@ -183,8 +167,7 @@ mod tests {
             run(LanguageVersion::V0_8_1, &["a.sol"]),
         ];
 
-        let (_, stale) = split_and_check_against(TABLE, runs);
-        let error = stale.unwrap_err().to_string();
+        let error = check_stale_against(TABLE, &runs).unwrap_err().to_string();
 
         assert!(error.contains("'a.sol' did not fail at 0.8.0"), "{error}");
         assert!(!error.contains("0.8.1"), "{error}");
@@ -200,22 +183,20 @@ mod tests {
             run(LanguageVersion::V0_8_5, &[]),
         ];
 
-        let (_, stale) = split_and_check_against(TABLE, runs);
-
-        stale.unwrap();
+        check_stale_against(TABLE, &runs).unwrap();
     }
 
     /// Paths are whole names, never prefixes: neither the directory holding
     /// the test nor a sibling under it is covered.
     #[test]
     fn a_case_covers_exactly_the_test_it_names() {
-        let runs = vec![run(LanguageVersion::V0_8_0, &["a.sol/nested.sol"])];
+        let mut runs = vec![run(LanguageVersion::V0_8_0, &["a.sol/nested.sol"])];
 
-        let (runs, stale) = split_and_check_against(TABLE, runs);
-        let error = stale.unwrap_err().to_string();
+        let error = check_stale_against(TABLE, &runs).unwrap_err().to_string();
+        split_against(TABLE, &mut runs);
 
         assert!(error.contains("'a.sol' did not fail at 0.8.0"), "{error}");
-        assert_eq!(runs[0].failures.expected, 0);
+        assert_eq!(runs[0].expected_failures, Some(0));
         assert_eq!(unexpected(&runs[0]), ["a.sol/nested.sol"]);
     }
 }
