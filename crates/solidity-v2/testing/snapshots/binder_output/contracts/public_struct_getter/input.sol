@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Base {
     struct Single { address a; }
     Single public single;

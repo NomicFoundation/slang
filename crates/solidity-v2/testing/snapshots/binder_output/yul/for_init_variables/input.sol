@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function test() public {
         for (uint256 i = 0; i < 10; i += 1) {

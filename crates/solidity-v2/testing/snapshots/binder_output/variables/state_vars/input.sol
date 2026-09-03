@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Foo {
     uint x;
 

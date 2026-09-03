@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract First {
     enum Choice { One, Two }
 

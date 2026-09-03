@@ -2,9 +2,9 @@
 
 Parse errors:
 [syntax/unexpected-terminal] Error: Unexpected CloseBrace. One of AddressKeyword, AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
-    ╭─[input.sol:11:1]
+    ╭─[input.sol:13:1]
     │
- 11 │ }
+ 13 │ }
     │ ┬  
     │ ╰── Error occurred here.
 ────╯

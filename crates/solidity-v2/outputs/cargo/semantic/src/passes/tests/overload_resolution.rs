@@ -44,6 +44,7 @@ fn function_definition_ids(contract: &ir::ContractDefinition, name: &str) -> Vec
 #[test]
 fn test_attached_functions_from_different_directives_stay_ambiguous() {
     const SOURCE: &str = r###"
+pragma solidity *;
 struct S {
     uint256 x;
 }
@@ -199,6 +200,7 @@ fn test_public_function_type_does_not_convert_to_external() {
 #[test]
 fn test_public_function_argument_selects_internal_overload() {
     const SOURCE: &str = r###"
+pragma solidity *;
 contract C {
     function target(bytes memory) public {}
 

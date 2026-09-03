@@ -1,3 +1,5 @@
+pragma solidity *;
+
 interface Example {
     enum Choice { One, Two }
     struct Book { string author; }

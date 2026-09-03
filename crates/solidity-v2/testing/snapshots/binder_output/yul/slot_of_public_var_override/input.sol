@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Base {
     function x() public view virtual returns (uint) {}
 }

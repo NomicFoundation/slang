@@ -196,6 +196,7 @@ fn test_meta_type_internal_names() {
     // Meta-types print in solc's `type(T)` notation: `type(uint256)` for an
     // elementary type, `type(C.E)` for a named definition.
     let source = r#"
+        pragma solidity *;
         contract C {
             enum E { A }
             function g() internal pure {
@@ -311,6 +312,7 @@ fn test_function_declaration_via_type_name_has_no_mobile_type() {
     // ones only from a non-deriving ("foreign") scope; `internal` and local
     // `public` stay callable function values.
     let source = r#"
+        pragma solidity *;
         interface I {
             function h() external;
         }

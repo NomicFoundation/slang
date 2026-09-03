@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Lib {
     function nopCalldata(bytes calldata) external {}
     function nopMemory(bytes memory) external {}

@@ -1,21 +1,21 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (7):
-- Def: #1 ["Test" @ input.sol:1:10] (contract)
-- Def: #2 ["tx" @ input.sol:2:9] (state var, type: int256)
-- Def: #3 ["test" @ input.sol:4:14] (function, type: function () returns void)
-- Def: #4 ["block" @ input.sol:5:13] (variable, type: int256)
-- Def: #5 ["sha256" @ input.sol:11:14] (function, type: function () returns void)
-- Def: #6 ["sha256" @ input.sol:14:10] (function, type: function () returns void)
-- Def: #7 ["top_level" @ input.sol:16:10] (function, type: function () returns void)
+- Def: #1 ["Test" @ input.sol:3:10] (contract)
+- Def: #2 ["tx" @ input.sol:4:9] (state var, type: int256)
+- Def: #3 ["test" @ input.sol:6:14] (function, type: function () returns void)
+- Def: #4 ["block" @ input.sol:7:13] (variable, type: int256)
+- Def: #5 ["sha256" @ input.sol:13:14] (function, type: function () returns void)
+- Def: #6 ["sha256" @ input.sol:16:10] (function, type: function () returns void)
+- Def: #7 ["top_level" @ input.sol:18:10] (function, type: function () returns void)
 
 ------------------------------------------------------------------------
 
 References (4):
-- Ref: ["block" @ input.sol:6:9] -> #4
-- Ref: ["tx" @ input.sol:7:9] -> #2
-- Ref: ["sha256" @ input.sol:8:9] -> #5
-- Ref: ["sha256" @ input.sol:17:5] -> #6
+- Ref: ["block" @ input.sol:8:9] -> #4
+- Ref: ["tx" @ input.sol:9:9] -> #2
+- Ref: ["sha256" @ input.sol:10:9] -> #5
+- Ref: ["sha256" @ input.sol:19:5] -> #6
 
 ------------------------------------------------------------------------
 
@@ -26,41 +26,41 @@ Unbound identifiers (0):
 Bindings: 
     ╭─[input.sol:1:1]
     │
-  1 │ contract Test {
+  3 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 1
-  2 │     int tx;
+  4 │     int tx;
     │         ─┬  
     │          ╰── name: 2
     │ 
-  4 │     function test() public {
+  6 │     function test() public {
     │              ──┬─  
     │                ╰─── name: 3
-  5 │         int block;
+  7 │         int block;
     │             ──┬──  
     │               ╰──── name: 4
-  6 │         block;
+  8 │         block;
     │         ──┬──  
     │           ╰──── ref: 4
-  7 │         tx;
+  9 │         tx;
     │         ─┬  
     │          ╰── ref: 2
-  8 │         sha256();
+ 10 │         sha256();
     │         ───┬──  
     │            ╰──── ref: 5
     │ 
- 11 │     function sha256() public {}
+ 13 │     function sha256() public {}
     │              ───┬──  
     │                 ╰──── name: 5
     │ 
- 14 │ function sha256() {}
+ 16 │ function sha256() {}
     │          ───┬──  
     │             ╰──── name: 6
     │ 
- 16 │ function top_level() {
+ 18 │ function top_level() {
     │          ────┬────  
     │              ╰────── name: 7
- 17 │     sha256();
+ 19 │     sha256();
     │     ───┬──  
     │        ╰──── ref: 6
 ────╯

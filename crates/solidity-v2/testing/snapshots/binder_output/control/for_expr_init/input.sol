@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function test_non_decl_init() public {
         int z;

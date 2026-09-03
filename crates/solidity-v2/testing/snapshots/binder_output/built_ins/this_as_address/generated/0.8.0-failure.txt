@@ -2,16 +2,16 @@
 
 Parse errors:
 [resolution/member-not-found] Error: Member 'balance' not found or not visible after argument-dependent lookup.
-   ╭─[input.sol:4:14]
+   ╭─[input.sol:6:14]
    │
- 4 │         this.balance;
+ 6 │         this.balance;
    │              ───┬───  
    │                 ╰───── Error occurred here.
 ───╯
 [resolution/member-not-found] Error: Member 'balance' not found or not visible after argument-dependent lookup.
-    ╭─[input.sol:11:14]
+    ╭─[input.sol:13:14]
     │
- 11 │         this.balance;
+ 13 │         this.balance;
     │              ───┬───  
     │                 ╰───── Error occurred here.
 ────╯
@@ -19,16 +19,16 @@ Parse errors:
 ------------------------------------------------------------------------
 
 Definitions (4):
-- Def: #1 ["Test" @ input.sol:1:10] (contract)
-- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
-- Def: #3 ["Utils" @ input.sol:8:9] (library)
-- Def: #4 ["test" @ input.sol:9:14] (function, type: function () returns void)
+- Def: #1 ["Test" @ input.sol:3:10] (contract)
+- Def: #2 ["test" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #3 ["Utils" @ input.sol:10:9] (library)
+- Def: #4 ["test" @ input.sol:11:14] (function, type: function () returns void)
 
 ------------------------------------------------------------------------
 
 References (2):
-- Ref: ["balance" @ input.sol:4:14] -> unresolved
-- Ref: ["balance" @ input.sol:11:14] -> unresolved
+- Ref: ["balance" @ input.sol:6:14] -> unresolved
+- Ref: ["balance" @ input.sol:13:14] -> unresolved
 
 ------------------------------------------------------------------------
 
@@ -39,25 +39,25 @@ Unbound identifiers (0):
 Bindings: 
     ╭─[input.sol:1:1]
     │
-  1 │ contract Test {
+  3 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 1
-  2 │     function test() public {
+  4 │     function test() public {
     │              ──┬─  
     │                ╰─── name: 2
     │ 
-  4 │         this.balance;
+  6 │         this.balance;
     │              ───┬───  
     │                 ╰───── unresolved
     │ 
-  8 │ library Utils {
+ 10 │ library Utils {
     │         ──┬──  
     │           ╰──── name: 3
-  9 │     function test() internal {
+ 11 │     function test() internal {
     │              ──┬─  
     │                ╰─── name: 4
     │ 
- 11 │         this.balance;
+ 13 │         this.balance;
     │              ───┬───  
     │                 ╰───── unresolved
 ────╯

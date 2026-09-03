@@ -5,6 +5,8 @@
 // The bare name `x` then denotes the variable in every position, so `callee`
 // is a type error, not a resolution one, and slang does not report it yet.
 // The function stays reachable as `A.x` and `this.x`.
+pragma solidity *;
+
 contract A {
     function x(uint256) public pure returns (uint256) {
         return 1;

@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Lib {
     function nop(uint256 a, uint256 b) internal {}
     function nop(uint256 a, uint256 b, uint256 c) internal {}

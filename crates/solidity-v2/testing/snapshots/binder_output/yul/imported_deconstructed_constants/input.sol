@@ -1,4 +1,6 @@
 // --- path: main.sol
+pragma solidity *;
+
 import {FOO} from "./constants.sol";
 
 contract Test {
@@ -10,4 +12,6 @@ contract Test {
 }
 
 // --- path: constants.sol
+pragma solidity *;
+
 uint256 constant FOO = 1;

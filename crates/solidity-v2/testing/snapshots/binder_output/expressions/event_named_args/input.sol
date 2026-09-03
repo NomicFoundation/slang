@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Other {
     event Warn(string reason);
 }

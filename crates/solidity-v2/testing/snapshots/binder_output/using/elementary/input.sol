@@ -1,3 +1,5 @@
+pragma solidity *;
+
 function square(int value) returns (int) {}
 
 using {square} for int;

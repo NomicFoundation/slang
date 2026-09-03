@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library SafeMath {
     function add(uint, uint) internal returns (uint) {}
 }

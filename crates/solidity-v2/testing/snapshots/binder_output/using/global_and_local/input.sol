@@ -1,4 +1,6 @@
 // ---- path: main.sol
+pragma solidity *;
+
 import "./lib.sol";
 
 contract Test {
@@ -12,6 +14,8 @@ contract Test {
 }
 
 // ---- path: lib.sol
+pragma solidity *;
+
 type Amount is uint64;
 
 using {min} for Amount global;

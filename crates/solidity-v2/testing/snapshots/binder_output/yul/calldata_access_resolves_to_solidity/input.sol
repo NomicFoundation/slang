@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function test(bytes calldata add) public pure returns (uint256 len, uint256 off) {
         assembly {

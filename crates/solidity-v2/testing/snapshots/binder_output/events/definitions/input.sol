@@ -1,3 +1,5 @@
+pragma solidity *;
+
 event TopLevelEvent(int indexed x, int y);
 
 contract Test {

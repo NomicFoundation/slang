@@ -6,6 +6,8 @@
 //     slice`), so `firstByte` is unresolved on the slice below.
 //   - A `using L for *` directive applies to every type, including a slice.
 
+pragma solidity *;
+
 library L {
     function firstByte(bytes calldata b) internal pure returns (bytes1) {
         return b[0];

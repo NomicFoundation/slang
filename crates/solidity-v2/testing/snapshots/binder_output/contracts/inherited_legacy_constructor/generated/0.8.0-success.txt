@@ -1,23 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (7):
-- Def: #1 ["token" @ input.sol:1:10] (contract)
-- Def: #2 ["balanceOf" @ input.sol:2:40] (state var, type: address => uint256)
-- Def: #3 ["init" @ input.sol:4:14] (function, type: unresolved)
-- Def: #4 ["Test" @ input.sol:7:10] (contract)
-- Def: #5 ["merge" @ input.sol:8:14] (function, type: function (address) returns void)
-- Def: #6 ["target" @ input.sol:8:28] (parameter, type: address)
-- Def: #7 ["old" @ input.sol:9:15] (variable, type: token)
+- Def: #1 ["token" @ input.sol:3:10] (contract)
+- Def: #2 ["balanceOf" @ input.sol:4:40] (state var, type: address => uint256)
+- Def: #3 ["init" @ input.sol:6:14] (function, type: unresolved)
+- Def: #4 ["Test" @ input.sol:9:10] (contract)
+- Def: #5 ["merge" @ input.sol:10:14] (function, type: function (address) returns void)
+- Def: #6 ["target" @ input.sol:10:28] (parameter, type: address)
+- Def: #7 ["old" @ input.sol:11:15] (variable, type: token)
 
 ------------------------------------------------------------------------
 
 References (6):
-- Ref: ["token" @ input.sol:7:18] -> #1
-- Ref: ["token" @ input.sol:9:9] -> #1
-- Ref: ["token" @ input.sol:9:21] -> #1
-- Ref: ["old" @ input.sol:10:9] -> #7
-- Ref: ["balanceOf" @ input.sol:10:13] -> #2
-- Ref: ["target" @ input.sol:10:23] -> #6
+- Ref: ["token" @ input.sol:9:18] -> #1
+- Ref: ["token" @ input.sol:11:9] -> #1
+- Ref: ["token" @ input.sol:11:21] -> #1
+- Ref: ["old" @ input.sol:12:9] -> #7
+- Ref: ["balanceOf" @ input.sol:12:13] -> #2
+- Ref: ["target" @ input.sol:12:23] -> #6
 
 ------------------------------------------------------------------------
 
@@ -28,35 +28,35 @@ Unbound identifiers (0):
 Bindings: 
     ╭─[input.sol:1:1]
     │
-  1 │ contract token {
+  3 │ contract token {
     │          ──┬──  
     │            ╰──── name: 1
-  2 │     mapping(address => uint256) public balanceOf;
+  4 │     mapping(address => uint256) public balanceOf;
     │                                        ────┬────  
     │                                            ╰────── name: 2
     │ 
-  4 │     function init(uint256, string, string) public {}
+  6 │     function init(uint256, string, string) public {}
     │              ──┬─  
     │                ╰─── name: 3
     │ 
-  7 │ contract Test is token {
+  9 │ contract Test is token {
     │          ──┬─    ──┬──  
     │            ╰──────────── name: 4
     │                    │    
     │                    ╰──── ref: 1
-  8 │     function merge(address target) public {
+ 10 │     function merge(address target) public {
     │              ──┬──         ───┬──  
     │                ╰─────────────────── name: 5
     │                               │    
     │                               ╰──── name: 6
-  9 │         token old = token(address(0x7F2176cEB16dcb648dc924eff617c3dC2BEfd30d));
+ 11 │         token old = token(address(0x7F2176cEB16dcb648dc924eff617c3dC2BEfd30d));
     │         ──┬── ─┬─   ──┬──  
     │           ╰──────────────── ref: 1
     │                │      │    
     │                ╰─────────── name: 7
     │                       │    
     │                       ╰──── ref: 1
- 10 │         old.balanceOf(target);
+ 12 │         old.balanceOf(target);
     │         ─┬─ ────┬──── ───┬──  
     │          ╰──────────────────── ref: 7
     │                 │        │    

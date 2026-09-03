@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract A {
     function total() public returns (uint256) {}
 }

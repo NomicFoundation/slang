@@ -1,3 +1,5 @@
+pragma solidity *;
+
 using {invoke} for function(uint);
 
 function invoke(function(uint) x) {

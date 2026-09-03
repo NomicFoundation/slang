@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
   function someFunc(int64 x) public returns (int256) {
     return add(add(x), add(3));

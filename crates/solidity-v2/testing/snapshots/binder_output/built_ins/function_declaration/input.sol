@@ -1,3 +1,5 @@
+pragma solidity *;
+
 interface I {
     function i() external;
 }

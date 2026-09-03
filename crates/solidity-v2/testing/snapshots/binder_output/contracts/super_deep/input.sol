@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Base {
     function in_base() public {}
 }

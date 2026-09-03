@@ -1,4 +1,6 @@
 // --- path: main.sol
+pragma solidity *;
+
 import {Log as Renamed} from "./lib.sol";
 
 contract Test {
@@ -8,4 +10,6 @@ contract Test {
 }
 
 // --- path: lib.sol
+pragma solidity *;
+
 event Log(string name, uint level);

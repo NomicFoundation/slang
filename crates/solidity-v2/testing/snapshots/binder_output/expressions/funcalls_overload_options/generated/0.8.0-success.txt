@@ -1,28 +1,28 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (8):
-- Def: #1 ["Other" @ input.sol:1:10] (contract)
-- Def: #2 ["overloaded" @ input.sol:2:12] (function, type: function (int256) returns uint256)
-- Def: #3 ["x" @ input.sol:2:27] (parameter, type: int256)
-- Def: #4 ["overloaded" @ input.sol:6:12] (function, type: function () returns uint256)
-- Def: #5 ["Test" @ input.sol:11:10] (contract)
-- Def: #6 ["someFunc" @ input.sol:12:12] (function, type: function (Other, int256) returns void)
-- Def: #7 ["x" @ input.sol:12:27] (parameter, type: Other)
-- Def: #8 ["y" @ input.sol:12:34] (parameter, type: int256)
+- Def: #1 ["Other" @ input.sol:3:10] (contract)
+- Def: #2 ["overloaded" @ input.sol:4:12] (function, type: function (int256) returns uint256)
+- Def: #3 ["x" @ input.sol:4:27] (parameter, type: int256)
+- Def: #4 ["overloaded" @ input.sol:8:12] (function, type: function () returns uint256)
+- Def: #5 ["Test" @ input.sol:13:10] (contract)
+- Def: #6 ["someFunc" @ input.sol:14:12] (function, type: function (Other, int256) returns void)
+- Def: #7 ["x" @ input.sol:14:27] (parameter, type: Other)
+- Def: #8 ["y" @ input.sol:14:34] (parameter, type: int256)
 
 ------------------------------------------------------------------------
 
 References (10):
-- Ref: ["Other" @ input.sol:12:21] -> #1
-- Ref: ["x" @ input.sol:13:5] -> #7
-- Ref: ["overloaded" @ input.sol:13:7] -> #4
-- Ref: ["value" @ input.sol:13:19] -> built-in
-- Ref: ["gas" @ input.sol:13:30] -> built-in
-- Ref: ["x" @ input.sol:14:5] -> #7
-- Ref: ["overloaded" @ input.sol:14:7] -> #2
-- Ref: ["value" @ input.sol:14:19] -> built-in
-- Ref: ["gas" @ input.sol:14:30] -> built-in
-- Ref: ["y" @ input.sol:14:42] -> #8
+- Ref: ["Other" @ input.sol:14:21] -> #1
+- Ref: ["x" @ input.sol:15:5] -> #7
+- Ref: ["overloaded" @ input.sol:15:7] -> #4
+- Ref: ["value" @ input.sol:15:19] -> built-in
+- Ref: ["gas" @ input.sol:15:30] -> built-in
+- Ref: ["x" @ input.sol:16:5] -> #7
+- Ref: ["overloaded" @ input.sol:16:7] -> #2
+- Ref: ["value" @ input.sol:16:19] -> built-in
+- Ref: ["gas" @ input.sol:16:30] -> built-in
+- Ref: ["y" @ input.sol:16:42] -> #8
 
 ------------------------------------------------------------------------
 
@@ -33,23 +33,23 @@ Unbound identifiers (0):
 Bindings: 
     ╭─[input.sol:1:1]
     │
-  1 │ contract Other {
+  3 │ contract Other {
     │          ──┬──  
     │            ╰──── name: 1
-  2 │   function overloaded(int x) public payable returns (uint) {
+  4 │   function overloaded(int x) public payable returns (uint) {
     │            ─────┬────     ┬  
     │                 ╰──────────── name: 2
     │                           │  
     │                           ╰── name: 3
     │ 
-  6 │   function overloaded() public payable returns (uint) {
+  8 │   function overloaded() public payable returns (uint) {
     │            ─────┬────  
     │                 ╰────── name: 4
     │ 
- 11 │ contract Test {
+ 13 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 5
- 12 │   function someFunc(Other x, int y) public {
+ 14 │   function someFunc(Other x, int y) public {
     │            ────┬─── ──┬── ┬      ┬  
     │                ╰──────────────────── name: 6
     │                       │   │      │  
@@ -58,7 +58,7 @@ Bindings:
     │                           ╰───────── name: 7
     │                                  │  
     │                                  ╰── name: 8
- 13 │     x.overloaded{ value: 10, gas: 1000 }();
+ 15 │     x.overloaded{ value: 10, gas: 1000 }();
     │     ┬ ─────┬────  ──┬──      ─┬─  
     │     ╰───────────────────────────── ref: 7
     │            │        │         │   
@@ -67,7 +67,7 @@ Bindings:
     │                     ╰───────────── built-in
     │                               │   
     │                               ╰─── built-in
- 14 │     x.overloaded{ value: 10, gas: 1000 }(y);
+ 16 │     x.overloaded{ value: 10, gas: 1000 }(y);
     │     ┬ ─────┬────  ──┬──      ─┬─         ┬  
     │     ╰─────────────────────────────────────── ref: 7
     │            │        │         │          │  

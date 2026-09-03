@@ -1,3 +1,5 @@
+pragma solidity *;
+
 interface DataFeed { function getData(address token) external returns (uint value); }
 
 contract FeedConsumer {

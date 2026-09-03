@@ -1,36 +1,36 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (10):
-- Def: #1 ["Utils" @ input.sol:1:9] (library)
-- Def: #2 ["Point" @ input.sol:2:12] (struct)
-- Def: #3 ["x" @ input.sol:3:14] (struct member, type: uint256)
-- Def: #4 ["y" @ input.sol:4:14] (struct member, type: uint256)
-- Def: #5 ["add" @ input.sol:7:14] (function, type: function (Point memory, Point memory) returns Point memory)
-- Def: #6 ["add" @ input.sol:8:14] (function, type: function (uint256, uint256) returns uint256)
-- Def: #7 ["Test" @ input.sol:11:10] (contract)
-- Def: #8 ["test" @ input.sol:15:14] (function, type: function (Point calldata) returns void)
-- Def: #9 ["x" @ input.sol:15:40] (parameter, type: Point calldata)
-- Def: #10 ["p" @ input.sol:16:28] (variable, type: Point memory)
+- Def: #1 ["Utils" @ input.sol:3:9] (library)
+- Def: #2 ["Point" @ input.sol:4:12] (struct)
+- Def: #3 ["x" @ input.sol:5:14] (struct member, type: uint256)
+- Def: #4 ["y" @ input.sol:6:14] (struct member, type: uint256)
+- Def: #5 ["add" @ input.sol:9:14] (function, type: function (Point memory, Point memory) returns Point memory)
+- Def: #6 ["add" @ input.sol:10:14] (function, type: function (uint256, uint256) returns uint256)
+- Def: #7 ["Test" @ input.sol:13:10] (contract)
+- Def: #8 ["test" @ input.sol:17:14] (function, type: function (Point calldata) returns void)
+- Def: #9 ["x" @ input.sol:17:40] (parameter, type: Point calldata)
+- Def: #10 ["p" @ input.sol:18:28] (variable, type: Point memory)
 
 ------------------------------------------------------------------------
 
 References (16):
-- Ref: ["Point" @ input.sol:7:18] -> #2
-- Ref: ["Point" @ input.sol:7:32] -> #2
-- Ref: ["Point" @ input.sol:7:64] -> #2
-- Ref: ["Utils" @ input.sol:12:11] -> #1
-- Ref: ["Utils" @ input.sol:13:11] -> #1
-- Ref: ["Utils" @ input.sol:13:21] -> #1
-- Ref: ["Point" @ input.sol:13:27] -> #2
-- Ref: ["Utils" @ input.sol:15:19] -> #1
-- Ref: ["Point" @ input.sol:15:25] -> #2
-- Ref: ["Utils" @ input.sol:16:9] -> #1
-- Ref: ["Point" @ input.sol:16:15] -> #2
-- Ref: ["p" @ input.sol:17:9] -> #10
-- Ref: ["add" @ input.sol:17:11] -> #5
-- Ref: ["x" @ input.sol:17:15] -> #9
-- Ref: ["add" @ input.sol:17:18] -> #5
-- Ref: ["x" @ input.sol:17:22] -> #9
+- Ref: ["Point" @ input.sol:9:18] -> #2
+- Ref: ["Point" @ input.sol:9:32] -> #2
+- Ref: ["Point" @ input.sol:9:64] -> #2
+- Ref: ["Utils" @ input.sol:14:11] -> #1
+- Ref: ["Utils" @ input.sol:15:11] -> #1
+- Ref: ["Utils" @ input.sol:15:21] -> #1
+- Ref: ["Point" @ input.sol:15:27] -> #2
+- Ref: ["Utils" @ input.sol:17:19] -> #1
+- Ref: ["Point" @ input.sol:17:25] -> #2
+- Ref: ["Utils" @ input.sol:18:9] -> #1
+- Ref: ["Point" @ input.sol:18:15] -> #2
+- Ref: ["p" @ input.sol:19:9] -> #10
+- Ref: ["add" @ input.sol:19:11] -> #5
+- Ref: ["x" @ input.sol:19:15] -> #9
+- Ref: ["add" @ input.sol:19:18] -> #5
+- Ref: ["x" @ input.sol:19:22] -> #9
 
 ------------------------------------------------------------------------
 
@@ -41,20 +41,20 @@ Unbound identifiers (0):
 Bindings: 
     ╭─[input.sol:1:1]
     │
-  1 │ library Utils {
+  3 │ library Utils {
     │         ──┬──  
     │           ╰──── name: 1
-  2 │     struct Point {
+  4 │     struct Point {
     │            ──┬──  
     │              ╰──── name: 2
-  3 │         uint x;
+  5 │         uint x;
     │              ┬  
     │              ╰── name: 3
-  4 │         uint y;
+  6 │         uint y;
     │              ┬  
     │              ╰── name: 4
     │ 
-  7 │     function add(Point memory, Point memory) internal returns (Point memory) {}
+  9 │     function add(Point memory, Point memory) internal returns (Point memory) {}
     │              ─┬─ ──┬──         ──┬──                           ──┬──  
     │               ╰─────────────────────────────────────────────────────── name: 5
     │                    │             │                               │    
@@ -63,17 +63,17 @@ Bindings:
     │                                  ╰──────────────────────────────────── ref: 2
     │                                                                  │    
     │                                                                  ╰──── ref: 2
-  8 │     function add(uint, uint) internal returns (uint) {}
+ 10 │     function add(uint, uint) internal returns (uint) {}
     │              ─┬─  
     │               ╰─── name: 6
     │ 
- 11 │ contract Test {
+ 13 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 7
- 12 │     using Utils for uint;
+ 14 │     using Utils for uint;
     │           ──┬──  
     │             ╰──── ref: 1
- 13 │     using Utils for Utils.Point;
+ 15 │     using Utils for Utils.Point;
     │           ──┬──     ──┬── ──┬──  
     │             ╰──────────────────── ref: 1
     │                       │     │    
@@ -81,7 +81,7 @@ Bindings:
     │                             │    
     │                             ╰──── ref: 2
     │ 
- 15 │     function test(Utils.Point calldata x) public {
+ 17 │     function test(Utils.Point calldata x) public {
     │              ──┬─ ──┬── ──┬──          ┬  
     │                ╰────────────────────────── name: 8
     │                     │     │            │  
@@ -90,14 +90,14 @@ Bindings:
     │                           ╰─────────────── ref: 2
     │                                        │  
     │                                        ╰── name: 9
- 16 │         Utils.Point memory p;
+ 18 │         Utils.Point memory p;
     │         ──┬── ──┬──        ┬  
     │           ╰─────────────────── ref: 1
     │                 │          │  
     │                 ╰───────────── ref: 2
     │                            │  
     │                            ╰── name: 10
- 17 │         p.add(x).add(x);
+ 19 │         p.add(x).add(x);
     │         ┬ ─┬─ ┬  ─┬─ ┬  
     │         ╰─────────────── ref: 10
     │            │  │   │  │  

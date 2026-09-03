@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function test() public returns (int32) {
         return MyLib.LibType.unwrap(MyLib.create());

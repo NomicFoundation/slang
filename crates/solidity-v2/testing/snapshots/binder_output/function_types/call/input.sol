@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     struct Value {
         int x;

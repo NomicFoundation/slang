@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function test_for_empty_init() public {
         int i = 1;

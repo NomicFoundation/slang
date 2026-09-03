@@ -1,16 +1,16 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (4):
-- Def: #1 ["Foo" @ input.sol:1:8] (struct)
-- Def: #2 ["x" @ input.sol:2:10] (struct member, type: uint256)
-- Def: #3 ["Test" @ input.sol:5:10] (contract)
-- Def: #4 ["test" @ input.sol:6:14] (function, type: function () returns void)
+- Def: #1 ["Foo" @ input.sol:3:8] (struct)
+- Def: #2 ["x" @ input.sol:4:10] (struct member, type: uint256)
+- Def: #3 ["Test" @ input.sol:7:10] (contract)
+- Def: #4 ["test" @ input.sol:8:14] (function, type: function () returns void)
 
 ------------------------------------------------------------------------
 
 References (2):
-- Ref: ["Foo" @ input.sol:7:13] -> #1
-- Ref: ["length" @ input.sol:7:22] -> built-in
+- Ref: ["Foo" @ input.sol:9:13] -> #1
+- Ref: ["length" @ input.sol:9:22] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -21,20 +21,20 @@ Unbound identifiers (0):
 Bindings: 
    ╭─[input.sol:1:1]
    │
- 1 │ struct Foo {
+ 3 │ struct Foo {
    │        ─┬─  
    │         ╰─── name: 1
- 2 │     uint x;
+ 4 │     uint x;
    │          ┬  
    │          ╰── name: 2
    │ 
- 5 │ contract Test {
+ 7 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 3
- 6 │     function test() internal pure {
+ 8 │     function test() internal pure {
    │              ──┬─  
    │                ╰─── name: 4
- 7 │         new Foo[](0).length;
+ 9 │         new Foo[](0).length;
    │             ─┬─      ───┬──  
    │              ╰─────────────── ref: 1
    │                         │    

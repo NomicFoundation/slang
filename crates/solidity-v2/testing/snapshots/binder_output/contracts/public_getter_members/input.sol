@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Base {
     address public owner;
 }

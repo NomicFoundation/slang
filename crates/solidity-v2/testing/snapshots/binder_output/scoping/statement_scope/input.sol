@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Base {
     function foo() public returns (address) {}
 }

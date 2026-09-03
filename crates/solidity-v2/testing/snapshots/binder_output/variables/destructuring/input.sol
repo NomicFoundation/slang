@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Test {
     enum Choice { Yes, No }
 

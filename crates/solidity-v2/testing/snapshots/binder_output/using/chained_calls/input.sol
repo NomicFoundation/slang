@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Foo {
     struct Bar {
         uint value;

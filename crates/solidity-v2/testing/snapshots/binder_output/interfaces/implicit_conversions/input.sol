@@ -1,3 +1,5 @@
+pragma solidity *;
+
 interface IFoo {}
 contract Bar {}
 contract Foo is IFoo, Bar {}

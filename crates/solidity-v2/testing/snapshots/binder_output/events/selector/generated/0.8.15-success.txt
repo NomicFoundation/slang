@@ -1,16 +1,16 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (4):
-- Def: #1 ["Utils" @ input.sol:1:9] (library)
-- Def: #2 ["Foo" @ input.sol:2:11] (event)
-- Def: #3 ["x" @ input.sol:2:20] (parameter, type: uint256)
-- Def: #4 ["test" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #1 ["Utils" @ input.sol:3:9] (library)
+- Def: #2 ["Foo" @ input.sol:4:11] (event)
+- Def: #3 ["x" @ input.sol:4:20] (parameter, type: uint256)
+- Def: #4 ["test" @ input.sol:6:14] (function, type: function () returns void)
 
 ------------------------------------------------------------------------
 
 References (2):
-- Ref: ["Foo" @ input.sol:5:9] -> #2
-- Ref: ["selector" @ input.sol:5:13] -> built-in
+- Ref: ["Foo" @ input.sol:7:9] -> #2
+- Ref: ["selector" @ input.sol:7:13] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -21,19 +21,19 @@ Unbound identifiers (0):
 Bindings: 
    ╭─[input.sol:1:1]
    │
- 1 │ library Utils {
+ 3 │ library Utils {
    │         ──┬──  
    │           ╰──── name: 1
- 2 │     event Foo(uint x);
+ 4 │     event Foo(uint x);
    │           ─┬─      ┬  
    │            ╰────────── name: 2
    │                    │  
    │                    ╰── name: 3
    │ 
- 4 │     function test() internal pure {
+ 6 │     function test() internal pure {
    │              ──┬─  
    │                ╰─── name: 4
- 5 │         Foo.selector;
+ 7 │         Foo.selector;
    │         ─┬─ ────┬───  
    │          ╰──────────── ref: 2
    │                 │     

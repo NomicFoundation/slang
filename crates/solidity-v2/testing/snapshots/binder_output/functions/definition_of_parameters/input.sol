@@ -1,3 +1,5 @@
+pragma solidity *;
+
 function top_level(int x, int y) returns(int z) {}
 
 contract Test {

@@ -1,15 +1,15 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (3):
-- Def: #1 ["Lib" @ input.sol:1:9] (library)
-- Def: #2 ["IndexOutOfBounds" @ input.sol:2:9] (error)
-- Def: #3 ["test" @ input.sol:4:12] (modifier)
+- Def: #1 ["Lib" @ input.sol:3:9] (library)
+- Def: #2 ["IndexOutOfBounds" @ input.sol:4:9] (error)
+- Def: #3 ["test" @ input.sol:6:12] (modifier)
 
 ------------------------------------------------------------------------
 
 References (2):
-- Ref: ["IndexOutOfBounds" @ input.sol:5:12] -> #2
-- Ref: ["_" @ input.sol:6:5] -> built-in
+- Ref: ["IndexOutOfBounds" @ input.sol:7:12] -> #2
+- Ref: ["_" @ input.sol:8:5] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -20,20 +20,20 @@ Unbound identifiers (0):
 Bindings: 
    ╭─[input.sol:1:1]
    │
- 1 │ library Lib {
+ 3 │ library Lib {
    │         ─┬─  
    │          ╰─── name: 1
- 2 │   error IndexOutOfBounds();
+ 4 │   error IndexOutOfBounds();
    │         ────────┬───────  
    │                 ╰───────── name: 2
    │ 
- 4 │   modifier test() {
+ 6 │   modifier test() {
    │            ──┬─  
    │              ╰─── name: 3
- 5 │     revert IndexOutOfBounds();
+ 7 │     revert IndexOutOfBounds();
    │            ────────┬───────  
    │                    ╰───────── ref: 2
- 6 │     _;
+ 8 │     _;
    │     ┬  
    │     ╰── built-in
 ───╯

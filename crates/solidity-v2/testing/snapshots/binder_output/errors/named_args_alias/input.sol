@@ -1,4 +1,6 @@
 // --- path: main.sol
+pragma solidity *;
+
 import {Failure as Renamed} from "./lib.sol";
 
 contract Test {
@@ -8,4 +10,6 @@ contract Test {
 }
 
 // --- path: lib.sol
+pragma solidity *;
+
 error Failure(string name, uint level);

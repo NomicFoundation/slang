@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract S {
     function f() public {}
 }

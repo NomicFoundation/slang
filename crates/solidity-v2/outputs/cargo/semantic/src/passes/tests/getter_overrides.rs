@@ -31,6 +31,7 @@ fn linearised_function_names(context: &SemanticContext, contract: &str) -> Vec<S
 fn getter_shadows_overridden_function() {
     let context = build_context(
         r#"
+        pragma solidity *;
         contract Base {
             function x() external virtual returns (uint256) { return 0; }
         }
@@ -50,6 +51,7 @@ fn getter_shadows_overridden_function() {
 fn getter_shadows_from_middle_of_hierarchy() {
     let context = build_context(
         r#"
+        pragma solidity *;
         abstract contract A {
             function x() external virtual returns (uint256);
         }
@@ -69,6 +71,7 @@ fn getter_shadows_from_middle_of_hierarchy() {
 fn parameterized_getter_shadows_overridden_function() {
     let context = build_context(
         r#"
+        pragma solidity *;
         abstract contract Base {
             function m(uint256) external virtual returns (uint256);
         }
@@ -87,6 +90,7 @@ fn parameterized_getter_shadows_overridden_function() {
 fn differently_named_variable_does_not_shadow() {
     let context = build_context(
         r#"
+        pragma solidity *;
         contract Base {
             function x() external virtual returns (uint256) { return 0; }
         }

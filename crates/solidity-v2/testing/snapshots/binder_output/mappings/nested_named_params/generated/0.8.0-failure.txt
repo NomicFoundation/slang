@@ -2,23 +2,23 @@
 
 Parse errors:
 [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.18'.
-   ╭─[input.sol:3:25]
+   ╭─[input.sol:5:25]
    │
- 3 │         mapping(bytes32 value => uint256) positions;
+ 5 │         mapping(bytes32 value => uint256) positions;
    │                         ──┬──  
    │                           ╰──── Error occurred here.
 ───╯
 [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.18'.
-   ╭─[input.sol:6:21]
+   ╭─[input.sol:8:21]
    │
- 6 │     mapping(address asset0 => mapping(address asset1 => address)) map;
+ 8 │     mapping(address asset0 => mapping(address asset1 => address)) map;
    │                     ───┬──  
    │                        ╰──── Error occurred here.
 ───╯
 [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.18'.
-   ╭─[input.sol:6:47]
+   ╭─[input.sol:8:47]
    │
- 6 │     mapping(address asset0 => mapping(address asset1 => address)) map;
+ 8 │     mapping(address asset0 => mapping(address asset1 => address)) map;
    │                                               ───┬──  
    │                                                  ╰──── Error occurred here.
 ───╯
@@ -26,13 +26,13 @@ Parse errors:
 ------------------------------------------------------------------------
 
 Definitions (7):
-- Def: #1 ["Test" @ input.sol:1:10] (contract)
-- Def: #2 ["A" @ input.sol:2:12] (struct)
-- Def: #3 ["value" @ input.sol:3:25] (type param)
-- Def: #4 ["positions" @ input.sol:3:43] (struct member, type: bytes32 => uint256)
-- Def: #5 ["asset0" @ input.sol:6:21] (type param)
-- Def: #6 ["asset1" @ input.sol:6:47] (type param)
-- Def: #7 ["map" @ input.sol:6:67] (state var, type: address => address => address)
+- Def: #1 ["Test" @ input.sol:3:10] (contract)
+- Def: #2 ["A" @ input.sol:4:12] (struct)
+- Def: #3 ["value" @ input.sol:5:25] (type param)
+- Def: #4 ["positions" @ input.sol:5:43] (struct member, type: bytes32 => uint256)
+- Def: #5 ["asset0" @ input.sol:8:21] (type param)
+- Def: #6 ["asset1" @ input.sol:8:47] (type param)
+- Def: #7 ["map" @ input.sol:8:67] (state var, type: address => address => address)
 
 ------------------------------------------------------------------------
 
@@ -47,19 +47,19 @@ Unbound identifiers (0):
 Bindings: 
    ╭─[input.sol:1:1]
    │
- 1 │ contract Test {
+ 3 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 1
- 2 │     struct A {
+ 4 │     struct A {
    │            ┬  
    │            ╰── name: 2
- 3 │         mapping(bytes32 value => uint256) positions;
+ 5 │         mapping(bytes32 value => uint256) positions;
    │                         ──┬──             ────┬────  
    │                           ╰────────────────────────── name: 3
    │                                               │      
    │                                               ╰────── name: 4
    │ 
- 6 │     mapping(address asset0 => mapping(address asset1 => address)) map;
+ 8 │     mapping(address asset0 => mapping(address asset1 => address)) map;
    │                     ───┬──                    ───┬──              ─┬─  
    │                        ╰─────────────────────────────────────────────── name: 5
    │                                                  │                 │   

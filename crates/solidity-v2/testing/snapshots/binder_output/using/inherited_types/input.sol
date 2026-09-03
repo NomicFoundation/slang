@@ -1,3 +1,5 @@
+pragma solidity *;
+
 interface IPool {
     struct Info {
         uint256 amount;

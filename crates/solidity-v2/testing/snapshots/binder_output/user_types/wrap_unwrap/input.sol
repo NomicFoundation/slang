@@ -1,3 +1,5 @@
+pragma solidity *;
+
 type ShortString is bytes32;
 
 contract Test {

@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function test() public pure returns (uint) {
         uint x = 1;

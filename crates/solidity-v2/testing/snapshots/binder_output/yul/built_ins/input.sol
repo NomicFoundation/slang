@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract AssemblyBuiltIns {
     function test() public {
         assembly {

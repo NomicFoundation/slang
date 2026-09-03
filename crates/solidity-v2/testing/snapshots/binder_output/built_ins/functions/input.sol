@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract BuiltInsTest {
     function testRequire() public {
         require(true, "should always succeed");

@@ -69,7 +69,8 @@ fn operator_resolutions(source: &str) -> Vec<Option<String>> {
 #[test]
 fn binary_operator_resolves_to_bound_function() {
     let resolutions = operator_resolutions(
-        "type Int is int256;
+        "pragma solidity *;
+        type Int is int256;
         function add(Int, Int) pure returns (Int) { return Int.wrap(0); }
         using {add as +} for Int global;
         contract C {
@@ -84,7 +85,8 @@ fn binary_operator_resolves_to_bound_function() {
 #[test]
 fn every_overloadable_operator_resolves() {
     let resolutions = operator_resolutions(
-        "type Int is int256;
+        "pragma solidity *;
+        type Int is int256;
         function add(Int, Int) pure returns (Int) { return Int.wrap(0); }
         function sub(Int, Int) pure returns (Int) { return Int.wrap(0); }
         function neg(Int) pure returns (Int) { return Int.wrap(0); }
@@ -126,7 +128,8 @@ fn every_overloadable_operator_resolves() {
 #[test]
 fn unbound_operators_are_not_resolved() {
     let resolutions = operator_resolutions(
-        "type Int is int256;
+        "pragma solidity *;
+        type Int is int256;
         function add(Int, Int) pure returns (Int) { return Int.wrap(0); }
         using {add as +} for Int global;
         contract C {
@@ -144,7 +147,8 @@ fn unbound_operators_are_not_resolved() {
 #[test]
 fn duplicate_binding_is_ambiguous_and_not_resolved() {
     let resolutions = operator_resolutions(
-        "type Int is int256;
+        "pragma solidity *;
+        type Int is int256;
         function add1(Int, Int) pure returns (Int) { return Int.wrap(0); }
         function add2(Int, Int) pure returns (Int) { return Int.wrap(0); }
         using {add1 as +} for Int global;
@@ -161,7 +165,8 @@ fn duplicate_binding_is_ambiguous_and_not_resolved() {
 #[test]
 fn operator_bound_to_a_different_type_is_not_resolved() {
     let resolutions = operator_resolutions(
-        "type Int is int256;
+        "pragma solidity *;
+        type Int is int256;
         type Other is int256;
         function add(Other, Other) pure returns (Other) { return Other.wrap(0); }
         using {add as +} for Other global;

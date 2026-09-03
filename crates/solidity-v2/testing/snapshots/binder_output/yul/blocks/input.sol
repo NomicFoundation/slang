@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract AssemblyBlocks {
     function yul_let(uint256 x) public returns (uint256 z) {
         assembly {

@@ -120,6 +120,7 @@ fn test_overloaded_call_operand_narrows_to_selected_overload() {
     // candidate set (`Undetermined`) down to the selected overload — for
     // positional and named argument calls alike.
     let source = r#"
+        pragma solidity *;
         contract C {
             function f(uint x) internal pure {}
             function f(bool b) internal pure {}
@@ -174,6 +175,7 @@ fn test_overloaded_declaration_via_type_name_operand_narrows() {
     // its typing is narrowed to that specific (non-callable) declaration rather
     // than left as the ambiguous candidate set.
     let source = r#"
+        pragma solidity *;
         contract A {
             function f() external {}
             function f(uint x) external {}

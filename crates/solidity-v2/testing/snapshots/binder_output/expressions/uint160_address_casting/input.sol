@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Utils {
     function foo(address payable _to) internal {}
 }

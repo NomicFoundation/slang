@@ -33,7 +33,11 @@ fn compile(name: &'static str, contents: &'static str) -> CompilationUnit {
 
 #[test]
 fn declined_import_is_reported_as_unresolved() {
-    let contents = "import {Foo} from \"@scope/pkg/foo.sol\";\ncontract Main {}\n";
+    let contents = r#"
+        pragma solidity *;
+        import {Foo} from "@scope/pkg/foo.sol";
+        contract Main {}
+    "#;
     let unit = compile("main.sol", contents);
 
     let diagnostics: Vec<_> = unit.diagnostics().iter().collect();
@@ -66,7 +70,13 @@ fn declined_import_is_reported_as_unresolved() {
 fn every_declined_import_is_reported() {
     let unit = compile(
         "main.sol",
-        "import \"a.sol\";\nimport \"b.sol\";\nimport {C} from \"c.sol\";\ncontract Main {}\n",
+        r#"
+        pragma solidity *;
+        import "a.sol";
+        import "b.sol";
+        import {C} from "c.sol";
+        contract Main {}
+        "#,
     );
 
     let messages: Vec<_> = unit

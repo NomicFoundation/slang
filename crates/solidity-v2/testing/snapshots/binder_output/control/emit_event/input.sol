@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     event TestEvent(int id);
 

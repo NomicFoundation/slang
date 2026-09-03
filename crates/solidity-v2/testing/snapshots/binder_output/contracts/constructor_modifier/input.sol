@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     modifier validAddress(address _addr) {
         assert(_addr != address(0));

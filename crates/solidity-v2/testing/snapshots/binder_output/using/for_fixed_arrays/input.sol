@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library ArrayHelper {
     function asArray(string[1] memory items) internal {}
 }

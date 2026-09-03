@@ -1,13 +1,13 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (2):
-- Def: #1 ["Lib" @ input.sol:1:9] (library)
-- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns uint256)
+- Def: #1 ["Lib" @ input.sol:3:9] (library)
+- Def: #2 ["test" @ input.sol:4:14] (function, type: function () returns uint256)
 
 ------------------------------------------------------------------------
 
 References (1):
-- Ref: ["balance" @ input.sol:3:30] -> built-in
+- Ref: ["balance" @ input.sol:5:30] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -18,13 +18,13 @@ Unbound identifiers (0):
 Bindings: 
    ╭─[input.sol:1:1]
    │
- 1 │ library Lib {
+ 3 │ library Lib {
    │         ─┬─  
    │          ╰─── name: 1
- 2 │     function test() internal returns (uint) {
+ 4 │     function test() internal returns (uint) {
    │              ──┬─  
    │                ╰─── name: 2
- 3 │         return address(this).balance;
+ 5 │         return address(this).balance;
    │                              ───┬───  
    │                                 ╰───── built-in
 ───╯

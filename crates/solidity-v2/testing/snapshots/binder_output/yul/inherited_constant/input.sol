@@ -1,3 +1,5 @@
+pragma solidity *;
+
 abstract contract Utils {
     uint256 internal constant _FOO = 1;
 }

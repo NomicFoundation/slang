@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Lib {
     function increment(uint x) public {}
 }

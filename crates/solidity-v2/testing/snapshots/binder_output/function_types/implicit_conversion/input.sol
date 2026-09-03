@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function memory_internal(bytes memory) internal {}
     function memory_external(bytes memory) external {}

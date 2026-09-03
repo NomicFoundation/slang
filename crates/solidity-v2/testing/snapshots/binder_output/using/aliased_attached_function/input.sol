@@ -1,4 +1,6 @@
 // ---- path: main.sol
+pragma solidity *;
+
 import {g as f} from "other.sol";
 
 using {f} for uint;
@@ -10,4 +12,6 @@ contract Test {
 }
 
 // ---- path: other.sol
+pragma solidity *;
+
 function g(uint a) {}

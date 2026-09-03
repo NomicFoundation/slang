@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract NestedCustom {
     enum Kind { Alpha, Beta }
     struct Values {

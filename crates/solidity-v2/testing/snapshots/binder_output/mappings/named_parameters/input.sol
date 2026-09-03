@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract NamedMapping {
   mapping(address name => uint256) public justNameInKey;
 

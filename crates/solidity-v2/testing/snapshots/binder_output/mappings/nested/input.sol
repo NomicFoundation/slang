@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract NestedMapping {
     mapping(address => mapping(uint256 => bool)) public nested;
 

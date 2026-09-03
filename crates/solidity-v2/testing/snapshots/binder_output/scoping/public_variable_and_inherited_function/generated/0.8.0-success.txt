@@ -1,26 +1,26 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (9):
-- Def: #1 ["A" @ input.sol:8:10] (contract)
-- Def: #2 ["x" @ input.sol:9:14] (function, type: function (uint256) returns uint256)
-- Def: #3 ["B" @ input.sol:14:10] (contract)
-- Def: #4 ["x" @ input.sol:15:20] (state var, type: uint256)
-- Def: #5 ["value" @ input.sol:17:14] (function, type: function () returns uint256)
-- Def: #6 ["qualified" @ input.sol:21:14] (function, type: function () returns uint256)
-- Def: #7 ["external_call" @ input.sol:25:14] (function, type: function () returns uint256)
-- Def: #8 ["assembly_use" @ input.sol:29:14] (function, type: function () returns void)
-- Def: #9 ["y" @ input.sol:31:17] (yul variable)
+- Def: #1 ["A" @ input.sol:10:10] (contract)
+- Def: #2 ["x" @ input.sol:11:14] (function, type: function (uint256) returns uint256)
+- Def: #3 ["B" @ input.sol:16:10] (contract)
+- Def: #4 ["x" @ input.sol:17:20] (state var, type: uint256)
+- Def: #5 ["value" @ input.sol:19:14] (function, type: function () returns uint256)
+- Def: #6 ["qualified" @ input.sol:23:14] (function, type: function () returns uint256)
+- Def: #7 ["external_call" @ input.sol:27:14] (function, type: function () returns uint256)
+- Def: #8 ["assembly_use" @ input.sol:31:14] (function, type: function () returns void)
+- Def: #9 ["y" @ input.sol:33:17] (yul variable)
 
 ------------------------------------------------------------------------
 
 References (7):
-- Ref: ["A" @ input.sol:14:15] -> #1
-- Ref: ["x" @ input.sol:18:16] -> #4
-- Ref: ["A" @ input.sol:22:16] -> #1
-- Ref: ["x" @ input.sol:22:18] -> #2
-- Ref: ["x" @ input.sol:26:21] -> #2
-- Ref: ["x" @ input.sol:31:22] -> #4
-- Ref: ["slot" @ input.sol:31:24] -> built-in
+- Ref: ["A" @ input.sol:16:15] -> #1
+- Ref: ["x" @ input.sol:20:16] -> #4
+- Ref: ["A" @ input.sol:24:16] -> #1
+- Ref: ["x" @ input.sol:24:18] -> #2
+- Ref: ["x" @ input.sol:28:21] -> #2
+- Ref: ["x" @ input.sol:33:22] -> #4
+- Ref: ["slot" @ input.sol:33:24] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -31,50 +31,50 @@ Unbound identifiers (0):
 Bindings: 
     ╭─[input.sol:1:1]
     │
-  8 │ contract A {
+ 10 │ contract A {
     │          ┬  
     │          ╰── name: 1
-  9 │     function x(uint256) public pure returns (uint256) {
+ 11 │     function x(uint256) public pure returns (uint256) {
     │              ┬  
     │              ╰── name: 2
     │ 
- 14 │ contract B is A {
+ 16 │ contract B is A {
     │          ┬    ┬  
     │          ╰─────── name: 3
     │               │  
     │               ╰── ref: 1
- 15 │     uint256 public x;
+ 17 │     uint256 public x;
     │                    ┬  
     │                    ╰── name: 4
     │ 
- 17 │     function value() internal view returns (uint256) {
+ 19 │     function value() internal view returns (uint256) {
     │              ──┬──  
     │                ╰──── name: 5
- 18 │         return x;
+ 20 │         return x;
     │                ┬  
     │                ╰── ref: 4
     │ 
- 21 │     function qualified() internal pure returns (uint256) {
+ 23 │     function qualified() internal pure returns (uint256) {
     │              ────┬────  
     │                  ╰────── name: 6
- 22 │         return A.x(1);
+ 24 │         return A.x(1);
     │                ┬ ┬  
     │                ╰──── ref: 1
     │                  │  
     │                  ╰── ref: 2
     │ 
- 25 │     function external_call() external view returns (uint256) {
+ 27 │     function external_call() external view returns (uint256) {
     │              ──────┬──────  
     │                    ╰──────── name: 7
- 26 │         return this.x(1);
+ 28 │         return this.x(1);
     │                     ┬  
     │                     ╰── ref: 2
     │ 
- 29 │     function assembly_use() internal pure {
+ 31 │     function assembly_use() internal pure {
     │              ──────┬─────  
     │                    ╰─────── name: 8
     │ 
- 31 │             let y := x.slot
+ 33 │             let y := x.slot
     │                 ┬    ┬ ──┬─  
     │                 ╰──────────── name: 9
     │                      │   │   

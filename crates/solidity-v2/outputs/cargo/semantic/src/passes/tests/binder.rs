@@ -10,6 +10,7 @@ use crate::types::TypeRegistry;
 #[test]
 fn test_collect_definitions_and_linearise_contracts() {
     const CONTENTS: &str = r###"
+pragma solidity *;
 contract Base {}
 contract Test is Base layout at 0 {}
     "###;
@@ -55,6 +56,7 @@ fn get_contract_to_bases_map(binder: &Binder) -> Map<String, Vec<String>> {
 #[test]
 fn test_valid_linearisations() {
     const CONTENTS: &str = r#"
+pragma solidity *;
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.29;
 
@@ -96,6 +98,7 @@ fn test_linearise_with_forward_reference() {
     // order-independent, so it accepts the forward reference and computes the
     // linearisation `[D, B]`.
     const CONTENTS: &str = r#"
+pragma solidity *;
 contract D is B {}
 contract B {}
 "#;
@@ -117,6 +120,7 @@ contract B {}
 #[test]
 fn test_linearise_with_invalid_input() {
     const CONTENTS: &str = r#"
+pragma solidity *;
 contract Base {}
 
 library Foo {}
@@ -152,6 +156,7 @@ contract Test is Base, Foo { // Base should resolve to the contract, not the var
 #[test]
 fn test_type_definitions() {
     const CONTENTS: &str = r###"
+pragma solidity *;
 contract Base {
     uint256 public x;
     function foo(uint256 a) public pure returns (uint256) {
@@ -199,6 +204,7 @@ contract Test is Base {
 #[test]
 fn test_resolve_references() {
     const CONTENTS: &str = r###"
+pragma solidity *;
 contract Base {
     uint256 public x;
     function foo(uint256 a) public pure returns (uint256) {
@@ -250,6 +256,7 @@ contract Test is Base {
 #[test]
 fn test_collect_assembly_references() {
     const CONTENTS: &str = r###"
+pragma solidity *;
 contract Test {
     uint256 stateVar;
     function f() public {
@@ -299,8 +306,20 @@ contract Test {
 #[test]
 fn test_imported_symbol_resolves_to_the_declaring_file() {
     let analysis = Analysis::builder()
-        .file("a.sol", r#"import {C} from "b.sol";"#)
-        .file("b.sol", "contract C {}")
+        .file(
+            "a.sol",
+            r#"
+            pragma solidity *;
+            import {C} from "b.sol";
+            "#,
+        )
+        .file(
+            "b.sol",
+            r#"
+            pragma solidity *;
+            contract C {}
+            "#,
+        )
         .run(Analyse::Definitions)
         .expect_no_diagnostics();
 
@@ -328,7 +347,13 @@ fn test_imported_symbol_resolves_to_the_declaring_file() {
 #[test]
 fn test_import_of_an_unknown_file_stays_unresolved() {
     let analysis = Analysis::builder()
-        .file("a.sol", r#"import {C} from "missing.sol";"#)
+        .file(
+            "a.sol",
+            r#"
+            pragma solidity *;
+            import {C} from "missing.sol";
+            "#,
+        )
         .run(Analyse::Definitions)
         .expect_no_diagnostics();
 

@@ -1,4 +1,6 @@
 // ---- path: main.sol
+pragma solidity *;
+
 import {Base} from "./lib.sol";
 
 contract Test is Base {
@@ -8,6 +10,8 @@ contract Test is Base {
 
 
 // ---- path: lib.sol
+pragma solidity *;
+
 contract Base {
     modifier beforeRun() {
         _;

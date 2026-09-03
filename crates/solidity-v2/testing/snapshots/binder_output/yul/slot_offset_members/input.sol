@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     bytes data;
     function test() public {

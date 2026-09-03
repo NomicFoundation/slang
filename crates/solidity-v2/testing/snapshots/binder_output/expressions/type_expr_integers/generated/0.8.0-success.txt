@@ -1,21 +1,21 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (5):
-- Def: #1 ["Test" @ input.sol:1:10] (contract)
-- Def: #2 ["test" @ input.sol:4:14] (function, type: function () returns void)
-- Def: #3 ["Utils" @ input.sol:10:9] (library)
-- Def: #4 ["nop" @ input.sol:11:14] (function, type: function (uint256) returns void)
-- Def: #5 ["x" @ input.sol:11:23] (parameter, type: uint256)
+- Def: #1 ["Test" @ input.sol:3:10] (contract)
+- Def: #2 ["test" @ input.sol:6:14] (function, type: function () returns void)
+- Def: #3 ["Utils" @ input.sol:12:9] (library)
+- Def: #4 ["nop" @ input.sol:13:14] (function, type: function (uint256) returns void)
+- Def: #5 ["x" @ input.sol:13:23] (parameter, type: uint256)
 
 ------------------------------------------------------------------------
 
 References (6):
-- Ref: ["Utils" @ input.sol:2:11] -> #3
-- Ref: ["min" @ input.sol:5:20] -> built-in
-- Ref: ["nop" @ input.sol:5:24] -> #4
-- Ref: ["max" @ input.sol:6:20] -> built-in
-- Ref: ["nop" @ input.sol:6:24] -> #4
-- Ref: ["x" @ input.sol:12:16] -> #5
+- Ref: ["Utils" @ input.sol:4:11] -> #3
+- Ref: ["min" @ input.sol:7:20] -> built-in
+- Ref: ["nop" @ input.sol:7:24] -> #4
+- Ref: ["max" @ input.sol:8:20] -> built-in
+- Ref: ["nop" @ input.sol:8:24] -> #4
+- Ref: ["x" @ input.sol:14:16] -> #5
 
 ------------------------------------------------------------------------
 
@@ -26,36 +26,36 @@ Unbound identifiers (0):
 Bindings: 
     ╭─[input.sol:1:1]
     │
-  1 │ contract Test {
+  3 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 1
-  2 │     using Utils for uint;
+  4 │     using Utils for uint;
     │           ──┬──  
     │             ╰──── ref: 3
     │ 
-  4 │     function test() public {
+  6 │     function test() public {
     │              ──┬─  
     │                ╰─── name: 2
-  5 │         type(uint).min.nop();
+  7 │         type(uint).min.nop();
     │                    ─┬─ ─┬─  
     │                     ╰─────── built-in
     │                         │   
     │                         ╰─── ref: 4
-  6 │         type(uint).max.nop();
+  8 │         type(uint).max.nop();
     │                    ─┬─ ─┬─  
     │                     ╰─────── built-in
     │                         │   
     │                         ╰─── ref: 4
     │ 
- 10 │ library Utils {
+ 12 │ library Utils {
     │         ──┬──  
     │           ╰──── name: 3
- 11 │     function nop(uint x) internal {
+ 13 │     function nop(uint x) internal {
     │              ─┬─      ┬  
     │               ╰────────── name: 4
     │                       │  
     │                       ╰── name: 5
- 12 │         return x;
+ 14 │         return x;
     │                ┬  
     │                ╰── ref: 5
 ────╯

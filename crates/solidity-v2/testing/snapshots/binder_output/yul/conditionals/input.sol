@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract AssemblyConditionals {
     function yul_if(uint256 x) public returns (uint256 z) {
         assembly {

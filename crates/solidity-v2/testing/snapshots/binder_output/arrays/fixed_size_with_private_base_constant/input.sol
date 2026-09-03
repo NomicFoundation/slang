@@ -2,6 +2,8 @@
 // derived contract is independent. `N` resolves to the derived value and the
 // array is `uint256[2]`. The array length is what exercises this. A plain
 // reference would be masked by first-match disambiguation.
+pragma solidity *;
+
 contract Base {
     uint256 private constant N = 1;
 }

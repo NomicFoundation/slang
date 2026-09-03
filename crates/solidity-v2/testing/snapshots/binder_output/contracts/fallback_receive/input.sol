@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Fallback {
     event Log(string func, uint256 gas);
     uint status;

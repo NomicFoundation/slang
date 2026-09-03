@@ -1,3 +1,5 @@
+pragma solidity *;
+
 uint constant X = 1;
 uint constant Y = X + 3;
 

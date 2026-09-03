@@ -1,3 +1,5 @@
+pragma solidity *;
+
 interface IFoo {
     struct Bar {
         int value;

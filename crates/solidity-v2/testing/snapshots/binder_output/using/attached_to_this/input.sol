@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Utils {
     function foo(ITest subject) internal {}
 }

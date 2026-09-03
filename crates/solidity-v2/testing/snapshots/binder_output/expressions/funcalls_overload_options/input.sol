@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Other {
   function overloaded(int x) public payable returns (uint) {
     return 42;

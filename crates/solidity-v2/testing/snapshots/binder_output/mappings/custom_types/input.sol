@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Mappings {
     enum Direction { North, East, South, West }
     enum Kind { Zombie, Bat, Skeleton, Dragon }

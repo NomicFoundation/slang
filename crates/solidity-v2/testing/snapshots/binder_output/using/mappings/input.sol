@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     using Lib for mapping(address => uint);
     mapping(address => uint) balances;

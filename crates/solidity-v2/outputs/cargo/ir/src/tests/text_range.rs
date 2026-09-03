@@ -6,17 +6,18 @@ use crate::ir::TextRange;
 
 #[test]
 fn test_calculate_text_range() {
-    const CONTENTS: &str = r###"
-contract MyContract {
+    const CONTRACT: &str = r###"contract MyContract {
     constructor() {}
     function withParams(uint256 first, bool second) public {}
 }"###;
+
+    let contents = format!("pragma solidity *;\n{CONTRACT}");
 
     let language_version = LanguageVersion::LATEST;
     let ParseOutput {
         source_unit,
         diagnostics,
-    } = Parser::parse(&"test.sol".into(), CONTENTS, language_version);
+    } = Parser::parse(&"test.sol".into(), &contents, language_version);
 
     assert!(
         diagnostics.is_empty(),
@@ -31,7 +32,7 @@ contract MyContract {
     } = ir::build(
         &"test.sol".into(),
         &source_unit,
-        &CONTENTS,
+        &contents,
         language_version,
         &mut id_generator,
     );
@@ -41,27 +42,27 @@ contract MyContract {
         "IR builder diagnostics: {diagnostics:?}"
     );
 
-    let ir::SourceUnitMember::ContractDefinition(ref contract) = ir_root.members[0] else {
+    let ir::SourceUnitMember::ContractDefinition(ref contract) = ir_root.members[1] else {
         panic!("Expected ContractDefinition");
     };
 
     // A sequence node reports the range of its source text.
     let contract_range = contract.calculate_text_range().unwrap();
     assert_eq!(
-        &CONTENTS[contract_range.clone()],
-        CONTENTS.trim_start(),
+        &contents[contract_range.clone()],
+        CONTRACT,
         "Contract range should cover the whole definition"
     );
 
     // A choice node delegates to its inner node.
     assert_eq!(
-        ir_root.members[0].calculate_text_range(),
+        ir_root.members[1].calculate_text_range(),
         Some(contract_range)
     );
 
     // A terminal node reports the range of its text.
     let name_range = contract.name.calculate_text_range().unwrap();
-    assert_eq!(&CONTENTS[name_range], "MyContract");
+    assert_eq!(&contents[name_range], "MyContract");
 
     let ir::ContractMember::FunctionDefinition(ref constructor) = contract.members[0] else {
         panic!("Expected FunctionDefinition for constructor");
@@ -75,7 +76,7 @@ contract MyContract {
 
     // A non-empty collection spans from its first to its last element.
     let parameters_range = function.parameters.calculate_text_range().unwrap();
-    assert_eq!(&CONTENTS[parameters_range], "uint256 first, bool second");
+    assert_eq!(&contents[parameters_range], "uint256 first, bool second");
 
     // External nodes are not represented in the source code.
     assert_eq!(constructor.kind.calculate_text_range(), None);
@@ -83,5 +84,5 @@ contract MyContract {
     // Optional fields report the range of their value, if any.
     assert_eq!(constructor.name.calculate_text_range(), None);
     let body_range = function.body.calculate_text_range().unwrap();
-    assert_eq!(&CONTENTS[body_range], "{}");
+    assert_eq!(&contents[body_range], "{}");
 }

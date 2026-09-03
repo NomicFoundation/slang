@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     struct Funder {
         address addr;

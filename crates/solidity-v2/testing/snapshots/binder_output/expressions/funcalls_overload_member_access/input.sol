@@ -1,3 +1,5 @@
+pragma solidity *;
+
 interface Overloaded {
     function add(int64, int64) external returns (Overloaded);
 

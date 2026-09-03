@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Utils {
     event Foo(uint x);
 

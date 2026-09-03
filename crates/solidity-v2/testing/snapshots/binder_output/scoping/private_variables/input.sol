@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract A {
     uint256 private constant foo = 1;
     uint256 private bar;

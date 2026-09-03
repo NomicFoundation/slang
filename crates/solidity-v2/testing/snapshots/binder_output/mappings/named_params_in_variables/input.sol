@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     mapping(address owner => mapping(uint256 index => uint256)) private _ownedTokens;
 

@@ -2,44 +2,44 @@
 
 Parse errors:
 [resolution/member-not-found] Error: Member 'send' not found or not visible after argument-dependent lookup.
-   ╭─[input.sol:8:29]
-   │
- 8 │         bool v9 = recipient.send(1);
-   │                             ──┬─  
-   │                               ╰─── Error occurred here.
-───╯
+    ╭─[input.sol:10:29]
+    │
+ 10 │         bool v9 = recipient.send(1);
+    │                             ──┬─  
+    │                               ╰─── Error occurred here.
+────╯
 
 ------------------------------------------------------------------------
 
 Definitions (12):
-- Def: #1 ["Test" @ input.sol:1:10] (contract)
-- Def: #2 ["testAddress" @ input.sol:2:14] (function, type: function (address) returns void)
-- Def: #3 ["recipient" @ input.sol:2:34] (parameter, type: address)
-- Def: #4 ["x1" @ input.sol:3:22] (variable, type: bytes memory)
-- Def: #5 ["v1" @ input.sol:4:15] (variable, type: bool)
-- Def: #6 ["v2" @ input.sol:4:32] (variable, type: bytes memory)
-- Def: #7 ["v5" @ input.sol:5:15] (variable, type: bool)
-- Def: #8 ["v6" @ input.sol:5:32] (variable, type: bytes memory)
-- Def: #9 ["v7" @ input.sol:6:15] (variable, type: bool)
-- Def: #10 ["v8" @ input.sol:6:32] (variable, type: bytes memory)
-- Def: #11 ["v9" @ input.sol:8:14] (variable, type: bool)
-- Def: #12 ["v10" @ input.sol:9:17] (variable, type: uint256)
+- Def: #1 ["Test" @ input.sol:3:10] (contract)
+- Def: #2 ["testAddress" @ input.sol:4:14] (function, type: function (address) returns void)
+- Def: #3 ["recipient" @ input.sol:4:34] (parameter, type: address)
+- Def: #4 ["x1" @ input.sol:5:22] (variable, type: bytes memory)
+- Def: #5 ["v1" @ input.sol:6:15] (variable, type: bool)
+- Def: #6 ["v2" @ input.sol:6:32] (variable, type: bytes memory)
+- Def: #7 ["v5" @ input.sol:7:15] (variable, type: bool)
+- Def: #8 ["v6" @ input.sol:7:32] (variable, type: bytes memory)
+- Def: #9 ["v7" @ input.sol:8:15] (variable, type: bool)
+- Def: #10 ["v8" @ input.sol:8:32] (variable, type: bytes memory)
+- Def: #11 ["v9" @ input.sol:10:14] (variable, type: bool)
+- Def: #12 ["v10" @ input.sol:11:17] (variable, type: uint256)
 
 ------------------------------------------------------------------------
 
 References (12):
-- Ref: ["recipient" @ input.sol:4:38] -> #3
-- Ref: ["call" @ input.sol:4:48] -> built-in
-- Ref: ["x1" @ input.sol:4:53] -> #4
-- Ref: ["recipient" @ input.sol:5:38] -> #3
-- Ref: ["delegatecall" @ input.sol:5:48] -> built-in
-- Ref: ["x1" @ input.sol:5:61] -> #4
 - Ref: ["recipient" @ input.sol:6:38] -> #3
-- Ref: ["staticcall" @ input.sol:6:48] -> built-in
-- Ref: ["x1" @ input.sol:6:59] -> #4
-- Ref: ["recipient" @ input.sol:8:19] -> #3
-- Ref: ["send" @ input.sol:8:29] -> unresolved
-- Ref: ["balance" @ input.sol:9:37] -> built-in
+- Ref: ["call" @ input.sol:6:48] -> built-in
+- Ref: ["x1" @ input.sol:6:53] -> #4
+- Ref: ["recipient" @ input.sol:7:38] -> #3
+- Ref: ["delegatecall" @ input.sol:7:48] -> built-in
+- Ref: ["x1" @ input.sol:7:61] -> #4
+- Ref: ["recipient" @ input.sol:8:38] -> #3
+- Ref: ["staticcall" @ input.sol:8:48] -> built-in
+- Ref: ["x1" @ input.sol:8:59] -> #4
+- Ref: ["recipient" @ input.sol:10:19] -> #3
+- Ref: ["send" @ input.sol:10:29] -> unresolved
+- Ref: ["balance" @ input.sol:11:37] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -48,63 +48,63 @@ Unbound identifiers (0):
 ------------------------------------------------------------------------
 
 Bindings: 
-   ╭─[input.sol:1:1]
-   │
- 1 │ contract Test {
-   │          ──┬─  
-   │            ╰─── name: 1
- 2 │     function testAddress(address recipient) public {
-   │              ─────┬─────         ────┬────  
-   │                   ╰───────────────────────── name: 2
-   │                                      │      
-   │                                      ╰────── name: 3
- 3 │         bytes memory x1;
-   │                      ─┬  
-   │                       ╰── name: 4
- 4 │         (bool v1, bytes memory v2) = recipient.call(x1);
-   │               ─┬               ─┬    ────┬──── ──┬─ ─┬  
-   │                ╰──────────────────────────────────────── name: 5
-   │                                 │        │       │   │  
-   │                                 ╰─────────────────────── name: 6
-   │                                          │       │   │  
-   │                                          ╰────────────── ref: 3
-   │                                                  │   │  
-   │                                                  ╰────── built-in
-   │                                                      │  
-   │                                                      ╰── ref: 4
- 5 │         (bool v5, bytes memory v6) = recipient.delegatecall(x1);
-   │               ─┬               ─┬    ────┬──── ──────┬───── ─┬  
-   │                ╰──────────────────────────────────────────────── name: 7
-   │                                 │        │           │       │  
-   │                                 ╰─────────────────────────────── name: 8
-   │                                          │           │       │  
-   │                                          ╰────────────────────── ref: 3
-   │                                                      │       │  
-   │                                                      ╰────────── built-in
-   │                                                              │  
-   │                                                              ╰── ref: 4
- 6 │         (bool v7, bytes memory v8) = recipient.staticcall(x1);
-   │               ─┬               ─┬    ────┬──── ─────┬──── ─┬  
-   │                ╰────────────────────────────────────────────── name: 9
-   │                                 │        │          │      │  
-   │                                 ╰───────────────────────────── name: 10
-   │                                          │          │      │  
-   │                                          ╰──────────────────── ref: 3
-   │                                                     │      │  
-   │                                                     ╰───────── built-in
-   │                                                            │  
-   │                                                            ╰── ref: 4
-   │ 
- 8 │         bool v9 = recipient.send(1);
-   │              ─┬   ────┬──── ──┬─  
-   │               ╰─────────────────── name: 11
-   │                       │       │   
-   │                       ╰─────────── ref: 3
-   │                               │   
-   │                               ╰─── unresolved
- 9 │         uint256 v10 = address(this).balance;
-   │                 ─┬─                 ───┬───  
-   │                  ╰─────────────────────────── name: 12
-   │                                        │     
-   │                                        ╰───── built-in
-───╯
+    ╭─[input.sol:1:1]
+    │
+  3 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  4 │     function testAddress(address recipient) public {
+    │              ─────┬─────         ────┬────  
+    │                   ╰───────────────────────── name: 2
+    │                                      │      
+    │                                      ╰────── name: 3
+  5 │         bytes memory x1;
+    │                      ─┬  
+    │                       ╰── name: 4
+  6 │         (bool v1, bytes memory v2) = recipient.call(x1);
+    │               ─┬               ─┬    ────┬──── ──┬─ ─┬  
+    │                ╰──────────────────────────────────────── name: 5
+    │                                 │        │       │   │  
+    │                                 ╰─────────────────────── name: 6
+    │                                          │       │   │  
+    │                                          ╰────────────── ref: 3
+    │                                                  │   │  
+    │                                                  ╰────── built-in
+    │                                                      │  
+    │                                                      ╰── ref: 4
+  7 │         (bool v5, bytes memory v6) = recipient.delegatecall(x1);
+    │               ─┬               ─┬    ────┬──── ──────┬───── ─┬  
+    │                ╰──────────────────────────────────────────────── name: 7
+    │                                 │        │           │       │  
+    │                                 ╰─────────────────────────────── name: 8
+    │                                          │           │       │  
+    │                                          ╰────────────────────── ref: 3
+    │                                                      │       │  
+    │                                                      ╰────────── built-in
+    │                                                              │  
+    │                                                              ╰── ref: 4
+  8 │         (bool v7, bytes memory v8) = recipient.staticcall(x1);
+    │               ─┬               ─┬    ────┬──── ─────┬──── ─┬  
+    │                ╰────────────────────────────────────────────── name: 9
+    │                                 │        │          │      │  
+    │                                 ╰───────────────────────────── name: 10
+    │                                          │          │      │  
+    │                                          ╰──────────────────── ref: 3
+    │                                                     │      │  
+    │                                                     ╰───────── built-in
+    │                                                            │  
+    │                                                            ╰── ref: 4
+    │ 
+ 10 │         bool v9 = recipient.send(1);
+    │              ─┬   ────┬──── ──┬─  
+    │               ╰─────────────────── name: 11
+    │                       │       │   
+    │                       ╰─────────── ref: 3
+    │                               │   
+    │                               ╰─── unresolved
+ 11 │         uint256 v10 = address(this).balance;
+    │                 ─┬─                 ───┬───  
+    │                  ╰─────────────────────────── name: 12
+    │                                        │     
+    │                                        ╰───── built-in
+────╯

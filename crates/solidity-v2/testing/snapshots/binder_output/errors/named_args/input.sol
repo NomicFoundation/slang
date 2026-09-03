@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     enum Cause { InsuficientFunds, NotAuthorized, InvalidDate }
     error Failure (

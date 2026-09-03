@@ -495,8 +495,20 @@ pub(super) fn only_diagnostic(diagnostics: &DiagnosticCollection) -> &Diagnostic
 #[test]
 fn test_lookups_span_every_file() {
     let analysis = Analysis::builder()
-        .file("a.sol", "contract A {}")
-        .file("b.sol", "library B {}")
+        .file(
+            "a.sol",
+            r#"
+            pragma solidity *;
+            contract A {}
+            "#,
+        )
+        .file(
+            "b.sol",
+            r#"
+            pragma solidity *;
+            library B {}
+            "#,
+        )
         .run(Analyse::Definitions)
         .expect_no_diagnostics();
 
@@ -509,7 +521,10 @@ fn test_lookups_span_every_file() {
 /// move up to [`Analyse::Context`] without rewriting what it asserts.
 #[test]
 fn test_the_context_level_still_exposes_the_binder_and_types() {
-    const CONTENTS: &str = "contract C { uint256 public x; }";
+    const CONTENTS: &str = r#"
+        pragma solidity *;
+        contract C { uint256 public x; }
+    "#;
 
     let prefix = Analysis::of_source(CONTENTS)
         .run(Analyse::References)
@@ -537,8 +552,11 @@ fn test_the_context_level_still_exposes_the_binder_and_types() {
 #[test]
 fn test_function_bodies_are_found_in_contracts_and_libraries() {
     let analysis = Analysis::of_source(
-        "contract C { function f() internal { 1; } }
-         library L { function g() internal { 1; 2; } }",
+        r#"
+        pragma solidity *;
+        contract C { function f() internal { 1; } }
+        library L { function g() internal { 1; 2; } }
+        "#,
     )
     .run(Analyse::Definitions)
     .expect_no_diagnostics();
@@ -552,9 +570,14 @@ fn test_function_bodies_are_found_in_contracts_and_libraries() {
 #[test]
 #[should_panic(expected = "a context needs `Analyse::Context`")]
 fn test_a_prefix_analysis_has_no_context() {
-    Analysis::of_source("contract C {}")
-        .run(Analyse::Yul)
-        .context();
+    Analysis::of_source(
+        r#"
+        pragma solidity *;
+        contract C {}
+        "#,
+    )
+    .run(Analyse::Yul)
+    .context();
 }
 
 /// A name declared by two files has no single answer, so asking for it fails
@@ -563,8 +586,20 @@ fn test_a_prefix_analysis_has_no_context() {
 #[should_panic(expected = "more than one contract named `C`")]
 fn test_a_name_declared_by_two_files_is_rejected() {
     Analysis::builder()
-        .file("a.sol", "contract C {}")
-        .file("b.sol", "contract C {}")
+        .file(
+            "a.sol",
+            r#"
+            pragma solidity *;
+            contract C {}
+            "#,
+        )
+        .file(
+            "b.sol",
+            r#"
+            pragma solidity *;
+            contract C {}
+            "#,
+        )
         .run(Analyse::Definitions)
         .find_contract("C");
 }

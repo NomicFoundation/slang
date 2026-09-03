@@ -1,3 +1,5 @@
+pragma solidity *;
+
 enum Answer {
     Yes
 }

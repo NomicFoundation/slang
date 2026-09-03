@@ -1,15 +1,15 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (9):
-- Def: #1 ["top_level" @ input.sol:1:10] (function, type: function (int256, int256) returns int256)
-- Def: #2 ["x" @ input.sol:1:24] (parameter, type: int256)
-- Def: #3 ["y" @ input.sol:1:31] (parameter, type: int256)
-- Def: #4 ["z" @ input.sol:1:46] (parameter, type: int256)
-- Def: #5 ["Test" @ input.sol:3:10] (contract)
-- Def: #6 ["in_contract" @ input.sol:4:14] (function, type: function (int256, int256) returns int256)
-- Def: #7 ["x" @ input.sol:4:30] (parameter, type: int256)
-- Def: #8 ["y" @ input.sol:4:37] (parameter, type: int256)
-- Def: #9 ["z" @ input.sol:4:59] (parameter, type: int256)
+- Def: #1 ["top_level" @ input.sol:3:10] (function, type: function (int256, int256) returns int256)
+- Def: #2 ["x" @ input.sol:3:24] (parameter, type: int256)
+- Def: #3 ["y" @ input.sol:3:31] (parameter, type: int256)
+- Def: #4 ["z" @ input.sol:3:46] (parameter, type: int256)
+- Def: #5 ["Test" @ input.sol:5:10] (contract)
+- Def: #6 ["in_contract" @ input.sol:6:14] (function, type: function (int256, int256) returns int256)
+- Def: #7 ["x" @ input.sol:6:30] (parameter, type: int256)
+- Def: #8 ["y" @ input.sol:6:37] (parameter, type: int256)
+- Def: #9 ["z" @ input.sol:6:59] (parameter, type: int256)
 
 ------------------------------------------------------------------------
 
@@ -24,7 +24,7 @@ Unbound identifiers (0):
 Bindings: 
    ╭─[input.sol:1:1]
    │
- 1 │ function top_level(int x, int y) returns(int z) {}
+ 3 │ function top_level(int x, int y) returns(int z) {}
    │          ────┬────     ┬      ┬              ┬  
    │              ╰────────────────────────────────── name: 1
    │                        │      │              │  
@@ -34,10 +34,10 @@ Bindings:
    │                                              │  
    │                                              ╰── name: 4
    │ 
- 3 │ contract Test {
+ 5 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 5
- 4 │     function in_contract(int x, int y) public returns(int z) {}
+ 6 │     function in_contract(int x, int y) public returns(int z) {}
    │              ─────┬─────     ┬      ┬                     ┬  
    │                   ╰────────────────────────────────────────── name: 6
    │                              │      │                     │  

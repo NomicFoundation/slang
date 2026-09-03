@@ -2,9 +2,9 @@
 
 Parse errors:
 [compilation/missing-imported-file] Error: Imported file is missing: slots.sol
-   ╭─[input.sol:1:22]
+   ╭─[input.sol:3:22]
    │
- 1 │ import { slot } from "./slots.sol";  // even if undefined, the local def should have 2 references
+ 3 │ import { slot } from "./slots.sol";  // even if undefined, the local def should have 2 references
    │                      ──────┬──────  
    │                            ╰──────── Error occurred here.
 ───╯
@@ -12,21 +12,21 @@ Parse errors:
 ------------------------------------------------------------------------
 
 Definitions (6):
-- Def: #1 ["slot" @ input.sol:1:10] (imported symbol)
-- Def: #2 ["Foo" @ input.sol:3:10] (contract)
-- Def: #3 ["useSlotInAssembly" @ input.sol:4:14] (function, type: function () returns void)
-- Def: #4 ["value" @ input.sol:5:14] (variable, type: uint256)
-- Def: #5 ["useSlotInSolidity" @ input.sol:11:14] (function, type: function () returns void)
-- Def: #6 ["value" @ input.sol:12:14] (variable, type: uint256)
+- Def: #1 ["slot" @ input.sol:3:10] (imported symbol)
+- Def: #2 ["Foo" @ input.sol:5:10] (contract)
+- Def: #3 ["useSlotInAssembly" @ input.sol:6:14] (function, type: function () returns void)
+- Def: #4 ["value" @ input.sol:7:14] (variable, type: uint256)
+- Def: #5 ["useSlotInSolidity" @ input.sol:13:14] (function, type: function () returns void)
+- Def: #6 ["value" @ input.sol:14:14] (variable, type: uint256)
 
 ------------------------------------------------------------------------
 
 References (5):
-- Ref: ["slot" @ input.sol:1:10] -> unresolved
-- Ref: ["value" @ input.sol:7:13] -> #4
-- Ref: ["sload" @ input.sol:7:22] -> built-in
-- Ref: ["slot" @ input.sol:7:28] -> #1
-- Ref: ["slot" @ input.sol:12:22] -> #1
+- Ref: ["slot" @ input.sol:3:10] -> unresolved
+- Ref: ["value" @ input.sol:9:13] -> #4
+- Ref: ["sload" @ input.sol:9:22] -> built-in
+- Ref: ["slot" @ input.sol:9:28] -> #1
+- Ref: ["slot" @ input.sol:14:22] -> #1
 
 ------------------------------------------------------------------------
 
@@ -37,23 +37,23 @@ Unbound identifiers (0):
 Bindings: 
     ╭─[input.sol:1:1]
     │
-  1 │ import { slot } from "./slots.sol";  // even if undefined, the local def should have 2 references
+  3 │ import { slot } from "./slots.sol";  // even if undefined, the local def should have 2 references
     │          ──┬─  
     │            ╰─── name: 1
     │            │   
     │            ╰─── unresolved
     │ 
-  3 │ contract Foo {
+  5 │ contract Foo {
     │          ─┬─  
     │           ╰─── name: 2
-  4 │     function useSlotInAssembly() public {
+  6 │     function useSlotInAssembly() public {
     │              ────────┬────────  
     │                      ╰────────── name: 3
-  5 │         uint value;
+  7 │         uint value;
     │              ──┬──  
     │                ╰──── name: 4
     │ 
-  7 │             value := sload(slot)
+  9 │             value := sload(slot)
     │             ──┬──    ──┬── ──┬─  
     │               ╰────────────────── ref: 4
     │                        │     │   
@@ -61,10 +61,10 @@ Bindings:
     │                              │   
     │                              ╰─── ref: 1
     │ 
- 11 │     function useSlotInSolidity() public {
+ 13 │     function useSlotInSolidity() public {
     │              ────────┬────────  
     │                      ╰────────── name: 5
- 12 │         uint value = slot;
+ 14 │         uint value = slot;
     │              ──┬──   ──┬─  
     │                ╰─────────── name: 6
     │                        │   

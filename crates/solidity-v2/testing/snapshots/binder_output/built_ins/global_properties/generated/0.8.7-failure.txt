@@ -2,30 +2,30 @@
 
 Parse errors:
 [resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'London'.
-   ╭─[input.sol:8:25]
-   │
- 8 │         uint v1 = block.basefee;
-   │                         ───┬───  
-   │                            ╰───── Error occurred here.
-───╯
-[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Cancun'.
-   ╭─[input.sol:9:25]
-   │
- 9 │         uint v2 = block.blobbasefee;
-   │                         ─────┬─────  
-   │                              ╰─────── Error occurred here.
-───╯
-[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.24'.
-   ╭─[input.sol:9:25]
-   │
- 9 │         uint v2 = block.blobbasefee;
-   │                         ─────┬─────  
-   │                              ╰─────── Error occurred here.
-───╯
-[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.18'.
-    ╭─[input.sol:15:25]
+    ╭─[input.sol:10:25]
     │
- 15 │         uint v8 = block.prevrandao;
+ 10 │         uint v1 = block.basefee;
+    │                         ───┬───  
+    │                            ╰───── Error occurred here.
+────╯
+[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Cancun'.
+    ╭─[input.sol:11:25]
+    │
+ 11 │         uint v2 = block.blobbasefee;
+    │                         ─────┬─────  
+    │                              ╰─────── Error occurred here.
+────╯
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.24'.
+    ╭─[input.sol:11:25]
+    │
+ 11 │         uint v2 = block.blobbasefee;
+    │                         ─────┬─────  
+    │                              ╰─────── Error occurred here.
+────╯
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.18'.
+    ╭─[input.sol:17:25]
+    │
+ 17 │         uint v8 = block.prevrandao;
     │                         ─────┬────  
     │                              ╰────── Error occurred here.
 ────╯
@@ -33,59 +33,59 @@ Parse errors:
 ------------------------------------------------------------------------
 
 Definitions (19):
-- Def: #1 ["Test" @ input.sol:1:10] (contract)
-- Def: #2 ["testTx" @ input.sol:2:14] (function, type: function () returns void)
-- Def: #3 ["origin" @ input.sol:3:17] (variable, type: address)
-- Def: #4 ["price" @ input.sol:4:14] (variable, type: uint256)
-- Def: #5 ["testBlock" @ input.sol:7:14] (function, type: function () returns void)
-- Def: #6 ["v1" @ input.sol:8:14] (variable, type: uint256)
-- Def: #7 ["v2" @ input.sol:9:14] (variable, type: uint256)
-- Def: #8 ["v3" @ input.sol:10:14] (variable, type: uint256)
-- Def: #9 ["v4" @ input.sol:11:17] (variable, type: address)
-- Def: #10 ["v5" @ input.sol:12:14] (variable, type: uint256)
-- Def: #11 ["v6" @ input.sol:13:14] (variable, type: uint256)
-- Def: #12 ["v7" @ input.sol:14:14] (variable, type: uint256)
-- Def: #13 ["v8" @ input.sol:15:14] (variable, type: uint256)
-- Def: #14 ["v9" @ input.sol:16:14] (variable, type: uint256)
-- Def: #15 ["testMsg" @ input.sol:19:14] (function, type: function () returns void)
-- Def: #16 ["v1" @ input.sol:20:15] (variable, type: unresolved)
-- Def: #17 ["v2" @ input.sol:21:17] (variable, type: address)
-- Def: #18 ["v3" @ input.sol:22:16] (variable, type: bytes4)
-- Def: #19 ["v4" @ input.sol:23:14] (variable, type: uint256)
+- Def: #1 ["Test" @ input.sol:3:10] (contract)
+- Def: #2 ["testTx" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #3 ["origin" @ input.sol:5:17] (variable, type: address)
+- Def: #4 ["price" @ input.sol:6:14] (variable, type: uint256)
+- Def: #5 ["testBlock" @ input.sol:9:14] (function, type: function () returns void)
+- Def: #6 ["v1" @ input.sol:10:14] (variable, type: uint256)
+- Def: #7 ["v2" @ input.sol:11:14] (variable, type: uint256)
+- Def: #8 ["v3" @ input.sol:12:14] (variable, type: uint256)
+- Def: #9 ["v4" @ input.sol:13:17] (variable, type: address)
+- Def: #10 ["v5" @ input.sol:14:14] (variable, type: uint256)
+- Def: #11 ["v6" @ input.sol:15:14] (variable, type: uint256)
+- Def: #12 ["v7" @ input.sol:16:14] (variable, type: uint256)
+- Def: #13 ["v8" @ input.sol:17:14] (variable, type: uint256)
+- Def: #14 ["v9" @ input.sol:18:14] (variable, type: uint256)
+- Def: #15 ["testMsg" @ input.sol:21:14] (function, type: function () returns void)
+- Def: #16 ["v1" @ input.sol:22:15] (variable, type: unresolved)
+- Def: #17 ["v2" @ input.sol:23:17] (variable, type: address)
+- Def: #18 ["v3" @ input.sol:24:16] (variable, type: bytes4)
+- Def: #19 ["v4" @ input.sol:25:14] (variable, type: uint256)
 
 ------------------------------------------------------------------------
 
 References (30):
-- Ref: ["tx" @ input.sol:3:26] -> built-in
-- Ref: ["origin" @ input.sol:3:29] -> built-in
-- Ref: ["tx" @ input.sol:4:22] -> built-in
-- Ref: ["gasprice" @ input.sol:4:25] -> built-in
-- Ref: ["block" @ input.sol:8:19] -> built-in
-- Ref: ["basefee" @ input.sol:8:25] -> built-in
-- Ref: ["block" @ input.sol:9:19] -> built-in
-- Ref: ["blobbasefee" @ input.sol:9:25] -> built-in
+- Ref: ["tx" @ input.sol:5:26] -> built-in
+- Ref: ["origin" @ input.sol:5:29] -> built-in
+- Ref: ["tx" @ input.sol:6:22] -> built-in
+- Ref: ["gasprice" @ input.sol:6:25] -> built-in
 - Ref: ["block" @ input.sol:10:19] -> built-in
-- Ref: ["chainid" @ input.sol:10:25] -> built-in
-- Ref: ["block" @ input.sol:11:22] -> built-in
-- Ref: ["coinbase" @ input.sol:11:28] -> built-in
+- Ref: ["basefee" @ input.sol:10:25] -> built-in
+- Ref: ["block" @ input.sol:11:19] -> built-in
+- Ref: ["blobbasefee" @ input.sol:11:25] -> built-in
 - Ref: ["block" @ input.sol:12:19] -> built-in
-- Ref: ["difficulty" @ input.sol:12:25] -> built-in
-- Ref: ["block" @ input.sol:13:19] -> built-in
-- Ref: ["gaslimit" @ input.sol:13:25] -> built-in
+- Ref: ["chainid" @ input.sol:12:25] -> built-in
+- Ref: ["block" @ input.sol:13:22] -> built-in
+- Ref: ["coinbase" @ input.sol:13:28] -> built-in
 - Ref: ["block" @ input.sol:14:19] -> built-in
-- Ref: ["number" @ input.sol:14:25] -> built-in
+- Ref: ["difficulty" @ input.sol:14:25] -> built-in
 - Ref: ["block" @ input.sol:15:19] -> built-in
-- Ref: ["prevrandao" @ input.sol:15:25] -> built-in
+- Ref: ["gaslimit" @ input.sol:15:25] -> built-in
 - Ref: ["block" @ input.sol:16:19] -> built-in
-- Ref: ["timestamp" @ input.sol:16:25] -> built-in
-- Ref: ["msg" @ input.sol:20:20] -> built-in
-- Ref: ["data" @ input.sol:20:24] -> built-in
-- Ref: ["msg" @ input.sol:21:22] -> built-in
-- Ref: ["sender" @ input.sol:21:26] -> built-in
-- Ref: ["msg" @ input.sol:22:21] -> built-in
-- Ref: ["sig" @ input.sol:22:25] -> built-in
-- Ref: ["msg" @ input.sol:23:19] -> built-in
-- Ref: ["value" @ input.sol:23:23] -> built-in
+- Ref: ["number" @ input.sol:16:25] -> built-in
+- Ref: ["block" @ input.sol:17:19] -> built-in
+- Ref: ["prevrandao" @ input.sol:17:25] -> built-in
+- Ref: ["block" @ input.sol:18:19] -> built-in
+- Ref: ["timestamp" @ input.sol:18:25] -> built-in
+- Ref: ["msg" @ input.sol:22:20] -> built-in
+- Ref: ["data" @ input.sol:22:24] -> built-in
+- Ref: ["msg" @ input.sol:23:22] -> built-in
+- Ref: ["sender" @ input.sol:23:26] -> built-in
+- Ref: ["msg" @ input.sol:24:21] -> built-in
+- Ref: ["sig" @ input.sol:24:25] -> built-in
+- Ref: ["msg" @ input.sol:25:19] -> built-in
+- Ref: ["value" @ input.sol:25:23] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -96,20 +96,20 @@ Unbound identifiers (0):
 Bindings: 
     ╭─[input.sol:1:1]
     │
-  1 │ contract Test {
+  3 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 1
-  2 │     function testTx() public {
+  4 │     function testTx() public {
     │              ───┬──  
     │                 ╰──── name: 2
-  3 │         address origin = tx.origin;
+  5 │         address origin = tx.origin;
     │                 ───┬──   ─┬ ───┬──  
     │                    ╰──────────────── name: 3
     │                           │    │    
     │                           ╰───────── built-in
     │                                │    
     │                                ╰──── built-in
-  4 │         uint price = tx.gasprice;
+  6 │         uint price = tx.gasprice;
     │              ──┬──   ─┬ ────┬───  
     │                ╰────────────────── name: 4
     │                       │     │     
@@ -117,66 +117,66 @@ Bindings:
     │                             │     
     │                             ╰───── built-in
     │ 
-  7 │     function testBlock() public {
+  9 │     function testBlock() public {
     │              ────┬────  
     │                  ╰────── name: 5
-  8 │         uint v1 = block.basefee;
+ 10 │         uint v1 = block.basefee;
     │              ─┬   ──┬── ───┬───  
     │               ╰────────────────── name: 6
     │                     │      │     
     │                     ╰──────────── built-in
     │                            │     
     │                            ╰───── built-in
-  9 │         uint v2 = block.blobbasefee;
+ 11 │         uint v2 = block.blobbasefee;
     │              ─┬   ──┬── ─────┬─────  
     │               ╰────────────────────── name: 7
     │                     │        │       
     │                     ╰──────────────── built-in
     │                              │       
     │                              ╰─────── built-in
- 10 │         uint v3 = block.chainid;
+ 12 │         uint v3 = block.chainid;
     │              ─┬   ──┬── ───┬───  
     │               ╰────────────────── name: 8
     │                     │      │     
     │                     ╰──────────── built-in
     │                            │     
     │                            ╰───── built-in
- 11 │         address v4 = block.coinbase;
+ 13 │         address v4 = block.coinbase;
     │                 ─┬   ──┬── ────┬───  
     │                  ╰─────────────────── name: 9
     │                        │       │     
     │                        ╰───────────── built-in
     │                                │     
     │                                ╰───── built-in
- 12 │         uint v5 = block.difficulty;
+ 14 │         uint v5 = block.difficulty;
     │              ─┬   ──┬── ─────┬────  
     │               ╰───────────────────── name: 10
     │                     │        │      
     │                     ╰─────────────── built-in
     │                              │      
     │                              ╰────── built-in
- 13 │         uint v6 = block.gaslimit;
+ 15 │         uint v6 = block.gaslimit;
     │              ─┬   ──┬── ────┬───  
     │               ╰─────────────────── name: 11
     │                     │       │     
     │                     ╰───────────── built-in
     │                             │     
     │                             ╰───── built-in
- 14 │         uint v7 = block.number;
+ 16 │         uint v7 = block.number;
     │              ─┬   ──┬── ───┬──  
     │               ╰───────────────── name: 12
     │                     │      │    
     │                     ╰─────────── built-in
     │                            │    
     │                            ╰──── built-in
- 15 │         uint v8 = block.prevrandao;
+ 17 │         uint v8 = block.prevrandao;
     │              ─┬   ──┬── ─────┬────  
     │               ╰───────────────────── name: 13
     │                     │        │      
     │                     ╰─────────────── built-in
     │                              │      
     │                              ╰────── built-in
- 16 │         uint v9 = block.timestamp;
+ 18 │         uint v9 = block.timestamp;
     │              ─┬   ──┬── ────┬────  
     │               ╰──────────────────── name: 14
     │                     │       │      
@@ -184,31 +184,31 @@ Bindings:
     │                             │      
     │                             ╰────── built-in
     │ 
- 19 │     function testMsg() public {
+ 21 │     function testMsg() public {
     │              ───┬───  
     │                 ╰───── name: 15
- 20 │         bytes v1 = msg.data;
+ 22 │         bytes v1 = msg.data;
     │               ─┬   ─┬─ ──┬─  
     │                ╰───────────── name: 16
     │                     │    │   
     │                     ╰──────── built-in
     │                          │   
     │                          ╰─── built-in
- 21 │         address v2 = msg.sender;
+ 23 │         address v2 = msg.sender;
     │                 ─┬   ─┬─ ───┬──  
     │                  ╰─────────────── name: 17
     │                       │     │    
     │                       ╰────────── built-in
     │                             │    
     │                             ╰──── built-in
- 22 │         bytes4 v3 = msg.sig;
+ 24 │         bytes4 v3 = msg.sig;
     │                ─┬   ─┬─ ─┬─  
     │                 ╰──────────── name: 18
     │                      │   │   
     │                      ╰─────── built-in
     │                          │   
     │                          ╰─── built-in
- 23 │         uint v4 = msg.value;
+ 25 │         uint v4 = msg.value;
     │              ─┬   ─┬─ ──┬──  
     │               ╰────────────── name: 19
     │                    │    │    

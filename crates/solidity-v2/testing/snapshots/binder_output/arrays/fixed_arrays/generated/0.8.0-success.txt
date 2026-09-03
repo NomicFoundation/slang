@@ -1,12 +1,12 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (1):
-- Def: #1 ["test" @ input.sol:1:10] (function, type: function () returns void)
+- Def: #1 ["test" @ input.sol:3:10] (function, type: function () returns void)
 
 ------------------------------------------------------------------------
 
 References (1):
-- Ref: ["length" @ input.sol:2:13] -> built-in
+- Ref: ["length" @ input.sol:4:13] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -17,10 +17,10 @@ Unbound identifiers (0):
 Bindings: 
    ╭─[input.sol:1:1]
    │
- 1 │ function test() {
+ 3 │ function test() {
    │          ──┬─  
    │            ╰─── name: 1
- 2 │     ["foo"].length;
+ 4 │     ["foo"].length;
    │             ───┬──  
    │                ╰──── built-in
 ───╯

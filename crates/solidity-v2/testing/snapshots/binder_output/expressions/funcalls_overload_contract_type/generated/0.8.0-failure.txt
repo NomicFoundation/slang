@@ -2,9 +2,9 @@
 
 Parse errors:
 [resolution/member-not-found] Error: Member 'add' not found or not visible after argument-dependent lookup.
-    ╭─[input.sol:10:15]
+    ╭─[input.sol:12:15]
     │
- 10 │         other.add(this);
+ 12 │         other.add(this);
     │               ─┬─  
     │                ╰─── Error occurred here.
 ────╯
@@ -12,23 +12,23 @@ Parse errors:
 ------------------------------------------------------------------------
 
 Definitions (7):
-- Def: #1 ["Foo" @ input.sol:1:11] (interface)
-- Def: #2 ["add" @ input.sol:2:14] (function, type: function (address) returns int256)
-- Def: #3 ["add" @ input.sol:3:14] (function, type: function (int256, int256) returns int256)
-- Def: #4 ["Bar" @ input.sol:6:10] (contract)
-- Def: #5 ["someFunc" @ input.sol:7:14] (function, type: function (Foo, address) returns void)
-- Def: #6 ["other" @ input.sol:7:27] (parameter, type: Foo)
-- Def: #7 ["x" @ input.sol:7:42] (parameter, type: address)
+- Def: #1 ["Foo" @ input.sol:3:11] (interface)
+- Def: #2 ["add" @ input.sol:4:14] (function, type: function (address) returns int256)
+- Def: #3 ["add" @ input.sol:5:14] (function, type: function (int256, int256) returns int256)
+- Def: #4 ["Bar" @ input.sol:8:10] (contract)
+- Def: #5 ["someFunc" @ input.sol:9:14] (function, type: function (Foo, address) returns void)
+- Def: #6 ["other" @ input.sol:9:27] (parameter, type: Foo)
+- Def: #7 ["x" @ input.sol:9:42] (parameter, type: address)
 
 ------------------------------------------------------------------------
 
 References (6):
-- Ref: ["Foo" @ input.sol:7:23] -> #1
-- Ref: ["other" @ input.sol:8:9] -> #6
-- Ref: ["add" @ input.sol:8:15] -> #2
-- Ref: ["x" @ input.sol:8:19] -> #7
+- Ref: ["Foo" @ input.sol:9:23] -> #1
 - Ref: ["other" @ input.sol:10:9] -> #6
-- Ref: ["add" @ input.sol:10:15] -> unresolved
+- Ref: ["add" @ input.sol:10:15] -> #2
+- Ref: ["x" @ input.sol:10:19] -> #7
+- Ref: ["other" @ input.sol:12:9] -> #6
+- Ref: ["add" @ input.sol:12:15] -> unresolved
 
 ------------------------------------------------------------------------
 
@@ -39,20 +39,20 @@ Unbound identifiers (0):
 Bindings: 
     ╭─[input.sol:1:1]
     │
-  1 │ interface Foo {
+  3 │ interface Foo {
     │           ─┬─  
     │            ╰─── name: 1
-  2 │     function add(address) external returns (int);
+  4 │     function add(address) external returns (int);
     │              ─┬─  
     │               ╰─── name: 2
-  3 │     function add(int, int) external returns (int);
+  5 │     function add(int, int) external returns (int);
     │              ─┬─  
     │               ╰─── name: 3
     │ 
-  6 │ contract Bar {
+  8 │ contract Bar {
     │          ─┬─  
     │           ╰─── name: 4
-  7 │     function someFunc(Foo other, address x) internal {
+  9 │     function someFunc(Foo other, address x) internal {
     │              ────┬─── ─┬─ ──┬──          ┬  
     │                  ╰────────────────────────── name: 5
     │                        │    │            │  
@@ -61,7 +61,7 @@ Bindings:
     │                             ╰─────────────── name: 6
     │                                          │  
     │                                          ╰── name: 7
-  8 │         other.add(x);
+ 10 │         other.add(x);
     │         ──┬── ─┬─ ┬  
     │           ╰────────── ref: 6
     │                │  │  
@@ -69,7 +69,7 @@ Bindings:
     │                   │  
     │                   ╰── ref: 7
     │ 
- 10 │         other.add(this);
+ 12 │         other.add(this);
     │         ──┬── ─┬─  
     │           ╰──────── ref: 6
     │                │   

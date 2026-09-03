@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Lib {
     function nop_uint(uint x) public returns (uint) {}
     function nop_bool(bool x) public returns (bool) {}

@@ -1,3 +1,5 @@
+pragma solidity *;
+
 interface TestBase {
     function add(int, int) external returns (int);
 

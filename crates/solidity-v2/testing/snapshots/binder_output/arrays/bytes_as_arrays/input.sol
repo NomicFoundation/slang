@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function test(string storage a) internal {
         bytes storage x = bytes(a);

@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function test(uint amount) public {
         // transfer/send should not bind on >= 0.8.0

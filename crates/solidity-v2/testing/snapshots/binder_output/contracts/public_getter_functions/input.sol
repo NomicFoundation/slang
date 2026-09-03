@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     address public x;
     function test() public {

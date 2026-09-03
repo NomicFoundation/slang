@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function test() public {
         bytes4 v1 = this.test.selector;

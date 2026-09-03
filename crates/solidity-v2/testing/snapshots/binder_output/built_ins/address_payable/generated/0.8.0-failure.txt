@@ -2,38 +2,38 @@
 
 Parse errors:
 [resolution/member-not-found] Error: Member 'transfer' not found or not visible after argument-dependent lookup.
-   ╭─[input.sol:7:14]
+   ╭─[input.sol:9:14]
    │
- 7 │         rcpt.transfer(1);
+ 9 │         rcpt.transfer(1);
    │              ────┬───  
    │                  ╰───── Error occurred here.
 ───╯
 [resolution/member-not-found] Error: Member 'transfer' not found or not visible after argument-dependent lookup.
-   ╭─[input.sol:9:32]
-   │
- 9 │         address(uint160(rcpt)).transfer(1);
-   │                                ────┬───  
-   │                                    ╰───── Error occurred here.
-───╯
+    ╭─[input.sol:11:32]
+    │
+ 11 │         address(uint160(rcpt)).transfer(1);
+    │                                ────┬───  
+    │                                    ╰───── Error occurred here.
+────╯
 
 ------------------------------------------------------------------------
 
 Definitions (5):
-- Def: #1 ["Test" @ input.sol:1:10] (contract)
-- Def: #2 ["testPayable" @ input.sol:2:14] (function, type: function (address payable) returns void)
-- Def: #3 ["rcpt" @ input.sol:2:42] (parameter, type: address payable)
-- Def: #4 ["testNonPayable" @ input.sol:5:14] (function, type: function (address) returns void)
-- Def: #5 ["rcpt" @ input.sol:5:37] (parameter, type: address)
+- Def: #1 ["Test" @ input.sol:3:10] (contract)
+- Def: #2 ["testPayable" @ input.sol:4:14] (function, type: function (address payable) returns void)
+- Def: #3 ["rcpt" @ input.sol:4:42] (parameter, type: address payable)
+- Def: #4 ["testNonPayable" @ input.sol:7:14] (function, type: function (address) returns void)
+- Def: #5 ["rcpt" @ input.sol:7:37] (parameter, type: address)
 
 ------------------------------------------------------------------------
 
 References (6):
-- Ref: ["rcpt" @ input.sol:3:9] -> #3
-- Ref: ["transfer" @ input.sol:3:14] -> built-in
-- Ref: ["rcpt" @ input.sol:7:9] -> #5
-- Ref: ["transfer" @ input.sol:7:14] -> unresolved
-- Ref: ["rcpt" @ input.sol:9:25] -> #5
-- Ref: ["transfer" @ input.sol:9:32] -> unresolved
+- Ref: ["rcpt" @ input.sol:5:9] -> #3
+- Ref: ["transfer" @ input.sol:5:14] -> built-in
+- Ref: ["rcpt" @ input.sol:9:9] -> #5
+- Ref: ["transfer" @ input.sol:9:14] -> unresolved
+- Ref: ["rcpt" @ input.sol:11:25] -> #5
+- Ref: ["transfer" @ input.sol:11:32] -> unresolved
 
 ------------------------------------------------------------------------
 
@@ -42,37 +42,37 @@ Unbound identifiers (0):
 ------------------------------------------------------------------------
 
 Bindings: 
-   ╭─[input.sol:1:1]
-   │
- 1 │ contract Test {
-   │          ──┬─  
-   │            ╰─── name: 1
- 2 │     function testPayable(address payable rcpt) public {
-   │              ─────┬─────                 ──┬─  
-   │                   ╰──────────────────────────── name: 2
-   │                                            │   
-   │                                            ╰─── name: 3
- 3 │         rcpt.transfer(1);
-   │         ──┬─ ────┬───  
-   │           ╰──────────── ref: 3
-   │                  │     
-   │                  ╰───── built-in
-   │ 
- 5 │     function testNonPayable(address rcpt) public {
-   │              ───────┬──────         ──┬─  
-   │                     ╰───────────────────── name: 4
-   │                                       │   
-   │                                       ╰─── name: 5
-   │ 
- 7 │         rcpt.transfer(1);
-   │         ──┬─ ────┬───  
-   │           ╰──────────── ref: 5
-   │                  │     
-   │                  ╰───── unresolved
-   │ 
- 9 │         address(uint160(rcpt)).transfer(1);
-   │                         ──┬─   ────┬───  
-   │                           ╰────────────── ref: 5
-   │                                    │     
-   │                                    ╰───── unresolved
-───╯
+    ╭─[input.sol:1:1]
+    │
+  3 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  4 │     function testPayable(address payable rcpt) public {
+    │              ─────┬─────                 ──┬─  
+    │                   ╰──────────────────────────── name: 2
+    │                                            │   
+    │                                            ╰─── name: 3
+  5 │         rcpt.transfer(1);
+    │         ──┬─ ────┬───  
+    │           ╰──────────── ref: 3
+    │                  │     
+    │                  ╰───── built-in
+    │ 
+  7 │     function testNonPayable(address rcpt) public {
+    │              ───────┬──────         ──┬─  
+    │                     ╰───────────────────── name: 4
+    │                                       │   
+    │                                       ╰─── name: 5
+    │ 
+  9 │         rcpt.transfer(1);
+    │         ──┬─ ────┬───  
+    │           ╰──────────── ref: 5
+    │                  │     
+    │                  ╰───── unresolved
+    │ 
+ 11 │         address(uint160(rcpt)).transfer(1);
+    │                         ──┬─   ────┬───  
+    │                           ╰────────────── ref: 5
+    │                                    │     
+    │                                    ╰───── unresolved
+────╯

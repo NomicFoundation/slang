@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library Id {
   enum Answer {
     Yes

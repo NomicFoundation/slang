@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract AssemblyFunctions {
     function test(uint256 x) public returns (uint256 r) {
         assembly {

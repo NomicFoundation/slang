@@ -1,33 +1,33 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (10):
-- Def: #1 ["Constants" @ input.sol:1:10] (contract)
-- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
-- Def: #3 ["Direction" @ input.sol:9:6] (enum)
-- Def: #4 ["NORTH" @ input.sol:9:18] (enum member of Direction)
-- Def: #5 ["SOUTH" @ input.sol:9:25] (enum member of Direction)
-- Def: #6 ["EAST" @ input.sol:9:32] (enum member of Direction)
-- Def: #7 ["WEST" @ input.sol:9:38] (enum member of Direction)
-- Def: #8 ["MY_ADDRESS" @ input.sol:11:18] (constant, type: address)
-- Def: #9 ["MY_UINT" @ input.sol:12:18] (constant, type: uint256)
-- Def: #10 ["MY_DIRECTION" @ input.sol:13:20] (constant, type: Direction)
+- Def: #1 ["Constants" @ input.sol:3:10] (contract)
+- Def: #2 ["test" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #3 ["Direction" @ input.sol:11:6] (enum)
+- Def: #4 ["NORTH" @ input.sol:11:18] (enum member of Direction)
+- Def: #5 ["SOUTH" @ input.sol:11:25] (enum member of Direction)
+- Def: #6 ["EAST" @ input.sol:11:32] (enum member of Direction)
+- Def: #7 ["WEST" @ input.sol:11:38] (enum member of Direction)
+- Def: #8 ["MY_ADDRESS" @ input.sol:13:18] (constant, type: address)
+- Def: #9 ["MY_UINT" @ input.sol:14:18] (constant, type: uint256)
+- Def: #10 ["MY_DIRECTION" @ input.sol:15:20] (constant, type: Direction)
 
 ------------------------------------------------------------------------
 
 References (13):
-- Ref: ["assert" @ input.sol:3:9] -> built-in
-- Ref: ["MY_DIRECTION" @ input.sol:3:16] -> #10
-- Ref: ["Direction" @ input.sol:3:32] -> #3
-- Ref: ["NORTH" @ input.sol:3:42] -> #4
-- Ref: ["assert" @ input.sol:4:9] -> built-in
-- Ref: ["MY_UINT" @ input.sol:4:16] -> #9
-- Ref: ["require" @ input.sol:5:9] -> built-in
-- Ref: ["msg" @ input.sol:5:17] -> built-in
-- Ref: ["sender" @ input.sol:5:21] -> built-in
-- Ref: ["MY_ADDRESS" @ input.sol:5:31] -> #8
-- Ref: ["Direction" @ input.sol:13:1] -> #3
-- Ref: ["Direction" @ input.sol:13:35] -> #3
-- Ref: ["EAST" @ input.sol:13:45] -> #6
+- Ref: ["assert" @ input.sol:5:9] -> built-in
+- Ref: ["MY_DIRECTION" @ input.sol:5:16] -> #10
+- Ref: ["Direction" @ input.sol:5:32] -> #3
+- Ref: ["NORTH" @ input.sol:5:42] -> #4
+- Ref: ["assert" @ input.sol:6:9] -> built-in
+- Ref: ["MY_UINT" @ input.sol:6:16] -> #9
+- Ref: ["require" @ input.sol:7:9] -> built-in
+- Ref: ["msg" @ input.sol:7:17] -> built-in
+- Ref: ["sender" @ input.sol:7:21] -> built-in
+- Ref: ["MY_ADDRESS" @ input.sol:7:31] -> #8
+- Ref: ["Direction" @ input.sol:15:1] -> #3
+- Ref: ["Direction" @ input.sol:15:35] -> #3
+- Ref: ["EAST" @ input.sol:15:45] -> #6
 
 ------------------------------------------------------------------------
 
@@ -38,13 +38,13 @@ Unbound identifiers (0):
 Bindings: 
     ╭─[input.sol:1:1]
     │
-  1 │ contract Constants {
+  3 │ contract Constants {
     │          ────┬────  
     │              ╰────── name: 1
-  2 │     function test() public {
+  4 │     function test() public {
     │              ──┬─  
     │                ╰─── name: 2
-  3 │         assert(MY_DIRECTION != Direction.NORTH);
+  5 │         assert(MY_DIRECTION != Direction.NORTH);
     │         ───┬── ──────┬─────    ────┬──── ──┬──  
     │            ╰──────────────────────────────────── built-in
     │                      │             │       │    
@@ -53,12 +53,12 @@ Bindings:
     │                                    ╰──────────── ref: 3
     │                                            │    
     │                                            ╰──── ref: 4
-  4 │         assert(MY_UINT > 100);
+  6 │         assert(MY_UINT > 100);
     │         ───┬── ───┬───  
     │            ╰──────────── built-in
     │                   │     
     │                   ╰───── ref: 9
-  5 │         require(msg.sender == MY_ADDRESS);
+  7 │         require(msg.sender == MY_ADDRESS);
     │         ───┬─── ─┬─ ───┬──    ─────┬────  
     │            ╰────────────────────────────── built-in
     │                  │     │           │      
@@ -68,7 +68,7 @@ Bindings:
     │                                    │      
     │                                    ╰────── ref: 8
     │ 
-  9 │ enum Direction { NORTH, SOUTH, EAST, WEST }
+ 11 │ enum Direction { NORTH, SOUTH, EAST, WEST }
     │      ────┬────   ──┬──  ──┬──  ──┬─  ──┬─  
     │          ╰───────────────────────────────── name: 3
     │                    │      │      │     │   
@@ -80,13 +80,13 @@ Bindings:
     │                                        │   
     │                                        ╰─── name: 7
     │ 
- 11 │ address constant MY_ADDRESS = 0x777788889999AaAAbBbbCcccddDdeeeEfFFfCcCc;
+ 13 │ address constant MY_ADDRESS = 0x777788889999AaAAbBbbCcccddDdeeeEfFFfCcCc;
     │                  ─────┬────  
     │                       ╰────── name: 8
- 12 │ uint256 constant MY_UINT = 123;
+ 14 │ uint256 constant MY_UINT = 123;
     │                  ───┬───  
     │                     ╰───── name: 9
- 13 │ Direction constant MY_DIRECTION = Direction.EAST;
+ 15 │ Direction constant MY_DIRECTION = Direction.EAST;
     │ ────┬────          ──────┬─────   ────┬──── ──┬─  
     │     ╰───────────────────────────────────────────── ref: 3
     │                          │            │       │   

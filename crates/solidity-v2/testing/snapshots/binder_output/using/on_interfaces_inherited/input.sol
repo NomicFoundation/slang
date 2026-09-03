@@ -1,3 +1,5 @@
+pragma solidity *;
+
 library LibFoo {
     function use_foo(IFoo x) public returns (int) {}
 }

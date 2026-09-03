@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     function test_call() public returns (uint) {
         return Utils.create().value;

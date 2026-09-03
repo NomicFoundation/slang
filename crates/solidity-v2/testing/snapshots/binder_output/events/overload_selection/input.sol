@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Test {
     event Foo(uint x, uint y);
     event Foo(bool flag);
