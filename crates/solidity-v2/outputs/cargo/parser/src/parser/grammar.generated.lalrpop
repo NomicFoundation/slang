@@ -432,7 +432,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
     (StateVariableDefinitionValue)?> <semicolon: Semicolon> =>
     {
         let identifier = new_identifier(l..r, ctx.source); let iap =
-        parser_helpers::new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
+        parser_helpers::new_index_access_path_from_separated_identifier_path(parser_helpers::new_separated_identifier_path_from_identifier(identifier));
         let type_name =
         parser_helpers::new_type_name_index_access_path(iap, l, ctx);
         new_state_variable_definition(type_name, attributes, name, value,
@@ -453,14 +453,12 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
         new_state_variable_attributes(extra_attributes), name, value,
         semicolon)
     },
-}; IdentifierPathNoError: IdentifierPath =
+}; IdentifierPathNoError: parser_helpers::SeparatedIdentifierPath =
 {
-    <head: Identifier> <mut tail: IdentifierPathTail> =>
-    {
-        tail.insert(0, new_identifier_path_element_identifier(head));
-        new_identifier_path(tail)
-    }, <head: SomeIdentifier<"ErrorKeyword_Unreserved">> =>
-    new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
+    <head: Identifier> <tail: Repeated<IdentifierPathTailElement>> =>
+    parser_helpers::new_separated_identifier_path_from_identifier_and_tail(<>),
+    <head: SomeIdentifier<"ErrorKeyword_Unreserved">> =>
+    parser_helpers::new_separated_identifier_path_from_identifier(<>),
 }; SpecialStateVariableAttribute: StateVariableAttribute =
 {
     <override_specifier: OverrideSpecifier> =>
@@ -689,8 +687,8 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
     <type_name: TypeName0<FunctionRule, IAPRule>> => <>,
 }; TypeName: TypeName =
 {
-    <type_name: TypeName1<FunctionType, IndexAccessPath<IdentifierPath>>> =>
-    <>,
+    <type_name: TypeName1<FunctionType,
+    IndexAccessPath<SeparatedIdentifierPath>>> => <>,
 }; #[inline] ArrayTypeName: ArrayTypeName =
 {
     <type_name: TypeName1<FunctionType, NoIndexAccessPath>> <open_bracket:
@@ -824,19 +822,17 @@ VariableDeclarationStatementSpecialRevert: VariableDeclarationStatement =
     (StorageLocation)?> <name: Identifier> =>
     {
         let identifier = new_identifier(l..r, ctx.source); let iap =
-        parser_helpers::new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
+        parser_helpers::new_index_access_path_from_separated_identifier_path(parser_helpers::new_separated_identifier_path_from_identifier(identifier));
         let type_name =
         parser_helpers::new_type_name_index_access_path(iap, l, ctx);
         new_variable_declaration(type_name, storage_location, name)
     }
-}; #[inline] IdentifierPathNoRevert: IdentifierPath =
+}; #[inline] IdentifierPathNoRevert: parser_helpers::SeparatedIdentifierPath =
 {
-    <head: Identifier> <mut tail: IdentifierPathTail> =>
-    {
-        tail.insert(0, new_identifier_path_element_identifier(head));
-        new_identifier_path(tail)
-    }, <head: SomeIdentifier<"RevertKeyword_Unreserved">> =>
-    new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
+    <head: Identifier> <tail: Repeated<IdentifierPathTailElement>> =>
+    parser_helpers::new_separated_identifier_path_from_identifier_and_tail(<>),
+    <head: SomeIdentifier<"RevertKeyword_Unreserved">> =>
+    parser_helpers::new_separated_identifier_path_from_identifier(<>),
 };
     UncheckedBlock: UncheckedBlock = {
         <unchecked_keyword: UncheckedKeyword>  <block: Block>  => new_unchecked_block(<>),
@@ -1041,12 +1037,12 @@ Expression1<IndexAccessPathRule, NewExpressionRule>: Expression =
     <expression: Expression1<IndexAccessPath<NoIdentPath>, NoNewExpression>>
     <period: Period> <member: IdentifierPathElement> =>
     new_expression_member_access_expression(new_member_access_expression(<>)),
-    <expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>
-    <open_brace: OpenBrace> <options: CallOptions> <close_brace: CloseBrace>
-    =>
+    <expression: Expression1<IndexAccessPath<SeparatedIdentifierPath>,
+    NewExpression>> <open_brace: OpenBrace> <options: CallOptions>
+    <close_brace: CloseBrace> =>
     new_expression_call_options_expression(new_call_options_expression(<>)),
-    <expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>
-    <arguments: ArgumentsDeclaration> =>
+    <expression: Expression1<IndexAccessPath<SeparatedIdentifierPath>,
+    NewExpression>> <arguments: ArgumentsDeclaration> =>
     new_expression_function_call_expression(new_function_call_expression(<>)),
     <expression: Expression0<IndexAccessPathRule, NewExpressionRule>> => <>,
 }; NoNewExpression: NewExpression = {}; Expression5<Tail>: (Expression, Tail)
@@ -1058,7 +1054,7 @@ Expression1<IndexAccessPathRule, NewExpressionRule>: Expression =
         let (expr, tail) = expression;
         (new_expression_prefix_expression(new_prefix_expression(expression_prefix_expression_operator,
         expr)), tail)
-    }, <expression: Expression1<IndexAccessPath<IdentifierPath>,
+    }, <expression: Expression1<IndexAccessPath<SeparatedIdentifierPath>,
     NewExpression>> <tail: Tail> => (expression, tail),
 }; Expression6<Tail>: (Expression, Tail) =
 {
@@ -1294,17 +1290,18 @@ Expression_AssignmentExpression_Operator =
     new_expression_assignment_expression_operator_greater_than_greater_than_equal(<>),
     <operator: GreaterThanGreaterThanGreaterThanEqual> =>
     new_expression_assignment_expression_operator_greater_than_greater_than_greater_than_equal(<>),
-}; NoIdentPath: IdentifierPath = {}; IndexAccessPath<IdentPathRule>:
-parser_helpers::IndexAccessPath =
+}; NoIdentPath: parser_helpers::SeparatedIdentifierPath = {};
+IndexAccessPath<IdentPathRule>: parser_helpers::IndexAccessPath =
 {
-    <iap: IndexAccessPath<IdentifierPath>> <open_bracket: OpenBracket> <start:
-    (Expression)?> <end: (IndexAccessEnd)?> <close_bracket: CloseBracket> =>
+    <iap: IndexAccessPath<SeparatedIdentifierPath>> <open_bracket:
+    OpenBracket> <start: (Expression)?> <end: (IndexAccessEnd)?>
+    <close_bracket: CloseBracket> =>
     parser_helpers::index_access_path_add_index(<>),
     <IndexAccessPath1<IdentPathRule>> => <>,
 }; IndexAccessPath1<IdentPathRule>: parser_helpers::IndexAccessPath =
 {
-    <identifier: IdentPathRule> =>
-    parser_helpers::new_index_access_path_from_identifier_path(<>),
+    <separated_identifier_path: IdentPathRule> =>
+    parser_helpers::new_index_access_path_from_separated_identifier_path(<>),
     <elementary_type: ElementaryType> =>
     parser_helpers::new_index_access_path_from_elementary_type(<>),
 };
@@ -1359,7 +1356,7 @@ parser_helpers::IndexAccessPath =
     NewExpression: NewExpression =
 {
     <new_keyword: NewKeyword> <type_name: TypeName1<NoFunctionType,
-    IndexAccessPath<IdentifierPath>>> => new_new_expression(<>),
+    IndexAccessPath<SeparatedIdentifierPath>>> => new_new_expression(<>),
 }; NoFunctionType: FunctionType = {};
     TupleExpression: TupleExpression = {
         <open_paren: OpenParen>  <items: TupleValues>  <close_paren: CloseParen>  => new_tuple_expression(<>),
@@ -1443,25 +1440,16 @@ parser_helpers::IndexAccessPath =
     
     IdentifierPath: IdentifierPath =
 {
-    <head: Identifier> <tail: (IdentifierPathTail)?> =>
-    {
-        match tail
-        {
-            Some(mut tail) =>
-            {
-                tail.insert(0, new_identifier_path_element_identifier(head));
-                new_identifier_path(tail)
-            }, None =>
-            new_identifier_path(vec![new_identifier_path_element_identifier(head)]),
-        }
-    },
-}; IdentifierPathTail: Vec<IdentifierPathElement> =
-{ Period <elements: IdentifierPathTailElements> => <>, };
-IdentifierPathTailElements: Vec<IdentifierPathElement> =
+    <path: SeparatedIdentifierPath> =>
+    parser_helpers::new_identifier_path_from_separated_identifier_path(path),
+}; SeparatedIdentifierPath: parser_helpers::SeparatedIdentifierPath =
 {
-    <member_access_identifier: Separated<Period, <IdentifierPathElement>>> =>
-    <>,
-};
+    <head: Identifier> =>
+    parser_helpers::new_separated_identifier_path_from_identifier(<>), <head:
+    Identifier> <tail: Repeated<IdentifierPathTailElement>> =>
+    parser_helpers::new_separated_identifier_path_from_identifier_and_tail(<>),
+}; IdentifierPathTailElement: (Period, IdentifierPathElement) =
+{ <period: Period> <element: IdentifierPathElement> => (period, element), };
     IdentifierPathElement: IdentifierPathElement = {
         <identifier: Identifier>  => new_identifier_path_element_identifier(<>),
         <address_keyword: AddressKeyword>  => new_identifier_path_element_address_keyword(<>),

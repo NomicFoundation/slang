@@ -971,6 +971,11 @@ mod expression {
     }
 
     #[test]
+    fn member_access_with_comments() -> Result<()> {
+        run("Expression", "member_access_with_comments")
+    }
+
+    #[test]
     fn mixed_compound_assignment() -> Result<()> {
         run("Expression", "mixed_compound_assignment")
     }

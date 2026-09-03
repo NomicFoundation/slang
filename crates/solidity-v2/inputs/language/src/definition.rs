@@ -1864,7 +1864,9 @@ StateVariableDefinition: StateVariableDefinition = {
     // Special case for `error` type
     <l:@L> L_ErrorKeyword_Unreserved <r:@R>  <attributes: StateVariableAttributes>  <name: Identifier>  <value: (StateVariableDefinitionValue)?>  <semicolon: Semicolon> => {
         let identifier = new_identifier(l..r, ctx.source);
-        let iap = parser_helpers::new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
+        let iap = parser_helpers::new_index_access_path_from_separated_identifier_path(
+            parser_helpers::new_separated_identifier_path_from_identifier(identifier)
+        );
         let type_name = parser_helpers::new_type_name_index_access_path(iap, l, ctx);
 
         new_state_variable_definition(type_name, attributes, name, value, semicolon)
@@ -1884,14 +1886,11 @@ StateVariableDefinition: StateVariableDefinition = {
 };
 
 // Match an identifier path that, if it's a single element, is not `error`
-IdentifierPathNoError: IdentifierPath = {
+IdentifierPathNoError: parser_helpers::SeparatedIdentifierPath = {
     // We either have any identifier with a tail (ie a period)
-    <head: Identifier>  <mut tail: IdentifierPathTail>  => {
-        tail.insert(0, new_identifier_path_element_identifier(head));
-        new_identifier_path(tail)
-    },
+    <head: Identifier>  <tail: Repeated<IdentifierPathTailElement>>  => parser_helpers::new_separated_identifier_path_from_identifier_and_tail(<>),
     // or a single identifier that is not `error`
-    <head: SomeIdentifier<"ErrorKeyword_Unreserved">>  => new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
+    <head: SomeIdentifier<"ErrorKeyword_Unreserved">>  => parser_helpers::new_separated_identifier_path_from_identifier(<>),
 };
 
 // These are the attributes that can appear in a state variable but not a function,
@@ -2285,7 +2284,7 @@ TypeName1<FunctionRule, IAPRule>: TypeName = {
 };
 TypeName: TypeName = {
     // A regular type can have any function type and an IAP
-    <type_name: TypeName1<FunctionType, IndexAccessPath<IdentifierPath>>>  => <>,
+    <type_name: TypeName1<FunctionType, IndexAccessPath<SeparatedIdentifierPath>>>  => <>,
 };
 
 #[inline]
@@ -2523,7 +2522,9 @@ VariableDeclarationSpecialRevert: VariableDeclaration = {
     // The special `revert` type
     <l:@L> L_RevertKeyword_Unreserved <r:@R>  <storage_location: (StorageLocation)?>  <name: Identifier>  => {
         let identifier = new_identifier(l..r, ctx.source);
-        let iap = parser_helpers::new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
+        let iap = parser_helpers::new_index_access_path_from_separated_identifier_path(
+            parser_helpers::new_separated_identifier_path_from_identifier(identifier)
+        );
         let type_name = parser_helpers::new_type_name_index_access_path(iap, l, ctx);
         new_variable_declaration(type_name, storage_location, name)
     }
@@ -2531,14 +2532,11 @@ VariableDeclarationSpecialRevert: VariableDeclaration = {
 
 // An IdentifierPath that cannot be `revert`, used to disambiguate from the `revert` type
 #[inline]
-IdentifierPathNoRevert: IdentifierPath = {
+IdentifierPathNoRevert: parser_helpers::SeparatedIdentifierPath = {
     // We either have any identifier with a tail (ie a period)
-    <head: Identifier> <mut tail: IdentifierPathTail>  => {
-        tail.insert(0, new_identifier_path_element_identifier(head));
-        new_identifier_path(tail)
-    },
+    <head: Identifier> <tail: Repeated<IdentifierPathTailElement>>  => parser_helpers::new_separated_identifier_path_from_identifier_and_tail(<>),
     // or a single identifier that is not `revert`
-    <head: SomeIdentifier<"RevertKeyword_Unreserved">>  => new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
+    <head: SomeIdentifier<"RevertKeyword_Unreserved">>  => parser_helpers::new_separated_identifier_path_from_identifier(<>),
 };
                                         )
                                     )
@@ -3256,8 +3254,8 @@ Expression1<IndexAccessPathRule, NewExpressionRule>: Expression = {
 
     // Both the braces and the arguments declaration serve as markers for disambiguation, therefore
     // resetting the parametric rules.
-    <expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>  <open_brace: OpenBrace>  <options: CallOptions>  <close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
-    <expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>  <arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(new_function_call_expression(<>)),
+    <expression: Expression1<IndexAccessPath<SeparatedIdentifierPath>, NewExpression>>  <open_brace: OpenBrace>  <options: CallOptions>  <close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
+    <expression: Expression1<IndexAccessPath<SeparatedIdentifierPath>, NewExpression>>  <arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(new_function_call_expression(<>)),
 
     <expression: Expression0<IndexAccessPathRule, NewExpressionRule>>  => <>,
 };
@@ -3273,7 +3271,7 @@ Expression5<Tail>: (Expression, Tail) = {
     },
 
     // A tail can appear just after a postfix or primary expression
-    <expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>> <tail: Tail> => (expression, tail),
+    <expression: Expression1<IndexAccessPath<SeparatedIdentifierPath>, NewExpression>> <tail: Tail> => (expression, tail),
 };
 Expression6<Tail>: (Expression, Tail) = {
     // This is the only other postfix expression that can overwrite a trailing element
@@ -3481,16 +3479,16 @@ Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operat
 };
 
 // A rule matching en empty `IdentifierPath`
-NoIdentPath: IdentifierPath = {};
+NoIdentPath: parser_helpers::SeparatedIdentifierPath = {};
 
 // An Index Access Path that is parametric over the IdentifierPath rule used for member access and index access
 IndexAccessPath<IdentPathRule>: parser_helpers::IndexAccessPath = {
     // As before, we usually care about trailing constructs, so the brackets serve as markers to reset the parametric rule
-    <iap: IndexAccessPath<IdentifierPath>> <open_bracket: OpenBracket>  <start: (Expression)?>  <end: (IndexAccessEnd)?>  <close_bracket: CloseBracket>  => parser_helpers::index_access_path_add_index(<>),
+    <iap: IndexAccessPath<SeparatedIdentifierPath>> <open_bracket: OpenBracket>  <start: (Expression)?>  <end: (IndexAccessEnd)?>  <close_bracket: CloseBracket>  => parser_helpers::index_access_path_add_index(<>),
     <IndexAccessPath1<IdentPathRule>>  => <>,
 };
 IndexAccessPath1<IdentPathRule>: parser_helpers::IndexAccessPath = {
-    <identifier: IdentPathRule> => parser_helpers::new_index_access_path_from_identifier_path(<>),
+    <separated_identifier_path: IdentPathRule> => parser_helpers::new_index_access_path_from_separated_identifier_path(<>),
     <elementary_type: ElementaryType>  => parser_helpers::new_index_access_path_from_elementary_type(<>),
 };
                                         )
@@ -3595,7 +3593,7 @@ IndexAccessPath1<IdentPathRule>: parser_helpers::IndexAccessPath = {
 // We do this to avoid the amibiguity of `try new function () returns (uint) ...`, where the returns clause may be
 // parsed either as part of the function type or as part of a try statement.
 NewExpression: NewExpression = {
-    <new_keyword: NewKeyword>  <type_name: TypeName1<NoFunctionType, IndexAccessPath<IdentifierPath>>>  => new_new_expression(<>),
+    <new_keyword: NewKeyword>  <type_name: TypeName1<NoFunctionType, IndexAccessPath<SeparatedIdentifierPath>>>  => new_new_expression(<>),
 
 };
 
@@ -3921,23 +3919,20 @@ TupleValues: TupleValues = {
 // We need to force this to differentiate the first element from not being
 // an `AddressKeyword`
 IdentifierPath: IdentifierPath = {
-    <head: Identifier>  <tail: (IdentifierPathTail)?>  => {
-        match tail {
-            Some(mut tail) => {
-                tail.insert(0, new_identifier_path_element_identifier(head));
-                new_identifier_path(tail)
-            },
-            None => new_identifier_path(vec![new_identifier_path_element_identifier(head)]),
-        }
-    },
+    <path: SeparatedIdentifierPath>  => parser_helpers::new_identifier_path_from_separated_identifier_path(path),
 
 };
-IdentifierPathTail: Vec<IdentifierPathElement> = {
-    Period  <elements: IdentifierPathTailElements>  => <>,
+// A path can also be reinterpreted as a chain of member accesses, which needs the
+// periods that an `IdentifierPath` doesn't keep, so we hold on to them until we
+// know which of the two we're building.
+SeparatedIdentifierPath: parser_helpers::SeparatedIdentifierPath = {
+    <head: Identifier>  => parser_helpers::new_separated_identifier_path_from_identifier(<>),
+    <head: Identifier>  <tail: Repeated<IdentifierPathTailElement>>  => parser_helpers::new_separated_identifier_path_from_identifier_and_tail(<>),
 
 };
-IdentifierPathTailElements: Vec<IdentifierPathElement> = {
-    <member_access_identifier: Separated<Period, <IdentifierPathElement>>>  => <>,
+// Each element after the head, paired with the period that precedes it.
+IdentifierPathTailElement: (Period, IdentifierPathElement) = {
+    <period: Period>  <element: IdentifierPathElement>  => (period, element),
 
 };
                                         )
