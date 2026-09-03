@@ -14,7 +14,7 @@ Source: >
   11 │ // <<<                                                                                                         │ 219..225
   12 │ }                                                                                                              │ 226..227
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Semicolon. One of CloseParen, Comma was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractMembers/mismatched_delimiter/input.sol:7:29]

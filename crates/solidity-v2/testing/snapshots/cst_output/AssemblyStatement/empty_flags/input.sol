@@ -1,4 +1,4 @@
-st_oupragma solidity *;
+pragma solidity *;
 
 contract C {
     function f() public {

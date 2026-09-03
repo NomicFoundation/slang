@@ -9,7 +9,7 @@ Source: >
   6  │ // the grammar only allows the `abstract` keyword on contracts.                  │ 203..266
   7  │ abstract interface I {}                                                          │ 267..290
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected InterfaceKeyword. One of ContractKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/InterfaceDefinition/abstract_keyword/input.sol:7:10]

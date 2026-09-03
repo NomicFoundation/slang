@@ -5,7 +5,7 @@ Source: >
   2  │                                                                                  │ 19..19
   3  │ error E(uint[] memory);                                                          │ 20..43
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected MemoryKeyword. One of AtKeyword, CloseParen, Comma, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ErrorDefinition/parameter_with_location/input.sol:3:16]

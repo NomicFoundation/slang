@@ -11,7 +11,7 @@ Source: >
   8  │                                                                                                          │ 178..178
   9  │ // <<<                                                                                                   │ 179..185
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.27'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/unreserved_keywords/input.sol:5:7]

@@ -11,7 +11,7 @@ Source: >
   8  │     constructor() pure {}                                                        │ 284..309
   9  │ }                                                                                │ 310..311
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected PureKeyword. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, InternalKeyword, LayoutKeyword, OpenBrace, PayableKeyword, PublicKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ConstructorDefinition/pure_attribute/input.sol:8:19]

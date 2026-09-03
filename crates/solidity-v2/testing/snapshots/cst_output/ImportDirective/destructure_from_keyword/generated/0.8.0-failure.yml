@@ -6,7 +6,7 @@ Source: >
   3  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/parsing/import_complex_invalid_from.sol │ 20..140
   4  │ import {hello, world} from function;                                                                                     │ 141..177
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected FunctionKeyword. One of StringLiteral was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ImportDirective/destructure_from_keyword/input.sol:4:28]

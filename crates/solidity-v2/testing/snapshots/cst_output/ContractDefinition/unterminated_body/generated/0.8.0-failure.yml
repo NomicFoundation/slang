@@ -7,7 +7,7 @@ Source: >
   4  │ contract Sample {                                                                                              │ 131..148
   5  │ // <<<                                                                                                         │ 149..155
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-eof] Error: Unexpected end of file. One of AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, CloseBrace, ConstructorKeyword, EnumKeyword, ErrorKeyword, EventKeyword, FallbackKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, ModifierKeyword, ReceiveKeyword, RevertKeyword, StringKeyword, StructKeyword, TransientKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UsingKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/unterminated_body/input.sol:4:18]

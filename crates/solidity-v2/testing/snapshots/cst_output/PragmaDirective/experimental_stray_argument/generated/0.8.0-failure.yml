@@ -6,7 +6,7 @@ Source: >
   3  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/nameAndTypeResolution/520_experimental_pragma_multiple_same_line.sol │ 20..169
   4  │ pragma experimental ABIEncoderV2 unsupportedName;                                                                                                     │ 170..219
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of PragmaSemicolon was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/experimental_stray_argument/input.sol:4:34]

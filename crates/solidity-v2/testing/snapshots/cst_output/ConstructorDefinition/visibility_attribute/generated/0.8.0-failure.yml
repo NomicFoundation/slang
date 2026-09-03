@@ -11,7 +11,7 @@ Source: >
   8  │     constructor() external {}                                                    │ 276..305
   9  │ }                                                                                │ 306..307
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected ExternalKeyword. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, InternalKeyword, LayoutKeyword, OpenBrace, PayableKeyword, PublicKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ConstructorDefinition/visibility_attribute/input.sol:8:19]

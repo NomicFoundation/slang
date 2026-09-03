@@ -12,7 +12,7 @@ Source: >
   9  │     }                                                                                                            │ 222..227
   10 │ }                                                                                                                │ 228..229
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected YulPeriod. One of YulBreakKeyword, YulCloseBrace, YulContinueKeyword, YulDecimalLiteral, YulFalseKeyword, YulForKeyword, YulFunctionKeyword, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulIfKeyword, YulLeaveKeyword, YulLetKeyword, YulOpenBrace, YulOpenParen, YulStringLiteral, YulSwitchKeyword, YulTrueKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulExpression/decimal_fraction/input.sol:7:24]

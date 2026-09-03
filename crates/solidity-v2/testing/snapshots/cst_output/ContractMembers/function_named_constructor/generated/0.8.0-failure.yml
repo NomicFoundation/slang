@@ -9,7 +9,7 @@ Source: >
   6  │   function constructor() public {}                                                                                                     │ 169..203
   7  │ }                                                                                                                                      │ 204..205
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected ConstructorKeyword. One of AtKeyword, ErrorKeyword, FallbackKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, OpenParen, ReceiveKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractMembers/function_named_constructor/input.sol:6:12]

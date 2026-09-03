@@ -9,7 +9,7 @@ Source: >
   6  │                                                                                                                    │ 188..188
   7  │ // <<<                                                                                                             │ 189..195
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected CloseBrace. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ImportDirective/destructure_import_empty/input.sol:5:9]

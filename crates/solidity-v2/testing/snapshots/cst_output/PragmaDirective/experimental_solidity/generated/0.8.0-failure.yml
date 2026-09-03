@@ -8,7 +8,7 @@ Source: >
   5  │                                                                                                                 │ 162..162
   6  │ // <<<                                                                                                          │ 163..169
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.21'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/experimental_solidity/input.sol:4:21]

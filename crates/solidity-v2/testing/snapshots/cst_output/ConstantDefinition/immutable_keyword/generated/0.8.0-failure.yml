@@ -9,7 +9,7 @@ Source: >
   6  │ // parser: the grammar does not allow `immutable` on a file-level variable.      │ 209..284
   7  │ uint immutable x = 7;                                                            │ 285..306
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected ImmutableKeyword. One of ConstantKeyword, OpenBracket was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ConstantDefinition/immutable_keyword/input.sol:7:6]

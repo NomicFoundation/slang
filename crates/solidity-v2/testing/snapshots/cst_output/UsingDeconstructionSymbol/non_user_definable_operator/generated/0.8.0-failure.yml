@@ -6,7 +6,7 @@ Source: >
   3  │ // https://github.com/argotorg/solidity/blob/v0.8.22/test/libsolidity/syntaxTests/operators/userDefined/operator_parsing_non_user_definable.sol │ 20..163
   4  │ using {f as **} for uint;                                                                                                                       │ 164..189
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected AsteriskAsterisk. One of Ampersand, Asterisk, BangEqual, Bar, Caret, EqualEqual, GreaterThan, GreaterThanEqual, LessThan, LessThanEqual, Minus, Percent, Plus, Slash, Tilde was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDeconstructionSymbol/non_user_definable_operator/input.sol:4:13]

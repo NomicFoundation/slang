@@ -8,7 +8,7 @@ Source: >
   5  │     function f(uint a,) internal {}                                                                                                   │ 167..202
   6  │ }                                                                                                                                     │ 203..204
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected CloseParen. One of AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, ErrorKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, RevertKeyword, StringKeyword, TransientKeyword, UfixedKeyword, UintKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionDefinition/single_parameter_trailing_comma/input.sol:5:23]

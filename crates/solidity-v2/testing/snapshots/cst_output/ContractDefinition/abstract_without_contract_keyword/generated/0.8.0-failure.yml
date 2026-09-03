@@ -6,7 +6,7 @@ Source: >
   3  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/abstract/abstract_without_contract.sol │ 20..139
   4  │ abstract A { }                                                                                                          │ 140..154
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Identifier. One of ContractKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/abstract_without_contract_keyword/input.sol:4:10]

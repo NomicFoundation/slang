@@ -7,7 +7,7 @@ Source: >
   4  │ pragma abicoder foo;                                                                                                  │ 138..158
   5  │ // <<<                                                                                                                │ 159..165
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of AbicoderV1Keyword, AbicoderV2Keyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/abi_coder_unkown_identifier/input.sol:4:17]

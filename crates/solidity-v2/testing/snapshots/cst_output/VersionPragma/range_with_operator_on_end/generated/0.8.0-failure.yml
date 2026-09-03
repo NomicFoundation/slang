@@ -5,7 +5,7 @@ Source: >
   2  │ // solc parses it and silently discards the `<`; see `range_with_operator_on_start`. │ 75..159
   3  │ pragma solidity 0.1.0 - <0.9.0;                                                      │ 160..191
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected PragmaLessThan. One of PragmaStringLiteral, VersionPragmaComponent was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/VersionPragma/range_with_operator_on_end/input.sol:3:25]

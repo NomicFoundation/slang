@@ -10,7 +10,7 @@ Source: >
   7  │     receive() external payable override {}                                       │ 113..155
   8  │ }                                                                                │ 156..157
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected ReturnsKeyword. One of AtKeyword, ErrorKeyword, ExternalKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, OpenBrace, OverrideKeyword, PayableKeyword, RevertKeyword, Semicolon, TransientKeyword, VirtualKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ReceiveFunctionDefinition/inherited_return_values/input.sol:4:40]

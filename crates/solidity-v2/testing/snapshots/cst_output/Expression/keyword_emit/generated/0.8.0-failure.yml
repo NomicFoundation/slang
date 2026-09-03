@@ -12,7 +12,7 @@ Source: >
   9  │     }                                                                                             │ 164..169
   10 │ }                                                                                                 │ 170..171
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Semicolon. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/Expression/keyword_emit/input.sol:8:1]

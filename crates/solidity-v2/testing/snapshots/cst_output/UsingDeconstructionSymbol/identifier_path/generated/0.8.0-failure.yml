@@ -9,7 +9,7 @@ Source: >
   6  │ // <<<                                                                                                              │ 152..158
   7  │ } for uint;                                                                                                         │ 159..170
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDeconstructionSymbol/identifier_path/input.sol:3:1]

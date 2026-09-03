@@ -5,7 +5,7 @@ Source: >
   2  │                                                                                  │ 19..19
   3  │ type(MyInt) is uint256;                                                          │ 20..43
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected OpenParen. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/UserDefinedValueTypeDefinition/missing_identifier/input.sol:3:5]

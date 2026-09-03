@@ -9,7 +9,7 @@ Source: >
   6  │ // grammar only allows constant variables at file level.                         │ 208..264
   7  │ uint x = 7;                                                                      │ 265..276
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Identifier. One of ConstantKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ConstantDefinition/non_constant/input.sol:7:6]

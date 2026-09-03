@@ -7,7 +7,7 @@ Source: >
   4  │ using {add as +, sub, mul, div as /} for Int global;                                                          │ 130..182
   5  │ // <<<                                                                                                        │ 183..189
 
-Diagnostics: # 2 total
+Errors: # 2 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.19'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/destructure_multiple/input.sol:4:12]

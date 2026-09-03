@@ -11,7 +11,7 @@ Source: >
   8  │     constructor();                                                               │ 288..306
   9  │ }                                                                                │ 307..308
 
-Diagnostics: # 1 total
+Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Semicolon. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, InternalKeyword, LayoutKeyword, OpenBrace, PayableKeyword, PublicKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ConstructorDefinition/without_body/input.sol:8:18]
