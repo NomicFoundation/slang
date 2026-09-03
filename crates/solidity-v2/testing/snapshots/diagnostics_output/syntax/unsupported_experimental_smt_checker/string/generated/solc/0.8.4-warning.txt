@@ -7,5 +7,5 @@ Diagnostics: 1
    │
  4 │ pragma experimental "SMTChecker";
    │ ────────────────┬────────────────  
-   │                 ╰────────────────── Error occurred here.
+   │                 ╰────────────────── Warning occurred here.
 ───╯

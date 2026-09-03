@@ -9,5 +9,5 @@ Diagnostics: 2
    │
  9 │         return block.prevrandao;
    │                ────────┬───────  
-   │                        ╰───────── Error occurred here.
+   │                        ╰───────── Warning occurred here.
 ───╯

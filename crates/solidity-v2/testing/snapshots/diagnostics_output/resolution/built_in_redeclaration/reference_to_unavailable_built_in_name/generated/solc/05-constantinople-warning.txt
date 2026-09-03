@@ -7,5 +7,5 @@ Diagnostics: 1
     │
  11 │             let mcopy := 1
     │                 ──┬──  
-    │                   ╰──── Error occurred here.
+    │                   ╰──── Warning occurred here.
 ────╯
