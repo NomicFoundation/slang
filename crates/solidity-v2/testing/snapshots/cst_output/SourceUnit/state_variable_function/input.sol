@@ -1,3 +1,5 @@
+pragma solidity *;
+
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/state_variable_function/input.sol
 contract A {
 

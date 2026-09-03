@@ -1,15 +1,17 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // https://github.com/argotorg/solidity/blob/v0.8.22/test/libsolidity/syntaxTests/operators/userDefined/operator_parsing_not_an_operator.sol │ 0..140
-  2  │ using {f as x} for uint;                                                                                                                     │ 141..165
+  1  │ pragma solidity *;                                                                                                                           │ 0..18
+  2  │                                                                                                                                              │ 19..19
+  3  │ // https://github.com/argotorg/solidity/blob/v0.8.22/test/libsolidity/syntaxTests/operators/userDefined/operator_parsing_not_an_operator.sol │ 20..160
+  4  │ using {f as x} for uint;                                                                                                                     │ 161..185
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Identifier. One of Ampersand, Asterisk, BangEqual, Bar, Caret, EqualEqual, GreaterThan, GreaterThanEqual, LessThan, LessThanEqual, Minus, Percent, Plus, Slash, Tilde was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDeconstructionSymbol/identifier_instead_of_operator/input.sol:2:13]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDeconstructionSymbol/identifier_instead_of_operator/input.sol:4:13]
        │
-     2 │ using {f as x} for uint;
+     4 │ using {f as x} for uint;
        │             ┬  
        │             ╰── Error occurred here.
     ───╯

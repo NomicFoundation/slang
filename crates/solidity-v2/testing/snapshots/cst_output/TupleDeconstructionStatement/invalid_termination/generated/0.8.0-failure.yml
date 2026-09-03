@@ -1,23 +1,25 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                               │ 0..12
-  2  │     function f() {                                                                                                         │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol │ 32..154
-  4  │ (a, b) = (123, 135)                                                                                                        │ 155..174
-  5  │ /**/                                                                                                                       │ 175..179
-  6  │ { throw;                                                                                                                   │ 180..189
-  7  │                                                                                                                            │ 190..190
-  8  │ // <<<                                                                                                                     │ 191..197
-  9  │     }                                                                                                                      │ 198..203
-  10 │ }                                                                                                                          │ 204..205
+  1  │ pragma solidity *;                                                                                                         │ 0..18
+  2  │                                                                                                                            │ 19..19
+  3  │ contract C {                                                                                                               │ 20..32
+  4  │     function f() {                                                                                                         │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol │ 52..174
+  6  │ (a, b) = (123, 135)                                                                                                        │ 175..194
+  7  │ /**/                                                                                                                       │ 195..199
+  8  │ { throw;                                                                                                                   │ 200..209
+  9  │                                                                                                                            │ 210..210
+  10 │ // <<<                                                                                                                     │ 211..217
+  11 │     }                                                                                                                      │ 218..223
+  12 │ }                                                                                                                          │ 224..225
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected ThrowKeyword. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol:6:3]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol:8:3]
        │
-     6 │ { throw;
+     8 │ { throw;
        │   ──┬──  
        │     ╰──── Error occurred here.
     ───╯

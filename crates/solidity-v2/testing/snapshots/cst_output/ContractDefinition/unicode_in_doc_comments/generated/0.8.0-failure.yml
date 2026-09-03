@@ -1,20 +1,22 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/unicode_in_doc_comments/input.sol │ 0..116
-  2  │ // ╒════════════════════════════════════════════════════════════════╕                                                │ 117..318
-  3  │ // │ More Info: https://github.com/NomicFoundation/slang/issues/742 │                                                │ 319..392
-  4  │ // ╘════════════════════════════════════════════════════════════════╛                                                │ 393..594
-  5  │ unexpected                                                                                                           │ 595..605
-  6  │                                                                                                                      │ 606..606
-  7  │ // <<<                                                                                                               │ 607..613
+  1  │ pragma solidity *;                                                                                                   │ 0..18
+  2  │                                                                                                                      │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/unicode_in_doc_comments/input.sol │ 20..136
+  4  │ // ╒════════════════════════════════════════════════════════════════╕                                                │ 137..338
+  5  │ // │ More Info: https://github.com/NomicFoundation/slang/issues/742 │                                                │ 339..412
+  6  │ // ╘════════════════════════════════════════════════════════════════╛                                                │ 413..614
+  7  │ unexpected                                                                                                           │ 615..625
+  8  │                                                                                                                      │ 626..626
+  9  │ // <<<                                                                                                               │ 627..633
 
 Errors: # 1 total
   - >
     [syntax/unexpected-eof] Error: Unexpected end of file. One of ConstantKeyword, OpenBracket, Period was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/unicode_in_doc_comments/input.sol:5:11]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/unicode_in_doc_comments/input.sol:7:11]
        │
-     5 │ unexpected
+     7 │ unexpected
        │           │ 
        │           ╰─ Error occurred here.
     ───╯

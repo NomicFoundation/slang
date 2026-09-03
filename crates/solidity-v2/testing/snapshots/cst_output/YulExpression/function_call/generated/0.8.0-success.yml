@@ -1,48 +1,60 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                          │ 0..12
-  2  │     function f() {                                                                                    │ 13..31
-  3  │         assembly {                                                                                    │ 32..50
-  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulExpression/function_call/input.sol │ 51..152
-  5  │ foo(1)                                                                                                │ 153..159
-  6  │ // <<<                                                                                                │ 160..166
-  7  │         }                                                                                             │ 167..176
-  8  │     }                                                                                                 │ 177..182
-  9  │ }                                                                                                     │ 183..184
+  1  │ pragma solidity *;                                                                                    │ 0..18
+  2  │                                                                                                       │ 19..19
+  3  │ contract C {                                                                                          │ 20..32
+  4  │     function f() {                                                                                    │ 33..51
+  5  │         assembly {                                                                                    │ 52..70
+  6  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulExpression/function_call/input.sol │ 71..172
+  7  │ foo(1)                                                                                                │ 173..179
+  8  │ // <<<                                                                                                │ 180..186
+  9  │         }                                                                                             │ 187..196
+  10 │     }                                                                                                 │ 197..202
+  11 │ }                                                                                                     │ 203..204
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n        assembly {..." (0..184)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n        assembly {..." (0..184)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        assembly {..." (0..184)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..204)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..204)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        assembly {..." (20..204)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n        assembly {\n// >>> Copied fr..." (17..182)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        assembly {\n// >>> Copied fr..." (17..182)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n        assembly {\n// >>> Copied fr..." (37..202)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        assembly {\n// >>> Copied fr..." (37..202)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        assembly {\n// >>> Copied from crates/sol..." (30..182)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # "assembly {\n// >>> Copied from crates/solidity/test..." (40..176)
-                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement): # "assembly {\n// >>> Copied from crates/solidity/test..." (40..176)
-                                  - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (40..48)
-                                  - (body꞉ YulBlock): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (49..176)
-                                      - (open_brace꞉ YulOpenBrace): "{" # (49..50)
-                                      - (statements꞉ YulStatements): # "foo(1)" (153..159)
-                                          - (item꞉ YulStatement) ► (yul_expression꞉ YulExpression) ► (yul_function_call_expression꞉ YulFunctionCallExpression): # "foo(1)" (153..159)
-                                              - (operand꞉ YulExpression) ► (yul_path꞉ YulPath): # "foo" (153..156)
-                                                  - (item꞉ YulIdentifier): "foo" # (153..156)
-                                              - (open_paren꞉ YulOpenParen): "(" # (156..157)
-                                              - (arguments꞉ YulArguments): # "1" (157..158)
-                                                  - (item꞉ YulExpression) ► (yul_literal꞉ YulLiteral) ► (yul_decimal_literal꞉ YulDecimalLiteral): "1" # (157..158)
-                                              - (close_paren꞉ YulCloseParen): ")" # (158..159)
-                                      - (close_brace꞉ YulCloseBrace): "}" # (175..176)
-                          - (close_brace꞉ CloseBrace): "}" # (181..182)
-              - (close_brace꞉ CloseBrace): "}" # (183..184)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        assembly {\n// >>> Copied from crates/sol..." (50..202)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # "assembly {\n// >>> Copied from crates/solidity/test..." (60..196)
+                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement): # "assembly {\n// >>> Copied from crates/solidity/test..." (60..196)
+                                  - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (60..68)
+                                  - (body꞉ YulBlock): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (69..196)
+                                      - (open_brace꞉ YulOpenBrace): "{" # (69..70)
+                                      - (statements꞉ YulStatements): # "foo(1)" (173..179)
+                                          - (item꞉ YulStatement) ► (yul_expression꞉ YulExpression) ► (yul_function_call_expression꞉ YulFunctionCallExpression): # "foo(1)" (173..179)
+                                              - (operand꞉ YulExpression) ► (yul_path꞉ YulPath): # "foo" (173..176)
+                                                  - (item꞉ YulIdentifier): "foo" # (173..176)
+                                              - (open_paren꞉ YulOpenParen): "(" # (176..177)
+                                              - (arguments꞉ YulArguments): # "1" (177..178)
+                                                  - (item꞉ YulExpression) ► (yul_literal꞉ YulLiteral) ► (yul_decimal_literal꞉ YulDecimalLiteral): "1" # (177..178)
+                                              - (close_paren꞉ YulCloseParen): ")" # (178..179)
+                                      - (close_brace꞉ YulCloseBrace): "}" # (195..196)
+                          - (close_brace꞉ CloseBrace): "}" # (201..202)
+              - (close_brace꞉ CloseBrace): "}" # (203..204)

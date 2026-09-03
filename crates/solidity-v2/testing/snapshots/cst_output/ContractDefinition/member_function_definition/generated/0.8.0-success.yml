@@ -1,46 +1,58 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_function_definition/input.sol │ 0..119
-  2  │ contract Sample {                                                                                                       │ 120..137
-  3  │   function foo() returns (uint) {                                                                                       │ 138..171
-  4  │     return 1;                                                                                                           │ 172..185
-  5  │   }                                                                                                                     │ 186..189
-  6  │ }                                                                                                                       │ 190..191
-  7  │ // <<<                                                                                                                  │ 192..198
+  1  │ pragma solidity *;                                                                                                      │ 0..18
+  2  │                                                                                                                         │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_function_definition/input.sol │ 20..139
+  4  │ contract Sample {                                                                                                       │ 140..157
+  5  │   function foo() returns (uint) {                                                                                       │ 158..191
+  6  │     return 1;                                                                                                           │ 192..205
+  7  │   }                                                                                                                     │ 206..209
+  8  │ }                                                                                                                       │ 210..211
+  9  │ // <<<                                                                                                                  │ 212..218
 
 Tree:
-  - (root꞉ SourceUnit): # "contract Sample {\n  function foo() returns (uint) ..." (120..191)
-      - (members꞉ SourceUnitMembers): # "contract Sample {\n  function foo() returns (uint) ..." (120..191)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  function foo() returns (uint) ..." (120..191)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (120..128)
-              - (name꞉ Identifier): "Sample" # (129..135)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..211)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..211)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  function foo() returns (uint) ..." (140..211)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (140..148)
+              - (name꞉ Identifier): "Sample" # (149..155)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (136..137)
-              - (members꞉ ContractMembers): # "function foo() returns (uint) {\n    return 1;\n  }" (140..189)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function foo() returns (uint) {\n    return 1;\n  }" (140..189)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (140..148)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "foo" # (149..152)
-                      - (parameters꞉ ParametersDeclaration): # "()" (152..154)
-                          - (open_paren꞉ OpenParen): "(" # (152..153)
+              - (open_brace꞉ OpenBrace): "{" # (156..157)
+              - (members꞉ ContractMembers): # "function foo() returns (uint) {\n    return 1;\n  }" (160..209)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function foo() returns (uint) {\n    return 1;\n  }" (160..209)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (160..168)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "foo" # (169..172)
+                      - (parameters꞉ ParametersDeclaration): # "()" (172..174)
+                          - (open_paren꞉ OpenParen): "(" # (172..173)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (153..154)
+                          - (close_paren꞉ CloseParen): ")" # (173..174)
                       - (attributes꞉ FunctionAttributes): []
-                      - (returns꞉ ReturnsDeclaration): # "returns (uint)" (155..169)
-                          - (returns_keyword꞉ ReturnsKeyword): "returns" # (155..162)
-                          - (variables꞉ ParametersDeclaration): # "(uint)" (163..169)
-                              - (open_paren꞉ OpenParen): "(" # (163..164)
-                              - (parameters꞉ Parameters): # "uint" (164..168)
-                                  - (item꞉ Parameter): # "uint" (164..168)
-                                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (164..168)
-                              - (close_paren꞉ CloseParen): ")" # (168..169)
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n    return 1;\n  }" (170..189)
-                          - (open_brace꞉ OpenBrace): "{" # (170..171)
-                          - (statements꞉ Statements): # "return 1;" (176..185)
-                              - (item꞉ Statement) ► (return_statement꞉ ReturnStatement): # "return 1;" (176..185)
-                                  - (return_keyword꞉ ReturnKeyword): "return" # (176..182)
-                                  - (expression꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (183..184)
-                                      - (literal꞉ DecimalLiteral): "1" # (183..184)
-                                  - (semicolon꞉ Semicolon): ";" # (184..185)
-                          - (close_brace꞉ CloseBrace): "}" # (188..189)
-              - (close_brace꞉ CloseBrace): "}" # (190..191)
+                      - (returns꞉ ReturnsDeclaration): # "returns (uint)" (175..189)
+                          - (returns_keyword꞉ ReturnsKeyword): "returns" # (175..182)
+                          - (variables꞉ ParametersDeclaration): # "(uint)" (183..189)
+                              - (open_paren꞉ OpenParen): "(" # (183..184)
+                              - (parameters꞉ Parameters): # "uint" (184..188)
+                                  - (item꞉ Parameter): # "uint" (184..188)
+                                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (184..188)
+                              - (close_paren꞉ CloseParen): ")" # (188..189)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n    return 1;\n  }" (190..209)
+                          - (open_brace꞉ OpenBrace): "{" # (190..191)
+                          - (statements꞉ Statements): # "return 1;" (196..205)
+                              - (item꞉ Statement) ► (return_statement꞉ ReturnStatement): # "return 1;" (196..205)
+                                  - (return_keyword꞉ ReturnKeyword): "return" # (196..202)
+                                  - (expression꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (203..204)
+                                      - (literal꞉ DecimalLiteral): "1" # (203..204)
+                                  - (semicolon꞉ Semicolon): ";" # (204..205)
+                          - (close_brace꞉ CloseBrace): "}" # (208..209)
+              - (close_brace꞉ CloseBrace): "}" # (210..211)

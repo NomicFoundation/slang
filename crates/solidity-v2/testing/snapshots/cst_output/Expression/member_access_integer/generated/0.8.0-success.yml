@@ -1,47 +1,59 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                               │ 0..12
-  2  │     function f() {                                                                                         │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/member_access_integer/input.sol │ 32..138
-  4  │ 5.fromUint()                                                                                               │ 139..151
-  5  │                                                                                                            │ 152..152
-  6  │ // <<<                                                                                                     │ 153..159
-  7  │ ;                                                                                                          │ 160..161
-  8  │     }                                                                                                      │ 162..167
-  9  │ }                                                                                                          │ 168..169
+  1  │ pragma solidity *;                                                                                         │ 0..18
+  2  │                                                                                                            │ 19..19
+  3  │ contract C {                                                                                               │ 20..32
+  4  │     function f() {                                                                                         │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/member_access_integer/input.sol │ 52..158
+  6  │ 5.fromUint()                                                                                               │ 159..171
+  7  │                                                                                                            │ 172..172
+  8  │ // <<<                                                                                                     │ 173..179
+  9  │ ;                                                                                                          │ 180..181
+  10 │     }                                                                                                      │ 182..187
+  11 │ }                                                                                                          │ 188..189
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..169)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..169)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..169)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..189)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..189)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (20..189)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..167)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..167)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (37..187)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (37..187)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..167)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # "5.fromUint()\n\n// <<<\n;" (139..161)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "5.fromUint()\n\n// <<<\n;" (139..161)
-                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "5.fromUint()" (139..151)
-                                      - (operand꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "5.fromUint" (139..149)
-                                          - (operand꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "5" (139..140)
-                                              - (literal꞉ DecimalLiteral): "5" # (139..140)
-                                          - (period꞉ Period): "." # (140..141)
-                                          - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "fromUint" # (141..149)
-                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "()" (149..151)
-                                          - (open_paren꞉ OpenParen): "(" # (149..150)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (50..187)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # "5.fromUint()\n\n// <<<\n;" (159..181)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "5.fromUint()\n\n// <<<\n;" (159..181)
+                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "5.fromUint()" (159..171)
+                                      - (operand꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "5.fromUint" (159..169)
+                                          - (operand꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "5" (159..160)
+                                              - (literal꞉ DecimalLiteral): "5" # (159..160)
+                                          - (period꞉ Period): "." # (160..161)
+                                          - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "fromUint" # (161..169)
+                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "()" (169..171)
+                                          - (open_paren꞉ OpenParen): "(" # (169..170)
                                           - (arguments꞉ PositionalArguments): []
-                                          - (close_paren꞉ CloseParen): ")" # (150..151)
-                                  - (semicolon꞉ Semicolon): ";" # (160..161)
-                          - (close_brace꞉ CloseBrace): "}" # (166..167)
-              - (close_brace꞉ CloseBrace): "}" # (168..169)
+                                          - (close_paren꞉ CloseParen): ")" # (170..171)
+                                  - (semicolon꞉ Semicolon): ";" # (180..181)
+                          - (close_brace꞉ CloseBrace): "}" # (186..187)
+              - (close_brace꞉ CloseBrace): "}" # (188..189)

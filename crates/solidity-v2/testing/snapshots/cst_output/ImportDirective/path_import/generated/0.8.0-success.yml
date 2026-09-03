@@ -1,15 +1,27 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ImportDirective/path_import/input.sol │ 0..101
-  2  │ import "foo";                                                                                         │ 102..115
-  3  │ // <<<                                                                                                │ 116..122
+  1  │ pragma solidity *;                                                                                    │ 0..18
+  2  │                                                                                                       │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ImportDirective/path_import/input.sol │ 20..121
+  4  │ import "foo";                                                                                         │ 122..135
+  5  │ // <<<                                                                                                │ 136..142
 
 Tree:
-  - (root꞉ SourceUnit): # 'import "foo";' (102..115)
-      - (members꞉ SourceUnitMembers): # 'import "foo";' (102..115)
-          - (item꞉ SourceUnitMember) ► (import_directive꞉ ImportDirective): # 'import "foo";' (102..115)
-              - (import_keyword꞉ ImportKeyword): "import" # (102..108)
-              - (clause꞉ ImportClause) ► (path_import꞉ PathImport): # '"foo"' (109..114)
-                  - (path꞉ StringLiteral): '"foo"' # (109..114)
-              - (semicolon꞉ Semicolon): ";" # (114..115)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..135)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..135)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (import_directive꞉ ImportDirective): # 'import "foo";' (122..135)
+              - (import_keyword꞉ ImportKeyword): "import" # (122..128)
+              - (clause꞉ ImportClause) ► (path_import꞉ PathImport): # '"foo"' (129..134)
+                  - (path꞉ StringLiteral): '"foo"' # (129..134)
+              - (semicolon꞉ Semicolon): ";" # (134..135)

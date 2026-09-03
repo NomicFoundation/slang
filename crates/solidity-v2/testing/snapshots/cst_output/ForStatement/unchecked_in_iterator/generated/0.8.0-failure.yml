@@ -1,18 +1,20 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                     │ 0..12
-  2  │     function f() public {                                                        │ 13..38
-  3  │         for (uint x = 2; x < 2; unchecked { x++; }) {}                           │ 39..93
-  4  │     }                                                                            │ 94..99
-  5  │ }                                                                                │ 100..101
+  1  │ pragma solidity *;                                                               │ 0..18
+  2  │                                                                                  │ 19..19
+  3  │ contract C {                                                                     │ 20..32
+  4  │     function f() public {                                                        │ 33..58
+  5  │         for (uint x = 2; x < 2; unchecked { x++; }) {}                           │ 59..113
+  6  │     }                                                                            │ 114..119
+  7  │ }                                                                                │ 120..121
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UncheckedKeyword. One of AddressKeyword, AtKeyword, Bang, BoolKeyword, BytesKeyword, CloseParen, DecimalLiteral, DeleteKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, FromKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IntKeyword, LayoutKeyword, Minus, MinusMinus, NewKeyword, OpenBracket, OpenParen, PayableKeyword, PlusPlus, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UnicodeStringLiteral was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ForStatement/unchecked_in_iterator/input.sol:3:33]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ForStatement/unchecked_in_iterator/input.sol:5:33]
        │
-     3 │         for (uint x = 2; x < 2; unchecked { x++; }) {}
+     5 │         for (uint x = 2; x < 2; unchecked { x++; }) {}
        │                                 ────┬────  
        │                                     ╰────── Error occurred here.
     ───╯

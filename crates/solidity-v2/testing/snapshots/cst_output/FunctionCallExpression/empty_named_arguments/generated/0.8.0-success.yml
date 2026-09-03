@@ -1,47 +1,59 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                           │ 0..12
-  2  │     function f() {                                                                                                     │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/FunctionCallExpression/empty_named_arguments/input.sol │ 32..150
-  4  │ // Named arguments can be empty                                                                                        │ 151..182
-  5  │ someFunc({})                                                                                                           │ 183..195
-  6  │                                                                                                                        │ 196..196
-  7  │ // <<<                                                                                                                 │ 197..203
-  8  │ ;                                                                                                                      │ 204..205
-  9  │     }                                                                                                                  │ 206..211
-  10 │ }                                                                                                                      │ 212..213
+  1  │ pragma solidity *;                                                                                                     │ 0..18
+  2  │                                                                                                                        │ 19..19
+  3  │ contract C {                                                                                                           │ 20..32
+  4  │     function f() {                                                                                                     │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/FunctionCallExpression/empty_named_arguments/input.sol │ 52..170
+  6  │ // Named arguments can be empty                                                                                        │ 171..202
+  7  │ someFunc({})                                                                                                           │ 203..215
+  8  │                                                                                                                        │ 216..216
+  9  │ // <<<                                                                                                                 │ 217..223
+  10 │ ;                                                                                                                      │ 224..225
+  11 │     }                                                                                                                  │ 226..231
+  12 │ }                                                                                                                      │ 232..233
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..213)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..213)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..213)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..233)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..233)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (20..233)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..211)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..211)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (37..231)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (37..231)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..211)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # "someFunc({})\n\n// <<<\n;" (183..205)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "someFunc({})\n\n// <<<\n;" (183..205)
-                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "someFunc({})" (183..195)
-                                      - (operand꞉ Expression) ► (identifier꞉ Identifier): "someFunc" # (183..191)
-                                      - (arguments꞉ ArgumentsDeclaration) ► (named_arguments_declaration꞉ NamedArgumentsDeclaration): # "({})" (191..195)
-                                          - (open_paren꞉ OpenParen): "(" # (191..192)
-                                          - (arguments꞉ NamedArgumentGroup): # "{}" (192..194)
-                                              - (open_brace꞉ OpenBrace): "{" # (192..193)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (50..231)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # "someFunc({})\n\n// <<<\n;" (203..225)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "someFunc({})\n\n// <<<\n;" (203..225)
+                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "someFunc({})" (203..215)
+                                      - (operand꞉ Expression) ► (identifier꞉ Identifier): "someFunc" # (203..211)
+                                      - (arguments꞉ ArgumentsDeclaration) ► (named_arguments_declaration꞉ NamedArgumentsDeclaration): # "({})" (211..215)
+                                          - (open_paren꞉ OpenParen): "(" # (211..212)
+                                          - (arguments꞉ NamedArgumentGroup): # "{}" (212..214)
+                                              - (open_brace꞉ OpenBrace): "{" # (212..213)
                                               - (arguments꞉ NamedArguments): []
-                                              - (close_brace꞉ CloseBrace): "}" # (193..194)
-                                          - (close_paren꞉ CloseParen): ")" # (194..195)
-                                  - (semicolon꞉ Semicolon): ";" # (204..205)
-                          - (close_brace꞉ CloseBrace): "}" # (210..211)
-              - (close_brace꞉ CloseBrace): "}" # (212..213)
+                                              - (close_brace꞉ CloseBrace): "}" # (213..214)
+                                          - (close_paren꞉ CloseParen): ")" # (214..215)
+                                  - (semicolon꞉ Semicolon): ";" # (224..225)
+                          - (close_brace꞉ CloseBrace): "}" # (230..231)
+              - (close_brace꞉ CloseBrace): "}" # (232..233)

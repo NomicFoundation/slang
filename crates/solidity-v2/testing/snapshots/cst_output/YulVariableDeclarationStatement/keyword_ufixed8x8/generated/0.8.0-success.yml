@@ -1,47 +1,59 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                                │ 0..12
-  2  │     function f() {                                                                                                          │ 13..31
-  3  │         assembly {                                                                                                          │ 32..50
-  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulVariableDeclarationStatement/keyword_ufixed8x8/input.sol │ 51..174
-  5  │ // This form is always reserved until 0.7.1 in Yul:                                                                         │ 175..226
-  6  │ let ufixed8x8                                                                                                               │ 227..240
-  7  │                                                                                                                             │ 241..241
-  8  │ // <<<                                                                                                                      │ 242..248
-  9  │         }                                                                                                                   │ 249..258
-  10 │     }                                                                                                                       │ 259..264
-  11 │ }                                                                                                                           │ 265..266
+  1  │ pragma solidity *;                                                                                                          │ 0..18
+  2  │                                                                                                                             │ 19..19
+  3  │ contract C {                                                                                                                │ 20..32
+  4  │     function f() {                                                                                                          │ 33..51
+  5  │         assembly {                                                                                                          │ 52..70
+  6  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulVariableDeclarationStatement/keyword_ufixed8x8/input.sol │ 71..194
+  7  │ // This form is always reserved until 0.7.1 in Yul:                                                                         │ 195..246
+  8  │ let ufixed8x8                                                                                                               │ 247..260
+  9  │                                                                                                                             │ 261..261
+  10 │ // <<<                                                                                                                      │ 262..268
+  11 │         }                                                                                                                   │ 269..278
+  12 │     }                                                                                                                       │ 279..284
+  13 │ }                                                                                                                           │ 285..286
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n        assembly {..." (0..266)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n        assembly {..." (0..266)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        assembly {..." (0..266)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..286)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..286)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        assembly {..." (20..286)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n        assembly {\n// >>> Copied fr..." (17..264)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        assembly {\n// >>> Copied fr..." (17..264)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n        assembly {\n// >>> Copied fr..." (37..284)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        assembly {\n// >>> Copied fr..." (37..284)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        assembly {\n// >>> Copied from crates/sol..." (30..264)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # "assembly {\n// >>> Copied from crates/solidity/test..." (40..258)
-                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement): # "assembly {\n// >>> Copied from crates/solidity/test..." (40..258)
-                                  - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (40..48)
-                                  - (body꞉ YulBlock): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (49..258)
-                                      - (open_brace꞉ YulOpenBrace): "{" # (49..50)
-                                      - (statements꞉ YulStatements): # "let ufixed8x8" (227..240)
-                                          - (item꞉ YulStatement) ► (yul_variable_declaration_statement꞉ YulVariableDeclarationStatement): # "let ufixed8x8" (227..240)
-                                              - (let_keyword꞉ YulLetKeyword): "let" # (227..230)
-                                              - (variables꞉ YulVariableNames): # "ufixed8x8" (231..240)
-                                                  - (item꞉ YulIdentifier): "ufixed8x8" # (231..240)
-                                      - (close_brace꞉ YulCloseBrace): "}" # (257..258)
-                          - (close_brace꞉ CloseBrace): "}" # (263..264)
-              - (close_brace꞉ CloseBrace): "}" # (265..266)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        assembly {\n// >>> Copied from crates/sol..." (50..284)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # "assembly {\n// >>> Copied from crates/solidity/test..." (60..278)
+                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement): # "assembly {\n// >>> Copied from crates/solidity/test..." (60..278)
+                                  - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (60..68)
+                                  - (body꞉ YulBlock): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (69..278)
+                                      - (open_brace꞉ YulOpenBrace): "{" # (69..70)
+                                      - (statements꞉ YulStatements): # "let ufixed8x8" (247..260)
+                                          - (item꞉ YulStatement) ► (yul_variable_declaration_statement꞉ YulVariableDeclarationStatement): # "let ufixed8x8" (247..260)
+                                              - (let_keyword꞉ YulLetKeyword): "let" # (247..250)
+                                              - (variables꞉ YulVariableNames): # "ufixed8x8" (251..260)
+                                                  - (item꞉ YulIdentifier): "ufixed8x8" # (251..260)
+                                      - (close_brace꞉ YulCloseBrace): "}" # (277..278)
+                          - (close_brace꞉ CloseBrace): "}" # (283..284)
+              - (close_brace꞉ CloseBrace): "}" # (285..286)

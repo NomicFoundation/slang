@@ -1,13 +1,25 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/leading_trivia_multi_line_natspec_comment/input.sol │ 0..126
-  2  │ /**                                                                                                                            │ 127..130
-  3  │  * @foo bar                                                                                                                    │ 131..142
-  4  │  */                                                                                                                            │ 143..146
-  5  │                                                                                                                                │ 147..147
-  6  │ // <<<                                                                                                                         │ 148..154
+  1  │ pragma solidity *;                                                                                                             │ 0..18
+  2  │                                                                                                                                │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/leading_trivia_multi_line_natspec_comment/input.sol │ 20..146
+  4  │ /**                                                                                                                            │ 147..150
+  5  │  * @foo bar                                                                                                                    │ 151..162
+  6  │  */                                                                                                                            │ 163..166
+  7  │                                                                                                                                │ 167..167
+  8  │ // <<<                                                                                                                         │ 168..174
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers): []
+  - (root꞉ SourceUnit): # "pragma solidity *;" (0..18)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;" (0..18)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)

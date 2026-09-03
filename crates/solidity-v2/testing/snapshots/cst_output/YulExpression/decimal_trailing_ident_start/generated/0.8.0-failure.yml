@@ -1,23 +1,25 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                         │ 0..12
-  2  │     function f() {                                                                                                   │ 13..31
-  3  │         assembly {                                                                                                   │ 32..50
-  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulExpression/decimal_trailing_ident_start/input.sol │ 51..167
-  5  │ 1a                                                                                                                   │ 168..170
-  6  │                                                                                                                      │ 171..171
-  7  │ // <<<                                                                                                               │ 172..178
-  8  │         }                                                                                                            │ 179..188
-  9  │     }                                                                                                                │ 189..194
-  10 │ }                                                                                                                    │ 195..196
+  1  │ pragma solidity *;                                                                                                   │ 0..18
+  2  │                                                                                                                      │ 19..19
+  3  │ contract C {                                                                                                         │ 20..32
+  4  │     function f() {                                                                                                   │ 33..51
+  5  │         assembly {                                                                                                   │ 52..70
+  6  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulExpression/decimal_trailing_ident_start/input.sol │ 71..187
+  7  │ 1a                                                                                                                   │ 188..190
+  8  │                                                                                                                      │ 191..191
+  9  │ // <<<                                                                                                               │ 192..198
+  10 │         }                                                                                                            │ 199..208
+  11 │     }                                                                                                                │ 209..214
+  12 │ }                                                                                                                    │ 215..216
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of YulBreakKeyword, YulCloseBrace, YulContinueKeyword, YulDecimalLiteral, YulFalseKeyword, YulForKeyword, YulFunctionKeyword, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulIfKeyword, YulLeaveKeyword, YulLetKeyword, YulOpenBrace, YulStringLiteral, YulSwitchKeyword, YulTrueKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulExpression/decimal_trailing_ident_start/input.sol:5:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulExpression/decimal_trailing_ident_start/input.sol:7:1]
        │
-     5 │ 1a
+     7 │ 1a
        │ ─┬  
        │  ╰── Error occurred here.
     ───╯

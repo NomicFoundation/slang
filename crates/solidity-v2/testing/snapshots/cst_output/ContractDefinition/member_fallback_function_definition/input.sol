@@ -1,3 +1,5 @@
+pragma solidity *;
+
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_fallback_function_definition/input.sol
 contract Sample {
   fallback() {

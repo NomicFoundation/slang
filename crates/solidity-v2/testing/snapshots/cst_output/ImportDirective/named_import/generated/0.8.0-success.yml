@@ -1,20 +1,32 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ImportDirective/named_import/input.sol │ 0..102
-  2  │ import * as foo from "bar";                                                                            │ 103..130
-  3  │ // <<<                                                                                                 │ 131..137
+  1  │ pragma solidity *;                                                                                     │ 0..18
+  2  │                                                                                                        │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ImportDirective/named_import/input.sol │ 20..122
+  4  │ import * as foo from "bar";                                                                            │ 123..150
+  5  │ // <<<                                                                                                 │ 151..157
 
 Tree:
-  - (root꞉ SourceUnit): # 'import * as foo from "bar";' (103..130)
-      - (members꞉ SourceUnitMembers): # 'import * as foo from "bar";' (103..130)
-          - (item꞉ SourceUnitMember) ► (import_directive꞉ ImportDirective): # 'import * as foo from "bar";' (103..130)
-              - (import_keyword꞉ ImportKeyword): "import" # (103..109)
-              - (clause꞉ ImportClause) ► (named_import꞉ NamedImport): # '* as foo from "bar"' (110..129)
-                  - (asterisk꞉ Asterisk): "*" # (110..111)
-                  - (alias꞉ ImportAlias): # "as foo" (112..118)
-                      - (as_keyword꞉ AsKeyword): "as" # (112..114)
-                      - (identifier꞉ Identifier): "foo" # (115..118)
-                  - (from_keyword꞉ FromKeyword): "from" # (119..123)
-                  - (path꞉ StringLiteral): '"bar"' # (124..129)
-              - (semicolon꞉ Semicolon): ";" # (129..130)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..150)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..150)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (import_directive꞉ ImportDirective): # 'import * as foo from "bar";' (123..150)
+              - (import_keyword꞉ ImportKeyword): "import" # (123..129)
+              - (clause꞉ ImportClause) ► (named_import꞉ NamedImport): # '* as foo from "bar"' (130..149)
+                  - (asterisk꞉ Asterisk): "*" # (130..131)
+                  - (alias꞉ ImportAlias): # "as foo" (132..138)
+                      - (as_keyword꞉ AsKeyword): "as" # (132..134)
+                      - (identifier꞉ Identifier): "foo" # (135..138)
+                  - (from_keyword꞉ FromKeyword): "from" # (139..143)
+                  - (path꞉ StringLiteral): '"bar"' # (144..149)
+              - (semicolon꞉ Semicolon): ";" # (149..150)

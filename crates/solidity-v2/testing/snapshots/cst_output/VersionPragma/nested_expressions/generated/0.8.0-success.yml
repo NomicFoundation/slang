@@ -1,36 +1,48 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ pragma                                                                                                     │ 0..6
-  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VersionPragma/nested_expressions/input.sol │ 7..113
-  3  │ solidity ^1.0.0 || 2.0.0-3.0.0                                                                             │ 114..144
-  4  │ // <<<                                                                                                     │ 145..151
-  5  │ ;                                                                                                          │ 152..153
+  1  │ pragma solidity *;                                                                                         │ 0..18
+  2  │                                                                                                            │ 19..19
+  3  │ pragma                                                                                                     │ 20..26
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VersionPragma/nested_expressions/input.sol │ 27..133
+  5  │ solidity ^1.0.0 || 2.0.0-3.0.0                                                                             │ 134..164
+  6  │ // <<<                                                                                                     │ 165..171
+  7  │ ;                                                                                                          │ 172..173
 
 Tree:
-  - (root꞉ SourceUnit): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..153)
-      - (members꞉ SourceUnitMembers): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..153)
-          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..153)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\npragma\n// >>> Copied from crat..." (0..173)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\npragma\n// >>> Copied from crat..." (0..173)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
               - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
-              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity ^1.0.0 || 2.0.0-3.0.0" (114..144)
-                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (114..122)
-                  - (sets꞉ VersionPragmaExpressionSets): # "^1.0.0 || 2.0.0-3.0.0" (123..144)
-                      - (item꞉ VersionPragmaExpressionSet): # "^1.0.0" (123..129)
-                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "^1.0.0" (123..129)
-                              - (operator꞉ VersionPragmaOperator) ► (pragma_caret꞉ PragmaCaret): "^" # (123..124)
-                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "1.0.0" (124..129)
-                                  - (item꞉ VersionPragmaComponent): "1" # (124..125)
-                                  - (item꞉ VersionPragmaComponent): "0" # (126..127)
-                                  - (item꞉ VersionPragmaComponent): "0" # (128..129)
-                      - (item꞉ VersionPragmaExpressionSet): # "2.0.0-3.0.0" (133..144)
-                          - (item꞉ VersionPragmaExpression) ► (version_pragma_range꞉ VersionPragmaRange): # "2.0.0-3.0.0" (133..144)
-                              - (start꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "2.0.0" (133..138)
-                                  - (item꞉ VersionPragmaComponent): "2" # (133..134)
-                                  - (item꞉ VersionPragmaComponent): "0" # (135..136)
-                                  - (item꞉ VersionPragmaComponent): "0" # (137..138)
-                              - (minus꞉ PragmaMinus): "-" # (138..139)
-                              - (end꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "3.0.0" (139..144)
-                                  - (item꞉ VersionPragmaComponent): "3" # (139..140)
-                                  - (item꞉ VersionPragmaComponent): "0" # (141..142)
-                                  - (item꞉ VersionPragmaComponent): "0" # (143..144)
-              - (semicolon꞉ PragmaSemicolon): ";" # (152..153)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma\n// >>> Copied from crates/solidity/testing/..." (20..173)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (20..26)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity ^1.0.0 || 2.0.0-3.0.0" (134..164)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (134..142)
+                  - (sets꞉ VersionPragmaExpressionSets): # "^1.0.0 || 2.0.0-3.0.0" (143..164)
+                      - (item꞉ VersionPragmaExpressionSet): # "^1.0.0" (143..149)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "^1.0.0" (143..149)
+                              - (operator꞉ VersionPragmaOperator) ► (pragma_caret꞉ PragmaCaret): "^" # (143..144)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "1.0.0" (144..149)
+                                  - (item꞉ VersionPragmaComponent): "1" # (144..145)
+                                  - (item꞉ VersionPragmaComponent): "0" # (146..147)
+                                  - (item꞉ VersionPragmaComponent): "0" # (148..149)
+                      - (item꞉ VersionPragmaExpressionSet): # "2.0.0-3.0.0" (153..164)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_range꞉ VersionPragmaRange): # "2.0.0-3.0.0" (153..164)
+                              - (start꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "2.0.0" (153..158)
+                                  - (item꞉ VersionPragmaComponent): "2" # (153..154)
+                                  - (item꞉ VersionPragmaComponent): "0" # (155..156)
+                                  - (item꞉ VersionPragmaComponent): "0" # (157..158)
+                              - (minus꞉ PragmaMinus): "-" # (158..159)
+                              - (end꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "3.0.0" (159..164)
+                                  - (item꞉ VersionPragmaComponent): "3" # (159..160)
+                                  - (item꞉ VersionPragmaComponent): "0" # (161..162)
+                                  - (item꞉ VersionPragmaComponent): "0" # (163..164)
+              - (semicolon꞉ PragmaSemicolon): ";" # (172..173)

@@ -1,21 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                    │ 0..12
-  2  │     function f() {                                                                                              │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/HexNumberExpression/hex_trailing_unit/input.sol │ 32..143
-  4  │ 0x1days                                                                                                         │ 144..151
-  5  │ // <<<                                                                                                          │ 152..158
-  6  │ ;                                                                                                               │ 159..160
-  7  │     }                                                                                                           │ 161..166
-  8  │ }                                                                                                               │ 167..168
+  1  │ pragma solidity *;                                                                                              │ 0..18
+  2  │                                                                                                                 │ 19..19
+  3  │ contract C {                                                                                                    │ 20..32
+  4  │     function f() {                                                                                              │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/HexNumberExpression/hex_trailing_unit/input.sol │ 52..163
+  6  │ 0x1days                                                                                                         │ 164..171
+  7  │ // <<<                                                                                                          │ 172..178
+  8  │ ;                                                                                                               │ 179..180
+  9  │     }                                                                                                           │ 181..186
+  10 │ }                                                                                                               │ 187..188
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of AddressKeyword, AssemblyKeyword, AtKeyword, Bang, BoolKeyword, BreakKeyword, BytesKeyword, CloseBrace, ContinueKeyword, DecimalLiteral, DeleteKeyword, DoKeyword, EmitKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, ForKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IfKeyword, IntKeyword, LayoutKeyword, MappingKeyword, Minus, MinusMinus, NewKeyword, OpenBrace, OpenBracket, OpenParen, PayableKeyword, PlusPlus, ReturnKeyword, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TryKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UncheckedKeyword, UnicodeStringLiteral, WhileKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/HexNumberExpression/hex_trailing_unit/input.sol:4:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/HexNumberExpression/hex_trailing_unit/input.sol:6:1]
        │
-     4 │ 0x1days
+     6 │ 0x1days
        │ ───┬───  
        │    ╰───── Error occurred here.
     ───╯

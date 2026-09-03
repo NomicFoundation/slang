@@ -1,3 +1,5 @@
+pragma solidity *;
+
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/recovery_testbed/input.sol
 contract Contract {
 	function _transfer(address while) private {

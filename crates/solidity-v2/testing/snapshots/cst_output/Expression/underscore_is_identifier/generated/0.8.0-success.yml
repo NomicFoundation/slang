@@ -1,37 +1,49 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                  │ 0..12
-  2  │     function f() {                                                                                            │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/underscore_is_identifier/input.sol │ 32..141
-  4  │ _                                                                                                             │ 142..143
-  5  │ // <<<                                                                                                        │ 144..150
-  6  │ ;                                                                                                             │ 151..152
-  7  │     }                                                                                                         │ 153..158
-  8  │ }                                                                                                             │ 159..160
+  1  │ pragma solidity *;                                                                                            │ 0..18
+  2  │                                                                                                               │ 19..19
+  3  │ contract C {                                                                                                  │ 20..32
+  4  │     function f() {                                                                                            │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/underscore_is_identifier/input.sol │ 52..161
+  6  │ _                                                                                                             │ 162..163
+  7  │ // <<<                                                                                                        │ 164..170
+  8  │ ;                                                                                                             │ 171..172
+  9  │     }                                                                                                         │ 173..178
+  10 │ }                                                                                                             │ 179..180
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..160)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..160)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..160)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..180)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..180)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (20..180)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..158)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..158)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (37..178)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (37..178)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..158)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # "_\n// <<<\n;" (142..152)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "_\n// <<<\n;" (142..152)
-                                  - (expression꞉ Expression) ► (identifier꞉ Identifier): "_" # (142..143)
-                                  - (semicolon꞉ Semicolon): ";" # (151..152)
-                          - (close_brace꞉ CloseBrace): "}" # (157..158)
-              - (close_brace꞉ CloseBrace): "}" # (159..160)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (50..178)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # "_\n// <<<\n;" (162..172)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "_\n// <<<\n;" (162..172)
+                                  - (expression꞉ Expression) ► (identifier꞉ Identifier): "_" # (162..163)
+                                  - (semicolon꞉ Semicolon): ";" # (171..172)
+                          - (close_brace꞉ CloseBrace): "}" # (177..178)
+              - (close_brace꞉ CloseBrace): "}" # (179..180)

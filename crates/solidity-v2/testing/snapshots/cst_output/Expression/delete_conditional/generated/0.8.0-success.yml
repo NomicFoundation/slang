@@ -1,55 +1,67 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                            │ 0..12
-  2  │     function f() {                                                                                      │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/delete_conditional/input.sol │ 32..135
-  4  │ cond ? delete obj[slot1] : delete obj[slot2]                                                            │ 136..180
-  5  │                                                                                                         │ 181..181
-  6  │ // <<<                                                                                                  │ 182..188
-  7  │ ;                                                                                                       │ 189..190
-  8  │     }                                                                                                   │ 191..196
-  9  │ }                                                                                                       │ 197..198
+  1  │ pragma solidity *;                                                                                      │ 0..18
+  2  │                                                                                                         │ 19..19
+  3  │ contract C {                                                                                            │ 20..32
+  4  │     function f() {                                                                                      │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/delete_conditional/input.sol │ 52..155
+  6  │ cond ? delete obj[slot1] : delete obj[slot2]                                                            │ 156..200
+  7  │                                                                                                         │ 201..201
+  8  │ // <<<                                                                                                  │ 202..208
+  9  │ ;                                                                                                       │ 209..210
+  10 │     }                                                                                                   │ 211..216
+  11 │ }                                                                                                       │ 217..218
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..198)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..198)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..198)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..218)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..218)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (20..218)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..196)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..196)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (37..216)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (37..216)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..196)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # "cond ? delete obj[slot1] : delete obj[slot2]\n\n// <..." (136..190)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "cond ? delete obj[slot1] : delete obj[slot2]\n\n// <..." (136..190)
-                                  - (expression꞉ Expression) ► (conditional_expression꞉ ConditionalExpression): # "cond ? delete obj[slot1] : delete obj[slot2]" (136..180)
-                                      - (operand꞉ Expression) ► (identifier꞉ Identifier): "cond" # (136..140)
-                                      - (question_mark꞉ QuestionMark): "?" # (141..142)
-                                      - (true_expression꞉ Expression) ► (prefix_expression꞉ PrefixExpression): # "delete obj[slot1]" (143..160)
-                                          - (expression_prefix_expression_operator꞉ Expression_PrefixExpression_Operator) ► (delete_keyword꞉ DeleteKeyword): "delete" # (143..149)
-                                          - (operand꞉ Expression) ► (index_access_expression꞉ IndexAccessExpression): # "obj[slot1]" (150..160)
-                                              - (operand꞉ Expression) ► (identifier꞉ Identifier): "obj" # (150..153)
-                                              - (open_bracket꞉ OpenBracket): "[" # (153..154)
-                                              - (start꞉ Expression) ► (identifier꞉ Identifier): "slot1" # (154..159)
-                                              - (close_bracket꞉ CloseBracket): "]" # (159..160)
-                                      - (colon꞉ Colon): ":" # (161..162)
-                                      - (false_expression꞉ Expression) ► (prefix_expression꞉ PrefixExpression): # "delete obj[slot2]" (163..180)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (50..216)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # "cond ? delete obj[slot1] : delete obj[slot2]\n\n// <..." (156..210)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "cond ? delete obj[slot1] : delete obj[slot2]\n\n// <..." (156..210)
+                                  - (expression꞉ Expression) ► (conditional_expression꞉ ConditionalExpression): # "cond ? delete obj[slot1] : delete obj[slot2]" (156..200)
+                                      - (operand꞉ Expression) ► (identifier꞉ Identifier): "cond" # (156..160)
+                                      - (question_mark꞉ QuestionMark): "?" # (161..162)
+                                      - (true_expression꞉ Expression) ► (prefix_expression꞉ PrefixExpression): # "delete obj[slot1]" (163..180)
                                           - (expression_prefix_expression_operator꞉ Expression_PrefixExpression_Operator) ► (delete_keyword꞉ DeleteKeyword): "delete" # (163..169)
-                                          - (operand꞉ Expression) ► (index_access_expression꞉ IndexAccessExpression): # "obj[slot2]" (170..180)
+                                          - (operand꞉ Expression) ► (index_access_expression꞉ IndexAccessExpression): # "obj[slot1]" (170..180)
                                               - (operand꞉ Expression) ► (identifier꞉ Identifier): "obj" # (170..173)
                                               - (open_bracket꞉ OpenBracket): "[" # (173..174)
-                                              - (start꞉ Expression) ► (identifier꞉ Identifier): "slot2" # (174..179)
+                                              - (start꞉ Expression) ► (identifier꞉ Identifier): "slot1" # (174..179)
                                               - (close_bracket꞉ CloseBracket): "]" # (179..180)
-                                  - (semicolon꞉ Semicolon): ";" # (189..190)
-                          - (close_brace꞉ CloseBrace): "}" # (195..196)
-              - (close_brace꞉ CloseBrace): "}" # (197..198)
+                                      - (colon꞉ Colon): ":" # (181..182)
+                                      - (false_expression꞉ Expression) ► (prefix_expression꞉ PrefixExpression): # "delete obj[slot2]" (183..200)
+                                          - (expression_prefix_expression_operator꞉ Expression_PrefixExpression_Operator) ► (delete_keyword꞉ DeleteKeyword): "delete" # (183..189)
+                                          - (operand꞉ Expression) ► (index_access_expression꞉ IndexAccessExpression): # "obj[slot2]" (190..200)
+                                              - (operand꞉ Expression) ► (identifier꞉ Identifier): "obj" # (190..193)
+                                              - (open_bracket꞉ OpenBracket): "[" # (193..194)
+                                              - (start꞉ Expression) ► (identifier꞉ Identifier): "slot2" # (194..199)
+                                              - (close_bracket꞉ CloseBracket): "]" # (199..200)
+                                  - (semicolon꞉ Semicolon): ";" # (209..210)
+                          - (close_brace꞉ CloseBrace): "}" # (215..216)
+              - (close_brace꞉ CloseBrace): "}" # (217..218)

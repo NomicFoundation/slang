@@ -1,3 +1,5 @@
+pragma solidity *;
+
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/header_comment/input.sol
 /*
  * Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris.

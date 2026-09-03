@@ -1,42 +1,54 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                 │ 0..12
-  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/FunctionType/pure_state_mutability/input.sol │ 13..121
-  3  │ function () internal pure returns (uint)                                                                     │ 122..162
-  4  │                                                                                                              │ 163..163
-  5  │ // <<<                                                                                                       │ 164..170
-  6  │ x;                                                                                                           │ 171..173
-  7  │ }                                                                                                            │ 174..175
+  1  │ pragma solidity *;                                                                                           │ 0..18
+  2  │                                                                                                              │ 19..19
+  3  │ contract C {                                                                                                 │ 20..32
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/FunctionType/pure_state_mutability/input.sol │ 33..141
+  5  │ function () internal pure returns (uint)                                                                     │ 142..182
+  6  │                                                                                                              │ 183..183
+  7  │ // <<<                                                                                                       │ 184..190
+  8  │ x;                                                                                                           │ 191..193
+  9  │ }                                                                                                            │ 194..195
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..175)
-      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..175)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..175)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n// >>> Copied fro..." (0..195)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n// >>> Copied fro..." (0..195)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (20..195)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function () internal pure returns (uint)\n\n// <<<\nx..." (122..173)
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function () internal pure returns (uint)\n\n// <<<\nx..." (122..173)
-                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function () internal pure returns (uint)" (122..162)
-                          - (function_keyword꞉ FunctionKeyword): "function" # (122..130)
-                          - (parameters꞉ ParametersDeclaration): # "()" (131..133)
-                              - (open_paren꞉ OpenParen): "(" # (131..132)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function () internal pure returns (uint)\n\n// <<<\nx..." (142..193)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function () internal pure returns (uint)\n\n// <<<\nx..." (142..193)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function () internal pure returns (uint)" (142..182)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (142..150)
+                          - (parameters꞉ ParametersDeclaration): # "()" (151..153)
+                              - (open_paren꞉ OpenParen): "(" # (151..152)
                               - (parameters꞉ Parameters): []
-                              - (close_paren꞉ CloseParen): ")" # (132..133)
-                          - (attributes꞉ FunctionTypeAttributes): # "internal pure" (134..147)
-                              - (item꞉ FunctionTypeAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (134..142)
-                              - (item꞉ FunctionTypeAttribute) ► (pure_keyword꞉ PureKeyword): "pure" # (143..147)
-                          - (returns꞉ ReturnsDeclaration): # "returns (uint)" (148..162)
-                              - (returns_keyword꞉ ReturnsKeyword): "returns" # (148..155)
-                              - (variables꞉ ParametersDeclaration): # "(uint)" (156..162)
-                                  - (open_paren꞉ OpenParen): "(" # (156..157)
-                                  - (parameters꞉ Parameters): # "uint" (157..161)
-                                      - (item꞉ Parameter): # "uint" (157..161)
-                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (157..161)
-                                  - (close_paren꞉ CloseParen): ")" # (161..162)
+                              - (close_paren꞉ CloseParen): ")" # (152..153)
+                          - (attributes꞉ FunctionTypeAttributes): # "internal pure" (154..167)
+                              - (item꞉ FunctionTypeAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (154..162)
+                              - (item꞉ FunctionTypeAttribute) ► (pure_keyword꞉ PureKeyword): "pure" # (163..167)
+                          - (returns꞉ ReturnsDeclaration): # "returns (uint)" (168..182)
+                              - (returns_keyword꞉ ReturnsKeyword): "returns" # (168..175)
+                              - (variables꞉ ParametersDeclaration): # "(uint)" (176..182)
+                                  - (open_paren꞉ OpenParen): "(" # (176..177)
+                                  - (parameters꞉ Parameters): # "uint" (177..181)
+                                      - (item꞉ Parameter): # "uint" (177..181)
+                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (177..181)
+                                  - (close_paren꞉ CloseParen): ")" # (181..182)
                       - (attributes꞉ StateVariableAttributes): []
-                      - (name꞉ Identifier): "x" # (171..172)
-                      - (semicolon꞉ Semicolon): ";" # (172..173)
-              - (close_brace꞉ CloseBrace): "}" # (174..175)
+                      - (name꞉ Identifier): "x" # (191..192)
+                      - (semicolon꞉ Semicolon): ";" # (192..193)
+              - (close_brace꞉ CloseBrace): "}" # (194..195)

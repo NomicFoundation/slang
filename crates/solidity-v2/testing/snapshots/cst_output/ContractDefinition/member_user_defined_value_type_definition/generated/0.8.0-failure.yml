@@ -1,34 +1,46 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_user_defined_value_type_definition/input.sol │ 0..134
-  2  │ contract Sample {                                                                                                                      │ 135..152
-  3  │   type Foo is bool;                                                                                                                    │ 153..172
-  4  │ }                                                                                                                                      │ 173..174
-  5  │ // <<<                                                                                                                                 │ 175..181
+  1  │ pragma solidity *;                                                                                                                     │ 0..18
+  2  │                                                                                                                                        │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_user_defined_value_type_definition/input.sol │ 20..154
+  4  │ contract Sample {                                                                                                                      │ 155..172
+  5  │   type Foo is bool;                                                                                                                    │ 173..192
+  6  │ }                                                                                                                                      │ 193..194
+  7  │ // <<<                                                                                                                                 │ 195..201
 
 Errors: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.8'.
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/member_user_defined_value_type_definition/input.sol:3:3]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/member_user_defined_value_type_definition/input.sol:5:3]
        │
-     3 │   type Foo is bool;
+     5 │   type Foo is bool;
        │   ────────┬────────  
        │           ╰────────── Error occurred here.
     ───╯
 Tree:
-  - (root꞉ SourceUnit): # "contract Sample {\n  type Foo is bool;\n}" (135..174)
-      - (members꞉ SourceUnitMembers): # "contract Sample {\n  type Foo is bool;\n}" (135..174)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  type Foo is bool;\n}" (135..174)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (135..143)
-              - (name꞉ Identifier): "Sample" # (144..150)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..194)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..194)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  type Foo is bool;\n}" (155..194)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (155..163)
+              - (name꞉ Identifier): "Sample" # (164..170)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (151..152)
-              - (members꞉ ContractMembers): # "type Foo is bool;" (155..172)
-                  - (item꞉ ContractMember) ► (user_defined_value_type_definition꞉ UserDefinedValueTypeDefinition): # "type Foo is bool;" (155..172)
-                      - (type_keyword꞉ TypeKeyword): "type" # (155..159)
-                      - (name꞉ Identifier): "Foo" # (160..163)
-                      - (is_keyword꞉ IsKeyword): "is" # (164..166)
-                      - (value_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (167..171)
-                      - (semicolon꞉ Semicolon): ";" # (171..172)
-              - (close_brace꞉ CloseBrace): "}" # (173..174)
+              - (open_brace꞉ OpenBrace): "{" # (171..172)
+              - (members꞉ ContractMembers): # "type Foo is bool;" (175..192)
+                  - (item꞉ ContractMember) ► (user_defined_value_type_definition꞉ UserDefinedValueTypeDefinition): # "type Foo is bool;" (175..192)
+                      - (type_keyword꞉ TypeKeyword): "type" # (175..179)
+                      - (name꞉ Identifier): "Foo" # (180..183)
+                      - (is_keyword꞉ IsKeyword): "is" # (184..186)
+                      - (value_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (187..191)
+                      - (semicolon꞉ Semicolon): ";" # (191..192)
+              - (close_brace꞉ CloseBrace): "}" # (193..194)

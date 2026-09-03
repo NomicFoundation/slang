@@ -1,3 +1,5 @@
+pragma solidity *;
+
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/tuple_assignment_empty/input.sol
 library SafeMath {
   function tryAdd() internal pure  {

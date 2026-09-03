@@ -1,23 +1,25 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                    │ 0..12
-  2  │     function f() {                                                                              │ 13..31
-  3  │         assembly {                                                                              │ 32..50
-  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulLabel/single_label/input.sol │ 51..146
-  5  │ foo:                                                                                            │ 147..151
-  6  │                                                                                                 │ 152..152
-  7  │ // <<<                                                                                          │ 153..159
-  8  │         }                                                                                       │ 160..169
-  9  │     }                                                                                           │ 170..175
-  10 │ }                                                                                               │ 176..177
+  1  │ pragma solidity *;                                                                              │ 0..18
+  2  │                                                                                                 │ 19..19
+  3  │ contract C {                                                                                    │ 20..32
+  4  │     function f() {                                                                              │ 33..51
+  5  │         assembly {                                                                              │ 52..70
+  6  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulLabel/single_label/input.sol │ 71..166
+  7  │ foo:                                                                                            │ 167..171
+  8  │                                                                                                 │ 172..172
+  9  │ // <<<                                                                                          │ 173..179
+  10 │         }                                                                                       │ 180..189
+  11 │     }                                                                                           │ 190..195
+  12 │ }                                                                                               │ 196..197
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of YulBreakKeyword, YulCloseBrace, YulColonEqual, YulComma, YulContinueKeyword, YulDecimalLiteral, YulFalseKeyword, YulForKeyword, YulFunctionKeyword, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulIfKeyword, YulLeaveKeyword, YulLetKeyword, YulOpenBrace, YulOpenParen, YulPeriod, YulStringLiteral, YulSwitchKeyword, YulTrueKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulLabel/single_label/input.sol:5:4]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulLabel/single_label/input.sol:7:4]
        │
-     5 │ foo:
+     7 │ foo:
        │    ┬  
        │    ╰── Error occurred here.
     ───╯

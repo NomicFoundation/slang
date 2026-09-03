@@ -1,21 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                     │ 0..12
-  2  │     function f() {                                                                               │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/prefix_plus/input.sol │ 32..128
-  4  │ +foo                                                                                             │ 129..133
-  5  │ // <<<                                                                                           │ 134..140
-  6  │ ;                                                                                                │ 141..142
-  7  │     }                                                                                            │ 143..148
-  8  │ }                                                                                                │ 149..150
+  1  │ pragma solidity *;                                                                               │ 0..18
+  2  │                                                                                                  │ 19..19
+  3  │ contract C {                                                                                     │ 20..32
+  4  │     function f() {                                                                               │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/prefix_plus/input.sol │ 52..148
+  6  │ +foo                                                                                             │ 149..153
+  7  │ // <<<                                                                                           │ 154..160
+  8  │ ;                                                                                                │ 161..162
+  9  │     }                                                                                            │ 163..168
+  10 │ }                                                                                                │ 169..170
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Plus. One of AddressKeyword, AssemblyKeyword, AtKeyword, Bang, BoolKeyword, BreakKeyword, BytesKeyword, CloseBrace, ContinueKeyword, DecimalLiteral, DeleteKeyword, DoKeyword, EmitKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, ForKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IfKeyword, IntKeyword, LayoutKeyword, MappingKeyword, Minus, MinusMinus, NewKeyword, OpenBrace, OpenBracket, OpenParen, PayableKeyword, PlusPlus, ReturnKeyword, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TryKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UncheckedKeyword, UnicodeStringLiteral, WhileKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/Expression/prefix_plus/input.sol:4:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/Expression/prefix_plus/input.sol:6:1]
        │
-     4 │ +foo
+     6 │ +foo
        │ ┬  
        │ ╰── Error occurred here.
     ───╯

@@ -1,19 +1,21 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_unnamed_function_with_attrs_definition/input.sol │ 0..138
-  2  │ contract Sample {                                                                                                                          │ 139..156
-  3  │   function() external payable {}                                                                                                           │ 157..189
-  4  │ }                                                                                                                                          │ 190..191
-  5  │                                                                                                                                            │ 192..192
-  6  │ // <<<                                                                                                                                     │ 193..199
+  1  │ pragma solidity *;                                                                                                                         │ 0..18
+  2  │                                                                                                                                            │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_unnamed_function_with_attrs_definition/input.sol │ 20..158
+  4  │ contract Sample {                                                                                                                          │ 159..176
+  5  │   function() external payable {}                                                                                                           │ 177..209
+  6  │ }                                                                                                                                          │ 210..211
+  7  │                                                                                                                                            │ 212..212
+  8  │ // <<<                                                                                                                                     │ 213..219
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected OpenBrace. One of AtKeyword, ConstantKeyword, ErrorKeyword, ExternalKeyword, FromKeyword, GlobalKeyword, Identifier, ImmutableKeyword, InternalKeyword, LayoutKeyword, OpenBracket, OverrideKeyword, PayableKeyword, PrivateKeyword, PublicKeyword, PureKeyword, ReturnsKeyword, RevertKeyword, TransientKeyword, ViewKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/member_unnamed_function_with_attrs_definition/input.sol:3:31]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/member_unnamed_function_with_attrs_definition/input.sol:5:31]
        │
-     3 │   function() external payable {}
+     5 │   function() external payable {}
        │                               ┬  
        │                               ╰── Error occurred here.
     ───╯

@@ -1,45 +1,57 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                              │ 0..12
-  2  │     function f()                                                                          │ 13..29
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Block/unchecked/input.sol │ 30..119
-  4  │ { unchecked { x = 1; } }                                                                  │ 120..144
-  5  │ // <<<                                                                                    │ 145..151
-  6  │ }                                                                                         │ 152..153
+  1  │ pragma solidity *;                                                                        │ 0..18
+  2  │                                                                                           │ 19..19
+  3  │ contract C {                                                                              │ 20..32
+  4  │     function f()                                                                          │ 33..49
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Block/unchecked/input.sol │ 50..139
+  6  │ { unchecked { x = 1; } }                                                                  │ 140..164
+  7  │ // <<<                                                                                    │ 165..171
+  8  │ }                                                                                         │ 172..173
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f()\n// >>> Copied from c..." (0..153)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f()\n// >>> Copied from c..." (0..153)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f()\n// >>> Copied from c..." (0..153)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f()\n..." (0..173)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f()\n..." (0..173)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f()\n// >>> Copied from c..." (20..173)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f()\n// >>> Copied from crates/solidity/te..." (17..144)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f()\n// >>> Copied from crates/solidity/te..." (17..144)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f()\n// >>> Copied from crates/solidity/te..." (37..164)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f()\n// >>> Copied from crates/solidity/te..." (37..164)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{ unchecked { x = 1; } }" (120..144)
-                          - (open_brace꞉ OpenBrace): "{" # (120..121)
-                          - (statements꞉ Statements): # "unchecked { x = 1; }" (122..142)
-                              - (item꞉ Statement) ► (unchecked_block꞉ UncheckedBlock): # "unchecked { x = 1; }" (122..142)
-                                  - (unchecked_keyword꞉ UncheckedKeyword): "unchecked" # (122..131)
-                                  - (block꞉ Block): # "{ x = 1; }" (132..142)
-                                      - (open_brace꞉ OpenBrace): "{" # (132..133)
-                                      - (statements꞉ Statements): # "x = 1;" (134..140)
-                                          - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "x = 1;" (134..140)
-                                              - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "x = 1" (134..139)
-                                                  - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "x" # (134..135)
-                                                  - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (136..137)
-                                                  - (right_operand꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (138..139)
-                                                      - (literal꞉ DecimalLiteral): "1" # (138..139)
-                                              - (semicolon꞉ Semicolon): ";" # (139..140)
-                                      - (close_brace꞉ CloseBrace): "}" # (141..142)
-                          - (close_brace꞉ CloseBrace): "}" # (143..144)
-              - (close_brace꞉ CloseBrace): "}" # (152..153)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{ unchecked { x = 1; } }" (140..164)
+                          - (open_brace꞉ OpenBrace): "{" # (140..141)
+                          - (statements꞉ Statements): # "unchecked { x = 1; }" (142..162)
+                              - (item꞉ Statement) ► (unchecked_block꞉ UncheckedBlock): # "unchecked { x = 1; }" (142..162)
+                                  - (unchecked_keyword꞉ UncheckedKeyword): "unchecked" # (142..151)
+                                  - (block꞉ Block): # "{ x = 1; }" (152..162)
+                                      - (open_brace꞉ OpenBrace): "{" # (152..153)
+                                      - (statements꞉ Statements): # "x = 1;" (154..160)
+                                          - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "x = 1;" (154..160)
+                                              - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "x = 1" (154..159)
+                                                  - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "x" # (154..155)
+                                                  - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (156..157)
+                                                  - (right_operand꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (158..159)
+                                                      - (literal꞉ DecimalLiteral): "1" # (158..159)
+                                              - (semicolon꞉ Semicolon): ";" # (159..160)
+                                      - (close_brace꞉ CloseBrace): "}" # (161..162)
+                          - (close_brace꞉ CloseBrace): "}" # (163..164)
+              - (close_brace꞉ CloseBrace): "}" # (172..173)

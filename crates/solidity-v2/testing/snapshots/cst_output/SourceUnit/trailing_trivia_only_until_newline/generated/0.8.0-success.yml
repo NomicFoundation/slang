@@ -1,27 +1,39 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/trailing_trivia_only_until_newline/input.sol │ 0..119
-  2  │ contract A {} // first                                                                                                  │ 120..142
-  3  │               // second                                                                                                 │ 143..166
-  4  │ contract B {}                                                                                                           │ 167..180
-  5  │                                                                                                                         │ 181..181
-  6  │ // <<<                                                                                                                  │ 182..188
+  1  │ pragma solidity *;                                                                                                      │ 0..18
+  2  │                                                                                                                         │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/trailing_trivia_only_until_newline/input.sol │ 20..139
+  4  │ contract A {} // first                                                                                                  │ 140..162
+  5  │               // second                                                                                                 │ 163..186
+  6  │ contract B {}                                                                                                           │ 187..200
+  7  │                                                                                                                         │ 201..201
+  8  │ // <<<                                                                                                                  │ 202..208
 
 Tree:
-  - (root꞉ SourceUnit): # "contract A {} // first\n              // second\ncon..." (120..180)
-      - (members꞉ SourceUnitMembers): # "contract A {} // first\n              // second\ncon..." (120..180)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract A {}" (120..133)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (120..128)
-              - (name꞉ Identifier): "A" # (129..130)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..200)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..200)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract A {}" (140..153)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (140..148)
+              - (name꞉ Identifier): "A" # (149..150)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (131..132)
+              - (open_brace꞉ OpenBrace): "{" # (151..152)
               - (members꞉ ContractMembers): []
-              - (close_brace꞉ CloseBrace): "}" # (132..133)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract B {}" (167..180)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (167..175)
-              - (name꞉ Identifier): "B" # (176..177)
+              - (close_brace꞉ CloseBrace): "}" # (152..153)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract B {}" (187..200)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (187..195)
+              - (name꞉ Identifier): "B" # (196..197)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (178..179)
+              - (open_brace꞉ OpenBrace): "{" # (198..199)
               - (members꞉ ContractMembers): []
-              - (close_brace꞉ CloseBrace): "}" # (179..180)
+              - (close_brace꞉ CloseBrace): "}" # (199..200)

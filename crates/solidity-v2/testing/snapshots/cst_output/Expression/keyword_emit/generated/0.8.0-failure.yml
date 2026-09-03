@@ -1,21 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                      │ 0..12
-  2  │     function f() {                                                                                │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/keyword_emit/input.sol │ 32..129
-  4  │ emit                                                                                              │ 130..134
-  5  │ // <<<                                                                                            │ 135..141
-  6  │ ;                                                                                                 │ 142..143
-  7  │     }                                                                                             │ 144..149
-  8  │ }                                                                                                 │ 150..151
+  1  │ pragma solidity *;                                                                                │ 0..18
+  2  │                                                                                                   │ 19..19
+  3  │ contract C {                                                                                      │ 20..32
+  4  │     function f() {                                                                                │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/keyword_emit/input.sol │ 52..149
+  6  │ emit                                                                                              │ 150..154
+  7  │ // <<<                                                                                            │ 155..161
+  8  │ ;                                                                                                 │ 162..163
+  9  │     }                                                                                             │ 164..169
+  10 │ }                                                                                                 │ 170..171
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Semicolon. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/Expression/keyword_emit/input.sol:6:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/Expression/keyword_emit/input.sol:8:1]
        │
-     6 │ ;
+     8 │ ;
        │ ┬  
        │ ╰── Error occurred here.
     ───╯

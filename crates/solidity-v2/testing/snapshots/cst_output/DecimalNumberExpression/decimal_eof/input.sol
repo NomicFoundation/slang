@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract C {
     function f() {
 // This is intentional, to test how the lexer behave when combining

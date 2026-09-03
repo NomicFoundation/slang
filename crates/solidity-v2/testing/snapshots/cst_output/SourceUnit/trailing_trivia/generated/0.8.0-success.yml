@@ -1,32 +1,44 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/trailing_trivia/input.sol │ 0..100
-  2  │ contract First {}                                                                                    │ 101..118
-  3  │                                                                                                      │ 119..119
-  4  │                                                                                                      │ 120..120
-  5  │ // Newlines both before and after this comment should                                                │ 121..174
-  6  │ // be included in the trivia of the second contract.                                                 │ 175..227
-  7  │                                                                                                      │ 228..228
-  8  │                                                                                                      │ 229..229
-  9  │ contract Second {}                                                                                   │ 230..248
+  1  │ pragma solidity *;                                                                                   │ 0..18
+  2  │                                                                                                      │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/trailing_trivia/input.sol │ 20..120
+  4  │ contract First {}                                                                                    │ 121..138
+  5  │                                                                                                      │ 139..139
+  6  │                                                                                                      │ 140..140
+  7  │ // Newlines both before and after this comment should                                                │ 141..194
+  8  │ // be included in the trivia of the second contract.                                                 │ 195..247
+  9  │                                                                                                      │ 248..248
   10 │                                                                                                      │ 249..249
-  11 │ // <<<                                                                                               │ 250..256
+  11 │ contract Second {}                                                                                   │ 250..268
+  12 │                                                                                                      │ 269..269
+  13 │ // <<<                                                                                               │ 270..276
 
 Tree:
-  - (root꞉ SourceUnit): # "contract First {}\n\n\n// Newlines both before and af..." (101..248)
-      - (members꞉ SourceUnitMembers): # "contract First {}\n\n\n// Newlines both before and af..." (101..248)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract First {}" (101..118)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (101..109)
-              - (name꞉ Identifier): "First" # (110..115)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..268)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..268)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract First {}" (121..138)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (121..129)
+              - (name꞉ Identifier): "First" # (130..135)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (116..117)
+              - (open_brace꞉ OpenBrace): "{" # (136..137)
               - (members꞉ ContractMembers): []
-              - (close_brace꞉ CloseBrace): "}" # (117..118)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Second {}" (230..248)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (230..238)
-              - (name꞉ Identifier): "Second" # (239..245)
+              - (close_brace꞉ CloseBrace): "}" # (137..138)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Second {}" (250..268)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (250..258)
+              - (name꞉ Identifier): "Second" # (259..265)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (246..247)
+              - (open_brace꞉ OpenBrace): "{" # (266..267)
               - (members꞉ ContractMembers): []
-              - (close_brace꞉ CloseBrace): "}" # (247..248)
+              - (close_brace꞉ CloseBrace): "}" # (267..268)

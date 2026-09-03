@@ -1,21 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                          │ 0..12
-  2  │     function f() {                                                                                                    │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_ufixed/input.sol │ 32..149
-  4  │ uint ufixed;                                                                                                          │ 150..162
-  5  │                                                                                                                       │ 163..163
-  6  │ // <<<                                                                                                                │ 164..170
-  7  │     }                                                                                                                 │ 171..176
-  8  │ }                                                                                                                     │ 177..178
+  1  │ pragma solidity *;                                                                                                    │ 0..18
+  2  │                                                                                                                       │ 19..19
+  3  │ contract C {                                                                                                          │ 20..32
+  4  │     function f() {                                                                                                    │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_ufixed/input.sol │ 52..169
+  6  │ uint ufixed;                                                                                                          │ 170..182
+  7  │                                                                                                                       │ 183..183
+  8  │ // <<<                                                                                                                │ 184..190
+  9  │     }                                                                                                                 │ 191..196
+  10 │ }                                                                                                                     │ 197..198
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UfixedKeyword. One of Ampersand, AmpersandAmpersand, AmpersandEqual, Asterisk, AsteriskAsterisk, AsteriskEqual, AtKeyword, BangEqual, Bar, BarBar, BarEqual, CallDataKeyword, Caret, CaretEqual, Equal, EqualEqual, ErrorKeyword, FromKeyword, GlobalKeyword, GreaterThan, GreaterThanEqual, GreaterThanGreaterThan, GreaterThanGreaterThanEqual, GreaterThanGreaterThanGreaterThan, GreaterThanGreaterThanGreaterThanEqual, Identifier, LayoutKeyword, LessThan, LessThanEqual, LessThanLessThan, LessThanLessThanEqual, MemoryKeyword, Minus, MinusEqual, MinusMinus, OpenBrace, OpenBracket, OpenParen, Percent, PercentEqual, Period, Plus, PlusEqual, PlusPlus, QuestionMark, RevertKeyword, Semicolon, Slash, SlashEqual, StorageKeyword, TransientKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_ufixed/input.sol:4:6]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_ufixed/input.sol:6:6]
        │
-     4 │ uint ufixed;
+     6 │ uint ufixed;
        │      ───┬──  
        │         ╰──── Error occurred here.
     ───╯

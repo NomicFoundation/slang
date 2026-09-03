@@ -1,20 +1,22 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/StructDefinition/member_function_pointer/input.sol │ 0..114
-  2  │ struct State {                                                                                                     │ 115..129
-  3  │   bool accepts;                                                                                                    │ 130..145
-  4  │   function (byte) internal pure returns (uint) func;                                                               │ 146..198
-  5  │ }                                                                                                                  │ 199..200
-  6  │                                                                                                                    │ 201..201
-  7  │ // <<<                                                                                                             │ 202..208
+  1  │ pragma solidity *;                                                                                                 │ 0..18
+  2  │                                                                                                                    │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/StructDefinition/member_function_pointer/input.sol │ 20..134
+  4  │ struct State {                                                                                                     │ 135..149
+  5  │   bool accepts;                                                                                                    │ 150..165
+  6  │   function (byte) internal pure returns (uint) func;                                                               │ 166..218
+  7  │ }                                                                                                                  │ 219..220
+  8  │                                                                                                                    │ 221..221
+  9  │ // <<<                                                                                                             │ 222..228
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected ByteKeyword. One of AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, CloseParen, ErrorKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, RevertKeyword, StringKeyword, TransientKeyword, UfixedKeyword, UintKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/StructDefinition/member_function_pointer/input.sol:4:13]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/StructDefinition/member_function_pointer/input.sol:6:13]
        │
-     4 │   function (byte) internal pure returns (uint) func;
+     6 │   function (byte) internal pure returns (uint) func;
        │             ──┬─  
        │               ╰─── Error occurred here.
     ───╯

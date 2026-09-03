@@ -1,21 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                           │ 0..12
-  2  │     function f() {                                                                                                     │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_bytes11/input.sol │ 32..150
-  4  │ uint bytes11;                                                                                                          │ 151..164
-  5  │                                                                                                                        │ 165..165
-  6  │ // <<<                                                                                                                 │ 166..172
-  7  │     }                                                                                                                  │ 173..178
-  8  │ }                                                                                                                      │ 179..180
+  1  │ pragma solidity *;                                                                                                     │ 0..18
+  2  │                                                                                                                        │ 19..19
+  3  │ contract C {                                                                                                           │ 20..32
+  4  │     function f() {                                                                                                     │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_bytes11/input.sol │ 52..170
+  6  │ uint bytes11;                                                                                                          │ 171..184
+  7  │                                                                                                                        │ 185..185
+  8  │ // <<<                                                                                                                 │ 186..192
+  9  │     }                                                                                                                  │ 193..198
+  10 │ }                                                                                                                      │ 199..200
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected BytesKeyword. One of Ampersand, AmpersandAmpersand, AmpersandEqual, Asterisk, AsteriskAsterisk, AsteriskEqual, AtKeyword, BangEqual, Bar, BarBar, BarEqual, CallDataKeyword, Caret, CaretEqual, Equal, EqualEqual, ErrorKeyword, FromKeyword, GlobalKeyword, GreaterThan, GreaterThanEqual, GreaterThanGreaterThan, GreaterThanGreaterThanEqual, GreaterThanGreaterThanGreaterThan, GreaterThanGreaterThanGreaterThanEqual, Identifier, LayoutKeyword, LessThan, LessThanEqual, LessThanLessThan, LessThanLessThanEqual, MemoryKeyword, Minus, MinusEqual, MinusMinus, OpenBrace, OpenBracket, OpenParen, Percent, PercentEqual, Period, Plus, PlusEqual, PlusPlus, QuestionMark, RevertKeyword, Semicolon, Slash, SlashEqual, StorageKeyword, TransientKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_bytes11/input.sol:4:6]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_bytes11/input.sol:6:6]
        │
-     4 │ uint bytes11;
+     6 │ uint bytes11;
        │      ───┬───  
        │         ╰───── Error occurred here.
     ───╯

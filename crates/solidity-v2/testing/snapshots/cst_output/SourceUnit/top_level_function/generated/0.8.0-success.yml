@@ -1,22 +1,34 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/top_level_function/input.sol │ 0..103
-  2  │ function foo() { }                                                                                      │ 104..122
-  3  │ // <<<                                                                                                  │ 123..129
+  1  │ pragma solidity *;                                                                                      │ 0..18
+  2  │                                                                                                         │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/top_level_function/input.sol │ 20..123
+  4  │ function foo() { }                                                                                      │ 124..142
+  5  │ // <<<                                                                                                  │ 143..149
 
 Tree:
-  - (root꞉ SourceUnit): # "function foo() { }" (104..122)
-      - (members꞉ SourceUnitMembers): # "function foo() { }" (104..122)
-          - (item꞉ SourceUnitMember) ► (function_definition꞉ FunctionDefinition): # "function foo() { }" (104..122)
-              - (function_keyword꞉ FunctionKeyword): "function" # (104..112)
-              - (name꞉ FunctionName) ► (identifier꞉ Identifier): "foo" # (113..116)
-              - (parameters꞉ ParametersDeclaration): # "()" (116..118)
-                  - (open_paren꞉ OpenParen): "(" # (116..117)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..142)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..142)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (function_definition꞉ FunctionDefinition): # "function foo() { }" (124..142)
+              - (function_keyword꞉ FunctionKeyword): "function" # (124..132)
+              - (name꞉ FunctionName) ► (identifier꞉ Identifier): "foo" # (133..136)
+              - (parameters꞉ ParametersDeclaration): # "()" (136..138)
+                  - (open_paren꞉ OpenParen): "(" # (136..137)
                   - (parameters꞉ Parameters): []
-                  - (close_paren꞉ CloseParen): ")" # (117..118)
+                  - (close_paren꞉ CloseParen): ")" # (137..138)
               - (attributes꞉ FunctionAttributes): []
-              - (body꞉ FunctionBody) ► (block꞉ Block): # "{ }" (119..122)
-                  - (open_brace꞉ OpenBrace): "{" # (119..120)
+              - (body꞉ FunctionBody) ► (block꞉ Block): # "{ }" (139..142)
+                  - (open_brace꞉ OpenBrace): "{" # (139..140)
                   - (statements꞉ Statements): []
-                  - (close_brace꞉ CloseBrace): "}" # (121..122)
+                  - (close_brace꞉ CloseBrace): "}" # (141..142)

@@ -1,20 +1,22 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                     │ 0..12
-  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/FunctionType/constant_state_mutability/input.sol │ 13..125
-  3  │ function () constant internal returns (uint)                                                                     │ 126..170
-  4  │                                                                                                                  │ 171..171
-  5  │ // <<<                                                                                                           │ 172..178
-  6  │ x;                                                                                                               │ 179..181
-  7  │ }                                                                                                                │ 182..183
+  1  │ pragma solidity *;                                                                                               │ 0..18
+  2  │                                                                                                                  │ 19..19
+  3  │ contract C {                                                                                                     │ 20..32
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/FunctionType/constant_state_mutability/input.sol │ 33..145
+  5  │ function () constant internal returns (uint)                                                                     │ 146..190
+  6  │                                                                                                                  │ 191..191
+  7  │ // <<<                                                                                                           │ 192..198
+  8  │ x;                                                                                                               │ 199..201
+  9  │ }                                                                                                                │ 202..203
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected ReturnsKeyword. One of AtKeyword, ConstantKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, ImmutableKeyword, InternalKeyword, LayoutKeyword, OverrideKeyword, PrivateKeyword, PublicKeyword, RevertKeyword, TransientKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionType/constant_state_mutability/input.sol:3:31]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionType/constant_state_mutability/input.sol:5:31]
        │
-     3 │ function () constant internal returns (uint)
+     5 │ function () constant internal returns (uint)
        │                               ───┬───  
        │                                  ╰───── Error occurred here.
     ───╯

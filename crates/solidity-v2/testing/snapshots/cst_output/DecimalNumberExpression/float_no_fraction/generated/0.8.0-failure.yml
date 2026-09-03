@@ -1,21 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                        │ 0..12
-  2  │     function f() {                                                                                                  │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/DecimalNumberExpression/float_no_fraction/input.sol │ 32..147
-  4  │ 1.                                                                                                                  │ 148..150
-  5  │ // <<<                                                                                                              │ 151..157
-  6  │ ;                                                                                                                   │ 158..159
-  7  │     }                                                                                                               │ 160..165
-  8  │ }                                                                                                                   │ 166..167
+  1  │ pragma solidity *;                                                                                                  │ 0..18
+  2  │                                                                                                                     │ 19..19
+  3  │ contract C {                                                                                                        │ 20..32
+  4  │     function f() {                                                                                                  │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/DecimalNumberExpression/float_no_fraction/input.sol │ 52..167
+  6  │ 1.                                                                                                                  │ 168..170
+  7  │ // <<<                                                                                                              │ 171..177
+  8  │ ;                                                                                                                   │ 178..179
+  9  │     }                                                                                                               │ 180..185
+  10 │ }                                                                                                                   │ 186..187
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Semicolon. One of AddressKeyword, AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/DecimalNumberExpression/float_no_fraction/input.sol:6:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/DecimalNumberExpression/float_no_fraction/input.sol:8:1]
        │
-     6 │ ;
+     8 │ ;
        │ ┬  
        │ ╰── Error occurred here.
     ───╯

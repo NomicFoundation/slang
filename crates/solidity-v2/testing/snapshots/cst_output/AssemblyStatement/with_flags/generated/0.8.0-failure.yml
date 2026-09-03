@@ -1,57 +1,69 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                           │ 0..12
-  2  │     function f() {                                                                                     │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/AssemblyStatement/with_flags/input.sol │ 32..134
-  4  │ assembly "evmasm" ("memory-safe") {                                                                    │ 135..170
-  5  │                                                                                                        │ 171..171
-  6  │ }                                                                                                      │ 172..173
-  7  │                                                                                                        │ 174..174
-  8  │ // <<<                                                                                                 │ 175..181
-  9  │     }                                                                                                  │ 182..187
-  10 │ }                                                                                                      │ 188..189
+  1  │ pragma solidity *;                                                                                     │ 0..18
+  2  │                                                                                                        │ 19..19
+  3  │ contract C {                                                                                           │ 20..32
+  4  │     function f() {                                                                                     │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/AssemblyStatement/with_flags/input.sol │ 52..154
+  6  │ assembly "evmasm" ("memory-safe") {                                                                    │ 155..190
+  7  │                                                                                                        │ 191..191
+  8  │ }                                                                                                      │ 192..193
+  9  │                                                                                                        │ 194..194
+  10 │ // <<<                                                                                                 │ 195..201
+  11 │     }                                                                                                  │ 202..207
+  12 │ }                                                                                                      │ 208..209
 
 Errors: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/AssemblyStatement/with_flags/input.sol:4:19]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/AssemblyStatement/with_flags/input.sol:6:19]
        │
-     4 │ assembly "evmasm" ("memory-safe") {
+     6 │ assembly "evmasm" ("memory-safe") {
        │                   ───────┬───────  
        │                          ╰───────── Error occurred here.
     ───╯
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..189)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..189)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..189)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..209)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..209)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (20..209)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..187)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..187)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (37..207)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (37..207)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..187)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # 'assembly "evmasm" ("memory-safe") {\n\n}' (135..173)
-                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement): # 'assembly "evmasm" ("memory-safe") {\n\n}' (135..173)
-                                  - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (135..143)
-                                  - (label꞉ YulStringLiteral): '"evmasm"' # (144..152)
-                                  - (flags꞉ YulFlagsDeclaration): # '("memory-safe")' (153..168)
-                                      - (open_paren꞉ YulOpenParen): "(" # (153..154)
-                                      - (flags꞉ YulFlags): # '"memory-safe"' (154..167)
-                                          - (item꞉ YulStringLiteral): '"memory-safe"' # (154..167)
-                                      - (close_paren꞉ YulCloseParen): ")" # (167..168)
-                                  - (body꞉ YulBlock): # "{\n\n}" (169..173)
-                                      - (open_brace꞉ YulOpenBrace): "{" # (169..170)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (50..207)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # 'assembly "evmasm" ("memory-safe") {\n\n}' (155..193)
+                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement): # 'assembly "evmasm" ("memory-safe") {\n\n}' (155..193)
+                                  - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (155..163)
+                                  - (label꞉ YulStringLiteral): '"evmasm"' # (164..172)
+                                  - (flags꞉ YulFlagsDeclaration): # '("memory-safe")' (173..188)
+                                      - (open_paren꞉ YulOpenParen): "(" # (173..174)
+                                      - (flags꞉ YulFlags): # '"memory-safe"' (174..187)
+                                          - (item꞉ YulStringLiteral): '"memory-safe"' # (174..187)
+                                      - (close_paren꞉ YulCloseParen): ")" # (187..188)
+                                  - (body꞉ YulBlock): # "{\n\n}" (189..193)
+                                      - (open_brace꞉ YulOpenBrace): "{" # (189..190)
                                       - (statements꞉ YulStatements): []
-                                      - (close_brace꞉ YulCloseBrace): "}" # (172..173)
-                          - (close_brace꞉ CloseBrace): "}" # (186..187)
-              - (close_brace꞉ CloseBrace): "}" # (188..189)
+                                      - (close_brace꞉ YulCloseBrace): "}" # (192..193)
+                          - (close_brace꞉ CloseBrace): "}" # (206..207)
+              - (close_brace꞉ CloseBrace): "}" # (208..209)

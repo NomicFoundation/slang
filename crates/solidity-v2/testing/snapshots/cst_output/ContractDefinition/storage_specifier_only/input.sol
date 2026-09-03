@@ -1,3 +1,5 @@
+pragma solidity *;
+
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/storage_specifier_only/input.sol
 contract Foo layout at 0 {
     function foo(){}

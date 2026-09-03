@@ -1,21 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                  │ 0..12
-  2  │     function f() {                                                                                            │ 13..31
-  3  │         assembly {                                                                                            │ 32..50
-  4  │             // https://github.com/argotorg/solidity/blob/v0.8.27/test/libyul/yulSyntaxTests/invalid_type3.yul │ 51..160
-  5  │             function f(a) -> b: invalidType {}                                                                │ 161..207
-  6  │         }                                                                                                     │ 208..217
-  7  │     }                                                                                                         │ 218..223
-  8  │ }                                                                                                             │ 224..225
+  1  │ pragma solidity *;                                                                                            │ 0..18
+  2  │                                                                                                               │ 19..19
+  3  │ contract C {                                                                                                  │ 20..32
+  4  │     function f() {                                                                                            │ 33..51
+  5  │         assembly {                                                                                            │ 52..70
+  6  │             // https://github.com/argotorg/solidity/blob/v0.8.27/test/libyul/yulSyntaxTests/invalid_type3.yul │ 71..180
+  7  │             function f(a) -> b: invalidType {}                                                                │ 181..227
+  8  │         }                                                                                                     │ 228..237
+  9  │     }                                                                                                         │ 238..243
+  10 │ }                                                                                                             │ 244..245
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of YulComma, YulOpenBrace was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulFunctionDefinition/invalid_return_type/input.sol:5:31]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulFunctionDefinition/invalid_return_type/input.sol:7:31]
        │
-     5 │             function f(a) -> b: invalidType {}
+     7 │             function f(a) -> b: invalidType {}
        │                               ┬  
        │                               ╰── Error occurred here.
     ───╯

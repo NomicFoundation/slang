@@ -1,41 +1,53 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                                │ 0..12
-  2  │     function f() {                                                                                                          │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_experimental/input.sol │ 32..155
-  4  │ // Always valid as an identifier (never reserved):                                                                          │ 156..206
-  5  │ uint experimental;                                                                                                          │ 207..225
-  6  │                                                                                                                             │ 226..226
-  7  │ // <<<                                                                                                                      │ 227..233
-  8  │     }                                                                                                                       │ 234..239
-  9  │ }                                                                                                                           │ 240..241
+  1  │ pragma solidity *;                                                                                                          │ 0..18
+  2  │                                                                                                                             │ 19..19
+  3  │ contract C {                                                                                                                │ 20..32
+  4  │     function f() {                                                                                                          │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_experimental/input.sol │ 52..175
+  6  │ // Always valid as an identifier (never reserved):                                                                          │ 176..226
+  7  │ uint experimental;                                                                                                          │ 227..245
+  8  │                                                                                                                             │ 246..246
+  9  │ // <<<                                                                                                                      │ 247..253
+  10 │     }                                                                                                                       │ 254..259
+  11 │ }                                                                                                                           │ 260..261
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..241)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..241)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..241)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..261)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..261)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (20..261)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..239)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..239)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (37..259)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (37..259)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..239)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # "uint experimental;" (207..225)
-                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "uint experimental;" (207..225)
-                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "uint experimental" (207..224)
-                                      - (declaration꞉ VariableDeclaration): # "uint experimental" (207..224)
-                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (207..211)
-                                          - (name꞉ Identifier): "experimental" # (212..224)
-                                  - (semicolon꞉ Semicolon): ";" # (224..225)
-                          - (close_brace꞉ CloseBrace): "}" # (238..239)
-              - (close_brace꞉ CloseBrace): "}" # (240..241)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (50..259)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # "uint experimental;" (227..245)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "uint experimental;" (227..245)
+                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "uint experimental" (227..244)
+                                      - (declaration꞉ VariableDeclaration): # "uint experimental" (227..244)
+                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (227..231)
+                                          - (name꞉ Identifier): "experimental" # (232..244)
+                                  - (semicolon꞉ Semicolon): ";" # (244..245)
+                          - (close_brace꞉ CloseBrace): "}" # (258..259)
+              - (close_brace꞉ CloseBrace): "}" # (260..261)

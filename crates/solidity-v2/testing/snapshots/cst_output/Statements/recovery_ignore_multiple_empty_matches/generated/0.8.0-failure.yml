@@ -1,21 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                                │ 0..12
-  2  │     function f() {                                                                                                          │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Statements/recovery_ignore_multiple_empty_matches/input.sol │ 32..155
-  4  │ for(int)                                                                                                                    │ 156..164
-  5  │                                                                                                                             │ 165..165
-  6  │ // <<<                                                                                                                      │ 166..172
-  7  │     }                                                                                                                       │ 173..178
-  8  │ }                                                                                                                           │ 179..180
+  1  │ pragma solidity *;                                                                                                          │ 0..18
+  2  │                                                                                                                             │ 19..19
+  3  │ contract C {                                                                                                                │ 20..32
+  4  │     function f() {                                                                                                          │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Statements/recovery_ignore_multiple_empty_matches/input.sol │ 52..175
+  6  │ for(int)                                                                                                                    │ 176..184
+  7  │                                                                                                                             │ 185..185
+  8  │ // <<<                                                                                                                      │ 186..192
+  9  │     }                                                                                                                       │ 193..198
+  10 │ }                                                                                                                           │ 199..200
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected CloseParen. One of Semicolon was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/Statements/recovery_ignore_multiple_empty_matches/input.sol:4:8]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/Statements/recovery_ignore_multiple_empty_matches/input.sol:6:8]
        │
-     4 │ for(int)
+     6 │ for(int)
        │        ┬  
        │        ╰── Error occurred here.
     ───╯

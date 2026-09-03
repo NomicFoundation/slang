@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract C {
     receive() external payable virtual returns (uint256) {}
 }

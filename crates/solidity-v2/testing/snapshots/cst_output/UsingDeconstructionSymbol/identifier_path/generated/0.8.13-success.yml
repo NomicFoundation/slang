@@ -1,25 +1,37 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ using {                                                                                                             │ 0..7
-  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDeconstructionSymbol/identifier_path/input.sol │ 8..123
-  3  │ foo.bar                                                                                                             │ 124..131
-  4  │ // <<<                                                                                                              │ 132..138
-  5  │ } for uint;                                                                                                         │ 139..150
+  1  │ pragma solidity *;                                                                                                  │ 0..18
+  2  │                                                                                                                     │ 19..19
+  3  │ using {                                                                                                             │ 20..27
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDeconstructionSymbol/identifier_path/input.sol │ 28..143
+  5  │ foo.bar                                                                                                             │ 144..151
+  6  │ // <<<                                                                                                              │ 152..158
+  7  │ } for uint;                                                                                                         │ 159..170
 
 Tree:
-  - (root꞉ SourceUnit): # "using {\n// >>> Copied from crates/solidity/testing..." (0..150)
-      - (members꞉ SourceUnitMembers): # "using {\n// >>> Copied from crates/solidity/testing..." (0..150)
-          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using {\n// >>> Copied from crates/solidity/testing..." (0..150)
-              - (using_keyword꞉ UsingKeyword): "using" # (0..5)
-              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (6..140)
-                  - (open_brace꞉ OpenBrace): "{" # (6..7)
-                  - (symbols꞉ UsingDeconstructionSymbols): # "foo.bar" (124..131)
-                      - (item꞉ UsingDeconstructionSymbol): # "foo.bar" (124..131)
-                          - (name꞉ IdentifierPath): # "foo.bar" (124..131)
-                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (124..127)
-                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "bar" # (128..131)
-                  - (close_brace꞉ CloseBrace): "}" # (139..140)
-              - (for_keyword꞉ ForKeyword): "for" # (141..144)
-              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (145..149)
-              - (semicolon꞉ Semicolon): ";" # (149..150)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\nusing {\n// >>> Copied from cra..." (0..170)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\nusing {\n// >>> Copied from cra..." (0..170)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using {\n// >>> Copied from crates/solidity/testing..." (20..170)
+              - (using_keyword꞉ UsingKeyword): "using" # (20..25)
+              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (26..160)
+                  - (open_brace꞉ OpenBrace): "{" # (26..27)
+                  - (symbols꞉ UsingDeconstructionSymbols): # "foo.bar" (144..151)
+                      - (item꞉ UsingDeconstructionSymbol): # "foo.bar" (144..151)
+                          - (name꞉ IdentifierPath): # "foo.bar" (144..151)
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (144..147)
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "bar" # (148..151)
+                  - (close_brace꞉ CloseBrace): "}" # (159..160)
+              - (for_keyword꞉ ForKeyword): "for" # (161..164)
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (165..169)
+              - (semicolon꞉ Semicolon): ";" # (169..170)

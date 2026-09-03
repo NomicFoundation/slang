@@ -1,8 +1,20 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ /**/ /**/                                                                        │ 0..9
+  1  │ pragma solidity *;                                                               │ 0..18
+  2  │                                                                                  │ 19..19
+  3  │ /**/ /**/                                                                        │ 20..29
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers): []
+  - (root꞉ SourceUnit): # "pragma solidity *;" (0..18)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;" (0..18)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)

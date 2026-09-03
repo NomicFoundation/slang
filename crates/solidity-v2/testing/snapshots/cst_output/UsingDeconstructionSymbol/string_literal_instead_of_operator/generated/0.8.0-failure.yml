@@ -1,15 +1,17 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // https://github.com/argotorg/solidity/blob/v0.8.22/test/libsolidity/syntaxTests/operators/userDefined/operator_parsing_operator_name_empty_string.sol │ 0..151
-  2  │ using {f as ""} for uint;                                                                                                                               │ 152..177
+  1  │ pragma solidity *;                                                                                                                                      │ 0..18
+  2  │                                                                                                                                                         │ 19..19
+  3  │ // https://github.com/argotorg/solidity/blob/v0.8.22/test/libsolidity/syntaxTests/operators/userDefined/operator_parsing_operator_name_empty_string.sol │ 20..171
+  4  │ using {f as ""} for uint;                                                                                                                               │ 172..197
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected StringLiteral. One of Ampersand, Asterisk, BangEqual, Bar, Caret, EqualEqual, GreaterThan, GreaterThanEqual, LessThan, LessThanEqual, Minus, Percent, Plus, Slash, Tilde was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDeconstructionSymbol/string_literal_instead_of_operator/input.sol:2:13]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDeconstructionSymbol/string_literal_instead_of_operator/input.sol:4:13]
        │
-     2 │ using {f as ""} for uint;
+     4 │ using {f as ""} for uint;
        │             ─┬  
        │              ╰── Error occurred here.
     ───╯

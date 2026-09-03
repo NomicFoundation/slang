@@ -1,19 +1,21 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                          │ 0..12
-  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UnnamedFunctionDefinition/private_attribute/input.sol │ 13..130
-  3  │ function () private {}                                                                                                │ 131..153
-  4  │                                                                                                                       │ 154..154
-  5  │ // <<<                                                                                                                │ 155..161
-  6  │ }                                                                                                                     │ 162..163
+  1  │ pragma solidity *;                                                                                                    │ 0..18
+  2  │                                                                                                                       │ 19..19
+  3  │ contract C {                                                                                                          │ 20..32
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UnnamedFunctionDefinition/private_attribute/input.sol │ 33..150
+  5  │ function () private {}                                                                                                │ 151..173
+  6  │                                                                                                                       │ 174..174
+  7  │ // <<<                                                                                                                │ 175..181
+  8  │ }                                                                                                                     │ 182..183
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected OpenBrace. One of AtKeyword, ConstantKeyword, ErrorKeyword, ExternalKeyword, FromKeyword, GlobalKeyword, Identifier, ImmutableKeyword, InternalKeyword, LayoutKeyword, OpenBracket, OverrideKeyword, PayableKeyword, PrivateKeyword, PublicKeyword, PureKeyword, ReturnsKeyword, RevertKeyword, TransientKeyword, ViewKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UnnamedFunctionDefinition/private_attribute/input.sol:3:21]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UnnamedFunctionDefinition/private_attribute/input.sol:5:21]
        │
-     3 │ function () private {}
+     5 │ function () private {}
        │                     ┬  
        │                     ╰── Error occurred here.
     ───╯

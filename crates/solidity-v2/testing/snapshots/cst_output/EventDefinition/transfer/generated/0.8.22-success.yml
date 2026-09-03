@@ -1,32 +1,44 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/EventDefinition/transfer/input.sol │ 0..98
-  2  │ event Transfer(address indexed from, address indexed to, uint256 value);                           │ 99..171
-  3  │                                                                                                    │ 172..172
-  4  │ // <<<                                                                                             │ 173..179
+  1  │ pragma solidity *;                                                                                 │ 0..18
+  2  │                                                                                                    │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/EventDefinition/transfer/input.sol │ 20..118
+  4  │ event Transfer(address indexed from, address indexed to, uint256 value);                           │ 119..191
+  5  │                                                                                                    │ 192..192
+  6  │ // <<<                                                                                             │ 193..199
 
 Tree:
-  - (root꞉ SourceUnit): # "event Transfer(address indexed from, address index..." (99..171)
-      - (members꞉ SourceUnitMembers): # "event Transfer(address indexed from, address index..." (99..171)
-          - (item꞉ SourceUnitMember) ► (event_definition꞉ EventDefinition): # "event Transfer(address indexed from, address index..." (99..171)
-              - (event_keyword꞉ EventKeyword): "event" # (99..104)
-              - (name꞉ Identifier): "Transfer" # (105..113)
-              - (parameters꞉ EventParametersDeclaration): # "(address indexed from, address indexed to, uint256..." (113..170)
-                  - (open_paren꞉ OpenParen): "(" # (113..114)
-                  - (parameters꞉ EventParameters): # "address indexed from, address indexed to, uint256 ..." (114..169)
-                      - (item꞉ EventParameter): # "address indexed from" (114..134)
-                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType): # "address" (114..121)
-                              - (address_keyword꞉ AddressKeyword): "address" # (114..121)
-                          - (indexed_keyword꞉ IndexedKeyword): "indexed" # (122..129)
-                          - (name꞉ Identifier): "from" # (130..134)
-                      - (item꞉ EventParameter): # "address indexed to" (136..154)
-                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType): # "address" (136..143)
-                              - (address_keyword꞉ AddressKeyword): "address" # (136..143)
-                          - (indexed_keyword꞉ IndexedKeyword): "indexed" # (144..151)
-                          - (name꞉ Identifier): "to" # (152..154)
-                      - (item꞉ EventParameter): # "uint256 value" (156..169)
-                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (156..163)
-                          - (name꞉ Identifier): "value" # (164..169)
-                  - (close_paren꞉ CloseParen): ")" # (169..170)
-              - (semicolon꞉ Semicolon): ";" # (170..171)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..191)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..191)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (event_definition꞉ EventDefinition): # "event Transfer(address indexed from, address index..." (119..191)
+              - (event_keyword꞉ EventKeyword): "event" # (119..124)
+              - (name꞉ Identifier): "Transfer" # (125..133)
+              - (parameters꞉ EventParametersDeclaration): # "(address indexed from, address indexed to, uint256..." (133..190)
+                  - (open_paren꞉ OpenParen): "(" # (133..134)
+                  - (parameters꞉ EventParameters): # "address indexed from, address indexed to, uint256 ..." (134..189)
+                      - (item꞉ EventParameter): # "address indexed from" (134..154)
+                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType): # "address" (134..141)
+                              - (address_keyword꞉ AddressKeyword): "address" # (134..141)
+                          - (indexed_keyword꞉ IndexedKeyword): "indexed" # (142..149)
+                          - (name꞉ Identifier): "from" # (150..154)
+                      - (item꞉ EventParameter): # "address indexed to" (156..174)
+                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType): # "address" (156..163)
+                              - (address_keyword꞉ AddressKeyword): "address" # (156..163)
+                          - (indexed_keyword꞉ IndexedKeyword): "indexed" # (164..171)
+                          - (name꞉ Identifier): "to" # (172..174)
+                      - (item꞉ EventParameter): # "uint256 value" (176..189)
+                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (176..183)
+                          - (name꞉ Identifier): "value" # (184..189)
+                  - (close_paren꞉ CloseParen): ")" # (189..190)
+              - (semicolon꞉ Semicolon): ";" # (190..191)

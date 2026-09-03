@@ -1,30 +1,42 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/storage_specifier_before_inheritance/input.sol │ 0..129
-  2  │ contract Foo layout at 0 is Bar {                                                                                                 │ 130..163
-  3  │ }                                                                                                                                 │ 164..165
-  4  │                                                                                                                                   │ 166..166
-  5  │ // <<<                                                                                                                            │ 167..173
+  1  │ pragma solidity *;                                                                                                                │ 0..18
+  2  │                                                                                                                                   │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/storage_specifier_before_inheritance/input.sol │ 20..149
+  4  │ contract Foo layout at 0 is Bar {                                                                                                 │ 150..183
+  5  │ }                                                                                                                                 │ 184..185
+  6  │                                                                                                                                   │ 186..186
+  7  │ // <<<                                                                                                                            │ 187..193
 
 Tree:
-  - (root꞉ SourceUnit): # "contract Foo layout at 0 is Bar {\n}" (130..165)
-      - (members꞉ SourceUnitMembers): # "contract Foo layout at 0 is Bar {\n}" (130..165)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Foo layout at 0 is Bar {\n}" (130..165)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (130..138)
-              - (name꞉ Identifier): "Foo" # (139..142)
-              - (specifiers꞉ ContractSpecifiers): # "layout at 0 is Bar" (143..161)
-                  - (item꞉ ContractSpecifier) ► (storage_layout_specifier꞉ StorageLayoutSpecifier): # "layout at 0" (143..154)
-                      - (layout_keyword꞉ LayoutKeyword): "layout" # (143..149)
-                      - (at_keyword꞉ AtKeyword): "at" # (150..152)
-                      - (expression꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "0" (153..154)
-                          - (literal꞉ DecimalLiteral): "0" # (153..154)
-                  - (item꞉ ContractSpecifier) ► (inheritance_specifier꞉ InheritanceSpecifier): # "is Bar" (155..161)
-                      - (is_keyword꞉ IsKeyword): "is" # (155..157)
-                      - (types꞉ InheritanceTypes): # "Bar" (158..161)
-                          - (item꞉ InheritanceType): # "Bar" (158..161)
-                              - (type_name꞉ IdentifierPath): # "Bar" (158..161)
-                                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Bar" # (158..161)
-              - (open_brace꞉ OpenBrace): "{" # (162..163)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..185)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..185)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Foo layout at 0 is Bar {\n}" (150..185)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (150..158)
+              - (name꞉ Identifier): "Foo" # (159..162)
+              - (specifiers꞉ ContractSpecifiers): # "layout at 0 is Bar" (163..181)
+                  - (item꞉ ContractSpecifier) ► (storage_layout_specifier꞉ StorageLayoutSpecifier): # "layout at 0" (163..174)
+                      - (layout_keyword꞉ LayoutKeyword): "layout" # (163..169)
+                      - (at_keyword꞉ AtKeyword): "at" # (170..172)
+                      - (expression꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "0" (173..174)
+                          - (literal꞉ DecimalLiteral): "0" # (173..174)
+                  - (item꞉ ContractSpecifier) ► (inheritance_specifier꞉ InheritanceSpecifier): # "is Bar" (175..181)
+                      - (is_keyword꞉ IsKeyword): "is" # (175..177)
+                      - (types꞉ InheritanceTypes): # "Bar" (178..181)
+                          - (item꞉ InheritanceType): # "Bar" (178..181)
+                              - (type_name꞉ IdentifierPath): # "Bar" (178..181)
+                                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Bar" # (178..181)
+              - (open_brace꞉ OpenBrace): "{" # (182..183)
               - (members꞉ ContractMembers): []
-              - (close_brace꞉ CloseBrace): "}" # (164..165)
+              - (close_brace꞉ CloseBrace): "}" # (184..185)

@@ -1,28 +1,40 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ pragma                                                                                                   │ 0..6
-  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VersionPragma/multiple_strings/input.sol │ 7..111
-  3  │ solidity ^"1.2.3" || "4.5.6"-'7.8.9'                                                                     │ 112..148
-  4  │                                                                                                          │ 149..149
-  5  │ // <<<                                                                                                   │ 150..156
-  6  │ ;                                                                                                        │ 157..158
+  1  │ pragma solidity *;                                                                                       │ 0..18
+  2  │                                                                                                          │ 19..19
+  3  │ pragma                                                                                                   │ 20..26
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VersionPragma/multiple_strings/input.sol │ 27..131
+  5  │ solidity ^"1.2.3" || "4.5.6"-'7.8.9'                                                                     │ 132..168
+  6  │                                                                                                          │ 169..169
+  7  │ // <<<                                                                                                   │ 170..176
+  8  │ ;                                                                                                        │ 177..178
 
 Tree:
-  - (root꞉ SourceUnit): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..158)
-      - (members꞉ SourceUnitMembers): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..158)
-          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..158)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\npragma\n// >>> Copied from crat..." (0..178)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\npragma\n// >>> Copied from crat..." (0..178)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
               - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
-              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # 'solidity ^"1.2.3" || "4.5.6"-''7.8.9''' (112..148)
-                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (112..120)
-                  - (sets꞉ VersionPragmaExpressionSets): # '^"1.2.3" || "4.5.6"-''7.8.9''' (121..148)
-                      - (item꞉ VersionPragmaExpressionSet): # '^"1.2.3"' (121..129)
-                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # '^"1.2.3"' (121..129)
-                              - (operator꞉ VersionPragmaOperator) ► (pragma_caret꞉ PragmaCaret): "^" # (121..122)
-                              - (specifier꞉ VersionPragmaSpecifier) ► (pragma_string_literal꞉ PragmaStringLiteral): '"1.2.3"' # (122..129)
-                      - (item꞉ VersionPragmaExpressionSet): # '"4.5.6"-''7.8.9''' (133..148)
-                          - (item꞉ VersionPragmaExpression) ► (version_pragma_range꞉ VersionPragmaRange): # '"4.5.6"-''7.8.9''' (133..148)
-                              - (start꞉ VersionPragmaSpecifier) ► (pragma_string_literal꞉ PragmaStringLiteral): '"4.5.6"' # (133..140)
-                              - (minus꞉ PragmaMinus): "-" # (140..141)
-                              - (end꞉ VersionPragmaSpecifier) ► (pragma_string_literal꞉ PragmaStringLiteral): "'7.8.9'" # (141..148)
-              - (semicolon꞉ PragmaSemicolon): ";" # (157..158)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma\n// >>> Copied from crates/solidity/testing/..." (20..178)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (20..26)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # 'solidity ^"1.2.3" || "4.5.6"-''7.8.9''' (132..168)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (132..140)
+                  - (sets꞉ VersionPragmaExpressionSets): # '^"1.2.3" || "4.5.6"-''7.8.9''' (141..168)
+                      - (item꞉ VersionPragmaExpressionSet): # '^"1.2.3"' (141..149)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # '^"1.2.3"' (141..149)
+                              - (operator꞉ VersionPragmaOperator) ► (pragma_caret꞉ PragmaCaret): "^" # (141..142)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (pragma_string_literal꞉ PragmaStringLiteral): '"1.2.3"' # (142..149)
+                      - (item꞉ VersionPragmaExpressionSet): # '"4.5.6"-''7.8.9''' (153..168)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_range꞉ VersionPragmaRange): # '"4.5.6"-''7.8.9''' (153..168)
+                              - (start꞉ VersionPragmaSpecifier) ► (pragma_string_literal꞉ PragmaStringLiteral): '"4.5.6"' # (153..160)
+                              - (minus꞉ PragmaMinus): "-" # (160..161)
+                              - (end꞉ VersionPragmaSpecifier) ► (pragma_string_literal꞉ PragmaStringLiteral): "'7.8.9'" # (161..168)
+              - (semicolon꞉ PragmaSemicolon): ";" # (177..178)

@@ -1,48 +1,60 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                   │ 0..12
-  2  │     function f() {                                                                             │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TupleExpression/full/input.sol │ 32..126
-  4  │ (first, second, third, fourth)                                                                 │ 127..157
-  5  │ // <<<                                                                                         │ 158..164
-  6  │ ;                                                                                              │ 165..166
-  7  │     }                                                                                          │ 167..172
-  8  │ }                                                                                              │ 173..174
+  1  │ pragma solidity *;                                                                             │ 0..18
+  2  │                                                                                                │ 19..19
+  3  │ contract C {                                                                                   │ 20..32
+  4  │     function f() {                                                                             │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TupleExpression/full/input.sol │ 52..146
+  6  │ (first, second, third, fourth)                                                                 │ 147..177
+  7  │ // <<<                                                                                         │ 178..184
+  8  │ ;                                                                                              │ 185..186
+  9  │     }                                                                                          │ 187..192
+  10 │ }                                                                                              │ 193..194
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..174)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..174)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..174)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..194)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..194)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (20..194)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..172)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..172)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (37..192)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (37..192)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..172)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # "(first, second, third, fourth)\n// <<<\n;" (127..166)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "(first, second, third, fourth)\n// <<<\n;" (127..166)
-                                  - (expression꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(first, second, third, fourth)" (127..157)
-                                      - (open_paren꞉ OpenParen): "(" # (127..128)
-                                      - (items꞉ TupleValues): # "first, second, third, fourth" (128..156)
-                                          - (item꞉ TupleValue): # "first" (128..133)
-                                              - (expression꞉ Expression) ► (identifier꞉ Identifier): "first" # (128..133)
-                                          - (item꞉ TupleValue): # "second" (135..141)
-                                              - (expression꞉ Expression) ► (identifier꞉ Identifier): "second" # (135..141)
-                                          - (item꞉ TupleValue): # "third" (143..148)
-                                              - (expression꞉ Expression) ► (identifier꞉ Identifier): "third" # (143..148)
-                                          - (item꞉ TupleValue): # "fourth" (150..156)
-                                              - (expression꞉ Expression) ► (identifier꞉ Identifier): "fourth" # (150..156)
-                                      - (close_paren꞉ CloseParen): ")" # (156..157)
-                                  - (semicolon꞉ Semicolon): ";" # (165..166)
-                          - (close_brace꞉ CloseBrace): "}" # (171..172)
-              - (close_brace꞉ CloseBrace): "}" # (173..174)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (50..192)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # "(first, second, third, fourth)\n// <<<\n;" (147..186)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "(first, second, third, fourth)\n// <<<\n;" (147..186)
+                                  - (expression꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(first, second, third, fourth)" (147..177)
+                                      - (open_paren꞉ OpenParen): "(" # (147..148)
+                                      - (items꞉ TupleValues): # "first, second, third, fourth" (148..176)
+                                          - (item꞉ TupleValue): # "first" (148..153)
+                                              - (expression꞉ Expression) ► (identifier꞉ Identifier): "first" # (148..153)
+                                          - (item꞉ TupleValue): # "second" (155..161)
+                                              - (expression꞉ Expression) ► (identifier꞉ Identifier): "second" # (155..161)
+                                          - (item꞉ TupleValue): # "third" (163..168)
+                                              - (expression꞉ Expression) ► (identifier꞉ Identifier): "third" # (163..168)
+                                          - (item꞉ TupleValue): # "fourth" (170..176)
+                                              - (expression꞉ Expression) ► (identifier꞉ Identifier): "fourth" # (170..176)
+                                      - (close_paren꞉ CloseParen): ")" # (176..177)
+                                  - (semicolon꞉ Semicolon): ";" # (185..186)
+                          - (close_brace꞉ CloseBrace): "}" # (191..192)
+              - (close_brace꞉ CloseBrace): "}" # (193..194)

@@ -1,31 +1,43 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_fallback_function_definition/input.sol │ 0..128
-  2  │ contract Sample {                                                                                                                │ 129..146
-  3  │   fallback() {                                                                                                                   │ 147..161
-  4  │   }                                                                                                                              │ 162..165
-  5  │ }                                                                                                                                │ 166..167
-  6  │ // <<<                                                                                                                           │ 168..174
+  1  │ pragma solidity *;                                                                                                               │ 0..18
+  2  │                                                                                                                                  │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_fallback_function_definition/input.sol │ 20..148
+  4  │ contract Sample {                                                                                                                │ 149..166
+  5  │   fallback() {                                                                                                                   │ 167..181
+  6  │   }                                                                                                                              │ 182..185
+  7  │ }                                                                                                                                │ 186..187
+  8  │ // <<<                                                                                                                           │ 188..194
 
 Tree:
-  - (root꞉ SourceUnit): # "contract Sample {\n  fallback() {\n  }\n}" (129..167)
-      - (members꞉ SourceUnitMembers): # "contract Sample {\n  fallback() {\n  }\n}" (129..167)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  fallback() {\n  }\n}" (129..167)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (129..137)
-              - (name꞉ Identifier): "Sample" # (138..144)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..187)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..187)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  fallback() {\n  }\n}" (149..187)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (149..157)
+              - (name꞉ Identifier): "Sample" # (158..164)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (145..146)
-              - (members꞉ ContractMembers): # "fallback() {\n  }" (149..165)
-                  - (item꞉ ContractMember) ► (fallback_function_definition꞉ FallbackFunctionDefinition): # "fallback() {\n  }" (149..165)
-                      - (fallback_keyword꞉ FallbackKeyword): "fallback" # (149..157)
-                      - (parameters꞉ ParametersDeclaration): # "()" (157..159)
-                          - (open_paren꞉ OpenParen): "(" # (157..158)
+              - (open_brace꞉ OpenBrace): "{" # (165..166)
+              - (members꞉ ContractMembers): # "fallback() {\n  }" (169..185)
+                  - (item꞉ ContractMember) ► (fallback_function_definition꞉ FallbackFunctionDefinition): # "fallback() {\n  }" (169..185)
+                      - (fallback_keyword꞉ FallbackKeyword): "fallback" # (169..177)
+                      - (parameters꞉ ParametersDeclaration): # "()" (177..179)
+                          - (open_paren꞉ OpenParen): "(" # (177..178)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (158..159)
+                          - (close_paren꞉ CloseParen): ")" # (178..179)
                       - (attributes꞉ FallbackFunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n  }" (160..165)
-                          - (open_brace꞉ OpenBrace): "{" # (160..161)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n  }" (180..185)
+                          - (open_brace꞉ OpenBrace): "{" # (180..181)
                           - (statements꞉ Statements): []
-                          - (close_brace꞉ CloseBrace): "}" # (164..165)
-              - (close_brace꞉ CloseBrace): "}" # (166..167)
+                          - (close_brace꞉ CloseBrace): "}" # (184..185)
+              - (close_brace꞉ CloseBrace): "}" # (186..187)

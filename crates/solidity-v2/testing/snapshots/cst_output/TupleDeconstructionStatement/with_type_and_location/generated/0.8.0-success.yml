@@ -1,52 +1,64 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                                  │ 0..12
-  2  │     function f() {                                                                                                            │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/with_type_and_location/input.sol │ 32..157
-  4  │ (bool memory x, bool storage y) = rhs;                                                                                        │ 158..196
-  5  │ // <<<                                                                                                                        │ 197..203
-  6  │     }                                                                                                                         │ 204..209
-  7  │ }                                                                                                                             │ 210..211
+  1  │ pragma solidity *;                                                                                                            │ 0..18
+  2  │                                                                                                                               │ 19..19
+  3  │ contract C {                                                                                                                  │ 20..32
+  4  │     function f() {                                                                                                            │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/with_type_and_location/input.sol │ 52..177
+  6  │ (bool memory x, bool storage y) = rhs;                                                                                        │ 178..216
+  7  │ // <<<                                                                                                                        │ 217..223
+  8  │     }                                                                                                                         │ 224..229
+  9  │ }                                                                                                                             │ 230..231
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..211)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..211)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..211)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..231)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..231)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (20..231)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..209)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..209)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (37..229)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (37..229)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..209)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # "(bool memory x, bool storage y) = rhs;" (158..196)
-                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "(bool memory x, bool storage y) = rhs;" (158..196)
-                                  - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration): # "(bool memory x, bool storage y) = rhs" (158..195)
-                                      - (open_paren꞉ OpenParen): "(" # (158..159)
-                                      - (elements꞉ MultiTypedDeclarationElements): # "bool memory x, bool storage y" (159..188)
-                                          - (item꞉ MultiTypedDeclarationElement): # "bool memory x" (159..172)
-                                              - (member꞉ VariableDeclaration): # "bool memory x" (159..172)
-                                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (159..163)
-                                                  - (storage_location꞉ StorageLocation) ► (memory_keyword꞉ MemoryKeyword): "memory" # (164..170)
-                                                  - (name꞉ Identifier): "x" # (171..172)
-                                          - (item꞉ MultiTypedDeclarationElement): # "bool storage y" (174..188)
-                                              - (member꞉ VariableDeclaration): # "bool storage y" (174..188)
-                                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (174..178)
-                                                  - (storage_location꞉ StorageLocation) ► (storage_keyword꞉ StorageKeyword): "storage" # (179..186)
-                                                  - (name꞉ Identifier): "y" # (187..188)
-                                      - (close_paren꞉ CloseParen): ")" # (188..189)
-                                      - (value꞉ VariableDeclarationValue): # "= rhs" (190..195)
-                                          - (equal꞉ Equal): "=" # (190..191)
-                                          - (expression꞉ Expression) ► (identifier꞉ Identifier): "rhs" # (192..195)
-                                  - (semicolon꞉ Semicolon): ";" # (195..196)
-                          - (close_brace꞉ CloseBrace): "}" # (208..209)
-              - (close_brace꞉ CloseBrace): "}" # (210..211)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (50..229)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # "(bool memory x, bool storage y) = rhs;" (178..216)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "(bool memory x, bool storage y) = rhs;" (178..216)
+                                  - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration): # "(bool memory x, bool storage y) = rhs" (178..215)
+                                      - (open_paren꞉ OpenParen): "(" # (178..179)
+                                      - (elements꞉ MultiTypedDeclarationElements): # "bool memory x, bool storage y" (179..208)
+                                          - (item꞉ MultiTypedDeclarationElement): # "bool memory x" (179..192)
+                                              - (member꞉ VariableDeclaration): # "bool memory x" (179..192)
+                                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (179..183)
+                                                  - (storage_location꞉ StorageLocation) ► (memory_keyword꞉ MemoryKeyword): "memory" # (184..190)
+                                                  - (name꞉ Identifier): "x" # (191..192)
+                                          - (item꞉ MultiTypedDeclarationElement): # "bool storage y" (194..208)
+                                              - (member꞉ VariableDeclaration): # "bool storage y" (194..208)
+                                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (194..198)
+                                                  - (storage_location꞉ StorageLocation) ► (storage_keyword꞉ StorageKeyword): "storage" # (199..206)
+                                                  - (name꞉ Identifier): "y" # (207..208)
+                                      - (close_paren꞉ CloseParen): ")" # (208..209)
+                                      - (value꞉ VariableDeclarationValue): # "= rhs" (210..215)
+                                          - (equal꞉ Equal): "=" # (210..211)
+                                          - (expression꞉ Expression) ► (identifier꞉ Identifier): "rhs" # (212..215)
+                                  - (semicolon꞉ Semicolon): ";" # (215..216)
+                          - (close_brace꞉ CloseBrace): "}" # (228..229)
+              - (close_brace꞉ CloseBrace): "}" # (230..231)

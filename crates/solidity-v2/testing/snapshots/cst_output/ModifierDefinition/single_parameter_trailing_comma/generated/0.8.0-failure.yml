@@ -1,17 +1,19 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                                        │ 0..12
-  2  │     // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/parsing/single_modifier_arg_trailing_comma.sol │ 13..144
-  3  │     modifier m(uint a,) { _; }                                                                                                      │ 145..175
-  4  │ }                                                                                                                                   │ 176..177
+  1  │ pragma solidity *;                                                                                                                  │ 0..18
+  2  │                                                                                                                                     │ 19..19
+  3  │ contract C {                                                                                                                        │ 20..32
+  4  │     // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/parsing/single_modifier_arg_trailing_comma.sol │ 33..164
+  5  │     modifier m(uint a,) { _; }                                                                                                      │ 165..195
+  6  │ }                                                                                                                                   │ 196..197
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected CloseParen. One of AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, ErrorKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, RevertKeyword, StringKeyword, TransientKeyword, UfixedKeyword, UintKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ModifierDefinition/single_parameter_trailing_comma/input.sol:3:23]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ModifierDefinition/single_parameter_trailing_comma/input.sol:5:23]
        │
-     3 │     modifier m(uint a,) { _; }
+     5 │     modifier m(uint a,) { _; }
        │                       ┬  
        │                       ╰── Error occurred here.
     ───╯

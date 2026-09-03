@@ -1,3 +1,5 @@
+pragma solidity *;
+
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/error_definition/input.sol
 error MyError(uint256 a, uint256 b);
 

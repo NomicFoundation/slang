@@ -1,18 +1,20 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ImportDirective/destructure_import_empty/input.sol │ 0..114
-  2  │ // Empty imports are not valid                                                                                     │ 115..145
-  3  │ import {} from "foo";                                                                                              │ 146..167
-  4  │                                                                                                                    │ 168..168
-  5  │ // <<<                                                                                                             │ 169..175
+  1  │ pragma solidity *;                                                                                                 │ 0..18
+  2  │                                                                                                                    │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ImportDirective/destructure_import_empty/input.sol │ 20..134
+  4  │ // Empty imports are not valid                                                                                     │ 135..165
+  5  │ import {} from "foo";                                                                                              │ 166..187
+  6  │                                                                                                                    │ 188..188
+  7  │ // <<<                                                                                                             │ 189..195
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected CloseBrace. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ImportDirective/destructure_import_empty/input.sol:3:9]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ImportDirective/destructure_import_empty/input.sol:5:9]
        │
-     3 │ import {} from "foo";
+     5 │ import {} from "foo";
        │         ┬  
        │         ╰── Error occurred here.
     ───╯

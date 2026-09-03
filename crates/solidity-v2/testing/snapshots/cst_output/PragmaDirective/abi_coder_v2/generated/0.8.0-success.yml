@@ -1,17 +1,29 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/PragmaDirective/abi_coder_v2/input.sol │ 0..102
-  2  │ pragma abicoder v2;                                                                                    │ 103..122
-  3  │                                                                                                        │ 123..123
-  4  │ // <<<                                                                                                 │ 124..130
+  1  │ pragma solidity *;                                                                                     │ 0..18
+  2  │                                                                                                        │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/PragmaDirective/abi_coder_v2/input.sol │ 20..122
+  4  │ pragma abicoder v2;                                                                                    │ 123..142
+  5  │                                                                                                        │ 143..143
+  6  │ // <<<                                                                                                 │ 144..150
 
 Tree:
-  - (root꞉ SourceUnit): # "pragma abicoder v2;" (103..122)
-      - (members꞉ SourceUnitMembers): # "pragma abicoder v2;" (103..122)
-          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma abicoder v2;" (103..122)
-              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (103..109)
-              - (pragma꞉ Pragma) ► (abicoder_pragma꞉ AbicoderPragma): # "abicoder v2" (110..121)
-                  - (abicoder_keyword꞉ AbicoderKeyword): "abicoder" # (110..118)
-                  - (version꞉ AbicoderVersion) ► (abicoder_v2_keyword꞉ AbicoderV2Keyword): "v2" # (119..121)
-              - (semicolon꞉ PragmaSemicolon): ";" # (121..122)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..142)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..142)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma abicoder v2;" (123..142)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (123..129)
+              - (pragma꞉ Pragma) ► (abicoder_pragma꞉ AbicoderPragma): # "abicoder v2" (130..141)
+                  - (abicoder_keyword꞉ AbicoderKeyword): "abicoder" # (130..138)
+                  - (version꞉ AbicoderVersion) ► (abicoder_v2_keyword꞉ AbicoderV2Keyword): "v2" # (139..141)
+              - (semicolon꞉ PragmaSemicolon): ";" # (141..142)

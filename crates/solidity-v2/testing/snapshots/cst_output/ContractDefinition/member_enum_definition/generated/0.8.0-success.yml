@@ -1,32 +1,44 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_enum_definition/input.sol │ 0..115
-  2  │ contract Sample {                                                                                                   │ 116..133
-  3  │   enum State {                                                                                                      │ 134..148
-  4  │     A,                                                                                                              │ 149..155
-  5  │     B,                                                                                                              │ 156..162
-  6  │     C                                                                                                               │ 163..168
-  7  │   }                                                                                                                 │ 169..172
-  8  │ }                                                                                                                   │ 173..174
-  9  │ // <<<                                                                                                              │ 175..181
+  1  │ pragma solidity *;                                                                                                  │ 0..18
+  2  │                                                                                                                     │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_enum_definition/input.sol │ 20..135
+  4  │ contract Sample {                                                                                                   │ 136..153
+  5  │   enum State {                                                                                                      │ 154..168
+  6  │     A,                                                                                                              │ 169..175
+  7  │     B,                                                                                                              │ 176..182
+  8  │     C                                                                                                               │ 183..188
+  9  │   }                                                                                                                 │ 189..192
+  10 │ }                                                                                                                   │ 193..194
+  11 │ // <<<                                                                                                              │ 195..201
 
 Tree:
-  - (root꞉ SourceUnit): # "contract Sample {\n  enum State {\n    A,\n    B,\n   ..." (116..174)
-      - (members꞉ SourceUnitMembers): # "contract Sample {\n  enum State {\n    A,\n    B,\n   ..." (116..174)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  enum State {\n    A,\n    B,\n   ..." (116..174)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (116..124)
-              - (name꞉ Identifier): "Sample" # (125..131)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..194)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..194)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  enum State {\n    A,\n    B,\n   ..." (136..194)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (136..144)
+              - (name꞉ Identifier): "Sample" # (145..151)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (132..133)
-              - (members꞉ ContractMembers): # "enum State {\n    A,\n    B,\n    C\n  }" (136..172)
-                  - (item꞉ ContractMember) ► (enum_definition꞉ EnumDefinition): # "enum State {\n    A,\n    B,\n    C\n  }" (136..172)
-                      - (enum_keyword꞉ EnumKeyword): "enum" # (136..140)
-                      - (name꞉ Identifier): "State" # (141..146)
-                      - (open_brace꞉ OpenBrace): "{" # (147..148)
-                      - (members꞉ EnumMembers): # "A,\n    B,\n    C" (153..168)
-                          - (item꞉ Identifier): "A" # (153..154)
-                          - (item꞉ Identifier): "B" # (160..161)
-                          - (item꞉ Identifier): "C" # (167..168)
-                      - (close_brace꞉ CloseBrace): "}" # (171..172)
-              - (close_brace꞉ CloseBrace): "}" # (173..174)
+              - (open_brace꞉ OpenBrace): "{" # (152..153)
+              - (members꞉ ContractMembers): # "enum State {\n    A,\n    B,\n    C\n  }" (156..192)
+                  - (item꞉ ContractMember) ► (enum_definition꞉ EnumDefinition): # "enum State {\n    A,\n    B,\n    C\n  }" (156..192)
+                      - (enum_keyword꞉ EnumKeyword): "enum" # (156..160)
+                      - (name꞉ Identifier): "State" # (161..166)
+                      - (open_brace꞉ OpenBrace): "{" # (167..168)
+                      - (members꞉ EnumMembers): # "A,\n    B,\n    C" (173..188)
+                          - (item꞉ Identifier): "A" # (173..174)
+                          - (item꞉ Identifier): "B" # (180..181)
+                          - (item꞉ Identifier): "C" # (187..188)
+                      - (close_brace꞉ CloseBrace): "}" # (191..192)
+              - (close_brace꞉ CloseBrace): "}" # (193..194)

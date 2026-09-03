@@ -1,31 +1,43 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/top_level_event/input.sol │ 0..100
-  2  │ event E1(uint256 value);                                                                             │ 101..125
-  3  │                                                                                                      │ 126..126
-  4  │ // <<<                                                                                               │ 127..133
+  1  │ pragma solidity *;                                                                                   │ 0..18
+  2  │                                                                                                      │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/top_level_event/input.sol │ 20..120
+  4  │ event E1(uint256 value);                                                                             │ 121..145
+  5  │                                                                                                      │ 146..146
+  6  │ // <<<                                                                                               │ 147..153
 
 Errors: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.22'.
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/top_level_event/input.sol:2:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/top_level_event/input.sol:4:1]
        │
-     2 │ event E1(uint256 value);
+     4 │ event E1(uint256 value);
        │ ────────────┬───────────  
        │             ╰───────────── Error occurred here.
     ───╯
 Tree:
-  - (root꞉ SourceUnit): # "event E1(uint256 value);" (101..125)
-      - (members꞉ SourceUnitMembers): # "event E1(uint256 value);" (101..125)
-          - (item꞉ SourceUnitMember) ► (event_definition꞉ EventDefinition): # "event E1(uint256 value);" (101..125)
-              - (event_keyword꞉ EventKeyword): "event" # (101..106)
-              - (name꞉ Identifier): "E1" # (107..109)
-              - (parameters꞉ EventParametersDeclaration): # "(uint256 value)" (109..124)
-                  - (open_paren꞉ OpenParen): "(" # (109..110)
-                  - (parameters꞉ EventParameters): # "uint256 value" (110..123)
-                      - (item꞉ EventParameter): # "uint256 value" (110..123)
-                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (110..117)
-                          - (name꞉ Identifier): "value" # (118..123)
-                  - (close_paren꞉ CloseParen): ")" # (123..124)
-              - (semicolon꞉ Semicolon): ";" # (124..125)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..145)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..145)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (event_definition꞉ EventDefinition): # "event E1(uint256 value);" (121..145)
+              - (event_keyword꞉ EventKeyword): "event" # (121..126)
+              - (name꞉ Identifier): "E1" # (127..129)
+              - (parameters꞉ EventParametersDeclaration): # "(uint256 value)" (129..144)
+                  - (open_paren꞉ OpenParen): "(" # (129..130)
+                  - (parameters꞉ EventParameters): # "uint256 value" (130..143)
+                      - (item꞉ EventParameter): # "uint256 value" (130..143)
+                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (130..137)
+                          - (name꞉ Identifier): "value" # (138..143)
+                  - (close_paren꞉ CloseParen): ")" # (143..144)
+              - (semicolon꞉ Semicolon): ";" # (144..145)

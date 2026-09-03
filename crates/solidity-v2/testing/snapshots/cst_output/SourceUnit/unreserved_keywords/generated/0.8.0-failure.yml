@@ -1,41 +1,53 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/unreserved_keywords/input.sol │ 0..104
-  2  │ contract A {                                                                                             │ 105..117
-  3  │ 	uint transient foo;                                                                                     │ 118..138
-  4  │ 	uint transient;                                                                                         │ 139..155
-  5  │ }                                                                                                        │ 156..157
-  6  │                                                                                                          │ 158..158
-  7  │ // <<<                                                                                                   │ 159..165
+  1  │ pragma solidity *;                                                                                       │ 0..18
+  2  │                                                                                                          │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/unreserved_keywords/input.sol │ 20..124
+  4  │ contract A {                                                                                             │ 125..137
+  5  │ 	uint transient foo;                                                                                     │ 138..158
+  6  │ 	uint transient;                                                                                         │ 159..175
+  7  │ }                                                                                                        │ 176..177
+  8  │                                                                                                          │ 178..178
+  9  │ // <<<                                                                                                   │ 179..185
 
 Errors: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.27'.
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/unreserved_keywords/input.sol:3:7]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/unreserved_keywords/input.sol:5:7]
        │
-     3 │     uint transient foo;
+     5 │     uint transient foo;
        │          ────┬────  
        │              ╰────── Error occurred here.
     ───╯
 Tree:
-  - (root꞉ SourceUnit): # "contract A {\n\tuint transient foo;\n\tuint transient;..." (105..157)
-      - (members꞉ SourceUnitMembers): # "contract A {\n\tuint transient foo;\n\tuint transient;..." (105..157)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract A {\n\tuint transient foo;\n\tuint transient;..." (105..157)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (105..113)
-              - (name꞉ Identifier): "A" # (114..115)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..177)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..177)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract A {\n\tuint transient foo;\n\tuint transient;..." (125..177)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (125..133)
+              - (name꞉ Identifier): "A" # (134..135)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (116..117)
-              - (members꞉ ContractMembers): # "uint transient foo;\n\tuint transient;" (119..155)
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "uint transient foo;" (119..138)
-                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (119..123)
-                      - (attributes꞉ StateVariableAttributes): # "transient" (124..133)
-                          - (item꞉ StateVariableAttribute) ► (transient_keyword꞉ TransientKeyword): "transient" # (124..133)
-                      - (name꞉ Identifier): "foo" # (134..137)
-                      - (semicolon꞉ Semicolon): ";" # (137..138)
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "uint transient;" (140..155)
-                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (140..144)
+              - (open_brace꞉ OpenBrace): "{" # (136..137)
+              - (members꞉ ContractMembers): # "uint transient foo;\n\tuint transient;" (139..175)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "uint transient foo;" (139..158)
+                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (139..143)
+                      - (attributes꞉ StateVariableAttributes): # "transient" (144..153)
+                          - (item꞉ StateVariableAttribute) ► (transient_keyword꞉ TransientKeyword): "transient" # (144..153)
+                      - (name꞉ Identifier): "foo" # (154..157)
+                      - (semicolon꞉ Semicolon): ";" # (157..158)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "uint transient;" (160..175)
+                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (160..164)
                       - (attributes꞉ StateVariableAttributes): []
-                      - (name꞉ Identifier): "transient" # (145..154)
-                      - (semicolon꞉ Semicolon): ";" # (154..155)
-              - (close_brace꞉ CloseBrace): "}" # (156..157)
+                      - (name꞉ Identifier): "transient" # (165..174)
+                      - (semicolon꞉ Semicolon): ";" # (174..175)
+              - (close_brace꞉ CloseBrace): "}" # (176..177)

@@ -1,3 +1,5 @@
+pragma solidity *;
+
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/InterfaceDefinition/sample_counter/input.sol
 interface ICounter {
     // returns the current count

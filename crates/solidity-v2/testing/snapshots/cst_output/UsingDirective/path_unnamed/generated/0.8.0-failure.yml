@@ -1,26 +1,38 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDirective/path_unnamed/input.sol │ 0..101
-  2  │ using foo for *;                                                                                      │ 102..118
-  3  │ // <<<                                                                                                │ 119..125
+  1  │ pragma solidity *;                                                                                    │ 0..18
+  2  │                                                                                                       │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDirective/path_unnamed/input.sol │ 20..121
+  4  │ using foo for *;                                                                                      │ 122..138
+  5  │ // <<<                                                                                                │ 139..145
 
 Errors: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/path_unnamed/input.sol:2:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/path_unnamed/input.sol:4:1]
        │
-     2 │ using foo for *;
+     4 │ using foo for *;
        │ ────────┬───────  
        │         ╰───────── Error occurred here.
     ───╯
 Tree:
-  - (root꞉ SourceUnit): # "using foo for *;" (102..118)
-      - (members꞉ SourceUnitMembers): # "using foo for *;" (102..118)
-          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using foo for *;" (102..118)
-              - (using_keyword꞉ UsingKeyword): "using" # (102..107)
-              - (clause꞉ UsingClause) ► (identifier_path꞉ IdentifierPath): # "foo" (108..111)
-                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (108..111)
-              - (for_keyword꞉ ForKeyword): "for" # (112..115)
-              - (target꞉ UsingTarget) ► (asterisk꞉ Asterisk): "*" # (116..117)
-              - (semicolon꞉ Semicolon): ";" # (117..118)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..138)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..138)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using foo for *;" (122..138)
+              - (using_keyword꞉ UsingKeyword): "using" # (122..127)
+              - (clause꞉ UsingClause) ► (identifier_path꞉ IdentifierPath): # "foo" (128..131)
+                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (128..131)
+              - (for_keyword꞉ ForKeyword): "for" # (132..135)
+              - (target꞉ UsingTarget) ► (asterisk꞉ Asterisk): "*" # (136..137)
+              - (semicolon꞉ Semicolon): ";" # (137..138)

@@ -1,30 +1,42 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                               │ 0..12
-  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ReceiveFunctionDefinition/simple/input.sol │ 13..119
-  3  │ receive () {}                                                                                              │ 120..133
-  4  │ // <<<                                                                                                     │ 134..140
-  5  │ }                                                                                                          │ 141..142
+  1  │ pragma solidity *;                                                                                         │ 0..18
+  2  │                                                                                                            │ 19..19
+  3  │ contract C {                                                                                               │ 20..32
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ReceiveFunctionDefinition/simple/input.sol │ 33..139
+  5  │ receive () {}                                                                                              │ 140..153
+  6  │ // <<<                                                                                                     │ 154..160
+  7  │ }                                                                                                          │ 161..162
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..142)
-      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..142)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..142)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n// >>> Copied fro..." (0..162)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n// >>> Copied fro..." (0..162)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (20..162)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "receive () {}" (120..133)
-                  - (item꞉ ContractMember) ► (receive_function_definition꞉ ReceiveFunctionDefinition): # "receive () {}" (120..133)
-                      - (receive_keyword꞉ ReceiveKeyword): "receive" # (120..127)
-                      - (parameters꞉ ParametersDeclaration): # "()" (128..130)
-                          - (open_paren꞉ OpenParen): "(" # (128..129)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "receive () {}" (140..153)
+                  - (item꞉ ContractMember) ► (receive_function_definition꞉ ReceiveFunctionDefinition): # "receive () {}" (140..153)
+                      - (receive_keyword꞉ ReceiveKeyword): "receive" # (140..147)
+                      - (parameters꞉ ParametersDeclaration): # "()" (148..150)
+                          - (open_paren꞉ OpenParen): "(" # (148..149)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (129..130)
+                          - (close_paren꞉ CloseParen): ")" # (149..150)
                       - (attributes꞉ ReceiveFunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{}" (131..133)
-                          - (open_brace꞉ OpenBrace): "{" # (131..132)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{}" (151..153)
+                          - (open_brace꞉ OpenBrace): "{" # (151..152)
                           - (statements꞉ Statements): []
-                          - (close_brace꞉ CloseBrace): "}" # (132..133)
-              - (close_brace꞉ CloseBrace): "}" # (141..142)
+                          - (close_brace꞉ CloseBrace): "}" # (152..153)
+              - (close_brace꞉ CloseBrace): "}" # (161..162)

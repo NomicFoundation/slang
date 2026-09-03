@@ -1,25 +1,37 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UserDefinedValueTypeDefinition/bool/input.sol │ 0..109
-  2  │ type Foo is bool;                                                                                             │ 110..127
-  3  │ // <<<                                                                                                        │ 128..134
+  1  │ pragma solidity *;                                                                                            │ 0..18
+  2  │                                                                                                               │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UserDefinedValueTypeDefinition/bool/input.sol │ 20..129
+  4  │ type Foo is bool;                                                                                             │ 130..147
+  5  │ // <<<                                                                                                        │ 148..154
 
 Errors: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.8'.
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UserDefinedValueTypeDefinition/bool/input.sol:2:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UserDefinedValueTypeDefinition/bool/input.sol:4:1]
        │
-     2 │ type Foo is bool;
+     4 │ type Foo is bool;
        │ ────────┬────────  
        │         ╰────────── Error occurred here.
     ───╯
 Tree:
-  - (root꞉ SourceUnit): # "type Foo is bool;" (110..127)
-      - (members꞉ SourceUnitMembers): # "type Foo is bool;" (110..127)
-          - (item꞉ SourceUnitMember) ► (user_defined_value_type_definition꞉ UserDefinedValueTypeDefinition): # "type Foo is bool;" (110..127)
-              - (type_keyword꞉ TypeKeyword): "type" # (110..114)
-              - (name꞉ Identifier): "Foo" # (115..118)
-              - (is_keyword꞉ IsKeyword): "is" # (119..121)
-              - (value_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (122..126)
-              - (semicolon꞉ Semicolon): ";" # (126..127)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..147)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..147)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (user_defined_value_type_definition꞉ UserDefinedValueTypeDefinition): # "type Foo is bool;" (130..147)
+              - (type_keyword꞉ TypeKeyword): "type" # (130..134)
+              - (name꞉ Identifier): "Foo" # (135..138)
+              - (is_keyword꞉ IsKeyword): "is" # (139..141)
+              - (value_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (142..146)
+              - (semicolon꞉ Semicolon): ";" # (146..147)

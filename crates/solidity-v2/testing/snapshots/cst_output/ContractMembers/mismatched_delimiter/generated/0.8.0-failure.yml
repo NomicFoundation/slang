@@ -1,23 +1,25 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                   │ 0..12
-  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractMembers/mismatched_delimiter/input.sol │ 13..123
-  3  │ function someFunc() public {                                                                                   │ 124..152
-  4  │     {                                                                                                          │ 153..158
-  5  │         uint256 arg = (1 + 2;                                                                                  │ 159..188
-  6  │     })                                                                                                         │ 189..195
-  7  │ }                                                                                                              │ 196..197
-  8  │                                                                                                                │ 198..198
-  9  │ // <<<                                                                                                         │ 199..205
-  10 │ }                                                                                                              │ 206..207
+  1  │ pragma solidity *;                                                                                             │ 0..18
+  2  │                                                                                                                │ 19..19
+  3  │ contract C {                                                                                                   │ 20..32
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractMembers/mismatched_delimiter/input.sol │ 33..143
+  5  │ function someFunc() public {                                                                                   │ 144..172
+  6  │     {                                                                                                          │ 173..178
+  7  │         uint256 arg = (1 + 2;                                                                                  │ 179..208
+  8  │     })                                                                                                         │ 209..215
+  9  │ }                                                                                                              │ 216..217
+  10 │                                                                                                                │ 218..218
+  11 │ // <<<                                                                                                         │ 219..225
+  12 │ }                                                                                                              │ 226..227
 
 Errors: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Semicolon. One of CloseParen, Comma was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractMembers/mismatched_delimiter/input.sol:5:29]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractMembers/mismatched_delimiter/input.sol:7:29]
        │
-     5 │         uint256 arg = (1 + 2;
+     7 │         uint256 arg = (1 + 2;
        │                             ┬  
        │                             ╰── Error occurred here.
     ───╯

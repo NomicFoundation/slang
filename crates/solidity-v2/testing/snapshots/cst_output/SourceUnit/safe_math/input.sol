@@ -1,3 +1,5 @@
+pragma solidity *;
+
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/safe_math/input.sol
 library SafeMath {
   function tryAdd(uint256 a, uint256 b) internal pure returns (bool, uint256) {

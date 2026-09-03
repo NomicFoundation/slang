@@ -1,3 +1,5 @@
+pragma solidity *;
+
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/function_multiple_delimiters/input.sol
 // SPDX-License-Identifier: MIT
 contract ABC {

@@ -1,23 +1,35 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/empty_multiline_over_natspec/input.sol │ 0..113
-  2  │ // The below comments should be parsed into two separate tokens, instead of one NatSpec comment:                  │ 114..210
-  3  │                                                                                                                   │ 211..211
-  4  │ contract Foo {                                                                                                    │ 212..226
-  5  │   /**/                                                                                                            │ 227..233
-  6  │ }                                                                                                                 │ 234..235
-  7  │ /**/                                                                                                              │ 236..240
-  8  │                                                                                                                   │ 241..241
-  9  │ // <<<                                                                                                            │ 242..248
+  1  │ pragma solidity *;                                                                                                │ 0..18
+  2  │                                                                                                                   │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/empty_multiline_over_natspec/input.sol │ 20..133
+  4  │ // The below comments should be parsed into two separate tokens, instead of one NatSpec comment:                  │ 134..230
+  5  │                                                                                                                   │ 231..231
+  6  │ contract Foo {                                                                                                    │ 232..246
+  7  │   /**/                                                                                                            │ 247..253
+  8  │ }                                                                                                                 │ 254..255
+  9  │ /**/                                                                                                              │ 256..260
+  10 │                                                                                                                   │ 261..261
+  11 │ // <<<                                                                                                            │ 262..268
 
 Tree:
-  - (root꞉ SourceUnit): # "contract Foo {\n  /**/\n}" (212..235)
-      - (members꞉ SourceUnitMembers): # "contract Foo {\n  /**/\n}" (212..235)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Foo {\n  /**/\n}" (212..235)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (212..220)
-              - (name꞉ Identifier): "Foo" # (221..224)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..255)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..255)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Foo {\n  /**/\n}" (232..255)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (232..240)
+              - (name꞉ Identifier): "Foo" # (241..244)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (225..226)
+              - (open_brace꞉ OpenBrace): "{" # (245..246)
               - (members꞉ ContractMembers): []
-              - (close_brace꞉ CloseBrace): "}" # (234..235)
+              - (close_brace꞉ CloseBrace): "}" # (254..255)
