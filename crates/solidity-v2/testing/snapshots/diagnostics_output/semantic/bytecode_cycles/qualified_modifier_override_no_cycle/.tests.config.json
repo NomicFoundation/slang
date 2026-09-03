@@ -8,6 +8,13 @@
           "till": "0.8.4"
         },
         "reason": "solc before '0.8.4' reports the `new B()` inside the never-invoked override, without reachability analysis. Slang implements the '0.8.4' reachability semantics for every version and emits no such error, so it accepts this input on '0.8.0' to '0.8.3', where solc does not."
+      },
+      {
+        "specifier": {
+          "type": "From",
+          "from": "0.8.31"
+        },
+        "reason": "solc from '0.8.31' warns that 'Virtual modifiers are deprecated and scheduled for removal'. Slang has no equivalent deprecation warning, so it reports nothing at all on these versions."
       }
     ]
   }

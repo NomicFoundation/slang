@@ -4,6 +4,15 @@
     "target": {
       "value": "Istanbul",
       "reason": "Istanbul is pre-Paris and accepted by every supported solc, so the version axis shows both the pre-0.8.18 error and the warning-only behaviour after it."
-    }
+    },
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "From",
+          "from": "0.8.18"
+        },
+        "reason": "This is the case the test is about: once `block.prevrandao` exists, solc downgrades the pre-Paris use to a warning that it 'is not supported by the VM version and will be treated as \"difficulty\"'. Slang keeps `block.prevrandao` available on every target without a diagnostic, so it stays silent where solc warns."
+      }
+    ]
   }
 }

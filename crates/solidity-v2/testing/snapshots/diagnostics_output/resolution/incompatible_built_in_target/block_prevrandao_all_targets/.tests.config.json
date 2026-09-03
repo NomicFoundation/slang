@@ -13,6 +13,14 @@
           "till": "Homestead"
         },
         "reason": "solc 0.8.36 declines the Frontier target outright ('Invalid EVM version requested'), which is an error, while slang compiles the input. Unrelated to `block.prevrandao`: solc never looks at the source on this target."
+      },
+      {
+        "specifier": {
+          "type": "Range",
+          "from": "Homestead",
+          "till": "Paris"
+        },
+        "reason": "This is the case the test is about: before Paris, solc warns that 'prevrandao' is not supported by the VM version and will be treated as 'difficulty'. Slang keeps `block.prevrandao` available on every target without a diagnostic, so it stays silent where solc warns. The pre-Constantinople targets additionally draw solc's 'Support for EVM versions older than constantinople is deprecated' warning."
       }
     ]
   }
