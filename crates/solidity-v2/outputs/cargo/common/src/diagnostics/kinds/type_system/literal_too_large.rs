@@ -19,6 +19,6 @@ impl DiagnosticExtensions for LiteralTooLarge {
     }
 
     fn message(&self) -> String {
-        "This literal does not fit any EVM type.".to_owned()
+        "This literal value is too large to fit into EVM slots (32 bytes).".to_owned()
     }
 }

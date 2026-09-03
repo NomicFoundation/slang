@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[type-system/literal-too-large] Error: This literal does not fit any EVM type.
+[type-system/literal-too-large] Error: This literal value is too large to fit into EVM slots (32 bytes).
    ╭─[input.sol:7:16]
    │
  7 │     return c ? 2**9999 : 1;
