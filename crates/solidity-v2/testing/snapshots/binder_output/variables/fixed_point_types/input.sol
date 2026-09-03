@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract Foo {
     function bar() public pure {
         // Bare 'fixed'/'ufixed' are aliases for the '128x18' variants.
