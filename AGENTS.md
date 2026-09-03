@@ -4,7 +4,7 @@
 
 Slang is a modular Solidity compiler tooling suite built by the Nomic Foundation. It provides a full-fidelity concrete syntax tree (CST) parser, semantic analysis, and binding computation for Solidity source code. It is **not** a replacement for solc — it focuses on code analysis and developer tooling, not bytecode generation.
 
-- **Language**: Rust workspace (60 crates) with TypeScript/npm bindings via WASM
+- **Language**: Rust workspace (48 crates) with TypeScript/npm bindings via WASM
 - **Supports**: Solidity versions 0.4.11 to latest 0.8.+
 - **Published as**: `slang_solidity` (crates.io), `@nomicfoundation/slang` (npm)
 
@@ -13,41 +13,49 @@ Additionally, the repository also contains the crates for the under-development 
 ## Repository Architecture
 
 ```tree
-crates/
-├── infra/              Build tooling and the infra CLI
-├── codegen/            Code generation from language definitions (v1)
-├── codegen-v2/         Next-gen code generation (LALRPOP-based)
-├── language/           Language definition building blocks (v1)
-├── language-v2/        v2 language definitions
-├── metaslang/
-│   ├── cst/            Generic CST library (build, navigate, query)
-│   ├── bindings/       Semantic binding computation
-│   ├── graph_builder/  Binding graph construction
-│   └── stack_graphs/   Stack graphs for scope analysis
-├── solidity/
-│   ├── inputs/language/
-│   │   └── src/definition.rs   Grammar definition (hand-written v1 parser)
-│   ├── outputs/
-│   │   ├── cargo/crate/    Main published Rust crate (slang_solidity)
-│   │   ├── cargo/cli/      CLI tool (slang_solidity_cli)
-│   │   ├── cargo/wasm/     WASM bindings
-│   │   ├── cargo/tests/    Integration tests
-│   │   ├── npm/package/    npm package (@nomicfoundation/slang)
-│   │   └── spec/           Language specification generator
-│   └── testing/            Snapshots, perf, solc compat, sourcify tests
-├── solidity-v2/
-│   ├── inputs/language/
-│   │   └── src/definition.rs   Grammar definition (LALRPOP-based v2 parser)
-│   ├── outputs/
-│   │   └── cargo/
-│   │       ├── common/     Shared types (slang_solidity_v2_common)
-│   │       ├── cst/        CST node types (slang_solidity_v2_cst)
-│   │       ├── parser/     LALRPOP-generated parser (slang_solidity_v2_parser)
-│   │       └── tests/      V2 integration tests
-│   └── testing/
-│       ├── snapshots/      CST output golden files (cst_output/)
-│       └── utils/          Test utilities and V1 comparison tooling
-└── documentation/      MkDocs documentation site
+.                       (repo root)
+├── bin/                Hermit-managed toolchain binaries (`cargo`, `node`, `npm`, `task`, ...)
+├── scripts/            Shell entry points, incl. `bin/infra` (the infra CLI)
+├── documentation/      MkDocs documentation site
+└── crates/
+    ├── infra/              Build tooling and the infra CLI
+    ├── codegen/            Code generation from language definitions (v1)
+    ├── codegen-v2/         Next-gen code generation (LALRPOP-based)
+    ├── language/           Language definition building blocks (v1)
+    ├── language-v2/        v2 language definitions
+    ├── metaslang/
+    │   ├── cst/            Generic CST library (build, navigate, query)
+    │   ├── bindings/       Semantic binding computation
+    │   ├── graph_builder/  Binding graph construction
+    │   └── stack_graphs/   Stack graphs for scope analysis
+    ├── solidity/
+    │   ├── inputs/language/
+    │   │   └── src/definition.rs   Grammar definition (hand-written v1 parser)
+    │   ├── outputs/
+    │   │   ├── cargo/crate/    Main published Rust crate (slang_solidity)
+    │   │   ├── cargo/cli/      CLI tool (slang_solidity_cli)
+    │   │   ├── cargo/wasm/     WASM bindings
+    │   │   ├── cargo/tests/    Integration tests
+    │   │   ├── npm/package/    npm package (@nomicfoundation/slang)
+    │   │   └── spec/           Language specification generator
+    │   └── testing/            Snapshots, perf, solc compat, sourcify tests
+    └── solidity-v2/
+        ├── inputs/language/
+        │   └── src/definition.rs   Grammar definition (LALRPOP-based v2 parser)
+        ├── outputs/
+        │   └── cargo/
+        │       ├── common/         Versions, EVM targets, diagnostics (slang_solidity_v2_common)
+        │       ├── cst/            CST node types (slang_solidity_v2_cst)
+        │       ├── parser/         LALRPOP-generated parser (slang_solidity_v2_parser)
+        │       ├── ir/             CST lowered into the IR analysis runs on (slang_solidity_v2_ir)
+        │       ├── semantic/       Binder, type system, analysis passes (slang_solidity_v2_semantic)
+        │       ├── ast/            Public AST/type/ABI surface (slang_solidity_v2_ast)
+        │       ├── slang_solidity/ Public API: `CompilationUnit` (slang_solidity_v2)
+        │       └── tests/          Snapshot test runners (V2 integration tests)
+        └── testing/
+            ├── snapshots/          Golden files: cst_output/, binder_output/, diagnostics_output/
+            ├── solc/               solc comparison suite (results.generated.json)
+            └── utils/              Test utilities and V1 comparison tooling
 ```
 
 v1 and v2 implementations coexist in the same `main` branch.
@@ -101,12 +109,14 @@ You can also use `nextest` directly for faster iteration on Rust tests:
 
 `CompilationUnit::create()` parses source files in parallel over `rayon`'s ambient thread pool
 (the caller's installed pool, or the global one otherwise); IR building and semantic analysis are
-still sequential. `Concurrency::Inline` in the `Configuration` pins the whole compilation to the
-calling thread instead. One invariant holds it together: **output must not depend on the
-concurrency choice.** Files are lowered to IR in `FileId` order, and that is what makes node ids
-stable — so the parse phase has to hand them back in that order, which is why it collects from an
-_indexed_ parallel iterator. `slang_solidity/src/tests/thread_safety.rs` guards this, both across
-pool sizes and across concurrent builds.
+still sequential. Fewer than two sources skip `rayon` altogether and parse on the calling thread,
+where the scheduling overhead isn't worth it. There is no knob on the `Configuration` to opt out:
+to bound or serialize the work, call `create()` inside `rayon::ThreadPool::install` on a pool of
+your own. One invariant holds it together: **output must not depend on the concurrency choice.**
+Files are lowered to IR in `FileId` order, and that is what makes node ids stable — so the parse
+phase has to hand them back in that order, which is why it collects from an _indexed_ parallel
+iterator. `crates/solidity-v2/outputs/cargo/slang_solidity/src/tests/thread_safety.rs` guards
+this, both across pool sizes and across concurrent builds.
 
 ## Code Generation
 
