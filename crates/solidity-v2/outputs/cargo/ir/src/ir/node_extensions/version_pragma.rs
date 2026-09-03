@@ -58,15 +58,15 @@ impl ir::VersionPragmaComparatorStruct {
                 }
             }
             operator => {
-                return satisfies(compare(&self.specifier, version, levels), operator);
+                return satisfies(compare(version, &self.specifier, levels), operator);
             }
         };
 
         satisfies(
-            compare(&self.specifier, version, levels),
+            compare(version, &self.specifier, levels),
             ir::VersionPragmaOperator::GreaterThanEqual,
         ) && satisfies(
-            compare(&self.specifier, version, upper_bound_levels),
+            compare(version, &self.specifier, upper_bound_levels),
             ir::VersionPragmaOperator::LessThanEqual,
         )
     }
@@ -108,8 +108,8 @@ impl VersionPragmaComponentExtensions for ir::VersionPragmaComponent {
 /// Compares `version` against the first `levels` components of `specifier`,
 /// skipping the ones written as a wildcard.
 fn compare(
-    specifier: &ir::VersionPragmaSpecifier,
     version: &SemverVersion,
+    specifier: &ir::VersionPragmaSpecifier,
     levels: usize,
 ) -> Ordering {
     let theirs = [version.major, version.minor, version.patch];

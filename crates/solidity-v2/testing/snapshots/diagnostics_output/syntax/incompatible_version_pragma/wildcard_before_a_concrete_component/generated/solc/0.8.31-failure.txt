@@ -3,9 +3,9 @@
 Diagnostics: 1
 
 [ParserError 5333] Error: Source file requires different compiler version (current compiler is 0.8.31+commit.fd3a2265.Linux.g++) - note that nightly builds are considered to be strictly less than the released version
-   ╭─[input.sol:4:1]
+   ╭─[input.sol:3:1]
    │
- 4 │ pragma solidity x.1.0;
+ 3 │ pragma solidity 0.x.1;
    │ ───────────┬──────────  
    │            ╰──────────── Error occurred here.
 ───╯

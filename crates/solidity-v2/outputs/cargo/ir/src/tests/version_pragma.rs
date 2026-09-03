@@ -269,6 +269,11 @@ fn a_wildcard_only_frees_its_own_component() {
         &[v(0, 1, 0), v(5, 1, 0)],
         &[v(0, 8, 36), v(0, 1, 1)],
     );
+    assert_matches(
+        "0.x.1",
+        &[v(0, 0, 1), v(0, 5, 1)],
+        &[v(0, 8, 36), v(1, 0, 1)],
+    );
 }
 
 /// Comparison walks only the components the literal wrote and stops at the first

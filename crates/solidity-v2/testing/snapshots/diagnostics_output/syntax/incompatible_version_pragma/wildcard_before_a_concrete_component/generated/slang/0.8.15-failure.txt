@@ -3,9 +3,9 @@
 Diagnostics: 1
 
 [syntax/incompatible-version-pragma] Error: This pragma is incompatible with the compilation language version '0.8.15'.
-   ╭─[input.sol:4:8]
+   ╭─[input.sol:3:8]
    │
- 4 │ pragma solidity x.1.0;
+ 3 │ pragma solidity 0.x.1;
    │        ───────┬──────  
    │               ╰──────── Error occurred here.
 ───╯
