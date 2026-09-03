@@ -319,6 +319,7 @@ impl<'a> BuiltInsResolver<'a> {
             },
             Type::Contract(_) | Type::Interface(_) | Type::Library(_) => None,
             Type::Enum(_) => None,
+            Type::Error(_) | Type::Event(_) => None,
             Type::FixedPointNumber(_) => None,
             Type::FixedSizeArray(_) => match symbol {
                 "length" => Some(InternalBuiltIn::Length),

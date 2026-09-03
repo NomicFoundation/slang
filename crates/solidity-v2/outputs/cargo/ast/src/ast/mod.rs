@@ -17,9 +17,9 @@ mod serialize;
 mod types;
 pub use types::{
     AddressType, ArraySliceType, ArrayType, BooleanType, ByteArrayType, BytesType, ContractType,
-    EnumType, FixedPointNumberType, FixedSizeArrayType, FunctionType, IntegerType, InterfaceType,
-    LiteralKind, LiteralType, MappingType, MetaType, Number, StringType, StructType, TupleType,
-    Type, UserDefinedValueType, UserMetaType, VoidType,
+    EnumType, ErrorType, EventType, FixedPointNumberType, FixedSizeArrayType, FunctionType,
+    IntegerType, InterfaceType, LiteralKind, LiteralType, MappingType, MetaType, Number,
+    StringType, StructType, TupleType, Type, UserDefinedValueType, UserMetaType, VoidType,
 };
 
 #[path = "visitor.generated.rs"]

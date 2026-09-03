@@ -404,6 +404,8 @@ fn type_display(type_: &Type) -> String {
         }
         Type::Contract(contract) => definition_name(&contract.definition()),
         Type::Enum(enum_) => definition_name(&enum_.definition()),
+        Type::Error(error) => format!("error {name}", name = definition_name(&error.definition())),
+        Type::Event(event) => format!("event {name}", name = definition_name(&event.definition())),
         Type::FixedPointNumber(fixed) => {
             format!(
                 "{signed}fixed{bits}x{precision_bits}",

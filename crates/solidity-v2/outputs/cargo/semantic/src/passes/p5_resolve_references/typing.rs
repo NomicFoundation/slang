@@ -16,9 +16,9 @@ use crate::binder::{Definition, Resolution, Typing};
 use crate::built_ins::BuiltInCallError;
 use crate::passes::common::node_location;
 use crate::types::{
-    AddressType, ArraySliceType, ArrayType, ContractType, DataLocation, FixedSizeArrayType,
-    FunctionType, FunctionTypeVisibility, IntegerType, LiteralKind, MetaType, NoMobileType, Number,
-    StringType, Type, TypeId, UserMetaType, literals,
+    AddressType, ArraySliceType, ArrayType, ContractType, DataLocation, ErrorType, EventType,
+    FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType, LiteralKind, MetaType,
+    NoMobileType, Number, StringType, Type, TypeId, UserMetaType, literals,
 };
 
 impl Pass<'_> {
@@ -761,6 +761,23 @@ impl Pass<'_> {
                             .expect("definition kind is handled by type_of_definition");
                         Typing::Resolved(self.types.register_type(type_))
                     }
+                    Some(Definition::Error(_)) => {
+                        // TODO(validation): an error instance is only valid in
+                        // a `revert` statement or as the second parameter of a
+                        // `require`/`assert`. See SDR[1504]
+                        let type_id = self
+                            .types
+                            .register_type(Type::Error(ErrorType { definition_id }));
+                        Typing::Resolved(type_id)
+                    }
+                    Some(Definition::Event(_)) => {
+                        // TODO(validation) SDR[950]: an event invocation has
+                        // to be prefixed by `emit`.
+                        let type_id = self
+                            .types
+                            .register_type(Type::Event(EventType { definition_id }));
+                        Typing::Resolved(type_id)
+                    }
                     Some(Definition::Function(_)) => {
                         // Calling a function referenced through a contract/interface
                         // type name (eg. `C.f()`) is invalid: it's a non-callable
@@ -769,21 +786,6 @@ impl Pass<'_> {
 
                         self.diagnostics
                             .push(file_id, range, CannotCallViaContractTypeName);
-                        Typing::Unresolved
-                    }
-                    Some(Definition::Event(_)) => {
-                        // TODO: an event invocation has to be prefixed by
-                        // `emit`. The name *is* callable, so this is not a
-                        // callability error. OTOH we don't have a `Type`
-                        // variant for events to be able to type this yet. See
-                        // SDR[950].
-                        Typing::Unresolved
-                    }
-                    Some(Definition::Error(_)) => {
-                        // TODO: An error construction has no value type of its own,
-                        // except as an assertion parameter. Similar to the
-                        // event case, we don't have a `Type` variant to
-                        // represent the error yet. See SDR[1504]
                         Typing::Unresolved
                     }
                     Some(Definition::UserDefinedValueType(_)) => {
@@ -940,18 +942,23 @@ impl Pass<'_> {
                         (Typing::Resolved(type_id), Some(definition_id))
                     }
                     Some(Definition::Error(_)) => {
-                        // TODO: An error construction has no value type of its
-                        // own, matching the positional form. Return the
-                        // definition so the argument names resolve against its
-                        // parameters.
-                        (Typing::Unresolved, Some(definition_id))
+                        // error "instantiation"
+                        // TODO(validation): an error instance is only valid in
+                        // a `revert` statement or as the second parameter of a
+                        // `require`/`assert`
+                        let type_id = self
+                            .types
+                            .register_type(Type::Error(ErrorType { definition_id }));
+                        (Typing::Resolved(type_id), Some(definition_id))
                     }
                     Some(Definition::Event(_)) => {
-                        // TODO: Likewise, an event invocation has no value type of
-                        // its own; return the definition so the argument names
-                        // resolve against its parameters.  See SDR[950]: an
-                        // event invocation has to be prefixed by `emit`.
-                        (Typing::Unresolved, Some(definition_id))
+                        // TODO(validation) SDR[950]: an event invocation has to
+                        // be prefixed by `emit` so this type is not valid in
+                        // any other position.
+                        let type_id = self
+                            .types
+                            .register_type(Type::Event(EventType { definition_id }));
+                        (Typing::Resolved(type_id), Some(definition_id))
                     }
                     Some(Definition::Function(_)) => {
                         // Calling a function via a contract/interface type name is
