@@ -28,6 +28,7 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
     normalize_experimental_feature(&mut mutator);
     normalize_abicoder_version(&mut mutator);
     normalize_assembly_statement(&mut mutator);
+    normalize_version_pragma(&mut mutator);
     normalize_yul_terminals(&mut mutator);
     simplify_imports(&mut mutator);
     simplify_parameters(&mut mutator);
@@ -332,10 +333,10 @@ fn collapse_redundant_node_types(mutator: &mut IrModelMutator) {
 }
 
 fn simplify_string_literals(mutator: &mut IrModelMutator) {
-    // Normalize StringLiteral kinds (same concept, different parsing context)
+    // Normalize StringLiteral kinds between Solidity and Yul.
+    // Note: `PragmaStringLiteral` is rewritten in the IR into a structured strong type.
     mutator.normalize_terminal("YulStringLiteral", "StringLiteral");
     mutator.normalize_terminal("YulHexStringLiteral", "HexStringLiteral");
-    mutator.normalize_terminal("PragmaStringLiteral", "StringLiteral");
 }
 
 fn normalize_assembly_statement(mutator: &mut IrModelMutator) {
@@ -369,6 +370,60 @@ fn normalize_abicoder_version(mutator: &mut IrModelMutator) {
     mutator.remove_type("AbicoderVersion");
     mutator.add_enum_type("AbicoderVersion", &["V1", "V2"]);
     mutator.add_sequence_field("AbicoderPragma", "version", "AbicoderVersion", false);
+}
+
+fn normalize_version_pragma(mutator: &mut IrModelMutator) {
+    mutator.remove_type("VersionPragmaExpressionSets");
+    mutator.remove_type("VersionPragmaExpressionSet");
+    mutator.remove_type("VersionPragmaExpression");
+    mutator.remove_type("VersionPragmaRange");
+    mutator.remove_type("VersionPragmaTerm");
+    mutator.remove_type("VersionPragmaSpecifier");
+    mutator.remove_type("VersionPragmaComponents");
+    mutator.remove_type("VersionPragmaComponent");
+    mutator.remove_type("VersionPragmaOperator");
+
+    mutator.add_enum_type(
+        "VersionPragmaOperator",
+        &[
+            "Caret",
+            "Tilde",
+            "Equal",
+            "LessThan",
+            "LessThanEqual",
+            "GreaterThan",
+            "GreaterThanEqual",
+        ],
+    );
+
+    mutator.add_external_type("usize");
+
+    mutator.add_enum_type("VersionPragmaComponent", &["Wildcard", "Unrecognized"]);
+    mutator.add_labelled_choice_variant("VersionPragmaComponent", "Number", "usize");
+    mutator.add_collection_type("VersionPragmaSpecifier", "VersionPragmaComponent");
+
+    mutator.add_sequence_type("VersionPragmaComparator");
+    mutator.add_sequence_field(
+        "VersionPragmaComparator",
+        "operator",
+        "VersionPragmaOperator",
+        false,
+    );
+    mutator.add_sequence_field(
+        "VersionPragmaComparator",
+        "specifier",
+        "VersionPragmaSpecifier",
+        false,
+    );
+
+    mutator.add_collection_type("VersionPragmaExpressionSet", "VersionPragmaComparator");
+    mutator.add_collection_type("VersionPragmaExpressionSets", "VersionPragmaExpressionSet");
+    mutator.add_sequence_field(
+        "VersionPragma",
+        "sets",
+        "VersionPragmaExpressionSets",
+        false,
+    );
 }
 
 fn normalize_yul_terminals(mutator: &mut IrModelMutator) {

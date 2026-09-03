@@ -1,7 +1,9 @@
 mod expected_array_length_expression;
 mod incompatible_syntax_version;
+mod incompatible_version_pragma;
 mod invalid_assembly_dialect;
 mod invalid_mutability;
+mod invalid_version_specifier;
 mod invalid_visibility;
 mod more_than_one_inheritance_list;
 mod more_than_one_storage_layout;
@@ -18,8 +20,10 @@ mod unsupported_experimental_solidity;
 
 pub use expected_array_length_expression::ExpectedArrayLengthExpression;
 pub use incompatible_syntax_version::IncompatibleSyntaxVersion;
+pub use incompatible_version_pragma::IncompatibleVersionPragma;
 pub use invalid_assembly_dialect::InvalidAssemblyDialect;
 pub use invalid_mutability::InvalidMutability;
+pub use invalid_version_specifier::InvalidVersionSpecifier;
 pub use invalid_visibility::InvalidVisibility;
 pub use more_than_one_inheritance_list::MoreThanOneInheritanceList;
 pub use more_than_one_storage_layout::MoreThanOneStorageLayout;
@@ -84,6 +88,11 @@ define_diagnostic_kind! {
         /// A source file selected the legacy ABI coder via `pragma abicoder v1;`,
         /// which Slang does not support.
         UnsupportedAbicoderV1(UnsupportedAbicoderV1),
+
+        /// A `pragma solidity` version literal cannot be read as a version.
+        InvalidVersionSpecifier(InvalidVersionSpecifier),
+        /// A `pragma solidity` excludes the language version being compiled.
+        IncompatibleVersionPragma(IncompatibleVersionPragma),
 
         /// A `pragma experimental` named a feature that Slang does not recognize.
         UnrecognizedExperimentalFeature(UnrecognizedExperimentalFeature),

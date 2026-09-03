@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/invalid-version-specifier] Error: '0.8.beta' is not a valid version specifier.
+   ╭─[input.sol:4:17]
+   │
+ 4 │ pragma solidity "0.8.beta";
+   │                 ─────┬────  
+   │                      ╰────── Error occurred here.
+───╯

@@ -49,7 +49,14 @@ impl Serialize for {{ parent_type }} {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         match self {
             {%- for variant in choice.variants %}
-            {% if variant.kind == "External" -%}
+            {% if variant.is_external -%}
+            {{ parent_type }}::{{ variant.name }}(inner) => {
+                let mut map = serializer.serialize_map(Some(2))?;
+                map.serialize_entry("type", "{{ parent_type }}::{{ variant.name }}")?;
+                map.serialize_entry("value", inner)?;
+                map.end()
+            }
+            {%- elif variant.is_unit -%}
             {{ parent_type }}::{{ variant.name }} => {
                 let mut map = serializer.serialize_map(Some(1))?;
                 map.serialize_entry("type", "{{ parent_type }}::{{ variant.name }}")?;

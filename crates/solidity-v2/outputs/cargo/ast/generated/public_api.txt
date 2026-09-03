@@ -296,7 +296,6 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_return_statement(&mut
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_revert_statement(&mut self, &slang_solidity_v2_ast::ast::RevertStatement) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_shift_expression(&mut self, &slang_solidity_v2_ast::ast::ShiftExpression) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_shift_expression_operator(&mut self, &slang_solidity_v2_ast::ast::ShiftExpressionOperator) -> bool
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_simple_version_literal(&mut self, &slang_solidity_v2_ast::ast::SimpleVersionLiteral) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_single_typed_declaration(&mut self, &slang_solidity_v2_ast::ast::SingleTypedDeclaration) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_source_unit(&mut self, &slang_solidity_v2_ast::ast::SourceUnit) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_source_unit_member(&mut self, &slang_solidity_v2_ast::ast::SourceUnitMember) -> bool
@@ -332,14 +331,13 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_using_target(&mut sel
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_variable_declaration(&mut self, &slang_solidity_v2_ast::ast::VariableDeclaration) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_variable_declaration_statement(&mut self, &slang_solidity_v2_ast::ast::VariableDeclarationStatement) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_variable_declaration_target(&mut self, &slang_solidity_v2_ast::ast::VariableDeclarationTarget) -> bool
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_version_expression(&mut self, &slang_solidity_v2_ast::ast::VersionExpression) -> bool
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_version_expression_set(&mut self, &slang_solidity_v2_ast::ast::VersionExpressionSet) -> bool
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_version_expression_sets(&mut self, &slang_solidity_v2_ast::ast::VersionExpressionSets) -> bool
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_version_literal(&mut self, &slang_solidity_v2_ast::ast::VersionLiteral) -> bool
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_version_operator(&mut self, &slang_solidity_v2_ast::ast::VersionOperator) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_version_pragma(&mut self, &slang_solidity_v2_ast::ast::VersionPragma) -> bool
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_version_range(&mut self, &slang_solidity_v2_ast::ast::VersionRange) -> bool
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_version_term(&mut self, &slang_solidity_v2_ast::ast::VersionTerm) -> bool
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_version_pragma_comparator(&mut self, &slang_solidity_v2_ast::ast::VersionPragmaComparator) -> bool
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_version_pragma_component(&mut self, &slang_solidity_v2_ast::ast::VersionPragmaComponent) -> bool
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_version_pragma_expression_set(&mut self, &slang_solidity_v2_ast::ast::VersionPragmaExpressionSet) -> bool
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_version_pragma_expression_sets(&mut self, &slang_solidity_v2_ast::ast::VersionPragmaExpressionSets) -> bool
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_version_pragma_operator(&mut self, &slang_solidity_v2_ast::ast::VersionPragmaOperator) -> bool
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_version_pragma_specifier(&mut self, &slang_solidity_v2_ast::ast::VersionPragmaSpecifier) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_while_statement(&mut self, &slang_solidity_v2_ast::ast::WhileStatement) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_arguments(&mut self, &slang_solidity_v2_ast::ast::YulArguments) -> bool
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_yul_block(&mut self, &slang_solidity_v2_ast::ast::YulBlock) -> bool
@@ -466,7 +464,6 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_return_statement(&mut
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_revert_statement(&mut self, &slang_solidity_v2_ast::ast::RevertStatement)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_shift_expression(&mut self, &slang_solidity_v2_ast::ast::ShiftExpression)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_shift_expression_operator(&mut self, &slang_solidity_v2_ast::ast::ShiftExpressionOperator)
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_simple_version_literal(&mut self, &slang_solidity_v2_ast::ast::SimpleVersionLiteral)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_single_typed_declaration(&mut self, &slang_solidity_v2_ast::ast::SingleTypedDeclaration)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_source_unit(&mut self, &slang_solidity_v2_ast::ast::SourceUnit)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_source_unit_member(&mut self, &slang_solidity_v2_ast::ast::SourceUnitMember)
@@ -502,14 +499,13 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_using_target(&mut sel
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_variable_declaration(&mut self, &slang_solidity_v2_ast::ast::VariableDeclaration)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_variable_declaration_statement(&mut self, &slang_solidity_v2_ast::ast::VariableDeclarationStatement)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_variable_declaration_target(&mut self, &slang_solidity_v2_ast::ast::VariableDeclarationTarget)
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_version_expression(&mut self, &slang_solidity_v2_ast::ast::VersionExpression)
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_version_expression_set(&mut self, &slang_solidity_v2_ast::ast::VersionExpressionSet)
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_version_expression_sets(&mut self, &slang_solidity_v2_ast::ast::VersionExpressionSets)
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_version_literal(&mut self, &slang_solidity_v2_ast::ast::VersionLiteral)
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_version_operator(&mut self, &slang_solidity_v2_ast::ast::VersionOperator)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_version_pragma(&mut self, &slang_solidity_v2_ast::ast::VersionPragma)
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_version_range(&mut self, &slang_solidity_v2_ast::ast::VersionRange)
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_version_term(&mut self, &slang_solidity_v2_ast::ast::VersionTerm)
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_version_pragma_comparator(&mut self, &slang_solidity_v2_ast::ast::VersionPragmaComparator)
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_version_pragma_component(&mut self, &slang_solidity_v2_ast::ast::VersionPragmaComponent)
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_version_pragma_expression_set(&mut self, &slang_solidity_v2_ast::ast::VersionPragmaExpressionSet)
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_version_pragma_expression_sets(&mut self, &slang_solidity_v2_ast::ast::VersionPragmaExpressionSets)
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_version_pragma_operator(&mut self, &slang_solidity_v2_ast::ast::VersionPragmaOperator)
+pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_version_pragma_specifier(&mut self, &slang_solidity_v2_ast::ast::VersionPragmaSpecifier)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_while_statement(&mut self, &slang_solidity_v2_ast::ast::WhileStatement)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_arguments(&mut self, &slang_solidity_v2_ast::ast::YulArguments)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::leave_yul_block(&mut self, &slang_solidity_v2_ast::ast::YulBlock)
@@ -546,7 +542,6 @@ pub fn slang_solidity_v2_ast::ast::visitor::Visitor::visit_string_literal(&mut s
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::visit_ufixed_keyword(&mut self, &slang_solidity_v2_ast::ast::UfixedKeyword)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::visit_uint_keyword(&mut self, &slang_solidity_v2_ast::ast::UintKeyword)
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::visit_unicode_string_literal(&mut self, &slang_solidity_v2_ast::ast::UnicodeStringLiteral)
-pub fn slang_solidity_v2_ast::ast::visitor::Visitor::visit_version_specifier(&mut self, &slang_solidity_v2_ast::ast::VersionSpecifier)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_abicoder_pragma(&slang_solidity_v2_ast::ast::AbicoderPragma, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_abicoder_version(&slang_solidity_v2_ast::ast::AbicoderVersion, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_additive_expression(&slang_solidity_v2_ast::ast::AdditiveExpression, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
@@ -659,12 +654,10 @@ pub fn slang_solidity_v2_ast::ast::visitor::accept_using_target(&slang_solidity_
 pub fn slang_solidity_v2_ast::ast::visitor::accept_variable_declaration(&slang_solidity_v2_ast::ast::VariableDeclaration, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_variable_declaration_statement(&slang_solidity_v2_ast::ast::VariableDeclarationStatement, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_variable_declaration_target(&slang_solidity_v2_ast::ast::VariableDeclarationTarget, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
-pub fn slang_solidity_v2_ast::ast::visitor::accept_version_expression(&slang_solidity_v2_ast::ast::VersionExpression, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
-pub fn slang_solidity_v2_ast::ast::visitor::accept_version_literal(&slang_solidity_v2_ast::ast::VersionLiteral, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
-pub fn slang_solidity_v2_ast::ast::visitor::accept_version_operator(&slang_solidity_v2_ast::ast::VersionOperator, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_version_pragma(&slang_solidity_v2_ast::ast::VersionPragma, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
-pub fn slang_solidity_v2_ast::ast::visitor::accept_version_range(&slang_solidity_v2_ast::ast::VersionRange, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
-pub fn slang_solidity_v2_ast::ast::visitor::accept_version_term(&slang_solidity_v2_ast::ast::VersionTerm, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
+pub fn slang_solidity_v2_ast::ast::visitor::accept_version_pragma_comparator(&slang_solidity_v2_ast::ast::VersionPragmaComparator, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
+pub fn slang_solidity_v2_ast::ast::visitor::accept_version_pragma_component(&slang_solidity_v2_ast::ast::VersionPragmaComponent, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
+pub fn slang_solidity_v2_ast::ast::visitor::accept_version_pragma_operator(&slang_solidity_v2_ast::ast::VersionPragmaOperator, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_while_statement(&slang_solidity_v2_ast::ast::WhileStatement, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_yul_block(&slang_solidity_v2_ast::ast::YulBlock, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
 pub fn slang_solidity_v2_ast::ast::visitor::accept_yul_break_statement(&slang_solidity_v2_ast::ast::YulBreakStatement, &mut impl slang_solidity_v2_ast::ast::visitor::Visitor)
@@ -1120,32 +1113,26 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::VariableDeclarationTarge
 pub fn slang_solidity_v2_ast::ast::VariableDeclarationTarget::clone(&self) -> slang_solidity_v2_ast::ast::VariableDeclarationTarget
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VariableDeclarationTarget
 pub fn slang_solidity_v2_ast::ast::VariableDeclarationTarget::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub enum slang_solidity_v2_ast::ast::VersionExpression
-pub slang_solidity_v2_ast::ast::VersionExpression::VersionRange(slang_solidity_v2_ast::ast::VersionRange)
-pub slang_solidity_v2_ast::ast::VersionExpression::VersionTerm(slang_solidity_v2_ast::ast::VersionTerm)
-impl core::clone::Clone for slang_solidity_v2_ast::ast::VersionExpression
-pub fn slang_solidity_v2_ast::ast::VersionExpression::clone(&self) -> slang_solidity_v2_ast::ast::VersionExpression
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VersionExpression
-pub fn slang_solidity_v2_ast::ast::VersionExpression::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub enum slang_solidity_v2_ast::ast::VersionLiteral
-pub slang_solidity_v2_ast::ast::VersionLiteral::SimpleVersionLiteral(slang_solidity_v2_ast::ast::SimpleVersionLiteral)
-pub slang_solidity_v2_ast::ast::VersionLiteral::StringLiteral(slang_solidity_v2_ast::ast::StringLiteral)
-impl core::clone::Clone for slang_solidity_v2_ast::ast::VersionLiteral
-pub fn slang_solidity_v2_ast::ast::VersionLiteral::clone(&self) -> slang_solidity_v2_ast::ast::VersionLiteral
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VersionLiteral
-pub fn slang_solidity_v2_ast::ast::VersionLiteral::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub enum slang_solidity_v2_ast::ast::VersionOperator
-pub slang_solidity_v2_ast::ast::VersionOperator::PragmaCaret(slang_solidity_v2_ast::ast::PragmaCaret)
-pub slang_solidity_v2_ast::ast::VersionOperator::PragmaEqual(slang_solidity_v2_ast::ast::PragmaEqual)
-pub slang_solidity_v2_ast::ast::VersionOperator::PragmaGreaterThan(slang_solidity_v2_ast::ast::PragmaGreaterThan)
-pub slang_solidity_v2_ast::ast::VersionOperator::PragmaGreaterThanEqual(slang_solidity_v2_ast::ast::PragmaGreaterThanEqual)
-pub slang_solidity_v2_ast::ast::VersionOperator::PragmaLessThan(slang_solidity_v2_ast::ast::PragmaLessThan)
-pub slang_solidity_v2_ast::ast::VersionOperator::PragmaLessThanEqual(slang_solidity_v2_ast::ast::PragmaLessThanEqual)
-pub slang_solidity_v2_ast::ast::VersionOperator::PragmaTilde(slang_solidity_v2_ast::ast::PragmaTilde)
-impl core::clone::Clone for slang_solidity_v2_ast::ast::VersionOperator
-pub fn slang_solidity_v2_ast::ast::VersionOperator::clone(&self) -> slang_solidity_v2_ast::ast::VersionOperator
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VersionOperator
-pub fn slang_solidity_v2_ast::ast::VersionOperator::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub enum slang_solidity_v2_ast::ast::VersionPragmaComponent
+pub slang_solidity_v2_ast::ast::VersionPragmaComponent::Number(usize)
+pub slang_solidity_v2_ast::ast::VersionPragmaComponent::Unrecognized
+pub slang_solidity_v2_ast::ast::VersionPragmaComponent::Wildcard
+impl core::clone::Clone for slang_solidity_v2_ast::ast::VersionPragmaComponent
+pub fn slang_solidity_v2_ast::ast::VersionPragmaComponent::clone(&self) -> slang_solidity_v2_ast::ast::VersionPragmaComponent
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VersionPragmaComponent
+pub fn slang_solidity_v2_ast::ast::VersionPragmaComponent::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub enum slang_solidity_v2_ast::ast::VersionPragmaOperator
+pub slang_solidity_v2_ast::ast::VersionPragmaOperator::Caret
+pub slang_solidity_v2_ast::ast::VersionPragmaOperator::Equal
+pub slang_solidity_v2_ast::ast::VersionPragmaOperator::GreaterThan
+pub slang_solidity_v2_ast::ast::VersionPragmaOperator::GreaterThanEqual
+pub slang_solidity_v2_ast::ast::VersionPragmaOperator::LessThan
+pub slang_solidity_v2_ast::ast::VersionPragmaOperator::LessThanEqual
+pub slang_solidity_v2_ast::ast::VersionPragmaOperator::Tilde
+impl core::clone::Clone for slang_solidity_v2_ast::ast::VersionPragmaOperator
+pub fn slang_solidity_v2_ast::ast::VersionPragmaOperator::clone(&self) -> slang_solidity_v2_ast::ast::VersionPragmaOperator
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VersionPragmaOperator
+pub fn slang_solidity_v2_ast::ast::VersionPragmaOperator::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub enum slang_solidity_v2_ast::ast::YulExpression
 pub slang_solidity_v2_ast::ast::YulExpression::YulFunctionCallExpression(slang_solidity_v2_ast::ast::YulFunctionCallExpression)
 pub slang_solidity_v2_ast::ast::YulExpression::YulLiteral(slang_solidity_v2_ast::ast::YulLiteral)
@@ -2792,17 +2779,6 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::PostfixExpressionStruct
 pub fn slang_solidity_v2_ast::ast::PostfixExpressionStruct::clone(&self) -> slang_solidity_v2_ast::ast::PostfixExpressionStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PostfixExpressionStruct
 pub fn slang_solidity_v2_ast::ast::PostfixExpressionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::PragmaCaretStruct
-impl slang_solidity_v2_ast::ast::PragmaCaretStruct
-pub fn slang_solidity_v2_ast::ast::PragmaCaretStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
-pub fn slang_solidity_v2_ast::ast::PragmaCaretStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
-pub fn slang_solidity_v2_ast::ast::PragmaCaretStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PragmaCaretStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::ast::PragmaCaretStruct::unparse(&self) -> &str
-impl core::clone::Clone for slang_solidity_v2_ast::ast::PragmaCaretStruct
-pub fn slang_solidity_v2_ast::ast::PragmaCaretStruct::clone(&self) -> slang_solidity_v2_ast::ast::PragmaCaretStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PragmaCaretStruct
-pub fn slang_solidity_v2_ast::ast::PragmaCaretStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::PragmaDirectiveStruct
 impl slang_solidity_v2_ast::ast::PragmaDirectiveStruct
 pub fn slang_solidity_v2_ast::ast::PragmaDirectiveStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
@@ -2814,72 +2790,6 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::PragmaDirectiveStruct
 pub fn slang_solidity_v2_ast::ast::PragmaDirectiveStruct::clone(&self) -> slang_solidity_v2_ast::ast::PragmaDirectiveStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PragmaDirectiveStruct
 pub fn slang_solidity_v2_ast::ast::PragmaDirectiveStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::PragmaEqualStruct
-impl slang_solidity_v2_ast::ast::PragmaEqualStruct
-pub fn slang_solidity_v2_ast::ast::PragmaEqualStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
-pub fn slang_solidity_v2_ast::ast::PragmaEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
-pub fn slang_solidity_v2_ast::ast::PragmaEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PragmaEqualStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::ast::PragmaEqualStruct::unparse(&self) -> &str
-impl core::clone::Clone for slang_solidity_v2_ast::ast::PragmaEqualStruct
-pub fn slang_solidity_v2_ast::ast::PragmaEqualStruct::clone(&self) -> slang_solidity_v2_ast::ast::PragmaEqualStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PragmaEqualStruct
-pub fn slang_solidity_v2_ast::ast::PragmaEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct
-impl slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct
-pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
-pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
-pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct::unparse(&self) -> &str
-impl core::clone::Clone for slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct
-pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct::clone(&self) -> slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct
-pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::PragmaGreaterThanStruct
-impl slang_solidity_v2_ast::ast::PragmaGreaterThanStruct
-pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
-pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
-pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanStruct::unparse(&self) -> &str
-impl core::clone::Clone for slang_solidity_v2_ast::ast::PragmaGreaterThanStruct
-pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanStruct::clone(&self) -> slang_solidity_v2_ast::ast::PragmaGreaterThanStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PragmaGreaterThanStruct
-pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct
-impl slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct
-pub fn slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
-pub fn slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
-pub fn slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct::unparse(&self) -> &str
-impl core::clone::Clone for slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct
-pub fn slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct::clone(&self) -> slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct
-pub fn slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::PragmaLessThanStruct
-impl slang_solidity_v2_ast::ast::PragmaLessThanStruct
-pub fn slang_solidity_v2_ast::ast::PragmaLessThanStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
-pub fn slang_solidity_v2_ast::ast::PragmaLessThanStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
-pub fn slang_solidity_v2_ast::ast::PragmaLessThanStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PragmaLessThanStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::ast::PragmaLessThanStruct::unparse(&self) -> &str
-impl core::clone::Clone for slang_solidity_v2_ast::ast::PragmaLessThanStruct
-pub fn slang_solidity_v2_ast::ast::PragmaLessThanStruct::clone(&self) -> slang_solidity_v2_ast::ast::PragmaLessThanStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PragmaLessThanStruct
-pub fn slang_solidity_v2_ast::ast::PragmaLessThanStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::PragmaTildeStruct
-impl slang_solidity_v2_ast::ast::PragmaTildeStruct
-pub fn slang_solidity_v2_ast::ast::PragmaTildeStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
-pub fn slang_solidity_v2_ast::ast::PragmaTildeStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
-pub fn slang_solidity_v2_ast::ast::PragmaTildeStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PragmaTildeStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::ast::PragmaTildeStruct::unparse(&self) -> &str
-impl core::clone::Clone for slang_solidity_v2_ast::ast::PragmaTildeStruct
-pub fn slang_solidity_v2_ast::ast::PragmaTildeStruct::clone(&self) -> slang_solidity_v2_ast::ast::PragmaTildeStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PragmaTildeStruct
-pub fn slang_solidity_v2_ast::ast::PragmaTildeStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::PrefixExpressionStruct
 impl slang_solidity_v2_ast::ast::PrefixExpressionStruct
 pub fn slang_solidity_v2_ast::ast::PrefixExpressionStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
@@ -2963,15 +2873,6 @@ impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::ShiftExpressionS
 pub fn slang_solidity_v2_ast::ast::ShiftExpressionStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 impl slang_solidity_v2_ast::ast::BinaryOperatorExpression for slang_solidity_v2_ast::ast::ShiftExpressionStruct
 pub fn slang_solidity_v2_ast::ast::ShiftExpressionStruct::common_operand_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub struct slang_solidity_v2_ast::ast::SimpleVersionLiteralStruct
-impl slang_solidity_v2_ast::ast::SimpleVersionLiteralStruct
-pub fn slang_solidity_v2_ast::ast::SimpleVersionLiteralStruct::is_empty(&self) -> bool
-pub fn slang_solidity_v2_ast::ast::SimpleVersionLiteralStruct::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::VersionSpecifier> + use<'_>
-pub fn slang_solidity_v2_ast::ast::SimpleVersionLiteralStruct::len(&self) -> usize
-impl core::clone::Clone for slang_solidity_v2_ast::ast::SimpleVersionLiteralStruct
-pub fn slang_solidity_v2_ast::ast::SimpleVersionLiteralStruct::clone(&self) -> slang_solidity_v2_ast::ast::SimpleVersionLiteralStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::SimpleVersionLiteralStruct
-pub fn slang_solidity_v2_ast::ast::SimpleVersionLiteralStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::SingleTypedDeclarationStruct
 impl slang_solidity_v2_ast::ast::SingleTypedDeclarationStruct
 pub fn slang_solidity_v2_ast::ast::SingleTypedDeclarationStruct::declaration(&self) -> slang_solidity_v2_ast::ast::VariableDeclaration
@@ -3437,70 +3338,56 @@ impl core::clone::Clone for slang_solidity_v2_ast::ast::VariableDeclarationStruc
 pub fn slang_solidity_v2_ast::ast::VariableDeclarationStruct::clone(&self) -> slang_solidity_v2_ast::ast::VariableDeclarationStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VariableDeclarationStruct
 pub fn slang_solidity_v2_ast::ast::VariableDeclarationStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::VersionExpressionSetStruct
-impl slang_solidity_v2_ast::ast::VersionExpressionSetStruct
-pub fn slang_solidity_v2_ast::ast::VersionExpressionSetStruct::is_empty(&self) -> bool
-pub fn slang_solidity_v2_ast::ast::VersionExpressionSetStruct::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::VersionExpression> + use<'_>
-pub fn slang_solidity_v2_ast::ast::VersionExpressionSetStruct::len(&self) -> usize
-impl core::clone::Clone for slang_solidity_v2_ast::ast::VersionExpressionSetStruct
-pub fn slang_solidity_v2_ast::ast::VersionExpressionSetStruct::clone(&self) -> slang_solidity_v2_ast::ast::VersionExpressionSetStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VersionExpressionSetStruct
-pub fn slang_solidity_v2_ast::ast::VersionExpressionSetStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::VersionExpressionSetsStruct
-impl slang_solidity_v2_ast::ast::VersionExpressionSetsStruct
-pub fn slang_solidity_v2_ast::ast::VersionExpressionSetsStruct::is_empty(&self) -> bool
-pub fn slang_solidity_v2_ast::ast::VersionExpressionSetsStruct::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::VersionExpressionSet> + use<'_>
-pub fn slang_solidity_v2_ast::ast::VersionExpressionSetsStruct::len(&self) -> usize
-impl core::clone::Clone for slang_solidity_v2_ast::ast::VersionExpressionSetsStruct
-pub fn slang_solidity_v2_ast::ast::VersionExpressionSetsStruct::clone(&self) -> slang_solidity_v2_ast::ast::VersionExpressionSetsStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VersionExpressionSetsStruct
-pub fn slang_solidity_v2_ast::ast::VersionExpressionSetsStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub struct slang_solidity_v2_ast::ast::VersionPragmaComparatorStruct
+impl slang_solidity_v2_ast::ast::VersionPragmaComparatorStruct
+pub fn slang_solidity_v2_ast::ast::VersionPragmaComparatorStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
+pub fn slang_solidity_v2_ast::ast::VersionPragmaComparatorStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
+pub fn slang_solidity_v2_ast::ast::VersionPragmaComparatorStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
+pub fn slang_solidity_v2_ast::ast::VersionPragmaComparatorStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::VersionPragmaComparatorStruct::operator(&self) -> slang_solidity_v2_ast::ast::VersionPragmaOperator
+pub fn slang_solidity_v2_ast::ast::VersionPragmaComparatorStruct::specifier(&self) -> slang_solidity_v2_ast::ast::VersionPragmaSpecifier
+impl core::clone::Clone for slang_solidity_v2_ast::ast::VersionPragmaComparatorStruct
+pub fn slang_solidity_v2_ast::ast::VersionPragmaComparatorStruct::clone(&self) -> slang_solidity_v2_ast::ast::VersionPragmaComparatorStruct
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VersionPragmaComparatorStruct
+pub fn slang_solidity_v2_ast::ast::VersionPragmaComparatorStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub struct slang_solidity_v2_ast::ast::VersionPragmaExpressionSetStruct
+impl slang_solidity_v2_ast::ast::VersionPragmaExpressionSetStruct
+pub fn slang_solidity_v2_ast::ast::VersionPragmaExpressionSetStruct::is_empty(&self) -> bool
+pub fn slang_solidity_v2_ast::ast::VersionPragmaExpressionSetStruct::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::VersionPragmaComparator> + use<'_>
+pub fn slang_solidity_v2_ast::ast::VersionPragmaExpressionSetStruct::len(&self) -> usize
+impl core::clone::Clone for slang_solidity_v2_ast::ast::VersionPragmaExpressionSetStruct
+pub fn slang_solidity_v2_ast::ast::VersionPragmaExpressionSetStruct::clone(&self) -> slang_solidity_v2_ast::ast::VersionPragmaExpressionSetStruct
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VersionPragmaExpressionSetStruct
+pub fn slang_solidity_v2_ast::ast::VersionPragmaExpressionSetStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub struct slang_solidity_v2_ast::ast::VersionPragmaExpressionSetsStruct
+impl slang_solidity_v2_ast::ast::VersionPragmaExpressionSetsStruct
+pub fn slang_solidity_v2_ast::ast::VersionPragmaExpressionSetsStruct::is_empty(&self) -> bool
+pub fn slang_solidity_v2_ast::ast::VersionPragmaExpressionSetsStruct::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::VersionPragmaExpressionSet> + use<'_>
+pub fn slang_solidity_v2_ast::ast::VersionPragmaExpressionSetsStruct::len(&self) -> usize
+impl core::clone::Clone for slang_solidity_v2_ast::ast::VersionPragmaExpressionSetsStruct
+pub fn slang_solidity_v2_ast::ast::VersionPragmaExpressionSetsStruct::clone(&self) -> slang_solidity_v2_ast::ast::VersionPragmaExpressionSetsStruct
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VersionPragmaExpressionSetsStruct
+pub fn slang_solidity_v2_ast::ast::VersionPragmaExpressionSetsStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
+pub struct slang_solidity_v2_ast::ast::VersionPragmaSpecifierStruct
+impl slang_solidity_v2_ast::ast::VersionPragmaSpecifierStruct
+pub fn slang_solidity_v2_ast::ast::VersionPragmaSpecifierStruct::is_empty(&self) -> bool
+pub fn slang_solidity_v2_ast::ast::VersionPragmaSpecifierStruct::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::VersionPragmaComponent> + use<'_>
+pub fn slang_solidity_v2_ast::ast::VersionPragmaSpecifierStruct::len(&self) -> usize
+impl core::clone::Clone for slang_solidity_v2_ast::ast::VersionPragmaSpecifierStruct
+pub fn slang_solidity_v2_ast::ast::VersionPragmaSpecifierStruct::clone(&self) -> slang_solidity_v2_ast::ast::VersionPragmaSpecifierStruct
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VersionPragmaSpecifierStruct
+pub fn slang_solidity_v2_ast::ast::VersionPragmaSpecifierStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::VersionPragmaStruct
 impl slang_solidity_v2_ast::ast::VersionPragmaStruct
 pub fn slang_solidity_v2_ast::ast::VersionPragmaStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::ast::VersionPragmaStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::VersionPragmaStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub fn slang_solidity_v2_ast::ast::VersionPragmaStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::ast::VersionPragmaStruct::sets(&self) -> slang_solidity_v2_ast::ast::VersionExpressionSets
+pub fn slang_solidity_v2_ast::ast::VersionPragmaStruct::sets(&self) -> slang_solidity_v2_ast::ast::VersionPragmaExpressionSets
 impl core::clone::Clone for slang_solidity_v2_ast::ast::VersionPragmaStruct
 pub fn slang_solidity_v2_ast::ast::VersionPragmaStruct::clone(&self) -> slang_solidity_v2_ast::ast::VersionPragmaStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VersionPragmaStruct
 pub fn slang_solidity_v2_ast::ast::VersionPragmaStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::VersionRangeStruct
-impl slang_solidity_v2_ast::ast::VersionRangeStruct
-pub fn slang_solidity_v2_ast::ast::VersionRangeStruct::end(&self) -> slang_solidity_v2_ast::ast::VersionLiteral
-pub fn slang_solidity_v2_ast::ast::VersionRangeStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
-pub fn slang_solidity_v2_ast::ast::VersionRangeStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
-pub fn slang_solidity_v2_ast::ast::VersionRangeStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::VersionRangeStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::ast::VersionRangeStruct::start(&self) -> slang_solidity_v2_ast::ast::VersionLiteral
-impl core::clone::Clone for slang_solidity_v2_ast::ast::VersionRangeStruct
-pub fn slang_solidity_v2_ast::ast::VersionRangeStruct::clone(&self) -> slang_solidity_v2_ast::ast::VersionRangeStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VersionRangeStruct
-pub fn slang_solidity_v2_ast::ast::VersionRangeStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::VersionSpecifierStruct
-impl slang_solidity_v2_ast::ast::VersionSpecifierStruct
-pub fn slang_solidity_v2_ast::ast::VersionSpecifierStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
-pub fn slang_solidity_v2_ast::ast::VersionSpecifierStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
-pub fn slang_solidity_v2_ast::ast::VersionSpecifierStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::VersionSpecifierStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::ast::VersionSpecifierStruct::unparse(&self) -> &str
-impl core::clone::Clone for slang_solidity_v2_ast::ast::VersionSpecifierStruct
-pub fn slang_solidity_v2_ast::ast::VersionSpecifierStruct::clone(&self) -> slang_solidity_v2_ast::ast::VersionSpecifierStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VersionSpecifierStruct
-pub fn slang_solidity_v2_ast::ast::VersionSpecifierStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub struct slang_solidity_v2_ast::ast::VersionTermStruct
-impl slang_solidity_v2_ast::ast::VersionTermStruct
-pub fn slang_solidity_v2_ast::ast::VersionTermStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
-pub fn slang_solidity_v2_ast::ast::VersionTermStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
-pub fn slang_solidity_v2_ast::ast::VersionTermStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::VersionTermStruct::literal(&self) -> slang_solidity_v2_ast::ast::VersionLiteral
-pub fn slang_solidity_v2_ast::ast::VersionTermStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
-pub fn slang_solidity_v2_ast::ast::VersionTermStruct::operator(&self) -> core::option::Option<slang_solidity_v2_ast::ast::VersionOperator>
-impl core::clone::Clone for slang_solidity_v2_ast::ast::VersionTermStruct
-pub fn slang_solidity_v2_ast::ast::VersionTermStruct::clone(&self) -> slang_solidity_v2_ast::ast::VersionTermStruct
-impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VersionTermStruct
-pub fn slang_solidity_v2_ast::ast::VersionTermStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::VoidType
 impl core::clone::Clone for slang_solidity_v2_ast::ast::VoidType
 pub fn slang_solidity_v2_ast::ast::VoidType::clone(&self) -> slang_solidity_v2_ast::ast::VoidType
@@ -3889,8 +3776,7 @@ pub fn slang_solidity_v2_ast::ast::create_using_directive(&slang_solidity_v2_ir:
 pub fn slang_solidity_v2_ast::ast::create_variable_declaration(&slang_solidity_v2_ir::ir::nodes::VariableDeclaration, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::VariableDeclaration
 pub fn slang_solidity_v2_ast::ast::create_variable_declaration_statement(&slang_solidity_v2_ir::ir::nodes::VariableDeclarationStatement, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::VariableDeclarationStatement
 pub fn slang_solidity_v2_ast::ast::create_version_pragma(&slang_solidity_v2_ir::ir::nodes::VersionPragma, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::VersionPragma
-pub fn slang_solidity_v2_ast::ast::create_version_range(&slang_solidity_v2_ir::ir::nodes::VersionRange, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::VersionRange
-pub fn slang_solidity_v2_ast::ast::create_version_term(&slang_solidity_v2_ir::ir::nodes::VersionTerm, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::VersionTerm
+pub fn slang_solidity_v2_ast::ast::create_version_pragma_comparator(&slang_solidity_v2_ir::ir::nodes::VersionPragmaComparator, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::VersionPragmaComparator
 pub fn slang_solidity_v2_ast::ast::create_while_statement(&slang_solidity_v2_ir::ir::nodes::WhileStatement, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::WhileStatement
 pub fn slang_solidity_v2_ast::ast::create_yul_block(&slang_solidity_v2_ir::ir::nodes::YulBlock, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulBlock
 pub fn slang_solidity_v2_ast::ast::create_yul_break_statement(&slang_solidity_v2_ir::ir::nodes::YulBreakStatement, &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulBreakStatement
@@ -4024,21 +3910,13 @@ pub type slang_solidity_v2_ast::ast::PlusEqual = slang_solidity_v2_ast::ast::Plu
 pub type slang_solidity_v2_ast::ast::PlusPlus = slang_solidity_v2_ast::ast::PlusPlusStruct
 pub type slang_solidity_v2_ast::ast::PositionalArguments = slang_solidity_v2_ast::ast::PositionalArgumentsStruct
 pub type slang_solidity_v2_ast::ast::PostfixExpression = slang_solidity_v2_ast::ast::PostfixExpressionStruct
-pub type slang_solidity_v2_ast::ast::PragmaCaret = slang_solidity_v2_ast::ast::PragmaCaretStruct
 pub type slang_solidity_v2_ast::ast::PragmaDirective = slang_solidity_v2_ast::ast::PragmaDirectiveStruct
-pub type slang_solidity_v2_ast::ast::PragmaEqual = slang_solidity_v2_ast::ast::PragmaEqualStruct
-pub type slang_solidity_v2_ast::ast::PragmaGreaterThan = slang_solidity_v2_ast::ast::PragmaGreaterThanStruct
-pub type slang_solidity_v2_ast::ast::PragmaGreaterThanEqual = slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct
-pub type slang_solidity_v2_ast::ast::PragmaLessThan = slang_solidity_v2_ast::ast::PragmaLessThanStruct
-pub type slang_solidity_v2_ast::ast::PragmaLessThanEqual = slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct
-pub type slang_solidity_v2_ast::ast::PragmaTilde = slang_solidity_v2_ast::ast::PragmaTildeStruct
 pub type slang_solidity_v2_ast::ast::PrefixExpression = slang_solidity_v2_ast::ast::PrefixExpressionStruct
 pub type slang_solidity_v2_ast::ast::ReturnStatement = slang_solidity_v2_ast::ast::ReturnStatementStruct
 pub type slang_solidity_v2_ast::ast::RevertStatement = slang_solidity_v2_ast::ast::RevertStatementStruct
 pub type slang_solidity_v2_ast::ast::SecondsKeyword = slang_solidity_v2_ast::ast::SecondsKeywordStruct
 pub type slang_solidity_v2_ast::ast::Semicolon = slang_solidity_v2_ast::ast::SemicolonStruct
 pub type slang_solidity_v2_ast::ast::ShiftExpression = slang_solidity_v2_ast::ast::ShiftExpressionStruct
-pub type slang_solidity_v2_ast::ast::SimpleVersionLiteral = slang_solidity_v2_ast::ast::SimpleVersionLiteralStruct
 pub type slang_solidity_v2_ast::ast::SingleTypedDeclaration = slang_solidity_v2_ast::ast::SingleTypedDeclarationStruct
 pub type slang_solidity_v2_ast::ast::Slash = slang_solidity_v2_ast::ast::SlashStruct
 pub type slang_solidity_v2_ast::ast::SlashEqual = slang_solidity_v2_ast::ast::SlashEqualStruct
@@ -4075,12 +3953,11 @@ pub type slang_solidity_v2_ast::ast::UsingDeconstructionSymbols = slang_solidity
 pub type slang_solidity_v2_ast::ast::UsingDirective = slang_solidity_v2_ast::ast::UsingDirectiveStruct
 pub type slang_solidity_v2_ast::ast::VariableDeclaration = slang_solidity_v2_ast::ast::VariableDeclarationStruct
 pub type slang_solidity_v2_ast::ast::VariableDeclarationStatement = slang_solidity_v2_ast::ast::VariableDeclarationStatementStruct
-pub type slang_solidity_v2_ast::ast::VersionExpressionSet = slang_solidity_v2_ast::ast::VersionExpressionSetStruct
-pub type slang_solidity_v2_ast::ast::VersionExpressionSets = slang_solidity_v2_ast::ast::VersionExpressionSetsStruct
 pub type slang_solidity_v2_ast::ast::VersionPragma = slang_solidity_v2_ast::ast::VersionPragmaStruct
-pub type slang_solidity_v2_ast::ast::VersionRange = slang_solidity_v2_ast::ast::VersionRangeStruct
-pub type slang_solidity_v2_ast::ast::VersionSpecifier = slang_solidity_v2_ast::ast::VersionSpecifierStruct
-pub type slang_solidity_v2_ast::ast::VersionTerm = slang_solidity_v2_ast::ast::VersionTermStruct
+pub type slang_solidity_v2_ast::ast::VersionPragmaComparator = slang_solidity_v2_ast::ast::VersionPragmaComparatorStruct
+pub type slang_solidity_v2_ast::ast::VersionPragmaExpressionSet = slang_solidity_v2_ast::ast::VersionPragmaExpressionSetStruct
+pub type slang_solidity_v2_ast::ast::VersionPragmaExpressionSets = slang_solidity_v2_ast::ast::VersionPragmaExpressionSetsStruct
+pub type slang_solidity_v2_ast::ast::VersionPragmaSpecifier = slang_solidity_v2_ast::ast::VersionPragmaSpecifierStruct
 pub type slang_solidity_v2_ast::ast::WeeksKeyword = slang_solidity_v2_ast::ast::WeeksKeywordStruct
 pub type slang_solidity_v2_ast::ast::WeiKeyword = slang_solidity_v2_ast::ast::WeiKeywordStruct
 pub type slang_solidity_v2_ast::ast::WhileStatement = slang_solidity_v2_ast::ast::WhileStatementStruct

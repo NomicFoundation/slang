@@ -1065,28 +1065,15 @@ impl Serialize for VersionPragmaStruct {
     }
 }
 
-impl Serialize for VersionRangeStruct {
+impl Serialize for VersionPragmaComparatorStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut map = serializer.serialize_map(Some(6))?;
         map.serialize_entry("id", &self.node_id())?;
-        map.serialize_entry("type", "VersionRange")?;
-        map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
-        map.serialize_entry("file", self.get_file_id())?;
-        map.serialize_entry("start", &self.start())?;
-        map.serialize_entry("end", &self.end())?;
-        map.end()
-    }
-}
-
-impl Serialize for VersionTermStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(6))?;
-        map.serialize_entry("id", &self.node_id())?;
-        map.serialize_entry("type", "VersionTerm")?;
+        map.serialize_entry("type", "VersionPragmaComparator")?;
         map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
         map.serialize_entry("file", self.get_file_id())?;
         map.serialize_entry("operator", &self.operator())?;
-        map.serialize_entry("literal", &self.literal())?;
+        map.serialize_entry("specifier", &self.specifier())?;
         map.end()
     }
 }
@@ -1843,34 +1830,67 @@ impl Serialize for VariableDeclarationTarget {
     }
 }
 
-impl Serialize for VersionExpression {
+impl Serialize for VersionPragmaComponent {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         match self {
-            VersionExpression::VersionRange(inner) => inner.serialize(serializer),
-            VersionExpression::VersionTerm(inner) => inner.serialize(serializer),
+            VersionPragmaComponent::Wildcard => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "VersionPragmaComponent::Wildcard")?;
+                map.end()
+            }
+            VersionPragmaComponent::Unrecognized => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "VersionPragmaComponent::Unrecognized")?;
+                map.end()
+            }
+            VersionPragmaComponent::Number(inner) => {
+                let mut map = serializer.serialize_map(Some(2))?;
+                map.serialize_entry("type", "VersionPragmaComponent::Number")?;
+                map.serialize_entry("value", inner)?;
+                map.end()
+            }
         }
     }
 }
 
-impl Serialize for VersionLiteral {
+impl Serialize for VersionPragmaOperator {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         match self {
-            VersionLiteral::SimpleVersionLiteral(inner) => inner.serialize(serializer),
-            VersionLiteral::StringLiteral(inner) => inner.serialize(serializer),
-        }
-    }
-}
-
-impl Serialize for VersionOperator {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        match self {
-            VersionOperator::PragmaCaret(inner) => inner.serialize(serializer),
-            VersionOperator::PragmaTilde(inner) => inner.serialize(serializer),
-            VersionOperator::PragmaEqual(inner) => inner.serialize(serializer),
-            VersionOperator::PragmaLessThan(inner) => inner.serialize(serializer),
-            VersionOperator::PragmaGreaterThan(inner) => inner.serialize(serializer),
-            VersionOperator::PragmaLessThanEqual(inner) => inner.serialize(serializer),
-            VersionOperator::PragmaGreaterThanEqual(inner) => inner.serialize(serializer),
+            VersionPragmaOperator::Caret => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "VersionPragmaOperator::Caret")?;
+                map.end()
+            }
+            VersionPragmaOperator::Tilde => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "VersionPragmaOperator::Tilde")?;
+                map.end()
+            }
+            VersionPragmaOperator::Equal => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "VersionPragmaOperator::Equal")?;
+                map.end()
+            }
+            VersionPragmaOperator::LessThan => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "VersionPragmaOperator::LessThan")?;
+                map.end()
+            }
+            VersionPragmaOperator::LessThanEqual => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "VersionPragmaOperator::LessThanEqual")?;
+                map.end()
+            }
+            VersionPragmaOperator::GreaterThan => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "VersionPragmaOperator::GreaterThan")?;
+                map.end()
+            }
+            VersionPragmaOperator::GreaterThanEqual => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "VersionPragmaOperator::GreaterThanEqual")?;
+                map.end()
+            }
         }
     }
 }
@@ -2090,16 +2110,6 @@ impl Serialize for PositionalArgumentsStruct {
     }
 }
 
-impl Serialize for SimpleVersionLiteralStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut seq = serializer.serialize_seq(Some(self.len()))?;
-        for item in self.iter() {
-            seq.serialize_element(&item)?;
-        }
-        seq.end()
-    }
-}
-
 impl Serialize for SourceUnitMembersStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut seq = serializer.serialize_seq(Some(self.len()))?;
@@ -2170,7 +2180,7 @@ impl Serialize for UsingDeconstructionSymbolsStruct {
     }
 }
 
-impl Serialize for VersionExpressionSetStruct {
+impl Serialize for VersionPragmaExpressionSetStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut seq = serializer.serialize_seq(Some(self.len()))?;
         for item in self.iter() {
@@ -2180,7 +2190,17 @@ impl Serialize for VersionExpressionSetStruct {
     }
 }
 
-impl Serialize for VersionExpressionSetsStruct {
+impl Serialize for VersionPragmaExpressionSetsStruct {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let mut seq = serializer.serialize_seq(Some(self.len()))?;
+        for item in self.iter() {
+            seq.serialize_element(&item)?;
+        }
+        seq.end()
+    }
+}
+
+impl Serialize for VersionPragmaSpecifierStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut seq = serializer.serialize_seq(Some(self.len()))?;
         for item in self.iter() {
@@ -2799,83 +2819,6 @@ impl Serialize for PlusPlusStruct {
     }
 }
 
-impl Serialize for PragmaCaretStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(4))?;
-        map.serialize_entry("id", &self.ir_node.id())?;
-        map.serialize_entry("type", "PragmaCaret")?;
-        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
-        map.serialize_entry("file", self.get_file_id())?;
-        map.end()
-    }
-}
-
-impl Serialize for PragmaEqualStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(4))?;
-        map.serialize_entry("id", &self.ir_node.id())?;
-        map.serialize_entry("type", "PragmaEqual")?;
-        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
-        map.serialize_entry("file", self.get_file_id())?;
-        map.end()
-    }
-}
-
-impl Serialize for PragmaGreaterThanStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(4))?;
-        map.serialize_entry("id", &self.ir_node.id())?;
-        map.serialize_entry("type", "PragmaGreaterThan")?;
-        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
-        map.serialize_entry("file", self.get_file_id())?;
-        map.end()
-    }
-}
-
-impl Serialize for PragmaGreaterThanEqualStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(4))?;
-        map.serialize_entry("id", &self.ir_node.id())?;
-        map.serialize_entry("type", "PragmaGreaterThanEqual")?;
-        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
-        map.serialize_entry("file", self.get_file_id())?;
-        map.end()
-    }
-}
-
-impl Serialize for PragmaLessThanStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(4))?;
-        map.serialize_entry("id", &self.ir_node.id())?;
-        map.serialize_entry("type", "PragmaLessThan")?;
-        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
-        map.serialize_entry("file", self.get_file_id())?;
-        map.end()
-    }
-}
-
-impl Serialize for PragmaLessThanEqualStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(4))?;
-        map.serialize_entry("id", &self.ir_node.id())?;
-        map.serialize_entry("type", "PragmaLessThanEqual")?;
-        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
-        map.serialize_entry("file", self.get_file_id())?;
-        map.end()
-    }
-}
-
-impl Serialize for PragmaTildeStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(4))?;
-        map.serialize_entry("id", &self.ir_node.id())?;
-        map.serialize_entry("type", "PragmaTilde")?;
-        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
-        map.serialize_entry("file", self.get_file_id())?;
-        map.end()
-    }
-}
-
 impl Serialize for SecondsKeywordStruct {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut map = serializer.serialize_map(Some(4))?;
@@ -3027,18 +2970,6 @@ impl Serialize for UnicodeStringLiteralStruct {
         let mut map = serializer.serialize_map(Some(5))?;
         map.serialize_entry("id", &self.ir_node.id())?;
         map.serialize_entry("type", "UnicodeStringLiteral")?;
-        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
-        map.serialize_entry("file", self.get_file_id())?;
-        map.serialize_entry("text", self.ir_node.unparse())?;
-        map.end()
-    }
-}
-
-impl Serialize for VersionSpecifierStruct {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut map = serializer.serialize_map(Some(5))?;
-        map.serialize_entry("id", &self.ir_node.id())?;
-        map.serialize_entry("type", "VersionSpecifier")?;
         map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
         map.serialize_entry("file", self.get_file_id())?;
         map.serialize_entry("text", self.ir_node.unparse())?;

@@ -903,7 +903,7 @@ impl TextEnd for VersionPragmaStruct {
     }
 }
 
-impl TextEnd for VersionRangeStruct {
+impl TextEnd for VersionPragmaRangeStruct {
     fn calculate_text_end(&self) -> Option<usize> {
         None.or_else(|| self.end.calculate_text_end())
             .or_else(|| self.minus.calculate_text_end())
@@ -911,9 +911,9 @@ impl TextEnd for VersionRangeStruct {
     }
 }
 
-impl TextEnd for VersionTermStruct {
+impl TextEnd for VersionPragmaTermStruct {
     fn calculate_text_end(&self) -> Option<usize> {
-        None.or_else(|| self.literal.calculate_text_end())
+        None.or_else(|| self.specifier.calculate_text_end())
             .or_else(|| self.operator.calculate_text_end())
     }
 }
@@ -1611,34 +1611,34 @@ impl TextEnd for VariableDeclarationTarget {
     }
 }
 
-impl TextEnd for VersionExpression {
+impl TextEnd for VersionPragmaExpression {
     fn calculate_text_end(&self) -> Option<usize> {
         match self {
-            VersionExpression::VersionRange(child) => child.calculate_text_end(),
-            VersionExpression::VersionTerm(child) => child.calculate_text_end(),
+            VersionPragmaExpression::VersionPragmaRange(child) => child.calculate_text_end(),
+            VersionPragmaExpression::VersionPragmaTerm(child) => child.calculate_text_end(),
         }
     }
 }
 
-impl TextEnd for VersionLiteral {
+impl TextEnd for VersionPragmaOperator {
     fn calculate_text_end(&self) -> Option<usize> {
         match self {
-            VersionLiteral::SimpleVersionLiteral(child) => child.calculate_text_end(),
-            VersionLiteral::PragmaStringLiteral(child) => child.calculate_text_end(),
+            VersionPragmaOperator::PragmaCaret(child) => child.calculate_text_end(),
+            VersionPragmaOperator::PragmaTilde(child) => child.calculate_text_end(),
+            VersionPragmaOperator::PragmaEqual(child) => child.calculate_text_end(),
+            VersionPragmaOperator::PragmaLessThan(child) => child.calculate_text_end(),
+            VersionPragmaOperator::PragmaGreaterThan(child) => child.calculate_text_end(),
+            VersionPragmaOperator::PragmaLessThanEqual(child) => child.calculate_text_end(),
+            VersionPragmaOperator::PragmaGreaterThanEqual(child) => child.calculate_text_end(),
         }
     }
 }
 
-impl TextEnd for VersionOperator {
+impl TextEnd for VersionPragmaSpecifier {
     fn calculate_text_end(&self) -> Option<usize> {
         match self {
-            VersionOperator::PragmaCaret(child) => child.calculate_text_end(),
-            VersionOperator::PragmaTilde(child) => child.calculate_text_end(),
-            VersionOperator::PragmaEqual(child) => child.calculate_text_end(),
-            VersionOperator::PragmaLessThan(child) => child.calculate_text_end(),
-            VersionOperator::PragmaGreaterThan(child) => child.calculate_text_end(),
-            VersionOperator::PragmaLessThanEqual(child) => child.calculate_text_end(),
-            VersionOperator::PragmaGreaterThanEqual(child) => child.calculate_text_end(),
+            VersionPragmaSpecifier::VersionPragmaComponents(child) => child.calculate_text_end(),
+            VersionPragmaSpecifier::PragmaStringLiteral(child) => child.calculate_text_end(),
         }
     }
 }
@@ -1918,15 +1918,6 @@ impl TextEnd for ReceiveFunctionAttributes {
     }
 }
 
-impl TextEnd for SimpleVersionLiteral {
-    fn calculate_text_end(&self) -> Option<usize> {
-        self.elements
-            .iter()
-            .rev()
-            .find_map(TextEnd::calculate_text_end)
-    }
-}
-
 impl TextEnd for SourceUnitMembers {
     fn calculate_text_end(&self) -> Option<usize> {
         self.elements
@@ -1999,7 +1990,7 @@ impl TextEnd for UsingDeconstructionSymbols {
     }
 }
 
-impl TextEnd for VersionExpressionSet {
+impl TextEnd for VersionPragmaComponents {
     fn calculate_text_end(&self) -> Option<usize> {
         self.elements
             .iter()
@@ -2008,7 +1999,16 @@ impl TextEnd for VersionExpressionSet {
     }
 }
 
-impl TextEnd for VersionExpressionSets {
+impl TextEnd for VersionPragmaExpressionSet {
+    fn calculate_text_end(&self) -> Option<usize> {
+        self.elements
+            .iter()
+            .rev()
+            .find_map(TextEnd::calculate_text_end)
+    }
+}
+
+impl TextEnd for VersionPragmaExpressionSets {
     fn calculate_text_end(&self) -> Option<usize> {
         self.elements
             .iter()
@@ -3163,7 +3163,7 @@ impl TextEnd for VarKeyword {
     }
 }
 
-impl TextEnd for VersionSpecifier {
+impl TextEnd for VersionPragmaComponent {
     fn calculate_text_end(&self) -> Option<usize> {
         Some(self.range.end)
     }

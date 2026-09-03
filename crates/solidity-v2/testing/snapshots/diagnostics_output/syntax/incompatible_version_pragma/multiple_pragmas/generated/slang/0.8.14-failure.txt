@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/incompatible-version-pragma] Error: This pragma is incompatible with the compilation language version '0.8.14'.
+   ╭─[input.sol:4:8]
+   │
+ 4 │ pragma solidity <0.8.10;
+   │        ────────┬───────  
+   │                ╰───────── Error occurred here.
+───╯

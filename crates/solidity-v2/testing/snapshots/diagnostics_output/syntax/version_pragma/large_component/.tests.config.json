@@ -1,0 +1,14 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "From",
+          "from": "0.8.0"
+        },
+        "reason": "solc holds a version component in an 'unsigned' and rejects the pragma outright once a number passes 2^32-1. Slang holds it in a 'usize' and has no such limit, so it compares '4294967296' like the number it is and every supported version is below it."
+      }
+    ]
+  }
+}

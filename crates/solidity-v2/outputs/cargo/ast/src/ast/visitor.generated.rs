@@ -409,15 +409,10 @@ pub trait Visitor {
     }
     fn leave_version_pragma(&mut self, _node: &VersionPragma) {}
 
-    fn enter_version_range(&mut self, _node: &VersionRange) -> bool {
+    fn enter_version_pragma_comparator(&mut self, _node: &VersionPragmaComparator) -> bool {
         true
     }
-    fn leave_version_range(&mut self, _node: &VersionRange) {}
-
-    fn enter_version_term(&mut self, _node: &VersionTerm) -> bool {
-        true
-    }
-    fn leave_version_term(&mut self, _node: &VersionTerm) {}
+    fn leave_version_pragma_comparator(&mut self, _node: &VersionPragmaComparator) {}
 
     fn enter_while_statement(&mut self, _node: &WhileStatement) -> bool {
         true
@@ -690,20 +685,15 @@ pub trait Visitor {
     }
     fn leave_variable_declaration_target(&mut self, _node: &VariableDeclarationTarget) {}
 
-    fn enter_version_expression(&mut self, _node: &VersionExpression) -> bool {
+    fn enter_version_pragma_component(&mut self, _node: &VersionPragmaComponent) -> bool {
         true
     }
-    fn leave_version_expression(&mut self, _node: &VersionExpression) {}
+    fn leave_version_pragma_component(&mut self, _node: &VersionPragmaComponent) {}
 
-    fn enter_version_literal(&mut self, _node: &VersionLiteral) -> bool {
+    fn enter_version_pragma_operator(&mut self, _node: &VersionPragmaOperator) -> bool {
         true
     }
-    fn leave_version_literal(&mut self, _node: &VersionLiteral) {}
-
-    fn enter_version_operator(&mut self, _node: &VersionOperator) -> bool {
-        true
-    }
-    fn leave_version_operator(&mut self, _node: &VersionOperator) {}
+    fn leave_version_pragma_operator(&mut self, _node: &VersionPragmaOperator) {}
 
     fn enter_yul_expression(&mut self, _node: &YulExpression) -> bool {
         true
@@ -811,11 +801,6 @@ pub trait Visitor {
     }
     fn leave_positional_arguments(&mut self, _items: &PositionalArguments) {}
 
-    fn enter_simple_version_literal(&mut self, _items: &SimpleVersionLiteral) -> bool {
-        true
-    }
-    fn leave_simple_version_literal(&mut self, _items: &SimpleVersionLiteral) {}
-
     fn enter_source_unit_members(&mut self, _items: &SourceUnitMembers) -> bool {
         true
     }
@@ -851,15 +836,23 @@ pub trait Visitor {
     }
     fn leave_using_deconstruction_symbols(&mut self, _items: &UsingDeconstructionSymbols) {}
 
-    fn enter_version_expression_set(&mut self, _items: &VersionExpressionSet) -> bool {
+    fn enter_version_pragma_expression_set(&mut self, _items: &VersionPragmaExpressionSet) -> bool {
         true
     }
-    fn leave_version_expression_set(&mut self, _items: &VersionExpressionSet) {}
+    fn leave_version_pragma_expression_set(&mut self, _items: &VersionPragmaExpressionSet) {}
 
-    fn enter_version_expression_sets(&mut self, _items: &VersionExpressionSets) -> bool {
+    fn enter_version_pragma_expression_sets(
+        &mut self,
+        _items: &VersionPragmaExpressionSets,
+    ) -> bool {
         true
     }
-    fn leave_version_expression_sets(&mut self, _items: &VersionExpressionSets) {}
+    fn leave_version_pragma_expression_sets(&mut self, _items: &VersionPragmaExpressionSets) {}
+
+    fn enter_version_pragma_specifier(&mut self, _items: &VersionPragmaSpecifier) -> bool {
+        true
+    }
+    fn leave_version_pragma_specifier(&mut self, _items: &VersionPragmaSpecifier) {}
 
     fn enter_yul_arguments(&mut self, _items: &YulArguments) -> bool {
         true
@@ -917,8 +910,6 @@ pub trait Visitor {
     fn visit_uint_keyword(&mut self, _node: &UintKeyword) {}
 
     fn visit_unicode_string_literal(&mut self, _node: &UnicodeStringLiteral) {}
-
-    fn visit_version_specifier(&mut self, _node: &VersionSpecifier) {}
 }
 
 //
@@ -1730,28 +1721,20 @@ pub fn accept_version_pragma(node: &VersionPragma, visitor: &mut impl Visitor) {
     if !visitor.enter_version_pragma(node) {
         return;
     }
-    accept_version_expression_sets(&node.sets(), visitor);
+    accept_version_pragma_expression_sets(&node.sets(), visitor);
     visitor.leave_version_pragma(node);
 }
 
-pub fn accept_version_range(node: &VersionRange, visitor: &mut impl Visitor) {
-    if !visitor.enter_version_range(node) {
+pub fn accept_version_pragma_comparator(
+    node: &VersionPragmaComparator,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_version_pragma_comparator(node) {
         return;
     }
-    accept_version_literal(&node.start(), visitor);
-    accept_version_literal(&node.end(), visitor);
-    visitor.leave_version_range(node);
-}
-
-pub fn accept_version_term(node: &VersionTerm, visitor: &mut impl Visitor) {
-    if !visitor.enter_version_term(node) {
-        return;
-    }
-    if let Some(ref operator) = node.operator() {
-        accept_version_operator(operator, visitor);
-    }
-    accept_version_literal(&node.literal(), visitor);
-    visitor.leave_version_term(node);
+    accept_version_pragma_operator(&node.operator(), visitor);
+    accept_version_pragma_specifier(&node.specifier(), visitor);
+    visitor.leave_version_pragma_comparator(node);
 }
 
 pub fn accept_while_statement(node: &WhileStatement, visitor: &mut impl Visitor) {
@@ -2632,50 +2615,32 @@ pub fn accept_variable_declaration_target(
     visitor.leave_variable_declaration_target(node);
 }
 
-pub fn accept_version_expression(node: &VersionExpression, visitor: &mut impl Visitor) {
-    if !visitor.enter_version_expression(node) {
+pub fn accept_version_pragma_component(node: &VersionPragmaComponent, visitor: &mut impl Visitor) {
+    if !visitor.enter_version_pragma_component(node) {
         return;
     }
     match node {
-        VersionExpression::VersionRange(version_range) => {
-            accept_version_range(version_range, visitor);
-        }
-        VersionExpression::VersionTerm(version_term) => {
-            accept_version_term(version_term, visitor);
-        }
+        VersionPragmaComponent::Wildcard => {}
+        VersionPragmaComponent::Unrecognized => {}
+        VersionPragmaComponent::Number(_) => {}
     }
-    visitor.leave_version_expression(node);
+    visitor.leave_version_pragma_component(node);
 }
 
-pub fn accept_version_literal(node: &VersionLiteral, visitor: &mut impl Visitor) {
-    if !visitor.enter_version_literal(node) {
+pub fn accept_version_pragma_operator(node: &VersionPragmaOperator, visitor: &mut impl Visitor) {
+    if !visitor.enter_version_pragma_operator(node) {
         return;
     }
     match node {
-        VersionLiteral::SimpleVersionLiteral(simple_version_literal) => {
-            accept_simple_version_literal(simple_version_literal, visitor);
-        }
-        VersionLiteral::StringLiteral(string_literal) => {
-            visitor.visit_string_literal(string_literal);
-        }
+        VersionPragmaOperator::Caret => {}
+        VersionPragmaOperator::Tilde => {}
+        VersionPragmaOperator::Equal => {}
+        VersionPragmaOperator::LessThan => {}
+        VersionPragmaOperator::LessThanEqual => {}
+        VersionPragmaOperator::GreaterThan => {}
+        VersionPragmaOperator::GreaterThanEqual => {}
     }
-    visitor.leave_version_literal(node);
-}
-
-pub fn accept_version_operator(node: &VersionOperator, visitor: &mut impl Visitor) {
-    if !visitor.enter_version_operator(node) {
-        return;
-    }
-    match node {
-        VersionOperator::PragmaCaret(_) => {}
-        VersionOperator::PragmaTilde(_) => {}
-        VersionOperator::PragmaEqual(_) => {}
-        VersionOperator::PragmaLessThan(_) => {}
-        VersionOperator::PragmaGreaterThan(_) => {}
-        VersionOperator::PragmaLessThanEqual(_) => {}
-        VersionOperator::PragmaGreaterThanEqual(_) => {}
-    }
-    visitor.leave_version_operator(node);
+    visitor.leave_version_pragma_operator(node);
 }
 
 pub fn accept_yul_expression(node: &YulExpression, visitor: &mut impl Visitor) {
@@ -2959,17 +2924,6 @@ fn accept_positional_arguments(items: &PositionalArguments, visitor: &mut impl V
 }
 
 #[inline]
-fn accept_simple_version_literal(items: &SimpleVersionLiteral, visitor: &mut impl Visitor) {
-    if !visitor.enter_simple_version_literal(items) {
-        return;
-    }
-    for item in items.iter() {
-        visitor.visit_version_specifier(&item);
-    }
-    visitor.leave_simple_version_literal(items);
-}
-
-#[inline]
 fn accept_source_unit_members(items: &SourceUnitMembers, visitor: &mut impl Visitor) {
     if !visitor.enter_source_unit_members(items) {
         return;
@@ -3050,25 +3004,42 @@ fn accept_using_deconstruction_symbols(
 }
 
 #[inline]
-fn accept_version_expression_set(items: &VersionExpressionSet, visitor: &mut impl Visitor) {
-    if !visitor.enter_version_expression_set(items) {
+fn accept_version_pragma_expression_set(
+    items: &VersionPragmaExpressionSet,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_version_pragma_expression_set(items) {
         return;
     }
     for item in items.iter() {
-        accept_version_expression(&item, visitor);
+        accept_version_pragma_comparator(&item, visitor);
     }
-    visitor.leave_version_expression_set(items);
+    visitor.leave_version_pragma_expression_set(items);
 }
 
 #[inline]
-fn accept_version_expression_sets(items: &VersionExpressionSets, visitor: &mut impl Visitor) {
-    if !visitor.enter_version_expression_sets(items) {
+fn accept_version_pragma_expression_sets(
+    items: &VersionPragmaExpressionSets,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_version_pragma_expression_sets(items) {
         return;
     }
     for item in items.iter() {
-        accept_version_expression_set(&item, visitor);
+        accept_version_pragma_expression_set(&item, visitor);
     }
-    visitor.leave_version_expression_sets(items);
+    visitor.leave_version_pragma_expression_sets(items);
+}
+
+#[inline]
+fn accept_version_pragma_specifier(items: &VersionPragmaSpecifier, visitor: &mut impl Visitor) {
+    if !visitor.enter_version_pragma_specifier(items) {
+        return;
+    }
+    for item in items.iter() {
+        accept_version_pragma_component(&item, visitor);
+    }
+    visitor.leave_version_pragma_specifier(items);
 }
 
 #[inline]

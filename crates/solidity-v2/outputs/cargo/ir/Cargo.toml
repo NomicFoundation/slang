@@ -23,6 +23,7 @@ default = []
 __private_testing_utils = []
 
 [dependencies]
+semver = { workspace = true }
 slang_solidity_v2_common = { workspace = true }
 slang_solidity_v2_cst = { workspace = true }
 

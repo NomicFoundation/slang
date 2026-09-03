@@ -52,8 +52,10 @@ impl<T: TextRange> TextRange for Arc<[T]> {
         fn calculate_text_range(&self) -> Option<Range<usize>> {
             match self {
                 {% for variant in choice.variants -%}
-                    {% if variant.is_external %}
+                    {% if variant.is_unit %}
                     {{ parent_type }}::{{ variant.name }} => None,
+                    {% elif variant.is_external %}
+                    {{ parent_type }}::{{ variant.name }}(_) => None,
                     {% else %}
                     {{ parent_type }}::{{ variant.name }}(inner) => inner.calculate_text_range(),
                     {% endif %}

@@ -3593,23 +3593,27 @@ pub fn render_version_pragma(source: &str, node: &VersionPragma, depth: usize) -
     {
         let sets = &node.sets;
 
-        let rendered = render_version_expression_sets(source, sets, depth + 1);
+        let rendered = render_version_pragma_expression_sets(source, sets, depth + 1);
 
-        acc.add("sets", "VersionExpressionSets", rendered);
+        acc.add("sets", "VersionPragmaExpressionSets", rendered);
     }
 
     acc.finish()
 }
 
-pub fn render_version_range(source: &str, node: &VersionRange, depth: usize) -> RenderedOutput {
+pub fn render_version_pragma_range(
+    source: &str,
+    node: &VersionPragmaRange,
+    depth: usize,
+) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     {
         let start = &node.start;
 
-        let rendered = render_version_literal(source, start, depth + 1);
+        let rendered = render_version_pragma_specifier(source, start, depth + 1);
 
-        acc.add("start", "VersionLiteral", rendered);
+        acc.add("start", "VersionPragmaSpecifier", rendered);
     }
 
     {
@@ -3623,29 +3627,33 @@ pub fn render_version_range(source: &str, node: &VersionRange, depth: usize) -> 
     {
         let end = &node.end;
 
-        let rendered = render_version_literal(source, end, depth + 1);
+        let rendered = render_version_pragma_specifier(source, end, depth + 1);
 
-        acc.add("end", "VersionLiteral", rendered);
+        acc.add("end", "VersionPragmaSpecifier", rendered);
     }
 
     acc.finish()
 }
 
-pub fn render_version_term(source: &str, node: &VersionTerm, depth: usize) -> RenderedOutput {
+pub fn render_version_pragma_term(
+    source: &str,
+    node: &VersionPragmaTerm,
+    depth: usize,
+) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     if let Some(ref operator) = node.operator {
-        let rendered = render_version_operator(source, operator, depth + 1);
+        let rendered = render_version_pragma_operator(source, operator, depth + 1);
 
-        acc.add("operator", "VersionOperator", rendered);
+        acc.add("operator", "VersionPragmaOperator", rendered);
     }
 
     {
-        let literal = &node.literal;
+        let specifier = &node.specifier;
 
-        let rendered = render_version_literal(source, literal, depth + 1);
+        let rendered = render_version_pragma_specifier(source, specifier, depth + 1);
 
-        acc.add("literal", "VersionLiteral", rendered);
+        acc.add("specifier", "VersionPragmaSpecifier", rendered);
     }
 
     acc.finish()
@@ -7608,35 +7616,35 @@ pub fn render_variable_declaration_target(
     }
 }
 
-pub fn render_version_expression(
+pub fn render_version_pragma_expression(
     source: &str,
-    node: &VersionExpression,
+    node: &VersionPragmaExpression,
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        VersionExpression::VersionRange(element) => {
-            let (range, mut frags) = render_version_range(source, element, depth);
+        VersionPragmaExpression::VersionPragmaRange(element) => {
+            let (range, mut frags) = render_version_pragma_range(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
                     " \u{25ba} {}",
-                    format_label_kind("version_range", "VersionRange")
+                    format_label_kind("version_pragma_range", "VersionPragmaRange")
                 ),
             );
             (range, frags)
         }
 
-        VersionExpression::VersionTerm(element) => {
-            let (range, mut frags) = render_version_term(source, element, depth);
+        VersionPragmaExpression::VersionPragmaTerm(element) => {
+            let (range, mut frags) = render_version_pragma_term(source, element, depth);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
                     " \u{25ba} {}",
-                    format_label_kind("version_term", "VersionTerm")
+                    format_label_kind("version_pragma_term", "VersionPragmaTerm")
                 ),
             );
             (range, frags)
@@ -7644,45 +7652,13 @@ pub fn render_version_expression(
     }
 }
 
-pub fn render_version_literal(source: &str, node: &VersionLiteral, depth: usize) -> RenderedOutput {
-    match node {
-        VersionLiteral::SimpleVersionLiteral(element) => {
-            let (range, mut frags) = render_simple_version_literal(source, element, depth);
-
-            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
-            frags.insert(
-                0,
-                format!(
-                    " \u{25ba} {}",
-                    format_label_kind("simple_version_literal", "SimpleVersionLiteral")
-                ),
-            );
-            (range, frags)
-        }
-
-        VersionLiteral::PragmaStringLiteral(element) => {
-            let (range, mut frags) = render_terminal(source, &element.range);
-
-            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
-            frags.insert(
-                0,
-                format!(
-                    " \u{25ba} {}",
-                    format_label_kind("pragma_string_literal", "PragmaStringLiteral")
-                ),
-            );
-            (range, frags)
-        }
-    }
-}
-
-pub fn render_version_operator(
+pub fn render_version_pragma_operator(
     source: &str,
-    node: &VersionOperator,
+    node: &VersionPragmaOperator,
     depth: usize,
 ) -> RenderedOutput {
     match node {
-        VersionOperator::PragmaCaret(element) => {
+        VersionPragmaOperator::PragmaCaret(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7696,7 +7672,7 @@ pub fn render_version_operator(
             (range, frags)
         }
 
-        VersionOperator::PragmaTilde(element) => {
+        VersionPragmaOperator::PragmaTilde(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7710,7 +7686,7 @@ pub fn render_version_operator(
             (range, frags)
         }
 
-        VersionOperator::PragmaEqual(element) => {
+        VersionPragmaOperator::PragmaEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7724,7 +7700,7 @@ pub fn render_version_operator(
             (range, frags)
         }
 
-        VersionOperator::PragmaLessThan(element) => {
+        VersionPragmaOperator::PragmaLessThan(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7738,7 +7714,7 @@ pub fn render_version_operator(
             (range, frags)
         }
 
-        VersionOperator::PragmaGreaterThan(element) => {
+        VersionPragmaOperator::PragmaGreaterThan(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7752,7 +7728,7 @@ pub fn render_version_operator(
             (range, frags)
         }
 
-        VersionOperator::PragmaLessThanEqual(element) => {
+        VersionPragmaOperator::PragmaLessThanEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7766,7 +7742,7 @@ pub fn render_version_operator(
             (range, frags)
         }
 
-        VersionOperator::PragmaGreaterThanEqual(element) => {
+        VersionPragmaOperator::PragmaGreaterThanEqual(element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
             // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
@@ -7775,6 +7751,42 @@ pub fn render_version_operator(
                 format!(
                     " \u{25ba} {}",
                     format_label_kind("pragma_greater_than_equal", "PragmaGreaterThanEqual")
+                ),
+            );
+            (range, frags)
+        }
+    }
+}
+
+pub fn render_version_pragma_specifier(
+    source: &str,
+    node: &VersionPragmaSpecifier,
+    depth: usize,
+) -> RenderedOutput {
+    match node {
+        VersionPragmaSpecifier::VersionPragmaComponents(element) => {
+            let (range, mut frags) = render_version_pragma_components(source, element, depth);
+
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("version_pragma_components", "VersionPragmaComponents")
+                ),
+            );
+            (range, frags)
+        }
+
+        VersionPragmaSpecifier::PragmaStringLiteral(element) => {
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("pragma_string_literal", "PragmaStringLiteral")
                 ),
             );
             (range, frags)
@@ -8501,23 +8513,6 @@ pub fn render_receive_function_attributes(
     acc.finish()
 }
 
-pub fn render_simple_version_literal(
-    source: &str,
-    node: &SimpleVersionLiteral,
-    depth: usize,
-) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_terminal(source, &element.range);
-
-        acc.add("item", "VersionSpecifier", rendered);
-    }
-    acc.finish()
-}
-
 pub fn render_source_unit_members(
     source: &str,
     node: &SourceUnitMembers,
@@ -8638,9 +8633,9 @@ pub fn render_using_deconstruction_symbols(
     acc.finish()
 }
 
-pub fn render_version_expression_set(
+pub fn render_version_pragma_components(
     source: &str,
-    node: &VersionExpressionSet,
+    node: &VersionPragmaComponents,
     depth: usize,
 ) -> RenderedOutput {
     if node.elements.is_empty() {
@@ -8648,16 +8643,16 @@ pub fn render_version_expression_set(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        let rendered = render_version_expression(source, element, depth + 1);
+        let rendered = render_terminal(source, &element.range);
 
-        acc.add("item", "VersionExpression", rendered);
+        acc.add("item", "VersionPragmaComponent", rendered);
     }
     acc.finish()
 }
 
-pub fn render_version_expression_sets(
+pub fn render_version_pragma_expression_set(
     source: &str,
-    node: &VersionExpressionSets,
+    node: &VersionPragmaExpressionSet,
     depth: usize,
 ) -> RenderedOutput {
     if node.elements.is_empty() {
@@ -8665,9 +8660,26 @@ pub fn render_version_expression_sets(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        let rendered = render_version_expression_set(source, element, depth + 1);
+        let rendered = render_version_pragma_expression(source, element, depth + 1);
 
-        acc.add("item", "VersionExpressionSet", rendered);
+        acc.add("item", "VersionPragmaExpression", rendered);
+    }
+    acc.finish()
+}
+
+pub fn render_version_pragma_expression_sets(
+    source: &str,
+    node: &VersionPragmaExpressionSets,
+    depth: usize,
+) -> RenderedOutput {
+    if node.elements.is_empty() {
+        return (None, vec![": []\n".to_string()]);
+    }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        let rendered = render_version_pragma_expression_set(source, element, depth + 1);
+
+        acc.add("item", "VersionPragmaExpressionSet", rendered);
     }
     acc.finish()
 }

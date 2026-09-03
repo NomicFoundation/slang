@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 1684] Error: Invalid version pragma. Expected the start of a version number but instead found character 'b'. Version number is invalid or the pragma is not terminated with a semicolon.
+   ╭─[input.sol:4:1]
+   │
+ 4 │ pragma solidity "0.8.beta";
+   │ ─────────────┬─────────────  
+   │              ╰─────────────── Error occurred here.
+───╯

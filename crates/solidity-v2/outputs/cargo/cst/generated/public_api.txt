@@ -550,41 +550,41 @@ pub fn slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationTarget::
 impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationTarget
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationTarget
 pub fn slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationTarget::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-pub enum slang_solidity_v2_cst::structured_cst::nodes::VersionExpression
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionExpression::VersionRange(slang_solidity_v2_cst::structured_cst::nodes::VersionRange)
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionExpression::VersionTerm(slang_solidity_v2_cst::structured_cst::nodes::VersionTerm)
-impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionExpression
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionExpression::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::VersionExpression) -> bool
-impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::VersionExpression
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionExpression::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionExpression
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionExpression
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionExpression::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-pub enum slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral::PragmaStringLiteral(slang_solidity_v2_cst::structured_cst::nodes::PragmaStringLiteral)
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral::SimpleVersionLiteral(slang_solidity_v2_cst::structured_cst::nodes::SimpleVersionLiteral)
-impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral) -> bool
-impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-pub enum slang_solidity_v2_cst::structured_cst::nodes::VersionOperator
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionOperator::PragmaCaret(slang_solidity_v2_cst::structured_cst::nodes::PragmaCaret)
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionOperator::PragmaEqual(slang_solidity_v2_cst::structured_cst::nodes::PragmaEqual)
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionOperator::PragmaGreaterThan(slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThan)
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionOperator::PragmaGreaterThanEqual(slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThanEqual)
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionOperator::PragmaLessThan(slang_solidity_v2_cst::structured_cst::nodes::PragmaLessThan)
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionOperator::PragmaLessThanEqual(slang_solidity_v2_cst::structured_cst::nodes::PragmaLessThanEqual)
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionOperator::PragmaTilde(slang_solidity_v2_cst::structured_cst::nodes::PragmaTilde)
-impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionOperator
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionOperator::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::VersionOperator) -> bool
-impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::VersionOperator
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionOperator::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionOperator
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionOperator
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionOperator::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+pub enum slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression::VersionPragmaRange(slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRange)
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression::VersionPragmaTerm(slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTerm)
+impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression) -> bool
+impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+pub enum slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator::PragmaCaret(slang_solidity_v2_cst::structured_cst::nodes::PragmaCaret)
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator::PragmaEqual(slang_solidity_v2_cst::structured_cst::nodes::PragmaEqual)
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator::PragmaGreaterThan(slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThan)
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator::PragmaGreaterThanEqual(slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThanEqual)
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator::PragmaLessThan(slang_solidity_v2_cst::structured_cst::nodes::PragmaLessThan)
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator::PragmaLessThanEqual(slang_solidity_v2_cst::structured_cst::nodes::PragmaLessThanEqual)
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator::PragmaTilde(slang_solidity_v2_cst::structured_cst::nodes::PragmaTilde)
+impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator) -> bool
+impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+pub enum slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier::PragmaStringLiteral(slang_solidity_v2_cst::structured_cst::nodes::PragmaStringLiteral)
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier::VersionPragmaComponents(slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponents)
+impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier) -> bool
+impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub enum slang_solidity_v2_cst::structured_cst::nodes::YulExpression
 pub slang_solidity_v2_cst::structured_cst::nodes::YulExpression::YulFunctionCallExpression(slang_solidity_v2_cst::structured_cst::nodes::YulFunctionCallExpression)
 pub slang_solidity_v2_cst::structured_cst::nodes::YulExpression::YulLiteral(slang_solidity_v2_cst::structured_cst::nodes::YulLiteral)
@@ -3170,15 +3170,6 @@ pub fn slang_solidity_v2_cst::structured_cst::nodes::ShiftExpressionStruct::fmt(
 impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::ShiftExpressionStruct
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::ShiftExpressionStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::ShiftExpressionStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-pub struct slang_solidity_v2_cst::structured_cst::nodes::SimpleVersionLiteral
-pub slang_solidity_v2_cst::structured_cst::nodes::SimpleVersionLiteral::elements: alloc::vec::Vec<slang_solidity_v2_cst::structured_cst::nodes::VersionSpecifier>
-impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::SimpleVersionLiteral
-pub fn slang_solidity_v2_cst::structured_cst::nodes::SimpleVersionLiteral::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::SimpleVersionLiteral) -> bool
-impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::SimpleVersionLiteral
-pub fn slang_solidity_v2_cst::structured_cst::nodes::SimpleVersionLiteral::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::SimpleVersionLiteral
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::SimpleVersionLiteral
-pub fn slang_solidity_v2_cst::structured_cst::nodes::SimpleVersionLiteral::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_cst::structured_cst::nodes::SingleTypedDeclarationStruct
 pub slang_solidity_v2_cst::structured_cst::nodes::SingleTypedDeclarationStruct::declaration: slang_solidity_v2_cst::structured_cst::nodes::VariableDeclaration
 pub slang_solidity_v2_cst::structured_cst::nodes::SingleTypedDeclarationStruct::value: core::option::Option<slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationValue>
@@ -3715,26 +3706,55 @@ pub fn slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationValueStr
 impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationValueStruct
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationValueStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationValueStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-pub struct slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSet
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSet::elements: alloc::vec::Vec<slang_solidity_v2_cst::structured_cst::nodes::VersionExpression>
-impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSet
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSet::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSet) -> bool
-impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSet
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSet::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSet
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSet
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSet::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-pub struct slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSets
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSets::elements: alloc::vec::Vec<slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSet>
-impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSets
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSets::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSets) -> bool
-impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSets
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSets::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSets
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSets
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSets::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+pub struct slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponent
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponent::range: core::ops::range::Range<usize>
+impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponent
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponent::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponent) -> bool
+impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponent
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponent::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponent
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponent
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponent::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+pub struct slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponents
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponents::elements: alloc::vec::Vec<slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponent>
+impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponents
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponents::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponents) -> bool
+impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponents
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponents::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponents
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponents
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponents::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+pub struct slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSet
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSet::elements: alloc::vec::Vec<slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression>
+impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSet
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSet::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSet) -> bool
+impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSet
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSet::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSet
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSet
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSet::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+pub struct slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSets
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSets::elements: alloc::vec::Vec<slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSet>
+impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSets
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSets::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSets) -> bool
+impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSets
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSets::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSets
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSets
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSets::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+pub struct slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRangeStruct
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRangeStruct::end: slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRangeStruct::minus: slang_solidity_v2_cst::structured_cst::nodes::PragmaMinus
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRangeStruct::start: slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier
+impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRangeStruct
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRangeStruct::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRangeStruct) -> bool
+impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRangeStruct
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRangeStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRangeStruct
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRangeStruct
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRangeStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaStruct
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaStruct::sets: slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSets
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaStruct::sets: slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSets
 pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaStruct::solidity_keyword: slang_solidity_v2_cst::structured_cst::nodes::SolidityKeyword
 impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaStruct::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaStruct) -> bool
@@ -3743,36 +3763,16 @@ pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaStruct::fmt(&s
 impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaStruct
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-pub struct slang_solidity_v2_cst::structured_cst::nodes::VersionRangeStruct
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionRangeStruct::end: slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionRangeStruct::minus: slang_solidity_v2_cst::structured_cst::nodes::PragmaMinus
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionRangeStruct::start: slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral
-impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionRangeStruct
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionRangeStruct::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::VersionRangeStruct) -> bool
-impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::VersionRangeStruct
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionRangeStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionRangeStruct
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionRangeStruct
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionRangeStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-pub struct slang_solidity_v2_cst::structured_cst::nodes::VersionSpecifier
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionSpecifier::range: core::ops::range::Range<usize>
-impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionSpecifier
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionSpecifier::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::VersionSpecifier) -> bool
-impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::VersionSpecifier
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionSpecifier::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionSpecifier
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionSpecifier
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionSpecifier::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-pub struct slang_solidity_v2_cst::structured_cst::nodes::VersionTermStruct
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionTermStruct::literal: slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral
-pub slang_solidity_v2_cst::structured_cst::nodes::VersionTermStruct::operator: core::option::Option<slang_solidity_v2_cst::structured_cst::nodes::VersionOperator>
-impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionTermStruct
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionTermStruct::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::VersionTermStruct) -> bool
-impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::VersionTermStruct
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionTermStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionTermStruct
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionTermStruct
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionTermStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+pub struct slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTermStruct
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTermStruct::operator: core::option::Option<slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator>
+pub slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTermStruct::specifier: slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier
+impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTermStruct
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTermStruct::eq(&self, &slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTermStruct) -> bool
+impl core::fmt::Debug for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTermStruct
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTermStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTermStruct
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTermStruct
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTermStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_cst::structured_cst::nodes::ViewKeyword
 pub slang_solidity_v2_cst::structured_cst::nodes::ViewKeyword::range: core::ops::range::Range<usize>
 impl core::cmp::PartialEq for slang_solidity_v2_cst::structured_cst::nodes::ViewKeyword
@@ -4766,7 +4766,6 @@ pub fn slang_solidity_v2_cst::structured_cst::nodes::new_sealed_keyword(core::op
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_seconds_keyword(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::SecondsKeyword
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_semicolon(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::Semicolon
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_shift_expression(slang_solidity_v2_cst::structured_cst::nodes::Expression, slang_solidity_v2_cst::structured_cst::nodes::Expression_ShiftExpression_Operator, slang_solidity_v2_cst::structured_cst::nodes::Expression) -> slang_solidity_v2_cst::structured_cst::nodes::ShiftExpression
-pub fn slang_solidity_v2_cst::structured_cst::nodes::new_simple_version_literal(alloc::vec::Vec<slang_solidity_v2_cst::structured_cst::nodes::VersionSpecifier>) -> slang_solidity_v2_cst::structured_cst::nodes::SimpleVersionLiteral
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_single_typed_declaration(slang_solidity_v2_cst::structured_cst::nodes::VariableDeclaration, core::option::Option<slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationValue>) -> slang_solidity_v2_cst::structured_cst::nodes::SingleTypedDeclaration
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_size_of_keyword(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::SizeOfKeyword
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_slash(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::Slash
@@ -4890,23 +4889,24 @@ pub fn slang_solidity_v2_cst::structured_cst::nodes::new_variable_declaration_st
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_variable_declaration_target_multi_typed_declaration(slang_solidity_v2_cst::structured_cst::nodes::MultiTypedDeclaration) -> slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationTarget
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_variable_declaration_target_single_typed_declaration(slang_solidity_v2_cst::structured_cst::nodes::SingleTypedDeclaration) -> slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationTarget
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_variable_declaration_value(slang_solidity_v2_cst::structured_cst::nodes::Equal, slang_solidity_v2_cst::structured_cst::nodes::Expression) -> slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationValue
-pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_expression_set(alloc::vec::Vec<slang_solidity_v2_cst::structured_cst::nodes::VersionExpression>) -> slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSet
-pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_expression_sets(alloc::vec::Vec<slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSet>) -> slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSets
-pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_expression_version_range(slang_solidity_v2_cst::structured_cst::nodes::VersionRange) -> slang_solidity_v2_cst::structured_cst::nodes::VersionExpression
-pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_expression_version_term(slang_solidity_v2_cst::structured_cst::nodes::VersionTerm) -> slang_solidity_v2_cst::structured_cst::nodes::VersionExpression
-pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_literal_pragma_string_literal(slang_solidity_v2_cst::structured_cst::nodes::PragmaStringLiteral) -> slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral
-pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_literal_simple_version_literal(slang_solidity_v2_cst::structured_cst::nodes::SimpleVersionLiteral) -> slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral
-pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_operator_pragma_caret(slang_solidity_v2_cst::structured_cst::nodes::PragmaCaret) -> slang_solidity_v2_cst::structured_cst::nodes::VersionOperator
-pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_operator_pragma_equal(slang_solidity_v2_cst::structured_cst::nodes::PragmaEqual) -> slang_solidity_v2_cst::structured_cst::nodes::VersionOperator
-pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_operator_pragma_greater_than(slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThan) -> slang_solidity_v2_cst::structured_cst::nodes::VersionOperator
-pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_operator_pragma_greater_than_equal(slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThanEqual) -> slang_solidity_v2_cst::structured_cst::nodes::VersionOperator
-pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_operator_pragma_less_than(slang_solidity_v2_cst::structured_cst::nodes::PragmaLessThan) -> slang_solidity_v2_cst::structured_cst::nodes::VersionOperator
-pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_operator_pragma_less_than_equal(slang_solidity_v2_cst::structured_cst::nodes::PragmaLessThanEqual) -> slang_solidity_v2_cst::structured_cst::nodes::VersionOperator
-pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_operator_pragma_tilde(slang_solidity_v2_cst::structured_cst::nodes::PragmaTilde) -> slang_solidity_v2_cst::structured_cst::nodes::VersionOperator
-pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma(slang_solidity_v2_cst::structured_cst::nodes::SolidityKeyword, slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSets) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragma
-pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_range(slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral, slang_solidity_v2_cst::structured_cst::nodes::PragmaMinus, slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral) -> slang_solidity_v2_cst::structured_cst::nodes::VersionRange
-pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_specifier(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::VersionSpecifier
-pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_term(core::option::Option<slang_solidity_v2_cst::structured_cst::nodes::VersionOperator>, slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral) -> slang_solidity_v2_cst::structured_cst::nodes::VersionTerm
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma(slang_solidity_v2_cst::structured_cst::nodes::SolidityKeyword, slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSets) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragma
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma_component(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponent
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma_components(alloc::vec::Vec<slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponent>) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponents
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma_expression_set(alloc::vec::Vec<slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression>) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSet
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma_expression_sets(alloc::vec::Vec<slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSet>) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSets
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma_expression_version_pragma_range(slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRange) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma_expression_version_pragma_term(slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTerm) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma_operator_pragma_caret(slang_solidity_v2_cst::structured_cst::nodes::PragmaCaret) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma_operator_pragma_equal(slang_solidity_v2_cst::structured_cst::nodes::PragmaEqual) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma_operator_pragma_greater_than(slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThan) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma_operator_pragma_greater_than_equal(slang_solidity_v2_cst::structured_cst::nodes::PragmaGreaterThanEqual) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma_operator_pragma_less_than(slang_solidity_v2_cst::structured_cst::nodes::PragmaLessThan) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma_operator_pragma_less_than_equal(slang_solidity_v2_cst::structured_cst::nodes::PragmaLessThanEqual) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma_operator_pragma_tilde(slang_solidity_v2_cst::structured_cst::nodes::PragmaTilde) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma_range(slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier, slang_solidity_v2_cst::structured_cst::nodes::PragmaMinus, slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRange
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma_specifier_pragma_string_literal(slang_solidity_v2_cst::structured_cst::nodes::PragmaStringLiteral) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma_specifier_version_pragma_components(slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponents) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier
+pub fn slang_solidity_v2_cst::structured_cst::nodes::new_version_pragma_term(core::option::Option<slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator>, slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier) -> slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTerm
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_view_keyword(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::ViewKeyword
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_virtual_keyword(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::VirtualKeyword
 pub fn slang_solidity_v2_cst::structured_cst::nodes::new_weeks_keyword(core::ops::range::Range<usize>, &str) -> slang_solidity_v2_cst::structured_cst::nodes::WeeksKeyword
@@ -5093,8 +5093,8 @@ pub type slang_solidity_v2_cst::structured_cst::nodes::VariableDeclaration = all
 pub type slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationStatement = alloc::boxed::Box<slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationStatementStruct>
 pub type slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationValue = alloc::boxed::Box<slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationValueStruct>
 pub type slang_solidity_v2_cst::structured_cst::nodes::VersionPragma = alloc::boxed::Box<slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaStruct>
-pub type slang_solidity_v2_cst::structured_cst::nodes::VersionRange = alloc::boxed::Box<slang_solidity_v2_cst::structured_cst::nodes::VersionRangeStruct>
-pub type slang_solidity_v2_cst::structured_cst::nodes::VersionTerm = alloc::boxed::Box<slang_solidity_v2_cst::structured_cst::nodes::VersionTermStruct>
+pub type slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRange = alloc::boxed::Box<slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRangeStruct>
+pub type slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTerm = alloc::boxed::Box<slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTermStruct>
 pub type slang_solidity_v2_cst::structured_cst::nodes::WhileStatement = alloc::boxed::Box<slang_solidity_v2_cst::structured_cst::nodes::WhileStatementStruct>
 pub type slang_solidity_v2_cst::structured_cst::nodes::YulBlock = alloc::boxed::Box<slang_solidity_v2_cst::structured_cst::nodes::YulBlockStruct>
 pub type slang_solidity_v2_cst::structured_cst::nodes::YulBreakStatement = alloc::boxed::Box<slang_solidity_v2_cst::structured_cst::nodes::YulBreakStatementStruct>
@@ -5696,8 +5696,6 @@ impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst:
 pub fn slang_solidity_v2_cst::structured_cst::nodes::Semicolon::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::ShiftExpressionStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::ShiftExpressionStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::SimpleVersionLiteral
-pub fn slang_solidity_v2_cst::structured_cst::nodes::SimpleVersionLiteral::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::SingleTypedDeclarationStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::SingleTypedDeclarationStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::SizeOfKeyword
@@ -5828,24 +5826,26 @@ impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst:
 pub fn slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationTarget::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationValueStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationValueStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionExpression
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionExpression::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSet
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSet::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSets
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSets::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionOperator
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionOperator::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponent
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponent::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponents
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponents::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSet
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSet::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSets
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSets::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRangeStruct
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRangeStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionRangeStruct
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionRangeStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionSpecifier
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionSpecifier::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionTermStruct
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionTermStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTermStruct
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTermStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::ViewKeyword
 pub fn slang_solidity_v2_cst::structured_cst::nodes::ViewKeyword::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VirtualKeyword
@@ -6560,8 +6560,6 @@ impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst:
 pub fn slang_solidity_v2_cst::structured_cst::nodes::Semicolon::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::ShiftExpressionStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::ShiftExpressionStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::SimpleVersionLiteral
-pub fn slang_solidity_v2_cst::structured_cst::nodes::SimpleVersionLiteral::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::SingleTypedDeclarationStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::SingleTypedDeclarationStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::SizeOfKeyword
@@ -6692,24 +6690,26 @@ impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst:
 pub fn slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationTarget::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationValueStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::VariableDeclarationValueStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionExpression
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionExpression::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSet
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSet::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSets
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionExpressionSets::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionLiteral::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionOperator
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionOperator::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponent
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponent::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponents
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaComponents::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpression::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSet
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSet::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSets
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaExpressionSets::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaOperator::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRangeStruct
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaRangeStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaSpecifier::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaStruct
 pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionRangeStruct
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionRangeStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionSpecifier
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionSpecifier::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
-impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionTermStruct
-pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionTermStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
+impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTermStruct
+pub fn slang_solidity_v2_cst::structured_cst::nodes::VersionPragmaTermStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::ViewKeyword
 pub fn slang_solidity_v2_cst::structured_cst::nodes::ViewKeyword::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 impl slang_solidity_v2_cst::structured_cst::TextRange for slang_solidity_v2_cst::structured_cst::nodes::VirtualKeyword

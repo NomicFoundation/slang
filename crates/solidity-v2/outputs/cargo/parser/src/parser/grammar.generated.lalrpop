@@ -67,47 +67,47 @@ Repeated<T>: Vec<T> = {
         
     };
     VersionPragma: VersionPragma = {
-        <solidity_keyword: SolidityKeyword>  <sets: VersionExpressionSets>  => new_version_pragma(<>),
+        <solidity_keyword: SolidityKeyword>  <sets: VersionPragmaExpressionSets>  => new_version_pragma(<>),
         
     };
-    VersionExpressionSets: VersionExpressionSets = {
-        <version_expression_set: Separated<PragmaBarBar, <VersionExpressionSet>>>  => new_version_expression_sets(<>),
+    VersionPragmaExpressionSets: VersionPragmaExpressionSets = {
+        <version_pragma_expression_set: Separated<PragmaBarBar, <VersionPragmaExpressionSet>>>  => new_version_pragma_expression_sets(<>),
         
     };
-    VersionExpressionSet: VersionExpressionSet = {
-        <version_expression: Repeated<<VersionExpression>>>  => new_version_expression_set(<>),
+    VersionPragmaExpressionSet: VersionPragmaExpressionSet = {
+        <version_pragma_expression: Repeated<<VersionPragmaExpression>>>  => new_version_pragma_expression_set(<>),
         
     };
-    VersionExpression: VersionExpression = {
-        <version_range: VersionRange>  => new_version_expression_version_range(<>),
-        <version_term: VersionTerm>  => new_version_expression_version_term(<>),
+    VersionPragmaExpression: VersionPragmaExpression = {
+        <version_pragma_range: VersionPragmaRange>  => new_version_pragma_expression_version_pragma_range(<>),
+        <version_pragma_term: VersionPragmaTerm>  => new_version_pragma_expression_version_pragma_term(<>),
         
     };
-    VersionRange: VersionRange = {
-        <start: VersionLiteral>  <minus: PragmaMinus>  <end: VersionLiteral>  => new_version_range(<>),
+    VersionPragmaRange: VersionPragmaRange = {
+        <start: VersionPragmaSpecifier>  <minus: PragmaMinus>  <end: VersionPragmaSpecifier>  => new_version_pragma_range(<>),
         
     };
-    VersionTerm: VersionTerm = {
-        <operator: (VersionOperator)?>  <literal: VersionLiteral>  => new_version_term(<>),
+    VersionPragmaTerm: VersionPragmaTerm = {
+        <operator: (VersionPragmaOperator)?>  <specifier: VersionPragmaSpecifier>  => new_version_pragma_term(<>),
         
     };
-    VersionOperator: VersionOperator = {
-        <pragma_caret: PragmaCaret>  => new_version_operator_pragma_caret(<>),
-        <pragma_tilde: PragmaTilde>  => new_version_operator_pragma_tilde(<>),
-        <pragma_equal: PragmaEqual>  => new_version_operator_pragma_equal(<>),
-        <pragma_less_than: PragmaLessThan>  => new_version_operator_pragma_less_than(<>),
-        <pragma_greater_than: PragmaGreaterThan>  => new_version_operator_pragma_greater_than(<>),
-        <pragma_less_than_equal: PragmaLessThanEqual>  => new_version_operator_pragma_less_than_equal(<>),
-        <pragma_greater_than_equal: PragmaGreaterThanEqual>  => new_version_operator_pragma_greater_than_equal(<>),
+    VersionPragmaOperator: VersionPragmaOperator = {
+        <pragma_caret: PragmaCaret>  => new_version_pragma_operator_pragma_caret(<>),
+        <pragma_tilde: PragmaTilde>  => new_version_pragma_operator_pragma_tilde(<>),
+        <pragma_equal: PragmaEqual>  => new_version_pragma_operator_pragma_equal(<>),
+        <pragma_less_than: PragmaLessThan>  => new_version_pragma_operator_pragma_less_than(<>),
+        <pragma_greater_than: PragmaGreaterThan>  => new_version_pragma_operator_pragma_greater_than(<>),
+        <pragma_less_than_equal: PragmaLessThanEqual>  => new_version_pragma_operator_pragma_less_than_equal(<>),
+        <pragma_greater_than_equal: PragmaGreaterThanEqual>  => new_version_pragma_operator_pragma_greater_than_equal(<>),
         
     };
-    VersionLiteral: VersionLiteral = {
-        <simple_version_literal: SimpleVersionLiteral>  => new_version_literal_simple_version_literal(<>),
-        <pragma_string_literal: PragmaStringLiteral>  => new_version_literal_pragma_string_literal(<>),
+    VersionPragmaSpecifier: VersionPragmaSpecifier = {
+        <version_pragma_components: VersionPragmaComponents>  => new_version_pragma_specifier_version_pragma_components(<>),
+        <pragma_string_literal: PragmaStringLiteral>  => new_version_pragma_specifier_pragma_string_literal(<>),
         
     };
-    SimpleVersionLiteral: SimpleVersionLiteral = {
-        <version_specifier: Separated<PragmaPeriod, <VersionSpecifier>>>  => new_simple_version_literal(<>),
+    VersionPragmaComponents: VersionPragmaComponents = {
+        <version_pragma_component: Separated<PragmaPeriod, <VersionPragmaComponent>>>  => new_version_pragma_components(<>),
         
     };
     
@@ -2741,9 +2741,9 @@ VarKeyword: VarKeyword = {
 
 };
 #[inline]
-VersionSpecifier: VersionSpecifier = {
+VersionPragmaComponent: VersionPragmaComponent = {
 
-        <l:@L> L_VersionSpecifier <r:@L> => new_version_specifier(l..r, ctx.source),
+        <l:@L> L_VersionPragmaComponent <r:@L> => new_version_pragma_component(l..r, ctx.source),
 
 };
 #[inline]
@@ -3149,7 +3149,7 @@ extern {
         L_UnicodeStringLiteral => LexemeKind::UnicodeStringLiteral,
         L_UsingKeyword_Reserved => LexemeKind::UsingKeyword_Reserved,
         L_VarKeyword_Reserved => LexemeKind::VarKeyword_Reserved,
-        L_VersionSpecifier => LexemeKind::VersionSpecifier,
+        L_VersionPragmaComponent => LexemeKind::VersionPragmaComponent,
         L_ViewKeyword_Reserved => LexemeKind::ViewKeyword_Reserved,
         L_VirtualKeyword_Reserved => LexemeKind::VirtualKeyword_Reserved,
         L_WeeksKeyword_Reserved => LexemeKind::WeeksKeyword_Reserved,

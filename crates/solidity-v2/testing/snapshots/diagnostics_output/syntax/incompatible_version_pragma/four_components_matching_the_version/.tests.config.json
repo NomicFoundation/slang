@@ -1,0 +1,14 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "From",
+          "from": "0.8.36"
+        },
+        "reason": "solc reads the components past the third as a second comparator, so it takes '0.8.36.0' as '0.8.36' followed by '0', and the latter holds for any version whose major is '0' — which makes solc accept the pragma on '0.8.36' alone. Slang keeps the literal as the four-component version it is, which names no release, so it admits nothing on any version."
+      }
+    ]
+  }
+}

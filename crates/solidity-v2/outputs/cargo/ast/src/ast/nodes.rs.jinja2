@@ -37,18 +37,16 @@ use super::types::Type;
       self.ir_node.id()
     }
     {% for field in sequence.fields -%}
-      {% if field.is_optional %}
-        {% if field.field_type.kind == "External" %}
-          pub fn {{ field.label }}(&self) -> bool {
-            self.ir_node.{{ field.label }}
-          }
-        {% else %}
-          pub fn {{ field.label }}(&self) -> Option<{{ field.field_type.name }}> {
-            self.ir_node.{{ field.label }}.as_ref().map(|ir_node| {
-              create_{{ field.field_type.name | snake_case }}(ir_node, &self.semantic)
-            })
-          }
-        {% endif %}
+      {% if field.field_type.is_external %}
+        pub fn {{ field.label }}(&self) -> {% if field.is_optional %}Option<{{ field.field_type.name }}>{% else %}{{ field.field_type.name }}{% endif %} {
+          self.ir_node.{{ field.label }}
+        }
+      {% elif field.is_optional %}
+        pub fn {{ field.label }}(&self) -> Option<{{ field.field_type.name }}> {
+          self.ir_node.{{ field.label }}.as_ref().map(|ir_node| {
+            create_{{ field.field_type.name | snake_case }}(ir_node, &self.semantic)
+          })
+        }
       {% else %} {# not field.is_optional #}
         pub fn {{ field.label }}(&self) -> {{ field.field_type.name }} {
           create_{{ field.field_type.name | snake_case }}(&self.ir_node.{{ field.label }}, &self.semantic)
@@ -80,13 +78,14 @@ use super::types::Type;
   pub enum {{ parent_type }} {
     {% for variant in choice.variants -%}
       {{ variant.name }}
-      {%- if variant.kind != "External" -%}
-        ({{ variant.name }})
+      {%- if not variant.is_unit -%}
+        ({{ variant.type_name }})
       {%- endif -%}
       ,
     {%- endfor -%}
   }
 
+  #[allow(clippy::clone_on_copy)]
   #[allow(clippy::too_many_lines)]
   #[allow(clippy::trivially_copy_pass_by_ref)]
   pub(crate) fn create_{{ parent_type | snake_case }}(
@@ -98,11 +97,13 @@ use super::types::Type;
         ir::{{ parent_type }}::{{ variant.name }}
         {%- if variant.kind == "Collection" -%}
           (nodes) => {{ parent_type }}::{{ variant.name }}(
-            create_{{ variant.name | snake_case }}(nodes, semantic)
+            create_{{ variant.type_name | snake_case }}(nodes, semantic)
           ),
-        {%- elif variant.kind != "External" -%}
+        {%- elif variant.is_external -%}
+          (variant) => {{ parent_type }}::{{ variant.name }}(variant.clone()),
+        {%- elif not variant.is_unit -%}
           (variant) => {{ parent_type }}::{{ variant.name }}(
-            create_{{ variant.name | snake_case }}(variant, semantic)
+            create_{{ variant.type_name | snake_case }}(variant, semantic)
           ),
         {%- else -%}
           => {{ parent_type }}::{{ variant.name }},

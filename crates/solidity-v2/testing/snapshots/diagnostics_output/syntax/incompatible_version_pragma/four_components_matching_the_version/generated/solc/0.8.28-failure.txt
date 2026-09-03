@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 5333] Error: Source file requires different compiler version (current compiler is 0.8.28+commit.7893614a.Linux.g++) - note that nightly builds are considered to be strictly less than the released version
+   ╭─[input.sol:4:1]
+   │
+ 4 │ pragma solidity 0.8.36.0;
+   │ ────────────┬────────────  
+   │             ╰────────────── Error occurred here.
+───╯

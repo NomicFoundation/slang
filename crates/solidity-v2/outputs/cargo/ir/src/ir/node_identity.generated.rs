@@ -512,13 +512,7 @@ impl NodeIdentity for VersionPragmaStruct {
     }
 }
 
-impl NodeIdentity for VersionRangeStruct {
-    fn node_id(&self) -> Option<NodeId> {
-        Some(self.id)
-    }
-}
-
-impl NodeIdentity for VersionTermStruct {
+impl NodeIdentity for VersionPragmaComparatorStruct {
     fn node_id(&self) -> Option<NodeId> {
         Some(self.id)
     }
@@ -1206,42 +1200,34 @@ impl NodeIdentity for VariableDeclarationTarget {
     }
 }
 
-impl NodeIdentity for VersionExpression {
+impl NodeIdentity for VersionPragmaComponent {
     fn node_id(&self) -> Option<NodeId> {
         match self {
-            VersionExpression::VersionRange(inner) => inner.node_id(),
+            VersionPragmaComponent::Wildcard => None,
 
-            VersionExpression::VersionTerm(inner) => inner.node_id(),
+            VersionPragmaComponent::Unrecognized => None,
+
+            VersionPragmaComponent::Number(_) => None,
         }
     }
 }
 
-impl NodeIdentity for VersionLiteral {
+impl NodeIdentity for VersionPragmaOperator {
     fn node_id(&self) -> Option<NodeId> {
         match self {
-            VersionLiteral::SimpleVersionLiteral(inner) => inner.node_id(),
+            VersionPragmaOperator::Caret => None,
 
-            VersionLiteral::StringLiteral(inner) => inner.node_id(),
-        }
-    }
-}
+            VersionPragmaOperator::Tilde => None,
 
-impl NodeIdentity for VersionOperator {
-    fn node_id(&self) -> Option<NodeId> {
-        match self {
-            VersionOperator::PragmaCaret(inner) => inner.node_id(),
+            VersionPragmaOperator::Equal => None,
 
-            VersionOperator::PragmaTilde(inner) => inner.node_id(),
+            VersionPragmaOperator::LessThan => None,
 
-            VersionOperator::PragmaEqual(inner) => inner.node_id(),
+            VersionPragmaOperator::LessThanEqual => None,
 
-            VersionOperator::PragmaLessThan(inner) => inner.node_id(),
+            VersionPragmaOperator::GreaterThan => None,
 
-            VersionOperator::PragmaGreaterThan(inner) => inner.node_id(),
-
-            VersionOperator::PragmaLessThanEqual(inner) => inner.node_id(),
-
-            VersionOperator::PragmaGreaterThanEqual(inner) => inner.node_id(),
+            VersionPragmaOperator::GreaterThanEqual => None,
         }
     }
 }
@@ -1592,48 +1578,6 @@ impl NodeIdentity for PlusPlusStruct {
     }
 }
 
-impl NodeIdentity for PragmaCaretStruct {
-    fn node_id(&self) -> Option<NodeId> {
-        Some(self.id)
-    }
-}
-
-impl NodeIdentity for PragmaEqualStruct {
-    fn node_id(&self) -> Option<NodeId> {
-        Some(self.id)
-    }
-}
-
-impl NodeIdentity for PragmaGreaterThanStruct {
-    fn node_id(&self) -> Option<NodeId> {
-        Some(self.id)
-    }
-}
-
-impl NodeIdentity for PragmaGreaterThanEqualStruct {
-    fn node_id(&self) -> Option<NodeId> {
-        Some(self.id)
-    }
-}
-
-impl NodeIdentity for PragmaLessThanStruct {
-    fn node_id(&self) -> Option<NodeId> {
-        Some(self.id)
-    }
-}
-
-impl NodeIdentity for PragmaLessThanEqualStruct {
-    fn node_id(&self) -> Option<NodeId> {
-        Some(self.id)
-    }
-}
-
-impl NodeIdentity for PragmaTildeStruct {
-    fn node_id(&self) -> Option<NodeId> {
-        Some(self.id)
-    }
-}
-
 impl NodeIdentity for SecondsKeywordStruct {
     fn node_id(&self) -> Option<NodeId> {
         Some(self.id)
@@ -1713,12 +1657,6 @@ impl NodeIdentity for UintKeywordStruct {
 }
 
 impl NodeIdentity for UnicodeStringLiteralStruct {
-    fn node_id(&self) -> Option<NodeId> {
-        Some(self.id)
-    }
-}
-
-impl NodeIdentity for VersionSpecifierStruct {
     fn node_id(&self) -> Option<NodeId> {
         Some(self.id)
     }

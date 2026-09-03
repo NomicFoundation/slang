@@ -513,13 +513,7 @@ impl TextRange for VersionPragmaStruct {
     }
 }
 
-impl TextRange for VersionRangeStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
-    }
-}
-
-impl TextRange for VersionTermStruct {
+impl TextRange for VersionPragmaComparatorStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.range.clone())
     }
@@ -1217,42 +1211,34 @@ impl TextRange for VariableDeclarationTarget {
     }
 }
 
-impl TextRange for VersionExpression {
+impl TextRange for VersionPragmaComponent {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         match self {
-            VersionExpression::VersionRange(inner) => inner.calculate_text_range(),
+            VersionPragmaComponent::Wildcard => None,
 
-            VersionExpression::VersionTerm(inner) => inner.calculate_text_range(),
+            VersionPragmaComponent::Unrecognized => None,
+
+            VersionPragmaComponent::Number(_) => None,
         }
     }
 }
 
-impl TextRange for VersionLiteral {
+impl TextRange for VersionPragmaOperator {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         match self {
-            VersionLiteral::SimpleVersionLiteral(inner) => inner.calculate_text_range(),
+            VersionPragmaOperator::Caret => None,
 
-            VersionLiteral::StringLiteral(inner) => inner.calculate_text_range(),
-        }
-    }
-}
+            VersionPragmaOperator::Tilde => None,
 
-impl TextRange for VersionOperator {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        match self {
-            VersionOperator::PragmaCaret(inner) => inner.calculate_text_range(),
+            VersionPragmaOperator::Equal => None,
 
-            VersionOperator::PragmaTilde(inner) => inner.calculate_text_range(),
+            VersionPragmaOperator::LessThan => None,
 
-            VersionOperator::PragmaEqual(inner) => inner.calculate_text_range(),
+            VersionPragmaOperator::LessThanEqual => None,
 
-            VersionOperator::PragmaLessThan(inner) => inner.calculate_text_range(),
+            VersionPragmaOperator::GreaterThan => None,
 
-            VersionOperator::PragmaGreaterThan(inner) => inner.calculate_text_range(),
-
-            VersionOperator::PragmaLessThanEqual(inner) => inner.calculate_text_range(),
-
-            VersionOperator::PragmaGreaterThanEqual(inner) => inner.calculate_text_range(),
+            VersionPragmaOperator::GreaterThanEqual => None,
         }
     }
 }
@@ -1603,48 +1589,6 @@ impl TextRange for PlusPlusStruct {
     }
 }
 
-impl TextRange for PragmaCaretStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
-    }
-}
-
-impl TextRange for PragmaEqualStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
-    }
-}
-
-impl TextRange for PragmaGreaterThanStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
-    }
-}
-
-impl TextRange for PragmaGreaterThanEqualStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
-    }
-}
-
-impl TextRange for PragmaLessThanStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
-    }
-}
-
-impl TextRange for PragmaLessThanEqualStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
-    }
-}
-
-impl TextRange for PragmaTildeStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
-    }
-}
-
 impl TextRange for SecondsKeywordStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.range.clone())
@@ -1724,12 +1668,6 @@ impl TextRange for UintKeywordStruct {
 }
 
 impl TextRange for UnicodeStringLiteralStruct {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.range.clone())
-    }
-}
-
-impl TextRange for VersionSpecifierStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.range.clone())
     }
