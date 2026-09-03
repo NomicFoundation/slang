@@ -3,7 +3,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use language_v2_definition::model;
 use serde::Serialize;
 
-use super::model::{Choice, Collection, Field, IrModel, NodeType, Sequence, Terminal};
+use super::model::{Choice, Collection, Field, IrModel, NodeType, Sequence, Terminal, Variant};
 
 #[derive(Default, Serialize)]
 pub struct IrModelMutator {
@@ -33,16 +33,17 @@ pub struct IrModelMutator {
 #[derive(Clone, Serialize)]
 pub struct MutatedSequence {
     pub fields: Vec<MutatedField>,
-    // Indicates that new fields were added to the sequence, making it
-    // impossible to auto-generate a transformer function.
-    pub has_added_fields: bool,
+    // Indicates the transformer function is written by hand: either because the
+    // sequence's fields were added or retyped and so cannot be auto-generated, or
+    // because `mark_sequence_builder_as_custom` opted it out.
+    pub has_custom_builder: bool,
 }
 
 impl From<&Sequence> for MutatedSequence {
     fn from(value: &Sequence) -> Self {
         Self {
             fields: value.fields.iter().map(|field| field.into()).collect(),
-            has_added_fields: false,
+            has_custom_builder: false,
         }
     }
 }
@@ -84,7 +85,12 @@ pub struct MutatedField {
     // access the source. Stays stable across renames.
     pub source_label: model::Identifier,
     pub field_type: NodeType,
+    // Whether the *source* CST field was optional. The auto-builder reads this
+    // to decide between `.as_ref().map(..)` and a direct build.
     pub is_optional: bool,
+    // Whether the *generated* field is an `Option`. These differ only for a
+    // collapsed boolean, where an optional source becomes a plain `bool`.
+    pub is_target_optional: bool,
     pub target_type: NodeType,
 }
 
@@ -95,6 +101,7 @@ impl From<&Field> for MutatedField {
             source_label: value.label.clone(),
             field_type: value.field_type.clone(),
             is_optional: value.is_optional,
+            is_target_optional: value.is_optional,
             target_type: value.field_type.clone(),
         }
     }
@@ -105,13 +112,14 @@ impl From<&MutatedField> for Field {
         Self {
             label: value.label.clone(),
             field_type: value.target_type.clone(),
-            is_optional: value.is_optional,
+            is_optional: value.is_target_optional,
         }
     }
 }
 
 #[derive(Clone, Serialize)]
 pub struct MutatedVariant {
+    pub label: model::Identifier,
     pub source: NodeType,
     pub target: NodeType,
     pub is_new: bool,
@@ -140,8 +148,9 @@ impl MutatedChoice {
                 .variants
                 .iter()
                 .map(|v| MutatedVariant {
-                    source: v.clone(),
-                    target: v.clone(),
+                    label: v.label.clone(),
+                    source: v.node_type.clone(),
+                    target: v.node_type.clone(),
                     is_new: false,
                 })
                 .collect(),
@@ -153,7 +162,14 @@ impl MutatedChoice {
 
 impl From<&MutatedChoice> for Choice {
     fn from(value: &MutatedChoice) -> Self {
-        let variants = value.variants.iter().map(|v| v.target.clone()).collect();
+        let variants = value
+            .variants
+            .iter()
+            .map(|v| Variant {
+                label: v.label.clone(),
+                node_type: v.target.clone(),
+            })
+            .collect();
         Self { variants }
     }
 }
@@ -297,13 +313,25 @@ impl IrModelMutator {
         }
     }
 
-    pub fn add_choice_variant(&mut self, choice_id: &str, variant: &str) {
-        let variant_type = self.find_node_type(&variant.into());
+    // Adds a variant carrying (and named after) `variant_type`.
+    pub fn add_choice_variant(&mut self, choice_id: &str, variant_type: &str) {
+        self.add_labelled_choice_variant(choice_id, variant_type, variant_type);
+    }
+
+    // Adds a variant named `label` carrying `variant_type`.
+    pub fn add_labelled_choice_variant(
+        &mut self,
+        choice_id: &str,
+        label: &str,
+        variant_type: &str,
+    ) {
+        let variant_type = self.find_node_type(&variant_type.into());
         let identifier: model::Identifier = choice_id.into();
         let Some(choice) = self.choices.get_mut(&identifier) else {
             panic!("Choice {choice_id} not found in IR model");
         };
         choice.variants.push(MutatedVariant {
+            label: label.into(),
             source: variant_type.clone(),
             target: variant_type,
             is_new: true,
@@ -316,9 +344,9 @@ impl IrModelMutator {
         let mut mutated_variants = Vec::new();
         for variant in variants {
             let identifier: model::Identifier = (*variant).into();
-            self.external_types.insert(identifier.clone());
-            let node_type = NodeType::External(identifier);
+            let node_type = NodeType::Unit(identifier.clone());
             mutated_variants.push(MutatedVariant {
+                label: identifier,
                 source: node_type.clone(),
                 target: node_type,
                 is_new: true,
@@ -391,6 +419,13 @@ impl IrModelMutator {
         for choice in self.choices.values_mut() {
             for variant in &mut choice.variants {
                 if variant.target == *old {
+                    // A variant named after the type it carries follows it, so
+                    // eg. `SourceUnitMember::ImportClause` becomes
+                    // `ImportDirective` when that is what the clause collapses
+                    // to. An explicitly labelled one keeps its name.
+                    if variant.label == *old.as_identifier() {
+                        variant.label = new.as_identifier().clone();
+                    }
                     variant.target = new.clone();
                 }
             }
@@ -432,6 +467,21 @@ impl IrModelMutator {
         }
     }
 
+    pub fn add_external_type(&mut self, name: &str) {
+        let name_id: model::Identifier = name.into();
+
+        assert!(
+            !self.sequences.contains_key(&name_id)
+                && !self.choices.contains_key(&name_id)
+                && !self.collections.contains_key(&name_id)
+                && !self.terminals.contains_key(&name_id)
+                && !self.external_types.contains(&name_id),
+            "Cannot add external type {name}: name already in use"
+        );
+
+        self.external_types.insert(name_id);
+    }
+
     pub fn add_sequence_field(
         &mut self,
         sequence_id: &str,
@@ -450,9 +500,10 @@ impl IrModelMutator {
             source_label: field_label,
             field_type: target_type.clone(),
             is_optional,
+            is_target_optional: is_optional,
             target_type,
         });
-        sequence.has_added_fields = true;
+        sequence.has_custom_builder = true;
     }
 
     pub fn insert_sequence_field_before(
@@ -484,10 +535,11 @@ impl IrModelMutator {
                 source_label: field_label,
                 field_type: target_type.clone(),
                 is_optional,
+                is_target_optional: is_optional,
                 target_type,
             },
         );
-        sequence.has_added_fields = true;
+        sequence.has_custom_builder = true;
     }
 
     // Removes a sequence type with a single field from the target language,
@@ -607,7 +659,7 @@ impl IrModelMutator {
             name_id,
             MutatedSequence {
                 fields: Vec::new(),
-                has_added_fields: true,
+                has_custom_builder: true,
             },
         );
     }
@@ -713,8 +765,8 @@ impl IrModelMutator {
     }
 
     // Converts an optional, unique-terminal sequence field into a boolean
-    // field, rendered via a shared synthetic `External` "Boolean" type. The
-    // original terminal type is preserved in `field_type` and `source_label`.
+    // field, rendered as an external `bool`. The original terminal type is
+    // preserved in `field_type` and `source_label`.
     pub fn convert_optional_to_boolean(
         &mut self,
         sequence_id: &str,
@@ -744,14 +796,14 @@ impl IrModelMutator {
                  expected an optional unique terminal"
         );
 
-        field.target_type = NodeType::External("Boolean".into());
+        field.target_type = NodeType::External("bool".into());
+        field.is_target_optional = false;
         field.label = new_label;
 
-        self.external_types.insert("Boolean".into());
+        self.external_types.insert("bool".into());
     }
 
-    // Adds a new boolean field to a sequence by using the synthetic `External`
-    // "Boolean" type.
+    // Adds a new boolean field to a sequence by using the external `bool` type.
     pub fn add_sequence_boolean(&mut self, sequence_id: &str, field_label: &str) {
         let field = self.new_boolean_field(sequence_id, field_label);
 
@@ -760,11 +812,11 @@ impl IrModelMutator {
             panic!("Sequence {sequence_id} not found in IR model");
         };
         sequence.fields.push(field);
-        sequence.has_added_fields = true;
+        sequence.has_custom_builder = true;
     }
 
     // Inserts a new boolean field into a sequence, before an existing field, by
-    // using the synthetic `External` "Boolean" type.
+    // using the external `bool` type.
     pub fn insert_sequence_boolean_before(
         &mut self,
         sequence_id: &str,
@@ -786,13 +838,13 @@ impl IrModelMutator {
             panic!("Could not find {before_label} in sequence {sequence_id}");
         };
         sequence.fields.insert(insertion_index, field);
-        sequence.has_added_fields = true;
+        sequence.has_custom_builder = true;
     }
 
-    // Builds a boolean field rendered via the shared synthetic `External`
-    // "Boolean" type, registering that type on first use. Boolean fields never
-    // map back to a single CST field, so callers must mark the owning sequence
-    // as having added fields and hand-write its builder.
+    // Builds a boolean field rendered as an external `bool`, registering that
+    // type on first use. Boolean fields never map back to a single CST field, so
+    // callers must mark the owning sequence as needing a custom builder and
+    // hand-write it.
     fn new_boolean_field(&mut self, sequence_id: &str, field_label: &str) -> MutatedField {
         let sequence_identifier: model::Identifier = sequence_id.into();
         let field_label: model::Identifier = field_label.into();
@@ -808,14 +860,15 @@ impl IrModelMutator {
             "The sequence {sequence_id} already has a {field_label} field",
         );
 
-        self.external_types.insert("Boolean".into());
+        self.external_types.insert("bool".into());
 
-        let target_type = NodeType::External("Boolean".into());
+        let target_type = NodeType::External("bool".into());
         MutatedField {
             label: field_label.clone(),
             source_label: field_label,
             field_type: target_type.clone(),
             is_optional: true,
+            is_target_optional: false,
             target_type,
         }
     }

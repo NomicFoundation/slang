@@ -2165,12 +2165,12 @@ pub type VersionPragma = Box<VersionPragmaStruct>;
 #[derive(Debug, PartialEq)]
 pub struct VersionPragmaStruct {
     pub solidity_keyword: SolidityKeyword,
-    pub sets: VersionExpressionSets,
+    pub sets: VersionPragmaExpressionSets,
 }
 
 pub fn new_version_pragma(
     solidity_keyword: SolidityKeyword,
-    sets: VersionExpressionSets,
+    sets: VersionPragmaExpressionSets,
 ) -> VersionPragma {
     Box::new(VersionPragmaStruct {
         solidity_keyword,
@@ -2178,33 +2178,39 @@ pub fn new_version_pragma(
     })
 }
 
-pub type VersionRange = Box<VersionRangeStruct>;
+pub type VersionPragmaRange = Box<VersionPragmaRangeStruct>;
 
 #[derive(Debug, PartialEq)]
-pub struct VersionRangeStruct {
-    pub start: VersionLiteral,
+pub struct VersionPragmaRangeStruct {
+    pub start: VersionPragmaSpecifier,
     pub minus: PragmaMinus,
-    pub end: VersionLiteral,
+    pub end: VersionPragmaSpecifier,
 }
 
-pub fn new_version_range(
-    start: VersionLiteral,
+pub fn new_version_pragma_range(
+    start: VersionPragmaSpecifier,
     minus: PragmaMinus,
-    end: VersionLiteral,
-) -> VersionRange {
-    Box::new(VersionRangeStruct { start, minus, end })
+    end: VersionPragmaSpecifier,
+) -> VersionPragmaRange {
+    Box::new(VersionPragmaRangeStruct { start, minus, end })
 }
 
-pub type VersionTerm = Box<VersionTermStruct>;
+pub type VersionPragmaTerm = Box<VersionPragmaTermStruct>;
 
 #[derive(Debug, PartialEq)]
-pub struct VersionTermStruct {
-    pub operator: Option<VersionOperator>,
-    pub literal: VersionLiteral,
+pub struct VersionPragmaTermStruct {
+    pub operator: Option<VersionPragmaOperator>,
+    pub specifier: VersionPragmaSpecifier,
 }
 
-pub fn new_version_term(operator: Option<VersionOperator>, literal: VersionLiteral) -> VersionTerm {
-    Box::new(VersionTermStruct { operator, literal })
+pub fn new_version_pragma_term(
+    operator: Option<VersionPragmaOperator>,
+    specifier: VersionPragmaSpecifier,
+) -> VersionPragmaTerm {
+    Box::new(VersionPragmaTermStruct {
+        operator,
+        specifier,
+    })
 }
 
 pub type WhileStatement = Box<WhileStatementStruct>;
@@ -4031,35 +4037,25 @@ pub fn new_variable_declaration_target_multi_typed_declaration(
 }
 
 #[derive(Debug, PartialEq)]
-pub enum VersionExpression {
-    VersionRange(VersionRange),
-    VersionTerm(VersionTerm),
+pub enum VersionPragmaExpression {
+    VersionPragmaRange(VersionPragmaRange),
+    VersionPragmaTerm(VersionPragmaTerm),
 }
 
-pub fn new_version_expression_version_range(element: VersionRange) -> VersionExpression {
-    VersionExpression::VersionRange(element)
+pub fn new_version_pragma_expression_version_pragma_range(
+    element: VersionPragmaRange,
+) -> VersionPragmaExpression {
+    VersionPragmaExpression::VersionPragmaRange(element)
 }
 
-pub fn new_version_expression_version_term(element: VersionTerm) -> VersionExpression {
-    VersionExpression::VersionTerm(element)
-}
-
-#[derive(Debug, PartialEq)]
-pub enum VersionLiteral {
-    SimpleVersionLiteral(SimpleVersionLiteral),
-    PragmaStringLiteral(PragmaStringLiteral),
-}
-
-pub fn new_version_literal_simple_version_literal(element: SimpleVersionLiteral) -> VersionLiteral {
-    VersionLiteral::SimpleVersionLiteral(element)
-}
-
-pub fn new_version_literal_pragma_string_literal(element: PragmaStringLiteral) -> VersionLiteral {
-    VersionLiteral::PragmaStringLiteral(element)
+pub fn new_version_pragma_expression_version_pragma_term(
+    element: VersionPragmaTerm,
+) -> VersionPragmaExpression {
+    VersionPragmaExpression::VersionPragmaTerm(element)
 }
 
 #[derive(Debug, PartialEq)]
-pub enum VersionOperator {
+pub enum VersionPragmaOperator {
     PragmaCaret(PragmaCaret),
     PragmaTilde(PragmaTilde),
     PragmaEqual(PragmaEqual),
@@ -4069,36 +4065,58 @@ pub enum VersionOperator {
     PragmaGreaterThanEqual(PragmaGreaterThanEqual),
 }
 
-pub fn new_version_operator_pragma_caret(element: PragmaCaret) -> VersionOperator {
-    VersionOperator::PragmaCaret(element)
+pub fn new_version_pragma_operator_pragma_caret(element: PragmaCaret) -> VersionPragmaOperator {
+    VersionPragmaOperator::PragmaCaret(element)
 }
 
-pub fn new_version_operator_pragma_tilde(element: PragmaTilde) -> VersionOperator {
-    VersionOperator::PragmaTilde(element)
+pub fn new_version_pragma_operator_pragma_tilde(element: PragmaTilde) -> VersionPragmaOperator {
+    VersionPragmaOperator::PragmaTilde(element)
 }
 
-pub fn new_version_operator_pragma_equal(element: PragmaEqual) -> VersionOperator {
-    VersionOperator::PragmaEqual(element)
+pub fn new_version_pragma_operator_pragma_equal(element: PragmaEqual) -> VersionPragmaOperator {
+    VersionPragmaOperator::PragmaEqual(element)
 }
 
-pub fn new_version_operator_pragma_less_than(element: PragmaLessThan) -> VersionOperator {
-    VersionOperator::PragmaLessThan(element)
+pub fn new_version_pragma_operator_pragma_less_than(
+    element: PragmaLessThan,
+) -> VersionPragmaOperator {
+    VersionPragmaOperator::PragmaLessThan(element)
 }
 
-pub fn new_version_operator_pragma_greater_than(element: PragmaGreaterThan) -> VersionOperator {
-    VersionOperator::PragmaGreaterThan(element)
+pub fn new_version_pragma_operator_pragma_greater_than(
+    element: PragmaGreaterThan,
+) -> VersionPragmaOperator {
+    VersionPragmaOperator::PragmaGreaterThan(element)
 }
 
-pub fn new_version_operator_pragma_less_than_equal(
+pub fn new_version_pragma_operator_pragma_less_than_equal(
     element: PragmaLessThanEqual,
-) -> VersionOperator {
-    VersionOperator::PragmaLessThanEqual(element)
+) -> VersionPragmaOperator {
+    VersionPragmaOperator::PragmaLessThanEqual(element)
 }
 
-pub fn new_version_operator_pragma_greater_than_equal(
+pub fn new_version_pragma_operator_pragma_greater_than_equal(
     element: PragmaGreaterThanEqual,
-) -> VersionOperator {
-    VersionOperator::PragmaGreaterThanEqual(element)
+) -> VersionPragmaOperator {
+    VersionPragmaOperator::PragmaGreaterThanEqual(element)
+}
+
+#[derive(Debug, PartialEq)]
+pub enum VersionPragmaSpecifier {
+    VersionPragmaComponents(VersionPragmaComponents),
+    PragmaStringLiteral(PragmaStringLiteral),
+}
+
+pub fn new_version_pragma_specifier_version_pragma_components(
+    element: VersionPragmaComponents,
+) -> VersionPragmaSpecifier {
+    VersionPragmaSpecifier::VersionPragmaComponents(element)
+}
+
+pub fn new_version_pragma_specifier_pragma_string_literal(
+    element: PragmaStringLiteral,
+) -> VersionPragmaSpecifier {
+    VersionPragmaSpecifier::PragmaStringLiteral(element)
 }
 
 #[derive(Debug, PartialEq)]
@@ -4474,15 +4492,6 @@ pub fn new_receive_function_attributes(
 }
 
 #[derive(Debug, PartialEq)]
-pub struct SimpleVersionLiteral {
-    pub elements: Vec<VersionSpecifier>,
-}
-
-pub fn new_simple_version_literal(elements: Vec<VersionSpecifier>) -> SimpleVersionLiteral {
-    SimpleVersionLiteral { elements }
-}
-
-#[derive(Debug, PartialEq)]
 pub struct SourceUnitMembers {
     pub elements: Vec<SourceUnitMember>,
 }
@@ -4559,21 +4568,36 @@ pub fn new_using_deconstruction_symbols(
 }
 
 #[derive(Debug, PartialEq)]
-pub struct VersionExpressionSet {
-    pub elements: Vec<VersionExpression>,
+pub struct VersionPragmaComponents {
+    pub elements: Vec<VersionPragmaComponent>,
 }
 
-pub fn new_version_expression_set(elements: Vec<VersionExpression>) -> VersionExpressionSet {
-    VersionExpressionSet { elements }
+pub fn new_version_pragma_components(
+    elements: Vec<VersionPragmaComponent>,
+) -> VersionPragmaComponents {
+    VersionPragmaComponents { elements }
 }
 
 #[derive(Debug, PartialEq)]
-pub struct VersionExpressionSets {
-    pub elements: Vec<VersionExpressionSet>,
+pub struct VersionPragmaExpressionSet {
+    pub elements: Vec<VersionPragmaExpression>,
 }
 
-pub fn new_version_expression_sets(elements: Vec<VersionExpressionSet>) -> VersionExpressionSets {
-    VersionExpressionSets { elements }
+pub fn new_version_pragma_expression_set(
+    elements: Vec<VersionPragmaExpression>,
+) -> VersionPragmaExpressionSet {
+    VersionPragmaExpressionSet { elements }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct VersionPragmaExpressionSets {
+    pub elements: Vec<VersionPragmaExpressionSet>,
+}
+
+pub fn new_version_pragma_expression_sets(
+    elements: Vec<VersionPragmaExpressionSet>,
+) -> VersionPragmaExpressionSets {
+    VersionPragmaExpressionSets { elements }
 }
 
 #[derive(Debug, PartialEq)]
@@ -6275,12 +6299,12 @@ pub fn new_var_keyword(range: Range<usize>, _source: &str) -> VarKeyword {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct VersionSpecifier {
+pub struct VersionPragmaComponent {
     pub range: Range<usize>,
 }
 
-pub fn new_version_specifier(range: Range<usize>, _source: &str) -> VersionSpecifier {
-    VersionSpecifier { range }
+pub fn new_version_pragma_component(range: Range<usize>, _source: &str) -> VersionPragmaComponent {
+    VersionPragmaComponent { range }
 }
 
 #[derive(Debug, PartialEq)]

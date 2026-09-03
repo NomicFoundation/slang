@@ -3612,8 +3612,8 @@ impl VersionPragmaStruct {
         self.ir_node.id()
     }
 
-    pub fn sets(&self) -> VersionExpressionSets {
-        create_version_expression_sets(&self.ir_node.sets, &self.semantic)
+    pub fn sets(&self) -> VersionPragmaExpressionSets {
+        create_version_pragma_expression_sets(&self.ir_node.sets, &self.semantic)
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -3629,82 +3629,35 @@ impl VersionPragmaStruct {
     }
 }
 
-pub type VersionRange = VersionRangeStruct;
+pub type VersionPragmaComparator = VersionPragmaComparatorStruct;
 
 #[derive(Clone)]
-pub struct VersionRangeStruct {
-    pub(crate) ir_node: ir::VersionRange,
+pub struct VersionPragmaComparatorStruct {
+    pub(crate) ir_node: ir::VersionPragmaComparator,
     pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub fn create_version_range(
-    ir_node: &ir::VersionRange,
+pub fn create_version_pragma_comparator(
+    ir_node: &ir::VersionPragmaComparator,
     semantic: &Arc<SemanticContext>,
-) -> VersionRange {
-    VersionRangeStruct {
+) -> VersionPragmaComparator {
+    VersionPragmaComparatorStruct {
         ir_node: Arc::clone(ir_node),
         semantic: Arc::clone(semantic),
     }
 }
 
-impl VersionRangeStruct {
+impl VersionPragmaComparatorStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
-    pub fn start(&self) -> VersionLiteral {
-        create_version_literal(&self.ir_node.start, &self.semantic)
+    pub fn operator(&self) -> VersionPragmaOperator {
+        create_version_pragma_operator(&self.ir_node.operator, &self.semantic)
     }
 
-    pub fn end(&self) -> VersionLiteral {
-        create_version_literal(&self.ir_node.end, &self.semantic)
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &FileId {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
-pub type VersionTerm = VersionTermStruct;
-
-#[derive(Clone)]
-pub struct VersionTermStruct {
-    pub(crate) ir_node: ir::VersionTerm,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub fn create_version_term(
-    ir_node: &ir::VersionTerm,
-    semantic: &Arc<SemanticContext>,
-) -> VersionTerm {
-    VersionTermStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    }
-}
-
-impl VersionTermStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn operator(&self) -> Option<VersionOperator> {
-        self.ir_node
-            .operator
-            .as_ref()
-            .map(|ir_node| create_version_operator(ir_node, &self.semantic))
-    }
-
-    pub fn literal(&self) -> VersionLiteral {
-        create_version_literal(&self.ir_node.literal, &self.semantic)
+    pub fn specifier(&self) -> VersionPragmaSpecifier {
+        create_version_pragma_specifier(&self.ir_node.specifier, &self.semantic)
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -4380,6 +4333,7 @@ pub enum AbicoderVersion {
     V2,
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_abicoder_version(
@@ -4398,6 +4352,7 @@ pub enum AdditiveExpressionOperator {
     Plus(Plus),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_additive_expression_operator(
@@ -4420,6 +4375,7 @@ pub enum ArgumentsDeclaration {
     NamedArguments(NamedArguments),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_arguments_declaration(
@@ -4452,6 +4408,7 @@ pub enum AssignmentExpressionOperator {
     SlashEqual(SlashEqual),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_assignment_expression_operator(
@@ -4511,6 +4468,7 @@ pub enum CatchClauseKind {
     LowLevel,
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_catch_clause_kind(
@@ -4537,6 +4495,7 @@ pub enum ContractMember {
     ConstantDefinition(ConstantDefinition),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_contract_member(
@@ -4590,6 +4549,7 @@ pub enum ElementaryType {
     UfixedKeyword(UfixedKeyword),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_elementary_type(
@@ -4630,6 +4590,7 @@ pub enum EqualityExpressionOperator {
     EqualEqual(EqualEqual),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_equality_expression_operator(
@@ -4654,6 +4615,7 @@ pub enum ExperimentalFeature {
     Unrecognized,
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_experimental_feature(
@@ -4705,6 +4667,7 @@ pub enum Expression {
     Identifier(Identifier),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_expression(
@@ -4820,6 +4783,7 @@ pub enum ForStatementCondition {
     Semicolon(Semicolon),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_for_statement_condition(
@@ -4845,6 +4809,7 @@ pub enum ForStatementInitialization {
     Semicolon(Semicolon),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_for_statement_initialization(
@@ -4877,6 +4842,7 @@ pub enum FunctionKind {
     Modifier,
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_function_kind(
@@ -4900,6 +4866,7 @@ pub enum FunctionMutability {
     Payable,
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_function_mutability(
@@ -4922,6 +4889,7 @@ pub enum FunctionVisibility {
     External,
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_function_visibility(
@@ -4942,6 +4910,7 @@ pub enum ImportClause {
     ImportDeconstruction(ImportDeconstruction),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_import_clause(
@@ -4966,6 +4935,7 @@ pub enum InequalityExpressionOperator {
     LessThanEqual(LessThanEqual),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_inequality_expression_operator(
@@ -4997,6 +4967,7 @@ pub enum MultiplicativeExpressionOperator {
     Slash(Slash),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_multiplicative_expression_operator(
@@ -5028,6 +4999,7 @@ pub enum NumberUnit {
     WeeksKeyword(WeeksKeyword),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_number_unit(
@@ -5068,6 +5040,7 @@ pub enum PostfixExpressionOperator {
     PlusPlus(PlusPlus),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_postfix_expression_operator(
@@ -5091,6 +5064,7 @@ pub enum Pragma {
     ExperimentalPragma(ExperimentalPragma),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_pragma(ir_node: &ir::Pragma, semantic: &Arc<SemanticContext>) -> Pragma {
@@ -5117,6 +5091,7 @@ pub enum PrefixExpressionOperator {
     Tilde(Tilde),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_prefix_expression_operator(
@@ -5152,6 +5127,7 @@ pub enum ShiftExpressionOperator {
     LessThanLessThan(LessThanLessThan),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_shift_expression_operator(
@@ -5192,6 +5168,7 @@ pub enum SourceUnitMember {
     ConstantDefinition(ConstantDefinition),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_source_unit_member(
@@ -5251,6 +5228,7 @@ pub enum StateVariableMutability {
     Transient,
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_state_variable_mutability(
@@ -5272,6 +5250,7 @@ pub enum StateVariableVisibility {
     Internal,
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_state_variable_visibility(
@@ -5304,6 +5283,7 @@ pub enum Statement {
     ExpressionStatement(ExpressionStatement),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_statement(
@@ -5366,6 +5346,7 @@ pub enum StorageLocation {
     CallDataKeyword(CallDataKeyword),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_storage_location(
@@ -5392,6 +5373,7 @@ pub enum StringExpression {
     UnicodeStringLiterals(UnicodeStringLiterals),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_string_expression(
@@ -5420,6 +5402,7 @@ pub enum TypeName {
     IdentifierPath(IdentifierPath),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_type_name(
@@ -5451,6 +5434,7 @@ pub enum UsingClause {
     UsingDeconstruction(UsingDeconstruction),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_using_clause(
@@ -5486,6 +5470,7 @@ pub enum UsingOperator {
     Tilde(Tilde),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_using_operator(
@@ -5535,6 +5520,7 @@ pub enum UsingTarget {
     Asterisk(Asterisk),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_using_target(
@@ -5557,6 +5543,7 @@ pub enum VariableDeclarationTarget {
     MultiTypedDeclaration(MultiTypedDeclaration),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_variable_declaration_target(
@@ -5578,90 +5565,54 @@ pub(crate) fn create_variable_declaration_target(
 }
 
 #[derive(Clone)]
-pub enum VersionExpression {
-    VersionRange(VersionRange),
-    VersionTerm(VersionTerm),
+pub enum VersionPragmaComponent {
+    Wildcard,
+    Unrecognized,
+    Number(usize),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_version_expression(
-    ir_node: &ir::VersionExpression,
+pub(crate) fn create_version_pragma_component(
+    ir_node: &ir::VersionPragmaComponent,
     semantic: &Arc<SemanticContext>,
-) -> VersionExpression {
+) -> VersionPragmaComponent {
     match ir_node {
-        ir::VersionExpression::VersionRange(variant) => {
-            VersionExpression::VersionRange(create_version_range(variant, semantic))
-        }
-        ir::VersionExpression::VersionTerm(variant) => {
-            VersionExpression::VersionTerm(create_version_term(variant, semantic))
+        ir::VersionPragmaComponent::Wildcard => VersionPragmaComponent::Wildcard,
+        ir::VersionPragmaComponent::Unrecognized => VersionPragmaComponent::Unrecognized,
+        ir::VersionPragmaComponent::Number(variant) => {
+            VersionPragmaComponent::Number(variant.clone())
         }
     }
 }
 
 #[derive(Clone)]
-pub enum VersionLiteral {
-    SimpleVersionLiteral(SimpleVersionLiteral),
-    StringLiteral(StringLiteral),
+pub enum VersionPragmaOperator {
+    Caret,
+    Tilde,
+    Equal,
+    LessThan,
+    LessThanEqual,
+    GreaterThan,
+    GreaterThanEqual,
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_version_literal(
-    ir_node: &ir::VersionLiteral,
+pub(crate) fn create_version_pragma_operator(
+    ir_node: &ir::VersionPragmaOperator,
     semantic: &Arc<SemanticContext>,
-) -> VersionLiteral {
+) -> VersionPragmaOperator {
     match ir_node {
-        ir::VersionLiteral::SimpleVersionLiteral(nodes) => {
-            VersionLiteral::SimpleVersionLiteral(create_simple_version_literal(nodes, semantic))
-        }
-        ir::VersionLiteral::StringLiteral(variant) => {
-            VersionLiteral::StringLiteral(create_string_literal(variant, semantic))
-        }
-    }
-}
-
-#[derive(Clone)]
-pub enum VersionOperator {
-    PragmaCaret(PragmaCaret),
-    PragmaTilde(PragmaTilde),
-    PragmaEqual(PragmaEqual),
-    PragmaLessThan(PragmaLessThan),
-    PragmaGreaterThan(PragmaGreaterThan),
-    PragmaLessThanEqual(PragmaLessThanEqual),
-    PragmaGreaterThanEqual(PragmaGreaterThanEqual),
-}
-
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_version_operator(
-    ir_node: &ir::VersionOperator,
-    semantic: &Arc<SemanticContext>,
-) -> VersionOperator {
-    match ir_node {
-        ir::VersionOperator::PragmaCaret(variant) => {
-            VersionOperator::PragmaCaret(create_pragma_caret(variant, semantic))
-        }
-        ir::VersionOperator::PragmaTilde(variant) => {
-            VersionOperator::PragmaTilde(create_pragma_tilde(variant, semantic))
-        }
-        ir::VersionOperator::PragmaEqual(variant) => {
-            VersionOperator::PragmaEqual(create_pragma_equal(variant, semantic))
-        }
-        ir::VersionOperator::PragmaLessThan(variant) => {
-            VersionOperator::PragmaLessThan(create_pragma_less_than(variant, semantic))
-        }
-        ir::VersionOperator::PragmaGreaterThan(variant) => {
-            VersionOperator::PragmaGreaterThan(create_pragma_greater_than(variant, semantic))
-        }
-        ir::VersionOperator::PragmaLessThanEqual(variant) => {
-            VersionOperator::PragmaLessThanEqual(create_pragma_less_than_equal(variant, semantic))
-        }
-        ir::VersionOperator::PragmaGreaterThanEqual(variant) => {
-            VersionOperator::PragmaGreaterThanEqual(create_pragma_greater_than_equal(
-                variant, semantic,
-            ))
-        }
+        ir::VersionPragmaOperator::Caret => VersionPragmaOperator::Caret,
+        ir::VersionPragmaOperator::Tilde => VersionPragmaOperator::Tilde,
+        ir::VersionPragmaOperator::Equal => VersionPragmaOperator::Equal,
+        ir::VersionPragmaOperator::LessThan => VersionPragmaOperator::LessThan,
+        ir::VersionPragmaOperator::LessThanEqual => VersionPragmaOperator::LessThanEqual,
+        ir::VersionPragmaOperator::GreaterThan => VersionPragmaOperator::GreaterThan,
+        ir::VersionPragmaOperator::GreaterThanEqual => VersionPragmaOperator::GreaterThanEqual,
     }
 }
 
@@ -5672,6 +5623,7 @@ pub enum YulExpression {
     YulPath(YulPath),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_yul_expression(
@@ -5703,6 +5655,7 @@ pub enum YulLiteral {
     StringLiteral(StringLiteral),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_yul_literal(
@@ -5746,6 +5699,7 @@ pub enum YulStatement {
     YulExpression(YulExpression),
 }
 
+#[allow(clippy::clone_on_copy)]
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_yul_statement(
@@ -6358,39 +6312,6 @@ impl PositionalArgumentsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type SimpleVersionLiteral = SimpleVersionLiteralStruct;
-
-pub(crate) fn create_simple_version_literal(
-    nodes: &ir::SimpleVersionLiteral,
-    semantic: &Arc<SemanticContext>,
-) -> SimpleVersionLiteral {
-    SimpleVersionLiteralStruct {
-        ir_nodes: Arc::clone(nodes),
-        semantic: Arc::clone(semantic),
-    }
-}
-
-#[derive(Clone)]
-pub struct SimpleVersionLiteralStruct {
-    pub(crate) ir_nodes: ir::SimpleVersionLiteral,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-impl SimpleVersionLiteralStruct {
-    pub fn iter(&self) -> impl Iterator<Item = VersionSpecifier> + use<'_> {
-        self.ir_nodes
-            .iter()
-            .map(|ir_node| create_version_specifier(ir_node, &self.semantic))
-    }
-
-    pub fn len(&self) -> usize {
-        self.ir_nodes.len()
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.ir_nodes.is_empty()
-    }
-}
 pub type SourceUnitMembers = SourceUnitMembersStruct;
 
 pub(crate) fn create_source_unit_members(
@@ -6622,29 +6543,29 @@ impl UsingDeconstructionSymbolsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type VersionExpressionSet = VersionExpressionSetStruct;
+pub type VersionPragmaExpressionSet = VersionPragmaExpressionSetStruct;
 
-pub(crate) fn create_version_expression_set(
-    nodes: &ir::VersionExpressionSet,
+pub(crate) fn create_version_pragma_expression_set(
+    nodes: &ir::VersionPragmaExpressionSet,
     semantic: &Arc<SemanticContext>,
-) -> VersionExpressionSet {
-    VersionExpressionSetStruct {
+) -> VersionPragmaExpressionSet {
+    VersionPragmaExpressionSetStruct {
         ir_nodes: Arc::clone(nodes),
         semantic: Arc::clone(semantic),
     }
 }
 
 #[derive(Clone)]
-pub struct VersionExpressionSetStruct {
-    pub(crate) ir_nodes: ir::VersionExpressionSet,
+pub struct VersionPragmaExpressionSetStruct {
+    pub(crate) ir_nodes: ir::VersionPragmaExpressionSet,
     pub(crate) semantic: Arc<SemanticContext>,
 }
 
-impl VersionExpressionSetStruct {
-    pub fn iter(&self) -> impl Iterator<Item = VersionExpression> + use<'_> {
+impl VersionPragmaExpressionSetStruct {
+    pub fn iter(&self) -> impl Iterator<Item = VersionPragmaComparator> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| create_version_expression(ir_node, &self.semantic))
+            .map(|ir_node| create_version_pragma_comparator(ir_node, &self.semantic))
     }
 
     pub fn len(&self) -> usize {
@@ -6655,29 +6576,62 @@ impl VersionExpressionSetStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type VersionExpressionSets = VersionExpressionSetsStruct;
+pub type VersionPragmaExpressionSets = VersionPragmaExpressionSetsStruct;
 
-pub(crate) fn create_version_expression_sets(
-    nodes: &ir::VersionExpressionSets,
+pub(crate) fn create_version_pragma_expression_sets(
+    nodes: &ir::VersionPragmaExpressionSets,
     semantic: &Arc<SemanticContext>,
-) -> VersionExpressionSets {
-    VersionExpressionSetsStruct {
+) -> VersionPragmaExpressionSets {
+    VersionPragmaExpressionSetsStruct {
         ir_nodes: Arc::clone(nodes),
         semantic: Arc::clone(semantic),
     }
 }
 
 #[derive(Clone)]
-pub struct VersionExpressionSetsStruct {
-    pub(crate) ir_nodes: ir::VersionExpressionSets,
+pub struct VersionPragmaExpressionSetsStruct {
+    pub(crate) ir_nodes: ir::VersionPragmaExpressionSets,
     pub(crate) semantic: Arc<SemanticContext>,
 }
 
-impl VersionExpressionSetsStruct {
-    pub fn iter(&self) -> impl Iterator<Item = VersionExpressionSet> + use<'_> {
+impl VersionPragmaExpressionSetsStruct {
+    pub fn iter(&self) -> impl Iterator<Item = VersionPragmaExpressionSet> + use<'_> {
         self.ir_nodes
             .iter()
-            .map(|ir_node| create_version_expression_set(ir_node, &self.semantic))
+            .map(|ir_node| create_version_pragma_expression_set(ir_node, &self.semantic))
+    }
+
+    pub fn len(&self) -> usize {
+        self.ir_nodes.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.ir_nodes.is_empty()
+    }
+}
+pub type VersionPragmaSpecifier = VersionPragmaSpecifierStruct;
+
+pub(crate) fn create_version_pragma_specifier(
+    nodes: &ir::VersionPragmaSpecifier,
+    semantic: &Arc<SemanticContext>,
+) -> VersionPragmaSpecifier {
+    VersionPragmaSpecifierStruct {
+        ir_nodes: Arc::clone(nodes),
+        semantic: Arc::clone(semantic),
+    }
+}
+
+#[derive(Clone)]
+pub struct VersionPragmaSpecifierStruct {
+    pub(crate) ir_nodes: ir::VersionPragmaSpecifier,
+    pub(crate) semantic: Arc<SemanticContext>,
+}
+
+impl VersionPragmaSpecifierStruct {
+    pub fn iter(&self) -> impl Iterator<Item = VersionPragmaComponent> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| create_version_pragma_component(ir_node, &self.semantic))
     }
 
     pub fn len(&self) -> usize {
@@ -8814,286 +8768,6 @@ impl PlusPlusStruct {
     }
 }
 
-pub type PragmaCaret = PragmaCaretStruct;
-
-#[derive(Clone)]
-pub struct PragmaCaretStruct {
-    pub(crate) ir_node: ir::PragmaCaret,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub(crate) fn create_pragma_caret(
-    ir_node: &ir::PragmaCaret,
-    semantic: &Arc<SemanticContext>,
-) -> PragmaCaret {
-    PragmaCaretStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    }
-}
-
-impl PragmaCaretStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &FileId {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
-pub type PragmaEqual = PragmaEqualStruct;
-
-#[derive(Clone)]
-pub struct PragmaEqualStruct {
-    pub(crate) ir_node: ir::PragmaEqual,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub(crate) fn create_pragma_equal(
-    ir_node: &ir::PragmaEqual,
-    semantic: &Arc<SemanticContext>,
-) -> PragmaEqual {
-    PragmaEqualStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    }
-}
-
-impl PragmaEqualStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &FileId {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
-pub type PragmaGreaterThan = PragmaGreaterThanStruct;
-
-#[derive(Clone)]
-pub struct PragmaGreaterThanStruct {
-    pub(crate) ir_node: ir::PragmaGreaterThan,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub(crate) fn create_pragma_greater_than(
-    ir_node: &ir::PragmaGreaterThan,
-    semantic: &Arc<SemanticContext>,
-) -> PragmaGreaterThan {
-    PragmaGreaterThanStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    }
-}
-
-impl PragmaGreaterThanStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &FileId {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
-pub type PragmaGreaterThanEqual = PragmaGreaterThanEqualStruct;
-
-#[derive(Clone)]
-pub struct PragmaGreaterThanEqualStruct {
-    pub(crate) ir_node: ir::PragmaGreaterThanEqual,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub(crate) fn create_pragma_greater_than_equal(
-    ir_node: &ir::PragmaGreaterThanEqual,
-    semantic: &Arc<SemanticContext>,
-) -> PragmaGreaterThanEqual {
-    PragmaGreaterThanEqualStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    }
-}
-
-impl PragmaGreaterThanEqualStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &FileId {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
-pub type PragmaLessThan = PragmaLessThanStruct;
-
-#[derive(Clone)]
-pub struct PragmaLessThanStruct {
-    pub(crate) ir_node: ir::PragmaLessThan,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub(crate) fn create_pragma_less_than(
-    ir_node: &ir::PragmaLessThan,
-    semantic: &Arc<SemanticContext>,
-) -> PragmaLessThan {
-    PragmaLessThanStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    }
-}
-
-impl PragmaLessThanStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &FileId {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
-pub type PragmaLessThanEqual = PragmaLessThanEqualStruct;
-
-#[derive(Clone)]
-pub struct PragmaLessThanEqualStruct {
-    pub(crate) ir_node: ir::PragmaLessThanEqual,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub(crate) fn create_pragma_less_than_equal(
-    ir_node: &ir::PragmaLessThanEqual,
-    semantic: &Arc<SemanticContext>,
-) -> PragmaLessThanEqual {
-    PragmaLessThanEqualStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    }
-}
-
-impl PragmaLessThanEqualStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &FileId {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
-pub type PragmaTilde = PragmaTildeStruct;
-
-#[derive(Clone)]
-pub struct PragmaTildeStruct {
-    pub(crate) ir_node: ir::PragmaTilde,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub(crate) fn create_pragma_tilde(
-    ir_node: &ir::PragmaTilde,
-    semantic: &Arc<SemanticContext>,
-) -> PragmaTilde {
-    PragmaTildeStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    }
-}
-
-impl PragmaTildeStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &FileId {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
 pub type SecondsKeyword = SecondsKeywordStruct;
 
 #[derive(Clone)]
@@ -9627,46 +9301,6 @@ pub(crate) fn create_unicode_string_literal(
 }
 
 impl UnicodeStringLiteralStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
-    pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
-    }
-
-    pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-    }
-
-    pub fn get_file_id(&self) -> &FileId {
-        self.semantic.file_id_from_node_id(self.ir_node.id())
-    }
-
-    pub fn get_text_range(&self) -> &Range<usize> {
-        &self.ir_node.range
-    }
-}
-
-pub type VersionSpecifier = VersionSpecifierStruct;
-
-#[derive(Clone)]
-pub struct VersionSpecifierStruct {
-    pub(crate) ir_node: ir::VersionSpecifier,
-    pub(crate) semantic: Arc<SemanticContext>,
-}
-
-pub(crate) fn create_version_specifier(
-    ir_node: &ir::VersionSpecifier,
-    semantic: &Arc<SemanticContext>,
-) -> VersionSpecifier {
-    VersionSpecifierStruct {
-        ir_node: Arc::clone(ir_node),
-        semantic: Arc::clone(semantic),
-    }
-}
-
-impl VersionSpecifierStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }

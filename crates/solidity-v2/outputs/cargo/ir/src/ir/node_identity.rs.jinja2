@@ -51,8 +51,10 @@ impl<T: NodeIdentity> NodeIdentity for Arc<[T]> {
         fn node_id(&self) -> Option<NodeId> {
             match self {
                 {% for variant in choice.variants -%}
-                    {% if variant.is_external %}
+                    {% if variant.is_unit %}
                     {{ parent_type }}::{{ variant.name }} => None,
+                    {% elif variant.is_external %}
+                    {{ parent_type }}::{{ variant.name }}(_) => None,
                     {% else %}
                     {{ parent_type }}::{{ variant.name }}(inner) => inner.node_id(),
                     {% endif %}

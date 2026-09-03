@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 6281] Error: Token incompatible with Solidity parser as part of pragma directive.
+   ╭─[input.sol:3:25]
+   │
+ 3 │ pragma solidity 0.8.0 - 1x;
+   │                         ┬  
+   │                         ╰── Error occurred here.
+───╯

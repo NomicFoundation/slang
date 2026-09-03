@@ -77,14 +77,13 @@ impl<'source> ContextWrapper<'source> {
 
 #[derive(Clone, Debug, Logos)]
 #[logos(extras = ContextExtras)]
-#[logos(subpattern VersionSpecifierFragment = r#"([0-9]|x|X|\*)+"#)]
 #[logos(subpattern PragmaAsciiEscape = r#"n|r|t|'|"|\\|\r\n|\r|\n"#)]
 #[logos(subpattern PragmaHexCharacter = r#"[0-9]|[a-f]|[A-F]"#)]
 #[logos(subpattern PragmaHexByteEscape = r#"x(?&PragmaHexCharacter)(?&PragmaHexCharacter)"#)]
 #[logos(subpattern PragmaUnicodeEscape = r#"u(?&PragmaHexCharacter)(?&PragmaHexCharacter)(?&PragmaHexCharacter)(?&PragmaHexCharacter)"#)]
 #[logos(subpattern PragmaEscapeSequence = r#"\\((?&PragmaAsciiEscape)|(?&PragmaHexByteEscape)|(?&PragmaUnicodeEscape))"#)]
 pub enum PragmaContext {
-    #[regex(r#"(?&VersionSpecifierFragment)"#, |_| { LexemeKind::VersionSpecifier }, priority = 2000001)]
+    #[regex(r#"([0-9]|x|X|\*)+"#, |_| { LexemeKind::VersionPragmaComponent }, priority = 2000001)]
     #[regex(r#"abicoder"#, |_| { LexemeKind::AbicoderKeyword_Reserved }, priority = 3000002)]
     #[regex(r#"experimental"#, |_| { LexemeKind::ExperimentalKeyword_Reserved }, priority = 3000003)]
     #[regex(r#"v1"#, |_| { LexemeKind::AbicoderV1Keyword_Reserved }, priority = 3000004)]

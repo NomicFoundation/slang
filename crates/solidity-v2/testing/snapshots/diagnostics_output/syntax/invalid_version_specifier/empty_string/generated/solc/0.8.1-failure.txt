@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 1684] Error: Found version pragma, but failed to parse it. Please ensure there is a trailing semicolon.
+   ╭─[input.sol:2:1]
+   │
+ 2 │ pragma solidity "";
+   │ ─────────┬─────────  
+   │          ╰─────────── Error occurred here.
+───╯

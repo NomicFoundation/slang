@@ -650,13 +650,13 @@ impl TextRange for VersionPragmaStruct {
     }
 }
 
-impl TextRange for VersionRangeStruct {
+impl TextRange for VersionPragmaRangeStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.calculate_text_start()?..self.calculate_text_end()?)
     }
 }
 
-impl TextRange for VersionTermStruct {
+impl TextRange for VersionPragmaTermStruct {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.calculate_text_start()?..self.calculate_text_end()?)
     }
@@ -1010,19 +1010,19 @@ impl TextRange for VariableDeclarationTarget {
     }
 }
 
-impl TextRange for VersionExpression {
+impl TextRange for VersionPragmaExpression {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.calculate_text_start()?..self.calculate_text_end()?)
     }
 }
 
-impl TextRange for VersionLiteral {
+impl TextRange for VersionPragmaOperator {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.calculate_text_start()?..self.calculate_text_end()?)
     }
 }
 
-impl TextRange for VersionOperator {
+impl TextRange for VersionPragmaSpecifier {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.calculate_text_start()?..self.calculate_text_end()?)
     }
@@ -1202,12 +1202,6 @@ impl TextRange for ReceiveFunctionAttributes {
     }
 }
 
-impl TextRange for SimpleVersionLiteral {
-    fn calculate_text_range(&self) -> Option<Range<usize>> {
-        Some(self.calculate_text_start()?..self.calculate_text_end()?)
-    }
-}
-
 impl TextRange for SourceUnitMembers {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.calculate_text_start()?..self.calculate_text_end()?)
@@ -1256,13 +1250,19 @@ impl TextRange for UsingDeconstructionSymbols {
     }
 }
 
-impl TextRange for VersionExpressionSet {
+impl TextRange for VersionPragmaComponents {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.calculate_text_start()?..self.calculate_text_end()?)
     }
 }
 
-impl TextRange for VersionExpressionSets {
+impl TextRange for VersionPragmaExpressionSet {
+    fn calculate_text_range(&self) -> Option<Range<usize>> {
+        Some(self.calculate_text_start()?..self.calculate_text_end()?)
+    }
+}
+
+impl TextRange for VersionPragmaExpressionSets {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.calculate_text_start()?..self.calculate_text_end()?)
     }
@@ -2390,7 +2390,7 @@ impl TextRange for VarKeyword {
     }
 }
 
-impl TextRange for VersionSpecifier {
+impl TextRange for VersionPragmaComponent {
     fn calculate_text_range(&self) -> Option<Range<usize>> {
         Some(self.calculate_text_start()?..self.calculate_text_end()?)
     }

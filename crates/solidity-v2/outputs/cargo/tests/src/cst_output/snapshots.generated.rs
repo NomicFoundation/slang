@@ -2462,6 +2462,21 @@ mod version_pragma {
     }
 
     #[test]
+    fn range_with_operator_on_both_ends() -> Result<()> {
+        run("VersionPragma", "range_with_operator_on_both_ends")
+    }
+
+    #[test]
+    fn range_with_operator_on_end() -> Result<()> {
+        run("VersionPragma", "range_with_operator_on_end")
+    }
+
+    #[test]
+    fn range_with_operator_on_start() -> Result<()> {
+        run("VersionPragma", "range_with_operator_on_start")
+    }
+
+    #[test]
     fn ranges() -> Result<()> {
         run("VersionPragma", "ranges")
     }

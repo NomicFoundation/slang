@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.8;
+pragma solidity *;
 
 contract Test {
     enum ActionChoices { GoLeft, GoRight, GoStraight, SitStill }

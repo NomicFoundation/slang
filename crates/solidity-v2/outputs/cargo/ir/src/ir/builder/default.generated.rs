@@ -1030,54 +1030,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         Arc::new(output::VariableDeclarationStatementStruct { id, range, target })
     }
 
-    pub(super) fn build_version_pragma(
-        &mut self,
-        source: &input::VersionPragma,
-    ) -> output::VersionPragma {
-        let id = self.next_id(output::NodeKind::VersionPragma);
-        let range = source.calculate_text_range().unwrap_or_default();
-        let sets = self.build_version_expression_sets(&source.sets);
-
-        Arc::new(output::VersionPragmaStruct { id, range, sets })
-    }
-
-    pub(super) fn build_version_range(
-        &mut self,
-        source: &input::VersionRange,
-    ) -> output::VersionRange {
-        let id = self.next_id(output::NodeKind::VersionRange);
-        let range = source.calculate_text_range().unwrap_or_default();
-        let start = self.build_version_literal(&source.start);
-        let end = self.build_version_literal(&source.end);
-
-        Arc::new(output::VersionRangeStruct {
-            id,
-            range,
-            start,
-            end,
-        })
-    }
-
-    pub(super) fn build_version_term(
-        &mut self,
-        source: &input::VersionTerm,
-    ) -> output::VersionTerm {
-        let id = self.next_id(output::NodeKind::VersionTerm);
-        let range = source.calculate_text_range().unwrap_or_default();
-        let operator = source
-            .operator
-            .as_ref()
-            .map(|value| self.build_version_operator(value));
-        let literal = self.build_version_literal(&source.literal);
-
-        Arc::new(output::VersionTermStruct {
-            id,
-            range,
-            operator,
-            literal,
-        })
-    }
-
     pub(super) fn build_while_statement(
         &mut self,
         source: &input::WhileStatement,
@@ -2267,84 +2219,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     #[allow(clippy::unused_self)]
-    pub(super) fn build_version_expression(
-        &mut self,
-        source: &input::VersionExpression,
-    ) -> output::VersionExpression {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::VersionExpression::VersionRange(version_range) => {
-                output::VersionExpression::VersionRange(self.build_version_range(version_range))
-            }
-            input::VersionExpression::VersionTerm(version_term) => {
-                output::VersionExpression::VersionTerm(self.build_version_term(version_term))
-            }
-        }
-    }
-
-    #[allow(clippy::unused_self)]
-    pub(super) fn build_version_literal(
-        &mut self,
-        source: &input::VersionLiteral,
-    ) -> output::VersionLiteral {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::VersionLiteral::SimpleVersionLiteral(simple_version_literal) => {
-                output::VersionLiteral::SimpleVersionLiteral(
-                    self.build_simple_version_literal(simple_version_literal),
-                )
-            }
-            input::VersionLiteral::PragmaStringLiteral(pragma_string_literal) => {
-                output::VersionLiteral::StringLiteral(
-                    self.build_pragma_string_literal(pragma_string_literal),
-                )
-            }
-        }
-    }
-
-    #[allow(clippy::unused_self)]
-    pub(super) fn build_version_operator(
-        &mut self,
-        source: &input::VersionOperator,
-    ) -> output::VersionOperator {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::VersionOperator::PragmaCaret(pragma_caret) => {
-                output::VersionOperator::PragmaCaret(self.build_pragma_caret(pragma_caret))
-            }
-            input::VersionOperator::PragmaTilde(pragma_tilde) => {
-                output::VersionOperator::PragmaTilde(self.build_pragma_tilde(pragma_tilde))
-            }
-            input::VersionOperator::PragmaEqual(pragma_equal) => {
-                output::VersionOperator::PragmaEqual(self.build_pragma_equal(pragma_equal))
-            }
-            input::VersionOperator::PragmaLessThan(pragma_less_than) => {
-                output::VersionOperator::PragmaLessThan(
-                    self.build_pragma_less_than(pragma_less_than),
-                )
-            }
-            input::VersionOperator::PragmaGreaterThan(pragma_greater_than) => {
-                output::VersionOperator::PragmaGreaterThan(
-                    self.build_pragma_greater_than(pragma_greater_than),
-                )
-            }
-            input::VersionOperator::PragmaLessThanEqual(pragma_less_than_equal) => {
-                output::VersionOperator::PragmaLessThanEqual(
-                    self.build_pragma_less_than_equal(pragma_less_than_equal),
-                )
-            }
-            input::VersionOperator::PragmaGreaterThanEqual(pragma_greater_than_equal) => {
-                output::VersionOperator::PragmaGreaterThanEqual(
-                    self.build_pragma_greater_than_equal(pragma_greater_than_equal),
-                )
-            }
-        }
-    }
-
-    #[allow(clippy::unused_self)]
     pub(super) fn build_yul_expression(
         &mut self,
         source: &input::YulExpression,
@@ -2695,20 +2569,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .collect()
     }
 
-    pub(super) fn build_simple_version_literal(
-        &mut self,
-        source: &input::SimpleVersionLiteral,
-    ) -> output::SimpleVersionLiteral {
-        if source.elements.is_empty() {
-            return Arc::default();
-        }
-        source
-            .elements
-            .iter()
-            .map(|item| self.build_version_specifier(item))
-            .collect()
-    }
-
     pub(super) fn build_source_unit_members(
         &mut self,
         source: &input::SourceUnitMembers,
@@ -2801,34 +2661,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .elements
             .iter()
             .map(|item| self.build_using_deconstruction_symbol(item))
-            .collect()
-    }
-
-    pub(super) fn build_version_expression_set(
-        &mut self,
-        source: &input::VersionExpressionSet,
-    ) -> output::VersionExpressionSet {
-        if source.elements.is_empty() {
-            return Arc::default();
-        }
-        source
-            .elements
-            .iter()
-            .map(|item| self.build_version_expression(item))
-            .collect()
-    }
-
-    pub(super) fn build_version_expression_sets(
-        &mut self,
-        source: &input::VersionExpressionSets,
-    ) -> output::VersionExpressionSets {
-        if source.elements.is_empty() {
-            return Arc::default();
-        }
-        source
-            .elements
-            .iter()
-            .map(|item| self.build_version_expression_set(item))
             .collect()
     }
 
@@ -3338,76 +3170,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         })
     }
 
-    pub(super) fn build_pragma_caret(
-        &mut self,
-        source: &input::PragmaCaret,
-    ) -> output::PragmaCaret {
-        Arc::new(output::PragmaCaretStruct {
-            id: self.next_id(output::NodeKind::PragmaCaret),
-            range: source.range.clone(),
-        })
-    }
-
-    pub(super) fn build_pragma_equal(
-        &mut self,
-        source: &input::PragmaEqual,
-    ) -> output::PragmaEqual {
-        Arc::new(output::PragmaEqualStruct {
-            id: self.next_id(output::NodeKind::PragmaEqual),
-            range: source.range.clone(),
-        })
-    }
-
-    pub(super) fn build_pragma_greater_than(
-        &mut self,
-        source: &input::PragmaGreaterThan,
-    ) -> output::PragmaGreaterThan {
-        Arc::new(output::PragmaGreaterThanStruct {
-            id: self.next_id(output::NodeKind::PragmaGreaterThan),
-            range: source.range.clone(),
-        })
-    }
-
-    pub(super) fn build_pragma_greater_than_equal(
-        &mut self,
-        source: &input::PragmaGreaterThanEqual,
-    ) -> output::PragmaGreaterThanEqual {
-        Arc::new(output::PragmaGreaterThanEqualStruct {
-            id: self.next_id(output::NodeKind::PragmaGreaterThanEqual),
-            range: source.range.clone(),
-        })
-    }
-
-    pub(super) fn build_pragma_less_than(
-        &mut self,
-        source: &input::PragmaLessThan,
-    ) -> output::PragmaLessThan {
-        Arc::new(output::PragmaLessThanStruct {
-            id: self.next_id(output::NodeKind::PragmaLessThan),
-            range: source.range.clone(),
-        })
-    }
-
-    pub(super) fn build_pragma_less_than_equal(
-        &mut self,
-        source: &input::PragmaLessThanEqual,
-    ) -> output::PragmaLessThanEqual {
-        Arc::new(output::PragmaLessThanEqualStruct {
-            id: self.next_id(output::NodeKind::PragmaLessThanEqual),
-            range: source.range.clone(),
-        })
-    }
-
-    pub(super) fn build_pragma_tilde(
-        &mut self,
-        source: &input::PragmaTilde,
-    ) -> output::PragmaTilde {
-        Arc::new(output::PragmaTildeStruct {
-            id: self.next_id(output::NodeKind::PragmaTilde),
-            range: source.range.clone(),
-        })
-    }
-
     pub(super) fn build_seconds_keyword(
         &mut self,
         source: &input::SecondsKeyword,
@@ -3540,17 +3302,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         })
     }
 
-    pub(super) fn build_version_specifier(
-        &mut self,
-        source: &input::VersionSpecifier,
-    ) -> output::VersionSpecifier {
-        Arc::new(output::VersionSpecifierStruct {
-            id: self.next_id(output::NodeKind::VersionSpecifier),
-            range: source.range.clone(),
-            text: self.unparse_range(source.range.clone()),
-        })
-    }
-
     pub(super) fn build_weeks_keyword(
         &mut self,
         source: &input::WeeksKeyword,
@@ -3571,17 +3322,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     //
     // Normalized Terminals
     //
-
-    pub(super) fn build_pragma_string_literal(
-        &mut self,
-        source: &input::PragmaStringLiteral,
-    ) -> output::StringLiteral {
-        Arc::new(output::StringLiteralStruct {
-            id: self.next_id(output::NodeKind::StringLiteral),
-            range: source.range.clone(),
-            text: self.unparse_range(source.range.clone()),
-        })
-    }
 
     pub(super) fn build_yul_decimal_literal(
         &mut self,

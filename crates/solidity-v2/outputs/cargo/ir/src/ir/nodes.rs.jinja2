@@ -24,13 +24,7 @@ pub use super::kinds::NodeKind;
     pub range: Range<usize>,
     {%- for field in sequence.fields %}
       pub {{ field.label | snake_case }}:
-      {%- if field.field_type.kind == "External" -%}
-        {%- if field.is_optional -%}
-          bool,
-        {%- else -%}
-          {{ throw(message="Cannot generate sequence field for non-optional external type") }},
-        {%- endif -%}
-      {%- elif field.is_optional -%}
+      {%- if field.is_optional -%}
         Option<{{ field.field_type.name }}>,
       {%- else -%}
         {{ field.field_type.name }},
@@ -51,17 +45,19 @@ pub use super::kinds::NodeKind;
 //
 
 {% for parent_type, choice in target.choices %}
-  {% set_global all_external = true %}
+  {# A choice that holds no node at all stands for a value rather than a node,
+     so it is compared and copied like one. #}
+  {% set_global all_values = true %}
   {% set_global all_terminals = true %}
   {% for variant in choice.variants %}
-    {% if not variant.is_external %}
-      {% set_global all_external = false %}
+    {% if not variant.is_unit and not variant.is_external %}
+      {% set_global all_values = false %}
     {% endif %}
     {% if not variant.is_terminal %}
       {% set_global all_terminals = false %}
     {% endif %}
   {% endfor %}
-  {% if all_external -%}
+  {% if all_values -%}
     #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
   {%- else -%}
     #[derive(Clone, Debug)]
@@ -71,8 +67,8 @@ pub use super::kinds::NodeKind;
   pub enum {{ parent_type }} {
     {% for variant in choice.variants -%}
       {{ variant.name }}
-      {%- if variant.kind != "External" -%}
-        ({{ variant.name }})
+      {%- if not variant.is_unit -%}
+        ({{ variant.type_name }})
       {%- endif -%}
       ,
     {%- endfor -%}

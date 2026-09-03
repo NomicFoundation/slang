@@ -1,0 +1,14 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "From",
+          "from": "0.8.0"
+        },
+        "reason": "solc reads a version literal character by character and ends a number at the first '0', so it takes '0.08' as the comparator '0.0' followed by a second comparator '8', which no version satisfies. Slang reads leading zeros the way semver intends, so '0.08' is '0.8' and admits every '0.8.x'."
+      }
+    ]
+  }
+}

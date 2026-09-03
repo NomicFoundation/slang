@@ -16,23 +16,24 @@ impl<S: Source> CstToIrBuilder<'_, S> {
   // Sequences
   //
   {% for parent_type, sequence in builder.sequences %}
-    {% if not sequence.has_added_fields %}
+    {% if not sequence.has_custom_builder %}
       pub(super) fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }}
       {
         let id = self.next_id(output::NodeKind::{{ parent_type }});
         let range = source.calculate_text_range().unwrap_or_default();
         {%- for field in sequence.fields %}
           let {{ field.label | snake_case }} =
-          {%- if field.field_type.kind == "External" -%}
-            {{ throw(message="Cannot auto-build external sequence field") }};
+          {%- if field.field_type.is_unit -%}
+            {{ throw(message="Cannot auto-build a unit sequence field") }};
+          {%- elif field.is_optional and not field.is_target_optional -%}
+            {# An optional source collapsed to a plain value: presence is it #}
+            source.{{ field.source_label | snake_case }}.is_some();
+          {%- elif field.field_type.is_external -%}
+            {{ throw(message="Cannot auto-build an external sequence field") }};
           {%- elif field.is_optional -%}
-            {%- if field.target_type.kind == "External" and field.target_type.name == "Boolean" -%}
-              source.{{ field.source_label | snake_case }}.is_some();
-            {%- else -%}
-              source.{{ field.source_label | snake_case }}.as_ref().map(
-                |value| self.build_{{ field.field_type.name | snake_case }}(value)
-              );
-            {%- endif -%}
+            source.{{ field.source_label | snake_case }}.as_ref().map(
+              |value| self.build_{{ field.field_type.name | snake_case }}(value)
+            );
           {%- else -%}
             {# Non-optional unique terminals should be elided at this point #}
             self.build_{{ field.field_type.name | snake_case }}(&source.{{ field.source_label | snake_case }});

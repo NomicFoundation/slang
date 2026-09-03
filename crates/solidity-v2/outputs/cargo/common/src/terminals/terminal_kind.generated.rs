@@ -187,7 +187,7 @@ pub enum TerminalKind {
     UnicodeStringLiteral,
     UsingKeyword,
     VarKeyword,
-    VersionSpecifier,
+    VersionPragmaComponent,
     ViewKeyword,
     VirtualKeyword,
     WeeksKeyword,

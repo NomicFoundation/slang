@@ -64,39 +64,39 @@ language_v2_macros::compile!(Language(
                                 name = VersionPragma,
                                 fields = (
                                     solidity_keyword = Required(SolidityKeyword),
-                                    sets = Required(VersionExpressionSets)
+                                    sets = Required(VersionPragmaExpressionSets)
                                 )
                             ),
                             Separated(
-                                name = VersionExpressionSets,
-                                reference = VersionExpressionSet,
+                                name = VersionPragmaExpressionSets,
+                                reference = VersionPragmaExpressionSet,
                                 separator = PragmaBarBar
                             ),
-                            Repeated(name = VersionExpressionSet, reference = VersionExpression),
+                            Repeated(name = VersionPragmaExpressionSet, reference = VersionPragmaExpression),
                             Enum(
-                                name = VersionExpression,
+                                name = VersionPragmaExpression,
                                 variants = [
-                                    EnumVariant(reference = VersionRange),
-                                    EnumVariant(reference = VersionTerm)
+                                    EnumVariant(reference = VersionPragmaRange),
+                                    EnumVariant(reference = VersionPragmaTerm)
                                 ]
                             ),
                             Struct(
-                                name = VersionRange,
+                                name = VersionPragmaRange,
                                 fields = (
-                                    start = Required(VersionLiteral),
+                                    start = Required(VersionPragmaSpecifier),
                                     minus = Required(PragmaMinus),
-                                    end = Required(VersionLiteral)
+                                    end = Required(VersionPragmaSpecifier)
                                 )
                             ),
                             Struct(
-                                name = VersionTerm,
+                                name = VersionPragmaTerm,
                                 fields = (
-                                    operator = Optional(reference = VersionOperator),
-                                    literal = Required(VersionLiteral)
+                                    operator = Optional(reference = VersionPragmaOperator),
+                                    specifier = Required(VersionPragmaSpecifier)
                                 )
                             ),
                             Enum(
-                                name = VersionOperator,
+                                name = VersionPragmaOperator,
                                 variants = [
                                     EnumVariant(reference = PragmaCaret),
                                     EnumVariant(reference = PragmaTilde),
@@ -108,23 +108,19 @@ language_v2_macros::compile!(Language(
                                 ]
                             ),
                             Enum(
-                                name = VersionLiteral,
+                                name = VersionPragmaSpecifier,
                                 variants = [
-                                    EnumVariant(reference = SimpleVersionLiteral),
+                                    EnumVariant(reference = VersionPragmaComponents),
                                     EnumVariant(reference = PragmaStringLiteral)
                                 ]
                             ),
                             Separated(
-                                name = SimpleVersionLiteral,
-                                reference = VersionSpecifier,
+                                name = VersionPragmaComponents,
+                                reference = VersionPragmaComponent,
                                 separator = PragmaPeriod
                             ),
                             Token(
-                                name = VersionSpecifier,
-                                scanner = Fragment(VersionSpecifierFragment)
-                            ),
-                            Fragment(
-                                name = VersionSpecifierFragment,
+                                name = VersionPragmaComponent,
                                 scanner = OneOrMore(Choice([
                                     Range(inclusive_start = '0', inclusive_end = '9'),
                                     Atom("x"),

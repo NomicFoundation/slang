@@ -17,4 +17,5 @@ macro_rules! expect_variant {
 
 mod builder;
 mod text_range;
+mod version_pragma;
 mod visitor;

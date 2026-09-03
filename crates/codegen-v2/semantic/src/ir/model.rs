@@ -39,6 +39,7 @@ pub enum NodeType {
     Collection(model::Identifier),
     Terminal(model::Identifier),
     UniqueTerminal(model::Identifier),
+    Unit(model::Identifier),
     // An externally-defined type, not generated from the language definition.
     // Behaves like `UniqueTerminal` in the IR/AST templates (bool field in
     // sequences, plain enum variant in choices, disallowed in collections).
@@ -56,7 +57,42 @@ pub struct Field {
 #[allow(clippy::struct_field_names)]
 #[derive(Clone, Serialize)]
 pub struct Choice {
-    pub variants: Vec<NodeType>,
+    pub variants: Vec<Variant>,
+}
+
+#[derive(Clone)]
+pub struct Variant {
+    pub label: model::Identifier,
+    pub node_type: NodeType,
+}
+
+impl Variant {
+    pub fn of(node_type: NodeType) -> Self {
+        Self {
+            label: node_type.as_identifier().clone(),
+            node_type,
+        }
+    }
+}
+
+impl Serialize for Variant {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let mut map = serializer.serialize_map(None)?;
+        map.serialize_entry("name", &self.label)?;
+        map.serialize_entry("type_name", self.node_type.as_identifier())?;
+        map.serialize_entry("kind", &self.node_type.kind_name())?;
+        map.serialize_entry("is_terminal", &self.node_type.is_terminal())?;
+        map.serialize_entry(
+            "is_unique",
+            &matches!(self.node_type, NodeType::UniqueTerminal(_)),
+        )?;
+        map.serialize_entry("is_unit", &self.node_type.is_unit())?;
+        map.serialize_entry("is_external", &self.node_type.is_external())?;
+        map.end()
+    }
 }
 
 #[derive(Clone, Serialize)]
@@ -72,6 +108,7 @@ impl NodeType {
             | NodeType::Collection(identifier)
             | NodeType::Terminal(identifier)
             | NodeType::UniqueTerminal(identifier)
+            | NodeType::Unit(identifier)
             | NodeType::External(identifier) => identifier,
         }
     }
@@ -80,8 +117,24 @@ impl NodeType {
         matches!(self, Self::Terminal(_) | Self::UniqueTerminal(_))
     }
 
+    pub fn is_unit(&self) -> bool {
+        matches!(self, Self::Unit(_))
+    }
+
     pub fn is_external(&self) -> bool {
         matches!(self, Self::External(_))
+    }
+
+    pub fn kind_name(&self) -> &'static str {
+        match self {
+            Self::Sequence(_) => "Sequence",
+            Self::Choice(_) => "Choice",
+            Self::Collection(_) => "Collection",
+            Self::Terminal(_) => "Terminal",
+            Self::UniqueTerminal(_) => "UniqueTerminal",
+            Self::Unit(_) => "Unit",
+            Self::External(_) => "External",
+        }
     }
 }
 
@@ -96,22 +149,13 @@ impl Serialize for NodeType {
     where
         S: serde::Serializer,
     {
-        let mut map = serializer.serialize_map(Some(5))?;
-        let (identifier, kind, is_terminal, is_unique, is_external) = match self {
-            NodeType::Sequence(identifier) => (identifier, "Sequence", false, false, false),
-            NodeType::Choice(identifier) => (identifier, "Choice", false, false, false),
-            NodeType::Collection(identifier) => (identifier, "Collection", false, false, false),
-            NodeType::Terminal(identifier) => (identifier, "Terminal", true, false, false),
-            NodeType::UniqueTerminal(identifier) => {
-                (identifier, "UniqueTerminal", true, true, false)
-            }
-            NodeType::External(identifier) => (identifier, "External", false, false, true),
-        };
-        map.serialize_entry("name", identifier)?;
-        map.serialize_entry("kind", kind)?;
-        map.serialize_entry("is_terminal", &is_terminal)?;
-        map.serialize_entry("is_unique", &is_unique)?;
-        map.serialize_entry("is_external", &is_external)?;
+        let mut map = serializer.serialize_map(Some(6))?;
+        map.serialize_entry("name", self.as_identifier())?;
+        map.serialize_entry("kind", &self.kind_name())?;
+        map.serialize_entry("is_terminal", &self.is_terminal())?;
+        map.serialize_entry("is_unique", &matches!(self, NodeType::UniqueTerminal(_)))?;
+        map.serialize_entry("is_unit", &self.is_unit())?;
+        map.serialize_entry("is_external", &self.is_external())?;
         map.end()
     }
 }
@@ -299,7 +343,7 @@ impl IrModelBuilder {
         let variants = item
             .variants
             .iter()
-            .map(|variant| self.find_node_type(&variant.reference))
+            .map(|variant| Variant::of(self.find_node_type(&variant.reference)))
             .collect();
 
         self.choices.insert(parent_type, Choice { variants });
@@ -336,7 +380,7 @@ impl IrModelBuilder {
 
         let variants = precedence_expressions
             .chain(primary_expressions)
-            .map(|item| self.find_node_type(item))
+            .map(|item| Variant::of(self.find_node_type(item)))
             .collect();
 
         self.choices.insert(parent_type, Choice { variants });
@@ -391,7 +435,7 @@ impl IrModelBuilder {
             self.choices.insert(
                 ident.clone(),
                 Choice {
-                    variants: variants.into_iter().collect(),
+                    variants: variants.into_iter().map(Variant::of).collect(),
                 },
             );
 

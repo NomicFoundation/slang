@@ -903,7 +903,7 @@ impl TextStart for VersionPragmaStruct {
     }
 }
 
-impl TextStart for VersionRangeStruct {
+impl TextStart for VersionPragmaRangeStruct {
     fn calculate_text_start(&self) -> Option<usize> {
         None.or_else(|| self.start.calculate_text_start())
             .or_else(|| self.minus.calculate_text_start())
@@ -911,10 +911,10 @@ impl TextStart for VersionRangeStruct {
     }
 }
 
-impl TextStart for VersionTermStruct {
+impl TextStart for VersionPragmaTermStruct {
     fn calculate_text_start(&self) -> Option<usize> {
         None.or_else(|| self.operator.calculate_text_start())
-            .or_else(|| self.literal.calculate_text_start())
+            .or_else(|| self.specifier.calculate_text_start())
     }
 }
 
@@ -1623,34 +1623,34 @@ impl TextStart for VariableDeclarationTarget {
     }
 }
 
-impl TextStart for VersionExpression {
+impl TextStart for VersionPragmaExpression {
     fn calculate_text_start(&self) -> Option<usize> {
         match self {
-            VersionExpression::VersionRange(child) => child.calculate_text_start(),
-            VersionExpression::VersionTerm(child) => child.calculate_text_start(),
+            VersionPragmaExpression::VersionPragmaRange(child) => child.calculate_text_start(),
+            VersionPragmaExpression::VersionPragmaTerm(child) => child.calculate_text_start(),
         }
     }
 }
 
-impl TextStart for VersionLiteral {
+impl TextStart for VersionPragmaOperator {
     fn calculate_text_start(&self) -> Option<usize> {
         match self {
-            VersionLiteral::SimpleVersionLiteral(child) => child.calculate_text_start(),
-            VersionLiteral::PragmaStringLiteral(child) => child.calculate_text_start(),
+            VersionPragmaOperator::PragmaCaret(child) => child.calculate_text_start(),
+            VersionPragmaOperator::PragmaTilde(child) => child.calculate_text_start(),
+            VersionPragmaOperator::PragmaEqual(child) => child.calculate_text_start(),
+            VersionPragmaOperator::PragmaLessThan(child) => child.calculate_text_start(),
+            VersionPragmaOperator::PragmaGreaterThan(child) => child.calculate_text_start(),
+            VersionPragmaOperator::PragmaLessThanEqual(child) => child.calculate_text_start(),
+            VersionPragmaOperator::PragmaGreaterThanEqual(child) => child.calculate_text_start(),
         }
     }
 }
 
-impl TextStart for VersionOperator {
+impl TextStart for VersionPragmaSpecifier {
     fn calculate_text_start(&self) -> Option<usize> {
         match self {
-            VersionOperator::PragmaCaret(child) => child.calculate_text_start(),
-            VersionOperator::PragmaTilde(child) => child.calculate_text_start(),
-            VersionOperator::PragmaEqual(child) => child.calculate_text_start(),
-            VersionOperator::PragmaLessThan(child) => child.calculate_text_start(),
-            VersionOperator::PragmaGreaterThan(child) => child.calculate_text_start(),
-            VersionOperator::PragmaLessThanEqual(child) => child.calculate_text_start(),
-            VersionOperator::PragmaGreaterThanEqual(child) => child.calculate_text_start(),
+            VersionPragmaSpecifier::VersionPragmaComponents(child) => child.calculate_text_start(),
+            VersionPragmaSpecifier::PragmaStringLiteral(child) => child.calculate_text_start(),
         }
     }
 }
@@ -1905,14 +1905,6 @@ impl TextStart for ReceiveFunctionAttributes {
     }
 }
 
-impl TextStart for SimpleVersionLiteral {
-    fn calculate_text_start(&self) -> Option<usize> {
-        self.elements
-            .iter()
-            .find_map(TextStart::calculate_text_start)
-    }
-}
-
 impl TextStart for SourceUnitMembers {
     fn calculate_text_start(&self) -> Option<usize> {
         self.elements
@@ -1977,7 +1969,7 @@ impl TextStart for UsingDeconstructionSymbols {
     }
 }
 
-impl TextStart for VersionExpressionSet {
+impl TextStart for VersionPragmaComponents {
     fn calculate_text_start(&self) -> Option<usize> {
         self.elements
             .iter()
@@ -1985,7 +1977,15 @@ impl TextStart for VersionExpressionSet {
     }
 }
 
-impl TextStart for VersionExpressionSets {
+impl TextStart for VersionPragmaExpressionSet {
+    fn calculate_text_start(&self) -> Option<usize> {
+        self.elements
+            .iter()
+            .find_map(TextStart::calculate_text_start)
+    }
+}
+
+impl TextStart for VersionPragmaExpressionSets {
     fn calculate_text_start(&self) -> Option<usize> {
         self.elements
             .iter()
@@ -3131,7 +3131,7 @@ impl TextStart for VarKeyword {
     }
 }
 
-impl TextStart for VersionSpecifier {
+impl TextStart for VersionPragmaComponent {
     fn calculate_text_start(&self) -> Option<usize> {
         Some(self.range.start)
     }

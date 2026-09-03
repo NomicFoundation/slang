@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[syntax/invalid-version-specifier] Error: '1x' is not a valid version specifier.
+   ╭─[input.sol:3:17]
+   │
+ 3 │ pragma solidity 1x || 2x;
+   │                 ─┬  
+   │                  ╰── Error occurred here.
+───╯
+
+[syntax/invalid-version-specifier] Error: '2x' is not a valid version specifier.
+   ╭─[input.sol:3:23]
+   │
+ 3 │ pragma solidity 1x || 2x;
+   │                       ─┬  
+   │                        ╰── Error occurred here.
+───╯

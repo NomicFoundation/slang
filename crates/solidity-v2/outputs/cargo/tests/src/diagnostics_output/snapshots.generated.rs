@@ -3031,6 +3031,72 @@ mod syntax {
         }
     }
 
+    mod incompatible_version_pragma {
+        use super::*;
+
+        #[test]
+        fn alternatives() -> Result<()> {
+            run("syntax/incompatible_version_pragma", "alternatives")
+        }
+
+        #[test]
+        fn below_supported_versions() -> Result<()> {
+            run(
+                "syntax/incompatible_version_pragma",
+                "below_supported_versions",
+            )
+        }
+
+        #[test]
+        fn bounded_range() -> Result<()> {
+            run("syntax/incompatible_version_pragma", "bounded_range")
+        }
+
+        #[test]
+        fn caret_excludes_earlier_versions() -> Result<()> {
+            run(
+                "syntax/incompatible_version_pragma",
+                "caret_excludes_earlier_versions",
+            )
+        }
+
+        #[test]
+        fn four_components() -> Result<()> {
+            run("syntax/incompatible_version_pragma", "four_components")
+        }
+
+        #[test]
+        fn four_components_matching_the_version() -> Result<()> {
+            run(
+                "syntax/incompatible_version_pragma",
+                "four_components_matching_the_version",
+            )
+        }
+
+        #[test]
+        fn hyphen_range() -> Result<()> {
+            run("syntax/incompatible_version_pragma", "hyphen_range")
+        }
+
+        #[test]
+        fn multiple_pragmas() -> Result<()> {
+            run("syntax/incompatible_version_pragma", "multiple_pragmas")
+        }
+
+        #[test]
+        fn partial_version() -> Result<()> {
+            run("syntax/incompatible_version_pragma", "partial_version")
+        }
+
+        #[test]
+        fn wildcard_before_a_concrete_component() -> Result<()> {
+            run(
+                "syntax/incompatible_version_pragma",
+                "wildcard_before_a_concrete_component",
+            )
+        }
+    }
+
     mod invalid_assembly_dialect {
         use super::*;
 
@@ -3094,6 +3160,72 @@ mod syntax {
         #[test]
         fn receive_function() -> Result<()> {
             run("syntax/invalid_mutability", "receive_function")
+        }
+    }
+
+    mod invalid_version_specifier {
+        use super::*;
+
+        #[test]
+        fn digits_mixed_with_wildcard() -> Result<()> {
+            run(
+                "syntax/invalid_version_specifier",
+                "digits_mixed_with_wildcard",
+            )
+        }
+
+        #[test]
+        fn empty_string() -> Result<()> {
+            run("syntax/invalid_version_specifier", "empty_string")
+        }
+
+        #[test]
+        fn number_too_large() -> Result<()> {
+            run("syntax/invalid_version_specifier", "number_too_large")
+        }
+
+        #[test]
+        fn range_endpoint() -> Result<()> {
+            run("syntax/invalid_version_specifier", "range_endpoint")
+        }
+
+        #[test]
+        fn reported_once_per_specifier() -> Result<()> {
+            run(
+                "syntax/invalid_version_specifier",
+                "reported_once_per_specifier",
+            )
+        }
+
+        #[test]
+        fn string_is_not_a_version() -> Result<()> {
+            run(
+                "syntax/invalid_version_specifier",
+                "string_is_not_a_version",
+            )
+        }
+
+        #[test]
+        fn string_with_letters() -> Result<()> {
+            run("syntax/invalid_version_specifier", "string_with_letters")
+        }
+
+        #[test]
+        fn string_with_prerelease() -> Result<()> {
+            run("syntax/invalid_version_specifier", "string_with_prerelease")
+        }
+
+        #[test]
+        fn string_with_symbol() -> Result<()> {
+            run("syntax/invalid_version_specifier", "string_with_symbol")
+        }
+
+        #[test]
+        fn string_with_trailing_period() -> Result<()> {
+            run(
+                "syntax/invalid_version_specifier",
+                "string_with_trailing_period",
+            )
         }
     }
 
@@ -3421,6 +3553,40 @@ mod syntax {
         #[test]
         fn string() -> Result<()> {
             run("syntax/unsupported_experimental_solidity", "string")
+        }
+    }
+
+    mod version_pragma {
+        use super::*;
+
+        #[test]
+        fn comparators_without_whitespace() -> Result<()> {
+            run("syntax/version_pragma", "comparators_without_whitespace")
+        }
+
+        #[test]
+        fn escaped_string_literal() -> Result<()> {
+            run("syntax/version_pragma", "escaped_string_literal")
+        }
+
+        #[test]
+        fn large_component() -> Result<()> {
+            run("syntax/version_pragma", "large_component")
+        }
+
+        #[test]
+        fn leading_zero() -> Result<()> {
+            run("syntax/version_pragma", "leading_zero")
+        }
+
+        #[test]
+        fn repeated_wildcard_characters() -> Result<()> {
+            run("syntax/version_pragma", "repeated_wildcard_characters")
+        }
+
+        #[test]
+        fn trivia_between_components() -> Result<()> {
+            run("syntax/version_pragma", "trivia_between_components")
         }
     }
 }

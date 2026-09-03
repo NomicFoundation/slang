@@ -10538,7 +10538,7 @@ impl NodeChecker for VersionPragma {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for VersionRange {
+impl NodeChecker for VersionPragmaRange {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10626,7 +10626,7 @@ impl NodeChecker for VersionRange {
 }
 
 /// Generic `NodeChecker` for sequences
-impl NodeChecker for VersionTerm {
+impl NodeChecker for VersionPragmaTerm {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -10668,21 +10668,23 @@ impl NodeChecker for VersionTerm {
             }
         }
 
-        // literal
+        // specifier
 
         {
-            let literal = &self.literal;
+            let specifier = &self.specifier;
 
             // Prepare edge label
+
+            // Renamed in V2; V1 still labels this edge `Literal`.
 
             if let Some((child, child_offset)) =
                 extract_with_label(&mut children, EdgeLabel::Literal)
             {
-                let child_errors = literal.check_node_with_offset(&child.node, child_offset);
+                let child_errors = specifier.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected literal to be present in the CST, but it was not".to_string(),
+                    "Expected specifier to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
@@ -14746,7 +14748,7 @@ impl NodeChecker for VariableDeclarationTarget {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for VersionExpression {
+impl NodeChecker for VersionPragmaExpression {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14790,11 +14792,11 @@ impl NodeChecker for VersionExpression {
         let mut errors = vec![];
 
         match self {
-            Self::VersionRange(element) => {
+            Self::VersionPragmaRange(element) => {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
 
-            Self::VersionTerm(element) => {
+            Self::VersionPragmaTerm(element) => {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
         }
@@ -14803,81 +14805,8 @@ impl NodeChecker for VersionExpression {
     }
 }
 
-/// Custom `NodeChecker` for `VersionLiteral` — remaps `PragmaStringLiteral` variant to V1 version literal terminals
-impl NodeChecker for VersionLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-
-        if node.kind() != NodeKind::Nonterminal(NonterminalKind::VersionLiteral) {
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be {}, but it was {}",
-                    NonterminalKind::VersionLiteral,
-                    node.kind()
-                ),
-                node_range,
-            )];
-        }
-
-        let children = children_with_offsets(node, text_offset);
-
-        if children.len() != 1 {
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected exactly one child for {}, but got: {children:#?}",
-                    NonterminalKind::VersionLiteral
-                ),
-                node_range,
-            )];
-        }
-
-        let (child, child_offset) = &children[0];
-
-        if child.label != EdgeLabel::Variant {
-            let child_range = *child_offset..(*child_offset + child.node.text_len());
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected child to be of variant type, but it was {}",
-                    child.label
-                ),
-                child_range,
-            )];
-        }
-
-        match self {
-            Self::SimpleVersionLiteral(element) => {
-                element.check_node_with_offset(&child.node, *child_offset)
-            }
-            Self::PragmaStringLiteral(_) => {
-                // V2 PragmaStringLiteral maps to V1's SingleQuotedVersionLiteral or DoubleQuotedVersionLiteral
-                let child_range = *child_offset..(*child_offset + child.node.text_len());
-                if let NodeKind::Terminal(terminal_kind) = child.node.kind() {
-                    match terminal_kind.as_ref() {
-                        "SingleQuotedVersionLiteral" | "DoubleQuotedVersionLiteral" => vec![],
-                        _ => vec![NodeCheckerError::new(
-                            format!(
-                                "Expected node kind to be SingleQuotedVersionLiteral or DoubleQuotedVersionLiteral, but it was {}",
-                                terminal_kind.as_ref()
-                            ),
-                            child_range,
-                        )],
-                    }
-                } else {
-                    vec![NodeCheckerError::new(
-                        format!(
-                            "Expected node kind to be a terminal, but it was {}",
-                            child.node.kind()
-                        ),
-                        child_range,
-                    )]
-                }
-            }
-        }
-    }
-}
-
 /// Generic `NodeChecker` for choices
-impl NodeChecker for VersionOperator {
+impl NodeChecker for VersionPragmaOperator {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -14951,6 +14880,79 @@ impl NodeChecker for VersionOperator {
         }
 
         errors
+    }
+}
+
+/// Custom `NodeChecker` for `VersionPragmaSpecifier` — remaps `PragmaStringLiteral` variant to V1 version literal terminals
+impl NodeChecker for VersionPragmaSpecifier {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::VersionLiteral) {
+            return vec![NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be {}, but it was {}",
+                    NonterminalKind::VersionLiteral,
+                    node.kind()
+                ),
+                node_range,
+            )];
+        }
+
+        let children = children_with_offsets(node, text_offset);
+
+        if children.len() != 1 {
+            return vec![NodeCheckerError::new(
+                format!(
+                    "Expected exactly one child for {}, but got: {children:#?}",
+                    NonterminalKind::VersionLiteral
+                ),
+                node_range,
+            )];
+        }
+
+        let (child, child_offset) = &children[0];
+
+        if child.label != EdgeLabel::Variant {
+            let child_range = *child_offset..(*child_offset + child.node.text_len());
+            return vec![NodeCheckerError::new(
+                format!(
+                    "Expected child to be of variant type, but it was {}",
+                    child.label
+                ),
+                child_range,
+            )];
+        }
+
+        match self {
+            Self::VersionPragmaComponents(element) => {
+                element.check_node_with_offset(&child.node, *child_offset)
+            }
+            Self::PragmaStringLiteral(_) => {
+                // V2 PragmaStringLiteral maps to V1's SingleQuotedVersionLiteral or DoubleQuotedVersionLiteral
+                let child_range = *child_offset..(*child_offset + child.node.text_len());
+                if let NodeKind::Terminal(terminal_kind) = child.node.kind() {
+                    match terminal_kind.as_ref() {
+                        "SingleQuotedVersionLiteral" | "DoubleQuotedVersionLiteral" => vec![],
+                        _ => vec![NodeCheckerError::new(
+                            format!(
+                                "Expected node kind to be SingleQuotedVersionLiteral or DoubleQuotedVersionLiteral, but it was {}",
+                                terminal_kind.as_ref()
+                            ),
+                            child_range,
+                        )],
+                    }
+                } else {
+                    vec![NodeCheckerError::new(
+                        format!(
+                            "Expected node kind to be a terminal, but it was {}",
+                            child.node.kind()
+                        ),
+                        child_range,
+                    )]
+                }
+            }
+        }
     }
 }
 
@@ -16245,46 +16247,6 @@ impl NodeChecker for ReceiveFunctionAttributes {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for SimpleVersionLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-
-        if node.kind() != NodeKind::Nonterminal(NonterminalKind::SimpleVersionLiteral) {
-            // Don't even check the rest
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be {}, but it was {}",
-                    NonterminalKind::SimpleVersionLiteral,
-                    node.kind()
-                ),
-                node_range,
-            )];
-        }
-
-        let children = children_with_offsets(node, text_offset);
-
-        if children.len() != self.elements.len() {
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected {} elements, but got: {:#?}",
-                    self.elements.len(),
-                    children
-                ),
-                node_range,
-            )];
-        }
-
-        let mut errors = vec![];
-
-        for (i, (child, child_offset)) in children.iter().enumerate() {
-            let element = &self.elements[i];
-            errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-        }
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for repeated and separated
 impl NodeChecker for SourceUnitMembers {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -16605,7 +16567,47 @@ impl NodeChecker for UsingDeconstructionSymbols {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for VersionExpressionSet {
+impl NodeChecker for VersionPragmaComponents {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::SimpleVersionLiteral) {
+            // Don't even check the rest
+            return vec![NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be {}, but it was {}",
+                    NonterminalKind::SimpleVersionLiteral,
+                    node.kind()
+                ),
+                node_range,
+            )];
+        }
+
+        let children = children_with_offsets(node, text_offset);
+
+        if children.len() != self.elements.len() {
+            return vec![NodeCheckerError::new(
+                format!(
+                    "Expected {} elements, but got: {:#?}",
+                    self.elements.len(),
+                    children
+                ),
+                node_range,
+            )];
+        }
+
+        let mut errors = vec![];
+
+        for (i, (child, child_offset)) in children.iter().enumerate() {
+            let element = &self.elements[i];
+            errors.extend(element.check_node_with_offset(&child.node, *child_offset));
+        }
+        errors
+    }
+}
+
+/// Generic `NodeChecker` for repeated and separated
+impl NodeChecker for VersionPragmaExpressionSet {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -16645,7 +16647,7 @@ impl NodeChecker for VersionExpressionSet {
 }
 
 /// Generic `NodeChecker` for repeated and separated
-impl NodeChecker for VersionExpressionSets {
+impl NodeChecker for VersionPragmaExpressionSets {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
@@ -22121,13 +22123,13 @@ impl NodeChecker for VarKeyword {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for VersionSpecifier {
+impl NodeChecker for VersionPragmaComponent {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "VersionSpecifier";
+            let v2_kind = "VersionPragmaComponent";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(

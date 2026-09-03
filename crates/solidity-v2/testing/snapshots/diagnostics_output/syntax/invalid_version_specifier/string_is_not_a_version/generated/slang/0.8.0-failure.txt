@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/invalid-version-specifier] Error: 'Y' is not a valid version specifier.
+   ╭─[input.sol:3:17]
+   │
+ 3 │ pragma solidity "Y";
+   │                 ─┬─  
+   │                  ╰─── Error occurred here.
+───╯

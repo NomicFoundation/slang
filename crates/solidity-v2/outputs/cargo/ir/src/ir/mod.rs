@@ -14,6 +14,7 @@ mod text_range;
 pub use text_range::TextRange;
 
 mod node_extensions;
+pub use node_extensions::{VersionPragmaComponentExtensions, VersionPragmaSpecifierExtensions};
 
 mod builder;
 pub use builder::node_id_generator::{NodeIdGenerator, NodeKindHistogram};

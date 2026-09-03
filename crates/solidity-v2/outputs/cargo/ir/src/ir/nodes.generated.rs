@@ -1362,7 +1362,7 @@ pub type VersionPragma = Arc<VersionPragmaStruct>;
 pub struct VersionPragmaStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
-    pub sets: VersionExpressionSets,
+    pub sets: VersionPragmaExpressionSets,
 }
 
 impl VersionPragmaStruct {
@@ -1371,35 +1371,18 @@ impl VersionPragmaStruct {
     }
 }
 
-pub type VersionRange = Arc<VersionRangeStruct>;
+pub type VersionPragmaComparator = Arc<VersionPragmaComparatorStruct>;
 
 #[derive(Debug)]
 #[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
-pub struct VersionRangeStruct {
+pub struct VersionPragmaComparatorStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
-    pub start: VersionLiteral,
-    pub end: VersionLiteral,
+    pub operator: VersionPragmaOperator,
+    pub specifier: VersionPragmaSpecifier,
 }
 
-impl VersionRangeStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-}
-
-pub type VersionTerm = Arc<VersionTermStruct>;
-
-#[derive(Debug)]
-#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
-pub struct VersionTermStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-    pub operator: Option<VersionOperator>,
-    pub literal: VersionLiteral,
-}
-
-impl VersionTermStruct {
+impl VersionPragmaComparatorStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
@@ -2154,44 +2137,22 @@ pub enum VariableDeclarationTarget {
     MultiTypedDeclaration(MultiTypedDeclaration),
 }
 
-#[derive(Clone, Debug)]
-#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
-pub enum VersionExpression {
-    VersionRange(VersionRange),
-    VersionTerm(VersionTerm),
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+pub enum VersionPragmaComponent {
+    Wildcard,
+    Unrecognized,
+    Number(usize),
 }
 
-#[derive(Clone, Debug)]
-#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
-pub enum VersionLiteral {
-    SimpleVersionLiteral(SimpleVersionLiteral),
-    StringLiteral(StringLiteral),
-}
-
-#[derive(Clone, Debug)]
-#[cfg_attr(feature = "__private_testing_utils", derive(Eq, PartialEq))]
-pub enum VersionOperator {
-    PragmaCaret(PragmaCaret),
-    PragmaTilde(PragmaTilde),
-    PragmaEqual(PragmaEqual),
-    PragmaLessThan(PragmaLessThan),
-    PragmaGreaterThan(PragmaGreaterThan),
-    PragmaLessThanEqual(PragmaLessThanEqual),
-    PragmaGreaterThanEqual(PragmaGreaterThanEqual),
-}
-
-impl VersionOperator {
-    pub fn unparse(&self) -> &str {
-        match self {
-            VersionOperator::PragmaCaret(inner) => inner.unparse(),
-            VersionOperator::PragmaTilde(inner) => inner.unparse(),
-            VersionOperator::PragmaEqual(inner) => inner.unparse(),
-            VersionOperator::PragmaLessThan(inner) => inner.unparse(),
-            VersionOperator::PragmaGreaterThan(inner) => inner.unparse(),
-            VersionOperator::PragmaLessThanEqual(inner) => inner.unparse(),
-            VersionOperator::PragmaGreaterThanEqual(inner) => inner.unparse(),
-        }
-    }
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+pub enum VersionPragmaOperator {
+    Caret,
+    Tilde,
+    Equal,
+    LessThan,
+    LessThanEqual,
+    GreaterThan,
+    GreaterThanEqual,
 }
 
 #[derive(Clone, Debug)]
@@ -2280,8 +2241,6 @@ pub type Parameters = Arc<[Parameter]>;
 
 pub type PositionalArguments = Arc<[Expression]>;
 
-pub type SimpleVersionLiteral = Arc<[VersionSpecifier]>;
-
 pub type SourceUnitMembers = Arc<[SourceUnitMember]>;
 
 pub type Statements = Arc<[Statement]>;
@@ -2296,9 +2255,11 @@ pub type UnicodeStringLiterals = Arc<[UnicodeStringLiteral]>;
 
 pub type UsingDeconstructionSymbols = Arc<[UsingDeconstructionSymbol]>;
 
-pub type VersionExpressionSet = Arc<[VersionExpression]>;
+pub type VersionPragmaExpressionSet = Arc<[VersionPragmaComparator]>;
 
-pub type VersionExpressionSets = Arc<[VersionExpressionSet]>;
+pub type VersionPragmaExpressionSets = Arc<[VersionPragmaExpressionSet]>;
+
+pub type VersionPragmaSpecifier = Arc<[VersionPragmaComponent]>;
 
 pub type YulArguments = Arc<[YulExpression]>;
 
@@ -3141,125 +3102,6 @@ impl PlusPlusStruct {
     }
 }
 
-pub type PragmaCaret = Arc<PragmaCaretStruct>;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct PragmaCaretStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-}
-
-impl PragmaCaretStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-    pub fn unparse(&self) -> &'static str {
-        "^"
-    }
-}
-
-pub type PragmaEqual = Arc<PragmaEqualStruct>;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct PragmaEqualStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-}
-
-impl PragmaEqualStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-    pub fn unparse(&self) -> &'static str {
-        "="
-    }
-}
-
-pub type PragmaGreaterThan = Arc<PragmaGreaterThanStruct>;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct PragmaGreaterThanStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-}
-
-impl PragmaGreaterThanStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-    pub fn unparse(&self) -> &'static str {
-        ">"
-    }
-}
-
-pub type PragmaGreaterThanEqual = Arc<PragmaGreaterThanEqualStruct>;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct PragmaGreaterThanEqualStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-}
-
-impl PragmaGreaterThanEqualStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-    pub fn unparse(&self) -> &'static str {
-        ">="
-    }
-}
-
-pub type PragmaLessThan = Arc<PragmaLessThanStruct>;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct PragmaLessThanStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-}
-
-impl PragmaLessThanStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-    pub fn unparse(&self) -> &'static str {
-        "<"
-    }
-}
-
-pub type PragmaLessThanEqual = Arc<PragmaLessThanEqualStruct>;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct PragmaLessThanEqualStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-}
-
-impl PragmaLessThanEqualStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-    pub fn unparse(&self) -> &'static str {
-        "<="
-    }
-}
-
-pub type PragmaTilde = Arc<PragmaTildeStruct>;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct PragmaTildeStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-}
-
-impl PragmaTildeStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-    pub fn unparse(&self) -> &'static str {
-        "~"
-    }
-}
-
 pub type SecondsKeyword = Arc<SecondsKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -3494,24 +3336,6 @@ pub struct UnicodeStringLiteralStruct {
 }
 
 impl UnicodeStringLiteralStruct {
-    pub fn id(&self) -> NodeId {
-        self.id
-    }
-    pub fn unparse(&self) -> &str {
-        &self.text
-    }
-}
-
-pub type VersionSpecifier = Arc<VersionSpecifierStruct>;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct VersionSpecifierStruct {
-    pub(crate) id: NodeId,
-    pub range: Range<usize>,
-    pub text: String,
-}
-
-impl VersionSpecifierStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
