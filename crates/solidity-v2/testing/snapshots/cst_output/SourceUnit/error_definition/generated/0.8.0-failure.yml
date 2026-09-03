@@ -13,7 +13,7 @@ Source: >
   10 │                                                                                                       │ 224..224
   11 │ // <<<                                                                                                │ 225..231
 
-Errors: # 2 total
+Diagnostics: # 2 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/error_definition/input.sol:4:1]

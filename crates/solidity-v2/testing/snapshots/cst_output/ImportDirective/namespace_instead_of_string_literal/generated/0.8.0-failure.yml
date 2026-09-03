@@ -6,7 +6,7 @@ Source: >
   3  │ // https://github.com/argotorg/solidity/blob/v0.8.21/test/libsolidity/syntaxTests/experimental/parsing_stdlib_import_without_pragma_1.sol │ 20..157
   4  │ import std.stub;                                                                                                                          │ 158..174
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Identifier. One of Asterisk, OpenBrace, StringLiteral was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ImportDirective/namespace_instead_of_string_literal/input.sol:4:8]

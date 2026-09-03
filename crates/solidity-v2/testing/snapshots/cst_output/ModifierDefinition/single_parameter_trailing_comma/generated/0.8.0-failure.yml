@@ -8,7 +8,7 @@ Source: >
   5  │     modifier m(uint a,) { _; }                                                                                                      │ 165..195
   6  │ }                                                                                                                                   │ 196..197
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected CloseParen. One of AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, ErrorKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, RevertKeyword, StringKeyword, TransientKeyword, UfixedKeyword, UintKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ModifierDefinition/single_parameter_trailing_comma/input.sol:5:23]

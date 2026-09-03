@@ -8,7 +8,7 @@ Source: >
   5  │   function                                                                                              │ 142..152
   6  │ // <<<                                                                                                  │ 153..159
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-eof] Error: Unexpected end of file. One of AtKeyword, ErrorKeyword, FallbackKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, OpenParen, ReceiveKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/partial_definition/input.sol:5:11]

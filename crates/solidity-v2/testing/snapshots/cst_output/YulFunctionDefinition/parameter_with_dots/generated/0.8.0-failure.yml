@@ -12,7 +12,7 @@ Source: >
   9  │     }                                                                                                                        │ 238..243
   10 │ }                                                                                                                            │ 244..245
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected YulPeriod. One of YulCloseParen, YulComma was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulFunctionDefinition/parameter_with_dots/input.sol:7:25]

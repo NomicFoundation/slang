@@ -13,7 +13,7 @@ Source: >
   10 │     }                                                                                                   │ 174..179
   11 │ }                                                                                                       │ 180..181
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Semicolon. One of AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, ErrorKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, RevertKeyword, StringKeyword, TransientKeyword, UfixedKeyword, UintKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/Expression/incomplete_operand/input.sol:9:1]

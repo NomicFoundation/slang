@@ -14,7 +14,7 @@ Source: >
   11 │     }                                                                                                                      │ 218..223
   12 │ }                                                                                                                          │ 224..225
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected ThrowKeyword. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol:8:3]

@@ -20,7 +20,7 @@ Source: >
   17 │     }                                                                                                         │ 242..247
   18 │ }                                                                                                             │ 248..249
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of YulBreakKeyword, YulCloseBrace, YulContinueKeyword, YulDecimalLiteral, YulFalseKeyword, YulForKeyword, YulFunctionKeyword, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulIfKeyword, YulLeaveKeyword, YulLetKeyword, YulOpenBrace, YulOpenParen, YulStringLiteral, YulSwitchKeyword, YulTrueKeyword was expected
         ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulBlock/multiple_stack_assignments/input.sol:11:3]

@@ -7,7 +7,7 @@ Source: >
   4  │ using {add} for Int global;                                                                                 │ 128..155
   5  │ // <<<                                                                                                      │ 156..162
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/destructure_single/input.sol:4:1]

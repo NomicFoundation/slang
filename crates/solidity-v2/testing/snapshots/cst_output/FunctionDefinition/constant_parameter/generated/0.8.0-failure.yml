@@ -12,7 +12,7 @@ Source: >
   9  │     function f(uint constant x) internal pure {}                                 │ 325..373
   10 │ }                                                                                │ 374..375
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected ConstantKeyword. One of AtKeyword, CallDataKeyword, CloseParen, Comma, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, MemoryKeyword, RevertKeyword, StorageKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionDefinition/constant_parameter/input.sol:9:21]

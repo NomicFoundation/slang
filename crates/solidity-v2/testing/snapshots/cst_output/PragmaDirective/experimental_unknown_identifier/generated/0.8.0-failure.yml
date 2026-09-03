@@ -7,7 +7,7 @@ Source: >
   4  │ pragma experimental foo;                                                                                                  │ 142..166
   5  │ // <<<                                                                                                                    │ 167..173
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of ABIEncoderV2Keyword, PragmaStringLiteral, SMTCheckerKeyword, SolidityKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/experimental_unknown_identifier/input.sol:4:21]

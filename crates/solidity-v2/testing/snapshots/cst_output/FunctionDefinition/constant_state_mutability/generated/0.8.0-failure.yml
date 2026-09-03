@@ -7,7 +7,7 @@ Source: >
   4  │ function a() constant {}                                                                                               │ 139..163
   5  │ // <<<                                                                                                                 │ 164..170
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected ConstantKeyword. One of AtKeyword, ErrorKeyword, ExternalKeyword, FromKeyword, GlobalKeyword, Identifier, InternalKeyword, LayoutKeyword, OpenBrace, OverrideKeyword, PayableKeyword, PrivateKeyword, PublicKeyword, PureKeyword, ReturnsKeyword, RevertKeyword, Semicolon, TransientKeyword, ViewKeyword, VirtualKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionDefinition/constant_state_mutability/input.sol:4:14]

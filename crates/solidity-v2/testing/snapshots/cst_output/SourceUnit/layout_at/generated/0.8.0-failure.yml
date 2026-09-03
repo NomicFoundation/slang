@@ -18,7 +18,7 @@ Source: >
   15 │                                                                                                │ 283..283
   16 │ // <<<                                                                                         │ 284..290
 
-Errors: # 4 total
+Diagnostics: # 4 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/layout_at/input.sol:4:19]

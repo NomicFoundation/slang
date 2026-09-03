@@ -12,7 +12,7 @@ Source: >
   9  │                                                                                                                          │ 205..205
   10 │ // <<<                                                                                                                   │ 206..212
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-eof] Error: Unexpected end of file. One of ConstantKeyword, OpenBracket, Period was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/end_of_file_trivia_unexpected_after/input.sol:8:16]

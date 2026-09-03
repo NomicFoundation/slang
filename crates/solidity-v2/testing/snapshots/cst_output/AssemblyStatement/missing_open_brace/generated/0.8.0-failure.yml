@@ -9,7 +9,7 @@ Source: >
   6  │     }                                                                            │ 81..86
   7  │ }                                                                                │ 87..88
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected YulCloseBrace. One of YulOpenBrace, YulOpenParen, YulStringLiteral was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/AssemblyStatement/missing_open_brace/input.sol:6:5]

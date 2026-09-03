@@ -11,7 +11,7 @@ Source: >
   8  │     }                                                                                                                                     │ 259..264
   9  │ }                                                                                                                                         │ 265..266
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected MemoryKeyword. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/VariableDeclarationStatement/multiple_storage_locations/input.sol:7:24]

@@ -6,7 +6,7 @@ Source: >
   3  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/abstract/abstract_only.sol │ 20..127
   4  │ abstract                                                                                                    │ 128..136
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-eof] Error: Unexpected end of file. One of ContractKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/abstract_only/input.sol:4:9]

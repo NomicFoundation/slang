@@ -6,7 +6,7 @@ Source: >
   3  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/pragma/unknown_pragma.sol │ 20..126
   4  │ pragma thisdoesntexist;                                                                                    │ 127..150
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of AbicoderKeyword, ExperimentalKeyword, SolidityKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/unknown_pragma/input.sol:4:8]

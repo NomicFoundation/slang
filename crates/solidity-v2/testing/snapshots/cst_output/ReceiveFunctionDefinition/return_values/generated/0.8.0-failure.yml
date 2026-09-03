@@ -7,7 +7,7 @@ Source: >
   4  │     receive() external payable returns (uint256) {}                              │ 33..84
   5  │ }                                                                                │ 85..86
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected ReturnsKeyword. One of AtKeyword, ErrorKeyword, ExternalKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, OpenBrace, OverrideKeyword, PayableKeyword, RevertKeyword, Semicolon, TransientKeyword, VirtualKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ReceiveFunctionDefinition/return_values/input.sol:4:32]

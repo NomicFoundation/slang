@@ -8,7 +8,7 @@ Source: >
   5  │                                                                                                    │ 192..192
   6  │ // <<<                                                                                             │ 193..199
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.22'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/EventDefinition/transfer/input.sol:4:1]

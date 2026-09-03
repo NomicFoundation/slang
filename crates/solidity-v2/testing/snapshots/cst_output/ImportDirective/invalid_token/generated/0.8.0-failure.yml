@@ -6,7 +6,7 @@ Source: >
   3  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/parsing/import_invalid_token.sol │ 20..133
   4  │ import function;                                                                                                  │ 134..150
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected FunctionKeyword. One of Asterisk, OpenBrace, StringLiteral was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ImportDirective/invalid_token/input.sol:4:8]

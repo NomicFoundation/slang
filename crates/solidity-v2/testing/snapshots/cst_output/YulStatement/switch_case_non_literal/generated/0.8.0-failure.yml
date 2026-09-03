@@ -14,7 +14,7 @@ Source: >
   11 │     }                                                                                                              │ 271..276
   12 │ }                                                                                                                  │ 277..278
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected YulIdentifier. One of YulDecimalLiteral, YulFalseKeyword, YulHexLiteral, YulHexStringLiteral, YulStringLiteral, YulTrueKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulStatement/switch_case_non_literal/input.sol:8:18]

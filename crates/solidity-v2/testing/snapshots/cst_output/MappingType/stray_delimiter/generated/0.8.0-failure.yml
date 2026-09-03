@@ -11,7 +11,7 @@ Source: >
   8  │ x;                                                                                                    │ 175..177
   9  │ }                                                                                                     │ 178..179
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected CloseBracket. One of AtKeyword, CloseParen, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, OpenBracket, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/MappingType/stray_delimiter/input.sol:5:26]

@@ -11,7 +11,7 @@ Source: >
   8  │                                                                                                                    │ 221..221
   9  │ // <<<                                                                                                             │ 222..228
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected ByteKeyword. One of AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, CloseParen, ErrorKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, RevertKeyword, StringKeyword, TransientKeyword, UfixedKeyword, UintKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/StructDefinition/member_function_pointer/input.sol:6:13]

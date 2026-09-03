@@ -14,7 +14,7 @@ Source: >
   11 │     }                                                                                                  │ 202..207
   12 │ }                                                                                                      │ 208..209
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/AssemblyStatement/with_flags/input.sol:6:19]
