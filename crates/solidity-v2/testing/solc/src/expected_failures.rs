@@ -462,4 +462,12 @@ const EXPECTED_FAILURES: &[ExpectedFailures] = &[
             versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_35),
         }],
     },
+    ExpectedFailures {
+        reason: r"solc allows to refer module aliases in ternary expressions as long as they \
+                  refer to the same module, `(flag ? M : M).C`. Slang does not allow this.",
+        cases: &[ExpectedCase {
+            test_path: "expressions/module_from_ternary_expression.sol",
+            versions: LanguageVersionSpecifier::from(LanguageVersion::V0_8_21),
+        }],
+    },
 ];
