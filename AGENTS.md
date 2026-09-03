@@ -13,47 +13,49 @@ Additionally, the repository also contains the crates for the under-development 
 ## Repository Architecture
 
 ```tree
-crates/
-├── infra/              Build tooling and the infra CLI
-├── codegen/            Code generation from language definitions (v1)
-├── codegen-v2/         Next-gen code generation (LALRPOP-based)
-├── language/           Language definition building blocks (v1)
-├── language-v2/        v2 language definitions
-├── metaslang/
-│   ├── cst/            Generic CST library (build, navigate, query)
-│   ├── bindings/       Semantic binding computation
-│   ├── graph_builder/  Binding graph construction
-│   └── stack_graphs/   Stack graphs for scope analysis
-├── solidity/
-│   ├── inputs/language/
-│   │   └── src/definition.rs   Grammar definition (hand-written v1 parser)
-│   ├── outputs/
-│   │   ├── cargo/crate/    Main published Rust crate (slang_solidity)
-│   │   ├── cargo/cli/      CLI tool (slang_solidity_cli)
-│   │   ├── cargo/wasm/     WASM bindings
-│   │   ├── cargo/tests/    Integration tests
-│   │   ├── npm/package/    npm package (@nomicfoundation/slang)
-│   │   └── spec/           Language specification generator
-│   └── testing/            Snapshots, perf, solc compat, sourcify tests
-└── solidity-v2/
-    ├── inputs/language/
-    │   └── src/definition.rs   Grammar definition (LALRPOP-based v2 parser)
-    ├── outputs/
-    │   └── cargo/
-    │       ├── common/         Versions, EVM targets, diagnostics (slang_solidity_v2_common)
-    │       ├── cst/            CST node types (slang_solidity_v2_cst)
-    │       ├── parser/         LALRPOP-generated parser (slang_solidity_v2_parser)
-    │       ├── ir/             CST lowered into the IR analysis runs on (slang_solidity_v2_ir)
-    │       ├── semantic/       Binder, type system, analysis passes (slang_solidity_v2_semantic)
-    │       ├── ast/            Public AST/type/ABI surface (slang_solidity_v2_ast)
-    │       ├── slang_solidity/ Public API: `CompilationUnit` (slang_solidity_v2)
-    │       └── tests/          Snapshot test runners (V2 integration tests)
-    └── testing/
-        ├── snapshots/          Golden files: cst_output/, binder_output/, diagnostics_output/
-        ├── solc/               solc comparison suite (results.generated.json)
-        └── utils/              Test utilities and V1 comparison tooling
-
-documentation/          MkDocs documentation site (at the repo root, not under crates/)
+.                       (repo root)
+├── bin/                Hermit-managed toolchain binaries (`cargo`, `node`, `npm`, `task`, ...)
+├── scripts/            Shell entry points, incl. `bin/infra` (the infra CLI)
+├── documentation/      MkDocs documentation site
+└── crates/
+    ├── infra/              Build tooling and the infra CLI
+    ├── codegen/            Code generation from language definitions (v1)
+    ├── codegen-v2/         Next-gen code generation (LALRPOP-based)
+    ├── language/           Language definition building blocks (v1)
+    ├── language-v2/        v2 language definitions
+    ├── metaslang/
+    │   ├── cst/            Generic CST library (build, navigate, query)
+    │   ├── bindings/       Semantic binding computation
+    │   ├── graph_builder/  Binding graph construction
+    │   └── stack_graphs/   Stack graphs for scope analysis
+    ├── solidity/
+    │   ├── inputs/language/
+    │   │   └── src/definition.rs   Grammar definition (hand-written v1 parser)
+    │   ├── outputs/
+    │   │   ├── cargo/crate/    Main published Rust crate (slang_solidity)
+    │   │   ├── cargo/cli/      CLI tool (slang_solidity_cli)
+    │   │   ├── cargo/wasm/     WASM bindings
+    │   │   ├── cargo/tests/    Integration tests
+    │   │   ├── npm/package/    npm package (@nomicfoundation/slang)
+    │   │   └── spec/           Language specification generator
+    │   └── testing/            Snapshots, perf, solc compat, sourcify tests
+    └── solidity-v2/
+        ├── inputs/language/
+        │   └── src/definition.rs   Grammar definition (LALRPOP-based v2 parser)
+        ├── outputs/
+        │   └── cargo/
+        │       ├── common/         Versions, EVM targets, diagnostics (slang_solidity_v2_common)
+        │       ├── cst/            CST node types (slang_solidity_v2_cst)
+        │       ├── parser/         LALRPOP-generated parser (slang_solidity_v2_parser)
+        │       ├── ir/             CST lowered into the IR analysis runs on (slang_solidity_v2_ir)
+        │       ├── semantic/       Binder, type system, analysis passes (slang_solidity_v2_semantic)
+        │       ├── ast/            Public AST/type/ABI surface (slang_solidity_v2_ast)
+        │       ├── slang_solidity/ Public API: `CompilationUnit` (slang_solidity_v2)
+        │       └── tests/          Snapshot test runners (V2 integration tests)
+        └── testing/
+            ├── snapshots/          Golden files: cst_output/, binder_output/, diagnostics_output/
+            ├── solc/               solc comparison suite (results.generated.json)
+            └── utils/              Test utilities and V1 comparison tooling
 ```
 
 v1 and v2 implementations coexist in the same `main` branch.
