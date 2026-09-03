@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[type-system/expression-not-a-value] Error: This expression denotes a type or declaration, not a value.
+   ╭─[input.sol:8:16]
+   │
+ 8 │     return c ? E : E.A;
+   │                ┬  
+   │                ╰── Error occurred here.
+───╯
+
+[type-system/expression-not-a-value] Error: This expression denotes a type or declaration, not a value.
+    ╭─[input.sol:13:27]
+    │
+ 13 │     return c ? uint8(1) : E;
+    │                           ┬  
+    │                           ╰── Error occurred here.
+────╯
+
+[type-system/expression-not-a-value] Error: This expression denotes a type or declaration, not a value.
+    ╭─[input.sol:19:16]
+    │
+ 19 │     return c ? E : E;
+    │                ┬  
+    │                ╰── Error occurred here.
+────╯
+
+[type-system/expression-not-a-value] Error: This expression denotes a type or declaration, not a value.
+    ╭─[input.sol:19:20]
+    │
+ 19 │     return c ? E : E;
+    │                    ┬  
+    │                    ╰── Error occurred here.
+────╯

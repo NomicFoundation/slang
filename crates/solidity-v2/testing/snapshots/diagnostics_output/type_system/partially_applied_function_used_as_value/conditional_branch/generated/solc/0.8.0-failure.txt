@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 3703] Error: Invalid mobile type in false expression.
+   ╭─[input.sol:9:31]
+   │
+ 9 │         return c ? this.foo : this.foo{gas: 4};
+   │                               ────────┬───────  
+   │                                       ╰───────── Error occurred here.
+───╯

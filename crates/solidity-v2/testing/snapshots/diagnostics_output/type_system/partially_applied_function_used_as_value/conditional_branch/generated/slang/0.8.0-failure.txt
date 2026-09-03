@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/partially-applied-function-used-as-value] Error: A function with a bound argument or call options can only be called, not used as a value.
+   ╭─[input.sol:9:31]
+   │
+ 9 │         return c ? this.foo : this.foo{gas: 4};
+   │                               ────────┬───────  
+   │                                       ╰───────── Error occurred here.
+───╯

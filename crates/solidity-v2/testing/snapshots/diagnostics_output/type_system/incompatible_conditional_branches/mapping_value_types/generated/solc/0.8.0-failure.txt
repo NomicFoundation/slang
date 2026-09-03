@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 1080] Error: True expression's type mapping(uint256 => int128) does not match false expression's type mapping(uint256 => int256).
+    ╭─[input.sol:10:17]
+    │
+ 10 │         return (c ? m1 : m2)[0];
+    │                 ─────┬─────  
+    │                      ╰─────── Error occurred here.
+────╯

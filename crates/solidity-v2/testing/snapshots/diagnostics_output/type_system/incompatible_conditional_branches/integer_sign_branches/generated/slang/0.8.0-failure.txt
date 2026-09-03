@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/incompatible-conditional-branches] Error: The true and false branches of this conditional expression have no common type.
+   ╭─[input.sol:6:16]
+   │
+ 6 │         return true ? 1 : -1;
+   │                ──────┬──────  
+   │                      ╰──────── Error occurred here.
+───╯

@@ -665,8 +665,8 @@
   "0.8.21": {
     "commit": "d9974bed7134e043f7ccc593c0c19c67d2d45dc4",
     "executed": 1466,
-    "passed": 1434,
-    "failed": 32,
+    "passed": 1433,
+    "failed": 33,
     "failures": [
       "abiEncoderV1/abi_encode_empty_string.sol",
       "abiEncoderV1/bool_out_of_bounds.sol",
@@ -683,6 +683,7 @@
       "cleanup/bool_conversion_v1.sol",
       "cleanup/cleanup_address_types_v1.sol",
       "cleanup/cleanup_bytes_types_v1.sol",
+      "expressions/module_from_ternary_expression.sol",
       "operators/shifts/shift_right_garbled_signed_v1.sol",
       "operators/shifts/shift_right_garbled_v1.sol",
       "operators/shifts/shift_right_negative_lvalue_signextend_int16_v1.sol",
@@ -705,8 +706,8 @@
   "0.8.22": {
     "commit": "4fc1097e8df32897ccee8985019610fa5a869212",
     "executed": 1476,
-    "passed": 1444,
-    "failed": 32,
+    "passed": 1443,
+    "failed": 33,
     "failures": [
       "abiEncoderV1/abi_encode_empty_string.sol",
       "abiEncoderV1/bool_out_of_bounds.sol",
@@ -723,6 +724,7 @@
       "cleanup/bool_conversion_v1.sol",
       "cleanup/cleanup_address_types_v1.sol",
       "cleanup/cleanup_bytes_types_v1.sol",
+      "expressions/module_from_ternary_expression.sol",
       "operators/shifts/shift_right_garbled_signed_v1.sol",
       "operators/shifts/shift_right_garbled_v1.sol",
       "operators/shifts/shift_right_negative_lvalue_signextend_int16_v1.sol",
@@ -745,8 +747,8 @@
   "0.8.23": {
     "commit": "f704f362dbb2a0af54d1484eb50cdafbc7dc086d",
     "executed": 1476,
-    "passed": 1444,
-    "failed": 32,
+    "passed": 1443,
+    "failed": 33,
     "failures": [
       "abiEncoderV1/abi_encode_empty_string.sol",
       "abiEncoderV1/bool_out_of_bounds.sol",
@@ -763,6 +765,7 @@
       "cleanup/bool_conversion_v1.sol",
       "cleanup/cleanup_address_types_v1.sol",
       "cleanup/cleanup_bytes_types_v1.sol",
+      "expressions/module_from_ternary_expression.sol",
       "operators/shifts/shift_right_garbled_signed_v1.sol",
       "operators/shifts/shift_right_garbled_v1.sol",
       "operators/shifts/shift_right_negative_lvalue_signextend_int16_v1.sol",
@@ -785,8 +788,8 @@
   "0.8.24": {
     "commit": "e11b9ed9f2c254bc894d844c0a64a0eb76bbb4fd",
     "executed": 1506,
-    "passed": 1472,
-    "failed": 34,
+    "passed": 1471,
+    "failed": 35,
     "failures": [
       "abiEncoderV1/abi_encode_empty_string.sol",
       "abiEncoderV1/bool_out_of_bounds.sol",
@@ -805,6 +808,7 @@
       "cleanup/cleanup_bytes_types_v1.sol",
       "experimental/stub.sol",
       "experimental/type_class.sol",
+      "expressions/module_from_ternary_expression.sol",
       "operators/shifts/shift_right_garbled_signed_v1.sol",
       "operators/shifts/shift_right_garbled_v1.sol",
       "operators/shifts/shift_right_negative_lvalue_signextend_int16_v1.sol",
@@ -827,8 +831,8 @@
   "0.8.25": {
     "commit": "b61c2a91b3a478bd53fb831b0e8811668bc0dd05",
     "executed": 1506,
-    "passed": 1472,
-    "failed": 34,
+    "passed": 1471,
+    "failed": 35,
     "failures": [
       "abiEncoderV1/abi_encode_empty_string.sol",
       "abiEncoderV1/bool_out_of_bounds.sol",
@@ -847,6 +851,7 @@
       "cleanup/cleanup_bytes_types_v1.sol",
       "experimental/stub.sol",
       "experimental/type_class.sol",
+      "expressions/module_from_ternary_expression.sol",
       "operators/shifts/shift_right_garbled_signed_v1.sol",
       "operators/shifts/shift_right_garbled_v1.sol",
       "operators/shifts/shift_right_negative_lvalue_signextend_int16_v1.sol",
@@ -869,8 +874,8 @@
   "0.8.26": {
     "commit": "8a97fa7a1db1ec509221ead6fea6802c684ee887",
     "executed": 1516,
-    "passed": 1482,
-    "failed": 34,
+    "passed": 1481,
+    "failed": 35,
     "failures": [
       "abiEncoderV1/abi_encode_empty_string.sol",
       "abiEncoderV1/bool_out_of_bounds.sol",
@@ -889,6 +894,7 @@
       "cleanup/cleanup_bytes_types_v1.sol",
       "experimental/stub.sol",
       "experimental/type_class.sol",
+      "expressions/module_from_ternary_expression.sol",
       "operators/shifts/shift_right_garbled_signed_v1.sol",
       "operators/shifts/shift_right_garbled_v1.sol",
       "operators/shifts/shift_right_negative_lvalue_signextend_int16_v1.sol",
@@ -911,8 +917,8 @@
   "0.8.27": {
     "commit": "40a35a097cb1e03550c7ce415f2b46ad81e882a6",
     "executed": 1522,
-    "passed": 1488,
-    "failed": 34,
+    "passed": 1487,
+    "failed": 35,
     "failures": [
       "abiEncoderV1/abi_encode_empty_string.sol",
       "abiEncoderV1/bool_out_of_bounds.sol",
@@ -931,6 +937,7 @@
       "cleanup/cleanup_bytes_types_v1.sol",
       "experimental/stub.sol",
       "experimental/type_class.sol",
+      "expressions/module_from_ternary_expression.sol",
       "operators/shifts/shift_right_garbled_signed_v1.sol",
       "operators/shifts/shift_right_garbled_v1.sol",
       "operators/shifts/shift_right_negative_lvalue_signextend_int16_v1.sol",
@@ -953,8 +960,8 @@
   "0.8.28": {
     "commit": "7893614a31fbeacd1966994e310ed4f760772658",
     "executed": 1545,
-    "passed": 1511,
-    "failed": 34,
+    "passed": 1510,
+    "failed": 35,
     "failures": [
       "abiEncoderV1/abi_encode_empty_string.sol",
       "abiEncoderV1/bool_out_of_bounds.sol",
@@ -973,6 +980,7 @@
       "cleanup/cleanup_bytes_types_v1.sol",
       "experimental/stub.sol",
       "experimental/type_class.sol",
+      "expressions/module_from_ternary_expression.sol",
       "operators/shifts/shift_right_garbled_signed_v1.sol",
       "operators/shifts/shift_right_garbled_v1.sol",
       "operators/shifts/shift_right_negative_lvalue_signextend_int16_v1.sol",
@@ -995,8 +1003,8 @@
   "0.8.29": {
     "commit": "ab55807c0d9198fb126442188d40fcab292a2acb",
     "executed": 1587,
-    "passed": 1553,
-    "failed": 34,
+    "passed": 1552,
+    "failed": 35,
     "failures": [
       "abiEncodeDecode/abi_encode_empty_string_v1.sol",
       "abiEncodeDecode/abi_encode_with_selector.sol",
@@ -1015,6 +1023,7 @@
       "cleanup/cleanup_bytes_types_v1.sol",
       "experimental/stub.sol",
       "experimental/type_class.sol",
+      "expressions/module_from_ternary_expression.sol",
       "operators/shifts/shift_right_garbled_signed_v1.sol",
       "operators/shifts/shift_right_garbled_v1.sol",
       "operators/shifts/shift_right_negative_lvalue_signextend_int16_v1.sol",
@@ -1037,8 +1046,8 @@
   "0.8.30": {
     "commit": "73712a01b2de56d9ad91e3b6936f85c90cb7de36",
     "executed": 1587,
-    "passed": 1553,
-    "failed": 34,
+    "passed": 1552,
+    "failed": 35,
     "failures": [
       "abiEncodeDecode/abi_encode_empty_string_v1.sol",
       "abiEncodeDecode/abi_encode_with_selector.sol",
@@ -1057,6 +1066,7 @@
       "cleanup/cleanup_bytes_types_v1.sol",
       "experimental/stub.sol",
       "experimental/type_class.sol",
+      "expressions/module_from_ternary_expression.sol",
       "operators/shifts/shift_right_garbled_signed_v1.sol",
       "operators/shifts/shift_right_garbled_v1.sol",
       "operators/shifts/shift_right_negative_lvalue_signextend_int16_v1.sol",
@@ -1079,8 +1089,8 @@
   "0.8.31": {
     "commit": "fd3a22656ebe9c91a96ebd846ab7699b5f2e053c",
     "executed": 1589,
-    "passed": 1555,
-    "failed": 34,
+    "passed": 1554,
+    "failed": 35,
     "failures": [
       "abiEncodeDecode/abi_encode_empty_string_v1.sol",
       "abiEncodeDecode/abi_encode_with_selector.sol",
@@ -1099,6 +1109,7 @@
       "cleanup/cleanup_bytes_types_v1.sol",
       "experimental/stub.sol",
       "experimental/type_class.sol",
+      "expressions/module_from_ternary_expression.sol",
       "operators/shifts/shift_right_garbled_signed_v1.sol",
       "operators/shifts/shift_right_garbled_v1.sol",
       "operators/shifts/shift_right_negative_lvalue_signextend_int16_v1.sol",
@@ -1121,8 +1132,8 @@
   "0.8.32": {
     "commit": "ebbd65e568ccc79cfaaa5814a7d2a92b70ddd3ae",
     "executed": 1608,
-    "passed": 1574,
-    "failed": 34,
+    "passed": 1573,
+    "failed": 35,
     "failures": [
       "abiEncodeDecode/abi_encode_empty_string_v1.sol",
       "abiEncodeDecode/abi_encode_with_selector.sol",
@@ -1141,6 +1152,7 @@
       "cleanup/cleanup_bytes_types_v1.sol",
       "experimental/stub.sol",
       "experimental/type_class.sol",
+      "expressions/module_from_ternary_expression.sol",
       "operators/shifts/shift_right_garbled_signed_v1.sol",
       "operators/shifts/shift_right_garbled_v1.sol",
       "operators/shifts/shift_right_negative_lvalue_signextend_int16_v1.sol",
@@ -1163,8 +1175,8 @@
   "0.8.33": {
     "commit": "64118f21280f0196f491689f0fc93dc5bec20dc1",
     "executed": 1608,
-    "passed": 1574,
-    "failed": 34,
+    "passed": 1573,
+    "failed": 35,
     "failures": [
       "abiEncodeDecode/abi_encode_empty_string_v1.sol",
       "abiEncodeDecode/abi_encode_with_selector.sol",
@@ -1183,6 +1195,7 @@
       "cleanup/cleanup_bytes_types_v1.sol",
       "experimental/stub.sol",
       "experimental/type_class.sol",
+      "expressions/module_from_ternary_expression.sol",
       "operators/shifts/shift_right_garbled_signed_v1.sol",
       "operators/shifts/shift_right_garbled_v1.sol",
       "operators/shifts/shift_right_negative_lvalue_signextend_int16_v1.sol",
@@ -1205,8 +1218,8 @@
   "0.8.34": {
     "commit": "80d5c5362b5d41697fd62ef36cf6abd8d5a68cc4",
     "executed": 1620,
-    "passed": 1586,
-    "failed": 34,
+    "passed": 1585,
+    "failed": 35,
     "failures": [
       "abiEncodeDecode/abi_encode_empty_string_v1.sol",
       "abiEncodeDecode/abi_encode_with_selector.sol",
@@ -1225,6 +1238,7 @@
       "cleanup/cleanup_bytes_types_v1.sol",
       "experimental/stub.sol",
       "experimental/type_class.sol",
+      "expressions/module_from_ternary_expression.sol",
       "operators/shifts/shift_right_garbled_signed_v1.sol",
       "operators/shifts/shift_right_garbled_v1.sol",
       "operators/shifts/shift_right_negative_lvalue_signextend_int16_v1.sol",
@@ -1247,8 +1261,8 @@
   "0.8.35": {
     "commit": "47b9dedda00ef23974eca07c06c97cc1c80088b4",
     "executed": 1646,
-    "passed": 1611,
-    "failed": 35,
+    "passed": 1610,
+    "failed": 36,
     "failures": [
       "abiEncodeDecode/abi_encode_empty_string_v1.sol",
       "abiEncodeDecode/abi_encode_with_selector.sol",
@@ -1267,6 +1281,7 @@
       "cleanup/cleanup_bytes_types_v1.sol",
       "experimental/stub.sol",
       "experimental/type_class.sol",
+      "expressions/module_from_ternary_expression.sol",
       "isoltestTesting/future_evm_version_smoke_test.sol",
       "operators/shifts/shift_right_garbled_signed_v1.sol",
       "operators/shifts/shift_right_garbled_v1.sol",
@@ -1290,8 +1305,8 @@
   "0.8.36": {
     "commit": "8a079791d9cca7a6c03fd6a8429b93aa3bddefed",
     "executed": 1643,
-    "passed": 1607,
-    "failed": 36,
+    "passed": 1606,
+    "failed": 37,
     "failures": [
       "abicoder/abi_encode_empty_string_v1.sol",
       "abicoder/abi_encode_memory_dynamic_array_and_calldata_bytes_v1.sol",
@@ -1311,6 +1326,7 @@
       "cleanup/cleanup_bytes_types_v1.sol",
       "experimental/stub.sol",
       "experimental/type_class.sol",
+      "expressions/module_from_ternary_expression.sol",
       "isoltestTesting/future_evm_version_smoke_test.sol",
       "operators/shifts/shift_right_garbled_signed_v1.sol",
       "operators/shifts/shift_right_garbled_v1.sol",

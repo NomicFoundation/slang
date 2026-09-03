@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 1080] Error: True expression's type tuple(uint256,uint128) does not match false expression's type tuple(uint128,uint256).
+   ╭─[input.sol:8:16]
+   │
+ 8 │         return true ? (uint256(1), uint128(2)) : (uint128(3), uint256(4));
+   │                ─────────────────────────────┬────────────────────────────  
+   │                                             ╰────────────────────────────── Error occurred here.
+───╯

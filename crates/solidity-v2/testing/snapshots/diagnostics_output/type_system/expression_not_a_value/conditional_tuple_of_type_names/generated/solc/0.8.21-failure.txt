@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 9717] Error: Invalid mobile type in true expression.
+   ╭─[input.sol:7:16]
+   │
+ 7 │     return c ? (uint, bool) : (uint, bool);
+   │                ──────┬─────  
+   │                      ╰─────── Error occurred here.
+───╯
+
+[TypeError 3703] Error: Invalid mobile type in false expression.
+   ╭─[input.sol:7:31]
+   │
+ 7 │     return c ? (uint, bool) : (uint, bool);
+   │                               ──────┬─────  
+   │                                     ╰─────── Error occurred here.
+───╯

@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[TypeError 1080] Error: True expression's type type(enum E) does not match false expression's type enum E.
+   ╭─[input.sol:8:12]
+   │
+ 8 │     return c ? E : E.A;
+   │            ─────┬─────  
+   │                 ╰─────── Error occurred here.
+───╯
+
+[TypeError 6359] Error: Return argument type type(enum E) is not implicitly convertible to expected type (type of first return variable) enum E.
+   ╭─[input.sol:8:12]
+   │
+ 8 │     return c ? E : E.A;
+   │            ─────┬─────  
+   │                 ╰─────── Error occurred here.
+───╯
+
+[TypeError 1080] Error: True expression's type uint8 does not match false expression's type type(enum E).
+    ╭─[input.sol:13:12]
+    │
+ 13 │     return c ? uint8(1) : E;
+    │            ────────┬───────  
+    │                    ╰───────── Error occurred here.
+────╯
+
+[TypeError 6359] Error: Return argument type type(enum E) is not implicitly convertible to expected type (type of first return variable) enum E.
+    ╭─[input.sol:19:12]
+    │
+ 19 │     return c ? E : E;
+    │            ────┬────  
+    │                ╰────── Error occurred here.
+────╯

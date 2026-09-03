@@ -187,19 +187,6 @@ fn test_conditional_expression_unifies_branch_types() {
 }
 
 #[test]
-fn test_conditional_expression_unresolved_when_branches_incompatible() {
-    // uint8 (1) and int8 (-1): neither converts to the other at the same
-    // bit width, so unification fails and the conditional is unresolved.
-    let (type_, _) = expression("true ? 1 : -1").into_type();
-    assert_eq!(type_, None);
-
-    // A non-reducing rational has no `reified` type yet, so any conditional
-    // involving one is unresolved.
-    let (type_, _) = expression("true ? 0.5 : 1").into_type();
-    assert_eq!(type_, None);
-}
-
-#[test]
 fn test_array_literal_unifies_element_types() {
     // Homogeneous uint8 elements.
     let (expr_type, types) = expression("[1, 2, 3]").into_resolved_type();
@@ -310,12 +297,6 @@ fn test_array_literal_unifies_byte_array_and_literal_zero() {
 }
 
 #[test]
-fn test_conditional_expression_does_not_unify_byte_array_and_literal_zero() {
-    let (type_, _) = expression("true ? bytes32(0) : 0").into_type();
-    assert_eq!(type_, None);
-}
-
-#[test]
 fn test_array_literal_does_not_unify_when_literal_is_first_and_byte_array_follows() {
     // The first element of the array is used to find the common type
     // Matches solc behaviour
@@ -347,12 +328,6 @@ fn test_array_literal_unifies_byte_array_and_matching_hex_literal() {
     };
     assert_eq!(size, U256::from(2));
     assert_eq!(element_type, types.bytes1());
-}
-
-#[test]
-fn test_conditional_expression_loses_hex_literal_specialness() {
-    let (type_, _) = expression("true ? bytes1(0x01) : 0x01").into_type();
-    assert_eq!(type_, None);
 }
 
 #[test]
@@ -417,22 +392,6 @@ fn test_conditional_expression_with_function_call_tuple() {
         assert_eq!(tuple_types[0], types.uint256(), "element 0 for `{expr}`");
         assert_eq!(tuple_types[1], types.uint256(), "element 1 for `{expr}`");
     }
-
-    // No common type: each tuple is "wider" in a different position (element 0
-    // on the left, element 1 on the right), so neither converts to the other
-    // (matches solc error 1080).
-    let expr = "true ? (uint256(1), uint128(2)) : (uint128(3), uint256(4))";
-    let (expr_type, _) = expression(expr).into_type();
-    assert!(expr_type.is_none());
-}
-
-#[test]
-fn test_mappings_only_unify_on_equal_elements() {
-    // Mappings must match on key and value types
-    let (expr_type, _) = expression("true ? m1 : m2")
-        .with_members("mapping(uint => int128) m1; mapping(uint => int256) m2;")
-        .into_type();
-    assert_eq!(None, expr_type);
 }
 
 #[test]

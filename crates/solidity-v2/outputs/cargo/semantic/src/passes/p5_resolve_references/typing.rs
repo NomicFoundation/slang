@@ -3,7 +3,8 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     AmbiguousReference, MemberNotFound, NoMatchingCallableDeclaration,
 };
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    CannotCallViaContractTypeName, ExpressionNotCallable,
+    CannotCallViaContractTypeName, ExpressionNotAValue, ExpressionNotCallable,
+    IncompatibleConditionalBranches, LiteralTooLarge, PartiallyAppliedFunctionUsedAsValue,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -16,8 +17,8 @@ use crate::built_ins::BuiltInCallError;
 use crate::passes::common::node_location;
 use crate::types::{
     AddressType, ArraySliceType, ArrayType, ContractType, DataLocation, FixedSizeArrayType,
-    FunctionType, FunctionTypeVisibility, IntegerType, LiteralKind, MetaType, Number, StringType,
-    Type, TypeId, UserMetaType, literals,
+    FunctionType, FunctionTypeVisibility, IntegerType, LiteralKind, MetaType, NoMobileType, Number,
+    StringType, Type, TypeId, UserMetaType, literals,
 };
 
 impl Pass<'_> {
@@ -155,6 +156,42 @@ impl Pass<'_> {
     pub(super) fn type_of_definition(&self, definition_id: NodeId) -> Option<Type> {
         let definition = self.binder.find_definition_by_id(definition_id)?;
         definition.try_into().ok()
+    }
+
+    /// The ternary takes the mobile type of both branches before computing
+    /// their common type.
+    pub(super) fn type_of_conditional_expression(
+        &mut self,
+        node: &ir::ConditionalExpression,
+    ) -> Option<TypeId> {
+        let true_mobile = self.mobile_type_of_conditional_branch(&node.true_expression);
+        let false_mobile = self.mobile_type_of_conditional_branch(&node.false_expression);
+        let common = self.types.common_type(true_mobile?, false_mobile?);
+        if common.is_none() {
+            self.push_diagnostic(node, IncompatibleConditionalBranches);
+        }
+        common
+    }
+
+    /// The mobile type of one conditional branch, reporting why a branch has
+    /// none.
+    fn mobile_type_of_conditional_branch(&mut self, branch: &ir::Expression) -> Option<TypeId> {
+        let type_id = self.typing_of_expression(branch).as_type_id()?;
+        match self.types.compute_mobile_type(type_id) {
+            Ok(mobile) => Some(mobile),
+            Err(NoMobileType::NotAValue) => {
+                self.push_diagnostic(branch, ExpressionNotAValue);
+                None
+            }
+            Err(NoMobileType::PartiallyAppliedFunction) => {
+                self.push_diagnostic(branch, PartiallyAppliedFunctionUsedAsValue);
+                None
+            }
+            Err(NoMobileType::LiteralTooLarge) => {
+                self.push_diagnostic(branch, LiteralTooLarge);
+                None
+            }
+        }
     }
 
     /// Records the common type both operands of a comparison reconcile to

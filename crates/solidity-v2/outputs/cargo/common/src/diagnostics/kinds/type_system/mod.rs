@@ -5,11 +5,15 @@ mod array_length_too_large;
 mod array_length_zero;
 mod cannot_call_via_contract_type_name;
 mod constant_arithmetic_error;
+mod expression_not_a_value;
 mod expression_not_callable;
 mod fallback_function_mutability;
 mod fallback_function_signature;
+mod incompatible_conditional_branches;
 mod incompatible_constant_operator;
 mod invalid_base;
+mod literal_too_large;
+mod partially_applied_function_used_as_value;
 mod receive_function_parameters;
 mod storage_layout_base_non_integer;
 mod storage_layout_base_not_constant;
@@ -22,11 +26,15 @@ pub use array_length_too_large::ArrayLengthTooLarge;
 pub use array_length_zero::ArrayLengthZero;
 pub use cannot_call_via_contract_type_name::CannotCallViaContractTypeName;
 pub use constant_arithmetic_error::ConstantArithmeticError;
+pub use expression_not_a_value::ExpressionNotAValue;
 pub use expression_not_callable::ExpressionNotCallable;
 pub use fallback_function_mutability::FallbackFunctionMutability;
 pub use fallback_function_signature::FallbackFunctionSignature;
+pub use incompatible_conditional_branches::IncompatibleConditionalBranches;
 pub use incompatible_constant_operator::IncompatibleConstantOperator;
 pub use invalid_base::InvalidBase;
+pub use literal_too_large::LiteralTooLarge;
+pub use partially_applied_function_used_as_value::PartiallyAppliedFunctionUsedAsValue;
 pub use receive_function_parameters::ReceiveFunctionParameters;
 use serde::Serialize;
 pub use storage_layout_base_non_integer::StorageLayoutBaseNonInteger;
@@ -83,5 +91,13 @@ define_diagnostic_kind! {
         CannotCallViaContractTypeName(CannotCallViaContractTypeName),
         /// The callee of a call is not callable.
         ExpressionNotCallable(ExpressionNotCallable),
+        /// An expression naming a type or declaration is used as a value.
+        ExpressionNotAValue(ExpressionNotAValue),
+        /// A partially applied function is used as a value rather than called.
+        PartiallyAppliedFunctionUsedAsValue(PartiallyAppliedFunctionUsedAsValue),
+        /// A number literal too large for any EVM type is used as a value.
+        LiteralTooLarge(LiteralTooLarge),
+        /// The two branches of a conditional have no common type.
+        IncompatibleConditionalBranches(IncompatibleConditionalBranches),
     }
 }

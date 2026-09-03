@@ -97,13 +97,13 @@ impl TypeRegistry {
         // type. The `common_type`/mobilise dance below would only rediscover
         // that, at the cost of extra `Type` clones and convertibility checks.
         if left == right {
-            return self.compute_mobile_type(left);
+            return self.compute_mobile_type(left).ok();
         }
         if let Some(common) = self.common_type(left, right) {
             return Some(common);
         }
-        let left_mobile = self.compute_mobile_type(left)?;
-        let right_mobile = self.compute_mobile_type(right)?;
+        let left_mobile = self.compute_mobile_type(left).ok()?;
+        let right_mobile = self.compute_mobile_type(right).ok()?;
         if left_mobile == left && right_mobile == right {
             // Nothing mobilised, so `common_type` already failed on these.
             return None;

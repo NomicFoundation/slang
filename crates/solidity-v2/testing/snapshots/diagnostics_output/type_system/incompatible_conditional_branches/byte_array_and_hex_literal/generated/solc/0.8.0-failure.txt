@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 1080] Error: True expression's type bytes1 does not match false expression's type uint8.
+   ╭─[input.sol:9:16]
+   │
+ 9 │         return true ? bytes1(0x01) : 0x01;
+   │                ─────────────┬────────────  
+   │                             ╰────────────── Error occurred here.
+───╯

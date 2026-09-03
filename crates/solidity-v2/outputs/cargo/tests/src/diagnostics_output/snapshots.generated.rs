@@ -3789,6 +3789,39 @@ mod type_system {
         }
     }
 
+    mod expression_not_a_value {
+        use super::*;
+
+        #[test]
+        fn conditional_elementary_type_name_branches() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "conditional_elementary_type_name_branches",
+            )
+        }
+
+        #[test]
+        fn conditional_tuple_of_type_names() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "conditional_tuple_of_type_names",
+            )
+        }
+
+        #[test]
+        fn conditional_type_name_branch() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "conditional_type_name_branch",
+            )
+        }
+
+        #[test]
+        fn module_aliases() -> Result<()> {
+            run("type_system/expression_not_a_value", "module_aliases")
+        }
+    }
+
     mod expression_not_callable {
         use super::*;
 
@@ -3843,6 +3876,58 @@ mod type_system {
         run("type_system", "fallback_function_signature")
     }
 
+    mod incompatible_conditional_branches {
+        use super::*;
+
+        #[test]
+        fn byte_array_and_hex_literal() -> Result<()> {
+            run(
+                "type_system/incompatible_conditional_branches",
+                "byte_array_and_hex_literal",
+            )
+        }
+
+        #[test]
+        fn byte_array_and_literal_zero() -> Result<()> {
+            run(
+                "type_system/incompatible_conditional_branches",
+                "byte_array_and_literal_zero",
+            )
+        }
+
+        #[test]
+        fn integer_sign_branches() -> Result<()> {
+            run(
+                "type_system/incompatible_conditional_branches",
+                "integer_sign_branches",
+            )
+        }
+
+        #[test]
+        fn mapping_value_types() -> Result<()> {
+            run(
+                "type_system/incompatible_conditional_branches",
+                "mapping_value_types",
+            )
+        }
+
+        #[test]
+        fn rational_and_integer_branches() -> Result<()> {
+            run(
+                "type_system/incompatible_conditional_branches",
+                "rational_and_integer_branches",
+            )
+        }
+
+        #[test]
+        fn tuple_element_widths() -> Result<()> {
+            run(
+                "type_system/incompatible_conditional_branches",
+                "tuple_element_widths",
+            )
+        }
+    }
+
     mod invalid_base {
         use super::*;
 
@@ -3854,6 +3939,27 @@ mod type_system {
         #[test]
         fn library() -> Result<()> {
             run("type_system/invalid_base", "library")
+        }
+    }
+
+    mod literal_too_large {
+        use super::*;
+
+        #[test]
+        fn conditional_branch() -> Result<()> {
+            run("type_system/literal_too_large", "conditional_branch")
+        }
+    }
+
+    mod partially_applied_function_used_as_value {
+        use super::*;
+
+        #[test]
+        fn conditional_branch() -> Result<()> {
+            run(
+                "type_system/partially_applied_function_used_as_value",
+                "conditional_branch",
+            )
         }
     }
 
