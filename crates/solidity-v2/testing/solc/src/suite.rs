@@ -4,7 +4,7 @@ use rayon::prelude::*;
 
 use crate::dataset::Datasets;
 use crate::expected_failures;
-use crate::results::{AllFailures, Failure, RESULTS_FILE, SplitFailures, TestResults, VersionRun};
+use crate::results::{AllFailures, Failure, SplitFailures, TestResults, VersionRun};
 use crate::runner::{self, Outcome};
 
 /// Fetches every supported version's semantic tests, compiles all of them,
@@ -27,6 +27,10 @@ pub fn run() -> Result<()> {
 
     report_new_failures(&previous, &runs);
 
+    // Rendered while the runs are still around: `TestResults` keeps only the
+    // paths, and the diagnostics behind them are what the report needs.
+    let unexpected = render_unexpected_failures(&runs);
+
     let results: TestResults = runs.into_iter().collect();
     report_summary(&results);
 
@@ -37,18 +41,33 @@ pub fn run() -> Result<()> {
     // guarantee the snapshot test file is written.
     stale_check?;
 
-    let unexpected = results.unexpected_failures();
-
-    if unexpected > 0 {
+    if !unexpected.is_empty() {
         bail!(
-            "slang rejected {unexpected} semantic test(s) that `solc` compiles. Each \
+            "slang rejected {count} semantic test(s) that `solc` compiles. Each \
              one is either a gap to fix, or a difference we stand behind and \
-             should declare in `src/expected_failures.rs`; they are listed per \
-             version in `{RESULTS_FILE}`."
+             should declare in `src/expected_failures.rs`:\n\n{failures}",
+            count = unexpected.len(),
+            failures = unexpected.join("\n\n"),
         );
     }
 
     Ok(())
+}
+
+/// Renders one block per unexpected failure: the version it ran at, the test's
+/// path, and the diagnostics slang reported for it.
+fn render_unexpected_failures(runs: &[VersionRun<SplitFailures>]) -> Vec<String> {
+    runs.iter()
+        .flat_map(|run| &run.failures.unexpected)
+        .map(|failure| {
+            format!(
+                "- [{version}] {test_path}\n{diagnostics}",
+                version = failure.version,
+                test_path = failure.test_path,
+                diagnostics = failure.diagnostics.join("\n"),
+            )
+        })
+        .collect()
 }
 
 /// Compiles every test in every dataset.
