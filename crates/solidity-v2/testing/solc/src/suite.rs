@@ -21,12 +21,11 @@ pub fn run() -> Result<()> {
 
     let mut runs = execute(&datasets)?;
 
-    // Checked before the split, which is what drops the expected failures from
-    // the runs — the paths this reads are gone afterwards.
-    let stale_check = expected_failures::check_stale(&runs);
+    // Sorts the failures we stand behind apart from the ones we don't.
+    expected_failures::partition(&mut runs);
 
-    // Counts the failures we stand behind, leaving only the ones we don't.
-    expected_failures::split(&mut runs);
+    // Expected failures should *all* still be failing.
+    let stale_check = expected_failures::check_stale(&runs);
 
     report_new_failures(&previous, &runs);
 
@@ -105,7 +104,7 @@ fn execute(datasets: &Datasets) -> Result<Vec<VersionRun>> {
                 commit: dataset.commit_sha().to_owned(),
                 executed: test_files.len(),
                 unexpected_failures: outcomes.into_iter().flatten().collect(),
-                expected_failures: None,
+                expected_failures: Vec::new(),
             })
         })
         .collect()

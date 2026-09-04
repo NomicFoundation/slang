@@ -28,20 +28,18 @@ pub struct VersionRun {
     pub commit: String,
     /// How many tests ran, whether they passed or not.
     pub executed: usize,
-    /// The failures we don't stand behind. Until
-    /// [`expected_failures::split`] has run this holds *every* failing test in
-    /// the run.
+    /// The failures nothing accounts for: each one is a gap to fix. Until
+    /// [`expected_failures::partition`] has run this holds *every* failing test
+    /// in the run.
     ///
-    /// [`expected_failures::split`]: crate::expected_failures::split
+    /// [`expected_failures::partition`]: crate::expected_failures::partition
     pub unexpected_failures: Vec<Failure>,
-    /// How many failures an [`expected_failures`] case accounts for. Counting
-    /// them rather than keeping their paths.
-    ///
-    /// `None` until [`expected_failures::split`] has run.
+    /// The failures an [`expected_failures`] case stands behind. Empty until
+    /// [`expected_failures::partition`] has run.
     ///
     /// [`expected_failures`]: crate::expected_failures
-    /// [`expected_failures::split`]: crate::expected_failures::split
-    pub expected_failures: Option<usize>,
+    /// [`expected_failures::partition`]: crate::expected_failures::partition
+    pub expected_failures: Vec<Failure>,
 }
 
 /// What a whole run produced, per version.
@@ -144,9 +142,7 @@ impl FromIterator<VersionRun> for TestResults {
             .into_iter()
             .map(|run| {
                 let unexpected_failures = run.unexpected_failures.len();
-                let expected_failures = run
-                    .expected_failures
-                    .expect("expected failures should be set after splitting");
+                let expected_failures = run.expected_failures.len();
 
                 let results = VersionResults {
                     commit: run.commit,
