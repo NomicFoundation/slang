@@ -64,7 +64,7 @@ pub(crate) fn filter_overriden_definitions(
     for definition_id in definition_ids {
         match binder.find_definition_by_id(definition_id).unwrap() {
             Definition::Function(_) => {
-                if let Typing::Resolved(type_id) = binder.node_typing(definition_id) {
+                if let &Typing::Resolved(type_id) = binder.node_typing(definition_id) {
                     let Type::Function(function_type) = types.get_type_by_id(type_id) else {
                         unreachable!("type of function definition is not a function");
                     };

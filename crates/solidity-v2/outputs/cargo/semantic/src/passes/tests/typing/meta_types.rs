@@ -359,7 +359,7 @@ fn test_function_declaration_via_type_name_has_no_mobile_type() {
             .filter_map(|stmt| match stmt {
                 ir::Statement::ExpressionStatement(s) => {
                     let node_id = s.expression.node_id().expect("expression has a node id");
-                    Some(binder.node_typing(node_id))
+                    Some(binder.node_typing(node_id).clone())
                 }
                 _ => None,
             })

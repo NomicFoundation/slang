@@ -96,7 +96,7 @@ fn check_receive_function(
         );
     }
 
-    let Typing::Resolved(type_id) = binder.node_typing(node.id()) else {
+    let &Typing::Resolved(type_id) = binder.node_typing(node.id()) else {
         unreachable!("receive function definition is not typed");
     };
     let Type::Function(function_type) = types.get_type_by_id(type_id) else {

@@ -374,7 +374,7 @@ impl Visitor for Pass<'_> {
             // a value is required is for the enclosing context to decide, and
             // it sees this same typing.
             match &node.items.first().unwrap().expression {
-                Some(expression) => self.check_typing_of_expression(expression),
+                Some(expression) => self.check_typing_of_expression(expression).clone(),
                 None => Typing::Unresolved,
             }
         } else {
@@ -395,7 +395,7 @@ impl Visitor for Pass<'_> {
     fn leave_member_access_expression(&mut self, node: &ir::MemberAccessExpression) {
         // we need to resolve the identifier at this point that we already have
         // typing information of the operand expression
-        let operand_typing = self.check_typing_of_expression(&node.operand);
+        let operand_typing = self.check_typing_of_expression(&node.operand).clone();
         let member_resolution =
             self.resolve_symbol_in_typing(&operand_typing, node.member.unparse());
         let resolution = filter_overriden_definitions(self.binder, self.types, member_resolution);
@@ -613,7 +613,7 @@ impl Visitor for Pass<'_> {
 
         // `foo{value: 3}` partially applies but is still a callee, so an
         // overload set has to survive to the enclosing call.
-        let operand_typing = self.raw_typing_of_expression(&node.operand);
+        let operand_typing = self.raw_typing_of_expression(&node.operand).clone();
 
         // Pre-applying call options (eg. `foo{value: 3}`) partially applies the
         // function.
