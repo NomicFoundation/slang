@@ -177,7 +177,7 @@ impl<K, V> slang_solidity_v2_common::collections::DefaultWithCapacity for slang_
 pub fn slang_solidity_v2_common::collections::Map<K, V>::default_with_capacity(usize) -> Self
 impl<T> slang_solidity_v2_common::collections::DefaultWithCapacity for slang_solidity_v2_common::collections::Set<T>
 pub fn slang_solidity_v2_common::collections::Set<T>::default_with_capacity(usize) -> Self
-pub type slang_solidity_v2_common::collections::DeterministicState = core::hash::BuildHasherDefault<fxhash::FxHasher>
+pub type slang_solidity_v2_common::collections::DeterministicState = core::hash::BuildHasherDefault<rustc_hash::FxHasher>
 pub type slang_solidity_v2_common::collections::Map<K, V> = std::collections::hash::map::HashMap<K, V, slang_solidity_v2_common::collections::DeterministicState>
 pub type slang_solidity_v2_common::collections::OrderedMap<K, V> = indexmap::map::IndexMap<K, V, slang_solidity_v2_common::collections::DeterministicState>
 pub type slang_solidity_v2_common::collections::OrderedSet<T> = indexmap::set::IndexSet<T, slang_solidity_v2_common::collections::DeterministicState>
