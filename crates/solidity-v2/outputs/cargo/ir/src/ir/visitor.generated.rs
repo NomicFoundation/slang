@@ -1457,7 +1457,7 @@ pub fn accept_inheritance_type(node: &InheritanceType, visitor: &mut impl Visito
     }
     accept_identifier_path(&node.type_name, visitor);
     if let Some(arguments) = &node.arguments {
-        accept_arguments_declaration(arguments, visitor);
+        accept_positional_arguments(arguments, visitor);
     }
     visitor.leave_inheritance_type(node);
 }
@@ -1507,7 +1507,7 @@ pub fn accept_modifier_invocation(node: &ModifierInvocation, visitor: &mut impl 
     }
     accept_identifier_path(&node.name, visitor);
     if let Some(arguments) = &node.arguments {
-        accept_arguments_declaration(arguments, visitor);
+        accept_positional_arguments(arguments, visitor);
     }
     visitor.leave_modifier_invocation(node);
 }
@@ -3002,7 +3002,7 @@ pub fn accept_yul_statement(node: &YulStatement, visitor: &mut impl Visitor) {
 //
 
 #[inline]
-fn accept_array_values(items: &ArrayValues, visitor: &mut impl Visitor) {
+pub fn accept_array_values(items: &ArrayValues, visitor: &mut impl Visitor) {
     if !visitor.enter_array_values(items) {
         return;
     }
@@ -3014,7 +3014,7 @@ fn accept_array_values(items: &ArrayValues, visitor: &mut impl Visitor) {
     visitor.leave_array_values(items);
 }
 #[inline]
-fn accept_call_options(items: &CallOptions, visitor: &mut impl Visitor) {
+pub fn accept_call_options(items: &CallOptions, visitor: &mut impl Visitor) {
     if !visitor.enter_call_options(items) {
         return;
     }
@@ -3026,7 +3026,7 @@ fn accept_call_options(items: &CallOptions, visitor: &mut impl Visitor) {
     visitor.leave_call_options(items);
 }
 #[inline]
-fn accept_catch_clauses(items: &CatchClauses, visitor: &mut impl Visitor) {
+pub fn accept_catch_clauses(items: &CatchClauses, visitor: &mut impl Visitor) {
     if !visitor.enter_catch_clauses(items) {
         return;
     }
@@ -3038,7 +3038,7 @@ fn accept_catch_clauses(items: &CatchClauses, visitor: &mut impl Visitor) {
     visitor.leave_catch_clauses(items);
 }
 #[inline]
-fn accept_contract_members(items: &ContractMembers, visitor: &mut impl Visitor) {
+pub fn accept_contract_members(items: &ContractMembers, visitor: &mut impl Visitor) {
     if !visitor.enter_contract_members(items) {
         return;
     }
@@ -3050,7 +3050,7 @@ fn accept_contract_members(items: &ContractMembers, visitor: &mut impl Visitor) 
     visitor.leave_contract_members(items);
 }
 #[inline]
-fn accept_enum_members(items: &EnumMembers, visitor: &mut impl Visitor) {
+pub fn accept_enum_members(items: &EnumMembers, visitor: &mut impl Visitor) {
     if !visitor.enter_enum_members(items) {
         return;
     }
@@ -3062,7 +3062,7 @@ fn accept_enum_members(items: &EnumMembers, visitor: &mut impl Visitor) {
     visitor.leave_enum_members(items);
 }
 #[inline]
-fn accept_hex_string_literals(items: &HexStringLiterals, visitor: &mut impl Visitor) {
+pub fn accept_hex_string_literals(items: &HexStringLiterals, visitor: &mut impl Visitor) {
     if !visitor.enter_hex_string_literals(items) {
         return;
     }
@@ -3074,7 +3074,7 @@ fn accept_hex_string_literals(items: &HexStringLiterals, visitor: &mut impl Visi
     visitor.leave_hex_string_literals(items);
 }
 #[inline]
-fn accept_identifier_path(items: &IdentifierPath, visitor: &mut impl Visitor) {
+pub fn accept_identifier_path(items: &IdentifierPath, visitor: &mut impl Visitor) {
     if !visitor.enter_identifier_path(items) {
         return;
     }
@@ -3086,7 +3086,7 @@ fn accept_identifier_path(items: &IdentifierPath, visitor: &mut impl Visitor) {
     visitor.leave_identifier_path(items);
 }
 #[inline]
-fn accept_import_deconstruction_symbols(
+pub fn accept_import_deconstruction_symbols(
     items: &ImportDeconstructionSymbols,
     visitor: &mut impl Visitor,
 ) {
@@ -3101,7 +3101,7 @@ fn accept_import_deconstruction_symbols(
     visitor.leave_import_deconstruction_symbols(items);
 }
 #[inline]
-fn accept_inheritance_types(items: &InheritanceTypes, visitor: &mut impl Visitor) {
+pub fn accept_inheritance_types(items: &InheritanceTypes, visitor: &mut impl Visitor) {
     if !visitor.enter_inheritance_types(items) {
         return;
     }
@@ -3113,7 +3113,7 @@ fn accept_inheritance_types(items: &InheritanceTypes, visitor: &mut impl Visitor
     visitor.leave_inheritance_types(items);
 }
 #[inline]
-fn accept_interface_members(items: &InterfaceMembers, visitor: &mut impl Visitor) {
+pub fn accept_interface_members(items: &InterfaceMembers, visitor: &mut impl Visitor) {
     if !visitor.enter_interface_members(items) {
         return;
     }
@@ -3125,7 +3125,7 @@ fn accept_interface_members(items: &InterfaceMembers, visitor: &mut impl Visitor
     visitor.leave_interface_members(items);
 }
 #[inline]
-fn accept_library_members(items: &LibraryMembers, visitor: &mut impl Visitor) {
+pub fn accept_library_members(items: &LibraryMembers, visitor: &mut impl Visitor) {
     if !visitor.enter_library_members(items) {
         return;
     }
@@ -3137,7 +3137,7 @@ fn accept_library_members(items: &LibraryMembers, visitor: &mut impl Visitor) {
     visitor.leave_library_members(items);
 }
 #[inline]
-fn accept_modifier_invocations(items: &ModifierInvocations, visitor: &mut impl Visitor) {
+pub fn accept_modifier_invocations(items: &ModifierInvocations, visitor: &mut impl Visitor) {
     if !visitor.enter_modifier_invocations(items) {
         return;
     }
@@ -3149,7 +3149,7 @@ fn accept_modifier_invocations(items: &ModifierInvocations, visitor: &mut impl V
     visitor.leave_modifier_invocations(items);
 }
 #[inline]
-fn accept_multi_typed_declaration_elements(
+pub fn accept_multi_typed_declaration_elements(
     items: &MultiTypedDeclarationElements,
     visitor: &mut impl Visitor,
 ) {
@@ -3164,7 +3164,7 @@ fn accept_multi_typed_declaration_elements(
     visitor.leave_multi_typed_declaration_elements(items);
 }
 #[inline]
-fn accept_named_arguments(items: &NamedArguments, visitor: &mut impl Visitor) {
+pub fn accept_named_arguments(items: &NamedArguments, visitor: &mut impl Visitor) {
     if !visitor.enter_named_arguments(items) {
         return;
     }
@@ -3176,7 +3176,7 @@ fn accept_named_arguments(items: &NamedArguments, visitor: &mut impl Visitor) {
     visitor.leave_named_arguments(items);
 }
 #[inline]
-fn accept_override_paths(items: &OverridePaths, visitor: &mut impl Visitor) {
+pub fn accept_override_paths(items: &OverridePaths, visitor: &mut impl Visitor) {
     if !visitor.enter_override_paths(items) {
         return;
     }
@@ -3188,7 +3188,7 @@ fn accept_override_paths(items: &OverridePaths, visitor: &mut impl Visitor) {
     visitor.leave_override_paths(items);
 }
 #[inline]
-fn accept_parameters(items: &Parameters, visitor: &mut impl Visitor) {
+pub fn accept_parameters(items: &Parameters, visitor: &mut impl Visitor) {
     if !visitor.enter_parameters(items) {
         return;
     }
@@ -3200,7 +3200,7 @@ fn accept_parameters(items: &Parameters, visitor: &mut impl Visitor) {
     visitor.leave_parameters(items);
 }
 #[inline]
-fn accept_positional_arguments(items: &PositionalArguments, visitor: &mut impl Visitor) {
+pub fn accept_positional_arguments(items: &PositionalArguments, visitor: &mut impl Visitor) {
     if !visitor.enter_positional_arguments(items) {
         return;
     }
@@ -3212,7 +3212,7 @@ fn accept_positional_arguments(items: &PositionalArguments, visitor: &mut impl V
     visitor.leave_positional_arguments(items);
 }
 #[inline]
-fn accept_source_unit_members(items: &SourceUnitMembers, visitor: &mut impl Visitor) {
+pub fn accept_source_unit_members(items: &SourceUnitMembers, visitor: &mut impl Visitor) {
     if !visitor.enter_source_unit_members(items) {
         return;
     }
@@ -3224,7 +3224,7 @@ fn accept_source_unit_members(items: &SourceUnitMembers, visitor: &mut impl Visi
     visitor.leave_source_unit_members(items);
 }
 #[inline]
-fn accept_statements(items: &Statements, visitor: &mut impl Visitor) {
+pub fn accept_statements(items: &Statements, visitor: &mut impl Visitor) {
     if !visitor.enter_statements(items) {
         return;
     }
@@ -3236,7 +3236,7 @@ fn accept_statements(items: &Statements, visitor: &mut impl Visitor) {
     visitor.leave_statements(items);
 }
 #[inline]
-fn accept_string_literals(items: &StringLiterals, visitor: &mut impl Visitor) {
+pub fn accept_string_literals(items: &StringLiterals, visitor: &mut impl Visitor) {
     if !visitor.enter_string_literals(items) {
         return;
     }
@@ -3248,7 +3248,7 @@ fn accept_string_literals(items: &StringLiterals, visitor: &mut impl Visitor) {
     visitor.leave_string_literals(items);
 }
 #[inline]
-fn accept_struct_members(items: &StructMembers, visitor: &mut impl Visitor) {
+pub fn accept_struct_members(items: &StructMembers, visitor: &mut impl Visitor) {
     if !visitor.enter_struct_members(items) {
         return;
     }
@@ -3260,7 +3260,7 @@ fn accept_struct_members(items: &StructMembers, visitor: &mut impl Visitor) {
     visitor.leave_struct_members(items);
 }
 #[inline]
-fn accept_tuple_values(items: &TupleValues, visitor: &mut impl Visitor) {
+pub fn accept_tuple_values(items: &TupleValues, visitor: &mut impl Visitor) {
     if !visitor.enter_tuple_values(items) {
         return;
     }
@@ -3272,7 +3272,7 @@ fn accept_tuple_values(items: &TupleValues, visitor: &mut impl Visitor) {
     visitor.leave_tuple_values(items);
 }
 #[inline]
-fn accept_unicode_string_literals(items: &UnicodeStringLiterals, visitor: &mut impl Visitor) {
+pub fn accept_unicode_string_literals(items: &UnicodeStringLiterals, visitor: &mut impl Visitor) {
     if !visitor.enter_unicode_string_literals(items) {
         return;
     }
@@ -3284,7 +3284,7 @@ fn accept_unicode_string_literals(items: &UnicodeStringLiterals, visitor: &mut i
     visitor.leave_unicode_string_literals(items);
 }
 #[inline]
-fn accept_using_deconstruction_symbols(
+pub fn accept_using_deconstruction_symbols(
     items: &UsingDeconstructionSymbols,
     visitor: &mut impl Visitor,
 ) {
@@ -3299,7 +3299,7 @@ fn accept_using_deconstruction_symbols(
     visitor.leave_using_deconstruction_symbols(items);
 }
 #[inline]
-fn accept_version_pragma_expression_set(
+pub fn accept_version_pragma_expression_set(
     items: &VersionPragmaExpressionSet,
     visitor: &mut impl Visitor,
 ) {
@@ -3314,7 +3314,7 @@ fn accept_version_pragma_expression_set(
     visitor.leave_version_pragma_expression_set(items);
 }
 #[inline]
-fn accept_version_pragma_expression_sets(
+pub fn accept_version_pragma_expression_sets(
     items: &VersionPragmaExpressionSets,
     visitor: &mut impl Visitor,
 ) {
@@ -3329,7 +3329,7 @@ fn accept_version_pragma_expression_sets(
     visitor.leave_version_pragma_expression_sets(items);
 }
 #[inline]
-fn accept_version_pragma_specifier(items: &VersionPragmaSpecifier, visitor: &mut impl Visitor) {
+pub fn accept_version_pragma_specifier(items: &VersionPragmaSpecifier, visitor: &mut impl Visitor) {
     if !visitor.enter_version_pragma_specifier(items) {
         return;
     }
@@ -3341,7 +3341,7 @@ fn accept_version_pragma_specifier(items: &VersionPragmaSpecifier, visitor: &mut
     visitor.leave_version_pragma_specifier(items);
 }
 #[inline]
-fn accept_yul_arguments(items: &YulArguments, visitor: &mut impl Visitor) {
+pub fn accept_yul_arguments(items: &YulArguments, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_arguments(items) {
         return;
     }
@@ -3353,7 +3353,7 @@ fn accept_yul_arguments(items: &YulArguments, visitor: &mut impl Visitor) {
     visitor.leave_yul_arguments(items);
 }
 #[inline]
-fn accept_yul_parameters(items: &YulParameters, visitor: &mut impl Visitor) {
+pub fn accept_yul_parameters(items: &YulParameters, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_parameters(items) {
         return;
     }
@@ -3365,7 +3365,7 @@ fn accept_yul_parameters(items: &YulParameters, visitor: &mut impl Visitor) {
     visitor.leave_yul_parameters(items);
 }
 #[inline]
-fn accept_yul_path(items: &YulPath, visitor: &mut impl Visitor) {
+pub fn accept_yul_path(items: &YulPath, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_path(items) {
         return;
     }
@@ -3377,7 +3377,7 @@ fn accept_yul_path(items: &YulPath, visitor: &mut impl Visitor) {
     visitor.leave_yul_path(items);
 }
 #[inline]
-fn accept_yul_paths(items: &YulPaths, visitor: &mut impl Visitor) {
+pub fn accept_yul_paths(items: &YulPaths, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_paths(items) {
         return;
     }
@@ -3389,7 +3389,7 @@ fn accept_yul_paths(items: &YulPaths, visitor: &mut impl Visitor) {
     visitor.leave_yul_paths(items);
 }
 #[inline]
-fn accept_yul_statements(items: &YulStatements, visitor: &mut impl Visitor) {
+pub fn accept_yul_statements(items: &YulStatements, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_statements(items) {
         return;
     }
@@ -3401,7 +3401,7 @@ fn accept_yul_statements(items: &YulStatements, visitor: &mut impl Visitor) {
     visitor.leave_yul_statements(items);
 }
 #[inline]
-fn accept_yul_value_cases(items: &YulValueCases, visitor: &mut impl Visitor) {
+pub fn accept_yul_value_cases(items: &YulValueCases, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_value_cases(items) {
         return;
     }
@@ -3413,7 +3413,7 @@ fn accept_yul_value_cases(items: &YulValueCases, visitor: &mut impl Visitor) {
     visitor.leave_yul_value_cases(items);
 }
 #[inline]
-fn accept_yul_variable_names(items: &YulVariableNames, visitor: &mut impl Visitor) {
+pub fn accept_yul_variable_names(items: &YulVariableNames, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_variable_names(items) {
         return;
     }

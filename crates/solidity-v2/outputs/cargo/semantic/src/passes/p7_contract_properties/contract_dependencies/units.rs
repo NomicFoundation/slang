@@ -24,7 +24,7 @@ enum CodeUnitKind<'a> {
     Initializer(&'a ir::Expression),
     /// Base constructor arguments, eg. `f()` in `contract B is A(f())`.
     /// They run when the deriving contract is created.
-    BaseArguments(&'a ir::ArgumentsDeclaration),
+    BaseArguments(&'a ir::PositionalArguments),
 }
 
 pub(super) fn collect(binder: &Binder) -> Vec<CodeUnit<'_>> {
@@ -105,16 +105,17 @@ pub(super) fn visit_code_unit(unit: &CodeUnit<'_>, visitor: &mut impl Visitor) {
         CodeUnitKind::Callable(function) => {
             // Only the modifier invocations and the body can hold references.
             // Everything else is skipped.
-            for modifier_invocation in function.attributes.modifier_invocations.iter() {
-                ir::visitor::accept_modifier_invocation(modifier_invocation, visitor);
-            }
+            ir::visitor::accept_modifier_invocations(
+                &function.attributes.modifier_invocations,
+                visitor,
+            );
             if let Some(body) = &function.body {
                 ir::visitor::accept_block(body, visitor);
             }
         }
         CodeUnitKind::Initializer(value) => ir::visitor::accept_expression(value, visitor),
         CodeUnitKind::BaseArguments(arguments) => {
-            ir::visitor::accept_arguments_declaration(arguments, visitor);
+            ir::visitor::accept_positional_arguments(arguments, visitor);
         }
     }
 }

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[ParserError 6933] Error: Expected primary expression.
+    ╭─[input.sol:13:36]
+    │
+ 13 │     function named() public tagged({value: 2}) {}
+    │                                    ┬  
+    │                                    ╰── Error occurred here.
+────╯

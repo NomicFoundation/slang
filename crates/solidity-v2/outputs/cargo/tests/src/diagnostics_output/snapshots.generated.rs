@@ -3474,6 +3474,31 @@ mod syntax {
         }
     }
 
+    mod named_arguments_not_allowed {
+        use super::*;
+
+        #[test]
+        fn base_constructor_calls() -> Result<()> {
+            run(
+                "syntax/named_arguments_not_allowed",
+                "base_constructor_calls",
+            )
+        }
+
+        #[test]
+        fn inheritance_specifiers() -> Result<()> {
+            run(
+                "syntax/named_arguments_not_allowed",
+                "inheritance_specifiers",
+            )
+        }
+
+        #[test]
+        fn modifier_invocations() -> Result<()> {
+            run("syntax/named_arguments_not_allowed", "modifier_invocations")
+        }
+    }
+
     mod non_address_state_mutability {
         use super::*;
 
