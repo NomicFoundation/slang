@@ -35,7 +35,7 @@ fn build_pragma(expression: &str) -> (ir::VersionPragma, Vec<String>) {
         diagnostics,
     } = ir::build(
         &file_id,
-        &source_unit,
+        &source_unit.unwrap(),
         &contents.as_str(),
         LanguageVersion::LATEST,
         &mut id_generator,
@@ -614,7 +614,7 @@ fn an_unreadable_pragma_does_not_suppress_the_check_on_another() {
     let mut id_generator = ir::NodeIdGenerator::default();
     let ir::BuildOutput { diagnostics, .. } = ir::build(
         &file_id,
-        &source_unit,
+        &source_unit.unwrap(),
         &contents,
         LanguageVersion::LATEST,
         &mut id_generator,

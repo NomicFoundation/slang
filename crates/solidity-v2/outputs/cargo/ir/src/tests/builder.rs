@@ -38,7 +38,7 @@ contract MyContract {
         diagnostics,
     } = ir::build(
         &"test.sol".into(),
-        &source_unit,
+        &source_unit.unwrap(),
         &CONTENTS,
         language_version,
         &mut id_generator,
@@ -125,7 +125,7 @@ contract MyContract {
     let mut id_generator = ir::NodeIdGenerator::default();
     let ir::BuildOutput { diagnostics, .. } = ir::build(
         &"test.sol".into(),
-        &source_unit,
+        &source_unit.unwrap(),
         &CONTENTS,
         language_version,
         &mut id_generator,
@@ -176,7 +176,7 @@ contract Test is Base layout at 0 {}
         diagnostics,
     } = ir::build(
         &"test.sol".into(),
-        &source_unit,
+        &source_unit.unwrap(),
         &CONTENTS,
         language_version,
         &mut id_generator,
@@ -254,7 +254,7 @@ contract Test {
         diagnostics,
     } = ir::build(
         &"test.sol".into(),
-        &source_unit,
+        &source_unit.unwrap(),
         &CONTENTS,
         language_version,
         &mut id_generator,

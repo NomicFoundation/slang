@@ -61,6 +61,7 @@ pub fn compare_with_v1_cursor(
     }
 
     source_unit
+        .unwrap()
         .check_node(&root_cursor.node())
         .into_iter()
         .map(ComparisonError::NodeCheckerError)

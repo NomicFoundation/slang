@@ -16,6 +16,3 @@ Diagnostics: # 1 total
        │            ─────┬─────  
        │                 ╰─────── Error occurred here.
     ───╯
-Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers): []

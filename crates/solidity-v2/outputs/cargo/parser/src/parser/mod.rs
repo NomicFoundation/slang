@@ -5,9 +5,7 @@ use slang_solidity_v2_common::diagnostics::kinds::syntax::{UnexpectedEof, Unexpe
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::terminals::TerminalKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_cst::structured_cst::nodes::{
-    SourceUnit, new_source_unit, new_source_unit_members,
-};
+use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
 
 use crate::lexer::{LexemeKind, Lexer};
 use crate::parser::validation::validate_syntax_version;
@@ -54,13 +52,13 @@ pub(crate) struct GrammarCtx<'a> {
 /// The output of a parse operation, containing both the source unit and any diagnostics.
 #[derive(Debug, PartialEq)]
 pub struct ParseOutput {
-    pub source_unit: SourceUnit,
+    pub source_unit: Option<SourceUnit>,
     pub diagnostics: DiagnosticCollection,
 }
 
 /// A Parser for Solidity Source Units
 ///
-/// TODO(v2): Error recovery, for now we return an empty [`SourceUnit`] on error
+/// TODO(v2): Error recovery, for now we return no [`SourceUnit`] on error
 /// TODO(v2): Make the parser skip unique tokens, performance improvement
 #[derive(Default)]
 pub struct Parser;
@@ -76,30 +74,31 @@ impl Parser {
             diagnostics: DiagnosticCollection::default(),
             language_version,
         };
-        let result = parser.parse(&mut ctx, lexer);
-        match result {
+
+        let source_unit = match parser.parse(&mut ctx, lexer) {
             Ok(source_unit) => {
-                // TODO(v2): these tests should really go through 'CompilationUnit' once it is ready.
-                // This way, we won't have to call individual validation APIs.
-                // All errors should be collected during the compilation unit construction.
+                // Most validation happens during the 'CompilationUnit' building, but this specific
+                // check is done here to make sure that other 'Parser' users can still be informed of any
+                // inconsistency between the source unit and the expected syntax version.
                 validate_syntax_version(
                     &source_unit,
                     language_version,
                     file_id,
                     &mut ctx.diagnostics,
                 );
-                ParseOutput {
-                    source_unit,
-                    diagnostics: ctx.diagnostics,
-                }
+
+                Some(source_unit)
             }
             Err(e) => {
                 convert_parse_error(file_id, &mut ctx.diagnostics, e);
-                ParseOutput {
-                    source_unit: new_source_unit(new_source_unit_members(vec![])),
-                    diagnostics: ctx.diagnostics,
-                }
+
+                None
             }
+        };
+
+        ParseOutput {
+            source_unit,
+            diagnostics: ctx.diagnostics,
         }
     }
 }

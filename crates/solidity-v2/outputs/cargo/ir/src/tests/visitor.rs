@@ -94,7 +94,7 @@ contract Counter is Ownable {
         diagnostics,
     } = ir::build(
         &"test.sol".into(),
-        &source_unit,
+        &source_unit.unwrap(),
         &CONTENTS,
         language_version,
         &mut id_generator,

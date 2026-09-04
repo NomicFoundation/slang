@@ -155,6 +155,11 @@ fn parse_file(
         diagnostics,
     } = Parser::parse(&file_id, contents, language_version);
 
+    // If parser failed to produce a syntax tree, we create an empty tree,
+    // so imports pointing at it must resolve rather than be reported as missing.
+    let source_unit =
+        source_unit.unwrap_or_else(|| cst::new_source_unit(cst::new_source_unit_members(vec![])));
+
     let parsed_file = ParsedFile {
         file_id,
         contents,

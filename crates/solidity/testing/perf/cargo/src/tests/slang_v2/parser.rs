@@ -21,7 +21,7 @@ pub fn run(project: Input) -> Output {
         } = Parser::parse(&key.as_str().into(), source, lang_version);
         assert!(diagnostics.is_empty());
 
-        source_units.push((key.clone(), source_unit));
+        source_units.push((key.clone(), source_unit.unwrap()));
     }
     assert!(!source_units.is_empty());
 

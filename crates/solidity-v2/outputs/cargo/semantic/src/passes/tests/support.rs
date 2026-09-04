@@ -75,7 +75,7 @@ fn build_file(
         diagnostics,
     } = ir::build(
         &file_id,
-        &source_unit,
+        &source_unit.unwrap(),
         &contents,
         language_version,
         id_generator,
