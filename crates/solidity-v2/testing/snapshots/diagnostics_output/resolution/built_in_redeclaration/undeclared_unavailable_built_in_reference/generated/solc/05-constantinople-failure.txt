@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[TypeError 7755] Error: The "mcopy" instruction is only available for Cancun-compatible VMs (you are currently compiling for "constantinople").
+[TypeError 7755] Error: The "mcopy" instruction is only available for Cancun-compatible VMs (you are currently compiling for "__CURRENT_SOLC_EVM_VERSION__").
    ╭─[input.sol:9:13]
    │
  9 │             mcopy(1, 2, 3)

@@ -3,8 +3,7 @@ use std::ops::Range;
 
 use anyhow::Result;
 use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
-use slang_solidity_v2::compilation::FileId;
-use slang_solidity_v2::diagnostics::DiagnosticCollection;
+use slang_solidity_v2::compilation::{CompilationUnit, FileId};
 use slang_solidity_v2_common::collections::SortedMap;
 use solidity_v2_testing_utils::reporting::diagnostic;
 
@@ -30,7 +29,7 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
     } = report_data;
 
     if !compilation.diagnostics().is_empty() {
-        report_diagnostics(&mut report, compilation.diagnostics(), files)?;
+        report_diagnostics(&mut report, compilation, files)?;
         writeln!(report, "{SEPARATOR}")?;
     }
 
@@ -106,14 +105,20 @@ fn report_unbound_identifiers(
 
 fn report_diagnostics(
     report: &mut String,
-    diagnostics: &DiagnosticCollection,
+    compilation: &CompilationUnit,
     file_contents: &SortedMap<FileId, String>,
 ) -> Result<()> {
     writeln!(report, "Parse errors:")?;
-    for diagnostic in diagnostics {
+    for diagnostic in compilation.diagnostics() {
         let file_id = diagnostic.file_id();
         let source = file_contents.get(file_id).cloned().unwrap_or_default();
-        let rendered = diagnostic::render(diagnostic, file_id.as_str(), &source, false);
+        let rendered = diagnostic::render_for_snapshot(
+            diagnostic,
+            file_id.as_str(),
+            &source,
+            compilation.language_version(),
+            compilation.evm_target(),
+        );
         writeln!(report, "{rendered}")?;
     }
     Ok(())

@@ -36,7 +36,13 @@ impl TestTarget for SlangTarget {
                 let file_id = diagnostic.file_id();
                 let source = files.get(file_id).cloned().unwrap_or_default();
 
-                diagnostic::render(diagnostic, file_id.as_str(), &source, false)
+                diagnostic::render_for_snapshot(
+                    diagnostic,
+                    file_id.as_str(),
+                    &source,
+                    version,
+                    evm_target,
+                )
             })
             .collect();
 

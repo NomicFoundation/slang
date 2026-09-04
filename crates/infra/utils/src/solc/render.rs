@@ -2,12 +2,51 @@ use std::collections::BTreeMap;
 
 use anyhow::Result;
 use ariadne::{Config, Label, Report, ReportKind, Source};
+use semver::Version;
 
 use crate::paths::PathExtensions;
+use crate::snapshot_markers::{
+    CURRENT_SOLC_BUILD_VERSION, CURRENT_SOLC_EVM_VERSION, replace_marker,
+};
 use crate::solc::{Error, Severity};
 
 pub fn render_solc_error(error: &Error, sources: &BTreeMap<String, String>) -> Result<String> {
-    let message = &error.message;
+    render_message(error, sources, &error.message)
+}
+
+pub fn render_solc_error_for_snapshot(
+    error: &Error,
+    sources: &BTreeMap<String, String>,
+    version: &Version,
+    evm_version: &str,
+) -> Result<String> {
+    let version = version.to_string();
+
+    let message = replace_marker(
+        &error.message,
+        &version,
+        &format!(
+            r"\b{version}\+commit\.[0-9a-f]{{8}}(\.[A-Za-z0-9+]+)+",
+            version = regex::escape(&version),
+        ),
+        CURRENT_SOLC_BUILD_VERSION,
+    );
+
+    let message = replace_marker(
+        &message,
+        evm_version,
+        &format!(r"\b{evm_version}\b"),
+        CURRENT_SOLC_EVM_VERSION,
+    );
+
+    render_message(error, sources, &message)
+}
+
+fn render_message(
+    error: &Error,
+    sources: &BTreeMap<String, String>,
+    message: &str,
+) -> Result<String> {
     let kind = severity_to_kind(&error.severity);
 
     let code = format!(

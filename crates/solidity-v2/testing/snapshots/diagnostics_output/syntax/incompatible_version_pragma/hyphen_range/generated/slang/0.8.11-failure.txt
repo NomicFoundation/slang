@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[syntax/incompatible-version-pragma] Error: This pragma is incompatible with the compilation language version '0.8.11'.
+[syntax/incompatible-version-pragma] Error: This pragma is incompatible with the compilation language version '__CURRENT_SLANG_LANGUAGE_VERSION__'.
    ╭─[input.sol:3:8]
    │
  3 │ pragma solidity 0.8.5 - 0.8.10;
