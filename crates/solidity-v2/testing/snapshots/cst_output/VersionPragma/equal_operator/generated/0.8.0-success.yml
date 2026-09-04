@@ -1,25 +1,37 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ pragma                                                                                                 │ 0..6
-  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VersionPragma/equal_operator/input.sol │ 7..109
-  3  │ solidity =0.8.0                                                                                        │ 110..125
-  4  │ // <<<                                                                                                 │ 126..132
-  5  │ ;                                                                                                      │ 133..134
+  1  │ pragma solidity *;                                                                                     │ 0..18
+  2  │                                                                                                        │ 19..19
+  3  │ pragma                                                                                                 │ 20..26
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VersionPragma/equal_operator/input.sol │ 27..129
+  5  │ solidity =0.8.0                                                                                        │ 130..145
+  6  │ // <<<                                                                                                 │ 146..152
+  7  │ ;                                                                                                      │ 153..154
 
 Tree:
-  - (root꞉ SourceUnit): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..134)
-      - (members꞉ SourceUnitMembers): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..134)
-          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..134)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\npragma\n// >>> Copied from crat..." (0..154)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\npragma\n// >>> Copied from crat..." (0..154)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
               - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
-              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity =0.8.0" (110..125)
-                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (110..118)
-                  - (sets꞉ VersionPragmaExpressionSets): # "=0.8.0" (119..125)
-                      - (item꞉ VersionPragmaExpressionSet): # "=0.8.0" (119..125)
-                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "=0.8.0" (119..125)
-                              - (operator꞉ VersionPragmaOperator) ► (pragma_equal꞉ PragmaEqual): "=" # (119..120)
-                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "0.8.0" (120..125)
-                                  - (item꞉ VersionPragmaComponent): "0" # (120..121)
-                                  - (item꞉ VersionPragmaComponent): "8" # (122..123)
-                                  - (item꞉ VersionPragmaComponent): "0" # (124..125)
-              - (semicolon꞉ PragmaSemicolon): ";" # (133..134)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma\n// >>> Copied from crates/solidity/testing/..." (20..154)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (20..26)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity =0.8.0" (130..145)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (130..138)
+                  - (sets꞉ VersionPragmaExpressionSets): # "=0.8.0" (139..145)
+                      - (item꞉ VersionPragmaExpressionSet): # "=0.8.0" (139..145)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "=0.8.0" (139..145)
+                              - (operator꞉ VersionPragmaOperator) ► (pragma_equal꞉ PragmaEqual): "=" # (139..140)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "0.8.0" (140..145)
+                                  - (item꞉ VersionPragmaComponent): "0" # (140..141)
+                                  - (item꞉ VersionPragmaComponent): "8" # (142..143)
+                                  - (item꞉ VersionPragmaComponent): "0" # (144..145)
+              - (semicolon꞉ PragmaSemicolon): ";" # (153..154)

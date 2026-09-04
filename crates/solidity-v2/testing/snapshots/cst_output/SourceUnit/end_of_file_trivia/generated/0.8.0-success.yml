@@ -1,23 +1,35 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/end_of_file_trivia/input.sol │ 0..103
-  2  │ contract X { }                                                                                          │ 104..118
-  3  │                                                                                                         │ 119..123
-  4  │ // spaces before this                                                                                   │ 124..145
-  5  │                                                                                                         │ 146..146
-  6  │ /* new lines after this */                                                                              │ 147..173
-  7  │                                                                                                         │ 174..174
-  8  │                                                                                                         │ 175..175
-  9  │ // <<<                                                                                                  │ 176..182
+  1  │ pragma solidity *;                                                                                      │ 0..18
+  2  │                                                                                                         │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/end_of_file_trivia/input.sol │ 20..123
+  4  │ contract X { }                                                                                          │ 124..138
+  5  │                                                                                                         │ 139..143
+  6  │ // spaces before this                                                                                   │ 144..165
+  7  │                                                                                                         │ 166..166
+  8  │ /* new lines after this */                                                                              │ 167..193
+  9  │                                                                                                         │ 194..194
+  10 │                                                                                                         │ 195..195
+  11 │ // <<<                                                                                                  │ 196..202
 
 Tree:
-  - (root꞉ SourceUnit): # "contract X { }" (104..118)
-      - (members꞉ SourceUnitMembers): # "contract X { }" (104..118)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract X { }" (104..118)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (104..112)
-              - (name꞉ Identifier): "X" # (113..114)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..138)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..138)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract X { }" (124..138)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (124..132)
+              - (name꞉ Identifier): "X" # (133..134)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (115..116)
+              - (open_brace꞉ OpenBrace): "{" # (135..136)
               - (members꞉ ContractMembers): []
-              - (close_brace꞉ CloseBrace): "}" # (117..118)
+              - (close_brace꞉ CloseBrace): "}" # (137..138)

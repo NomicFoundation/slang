@@ -1,22 +1,24 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                                   │ 0..12
-  2  │     function f() {                                                                                                             │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/DecimalNumberExpression/decimal_trailing_ident_start/input.sol │ 32..158
-  4  │ 1a                                                                                                                             │ 159..161
-  5  │                                                                                                                                │ 162..162
-  6  │ // <<<                                                                                                                         │ 163..169
-  7  │ ;                                                                                                                              │ 170..171
-  8  │     }                                                                                                                          │ 172..177
-  9  │ }                                                                                                                              │ 178..179
+  1  │ pragma solidity *;                                                                                                             │ 0..18
+  2  │                                                                                                                                │ 19..19
+  3  │ contract C {                                                                                                                   │ 20..32
+  4  │     function f() {                                                                                                             │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/DecimalNumberExpression/decimal_trailing_ident_start/input.sol │ 52..178
+  6  │ 1a                                                                                                                             │ 179..181
+  7  │                                                                                                                                │ 182..182
+  8  │ // <<<                                                                                                                         │ 183..189
+  9  │ ;                                                                                                                              │ 190..191
+  10 │     }                                                                                                                          │ 192..197
+  11 │ }                                                                                                                              │ 198..199
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of AddressKeyword, AssemblyKeyword, AtKeyword, Bang, BoolKeyword, BreakKeyword, BytesKeyword, CloseBrace, ContinueKeyword, DecimalLiteral, DeleteKeyword, DoKeyword, EmitKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, ForKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IfKeyword, IntKeyword, LayoutKeyword, MappingKeyword, Minus, MinusMinus, NewKeyword, OpenBrace, OpenBracket, OpenParen, PayableKeyword, PlusPlus, ReturnKeyword, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TryKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UncheckedKeyword, UnicodeStringLiteral, WhileKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/DecimalNumberExpression/decimal_trailing_ident_start/input.sol:4:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/DecimalNumberExpression/decimal_trailing_ident_start/input.sol:6:1]
        │
-     4 │ 1a
+     6 │ 1a
        │ ─┬  
        │  ╰── Error occurred here.
     ───╯

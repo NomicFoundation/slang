@@ -1,23 +1,25 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                                   │ 0..12
-  2  │     function f() {                                                                                                             │ 13..31
-  3  │         assembly {                                                                                                             │ 32..50
-  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulVariableDeclarationStatement/identifier_with_dots/input.sol │ 51..177
-  5  │ let a.b.c := 1                                                                                                                 │ 178..192
-  6  │                                                                                                                                │ 193..193
-  7  │ // <<<                                                                                                                         │ 194..200
-  8  │         }                                                                                                                      │ 201..210
-  9  │     }                                                                                                                          │ 211..216
-  10 │ }                                                                                                                              │ 217..218
+  1  │ pragma solidity *;                                                                                                             │ 0..18
+  2  │                                                                                                                                │ 19..19
+  3  │ contract C {                                                                                                                   │ 20..32
+  4  │     function f() {                                                                                                             │ 33..51
+  5  │         assembly {                                                                                                             │ 52..70
+  6  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulVariableDeclarationStatement/identifier_with_dots/input.sol │ 71..197
+  7  │ let a.b.c := 1                                                                                                                 │ 198..212
+  8  │                                                                                                                                │ 213..213
+  9  │ // <<<                                                                                                                         │ 214..220
+  10 │         }                                                                                                                      │ 221..230
+  11 │     }                                                                                                                          │ 231..236
+  12 │ }                                                                                                                              │ 237..238
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected YulPeriod. One of YulBreakKeyword, YulCloseBrace, YulColonEqual, YulComma, YulContinueKeyword, YulDecimalLiteral, YulFalseKeyword, YulForKeyword, YulFunctionKeyword, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulIfKeyword, YulLeaveKeyword, YulLetKeyword, YulOpenBrace, YulStringLiteral, YulSwitchKeyword, YulTrueKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulVariableDeclarationStatement/identifier_with_dots/input.sol:5:6]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulVariableDeclarationStatement/identifier_with_dots/input.sol:7:6]
        │
-     5 │ let a.b.c := 1
+     7 │ let a.b.c := 1
        │      ┬  
        │      ╰── Error occurred here.
     ───╯

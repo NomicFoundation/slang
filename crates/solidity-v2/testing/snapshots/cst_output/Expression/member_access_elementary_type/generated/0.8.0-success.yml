@@ -1,47 +1,59 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                     │ 0..12
-  2  │     function f() {                                                                                               │ 13..31
-  3  │         // The `address` below should be parsed as an elementary type, rather than as an identifier path element │ 32..144
-  4  │         address.x;                                                                                               │ 145..163
-  5  │         // This one is an identifier path element                                                                │ 164..213
-  6  │         int.address;                                                                                             │ 214..234
-  7  │     }                                                                                                            │ 235..240
-  8  │ }                                                                                                                │ 241..242
+  1  │ pragma solidity *;                                                                                               │ 0..18
+  2  │                                                                                                                  │ 19..19
+  3  │ contract C {                                                                                                     │ 20..32
+  4  │     function f() {                                                                                               │ 33..51
+  5  │         // The `address` below should be parsed as an elementary type, rather than as an identifier path element │ 52..164
+  6  │         address.x;                                                                                               │ 165..183
+  7  │         // This one is an identifier path element                                                                │ 184..233
+  8  │         int.address;                                                                                             │ 234..254
+  9  │     }                                                                                                            │ 255..260
+  10 │ }                                                                                                                │ 261..262
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n        // The `ad..." (0..242)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n        // The `ad..." (0..242)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        // The `ad..." (0..242)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..262)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..262)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        // The `ad..." (20..262)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n        // The `address` below shou..." (17..240)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        // The `address` below shou..." (17..240)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n        // The `address` below shou..." (37..260)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        // The `address` below shou..." (37..260)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        // The `address` below should be parsed ..." (30..240)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # "address.x;\n        // This one is an identifier pa..." (153..234)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "address.x;" (153..163)
-                                  - (expression꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "address.x" (153..162)
-                                      - (operand꞉ Expression) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType): # "address" (153..160)
-                                          - (address_keyword꞉ AddressKeyword): "address" # (153..160)
-                                      - (period꞉ Period): "." # (160..161)
-                                      - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "x" # (161..162)
-                                  - (semicolon꞉ Semicolon): ";" # (162..163)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "int.address;" (222..234)
-                                  - (expression꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "int.address" (222..233)
-                                      - (operand꞉ Expression) ► (elementary_type꞉ ElementaryType) ► (int_keyword꞉ IntKeyword): "int" # (222..225)
-                                      - (period꞉ Period): "." # (225..226)
-                                      - (member꞉ IdentifierPathElement) ► (address_keyword꞉ AddressKeyword): "address" # (226..233)
-                                  - (semicolon꞉ Semicolon): ";" # (233..234)
-                          - (close_brace꞉ CloseBrace): "}" # (239..240)
-              - (close_brace꞉ CloseBrace): "}" # (241..242)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        // The `address` below should be parsed ..." (50..260)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # "address.x;\n        // This one is an identifier pa..." (173..254)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "address.x;" (173..183)
+                                  - (expression꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "address.x" (173..182)
+                                      - (operand꞉ Expression) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType): # "address" (173..180)
+                                          - (address_keyword꞉ AddressKeyword): "address" # (173..180)
+                                      - (period꞉ Period): "." # (180..181)
+                                      - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "x" # (181..182)
+                                  - (semicolon꞉ Semicolon): ";" # (182..183)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "int.address;" (242..254)
+                                  - (expression꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "int.address" (242..253)
+                                      - (operand꞉ Expression) ► (elementary_type꞉ ElementaryType) ► (int_keyword꞉ IntKeyword): "int" # (242..245)
+                                      - (period꞉ Period): "." # (245..246)
+                                      - (member꞉ IdentifierPathElement) ► (address_keyword꞉ AddressKeyword): "address" # (246..253)
+                                  - (semicolon꞉ Semicolon): ";" # (253..254)
+                          - (close_brace꞉ CloseBrace): "}" # (259..260)
+              - (close_brace꞉ CloseBrace): "}" # (261..262)

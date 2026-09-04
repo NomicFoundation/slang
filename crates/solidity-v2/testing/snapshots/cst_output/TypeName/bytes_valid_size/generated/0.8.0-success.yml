@@ -1,25 +1,37 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                        │ 0..12
-  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TypeName/bytes_valid_size/input.sol │ 13..112
-  3  │ bytes32                                                                                             │ 113..120
-  4  │ // <<<                                                                                              │ 121..127
-  5  │ x;                                                                                                  │ 128..130
-  6  │ }                                                                                                   │ 131..132
+  1  │ pragma solidity *;                                                                                  │ 0..18
+  2  │                                                                                                     │ 19..19
+  3  │ contract C {                                                                                        │ 20..32
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TypeName/bytes_valid_size/input.sol │ 33..132
+  5  │ bytes32                                                                                             │ 133..140
+  6  │ // <<<                                                                                              │ 141..147
+  7  │ x;                                                                                                  │ 148..150
+  8  │ }                                                                                                   │ 151..152
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..132)
-      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..132)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..132)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n// >>> Copied fro..." (0..152)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n// >>> Copied fro..." (0..152)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (20..152)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "bytes32\n// <<<\nx;" (113..130)
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "bytes32\n// <<<\nx;" (113..130)
-                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bytes_keyword꞉ BytesKeyword): "bytes32" # (113..120)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "bytes32\n// <<<\nx;" (133..150)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "bytes32\n// <<<\nx;" (133..150)
+                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bytes_keyword꞉ BytesKeyword): "bytes32" # (133..140)
                       - (attributes꞉ StateVariableAttributes): []
-                      - (name꞉ Identifier): "x" # (128..129)
-                      - (semicolon꞉ Semicolon): ";" # (129..130)
-              - (close_brace꞉ CloseBrace): "}" # (131..132)
+                      - (name꞉ Identifier): "x" # (148..149)
+                      - (semicolon꞉ Semicolon): ";" # (149..150)
+              - (close_brace꞉ CloseBrace): "}" # (151..152)

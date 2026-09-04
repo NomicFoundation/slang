@@ -1,16 +1,28 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/EnumDefinition/no_members/input.sol │ 0..99
-  2  │ enum Foo { }                                                                                        │ 100..112
-  3  │ // <<<                                                                                              │ 113..119
+  1  │ pragma solidity *;                                                                                  │ 0..18
+  2  │                                                                                                     │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/EnumDefinition/no_members/input.sol │ 20..119
+  4  │ enum Foo { }                                                                                        │ 120..132
+  5  │ // <<<                                                                                              │ 133..139
 
 Tree:
-  - (root꞉ SourceUnit): # "enum Foo { }" (100..112)
-      - (members꞉ SourceUnitMembers): # "enum Foo { }" (100..112)
-          - (item꞉ SourceUnitMember) ► (enum_definition꞉ EnumDefinition): # "enum Foo { }" (100..112)
-              - (enum_keyword꞉ EnumKeyword): "enum" # (100..104)
-              - (name꞉ Identifier): "Foo" # (105..108)
-              - (open_brace꞉ OpenBrace): "{" # (109..110)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..132)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..132)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (enum_definition꞉ EnumDefinition): # "enum Foo { }" (120..132)
+              - (enum_keyword꞉ EnumKeyword): "enum" # (120..124)
+              - (name꞉ Identifier): "Foo" # (125..128)
+              - (open_brace꞉ OpenBrace): "{" # (129..130)
               - (members꞉ EnumMembers): []
-              - (close_brace꞉ CloseBrace): "}" # (111..112)
+              - (close_brace꞉ CloseBrace): "}" # (131..132)

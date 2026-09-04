@@ -1,66 +1,78 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                                                                  │ 0..12
-  2  │     function f() {                                                                                                                                            │ 13..31
-  3  │         assembly {                                                                                                                                            │ 32..50
-  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulStatements/function_pointer/input.sol                                                      │ 51..155
-  5  │ {                                                                                                                                                             │ 156..157
-  6  │ 	// https://github.com/ethereum/solidity/blob/ebdce269005e8f2a6652bad64a000725ff1624fe/docs/assembly.rst#access-to-external-variables-functions-and-libraries │ 158..315
-  7  │ 	f.address := newAddress                                                                                                                                      │ 316..340
-  8  │ 	f.selector := newSelector                                                                                                                                    │ 341..367
-  9  │ }                                                                                                                                                             │ 368..369
-  10 │                                                                                                                                                               │ 370..370
-  11 │ // <<<                                                                                                                                                        │ 371..377
-  12 │         }                                                                                                                                                     │ 378..387
-  13 │     }                                                                                                                                                         │ 388..393
-  14 │ }                                                                                                                                                             │ 394..395
+  1  │ pragma solidity *;                                                                                                                                            │ 0..18
+  2  │                                                                                                                                                               │ 19..19
+  3  │ contract C {                                                                                                                                                  │ 20..32
+  4  │     function f() {                                                                                                                                            │ 33..51
+  5  │         assembly {                                                                                                                                            │ 52..70
+  6  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulStatements/function_pointer/input.sol                                                      │ 71..175
+  7  │ {                                                                                                                                                             │ 176..177
+  8  │ 	// https://github.com/ethereum/solidity/blob/ebdce269005e8f2a6652bad64a000725ff1624fe/docs/assembly.rst#access-to-external-variables-functions-and-libraries │ 178..335
+  9  │ 	f.address := newAddress                                                                                                                                      │ 336..360
+  10 │ 	f.selector := newSelector                                                                                                                                    │ 361..387
+  11 │ }                                                                                                                                                             │ 388..389
+  12 │                                                                                                                                                               │ 390..390
+  13 │ // <<<                                                                                                                                                        │ 391..397
+  14 │         }                                                                                                                                                     │ 398..407
+  15 │     }                                                                                                                                                         │ 408..413
+  16 │ }                                                                                                                                                             │ 414..415
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n        assembly {..." (0..395)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n        assembly {..." (0..395)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        assembly {..." (0..395)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..415)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..415)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        assembly {..." (20..415)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n        assembly {\n// >>> Copied fr..." (17..393)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        assembly {\n// >>> Copied fr..." (17..393)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n        assembly {\n// >>> Copied fr..." (37..413)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        assembly {\n// >>> Copied fr..." (37..413)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        assembly {\n// >>> Copied from crates/sol..." (30..393)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # "assembly {\n// >>> Copied from crates/solidity/test..." (40..387)
-                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement): # "assembly {\n// >>> Copied from crates/solidity/test..." (40..387)
-                                  - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (40..48)
-                                  - (body꞉ YulBlock): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (49..387)
-                                      - (open_brace꞉ YulOpenBrace): "{" # (49..50)
-                                      - (statements꞉ YulStatements): # "{\n\t// https://github.com/ethereum/solidity/blob/eb..." (156..369)
-                                          - (item꞉ YulStatement) ► (yul_block꞉ YulBlock): # "{\n\t// https://github.com/ethereum/solidity/blob/eb..." (156..369)
-                                              - (open_brace꞉ YulOpenBrace): "{" # (156..157)
-                                              - (statements꞉ YulStatements): # "f.address := newAddress\n\tf.selector := newSelector" (317..367)
-                                                  - (item꞉ YulStatement) ► (yul_variable_assignment_statement꞉ YulVariableAssignmentStatement): # "f.address := newAddress" (317..340)
-                                                      - (variables꞉ YulPaths): # "f.address" (317..326)
-                                                          - (item꞉ YulPath): # "f.address" (317..326)
-                                                              - (item꞉ YulIdentifier): "f" # (317..318)
-                                                              - (item꞉ YulIdentifier): "address" # (319..326)
-                                                      - (assignment꞉ YulColonEqual): ":=" # (327..329)
-                                                      - (expression꞉ YulExpression) ► (yul_path꞉ YulPath): # "newAddress" (330..340)
-                                                          - (item꞉ YulIdentifier): "newAddress" # (330..340)
-                                                  - (item꞉ YulStatement) ► (yul_variable_assignment_statement꞉ YulVariableAssignmentStatement): # "f.selector := newSelector" (342..367)
-                                                      - (variables꞉ YulPaths): # "f.selector" (342..352)
-                                                          - (item꞉ YulPath): # "f.selector" (342..352)
-                                                              - (item꞉ YulIdentifier): "f" # (342..343)
-                                                              - (item꞉ YulIdentifier): "selector" # (344..352)
-                                                      - (assignment꞉ YulColonEqual): ":=" # (353..355)
-                                                      - (expression꞉ YulExpression) ► (yul_path꞉ YulPath): # "newSelector" (356..367)
-                                                          - (item꞉ YulIdentifier): "newSelector" # (356..367)
-                                              - (close_brace꞉ YulCloseBrace): "}" # (368..369)
-                                      - (close_brace꞉ YulCloseBrace): "}" # (386..387)
-                          - (close_brace꞉ CloseBrace): "}" # (392..393)
-              - (close_brace꞉ CloseBrace): "}" # (394..395)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        assembly {\n// >>> Copied from crates/sol..." (50..413)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # "assembly {\n// >>> Copied from crates/solidity/test..." (60..407)
+                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement): # "assembly {\n// >>> Copied from crates/solidity/test..." (60..407)
+                                  - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (60..68)
+                                  - (body꞉ YulBlock): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (69..407)
+                                      - (open_brace꞉ YulOpenBrace): "{" # (69..70)
+                                      - (statements꞉ YulStatements): # "{\n\t// https://github.com/ethereum/solidity/blob/eb..." (176..389)
+                                          - (item꞉ YulStatement) ► (yul_block꞉ YulBlock): # "{\n\t// https://github.com/ethereum/solidity/blob/eb..." (176..389)
+                                              - (open_brace꞉ YulOpenBrace): "{" # (176..177)
+                                              - (statements꞉ YulStatements): # "f.address := newAddress\n\tf.selector := newSelector" (337..387)
+                                                  - (item꞉ YulStatement) ► (yul_variable_assignment_statement꞉ YulVariableAssignmentStatement): # "f.address := newAddress" (337..360)
+                                                      - (variables꞉ YulPaths): # "f.address" (337..346)
+                                                          - (item꞉ YulPath): # "f.address" (337..346)
+                                                              - (item꞉ YulIdentifier): "f" # (337..338)
+                                                              - (item꞉ YulIdentifier): "address" # (339..346)
+                                                      - (assignment꞉ YulColonEqual): ":=" # (347..349)
+                                                      - (expression꞉ YulExpression) ► (yul_path꞉ YulPath): # "newAddress" (350..360)
+                                                          - (item꞉ YulIdentifier): "newAddress" # (350..360)
+                                                  - (item꞉ YulStatement) ► (yul_variable_assignment_statement꞉ YulVariableAssignmentStatement): # "f.selector := newSelector" (362..387)
+                                                      - (variables꞉ YulPaths): # "f.selector" (362..372)
+                                                          - (item꞉ YulPath): # "f.selector" (362..372)
+                                                              - (item꞉ YulIdentifier): "f" # (362..363)
+                                                              - (item꞉ YulIdentifier): "selector" # (364..372)
+                                                      - (assignment꞉ YulColonEqual): ":=" # (373..375)
+                                                      - (expression꞉ YulExpression) ► (yul_path꞉ YulPath): # "newSelector" (376..387)
+                                                          - (item꞉ YulIdentifier): "newSelector" # (376..387)
+                                              - (close_brace꞉ YulCloseBrace): "}" # (388..389)
+                                      - (close_brace꞉ YulCloseBrace): "}" # (406..407)
+                          - (close_brace꞉ CloseBrace): "}" # (412..413)
+              - (close_brace꞉ CloseBrace): "}" # (414..415)

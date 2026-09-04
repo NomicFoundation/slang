@@ -1,20 +1,22 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                 │ 0..12
-  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/FunctionType/basic/input.sol │ 13..105
-  3  │ function (byte) internal pure returns (uint)                                                 │ 106..150
-  4  │                                                                                              │ 151..151
-  5  │ // <<<                                                                                       │ 152..158
-  6  │ x;                                                                                           │ 159..161
-  7  │ }                                                                                            │ 162..163
+  1  │ pragma solidity *;                                                                           │ 0..18
+  2  │                                                                                              │ 19..19
+  3  │ contract C {                                                                                 │ 20..32
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/FunctionType/basic/input.sol │ 33..125
+  5  │ function (byte) internal pure returns (uint)                                                 │ 126..170
+  6  │                                                                                              │ 171..171
+  7  │ // <<<                                                                                       │ 172..178
+  8  │ x;                                                                                           │ 179..181
+  9  │ }                                                                                            │ 182..183
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected ByteKeyword. One of AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, CloseParen, ErrorKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, RevertKeyword, StringKeyword, TransientKeyword, UfixedKeyword, UintKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionType/basic/input.sol:3:11]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionType/basic/input.sol:5:11]
        │
-     3 │ function (byte) internal pure returns (uint)
+     5 │ function (byte) internal pure returns (uint)
        │           ──┬─  
        │             ╰─── Error occurred here.
     ───╯

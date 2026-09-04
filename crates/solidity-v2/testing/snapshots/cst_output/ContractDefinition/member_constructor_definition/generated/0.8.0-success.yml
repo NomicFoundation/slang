@@ -1,32 +1,44 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_constructor_definition/input.sol │ 0..122
-  2  │ contract Sample {                                                                                                          │ 123..140
-  3  │   constructor() public {                                                                                                   │ 141..165
-  4  │   }                                                                                                                        │ 166..169
-  5  │ }                                                                                                                          │ 170..171
-  6  │ // <<<                                                                                                                     │ 172..178
+  1  │ pragma solidity *;                                                                                                         │ 0..18
+  2  │                                                                                                                            │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_constructor_definition/input.sol │ 20..142
+  4  │ contract Sample {                                                                                                          │ 143..160
+  5  │   constructor() public {                                                                                                   │ 161..185
+  6  │   }                                                                                                                        │ 186..189
+  7  │ }                                                                                                                          │ 190..191
+  8  │ // <<<                                                                                                                     │ 192..198
 
 Tree:
-  - (root꞉ SourceUnit): # "contract Sample {\n  constructor() public {\n  }\n}" (123..171)
-      - (members꞉ SourceUnitMembers): # "contract Sample {\n  constructor() public {\n  }\n}" (123..171)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  constructor() public {\n  }\n}" (123..171)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (123..131)
-              - (name꞉ Identifier): "Sample" # (132..138)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..191)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..191)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  constructor() public {\n  }\n}" (143..191)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (143..151)
+              - (name꞉ Identifier): "Sample" # (152..158)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (139..140)
-              - (members꞉ ContractMembers): # "constructor() public {\n  }" (143..169)
-                  - (item꞉ ContractMember) ► (constructor_definition꞉ ConstructorDefinition): # "constructor() public {\n  }" (143..169)
-                      - (constructor_keyword꞉ ConstructorKeyword): "constructor" # (143..154)
-                      - (parameters꞉ ParametersDeclaration): # "()" (154..156)
-                          - (open_paren꞉ OpenParen): "(" # (154..155)
+              - (open_brace꞉ OpenBrace): "{" # (159..160)
+              - (members꞉ ContractMembers): # "constructor() public {\n  }" (163..189)
+                  - (item꞉ ContractMember) ► (constructor_definition꞉ ConstructorDefinition): # "constructor() public {\n  }" (163..189)
+                      - (constructor_keyword꞉ ConstructorKeyword): "constructor" # (163..174)
+                      - (parameters꞉ ParametersDeclaration): # "()" (174..176)
+                          - (open_paren꞉ OpenParen): "(" # (174..175)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (155..156)
-                      - (attributes꞉ ConstructorAttributes): # "public" (157..163)
-                          - (item꞉ ConstructorAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (157..163)
-                      - (body꞉ Block): # "{\n  }" (164..169)
-                          - (open_brace꞉ OpenBrace): "{" # (164..165)
+                          - (close_paren꞉ CloseParen): ")" # (175..176)
+                      - (attributes꞉ ConstructorAttributes): # "public" (177..183)
+                          - (item꞉ ConstructorAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (177..183)
+                      - (body꞉ Block): # "{\n  }" (184..189)
+                          - (open_brace꞉ OpenBrace): "{" # (184..185)
                           - (statements꞉ Statements): []
-                          - (close_brace꞉ CloseBrace): "}" # (168..169)
-              - (close_brace꞉ CloseBrace): "}" # (170..171)
+                          - (close_brace꞉ CloseBrace): "}" # (188..189)
+              - (close_brace꞉ CloseBrace): "}" # (190..191)

@@ -1,3 +1,5 @@
+pragma solidity *;
+
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/constructor_contextual/input.sol
 // Constructors introduced in 0.4.22 but `constructor` was usable as identifier until 0.5.0
 

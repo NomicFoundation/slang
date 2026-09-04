@@ -1,36 +1,48 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDirective/user_defined_operator/input.sol │ 0..110
-  2  │ using {div as /} for Int global;                                                                               │ 111..143
-  3  │ // <<<                                                                                                         │ 144..150
+  1  │ pragma solidity *;                                                                                             │ 0..18
+  2  │                                                                                                                │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDirective/user_defined_operator/input.sol │ 20..130
+  4  │ using {div as /} for Int global;                                                                               │ 131..163
+  5  │ // <<<                                                                                                         │ 164..170
 
 Diagnostics: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/user_defined_operator/input.sol:2:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/user_defined_operator/input.sol:4:1]
        │
-     2 │ using {div as /} for Int global;
+     4 │ using {div as /} for Int global;
        │ ────────────────┬───────────────  
        │                 ╰───────────────── Error occurred here.
     ───╯
 Tree:
-  - (root꞉ SourceUnit): # "using {div as /} for Int global;" (111..143)
-      - (members꞉ SourceUnitMembers): # "using {div as /} for Int global;" (111..143)
-          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using {div as /} for Int global;" (111..143)
-              - (using_keyword꞉ UsingKeyword): "using" # (111..116)
-              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction): # "{div as /}" (117..127)
-                  - (open_brace꞉ OpenBrace): "{" # (117..118)
-                  - (symbols꞉ UsingDeconstructionSymbols): # "div as /" (118..126)
-                      - (item꞉ UsingDeconstructionSymbol): # "div as /" (118..126)
-                          - (name꞉ IdentifierPath): # "div" (118..121)
-                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "div" # (118..121)
-                          - (alias꞉ UsingAlias): # "as /" (122..126)
-                              - (as_keyword꞉ AsKeyword): "as" # (122..124)
-                              - (operator꞉ UsingOperator) ► (slash꞉ Slash): "/" # (125..126)
-                  - (close_brace꞉ CloseBrace): "}" # (126..127)
-              - (for_keyword꞉ ForKeyword): "for" # (128..131)
-              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath): # "Int" (132..135)
-                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Int" # (132..135)
-              - (global_keyword꞉ GlobalKeyword): "global" # (136..142)
-              - (semicolon꞉ Semicolon): ";" # (142..143)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..163)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..163)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using {div as /} for Int global;" (131..163)
+              - (using_keyword꞉ UsingKeyword): "using" # (131..136)
+              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction): # "{div as /}" (137..147)
+                  - (open_brace꞉ OpenBrace): "{" # (137..138)
+                  - (symbols꞉ UsingDeconstructionSymbols): # "div as /" (138..146)
+                      - (item꞉ UsingDeconstructionSymbol): # "div as /" (138..146)
+                          - (name꞉ IdentifierPath): # "div" (138..141)
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "div" # (138..141)
+                          - (alias꞉ UsingAlias): # "as /" (142..146)
+                              - (as_keyword꞉ AsKeyword): "as" # (142..144)
+                              - (operator꞉ UsingOperator) ► (slash꞉ Slash): "/" # (145..146)
+                  - (close_brace꞉ CloseBrace): "}" # (146..147)
+              - (for_keyword꞉ ForKeyword): "for" # (148..151)
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath): # "Int" (152..155)
+                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Int" # (152..155)
+              - (global_keyword꞉ GlobalKeyword): "global" # (156..162)
+              - (semicolon꞉ Semicolon): ";" # (162..163)

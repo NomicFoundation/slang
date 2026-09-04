@@ -1,124 +1,136 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                         │ 0..12
-  2  │     function f() {                                                                                   │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Statements/compound_tokens/input.sol │ 32..132
-  4  │ a && b;                                                                                              │ 133..140
-  5  │ a &= b;                                                                                              │ 141..148
-  6  │ a || b;                                                                                              │ 149..156
-  7  │ a |= b;                                                                                              │ 157..164
-  8  │ a / b;                                                                                               │ 165..171
-  9  │ a /= b;                                                                                              │ 172..179
-  10 │ a > b;                                                                                               │ 180..186
-  11 │ a >= b;                                                                                              │ 187..194
-  12 │ a >> b;                                                                                              │ 195..202
-  13 │ a >>= b;                                                                                             │ 203..211
-  14 │ a >>>= b;                                                                                            │ 212..221
-  15 │ a << b;                                                                                              │ 222..229
-  16 │ a <<= b;                                                                                             │ 230..238
-  17 │                                                                                                      │ 239..239
-  18 │ // <<<                                                                                               │ 240..246
-  19 │     }                                                                                                │ 247..252
-  20 │ }                                                                                                    │ 253..254
+  1  │ pragma solidity *;                                                                                   │ 0..18
+  2  │                                                                                                      │ 19..19
+  3  │ contract C {                                                                                         │ 20..32
+  4  │     function f() {                                                                                   │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Statements/compound_tokens/input.sol │ 52..152
+  6  │ a && b;                                                                                              │ 153..160
+  7  │ a &= b;                                                                                              │ 161..168
+  8  │ a || b;                                                                                              │ 169..176
+  9  │ a |= b;                                                                                              │ 177..184
+  10 │ a / b;                                                                                               │ 185..191
+  11 │ a /= b;                                                                                              │ 192..199
+  12 │ a > b;                                                                                               │ 200..206
+  13 │ a >= b;                                                                                              │ 207..214
+  14 │ a >> b;                                                                                              │ 215..222
+  15 │ a >>= b;                                                                                             │ 223..231
+  16 │ a >>>= b;                                                                                            │ 232..241
+  17 │ a << b;                                                                                              │ 242..249
+  18 │ a <<= b;                                                                                             │ 250..258
+  19 │                                                                                                      │ 259..259
+  20 │ // <<<                                                                                               │ 260..266
+  21 │     }                                                                                                │ 267..272
+  22 │ }                                                                                                    │ 273..274
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..254)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..254)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..254)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..274)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..274)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (20..274)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..252)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..252)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (37..272)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (37..272)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..252)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # "a && b;\na &= b;\na || b;\na |= b;\na / b;\na /= b;\na >..." (133..238)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a && b;" (133..140)
-                                  - (expression꞉ Expression) ► (and_expression꞉ AndExpression): # "a && b" (133..139)
-                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (133..134)
-                                      - (operator꞉ AmpersandAmpersand): "&&" # (135..137)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (138..139)
-                                  - (semicolon꞉ Semicolon): ";" # (139..140)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a &= b;" (141..148)
-                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "a &= b" (141..147)
-                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (141..142)
-                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (ampersand_equal꞉ AmpersandEqual): "&=" # (143..145)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (146..147)
-                                  - (semicolon꞉ Semicolon): ";" # (147..148)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a || b;" (149..156)
-                                  - (expression꞉ Expression) ► (or_expression꞉ OrExpression): # "a || b" (149..155)
-                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (149..150)
-                                      - (operator꞉ BarBar): "||" # (151..153)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (154..155)
-                                  - (semicolon꞉ Semicolon): ";" # (155..156)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a |= b;" (157..164)
-                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "a |= b" (157..163)
-                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (157..158)
-                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (bar_equal꞉ BarEqual): "|=" # (159..161)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (162..163)
-                                  - (semicolon꞉ Semicolon): ";" # (163..164)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a / b;" (165..171)
-                                  - (expression꞉ Expression) ► (multiplicative_expression꞉ MultiplicativeExpression): # "a / b" (165..170)
-                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (165..166)
-                                      - (expression_multiplicative_expression_operator꞉ Expression_MultiplicativeExpression_Operator) ► (slash꞉ Slash): "/" # (167..168)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (169..170)
-                                  - (semicolon꞉ Semicolon): ";" # (170..171)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a /= b;" (172..179)
-                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "a /= b" (172..178)
-                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (172..173)
-                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (slash_equal꞉ SlashEqual): "/=" # (174..176)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (177..178)
-                                  - (semicolon꞉ Semicolon): ";" # (178..179)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a > b;" (180..186)
-                                  - (expression꞉ Expression) ► (inequality_expression꞉ InequalityExpression): # "a > b" (180..185)
-                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (180..181)
-                                      - (expression_inequality_expression_operator꞉ Expression_InequalityExpression_Operator) ► (greater_than꞉ GreaterThan): ">" # (182..183)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (184..185)
-                                  - (semicolon꞉ Semicolon): ";" # (185..186)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a >= b;" (187..194)
-                                  - (expression꞉ Expression) ► (inequality_expression꞉ InequalityExpression): # "a >= b" (187..193)
-                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (187..188)
-                                      - (expression_inequality_expression_operator꞉ Expression_InequalityExpression_Operator) ► (greater_than_equal꞉ GreaterThanEqual): ">=" # (189..191)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (192..193)
-                                  - (semicolon꞉ Semicolon): ";" # (193..194)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a >> b;" (195..202)
-                                  - (expression꞉ Expression) ► (shift_expression꞉ ShiftExpression): # "a >> b" (195..201)
-                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (195..196)
-                                      - (expression_shift_expression_operator꞉ Expression_ShiftExpression_Operator) ► (greater_than_greater_than꞉ GreaterThanGreaterThan): ">>" # (197..199)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (200..201)
-                                  - (semicolon꞉ Semicolon): ";" # (201..202)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a >>= b;" (203..211)
-                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "a >>= b" (203..210)
-                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (203..204)
-                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (greater_than_greater_than_equal꞉ GreaterThanGreaterThanEqual): ">>=" # (205..208)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (209..210)
-                                  - (semicolon꞉ Semicolon): ";" # (210..211)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a >>>= b;" (212..221)
-                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "a >>>= b" (212..220)
-                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (212..213)
-                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (greater_than_greater_than_greater_than_equal꞉ GreaterThanGreaterThanGreaterThanEqual): ">>>=" # (214..218)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (219..220)
-                                  - (semicolon꞉ Semicolon): ";" # (220..221)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a << b;" (222..229)
-                                  - (expression꞉ Expression) ► (shift_expression꞉ ShiftExpression): # "a << b" (222..228)
-                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (222..223)
-                                      - (expression_shift_expression_operator꞉ Expression_ShiftExpression_Operator) ► (less_than_less_than꞉ LessThanLessThan): "<<" # (224..226)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (227..228)
-                                  - (semicolon꞉ Semicolon): ";" # (228..229)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a <<= b;" (230..238)
-                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "a <<= b" (230..237)
-                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (230..231)
-                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (less_than_less_than_equal꞉ LessThanLessThanEqual): "<<=" # (232..235)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (236..237)
-                                  - (semicolon꞉ Semicolon): ";" # (237..238)
-                          - (close_brace꞉ CloseBrace): "}" # (251..252)
-              - (close_brace꞉ CloseBrace): "}" # (253..254)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (50..272)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # "a && b;\na &= b;\na || b;\na |= b;\na / b;\na /= b;\na >..." (153..258)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a && b;" (153..160)
+                                  - (expression꞉ Expression) ► (and_expression꞉ AndExpression): # "a && b" (153..159)
+                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (153..154)
+                                      - (operator꞉ AmpersandAmpersand): "&&" # (155..157)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (158..159)
+                                  - (semicolon꞉ Semicolon): ";" # (159..160)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a &= b;" (161..168)
+                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "a &= b" (161..167)
+                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (161..162)
+                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (ampersand_equal꞉ AmpersandEqual): "&=" # (163..165)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (166..167)
+                                  - (semicolon꞉ Semicolon): ";" # (167..168)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a || b;" (169..176)
+                                  - (expression꞉ Expression) ► (or_expression꞉ OrExpression): # "a || b" (169..175)
+                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (169..170)
+                                      - (operator꞉ BarBar): "||" # (171..173)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (174..175)
+                                  - (semicolon꞉ Semicolon): ";" # (175..176)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a |= b;" (177..184)
+                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "a |= b" (177..183)
+                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (177..178)
+                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (bar_equal꞉ BarEqual): "|=" # (179..181)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (182..183)
+                                  - (semicolon꞉ Semicolon): ";" # (183..184)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a / b;" (185..191)
+                                  - (expression꞉ Expression) ► (multiplicative_expression꞉ MultiplicativeExpression): # "a / b" (185..190)
+                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (185..186)
+                                      - (expression_multiplicative_expression_operator꞉ Expression_MultiplicativeExpression_Operator) ► (slash꞉ Slash): "/" # (187..188)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (189..190)
+                                  - (semicolon꞉ Semicolon): ";" # (190..191)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a /= b;" (192..199)
+                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "a /= b" (192..198)
+                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (192..193)
+                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (slash_equal꞉ SlashEqual): "/=" # (194..196)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (197..198)
+                                  - (semicolon꞉ Semicolon): ";" # (198..199)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a > b;" (200..206)
+                                  - (expression꞉ Expression) ► (inequality_expression꞉ InequalityExpression): # "a > b" (200..205)
+                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (200..201)
+                                      - (expression_inequality_expression_operator꞉ Expression_InequalityExpression_Operator) ► (greater_than꞉ GreaterThan): ">" # (202..203)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (204..205)
+                                  - (semicolon꞉ Semicolon): ";" # (205..206)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a >= b;" (207..214)
+                                  - (expression꞉ Expression) ► (inequality_expression꞉ InequalityExpression): # "a >= b" (207..213)
+                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (207..208)
+                                      - (expression_inequality_expression_operator꞉ Expression_InequalityExpression_Operator) ► (greater_than_equal꞉ GreaterThanEqual): ">=" # (209..211)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (212..213)
+                                  - (semicolon꞉ Semicolon): ";" # (213..214)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a >> b;" (215..222)
+                                  - (expression꞉ Expression) ► (shift_expression꞉ ShiftExpression): # "a >> b" (215..221)
+                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (215..216)
+                                      - (expression_shift_expression_operator꞉ Expression_ShiftExpression_Operator) ► (greater_than_greater_than꞉ GreaterThanGreaterThan): ">>" # (217..219)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (220..221)
+                                  - (semicolon꞉ Semicolon): ";" # (221..222)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a >>= b;" (223..231)
+                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "a >>= b" (223..230)
+                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (223..224)
+                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (greater_than_greater_than_equal꞉ GreaterThanGreaterThanEqual): ">>=" # (225..228)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (229..230)
+                                  - (semicolon꞉ Semicolon): ";" # (230..231)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a >>>= b;" (232..241)
+                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "a >>>= b" (232..240)
+                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (232..233)
+                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (greater_than_greater_than_greater_than_equal꞉ GreaterThanGreaterThanGreaterThanEqual): ">>>=" # (234..238)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (239..240)
+                                  - (semicolon꞉ Semicolon): ";" # (240..241)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a << b;" (242..249)
+                                  - (expression꞉ Expression) ► (shift_expression꞉ ShiftExpression): # "a << b" (242..248)
+                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (242..243)
+                                      - (expression_shift_expression_operator꞉ Expression_ShiftExpression_Operator) ► (less_than_less_than꞉ LessThanLessThan): "<<" # (244..246)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (247..248)
+                                  - (semicolon꞉ Semicolon): ";" # (248..249)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a <<= b;" (250..258)
+                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "a <<= b" (250..257)
+                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (250..251)
+                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (less_than_less_than_equal꞉ LessThanLessThanEqual): "<<=" # (252..255)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (256..257)
+                                  - (semicolon꞉ Semicolon): ";" # (257..258)
+                          - (close_brace꞉ CloseBrace): "}" # (271..272)
+              - (close_brace꞉ CloseBrace): "}" # (273..274)

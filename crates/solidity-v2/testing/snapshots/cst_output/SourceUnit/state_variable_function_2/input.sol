@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract C {
     // external works!
     function () external public x;

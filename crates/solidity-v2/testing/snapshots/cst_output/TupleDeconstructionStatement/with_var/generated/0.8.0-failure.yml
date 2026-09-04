@@ -1,22 +1,24 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                    │ 0..12
-  2  │     function f() {                                                                                              │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/with_var/input.sol │ 32..143
-  4  │ // "var" should be disabled in "0.5.0":                                                                         │ 144..183
-  5  │ var (foo, bar) = rhs;                                                                                           │ 184..205
-  6  │                                                                                                                 │ 206..206
-  7  │ // <<<                                                                                                          │ 207..213
-  8  │     }                                                                                                           │ 214..219
-  9  │ }                                                                                                               │ 220..221
+  1  │ pragma solidity *;                                                                                              │ 0..18
+  2  │                                                                                                                 │ 19..19
+  3  │ contract C {                                                                                                    │ 20..32
+  4  │     function f() {                                                                                              │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/with_var/input.sol │ 52..163
+  6  │ // "var" should be disabled in "0.5.0":                                                                         │ 164..203
+  7  │ var (foo, bar) = rhs;                                                                                           │ 204..225
+  8  │                                                                                                                 │ 226..226
+  9  │ // <<<                                                                                                          │ 227..233
+  10 │     }                                                                                                           │ 234..239
+  11 │ }                                                                                                               │ 240..241
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected VarKeyword. One of AddressKeyword, AssemblyKeyword, AtKeyword, Bang, BoolKeyword, BreakKeyword, BytesKeyword, CloseBrace, ContinueKeyword, DecimalLiteral, DeleteKeyword, DoKeyword, EmitKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, ForKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IfKeyword, IntKeyword, LayoutKeyword, MappingKeyword, Minus, MinusMinus, NewKeyword, OpenBrace, OpenBracket, OpenParen, PayableKeyword, PlusPlus, ReturnKeyword, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TryKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UncheckedKeyword, UnicodeStringLiteral, WhileKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/TupleDeconstructionStatement/with_var/input.sol:5:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/TupleDeconstructionStatement/with_var/input.sol:7:1]
        │
-     5 │ var (foo, bar) = rhs;
+     7 │ var (foo, bar) = rhs;
        │ ─┬─  
        │  ╰─── Error occurred here.
     ───╯

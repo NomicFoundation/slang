@@ -1,21 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                       │ 0..12
-  2  │     function f() {                                                                                                 │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/HexNumberExpression/hex_uppercase_prefix/input.sol │ 32..146
-  4  │ 0X123456789                                                                                                        │ 147..158
-  5  │ // <<<                                                                                                             │ 159..165
-  6  │ ;                                                                                                                  │ 166..167
-  7  │     }                                                                                                              │ 168..173
-  8  │ }                                                                                                                  │ 174..175
+  1  │ pragma solidity *;                                                                                                 │ 0..18
+  2  │                                                                                                                    │ 19..19
+  3  │ contract C {                                                                                                       │ 20..32
+  4  │     function f() {                                                                                                 │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/HexNumberExpression/hex_uppercase_prefix/input.sol │ 52..166
+  6  │ 0X123456789                                                                                                        │ 167..178
+  7  │ // <<<                                                                                                             │ 179..185
+  8  │ ;                                                                                                                  │ 186..187
+  9  │     }                                                                                                              │ 188..193
+  10 │ }                                                                                                                  │ 194..195
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of AddressKeyword, AssemblyKeyword, AtKeyword, Bang, BoolKeyword, BreakKeyword, BytesKeyword, CloseBrace, ContinueKeyword, DecimalLiteral, DeleteKeyword, DoKeyword, EmitKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, ForKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IfKeyword, IntKeyword, LayoutKeyword, MappingKeyword, Minus, MinusMinus, NewKeyword, OpenBrace, OpenBracket, OpenParen, PayableKeyword, PlusPlus, ReturnKeyword, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TryKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UncheckedKeyword, UnicodeStringLiteral, WhileKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/HexNumberExpression/hex_uppercase_prefix/input.sol:4:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/HexNumberExpression/hex_uppercase_prefix/input.sol:6:1]
        │
-     4 │ 0X123456789
+     6 │ 0X123456789
        │ ─────┬─────  
        │      ╰─────── Error occurred here.
     ───╯

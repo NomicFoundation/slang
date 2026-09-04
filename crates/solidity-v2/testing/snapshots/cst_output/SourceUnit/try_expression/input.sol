@@ -1,3 +1,5 @@
+pragma solidity *;
+
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/try_expression/input.sol
 library SafeMath {
   function tryAdd() internal pure  {

@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract C {
     function f() {
         assembly

@@ -1,32 +1,44 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                               │ 0..12
-  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractMembers/state_variable_constant_function/input.sol │ 13..135
-  3  │ function() constant foo;                                                                                                   │ 136..160
-  4  │                                                                                                                            │ 161..161
-  5  │ // <<<                                                                                                                     │ 162..168
-  6  │ }                                                                                                                          │ 169..170
+  1  │ pragma solidity *;                                                                                                         │ 0..18
+  2  │                                                                                                                            │ 19..19
+  3  │ contract C {                                                                                                               │ 20..32
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractMembers/state_variable_constant_function/input.sol │ 33..155
+  5  │ function() constant foo;                                                                                                   │ 156..180
+  6  │                                                                                                                            │ 181..181
+  7  │ // <<<                                                                                                                     │ 182..188
+  8  │ }                                                                                                                          │ 189..190
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..170)
-      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..170)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..170)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n// >>> Copied fro..." (0..190)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n// >>> Copied fro..." (0..190)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (20..190)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function() constant foo;" (136..160)
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function() constant foo;" (136..160)
-                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function()" (136..146)
-                          - (function_keyword꞉ FunctionKeyword): "function" # (136..144)
-                          - (parameters꞉ ParametersDeclaration): # "()" (144..146)
-                              - (open_paren꞉ OpenParen): "(" # (144..145)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function() constant foo;" (156..180)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function() constant foo;" (156..180)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function()" (156..166)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (156..164)
+                          - (parameters꞉ ParametersDeclaration): # "()" (164..166)
+                              - (open_paren꞉ OpenParen): "(" # (164..165)
                               - (parameters꞉ Parameters): []
-                              - (close_paren꞉ CloseParen): ")" # (145..146)
+                              - (close_paren꞉ CloseParen): ")" # (165..166)
                           - (attributes꞉ FunctionTypeAttributes): []
-                      - (attributes꞉ StateVariableAttributes): # "constant" (147..155)
-                          - (item꞉ StateVariableAttribute) ► (constant_keyword꞉ ConstantKeyword): "constant" # (147..155)
-                      - (name꞉ Identifier): "foo" # (156..159)
-                      - (semicolon꞉ Semicolon): ";" # (159..160)
-              - (close_brace꞉ CloseBrace): "}" # (169..170)
+                      - (attributes꞉ StateVariableAttributes): # "constant" (167..175)
+                          - (item꞉ StateVariableAttribute) ► (constant_keyword꞉ ConstantKeyword): "constant" # (167..175)
+                      - (name꞉ Identifier): "foo" # (176..179)
+                      - (semicolon꞉ Semicolon): ";" # (179..180)
+              - (close_brace꞉ CloseBrace): "}" # (189..190)

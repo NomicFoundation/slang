@@ -1,45 +1,57 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                              │ 0..12
-  2  │     function f() {                                                                                        │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/address_payable_call/input.sol │ 32..137
-  4  │ address payable(value)                                                                                    │ 138..160
-  5  │ // <<<                                                                                                    │ 161..167
-  6  │ ;                                                                                                         │ 168..169
-  7  │     }                                                                                                     │ 170..175
-  8  │ }                                                                                                         │ 176..177
+  1  │ pragma solidity *;                                                                                        │ 0..18
+  2  │                                                                                                           │ 19..19
+  3  │ contract C {                                                                                              │ 20..32
+  4  │     function f() {                                                                                        │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/address_payable_call/input.sol │ 52..157
+  6  │ address payable(value)                                                                                    │ 158..180
+  7  │ // <<<                                                                                                    │ 181..187
+  8  │ ;                                                                                                         │ 188..189
+  9  │     }                                                                                                     │ 190..195
+  10 │ }                                                                                                         │ 196..197
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..177)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..177)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..177)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..197)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..197)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (20..197)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..175)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..175)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (37..195)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (37..195)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..175)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # "address payable(value)\n// <<<\n;" (138..169)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "address payable(value)\n// <<<\n;" (138..169)
-                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "address payable(value)" (138..160)
-                                      - (operand꞉ Expression) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType): # "address payable" (138..153)
-                                          - (address_keyword꞉ AddressKeyword): "address" # (138..145)
-                                          - (payable_keyword꞉ PayableKeyword): "payable" # (146..153)
-                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "(value)" (153..160)
-                                          - (open_paren꞉ OpenParen): "(" # (153..154)
-                                          - (arguments꞉ PositionalArguments): # "value" (154..159)
-                                              - (item꞉ Expression) ► (identifier꞉ Identifier): "value" # (154..159)
-                                          - (close_paren꞉ CloseParen): ")" # (159..160)
-                                  - (semicolon꞉ Semicolon): ";" # (168..169)
-                          - (close_brace꞉ CloseBrace): "}" # (174..175)
-              - (close_brace꞉ CloseBrace): "}" # (176..177)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (50..195)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # "address payable(value)\n// <<<\n;" (158..189)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "address payable(value)\n// <<<\n;" (158..189)
+                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "address payable(value)" (158..180)
+                                      - (operand꞉ Expression) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType): # "address payable" (158..173)
+                                          - (address_keyword꞉ AddressKeyword): "address" # (158..165)
+                                          - (payable_keyword꞉ PayableKeyword): "payable" # (166..173)
+                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "(value)" (173..180)
+                                          - (open_paren꞉ OpenParen): "(" # (173..174)
+                                          - (arguments꞉ PositionalArguments): # "value" (174..179)
+                                              - (item꞉ Expression) ► (identifier꞉ Identifier): "value" # (174..179)
+                                          - (close_paren꞉ CloseParen): ")" # (179..180)
+                                  - (semicolon꞉ Semicolon): ";" # (188..189)
+                          - (close_brace꞉ CloseBrace): "}" # (194..195)
+              - (close_brace꞉ CloseBrace): "}" # (196..197)

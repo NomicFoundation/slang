@@ -1,18 +1,20 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                     │ 0..12
-  2  │     function f() public {                                                        │ 13..38
-  3  │         assembly () {}                                                           │ 39..61
-  4  │     }                                                                            │ 62..67
-  5  │ }                                                                                │ 68..69
+  1  │ pragma solidity *;                                                               │ 0..18
+  2  │                                                                                  │ 19..19
+  3  │ contract C {                                                                     │ 20..32
+  4  │     function f() public {                                                        │ 33..58
+  5  │         assembly () {}                                                           │ 59..81
+  6  │     }                                                                            │ 82..87
+  7  │ }                                                                                │ 88..89
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected YulCloseParen. One of YulStringLiteral was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/AssemblyStatement/empty_flags/input.sol:3:19]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/AssemblyStatement/empty_flags/input.sol:5:19]
        │
-     3 │         assembly () {}
+     5 │         assembly () {}
        │                   ┬  
        │                   ╰── Error occurred here.
     ───╯

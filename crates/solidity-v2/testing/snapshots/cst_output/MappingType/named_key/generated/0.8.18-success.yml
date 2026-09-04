@@ -1,34 +1,46 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                    │ 0..12
-  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/MappingType/named_key/input.sol │ 13..108
-  3  │ mapping(string Foo => bytes32)                                                                  │ 109..139
-  4  │ // <<<                                                                                          │ 140..146
-  5  │ x;                                                                                              │ 147..149
-  6  │ }                                                                                               │ 150..151
+  1  │ pragma solidity *;                                                                              │ 0..18
+  2  │                                                                                                 │ 19..19
+  3  │ contract C {                                                                                    │ 20..32
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/MappingType/named_key/input.sol │ 33..128
+  5  │ mapping(string Foo => bytes32)                                                                  │ 129..159
+  6  │ // <<<                                                                                          │ 160..166
+  7  │ x;                                                                                              │ 167..169
+  8  │ }                                                                                               │ 170..171
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..151)
-      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..151)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..151)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n// >>> Copied fro..." (0..171)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n// >>> Copied fro..." (0..171)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (20..171)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "mapping(string Foo => bytes32)\n// <<<\nx;" (109..149)
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "mapping(string Foo => bytes32)\n// <<<\nx;" (109..149)
-                      - (type_name꞉ TypeName) ► (mapping_type꞉ MappingType): # "mapping(string Foo => bytes32)" (109..139)
-                          - (mapping_keyword꞉ MappingKeyword): "mapping" # (109..116)
-                          - (open_paren꞉ OpenParen): "(" # (116..117)
-                          - (key_type꞉ MappingKey): # "string Foo" (117..127)
-                              - (key_type꞉ MappingKeyType) ► (elementary_type꞉ ElementaryType) ► (string_keyword꞉ StringKeyword): "string" # (117..123)
-                              - (name꞉ Identifier): "Foo" # (124..127)
-                          - (equal_greater_than꞉ EqualGreaterThan): "=>" # (128..130)
-                          - (value_type꞉ MappingValue): # "bytes32" (131..138)
-                              - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bytes_keyword꞉ BytesKeyword): "bytes32" # (131..138)
-                          - (close_paren꞉ CloseParen): ")" # (138..139)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "mapping(string Foo => bytes32)\n// <<<\nx;" (129..169)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "mapping(string Foo => bytes32)\n// <<<\nx;" (129..169)
+                      - (type_name꞉ TypeName) ► (mapping_type꞉ MappingType): # "mapping(string Foo => bytes32)" (129..159)
+                          - (mapping_keyword꞉ MappingKeyword): "mapping" # (129..136)
+                          - (open_paren꞉ OpenParen): "(" # (136..137)
+                          - (key_type꞉ MappingKey): # "string Foo" (137..147)
+                              - (key_type꞉ MappingKeyType) ► (elementary_type꞉ ElementaryType) ► (string_keyword꞉ StringKeyword): "string" # (137..143)
+                              - (name꞉ Identifier): "Foo" # (144..147)
+                          - (equal_greater_than꞉ EqualGreaterThan): "=>" # (148..150)
+                          - (value_type꞉ MappingValue): # "bytes32" (151..158)
+                              - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bytes_keyword꞉ BytesKeyword): "bytes32" # (151..158)
+                          - (close_paren꞉ CloseParen): ")" # (158..159)
                       - (attributes꞉ StateVariableAttributes): []
-                      - (name꞉ Identifier): "x" # (147..148)
-                      - (semicolon꞉ Semicolon): ";" # (148..149)
-              - (close_brace꞉ CloseBrace): "}" # (150..151)
+                      - (name꞉ Identifier): "x" # (167..168)
+                      - (semicolon꞉ Semicolon): ";" # (168..169)
+              - (close_brace꞉ CloseBrace): "}" # (170..171)

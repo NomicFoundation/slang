@@ -1,15 +1,17 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/nameAndTypeResolution/520_experimental_pragma_multiple_same_line.sol │ 0..149
-  2  │ pragma experimental ABIEncoderV2 unsupportedName;                                                                                                     │ 150..199
+  1  │ pragma solidity *;                                                                                                                                    │ 0..18
+  2  │                                                                                                                                                       │ 19..19
+  3  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/nameAndTypeResolution/520_experimental_pragma_multiple_same_line.sol │ 20..169
+  4  │ pragma experimental ABIEncoderV2 unsupportedName;                                                                                                     │ 170..219
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of PragmaSemicolon was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/experimental_stray_argument/input.sol:2:34]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/experimental_stray_argument/input.sol:4:34]
        │
-     2 │ pragma experimental ABIEncoderV2 unsupportedName;
+     4 │ pragma experimental ABIEncoderV2 unsupportedName;
        │                                  ┬  
        │                                  ╰── Error occurred here.
     ───╯

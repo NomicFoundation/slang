@@ -1,21 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                                    │ 0..12
-  2  │     function f() {                                                                                                              │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/DecimalNumberExpression/exponent_trailing_ident_start/input.sol │ 32..159
-  4  │ 1e2a                                                                                                                            │ 160..164
-  5  │ // <<<                                                                                                                          │ 165..171
-  6  │ ;                                                                                                                               │ 172..173
-  7  │     }                                                                                                                           │ 174..179
-  8  │ }                                                                                                                               │ 180..181
+  1  │ pragma solidity *;                                                                                                              │ 0..18
+  2  │                                                                                                                                 │ 19..19
+  3  │ contract C {                                                                                                                    │ 20..32
+  4  │     function f() {                                                                                                              │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/DecimalNumberExpression/exponent_trailing_ident_start/input.sol │ 52..179
+  6  │ 1e2a                                                                                                                            │ 180..184
+  7  │ // <<<                                                                                                                          │ 185..191
+  8  │ ;                                                                                                                               │ 192..193
+  9  │     }                                                                                                                           │ 194..199
+  10 │ }                                                                                                                               │ 200..201
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of AddressKeyword, AssemblyKeyword, AtKeyword, Bang, BoolKeyword, BreakKeyword, BytesKeyword, CloseBrace, ContinueKeyword, DecimalLiteral, DeleteKeyword, DoKeyword, EmitKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, ForKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IfKeyword, IntKeyword, LayoutKeyword, MappingKeyword, Minus, MinusMinus, NewKeyword, OpenBrace, OpenBracket, OpenParen, PayableKeyword, PlusPlus, ReturnKeyword, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TryKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UncheckedKeyword, UnicodeStringLiteral, WhileKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/DecimalNumberExpression/exponent_trailing_ident_start/input.sol:4:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/DecimalNumberExpression/exponent_trailing_ident_start/input.sol:6:1]
        │
-     4 │ 1e2a
+     6 │ 1e2a
        │ ──┬─  
        │   ╰─── Error occurred here.
     ───╯

@@ -1,36 +1,48 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ using {                                                                                                                   │ 0..7
-  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDeconstructionSymbol/single_id_as_operator/input.sol │ 8..129
-  3  │ foo as /                                                                                                                  │ 130..138
-  4  │ // <<<                                                                                                                    │ 139..145
-  5  │ } for uint;                                                                                                               │ 146..157
+  1  │ pragma solidity *;                                                                                                        │ 0..18
+  2  │                                                                                                                           │ 19..19
+  3  │ using {                                                                                                                   │ 20..27
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDeconstructionSymbol/single_id_as_operator/input.sol │ 28..149
+  5  │ foo as /                                                                                                                  │ 150..158
+  6  │ // <<<                                                                                                                    │ 159..165
+  7  │ } for uint;                                                                                                               │ 166..177
 
 Diagnostics: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.19'.
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDeconstructionSymbol/single_id_as_operator/input.sol:3:5]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDeconstructionSymbol/single_id_as_operator/input.sol:5:5]
        │
-     3 │ foo as /
+     5 │ foo as /
        │     ──┬─  
        │       ╰─── Error occurred here.
     ───╯
 Tree:
-  - (root꞉ SourceUnit): # "using {\n// >>> Copied from crates/solidity/testing..." (0..157)
-      - (members꞉ SourceUnitMembers): # "using {\n// >>> Copied from crates/solidity/testing..." (0..157)
-          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using {\n// >>> Copied from crates/solidity/testing..." (0..157)
-              - (using_keyword꞉ UsingKeyword): "using" # (0..5)
-              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (6..147)
-                  - (open_brace꞉ OpenBrace): "{" # (6..7)
-                  - (symbols꞉ UsingDeconstructionSymbols): # "foo as /" (130..138)
-                      - (item꞉ UsingDeconstructionSymbol): # "foo as /" (130..138)
-                          - (name꞉ IdentifierPath): # "foo" (130..133)
-                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (130..133)
-                          - (alias꞉ UsingAlias): # "as /" (134..138)
-                              - (as_keyword꞉ AsKeyword): "as" # (134..136)
-                              - (operator꞉ UsingOperator) ► (slash꞉ Slash): "/" # (137..138)
-                  - (close_brace꞉ CloseBrace): "}" # (146..147)
-              - (for_keyword꞉ ForKeyword): "for" # (148..151)
-              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (152..156)
-              - (semicolon꞉ Semicolon): ";" # (156..157)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\nusing {\n// >>> Copied from cra..." (0..177)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\nusing {\n// >>> Copied from cra..." (0..177)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using {\n// >>> Copied from crates/solidity/testing..." (20..177)
+              - (using_keyword꞉ UsingKeyword): "using" # (20..25)
+              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (26..167)
+                  - (open_brace꞉ OpenBrace): "{" # (26..27)
+                  - (symbols꞉ UsingDeconstructionSymbols): # "foo as /" (150..158)
+                      - (item꞉ UsingDeconstructionSymbol): # "foo as /" (150..158)
+                          - (name꞉ IdentifierPath): # "foo" (150..153)
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (150..153)
+                          - (alias꞉ UsingAlias): # "as /" (154..158)
+                              - (as_keyword꞉ AsKeyword): "as" # (154..156)
+                              - (operator꞉ UsingOperator) ► (slash꞉ Slash): "/" # (157..158)
+                  - (close_brace꞉ CloseBrace): "}" # (166..167)
+              - (for_keyword꞉ ForKeyword): "for" # (168..171)
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (172..176)
+              - (semicolon꞉ Semicolon): ";" # (176..177)

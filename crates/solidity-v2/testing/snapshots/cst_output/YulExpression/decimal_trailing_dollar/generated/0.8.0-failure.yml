@@ -1,22 +1,24 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                    │ 0..12
-  2  │     function f() {                                                                                              │ 13..31
-  3  │         assembly {                                                                                              │ 32..50
-  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulExpression/decimal_trailing_dollar/input.sol │ 51..162
-  5  │ 1$x                                                                                                             │ 163..166
-  6  │ // <<<                                                                                                          │ 167..173
-  7  │         }                                                                                                       │ 174..183
-  8  │     }                                                                                                           │ 184..189
-  9  │ }                                                                                                               │ 190..191
+  1  │ pragma solidity *;                                                                                              │ 0..18
+  2  │                                                                                                                 │ 19..19
+  3  │ contract C {                                                                                                    │ 20..32
+  4  │     function f() {                                                                                              │ 33..51
+  5  │         assembly {                                                                                              │ 52..70
+  6  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulExpression/decimal_trailing_dollar/input.sol │ 71..182
+  7  │ 1$x                                                                                                             │ 183..186
+  8  │ // <<<                                                                                                          │ 187..193
+  9  │         }                                                                                                       │ 194..203
+  10 │     }                                                                                                           │ 204..209
+  11 │ }                                                                                                               │ 210..211
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of YulBreakKeyword, YulCloseBrace, YulContinueKeyword, YulDecimalLiteral, YulFalseKeyword, YulForKeyword, YulFunctionKeyword, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulIfKeyword, YulLeaveKeyword, YulLetKeyword, YulOpenBrace, YulStringLiteral, YulSwitchKeyword, YulTrueKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulExpression/decimal_trailing_dollar/input.sol:5:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulExpression/decimal_trailing_dollar/input.sol:7:1]
        │
-     5 │ 1$x
+     7 │ 1$x
        │ ─┬─  
        │  ╰─── Error occurred here.
     ───╯

@@ -1,3 +1,5 @@
+pragma solidity *;
+
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/PragmaDirective/abi_coder_v2/input.sol
 pragma abicoder v2;
 

@@ -1,39 +1,51 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ using {                                                                                                                         │ 0..7
-  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDeconstructionSymbol/identifier_path_as_operator/input.sol │ 8..135
-  3  │ foo.bar as /                                                                                                                    │ 136..148
-  4  │ // <<<                                                                                                                          │ 149..155
-  5  │ } for uint;                                                                                                                     │ 156..167
+  1  │ pragma solidity *;                                                                                                              │ 0..18
+  2  │                                                                                                                                 │ 19..19
+  3  │ using {                                                                                                                         │ 20..27
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDeconstructionSymbol/identifier_path_as_operator/input.sol │ 28..155
+  5  │ foo.bar as /                                                                                                                    │ 156..168
+  6  │ // <<<                                                                                                                          │ 169..175
+  7  │ } for uint;                                                                                                                     │ 176..187
 
 Diagnostics: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDeconstructionSymbol/identifier_path_as_operator/input.sol:1:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDeconstructionSymbol/identifier_path_as_operator/input.sol:3:1]
        │
-     1 │ ╭─▶ using {
+     3 │ ╭─▶ using {
        ┆ ┆   
-     5 │ ├─▶ } for uint;
+     7 │ ├─▶ } for uint;
        │ │                 
        │ ╰───────────────── Error occurred here.
     ───╯
 Tree:
-  - (root꞉ SourceUnit): # "using {\n// >>> Copied from crates/solidity/testing..." (0..167)
-      - (members꞉ SourceUnitMembers): # "using {\n// >>> Copied from crates/solidity/testing..." (0..167)
-          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using {\n// >>> Copied from crates/solidity/testing..." (0..167)
-              - (using_keyword꞉ UsingKeyword): "using" # (0..5)
-              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (6..157)
-                  - (open_brace꞉ OpenBrace): "{" # (6..7)
-                  - (symbols꞉ UsingDeconstructionSymbols): # "foo.bar as /" (136..148)
-                      - (item꞉ UsingDeconstructionSymbol): # "foo.bar as /" (136..148)
-                          - (name꞉ IdentifierPath): # "foo.bar" (136..143)
-                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (136..139)
-                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "bar" # (140..143)
-                          - (alias꞉ UsingAlias): # "as /" (144..148)
-                              - (as_keyword꞉ AsKeyword): "as" # (144..146)
-                              - (operator꞉ UsingOperator) ► (slash꞉ Slash): "/" # (147..148)
-                  - (close_brace꞉ CloseBrace): "}" # (156..157)
-              - (for_keyword꞉ ForKeyword): "for" # (158..161)
-              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (162..166)
-              - (semicolon꞉ Semicolon): ";" # (166..167)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\nusing {\n// >>> Copied from cra..." (0..187)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\nusing {\n// >>> Copied from cra..." (0..187)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using {\n// >>> Copied from crates/solidity/testing..." (20..187)
+              - (using_keyword꞉ UsingKeyword): "using" # (20..25)
+              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (26..177)
+                  - (open_brace꞉ OpenBrace): "{" # (26..27)
+                  - (symbols꞉ UsingDeconstructionSymbols): # "foo.bar as /" (156..168)
+                      - (item꞉ UsingDeconstructionSymbol): # "foo.bar as /" (156..168)
+                          - (name꞉ IdentifierPath): # "foo.bar" (156..163)
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (156..159)
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "bar" # (160..163)
+                          - (alias꞉ UsingAlias): # "as /" (164..168)
+                              - (as_keyword꞉ AsKeyword): "as" # (164..166)
+                              - (operator꞉ UsingOperator) ► (slash꞉ Slash): "/" # (167..168)
+                  - (close_brace꞉ CloseBrace): "}" # (176..177)
+              - (for_keyword꞉ ForKeyword): "for" # (178..181)
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (182..186)
+              - (semicolon꞉ Semicolon): ";" # (186..187)

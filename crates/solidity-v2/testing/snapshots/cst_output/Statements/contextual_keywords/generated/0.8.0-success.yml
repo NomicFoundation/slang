@@ -1,61 +1,73 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                             │ 0..12
-  2  │     function f() {                                                                                       │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Statements/contextual_keywords/input.sol │ 32..136
-  4  │ uint256 error;                                                                                           │ 137..151
-  5  │ uint256 from;                                                                                            │ 152..165
-  6  │ uint256 revert;                                                                                          │ 166..181
-  7  │ uint256 global;                                                                                          │ 182..197
-  8  │                                                                                                          │ 198..198
-  9  │ // <<<                                                                                                   │ 199..205
-  10 │     }                                                                                                    │ 206..211
-  11 │ }                                                                                                        │ 212..213
+  1  │ pragma solidity *;                                                                                       │ 0..18
+  2  │                                                                                                          │ 19..19
+  3  │ contract C {                                                                                             │ 20..32
+  4  │     function f() {                                                                                       │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Statements/contextual_keywords/input.sol │ 52..156
+  6  │ uint256 error;                                                                                           │ 157..171
+  7  │ uint256 from;                                                                                            │ 172..185
+  8  │ uint256 revert;                                                                                          │ 186..201
+  9  │ uint256 global;                                                                                          │ 202..217
+  10 │                                                                                                          │ 218..218
+  11 │ // <<<                                                                                                   │ 219..225
+  12 │     }                                                                                                    │ 226..231
+  13 │ }                                                                                                        │ 232..233
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..213)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..213)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..213)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..233)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..233)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (20..233)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..211)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..211)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (37..231)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (37..231)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..211)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # "uint256 error;\nuint256 from;\nuint256 revert;\nuint2..." (137..197)
-                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "uint256 error;" (137..151)
-                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "uint256 error" (137..150)
-                                      - (declaration꞉ VariableDeclaration): # "uint256 error" (137..150)
-                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (137..144)
-                                          - (name꞉ Identifier): "error" # (145..150)
-                                  - (semicolon꞉ Semicolon): ";" # (150..151)
-                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "uint256 from;" (152..165)
-                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "uint256 from" (152..164)
-                                      - (declaration꞉ VariableDeclaration): # "uint256 from" (152..164)
-                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (152..159)
-                                          - (name꞉ Identifier): "from" # (160..164)
-                                  - (semicolon꞉ Semicolon): ";" # (164..165)
-                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "uint256 revert;" (166..181)
-                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "uint256 revert" (166..180)
-                                      - (declaration꞉ VariableDeclaration): # "uint256 revert" (166..180)
-                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (166..173)
-                                          - (name꞉ Identifier): "revert" # (174..180)
-                                  - (semicolon꞉ Semicolon): ";" # (180..181)
-                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "uint256 global;" (182..197)
-                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "uint256 global" (182..196)
-                                      - (declaration꞉ VariableDeclaration): # "uint256 global" (182..196)
-                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (182..189)
-                                          - (name꞉ Identifier): "global" # (190..196)
-                                  - (semicolon꞉ Semicolon): ";" # (196..197)
-                          - (close_brace꞉ CloseBrace): "}" # (210..211)
-              - (close_brace꞉ CloseBrace): "}" # (212..213)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (50..231)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # "uint256 error;\nuint256 from;\nuint256 revert;\nuint2..." (157..217)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "uint256 error;" (157..171)
+                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "uint256 error" (157..170)
+                                      - (declaration꞉ VariableDeclaration): # "uint256 error" (157..170)
+                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (157..164)
+                                          - (name꞉ Identifier): "error" # (165..170)
+                                  - (semicolon꞉ Semicolon): ";" # (170..171)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "uint256 from;" (172..185)
+                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "uint256 from" (172..184)
+                                      - (declaration꞉ VariableDeclaration): # "uint256 from" (172..184)
+                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (172..179)
+                                          - (name꞉ Identifier): "from" # (180..184)
+                                  - (semicolon꞉ Semicolon): ";" # (184..185)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "uint256 revert;" (186..201)
+                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "uint256 revert" (186..200)
+                                      - (declaration꞉ VariableDeclaration): # "uint256 revert" (186..200)
+                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (186..193)
+                                          - (name꞉ Identifier): "revert" # (194..200)
+                                  - (semicolon꞉ Semicolon): ";" # (200..201)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "uint256 global;" (202..217)
+                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "uint256 global" (202..216)
+                                      - (declaration꞉ VariableDeclaration): # "uint256 global" (202..216)
+                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (202..209)
+                                          - (name꞉ Identifier): "global" # (210..216)
+                                  - (semicolon꞉ Semicolon): ";" # (216..217)
+                          - (close_brace꞉ CloseBrace): "}" # (230..231)
+              - (close_brace꞉ CloseBrace): "}" # (232..233)

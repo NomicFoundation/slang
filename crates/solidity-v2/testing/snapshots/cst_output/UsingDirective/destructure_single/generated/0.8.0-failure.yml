@@ -1,33 +1,45 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_single/input.sol │ 0..107
-  2  │ using {add} for Int global;                                                                                 │ 108..135
-  3  │ // <<<                                                                                                      │ 136..142
+  1  │ pragma solidity *;                                                                                          │ 0..18
+  2  │                                                                                                             │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_single/input.sol │ 20..127
+  4  │ using {add} for Int global;                                                                                 │ 128..155
+  5  │ // <<<                                                                                                      │ 156..162
 
 Diagnostics: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/destructure_single/input.sol:2:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/destructure_single/input.sol:4:1]
        │
-     2 │ using {add} for Int global;
+     4 │ using {add} for Int global;
        │ ─────────────┬─────────────  
        │              ╰─────────────── Error occurred here.
     ───╯
 Tree:
-  - (root꞉ SourceUnit): # "using {add} for Int global;" (108..135)
-      - (members꞉ SourceUnitMembers): # "using {add} for Int global;" (108..135)
-          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using {add} for Int global;" (108..135)
-              - (using_keyword꞉ UsingKeyword): "using" # (108..113)
-              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction): # "{add}" (114..119)
-                  - (open_brace꞉ OpenBrace): "{" # (114..115)
-                  - (symbols꞉ UsingDeconstructionSymbols): # "add" (115..118)
-                      - (item꞉ UsingDeconstructionSymbol): # "add" (115..118)
-                          - (name꞉ IdentifierPath): # "add" (115..118)
-                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "add" # (115..118)
-                  - (close_brace꞉ CloseBrace): "}" # (118..119)
-              - (for_keyword꞉ ForKeyword): "for" # (120..123)
-              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath): # "Int" (124..127)
-                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Int" # (124..127)
-              - (global_keyword꞉ GlobalKeyword): "global" # (128..134)
-              - (semicolon꞉ Semicolon): ";" # (134..135)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..155)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..155)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using {add} for Int global;" (128..155)
+              - (using_keyword꞉ UsingKeyword): "using" # (128..133)
+              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction): # "{add}" (134..139)
+                  - (open_brace꞉ OpenBrace): "{" # (134..135)
+                  - (symbols꞉ UsingDeconstructionSymbols): # "add" (135..138)
+                      - (item꞉ UsingDeconstructionSymbol): # "add" (135..138)
+                          - (name꞉ IdentifierPath): # "add" (135..138)
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "add" # (135..138)
+                  - (close_brace꞉ CloseBrace): "}" # (138..139)
+              - (for_keyword꞉ ForKeyword): "for" # (140..143)
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath): # "Int" (144..147)
+                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Int" # (144..147)
+              - (global_keyword꞉ GlobalKeyword): "global" # (148..154)
+              - (semicolon꞉ Semicolon): ";" # (154..155)

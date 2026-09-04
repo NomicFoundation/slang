@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract C {
     function f() {
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/HexStringLiterals/all_separated_pairs/input.sol

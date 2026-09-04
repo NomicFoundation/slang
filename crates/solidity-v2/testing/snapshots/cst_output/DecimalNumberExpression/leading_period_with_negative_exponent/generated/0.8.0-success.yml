@@ -1,16 +1,28 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ uint constant x = .2e-3;                                                         │ 0..24
+  1  │ pragma solidity *;                                                               │ 0..18
+  2  │                                                                                  │ 19..19
+  3  │ uint constant x = .2e-3;                                                         │ 20..44
 
 Tree:
-  - (root꞉ SourceUnit): # "uint constant x = .2e-3;" (0..24)
-      - (members꞉ SourceUnitMembers): # "uint constant x = .2e-3;" (0..24)
-          - (item꞉ SourceUnitMember) ► (constant_definition꞉ ConstantDefinition): # "uint constant x = .2e-3;" (0..24)
-              - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (0..4)
-              - (constant_keyword꞉ ConstantKeyword): "constant" # (5..13)
-              - (name꞉ Identifier): "x" # (14..15)
-              - (equal꞉ Equal): "=" # (16..17)
-              - (value꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # ".2e-3" (18..23)
-                  - (literal꞉ DecimalLiteral): ".2e-3" # (18..23)
-              - (semicolon꞉ Semicolon): ";" # (23..24)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\nuint constant x = .2e-3;" (0..44)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\nuint constant x = .2e-3;" (0..44)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (constant_definition꞉ ConstantDefinition): # "uint constant x = .2e-3;" (20..44)
+              - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (20..24)
+              - (constant_keyword꞉ ConstantKeyword): "constant" # (25..33)
+              - (name꞉ Identifier): "x" # (34..35)
+              - (equal꞉ Equal): "=" # (36..37)
+              - (value꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # ".2e-3" (38..43)
+                  - (literal꞉ DecimalLiteral): ".2e-3" # (38..43)
+              - (semicolon꞉ Semicolon): ";" # (43..44)

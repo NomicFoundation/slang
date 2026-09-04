@@ -1,22 +1,24 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                 │ 0..12
-  2  │     function f() {                                                                                           │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/StringLiteral/double_quote_unicode/input.sol │ 32..140
-  4  │ "दिल"                                                                                                        │ 141..152
-  5  │                                                                                                              │ 153..153
-  6  │ // <<<                                                                                                       │ 154..160
-  7  │ ;                                                                                                            │ 161..162
-  8  │     }                                                                                                        │ 163..168
-  9  │ }                                                                                                            │ 169..170
+  1  │ pragma solidity *;                                                                                           │ 0..18
+  2  │                                                                                                              │ 19..19
+  3  │ contract C {                                                                                                 │ 20..32
+  4  │     function f() {                                                                                           │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/StringLiteral/double_quote_unicode/input.sol │ 52..160
+  6  │ "दिल"                                                                                                        │ 161..172
+  7  │                                                                                                              │ 173..173
+  8  │ // <<<                                                                                                       │ 174..180
+  9  │ ;                                                                                                            │ 181..182
+  10 │     }                                                                                                        │ 183..188
+  11 │ }                                                                                                            │ 189..190
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of AddressKeyword, AssemblyKeyword, AtKeyword, Bang, BoolKeyword, BreakKeyword, BytesKeyword, CloseBrace, ContinueKeyword, DecimalLiteral, DeleteKeyword, DoKeyword, EmitKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, ForKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IfKeyword, IntKeyword, LayoutKeyword, MappingKeyword, Minus, MinusMinus, NewKeyword, OpenBrace, OpenBracket, OpenParen, PayableKeyword, PlusPlus, ReturnKeyword, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TryKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UncheckedKeyword, UnicodeStringLiteral, WhileKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/StringLiteral/double_quote_unicode/input.sol:4:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/StringLiteral/double_quote_unicode/input.sol:6:1]
        │
-     4 │ "दिल"
+     6 │ "दिल"
        │ ┬  
        │ ╰── Error occurred here.
     ───╯

@@ -1,3 +1,5 @@
+pragma solidity *;
+
 contract C {
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol
 function all() override(some.ident unexpected tokens, ISomeInterface, Other) public {

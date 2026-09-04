@@ -1,15 +1,17 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/abstract/abstract_without_contract.sol │ 0..119
-  2  │ abstract A { }                                                                                                          │ 120..134
+  1  │ pragma solidity *;                                                                                                      │ 0..18
+  2  │                                                                                                                         │ 19..19
+  3  │ // https://github.com/argotorg/solidity/blob/v0.8.0/test/libsolidity/syntaxTests/abstract/abstract_without_contract.sol │ 20..139
+  4  │ abstract A { }                                                                                                          │ 140..154
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Identifier. One of ContractKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/abstract_without_contract_keyword/input.sol:2:10]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/abstract_without_contract_keyword/input.sol:4:10]
        │
-     2 │ abstract A { }
+     4 │ abstract A { }
        │          ┬  
        │          ╰── Error occurred here.
     ───╯

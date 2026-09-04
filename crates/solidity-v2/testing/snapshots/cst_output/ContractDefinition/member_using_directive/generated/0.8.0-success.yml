@@ -1,26 +1,38 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_using_directive/input.sol │ 0..115
-  2  │ contract Sample {                                                                                                   │ 116..133
-  3  │   using x for *;                                                                                                    │ 134..150
-  4  │ }                                                                                                                   │ 151..152
-  5  │ // <<<                                                                                                              │ 153..159
+  1  │ pragma solidity *;                                                                                                  │ 0..18
+  2  │                                                                                                                     │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_using_directive/input.sol │ 20..135
+  4  │ contract Sample {                                                                                                   │ 136..153
+  5  │   using x for *;                                                                                                    │ 154..170
+  6  │ }                                                                                                                   │ 171..172
+  7  │ // <<<                                                                                                              │ 173..179
 
 Tree:
-  - (root꞉ SourceUnit): # "contract Sample {\n  using x for *;\n}" (116..152)
-      - (members꞉ SourceUnitMembers): # "contract Sample {\n  using x for *;\n}" (116..152)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  using x for *;\n}" (116..152)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (116..124)
-              - (name꞉ Identifier): "Sample" # (125..131)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..172)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..172)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  using x for *;\n}" (136..172)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (136..144)
+              - (name꞉ Identifier): "Sample" # (145..151)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (132..133)
-              - (members꞉ ContractMembers): # "using x for *;" (136..150)
-                  - (item꞉ ContractMember) ► (using_directive꞉ UsingDirective): # "using x for *;" (136..150)
-                      - (using_keyword꞉ UsingKeyword): "using" # (136..141)
-                      - (clause꞉ UsingClause) ► (identifier_path꞉ IdentifierPath): # "x" (142..143)
-                          - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "x" # (142..143)
-                      - (for_keyword꞉ ForKeyword): "for" # (144..147)
-                      - (target꞉ UsingTarget) ► (asterisk꞉ Asterisk): "*" # (148..149)
-                      - (semicolon꞉ Semicolon): ";" # (149..150)
-              - (close_brace꞉ CloseBrace): "}" # (151..152)
+              - (open_brace꞉ OpenBrace): "{" # (152..153)
+              - (members꞉ ContractMembers): # "using x for *;" (156..170)
+                  - (item꞉ ContractMember) ► (using_directive꞉ UsingDirective): # "using x for *;" (156..170)
+                      - (using_keyword꞉ UsingKeyword): "using" # (156..161)
+                      - (clause꞉ UsingClause) ► (identifier_path꞉ IdentifierPath): # "x" (162..163)
+                          - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "x" # (162..163)
+                      - (for_keyword꞉ ForKeyword): "for" # (164..167)
+                      - (target꞉ UsingTarget) ► (asterisk꞉ Asterisk): "*" # (168..169)
+                      - (semicolon꞉ Semicolon): ";" # (169..170)
+              - (close_brace꞉ CloseBrace): "}" # (171..172)

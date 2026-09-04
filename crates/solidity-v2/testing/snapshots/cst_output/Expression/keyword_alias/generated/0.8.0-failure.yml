@@ -1,21 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                       │ 0..12
-  2  │     function f() {                                                                                 │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/keyword_alias/input.sol │ 32..130
-  4  │ alias                                                                                              │ 131..136
-  5  │ // <<<                                                                                             │ 137..143
-  6  │ ;                                                                                                  │ 144..145
-  7  │     }                                                                                              │ 146..151
-  8  │ }                                                                                                  │ 152..153
+  1  │ pragma solidity *;                                                                                 │ 0..18
+  2  │                                                                                                    │ 19..19
+  3  │ contract C {                                                                                       │ 20..32
+  4  │     function f() {                                                                                 │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/keyword_alias/input.sol │ 52..150
+  6  │ alias                                                                                              │ 151..156
+  7  │ // <<<                                                                                             │ 157..163
+  8  │ ;                                                                                                  │ 164..165
+  9  │     }                                                                                              │ 166..171
+  10 │ }                                                                                                  │ 172..173
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected AliasKeyword. One of AddressKeyword, AssemblyKeyword, AtKeyword, Bang, BoolKeyword, BreakKeyword, BytesKeyword, CloseBrace, ContinueKeyword, DecimalLiteral, DeleteKeyword, DoKeyword, EmitKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, ForKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IfKeyword, IntKeyword, LayoutKeyword, MappingKeyword, Minus, MinusMinus, NewKeyword, OpenBrace, OpenBracket, OpenParen, PayableKeyword, PlusPlus, ReturnKeyword, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TryKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UncheckedKeyword, UnicodeStringLiteral, WhileKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/Expression/keyword_alias/input.sol:4:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/Expression/keyword_alias/input.sol:6:1]
        │
-     4 │ alias
+     6 │ alias
        │ ──┬──  
        │   ╰──── Error occurred here.
     ───╯

@@ -1,3 +1,5 @@
+pragma solidity *;
+
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/trailing_trivia_only_until_newline/input.sol
 contract A {} // first
               // second

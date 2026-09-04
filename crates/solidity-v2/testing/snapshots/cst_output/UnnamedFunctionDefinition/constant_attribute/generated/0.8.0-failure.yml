@@ -1,20 +1,22 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                           │ 0..12
-  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UnnamedFunctionDefinition/constant_attribute/input.sol │ 13..131
-  3  │ // Split into `view` and `pure` in 0.4.16                                                                              │ 132..173
-  4  │ function () constant {}                                                                                                │ 174..197
-  5  │                                                                                                                        │ 198..198
-  6  │ // <<<                                                                                                                 │ 199..205
-  7  │ }                                                                                                                      │ 206..207
+  1  │ pragma solidity *;                                                                                                     │ 0..18
+  2  │                                                                                                                        │ 19..19
+  3  │ contract C {                                                                                                           │ 20..32
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UnnamedFunctionDefinition/constant_attribute/input.sol │ 33..151
+  5  │ // Split into `view` and `pure` in 0.4.16                                                                              │ 152..193
+  6  │ function () constant {}                                                                                                │ 194..217
+  7  │                                                                                                                        │ 218..218
+  8  │ // <<<                                                                                                                 │ 219..225
+  9  │ }                                                                                                                      │ 226..227
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected OpenBrace. One of AtKeyword, ConstantKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, ImmutableKeyword, InternalKeyword, LayoutKeyword, OverrideKeyword, PrivateKeyword, PublicKeyword, RevertKeyword, TransientKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UnnamedFunctionDefinition/constant_attribute/input.sol:4:22]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UnnamedFunctionDefinition/constant_attribute/input.sol:6:22]
        │
-     4 │ function () constant {}
+     6 │ function () constant {}
        │                      ┬  
        │                      ╰── Error occurred here.
     ───╯

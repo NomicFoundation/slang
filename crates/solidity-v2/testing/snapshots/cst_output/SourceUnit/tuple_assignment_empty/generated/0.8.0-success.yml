@@ -1,111 +1,123 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/tuple_assignment_empty/input.sol │ 0..107
-  2  │ library SafeMath {                                                                                          │ 108..126
-  3  │   function tryAdd() internal pure  {                                                                        │ 127..163
-  4  │     // If we don't use the return, V1 will parse them as TupleDeconstructionStatement                       │ 164..249
-  5  │     return () = foo;                                                                                        │ 250..270
-  6  │     return (,) = foo;                                                                                       │ 271..292
-  7  │     return (,,) = foo;                                                                                      │ 293..315
-  8  │                                                                                                             │ 316..316
-  9  │     () = foo;                                                                                               │ 317..330
-  10 │     (,) = foo;                                                                                              │ 331..345
-  11 │     (,,) = foo;                                                                                             │ 346..361
-  12 │   }                                                                                                         │ 362..365
-  13 │ }                                                                                                           │ 366..367
-  14 │                                                                                                             │ 368..368
-  15 │ // <<<                                                                                                      │ 369..375
+  1  │ pragma solidity *;                                                                                          │ 0..18
+  2  │                                                                                                             │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/tuple_assignment_empty/input.sol │ 20..127
+  4  │ library SafeMath {                                                                                          │ 128..146
+  5  │   function tryAdd() internal pure  {                                                                        │ 147..183
+  6  │     // If we don't use the return, V1 will parse them as TupleDeconstructionStatement                       │ 184..269
+  7  │     return () = foo;                                                                                        │ 270..290
+  8  │     return (,) = foo;                                                                                       │ 291..312
+  9  │     return (,,) = foo;                                                                                      │ 313..335
+  10 │                                                                                                             │ 336..336
+  11 │     () = foo;                                                                                               │ 337..350
+  12 │     (,) = foo;                                                                                              │ 351..365
+  13 │     (,,) = foo;                                                                                             │ 366..381
+  14 │   }                                                                                                         │ 382..385
+  15 │ }                                                                                                           │ 386..387
+  16 │                                                                                                             │ 388..388
+  17 │ // <<<                                                                                                      │ 389..395
 
 Tree:
-  - (root꞉ SourceUnit): # "library SafeMath {\n  function tryAdd() internal pu..." (108..367)
-      - (members꞉ SourceUnitMembers): # "library SafeMath {\n  function tryAdd() internal pu..." (108..367)
-          - (item꞉ SourceUnitMember) ► (library_definition꞉ LibraryDefinition): # "library SafeMath {\n  function tryAdd() internal pu..." (108..367)
-              - (library_keyword꞉ LibraryKeyword): "library" # (108..115)
-              - (name꞉ Identifier): "SafeMath" # (116..124)
-              - (open_brace꞉ OpenBrace): "{" # (125..126)
-              - (members꞉ LibraryMembers): # "function tryAdd() internal pure  {\n    // If we do..." (129..365)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function tryAdd() internal pure  {\n    // If we do..." (129..365)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (129..137)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "tryAdd" # (138..144)
-                      - (parameters꞉ ParametersDeclaration): # "()" (144..146)
-                          - (open_paren꞉ OpenParen): "(" # (144..145)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..387)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..387)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (library_definition꞉ LibraryDefinition): # "library SafeMath {\n  function tryAdd() internal pu..." (128..387)
+              - (library_keyword꞉ LibraryKeyword): "library" # (128..135)
+              - (name꞉ Identifier): "SafeMath" # (136..144)
+              - (open_brace꞉ OpenBrace): "{" # (145..146)
+              - (members꞉ LibraryMembers): # "function tryAdd() internal pure  {\n    // If we do..." (149..385)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function tryAdd() internal pure  {\n    // If we do..." (149..385)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (149..157)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "tryAdd" # (158..164)
+                      - (parameters꞉ ParametersDeclaration): # "()" (164..166)
+                          - (open_paren꞉ OpenParen): "(" # (164..165)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (145..146)
-                      - (attributes꞉ FunctionAttributes): # "internal pure" (147..160)
-                          - (item꞉ FunctionAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (147..155)
-                          - (item꞉ FunctionAttribute) ► (pure_keyword꞉ PureKeyword): "pure" # (156..160)
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n    // If we don't use the return, V1 will parse..." (162..365)
-                          - (open_brace꞉ OpenBrace): "{" # (162..163)
-                          - (statements꞉ Statements): # "return () = foo;\n    return (,) = foo;\n    return ..." (254..361)
-                              - (item꞉ Statement) ► (return_statement꞉ ReturnStatement): # "return () = foo;" (254..270)
-                                  - (return_keyword꞉ ReturnKeyword): "return" # (254..260)
-                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "() = foo" (261..269)
-                                      - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "()" (261..263)
-                                          - (open_paren꞉ OpenParen): "(" # (261..262)
+                          - (close_paren꞉ CloseParen): ")" # (165..166)
+                      - (attributes꞉ FunctionAttributes): # "internal pure" (167..180)
+                          - (item꞉ FunctionAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (167..175)
+                          - (item꞉ FunctionAttribute) ► (pure_keyword꞉ PureKeyword): "pure" # (176..180)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n    // If we don't use the return, V1 will parse..." (182..385)
+                          - (open_brace꞉ OpenBrace): "{" # (182..183)
+                          - (statements꞉ Statements): # "return () = foo;\n    return (,) = foo;\n    return ..." (274..381)
+                              - (item꞉ Statement) ► (return_statement꞉ ReturnStatement): # "return () = foo;" (274..290)
+                                  - (return_keyword꞉ ReturnKeyword): "return" # (274..280)
+                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "() = foo" (281..289)
+                                      - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "()" (281..283)
+                                          - (open_paren꞉ OpenParen): "(" # (281..282)
                                           - (items꞉ TupleValues):
                                               - (item꞉ TupleValue): []
-                                          - (close_paren꞉ CloseParen): ")" # (262..263)
-                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (264..265)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (266..269)
-                                  - (semicolon꞉ Semicolon): ";" # (269..270)
-                              - (item꞉ Statement) ► (return_statement꞉ ReturnStatement): # "return (,) = foo;" (275..292)
-                                  - (return_keyword꞉ ReturnKeyword): "return" # (275..281)
-                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "(,) = foo" (282..291)
-                                      - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(,)" (282..285)
-                                          - (open_paren꞉ OpenParen): "(" # (282..283)
-                                          - (items꞉ TupleValues):
-                                              - (item꞉ TupleValue): []
-                                              - (item꞉ TupleValue): []
-                                          - (close_paren꞉ CloseParen): ")" # (284..285)
-                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (286..287)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (288..291)
-                                  - (semicolon꞉ Semicolon): ";" # (291..292)
-                              - (item꞉ Statement) ► (return_statement꞉ ReturnStatement): # "return (,,) = foo;" (297..315)
-                                  - (return_keyword꞉ ReturnKeyword): "return" # (297..303)
-                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "(,,) = foo" (304..314)
-                                      - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(,,)" (304..308)
-                                          - (open_paren꞉ OpenParen): "(" # (304..305)
+                                          - (close_paren꞉ CloseParen): ")" # (282..283)
+                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (284..285)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (286..289)
+                                  - (semicolon꞉ Semicolon): ";" # (289..290)
+                              - (item꞉ Statement) ► (return_statement꞉ ReturnStatement): # "return (,) = foo;" (295..312)
+                                  - (return_keyword꞉ ReturnKeyword): "return" # (295..301)
+                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "(,) = foo" (302..311)
+                                      - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(,)" (302..305)
+                                          - (open_paren꞉ OpenParen): "(" # (302..303)
                                           - (items꞉ TupleValues):
                                               - (item꞉ TupleValue): []
                                               - (item꞉ TupleValue): []
-                                              - (item꞉ TupleValue): []
-                                          - (close_paren꞉ CloseParen): ")" # (307..308)
-                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (309..310)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (311..314)
-                                  - (semicolon꞉ Semicolon): ";" # (314..315)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "() = foo;" (321..330)
-                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "() = foo" (321..329)
-                                      - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "()" (321..323)
-                                          - (open_paren꞉ OpenParen): "(" # (321..322)
-                                          - (items꞉ TupleValues):
-                                              - (item꞉ TupleValue): []
-                                          - (close_paren꞉ CloseParen): ")" # (322..323)
-                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (324..325)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (326..329)
-                                  - (semicolon꞉ Semicolon): ";" # (329..330)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "(,) = foo;" (335..345)
-                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "(,) = foo" (335..344)
-                                      - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(,)" (335..338)
-                                          - (open_paren꞉ OpenParen): "(" # (335..336)
-                                          - (items꞉ TupleValues):
-                                              - (item꞉ TupleValue): []
-                                              - (item꞉ TupleValue): []
-                                          - (close_paren꞉ CloseParen): ")" # (337..338)
-                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (339..340)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (341..344)
-                                  - (semicolon꞉ Semicolon): ";" # (344..345)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "(,,) = foo;" (350..361)
-                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "(,,) = foo" (350..360)
-                                      - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(,,)" (350..354)
-                                          - (open_paren꞉ OpenParen): "(" # (350..351)
+                                          - (close_paren꞉ CloseParen): ")" # (304..305)
+                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (306..307)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (308..311)
+                                  - (semicolon꞉ Semicolon): ";" # (311..312)
+                              - (item꞉ Statement) ► (return_statement꞉ ReturnStatement): # "return (,,) = foo;" (317..335)
+                                  - (return_keyword꞉ ReturnKeyword): "return" # (317..323)
+                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "(,,) = foo" (324..334)
+                                      - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(,,)" (324..328)
+                                          - (open_paren꞉ OpenParen): "(" # (324..325)
                                           - (items꞉ TupleValues):
                                               - (item꞉ TupleValue): []
                                               - (item꞉ TupleValue): []
                                               - (item꞉ TupleValue): []
-                                          - (close_paren꞉ CloseParen): ")" # (353..354)
-                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (355..356)
-                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (357..360)
-                                  - (semicolon꞉ Semicolon): ";" # (360..361)
-                          - (close_brace꞉ CloseBrace): "}" # (364..365)
-              - (close_brace꞉ CloseBrace): "}" # (366..367)
+                                          - (close_paren꞉ CloseParen): ")" # (327..328)
+                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (329..330)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (331..334)
+                                  - (semicolon꞉ Semicolon): ";" # (334..335)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "() = foo;" (341..350)
+                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "() = foo" (341..349)
+                                      - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "()" (341..343)
+                                          - (open_paren꞉ OpenParen): "(" # (341..342)
+                                          - (items꞉ TupleValues):
+                                              - (item꞉ TupleValue): []
+                                          - (close_paren꞉ CloseParen): ")" # (342..343)
+                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (344..345)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (346..349)
+                                  - (semicolon꞉ Semicolon): ";" # (349..350)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "(,) = foo;" (355..365)
+                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "(,) = foo" (355..364)
+                                      - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(,)" (355..358)
+                                          - (open_paren꞉ OpenParen): "(" # (355..356)
+                                          - (items꞉ TupleValues):
+                                              - (item꞉ TupleValue): []
+                                              - (item꞉ TupleValue): []
+                                          - (close_paren꞉ CloseParen): ")" # (357..358)
+                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (359..360)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (361..364)
+                                  - (semicolon꞉ Semicolon): ";" # (364..365)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "(,,) = foo;" (370..381)
+                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "(,,) = foo" (370..380)
+                                      - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(,,)" (370..374)
+                                          - (open_paren꞉ OpenParen): "(" # (370..371)
+                                          - (items꞉ TupleValues):
+                                              - (item꞉ TupleValue): []
+                                              - (item꞉ TupleValue): []
+                                              - (item꞉ TupleValue): []
+                                          - (close_paren꞉ CloseParen): ")" # (373..374)
+                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (375..376)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (377..380)
+                                  - (semicolon꞉ Semicolon): ";" # (380..381)
+                          - (close_brace꞉ CloseBrace): "}" # (384..385)
+              - (close_brace꞉ CloseBrace): "}" # (386..387)

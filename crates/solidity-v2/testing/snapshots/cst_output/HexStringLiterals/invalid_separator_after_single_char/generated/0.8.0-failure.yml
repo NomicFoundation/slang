@@ -1,21 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                                    │ 0..12
-  2  │     function f() {                                                                                                              │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/HexStringLiterals/invalid_separator_after_single_char/input.sol │ 32..159
-  4  │ hex"1_2"                                                                                                                        │ 160..168
-  5  │ // <<<                                                                                                                          │ 169..175
-  6  │ ;                                                                                                                               │ 176..177
-  7  │     }                                                                                                                           │ 178..183
-  8  │ }                                                                                                                               │ 184..185
+  1  │ pragma solidity *;                                                                                                              │ 0..18
+  2  │                                                                                                                                 │ 19..19
+  3  │ contract C {                                                                                                                    │ 20..32
+  4  │     function f() {                                                                                                              │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/HexStringLiterals/invalid_separator_after_single_char/input.sol │ 52..179
+  6  │ hex"1_2"                                                                                                                        │ 180..188
+  7  │ // <<<                                                                                                                          │ 189..195
+  8  │ ;                                                                                                                               │ 196..197
+  9  │     }                                                                                                                           │ 198..203
+  10 │ }                                                                                                                               │ 204..205
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected HexKeyword. One of AddressKeyword, AssemblyKeyword, AtKeyword, Bang, BoolKeyword, BreakKeyword, BytesKeyword, CloseBrace, ContinueKeyword, DecimalLiteral, DeleteKeyword, DoKeyword, EmitKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, ForKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IfKeyword, IntKeyword, LayoutKeyword, MappingKeyword, Minus, MinusMinus, NewKeyword, OpenBrace, OpenBracket, OpenParen, PayableKeyword, PlusPlus, ReturnKeyword, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TryKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UncheckedKeyword, UnicodeStringLiteral, WhileKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/HexStringLiterals/invalid_separator_after_single_char/input.sol:4:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/HexStringLiterals/invalid_separator_after_single_char/input.sol:6:1]
        │
-     4 │ hex"1_2"
+     6 │ hex"1_2"
        │ ─┬─  
        │  ╰─── Error occurred here.
     ───╯

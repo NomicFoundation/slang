@@ -1,3 +1,5 @@
+pragma solidity *;
+
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/emit_contextual/input.sol
 // Emitting events introduced syntactically in 0.4.21 but `emit` was usable as identifier until 0.5.0
 

@@ -1,21 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/pratt_precedence_recovery/input.sol │ 0..110
-  2  │ contract A {                                                                                                   │ 111..123
-  3  │ 	function a() {                                                                                                │ 124..139
-  4  │ 		2 + (                                                                                                        │ 140..147
-  5  │ 	}                                                                                                             │ 148..150
-  6  │ }                                                                                                              │ 151..152
-  7  │                                                                                                                │ 153..153
-  8  │ // <<<                                                                                                         │ 154..160
+  1  │ pragma solidity *;                                                                                             │ 0..18
+  2  │                                                                                                                │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/pratt_precedence_recovery/input.sol │ 20..130
+  4  │ contract A {                                                                                                   │ 131..143
+  5  │ 	function a() {                                                                                                │ 144..159
+  6  │ 		2 + (                                                                                                        │ 160..167
+  7  │ 	}                                                                                                             │ 168..170
+  8  │ }                                                                                                              │ 171..172
+  9  │                                                                                                                │ 173..173
+  10 │ // <<<                                                                                                         │ 174..180
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected CloseBrace. One of AddressKeyword, AtKeyword, Bang, BoolKeyword, BytesKeyword, CloseParen, Comma, DecimalLiteral, DeleteKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, FromKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IntKeyword, LayoutKeyword, Minus, MinusMinus, NewKeyword, OpenBracket, OpenParen, PayableKeyword, PlusPlus, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UnicodeStringLiteral was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/pratt_precedence_recovery/input.sol:5:2]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/pratt_precedence_recovery/input.sol:7:2]
        │
-     5 │     }
+     7 │     }
        │     ┬  
        │     ╰── Error occurred here.
     ───╯

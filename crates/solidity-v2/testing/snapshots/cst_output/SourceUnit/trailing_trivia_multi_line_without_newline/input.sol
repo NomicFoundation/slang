@@ -1,3 +1,5 @@
+pragma solidity *;
+
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/trailing_trivia_multi_line_without_newline/input.sol
 contract A {} /* some comment */
 contract B {}

@@ -1,41 +1,53 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                            │ 0..12
-  2  │     function f() {                                                                                                      │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_abicoder/input.sol │ 32..151
-  4  │ // Always valid as an identifier (never reserved):                                                                      │ 152..202
-  5  │ uint abicoder;                                                                                                          │ 203..217
-  6  │                                                                                                                         │ 218..218
-  7  │ // <<<                                                                                                                  │ 219..225
-  8  │     }                                                                                                                   │ 226..231
-  9  │ }                                                                                                                       │ 232..233
+  1  │ pragma solidity *;                                                                                                      │ 0..18
+  2  │                                                                                                                         │ 19..19
+  3  │ contract C {                                                                                                            │ 20..32
+  4  │     function f() {                                                                                                      │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_abicoder/input.sol │ 52..171
+  6  │ // Always valid as an identifier (never reserved):                                                                      │ 172..222
+  7  │ uint abicoder;                                                                                                          │ 223..237
+  8  │                                                                                                                         │ 238..238
+  9  │ // <<<                                                                                                                  │ 239..245
+  10 │     }                                                                                                                   │ 246..251
+  11 │ }                                                                                                                       │ 252..253
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..233)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..233)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..233)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..253)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..253)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (20..253)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..231)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..231)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (37..251)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (37..251)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..231)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # "uint abicoder;" (203..217)
-                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "uint abicoder;" (203..217)
-                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "uint abicoder" (203..216)
-                                      - (declaration꞉ VariableDeclaration): # "uint abicoder" (203..216)
-                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (203..207)
-                                          - (name꞉ Identifier): "abicoder" # (208..216)
-                                  - (semicolon꞉ Semicolon): ";" # (216..217)
-                          - (close_brace꞉ CloseBrace): "}" # (230..231)
-              - (close_brace꞉ CloseBrace): "}" # (232..233)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (50..251)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # "uint abicoder;" (223..237)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "uint abicoder;" (223..237)
+                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "uint abicoder" (223..236)
+                                      - (declaration꞉ VariableDeclaration): # "uint abicoder" (223..236)
+                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (223..227)
+                                          - (name꞉ Identifier): "abicoder" # (228..236)
+                                  - (semicolon꞉ Semicolon): ";" # (236..237)
+                          - (close_brace꞉ CloseBrace): "}" # (250..251)
+              - (close_brace꞉ CloseBrace): "}" # (252..253)

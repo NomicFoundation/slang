@@ -311,11 +311,6 @@ mod contract_definition {
     fn unterminated_body() -> Result<()> {
         run("ContractDefinition", "unterminated_body")
     }
-
-    #[test]
-    fn zero_length_input() -> Result<()> {
-        run("ContractDefinition", "zero_length_input")
-    }
 }
 
 mod contract_members {

@@ -1,14 +1,16 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ uint public constant x = 7;                                                      │ 0..27
+  1  │ pragma solidity *;                                                               │ 0..18
+  2  │                                                                                  │ 19..19
+  3  │ uint public constant x = 7;                                                      │ 20..47
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected PublicKeyword. One of ConstantKeyword, OpenBracket was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ConstantDefinition/invalid_visibility/input.sol:1:6]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ConstantDefinition/invalid_visibility/input.sol:3:6]
        │
-     1 │ uint public constant x = 7;
+     3 │ uint public constant x = 7;
        │      ───┬──  
        │         ╰──── Error occurred here.
     ───╯

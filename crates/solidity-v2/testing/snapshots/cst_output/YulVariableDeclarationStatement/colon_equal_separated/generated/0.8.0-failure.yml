@@ -1,24 +1,26 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                                    │ 0..12
-  2  │     function f() {                                                                                                              │ 13..31
-  3  │         assembly {                                                                                                              │ 32..50
-  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulVariableDeclarationStatement/colon_equal_separated/input.sol │ 51..178
-  5  │ // ColonEqual was two separate tokens before "0.5.0":                                                                           │ 179..232
-  6  │ let foo : = 0                                                                                                                   │ 233..246
-  7  │                                                                                                                                 │ 247..247
-  8  │ // <<<                                                                                                                          │ 248..254
-  9  │         }                                                                                                                       │ 255..264
-  10 │     }                                                                                                                           │ 265..270
-  11 │ }                                                                                                                               │ 271..272
+  1  │ pragma solidity *;                                                                                                              │ 0..18
+  2  │                                                                                                                                 │ 19..19
+  3  │ contract C {                                                                                                                    │ 20..32
+  4  │     function f() {                                                                                                              │ 33..51
+  5  │         assembly {                                                                                                              │ 52..70
+  6  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulVariableDeclarationStatement/colon_equal_separated/input.sol │ 71..198
+  7  │ // ColonEqual was two separate tokens before "0.5.0":                                                                           │ 199..252
+  8  │ let foo : = 0                                                                                                                   │ 253..266
+  9  │                                                                                                                                 │ 267..267
+  10 │ // <<<                                                                                                                          │ 268..274
+  11 │         }                                                                                                                       │ 275..284
+  12 │     }                                                                                                                           │ 285..290
+  13 │ }                                                                                                                               │ 291..292
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of YulBreakKeyword, YulCloseBrace, YulColonEqual, YulComma, YulContinueKeyword, YulDecimalLiteral, YulFalseKeyword, YulForKeyword, YulFunctionKeyword, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulIfKeyword, YulLeaveKeyword, YulLetKeyword, YulOpenBrace, YulStringLiteral, YulSwitchKeyword, YulTrueKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulVariableDeclarationStatement/colon_equal_separated/input.sol:6:9]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulVariableDeclarationStatement/colon_equal_separated/input.sol:8:9]
        │
-     6 │ let foo : = 0
+     8 │ let foo : = 0
        │         ┬  
        │         ╰── Error occurred here.
     ───╯

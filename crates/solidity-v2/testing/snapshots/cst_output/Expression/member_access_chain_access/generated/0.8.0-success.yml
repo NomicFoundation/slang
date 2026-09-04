@@ -1,52 +1,64 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                    │ 0..12
-  2  │     function f() {                                                                                              │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/member_access_chain_access/input.sol │ 32..143
-  4  │ x.y.z[1].w                                                                                                      │ 144..154
-  5  │                                                                                                                 │ 155..155
-  6  │ // <<<                                                                                                          │ 156..162
-  7  │ ;                                                                                                               │ 163..164
-  8  │     }                                                                                                           │ 165..170
-  9  │ }                                                                                                               │ 171..172
+  1  │ pragma solidity *;                                                                                              │ 0..18
+  2  │                                                                                                                 │ 19..19
+  3  │ contract C {                                                                                                    │ 20..32
+  4  │     function f() {                                                                                              │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/member_access_chain_access/input.sol │ 52..163
+  6  │ x.y.z[1].w                                                                                                      │ 164..174
+  7  │                                                                                                                 │ 175..175
+  8  │ // <<<                                                                                                          │ 176..182
+  9  │ ;                                                                                                               │ 183..184
+  10 │     }                                                                                                           │ 185..190
+  11 │ }                                                                                                               │ 191..192
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..172)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..172)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..172)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..192)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..192)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (20..192)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..170)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..170)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (37..190)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (37..190)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..170)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # "x.y.z[1].w\n\n// <<<\n;" (144..164)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "x.y.z[1].w\n\n// <<<\n;" (144..164)
-                                  - (expression꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "x.y.z[1].w" (144..154)
-                                      - (operand꞉ Expression) ► (index_access_expression꞉ IndexAccessExpression): # "x.y.z[1]" (144..152)
-                                          - (operand꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "x.y.z" (144..149)
-                                              - (operand꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "x.y" (144..147)
-                                                  - (operand꞉ Expression) ► (identifier꞉ Identifier): "x" # (144..145)
-                                                  - (period꞉ Period): "." # (145..146)
-                                                  - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "y" # (146..147)
-                                              - (period꞉ Period): "." # (147..148)
-                                              - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "z" # (148..149)
-                                          - (open_bracket꞉ OpenBracket): "[" # (149..150)
-                                          - (start꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (150..151)
-                                              - (literal꞉ DecimalLiteral): "1" # (150..151)
-                                          - (close_bracket꞉ CloseBracket): "]" # (151..152)
-                                      - (period꞉ Period): "." # (152..153)
-                                      - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "w" # (153..154)
-                                  - (semicolon꞉ Semicolon): ";" # (163..164)
-                          - (close_brace꞉ CloseBrace): "}" # (169..170)
-              - (close_brace꞉ CloseBrace): "}" # (171..172)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (50..190)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # "x.y.z[1].w\n\n// <<<\n;" (164..184)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "x.y.z[1].w\n\n// <<<\n;" (164..184)
+                                  - (expression꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "x.y.z[1].w" (164..174)
+                                      - (operand꞉ Expression) ► (index_access_expression꞉ IndexAccessExpression): # "x.y.z[1]" (164..172)
+                                          - (operand꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "x.y.z" (164..169)
+                                              - (operand꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "x.y" (164..167)
+                                                  - (operand꞉ Expression) ► (identifier꞉ Identifier): "x" # (164..165)
+                                                  - (period꞉ Period): "." # (165..166)
+                                                  - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "y" # (166..167)
+                                              - (period꞉ Period): "." # (167..168)
+                                              - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "z" # (168..169)
+                                          - (open_bracket꞉ OpenBracket): "[" # (169..170)
+                                          - (start꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (170..171)
+                                              - (literal꞉ DecimalLiteral): "1" # (170..171)
+                                          - (close_bracket꞉ CloseBracket): "]" # (171..172)
+                                      - (period꞉ Period): "." # (172..173)
+                                      - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "w" # (173..174)
+                                  - (semicolon꞉ Semicolon): ";" # (183..184)
+                          - (close_brace꞉ CloseBrace): "}" # (189..190)
+              - (close_brace꞉ CloseBrace): "}" # (191..192)

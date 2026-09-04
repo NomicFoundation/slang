@@ -1,25 +1,27 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                │ 0..12
-  2  │     function f()                                                                                            │ 13..29
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Block/postfix_recovery_regression/input.sol │ 30..137
-  4  │ // Make sure we don't panic when encountering an unwinding close brace in a precedence parser               │ 138..231
-  5  │                                                                                                             │ 232..232
-  6  │ {                                                                                                           │ 233..234
-  7  │     a.b('                                                                                                   │ 235..244
-  8  │         }');                                                                                                │ 245..257
-  9  │ }                                                                                                           │ 258..259
-  10 │                                                                                                             │ 260..260
-  11 │ // <<<                                                                                                      │ 261..267
-  12 │ }                                                                                                           │ 268..269
+  1  │ pragma solidity *;                                                                                          │ 0..18
+  2  │                                                                                                             │ 19..19
+  3  │ contract C {                                                                                                │ 20..32
+  4  │     function f()                                                                                            │ 33..49
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Block/postfix_recovery_regression/input.sol │ 50..157
+  6  │ // Make sure we don't panic when encountering an unwinding close brace in a precedence parser               │ 158..251
+  7  │                                                                                                             │ 252..252
+  8  │ {                                                                                                           │ 253..254
+  9  │     a.b('                                                                                                   │ 255..264
+  10 │         }');                                                                                                │ 265..277
+  11 │ }                                                                                                           │ 278..279
+  12 │                                                                                                             │ 280..280
+  13 │ // <<<                                                                                                      │ 281..287
+  14 │ }                                                                                                           │ 288..289
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of AddressKeyword, AtKeyword, Bang, BoolKeyword, BytesKeyword, CloseParen, DecimalLiteral, DeleteKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, FromKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IntKeyword, LayoutKeyword, Minus, MinusMinus, NewKeyword, OpenBrace, OpenBracket, OpenParen, PayableKeyword, PlusPlus, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UnicodeStringLiteral was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/Block/postfix_recovery_regression/input.sol:7:9]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/Block/postfix_recovery_regression/input.sol:9:9]
        │
-     7 │     a.b('
+     9 │     a.b('
        │         ┬  
        │         ╰── Error occurred here.
     ───╯

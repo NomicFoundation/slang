@@ -1,24 +1,26 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                                   │ 0..12
-  2  │     function f() {                                                                                                             │ 13..31
-  3  │         assembly {                                                                                                             │ 32..50
-  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulVariableAssignmentStatement/colon_equal_separated/input.sol │ 51..177
-  5  │ // ColonEqual was two separate tokens before "0.5.0":                                                                          │ 178..231
-  6  │ foo : = 0                                                                                                                      │ 232..241
-  7  │                                                                                                                                │ 242..242
-  8  │ // <<<                                                                                                                         │ 243..249
-  9  │         }                                                                                                                      │ 250..259
-  10 │     }                                                                                                                          │ 260..265
-  11 │ }                                                                                                                              │ 266..267
+  1  │ pragma solidity *;                                                                                                             │ 0..18
+  2  │                                                                                                                                │ 19..19
+  3  │ contract C {                                                                                                                   │ 20..32
+  4  │     function f() {                                                                                                             │ 33..51
+  5  │         assembly {                                                                                                             │ 52..70
+  6  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulVariableAssignmentStatement/colon_equal_separated/input.sol │ 71..197
+  7  │ // ColonEqual was two separate tokens before "0.5.0":                                                                          │ 198..251
+  8  │ foo : = 0                                                                                                                      │ 252..261
+  9  │                                                                                                                                │ 262..262
+  10 │ // <<<                                                                                                                         │ 263..269
+  11 │         }                                                                                                                      │ 270..279
+  12 │     }                                                                                                                          │ 280..285
+  13 │ }                                                                                                                              │ 286..287
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of YulBreakKeyword, YulCloseBrace, YulColonEqual, YulComma, YulContinueKeyword, YulDecimalLiteral, YulFalseKeyword, YulForKeyword, YulFunctionKeyword, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulIfKeyword, YulLeaveKeyword, YulLetKeyword, YulOpenBrace, YulOpenParen, YulPeriod, YulStringLiteral, YulSwitchKeyword, YulTrueKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulVariableAssignmentStatement/colon_equal_separated/input.sol:6:5]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulVariableAssignmentStatement/colon_equal_separated/input.sol:8:5]
        │
-     6 │ foo : = 0
+     8 │ foo : = 0
        │     ┬  
        │     ╰── Error occurred here.
     ───╯

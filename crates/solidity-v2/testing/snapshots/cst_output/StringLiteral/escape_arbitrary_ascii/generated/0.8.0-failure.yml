@@ -1,23 +1,25 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                   │ 0..12
-  2  │     function f() {                                                                                             │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/StringLiteral/escape_arbitrary_ascii/input.sol │ 32..142
-  4  │ // Disallowed post 0.4.25                                                                                      │ 143..168
-  5  │ "\a"                                                                                                           │ 169..173
-  6  │                                                                                                                │ 174..174
-  7  │ // <<<                                                                                                         │ 175..181
-  8  │ ;                                                                                                              │ 182..183
-  9  │     }                                                                                                          │ 184..189
-  10 │ }                                                                                                              │ 190..191
+  1  │ pragma solidity *;                                                                                             │ 0..18
+  2  │                                                                                                                │ 19..19
+  3  │ contract C {                                                                                                   │ 20..32
+  4  │     function f() {                                                                                             │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/StringLiteral/escape_arbitrary_ascii/input.sol │ 52..162
+  6  │ // Disallowed post 0.4.25                                                                                      │ 163..188
+  7  │ "\a"                                                                                                           │ 189..193
+  8  │                                                                                                                │ 194..194
+  9  │ // <<<                                                                                                         │ 195..201
+  10 │ ;                                                                                                              │ 202..203
+  11 │     }                                                                                                          │ 204..209
+  12 │ }                                                                                                              │ 210..211
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of AddressKeyword, AssemblyKeyword, AtKeyword, Bang, BoolKeyword, BreakKeyword, BytesKeyword, CloseBrace, ContinueKeyword, DecimalLiteral, DeleteKeyword, DoKeyword, EmitKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, ForKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IfKeyword, IntKeyword, LayoutKeyword, MappingKeyword, Minus, MinusMinus, NewKeyword, OpenBrace, OpenBracket, OpenParen, PayableKeyword, PlusPlus, ReturnKeyword, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TryKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UncheckedKeyword, UnicodeStringLiteral, WhileKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/StringLiteral/escape_arbitrary_ascii/input.sol:5:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/StringLiteral/escape_arbitrary_ascii/input.sol:7:1]
        │
-     5 │ "\a"
+     7 │ "\a"
        │ ─┬  
        │  ╰── Error occurred here.
     ───╯

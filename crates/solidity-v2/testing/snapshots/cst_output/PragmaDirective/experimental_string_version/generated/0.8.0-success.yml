@@ -1,17 +1,29 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/PragmaDirective/experimental_string_version/input.sol │ 0..117
-  2  │ pragma experimental "1.2.3";                                                                                          │ 118..146
-  3  │                                                                                                                       │ 147..147
-  4  │ // <<<                                                                                                                │ 148..154
+  1  │ pragma solidity *;                                                                                                    │ 0..18
+  2  │                                                                                                                       │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/PragmaDirective/experimental_string_version/input.sol │ 20..137
+  4  │ pragma experimental "1.2.3";                                                                                          │ 138..166
+  5  │                                                                                                                       │ 167..167
+  6  │ // <<<                                                                                                                │ 168..174
 
 Tree:
-  - (root꞉ SourceUnit): # 'pragma experimental "1.2.3";' (118..146)
-      - (members꞉ SourceUnitMembers): # 'pragma experimental "1.2.3";' (118..146)
-          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # 'pragma experimental "1.2.3";' (118..146)
-              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (118..124)
-              - (pragma꞉ Pragma) ► (experimental_pragma꞉ ExperimentalPragma): # 'experimental "1.2.3"' (125..145)
-                  - (experimental_keyword꞉ ExperimentalKeyword): "experimental" # (125..137)
-                  - (feature꞉ ExperimentalFeature) ► (pragma_string_literal꞉ PragmaStringLiteral): '"1.2.3"' # (138..145)
-              - (semicolon꞉ PragmaSemicolon): ";" # (145..146)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..166)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..166)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # 'pragma experimental "1.2.3";' (138..166)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (138..144)
+              - (pragma꞉ Pragma) ► (experimental_pragma꞉ ExperimentalPragma): # 'experimental "1.2.3"' (145..165)
+                  - (experimental_keyword꞉ ExperimentalKeyword): "experimental" # (145..157)
+                  - (feature꞉ ExperimentalFeature) ► (pragma_string_literal꞉ PragmaStringLiteral): '"1.2.3"' # (158..165)
+              - (semicolon꞉ PragmaSemicolon): ";" # (165..166)

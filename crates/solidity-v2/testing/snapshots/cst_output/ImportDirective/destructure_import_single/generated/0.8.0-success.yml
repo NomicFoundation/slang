@@ -1,24 +1,36 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ImportDirective/destructure_import_single/input.sol │ 0..115
-  2  │ import { x as y } from "foo";                                                                                       │ 116..145
-  3  │ // <<<                                                                                                              │ 146..152
+  1  │ pragma solidity *;                                                                                                  │ 0..18
+  2  │                                                                                                                     │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ImportDirective/destructure_import_single/input.sol │ 20..135
+  4  │ import { x as y } from "foo";                                                                                       │ 136..165
+  5  │ // <<<                                                                                                              │ 166..172
 
 Tree:
-  - (root꞉ SourceUnit): # 'import { x as y } from "foo";' (116..145)
-      - (members꞉ SourceUnitMembers): # 'import { x as y } from "foo";' (116..145)
-          - (item꞉ SourceUnitMember) ► (import_directive꞉ ImportDirective): # 'import { x as y } from "foo";' (116..145)
-              - (import_keyword꞉ ImportKeyword): "import" # (116..122)
-              - (clause꞉ ImportClause) ► (import_deconstruction꞉ ImportDeconstruction): # '{ x as y } from "foo"' (123..144)
-                  - (open_brace꞉ OpenBrace): "{" # (123..124)
-                  - (symbols꞉ ImportDeconstructionSymbols): # "x as y" (125..131)
-                      - (item꞉ ImportDeconstructionSymbol): # "x as y" (125..131)
-                          - (name꞉ Identifier): "x" # (125..126)
-                          - (alias꞉ ImportAlias): # "as y" (127..131)
-                              - (as_keyword꞉ AsKeyword): "as" # (127..129)
-                              - (identifier꞉ Identifier): "y" # (130..131)
-                  - (close_brace꞉ CloseBrace): "}" # (132..133)
-                  - (from_keyword꞉ FromKeyword): "from" # (134..138)
-                  - (path꞉ StringLiteral): '"foo"' # (139..144)
-              - (semicolon꞉ Semicolon): ";" # (144..145)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..165)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..165)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (import_directive꞉ ImportDirective): # 'import { x as y } from "foo";' (136..165)
+              - (import_keyword꞉ ImportKeyword): "import" # (136..142)
+              - (clause꞉ ImportClause) ► (import_deconstruction꞉ ImportDeconstruction): # '{ x as y } from "foo"' (143..164)
+                  - (open_brace꞉ OpenBrace): "{" # (143..144)
+                  - (symbols꞉ ImportDeconstructionSymbols): # "x as y" (145..151)
+                      - (item꞉ ImportDeconstructionSymbol): # "x as y" (145..151)
+                          - (name꞉ Identifier): "x" # (145..146)
+                          - (alias꞉ ImportAlias): # "as y" (147..151)
+                              - (as_keyword꞉ AsKeyword): "as" # (147..149)
+                              - (identifier꞉ Identifier): "y" # (150..151)
+                  - (close_brace꞉ CloseBrace): "}" # (152..153)
+                  - (from_keyword꞉ FromKeyword): "from" # (154..158)
+                  - (path꞉ StringLiteral): '"foo"' # (159..164)
+              - (semicolon꞉ Semicolon): ";" # (164..165)

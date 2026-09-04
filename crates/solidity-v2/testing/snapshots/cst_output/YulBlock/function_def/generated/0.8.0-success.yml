@@ -1,77 +1,89 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                    │ 0..12
-  2  │     function f() {                                                                              │ 13..31
-  3  │         assembly                                                                                │ 32..48
-  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulBlock/function_def/input.sol │ 49..144
-  5  │ {                                                                                               │ 145..146
-  6  │ 	function mult(a, b) -> result {                                                                │ 147..179
-  7  │ 		result := mul(a, b)                                                                           │ 180..201
-  8  │ 	}                                                                                              │ 202..204
-  9  │ }                                                                                               │ 205..206
-  10 │                                                                                                 │ 207..207
-  11 │ // <<<                                                                                          │ 208..214
-  12 │     }                                                                                           │ 215..220
-  13 │ }                                                                                               │ 221..222
+  1  │ pragma solidity *;                                                                              │ 0..18
+  2  │                                                                                                 │ 19..19
+  3  │ contract C {                                                                                    │ 20..32
+  4  │     function f() {                                                                              │ 33..51
+  5  │         assembly                                                                                │ 52..68
+  6  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulBlock/function_def/input.sol │ 69..164
+  7  │ {                                                                                               │ 165..166
+  8  │ 	function mult(a, b) -> result {                                                                │ 167..199
+  9  │ 		result := mul(a, b)                                                                           │ 200..221
+  10 │ 	}                                                                                              │ 222..224
+  11 │ }                                                                                               │ 225..226
+  12 │                                                                                                 │ 227..227
+  13 │ // <<<                                                                                          │ 228..234
+  14 │     }                                                                                           │ 235..240
+  15 │ }                                                                                               │ 241..242
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n        assembly\n/..." (0..222)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n        assembly\n/..." (0..222)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        assembly\n/..." (0..222)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..242)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..242)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        assembly\n/..." (20..242)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n        assembly\n// >>> Copied from..." (17..220)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        assembly\n// >>> Copied from..." (17..220)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n        assembly\n// >>> Copied from..." (37..240)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        assembly\n// >>> Copied from..." (37..240)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        assembly\n// >>> Copied from crates/solid..." (30..220)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # "assembly\n// >>> Copied from crates/solidity/testin..." (40..206)
-                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement): # "assembly\n// >>> Copied from crates/solidity/testin..." (40..206)
-                                  - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (40..48)
-                                  - (body꞉ YulBlock): # "{\n\tfunction mult(a, b) -> result {\n\t\tresult := mul..." (145..206)
-                                      - (open_brace꞉ YulOpenBrace): "{" # (145..146)
-                                      - (statements꞉ YulStatements): # "function mult(a, b) -> result {\n\t\tresult := mul(a,..." (148..204)
-                                          - (item꞉ YulStatement) ► (yul_function_definition꞉ YulFunctionDefinition): # "function mult(a, b) -> result {\n\t\tresult := mul(a,..." (148..204)
-                                              - (function_keyword꞉ YulFunctionKeyword): "function" # (148..156)
-                                              - (name꞉ YulIdentifier): "mult" # (157..161)
-                                              - (parameters꞉ YulParametersDeclaration): # "(a, b)" (161..167)
-                                                  - (open_paren꞉ YulOpenParen): "(" # (161..162)
-                                                  - (parameters꞉ YulParameters): # "a, b" (162..166)
-                                                      - (item꞉ YulIdentifier): "a" # (162..163)
-                                                      - (item꞉ YulIdentifier): "b" # (165..166)
-                                                  - (close_paren꞉ YulCloseParen): ")" # (166..167)
-                                              - (returns꞉ YulReturnsDeclaration): # "-> result" (168..177)
-                                                  - (minus_greater_than꞉ YulMinusGreaterThan): "->" # (168..170)
-                                                  - (variables꞉ YulVariableNames): # "result" (171..177)
-                                                      - (item꞉ YulIdentifier): "result" # (171..177)
-                                              - (body꞉ YulBlock): # "{\n\t\tresult := mul(a, b)\n\t}" (178..204)
-                                                  - (open_brace꞉ YulOpenBrace): "{" # (178..179)
-                                                  - (statements꞉ YulStatements): # "result := mul(a, b)" (182..201)
-                                                      - (item꞉ YulStatement) ► (yul_variable_assignment_statement꞉ YulVariableAssignmentStatement): # "result := mul(a, b)" (182..201)
-                                                          - (variables꞉ YulPaths): # "result" (182..188)
-                                                              - (item꞉ YulPath): # "result" (182..188)
-                                                                  - (item꞉ YulIdentifier): "result" # (182..188)
-                                                          - (assignment꞉ YulColonEqual): ":=" # (189..191)
-                                                          - (expression꞉ YulExpression) ► (yul_function_call_expression꞉ YulFunctionCallExpression): # "mul(a, b)" (192..201)
-                                                              - (operand꞉ YulExpression) ► (yul_path꞉ YulPath): # "mul" (192..195)
-                                                                  - (item꞉ YulIdentifier): "mul" # (192..195)
-                                                              - (open_paren꞉ YulOpenParen): "(" # (195..196)
-                                                              - (arguments꞉ YulArguments): # "a, b" (196..200)
-                                                                  - (item꞉ YulExpression) ► (yul_path꞉ YulPath): # "a" (196..197)
-                                                                      - (item꞉ YulIdentifier): "a" # (196..197)
-                                                                  - (item꞉ YulExpression) ► (yul_path꞉ YulPath): # "b" (199..200)
-                                                                      - (item꞉ YulIdentifier): "b" # (199..200)
-                                                              - (close_paren꞉ YulCloseParen): ")" # (200..201)
-                                                  - (close_brace꞉ YulCloseBrace): "}" # (203..204)
-                                      - (close_brace꞉ YulCloseBrace): "}" # (205..206)
-                          - (close_brace꞉ CloseBrace): "}" # (219..220)
-              - (close_brace꞉ CloseBrace): "}" # (221..222)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        assembly\n// >>> Copied from crates/solid..." (50..240)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # "assembly\n// >>> Copied from crates/solidity/testin..." (60..226)
+                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement): # "assembly\n// >>> Copied from crates/solidity/testin..." (60..226)
+                                  - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (60..68)
+                                  - (body꞉ YulBlock): # "{\n\tfunction mult(a, b) -> result {\n\t\tresult := mul..." (165..226)
+                                      - (open_brace꞉ YulOpenBrace): "{" # (165..166)
+                                      - (statements꞉ YulStatements): # "function mult(a, b) -> result {\n\t\tresult := mul(a,..." (168..224)
+                                          - (item꞉ YulStatement) ► (yul_function_definition꞉ YulFunctionDefinition): # "function mult(a, b) -> result {\n\t\tresult := mul(a,..." (168..224)
+                                              - (function_keyword꞉ YulFunctionKeyword): "function" # (168..176)
+                                              - (name꞉ YulIdentifier): "mult" # (177..181)
+                                              - (parameters꞉ YulParametersDeclaration): # "(a, b)" (181..187)
+                                                  - (open_paren꞉ YulOpenParen): "(" # (181..182)
+                                                  - (parameters꞉ YulParameters): # "a, b" (182..186)
+                                                      - (item꞉ YulIdentifier): "a" # (182..183)
+                                                      - (item꞉ YulIdentifier): "b" # (185..186)
+                                                  - (close_paren꞉ YulCloseParen): ")" # (186..187)
+                                              - (returns꞉ YulReturnsDeclaration): # "-> result" (188..197)
+                                                  - (minus_greater_than꞉ YulMinusGreaterThan): "->" # (188..190)
+                                                  - (variables꞉ YulVariableNames): # "result" (191..197)
+                                                      - (item꞉ YulIdentifier): "result" # (191..197)
+                                              - (body꞉ YulBlock): # "{\n\t\tresult := mul(a, b)\n\t}" (198..224)
+                                                  - (open_brace꞉ YulOpenBrace): "{" # (198..199)
+                                                  - (statements꞉ YulStatements): # "result := mul(a, b)" (202..221)
+                                                      - (item꞉ YulStatement) ► (yul_variable_assignment_statement꞉ YulVariableAssignmentStatement): # "result := mul(a, b)" (202..221)
+                                                          - (variables꞉ YulPaths): # "result" (202..208)
+                                                              - (item꞉ YulPath): # "result" (202..208)
+                                                                  - (item꞉ YulIdentifier): "result" # (202..208)
+                                                          - (assignment꞉ YulColonEqual): ":=" # (209..211)
+                                                          - (expression꞉ YulExpression) ► (yul_function_call_expression꞉ YulFunctionCallExpression): # "mul(a, b)" (212..221)
+                                                              - (operand꞉ YulExpression) ► (yul_path꞉ YulPath): # "mul" (212..215)
+                                                                  - (item꞉ YulIdentifier): "mul" # (212..215)
+                                                              - (open_paren꞉ YulOpenParen): "(" # (215..216)
+                                                              - (arguments꞉ YulArguments): # "a, b" (216..220)
+                                                                  - (item꞉ YulExpression) ► (yul_path꞉ YulPath): # "a" (216..217)
+                                                                      - (item꞉ YulIdentifier): "a" # (216..217)
+                                                                  - (item꞉ YulExpression) ► (yul_path꞉ YulPath): # "b" (219..220)
+                                                                      - (item꞉ YulIdentifier): "b" # (219..220)
+                                                              - (close_paren꞉ YulCloseParen): ")" # (220..221)
+                                                  - (close_brace꞉ YulCloseBrace): "}" # (223..224)
+                                      - (close_brace꞉ YulCloseBrace): "}" # (225..226)
+                          - (close_brace꞉ CloseBrace): "}" # (239..240)
+              - (close_brace꞉ CloseBrace): "}" # (241..242)

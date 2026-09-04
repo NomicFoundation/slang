@@ -1,18 +1,30 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ImportDirective/path_import_with_alias/input.sol │ 0..112
-  2  │ import "foo" as bar;                                                                                             │ 113..133
-  3  │ // <<<                                                                                                           │ 134..140
+  1  │ pragma solidity *;                                                                                               │ 0..18
+  2  │                                                                                                                  │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ImportDirective/path_import_with_alias/input.sol │ 20..132
+  4  │ import "foo" as bar;                                                                                             │ 133..153
+  5  │ // <<<                                                                                                           │ 154..160
 
 Tree:
-  - (root꞉ SourceUnit): # 'import "foo" as bar;' (113..133)
-      - (members꞉ SourceUnitMembers): # 'import "foo" as bar;' (113..133)
-          - (item꞉ SourceUnitMember) ► (import_directive꞉ ImportDirective): # 'import "foo" as bar;' (113..133)
-              - (import_keyword꞉ ImportKeyword): "import" # (113..119)
-              - (clause꞉ ImportClause) ► (path_import꞉ PathImport): # '"foo" as bar' (120..132)
-                  - (path꞉ StringLiteral): '"foo"' # (120..125)
-                  - (alias꞉ ImportAlias): # "as bar" (126..132)
-                      - (as_keyword꞉ AsKeyword): "as" # (126..128)
-                      - (identifier꞉ Identifier): "bar" # (129..132)
-              - (semicolon꞉ Semicolon): ";" # (132..133)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..153)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..153)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (import_directive꞉ ImportDirective): # 'import "foo" as bar;' (133..153)
+              - (import_keyword꞉ ImportKeyword): "import" # (133..139)
+              - (clause꞉ ImportClause) ► (path_import꞉ PathImport): # '"foo" as bar' (140..152)
+                  - (path꞉ StringLiteral): '"foo"' # (140..145)
+                  - (alias꞉ ImportAlias): # "as bar" (146..152)
+                      - (as_keyword꞉ AsKeyword): "as" # (146..148)
+                      - (identifier꞉ Identifier): "bar" # (149..152)
+              - (semicolon꞉ Semicolon): ";" # (152..153)

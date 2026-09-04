@@ -1,19 +1,21 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/end_of_file_trivia_incomplete/input.sol │ 0..114
-  2  │ contract X {}                                                                                                      │ 115..128
-  3  │                                                                                                                    │ 129..129
-  4  │ /* unterminated comment                                                                                            │ 130..153
-  5  │                                                                                                                    │ 154..154
-  6  │ // <<<                                                                                                             │ 155..161
+  1  │ pragma solidity *;                                                                                                 │ 0..18
+  2  │                                                                                                                    │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/end_of_file_trivia_incomplete/input.sol │ 20..134
+  4  │ contract X {}                                                                                                      │ 135..148
+  5  │                                                                                                                    │ 149..149
+  6  │ /* unterminated comment                                                                                            │ 150..173
+  7  │                                                                                                                    │ 174..174
+  8  │ // <<<                                                                                                             │ 175..181
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Slash. One of AbstractKeyword, AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, ContractKeyword, EnumKeyword, ErrorKeyword, EventKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, ImportKeyword, IntKeyword, InterfaceKeyword, LayoutKeyword, LibraryKeyword, MappingKeyword, PragmaKeyword, RevertKeyword, StringKeyword, StructKeyword, TransientKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UsingKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/end_of_file_trivia_incomplete/input.sol:4:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/end_of_file_trivia_incomplete/input.sol:6:1]
        │
-     4 │ /* unterminated comment
+     6 │ /* unterminated comment
        │ ┬  
        │ ╰── Error occurred here.
     ───╯

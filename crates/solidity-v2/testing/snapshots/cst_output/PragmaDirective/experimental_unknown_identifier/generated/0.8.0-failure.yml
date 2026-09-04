@@ -1,16 +1,18 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/PragmaDirective/experimental_unknown_identifier/input.sol │ 0..121
-  2  │ pragma experimental foo;                                                                                                  │ 122..146
-  3  │ // <<<                                                                                                                    │ 147..153
+  1  │ pragma solidity *;                                                                                                        │ 0..18
+  2  │                                                                                                                           │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/PragmaDirective/experimental_unknown_identifier/input.sol │ 20..141
+  4  │ pragma experimental foo;                                                                                                  │ 142..166
+  5  │ // <<<                                                                                                                    │ 167..173
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of ABIEncoderV2Keyword, PragmaStringLiteral, SMTCheckerKeyword, SolidityKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/experimental_unknown_identifier/input.sol:2:21]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/experimental_unknown_identifier/input.sol:4:21]
        │
-     2 │ pragma experimental foo;
+     4 │ pragma experimental foo;
        │                     ┬  
        │                     ╰── Error occurred here.
     ───╯

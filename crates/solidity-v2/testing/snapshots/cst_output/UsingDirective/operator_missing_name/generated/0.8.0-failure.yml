@@ -1,14 +1,16 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ using {as -} for uint global;                                                    │ 0..29
+  1  │ pragma solidity *;                                                               │ 0..18
+  2  │                                                                                  │ 19..19
+  3  │ using {as -} for uint global;                                                    │ 20..49
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected AsKeyword. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/operator_missing_name/input.sol:1:8]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/operator_missing_name/input.sol:3:8]
        │
-     1 │ using {as -} for uint global;
+     3 │ using {as -} for uint global;
        │        ─┬  
        │         ╰── Error occurred here.
     ───╯

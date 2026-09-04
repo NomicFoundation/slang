@@ -1,31 +1,43 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_receive_function_definition/input.sol │ 0..127
-  2  │ contract Sample {                                                                                                               │ 128..145
-  3  │   receive() {                                                                                                                   │ 146..159
-  4  │   }                                                                                                                             │ 160..163
-  5  │ }                                                                                                                               │ 164..165
-  6  │ // <<<                                                                                                                          │ 166..172
+  1  │ pragma solidity *;                                                                                                              │ 0..18
+  2  │                                                                                                                                 │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_receive_function_definition/input.sol │ 20..147
+  4  │ contract Sample {                                                                                                               │ 148..165
+  5  │   receive() {                                                                                                                   │ 166..179
+  6  │   }                                                                                                                             │ 180..183
+  7  │ }                                                                                                                               │ 184..185
+  8  │ // <<<                                                                                                                          │ 186..192
 
 Tree:
-  - (root꞉ SourceUnit): # "contract Sample {\n  receive() {\n  }\n}" (128..165)
-      - (members꞉ SourceUnitMembers): # "contract Sample {\n  receive() {\n  }\n}" (128..165)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  receive() {\n  }\n}" (128..165)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (128..136)
-              - (name꞉ Identifier): "Sample" # (137..143)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..185)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..185)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  receive() {\n  }\n}" (148..185)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (148..156)
+              - (name꞉ Identifier): "Sample" # (157..163)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (144..145)
-              - (members꞉ ContractMembers): # "receive() {\n  }" (148..163)
-                  - (item꞉ ContractMember) ► (receive_function_definition꞉ ReceiveFunctionDefinition): # "receive() {\n  }" (148..163)
-                      - (receive_keyword꞉ ReceiveKeyword): "receive" # (148..155)
-                      - (parameters꞉ ParametersDeclaration): # "()" (155..157)
-                          - (open_paren꞉ OpenParen): "(" # (155..156)
+              - (open_brace꞉ OpenBrace): "{" # (164..165)
+              - (members꞉ ContractMembers): # "receive() {\n  }" (168..183)
+                  - (item꞉ ContractMember) ► (receive_function_definition꞉ ReceiveFunctionDefinition): # "receive() {\n  }" (168..183)
+                      - (receive_keyword꞉ ReceiveKeyword): "receive" # (168..175)
+                      - (parameters꞉ ParametersDeclaration): # "()" (175..177)
+                          - (open_paren꞉ OpenParen): "(" # (175..176)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (156..157)
+                          - (close_paren꞉ CloseParen): ")" # (176..177)
                       - (attributes꞉ ReceiveFunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n  }" (158..163)
-                          - (open_brace꞉ OpenBrace): "{" # (158..159)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n  }" (178..183)
+                          - (open_brace꞉ OpenBrace): "{" # (178..179)
                           - (statements꞉ Statements): []
-                          - (close_brace꞉ CloseBrace): "}" # (162..163)
-              - (close_brace꞉ CloseBrace): "}" # (164..165)
+                          - (close_brace꞉ CloseBrace): "}" # (182..183)
+              - (close_brace꞉ CloseBrace): "}" # (184..185)

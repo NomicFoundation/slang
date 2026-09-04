@@ -1,18 +1,20 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                     │ 0..12
-  2  │     function f() public pure {                                                   │ 13..43
-  3  │         assembly                                                                 │ 44..60
-  4  │     }                                                                            │ 61..66
-  5  │ }                                                                                │ 67..68
+  1  │ pragma solidity *;                                                               │ 0..18
+  2  │                                                                                  │ 19..19
+  3  │ contract C {                                                                     │ 20..32
+  4  │     function f() public pure {                                                   │ 33..63
+  5  │         assembly                                                                 │ 64..80
+  6  │     }                                                                            │ 81..86
+  7  │ }                                                                                │ 87..88
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected YulCloseBrace. One of YulOpenBrace, YulOpenParen, YulStringLiteral was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/AssemblyStatement/missing_open_brace/input.sol:4:5]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/AssemblyStatement/missing_open_brace/input.sol:6:5]
        │
-     4 │     }
+     6 │     }
        │     ┬  
        │     ╰── Error occurred here.
     ───╯

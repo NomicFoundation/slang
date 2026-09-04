@@ -1,20 +1,22 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                         │ 0..12
-  2  │     function f() {                                                                                                   │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/with_location/input.sol │ 32..148
-  4  │ (memory with_location, without_location) = rhs;                                                                      │ 149..196
-  5  │ // <<<                                                                                                               │ 197..203
-  6  │     }                                                                                                                │ 204..209
-  7  │ }                                                                                                                    │ 210..211
+  1  │ pragma solidity *;                                                                                                   │ 0..18
+  2  │                                                                                                                      │ 19..19
+  3  │ contract C {                                                                                                         │ 20..32
+  4  │     function f() {                                                                                                   │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/with_location/input.sol │ 52..168
+  6  │ (memory with_location, without_location) = rhs;                                                                      │ 169..216
+  7  │ // <<<                                                                                                               │ 217..223
+  8  │     }                                                                                                                │ 224..229
+  9  │ }                                                                                                                    │ 230..231
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected MemoryKeyword. One of AddressKeyword, AtKeyword, Bang, BoolKeyword, BytesKeyword, CloseParen, Comma, DecimalLiteral, DeleteKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, Minus, MinusMinus, NewKeyword, OpenBracket, OpenParen, PayableKeyword, PlusPlus, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UnicodeStringLiteral was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/TupleDeconstructionStatement/with_location/input.sol:4:2]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/TupleDeconstructionStatement/with_location/input.sol:6:2]
        │
-     4 │ (memory with_location, without_location) = rhs;
+     6 │ (memory with_location, without_location) = rhs;
        │  ───┬──  
        │     ╰──── Error occurred here.
     ───╯

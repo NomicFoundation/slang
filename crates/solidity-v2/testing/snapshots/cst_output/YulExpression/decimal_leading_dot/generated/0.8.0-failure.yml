@@ -1,21 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                     │ 0..12
-  2  │     function f() {                                                                                               │ 13..31
-  3  │         assembly {                                                                                               │ 32..50
-  4  │             // https://github.com/argotorg/solidity/blob/v0.8.0/test/libyul/yulSyntaxTests/number_literals_2.yul │ 51..163
-  5  │             let x := .1                                                                                          │ 164..187
-  6  │         }                                                                                                        │ 188..197
-  7  │     }                                                                                                            │ 198..203
-  8  │ }                                                                                                                │ 204..205
+  1  │ pragma solidity *;                                                                                               │ 0..18
+  2  │                                                                                                                  │ 19..19
+  3  │ contract C {                                                                                                     │ 20..32
+  4  │     function f() {                                                                                               │ 33..51
+  5  │         assembly {                                                                                               │ 52..70
+  6  │             // https://github.com/argotorg/solidity/blob/v0.8.0/test/libyul/yulSyntaxTests/number_literals_2.yul │ 71..183
+  7  │             let x := .1                                                                                          │ 184..207
+  8  │         }                                                                                                        │ 208..217
+  9  │     }                                                                                                            │ 218..223
+  10 │ }                                                                                                                │ 224..225
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected YulPeriod. One of YulDecimalLiteral, YulFalseKeyword, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulStringLiteral, YulTrueKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulExpression/decimal_leading_dot/input.sol:5:22]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulExpression/decimal_leading_dot/input.sol:7:22]
        │
-     5 │             let x := .1
+     7 │             let x := .1
        │                      ┬  
        │                      ╰── Error occurred here.
     ───╯

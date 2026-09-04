@@ -1,25 +1,37 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_state_variable_declaration/input.sol │ 0..126
-  2  │ contract Sample {                                                                                                              │ 127..144
-  3  │   uint public a;                                                                                                               │ 145..161
-  4  │ }                                                                                                                              │ 162..163
-  5  │ // <<<                                                                                                                         │ 164..170
+  1  │ pragma solidity *;                                                                                                             │ 0..18
+  2  │                                                                                                                                │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_state_variable_declaration/input.sol │ 20..146
+  4  │ contract Sample {                                                                                                              │ 147..164
+  5  │   uint public a;                                                                                                               │ 165..181
+  6  │ }                                                                                                                              │ 182..183
+  7  │ // <<<                                                                                                                         │ 184..190
 
 Tree:
-  - (root꞉ SourceUnit): # "contract Sample {\n  uint public a;\n}" (127..163)
-      - (members꞉ SourceUnitMembers): # "contract Sample {\n  uint public a;\n}" (127..163)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  uint public a;\n}" (127..163)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (127..135)
-              - (name꞉ Identifier): "Sample" # (136..142)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..183)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..183)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  uint public a;\n}" (147..183)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (147..155)
+              - (name꞉ Identifier): "Sample" # (156..162)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (143..144)
-              - (members꞉ ContractMembers): # "uint public a;" (147..161)
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "uint public a;" (147..161)
-                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (147..151)
-                      - (attributes꞉ StateVariableAttributes): # "public" (152..158)
-                          - (item꞉ StateVariableAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (152..158)
-                      - (name꞉ Identifier): "a" # (159..160)
-                      - (semicolon꞉ Semicolon): ";" # (160..161)
-              - (close_brace꞉ CloseBrace): "}" # (162..163)
+              - (open_brace꞉ OpenBrace): "{" # (163..164)
+              - (members꞉ ContractMembers): # "uint public a;" (167..181)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "uint public a;" (167..181)
+                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (167..171)
+                      - (attributes꞉ StateVariableAttributes): # "public" (172..178)
+                          - (item꞉ StateVariableAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (172..178)
+                      - (name꞉ Identifier): "a" # (179..180)
+                      - (semicolon꞉ Semicolon): ";" # (180..181)
+              - (close_brace꞉ CloseBrace): "}" # (182..183)

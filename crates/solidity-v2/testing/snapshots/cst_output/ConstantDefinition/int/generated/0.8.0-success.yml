@@ -1,18 +1,30 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ConstantDefinition/int/input.sol │ 0..96
-  2  │ int constant foo = 0;                                                                            │ 97..118
-  3  │ // <<<                                                                                           │ 119..125
+  1  │ pragma solidity *;                                                                               │ 0..18
+  2  │                                                                                                  │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ConstantDefinition/int/input.sol │ 20..116
+  4  │ int constant foo = 0;                                                                            │ 117..138
+  5  │ // <<<                                                                                           │ 139..145
 
 Tree:
-  - (root꞉ SourceUnit): # "int constant foo = 0;" (97..118)
-      - (members꞉ SourceUnitMembers): # "int constant foo = 0;" (97..118)
-          - (item꞉ SourceUnitMember) ► (constant_definition꞉ ConstantDefinition): # "int constant foo = 0;" (97..118)
-              - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (int_keyword꞉ IntKeyword): "int" # (97..100)
-              - (constant_keyword꞉ ConstantKeyword): "constant" # (101..109)
-              - (name꞉ Identifier): "foo" # (110..113)
-              - (equal꞉ Equal): "=" # (114..115)
-              - (value꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "0" (116..117)
-                  - (literal꞉ DecimalLiteral): "0" # (116..117)
-              - (semicolon꞉ Semicolon): ";" # (117..118)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..138)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..138)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (constant_definition꞉ ConstantDefinition): # "int constant foo = 0;" (117..138)
+              - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (int_keyword꞉ IntKeyword): "int" # (117..120)
+              - (constant_keyword꞉ ConstantKeyword): "constant" # (121..129)
+              - (name꞉ Identifier): "foo" # (130..133)
+              - (equal꞉ Equal): "=" # (134..135)
+              - (value꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "0" (136..137)
+                  - (literal꞉ DecimalLiteral): "0" # (136..137)
+              - (semicolon꞉ Semicolon): ";" # (137..138)

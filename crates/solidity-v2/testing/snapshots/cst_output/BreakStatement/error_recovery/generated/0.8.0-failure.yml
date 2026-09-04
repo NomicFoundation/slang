@@ -1,21 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                            │ 0..12
-  2  │     function f() {                                                                                      │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/BreakStatement/error_recovery/input.sol │ 32..135
-  4  │ break invalid ;                                                                                         │ 136..151
-  5  │                                                                                                         │ 152..152
-  6  │ // <<<                                                                                                  │ 153..159
-  7  │     }                                                                                                   │ 160..165
-  8  │ }                                                                                                       │ 166..167
+  1  │ pragma solidity *;                                                                                      │ 0..18
+  2  │                                                                                                         │ 19..19
+  3  │ contract C {                                                                                            │ 20..32
+  4  │     function f() {                                                                                      │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/BreakStatement/error_recovery/input.sol │ 52..155
+  6  │ break invalid ;                                                                                         │ 156..171
+  7  │                                                                                                         │ 172..172
+  8  │ // <<<                                                                                                  │ 173..179
+  9  │     }                                                                                                   │ 180..185
+  10 │ }                                                                                                       │ 186..187
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Identifier. One of Semicolon was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/BreakStatement/error_recovery/input.sol:4:7]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/BreakStatement/error_recovery/input.sol:6:7]
        │
-     4 │ break invalid ;
+     6 │ break invalid ;
        │       ───┬───  
        │          ╰───── Error occurred here.
     ───╯

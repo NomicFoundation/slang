@@ -1,27 +1,39 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ErrorDefinition/top_level/input.sol │ 0..99
-  2  │ error MyError();                                                                                    │ 100..116
-  3  │ // <<<                                                                                              │ 117..123
+  1  │ pragma solidity *;                                                                                  │ 0..18
+  2  │                                                                                                     │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ErrorDefinition/top_level/input.sol │ 20..119
+  4  │ error MyError();                                                                                    │ 120..136
+  5  │ // <<<                                                                                              │ 137..143
 
 Diagnostics: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ErrorDefinition/top_level/input.sol:2:1]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ErrorDefinition/top_level/input.sol:4:1]
        │
-     2 │ error MyError();
+     4 │ error MyError();
        │ ────────┬───────  
        │         ╰───────── Error occurred here.
     ───╯
 Tree:
-  - (root꞉ SourceUnit): # "error MyError();" (100..116)
-      - (members꞉ SourceUnitMembers): # "error MyError();" (100..116)
-          - (item꞉ SourceUnitMember) ► (error_definition꞉ ErrorDefinition): # "error MyError();" (100..116)
-              - (error_keyword꞉ ErrorKeyword): "error" # (100..105)
-              - (name꞉ Identifier): "MyError" # (106..113)
-              - (members꞉ ErrorParametersDeclaration): # "()" (113..115)
-                  - (open_paren꞉ OpenParen): "(" # (113..114)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..136)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..136)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (error_definition꞉ ErrorDefinition): # "error MyError();" (120..136)
+              - (error_keyword꞉ ErrorKeyword): "error" # (120..125)
+              - (name꞉ Identifier): "MyError" # (126..133)
+              - (members꞉ ErrorParametersDeclaration): # "()" (133..135)
+                  - (open_paren꞉ OpenParen): "(" # (133..134)
                   - (parameters꞉ ErrorParameters): []
-                  - (close_paren꞉ CloseParen): ")" # (114..115)
-              - (semicolon꞉ Semicolon): ";" # (115..116)
+                  - (close_paren꞉ CloseParen): ")" # (134..135)
+              - (semicolon꞉ Semicolon): ";" # (135..136)

@@ -1,46 +1,58 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                 │ 0..12
-  2  │     function f() {                                                                           │ 13..31
-  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/add_mul/input.sol │ 32..124
-  4  │ a * b + c * d                                                                                │ 125..138
-  5  │ // <<<                                                                                       │ 139..145
-  6  │ ;                                                                                            │ 146..147
-  7  │     }                                                                                        │ 148..153
-  8  │ }                                                                                            │ 154..155
+  1  │ pragma solidity *;                                                                           │ 0..18
+  2  │                                                                                              │ 19..19
+  3  │ contract C {                                                                                 │ 20..32
+  4  │     function f() {                                                                           │ 33..51
+  5  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/add_mul/input.sol │ 52..144
+  6  │ a * b + c * d                                                                                │ 145..158
+  7  │ // <<<                                                                                       │ 159..165
+  8  │ ;                                                                                            │ 166..167
+  9  │     }                                                                                        │ 168..173
+  10 │ }                                                                                            │ 174..175
 
 Tree:
-  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..155)
-      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..155)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..155)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
-              - (name꞉ Identifier): "C" # (9..10)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..175)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\ncontract C {\n    function f() ..." (0..175)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (20..175)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (20..28)
+              - (name꞉ Identifier): "C" # (29..30)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..153)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..153)
-                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
-                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
-                          - (open_paren꞉ OpenParen): "(" # (27..28)
+              - (open_brace꞉ OpenBrace): "{" # (31..32)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (37..173)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (37..173)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (37..45)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (46..47)
+                      - (parameters꞉ ParametersDeclaration): # "()" (47..49)
+                          - (open_paren꞉ OpenParen): "(" # (47..48)
                           - (parameters꞉ Parameters): []
-                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                          - (close_paren꞉ CloseParen): ")" # (48..49)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..153)
-                          - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements): # "a * b + c * d\n// <<<\n;" (125..147)
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a * b + c * d\n// <<<\n;" (125..147)
-                                  - (expression꞉ Expression) ► (additive_expression꞉ AdditiveExpression): # "a * b + c * d" (125..138)
-                                      - (left_operand꞉ Expression) ► (multiplicative_expression꞉ MultiplicativeExpression): # "a * b" (125..130)
-                                          - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (125..126)
-                                          - (expression_multiplicative_expression_operator꞉ Expression_MultiplicativeExpression_Operator) ► (asterisk꞉ Asterisk): "*" # (127..128)
-                                          - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (129..130)
-                                      - (expression_additive_expression_operator꞉ Expression_AdditiveExpression_Operator) ► (plus꞉ Plus): "+" # (131..132)
-                                      - (right_operand꞉ Expression) ► (multiplicative_expression꞉ MultiplicativeExpression): # "c * d" (133..138)
-                                          - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "c" # (133..134)
-                                          - (expression_multiplicative_expression_operator꞉ Expression_MultiplicativeExpression_Operator) ► (asterisk꞉ Asterisk): "*" # (135..136)
-                                          - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "d" # (137..138)
-                                  - (semicolon꞉ Semicolon): ";" # (146..147)
-                          - (close_brace꞉ CloseBrace): "}" # (152..153)
-              - (close_brace꞉ CloseBrace): "}" # (154..155)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (50..173)
+                          - (open_brace꞉ OpenBrace): "{" # (50..51)
+                          - (statements꞉ Statements): # "a * b + c * d\n// <<<\n;" (145..167)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a * b + c * d\n// <<<\n;" (145..167)
+                                  - (expression꞉ Expression) ► (additive_expression꞉ AdditiveExpression): # "a * b + c * d" (145..158)
+                                      - (left_operand꞉ Expression) ► (multiplicative_expression꞉ MultiplicativeExpression): # "a * b" (145..150)
+                                          - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (145..146)
+                                          - (expression_multiplicative_expression_operator꞉ Expression_MultiplicativeExpression_Operator) ► (asterisk꞉ Asterisk): "*" # (147..148)
+                                          - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (149..150)
+                                      - (expression_additive_expression_operator꞉ Expression_AdditiveExpression_Operator) ► (plus꞉ Plus): "+" # (151..152)
+                                      - (right_operand꞉ Expression) ► (multiplicative_expression꞉ MultiplicativeExpression): # "c * d" (153..158)
+                                          - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "c" # (153..154)
+                                          - (expression_multiplicative_expression_operator꞉ Expression_MultiplicativeExpression_Operator) ► (asterisk꞉ Asterisk): "*" # (155..156)
+                                          - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "d" # (157..158)
+                                  - (semicolon꞉ Semicolon): ";" # (166..167)
+                          - (close_brace꞉ CloseBrace): "}" # (172..173)
+              - (close_brace꞉ CloseBrace): "}" # (174..175)

@@ -1,36 +1,48 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_error_definition/input.sol │ 0..116
-  2  │ contract Sample {                                                                                                    │ 117..134
-  3  │   error Error1();                                                                                                    │ 135..152
-  4  │ }                                                                                                                    │ 153..154
-  5  │ // <<<                                                                                                               │ 155..161
+  1  │ pragma solidity *;                                                                                                   │ 0..18
+  2  │                                                                                                                      │ 19..19
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_error_definition/input.sol │ 20..136
+  4  │ contract Sample {                                                                                                    │ 137..154
+  5  │   error Error1();                                                                                                    │ 155..172
+  6  │ }                                                                                                                    │ 173..174
+  7  │ // <<<                                                                                                               │ 175..181
 
 Diagnostics: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/member_error_definition/input.sol:3:3]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/member_error_definition/input.sol:5:3]
        │
-     3 │   error Error1();
+     5 │   error Error1();
        │   ───────┬───────  
        │          ╰───────── Error occurred here.
     ───╯
 Tree:
-  - (root꞉ SourceUnit): # "contract Sample {\n  error Error1();\n}" (117..154)
-      - (members꞉ SourceUnitMembers): # "contract Sample {\n  error Error1();\n}" (117..154)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  error Error1();\n}" (117..154)
-              - (contract_keyword꞉ ContractKeyword): "contract" # (117..125)
-              - (name꞉ Identifier): "Sample" # (126..132)
+  - (root꞉ SourceUnit): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..174)
+      - (members꞉ SourceUnitMembers): # "pragma solidity *;\n\n// >>> Copied from crates/soli..." (0..174)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity *;" (0..18)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity *" (7..17)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+                  - (sets꞉ VersionPragmaExpressionSets): # "*" (16..17)
+                      - (item꞉ VersionPragmaExpressionSet): # "*" (16..17)
+                          - (item꞉ VersionPragmaExpression) ► (version_pragma_term꞉ VersionPragmaTerm): # "*" (16..17)
+                              - (specifier꞉ VersionPragmaSpecifier) ► (version_pragma_components꞉ VersionPragmaComponents): # "*" (16..17)
+                                  - (item꞉ VersionPragmaComponent): "*" # (16..17)
+              - (semicolon꞉ PragmaSemicolon): ";" # (17..18)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  error Error1();\n}" (137..174)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (137..145)
+              - (name꞉ Identifier): "Sample" # (146..152)
               - (specifiers꞉ ContractSpecifiers): []
-              - (open_brace꞉ OpenBrace): "{" # (133..134)
-              - (members꞉ ContractMembers): # "error Error1();" (137..152)
-                  - (item꞉ ContractMember) ► (error_definition꞉ ErrorDefinition): # "error Error1();" (137..152)
-                      - (error_keyword꞉ ErrorKeyword): "error" # (137..142)
-                      - (name꞉ Identifier): "Error1" # (143..149)
-                      - (members꞉ ErrorParametersDeclaration): # "()" (149..151)
-                          - (open_paren꞉ OpenParen): "(" # (149..150)
+              - (open_brace꞉ OpenBrace): "{" # (153..154)
+              - (members꞉ ContractMembers): # "error Error1();" (157..172)
+                  - (item꞉ ContractMember) ► (error_definition꞉ ErrorDefinition): # "error Error1();" (157..172)
+                      - (error_keyword꞉ ErrorKeyword): "error" # (157..162)
+                      - (name꞉ Identifier): "Error1" # (163..169)
+                      - (members꞉ ErrorParametersDeclaration): # "()" (169..171)
+                          - (open_paren꞉ OpenParen): "(" # (169..170)
                           - (parameters꞉ ErrorParameters): []
-                          - (close_paren꞉ CloseParen): ")" # (150..151)
-                      - (semicolon꞉ Semicolon): ";" # (151..152)
-              - (close_brace꞉ CloseBrace): "}" # (153..154)
+                          - (close_paren꞉ CloseParen): ")" # (170..171)
+                      - (semicolon꞉ Semicolon): ";" # (171..172)
+              - (close_brace꞉ CloseBrace): "}" # (173..174)

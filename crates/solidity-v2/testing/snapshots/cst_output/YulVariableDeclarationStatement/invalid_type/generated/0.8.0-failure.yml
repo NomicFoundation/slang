@@ -1,21 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract C {                                                                                                  │ 0..12
-  2  │     function f() {                                                                                            │ 13..31
-  3  │         assembly {                                                                                            │ 32..50
-  4  │             // https://github.com/argotorg/solidity/blob/v0.8.27/test/libyul/yulSyntaxTests/invalid_type2.yul │ 51..160
-  5  │             let x := 1:invalidType                                                                            │ 161..195
-  6  │         }                                                                                                     │ 196..205
-  7  │     }                                                                                                         │ 206..211
-  8  │ }                                                                                                             │ 212..213
+  1  │ pragma solidity *;                                                                                            │ 0..18
+  2  │                                                                                                               │ 19..19
+  3  │ contract C {                                                                                                  │ 20..32
+  4  │     function f() {                                                                                            │ 33..51
+  5  │         assembly {                                                                                            │ 52..70
+  6  │             // https://github.com/argotorg/solidity/blob/v0.8.27/test/libyul/yulSyntaxTests/invalid_type2.yul │ 71..180
+  7  │             let x := 1:invalidType                                                                            │ 181..215
+  8  │         }                                                                                                     │ 216..225
+  9  │     }                                                                                                         │ 226..231
+  10 │ }                                                                                                             │ 232..233
 
 Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of YulBreakKeyword, YulCloseBrace, YulContinueKeyword, YulDecimalLiteral, YulFalseKeyword, YulForKeyword, YulFunctionKeyword, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulIfKeyword, YulLeaveKeyword, YulLetKeyword, YulOpenBrace, YulOpenParen, YulStringLiteral, YulSwitchKeyword, YulTrueKeyword was expected
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulVariableDeclarationStatement/invalid_type/input.sol:5:23]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulVariableDeclarationStatement/invalid_type/input.sol:7:23]
        │
-     5 │             let x := 1:invalidType
+     7 │             let x := 1:invalidType
        │                       ┬  
        │                       ╰── Error occurred here.
     ───╯
