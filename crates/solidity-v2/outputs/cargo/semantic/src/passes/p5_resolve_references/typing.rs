@@ -403,6 +403,9 @@ impl Pass<'_> {
     ) -> Option<TypeId> {
         let mut item_type_ids: Vec<TypeId> = Vec::with_capacity(array.items.len());
         let mut all_typed = true;
+        // Every element is checked before the determining the array type, so
+        // one that has no type does not stop the rest from being checked (and
+        // reported).
         for item in array.items.iter() {
             if let Some(item_type_id) = self.check_type_of_value_expression(item) {
                 item_type_ids.push(item_type_id);

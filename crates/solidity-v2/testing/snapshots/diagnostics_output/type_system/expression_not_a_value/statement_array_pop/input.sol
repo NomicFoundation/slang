@@ -6,7 +6,7 @@ pragma solidity *;
 contract Test {
   uint[] data;
 
-  function f() public {
+  function f() public view {
     data.pop;
   }
 }

@@ -1,13 +1,3 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Diagnostics: 1
-
-[Warning 2018] Warning: Function state mutability can be restricted to view
-    ╭─[input.sol:9:3]
-    │
-  9 │ ╭─▶   function f() public {
-    ┆ ┆   
- 11 │ ├─▶   }
-    │ │         
-    │ ╰───────── Error occurred here.
-────╯
+Diagnostics: 0
