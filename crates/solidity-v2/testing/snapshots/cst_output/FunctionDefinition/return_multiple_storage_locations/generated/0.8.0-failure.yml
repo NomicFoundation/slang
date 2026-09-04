@@ -6,7 +6,7 @@ Source: >
   3  │     function f() returns (string calldata memory) {}                                                                                       │ 154..206
   4  │ }                                                                                                                                          │ 207..208
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected MemoryKeyword. One of AtKeyword, CloseParen, Comma, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionDefinition/return_multiple_storage_locations/input.sol:3:43]

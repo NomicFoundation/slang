@@ -7,7 +7,7 @@ Diagnostics: 4
    │
  7 │     modifier mod() virtual;
    │     ───────────┬───────────  
-   │                ╰───────────── Error occurred here.
+   │                ╰───────────── Warning occurred here.
 ───╯
 
 [TypeError 3656] Error: Contract "B" should be marked as abstract.

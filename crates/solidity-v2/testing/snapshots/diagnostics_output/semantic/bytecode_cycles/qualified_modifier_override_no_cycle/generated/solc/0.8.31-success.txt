@@ -9,5 +9,5 @@ Diagnostics: 1
     ┆ ┆   
  10 │ ├─▶     }
     │ │           
-    │ ╰─────────── Error occurred here.
+    │ ╰─────────── Warning occurred here.
 ────╯

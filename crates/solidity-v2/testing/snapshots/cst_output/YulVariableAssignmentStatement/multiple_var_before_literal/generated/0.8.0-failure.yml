@@ -10,7 +10,7 @@ Source: >
   7  │     }                                                                                                                 │ 205..210
   8  │ }                                                                                                                     │ 211..212
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected YulDecimalLiteral. One of YulIdentifier was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulVariableAssignmentStatement/multiple_var_before_literal/input.sol:5:16]

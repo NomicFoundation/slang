@@ -6,7 +6,7 @@ Source: >
   3  │ // `range_with_operator_on_start`.                                               │ 135..169
   4  │ pragma solidity ^0.1.0 - ^0.9.0;                                                 │ 170..202
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected PragmaMinus. One of PragmaBarBar, PragmaCaret, PragmaEqual, PragmaGreaterThan, PragmaGreaterThanEqual, PragmaLessThan, PragmaLessThanEqual, PragmaSemicolon, PragmaStringLiteral, PragmaTilde, VersionPragmaComponent was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/VersionPragma/range_with_operator_on_both_ends/input.sol:4:24]

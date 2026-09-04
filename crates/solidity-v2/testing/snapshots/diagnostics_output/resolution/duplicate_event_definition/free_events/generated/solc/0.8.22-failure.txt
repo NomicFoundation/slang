@@ -7,7 +7,7 @@ Diagnostics: 2
     │
  15 │     event Duplicated(uint256 a);
     │     ──────────────┬─────────────  
-    │                   ╰─────────────── Error occurred here.
+    │                   ╰─────────────── Warning occurred here.
 ────╯
 
 [DeclarationError 5883] Error: Event with same name and parameter types defined twice.

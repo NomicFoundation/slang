@@ -7,7 +7,7 @@ Diagnostics: 2
    │
  7 │     modifier m virtual;
    │     ─────────┬─────────  
-   │              ╰─────────── Error occurred here.
+   │              ╰─────────── Warning occurred here.
 ───╯
 
 [TypeError 3656] Error: Contract "A" should be marked as abstract.

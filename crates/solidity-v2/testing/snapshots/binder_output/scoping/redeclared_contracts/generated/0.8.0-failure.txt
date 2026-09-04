@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Parse errors:
+Diagnostics:
 [resolution/identifier-redeclaration] Error: Identifier already declared.
    ╭─[input.sol:7:10]
    │

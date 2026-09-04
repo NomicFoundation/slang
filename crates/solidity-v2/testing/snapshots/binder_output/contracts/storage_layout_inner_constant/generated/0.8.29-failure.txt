@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Parse errors:
+Diagnostics:
 [type-system/storage-layout-base-not-constant] Error: The base slot of the storage layout must be a compile-time constant expression.
    ╭─[input.sol:3:23]
    │
