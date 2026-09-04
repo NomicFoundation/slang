@@ -35,6 +35,7 @@ pub fn render<D: RenderDiagnostic>(
 
     let (kind, color) = match diagnostic.severity() {
         DiagnosticSeverity::Error => (ReportKind::Error, Color::Red),
+        DiagnosticSeverity::Warning => (ReportKind::Warning, Color::Yellow),
     };
 
     let message = diagnostic.message();
@@ -65,7 +66,7 @@ pub fn render<D: RenderDiagnostic>(
         .with_label(
             Label::new((source_id, range))
                 .with_color(color)
-                .with_message("Error occurred here."),
+                .with_message(format!("{:?} occurred here.", diagnostic.severity())),
         );
     if let Some(code) = code {
         report = report.with_code(code);

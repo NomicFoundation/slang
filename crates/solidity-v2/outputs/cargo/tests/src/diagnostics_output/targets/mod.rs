@@ -9,14 +9,17 @@ use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
 pub(crate) use solc::SolcTarget;
 
+use crate::snapshots::SnapshotStatus;
+
 /// The outcome of running a target on a single input.
 pub(crate) struct TargetOutcome {
     /// Every diagnostic, rendered for the snapshot body, regardless of
     /// severity.
     pub diagnostics: Vec<String>,
 
-    /// Whether the target considers the input valid.
-    pub compilation_succeeded: bool,
+    /// Status determined by the highest severity reported by the target.
+    /// Used for comparing outcomes between different targets.
+    pub status: SnapshotStatus,
 }
 
 pub(crate) trait TestTarget {

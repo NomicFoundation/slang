@@ -16,6 +16,7 @@ use slang_solidity_v2_semantic::context::{
 use super::configuration::{Configuration, ImportResolver};
 use super::file::InternalFile;
 use super::unit::CompilationUnit;
+use super::validation::validate_cst;
 
 impl CompilationUnit {
     /// Compiles the given source files into a [`CompilationUnit`].
@@ -152,13 +153,23 @@ fn parse_file(
 ) -> (ParsedFile<'_>, DiagnosticCollection) {
     let ParseOutput {
         source_unit,
-        diagnostics,
+        mut diagnostics,
     } = Parser::parse(&file_id, contents, language_version);
 
-    // If parser failed to produce a syntax tree, we create an empty tree,
-    // so imports pointing at it must resolve rather than be reported as missing.
-    let source_unit =
-        source_unit.unwrap_or_else(|| cst::new_source_unit(cst::new_source_unit_members(vec![])));
+    let source_unit = match source_unit {
+        Some(source_unit) => {
+            // Only run validation if the parser produced a tree.
+            // Never run it on the empty stub we produce when it fails:
+            validate_cst(&source_unit, &file_id, &mut diagnostics);
+
+            source_unit
+        }
+        None => {
+            // If parser failed to produce a syntax tree, we create an empty tree,
+            // so imports pointing at it must resolve rather than be reported as missing.
+            cst::new_source_unit(cst::new_source_unit_members(vec![]))
+        }
+    };
 
     let parsed_file = ParsedFile {
         file_id,

@@ -1,13 +1,13 @@
 use anyhow::Result;
 use slang_solidity_v2::compilation::FileId;
 use slang_solidity_v2_common::collections::SortedMap;
-use slang_solidity_v2_common::diagnostics::{DiagnosticExtensions, DiagnosticSeverity};
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use solidity_v2_testing_utils::compilation;
 use solidity_v2_testing_utils::reporting::diagnostic;
 
 use crate::diagnostics_output::targets::{TargetOutcome, TestTarget};
+use crate::snapshots::SnapshotStatus;
 
 pub(crate) struct SlangTarget;
 
@@ -24,14 +24,11 @@ impl TestTarget for SlangTarget {
     ) -> Result<TargetOutcome> {
         let compilation = compilation::compile(files, version, evm_target);
 
-        let diagnostics: Vec<_> = compilation.diagnostics().iter().collect();
+        let status = SnapshotStatus::from_diagnostics(compilation.diagnostics());
 
-        let compilation_succeeded = !diagnostics
+        let rendered = compilation
+            .diagnostics()
             .iter()
-            .any(|diagnostic| diagnostic.severity() == DiagnosticSeverity::Error);
-
-        let rendered = diagnostics
-            .into_iter()
             .map(|diagnostic| {
                 let file_id = diagnostic.file_id();
                 let source = files.get(file_id).cloned().unwrap_or_default();
@@ -42,7 +39,7 @@ impl TestTarget for SlangTarget {
 
         Ok(TargetOutcome {
             diagnostics: rendered,
-            compilation_succeeded,
+            status,
         })
     }
 }
