@@ -1,0 +1,15 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "Range",
+          "from": "0.8.11",
+          "till": "0.8.12"
+        },
+        "reason": "solc '0.8.11' rejects an external function reached through a contract type name as not being 'public' or 'external', which it stopped doing in '0.8.12'. Slang accepts it on every version that has `abi.encodeCall`."
+      }
+    ]
+  }
+}

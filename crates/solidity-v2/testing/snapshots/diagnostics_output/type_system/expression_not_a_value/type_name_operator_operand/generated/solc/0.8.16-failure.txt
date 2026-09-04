@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 2271] Error: Operator + not compatible with types type(enum E) and type(enum E).
+    ╭─[input.sol:10:12]
+    │
+ 10 │     return E + E;
+    │            ──┬──  
+    │              ╰──── Error occurred here.
+────╯
+
+[TypeError 6359] Error: Return argument type type(enum E) is not implicitly convertible to expected type (type of first return variable) uint256.
+    ╭─[input.sol:10:12]
+    │
+ 10 │     return E + E;
+    │            ──┬──  
+    │              ╰──── Error occurred here.
+────╯

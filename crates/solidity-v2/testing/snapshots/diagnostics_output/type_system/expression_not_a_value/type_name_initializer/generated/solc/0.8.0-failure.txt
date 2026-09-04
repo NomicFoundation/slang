@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9574] Error: Type type(uint256) is not implicitly convertible to expected type uint256.
+   ╭─[input.sol:9:5]
+   │
+ 9 │     uint256 x = uint;
+   │     ────────┬───────  
+   │             ╰───────── Error occurred here.
+───╯

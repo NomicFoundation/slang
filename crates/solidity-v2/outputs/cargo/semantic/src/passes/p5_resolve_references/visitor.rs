@@ -380,8 +380,14 @@ impl Visitor for Pass<'_> {
         } else {
             let mut types = Vec::new();
             for item in node.items.iter() {
+                // A component may name a type, as every component of the
+                // second argument of `abi.decode` does. The tuple then denotes
+                // a type rather than a value, which the enclosing context
+                // rejects where it requires one.
                 let type_id = match &item.expression {
-                    Some(expression) => self.check_type_of_value_expression(expression),
+                    Some(expression) => {
+                        self.check_type_of_value_or_type_name_expression(expression)
+                    }
                     None => None,
                 };
                 types.push(type_id.unwrap_or(self.types.void()));
@@ -467,7 +473,9 @@ impl Visitor for Pass<'_> {
             self.check_type_of_value_expression(index);
         }
 
-        let typing = match self.check_type_of_value_expression(&node.operand) {
+        // The operand may name a type, in which case indexing it names the
+        // array type of it (eg. the `uint[]` in `abi.decode(data, (uint[]))`).
+        let typing = match self.check_type_of_value_or_type_name_expression(&node.operand) {
             Some(operand_type_id) => {
                 match self.types.get_type_by_id(operand_type_id) {
                     Type::Array(ArrayType {
