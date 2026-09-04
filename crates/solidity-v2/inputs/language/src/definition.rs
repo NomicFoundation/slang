@@ -1876,7 +1876,7 @@ StateVariableDefinition: StateVariableDefinition = {
     // If the function type has no return, then we don't directly parse state variable attributes, we only do it if
     // we see a special one (one that can be a state variable attribute but not a function type attribute).
     <mut function_type: FunctionTypeInternalNoReturn> <special_attributes: (<SpecialStateVariableAttribute> <StateVariableAttributes>)?> <name: Identifier>  <value: (StateVariableDefinitionValue)?>  <semicolon: Semicolon>  => {
-        let mut extra_attributes = parser_helpers::extract_extra_attributes(&mut function_type);
+        let mut extra_attributes = parser_helpers::extract_extra_attributes(&mut function_type, ctx);
         if let Some(special_attributes) = special_attributes {
             extra_attributes.push(special_attributes.0);
             extra_attributes.extend(special_attributes.1.elements);

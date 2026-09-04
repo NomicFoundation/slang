@@ -443,8 +443,8 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) =
     Semicolon> =>
     {
         let mut extra_attributes =
-        parser_helpers::extract_extra_attributes(&mut function_type); if let
-        Some(special_attributes) = special_attributes
+        parser_helpers::extract_extra_attributes(&mut function_type, ctx); if
+        let Some(special_attributes) = special_attributes
         {
             extra_attributes.push(special_attributes.0);
             extra_attributes.extend(special_attributes.1.elements);

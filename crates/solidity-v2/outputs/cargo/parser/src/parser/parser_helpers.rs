@@ -4,7 +4,11 @@
 
 use std::iter::once;
 
-use slang_solidity_v2_common::diagnostics::kinds::syntax::ExpectedArrayLengthExpression;
+use slang_solidity_v2_common::diagnostics::kinds::syntax::{
+    ExpectedArrayLengthExpression, InvalidMutability, InvalidVisibility,
+};
+use slang_solidity_v2_common::terminals::TerminalKind;
+use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::{
     CloseBracket, ElementaryType, Expression, FunctionTypeAttribute, FunctionTypeStruct,
     Identifier, IdentifierPath, IdentifierPathElement, IndexAccessEnd, OpenBracket, Period,
@@ -15,6 +19,7 @@ use slang_solidity_v2_cst::structured_cst::nodes::{
     new_member_access_expression, new_type_name_array_type_name, new_type_name_elementary_type,
     new_type_name_identifier_path,
 };
+use slang_solidity_v2_cst::structured_cst::text_range::TextRange;
 
 use crate::parser::GrammarCtx;
 
@@ -213,9 +218,15 @@ pub(crate) fn new_expression_separated_identifier_path(
 
 /// We use this function to share attributes between a state variable that has a function type.
 /// We find and split the attributes from the function type as needed
-/// TODO(v2) fail gracefully if a wrong attribute is found
+///
+/// Extracted attributes belong to the state variable, so the ones that are not
+/// valid there (a mutability, or an `external` visibility) are reported as
+/// diagnostics and dropped.
+///
+/// TODO(error-recovery): Once the CST allows for error nodes, the dropped attributes should be present in there.
 pub(crate) fn extract_extra_attributes(
     fun_type: &mut FunctionTypeStruct,
+    ctx: &mut GrammarCtx<'_>,
 ) -> Vec<StateVariableAttribute> {
     // Move all matching attributes to extra_attributes if duplicate_found, else only the first occurrence
     let mut seen_visibility = false;
@@ -258,9 +269,43 @@ pub(crate) fn extract_extra_attributes(
                 FunctionTypeAttribute::PublicKeyword(terminal) => {
                     Some(StateVariableAttribute::PublicKeyword(terminal))
                 }
-                _ => {
-                    // TODO(v2): For now we skip this item
-                    // but we should fail gracefully in the future
+                // A state variable cannot be `external`
+                FunctionTypeAttribute::ExternalKeyword(terminal) => {
+                    ctx.diagnostics.push(
+                        ctx.file_id.to_owned(),
+                        terminal.range,
+                        InvalidVisibility {
+                            valid: vec![
+                                TerminalKind::PublicKeyword,
+                                TerminalKind::InternalKeyword,
+                                TerminalKind::PrivateKeyword,
+                            ],
+                        },
+                    );
+                    None
+                }
+                // Neither can it declare a function mutability
+                attr @ (FunctionTypeAttribute::PureKeyword(_)
+                | FunctionTypeAttribute::ViewKeyword(_)
+                | FunctionTypeAttribute::PayableKeyword(_)) => {
+                    let range = attr
+                        .calculate_text_range()
+                        .expect("Function type attributes always have a range");
+                    // `transient` only exists from 0.8.27 onwards, so offering it
+                    // below that would name a keyword the version check rejects.
+                    let mut valid = vec![
+                        TerminalKind::ConstantKeyword,
+                        TerminalKind::ImmutableKeyword,
+                    ];
+                    if ctx.language_version >= LanguageVersion::V0_8_27 {
+                        valid.push(TerminalKind::TransientKeyword);
+                    }
+
+                    ctx.diagnostics.push(
+                        ctx.file_id.to_owned(),
+                        range,
+                        InvalidMutability { valid },
+                    );
                     None
                 }
             }

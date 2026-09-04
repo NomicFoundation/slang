@@ -47,6 +47,8 @@ pub(crate) struct GrammarCtx<'a> {
     pub file_id: &'a FileId,
     /// Diagnostics accumulated during parsing.
     pub diagnostics: DiagnosticCollection,
+    /// Version being parsed, for diagnostics that depend on which syntax it allows.
+    pub language_version: LanguageVersion,
 }
 
 /// The output of a parse operation, containing both the source unit and any diagnostics.
@@ -72,6 +74,7 @@ impl Parser {
             source,
             file_id,
             diagnostics: DiagnosticCollection::default(),
+            language_version,
         };
         let result = parser.parse(&mut ctx, lexer);
         match result {
