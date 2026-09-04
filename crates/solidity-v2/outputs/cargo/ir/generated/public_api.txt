@@ -572,6 +572,8 @@ pub fn slang_solidity_v2_ir::ir::AdditiveExpressionOperator::calculate_text_rang
 pub enum slang_solidity_v2_ir::ir::ArgumentsDeclaration
 pub slang_solidity_v2_ir::ir::ArgumentsDeclaration::NamedArguments(slang_solidity_v2_ir::ir::NamedArguments)
 pub slang_solidity_v2_ir::ir::ArgumentsDeclaration::PositionalArguments(slang_solidity_v2_ir::ir::PositionalArguments)
+impl slang_solidity_v2_ir::ir::ArgumentsDeclaration
+pub fn slang_solidity_v2_ir::ir::ArgumentsDeclaration::is_empty(&self) -> bool
 impl core::clone::Clone for slang_solidity_v2_ir::ir::ArgumentsDeclaration
 pub fn slang_solidity_v2_ir::ir::ArgumentsDeclaration::clone(&self) -> slang_solidity_v2_ir::ir::ArgumentsDeclaration
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ArgumentsDeclaration

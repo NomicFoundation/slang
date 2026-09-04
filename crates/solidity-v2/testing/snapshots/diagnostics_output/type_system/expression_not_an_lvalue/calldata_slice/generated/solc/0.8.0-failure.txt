@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 4247] Error: Expression has to be an lvalue.
+   ╭─[input.sol:9:5]
+   │
+ 9 │     items[0:1] = items;
+   │     ─────┬────  
+   │          ╰────── Error occurred here.
+───╯
+
+[TypeError 7407] Error: Type uint256[] calldata is not implicitly convertible to expected type uint256[] calldata slice.
+   ╭─[input.sol:9:18]
+   │
+ 9 │     items[0:1] = items;
+   │                  ──┬──  
+   │                    ╰──── Error occurred here.
+───╯

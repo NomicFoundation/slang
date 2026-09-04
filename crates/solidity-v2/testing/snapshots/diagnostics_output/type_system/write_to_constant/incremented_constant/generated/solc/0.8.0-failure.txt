@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 6520] Error: Cannot assign to a constant variable.
+    ╭─[input.sol:10:5]
+    │
+ 10 │     LIMIT++;
+    │     ──┬──  
+    │       ╰──── Error occurred here.
+────╯
