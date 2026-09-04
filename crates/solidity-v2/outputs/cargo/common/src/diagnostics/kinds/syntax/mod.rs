@@ -5,6 +5,7 @@ mod invalid_assembly_dialect;
 mod invalid_mutability;
 mod invalid_version_specifier;
 mod invalid_visibility;
+mod missing_version_pragma;
 mod more_than_one_inheritance_list;
 mod more_than_one_storage_layout;
 mod multiple_mutability_specifiers;
@@ -25,6 +26,7 @@ pub use invalid_assembly_dialect::InvalidAssemblyDialect;
 pub use invalid_mutability::InvalidMutability;
 pub use invalid_version_specifier::InvalidVersionSpecifier;
 pub use invalid_visibility::InvalidVisibility;
+pub use missing_version_pragma::MissingVersionPragma;
 pub use more_than_one_inheritance_list::MoreThanOneInheritanceList;
 pub use more_than_one_storage_layout::MoreThanOneStorageLayout;
 pub use multiple_mutability_specifiers::MultipleMutabilitySpecifiers;
@@ -93,6 +95,8 @@ define_diagnostic_kind! {
         InvalidVersionSpecifier(InvalidVersionSpecifier),
         /// A `pragma solidity` excludes the language version being compiled.
         IncompatibleVersionPragma(IncompatibleVersionPragma),
+        /// A source file holds no `pragma solidity` at all.
+        MissingVersionPragma(MissingVersionPragma),
 
         /// A `pragma experimental` named a feature that Slang does not recognize.
         UnrecognizedExperimentalFeature(UnrecognizedExperimentalFeature),

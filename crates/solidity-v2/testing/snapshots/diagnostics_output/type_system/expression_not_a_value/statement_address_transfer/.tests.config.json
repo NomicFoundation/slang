@@ -1,0 +1,14 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "From",
+          "from": "0.8.31"
+        },
+        "reason": "From '0.8.31' solc emits `Warning 9207`, deprecating 'transfer' in favour of 'call{value: ...}(\"\")'. That is a style deprecation rather than a typing rule, and Slang has no equivalent, so it stays silent while solc warns."
+      }
+    ]
+  }
+}

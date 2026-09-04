@@ -42,10 +42,7 @@ pub(crate) fn format_label_kind(label: &str, kind: &str) -> String {
 }
 
 /// Render a parse result (success or failure) to YAML format.
-///
-/// Returns a tuple of (`is_success`, `rendered_output`), where `is_success` is true if
-/// `result` had no errors.
-pub fn render(source: &str, source_id: &str, result: &ParseOutput) -> (bool, String) {
+pub fn render(source: &str, source_id: &str, result: &ParseOutput) -> String {
     let mut w = String::new();
 
     // Write the source code
@@ -58,12 +55,12 @@ pub fn render(source: &str, source_id: &str, result: &ParseOutput) -> (bool, Str
     } = result;
 
     // Write the diagnostics
-    let diagnostics: Vec<String> = diagnostics
+    let rendered: Vec<String> = diagnostics
         .iter()
         .map(|d| diagnostic::render(d, source_id, source, false))
         .collect();
 
-    let is_success = !write_diagnostics(&mut w, &diagnostics).unwrap();
+    write_diagnostics(&mut w, &rendered).unwrap();
 
     // Write the Tree, if the parser produced one
     if let Some(source_unit) = source_unit {
@@ -75,7 +72,7 @@ pub fn render(source: &str, source_id: &str, result: &ParseOutput) -> (bool, Str
         }
     }
 
-    (is_success, w)
+    w
 }
 
 /// Helper to accumulate rendered children, merge their ranges,
@@ -216,19 +213,19 @@ fn render_preview(source: &str, range: &Range<usize>) -> String {
     }
 }
 
-fn write_diagnostics(w: &mut String, diagnostics: &Vec<String>) -> Result<bool, std::fmt::Error> {
-    if diagnostics.is_empty() {
-        return Ok(false);
+fn write_diagnostics(w: &mut String, rendered: &[String]) -> Result<(), std::fmt::Error> {
+    if rendered.is_empty() {
+        return Ok(());
     }
 
-    writeln!(w, "Diagnostics: # {count} total", count = diagnostics.len())?;
+    writeln!(w, "Diagnostics: # {count} total", count = rendered.len())?;
 
-    for diagnostic in diagnostics {
+    for diagnostic in rendered {
         writeln!(w, "  - >")?;
         for line in diagnostic.lines() {
             writeln!(w, "    {line}")?;
         }
     }
 
-    Ok(true)
+    Ok(())
 }

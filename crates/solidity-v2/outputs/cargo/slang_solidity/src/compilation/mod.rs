@@ -2,6 +2,7 @@ mod compile;
 mod configuration;
 mod file;
 mod unit;
+mod validation;
 
 pub use configuration::{Configuration, ImportResolver};
 pub use file::{File, FileStruct};

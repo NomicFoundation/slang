@@ -51,7 +51,7 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
             let report_data = ReportData::prepare(&compilation, &files);
 
             let status = if report_data.all_resolved() {
-                SnapshotStatus::Success
+                SnapshotStatus::from_diagnostics(compilation.diagnostics())
             } else {
                 SnapshotStatus::Failure
             };
