@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Parse errors:
+Diagnostics:
 [resolution/member-not-found] Error: Member 'use_foo' not found or not visible after argument-dependent lookup.
     ╭─[input.sol:14:17]
     │

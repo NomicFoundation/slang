@@ -9,7 +9,7 @@ Source: >
   6  │ // <<<                                                                                                                 │ 199..205
   7  │ }                                                                                                                      │ 206..207
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected OpenBrace. One of AtKeyword, ConstantKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, ImmutableKeyword, InternalKeyword, LayoutKeyword, OverrideKeyword, PrivateKeyword, PublicKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/UnnamedFunctionDefinition/constant_attribute/input.sol:4:22]

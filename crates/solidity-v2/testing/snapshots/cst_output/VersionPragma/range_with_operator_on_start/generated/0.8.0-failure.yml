@@ -8,7 +8,7 @@ Source: >
   5  │ // opposite of the `<` that was written. Rejecting the input says so plainly.    │ 238..315
   6  │ pragma solidity <0.1.0 - 0.9.0;                                                  │ 316..347
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected PragmaMinus. One of PragmaBarBar, PragmaCaret, PragmaEqual, PragmaGreaterThan, PragmaGreaterThanEqual, PragmaLessThan, PragmaLessThanEqual, PragmaSemicolon, PragmaStringLiteral, PragmaTilde, VersionPragmaComponent was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/VersionPragma/range_with_operator_on_start/input.sol:6:24]

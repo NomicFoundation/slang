@@ -15,5 +15,5 @@ Diagnostics: 2
    │
  5 │   function I() external;
    │   ───────────┬──────────  
-   │              ╰──────────── Error occurred here.
+   │              ╰──────────── Warning occurred here.
 ───╯

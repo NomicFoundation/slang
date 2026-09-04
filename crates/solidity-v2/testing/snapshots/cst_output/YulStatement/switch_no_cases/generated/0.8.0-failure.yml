@@ -11,7 +11,7 @@ Source: >
   8  │     }                                                                                                                     │ 206..211
   9  │ }                                                                                                                         │ 212..213
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected YulCloseBrace. One of YulCaseKeyword, YulDefaultKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulStatement/switch_no_cases/input.sol:7:9]

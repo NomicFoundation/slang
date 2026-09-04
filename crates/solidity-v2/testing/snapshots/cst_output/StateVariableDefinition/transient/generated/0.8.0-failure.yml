@@ -8,7 +8,7 @@ Source: >
   5  │ // <<<                                                                                                      │ 142..148
   6  │ }                                                                                                           │ 149..150
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.27'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/StateVariableDefinition/transient/input.sol:3:6]

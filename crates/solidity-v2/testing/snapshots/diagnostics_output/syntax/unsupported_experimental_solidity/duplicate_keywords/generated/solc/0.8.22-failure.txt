@@ -7,7 +7,7 @@ Diagnostics: 3
    │
  4 │ pragma experimental solidity;
    │ ──────────────┬──────────────  
-   │               ╰──────────────── Error occurred here.
+   │               ╰──────────────── Warning occurred here.
 ───╯
 
 [SyntaxError 1231] Error: Duplicate experimental feature name.

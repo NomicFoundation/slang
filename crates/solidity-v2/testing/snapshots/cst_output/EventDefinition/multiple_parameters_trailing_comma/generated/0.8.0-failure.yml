@@ -6,7 +6,7 @@ Source: >
   3  │     event E(uint a, uint b,);                                                                                                      │ 144..173
   4  │ }                                                                                                                                  │ 174..175
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected CloseParen. One of AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, ErrorKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, RevertKeyword, StringKeyword, TransientKeyword, UfixedKeyword, UintKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/EventDefinition/multiple_parameters_trailing_comma/input.sol:3:28]

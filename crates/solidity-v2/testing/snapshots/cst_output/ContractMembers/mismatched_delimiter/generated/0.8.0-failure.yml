@@ -12,7 +12,7 @@ Source: >
   9  │ // <<<                                                                                                         │ 199..205
   10 │ }                                                                                                              │ 206..207
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Semicolon. One of CloseParen, Comma was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractMembers/mismatched_delimiter/input.sol:5:29]
