@@ -150,6 +150,15 @@ impl Visitor for Pass<'_> {
         true
     }
 
+    fn enter_yul_paths(&mut self, _items: &ir::YulPaths) -> bool {
+        self.in_assignment_target = true;
+        true
+    }
+
+    fn leave_yul_paths(&mut self, _items: &ir::YulPaths) {
+        self.in_assignment_target = false;
+    }
+
     fn enter_yul_path(&mut self, items: &ir::YulPath) -> bool {
         if items.is_empty() {
             return false;
@@ -186,6 +195,8 @@ impl Visitor for Pass<'_> {
         self.record_solidity_reference(&resolution);
         let reference = Reference::new(Arc::clone(identifier), resolution.clone());
         self.binder.insert_reference(reference);
+
+        self.check_solidity_reference(identifier, &resolution, suffix);
 
         if let Some(suffix) = suffix {
             let resolution = self.resolve_yul_suffix(suffix.unparse(), &resolution);

@@ -15,6 +15,7 @@ use crate::passes::common::node_location;
 use crate::types::TypeRegistry;
 
 mod conflicts;
+mod reference_checks;
 mod resolution;
 mod structure_checks;
 mod visitor;
@@ -82,6 +83,8 @@ struct Pass<'a> {
     /// Which for-loop clause the traversal is currently inside, used to
     /// validate the placement of `break`/`continue` keywords.
     for_loop_clause: YulForLoopClause,
+    /// Whether we are doing an assignment. Used for diagnostics.
+    in_assignment_target: bool,
     /// The `for_loop_clause` active around each Yul function definition the
     /// traversal is currently nested inside: saved when entering a function
     /// (which resets the clause) and restored when leaving it. One entry per
@@ -122,6 +125,7 @@ impl<'a> Pass<'a> {
             diagnostics,
             solidity_references,
             for_loop_clause: YulForLoopClause::None,
+            in_assignment_target: false,
             function_clause_stack: Vec::new(),
         };
         ir::visitor::accept_yul_block(&ir_node.body, &mut pass);

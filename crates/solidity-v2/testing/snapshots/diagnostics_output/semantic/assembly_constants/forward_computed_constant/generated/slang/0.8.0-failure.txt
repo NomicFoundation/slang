@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/yul-forward-referenced-constant] Error: Constant variables with non-literal values cannot be forward referenced from inline assembly.
+   ╭─[input.sol:7:22]
+   │
+ 7 │             let x := K
+   │                      ┬  
+   │                      ╰── Error occurred here.
+───╯

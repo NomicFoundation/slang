@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 6252] Error: Constant variables cannot be assigned to.
+   ╭─[input.sol:9:13]
+   │
+ 9 │             K := 1
+   │             ┬  
+   │             ╰── Error occurred here.
+───╯

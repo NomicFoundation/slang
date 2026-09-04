@@ -1517,6 +1517,228 @@ mod runner {
 mod semantic {
     use super::*;
 
+    mod assembly_constants {
+        use super::*;
+
+        #[test]
+        fn address_literal() -> Result<()> {
+            run("semantic/assembly_constants", "address_literal")
+        }
+
+        #[test]
+        fn alias_chain() -> Result<()> {
+            run("semantic/assembly_constants", "alias_chain")
+        }
+
+        #[test]
+        fn alias_chain_through_public() -> Result<()> {
+            run("semantic/assembly_constants", "alias_chain_through_public")
+        }
+
+        #[test]
+        fn alias_to_uninitialized() -> Result<()> {
+            run("semantic/assembly_constants", "alias_to_uninitialized")
+        }
+
+        #[test]
+        fn alias_to_unsupported() -> Result<()> {
+            run("semantic/assembly_constants", "alias_to_unsupported")
+        }
+
+        #[test]
+        fn assign_multi() -> Result<()> {
+            run("semantic/assembly_constants", "assign_multi")
+        }
+
+        #[test]
+        fn assign_to_constant() -> Result<()> {
+            run("semantic/assembly_constants", "assign_to_constant")
+        }
+
+        #[test]
+        fn assign_to_constant_slot() -> Result<()> {
+            run("semantic/assembly_constants", "assign_to_constant_slot")
+        }
+
+        #[test]
+        fn backward_computed_constant() -> Result<()> {
+            run("semantic/assembly_constants", "backward_computed_constant")
+        }
+
+        #[test]
+        fn bool_literal() -> Result<()> {
+            run("semantic/assembly_constants", "bool_literal")
+        }
+
+        #[test]
+        fn broken_chain() -> Result<()> {
+            run("semantic/assembly_constants", "broken_chain")
+        }
+
+        #[test]
+        fn bytes32_string_literal() -> Result<()> {
+            run("semantic/assembly_constants", "bytes32_string_literal")
+        }
+
+        mod circular {
+            use super::*;
+
+            #[test]
+            fn alias_assign() -> Result<()> {
+                run("semantic/assembly_constants/circular", "alias_assign")
+            }
+
+            #[test]
+            fn alias_read() -> Result<()> {
+                run("semantic/assembly_constants/circular", "alias_read")
+            }
+
+            #[test]
+            fn alias_slot() -> Result<()> {
+                run("semantic/assembly_constants/circular", "alias_slot")
+            }
+        }
+
+        #[test]
+        fn comparison_of_literals() -> Result<()> {
+            run("semantic/assembly_constants", "comparison_of_literals")
+        }
+
+        #[test]
+        fn constant_plus_constant() -> Result<()> {
+            run("semantic/assembly_constants", "constant_plus_constant")
+        }
+
+        #[test]
+        fn dynamic_bytes_constant() -> Result<()> {
+            run("semantic/assembly_constants", "dynamic_bytes_constant")
+        }
+
+        #[test]
+        fn enum_constant() -> Result<()> {
+            run("semantic/assembly_constants", "enum_constant")
+        }
+
+        #[test]
+        fn ether_unit() -> Result<()> {
+            run("semantic/assembly_constants", "ether_unit")
+        }
+
+        #[test]
+        fn forward_computed_constant() -> Result<()> {
+            run("semantic/assembly_constants", "forward_computed_constant")
+        }
+
+        #[test]
+        fn forward_root_only() -> Result<()> {
+            run("semantic/assembly_constants", "forward_root_only")
+        }
+
+        #[test]
+        fn forward_unsupported_value() -> Result<()> {
+            run("semantic/assembly_constants", "forward_unsupported_value")
+        }
+
+        #[test]
+        fn hex_literal() -> Result<()> {
+            run("semantic/assembly_constants", "hex_literal")
+        }
+
+        #[test]
+        fn imported_constant() -> Result<()> {
+            run("semantic/assembly_constants", "imported_constant")
+        }
+
+        #[test]
+        fn imported_forward_cycle() -> Result<()> {
+            run("semantic/assembly_constants", "imported_forward_cycle")
+        }
+
+        #[test]
+        fn length_suffix_on_number_constant() -> Result<()> {
+            run(
+                "semantic/assembly_constants",
+                "length_suffix_on_number_constant",
+            )
+        }
+
+        #[test]
+        fn module_member_alias() -> Result<()> {
+            run("semantic/assembly_constants", "module_member_alias")
+        }
+
+        #[test]
+        fn negative_literal() -> Result<()> {
+            run("semantic/assembly_constants", "negative_literal")
+        }
+
+        #[test]
+        fn number_literal() -> Result<()> {
+            run("semantic/assembly_constants", "number_literal")
+        }
+
+        #[test]
+        fn offset_suffix_public_constant() -> Result<()> {
+            run(
+                "semantic/assembly_constants",
+                "offset_suffix_public_constant",
+            )
+        }
+
+        #[test]
+        fn parenthesized_literal() -> Result<()> {
+            run("semantic/assembly_constants", "parenthesized_literal")
+        }
+
+        #[test]
+        fn parenthesized_string_literal() -> Result<()> {
+            run(
+                "semantic/assembly_constants",
+                "parenthesized_string_literal",
+            )
+        }
+
+        #[test]
+        fn public_constant_read() -> Result<()> {
+            run("semantic/assembly_constants", "public_constant_read")
+        }
+
+        #[test]
+        fn rational_arithmetic() -> Result<()> {
+            run("semantic/assembly_constants", "rational_arithmetic")
+        }
+
+        #[test]
+        fn shadowed_by_yul_local() -> Result<()> {
+            run("semantic/assembly_constants", "shadowed_by_yul_local")
+        }
+
+        #[test]
+        fn slot_suffix() -> Result<()> {
+            run("semantic/assembly_constants", "slot_suffix")
+        }
+
+        #[test]
+        fn string_constant() -> Result<()> {
+            run("semantic/assembly_constants", "string_constant")
+        }
+
+        #[test]
+        fn type_max() -> Result<()> {
+            run("semantic/assembly_constants", "type_max")
+        }
+
+        #[test]
+        fn typed_arithmetic() -> Result<()> {
+            run("semantic/assembly_constants", "typed_arithmetic")
+        }
+
+        #[test]
+        fn uninitialized_assignment() -> Result<()> {
+            run("semantic/assembly_constants", "uninitialized_assignment")
+        }
+    }
+
     mod bytecode_cycles {
         use super::*;
 

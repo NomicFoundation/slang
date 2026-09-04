@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[structure/uninitialized-constant] Error: Uninitialized "constant" variable.
+   ╭─[input.sol:7:5]
+   │
+ 7 │     uint256 public constant U;
+   │     ─────────────┬────────────  
+   │                  ╰────────────── Error occurred here.
+───╯
+
+[semantic/yul-unsupported-constant] Error: Only direct number constants and references to such constants are supported by inline assembly.
+    ╭─[input.sol:12:22]
+    │
+ 12 │             let x := A
+    │                      ┬  
+    │                      ╰── Error occurred here.
+────╯
