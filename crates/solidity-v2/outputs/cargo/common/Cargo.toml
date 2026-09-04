@@ -19,7 +19,7 @@ keywords = ["utilities"]
 categories = ["compilers", "utilities"]
 
 [dependencies]
-fxhash = { workspace = true }
+rustc-hash = { workspace = true }
 indexmap = { workspace = true }
 itertools = { workspace = true }
 semver = { workspace = true }
