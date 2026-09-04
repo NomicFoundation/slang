@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[DeclarationError 8198] Error: Identifier "fp.selector" not found.
+    ╭─[input.sol:11:22]
+    │
+ 11 │             let s := fp.selector
+    │                      ─────┬─────  
+    │                           ╰─────── Error occurred here.
+────╯
+
+[DeclarationError 8198] Error: Identifier "fp.address" not found.
+    ╭─[input.sol:12:22]
+    │
+ 12 │             let a := fp.address
+    │                      ─────┬────  
+    │                           ╰────── Error occurred here.
+────╯

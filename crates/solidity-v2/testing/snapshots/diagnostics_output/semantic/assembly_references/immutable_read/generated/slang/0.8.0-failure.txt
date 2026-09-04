@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/yul-immutable-access] Error: Assembly access to immutable variables is not supported.
+    ╭─[input.sol:13:22]
+    │
+ 13 │             let t := x
+    │                      ┬  
+    │                      ╰── Error occurred here.
+────╯

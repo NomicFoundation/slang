@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/yul-storage-variable-access] Error: Storage variables cannot be accessed directly in inline assembly. Use the ".slot" and ".offset" suffixes.
+   ╭─[input.sol:9:17]
+   │
+ 9 │             pop(x)
+   │                 ┬  
+   │                 ╰── Error occurred here.
+───╯

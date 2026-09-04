@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4713] Error: State variables cannot be assigned to - you have to use "sstore()" or "tstore()".
+   ╭─[input.sol:9:13]
+   │
+ 9 │             x.offset := 2
+   │             ────┬───  
+   │                 ╰───── Error occurred here.
+───╯

@@ -662,9 +662,23 @@ pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKi
 pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::RecursiveStruct(slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct)
 pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::RecursiveStructValidatorExhausted(slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted)
 pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::YulAssignmentToConstant(slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToConstant)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::YulAssignmentToNonVariable(slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::YulAssignmentToOffset(slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::YulAssignmentToStateVariable(slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::YulCalldataArrayAccess(slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::YulCalldataSuffix(slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::YulExternalFunctionAccess(slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess)
 pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::YulForwardReferencedConstant(slang_solidity_v2_common::diagnostics::kinds::semantic::YulForwardReferencedConstant)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::YulFunctionPointerSuffix(slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::YulImmutableAccess(slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::YulInternalFunctionPointerSuffix(slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::YulMultipleSuffixes(slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::YulStorageSuffix(slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::YulStorageVariableAccess(slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess)
 pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::YulSuffixOnConstant(slang_solidity_v2_common::diagnostics::kinds::semantic::YulSuffixOnConstant)
 pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::YulUnsupportedConstant(slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedConstant)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::YulUnsupportedReference(slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::YulUnsupportedSuffix(slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix)
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
@@ -692,12 +706,40 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic:
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToConstant> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToConstant) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulForwardReferencedConstant> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulForwardReferencedConstant) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulSuffixOnConstant> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulSuffixOnConstant) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedConstant> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedConstant) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix) -> Self
 impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
@@ -899,6 +941,120 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToConstant::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToConstant::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToConstant::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::YulForwardReferencedConstant
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::YulForwardReferencedConstant
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulForwardReferencedConstant::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::YulForwardReferencedConstant
@@ -918,6 +1074,120 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulForwardReferencedConstant::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulForwardReferencedConstant::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulForwardReferencedConstant::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::YulSuffixOnConstant
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::YulSuffixOnConstant
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulSuffixOnConstant::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::YulSuffixOnConstant
@@ -956,6 +1226,45 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedConstant::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedConstant::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedConstant::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference::kind: &'static str
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub mod slang_solidity_v2_common::diagnostics::kinds::structure
 pub enum slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind
 pub slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind::Error
@@ -3414,12 +3723,40 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic:
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToConstant> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToConstant) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulForwardReferencedConstant> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulForwardReferencedConstant) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulSuffixOnConstant> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulSuffixOnConstant) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedConstant> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedConstant) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -3850,10 +4187,58 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToConstant::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToConstant::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToConstant::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToNonVariable::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToOffset::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulAssignmentToStateVariable::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataArrayAccess::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulCalldataSuffix::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulExternalFunctionAccess::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulForwardReferencedConstant
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulForwardReferencedConstant::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulForwardReferencedConstant::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulForwardReferencedConstant::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulFunctionPointerSuffix::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulImmutableAccess::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulInternalFunctionPointerSuffix::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulMultipleSuffixes::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageSuffix::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulStorageVariableAccess::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulSuffixOnConstant
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulSuffixOnConstant::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulSuffixOnConstant::message(&self) -> alloc::string::String
@@ -3862,6 +4247,14 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedConstant::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedConstant::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedConstant::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedReference::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::YulUnsupportedSuffix::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor::message(&self) -> alloc::string::String

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/yul-storage-suffix] Error: Storage variables only support ".slot" and ".offset".
+   ╭─[input.sol:9:24]
+   │
+ 9 │             let t := x.length
+   │                        ───┬──  
+   │                           ╰──── Error occurred here.
+───╯

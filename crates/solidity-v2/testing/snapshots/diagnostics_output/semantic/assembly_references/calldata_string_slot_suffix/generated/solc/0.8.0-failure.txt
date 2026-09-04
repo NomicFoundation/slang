@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 1536] Error: Calldata variables only support ".offset" and ".length".
+   ╭─[input.sol:7:22]
+   │
+ 7 │             let t := s.slot
+   │                      ───┬──  
+   │                         ╰──── Error occurred here.
+───╯

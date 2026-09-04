@@ -1739,6 +1739,427 @@ mod semantic {
         }
     }
 
+    mod assembly_references {
+        use super::*;
+
+        #[test]
+        fn assign_to_contract() -> Result<()> {
+            run("semantic/assembly_references", "assign_to_contract")
+        }
+
+        #[test]
+        fn assign_to_function() -> Result<()> {
+            run("semantic/assembly_references", "assign_to_function")
+        }
+
+        #[test]
+        fn assign_to_library() -> Result<()> {
+            run("semantic/assembly_references", "assign_to_library")
+        }
+
+        #[test]
+        fn calldata_array_read() -> Result<()> {
+            run("semantic/assembly_references", "calldata_array_read")
+        }
+
+        #[test]
+        fn calldata_array_slot_suffix() -> Result<()> {
+            run("semantic/assembly_references", "calldata_array_slot_suffix")
+        }
+
+        #[test]
+        fn calldata_bytes_read() -> Result<()> {
+            run("semantic/assembly_references", "calldata_bytes_read")
+        }
+
+        #[test]
+        fn calldata_bytes_slot_suffix() -> Result<()> {
+            run("semantic/assembly_references", "calldata_bytes_slot_suffix")
+        }
+
+        #[test]
+        fn calldata_offset_length_assignment() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "calldata_offset_length_assignment",
+            )
+        }
+
+        #[test]
+        fn calldata_offset_length_read() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "calldata_offset_length_read",
+            )
+        }
+
+        #[test]
+        fn calldata_string_read() -> Result<()> {
+            run("semantic/assembly_references", "calldata_string_read")
+        }
+
+        #[test]
+        fn calldata_string_slot_suffix() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "calldata_string_slot_suffix",
+            )
+        }
+
+        #[test]
+        fn calldata_struct_offset_suffix() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "calldata_struct_offset_suffix",
+            )
+        }
+
+        #[test]
+        fn calldata_struct_read() -> Result<()> {
+            run("semantic/assembly_references", "calldata_struct_read")
+        }
+
+        #[test]
+        fn contract_read() -> Result<()> {
+            run("semantic/assembly_references", "contract_read")
+        }
+
+        #[test]
+        fn contract_slot_suffix() -> Result<()> {
+            run("semantic/assembly_references", "contract_slot_suffix")
+        }
+
+        #[test]
+        fn contract_typed_local_read() -> Result<()> {
+            run("semantic/assembly_references", "contract_typed_local_read")
+        }
+
+        #[test]
+        fn enum_member_path() -> Result<()> {
+            run("semantic/assembly_references", "enum_member_path")
+        }
+
+        #[test]
+        fn enum_read() -> Result<()> {
+            run("semantic/assembly_references", "enum_read")
+        }
+
+        #[test]
+        fn event_read() -> Result<()> {
+            run("semantic/assembly_references", "event_read")
+        }
+
+        #[test]
+        fn external_function_parameter_read() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "external_function_parameter_read",
+            )
+        }
+
+        #[test]
+        fn external_function_pointer_offset_suffix() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "external_function_pointer_offset_suffix",
+            )
+        }
+
+        #[test]
+        fn external_function_pointer_read() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "external_function_pointer_read",
+            )
+        }
+
+        #[test]
+        fn external_function_pointer_selector_address() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "external_function_pointer_selector_address",
+            )
+        }
+
+        #[test]
+        fn extra_path_items() -> Result<()> {
+            run("semantic/assembly_references", "extra_path_items")
+        }
+
+        #[test]
+        fn free_function_read() -> Result<()> {
+            run("semantic/assembly_references", "free_function_read")
+        }
+
+        #[test]
+        fn function_read() -> Result<()> {
+            run("semantic/assembly_references", "function_read")
+        }
+
+        #[test]
+        fn function_slot_suffix() -> Result<()> {
+            run("semantic/assembly_references", "function_slot_suffix")
+        }
+
+        #[test]
+        fn immutable_assignment() -> Result<()> {
+            run("semantic/assembly_references", "immutable_assignment")
+        }
+
+        #[test]
+        fn immutable_read() -> Result<()> {
+            run("semantic/assembly_references", "immutable_read")
+        }
+
+        #[test]
+        fn immutable_slot_assignment() -> Result<()> {
+            run("semantic/assembly_references", "immutable_slot_assignment")
+        }
+
+        #[test]
+        fn immutable_slot_read() -> Result<()> {
+            run("semantic/assembly_references", "immutable_slot_read")
+        }
+
+        #[test]
+        fn import_alias_member_path() -> Result<()> {
+            run("semantic/assembly_references", "import_alias_member_path")
+        }
+
+        #[test]
+        fn import_alias_read() -> Result<()> {
+            run("semantic/assembly_references", "import_alias_read")
+        }
+
+        #[test]
+        fn imported_library_read() -> Result<()> {
+            run("semantic/assembly_references", "imported_library_read")
+        }
+
+        #[test]
+        fn interface_read() -> Result<()> {
+            run("semantic/assembly_references", "interface_read")
+        }
+
+        #[test]
+        fn internal_function_pointer_address_suffix() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "internal_function_pointer_address_suffix",
+            )
+        }
+
+        #[test]
+        fn internal_function_pointer_read() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "internal_function_pointer_read",
+            )
+        }
+
+        #[test]
+        fn internal_function_pointer_selector_suffix() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "internal_function_pointer_selector_suffix",
+            )
+        }
+
+        #[test]
+        fn library_read() -> Result<()> {
+            run("semantic/assembly_references", "library_read")
+        }
+
+        #[test]
+        fn library_slot_suffix() -> Result<()> {
+            run("semantic/assembly_references", "library_slot_suffix")
+        }
+
+        #[test]
+        fn local_value_read_and_assignment() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "local_value_read_and_assignment",
+            )
+        }
+
+        #[test]
+        fn magic_variable_suffix() -> Result<()> {
+            run("semantic/assembly_references", "magic_variable_suffix")
+        }
+
+        #[test]
+        fn mapping_pointer_read() -> Result<()> {
+            run("semantic/assembly_references", "mapping_pointer_read")
+        }
+
+        #[test]
+        fn mapping_slot_read() -> Result<()> {
+            run("semantic/assembly_references", "mapping_slot_read")
+        }
+
+        #[test]
+        fn memory_array_read() -> Result<()> {
+            run("semantic/assembly_references", "memory_array_read")
+        }
+
+        #[test]
+        fn memory_array_slot_suffix() -> Result<()> {
+            run("semantic/assembly_references", "memory_array_slot_suffix")
+        }
+
+        #[test]
+        fn memory_struct_read() -> Result<()> {
+            run("semantic/assembly_references", "memory_struct_read")
+        }
+
+        #[test]
+        fn modifier_read() -> Result<()> {
+            run("semantic/assembly_references", "modifier_read")
+        }
+
+        #[test]
+        fn return_parameter_assignment() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "return_parameter_assignment",
+            )
+        }
+
+        #[test]
+        fn state_variable_assignment() -> Result<()> {
+            run("semantic/assembly_references", "state_variable_assignment")
+        }
+
+        #[test]
+        fn state_variable_in_modifier() -> Result<()> {
+            run("semantic/assembly_references", "state_variable_in_modifier")
+        }
+
+        #[test]
+        fn state_variable_length_suffix() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "state_variable_length_suffix",
+            )
+        }
+
+        #[test]
+        fn state_variable_offset_assignment() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "state_variable_offset_assignment",
+            )
+        }
+
+        #[test]
+        fn state_variable_read() -> Result<()> {
+            run("semantic/assembly_references", "state_variable_read")
+        }
+
+        #[test]
+        fn state_variable_slot_assignment() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "state_variable_slot_assignment",
+            )
+        }
+
+        #[test]
+        fn state_variable_slot_offset_read() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "state_variable_slot_offset_read",
+            )
+        }
+
+        #[test]
+        fn static_calldata_array_length_suffix() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "static_calldata_array_length_suffix",
+            )
+        }
+
+        #[test]
+        fn static_calldata_array_read() -> Result<()> {
+            run("semantic/assembly_references", "static_calldata_array_read")
+        }
+
+        #[test]
+        fn storage_parameter_length_suffix() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "storage_parameter_length_suffix",
+            )
+        }
+
+        #[test]
+        fn storage_parameter_read() -> Result<()> {
+            run("semantic/assembly_references", "storage_parameter_read")
+        }
+
+        #[test]
+        fn storage_parameter_slot_read() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "storage_parameter_slot_read",
+            )
+        }
+
+        #[test]
+        fn storage_pointer_length_suffix() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "storage_pointer_length_suffix",
+            )
+        }
+
+        #[test]
+        fn storage_pointer_offset_assignment() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "storage_pointer_offset_assignment",
+            )
+        }
+
+        #[test]
+        fn storage_pointer_read() -> Result<()> {
+            run("semantic/assembly_references", "storage_pointer_read")
+        }
+
+        #[test]
+        fn storage_pointer_slot_assignment() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "storage_pointer_slot_assignment",
+            )
+        }
+
+        #[test]
+        fn storage_pointer_slot_offset_read() -> Result<()> {
+            run(
+                "semantic/assembly_references",
+                "storage_pointer_slot_offset_read",
+            )
+        }
+
+        #[test]
+        fn struct_read() -> Result<()> {
+            run("semantic/assembly_references", "struct_read")
+        }
+
+        #[test]
+        fn unresolved_type() -> Result<()> {
+            run("semantic/assembly_references", "unresolved_type")
+        }
+
+        #[test]
+        fn value_local_slot_suffix() -> Result<()> {
+            run("semantic/assembly_references", "value_local_slot_suffix")
+        }
+    }
+
     mod bytecode_cycles {
         use super::*;
 

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 1408] Error: Only local variables are supported. To access storage variables, use the ".slot" and ".offset" suffixes.
+   ╭─[input.sol:9:17]
+   │
+ 9 │             pop(x)
+   │                 ┬  
+   │                 ╰── Error occurred here.
+───╯

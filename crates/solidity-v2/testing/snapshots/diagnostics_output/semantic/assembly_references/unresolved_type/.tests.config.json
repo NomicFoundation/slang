@@ -1,0 +1,18 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "target": {
+      "value": "Istanbul",
+      "reason": "Using the latest EVM target supported by solc '0.8.0', to avoid triggering any additional 'Evm Version not supported' errors when comparing outputs."
+    },
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "From",
+          "from": "0.8.0"
+        },
+        "reason": "solc rejects the unresolved type names. slang does not report unresolved type names yet, and the assembly checks skip a variable whose type did not resolve, so nothing is reported."
+      }
+    ]
+  }
+}
