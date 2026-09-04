@@ -8,7 +8,7 @@ Source: >
   5  │                                                                                                                 │ 139..139
   6  │ // <<<                                                                                                          │ 140..146
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Semicolon. One of AtKeyword, ConstantKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, ImmutableKeyword, InternalKeyword, LayoutKeyword, OpenBracket, OverrideKeyword, Period, PrivateKeyword, PublicKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/missing_field_type/input.sol:3:8]

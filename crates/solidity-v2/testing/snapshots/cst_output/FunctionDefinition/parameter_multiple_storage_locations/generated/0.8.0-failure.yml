@@ -6,7 +6,7 @@ Source: >
   3  │     function f(uint[] storage memory x) internal {}                                                                                   │ 149..200
   4  │ }                                                                                                                                     │ 201..202
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected MemoryKeyword. One of AtKeyword, CloseParen, Comma, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionDefinition/parameter_multiple_storage_locations/input.sol:3:31]

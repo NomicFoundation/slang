@@ -7,7 +7,7 @@ Diagnostics: 2
    │
  4 │ pragma experimental "SMTChecker";
    │ ────────────────┬────────────────  
-   │                 ╰────────────────── Error occurred here.
+   │                 ╰────────────────── Warning occurred here.
 ───╯
 
 [Warning 8158] Warning: z3 was selected as a Horn solver for CHC analysis but libz3.so.4.8 was not found.

@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Parse errors:
+Diagnostics:
 [resolution/duplicate-function-definition] Error: Function with same name and parameter types defined twice.
     ╭─[input.sol:13:3]
     │

@@ -6,7 +6,7 @@ Source: >
   3  │                                                                                                     │ 115..115
   4  │ // <<<                                                                                              │ 116..122
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Semicolon. One of OpenParen was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/EventDefinition/no_parens/input.sol:2:14]

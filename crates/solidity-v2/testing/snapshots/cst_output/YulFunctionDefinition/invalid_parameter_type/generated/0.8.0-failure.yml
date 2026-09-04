@@ -10,7 +10,7 @@ Source: >
   7  │     }                                                                                                         │ 218..223
   8  │ }                                                                                                             │ 224..225
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of YulCloseParen, YulComma was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulFunctionDefinition/invalid_parameter_type/input.sol:5:25]
