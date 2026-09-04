@@ -785,7 +785,7 @@ mod tests {
             diagnostics,
         } = ir::build(
             &"test.sol".into(),
-            &source_unit,
+            &source_unit.unwrap(),
             &source,
             version,
             &mut id_generator,

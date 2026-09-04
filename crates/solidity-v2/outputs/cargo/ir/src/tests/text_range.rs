@@ -31,7 +31,7 @@ fn test_calculate_text_range() {
         diagnostics,
     } = ir::build(
         &"test.sol".into(),
-        &source_unit,
+        &source_unit.unwrap(),
         &contents,
         language_version,
         &mut id_generator,
