@@ -9,7 +9,7 @@ use slang_solidity_v2_common::collections::{SortedMap, SortedSet};
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 const CRATE_NAME: &str = "solidity_v2_testing_solc";
-const RESULTS_FILE: &str = "results.generated.json";
+pub const RESULTS_FILE: &str = "results.generated.json";
 
 /// A single `(version, test)` pair that slang didn't compile cleanly.
 pub struct Failure {
@@ -28,11 +28,21 @@ pub struct VersionRun {
     pub commit: String,
     /// How many tests ran, whether they passed or not.
     pub executed: usize,
-    pub failures: Vec<Failure>,
+    /// The failures nothing accounts for: each one is a gap to fix. Until
+    /// [`expected_failures::partition`] has run this holds *every* failing test
+    /// in the run.
+    ///
+    /// [`expected_failures::partition`]: crate::expected_failures::partition
+    pub unexpected_failures: Vec<Failure>,
+    /// The failures an [`expected_failures`] case stands behind. Empty until
+    /// [`expected_failures::partition`] has run.
+    ///
+    /// [`expected_failures`]: crate::expected_failures
+    /// [`expected_failures::partition`]: crate::expected_failures::partition
+    pub expected_failures: Vec<Failure>,
 }
 
-/// What a whole run produced, per version. Checking this in is what turns it
-/// into the baseline the next run is held to.
+/// What a whole run produced, per version.
 #[derive(Default, Serialize, Deserialize)]
 #[serde(transparent)]
 pub struct TestResults {
@@ -46,18 +56,14 @@ pub struct TestResults {
 /// are mutable in principle, so we record what each one actually resolved to.
 /// If one is ever re-pointed, the change lands right next to the counts it
 /// invalidates rather than in a separate file.
-///
-/// `executed` and `passed` are redundant with `failures`, but recording them
-/// means the diff also catches the dataset itself changing size — a version
-/// whose test count moves is worth noticing, and it would otherwise be
-/// invisible whenever the new tests happen to pass.
 #[derive(Serialize, Deserialize)]
 pub struct VersionResults {
     commit: String,
     executed: usize,
     passed: usize,
-    failed: usize,
-    failures: SortedSet<String>,
+    expected_failures: usize,
+    unexpected_failures: usize,
+    unexpected_failures_paths: SortedSet<String>,
 }
 
 /// Path to the checked-in results file, located via the shared
@@ -89,7 +95,7 @@ impl TestResults {
     pub fn contains_failure(&self, version: LanguageVersion, test_path: &str) -> bool {
         self.versions
             .get(&version)
-            .is_some_and(|results| results.failures.contains(test_path))
+            .is_some_and(|results| results.unexpected_failures_paths.contains(test_path))
     }
 
     /// Writes this run's results out. Locally that rewrites the checked-in
@@ -110,9 +116,23 @@ impl TestResults {
         self.versions.values().map(|results| results.passed).sum()
     }
 
-    /// Total tests slang rejected, across every version.
-    pub fn failed(&self) -> usize {
-        self.versions.values().map(|results| results.failed).sum()
+    /// Total tests slang rejected without an [`expected_failures`] entry
+    /// covering them, across every version.
+    ///
+    /// [`expected_failures`]: crate::expected_failures
+    pub fn unexpected_failures(&self) -> usize {
+        self.versions
+            .values()
+            .map(|results| results.unexpected_failures)
+            .sum()
+    }
+
+    /// Total tests slang rejected for an expected reason, across every version.
+    pub fn expected_failures(&self) -> usize {
+        self.versions
+            .values()
+            .map(|results| results.expected_failures)
+            .sum()
     }
 }
 
@@ -121,15 +141,17 @@ impl FromIterator<VersionRun> for TestResults {
         let versions = runs
             .into_iter()
             .map(|run| {
-                let failed = run.failures.len();
+                let unexpected_failures = run.unexpected_failures.len();
+                let expected_failures = run.expected_failures.len();
 
                 let results = VersionResults {
                     commit: run.commit,
                     executed: run.executed,
-                    passed: run.executed - failed,
-                    failed,
-                    failures: run
-                        .failures
+                    passed: run.executed - unexpected_failures - expected_failures,
+                    expected_failures,
+                    unexpected_failures,
+                    unexpected_failures_paths: run
+                        .unexpected_failures
                         .into_iter()
                         .map(|failure| failure.test_path)
                         .collect(),

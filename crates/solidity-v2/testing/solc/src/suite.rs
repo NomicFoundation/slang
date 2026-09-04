@@ -1,14 +1,17 @@
-use anyhow::Result;
+use anyhow::{Result, bail};
 use infra_utils::codegen::CodegenFileSystem;
 use rayon::prelude::*;
 
 use crate::dataset::Datasets;
+use crate::expected_failures;
 use crate::results::{Failure, TestResults, VersionRun};
 use crate::runner::{self, Outcome};
 
-/// Fetches every supported version's semantic tests, compiles all of them, and
+/// Fetches every supported version's semantic tests, compiles all of them,
 /// writes the result out through [`CodegenFileSystem`] — which rewrites the
-/// checked-in files locally, and asserts they still match in CI.
+/// checked-in file locally, and asserts it still matches in CI — and then holds
+/// the run to it: any test slang rejected that isn't an expected failure fails
+/// this suite.
 pub fn run() -> Result<()> {
     let datasets = Datasets::create()?;
 
@@ -16,16 +19,57 @@ pub fn run() -> Result<()> {
     // (the checked-in file only records which `(version, test)` pairs do).
     let previous = TestResults::load()?;
 
-    let runs = execute(&datasets)?;
+    let mut runs = execute(&datasets)?;
 
-    // This step only prints new diagnostics, but the test fails or passes
-    // on the write below, checking that the results stay the same.
+    // Sorts the failures we stand behind apart from the ones we don't.
+    expected_failures::partition(&mut runs);
+
+    // Expected failures should *all* still be failing.
+    let stale_check = expected_failures::check_stale(&runs);
+
     report_new_failures(&previous, &runs);
+
+    // Rendered while the runs are still around: `TestResults` keeps only the
+    // paths, and the diagnostics behind them are what the report needs.
+    let unexpected = render_unexpected_failures(&runs);
 
     let results: TestResults = runs.into_iter().collect();
     report_summary(&results);
 
-    results.write(&mut CodegenFileSystem::default())
+    // Written before any error is reported.
+    results.write(&mut CodegenFileSystem::default())?;
+
+    // Errors are reported at the end of the function, to
+    // guarantee the snapshot test file is written.
+    stale_check?;
+
+    if !unexpected.is_empty() {
+        bail!(
+            "slang rejected {count} semantic test(s) that `solc` compiles. Each \
+             one is either a gap to fix, or a difference we stand behind and \
+             should declare in `src/expected_failures.rs`:\n\n{failures}",
+            count = unexpected.len(),
+            failures = unexpected.join("\n\n"),
+        );
+    }
+
+    Ok(())
+}
+
+/// Renders one block per unexpected failure: the version it ran at, the test's
+/// path, and the diagnostics slang reported for it.
+fn render_unexpected_failures(runs: &[VersionRun]) -> Vec<String> {
+    runs.iter()
+        .flat_map(|run| &run.unexpected_failures)
+        .map(|failure| {
+            format!(
+                "- [{version}] {test_path}\n{diagnostics}",
+                version = failure.version,
+                test_path = failure.test_path,
+                diagnostics = failure.diagnostics.join("\n"),
+            )
+        })
+        .collect()
 }
 
 /// Compiles every test in every dataset.
@@ -55,13 +99,12 @@ fn execute(datasets: &Datasets) -> Result<Vec<VersionRun>> {
                 })
                 .collect::<Result<_>>()?;
 
-            let failures: Vec<Failure> = outcomes.into_iter().flatten().collect();
-
             Ok(VersionRun {
                 version,
                 commit: dataset.commit_sha().to_owned(),
                 executed: test_files.len(),
-                failures,
+                unexpected_failures: outcomes.into_iter().flatten().collect(),
+                expected_failures: Vec::new(),
             })
         })
         .collect()
@@ -72,10 +115,12 @@ fn execute(datasets: &Datasets) -> Result<Vec<VersionRun>> {
 /// numbers are recorded per version in the checked-in results either way.
 fn report_summary(results: &TestResults) {
     println!(
-        "Compiled {executed} semantic test(s): {passed} passed, {failed} failed.",
+        "Compiled {executed} semantic test(s): {passed} passed, \
+         {unexpected} unexpected failure(s), {expected} expected.",
         executed = results.executed(),
         passed = results.passed(),
-        failed = results.failed(),
+        unexpected = results.unexpected_failures(),
+        expected = results.expected_failures(),
     );
 }
 
@@ -90,7 +135,7 @@ const MAX_REPORTED_FAILURES: usize = 10;
 fn report_new_failures(previous: &TestResults, runs: &[VersionRun]) {
     let new_failures: Vec<&Failure> = runs
         .iter()
-        .flat_map(|run| &run.failures)
+        .flat_map(|run| &run.unexpected_failures)
         .filter(|failure| !previous.contains_failure(failure.version, &failure.test_path))
         .collect();
 
