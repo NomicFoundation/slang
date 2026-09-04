@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/expression-not-a-value] Error: This built-in cannot be used as a value.
+   ╭─[input.sol:8:9]
+   │
+ 8 │     if (block) {}
+   │         ──┬──  
+   │           ╰──── Error occurred here.
+───╯

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/expression-not-a-value] Error: This built-in cannot be used as a value.
+   ╭─[input.sol:8:24]
+   │
+ 8 │     uint flagged = 1 + tx;
+   │                        ─┬  
+   │                         ╰── Error occurred here.
+───╯

@@ -1,7 +1,7 @@
 use slang_solidity_v2_common::nodes::NodeId;
 
 use super::Pass;
-use crate::binder::{Definition, ParameterDefinition, Scope, Typing};
+use crate::binder::{Definition, ParameterDefinition, Scope};
 use crate::types::{FunctionType, Type, TypeId, UserMetaType};
 
 /// The outcome of selecting one overload out of a set of candidates.
@@ -165,17 +165,17 @@ impl Pass<'_> {
     pub(super) fn lookup_function_matching_positional_arguments(
         &self,
         type_ids: &[TypeId],
-        argument_typings: &[Typing],
+        argument_types: &[TypeId],
         receiver_type_id: Option<TypeId>,
     ) -> OverloadMatch<TypeId> {
         self.lookup_function_matching_arguments(
             type_ids,
-            argument_typings.len(),
+            argument_types.len(),
             receiver_type_id,
             |parameters, external_call| {
                 self.parameters_match_positional_arguments(
                     parameters,
-                    argument_typings,
+                    argument_types,
                     external_call,
                 )
             },
@@ -185,50 +185,47 @@ impl Pass<'_> {
     fn parameters_match_positional_arguments(
         &self,
         parameters: &[ParameterDefinition],
-        argument_typings: &[Typing],
+        argument_types: &[TypeId],
         external_call: bool,
     ) -> bool {
         parameters
             .iter()
-            .zip(argument_typings)
-            .all(|(parameter, argument_typing)| {
+            .zip(argument_types)
+            .all(|(parameter, argument_type)| {
                 parameter.type_id.is_some_and(|type_id| {
-                    self.parameter_type_matches_argument_typing(
+                    self.parameter_type_matches_argument_type(
                         type_id,
-                        argument_typing,
+                        *argument_type,
                         external_call,
                     )
                 })
             })
     }
 
-    fn parameter_type_matches_argument_typing(
+    fn parameter_type_matches_argument_type(
         &self,
         parameter_type: TypeId,
-        argument_typing: &Typing,
+        argument_type: TypeId,
         external_call: bool,
     ) -> bool {
-        let Some(type_id) = argument_typing.as_type_id() else {
-            return false;
-        };
         if external_call {
             self.types
-                .implicitly_convertible_to_for_external_call(type_id, parameter_type)
+                .implicitly_convertible_to_for_external_call(argument_type, parameter_type)
         } else {
             self.types
-                .implicitly_convertible_to(type_id, parameter_type)
+                .implicitly_convertible_to(argument_type, parameter_type)
         }
     }
 
     pub(super) fn lookup_function_matching_named_arguments(
         &self,
         type_ids: &[TypeId],
-        argument_typings: &[(String, Typing)],
+        argument_types: &[(&str, TypeId)],
         receiver_type_id: Option<TypeId>,
     ) -> OverloadMatch<TypeId> {
         self.lookup_function_matching_arguments(
             type_ids,
-            argument_typings.len(),
+            argument_types.len(),
             receiver_type_id,
             |parameters, external_call| {
                 if parameters.iter().any(|parameter| parameter.name.is_none()) {
@@ -236,7 +233,7 @@ impl Pass<'_> {
                     // for matching named arguments
                     return false;
                 }
-                self.parameters_match_named_arguments(parameters, argument_typings, external_call)
+                self.parameters_match_named_arguments(parameters, argument_types, external_call)
             },
         )
     }
@@ -244,28 +241,22 @@ impl Pass<'_> {
     fn parameters_match_named_arguments(
         &self,
         parameters: &[ParameterDefinition],
-        argument_typings: &[(String, Typing)],
+        argument_types: &[(&str, TypeId)],
         external_call: bool,
     ) -> bool {
-        argument_typings
-            .iter()
-            .all(|(argument_name, argument_typing)| {
-                let Some(parameter) = parameters.iter().find(|parameter| {
-                    parameter
-                        .name
-                        .as_ref()
-                        .is_some_and(|name| name == argument_name)
-                }) else {
-                    return false;
-                };
-                parameter.type_id.is_some_and(|type_id| {
-                    self.parameter_type_matches_argument_typing(
-                        type_id,
-                        argument_typing,
-                        external_call,
-                    )
-                })
+        argument_types.iter().all(|(argument_name, argument_type)| {
+            let Some(parameter) = parameters.iter().find(|parameter| {
+                parameter
+                    .name
+                    .as_ref()
+                    .is_some_and(|name| name == argument_name)
+            }) else {
+                return false;
+            };
+            parameter.type_id.is_some_and(|type_id| {
+                self.parameter_type_matches_argument_type(type_id, *argument_type, external_call)
             })
+        })
     }
 
     fn get_event_definition_parameters(
@@ -290,22 +281,22 @@ impl Pass<'_> {
     pub(super) fn lookup_event_matching_positional_arguments(
         &self,
         definition_ids: &[NodeId],
-        argument_typings: &[Typing],
+        argument_types: &[TypeId],
     ) -> OverloadMatch<NodeId> {
         OverloadMatch::from_matches(definition_ids.iter().copied().filter(|definition_id| {
             let Some(parameters) = self.get_event_definition_parameters(*definition_id) else {
                 return false;
             };
             // argument count matches, check that all types are implicitly convertible
-            parameters.len() == argument_typings.len()
-                && self.parameters_match_positional_arguments(parameters, argument_typings, false)
+            parameters.len() == argument_types.len()
+                && self.parameters_match_positional_arguments(parameters, argument_types, false)
         }))
     }
 
     pub(super) fn lookup_event_matching_named_arguments(
         &self,
         definition_ids: &[NodeId],
-        argument_typings: &[(String, Typing)],
+        argument_types: &[(&str, TypeId)],
     ) -> OverloadMatch<NodeId> {
         OverloadMatch::from_matches(definition_ids.iter().copied().filter(|definition_id| {
             let Some(parameters) = self.get_event_definition_parameters(*definition_id) else {
@@ -314,8 +305,8 @@ impl Pass<'_> {
             // cannot match if any parameter is unnamed
             parameters.iter().all(|parameter| parameter.name.is_some())
                 // argument count matches, check that all types are implicitly convertible
-                && parameters.len() == argument_typings.len()
-                && self.parameters_match_named_arguments(parameters, argument_typings, false)
+                && parameters.len() == argument_types.len()
+                && self.parameters_match_named_arguments(parameters, argument_types, false)
         }))
     }
 }

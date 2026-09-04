@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[Warning 9207] Warning: 'transfer' is deprecated and scheduled for removal. Use 'call{value: <amount>}("")' instead.
+    ╭─[input.sol:10:5]
+    │
+ 10 │     payable(this).transfer;
+    │     ───────────┬──────────  
+    │                ╰──────────── Error occurred here.
+────╯

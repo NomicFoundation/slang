@@ -2,7 +2,7 @@
 
 Diagnostics: 2
 
-[type-system/expression-not-a-value] Error: This expression denotes a type or declaration, not a value.
+[type-system/expression-not-a-value] Error: This expression denoting a type or module cannot be used as a value.
     ╭─[main.sol:11:20]
     │
  11 │     return (true ? A : B).K;
@@ -10,7 +10,7 @@ Diagnostics: 2
     │                    ╰── Error occurred here.
 ────╯
 
-[type-system/expression-not-a-value] Error: This expression denotes a type or declaration, not a value.
+[type-system/expression-not-a-value] Error: This expression denoting a type or module cannot be used as a value.
     ╭─[main.sol:11:24]
     │
  11 │     return (true ? A : B).K;

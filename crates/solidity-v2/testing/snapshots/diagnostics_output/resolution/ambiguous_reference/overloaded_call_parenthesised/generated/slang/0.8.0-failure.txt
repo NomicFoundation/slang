@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/ambiguous-reference] Error: No unique declaration found for 'f'.
+    ╭─[input.sol:23:17]
+    │
+ 23 │         return (f)(300);
+    │                 ┬  
+    │                 ╰── Error occurred here.
+────╯

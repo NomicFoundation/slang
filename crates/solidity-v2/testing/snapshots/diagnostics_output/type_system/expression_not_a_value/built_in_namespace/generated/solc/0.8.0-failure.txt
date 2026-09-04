@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9574] Error: Type abi is not implicitly convertible to expected type uint256.
+   ╭─[input.sol:8:5]
+   │
+ 8 │     uint flagged = abi;
+   │     ─────────┬────────  
+   │              ╰────────── Error occurred here.
+───╯

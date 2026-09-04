@@ -1,0 +1,43 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 5
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
+   ╭─[input.sol:6:1]
+   │
+ 6 │ error Flagged(uint value);
+   │ ─────────────┬────────────  
+   │              ╰────────────── Error occurred here.
+───╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
+    ╭─[input.sol:10:5]
+    │
+ 10 │     revert Flagged(abi);
+    │     ──────────┬─────────  
+    │               ╰─────────── Error occurred here.
+────╯
+
+[type-system/expression-not-a-value] Error: This built-in cannot be used as a value.
+    ╭─[input.sol:10:20]
+    │
+ 10 │     revert Flagged(abi);
+    │                    ─┬─  
+    │                     ╰─── Error occurred here.
+────╯
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
+    ╭─[input.sol:14:5]
+    │
+ 14 │     revert Flagged({value: tx});
+    │     ──────────────┬─────────────  
+    │                   ╰─────────────── Error occurred here.
+────╯
+
+[type-system/expression-not-a-value] Error: This built-in cannot be used as a value.
+    ╭─[input.sol:14:28]
+    │
+ 14 │     revert Flagged({value: tx});
+    │                            ─┬  
+    │                             ╰── Error occurred here.
+────╯

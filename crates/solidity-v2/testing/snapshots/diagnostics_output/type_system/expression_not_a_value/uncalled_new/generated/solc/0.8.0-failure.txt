@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9574] Error: Type function () returns (contract Other) is not implicitly convertible to expected type contract Other.
+    ╭─[input.sol:10:5]
+    │
+ 10 │     Other flagged = new Other;
+    │     ────────────┬────────────  
+    │                 ╰────────────── Error occurred here.
+────╯

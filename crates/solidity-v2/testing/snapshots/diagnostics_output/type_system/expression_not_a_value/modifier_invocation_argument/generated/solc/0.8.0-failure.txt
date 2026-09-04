@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4649] Error: Invalid type for argument in modifier invocation. Invalid implicit conversion from abi to uint256 requested.
+    ╭─[input.sol:11:30]
+    │
+ 11 │   function f() public view m(abi) {}
+    │                              ─┬─  
+    │                               ╰─── Error occurred here.
+────╯

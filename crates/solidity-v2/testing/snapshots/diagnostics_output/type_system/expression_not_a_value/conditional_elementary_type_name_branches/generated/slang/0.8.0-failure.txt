@@ -2,7 +2,7 @@
 
 Diagnostics: 2
 
-[type-system/expression-not-a-value] Error: This expression denotes a type or declaration, not a value.
+[type-system/expression-not-a-value] Error: This expression denoting a type or module cannot be used as a value.
    ╭─[input.sol:6:16]
    │
  6 │     return c ? uint : uint;
@@ -10,7 +10,7 @@ Diagnostics: 2
    │                  ╰─── Error occurred here.
 ───╯
 
-[type-system/expression-not-a-value] Error: This expression denotes a type or declaration, not a value.
+[type-system/expression-not-a-value] Error: This expression denoting a type or module cannot be used as a value.
    ╭─[input.sol:6:23]
    │
  6 │     return c ? uint : uint;

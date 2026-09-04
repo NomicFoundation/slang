@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 6378] Error: Unable to deduce common type for array elements.
+   ╭─[input.sol:9:30]
+   │
+ 9 │     uint[2] memory flagged = [abi, tx];
+   │                              ────┬────  
+   │                                  ╰────── Error occurred here.
+───╯

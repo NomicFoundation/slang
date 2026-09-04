@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 7407] Error: Type block is not implicitly convertible to expected type bool.
+   ╭─[input.sol:8:9]
+   │
+ 8 │     if (block) {}
+   │         ──┬──  
+   │           ╰──── Error occurred here.
+───╯

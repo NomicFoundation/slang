@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+[TypeError 7407] Error: Type abi is not implicitly convertible to expected type uint256.
+   ╭─[input.sol:7:30]
+   │
+ 7 │ uint constant FLAGGED_FILE = abi;
+   │                              ─┬─  
+   │                               ╰─── Error occurred here.
+───╯
+
+[TypeError 8349] Error: Initial value for constant variable has to be compile-time constant.
+   ╭─[input.sol:7:30]
+   │
+ 7 │ uint constant FLAGGED_FILE = abi;
+   │                              ─┬─  
+   │                               ╰─── Error occurred here.
+───╯
+
+[TypeError 7407] Error: Type tx is not implicitly convertible to expected type uint256.
+    ╭─[input.sol:10:34]
+    │
+ 10 │   uint constant FLAGGED_MEMBER = tx;
+    │                                  ─┬  
+    │                                   ╰── Error occurred here.
+────╯
+
+[TypeError 8349] Error: Initial value for constant variable has to be compile-time constant.
+    ╭─[input.sol:10:34]
+    │
+ 10 │   uint constant FLAGGED_MEMBER = tx;
+    │                                  ─┬  
+    │                                   ╰── Error occurred here.
+────╯

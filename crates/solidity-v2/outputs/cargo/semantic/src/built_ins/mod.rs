@@ -493,10 +493,15 @@ impl<'a> BuiltInsResolver<'a> {
     pub(crate) fn type_of_function_call(
         &mut self,
         built_in: &InternalBuiltIn,
-        argument_typings: &[Typing],
+        argument_types: Option<&[TypeId]>,
     ) -> Result<TypeId, BuiltInCallError> {
+        // If any of the arguments failed to type, we don't attempt to resolve
+        // the built-in call.
+        let Some(argument_types) = argument_types else {
+            return Err(BuiltInCallError::UnresolvedDependency);
+        };
         let type_id = match built_in {
-            InternalBuiltIn::AbiDecode => self.type_of_abi_decode(argument_typings)?,
+            InternalBuiltIn::AbiDecode => self.type_of_abi_decode(argument_types)?,
             InternalBuiltIn::AbiEncode => self.types.bytes_memory(),
             InternalBuiltIn::AbiEncodeCall => self.types.bytes_memory(),
             InternalBuiltIn::AbiEncodePacked => self.types.bytes_memory(),
@@ -510,7 +515,9 @@ impl<'a> BuiltInsResolver<'a> {
             InternalBuiltIn::AddressStaticcall => self.types.boolean_bytes_tuple(),
             InternalBuiltIn::AddressTransfer => self.types.void(),
             InternalBuiltIn::ArrayPush(type_id) => {
-                if argument_typings.is_empty() {
+                // `push()` yields a reference to the new element, `push(v)`
+                // yields nothing.
+                if argument_types.is_empty() {
                     *type_id
                 } else {
                     self.types.void()
@@ -565,16 +572,12 @@ impl<'a> BuiltInsResolver<'a> {
 
     fn type_of_abi_decode(
         &mut self,
-        argument_typings: &[Typing],
+        argument_types: &[TypeId],
     ) -> Result<TypeId, BuiltInCallError> {
         // TODO(validation): report an error when `abi.decode` is not given
         // exactly two arguments.
-        if argument_typings.len() != 2 {
+        let [_, type_id] = argument_types else {
             return Err(BuiltInCallError::NotReportedYet);
-        }
-        // The second argument's own type failed to resolve.
-        let Typing::Resolved(type_id) = &argument_typings[1] else {
-            return Err(BuiltInCallError::UnresolvedDependency);
         };
 
         // `abi.decode(data, (T))`: a single-element tuple collapses to the

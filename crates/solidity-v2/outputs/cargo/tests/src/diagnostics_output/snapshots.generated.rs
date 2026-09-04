@@ -67,6 +67,14 @@ mod resolution {
         }
 
         #[test]
+        fn overloaded_call_parenthesised() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_call_parenthesised",
+            )
+        }
+
+        #[test]
         fn overloaded_event() -> Result<()> {
             run("resolution/ambiguous_reference", "overloaded_event")
         }
@@ -3843,6 +3851,44 @@ mod type_system {
         use super::*;
 
         #[test]
+        fn array_literal_item() -> Result<()> {
+            run("type_system/expression_not_a_value", "array_literal_item")
+        }
+
+        #[test]
+        fn base_constructor_argument() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "base_constructor_argument",
+            )
+        }
+
+        #[test]
+        fn built_in_function() -> Result<()> {
+            run("type_system/expression_not_a_value", "built_in_function")
+        }
+
+        #[test]
+        fn built_in_namespace() -> Result<()> {
+            run("type_system/expression_not_a_value", "built_in_namespace")
+        }
+
+        #[test]
+        fn call_argument() -> Result<()> {
+            run("type_system/expression_not_a_value", "call_argument")
+        }
+
+        #[test]
+        fn call_option_value() -> Result<()> {
+            run("type_system/expression_not_a_value", "call_option_value")
+        }
+
+        #[test]
+        fn condition() -> Result<()> {
+            run("type_system/expression_not_a_value", "condition")
+        }
+
+        #[test]
         fn conditional_elementary_type_name_branches() -> Result<()> {
             run(
                 "type_system/expression_not_a_value",
@@ -3867,8 +3913,145 @@ mod type_system {
         }
 
         #[test]
+        fn constant_initializer() -> Result<()> {
+            run("type_system/expression_not_a_value", "constant_initializer")
+        }
+
+        #[test]
+        fn emit_argument() -> Result<()> {
+            run("type_system/expression_not_a_value", "emit_argument")
+        }
+
+        #[test]
+        fn index_access_index() -> Result<()> {
+            run("type_system/expression_not_a_value", "index_access_index")
+        }
+
+        #[test]
+        fn inheritance_specifier_argument() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "inheritance_specifier_argument",
+            )
+        }
+
+        #[test]
+        fn logical_operator_operand() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "logical_operator_operand",
+            )
+        }
+
+        #[test]
+        fn loop_condition() -> Result<()> {
+            run("type_system/expression_not_a_value", "loop_condition")
+        }
+
+        #[test]
+        fn modifier_invocation_argument() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "modifier_invocation_argument",
+            )
+        }
+
+        #[test]
+        fn modifier_placeholder() -> Result<()> {
+            run("type_system/expression_not_a_value", "modifier_placeholder")
+        }
+
+        #[test]
         fn module_aliases() -> Result<()> {
             run("type_system/expression_not_a_value", "module_aliases")
+        }
+
+        #[test]
+        fn named_argument() -> Result<()> {
+            run("type_system/expression_not_a_value", "named_argument")
+        }
+
+        #[test]
+        fn operator_operand() -> Result<()> {
+            run("type_system/expression_not_a_value", "operator_operand")
+        }
+
+        #[test]
+        fn revert_argument() -> Result<()> {
+            run("type_system/expression_not_a_value", "revert_argument")
+        }
+
+        #[test]
+        fn state_variable_initializer() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "state_variable_initializer",
+            )
+        }
+
+        #[test]
+        fn statement_address_transfer() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "statement_address_transfer",
+            )
+        }
+
+        #[test]
+        fn statement_array_pop() -> Result<()> {
+            run("type_system/expression_not_a_value", "statement_array_pop")
+        }
+
+        #[test]
+        fn statement_built_in_function() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "statement_built_in_function",
+            )
+        }
+
+        #[test]
+        fn statement_built_in_member() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "statement_built_in_member",
+            )
+        }
+
+        #[test]
+        fn statement_built_in_namespace() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "statement_built_in_namespace",
+            )
+        }
+
+        #[test]
+        fn statement_for_iterator() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "statement_for_iterator",
+            )
+        }
+
+        #[test]
+        fn statement_super() -> Result<()> {
+            run("type_system/expression_not_a_value", "statement_super")
+        }
+
+        #[test]
+        fn super_reference() -> Result<()> {
+            run("type_system/expression_not_a_value", "super_reference")
+        }
+
+        #[test]
+        fn tuple_component() -> Result<()> {
+            run("type_system/expression_not_a_value", "tuple_component")
+        }
+
+        #[test]
+        fn uncalled_new() -> Result<()> {
+            run("type_system/expression_not_a_value", "uncalled_new")
         }
     }
 
