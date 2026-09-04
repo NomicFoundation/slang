@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[resolution/incompatible-built-in-target] Error: This built-in was deprecated in EVM target 'Paris'.
+[resolution/incompatible-built-in-target] Error: This built-in was deprecated in EVM target '__CURRENT_SLANG_EVM_TARGET__'.
    ╭─[input.sol:7:23]
    │
  7 │             result := difficulty()

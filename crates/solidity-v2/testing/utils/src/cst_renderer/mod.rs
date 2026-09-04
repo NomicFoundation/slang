@@ -19,6 +19,8 @@ use std::cmp::max;
 use std::fmt::Write;
 use std::ops::Range;
 
+use slang_solidity_v2_common::evm_targets::EvmTarget;
+use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_parser::ParseOutput;
 
 use crate::reporting::diagnostic;
@@ -45,7 +47,13 @@ pub(crate) fn format_label_kind(label: &str, kind: &str) -> String {
 ///
 /// Returns a tuple of (`is_success`, `rendered_output`), where `is_success` is true if
 /// `result` had no errors.
-pub fn render(source: &str, source_id: &str, result: &ParseOutput) -> (bool, String) {
+pub fn render(
+    source: &str,
+    source_id: &str,
+    result: &ParseOutput,
+    version: LanguageVersion,
+    target: EvmTarget,
+) -> (bool, String) {
     let mut w = String::new();
 
     // Write the source code
@@ -59,7 +67,7 @@ pub fn render(source: &str, source_id: &str, result: &ParseOutput) -> (bool, Str
 
     let errors: Vec<String> = diagnostics
         .iter()
-        .map(|e| diagnostic::render(e, source_id, source, false))
+        .map(|e| diagnostic::render_for_snapshot(e, source_id, source, version, target))
         .collect();
 
     let is_success = !write_errors(&mut w, &errors).unwrap();
