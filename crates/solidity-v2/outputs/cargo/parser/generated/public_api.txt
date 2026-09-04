@@ -3,7 +3,7 @@
 pub mod slang_solidity_v2_parser
 pub struct slang_solidity_v2_parser::ParseOutput
 pub slang_solidity_v2_parser::ParseOutput::diagnostics: slang_solidity_v2_common::diagnostics::collection::DiagnosticCollection
-pub slang_solidity_v2_parser::ParseOutput::source_unit: slang_solidity_v2_cst::structured_cst::nodes::SourceUnit
+pub slang_solidity_v2_parser::ParseOutput::source_unit: core::option::Option<slang_solidity_v2_cst::structured_cst::nodes::SourceUnit>
 impl core::cmp::PartialEq for slang_solidity_v2_parser::ParseOutput
 pub fn slang_solidity_v2_parser::ParseOutput::eq(&self, &slang_solidity_v2_parser::ParseOutput) -> bool
 impl core::fmt::Debug for slang_solidity_v2_parser::ParseOutput

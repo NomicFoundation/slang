@@ -65,12 +65,14 @@ pub fn render(source: &str, source_id: &str, result: &ParseOutput) -> (bool, Str
 
     let is_success = !write_diagnostics(&mut w, &diagnostics).unwrap();
 
-    // Write the Tree
-    writeln!(&mut w, "Tree:").unwrap();
-    let (_, root_frags) = renderer::render_source_unit(source, source_unit, 0);
-    write!(w, "  - {}", format_label_kind("root", "SourceUnit")).unwrap();
-    for frag in root_frags {
-        w.push_str(&frag);
+    // Write the Tree, if the parser produced one
+    if let Some(source_unit) = source_unit {
+        writeln!(&mut w, "Tree:").unwrap();
+        let (_, root_frags) = renderer::render_source_unit(source, source_unit, 0);
+        write!(w, "  - {}", format_label_kind("root", "SourceUnit")).unwrap();
+        for frag in root_frags {
+            w.push_str(&frag);
+        }
     }
 
     (is_success, w)
