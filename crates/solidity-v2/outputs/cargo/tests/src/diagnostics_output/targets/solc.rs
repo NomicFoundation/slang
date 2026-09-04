@@ -1,7 +1,8 @@
 use anyhow::{Result, anyhow};
 use inflector::Inflector;
 use infra_utils::solc::{
-    Binary, CliInput, CliSettings, InputSource, LanguageSelector, Severity, render_solc_error,
+    Binary, CliInput, CliSettings, InputSource, LanguageSelector, Severity,
+    render_solc_error_for_snapshot,
 };
 use semver::Version;
 use slang_solidity_v2::compilation::FileId;
@@ -46,6 +47,8 @@ impl TestTarget for SolcTarget {
             .map(|(file_id, content)| (file_id.to_string(), content.clone()))
             .collect();
 
+        let evm_version = evm_target.to_string().to_camel_case();
+
         let input = CliInput {
             language: LanguageSelector::Solidity,
             sources: sources
@@ -60,7 +63,7 @@ impl TestTarget for SolcTarget {
                 })
                 .collect(),
             settings: CliSettings {
-                evm_version: Some(evm_target.to_string().to_camel_case()),
+                evm_version: Some(evm_version.clone()),
                 experimental: if version < LanguageVersion::V0_8_35 {
                     // 'experimental' flag was introduced in '0.8.35'
                     None
@@ -82,7 +85,10 @@ impl TestTarget for SolcTarget {
 
         let rendered = diagnostics
             .into_iter()
-            .map(|diagnostic| render_solc_error(&diagnostic, &sources).unwrap())
+            .map(|diagnostic| {
+                render_solc_error_for_snapshot(&diagnostic, &sources, &semver_version, &evm_version)
+                    .unwrap()
+            })
             .collect();
 
         Ok(TargetOutcome {
