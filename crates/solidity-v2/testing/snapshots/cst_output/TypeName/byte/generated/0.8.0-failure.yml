@@ -8,7 +8,7 @@ Source: >
   5  │ x;                                                                                      │ 113..115
   6  │ }                                                                                       │ 116..117
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected ByteKeyword. One of AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, CloseBrace, ConstructorKeyword, EnumKeyword, ErrorKeyword, EventKeyword, FallbackKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, ModifierKeyword, ReceiveKeyword, RevertKeyword, StringKeyword, StructKeyword, TransientKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UsingKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/TypeName/byte/input.sol:3:1]

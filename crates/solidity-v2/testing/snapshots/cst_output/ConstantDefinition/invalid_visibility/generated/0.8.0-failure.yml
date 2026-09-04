@@ -3,7 +3,7 @@
 Source: >
   1  │ uint public constant x = 7;                                                      │ 0..27
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected PublicKeyword. One of ConstantKeyword, OpenBracket was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ConstantDefinition/invalid_visibility/input.sol:1:6]

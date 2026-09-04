@@ -8,7 +8,7 @@ Source: >
   5  │ // <<<                                                                                                             │ 156..162
   6  │ }                                                                                                                  │ 163..164
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected OverrideKeyword. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, InternalKeyword, LayoutKeyword, OpenBrace, PayableKeyword, PublicKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ConstructorDefinition/override_attribute/input.sol:3:16]

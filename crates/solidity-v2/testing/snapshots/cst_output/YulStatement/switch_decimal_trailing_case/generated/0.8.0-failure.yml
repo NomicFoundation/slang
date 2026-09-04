@@ -11,7 +11,7 @@ Source: >
   8  │     }                                                                                                               │ 213..218
   9  │ }                                                                                                                   │ 219..220
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of YulDecimalLiteral, YulFalseKeyword, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulStringLiteral, YulTrueKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulStatement/switch_decimal_trailing_case/input.sol:5:8]

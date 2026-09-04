@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Parse errors:
+Diagnostics:
 [type-system/cannot-call-via-contract-type-name] Error: Cannot call function via contract type name.
     ╭─[input.sol:12:9]
     │

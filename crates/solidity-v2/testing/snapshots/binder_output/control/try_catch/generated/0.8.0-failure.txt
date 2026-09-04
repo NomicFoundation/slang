@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Parse errors:
+Diagnostics:
 [structure/invalid-catch-clause-name] Error: Invalid catch clause name. Expected either `catch (...)` or `catch Error(...)`.
     ╭─[input.sol:8:11]
     │
