@@ -100,12 +100,8 @@ fn linearise_functions(
                     if !already_overridden {
                         functions.push(function);
                     }
-                    // TODO(validation): if overriding, function must have the `override` specifier
-                    // and the overriden functions must be marked `virtual`
                     // TODO(validation): if overriding multiple ancestors, the function needs to
                     // specify the bases in a specifier
-                    // TODO(validation) SDR[6]: if overriding, the function mutability must be
-                    // stricter than the overridden one's
                 }
                 ir::ContractMember::StateVariableDefinition(state_variable) => {
                     // Record its getter, if it has one, so it can shadow a

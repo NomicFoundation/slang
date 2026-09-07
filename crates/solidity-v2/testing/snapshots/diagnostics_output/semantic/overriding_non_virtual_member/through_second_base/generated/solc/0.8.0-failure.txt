@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 4334] Error: Trying to override non-virtual function. Did you forget to add "virtual"?
+   ╭─[input.sol:5:5]
+   │
+ 5 │     function f() external view {}
+   │     ──────────────┬──────────────  
+   │                   ╰──────────────── Error occurred here.
+───╯
+
+[TypeError 6959] Error: Overriding function changes state mutability from "view" to "nonpayable".
+    ╭─[input.sol:16:5]
+    │
+ 16 │     function f() public override(A, B) {}
+    │     ──────────────────┬──────────────────  
+    │                       ╰──────────────────── Error occurred here.
+────╯

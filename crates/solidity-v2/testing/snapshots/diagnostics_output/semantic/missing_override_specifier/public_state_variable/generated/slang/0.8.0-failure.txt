@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/missing-override-specifier] Error: Overriding public state variable is missing "override" specifier.
+    ╭─[input.sol:10:5]
+    │
+ 10 │     uint256 public f;
+    │     ────────┬────────  
+    │             ╰────────── Error occurred here.
+────╯

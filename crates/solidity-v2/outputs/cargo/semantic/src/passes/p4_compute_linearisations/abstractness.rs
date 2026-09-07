@@ -26,7 +26,6 @@ impl<'a> HierarchyChecker<'a> {
             };
             let slots = abstract_slots.entry(candidate.name).or_default();
             for slot in slots.iter_mut() {
-                // TODO: check for SDR[1122]
                 if slot.overridden_by(types, &candidate) {
                     slot.type_id = candidate.type_id;
                     slot.implemented = candidate.implemented;

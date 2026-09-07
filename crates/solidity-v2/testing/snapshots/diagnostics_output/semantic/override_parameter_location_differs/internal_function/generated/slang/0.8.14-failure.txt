@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/override-parameter-location-differs] Error: Data locations of parameters have to be the same when overriding non-external functions, but they differ.
+    ╭─[input.sol:14:5]
+    │
+ 14 │     function f(uint256[1] calldata a) internal pure override returns (uint256) {
+    │     ─────────────────────────────────────┬─────────────────────────────────────  
+    │                                          ╰─────────────────────────────────────── Error occurred here.
+────╯

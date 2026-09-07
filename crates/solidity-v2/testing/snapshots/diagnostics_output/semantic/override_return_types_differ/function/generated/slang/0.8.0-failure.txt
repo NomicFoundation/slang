@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/override-return-types-differ] Error: Overriding function return types differ.
+    ╭─[input.sol:10:5]
+    │
+ 10 │     function f() internal virtual override returns (uint8);
+    │     ───────────────────────────┬───────────────────────────  
+    │                                ╰───────────────────────────── Error occurred here.
+────╯

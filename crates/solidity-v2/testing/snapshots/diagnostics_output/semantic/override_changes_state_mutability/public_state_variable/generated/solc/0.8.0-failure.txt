@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 6959] Error: Overriding public state variable changes state mutability from "pure" to "view".
+    ╭─[input.sol:10:5]
+    │
+ 10 │     uint256 public override foo;
+    │     ─────────────┬─────────────  
+    │                  ╰─────────────── Error occurred here.
+────╯

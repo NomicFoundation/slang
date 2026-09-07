@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 9456] Error: Overriding function is missing "override" specifier.
+    ╭─[input.sol:10:5]
+    │
+ 10 │     function f() public pure returns (uint256, uint256) {}
+    │     ───────────────────────────┬──────────────────────────  
+    │                                ╰──────────────────────────── Error occurred here.
+────╯
+
+[TypeError 4822] Error: Overriding function return types differ.
+    ╭─[input.sol:10:5]
+    │
+ 10 │     function f() public pure returns (uint256, uint256) {}
+    │     ───────────────────────────┬──────────────────────────  
+    │                                ╰──────────────────────────── Error occurred here.
+────╯

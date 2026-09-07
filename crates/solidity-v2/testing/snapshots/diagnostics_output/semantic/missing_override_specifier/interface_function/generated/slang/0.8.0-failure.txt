@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/missing-override-specifier] Error: Overriding function is missing "override" specifier.
+    ╭─[input.sol:11:5]
+    │
+ 11 │     function f() external {}
+    │     ───────────┬──────────  
+    │                ╰──────────── Error occurred here.
+────╯

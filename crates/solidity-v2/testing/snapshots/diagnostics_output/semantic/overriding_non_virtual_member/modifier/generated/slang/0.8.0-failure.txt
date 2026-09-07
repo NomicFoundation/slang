@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/overriding-non-virtual-member] Error: Trying to override non-virtual modifier. Did you forget to add "virtual"?
+   ╭─[input.sol:5:5]
+   │
+ 5 │     modifier m() {
+   │     ──────┬──────  
+   │           ╰──────── Error occurred here.
+───╯

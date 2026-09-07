@@ -56,7 +56,7 @@ Bindings:
     │            ╰─────────────── name: 4
     │                      │     
     │                      ╰───── ref: 1
- 14 │     function owner() external returns (address) {}
+ 14 │     function owner() external override returns (address) {}
     │              ──┬──  
     │                ╰──── name: 5
     │ 

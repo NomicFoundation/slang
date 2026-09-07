@@ -1,0 +1,15 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "target": {
+      "value": "Istanbul",
+      "reason": "Using the latest EVM target supported by solc '0.8.0', to avoid triggering any additional 'Evm Version not supported' errors when comparing outputs."
+    },
+    "expected_solc_divergence": [
+      {
+        "specifier": { "type": "Range", "from": "0.8.8", "till": "0.8.12" },
+        "reason": "solc 0.8.8 to 0.8.11 only found `IBase.foo` as the overridden function, which is exempt from the specifier as an interface function, so it accepted `Impl.foo`. From 0.8.12 it considers every ancestor and finds `Base.foo` too. slang pairs against the nearest definition, `Base.foo`, in every version."
+      }
+    ]
+  }
+}

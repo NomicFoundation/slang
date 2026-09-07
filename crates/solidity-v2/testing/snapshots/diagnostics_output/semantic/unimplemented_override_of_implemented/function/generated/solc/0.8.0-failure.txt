@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4593] Error: Overriding an implemented function with an unimplemented function is not allowed.
+    ╭─[input.sol:10:5]
+    │
+ 10 │     function f() external virtual override;
+    │     ───────────────────┬───────────────────  
+    │                        ╰───────────────────── Error occurred here.
+────╯

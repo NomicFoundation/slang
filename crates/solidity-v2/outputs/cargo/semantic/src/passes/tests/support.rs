@@ -249,6 +249,7 @@ impl<'a> AnalysisBuilder<'a> {
             drop(p4_compute_linearisations::run(
                 &binder,
                 &types,
+                self.language_version,
                 &file_node_mapper,
                 diagnostics,
             ));

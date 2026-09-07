@@ -844,7 +844,7 @@ impl TypeRegistry {
     // external function signature. External functions allow changing data
     // location from `memory` to `calldata` and viceversa. This applies to both
     // parameter and return types (a multi-value return is a tuple).
-    fn type_overrides_in_external_function(&self, left: TypeId, right: TypeId) -> bool {
+    pub(crate) fn type_overrides_in_external_function(&self, left: TypeId, right: TypeId) -> bool {
         if left == right {
             return true;
         }

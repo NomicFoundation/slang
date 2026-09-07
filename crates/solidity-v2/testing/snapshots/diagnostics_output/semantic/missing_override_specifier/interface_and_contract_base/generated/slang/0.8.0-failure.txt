@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[semantic/missing-override-specifier] Error: Overriding function is missing "override" specifier.
+   ╭─[input.sol:9:5]
+   │
+ 9 │     function foo() public view virtual {}
+   │     ─────────────────┬─────────────────  
+   │                      ╰─────────────────── Error occurred here.
+───╯
+
+[semantic/missing-override-specifier] Error: Overriding function is missing "override" specifier.
+    ╭─[input.sol:19:5]
+    │
+ 19 │     function foo() public view {}
+    │     ─────────────┬─────────────  
+    │                  ╰─────────────── Error occurred here.
+────╯
