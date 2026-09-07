@@ -15,5 +15,5 @@ Diagnostics: 2
    │
  9 │             uint x;
    │             ───┬──  
-   │                ╰──── Error occurred here.
+   │                ╰──── Warning occurred here.
 ───╯

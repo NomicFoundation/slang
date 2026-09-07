@@ -15,7 +15,7 @@ Diagnostics: 3
     │
  11 │     constructor() internal {}
     │     ────────────┬────────────  
-    │                 ╰────────────── Error occurred here.
+    │                 ╰────────────── Warning occurred here.
 ────╯
 
 [Warning 2462] Warning: Visibility for constructor is ignored. If you want the contract to be non-deployable, making it "abstract" is sufficient.
@@ -23,5 +23,5 @@ Diagnostics: 3
     │
  21 │     constructor() public {}
     │     ───────────┬───────────  
-    │                ╰───────────── Error occurred here.
+    │                ╰───────────── Warning occurred here.
 ────╯

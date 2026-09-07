@@ -7,5 +7,5 @@ Diagnostics: 1
    │
  8 │     function g(C self) internal {
    │                ───┬──  
-   │                   ╰──── Error occurred here.
+   │                   ╰──── Warning occurred here.
 ───╯

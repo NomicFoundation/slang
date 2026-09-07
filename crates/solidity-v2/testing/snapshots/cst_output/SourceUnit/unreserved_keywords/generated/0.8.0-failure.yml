@@ -9,7 +9,7 @@ Source: >
   6  │                                                                                                          │ 158..158
   7  │ // <<<                                                                                                   │ 159..165
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.27'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/unreserved_keywords/input.sol:3:7]

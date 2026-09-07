@@ -9,7 +9,7 @@ Diagnostics: 3
     ┆ ┆   
  11 │ ├─▶     }
     │ │           
-    │ ╰─────────── Error occurred here.
+    │ ╰─────────── Warning occurred here.
 ────╯
 
 [TypeError 7813] Error: Circular reference to contract bytecode either via "new" or "type(...).creationCode" / "type(...).runtimeCode".

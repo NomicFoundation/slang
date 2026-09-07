@@ -7,5 +7,5 @@ Diagnostics: 1
    │
  7 │ pragma abicoder v1;
    │ ─────────┬─────────  
-   │          ╰─────────── Error occurred here.
+   │          ╰─────────── Warning occurred here.
 ───╯

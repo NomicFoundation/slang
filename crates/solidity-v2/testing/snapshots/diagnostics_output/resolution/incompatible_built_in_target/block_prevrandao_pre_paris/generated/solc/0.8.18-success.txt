@@ -7,5 +7,5 @@ Diagnostics: 1
     │
  10 │         return block.prevrandao;
     │                ────────┬───────  
-    │                        ╰───────── Error occurred here.
+    │                        ╰───────── Warning occurred here.
 ────╯

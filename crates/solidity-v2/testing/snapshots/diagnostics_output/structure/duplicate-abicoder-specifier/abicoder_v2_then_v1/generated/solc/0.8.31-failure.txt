@@ -15,5 +15,5 @@ Diagnostics: 2
    │
  8 │ pragma abicoder v1;
    │ ─────────┬─────────  
-   │          ╰─────────── Error occurred here.
+   │          ╰─────────── Warning occurred here.
 ───╯

@@ -10,7 +10,7 @@ Source: >
   7  │     }                                                                                                   │ 160..165
   8  │ }                                                                                                       │ 166..167
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Identifier. One of Semicolon was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/BreakStatement/error_recovery/input.sol:4:7]

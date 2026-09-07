@@ -9,7 +9,7 @@ Diagnostics: 4
    │
  4 │ pragma experimental "SMTChecker";
    │ ────────────────┬────────────────  
-   │                 ╰────────────────── Error occurred here.
+   │                 ╰────────────────── Warning occurred here.
 ───╯
 
 [Warning 7649] Warning: CHC analysis was not possible since no Horn solver was found and enabled. The accepted solvers for CHC are Eldarica and z3.

@@ -7,7 +7,7 @@ Source: >
   4  │     WARNING,                                                                                                            │ 132..144
   5  │ }                                                                                                                       │ 145..146
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected CloseBrace. One of AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/EnumDefinition/trailing_comma/input.sol:5:1]

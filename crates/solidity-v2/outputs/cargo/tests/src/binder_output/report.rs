@@ -109,7 +109,7 @@ fn report_diagnostics(
     diagnostics: &DiagnosticCollection,
     file_contents: &SortedMap<FileId, String>,
 ) -> Result<()> {
-    writeln!(report, "Parse errors:")?;
+    writeln!(report, "Diagnostics:")?;
     for diagnostic in diagnostics {
         let file_id = diagnostic.file_id();
         let source = file_contents.get(file_id).cloned().unwrap_or_default();

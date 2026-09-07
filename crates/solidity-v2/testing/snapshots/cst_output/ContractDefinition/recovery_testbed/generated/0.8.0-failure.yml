@@ -17,7 +17,7 @@ Source: >
   14 │                                                                                                               │ 322..322
   15 │ // <<<                                                                                                        │ 323..329
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected WhileKeyword. One of AtKeyword, CallDataKeyword, CloseParen, Comma, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, MemoryKeyword, OpenBracket, PayableKeyword, RevertKeyword, StorageKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/recovery_testbed/input.sol:3:29]

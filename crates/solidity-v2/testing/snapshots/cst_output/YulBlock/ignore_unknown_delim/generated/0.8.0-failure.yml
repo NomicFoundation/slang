@@ -16,7 +16,7 @@ Source: >
   13 │     }                                                                                                   │ 246..251
   14 │ }                                                                                                       │ 252..253
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of YulDecimalLiteral, YulFalseKeyword, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulStringLiteral, YulTrueKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulBlock/ignore_unknown_delim/input.sol:8:13]

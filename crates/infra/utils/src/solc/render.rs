@@ -2,6 +2,7 @@ use std::collections::BTreeMap;
 
 use anyhow::Result;
 use ariadne::{Config, Label, Report, ReportKind, Source};
+use inflector::Inflector;
 
 use crate::paths::PathExtensions;
 use crate::solc::{Error, Severity};
@@ -42,7 +43,12 @@ pub fn render_solc_error(error: &Error, sources: &BTreeMap<String, String>) -> R
         .with_config(Config::default().with_color(false))
         .with_code(&code)
         .with_message(message)
-        .with_label(Label::new((source_id.as_str(), range)).with_message("Error occurred here."))
+        .with_label(
+            Label::new((source_id.as_str(), range)).with_message(format!(
+                "{} occurred here.",
+                error.severity.to_string().to_pascal_case()
+            )),
+        )
         .finish()
         .write((source_id.as_str(), Source::from(&source)), &mut report)?;
 

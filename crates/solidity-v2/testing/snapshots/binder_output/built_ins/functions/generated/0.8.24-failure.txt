@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Parse errors:
+Diagnostics:
 [resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Cancun'.
     ╭─[input.sol:21:22]
     │

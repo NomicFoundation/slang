@@ -10,7 +10,7 @@ Source: >
   7  │     }                                                                                                  │ 154..159
   8  │ }                                                                                                      │ 160..161
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected Semicolon. One of OpenBrace was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/Expression/keyword_unchecked/input.sol:6:1]

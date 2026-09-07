@@ -25,5 +25,5 @@ Diagnostics: 3
     │
  26 │     modifier m5() virtual;
     │     ───────────┬──────────  
-    │                ╰──────────── Error occurred here.
+    │                ╰──────────── Warning occurred here.
 ────╯

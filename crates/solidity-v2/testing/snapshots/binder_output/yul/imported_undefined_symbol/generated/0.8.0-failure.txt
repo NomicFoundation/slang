@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Parse errors:
+Diagnostics:
 [compilation/missing-imported-file] Error: Imported file is missing: slots.sol
    ╭─[input.sol:3:22]
    │

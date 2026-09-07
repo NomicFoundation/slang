@@ -9,7 +9,7 @@ Source: >
   6  │     }                                                                                                                │ 204..209
   7  │ }                                                                                                                    │ 210..211
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected MemoryKeyword. One of AddressKeyword, AtKeyword, Bang, BoolKeyword, BytesKeyword, CloseParen, Comma, DecimalLiteral, DeleteKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, Minus, MinusMinus, NewKeyword, OpenBracket, OpenParen, PayableKeyword, PlusPlus, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UnicodeStringLiteral was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/TupleDeconstructionStatement/with_location/input.sol:4:2]

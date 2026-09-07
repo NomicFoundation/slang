@@ -7,7 +7,7 @@ Diagnostics: 2
    │
  4 │ pragma experimental "solidity";
    │ ───────────────┬───────────────  
-   │                ╰───────────────── Error occurred here.
+   │                ╰───────────────── Warning occurred here.
 ───╯
 
 [UnimplementedFeatureError 6547] Error: Experimental Analysis is not implemented yet.

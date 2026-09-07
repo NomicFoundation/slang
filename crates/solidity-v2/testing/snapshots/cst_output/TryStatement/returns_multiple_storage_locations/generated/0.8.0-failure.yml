@@ -8,7 +8,7 @@ Source: >
   5  │     }                                                                                                                                                     │ 284..289
   6  │ }                                                                                                                                                         │ 290..291
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected StorageKeyword. One of AtKeyword, CloseParen, Comma, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/TryStatement/returns_multiple_storage_locations/input.sol:4:45]

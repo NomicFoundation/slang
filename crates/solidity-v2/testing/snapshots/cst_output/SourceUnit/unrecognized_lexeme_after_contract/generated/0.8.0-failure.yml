@@ -6,7 +6,7 @@ Source: >
   3  │                                                                                                                         │ 137..137
   4  │ // <<<                                                                                                                  │ 138..144
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected UNRECOGNIZED. One of IsKeyword, LayoutKeyword, OpenBrace was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/unrecognized_lexeme_after_contract/input.sol:2:12]

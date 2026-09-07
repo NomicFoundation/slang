@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Parse errors:
+Diagnostics:
 [semantic/recursive-struct] Error: Recursive struct definition.
    ╭─[input.sol:3:1]
    │
