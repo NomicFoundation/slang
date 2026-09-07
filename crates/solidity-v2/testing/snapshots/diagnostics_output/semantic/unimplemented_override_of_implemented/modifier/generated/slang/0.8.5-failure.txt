@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/unimplemented-override-of-implemented] Error: Overriding an implemented modifier with an unimplemented modifier is not allowed.
+    ╭─[input.sol:13:5]
+    │
+ 13 │     modifier m() virtual override;
+    │     ───────────────┬──────────────  
+    │                    ╰──────────────── Error occurred here.
+────╯

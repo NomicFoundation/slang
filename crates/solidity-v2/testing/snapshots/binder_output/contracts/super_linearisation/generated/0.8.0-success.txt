@@ -12,13 +12,15 @@ Definitions (8):
 
 ------------------------------------------------------------------------
 
-References (7):
+References (9):
 - Ref: ["A" @ input.sol:6:15] -> #1
 - Ref: ["foo" @ input.sol:8:15] -> #2
 - Ref: ["A" @ input.sol:11:15] -> #1
 - Ref: ["foo" @ input.sol:13:15] -> #2
 - Ref: ["B" @ input.sol:16:15] -> #3
 - Ref: ["C" @ input.sol:16:18] -> #5
+- Ref: ["B" @ input.sol:17:36] -> #3
+- Ref: ["C" @ input.sol:17:39] -> #5
 - Ref: ["foo" @ input.sol:18:15] -> #6
 
 ------------------------------------------------------------------------
@@ -33,7 +35,7 @@ Bindings:
   3 │ contract A {
     │          ┬  
     │          ╰── name: 1
-  4 │     function foo() public {}
+  4 │     function foo() public virtual {}
     │              ─┬─  
     │               ╰─── name: 2
     │ 
@@ -42,7 +44,7 @@ Bindings:
     │          ╰─────── name: 3
     │               │  
     │               ╰── ref: 1
-  7 │     function foo() public {
+  7 │     function foo() public virtual override {
     │              ─┬─  
     │               ╰─── name: 4
   8 │         super.foo();
@@ -54,7 +56,7 @@ Bindings:
     │          ╰─────── name: 5
     │               │  
     │               ╰── ref: 1
- 12 │     function foo() public {
+ 12 │     function foo() public virtual override {
     │              ─┬─  
     │               ╰─── name: 6
  13 │         super.foo();
@@ -68,9 +70,13 @@ Bindings:
     │               ╰───── ref: 3
     │                  │  
     │                  ╰── ref: 5
- 17 │     function foo() public {
-    │              ─┬─  
-    │               ╰─── name: 8
+ 17 │     function foo() public override(B, C) {
+    │              ─┬─                   ┬  ┬  
+    │               ╰────────────────────────── name: 8
+    │                                    │  │  
+    │                                    ╰───── ref: 3
+    │                                       │  
+    │                                       ╰── ref: 5
  18 │         super.foo();
     │               ─┬─  
     │                ╰─── ref: 6
