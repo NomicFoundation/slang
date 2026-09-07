@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/override-changes-modifier-signature] Error: Override changes modifier signature.
+    ╭─[input.sol:12:5]
+    │
+ 12 │     modifier m(uint8 a) override {
+    │     ──────────────┬──────────────  
+    │                   ╰──────────────── Error occurred here.
+────╯

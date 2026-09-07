@@ -112,8 +112,13 @@ impl SemanticContext {
             diagnostics,
         );
 
-        let mut contract_data =
-            p4_compute_linearisations::run(&binder, &types, &file_node_mapper, diagnostics);
+        let mut contract_data = p4_compute_linearisations::run(
+            &binder,
+            &types,
+            language_version,
+            &file_node_mapper,
+            diagnostics,
+        );
         p5_resolve_references::run(
             files,
             &mut binder,

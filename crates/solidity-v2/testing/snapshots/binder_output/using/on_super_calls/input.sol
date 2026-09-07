@@ -1,11 +1,11 @@
 pragma solidity *;
 
 contract A {
-    function total() public returns (uint256) {}
+    function total() public virtual returns (uint256) {}
 }
 contract B is A {
     using Lib for uint256;
-    function total() public returns (uint256) {
+    function total() public override returns (uint256) {
         return super.total().nop();
     }
 }
