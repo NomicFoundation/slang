@@ -576,6 +576,16 @@ mod resolution {
         use super::*;
 
         #[test]
+        fn super_in_free_function() -> Result<()> {
+            run("resolution/identifier_not_found", "super_in_free_function")
+        }
+
+        #[test]
+        fn super_in_library() -> Result<()> {
+            run("resolution/identifier_not_found", "super_in_library")
+        }
+
+        #[test]
         fn unresolved_base() -> Result<()> {
             run("resolution/identifier_not_found", "unresolved_base")
         }

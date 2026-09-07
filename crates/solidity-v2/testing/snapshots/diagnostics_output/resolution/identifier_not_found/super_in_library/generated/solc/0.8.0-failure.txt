@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 7576] Error: Undeclared identifier. "super" is not (or not yet) visible at this point.
+   ╭─[input.sol:8:9]
+   │
+ 8 │         super.f();
+   │         ──┬──  
+   │           ╰──── Error occurred here.
+───╯

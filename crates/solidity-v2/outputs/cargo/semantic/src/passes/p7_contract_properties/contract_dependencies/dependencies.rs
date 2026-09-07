@@ -7,7 +7,7 @@ use slang_solidity_v2_ir::ir;
 use super::references::{CallableReference, UnitReferences};
 use crate::binder::{Binder, Definition};
 use crate::context::{ContractData, ContractReference};
-use crate::passes::common::function_overrides;
+use crate::passes::common::{bases_after, most_derived_override, super_override};
 use crate::types::TypeRegistry;
 
 /// One contract's dependencies, keyed by the dependency's id and mapped to
@@ -265,14 +265,13 @@ impl DependencyCollector<'_> {
         }
 
         match self.binder.find_definition_by_id(declaration) {
-            Some(Definition::Function(function)) => self
-                .contract_data
-                .linearised_functions(self.contract_id)
-                .iter()
-                .find(|candidate| {
-                    function_overrides(self.binder, self.types, candidate, &function.ir_node)
-                })
-                .map_or(declaration, |resolved| resolved.id()),
+            Some(Definition::Function(function)) => most_derived_override(
+                self.binder,
+                self.types,
+                self.contract_data.linearised_functions(self.contract_id),
+                &function.ir_node,
+            )
+            .map_or(declaration, |resolved| resolved.id()),
             Some(Definition::Modifier(modifier)) => {
                 let name = modifier
                     .ir_node
@@ -316,33 +315,13 @@ impl DependencyCollector<'_> {
         else {
             return declaration;
         };
-
-        // `super` searches the collected contract's linearisation, starting
-        // after the contract the call is written in.
         let Some(bases) = self.binder.get_linearised_bases(self.contract_id) else {
             return declaration;
         };
-        let Some(position) = bases.iter().position(|base| *base == enclosing_contract) else {
+        let Some(bases) = bases_after(bases, enclosing_contract) else {
             return declaration;
         };
-
-        // The nearest override with a body wins.
-        for base_id in &bases[position + 1..] {
-            let members = match self.binder.find_definition_by_id(*base_id) {
-                Some(Definition::Contract(base)) => &base.ir_node.members[..],
-                Some(Definition::Interface(base)) => &base.ir_node.members[..],
-                _ => continue,
-            };
-            for member in members {
-                if let ir::ContractMember::FunctionDefinition(candidate) = member
-                    && matches!(candidate.kind, ir::FunctionKind::Regular)
-                    && candidate.body.is_some()
-                    && function_overrides(self.binder, self.types, candidate, &function.ir_node)
-                {
-                    return candidate.id();
-                }
-            }
-        }
-        declaration
+        super_override(self.binder, self.types, bases, &function.ir_node)
+            .map_or(declaration, |resolved| resolved.id())
     }
 }
