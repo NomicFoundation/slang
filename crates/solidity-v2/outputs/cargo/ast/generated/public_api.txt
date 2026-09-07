@@ -1629,6 +1629,8 @@ pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::linearised_events(&
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::linearised_functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::linearised_state_variables(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::StateVariableDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::modifiers(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::resolve_super(&self, &slang_solidity_v2_ast::ast::FunctionDefinition, &slang_solidity_v2_ast::ast::ContractDefinition) -> slang_solidity_v2_ast::ast::FunctionDefinition
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::resolve_virtual(&self, &slang_solidity_v2_ast::ast::FunctionDefinition) -> slang_solidity_v2_ast::ast::FunctionDefinition
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::state_variables(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::StateVariableDefinition>
 impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
@@ -2345,6 +2347,8 @@ pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::as_definition(&sel
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
 impl slang_solidity_v2_ast::ast::InterfaceDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::compute_interface_id(&self) -> core::option::Option<u32>
+impl slang_solidity_v2_ast::ast::InterfaceDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
 impl slang_solidity_v2_ast::ast::InterfaceDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
@@ -3093,6 +3097,8 @@ pub fn slang_solidity_v2_ast::ast::StructType::location(&self) -> slang_solidity
 impl core::clone::Clone for slang_solidity_v2_ast::ast::StructType
 pub fn slang_solidity_v2_ast::ast::StructType::clone(&self) -> slang_solidity_v2_ast::ast::StructType
 pub struct slang_solidity_v2_ast::ast::SuperKeywordStruct
+impl slang_solidity_v2_ast::ast::SuperKeywordStruct
+pub fn slang_solidity_v2_ast::ast::SuperKeywordStruct::anchor(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 impl slang_solidity_v2_ast::ast::SuperKeywordStruct
 pub fn slang_solidity_v2_ast::ast::SuperKeywordStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::ast::SuperKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>

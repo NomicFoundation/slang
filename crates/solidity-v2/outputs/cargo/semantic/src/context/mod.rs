@@ -15,6 +15,9 @@ use slang_solidity_v2_ir::ir;
 pub use storage_layout::{StorageLayoutBuilder, StoragePosition, StorageSize};
 
 use crate::binder::{Binder, BinderCapacities, Definition, Reference};
+use crate::passes::common::{
+    bases_after, has_virtual_semantics, most_derived_override, super_override,
+};
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_compute_linearisations,
     p5_resolve_references, p6_resolve_yul, p7_contract_properties, p8_code_analysis,
@@ -199,6 +202,64 @@ impl SemanticContext {
     /// definition.
     pub fn linearised_functions(&self, contract_id: NodeId) -> &[ir::FunctionDefinition] {
         self.contract_data.linearised_functions(contract_id)
+    }
+
+    /// The function a bare-name reference to `function_id` runs in code
+    /// compiled into `contract_id`: the most-derived override in the contract's
+    /// hierarchy when the declaration is `virtual` or an interface member, the
+    /// declaration itself otherwise, and also when nothing in the hierarchy
+    /// overrides it. `contract_id` must be a registered contract definition and
+    /// `function_id` a function definition.
+    pub fn resolve_virtual(
+        &self,
+        contract_id: NodeId,
+        function_id: NodeId,
+    ) -> &ir::FunctionDefinition {
+        let function = self.function_definition(function_id);
+        if !has_virtual_semantics(&self.binder, function) {
+            return function;
+        }
+        most_derived_override(
+            &self.binder,
+            &self.types,
+            self.contract_data.linearised_functions(contract_id),
+            function,
+        )
+        .unwrap_or(function)
+    }
+
+    /// The function `super.f` runs for the function `function_id` in code
+    /// compiled into `contract_id`, when written in the contract `anchor_id`:
+    /// the nearest implemented override after the anchor in `contract_id`'s
+    /// linearisation, or the declaration itself when none follows it.
+    /// `function_id` must be a function definition and `anchor_id` a contract
+    /// in `contract_id`'s linearisation.
+    pub fn resolve_super(
+        &self,
+        contract_id: NodeId,
+        function_id: NodeId,
+        anchor_id: NodeId,
+    ) -> &ir::FunctionDefinition {
+        let bases = self
+            .binder
+            .get_linearised_bases(contract_id)
+            .expect("the contract being compiled is linearised");
+        let function = self.function_definition(function_id);
+        super_override(
+            &self.binder,
+            &self.types,
+            bases_after(bases, anchor_id)
+                .expect("the `super` anchor is a base of the contract being compiled"),
+            function,
+        )
+        .unwrap_or(function)
+    }
+
+    fn function_definition(&self, function_id: NodeId) -> &ir::FunctionDefinition {
+        match self.binder.find_definition_by_id(function_id) {
+            Some(Definition::Function(function)) => &function.ir_node,
+            _ => panic!("{function_id:?} is not a function definition"),
+        }
     }
 
     /// For each contract, the contracts that its creation code embeds through

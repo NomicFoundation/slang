@@ -92,7 +92,7 @@ impl Pass<'_> {
             // An overload set has already been reported and sunk above.
             Typing::Unresolved | Typing::Undetermined(_) => Ok(None),
             Typing::BuiltIn(_) => Err(NotAValueKind::BuiltIn),
-            Typing::Super => Err(NotAValueKind::Super),
+            Typing::Super(_) => Err(NotAValueKind::Super),
             Typing::NewExpression(_) => Err(NotAValueKind::UncalledNew),
         };
         match outcome {
@@ -742,7 +742,7 @@ impl Pass<'_> {
                 // is only uncallable as a consequence.
                 Typing::Unresolved
             }
-            Typing::This(_) | Typing::Super => {
+            Typing::This(_) | Typing::Super(_) => {
                 // `this` and `super` name a contract instance, not a callable
                 self.report_operand_not_callable(node);
                 Typing::Unresolved
@@ -975,7 +975,7 @@ impl Pass<'_> {
                 // is only uncallable as a consequence.
                 (Typing::Unresolved, None)
             }
-            Typing::This(_) | Typing::Super => {
+            Typing::This(_) | Typing::Super(_) => {
                 // `this` and `super` name a contract instance, not a callable
                 self.report_operand_not_callable(node);
                 (Typing::Unresolved, None)

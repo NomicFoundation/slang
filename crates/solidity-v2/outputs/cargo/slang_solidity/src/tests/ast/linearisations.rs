@@ -134,3 +134,36 @@ fn test_contract_compute_linearised_functions_with_overrides() {
             .is_some_and(|name| name.name() == "override_me")
     );
 }
+
+define_fixture!(
+    FallbackOverride,
+    file: "main.sol", r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.29;
+
+contract Base {
+    fallback(bytes calldata input) external virtual returns (bytes memory) { return input; }
+}
+
+contract Derived is Base {
+    fallback() external override {}
+}
+"#,
+);
+
+#[test]
+fn test_linearised_functions_keep_one_fallback_whatever_its_signature() {
+    let unit = FallbackOverride::build_compilation_unit();
+
+    let derived = unit
+        .find_contract_by_name("Derived")
+        .next()
+        .expect("can find contract");
+    let functions = derived.linearised_functions();
+    assert_eq!(functions.len(), 1);
+    assert_eq!(
+        functions[0].node_id(),
+        derived.functions()[0].node_id(),
+        "the derived fallback overrides the base's despite their signatures"
+    );
+}

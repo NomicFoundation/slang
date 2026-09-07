@@ -1,14 +1,16 @@
 use std::sync::Arc;
 
 use slang_solidity_v2_common::collections::{DefaultWithCapacity, Set};
-use slang_solidity_v2_common::diagnostics::kinds::resolution::MemberNotFound;
+use slang_solidity_v2_common::diagnostics::kinds::resolution::{
+    IdentifierNotFound, MemberNotFound,
+};
 use slang_solidity_v2_common::diagnostics::kinds::structure::DuplicateNamedArgument;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
 
 use super::Pass;
-use crate::binder::{Reference, Resolution, Typing, UsingOperator};
+use crate::binder::{Definition, Reference, Resolution, Typing, UsingOperator};
 use crate::built_ins::InternalBuiltIn;
 use crate::passes::common::filter_overriden_definitions;
 use crate::types::{
@@ -435,9 +437,10 @@ impl Visitor for Pass<'_> {
                     })
                     .collect(),
             ),
-            Typing::Unresolved | Typing::BuiltIn(_) | Typing::NewExpression(_) | Typing::Super => {
-                typing
-            }
+            Typing::Unresolved
+            | Typing::BuiltIn(_)
+            | Typing::NewExpression(_)
+            | Typing::Super(_) => typing,
         };
 
         // Store the typing
@@ -641,19 +644,30 @@ impl Visitor for Pass<'_> {
     }
 
     fn visit_super_keyword(&mut self, node: &ir::SuperKeyword) {
-        self.binder.set_node_typing(node.id(), Typing::Super);
+        // `super` is anchored at the contract it is written in, which is the
+        // lexical one here; the contract being compiled decides the
+        // linearisation the anchor is searched in. A library is in no
+        // linearisation, so it anchors nothing.
+        let anchor = self.current_contract_node_id().filter(|node_id| {
+            matches!(
+                self.binder.find_definition_by_id(*node_id),
+                Some(Definition::Contract(_) | Definition::Interface(_))
+            )
+        });
+        match anchor {
+            Some(node_id) => {
+                let type_id = self.contract_type_id(node_id);
+                self.binder
+                    .set_node_typing(node.id(), Typing::Super(type_id));
+            }
+            None => self.push_diagnostic(node, IdentifierNotFound),
+        }
     }
 
     fn visit_this_keyword(&mut self, node: &ir::ThisKeyword) {
         // `this` is a special keyword that resolves to the current contract or library type
-        if let Some(scope_id) = self.current_contract_scope_id() {
-            let scope = self.binder.get_scope_by_id(scope_id);
-            let node_id = scope.node_id();
-            let type_ = self
-                .type_of_definition(node_id)
-                .expect("the scope of `this` should be a contract or library definition");
-            let type_id = self.types.register_type(type_);
-
+        if let Some(node_id) = self.current_contract_node_id() {
+            let type_id = self.contract_type_id(node_id);
             self.binder
                 .set_node_typing(node.id(), Typing::This(type_id));
         } else {

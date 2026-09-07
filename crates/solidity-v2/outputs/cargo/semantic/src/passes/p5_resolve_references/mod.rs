@@ -8,7 +8,7 @@ use crate::binder::{Binder, Scope, ScopeId};
 use crate::built_ins::BuiltInsResolver;
 use crate::context::{FileNodeMapper, SemanticFile};
 use crate::passes::common::node_location;
-use crate::types::TypeRegistry;
+use crate::types::{TypeId, TypeRegistry};
 
 mod disambiguation;
 mod resolution;
@@ -161,5 +161,20 @@ impl<'a> Pass<'a> {
             }
         }
         None
+    }
+
+    /// The definition the current contract scope belongs to: a contract,
+    /// interface or library.
+    fn current_contract_node_id(&self) -> Option<NodeId> {
+        let scope_id = self.current_contract_scope_id()?;
+        Some(self.binder.get_scope_by_id(scope_id).node_id())
+    }
+
+    /// The registered type of the contract, interface or library `node_id`.
+    fn contract_type_id(&mut self, node_id: NodeId) -> TypeId {
+        let type_ = self
+            .type_of_definition(node_id)
+            .expect("a contract scope belongs to a contract, interface or library definition");
+        self.types.register_type(type_)
     }
 }

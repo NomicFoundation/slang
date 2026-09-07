@@ -3,11 +3,11 @@
 
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
-    AmbiguousReference, MemberNotFound, NoMatchingCallableDeclaration,
+    AmbiguousReference, MemberNotFound, NoMatchingCallableDeclaration, ResolutionDiagnosticKind,
 };
 use slang_solidity_v2_ir::ir;
 
-use super::support::diagnostic_kinds;
+use super::support::{diagnostic_kinds, only_diagnostic};
 use super::{Analyse, Analysis, expression, expression_statement_types, expressions};
 use crate::binder::Typing;
 use crate::types::{
@@ -28,7 +28,7 @@ fn statement_types(analysis: &Analysis, owner: &str, function: &str) -> Vec<Opti
 }
 
 #[test]
-fn test_super_keyword_types_as_super() {
+fn test_super_keyword_carries_the_contract_it_is_written_in() {
     let source = r#"
         pragma solidity *;
         contract A {
@@ -60,13 +60,37 @@ fn test_super_keyword_types_as_super() {
         panic!("expected a super keyword");
     };
 
+    let Typing::Super(anchor_type_id) = analysis.binder().node_typing(super_keyword.id()) else {
+        panic!("`super` should be typed as `Typing::Super`");
+    };
+    let b = analysis.find_contract("B").id();
     assert!(
         matches!(
-            analysis.binder().node_typing(super_keyword.id()),
-            Typing::Super
+            analysis.types().get_type_by_id(*anchor_type_id),
+            Type::Contract(ContractType { definition_id }) if *definition_id == b
         ),
-        "`super` should be typed as `Typing::Super`"
+        "`super` carries the type of the contract it is written in"
     );
+}
+
+#[test]
+fn test_super_keyword_in_a_library_is_unresolved() {
+    let source = r#"
+        pragma solidity *;
+        library L {
+            function f() internal pure {}
+            function g() internal pure {
+                super.f();
+            }
+        }
+        "#;
+
+    let analysis = Analysis::of_source(source).run(Analyse::References);
+
+    assert!(matches!(
+        only_diagnostic(&analysis.diagnostics).kind(),
+        DiagnosticKind::Resolution(ResolutionDiagnosticKind::IdentifierNotFound(_))
+    ));
 }
 
 #[test]

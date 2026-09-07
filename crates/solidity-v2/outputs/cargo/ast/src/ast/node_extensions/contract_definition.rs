@@ -3,8 +3,8 @@ use super::super::nodes::{
     create_state_variable_definition,
 };
 use super::super::{
-    ContractDefinitionStruct, Definition, ErrorDefinition, EventDefinition, FunctionDefinition,
-    FunctionKind, FunctionMutability, StateVariableDefinition,
+    ContractDefinition, ContractDefinitionStruct, Definition, ErrorDefinition, EventDefinition,
+    FunctionDefinition, FunctionKind, FunctionMutability, StateVariableDefinition,
 };
 use super::ContractBase;
 
@@ -104,6 +104,34 @@ impl ContractDefinitionStruct {
             .iter()
             .map(|ir_node| create_function_definition(ir_node, &self.semantic))
             .collect()
+    }
+
+    /// The function a bare-name reference to `function` runs in code compiled
+    /// into this contract: the most-derived override in this contract's
+    /// hierarchy when `function` is `virtual` or an interface member, and
+    /// `function` itself otherwise.
+    pub fn resolve_virtual(&self, function: &FunctionDefinition) -> FunctionDefinition {
+        create_function_definition(
+            self.semantic
+                .resolve_virtual(self.ir_node.id(), function.node_id()),
+            &self.semantic,
+        )
+    }
+
+    /// The function `super.f` runs for `function` in code compiled into this
+    /// contract when written in the contract `anchor`: the nearest implemented
+    /// override after `anchor` in this contract's linearisation, or `function`
+    /// itself when none follows.
+    pub fn resolve_super(
+        &self,
+        function: &FunctionDefinition,
+        anchor: &ContractDefinition,
+    ) -> FunctionDefinition {
+        create_function_definition(
+            self.semantic
+                .resolve_super(self.ir_node.id(), function.node_id(), anchor.node_id()),
+            &self.semantic,
+        )
     }
 
     pub fn errors(&self) -> Vec<ErrorDefinition> {

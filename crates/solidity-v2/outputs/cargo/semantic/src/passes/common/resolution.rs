@@ -100,37 +100,108 @@ pub(crate) fn filter_overriden_definitions(
     Resolution::from(filtered_definitions)
 }
 
-/// Whether `overriding` overrides `overridden`: they share a name (or are the
-/// same kind of unnamed function) and their signatures are in an override
-/// relationship.
+/// Whether `overriding` overrides `overridden`: they share a name and their
+/// signatures are in an override relationship, or they are unnamed functions
+/// of the same kind, whatever their signatures: a contract dispatches at most
+/// one fallback and one receive function, so the kind alone identifies them.
 pub(crate) fn function_overrides(
     binder: &Binder,
     types: &TypeRegistry,
     overriding: &ir::FunctionDefinition,
     overridden: &ir::FunctionDefinition,
 ) -> bool {
-    let name_matches = match (&overriding.name, &overridden.name) {
+    match (&overriding.name, &overridden.name) {
         (None, None) => overriding.kind == overridden.kind,
         (Some(name), Some(other_name)) => {
             debug_assert!(
                 overriding.kind == overridden.kind && overriding.kind == ir::FunctionKind::Regular,
                 "compared functions are both regular"
             );
-            name.unparse() == other_name.unparse()
+            if name.unparse() != other_name.unparse() {
+                return false;
+            }
+            let overriding_type_id = binder.node_typing(overriding.id()).as_type_id();
+            let overridden_type_id = binder.node_typing(overridden.id()).as_type_id();
+            match (overriding_type_id, overridden_type_id) {
+                (Some(overriding_type_id), Some(overridden_type_id)) => {
+                    types.type_id_is_function_and_overrides(overriding_type_id, overridden_type_id)
+                }
+                _ => false,
+            }
         }
         _ => false,
-    };
-    if !name_matches {
-        return false;
     }
-    let overriding_type_id = binder.node_typing(overriding.id()).as_type_id();
-    let overridden_type_id = binder.node_typing(overridden.id()).as_type_id();
-    match (overriding_type_id, overridden_type_id) {
-        (Some(overriding_type_id), Some(overridden_type_id)) => {
-            types.type_id_is_function_and_overrides(overriding_type_id, overridden_type_id)
-        }
+}
+
+/// Whether a bare-name reference to `function` dispatches to its most-derived
+/// override rather than to the declaration itself: a `virtual` contract
+/// function, or an interface member, which is implicitly virtual. A free or
+/// library function never is, whatever it is marked.
+pub(crate) fn has_virtual_semantics(binder: &Binder, function: &ir::FunctionDefinition) -> bool {
+    match binder
+        .enclosing_definition_node_id(function.id())
+        .and_then(|id| binder.find_definition_by_id(id))
+    {
+        Some(Definition::Contract(_)) => function.attributes.is_virtual,
+        Some(Definition::Interface(_)) => true,
         _ => false,
     }
+}
+
+/// The most-derived function overriding `function` among `functions`, the
+/// linearised functions of the contract being compiled, or `None` when nothing
+/// there overrides it: the declaration is then the target, as for a virtual
+/// function whose only implementation is itself and for an interface member
+/// the contract leaves unimplemented.
+///
+/// `function` must have virtual semantics, which the caller establishes: the
+/// search compares signatures, not specifiers, so a non-virtual declaration
+/// would match a same-signature derived function that does not override it.
+pub(crate) fn most_derived_override<'a>(
+    binder: &Binder,
+    types: &TypeRegistry,
+    functions: &'a [ir::FunctionDefinition],
+    function: &ir::FunctionDefinition,
+) -> Option<&'a ir::FunctionDefinition> {
+    functions
+        .iter()
+        .find(|candidate| function_overrides(binder, types, candidate, function))
+}
+
+/// The part of the linearisation `bases` that `super` written in `anchor_id`
+/// searches: the bases after the anchor, or `None` when the anchor is not one.
+pub(crate) fn bases_after(bases: &[NodeId], anchor_id: NodeId) -> Option<&[NodeId]> {
+    let anchor_position = bases.iter().position(|base| *base == anchor_id)?;
+    Some(&bases[anchor_position + 1..])
+}
+
+/// The first implementation of `function` among `bases`, the linearisation of
+/// the contract being compiled after the `super` anchor, or `None` when
+/// nothing there implements it: the declaration is then the target, as for an
+/// interface member the hierarchy leaves unimplemented.
+pub(crate) fn super_override<'a>(
+    binder: &'a Binder,
+    types: &TypeRegistry,
+    bases: &[NodeId],
+    function: &ir::FunctionDefinition,
+) -> Option<&'a ir::FunctionDefinition> {
+    bases.iter().find_map(|base_id| {
+        let members = match binder.find_definition_by_id(*base_id)? {
+            Definition::Contract(base) => &base.ir_node.members[..],
+            Definition::Interface(base) => &base.ir_node.members[..],
+            _ => return None,
+        };
+        members.iter().find_map(|member| match member {
+            ir::ContractMember::FunctionDefinition(candidate)
+                if matches!(candidate.kind, ir::FunctionKind::Regular)
+                    && candidate.body.is_some()
+                    && function_overrides(binder, types, candidate, function) =>
+            {
+                Some(candidate)
+            }
+            _ => None,
+        })
+    })
 }
 
 /// Given a `Definition`'s `NodeId`, find the scope where we should resolve
