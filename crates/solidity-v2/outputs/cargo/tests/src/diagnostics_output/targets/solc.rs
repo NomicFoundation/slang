@@ -1,7 +1,7 @@
 use anyhow::{Result, anyhow};
 use inflector::Inflector;
 use infra_utils::solc::{
-    Binary, CliInput, CliSettings, InputSource, LanguageSelector, Severity,
+    Binary, CliInput, CliSettings, InputSource, LanguageSelector, ModelCheckerSettings, Severity,
     render_solc_error_for_snapshot,
 };
 use semver::Version;
@@ -70,6 +70,16 @@ impl TestTarget for SolcTarget {
                 } else {
                     // Allow experimental features, like 'Amsterdam' hardfork on '0.8.36'
                     Some(true)
+                },
+                model_checker: if version < LanguageVersion::V0_8_7 {
+                    // 'modelChecker.solvers' was introduced in '0.8.7'
+                    None
+                } else {
+                    // Use only the built-in SMT-LIB2 interface, so that the output
+                    // doesn't depend on which solvers are installed on the host machine.
+                    Some(ModelCheckerSettings {
+                        solvers: vec!["smtlib2".to_owned()],
+                    })
                 },
             },
         };

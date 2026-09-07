@@ -24,6 +24,17 @@ pub struct CliSettings {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub experimental: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub model_checker: Option<ModelCheckerSettings>,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ModelCheckerSettings {
+    /// The SMT solvers the model checker may use. When left out, solc uses
+    /// whichever solvers it finds on the machine.
+    pub solvers: Vec<String>,
 }
 
 #[derive(Debug, Serialize)]
