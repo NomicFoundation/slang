@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9456] Error: Overriding modifier is missing "override" specifier.
+    ╭─[input.sol:12:5]
+    │
+ 12 │ ╭─▶     modifier m(uint256 a) {
+    ┆ ┆   
+ 14 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
