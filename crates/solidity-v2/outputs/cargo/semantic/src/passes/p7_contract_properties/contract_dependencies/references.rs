@@ -10,6 +10,7 @@ use super::units::{CodeUnit, visit_code_unit};
 use crate::binder::{Binder, Definition, Resolution, Typing};
 use crate::built_ins::InternalBuiltIn;
 use crate::context::ContractReference;
+use crate::passes::common::has_virtual_semantics;
 use crate::types::{Type, TypeRegistry};
 
 /// A reference to a callable or constant found in a code unit.
@@ -174,7 +175,7 @@ impl ReferenceCollector<'_> {
         operand_typing: &Typing,
     ) {
         match operand_typing {
-            Typing::Super => {
+            Typing::Super(_) => {
                 if let Some(enclosing_contract) = self.enclosing_definition {
                     self.insert_function_reference(
                         node_id,
@@ -323,24 +324,10 @@ impl ReferenceCollector<'_> {
         for &definition_id in definition_ids {
             match self.binder.find_definition_by_id(definition_id) {
                 Some(Definition::Function(function)) => {
-                    let reference = match self.enclosing_definition_of(definition_id) {
-                        // Free functions and same-library functions always
-                        // run within the caller.
-                        None | Some(Definition::Library(_)) => {
-                            CallableReference::Static(definition_id)
-                        }
-                        // A contract function is resolved per contract only
-                        // when it is virtual.
-                        Some(Definition::Contract(_)) => {
-                            if function.ir_node.attributes.is_virtual {
-                                CallableReference::Virtual(definition_id)
-                            } else {
-                                CallableReference::Static(definition_id)
-                            }
-                        }
-                        // Interface members are implicitly virtual.
-                        Some(Definition::Interface(_)) => CallableReference::Virtual(definition_id),
-                        Some(_) => continue,
+                    let reference = if has_virtual_semantics(self.binder, &function.ir_node) {
+                        CallableReference::Virtual(definition_id)
+                    } else {
+                        CallableReference::Static(definition_id)
                     };
                     self.insert_function_reference(node.id(), reference);
                 }

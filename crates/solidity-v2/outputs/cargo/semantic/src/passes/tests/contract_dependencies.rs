@@ -921,3 +921,40 @@ fn a_units_own_reference_wins_over_the_constant_it_uses() {
         .expect("reference exists");
     assert_eq!(in_function, reference.range().start);
 }
+
+#[test]
+fn super_anchored_outside_the_linearisation_resolves_to_the_declaration() {
+    let context = build_context(
+        "contract A {
+            function f() public virtual {}
+        }
+        contract Unrelated {}",
+    );
+
+    let a = contract_id(&context, "A");
+    let unrelated = contract_id(&context, "Unrelated");
+    let f = &context.linearised_functions(a)[0];
+
+    assert_eq!(context.resolve_super(a, f, unrelated).id(), f.id());
+}
+
+#[test]
+fn super_from_a_fallback_skips_a_base_fallback() {
+    let context = build_context(
+        "contract Base {
+            fallback() external virtual {}
+        }
+        contract Derived is Base {
+            fallback() external override {}
+        }",
+    );
+
+    let derived = contract_id(&context, "Derived");
+    let fallback = &context.linearised_functions(derived)[0];
+
+    assert_eq!(
+        context.resolve_super(derived, fallback, derived).id(),
+        fallback.id(),
+        "only a regular function is a `super` target"
+    );
+}

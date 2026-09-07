@@ -75,7 +75,7 @@ impl Pass<'_> {
                 self.resolve_symbol_in_type(type_ids[0], symbol)
             }
             Typing::Resolved(type_id) => self.resolve_symbol_in_type(*type_id, symbol),
-            Typing::This(_) | Typing::Super => {
+            Typing::This(_) | Typing::Super(_) => {
                 // TODO: the contract scope here is not necessarily the current
                 // lexical scope; for compilation we should set it to the scope
                 // of the contract being compiled, as this will affect the
