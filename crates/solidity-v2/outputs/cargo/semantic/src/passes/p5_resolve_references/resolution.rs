@@ -301,20 +301,29 @@ impl Pass<'_> {
                 .all(|parameter_type_id| *parameter_type_id == operand_type_id)
     }
 
-    fn resolve_first_modifier(&self, resolution: &Resolution) -> Resolution {
-        let definition_ids = resolution.get_definition_ids();
-        if definition_ids.is_empty() {
-            return Resolution::Unresolved;
-        }
-        // Find the first definition that is either a modifier or a contract
-        // type, as that's how bases in constructors are parsed
-        definition_ids
+    /// The first candidate a modifier-list entry can name: a modifier, or a
+    /// base, which is how a constructor's base-argument lists are parsed. A
+    /// base may be named through an import alias, so the aliases are followed
+    /// for the test while the reference keeps the alias, as every other does.
+    fn resolve_first_modifier_or_base(&self, resolution: &Resolution) -> Resolution {
+        resolution
+            .get_definition_ids()
             .into_iter()
             .find(|definition_id| {
-                matches!(
-                    self.binder.find_definition_by_id(*definition_id),
-                    Some(Definition::Modifier(_) | Definition::Contract(_))
-                )
+                self.binder
+                    .follow_symbol_aliases(Resolution::Definition(*definition_id))
+                    .get_definition_ids()
+                    .into_iter()
+                    .any(|aliased_id| {
+                        matches!(
+                            self.binder.find_definition_by_id(aliased_id),
+                            Some(
+                                Definition::Modifier(_)
+                                    | Definition::Contract(_)
+                                    | Definition::Interface(_)
+                            )
+                        )
+                    })
             })
             .into()
     }
@@ -346,7 +355,7 @@ impl Pass<'_> {
             let resolution = if index == identifier_path.len() - 1 {
                 // The last element should be a modifier and for valid Solidity
                 // it overrides all previous definitions in the hierarchy
-                self.resolve_first_modifier(&resolution)
+                self.resolve_first_modifier_or_base(&resolution)
             } else {
                 resolution
             };

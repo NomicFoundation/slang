@@ -67,9 +67,9 @@ impl<'a> Overrides<'a> {
 
     /// Whether a bare-name reference to `function` dispatches to its
     /// most-derived override rather than to the declaration itself: a
-    /// `virtual` contract function, or an interface member, which is
-    /// implicitly virtual. A free or library function never is, whatever it is
-    /// marked.
+    /// `virtual` contract function or modifier, or an interface member, which
+    /// is implicitly virtual. A free or library function, or a library
+    /// modifier, never is, whatever it is marked.
     pub(crate) fn has_virtual_semantics(&self, function: &ir::FunctionDefinition) -> bool {
         if function.name.is_none() {
             return function.attributes.is_virtual;
@@ -83,6 +83,19 @@ impl<'a> Overrides<'a> {
             Some(Definition::Interface(_)) => true,
             _ => false,
         }
+    }
+
+    /// Whether the modifier-list entry `name`, naming `modifier`, dispatches
+    /// to the most-derived override of its name: a bare name of a modifier
+    /// with virtual semantics. A qualified name like `A.m` runs the
+    /// declaration; both can resolve to the same declaration, so only the
+    /// path's segments tell them apart.
+    pub(crate) fn modifier_dispatches_virtually(
+        &self,
+        name: &ir::IdentifierPath,
+        modifier: &ir::FunctionDefinition,
+    ) -> bool {
+        name.len() == 1 && self.has_virtual_semantics(modifier)
     }
 
     /// The most-derived function overriding `function` among `functions`, the

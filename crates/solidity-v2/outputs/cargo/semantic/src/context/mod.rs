@@ -223,18 +223,7 @@ impl SemanticContext {
     ) -> VirtualTarget<'a> {
         let overrides = Overrides::new(&self.binder, &self.types);
         if matches!(function.kind, ir::FunctionKind::Modifier) {
-            let bases = self
-                .binder
-                .get_linearised_bases(contract_id)
-                .expect("the contract being compiled is linearised");
-            let name = function
-                .name
-                .as_ref()
-                .expect("a modifier is named")
-                .unparse();
-            return VirtualTarget::Function(
-                overrides.modifier_target(bases, name).unwrap_or(function),
-            );
+            return VirtualTarget::Function(self.modifier_target(contract_id, function));
         }
         if !overrides.has_virtual_semantics(function) {
             return VirtualTarget::Function(function);
@@ -267,6 +256,47 @@ impl SemanticContext {
                 function,
             )
             .unwrap_or(function)
+    }
+
+    /// The modifier the modifier-list entry `name`, naming `modifier`, runs in
+    /// code compiled into `contract_id`: the most-derived modifier of its name
+    /// in the contract's hierarchy for a bare name of a `virtual` declaration,
+    /// the declaration itself for a qualified name or a declaration without
+    /// virtual semantics. `contract_id` must be a registered contract
+    /// definition, and `modifier` one its hierarchy declares when `name` is
+    /// bare and the modifier has virtual semantics.
+    pub fn resolve_modifier<'a>(
+        &'a self,
+        contract_id: NodeId,
+        modifier: &'a ir::FunctionDefinition,
+        name: &ir::IdentifierPath,
+    ) -> &'a ir::FunctionDefinition {
+        if !Overrides::new(&self.binder, &self.types).modifier_dispatches_virtually(name, modifier)
+        {
+            return modifier;
+        }
+        self.modifier_target(contract_id, modifier)
+    }
+
+    /// The modifier of `modifier`'s name that code compiled into `contract_id`
+    /// runs, or `modifier` itself when its hierarchy declares no other.
+    fn modifier_target<'a>(
+        &'a self,
+        contract_id: NodeId,
+        modifier: &'a ir::FunctionDefinition,
+    ) -> &'a ir::FunctionDefinition {
+        let bases = self
+            .binder
+            .get_linearised_bases(contract_id)
+            .expect("the contract being compiled is linearised");
+        let name = modifier
+            .name
+            .as_ref()
+            .expect("a modifier is named")
+            .unparse();
+        Overrides::new(&self.binder, &self.types)
+            .modifier_target(bases, name)
+            .unwrap_or(modifier)
     }
 
     /// For each contract, the contracts that its creation code embeds through

@@ -6,7 +6,8 @@ use super::super::nodes::{
 };
 use super::super::{
     ContractDefinition, ContractDefinitionStruct, Definition, ErrorDefinition, EventDefinition,
-    FunctionDefinition, FunctionKind, FunctionMutability, StateVariableDefinition,
+    FunctionDefinition, FunctionKind, FunctionMutability, ModifierInvocation,
+    StateVariableDefinition,
 };
 use super::{ContractBase, VirtualTarget};
 
@@ -140,6 +141,25 @@ impl ContractDefinitionStruct {
                 self.ir_node.id(),
                 &function.ir_node,
                 enclosing_contract.node_id(),
+            ),
+            &self.semantic,
+        )
+    }
+
+    /// The modifier the modifier-list entry `invocation`, naming `declaration`,
+    /// runs when this contract is the one being compiled: a bare name
+    /// dispatches to the most-derived modifier of that name in this contract's
+    /// hierarchy, a qualified name like `A.m` to the declaration it names.
+    pub fn resolve_modifier(
+        &self,
+        invocation: &ModifierInvocation,
+        declaration: &FunctionDefinition,
+    ) -> FunctionDefinition {
+        create_function_definition(
+            self.semantic.resolve_modifier(
+                self.ir_node.id(),
+                &declaration.ir_node,
+                &invocation.ir_node.name,
             ),
             &self.semantic,
         )

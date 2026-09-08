@@ -360,11 +360,9 @@ impl ReferenceCollector<'_> {
         else {
             return;
         };
-        // A bare name like `m` resolves to the most derived override. A
-        // qualified name like `A.m` opts out of virtual lookup and always
-        // runs A's modifier. Both can resolve to the same declaration, so
-        // only the number of path segments tells them apart.
-        let reference = if node.name.len() == 1 && modifier.ir_node.attributes.is_virtual {
+        let reference = if Overrides::new(self.binder, self.types)
+            .modifier_dispatches_virtually(&node.name, &modifier.ir_node)
+        {
             CallableReference::Virtual(definition_id)
         } else {
             CallableReference::Static(definition_id)
