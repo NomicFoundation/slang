@@ -10,7 +10,7 @@ use super::units::{CodeUnit, visit_code_unit};
 use crate::binder::{Binder, Definition, Resolution, Typing};
 use crate::built_ins::InternalBuiltIn;
 use crate::context::ContractReference;
-use crate::passes::common::has_virtual_semantics;
+use crate::passes::common::{has_virtual_semantics, modifier_dispatches_virtually};
 use crate::types::{Type, TypeRegistry};
 
 /// A reference to a callable or constant found in a code unit.
@@ -362,11 +362,8 @@ impl ReferenceCollector<'_> {
         else {
             return;
         };
-        // A bare name like `m` resolves to the most derived override. A
-        // qualified name like `A.m` opts out of virtual lookup and always
-        // runs A's modifier. Both can resolve to the same declaration, so
-        // only the number of path segments tells them apart.
-        let reference = if node.name.len() == 1 && modifier.ir_node.attributes.is_virtual {
+        let reference = if modifier_dispatches_virtually(self.binder, &node.name, &modifier.ir_node)
+        {
             CallableReference::Virtual(definition_id)
         } else {
             CallableReference::Static(definition_id)

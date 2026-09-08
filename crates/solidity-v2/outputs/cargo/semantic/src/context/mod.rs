@@ -16,7 +16,8 @@ pub use storage_layout::{StorageLayoutBuilder, StoragePosition, StorageSize};
 
 use crate::binder::{Binder, BinderCapacities, Definition, Reference};
 use crate::passes::common::{
-    bases_after, has_virtual_semantics, most_derived_override, super_override,
+    bases_after, has_virtual_semantics, modifier_dispatches_virtually, most_derived_modifier,
+    most_derived_override, super_override,
 };
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_compute_linearisations,
@@ -253,6 +254,35 @@ impl SemanticContext {
             function,
         )
         .unwrap_or(function)
+    }
+
+    /// The modifier the modifier-list entry `name`, naming `modifier_id`, runs
+    /// in code compiled into `contract_id`: the most-derived modifier of its
+    /// name in the contract's hierarchy for a bare name of a `virtual`
+    /// declaration, the declaration itself for a qualified name or a
+    /// declaration without virtual semantics. `contract_id` must be a registered
+    /// contract definition and `modifier_id` a modifier definition, declared by
+    /// a contract of `contract_id`'s hierarchy when `name` is bare and the
+    /// modifier has virtual semantics.
+    pub fn resolve_modifier(
+        &self,
+        contract_id: NodeId,
+        modifier_id: NodeId,
+        name: &ir::IdentifierPath,
+    ) -> &ir::FunctionDefinition {
+        let modifier = match self.binder.find_definition_by_id(modifier_id) {
+            Some(Definition::Modifier(modifier)) => &modifier.ir_node,
+            _ => panic!("{modifier_id:?} is not a modifier definition"),
+        };
+        if !modifier_dispatches_virtually(&self.binder, name, modifier) {
+            return modifier;
+        }
+        let bases = self
+            .binder
+            .get_linearised_bases(contract_id)
+            .expect("the contract being compiled is linearised");
+        most_derived_modifier(&self.binder, bases, modifier)
+            .expect("a bare-name invocation names a modifier declared in the contract's hierarchy")
     }
 
     fn function_definition(&self, function_id: NodeId) -> &ir::FunctionDefinition {

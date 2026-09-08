@@ -1,10 +1,13 @@
-//! `ContractDefinition::resolve_virtual`, `ContractDefinition::resolve_super`,
-//! and the anchor `super` carries: the queries a compiler needs to pick the
-//! implementation a call runs when a base's body is compiled into a derived
-//! contract.
+//! `ContractDefinition::resolve_virtual`, `resolve_super` and
+//! `resolve_modifier`, and the anchor `super` carries: the queries a compiler
+//! needs to pick the implementation a call or a modifier invocation runs when a
+//! base's body is compiled into a derived contract.
 
 use crate::ast::visitor::{Visitor, accept_function_definition};
-use crate::ast::{ContractDefinition, Definition, Expression, FunctionDefinition, Type};
+use crate::ast::{
+    ContractDefinition, Definition, Expression, FunctionDefinition, FunctionKind,
+    ModifierInvocation, Type,
+};
 use crate::compilation::CompilationUnit;
 use crate::define_fixture;
 
@@ -19,12 +22,17 @@ interface I {
 }
 
 library L {
+    modifier guarded() { _; }
     function s() internal pure returns (uint256) { return 0; }
+    function attached() internal guarded {}
 }
 
 function s() pure returns (uint256) { return 0; }
 
 abstract contract A is I {
+    modifier guarded() virtual { _; }
+    function bare() public guarded {}
+    function qualified() public A.guarded {}
     function f() public virtual returns (uint256) { return 1; }
     function f(uint256 x) public virtual returns (uint256) { return x; }
     function g() public virtual returns (uint256);
@@ -32,6 +40,7 @@ abstract contract A is I {
 }
 
 contract B is A {
+    modifier guarded() override { _; }
     function f() public virtual override returns (uint256) { return super.f() + 2; }
     function g() public virtual override returns (uint256) { return 20; }
     function i() external virtual override returns (uint256) { return 100; }
@@ -53,29 +62,59 @@ fn contract(unit: &CompilationUnit, name: &str) -> ContractDefinition {
         .expect("the fixture declares the contract")
 }
 
-/// The function `name` with `arity` parameters that `owner`, a contract, interface or library,
-/// itself declares.
-fn function(unit: &CompilationUnit, owner: &str, name: &str, arity: usize) -> FunctionDefinition {
+/// The functions and modifiers `owner`, a contract, interface or library, itself declares.
+fn function_definitions(unit: &CompilationUnit, owner: &str) -> Vec<FunctionDefinition> {
     unit.all_definitions()
         .find_map(|definition| match definition {
-            Definition::Contract(contract) if contract.name().name() == owner => {
-                Some(contract.functions())
-            }
+            Definition::Contract(contract) if contract.name().name() == owner => Some(
+                contract
+                    .functions()
+                    .into_iter()
+                    .chain(contract.modifiers())
+                    .collect(),
+            ),
             Definition::Interface(interface) if interface.name().name() == owner => {
                 Some(interface.functions())
             }
-            Definition::Library(library) if library.name().name() == owner => {
-                Some(library.functions())
-            }
+            Definition::Library(library) if library.name().name() == owner => Some(
+                library
+                    .functions()
+                    .into_iter()
+                    .chain(library.modifiers())
+                    .collect(),
+            ),
             _ => None,
         })
         .expect("the fixture declares the owner")
+}
+
+/// The function `name` with `arity` parameters that `owner` itself declares.
+fn function(unit: &CompilationUnit, owner: &str, name: &str, arity: usize) -> FunctionDefinition {
+    function_definitions(unit, owner)
         .into_iter()
         .find(|function| {
             function.name().is_some_and(|found| found.name() == name)
                 && function.parameters().len() == arity
         })
         .expect("the owner declares the function")
+}
+
+/// The one modifier `owner` declares.
+fn modifier(unit: &CompilationUnit, owner: &str) -> FunctionDefinition {
+    function_definitions(unit, owner)
+        .into_iter()
+        .find(|member| matches!(member.kind(), FunctionKind::Modifier))
+        .expect("the owner declares a modifier")
+}
+
+/// The one modifier-list entry on `owner`'s function `name`.
+fn invocation(unit: &CompilationUnit, owner: &str, name: &str) -> ModifierInvocation {
+    function(unit, owner, name, 0)
+        .attributes()
+        .modifier_invocations()
+        .iter()
+        .next()
+        .expect("the function carries a modifier-list entry")
 }
 
 /// Captures the anchor of every `super` keyword under a node.
@@ -218,6 +257,56 @@ fn test_resolve_super_skips_a_bodiless_override() {
         c.resolve_super(&function(&unit, "C", "f", 0), &c).node_id(),
         function(&unit, "B", "f", 0).node_id(),
         "M's f has no body, so super.f written in C runs B's"
+    );
+}
+
+#[test]
+fn test_resolve_modifier_picks_the_most_derived_override() {
+    let unit = Hierarchy::build_compilation_unit();
+    let bare = invocation(&unit, "A", "bare");
+    let a_guarded = modifier(&unit, "A");
+
+    assert_eq!(
+        contract(&unit, "C")
+            .resolve_modifier(&bare, &a_guarded)
+            .node_id(),
+        modifier(&unit, "B").node_id(),
+        "compiled into C, a bare entry naming A's virtual modifier runs B's override"
+    );
+    assert_eq!(
+        contract(&unit, "A")
+            .resolve_modifier(&bare, &a_guarded)
+            .node_id(),
+        a_guarded.node_id(),
+        "compiled into A, nothing overrides it, so it runs itself"
+    );
+}
+
+#[test]
+fn test_resolve_modifier_keeps_a_qualified_declaration() {
+    let unit = Hierarchy::build_compilation_unit();
+    let a_guarded = modifier(&unit, "A");
+
+    assert_eq!(
+        contract(&unit, "C")
+            .resolve_modifier(&invocation(&unit, "A", "qualified"), &a_guarded)
+            .node_id(),
+        a_guarded.node_id(),
+        "a qualified entry names its target, so B's override does not run"
+    );
+}
+
+#[test]
+fn test_resolve_modifier_keeps_a_library_modifier() {
+    let unit = Hierarchy::build_compilation_unit();
+    let l_guarded = modifier(&unit, "L");
+
+    assert_eq!(
+        contract(&unit, "C")
+            .resolve_modifier(&invocation(&unit, "L", "attached"), &l_guarded)
+            .node_id(),
+        l_guarded.node_id(),
+        "a library modifier runs itself although the hierarchy declares one of the same name"
     );
 }
 

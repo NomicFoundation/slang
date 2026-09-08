@@ -135,8 +135,9 @@ pub(crate) fn function_overrides(
 
 /// Whether a bare-name reference to `function` dispatches to its most-derived
 /// override rather than to the declaration itself: a `virtual` contract
-/// function, or an interface member, which is implicitly virtual. A free or
-/// library function never is, whatever it is marked.
+/// function or modifier, or an interface function, which is implicitly
+/// virtual. A free or library function, or a library modifier, never is,
+/// whatever it is marked.
 pub(crate) fn has_virtual_semantics(binder: &Binder, function: &ir::FunctionDefinition) -> bool {
     match binder
         .enclosing_definition_node_id(function.id())
@@ -146,6 +147,19 @@ pub(crate) fn has_virtual_semantics(binder: &Binder, function: &ir::FunctionDefi
         Some(Definition::Interface(_)) => true,
         _ => false,
     }
+}
+
+/// Whether the modifier-list entry `name`, naming `modifier`, dispatches to
+/// the most-derived override of its name: a bare name of a modifier with
+/// virtual semantics. A qualified name like `A.m` runs the declaration; both
+/// can resolve to the same declaration, so only the path's segments tell them
+/// apart.
+pub(crate) fn modifier_dispatches_virtually(
+    binder: &Binder,
+    name: &ir::IdentifierPath,
+    modifier: &ir::FunctionDefinition,
+) -> bool {
+    name.len() == 1 && has_virtual_semantics(binder, modifier)
 }
 
 /// The most-derived function overriding `function` among `functions`, the
@@ -166,6 +180,43 @@ pub(crate) fn most_derived_override<'a>(
     functions
         .iter()
         .find(|candidate| function_overrides(binder, types, candidate, function))
+}
+
+/// The most-derived modifier of `modifier`'s name among `bases`, the
+/// linearisation of the contract being compiled, or `None` when no contract
+/// there declares one. The search is by name alone, since modifiers cannot
+/// overload.
+///
+/// `modifier` must have virtual semantics, which the caller establishes: the
+/// search compares names, not specifiers, so a declaration without them would
+/// be resolved to a same-named modifier that does not override it.
+pub(crate) fn most_derived_modifier<'a>(
+    binder: &'a Binder,
+    bases: &[NodeId],
+    modifier: &ir::FunctionDefinition,
+) -> Option<&'a ir::FunctionDefinition> {
+    let name = modifier
+        .name
+        .as_ref()
+        .expect("modifiers are named")
+        .unparse();
+    bases.iter().find_map(|base_id| {
+        let Definition::Contract(base) = binder.find_definition_by_id(*base_id)? else {
+            return None;
+        };
+        base.ir_node.members.iter().find_map(|member| match member {
+            ir::ContractMember::FunctionDefinition(candidate)
+                if matches!(candidate.kind, ir::FunctionKind::Modifier)
+                    && candidate
+                        .name
+                        .as_ref()
+                        .is_some_and(|identifier| identifier.unparse() == name) =>
+            {
+                Some(candidate)
+            }
+            _ => None,
+        })
+    })
 }
 
 /// The part of the linearisation `bases` that `super` written in `anchor_id`

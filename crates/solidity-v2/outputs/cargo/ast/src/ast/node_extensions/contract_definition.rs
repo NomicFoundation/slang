@@ -4,7 +4,8 @@ use super::super::nodes::{
 };
 use super::super::{
     ContractDefinition, ContractDefinitionStruct, Definition, ErrorDefinition, EventDefinition,
-    FunctionDefinition, FunctionKind, FunctionMutability, StateVariableDefinition,
+    FunctionDefinition, FunctionKind, FunctionMutability, ModifierInvocation,
+    StateVariableDefinition,
 };
 use super::ContractBase;
 
@@ -130,6 +131,26 @@ impl ContractDefinitionStruct {
         create_function_definition(
             self.semantic
                 .resolve_super(self.ir_node.id(), function.node_id(), anchor.node_id()),
+            &self.semantic,
+        )
+    }
+
+    /// The modifier the modifier-list entry `invocation`, naming `declaration`,
+    /// runs when this contract is the one being compiled: a bare name
+    /// dispatches to the most-derived override of a `virtual` declaration, a
+    /// qualified name or a declaration without virtual semantics runs the
+    /// declaration itself; a library modifier never is virtual.
+    pub fn resolve_modifier(
+        &self,
+        invocation: &ModifierInvocation,
+        declaration: &FunctionDefinition,
+    ) -> FunctionDefinition {
+        create_function_definition(
+            self.semantic.resolve_modifier(
+                self.ir_node.id(),
+                declaration.node_id(),
+                &invocation.ir_node.name,
+            ),
             &self.semantic,
         )
     }

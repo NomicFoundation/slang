@@ -13,4 +13,11 @@ impl LibraryDefinitionStruct {
             .filter(|function| matches!(function.kind(), FunctionKind::Regular))
             .collect()
     }
+
+    pub fn modifiers(&self) -> Vec<FunctionDefinition> {
+        self.members()
+            .iter_function_definitions()
+            .filter(|function| matches!(function.kind(), FunctionKind::Modifier))
+            .collect()
+    }
 }

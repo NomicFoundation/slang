@@ -7,7 +7,9 @@ use slang_solidity_v2_ir::ir;
 use super::references::{CallableReference, UnitReferences};
 use crate::binder::{Binder, Definition};
 use crate::context::{ContractData, ContractReference};
-use crate::passes::common::{bases_after, most_derived_override, super_override};
+use crate::passes::common::{
+    bases_after, most_derived_modifier, most_derived_override, super_override,
+};
 use crate::types::TypeRegistry;
 
 /// One contract's dependencies, keyed by the dependency's id and mapped to
@@ -272,39 +274,17 @@ impl DependencyCollector<'_> {
                 &function.ir_node,
             )
             .map_or(declaration, |resolved| resolved.id()),
-            Some(Definition::Modifier(modifier)) => {
-                let name = modifier
-                    .ir_node
-                    .name
-                    .as_ref()
-                    .expect("modifiers are named")
-                    .unparse();
-                self.resolve_modifier_by_name(name).unwrap_or(declaration)
-            }
+            Some(Definition::Modifier(modifier)) => most_derived_modifier(
+                self.binder,
+                self.binder
+                    .get_linearised_bases(self.contract_id)
+                    .expect("the contract being compiled is linearised"),
+                &modifier.ir_node,
+            )
+            .expect("a bare-name invocation names a modifier declared in the contract's hierarchy")
+            .id(),
             _ => declaration,
         }
-    }
-
-    fn resolve_modifier_by_name(&self, name: &str) -> Option<NodeId> {
-        // Most-derived first. Modifiers cannot overload, the name suffices.
-        for base_id in self.binder.get_linearised_bases(self.contract_id)? {
-            let Some(Definition::Contract(base)) = self.binder.find_definition_by_id(*base_id)
-            else {
-                continue;
-            };
-            for member in base.ir_node.members.iter() {
-                if let ir::ContractMember::FunctionDefinition(function) = member
-                    && matches!(function.kind, ir::FunctionKind::Modifier)
-                    && function
-                        .name
-                        .as_ref()
-                        .is_some_and(|candidate| candidate.unparse() == name)
-                {
-                    return Some(function.id());
-                }
-            }
-        }
-        None
     }
 
     /// Resolves which implementation a `super.f()` call runs when compiled

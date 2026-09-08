@@ -245,6 +245,28 @@ fn function_value_taken_after_deployment_stays_out_of_the_creation_map() {
 }
 
 #[test]
+fn bare_modifier_invocation_runs_the_override() {
+    // The bare `m` on the inherited `f` runs C's override, so its `new B()`
+    // is reachable.
+    let source = "
+        pragma solidity *;
+        contract A {
+            modifier m() virtual { _; }
+            function f() public m {}
+        }
+        contract C is A {
+            modifier m() override { new B(); _; }
+        }
+        contract B {}";
+    let context = build_context(source);
+
+    let c = contract_id(&context, "C");
+    let b = contract_id(&context, "B");
+
+    assert!(context.deployed_bytecode_dependencies()[&c].contains_key(&b));
+}
+
+#[test]
 fn qualified_modifier_invocation_runs_the_named_modifier() {
     // `A.m` runs A's modifier even though C overrides it.
     let source = "
