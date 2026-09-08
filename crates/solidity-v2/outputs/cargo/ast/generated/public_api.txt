@@ -3062,6 +3062,8 @@ pub fn slang_solidity_v2_ast::ast::StructDefinitionStruct::get_type(&self) -> co
 pub fn slang_solidity_v2_ast::ast::StructDefinitionStruct::members(&self) -> slang_solidity_v2_ast::ast::StructMembers
 pub fn slang_solidity_v2_ast::ast::StructDefinitionStruct::name(&self) -> slang_solidity_v2_ast::ast::Identifier
 pub fn slang_solidity_v2_ast::ast::StructDefinitionStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl slang_solidity_v2_ast::ast::StructDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::StructDefinitionStruct::is_recursive(&self) -> bool
 impl core::clone::Clone for slang_solidity_v2_ast::ast::StructDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::StructDefinitionStruct::clone(&self) -> slang_solidity_v2_ast::ast::StructDefinitionStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::StructDefinitionStruct

@@ -135,7 +135,7 @@ impl SemanticContext {
         );
         p7_contract_properties::run(&binder, &mut contract_data, &types);
         p8_code_analysis::run(
-            &binder,
+            &mut binder,
             &contract_data,
             language_version,
             evm_target,

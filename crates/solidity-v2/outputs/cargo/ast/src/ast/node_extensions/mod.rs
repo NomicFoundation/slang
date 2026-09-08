@@ -21,6 +21,7 @@ mod library_definition;
 mod source_unit;
 mod state_variable_definition;
 mod string_expression;
+mod struct_definition;
 mod super_keyword;
 
 mod user_defined_operators;

@@ -1,4 +1,4 @@
-use slang_solidity_v2_common::collections::{Set, SortedMap};
+use slang_solidity_v2_common::collections::{Map, Set, SortedMap};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 
@@ -11,14 +11,14 @@ mod constants;
 mod structs;
 
 pub(crate) fn run(
-    binder: &Binder,
+    binder: &mut Binder,
     contract_data: &ContractData,
     types: &TypeRegistry,
     file_node_mapper: &FileNodeMapper,
     diagnostics: &mut DiagnosticCollection,
 ) {
     constants::detect_constant_value_dependency_cycles(binder, file_node_mapper, diagnostics);
-    structs::detect_recursive_structs(binder, types, file_node_mapper, diagnostics);
+    structs::run(binder, types, file_node_mapper, diagnostics);
     bytecode::detect_bytecode_dependency_cycles(
         binder,
         contract_data,
@@ -26,6 +26,12 @@ pub(crate) fn run(
         diagnostics,
     );
 }
+
+/// The path length at which solc's cycle checks give up, imposed on its
+/// `CycleDetector` by `DeclarationTypeChecker`, `PostTypeChecker` and
+/// `CompilerStack` alike, which the searches mirroring them take as their
+/// depth limit.
+pub(crate) const MAX_DEPTH: usize = 256;
 
 struct DependencyGraph {
     // Outgoing edges per node. Keys are node-id sorted for deterministic,
@@ -40,18 +46,23 @@ enum CycleSearchResult {
     /// node's first successor on the path to the cycle (or the node itself when
     /// it refers directly to itself).
     Cycle { via: NodeId },
-    /// The search gave up on a path longer than [`DependencyGraph::MAX_DEPTH`]. `node` is
-    /// the node at which the limit was hit.
+    /// The search gave up on a path longer than [`MAX_DEPTH`]. `node` is the
+    /// node at which the limit was hit.
     DepthExceeded { node: NodeId },
     /// No cycle is reachable from the searched node.
     None,
 }
 
 impl DependencyGraph {
-    const MAX_DEPTH: usize = 256;
-
     fn new(edges: SortedMap<NodeId, Vec<NodeId>>) -> Self {
         Self { edges }
+    }
+
+    /// The graph without `nodes`: an edge into one then leads nowhere, as any
+    /// edge to a node without an entry.
+    fn excluding(mut self, nodes: &Set<NodeId>) -> Self {
+        self.edges.retain(|node, _| !nodes.contains(node));
+        self
     }
 
     /// Runs [`Self::find_cycle`] on every node and drops the cycle-free results.
@@ -80,6 +91,38 @@ impl DependencyGraph {
         self.visit(node, &mut Vec::new(), &mut Set::default())
     }
 
+    /// The nodes that reach themselves, keeping no path for [`MAX_DEPTH`] to
+    /// bound: this and [`Self::nodes_reaching_cycles`] stand for solc's
+    /// `recursive` annotation, which walks without a limit.
+    fn nodes_on_cycles(&self) -> Set<NodeId> {
+        self.edges
+            .keys()
+            .copied()
+            .filter(|&node| self.reaches_itself(node))
+            .collect()
+    }
+
+    /// The nodes from which a cycle is reachable: those on one and every node
+    /// reaching them.
+    fn nodes_reaching_cycles(&self) -> Set<NodeId> {
+        let mut predecessors: Map<NodeId, Vec<NodeId>> = Map::default();
+        for (node, successors) in &self.edges {
+            for successor in successors {
+                predecessors.entry(*successor).or_default().push(*node);
+            }
+        }
+        let mut reaching = self.nodes_on_cycles();
+        let mut pending: Vec<NodeId> = reaching.iter().copied().collect();
+        while let Some(node) = pending.pop() {
+            for &predecessor in predecessors.get(&node).into_iter().flatten() {
+                if reaching.insert(predecessor) {
+                    pending.push(predecessor);
+                }
+            }
+        }
+        reaching
+    }
+
     fn visit(
         &self,
         node: NodeId,
@@ -97,7 +140,7 @@ impl DependencyGraph {
 
         stack.push(node);
 
-        if stack.len() >= Self::MAX_DEPTH {
+        if stack.len() >= MAX_DEPTH {
             stack.pop().expect("stack should not be empty");
             return CycleSearchResult::DepthExceeded { node };
         }
@@ -130,6 +173,23 @@ impl DependencyGraph {
         }
 
         result
+    }
+
+    /// Whether a walk from `node` returns to it.
+    fn reaches_itself(&self, node: NodeId) -> bool {
+        let mut visited = Set::default();
+        let mut pending = vec![node];
+        while let Some(current) = pending.pop() {
+            for &successor in self.edges.get(&current).into_iter().flatten() {
+                if successor == node {
+                    return true;
+                }
+                if visited.insert(successor) {
+                    pending.push(successor);
+                }
+            }
+        }
+        false
     }
 }
 
@@ -259,31 +319,31 @@ mod tests {
 
     #[test]
     fn deep_acyclic_chain_exceeds_depth_limit() {
-        let graph = chain(DependencyGraph::MAX_DEPTH + 10);
+        let graph = chain(MAX_DEPTH + 10);
 
         assert_eq!(
             find_cycle(&graph, 0),
             CycleSearchResult::DepthExceeded {
-                node: NodeId::from(DependencyGraph::MAX_DEPTH - 1)
+                node: NodeId::from(MAX_DEPTH - 1)
             }
         );
     }
 
     #[test]
     fn chain_reaching_max_depth_is_rejected() {
-        let graph = chain(DependencyGraph::MAX_DEPTH);
+        let graph = chain(MAX_DEPTH);
 
         assert_eq!(
             find_cycle(&graph, 0),
             CycleSearchResult::DepthExceeded {
-                node: NodeId::from(DependencyGraph::MAX_DEPTH - 1)
+                node: NodeId::from(MAX_DEPTH - 1)
             }
         );
     }
 
     #[test]
     fn chain_below_max_depth_is_accepted() {
-        let graph = chain(DependencyGraph::MAX_DEPTH - 1);
+        let graph = chain(MAX_DEPTH - 1);
 
         assert_eq!(find_cycle(&graph, 0), CycleSearchResult::None);
     }
@@ -291,7 +351,7 @@ mod tests {
     /// An oversized chain `2 -> 3 -> ... -> end`, entered by roots 0 and 1.
     /// Searches from 0, 1 and 2 all give up, each at a different node.
     fn oversized_chain(extra_edges: Vec<(usize, Vec<usize>)>) -> DependencyGraph {
-        let chain_end = DependencyGraph::MAX_DEPTH + 1;
+        let chain_end = MAX_DEPTH + 1;
         let mut edges = vec![(0, vec![2]), (1, vec![2])];
         edges.extend((2..=chain_end).map(|id| {
             let successors = if id < chain_end { vec![id + 1] } else { vec![] };
@@ -313,7 +373,7 @@ mod tests {
             vec![(
                 NodeId::from(0),
                 CycleSearchResult::DepthExceeded {
-                    node: NodeId::from(DependencyGraph::MAX_DEPTH)
+                    node: NodeId::from(MAX_DEPTH)
                 }
             )]
         );
@@ -323,7 +383,7 @@ mod tests {
     fn cycles_are_still_reported_after_an_exhaustion() {
         // A cycle declared after the oversized chain. Dropping the repeated
         // give-ups must not drop the cycle behind them.
-        let first = DependencyGraph::MAX_DEPTH + 2;
+        let first = MAX_DEPTH + 2;
         let second = first + 1;
         let graph = oversized_chain(vec![(first, vec![second]), (second, vec![first])]);
 
@@ -333,7 +393,7 @@ mod tests {
                 (
                     NodeId::from(0),
                     CycleSearchResult::DepthExceeded {
-                        node: NodeId::from(DependencyGraph::MAX_DEPTH)
+                        node: NodeId::from(MAX_DEPTH)
                     }
                 ),
                 (
@@ -365,7 +425,7 @@ mod tests {
         // same way (its `CycleDetector` skips processed vertices before its own
         // depth check), so re-checking depth here would diverge from solc.
         let target = 1;
-        let chain_end = DependencyGraph::MAX_DEPTH - 1;
+        let chain_end = MAX_DEPTH - 1;
         let mut edges = vec![(0, vec![target, 2]), (target, vec![])];
         edges.extend((2..=chain_end).map(|id| {
             let next = if id < chain_end { id + 1 } else { target };
@@ -401,5 +461,51 @@ mod tests {
                 "node {id} should be cycle-free"
             );
         }
+    }
+
+    #[test]
+    fn nodes_on_cycles_omits_a_node_that_only_reaches_one() {
+        let graph = graph(vec![(0, vec![1]), (1, vec![2]), (2, vec![1])]);
+
+        assert_eq!(
+            graph.nodes_on_cycles(),
+            [NodeId::from(1), NodeId::from(2)].into_iter().collect()
+        );
+    }
+
+    #[test]
+    fn nodes_reaching_cycles_keeps_a_node_that_only_reaches_one() {
+        let graph = graph(vec![(0, vec![1]), (1, vec![2]), (2, vec![1])]);
+
+        assert_eq!(
+            graph.nodes_reaching_cycles(),
+            [NodeId::from(0), NodeId::from(1), NodeId::from(2)]
+                .into_iter()
+                .collect()
+        );
+    }
+
+    #[test]
+    fn a_ring_past_the_depth_limit_puts_every_node_on_a_cycle() {
+        let length = MAX_DEPTH + 4;
+        let ring = graph(
+            (0..length)
+                .map(|id| (id, vec![(id + 1) % length]))
+                .collect(),
+        );
+
+        assert_eq!(ring.nodes_on_cycles().len(), length);
+    }
+
+    #[test]
+    fn excluding_takes_a_node_off_its_cycles() {
+        let graph = graph(vec![(0, vec![1]), (1, vec![2]), (2, vec![0])]);
+
+        assert!(
+            graph
+                .excluding(&[NodeId::from(2)].into_iter().collect())
+                .nodes_on_cycles()
+                .is_empty()
+        );
     }
 }
