@@ -319,6 +319,7 @@ pub fn slang_solidity_v2_semantic::context::SemanticContext::type_abi_internal_n
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_internal_name(&self, slang_solidity_v2_semantic::types::TypeId) -> alloc::string::String
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_library_name(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<alloc::string::String>
 impl slang_solidity_v2_semantic::context::SemanticContext
+pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_modifier(&self, slang_solidity_v2_common::nodes::NodeId, &slang_solidity_v2_ir::ir::nodes::ModifierInvocation) -> core::option::Option<&slang_solidity_v2_ir::ir::nodes::FunctionDefinition>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_super<'a>(&'a self, slang_solidity_v2_common::nodes::NodeId, &'a slang_solidity_v2_ir::ir::nodes::FunctionDefinition, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&'a slang_solidity_v2_ir::ir::nodes::FunctionDefinition>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_virtual<'a>(&'a self, slang_solidity_v2_common::nodes::NodeId, &'a slang_solidity_v2_ir::ir::nodes::FunctionDefinition) -> core::option::Option<slang_solidity_v2_semantic::context::VirtualTarget<'a>>
 pub struct slang_solidity_v2_semantic::context::SourceUnitImport

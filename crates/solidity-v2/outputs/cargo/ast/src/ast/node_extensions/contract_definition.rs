@@ -8,7 +8,8 @@ use super::super::nodes::{
 };
 use super::super::{
     ContractDefinition, ContractDefinitionStruct, Definition, ErrorDefinition, EventDefinition,
-    FunctionDefinition, FunctionKind, FunctionMutability, StateVariableDefinition,
+    FunctionDefinition, FunctionKind, FunctionMutability, ModifierInvocation,
+    StateVariableDefinition,
 };
 use super::{ContractBase, VirtualTarget};
 
@@ -156,6 +157,23 @@ impl ContractDefinitionStruct {
             )?,
             &self.semantic,
         ))
+    }
+
+    /// Resolves the modifier-list entry `invocation` when this contract is the
+    /// one being compiled. A bare name selects the most-derived modifier of
+    /// that name in this contract's hierarchy; a qualified name like `A.m` runs
+    /// the declaration it names, as does a nonvirtual one.
+    ///
+    /// Returns `None` if the entry names a base rather than a modifier, or the
+    /// modifier it names is outside this contract's hierarchy or compilation
+    /// unit.
+    pub fn resolve_modifier(&self, invocation: &ModifierInvocation) -> Option<FunctionDefinition> {
+        if !Arc::ptr_eq(&self.semantic, &invocation.semantic) {
+            return None;
+        }
+        self.semantic
+            .resolve_modifier(self.ir_node.id(), &invocation.ir_node)
+            .map(|target| create_function_definition(target, &self.semantic))
     }
 
     pub fn errors(&self) -> Vec<ErrorDefinition> {

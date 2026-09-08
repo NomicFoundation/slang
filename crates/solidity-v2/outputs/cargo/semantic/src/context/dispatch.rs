@@ -88,6 +88,32 @@ impl SemanticContext {
         super_target(&self.binder, &self.types, bases, enclosing_contract, member)
     }
 
+    /// Resolves the modifier-list entry `invocation` in code compiled into
+    /// `contract_id`. A bare name selects the most-derived modifier of that
+    /// name in the hierarchy; a qualified name like `A.m` runs the declaration
+    /// it names, as does a nonvirtual one.
+    ///
+    /// Returns `None` when the entry names a base rather than a modifier, as a
+    /// constructor's base-argument list does, or when the modifier it names is
+    /// not declared in `contract_id`'s hierarchy in this context.
+    pub fn resolve_modifier(
+        &self,
+        contract_id: NodeId,
+        invocation: &ir::ModifierInvocation,
+    ) -> Option<&ir::FunctionDefinition> {
+        let definition_id =
+            self.resolve_reference_identifier_to_definition_id(invocation.name.last()?.id())?;
+        let Definition::Modifier(modifier) = self.binder.find_definition_by_id(definition_id)?
+        else {
+            return None;
+        };
+        let (bases, member) = self.dispatch_member(contract_id, &modifier.ir_node)?;
+        if invocation.name.len() > 1 || !member.is_virtual() {
+            return Some(&modifier.ir_node);
+        }
+        modifier_target(&self.binder, &self.types, bases, member)
+    }
+
     fn dispatch_member<'a>(
         &'a self,
         contract_id: NodeId,
