@@ -14,7 +14,7 @@ Diagnostics:
 ------------------------------------------------------------------------
 
 Definitions (2):
-- Def: #1 ["X" @ input.sol:3:8] (struct)
+- Def: #1 ["X" @ input.sol:3:8] (struct, recursive: Indirect)
 - Def: #2 ["x" @ input.sol:4:7] (struct member, type: X (inherited))
 
 ------------------------------------------------------------------------

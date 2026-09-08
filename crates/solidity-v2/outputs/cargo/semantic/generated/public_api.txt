@@ -33,6 +33,18 @@ pub type slang_solidity_v2_semantic::types::Type::Error = ()
 pub fn slang_solidity_v2_semantic::types::Type::try_from(&slang_solidity_v2_semantic::binder::Definition) -> core::result::Result<Self, ()>
 impl core::fmt::Debug for slang_solidity_v2_semantic::binder::Definition
 pub fn slang_solidity_v2_semantic::binder::Definition::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub enum slang_solidity_v2_semantic::binder::Recursion
+pub slang_solidity_v2_semantic::binder::Recursion::Function
+pub slang_solidity_v2_semantic::binder::Recursion::Indirect
+impl core::clone::Clone for slang_solidity_v2_semantic::binder::Recursion
+pub fn slang_solidity_v2_semantic::binder::Recursion::clone(&self) -> slang_solidity_v2_semantic::binder::Recursion
+impl core::cmp::Eq for slang_solidity_v2_semantic::binder::Recursion
+impl core::cmp::PartialEq for slang_solidity_v2_semantic::binder::Recursion
+pub fn slang_solidity_v2_semantic::binder::Recursion::eq(&self, &slang_solidity_v2_semantic::binder::Recursion) -> bool
+impl core::fmt::Debug for slang_solidity_v2_semantic::binder::Recursion
+pub fn slang_solidity_v2_semantic::binder::Recursion::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for slang_solidity_v2_semantic::binder::Recursion
+impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::binder::Recursion
 pub enum slang_solidity_v2_semantic::binder::Resolution
 pub slang_solidity_v2_semantic::binder::Resolution::Ambiguous(alloc::boxed::Box<[slang_solidity_v2_common::nodes::NodeId]>)
 pub slang_solidity_v2_semantic::binder::Resolution::BuiltIn(slang_solidity_v2_semantic::built_ins::InternalBuiltIn)

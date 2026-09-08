@@ -6,7 +6,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use smallvec::SmallVec;
 
-use super::ScopeId;
+use super::{Recursion, ScopeId};
 use crate::types::{
     ContractType, DataLocation, EnumType, InterfaceType, LibraryType, StructType, Type, TypeId,
     UserDefinedValueType,
@@ -149,6 +149,9 @@ pub struct StateVariableDefinition {
 #[derive(Debug)]
 pub struct StructDefinition {
     pub ir_node: ir::StructDefinition,
+    /// `None` until `p8_code_analysis` runs, and afterwards for every struct
+    /// that meets no cycle.
+    pub recursion: Option<Recursion>,
 }
 
 #[derive(Debug)]
@@ -506,6 +509,7 @@ impl Definition {
     pub(crate) fn new_struct(ir_node: &ir::StructDefinition) -> Self {
         Self::Struct(StructDefinition {
             ir_node: Arc::clone(ir_node),
+            recursion: None,
         })
     }
 

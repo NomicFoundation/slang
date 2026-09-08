@@ -13,9 +13,9 @@ use crate::types::TypeRegistry;
 
 /// This pass hosts analyses that emit diagnostics over the fully resolved
 /// program, ie. they can only run after all references have been recorded.
-/// It produces no data for later consumption.
+/// The one fact it records is which structs are recursive.
 pub fn run(
-    binder: &Binder,
+    binder: &mut Binder,
     contract_data: &ContractData,
     language_version: LanguageVersion,
     evm_target: EvmTarget,
