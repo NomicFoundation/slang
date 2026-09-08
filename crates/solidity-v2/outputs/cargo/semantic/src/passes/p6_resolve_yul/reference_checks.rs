@@ -366,7 +366,7 @@ fn declaration_kind(definition: &Definition) -> UnsupportedReferenceKind {
 fn find_root_constant(binder: &Binder, start: NodeId) -> RootSearchResult {
     // A longer chain is left to the cycle detection in p8, which rejects it at
     // the declarations.
-    // __SLANG_CONSTANT_CYCLE_MAX_DEPTH__ keep in sync with `DependencyGraph::MAX_DEPTH`
+    // __SLANG_CONSTANT_CYCLE_MAX_DEPTH__ keep in sync with `cycle_detection::MAX_DEPTH`
     const MAX_DEPTH: usize = 256;
     let mut seen = Set::default();
     let mut current = start;

@@ -11,11 +11,14 @@ use crate::binder::Binder;
 use crate::context::{ContractData, FileNodeMapper};
 use crate::types::TypeRegistry;
 
+#[cfg(test)]
+pub(crate) use cycle_detection::MAX_DEPTH;
+
 /// This pass hosts analyses that emit diagnostics over the fully resolved
 /// program, ie. they can only run after all references have been recorded.
-/// It produces no data for later consumption.
+/// The one fact it records is which structs are recursive.
 pub fn run(
-    binder: &Binder,
+    binder: &mut Binder,
     contract_data: &ContractData,
     language_version: LanguageVersion,
     evm_target: EvmTarget,
