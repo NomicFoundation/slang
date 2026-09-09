@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     '@bytecodealliance/preview2-shim':
-      specifier: ^0.22.0
-      version: 0.22.0
+      specifier: ^0.23.0
+      version: 0.23.0
     '@changesets/changelog-github':
       specifier: ^0.7.0
       version: 0.7.0
@@ -148,7 +148,7 @@ importers:
     dependencies:
       '@bytecodealliance/preview2-shim':
         specifier: 'catalog:'
-        version: 0.22.0
+        version: 0.23.0
 
   crates/solidity/outputs/npm/tests:
     devDependencies:
@@ -452,8 +452,8 @@ packages:
   '@bytecodealliance/preview2-shim@0.17.9':
     resolution: {integrity: sha512-i0R3eQBe6PA/o/1EFE3Owe4In2rcccb6QxnjpntM/lPe3/duJ0bRQTVZM2Ufpo99X4eofGeltQUkape1C91FFA==}
 
-  '@bytecodealliance/preview2-shim@0.22.0':
-    resolution: {integrity: sha512-xQclicSPicWpEkCJ7f4JiI1JuxZcktmVExh++fDxerPfP+MknUd7Yx3jjk5R9uYhTD9bdefYHw8J0zehXGQL1A==}
+  '@bytecodealliance/preview2-shim@0.23.0':
+    resolution: {integrity: sha512-wO4Hp3w0lTvvUDKwwoTjJYp4Tu80OTfE7BIQRV9n1V64+KJdZW9l4K6fm7nFbNfwUUeHCwu3rExWBWEpu0BoIw==}
 
   '@bytecodealliance/weval@0.3.4':
     resolution: {integrity: sha512-+GCKtZXhPj7qyDl5pR0F3PTEk8tWINV8dv1tUbKMjMXvqjHIkvzalkWo5ZL2kCKwh8Bwn8rWpSmyvRC/Nlu9nQ==}
@@ -4178,7 +4178,7 @@ snapshots:
 
   '@bytecodealliance/preview2-shim@0.17.9': {}
 
-  '@bytecodealliance/preview2-shim@0.22.0':
+  '@bytecodealliance/preview2-shim@0.23.0':
     dependencies:
       '@bytecodealliance/jco-node-fs': 0.2.0
 
