@@ -39,7 +39,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
         "generated",
         |version, target| {
             let output = V2Parser::parse(&file_id, &source, version);
-            let (ok, contents) = render(&source, source_id, &output);
+            let (ok, contents) = render(&source, source_id, &output, version, target);
             let status = if ok {
                 SnapshotStatus::Success
             } else {

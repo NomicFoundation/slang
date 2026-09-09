@@ -2,7 +2,12 @@
 
 use std::ops::Range;
 
+use infra_utils::snapshot_markers::{
+    CURRENT_SLANG_EVM_TARGET, CURRENT_SLANG_LANGUAGE_VERSION, replace_marker,
+};
 use slang_solidity_v2_common::diagnostics::DiagnosticSeverity;
+use slang_solidity_v2_common::evm_targets::EvmTarget;
+use slang_solidity_v2_common::versions::LanguageVersion;
 
 mod implementations;
 
@@ -31,13 +36,49 @@ pub fn render<D: RenderDiagnostic>(
     source: &str,
     with_color: bool,
 ) -> String {
+    render_message(error, source_id, source, with_color, error.message())
+}
+
+pub fn render_for_snapshot<D: RenderDiagnostic>(
+    error: &D,
+    source_id: &str,
+    source: &str,
+    version: LanguageVersion,
+    target: EvmTarget,
+) -> String {
+    let version = version.to_string();
+    let target = target.to_string();
+
+    let message = replace_marker(
+        &error.message(),
+        &version,
+        &format!(r"\b{}\b", regex::escape(&version)),
+        CURRENT_SLANG_LANGUAGE_VERSION,
+    );
+
+    let message = replace_marker(
+        &message,
+        &target,
+        &format!(r"\b{target}\b"),
+        CURRENT_SLANG_EVM_TARGET,
+    );
+
+    render_message(error, source_id, source, false, message)
+}
+
+fn render_message<D: RenderDiagnostic>(
+    error: &D,
+    source_id: &str,
+    source: &str,
+    with_color: bool,
+    message: String,
+) -> String {
     use ariadne::{Color, Config, Label, Report, ReportKind, Source};
 
     let (kind, color) = match error.severity() {
         DiagnosticSeverity::Error => (ReportKind::Error, Color::Red),
     };
 
-    let message = error.message();
     let code = error.code();
 
     if source.is_empty() {
