@@ -1,0 +1,102 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (12):
+- Def: #1 ["I" @ input.sol:7:11] (interface)
+- Def: #2 ["f" @ input.sol:8:14] (function, type: function (bytes calldata) returns uint256)
+- Def: #3 ["data" @ input.sol:8:31] (parameter, type: bytes calldata)
+- Def: #4 ["C" @ input.sol:11:10] (contract)
+- Def: #5 ["f" @ input.sol:12:14] (function, type: function (bytes memory) returns uint256)
+- Def: #6 ["data" @ input.sol:12:29] (parameter, type: bytes memory)
+- Def: #7 ["viaThis" @ input.sol:16:14] (function, type: function (bytes calldata) returns uint256)
+- Def: #8 ["data" @ input.sol:16:37] (parameter, type: bytes calldata)
+- Def: #9 ["viaContractType" @ input.sol:20:14] (function, type: function (bytes calldata) returns uint256)
+- Def: #10 ["data" @ input.sol:20:45] (parameter, type: bytes calldata)
+- Def: #11 ["viaInterfaceType" @ input.sol:24:14] (function, type: function (bytes calldata) returns uint256)
+- Def: #12 ["data" @ input.sol:24:46] (parameter, type: bytes calldata)
+
+------------------------------------------------------------------------
+
+References (11):
+- Ref: ["I" @ input.sol:11:15] -> #1
+- Ref: ["data" @ input.sol:13:16] -> #6
+- Ref: ["length" @ input.sol:13:21] -> built-in
+- Ref: ["f" @ input.sol:17:21] -> #5
+- Ref: ["data" @ input.sol:17:23] -> #8
+- Ref: ["C" @ input.sol:21:16] -> #4
+- Ref: ["f" @ input.sol:21:33] -> #5
+- Ref: ["data" @ input.sol:21:35] -> #10
+- Ref: ["I" @ input.sol:25:16] -> #1
+- Ref: ["f" @ input.sol:25:33] -> #2
+- Ref: ["data" @ input.sol:25:35] -> #12
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  7 │ interface I {
+    │           ┬  
+    │           ╰── name: 1
+  8 │     function f(bytes calldata data) external returns (uint256);
+    │              ┬                ──┬─  
+    │              ╰────────────────────── name: 2
+    │                                 │   
+    │                                 ╰─── name: 3
+    │ 
+ 11 │ contract C is I {
+    │          ┬    ┬  
+    │          ╰─────── name: 4
+    │               │  
+    │               ╰── ref: 1
+ 12 │     function f(bytes memory data) public override returns (uint256) {
+    │              ┬              ──┬─  
+    │              ╰──────────────────── name: 5
+    │                               │   
+    │                               ╰─── name: 6
+ 13 │         return data.length;
+    │                ──┬─ ───┬──  
+    │                  ╰────────── ref: 6
+    │                        │    
+    │                        ╰──── built-in
+    │ 
+ 16 │     function viaThis(bytes calldata data) external returns (uint256) {
+    │              ───┬───                ──┬─  
+    │                 ╰───────────────────────── name: 7
+    │                                       │   
+    │                                       ╰─── name: 8
+ 17 │         return this.f(data);
+    │                     ┬ ──┬─  
+    │                     ╰─────── ref: 5
+    │                         │   
+    │                         ╰─── ref: 8
+    │ 
+ 20 │     function viaContractType(bytes calldata data) external returns (uint256) {
+    │              ───────┬───────                ──┬─  
+    │                     ╰───────────────────────────── name: 9
+    │                                               │   
+    │                                               ╰─── name: 10
+ 21 │         return C(address(this)).f(data);
+    │                ┬                ┬ ──┬─  
+    │                ╰──────────────────────── ref: 4
+    │                                 │   │   
+    │                                 ╰─────── ref: 5
+    │                                     │   
+    │                                     ╰─── ref: 10
+    │ 
+ 24 │     function viaInterfaceType(bytes calldata data) external returns (uint256) {
+    │              ────────┬───────                ──┬─  
+    │                      ╰───────────────────────────── name: 11
+    │                                                │   
+    │                                                ╰─── name: 12
+ 25 │         return I(address(this)).f(data);
+    │                ┬                ┬ ──┬─  
+    │                ╰──────────────────────── ref: 1
+    │                                 │   │   
+    │                                 ╰─────── ref: 2
+    │                                     │   
+    │                                     ╰─── ref: 12
+────╯

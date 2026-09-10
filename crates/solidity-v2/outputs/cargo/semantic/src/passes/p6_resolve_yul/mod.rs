@@ -30,7 +30,7 @@ use structure_checks::YulForLoopClause;
 /// definitions.
 ///
 /// It runs after `p3_type_definitions`/`p4_compute_linearisations` because
-/// `filter_overriden_definitions` consults function typing when a Yul
+/// `filter_overridden_definitions` consults function typing when a Yul
 /// identifier resolves to an ambiguous set of Solidity functions.
 ///
 /// Assembly blocks are isolated: Yul scopes only chain *up* into the enclosing

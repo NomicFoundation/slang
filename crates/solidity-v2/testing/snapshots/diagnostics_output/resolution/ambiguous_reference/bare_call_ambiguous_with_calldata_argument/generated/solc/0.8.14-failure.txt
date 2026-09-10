@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 7723] Error: Data locations of parameters have to be the same when overriding non-external functions, but they differ.
+    ╭─[input.sol:14:5]
+    │
+ 14 │ ╭─▶     function f(uint256[] calldata a) public override returns (uint256) {
+    ┆ ┆   
+ 16 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
+
+[TypeError 4487] Error: No unique declaration found after argument-dependent lookup.
+    ╭─[input.sol:19:16]
+    │
+ 19 │         return f(a);
+    │                ┬  
+    │                ╰── Error occurred here.
+────╯

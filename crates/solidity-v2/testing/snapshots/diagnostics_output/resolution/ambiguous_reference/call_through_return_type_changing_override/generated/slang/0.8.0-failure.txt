@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/override-return-types-differ] Error: Overriding function return types differ.
+    ╭─[input.sol:14:5]
+    │
+ 14 │     function f() public override returns (bool) {
+    │     ──────────────────────┬─────────────────────  
+    │                           ╰─────────────────────── Error occurred here.
+────╯
