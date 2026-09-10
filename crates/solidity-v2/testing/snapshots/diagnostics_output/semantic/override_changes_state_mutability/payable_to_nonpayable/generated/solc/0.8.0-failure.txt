@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 6959] Error: Overriding function changes state mutability from "payable" to "nonpayable".
+    ╭─[input.sol:11:5]
+    │
+ 11 │     function f() public override {}
+    │     ───────────────┬───────────────  
+    │                    ╰───────────────── Error occurred here.
+────╯

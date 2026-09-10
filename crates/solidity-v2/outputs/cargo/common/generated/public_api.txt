@@ -659,8 +659,19 @@ pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKi
 pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::CyclicDependencyValidatorExhausted(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicDependencyValidatorExhausted)
 pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::CyclicInheritance(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicInheritance)
 pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::LinearisationImpossible(slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::MissingOverrideSpecifier(slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::OverrideChangesModifierSignature(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::OverrideChangesStateMutability(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::OverrideParameterLocationDiffers(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::OverrideReturnLocationDiffers(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::OverrideReturnTypesDiffer(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::OverrideVisibilityDiffers(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::OverridingNonVirtualMember(slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::OverridingPublicStateVariable(slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::PublicStateVariableOverridesNonExternal(slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal)
 pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::RecursiveStruct(slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct)
 pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::RecursiveStructValidatorExhausted(slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted)
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::UnimplementedOverrideOfImplemented(slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented)
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
@@ -680,12 +691,34 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic:
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicInheritance) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented) -> Self
 impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
@@ -830,6 +863,203 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier::kind: alloc::string::String
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability::from: alloc::string::String
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability::kind: alloc::string::String
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability::to: alloc::string::String
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer::kind: alloc::string::String
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers::kind: alloc::string::String
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember::kind: alloc::string::String
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct
@@ -868,6 +1098,26 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented
+pub slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented::kind: alloc::string::String
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented> for slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub mod slang_solidity_v2_common::diagnostics::kinds::structure
 pub enum slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind
 pub slang_solidity_v2_common::diagnostics::kinds::structure::CatchClauseKind::Error
@@ -3335,12 +3585,34 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic:
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicInheritance) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStructValidatorExhausted) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::structure::AnonymousEventWithTooManyIndexedParameters> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -3755,6 +4027,46 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::LinearisationImpossible::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::MissingOverrideSpecifier::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesModifierSignature::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideChangesStateMutability::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideParameterLocationDiffers::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnLocationDiffers::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideReturnTypesDiffer::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverrideVisibilityDiffers::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingNonVirtualMember::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::OverridingPublicStateVariable::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::PublicStateVariableOverridesNonExternal::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::RecursiveStruct::message(&self) -> alloc::string::String
@@ -3767,6 +4079,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::SemanticDiagnosticKind::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::semantic::UnimplementedOverrideOfImplemented::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::structure::AbstractContractPublicConstructor::message(&self) -> alloc::string::String

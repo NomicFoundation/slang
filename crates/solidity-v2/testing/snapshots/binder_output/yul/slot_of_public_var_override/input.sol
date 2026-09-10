@@ -1,7 +1,7 @@
 pragma solidity *;
 
 contract Base {
-    function x() public view virtual returns (uint) {}
+    function x() external view virtual returns (uint) {}
 }
 
 contract Test is Base {

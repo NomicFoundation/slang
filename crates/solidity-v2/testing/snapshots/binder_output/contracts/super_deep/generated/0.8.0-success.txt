@@ -26,7 +26,7 @@ Bindings:
  3 │ contract Base {
    │          ──┬─  
    │            ╰─── name: 1
- 4 │     function in_base() public {}
+ 4 │     function in_base() public virtual {}
    │              ───┬───  
    │                 ╰───── name: 2
    │ 
@@ -40,7 +40,7 @@ Bindings:
    │            ╰───────────── name: 4
    │                     │    
    │                     ╰──── ref: 3
- 8 │     function in_base() public {
+ 8 │     function in_base() public override {
    │              ───┬───  
    │                 ╰───── name: 5
  9 │         super.in_base();

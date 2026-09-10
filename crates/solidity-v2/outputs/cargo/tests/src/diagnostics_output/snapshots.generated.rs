@@ -1999,6 +1999,237 @@ mod semantic {
         }
     }
 
+    mod missing_override_specifier {
+        use super::*;
+
+        #[test]
+        fn fallback_and_receive() -> Result<()> {
+            run(
+                "semantic/missing_override_specifier",
+                "fallback_and_receive",
+            )
+        }
+
+        #[test]
+        fn function() -> Result<()> {
+            run("semantic/missing_override_specifier", "function")
+        }
+
+        #[test]
+        fn interface_and_contract_base() -> Result<()> {
+            run(
+                "semantic/missing_override_specifier",
+                "interface_and_contract_base",
+            )
+        }
+
+        #[test]
+        fn interface_function() -> Result<()> {
+            run("semantic/missing_override_specifier", "interface_function")
+        }
+
+        #[test]
+        fn modifier() -> Result<()> {
+            run("semantic/missing_override_specifier", "modifier")
+        }
+
+        #[test]
+        fn public_state_variable() -> Result<()> {
+            run(
+                "semantic/missing_override_specifier",
+                "public_state_variable",
+            )
+        }
+    }
+
+    #[test]
+    fn override_changes_modifier_signature() -> Result<()> {
+        run("semantic", "override_changes_modifier_signature")
+    }
+
+    mod override_changes_state_mutability {
+        use super::*;
+
+        #[test]
+        fn nonpayable_to_payable() -> Result<()> {
+            run(
+                "semantic/override_changes_state_mutability",
+                "nonpayable_to_payable",
+            )
+        }
+
+        #[test]
+        fn payable_to_nonpayable() -> Result<()> {
+            run(
+                "semantic/override_changes_state_mutability",
+                "payable_to_nonpayable",
+            )
+        }
+
+        #[test]
+        fn public_state_variable() -> Result<()> {
+            run(
+                "semantic/override_changes_state_mutability",
+                "public_state_variable",
+            )
+        }
+
+        #[test]
+        fn stricter_allowed() -> Result<()> {
+            run(
+                "semantic/override_changes_state_mutability",
+                "stricter_allowed",
+            )
+        }
+
+        #[test]
+        fn view_to_nonpayable() -> Result<()> {
+            run(
+                "semantic/override_changes_state_mutability",
+                "view_to_nonpayable",
+            )
+        }
+    }
+
+    mod override_parameter_location_differs {
+        use super::*;
+
+        #[test]
+        fn external_function() -> Result<()> {
+            run(
+                "semantic/override_parameter_location_differs",
+                "external_function",
+            )
+        }
+
+        #[test]
+        fn internal_function() -> Result<()> {
+            run(
+                "semantic/override_parameter_location_differs",
+                "internal_function",
+            )
+        }
+    }
+
+    #[test]
+    fn override_return_location_differs() -> Result<()> {
+        run("semantic", "override_return_location_differs")
+    }
+
+    mod override_return_types_differ {
+        use super::*;
+
+        #[test]
+        fn function() -> Result<()> {
+            run("semantic/override_return_types_differ", "function")
+        }
+
+        #[test]
+        fn interface_function() -> Result<()> {
+            run(
+                "semantic/override_return_types_differ",
+                "interface_function",
+            )
+        }
+
+        #[test]
+        fn public_state_variable() -> Result<()> {
+            run(
+                "semantic/override_return_types_differ",
+                "public_state_variable",
+            )
+        }
+    }
+
+    mod override_visibility_differs {
+        use super::*;
+
+        #[test]
+        fn external_to_public() -> Result<()> {
+            run("semantic/override_visibility_differs", "external_to_public")
+        }
+
+        #[test]
+        fn internal_to_public() -> Result<()> {
+            run("semantic/override_visibility_differs", "internal_to_public")
+        }
+
+        #[test]
+        fn public_to_external() -> Result<()> {
+            run("semantic/override_visibility_differs", "public_to_external")
+        }
+    }
+
+    mod overriding_non_virtual_member {
+        use super::*;
+
+        #[test]
+        fn function() -> Result<()> {
+            run("semantic/overriding_non_virtual_member", "function")
+        }
+
+        #[test]
+        fn modifier() -> Result<()> {
+            run("semantic/overriding_non_virtual_member", "modifier")
+        }
+
+        #[test]
+        fn public_state_variable() -> Result<()> {
+            run(
+                "semantic/overriding_non_virtual_member",
+                "public_state_variable",
+            )
+        }
+
+        #[test]
+        fn through_second_base() -> Result<()> {
+            run(
+                "semantic/overriding_non_virtual_member",
+                "through_second_base",
+            )
+        }
+    }
+
+    mod overriding_public_state_variable {
+        use super::*;
+
+        #[test]
+        fn function_overrides_variable() -> Result<()> {
+            run(
+                "semantic/overriding_public_state_variable",
+                "function_overrides_variable",
+            )
+        }
+
+        #[test]
+        fn variable_overrides_variable() -> Result<()> {
+            run(
+                "semantic/overriding_public_state_variable",
+                "variable_overrides_variable",
+            )
+        }
+    }
+
+    mod public_state_variable_overrides_non_external {
+        use super::*;
+
+        #[test]
+        fn internal_function() -> Result<()> {
+            run(
+                "semantic/public_state_variable_overrides_non_external",
+                "internal_function",
+            )
+        }
+
+        #[test]
+        fn public_function() -> Result<()> {
+            run(
+                "semantic/public_state_variable_overrides_non_external",
+                "public_function",
+            )
+        }
+    }
+
     mod recursive_structs {
         use super::*;
 
@@ -2100,6 +2331,20 @@ mod semantic {
         #[test]
         fn via_mapping() -> Result<()> {
             run("semantic/recursive_structs", "via_mapping")
+        }
+    }
+
+    mod unimplemented_override_of_implemented {
+        use super::*;
+
+        #[test]
+        fn function() -> Result<()> {
+            run("semantic/unimplemented_override_of_implemented", "function")
+        }
+
+        #[test]
+        fn modifier() -> Result<()> {
+            run("semantic/unimplemented_override_of_implemented", "modifier")
         }
     }
 }

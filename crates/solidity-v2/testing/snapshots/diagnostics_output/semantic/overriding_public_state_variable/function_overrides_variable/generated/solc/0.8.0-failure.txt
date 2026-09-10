@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[DeclarationError 9097] Error: Identifier already declared.
+    ╭─[input.sol:11:5]
+    │
+ 11 │ ╭─▶     function x() public view override returns (uint256) {
+    ┆ ┆   
+ 13 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
+
+[TypeError 1452] Error: Cannot override public state variable.
+   ╭─[input.sol:5:5]
+   │
+ 5 │     uint256 public x;
+   │     ────────┬───────  
+   │             ╰───────── Error occurred here.
+───╯

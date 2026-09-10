@@ -1,6 +1,7 @@
 mod abstractness;
 mod duplicate_declarations;
 mod linearisations;
+mod overrides;
 mod redeclarations;
 
 use std::sync::Arc;
@@ -8,6 +9,7 @@ use std::sync::Arc;
 use slang_solidity_v2_common::collections::{DefaultWithCapacity, Map, Set};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
 
@@ -25,9 +27,11 @@ use crate::types::TypeRegistry;
 ///   for a member that illegally redeclares a same-named member inherited from
 ///   a base (see [`redeclarations`]), `DuplicateFunctionDefinition` and
 ///   `DuplicateEventDefinition` for same-named declarations a caller couldn't
-///   tell apart (see [`duplicate_declarations`]), and `ContractShouldBeAbstract`
+///   tell apart (see [`duplicate_declarations`]), `ContractShouldBeAbstract`
 ///   for a non-`abstract` contract that leaves a function or modifier
-///   unimplemented (see [`abstractness`]); and
+///   unimplemented (see [`abstractness`]), and the override diagnostics for a
+///   member that overrides an inherited one it isn't allowed to, or in a way it
+///   isn't allowed to (see [`overrides`]); and
 /// - pre-compute, per contract, the collections of functions, state variables,
 ///   errors and events visible in its hierarchy, stored in a `ContractData`
 ///   (see [`linearisations`]).
@@ -50,6 +54,7 @@ use crate::types::TypeRegistry;
 pub fn run(
     binder: &Binder,
     types: &TypeRegistry,
+    language_version: LanguageVersion,
     file_node_mapper: &FileNodeMapper,
     diagnostics: &mut DiagnosticCollection,
 ) -> ContractData {
@@ -72,6 +77,7 @@ pub fn run(
                 HierarchyChecker::check(
                     binder,
                     types,
+                    language_version,
                     file_node_mapper,
                     diagnostics,
                     &mut reported_redeclaration,
@@ -92,6 +98,7 @@ pub fn run(
                 HierarchyChecker::check(
                     binder,
                     types,
+                    language_version,
                     file_node_mapper,
                     diagnostics,
                     &mut reported_redeclaration,
@@ -114,10 +121,13 @@ pub fn run(
 /// checked before the deriving type's own.
 ///
 /// The per-check logic hangs off this type as methods defined in the sibling
-/// submodules ([`redeclarations`], [`abstractness`]).
+/// submodules ([`redeclarations`], [`abstractness`], [`overrides`]).
 struct HierarchyChecker<'a> {
     binder: &'a Binder,
     types: &'a TypeRegistry,
+    /// The version being compiled for. Some override rules only apply from a
+    /// given version on.
+    language_version: LanguageVersion,
     file_node_mapper: &'a FileNodeMapper,
     diagnostics: &'a mut DiagnosticCollection,
     reported_redeclaration: &'a mut Set<NodeId>,
@@ -145,11 +155,13 @@ struct HierarchyChecker<'a> {
 }
 
 impl<'a> HierarchyChecker<'a> {
-    /// Checks `definition_id`'s hierarchy, emitting its redeclaration and
-    /// abstractness diagnostics.
+    /// Checks `definition_id`'s hierarchy, emitting its redeclaration,
+    /// abstractness and override diagnostics.
+    #[allow(clippy::too_many_arguments)]
     fn check(
         binder: &'a Binder,
         types: &'a TypeRegistry,
+        language_version: LanguageVersion,
         file_node_mapper: &'a FileNodeMapper,
         diagnostics: &'a mut DiagnosticCollection,
         reported_redeclaration: &'a mut Set<NodeId>,
@@ -193,6 +205,7 @@ impl<'a> HierarchyChecker<'a> {
         let mut checker = HierarchyChecker {
             binder,
             types,
+            language_version,
             file_node_mapper,
             diagnostics,
             reported_redeclaration,
@@ -217,6 +230,7 @@ impl<'a> HierarchyChecker<'a> {
             checker.fold_base(*base_id);
         }
         checker.report_abstractness();
+        checker.check_overrides();
     }
 
     /// Folds one base into the running state: runs the redeclaration check of
