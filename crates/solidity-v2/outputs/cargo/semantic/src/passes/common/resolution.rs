@@ -138,16 +138,9 @@ impl<'a> Overridable<'a> {
     /// part in overriding.
     pub(crate) fn of(member: &'a ir::ContractMember, in_interface: bool) -> Option<Self> {
         match member {
-            ir::ContractMember::FunctionDefinition(definition) => match definition.kind {
-                ir::FunctionKind::Regular
-                | ir::FunctionKind::Fallback
-                | ir::FunctionKind::Receive => Some(Self::Function {
-                    definition,
-                    in_interface,
-                }),
-                ir::FunctionKind::Modifier => Some(Self::Modifier(definition)),
-                ir::FunctionKind::Constructor => None,
-            },
+            ir::ContractMember::FunctionDefinition(definition) => {
+                Self::of_function(definition, in_interface)
+            }
             ir::ContractMember::StateVariableDefinition(state_variable)
                 if matches!(
                     state_variable.attributes.visibility,
@@ -157,6 +150,25 @@ impl<'a> Overridable<'a> {
                 Some(Self::StateVariable(state_variable))
             }
             _ => None,
+        }
+    }
+
+    /// The overridable view of a function or modifier definition, for callers
+    /// that hold one directly rather than a contract member. `None` for a
+    /// constructor, which takes no part in overriding.
+    pub(crate) fn of_function(
+        definition: &'a ir::FunctionDefinition,
+        in_interface: bool,
+    ) -> Option<Self> {
+        match definition.kind {
+            ir::FunctionKind::Regular | ir::FunctionKind::Fallback | ir::FunctionKind::Receive => {
+                Some(Self::Function {
+                    definition,
+                    in_interface,
+                })
+            }
+            ir::FunctionKind::Modifier => Some(Self::Modifier(definition)),
+            ir::FunctionKind::Constructor => None,
         }
     }
 
@@ -337,39 +349,6 @@ impl<'a> Overridable<'a> {
             }
             Self::StateVariable(state_variable) => state_variable.range.clone(),
         }
-    }
-}
-
-/// Whether `overriding` overrides `overridden`: they share a name (or are the
-/// same kind of unnamed function) and their signatures are in an override
-/// relationship.
-pub(crate) fn function_overrides(
-    binder: &Binder,
-    types: &TypeRegistry,
-    overriding: &ir::FunctionDefinition,
-    overridden: &ir::FunctionDefinition,
-) -> bool {
-    let name_matches = match (&overriding.name, &overridden.name) {
-        (None, None) => overriding.kind == overridden.kind,
-        (Some(name), Some(other_name)) => {
-            debug_assert!(
-                overriding.kind == overridden.kind && overriding.kind == ir::FunctionKind::Regular,
-                "compared functions are both regular"
-            );
-            name.unparse() == other_name.unparse()
-        }
-        _ => false,
-    };
-    if !name_matches {
-        return false;
-    }
-    let overriding_type_id = binder.node_typing(overriding.id()).as_type_id();
-    let overridden_type_id = binder.node_typing(overridden.id()).as_type_id();
-    match (overriding_type_id, overridden_type_id) {
-        (Some(overriding_type_id), Some(overridden_type_id)) => {
-            types.type_id_is_function_and_overrides(overriding_type_id, overridden_type_id)
-        }
-        _ => false,
     }
 }
 

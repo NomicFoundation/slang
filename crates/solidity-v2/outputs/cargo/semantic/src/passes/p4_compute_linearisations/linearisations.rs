@@ -10,8 +10,8 @@ use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition};
 use crate::context::ContractLinearisations;
-use crate::passes::common::function_overrides;
-use crate::types::{TypeId, TypeRegistry};
+use crate::passes::common::Overridable;
+use crate::types::TypeRegistry;
 
 /// Walks the contract's linearised bases in reverse (most-base-first) and
 /// gathers the members visible in its hierarchy.
@@ -78,89 +78,39 @@ fn linearise_functions(
     types: &TypeRegistry,
     contract_base_members: &[&[ir::ContractMember]],
 ) -> Vec<ir::FunctionDefinition> {
-    let mut functions: Vec<&ir::FunctionDefinition> = Vec::new();
-    let mut getters: Vec<GetterSlot<'_>> = Vec::new();
+    // Only contract bases reach here, so nothing is declared in an interface.
+    // A public state variable is kept as well, so its getter can shadow a
+    // matching function inherited from a base contract.
+    let mut kept: Vec<Overridable<'_>> = Vec::new();
     for members in contract_base_members.iter().rev() {
         for member in *members {
-            match member {
-                ir::ContractMember::FunctionDefinition(function)
-                    if matches!(
-                        function.kind,
-                        ir::FunctionKind::Regular
-                            | ir::FunctionKind::Fallback
-                            | ir::FunctionKind::Receive
-                    ) =>
-                {
-                    let already_overridden = functions
-                        .iter()
-                        .any(|kept| function_overrides(binder, types, kept, function))
-                        || getters
-                            .iter()
-                            .any(|getter| getter_overrides(binder, types, getter, function));
-                    if !already_overridden {
-                        functions.push(function);
-                    }
-                    // TODO(validation): if overriding multiple ancestors, the function needs to
-                    // specify the bases in a specifier
-                }
-                ir::ContractMember::StateVariableDefinition(state_variable) => {
-                    // Record its getter, if it has one, so it can shadow a
-                    // matching function inherited from a base contract.
-                    getters.extend(getter_slot(binder, state_variable));
-                }
-                _ => {}
+            let Some(candidate) = Overridable::of(member, false) else {
+                continue;
+            };
+            if candidate.is_modifier()
+                || kept
+                    .iter()
+                    .any(|slot| slot.overrides(binder, types, &candidate))
+            {
+                continue;
             }
+            kept.push(candidate);
+            // TODO(validation): if overriding multiple ancestors, the function needs to
+            // specify the bases in a specifier
         }
     }
+    let mut functions: Vec<ir::FunctionDefinition> = kept
+        .iter()
+        .filter_map(|slot| match slot {
+            Overridable::Function { definition, .. } => Some(Arc::clone(*definition)),
+            _ => None,
+        })
+        .collect();
     functions.sort_by(|a, b| match (&a.name, &b.name) {
         (None, None) => Ordering::Equal,
         (None, Some(_)) => Ordering::Less,
         (Some(_), None) => Ordering::Greater,
         (Some(a), Some(b)) => a.unparse().cmp(b.unparse()),
     });
-    functions.into_iter().map(Arc::clone).collect()
-}
-
-/// A public state variable's generated getter, reduced to what we need to tell
-/// whether it overrides a function. Just its name and its function type.
-struct GetterSlot<'a> {
-    name: &'a str,
-    type_id: TypeId,
-}
-
-/// The [`GetterSlot`] for `state_variable`, or `None` when it has no getter.
-/// Only public state variables have a getter, and `getter_type_id` is set only
-/// for those, so unwrapping it below is what filters the non-public ones out.
-fn getter_slot<'a>(
-    binder: &Binder,
-    state_variable: &'a ir::StateVariableDefinition,
-) -> Option<GetterSlot<'a>> {
-    match binder.find_definition_by_id(state_variable.id()) {
-        Some(Definition::StateVariable(definition)) => Some(GetterSlot {
-            name: state_variable.name.unparse(),
-            type_id: definition.getter_type_id?,
-        }),
-        _ => None,
-    }
-}
-
-/// Whether `getter` overrides `function`. True when they share a name and the
-/// getter's type can override the function's. The getter version of
-/// [`function_overrides`].
-fn getter_overrides(
-    binder: &Binder,
-    types: &TypeRegistry,
-    getter: &GetterSlot<'_>,
-    function: &ir::FunctionDefinition,
-) -> bool {
-    function
-        .name
-        .as_ref()
-        .is_some_and(|name| name.unparse() == getter.name)
-        && binder
-            .node_typing(function.id())
-            .as_type_id()
-            .is_some_and(|function_type_id| {
-                types.type_id_is_function_and_overrides(getter.type_id, function_type_id)
-            })
+    functions
 }
