@@ -1,0 +1,9 @@
+{
+  "matrix": {
+    "type": "SingleVersionAllTargets",
+    "version": {
+      "value": "0.8.35",
+      "reason": "solc 0.8.0 loops forever when assembly references a pure alias cycle of constants, so the all-versions matrix cannot run these inputs. Any later version reports the cycle instead."
+    }
+  }
+}
