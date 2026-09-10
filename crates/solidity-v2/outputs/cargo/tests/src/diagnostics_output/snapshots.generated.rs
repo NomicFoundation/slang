@@ -2508,6 +2508,14 @@ mod structure {
         }
 
         #[test]
+        fn unimplemented_fallback() -> Result<()> {
+            run(
+                "structure/contract_should_be_abstract",
+                "unimplemented_fallback",
+            )
+        }
+
+        #[test]
         fn unimplemented_function() -> Result<()> {
             run(
                 "structure/contract_should_be_abstract",
@@ -2528,6 +2536,14 @@ mod structure {
             run(
                 "structure/contract_should_be_abstract",
                 "unimplemented_modifier",
+            )
+        }
+
+        #[test]
+        fn unimplemented_receive() -> Result<()> {
+            run(
+                "structure/contract_should_be_abstract",
+                "unimplemented_receive",
             )
         }
     }
