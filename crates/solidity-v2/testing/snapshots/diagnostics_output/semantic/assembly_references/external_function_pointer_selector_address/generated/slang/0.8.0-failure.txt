@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.10'.
+    ╭─[input.sol:11:25]
+    │
+ 11 │             let s := fp.selector
+    │                         ────┬───  
+    │                             ╰───── Error occurred here.
+────╯
+
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.10'.
+    ╭─[input.sol:12:25]
+    │
+ 12 │             let a := fp.address
+    │                         ───┬───  
+    │                            ╰───── Error occurred here.
+────╯

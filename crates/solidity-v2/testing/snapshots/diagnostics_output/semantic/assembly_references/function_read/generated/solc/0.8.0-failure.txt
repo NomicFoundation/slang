@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 2025] Error: Access to functions is not allowed in inline assembly.
+   ╭─[input.sol:9:22]
+   │
+ 9 │             let t := g
+   │                      ┬  
+   │                      ╰── Error occurred here.
+───╯

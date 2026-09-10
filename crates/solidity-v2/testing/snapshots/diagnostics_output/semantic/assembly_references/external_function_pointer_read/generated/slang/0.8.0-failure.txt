@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/yul-external-function-access] Error: Variables of external function type cannot be accessed directly in inline assembly.
+   ╭─[input.sol:8:22]
+   │
+ 8 │             let t := fp
+   │                      ─┬  
+   │                       ╰── Error occurred here.
+───╯

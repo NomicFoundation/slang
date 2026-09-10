@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/yul-unsupported-suffix] Error: The suffix is not supported by this variable or type.
+   ╭─[input.sol:9:24]
+   │
+ 9 │             let t := g.slot
+   │                        ──┬─  
+   │                          ╰─── Error occurred here.
+───╯

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/yul-unsupported-reference] Error: This is a modifier. Only variables and libraries can be referenced in inline assembly.
+    ╭─[input.sol:11:22]
+    │
+ 11 │             let t := m
+    │                      ┬  
+    │                      ╰── Error occurred here.
+────╯

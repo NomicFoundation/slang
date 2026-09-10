@@ -140,6 +140,14 @@ pub(crate) fn built_in_specifiers(
             Some(LanguageVersionSpecifier::from(LanguageVersion::V0_8_24)),
             Some(EvmTargetSpecifier::from(EvmTarget::Cancun)),
         ),
+        InternalBuiltIn::YulAddressField => (
+            Some(LanguageVersionSpecifier::from(LanguageVersion::V0_8_10)),
+            None,
+        ),
+        InternalBuiltIn::YulSelector => (
+            Some(LanguageVersionSpecifier::from(LanguageVersion::V0_8_10)),
+            None,
+        ),
 
         _ => (None, None),
     }
