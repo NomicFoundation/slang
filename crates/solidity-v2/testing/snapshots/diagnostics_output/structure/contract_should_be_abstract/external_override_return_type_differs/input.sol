@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity *;
 
-// The data-location relaxation for `external` overrides must not extend to the
-// underlying type: `int256[]` is not `uint256[]` whatever its location, so this
-// does not override and `B` should be abstract.
+// Return types play no part in deciding that `B.f` implements `A.f`, so `B` is
+// concrete. The `int256[]` return type is reported by the override check
+// instead.
 abstract contract A {
     function f(uint256[] calldata a)
         external
