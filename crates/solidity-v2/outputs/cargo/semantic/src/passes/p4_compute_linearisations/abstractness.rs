@@ -6,7 +6,6 @@ use slang_solidity_v2_ir::ir;
 use smallvec::SmallVec;
 
 use super::HierarchyChecker;
-use crate::binder::Definition;
 use crate::passes::common::{Callable, overrides};
 
 impl<'a> HierarchyChecker<'a> {
@@ -16,15 +15,15 @@ impl<'a> HierarchyChecker<'a> {
     /// status of) the matching slot — mirroring solc's base-to-derived overwrite
     /// of its unimplemented-declaration map. Slots are grouped by name, so a
     /// candidate is only ever compared against same-named slots.
-    pub(super) fn record_abstract(&mut self, members: &[&'a Definition]) {
+    pub(super) fn record_abstract(&mut self, members: &'a [ir::ContractMember]) {
         let binder = self.binder;
         let types = self.types;
         let abstract_slots = &mut self.abstract_slots;
-        'members: for definition in members {
-            let Some(candidate) = AbstractSlot::of(definition) else {
+        'members: for member in members {
+            let Some(candidate) = AbstractSlot::of(member) else {
                 continue;
             };
-            let slots = abstract_slots.entry(candidate.name).or_default();
+            let slots = abstract_slots.entry(candidate.callable.name()).or_default();
             for slot in slots.iter_mut() {
                 if overrides(binder, types, candidate.callable, slot.callable) {
                     *slot = candidate;
@@ -72,9 +71,6 @@ pub(super) type AbstractSlots<'a> = SmallVec<[AbstractSlot<'a>; 1]>;
 #[derive(Clone, Copy)]
 pub(super) struct AbstractSlot<'a> {
     callable: &'a dyn Callable,
-    /// The member's name, used to match declarations across bases. Borrowed from
-    /// the owning definition, which lives in the binder for the whole walk.
-    name: &'a str,
     implemented: bool,
 }
 
@@ -84,23 +80,25 @@ impl<'a> AbstractSlot<'a> {
     ///
     /// A `public` state variable contributes its (always-implemented) getter,
     /// which can satisfy a function declared in a base contract or interface.
-    fn of(definition: &'a Definition) -> Option<Self> {
-        let (callable, implemented): (&'a dyn Callable, bool) = match definition {
-            Definition::Function(function) => (&function.ir_node, function.ir_node.body.is_some()),
-            Definition::Modifier(modifier) => (&modifier.ir_node, modifier.ir_node.body.is_some()),
-            Definition::StateVariable(state_variable)
+    fn of(member: &'a ir::ContractMember) -> Option<Self> {
+        let (callable, implemented): (&'a dyn Callable, bool) = match member {
+            ir::ContractMember::FunctionDefinition(function)
+                if function.kind != ir::FunctionKind::Constructor =>
+            {
+                (function, function.body.is_some())
+            }
+            ir::ContractMember::StateVariableDefinition(state_variable)
                 if matches!(
-                    state_variable.ir_node.attributes.visibility,
+                    state_variable.attributes.visibility,
                     ir::StateVariableVisibility::Public
                 ) =>
             {
-                (&state_variable.ir_node, true)
+                (state_variable, true)
             }
             _ => return None,
         };
         Some(AbstractSlot {
             callable,
-            name: definition.identifier().unparse(),
             implemented,
         })
     }
