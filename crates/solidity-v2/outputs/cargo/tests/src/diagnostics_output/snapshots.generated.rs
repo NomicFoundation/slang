@@ -39,8 +39,32 @@ mod resolution {
         }
 
         #[test]
+        fn bare_call_ambiguous_with_calldata_argument() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "bare_call_ambiguous_with_calldata_argument",
+            )
+        }
+
+        #[test]
+        fn call_through_return_type_changing_override() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "call_through_return_type_changing_override",
+            )
+        }
+
+        #[test]
         fn member_call_not_unique() -> Result<()> {
             run("resolution/ambiguous_reference", "member_call_not_unique")
+        }
+
+        #[test]
+        fn member_call_through_location_changing_override() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "member_call_through_location_changing_override",
+            )
         }
 
         #[test]
@@ -100,6 +124,22 @@ mod resolution {
             run(
                 "resolution/ambiguous_reference",
                 "public_variable_shadows_base_function",
+            )
+        }
+
+        #[test]
+        fn qualified_call_through_location_changing_override() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "qualified_call_through_location_changing_override",
+            )
+        }
+
+        #[test]
+        fn value_call_through_location_changing_override() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "value_call_through_location_changing_override",
             )
         }
     }

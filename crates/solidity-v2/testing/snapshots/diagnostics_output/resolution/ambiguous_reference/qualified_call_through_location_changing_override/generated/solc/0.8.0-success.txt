@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[Warning 2018] Warning: Function state mutability can be restricted to pure
+    ╭─[input.sol:13:5]
+    │
+ 13 │ ╭─▶     function f(uint256[] memory a) public override returns (uint256) {
+    ┆ ┆   
+ 15 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯

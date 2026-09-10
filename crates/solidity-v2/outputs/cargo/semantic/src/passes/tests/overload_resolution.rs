@@ -6,8 +6,7 @@ use slang_solidity_v2_ir::ir;
 use super::support::{Analyse, Analysis, diagnostic_kind};
 use crate::binder::{Binder, Resolution};
 use crate::types::{
-    ContractType, FunctionType, FunctionTypeMutability, FunctionTypeVisibility, Type, TypeId,
-    TypeRegistry,
+    FunctionType, FunctionTypeMutability, FunctionTypeVisibility, Type, TypeRegistry,
 };
 
 /// The resolutions of every reference made through an identifier named `name`.
@@ -104,58 +103,6 @@ contract C {
         "expected both attached functions as candidates"
     );
     assert_ne!(definition_ids[0], definition_ids[1]);
-}
-
-/// Overriding is a contract-member relationship: two functions without a
-/// receiver never override each other, however identical their signatures.
-///
-/// Members do *not* need to be declared in contracts that derive from one
-/// another. A resolution gathers members from one linearisation and yields them
-/// most-derived first, so a sibling base's declaration is shadowed just as a
-/// base's is; `super.f()` in a contract whose two bases both declare `f` relies
-/// on it.
-#[test]
-fn test_override_is_a_contract_member_relationship() {
-    let mut types = TypeRegistry::new(LanguageVersion::LATEST);
-    let return_type = types.void();
-
-    let mut contract_type_of = |definition_id: usize| {
-        types.register_type(Type::Contract(ContractType {
-            definition_id: definition_id.into(),
-        }))
-    };
-    let base = contract_type_of(1);
-    let derived = contract_type_of(2);
-    let sibling = contract_type_of(3);
-    types.register_super_types(derived, &[derived, base]);
-
-    let function_declared_in = |receiver: Option<TypeId>| FunctionType {
-        definition_id: None,
-        parameter_types: Vec::new(),
-        return_type,
-        visibility: FunctionTypeVisibility::Internal,
-        mutability: FunctionTypeMutability::NonPayable,
-        implicit_receiver_type: receiver,
-        partially_applied: false,
-    };
-    let in_base = function_declared_in(Some(base));
-    let in_derived = function_declared_in(Some(derived));
-    let in_sibling = function_declared_in(Some(sibling));
-    let free = function_declared_in(None);
-
-    // All of these share a signature, so the plain check accepts every pair.
-    assert!(types.function_type_overrides(&in_derived, &in_base));
-    assert!(types.function_type_overrides(&free, &free));
-
-    // Contract members override, whether related by inheritance or not.
-    assert!(types.function_type_overrides_in_hierarchy(&in_derived, &in_base));
-    assert!(types.function_type_overrides_in_hierarchy(&in_base, &in_derived));
-    assert!(types.function_type_overrides_in_hierarchy(&in_sibling, &in_base));
-
-    // Anything without a receiver does not.
-    assert!(!types.function_type_overrides_in_hierarchy(&free, &free));
-    assert!(!types.function_type_overrides_in_hierarchy(&free, &in_base));
-    assert!(!types.function_type_overrides_in_hierarchy(&in_base, &free));
 }
 
 /// A function value carrying `Public` visibility is a plain reference, which
