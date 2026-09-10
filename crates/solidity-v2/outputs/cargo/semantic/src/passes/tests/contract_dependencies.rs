@@ -8,6 +8,7 @@ use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_common::versions::LanguageVersion;
 
 use super::support::{Analyse, Analysis, only_diagnostic};
 use crate::binder::Definition;
@@ -349,6 +350,35 @@ fn super_call_skips_bodiless_declarations() {
     let e = contract_id(&context, "E");
 
     assert!(context.deployed_bytecode_dependencies()[&d].contains_key(&e));
+}
+
+#[test]
+fn virtual_call_resolves_through_a_location_changing_override() {
+    // Valid before 0.8.14. D's override takes B.f's slot although the
+    // parameter location differs, so D runs it and inherits no reference.
+    let source = "
+        pragma solidity *;
+        contract B {
+            function f(uint256[] memory a) internal virtual { new E(); }
+            function g(uint256[] memory a) public { f(a); }
+        }
+        contract D is B {
+            function f(uint256[] calldata a) internal override {}
+        }
+        contract E {}";
+    let context = Analysis::of_source(source)
+        .target(TARGET)
+        .version(LanguageVersion::V0_8_13)
+        .run(Analyse::Context)
+        .expect_no_diagnostics()
+        .into_context();
+
+    let b = contract_id(&context, "B");
+    let d = contract_id(&context, "D");
+    let e = contract_id(&context, "E");
+
+    assert!(context.deployed_bytecode_dependencies()[&b].contains_key(&e));
+    assert!(!context.deployed_bytecode_dependencies().contains_key(&d));
 }
 
 #[test]
