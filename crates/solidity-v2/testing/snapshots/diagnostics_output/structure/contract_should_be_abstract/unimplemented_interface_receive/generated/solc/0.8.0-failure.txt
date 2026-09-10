@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 3656] Error: Contract "B" should be marked as abstract.
+    ╭─[input.sol:10:1]
+    │
+ 10 │ contract B is I {}
+    │ ─────────┬────────  
+    │          ╰────────── Error occurred here.
+────╯
+
+[TypeError 9456] Error: Overriding function is missing "override" specifier.
+    ╭─[input.sol:13:5]
+    │
+ 13 │     receive() external payable {}
+    │     ──────────────┬──────────────  
+    │                   ╰──────────────── Error occurred here.
+────╯

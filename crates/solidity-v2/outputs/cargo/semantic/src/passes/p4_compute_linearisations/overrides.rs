@@ -1,15 +1,12 @@
 //! The override check. Validates each member of a contract or interface
 //! against the inherited members it overrides.
 
-use std::ops::Range;
-
 use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::semantic::{
-    MissingOverrideSpecifier, OverridableKind, OverrideChangesModifierSignature,
-    OverrideChangesStateMutability, OverrideParameterLocationDiffers,
-    OverrideReturnLocationDiffers, OverrideReturnTypesDiffer, OverrideVisibilityDiffers,
-    OverridingNonVirtualMember, OverridingPublicStateVariable,
+    MissingOverrideSpecifier, OverrideChangesModifierSignature, OverrideChangesStateMutability,
+    OverrideParameterLocationDiffers, OverrideReturnLocationDiffers, OverrideReturnTypesDiffer,
+    OverrideVisibilityDiffers, OverridingNonVirtualMember, OverridingPublicStateVariable,
     PublicStateVariableOverridesNonExternal, StateMutability, UnimplementedOverrideOfImplemented,
 };
 use slang_solidity_v2_common::nodes::NodeId;
@@ -19,7 +16,7 @@ use smallvec::SmallVec;
 
 use super::HierarchyChecker;
 use crate::binder::{Binder, Definition};
-use crate::types::{FunctionType, Type, TypeRegistry};
+use crate::passes::common::Overridable;
 
 impl<'a> HierarchyChecker<'a> {
     /// Checks the members of this type against the inherited members they
@@ -75,7 +72,7 @@ impl<'a> HierarchyChecker<'a> {
             let nearest = members.get(&name).and_then(|candidates| {
                 candidates
                     .iter()
-                    .find(|candidate| overriding.same_signature(self.binder, self.types, candidate))
+                    .find(|candidate| overriding.overrides(self.binder, self.types, candidate))
             });
             if let Some(found) = nearest
                 && !overridden
@@ -239,238 +236,6 @@ fn direct_bases(binder: &Binder, definition_id: NodeId) -> Option<&[NodeId]> {
 /// nearest definition first within each name. `None` is the name of a fallback
 /// or receive.
 type BaseMembers<'a> = Map<Option<&'a str>, SmallVec<[Overridable<'a>; 1]>>;
-
-/// A member that can take part in overriding. A function, modifier or public
-/// state variable, viewed through the properties the override rules compare.
-#[derive(Clone, Copy)]
-enum Overridable<'a> {
-    /// A regular function, a fallback or a receive.
-    Function {
-        definition: &'a ir::FunctionDefinition,
-        /// Whether the member is declared in an interface. A function declared
-        /// in an interface is implicitly `virtual`.
-        in_interface: bool,
-    },
-    Modifier(&'a ir::FunctionDefinition),
-    /// A `public` state variable.
-    StateVariable(&'a ir::StateVariableDefinition),
-}
-
-impl<'a> Overridable<'a> {
-    /// The overridable members of the contract or interface `type_id`.
-    fn members_of(binder: &'a Binder, type_id: NodeId) -> impl Iterator<Item = Self> + 'a {
-        let (members, in_interface) = match binder.find_definition_by_id(type_id) {
-            Some(Definition::Contract(contract)) => (&contract.ir_node.members[..], false),
-            Some(Definition::Interface(interface)) => (&interface.ir_node.members[..], true),
-            _ => unreachable!("a type with bases is a contract or an interface"),
-        };
-        members
-            .iter()
-            .filter_map(move |member| Self::of(member, in_interface))
-    }
-
-    /// The overridable view of `member`, or `None` for members that don't take
-    /// part in overriding.
-    fn of(member: &'a ir::ContractMember, in_interface: bool) -> Option<Self> {
-        match member {
-            ir::ContractMember::FunctionDefinition(definition) => match definition.kind {
-                ir::FunctionKind::Regular
-                | ir::FunctionKind::Fallback
-                | ir::FunctionKind::Receive => Some(Self::Function {
-                    definition,
-                    in_interface,
-                }),
-                ir::FunctionKind::Modifier => Some(Self::Modifier(definition)),
-                ir::FunctionKind::Constructor => None,
-            },
-            ir::ContractMember::StateVariableDefinition(state_variable)
-                if matches!(
-                    state_variable.attributes.visibility,
-                    ir::StateVariableVisibility::Public
-                ) =>
-            {
-                Some(Self::StateVariable(state_variable))
-            }
-            _ => None,
-        }
-    }
-
-    fn node_id(&self) -> NodeId {
-        match self {
-            Self::Function { definition, .. } | Self::Modifier(definition) => definition.id(),
-            Self::StateVariable(state_variable) => state_variable.id(),
-        }
-    }
-
-    /// The name, or `None` for a fallback or receive.
-    fn name(&self) -> Option<&'a str> {
-        match self {
-            Self::Function { definition, .. } | Self::Modifier(definition) => {
-                definition.name.as_ref().map(|name| name.unparse())
-            }
-            Self::StateVariable(state_variable) => Some(state_variable.name.unparse()),
-        }
-    }
-
-    fn kind(&self) -> OverridableKind {
-        match self {
-            Self::Function { .. } => OverridableKind::Function,
-            Self::Modifier(_) => OverridableKind::Modifier,
-            Self::StateVariable(_) => OverridableKind::PublicStateVariable,
-        }
-    }
-
-    /// The function kind. A getter is a regular function.
-    fn function_kind(&self) -> ir::FunctionKind {
-        match self {
-            Self::Function { definition, .. } | Self::Modifier(definition) => definition.kind,
-            Self::StateVariable(_) => ir::FunctionKind::Regular,
-        }
-    }
-
-    fn is_modifier(&self) -> bool {
-        matches!(self, Self::Modifier(_))
-    }
-
-    fn is_function(&self) -> bool {
-        matches!(self, Self::Function { .. })
-    }
-
-    fn is_interface_function(&self) -> bool {
-        matches!(
-            self,
-            Self::Function {
-                in_interface: true,
-                ..
-            }
-        )
-    }
-
-    fn has_override_specifier(&self) -> bool {
-        match self {
-            Self::Function { definition, .. } | Self::Modifier(definition) => {
-                definition.attributes.override_specifier.is_some()
-            }
-            Self::StateVariable(state_variable) => {
-                state_variable.attributes.override_specifier.is_some()
-            }
-        }
-    }
-
-    fn is_virtual(&self) -> bool {
-        match self {
-            Self::Function {
-                definition,
-                in_interface,
-            } => definition.attributes.is_virtual || *in_interface,
-            Self::Modifier(definition) => definition.attributes.is_virtual,
-            Self::StateVariable(_) => false,
-        }
-    }
-
-    fn visibility(&self) -> ir::FunctionVisibility {
-        match self {
-            Self::Function { definition, .. } | Self::Modifier(definition) => {
-                definition.attributes.visibility
-            }
-            Self::StateVariable(_) => ir::FunctionVisibility::External,
-        }
-    }
-
-    fn mutability(&self) -> ir::FunctionMutability {
-        match self {
-            Self::Function { definition, .. } => definition.attributes.mutability,
-            Self::Modifier(_) => unreachable!("modifiers have no state mutability"),
-            Self::StateVariable(state_variable) => {
-                if matches!(
-                    state_variable.attributes.mutability,
-                    ir::StateVariableMutability::Constant
-                ) {
-                    ir::FunctionMutability::Pure
-                } else {
-                    ir::FunctionMutability::View
-                }
-            }
-        }
-    }
-
-    fn is_implemented(&self) -> bool {
-        match self {
-            Self::Function { definition, .. } | Self::Modifier(definition) => {
-                definition.body.is_some()
-            }
-            Self::StateVariable(_) => true,
-        }
-    }
-
-    /// The declared function type, or the getter's type for a state variable.
-    /// `None` when it couldn't be computed, which is reported elsewhere.
-    fn function_type(
-        &self,
-        binder: &'a Binder,
-        types: &'a TypeRegistry,
-    ) -> Option<&'a FunctionType> {
-        let type_id = match self {
-            Self::Function { definition, .. } | Self::Modifier(definition) => {
-                binder.node_typing(definition.id()).as_type_id()?
-            }
-            Self::StateVariable(state_variable) => {
-                match binder.find_definition_by_id(state_variable.id()) {
-                    Some(Definition::StateVariable(definition)) => definition.getter_type_id?,
-                    _ => unreachable!("state variable is not registered as a definition"),
-                }
-            }
-        };
-        let Type::Function(function_type) = types.get_type_by_id(type_id) else {
-            unreachable!("type of a callable or getter is not a function");
-        };
-        Some(function_type)
-    }
-
-    fn range(&self) -> Range<usize> {
-        match self {
-            Self::Function { definition, .. } | Self::Modifier(definition) => {
-                definition.signature_text_range()
-            }
-            Self::StateVariable(state_variable) => state_variable.range.clone(),
-        }
-    }
-
-    /// Whether `other` occupies the same override slot as this member.
-    fn same_signature(
-        &self,
-        binder: &'a Binder,
-        types: &'a TypeRegistry,
-        other: &Overridable<'a>,
-    ) -> bool {
-        if self.is_modifier() != other.is_modifier() || self.name() != other.name() {
-            return false;
-        }
-        if self.is_modifier() {
-            return true;
-        }
-        if self.function_kind() != other.function_kind() {
-            return false;
-        }
-        // A fallback or receive has no selector, so its parameters take no
-        // part in the signature.
-        if self.function_kind() != ir::FunctionKind::Regular {
-            return true;
-        }
-        // A member whose parameters aren't all typed is reported on its own.
-        // Treating it as matching anything here would invent an override.
-        let (Some(self_type), Some(other_type)) = (
-            self.function_type(binder, types),
-            other.function_type(binder, types),
-        ) else {
-            return false;
-        };
-        types.parameter_lists_are_indistinguishable(
-            &self_type.parameter_types,
-            &other_type.parameter_types,
-        )
-    }
-}
 
 /// Orders mutabilities from strictest to loosest.
 fn mutability_rank(mutability: ir::FunctionMutability) -> u8 {
