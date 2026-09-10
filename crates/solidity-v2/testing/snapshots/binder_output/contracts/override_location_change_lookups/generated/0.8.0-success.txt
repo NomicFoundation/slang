@@ -1,0 +1,116 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (14):
+- Def: #1 ["A" @ input.sol:6:10] (contract)
+- Def: #2 ["f" @ input.sol:7:14] (function, type: function (uint256[] memory) returns uint256)
+- Def: #3 ["a" @ input.sol:7:33] (parameter, type: uint256[] memory)
+- Def: #4 ["B" @ input.sol:12:10] (contract)
+- Def: #5 ["f" @ input.sol:13:14] (function, type: function (uint256[] calldata) returns uint256)
+- Def: #6 ["a" @ input.sol:13:35] (parameter, type: uint256[] calldata)
+- Def: #7 ["viaThis" @ input.sol:17:14] (function, type: function (uint256[] calldata) returns uint256)
+- Def: #8 ["a" @ input.sol:17:41] (parameter, type: uint256[] calldata)
+- Def: #9 ["viaSuper" @ input.sol:21:14] (function, type: function (uint256[] memory) returns uint256)
+- Def: #10 ["a" @ input.sol:21:40] (parameter, type: uint256[] memory)
+- Def: #11 ["C" @ input.sol:26:10] (contract)
+- Def: #12 ["viaValue" @ input.sol:27:14] (function, type: function (B, uint256[] calldata) returns uint256)
+- Def: #13 ["b" @ input.sol:27:25] (parameter, type: B)
+- Def: #14 ["a" @ input.sol:27:47] (parameter, type: uint256[] calldata)
+
+------------------------------------------------------------------------
+
+References (13):
+- Ref: ["a" @ input.sol:8:16] -> #3
+- Ref: ["length" @ input.sol:8:18] -> built-in
+- Ref: ["A" @ input.sol:12:15] -> #1
+- Ref: ["a" @ input.sol:14:16] -> #6
+- Ref: ["length" @ input.sol:14:18] -> built-in
+- Ref: ["f" @ input.sol:18:21] -> #5
+- Ref: ["a" @ input.sol:18:23] -> #8
+- Ref: ["f" @ input.sol:22:22] -> #2
+- Ref: ["a" @ input.sol:22:24] -> #10
+- Ref: ["B" @ input.sol:27:23] -> #4
+- Ref: ["b" @ input.sol:28:16] -> #13
+- Ref: ["f" @ input.sol:28:18] -> #5
+- Ref: ["a" @ input.sol:28:20] -> #14
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  6 │ contract A {
+    │          ┬  
+    │          ╰── name: 1
+  7 │     function f(uint256[] memory a) public virtual returns (uint256) {
+    │              ┬                  ┬  
+    │              ╰───────────────────── name: 2
+    │                                 │  
+    │                                 ╰── name: 3
+  8 │         return a.length;
+    │                ┬ ───┬──  
+    │                ╰───────── ref: 3
+    │                     │    
+    │                     ╰──── built-in
+    │ 
+ 12 │ contract B is A {
+    │          ┬    ┬  
+    │          ╰─────── name: 4
+    │               │  
+    │               ╰── ref: 1
+ 13 │     function f(uint256[] calldata a) public override returns (uint256) {
+    │              ┬                    ┬  
+    │              ╰─────────────────────── name: 5
+    │                                   │  
+    │                                   ╰── name: 6
+ 14 │         return a.length + 1;
+    │                ┬ ───┬──  
+    │                ╰───────── ref: 6
+    │                     │    
+    │                     ╰──── built-in
+    │ 
+ 17 │     function viaThis(uint256[] calldata a) external returns (uint256) {
+    │              ───┬───                    ┬  
+    │                 ╰────────────────────────── name: 7
+    │                                         │  
+    │                                         ╰── name: 8
+ 18 │         return this.f(a);
+    │                     ┬ ┬  
+    │                     ╰──── ref: 5
+    │                       │  
+    │                       ╰── ref: 8
+    │ 
+ 21 │     function viaSuper(uint256[] memory a) public returns (uint256) {
+    │              ────┬───                  ┬  
+    │                  ╰──────────────────────── name: 9
+    │                                        │  
+    │                                        ╰── name: 10
+ 22 │         return super.f(a);
+    │                      ┬ ┬  
+    │                      ╰──── ref: 2
+    │                        │  
+    │                        ╰── ref: 10
+    │ 
+ 26 │ contract C {
+    │          ┬  
+    │          ╰── name: 11
+ 27 │     function viaValue(B b, uint256[] calldata a) external returns (uint256) {
+    │              ────┬─── ┬ ┬                     ┬  
+    │                  ╰─────────────────────────────── name: 12
+    │                       │ │                     │  
+    │                       ╰────────────────────────── ref: 4
+    │                         │                     │  
+    │                         ╰──────────────────────── name: 13
+    │                                               │  
+    │                                               ╰── name: 14
+ 28 │         return b.f(a);
+    │                ┬ ┬ ┬  
+    │                ╰────── ref: 13
+    │                  │ │  
+    │                  ╰──── ref: 5
+    │                    │  
+    │                    ╰── ref: 14
+────╯
