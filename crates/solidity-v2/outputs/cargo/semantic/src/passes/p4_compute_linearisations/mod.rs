@@ -145,9 +145,10 @@ struct HierarchyChecker<'a> {
     /// no allocation.
     members_by_name: Map<&'a str, MemberKind>,
     /// Every function/modifier visible in the hierarchy so far together with
-    /// whether it is implemented, for the abstractness check. Grouped by name,
-    /// so recording a member only ever compares it against same-named slots.
-    abstract_slots: Map<&'a str, AbstractSlots<'a>>,
+    /// whether it is implemented, for the abstractness check. Grouped by name
+    /// (`None` for a fallback or receive), so recording a member only ever
+    /// compares it against same-named slots.
+    abstract_slots: Map<Option<&'a str>, AbstractSlots<'a>>,
     /// The signatures of the events visible in the hierarchy so far, for the
     /// duplicate-event check. Grouped by name, since only same-named events can
     /// duplicate each other.
@@ -266,7 +267,7 @@ impl<'a> HierarchyChecker<'a> {
         // does nothing more than build `abstract_slots`: if it ever emits
         // diagnostics, this gate must be lifted.
         if self.contract.is_some_and(|contract| !contract.is_abstract) {
-            self.record_abstract(&member_definitions);
+            self.record_abstract(members);
         }
         // The head is folded last, so nothing is ever checked against its
         // members: recording them would be dead work.
