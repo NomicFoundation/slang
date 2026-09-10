@@ -6,8 +6,8 @@ use slang_solidity_v2_ir::ir;
 use smallvec::SmallVec;
 
 use super::HierarchyChecker;
-use crate::binder::{Binder, Definition};
-use crate::types::{TypeId, TypeRegistry};
+use crate::binder::Definition;
+use crate::passes::common::{Callable, overrides};
 
 impl<'a> HierarchyChecker<'a> {
     /// Folds this base's functions and modifiers into the abstract-slot set.
@@ -21,14 +21,13 @@ impl<'a> HierarchyChecker<'a> {
         let types = self.types;
         let abstract_slots = &mut self.abstract_slots;
         'members: for definition in members {
-            let Some(candidate) = AbstractSlot::of(binder, definition) else {
+            let Some(candidate) = AbstractSlot::of(definition) else {
                 continue;
             };
             let slots = abstract_slots.entry(candidate.name).or_default();
             for slot in slots.iter_mut() {
-                if slot.overridden_by(types, &candidate) {
-                    slot.type_id = candidate.type_id;
-                    slot.implemented = candidate.implemented;
+                if overrides(binder, types, candidate.callable, slot.callable) {
+                    *slot = candidate;
                     continue 'members;
                 }
             }
@@ -70,22 +69,13 @@ pub(super) type AbstractSlots<'a> = SmallVec<[AbstractSlot<'a>; 1]>;
 /// A member of a contract's hierarchy that requires an implementation for the
 /// contract to be concrete: a function or a modifier, together with whether it
 /// is currently implemented.
+#[derive(Clone, Copy)]
 pub(super) struct AbstractSlot<'a> {
-    kind: AbstractSlotKind,
+    callable: &'a dyn Callable,
     /// The member's name, used to match declarations across bases. Borrowed from
     /// the owning definition, which lives in the binder for the whole walk.
     name: &'a str,
-    /// The member's (function) type, used to distinguish overloads and detect
-    /// overrides. `None` for modifiers, which cannot be overloaded and so match
-    /// on name alone.
-    type_id: Option<TypeId>,
     implemented: bool,
-}
-
-#[derive(PartialEq, Eq)]
-enum AbstractSlotKind {
-    Function,
-    Modifier,
 }
 
 impl<'a> AbstractSlot<'a> {
@@ -94,58 +84,24 @@ impl<'a> AbstractSlot<'a> {
     ///
     /// A `public` state variable contributes its (always-implemented) getter,
     /// which can satisfy a function declared in a base contract or interface.
-    fn of(binder: &Binder, definition: &'a Definition) -> Option<Self> {
-        let (kind, type_id, implemented) = match definition {
-            Definition::Function(function) => (
-                AbstractSlotKind::Function,
-                binder.node_typing(function.ir_node.id()).as_type_id(),
-                function.ir_node.body.is_some(),
-            ),
-            Definition::Modifier(modifier) => (
-                AbstractSlotKind::Modifier,
-                None,
-                modifier.ir_node.body.is_some(),
-            ),
+    fn of(definition: &'a Definition) -> Option<Self> {
+        let (callable, implemented): (&'a dyn Callable, bool) = match definition {
+            Definition::Function(function) => (&function.ir_node, function.ir_node.body.is_some()),
+            Definition::Modifier(modifier) => (&modifier.ir_node, modifier.ir_node.body.is_some()),
             Definition::StateVariable(state_variable)
                 if matches!(
                     state_variable.ir_node.attributes.visibility,
                     ir::StateVariableVisibility::Public
                 ) =>
             {
-                (
-                    AbstractSlotKind::Function,
-                    state_variable.getter_type_id,
-                    true,
-                )
+                (&state_variable.ir_node, true)
             }
             _ => return None,
         };
         Some(AbstractSlot {
-            kind,
+            callable,
             name: definition.identifier().unparse(),
-            type_id,
             implemented,
         })
-    }
-
-    /// Whether the more-derived `candidate` overrides `self`. The two slots are
-    /// known to share a name (they live in the same per-name group), so they
-    /// match if they are the same kind of member and (for functions) their
-    /// signatures are in an override relationship. Modifiers match on kind
-    /// alone since they cannot be overloaded.
-    fn overridden_by(&self, types: &TypeRegistry, candidate: &AbstractSlot<'_>) -> bool {
-        debug_assert_eq!(self.name, candidate.name, "grouped slots share a name");
-        if self.kind != candidate.kind {
-            return false;
-        }
-        match candidate.kind {
-            AbstractSlotKind::Modifier => true,
-            AbstractSlotKind::Function => match (candidate.type_id, self.type_id) {
-                (Some(candidate_type_id), Some(slot_type_id)) => {
-                    types.type_id_is_function_and_overrides(candidate_type_id, slot_type_id)
-                }
-                _ => false,
-            },
-        }
     }
 }

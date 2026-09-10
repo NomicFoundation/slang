@@ -2500,6 +2500,14 @@ mod structure {
         }
 
         #[test]
+        fn internal_override_data_location() -> Result<()> {
+            run(
+                "structure/contract_should_be_abstract",
+                "internal_override_data_location",
+            )
+        }
+
+        #[test]
         fn unimplemented_function() -> Result<()> {
             run(
                 "structure/contract_should_be_abstract",
