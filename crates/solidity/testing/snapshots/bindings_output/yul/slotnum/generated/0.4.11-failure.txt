@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+   │ 
+ 4 │             let slot := slotnum() // added in 0.8.37
+   │                 ──┬─    ───┬───  
+   │                   ╰────────────── name: 3
+   │                            │     
+   │                            ╰───── unresolved
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test() public {
+   ┆ ┆ ┆   
+ 4 │ │ │               let slot := slotnum() // added in 0.8.37
+   │ │ │                   ──┬─  
+   │ │ │                     ╰─── definiens: 3
+   ┆ ┆ ┆   
+ 6 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 7 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

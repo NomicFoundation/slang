@@ -87,6 +87,11 @@ mod built_ins {
     }
 
     #[test]
+    fn block_slotnum() -> Result<()> {
+        run("built_ins", "block_slotnum")
+    }
+
+    #[test]
     fn bytes() -> Result<()> {
         run("built_ins", "bytes")
     }
@@ -362,6 +367,11 @@ mod contracts {
     #[test]
     fn storage_layout_inner_constant() -> Result<()> {
         run("contracts", "storage_layout_inner_constant")
+    }
+
+    #[test]
+    fn storage_layout_signed_constant() -> Result<()> {
+        run("contracts", "storage_layout_signed_constant")
     }
 
     #[test]
@@ -1459,6 +1469,11 @@ mod yul {
     #[test]
     fn slot_suffix() -> Result<()> {
         run("yul", "slot_suffix")
+    }
+
+    #[test]
+    fn slotnum() -> Result<()> {
+        run("yul", "slotnum")
     }
 
     #[test]
