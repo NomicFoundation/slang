@@ -4,7 +4,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, DefinitionIds, Reference, Resolution, ScopeId, Typing};
-use crate::types::{FunctionType, Type, TypeRegistry};
+use crate::types::{FunctionType, Type, TypeId, TypeRegistry};
 
 /// Resolves an `IdentifierPath` starting from the given scope, creating
 /// `Reference`s for all its elements. It will follow through
@@ -98,6 +98,89 @@ pub(crate) fn filter_overriden_definitions(
         filtered_definitions.push(definition_id);
     }
     Resolution::from(filtered_definitions)
+}
+
+/// A member that can occupy an override slot. A function, a modifier, or a
+/// public state variable through its getter.
+pub(crate) trait Callable {
+    /// `None` for a fallback or receive.
+    fn name(&self) -> Option<&str>;
+    /// A getter is a regular function.
+    fn kind(&self) -> ir::FunctionKind;
+    /// The function or getter type. `None` when it couldn't be computed.
+    fn type_id(&self, binder: &Binder) -> Option<TypeId>;
+}
+
+impl Callable for ir::FunctionDefinition {
+    fn name(&self) -> Option<&str> {
+        self.name.as_ref().map(|name| name.unparse())
+    }
+
+    fn kind(&self) -> ir::FunctionKind {
+        self.kind
+    }
+
+    fn type_id(&self, binder: &Binder) -> Option<TypeId> {
+        binder.node_typing(self.id()).as_type_id()
+    }
+}
+
+impl Callable for ir::StateVariableDefinition {
+    fn name(&self) -> Option<&str> {
+        Some(self.name.unparse())
+    }
+
+    fn kind(&self) -> ir::FunctionKind {
+        ir::FunctionKind::Regular
+    }
+
+    fn type_id(&self, binder: &Binder) -> Option<TypeId> {
+        match binder.find_definition_by_id(self.id()) {
+            Some(Definition::StateVariable(definition)) => definition.getter_type_id,
+            _ => unreachable!("state variable is not registered as a definition"),
+        }
+    }
+}
+
+/// Whether `overriding` takes the override slot of `overridden`. The two match
+/// on name and kind. Regular functions and getters also need indistinguishable
+/// parameter lists.
+pub(crate) fn overrides(
+    binder: &Binder,
+    types: &TypeRegistry,
+    overriding: &dyn Callable,
+    overridden: &dyn Callable,
+) -> bool {
+    if overriding.kind() != overridden.kind() || overriding.name() != overridden.name() {
+        return false;
+    }
+    match overriding.kind() {
+        // Modifiers cannot be overloaded, and a fallback or receive has no
+        // selector, so name and kind are enough.
+        ir::FunctionKind::Modifier | ir::FunctionKind::Fallback | ir::FunctionKind::Receive => true,
+        // A member whose parameters aren't all typed is reported on its own.
+        // Treating it as matching anything here would invent an override.
+        ir::FunctionKind::Regular => match (overriding.type_id(binder), overridden.type_id(binder))
+        {
+            (Some(overriding_type_id), Some(overridden_type_id)) => types
+                .parameter_lists_are_indistinguishable(
+                    parameter_types(types, overriding_type_id),
+                    parameter_types(types, overridden_type_id),
+                ),
+            _ => false,
+        },
+        ir::FunctionKind::Constructor => {
+            unreachable!("constructors take no part in overriding")
+        }
+    }
+}
+
+/// The parameter types of the function type `type_id`.
+fn parameter_types(types: &TypeRegistry, type_id: TypeId) -> &[TypeId] {
+    let Type::Function(function_type) = types.get_type_by_id(type_id) else {
+        unreachable!("type of a function or getter is not a function");
+    };
+    &function_type.parameter_types
 }
 
 /// Whether `overriding` overrides `overridden`: they share a name (or are the
