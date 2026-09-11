@@ -1340,7 +1340,7 @@ pub fn accept_inheritance_type(node: &InheritanceType, visitor: &mut impl Visito
     }
     accept_identifier_path(&node.type_name(), visitor);
     if let Some(ref arguments) = node.arguments() {
-        accept_arguments_declaration(arguments, visitor);
+        accept_positional_arguments(arguments, visitor);
     }
     visitor.leave_inheritance_type(node);
 }
@@ -1390,7 +1390,7 @@ pub fn accept_modifier_invocation(node: &ModifierInvocation, visitor: &mut impl 
     }
     accept_identifier_path(&node.name(), visitor);
     if let Some(ref arguments) = node.arguments() {
-        accept_arguments_declaration(arguments, visitor);
+        accept_positional_arguments(arguments, visitor);
     }
     visitor.leave_modifier_invocation(node);
 }

@@ -2303,7 +2303,7 @@ impl slang_solidity_v2_ast::ast::UserDefinedOperatorExpression for slang_solidit
 pub fn slang_solidity_v2_ast::ast::InequalityExpressionStruct::resolve_operator_to_function(&self) -> core::option::Option<slang_solidity_v2_ast::ast::FunctionDefinition>
 pub struct slang_solidity_v2_ast::ast::InheritanceTypeStruct
 impl slang_solidity_v2_ast::ast::InheritanceTypeStruct
-pub fn slang_solidity_v2_ast::ast::InheritanceTypeStruct::arguments(&self) -> core::option::Option<slang_solidity_v2_ast::ast::ArgumentsDeclaration>
+pub fn slang_solidity_v2_ast::ast::InheritanceTypeStruct::arguments(&self) -> core::option::Option<slang_solidity_v2_ast::ast::PositionalArguments>
 pub fn slang_solidity_v2_ast::ast::InheritanceTypeStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::ast::InheritanceTypeStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::InheritanceTypeStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
@@ -2540,7 +2540,7 @@ impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::MinutesKeywordSt
 pub fn slang_solidity_v2_ast::ast::MinutesKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::ModifierInvocationStruct
 impl slang_solidity_v2_ast::ast::ModifierInvocationStruct
-pub fn slang_solidity_v2_ast::ast::ModifierInvocationStruct::arguments(&self) -> core::option::Option<slang_solidity_v2_ast::ast::ArgumentsDeclaration>
+pub fn slang_solidity_v2_ast::ast::ModifierInvocationStruct::arguments(&self) -> core::option::Option<slang_solidity_v2_ast::ast::PositionalArguments>
 pub fn slang_solidity_v2_ast::ast::ModifierInvocationStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::ast::ModifierInvocationStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::ModifierInvocationStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
