@@ -11,10 +11,9 @@ use crate::passes::common::{Callable, overrides};
 impl<'a> HierarchyChecker<'a> {
     /// Folds this base's functions and modifiers into the abstract-slot set.
     /// Bases are visited most-base-first, so a member here is more-derived than
-    /// anything already recorded and overrides (updating the implementation
-    /// status of) the matching slot — mirroring solc's base-to-derived overwrite
-    /// of its unimplemented-declaration map. Slots are grouped by name, so a
-    /// candidate is only ever compared against same-named slots.
+    /// anything already recorded and takes over the matching slot when it has
+    /// a body. Slots are grouped by name, so a candidate is only ever compared
+    /// against same-named slots.
     pub(super) fn record_abstract(&mut self, members: &'a [ir::ContractMember]) {
         let binder = self.binder;
         let types = self.types;
@@ -26,7 +25,12 @@ impl<'a> HierarchyChecker<'a> {
             let slots = abstract_slots.entry(candidate.callable.name()).or_default();
             for slot in slots.iter_mut() {
                 if overrides(binder, types, candidate.callable, slot.callable) {
-                    *slot = candidate;
+                    // A bodiless override is reported by the override check
+                    // and leaves the slot as it is, so it cannot make an
+                    // implemented member unimplemented again.
+                    if candidate.implemented {
+                        *slot = candidate;
+                    }
                     continue 'members;
                 }
             }
