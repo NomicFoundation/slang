@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 7567] Error: Member "length" is read-only and cannot be used to resize arrays.
+    ╭─[input.sol:10:5]
+    │
+ 10 │     items.length = 5;
+    │     ──────┬─────  
+    │           ╰─────── Error occurred here.
+────╯

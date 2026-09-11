@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 4247] Error: Expression has to be an lvalue.
+    ╭─[input.sol:11:5]
+    │
+ 11 │     items.push(1) = 2;
+    │     ──────┬──────  
+    │           ╰──────── Error occurred here.
+────╯
+
+[TypeError 7407] Error: Type int_const 2 is not implicitly convertible to expected type tuple().
+    ╭─[input.sol:11:21]
+    │
+ 11 │     items.push(1) = 2;
+    │                     ┬  
+    │                     ╰── Error occurred here.
+────╯

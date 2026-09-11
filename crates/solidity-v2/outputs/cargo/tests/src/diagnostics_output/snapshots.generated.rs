@@ -4055,6 +4055,140 @@ mod type_system {
         }
     }
 
+    mod expression_not_an_lvalue {
+        use super::*;
+
+        #[test]
+        fn accepted_array_push_reference() -> Result<()> {
+            run(
+                "type_system/expression_not_an_lvalue",
+                "accepted_array_push_reference",
+            )
+        }
+
+        #[test]
+        fn accepted_locations() -> Result<()> {
+            run("type_system/expression_not_an_lvalue", "accepted_locations")
+        }
+
+        #[test]
+        fn accepted_storage_pointer_member() -> Result<()> {
+            run(
+                "type_system/expression_not_an_lvalue",
+                "accepted_storage_pointer_member",
+            )
+        }
+
+        #[test]
+        fn accepted_tuple_destructuring() -> Result<()> {
+            run(
+                "type_system/expression_not_an_lvalue",
+                "accepted_tuple_destructuring",
+            )
+        }
+
+        #[test]
+        fn accepted_write_operators() -> Result<()> {
+            run(
+                "type_system/expression_not_an_lvalue",
+                "accepted_write_operators",
+            )
+        }
+
+        #[test]
+        fn array_length() -> Result<()> {
+            run("type_system/expression_not_an_lvalue", "array_length")
+        }
+
+        #[test]
+        fn array_push_with_argument() -> Result<()> {
+            run(
+                "type_system/expression_not_an_lvalue",
+                "array_push_with_argument",
+            )
+        }
+
+        #[test]
+        fn built_in_member() -> Result<()> {
+            run("type_system/expression_not_an_lvalue", "built_in_member")
+        }
+
+        #[test]
+        fn call_result() -> Result<()> {
+            run("type_system/expression_not_an_lvalue", "call_result")
+        }
+
+        #[test]
+        fn calldata_slice() -> Result<()> {
+            run("type_system/expression_not_an_lvalue", "calldata_slice")
+        }
+
+        #[test]
+        fn conditional_expression() -> Result<()> {
+            run(
+                "type_system/expression_not_an_lvalue",
+                "conditional_expression",
+            )
+        }
+
+        #[test]
+        fn creation_code() -> Result<()> {
+            run("type_system/expression_not_an_lvalue", "creation_code")
+        }
+
+        #[test]
+        fn deleted_function_name() -> Result<()> {
+            run(
+                "type_system/expression_not_an_lvalue",
+                "deleted_function_name",
+            )
+        }
+
+        #[test]
+        fn enum_member() -> Result<()> {
+            run("type_system/expression_not_an_lvalue", "enum_member")
+        }
+
+        #[test]
+        fn external_state_variable() -> Result<()> {
+            run(
+                "type_system/expression_not_an_lvalue",
+                "external_state_variable",
+            )
+        }
+
+        #[test]
+        fn fixed_bytes_element() -> Result<()> {
+            run(
+                "type_system/expression_not_an_lvalue",
+                "fixed_bytes_element",
+            )
+        }
+
+        #[test]
+        fn function_name() -> Result<()> {
+            run("type_system/expression_not_an_lvalue", "function_name")
+        }
+
+        #[test]
+        fn incremented_call_result() -> Result<()> {
+            run(
+                "type_system/expression_not_an_lvalue",
+                "incremented_call_result",
+            )
+        }
+
+        #[test]
+        fn operator_result() -> Result<()> {
+            run("type_system/expression_not_an_lvalue", "operator_result")
+        }
+
+        #[test]
+        fn tuple_component() -> Result<()> {
+            run("type_system/expression_not_an_lvalue", "tuple_component")
+        }
+    }
+
     mod expression_not_callable {
         use super::*;
 
@@ -4346,6 +4480,45 @@ mod type_system {
         #[test]
         fn valid() -> Result<()> {
             run("type_system/storage_layout_base_slot", "valid")
+        }
+    }
+
+    mod write_to_constant {
+        use super::*;
+
+        #[test]
+        fn accepted_constant_read() -> Result<()> {
+            run("type_system/write_to_constant", "accepted_constant_read")
+        }
+
+        #[test]
+        fn assignment() -> Result<()> {
+            run("type_system/write_to_constant", "assignment")
+        }
+
+        #[test]
+        fn deleted_constant() -> Result<()> {
+            run("type_system/write_to_constant", "deleted_constant")
+        }
+
+        #[test]
+        fn file_level_constant() -> Result<()> {
+            run("type_system/write_to_constant", "file_level_constant")
+        }
+
+        #[test]
+        fn incremented_constant() -> Result<()> {
+            run("type_system/write_to_constant", "incremented_constant")
+        }
+
+        #[test]
+        fn public_constant() -> Result<()> {
+            run("type_system/write_to_constant", "public_constant")
+        }
+
+        #[test]
+        fn qualified_constant() -> Result<()> {
+            run("type_system/write_to_constant", "qualified_constant")
         }
     }
 }
