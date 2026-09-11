@@ -300,6 +300,11 @@ mod contracts {
     }
 
     #[test]
+    fn interface_function_override_via_value() -> Result<()> {
+        run("contracts", "interface_function_override_via_value")
+    }
+
+    #[test]
     fn internal_visibility() -> Result<()> {
         run("contracts", "internal_visibility")
     }
@@ -327,6 +332,11 @@ mod contracts {
     #[test]
     fn overloaded_named_arguments_selected() -> Result<()> {
         run("contracts", "overloaded_named_arguments_selected")
+    }
+
+    #[test]
+    fn override_location_change_lookups() -> Result<()> {
+        run("contracts", "override_location_change_lookups")
     }
 
     #[test]

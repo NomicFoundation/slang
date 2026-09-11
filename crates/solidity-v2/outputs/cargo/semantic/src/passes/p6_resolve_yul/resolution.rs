@@ -1,7 +1,7 @@
 use super::Pass;
 use crate::binder::{Resolution, ScopeId};
 use crate::built_ins::{BuiltInsResolver, is_built_in_available};
-use crate::passes::common::filter_overriden_definitions;
+use crate::passes::common::filter_overridden_definitions;
 
 impl Pass<'_> {
     // Records a Solidity definition referenced from within the assembly block.
@@ -47,7 +47,7 @@ impl Pass<'_> {
         // Falling back to the unavailable built-in keeps the more precise
         // "introduced in <version/target>" diagnostic for a reference that has
         // no declaration in scope.
-        filter_overriden_definitions(
+        filter_overridden_definitions(
             self.binder,
             self.types,
             self.binder.resolve_in_scope(scope_id, symbol),
@@ -56,7 +56,7 @@ impl Pass<'_> {
     }
 
     pub(super) fn resolve_symbol_in_enclosing_solidity_scope(&self, symbol: &str) -> Resolution {
-        filter_overriden_definitions(
+        filter_overridden_definitions(
             self.binder,
             self.types,
             self.binder

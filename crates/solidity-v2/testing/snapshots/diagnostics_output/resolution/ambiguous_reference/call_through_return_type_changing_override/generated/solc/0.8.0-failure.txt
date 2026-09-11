@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 4822] Error: Overriding function return types differ.
+    ╭─[input.sol:14:5]
+    │
+ 14 │ ╭─▶     function f() public override returns (bool) {
+    ┆ ┆   
+ 16 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
