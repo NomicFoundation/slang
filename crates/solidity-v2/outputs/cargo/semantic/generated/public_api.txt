@@ -769,7 +769,6 @@ pub struct slang_solidity_v2_semantic::types::TypeRegistry
 impl slang_solidity_v2_semantic::types::TypeRegistry
 pub fn slang_solidity_v2_semantic::types::TypeRegistry::get_type_by_id(&self, slang_solidity_v2_semantic::types::TypeId) -> &slang_solidity_v2_semantic::types::Type
 pub fn slang_solidity_v2_semantic::types::TypeRegistry::number_value_of_type_id(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<slang_solidity_v2_semantic::types::Number>
-pub fn slang_solidity_v2_semantic::types::TypeRegistry::type_id_is_function_and_overrides(&self, slang_solidity_v2_semantic::types::TypeId, slang_solidity_v2_semantic::types::TypeId) -> bool
 pub struct slang_solidity_v2_semantic::types::UserDefinedValueType
 pub slang_solidity_v2_semantic::types::UserDefinedValueType::definition_id: slang_solidity_v2_common::nodes::NodeId
 impl core::clone::Clone for slang_solidity_v2_semantic::types::UserDefinedValueType
