@@ -2540,6 +2540,14 @@ mod structure {
         }
 
         #[test]
+        fn unimplemented_override_of_implemented() -> Result<()> {
+            run(
+                "structure/contract_should_be_abstract",
+                "unimplemented_override_of_implemented",
+            )
+        }
+
+        #[test]
         fn unimplemented_receive() -> Result<()> {
             run(
                 "structure/contract_should_be_abstract",
