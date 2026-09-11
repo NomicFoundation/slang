@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 6396] Error: The base slot of the storage layout must evaluate to a rational number.
+   ╭─[input.sol:8:22]
+   │
+ 8 │ contract C layout at x {}
+   │                      ┬  
+   │                      ╰── Error occurred here.
+───╯
+
+[TypeError 6396] Error: The base slot of the storage layout must evaluate to a rational number.
+   ╭─[input.sol:9:22]
+   │
+ 9 │ contract D layout at y {}
+   │                      ┬  
+   │                      ╰── Error occurred here.
+───╯

@@ -40,6 +40,10 @@ pub(crate) fn built_in_specifiers(
             Some(LanguageVersionSpecifier::from(LanguageVersion::V0_8_18)),
             None,
         ),
+        InternalBuiltIn::BlockSlotnum => (
+            Some(LanguageVersionSpecifier::from(LanguageVersion::V0_8_37)),
+            Some(EvmTargetSpecifier::from(EvmTarget::Amsterdam)),
+        ),
         InternalBuiltIn::AddressCodehash => (
             None,
             Some(EvmTargetSpecifier::from(EvmTarget::Constantinople)),
@@ -128,6 +132,10 @@ pub(crate) fn built_in_specifiers(
         InternalBuiltIn::YulShr => (
             None,
             Some(EvmTargetSpecifier::from(EvmTarget::Constantinople)),
+        ),
+        InternalBuiltIn::YulSlotnum => (
+            Some(LanguageVersionSpecifier::from(LanguageVersion::V0_8_37)),
+            Some(EvmTargetSpecifier::from(EvmTarget::Amsterdam)),
         ),
         InternalBuiltIn::YulStaticcall => {
             (None, Some(EvmTargetSpecifier::from(EvmTarget::Byzantium)))

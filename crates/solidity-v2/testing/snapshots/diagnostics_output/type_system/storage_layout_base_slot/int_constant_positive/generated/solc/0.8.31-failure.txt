@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 1481] Error: Base slot expression of type 'int256' is not convertible to uint256.
+   ╭─[input.sol:8:22]
+   │
+ 8 │ contract C layout at x {}
+   │                      ┬  
+   │                      ╰── Error occurred here.
+───╯
+
+[TypeError 1481] Error: Base slot expression of type 'int16' is not convertible to uint256.
+   ╭─[input.sol:9:22]
+   │
+ 9 │ contract D layout at y {}
+   │                      ┬  
+   │                      ╰── Error occurred here.
+───╯

@@ -746,7 +746,10 @@ impl SyntaxVersionValidator<'_> {
             ExperimentalFeature::SolidityKeyword(child) => {
                 if !self.check(
                     child,
-                    LanguageVersionSpecifier::from(LanguageVersion::V0_8_21),
+                    LanguageVersionSpecifier::range(
+                        LanguageVersion::V0_8_21,
+                        LanguageVersion::V0_8_37,
+                    ),
                 ) {
                     return;
                 }

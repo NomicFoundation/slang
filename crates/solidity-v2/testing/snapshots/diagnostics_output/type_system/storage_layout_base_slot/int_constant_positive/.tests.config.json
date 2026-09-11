@@ -1,0 +1,12 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "Range",
+        "from": "0.8.29",
+        "till": "0.8.37"
+      },
+      "reason": "Until '0.8.37' solc rejected non positive base slots, while slang supported them from the start."
+    }
+  ]
+}

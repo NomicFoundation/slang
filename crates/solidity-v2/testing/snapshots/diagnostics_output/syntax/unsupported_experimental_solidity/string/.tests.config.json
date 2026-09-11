@@ -10,10 +10,11 @@
     },
     {
       "specifier": {
-        "type": "From",
-        "from": "0.8.24"
+        "type": "Range",
+        "from": "0.8.24",
+        "till": "0.8.37"
       },
-      "reason": "From '0.8.24' solc again emits only `Warning 2264` for `pragma experimental solidity` and succeeds, while Slang keeps rejecting it. On '0.8.22' and '0.8.23' solc additionally raises `UnimplementedFeatureError 6547`, so both fail and agree there."
+      "reason": "From '0.8.24' solc again emits only `Warning 2264` for `pragma experimental solidity` and succeeds, while Slang keeps rejecting it. On '0.8.22' and '0.8.23' solc additionally raises `UnimplementedFeatureError 6547`, so both fail and agree there. From '0.8.37' solc has removed the prototype and reports `SyntaxError 3332`, so both reject it and the divergence ends."
     }
   ]
 }

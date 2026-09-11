@@ -117,6 +117,11 @@ mod built_ins {
     }
 
     #[test]
+    fn block_slotnum() -> Result<()> {
+        run("built_ins", "block_slotnum")
+    }
+
+    #[test]
     fn bytes() -> Result<()> {
         run("built_ins", "bytes")
     }
@@ -1564,6 +1569,11 @@ mod yul {
     #[test]
     fn slot_offset_members() -> Result<()> {
         run("yul", "slot_offset_members")
+    }
+
+    #[test]
+    fn slotnum() -> Result<()> {
+        run("yul", "slotnum")
     }
 
     #[test]

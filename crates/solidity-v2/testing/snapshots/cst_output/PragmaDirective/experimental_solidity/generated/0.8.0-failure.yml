@@ -8,7 +8,7 @@ Source: >
 
 Diagnostics: # 1 total
   - >
-    [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.21'.
+    [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.21', and deprecated in version '0.8.37'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/experimental_solidity/input.sol:2:21]
        │
      2 │ pragma experimental solidity;

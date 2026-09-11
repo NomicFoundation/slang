@@ -40,6 +40,7 @@ pub struct TypeRegistry {
     bytes4_type_id: TypeId,
     string_memory_type_id: TypeId,
     uint256_type_id: TypeId,
+    uint64_type_id: TypeId,
     uint8_type_id: TypeId,
     void_type_id: TypeId,
 }
@@ -80,6 +81,10 @@ impl TypeRegistry {
             is_signed: false,
             bits: 256,
         }));
+        let (uint64_type, _) = types.insert_full(Type::Integer(IntegerType {
+            is_signed: false,
+            bits: 64,
+        }));
         let (uint8_type, _) = types.insert_full(Type::Integer(IntegerType {
             is_signed: false,
             bits: 8,
@@ -107,6 +112,7 @@ impl TypeRegistry {
             bytes4_type_id: TypeId(bytes4_type),
             string_memory_type_id: TypeId(string_memory_type),
             uint256_type_id: TypeId(uint256_type),
+            uint64_type_id: TypeId(uint64_type),
             uint8_type_id: TypeId(uint8_type),
             void_type_id: TypeId(void_type),
         }
@@ -1005,6 +1011,9 @@ impl TypeRegistry {
     }
     pub(crate) fn uint256(&self) -> TypeId {
         self.uint256_type_id
+    }
+    pub(crate) fn uint64(&self) -> TypeId {
+        self.uint64_type_id
     }
     pub(crate) fn uint8(&self) -> TypeId {
         self.uint8_type_id

@@ -1,0 +1,11 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "From",
+        "from": "0.8.37"
+      },
+      "reason": "From '0.8.37' solc knows the `slotnum` built-in and warns that the name will be promoted to a Yul reserved identifier in the future (`Warning 5470`) while it is still unavailable. Slang models the name as either reserved or free, with no grace-period warning, so it stays silent. Neither side rejects the declaration, which is what this test asserts."
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "override_language_versions": {
+    "specifier": {
+      "type": "From",
+      "from": "0.8.36"
+    },
+    "reason": "Amsterdam is only a target solc accepts from '0.8.36'."
+  },
+  "override_evm_target": {
+    "value": "Amsterdam",
+    "reason": "`slotnum()` maps to an opcode introduced in Amsterdam, and no language version defaults to that target."
+  }
+}

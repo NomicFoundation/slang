@@ -56,7 +56,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                 output::ExperimentalFeature::SMTChecker
             }
             input::ExperimentalFeature::SolidityKeyword(node) => {
-                if self.language_version >= LanguageVersion::V0_8_21 {
+                if self.language_version >= LanguageVersion::V0_8_21
+                    && self.language_version < LanguageVersion::V0_8_37
+                {
                     self.report(node, UnsupportedExperimentalSolidity);
                 }
                 output::ExperimentalFeature::Solidity
@@ -69,7 +71,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                         self.report(literal, UnsupportedExperimentalSmtChecker);
                         output::ExperimentalFeature::SMTChecker
                     }
-                    "solidity" if self.language_version >= LanguageVersion::V0_8_21 => {
+                    "solidity"
+                        if self.language_version >= LanguageVersion::V0_8_21
+                            && self.language_version < LanguageVersion::V0_8_37 =>
+                    {
                         self.report(literal, UnsupportedExperimentalSolidity);
                         output::ExperimentalFeature::Solidity
                     }

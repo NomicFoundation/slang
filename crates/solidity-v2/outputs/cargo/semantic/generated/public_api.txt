@@ -128,6 +128,7 @@ pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::BlockDifficulty
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::BlockGaslimit
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::BlockNumber
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::BlockPrevrandao
+pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::BlockSlotnum
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::BlockTimestamp
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::Blockhash
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::BytesConcat
@@ -243,6 +244,7 @@ pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::YulShr
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::YulSignextend
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::YulSload
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::YulSlot
+pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::YulSlotnum
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::YulSlt
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::YulSmod
 pub slang_solidity_v2_semantic::built_ins::InternalBuiltIn::YulSstore

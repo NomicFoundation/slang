@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[Warning 8506] Warning: Experimental pragma ABIEncoderV2 is deprecated and will be removed in a future release.
+   ╭─[input.sol:7:1]
+   │
+ 7 │ pragma experimental ABIEncoderV2;
+   │ ────────────────┬────────────────  
+   │                 ╰────────────────── Warning occurred here.
+───╯
+
+[SyntaxError 3845] Error: ABI coder has already been selected for this source unit.
+   ╭─[input.sol:8:1]
+   │
+ 8 │ pragma abicoder v1;
+   │ ─────────┬─────────  
+   │          ╰─────────── Error occurred here.
+───╯
+
+[Warning 9511] Warning: ABI coder v1 is deprecated and scheduled for removal. Use ABI coder v2 instead.
+   ╭─[input.sol:8:1]
+   │
+ 8 │ pragma abicoder v1;
+   │ ─────────┬─────────  
+   │          ╰─────────── Warning occurred here.
+───╯
