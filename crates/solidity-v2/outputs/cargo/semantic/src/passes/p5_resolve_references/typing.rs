@@ -74,13 +74,32 @@ impl Pass<'_> {
         typing
     }
 
-    /// The type of `node` in a position that requires a value. Reports the
-    /// overload set [`Self::check_typing_of_expression`] does, and on top of it
-    /// the typings that name something which is not a value: a built-in (a
+    /// The type of `node` in a position that requires a value. On top of
+    /// [`Self::check_type_of_value_or_type_name_expression`], an expression
+    /// that denotes a type or a module is not a value either.
+    #[inline]
+    pub(super) fn check_type_of_value_expression(
+        &mut self,
+        node: &ir::Expression,
+    ) -> Option<TypeId> {
+        let type_id = self.check_type_of_value_or_type_name_expression(node)?;
+        if self.types.get_type_by_id(type_id).is_meta_type() {
+            self.report_expression_not_a_value(node, NotAValueKind::TypeOrModule);
+            return None;
+        }
+        Some(type_id)
+    }
+
+    /// The type of `node` in a position that takes either a value or a type
+    /// name, so a meta-type is left alone: the operand of an index access
+    /// (`uint[]`), a component of a tuple and an argument of a built-in call
+    /// (`abi.decode(data, (uint, bool))`). Reports the overload set
+    /// [`Self::check_typing_of_expression`] does, and on top of it the typings
+    /// that name something which is neither a value nor a type: a built-in (a
     /// namespace such as `abi`, or a built-in function), `super`, and an
     /// uncalled `new`.
     #[inline]
-    pub(super) fn check_type_of_value_expression(
+    pub(super) fn check_type_of_value_or_type_name_expression(
         &mut self,
         node: &ir::Expression,
     ) -> Option<TypeId> {
@@ -711,16 +730,36 @@ impl Pass<'_> {
         Typing::Resolved(type_id)
     }
 
+    /// Collects the types of `arguments`, each of which is a value position.
     pub(super) fn collect_positional_argument_types(
         &mut self,
         arguments: &[ir::Expression],
+    ) -> Option<Vec<TypeId>> {
+        self.collect_argument_types(arguments, Self::check_type_of_value_expression)
+    }
+
+    /// Collects the types of `arguments` for a callee that accepts a type name
+    /// in one of them: the second argument of `abi.decode`, the function
+    /// `abi.encodeCall` encodes a call to, and the library name a conversion
+    /// takes in `address(L)`. Which of them is valid is up to the callee.
+    pub(super) fn collect_argument_types_allowing_type_names(
+        &mut self,
+        arguments: &[ir::Expression],
+    ) -> Option<Vec<TypeId>> {
+        self.collect_argument_types(arguments, Self::check_type_of_value_or_type_name_expression)
+    }
+
+    fn collect_argument_types(
+        &mut self,
+        arguments: &[ir::Expression],
+        check: fn(&mut Self, &ir::Expression) -> Option<TypeId>,
     ) -> Option<Vec<TypeId>> {
         // Every argument is checked before the result is folded, so one that has
         // no type does not stop the rest from being checked (and reported).
         let mut types = Vec::with_capacity(arguments.len());
         let mut all_typed = true;
         for argument in arguments {
-            match self.check_type_of_value_expression(argument) {
+            match check(self, argument) {
                 Some(type_id) => types.push(type_id),
                 None => all_typed = false,
             }
@@ -734,7 +773,19 @@ impl Pass<'_> {
         arguments: &[ir::Expression],
     ) -> Typing {
         let operand_typing = self.raw_typing_of_expression(&node.operand).clone();
-        let argument_types = self.collect_positional_argument_types(arguments);
+        // A built-in and a conversion each accept a type name in an argument,
+        // so theirs are not all value positions; see
+        // [`Self::collect_argument_types_allowing_type_names`].
+        let accepts_type_names = match &operand_typing {
+            Typing::BuiltIn(_) => true,
+            Typing::Resolved(type_id) => self.types.get_type_by_id(*type_id).is_meta_type(),
+            _ => false,
+        };
+        let argument_types = if accepts_type_names {
+            self.collect_argument_types_allowing_type_names(arguments)
+        } else {
+            self.collect_positional_argument_types(arguments)
+        };
 
         match operand_typing {
             Typing::Unresolved => {

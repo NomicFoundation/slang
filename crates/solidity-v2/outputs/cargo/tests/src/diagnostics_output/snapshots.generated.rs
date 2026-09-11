@@ -3874,6 +3874,14 @@ mod type_system {
         }
 
         #[test]
+        fn built_in_type_name_argument() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "built_in_type_name_argument",
+            )
+        }
+
+        #[test]
         fn call_argument() -> Result<()> {
             run("type_system/expression_not_a_value", "call_argument")
         }
@@ -3923,6 +3931,14 @@ mod type_system {
         }
 
         #[test]
+        fn function_declaration_built_in_argument() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "function_declaration_built_in_argument",
+            )
+        }
+
+        #[test]
         fn index_access_index() -> Result<()> {
             run("type_system/expression_not_a_value", "index_access_index")
         }
@@ -3932,6 +3948,14 @@ mod type_system {
             run(
                 "type_system/expression_not_a_value",
                 "inheritance_specifier_argument",
+            )
+        }
+
+        #[test]
+        fn library_name_conversion() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "library_name_conversion",
             )
         }
 
@@ -4047,6 +4071,46 @@ mod type_system {
         #[test]
         fn tuple_component() -> Result<()> {
             run("type_system/expression_not_a_value", "tuple_component")
+        }
+
+        #[test]
+        fn type_name_call_argument() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "type_name_call_argument",
+            )
+        }
+
+        #[test]
+        fn type_name_index_access_operand() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "type_name_index_access_operand",
+            )
+        }
+
+        #[test]
+        fn type_name_initializer() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "type_name_initializer",
+            )
+        }
+
+        #[test]
+        fn type_name_operator_operand() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "type_name_operator_operand",
+            )
+        }
+
+        #[test]
+        fn type_name_overloaded_call_argument() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "type_name_overloaded_call_argument",
+            )
         }
 
         #[test]

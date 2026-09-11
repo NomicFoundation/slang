@@ -98,22 +98,6 @@ fn test_overload_resolution_rejects_byte_array_narrowing() {
 }
 
 #[test]
-fn test_meta_type_argument_does_not_match_overloads() {
-    // Passing a type name as an argument must not match any overload
-    // candidate during disambiguation.
-    let context = r#"
-        function f(uint x) internal pure returns (bool) { return x > 0; }
-        function f(bool x) internal pure returns (uint) { return x ? 1 : 0; }
-    "#;
-    assert_eq!(
-        Some(NoMatchingCallableDeclaration.into()),
-        expression("f(uint)")
-            .with_members(context)
-            .into_diagnostic(),
-    );
-}
-
-#[test]
 fn test_overloaded_call_operand_narrows_to_selected_overload() {
     // When an overloaded callee resolves to a single overload through the
     // call's arguments, the operand's typing is narrowed from the whole

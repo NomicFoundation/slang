@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 3509] Error: Function must be "public" or "external".
+    ╭─[input.sol:13:31]
+    │
+ 13 │         return abi.encodeCall(C.g, (1));
+    │                               ─┬─  
+    │                                ╰─── Error occurred here.
+────╯

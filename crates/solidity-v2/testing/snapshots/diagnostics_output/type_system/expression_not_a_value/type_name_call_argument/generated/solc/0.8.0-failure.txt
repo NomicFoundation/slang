@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9553] Error: Invalid type for argument in function call. Invalid implicit conversion from type(enum Test.E) to uint256 requested.
+    ╭─[input.sol:13:10]
+    │
+ 13 │     take(E);
+    │          ┬  
+    │          ╰── Error occurred here.
+────╯
