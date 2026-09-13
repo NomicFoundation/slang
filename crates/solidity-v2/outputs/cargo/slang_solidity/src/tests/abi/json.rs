@@ -1,6 +1,6 @@
-//! The JSON-ABI serialization, pinned against solc 0.8.34's `--abi` output for the same sources:
-//! the compact strings below are solc's verbatim, so key order and `internalType` spelling are
-//! covered along with the entries themselves.
+//! The JSON-ABI serialization, pinned against solc's `--abi` output for the same sources (0.8.34 and
+//! 0.8.35 agree): the compact strings below are solc's verbatim, so key order and `internalType`
+//! spelling are covered along with the entries themselves.
 
 use crate::abi::AbiEntry;
 use crate::define_fixture;
@@ -53,7 +53,21 @@ interface IDerived is IBase {
     function ping(uint256 v) external override returns (uint256);
 }
 abstract contract AB is IBase {
+    constructor(uint256 seed) {}
     function extra() external virtual;
+}
+interface IBalance {
+    function balanceOf(address account) external view returns (uint256);
+}
+contract Getter is IBalance {
+    mapping(address => uint256) public override balanceOf;
+}
+library LJ {
+    uint256 public constant X = 1;
+    error E();
+    event Ev();
+    function view_fn(uint256 x) external view returns (uint256) {}
+    function mut_fn(uint256 x) external returns (uint256) {}
 }
 "#,
 );
@@ -79,6 +93,8 @@ fn interface_hierarchy_matches_solc() {
         r#"[{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"v","type":"uint256"}],"name":"Pinged","type":"event"},{"inputs":[{"internalType":"uint256","name":"v","type":"uint256"}],"name":"ping","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"pong","outputs":[],"stateMutability":"nonpayable","type":"function"}]"#
     );
 
+    // An abstract contract lists the interface function nothing implements and not its
+    // constructor, which cannot run.
     let abstract_contract = unit
         .find_contract_by_name("AB")
         .next()
@@ -88,6 +104,28 @@ fn interface_hierarchy_matches_solc() {
     assert_eq!(
         json(abstract_contract.entries()),
         r#"[{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"v","type":"uint256"}],"name":"Pinged","type":"event"},{"inputs":[],"name":"extra","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"v","type":"uint256"}],"name":"ping","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"}]"#
+    );
+
+    // A public state variable implements the interface function; the getter is listed once.
+    let getter = unit
+        .find_contract_by_name("Getter")
+        .next()
+        .expect("contract Getter exists")
+        .compute_abi()
+        .expect("the ABI is computable");
+    assert_eq!(
+        json(getter.entries()),
+        r#"[{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]"#
+    );
+
+    // A library lists its constants' getters and `view`/`pure` functions; `mut_fn` writes state
+    // and is left out.
+    let library = fixtures::find_library(&unit, "LJ")
+        .compute_abi()
+        .expect("the ABI is computable");
+    assert_eq!(
+        json(library.entries()),
+        r#"[{"inputs":[],"name":"E","type":"error"},{"anonymous":false,"inputs":[],"name":"Ev","type":"event"},{"inputs":[],"name":"X","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"x","type":"uint256"}],"name":"view_fn","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]"#
     );
 }
 
@@ -141,5 +179,35 @@ fn internal_types_match_solc() {
     assert_eq!(
         json(function_types.entries()),
         r#"[{"inputs":[{"internalType":"function (uint256) external","name":"cb","type":"function"}],"name":"a","outputs":[],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"function (uint256) view external returns (bool)","name":"cb","type":"function"}],"name":"b","outputs":[],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"function () payable external","name":"cb","type":"function"},{"internalType":"enum E","name":"e","type":"uint8"},{"internalType":"uint256[3]","name":"xs","type":"uint256[3]"},{"internalType":"string","name":"s","type":"string"},{"internalType":"bytes","name":"bs","type":"bytes"}],"name":"c","outputs":[],"stateMutability":"pure","type":"function"}]"#
+    );
+}
+
+define_fixture!(
+    Overloads,
+    file: "main.sol", r#"
+pragma solidity ^0.8.0;
+interface IOverloads {
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes calldata data) external;
+    function safeTransferFrom(address from, address to, uint256 tokenId) external;
+    function transferFromAndCall(address from, address to, uint256 value) external returns (bool);
+    function transferFromAndCall(address from, address to, uint256 value, bytes calldata data) external returns (bool);
+}
+"#,
+);
+
+/// solc lists overloads in ascending selector order, not declaration order: the three-parameter
+/// `safeTransferFrom` (`0x42842e0e`) precedes the four-parameter one (`0xb88d4fde`), while the
+/// four-parameter `transferFromAndCall` (`0xc1d34b89`) precedes the three-parameter one
+/// (`0xd8fbe994`).
+#[test]
+fn overloads_follow_selector_order() {
+    let unit = Overloads::build_compilation_unit();
+    let abi = fixtures::find_interface(&unit, "IOverloads")
+        .compute_abi()
+        .expect("the ABI is computable");
+
+    assert_eq!(
+        json(abi.entries()),
+        r#"[{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"transferFromAndCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transferFromAndCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"}]"#
     );
 }

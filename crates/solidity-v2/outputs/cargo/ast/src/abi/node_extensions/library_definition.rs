@@ -1,10 +1,11 @@
 use crate::abi::ContractAbi;
-use crate::ast::{ContractMember, LibraryDefinitionStruct, StorageLocation};
+use crate::ast::{ContractMember, FunctionMutability, LibraryDefinitionStruct, StorageLocation};
 
 impl LibraryDefinitionStruct {
-    /// The ABI of the library's externally visible functions, errors and events. A function
-    /// taking a storage reference is reachable only by `DELEGATECALL` from a contract and is
-    /// left out, as solc does; a library has no storage of its own, so both layouts are empty.
+    /// The ABI of the library's `view` and `pure` external functions, public constants' getters,
+    /// errors and events. A function that writes state or takes a storage reference is reachable
+    /// only by `DELEGATECALL` from a contract and is left out, as solc does; a library has no
+    /// storage of its own, so both layouts are empty.
     pub fn compute_abi(&self) -> Option<ContractAbi> {
         let mut entries = Vec::new();
         for member in self.members().iter() {
@@ -16,8 +17,20 @@ impl LibraryDefinitionStruct {
                             Some(StorageLocation::StorageKeyword(_))
                         )
                     });
-                    if !takes_storage_reference && let Some(entry) = function.compute_abi_entry() {
+                    let reads_only = matches!(
+                        function.attributes().mutability(),
+                        FunctionMutability::View | FunctionMutability::Pure
+                    );
+                    if reads_only
+                        && !takes_storage_reference
+                        && let Some(entry) = function.compute_abi_entry()
+                    {
                         entries.push(entry);
+                    }
+                }
+                ContractMember::StateVariableDefinition(state_variable) => {
+                    if state_variable.is_externally_visible() {
+                        entries.push(state_variable.compute_abi_entry()?);
                     }
                 }
                 ContractMember::ErrorDefinition(error) => entries.push(error.compute_abi_entry()?),

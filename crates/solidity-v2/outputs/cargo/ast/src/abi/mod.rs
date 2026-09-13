@@ -166,6 +166,20 @@ impl AbiFunction {
     pub fn state_mutability(&self) -> &AbiMutability {
         &self.state_mutability
     }
+
+    /// The 4-byte selector, hashed from the canonical signature the inputs spell.
+    pub fn selector(&self) -> u32 {
+        let signature = format!(
+            "{}({})",
+            self.name,
+            self.inputs
+                .iter()
+                .map(AbiParameter::type_name)
+                .collect::<Vec<_>>()
+                .join(",")
+        );
+        selector_from_signature(&signature)
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -216,8 +230,10 @@ impl PartialEq for AbiEntry {
 impl Eq for AbiEntry {}
 
 // The ordering defined by this implementation is alphabetical "type" + "name",
-// same as `solc`'s. For equal names we use the `node_id` as the tie breaker to
-// keep consistency with the `PartialEq` implementation.
+// same as `solc`'s. Overloaded functions follow in ascending selector order,
+// which is where solc's interface function map puts them; other equal names
+// use the `node_id` as the tie breaker to keep consistency with the
+// `PartialEq` implementation.
 impl Ord for AbiEntry {
     fn cmp(&self, other: &Self) -> Ordering {
         match (self, other) {
@@ -238,7 +254,10 @@ impl Ord for AbiEntry {
             }
             (Self::Function(self_inner), Self::Function(other_inner)) => {
                 match self_inner.name.cmp(&other_inner.name) {
-                    Ordering::Equal => self.node_id().cmp(&other.node_id()),
+                    Ordering::Equal => self_inner
+                        .selector()
+                        .cmp(&other_inner.selector())
+                        .then_with(|| self.node_id().cmp(&other.node_id())),
                     name_ordering => name_ordering,
                 }
             }

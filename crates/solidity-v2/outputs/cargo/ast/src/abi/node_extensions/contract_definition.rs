@@ -26,7 +26,10 @@ impl ContractDefinitionStruct {
 
     fn compute_abi_entries(&self) -> Option<Vec<AbiEntry>> {
         let mut entries = Vec::new();
-        if let Some(constructor) = self.constructor() {
+        // An abstract contract cannot be deployed, so solc leaves its constructor out.
+        if let Some(constructor) = self.constructor()
+            && !self.is_abstract()
+        {
             entries.push(constructor.compute_abi_entry()?);
         }
         let mut implemented = Set::default();
@@ -36,9 +39,15 @@ impl ContractDefinitionStruct {
                 entries.push(function.compute_abi_entry()?);
             }
         }
+        for state_variable in &self.linearised_state_variables() {
+            if state_variable.is_externally_visible() {
+                implemented.insert(state_variable.compute_canonical_signature()?);
+                entries.push(state_variable.compute_abi_entry()?);
+            }
+        }
         // The linearised functions hold only what the contract hierarchy implements; a function
-        // an interface base declares and no contract implements is still part of the ABI of the
-        // (necessarily abstract) contract.
+        // an interface base declares and no contract implements, by a function or a getter, is
+        // still part of the ABI of the (necessarily abstract) contract.
         for base in &self.linearised_bases() {
             let ContractBase::Interface(interface) = base else {
                 continue;
@@ -47,11 +56,6 @@ impl ContractDefinitionStruct {
                 if implemented.insert(function.compute_abi_key()?) {
                     entries.push(function.compute_abi_entry()?);
                 }
-            }
-        }
-        for state_variable in &self.linearised_state_variables() {
-            if state_variable.is_externally_visible() {
-                entries.push(state_variable.compute_abi_entry()?);
             }
         }
         for error in &self.linearised_errors() {
