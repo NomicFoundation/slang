@@ -3,7 +3,6 @@
 //! base-to-derived source order, and its functions flattened
 //! most-derived-first, resolving overrides.
 
-use std::cmp::Ordering;
 use std::sync::Arc;
 
 use slang_solidity_v2_common::nodes::NodeId;
@@ -11,7 +10,7 @@ use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition};
 use crate::context::ContractLinearisations;
-use crate::passes::common::overrides;
+use crate::passes::common::{Callable, overrides};
 use crate::types::TypeRegistry;
 
 /// Walks the contract's or interface's linearised bases in reverse
@@ -77,50 +76,99 @@ fn linearise_functions(
     types: &TypeRegistry,
     base_members: &[&[ir::ContractMember]],
 ) -> Vec<ir::FunctionDefinition> {
-    let mut functions: Vec<&ir::FunctionDefinition> = Vec::new();
-    let mut getters: Vec<&ir::StateVariableDefinition> = Vec::new();
+    let mut candidates: Vec<Candidate<'_>> = Vec::with_capacity(
+        base_members
+            .iter()
+            .map(|members| {
+                members
+                    .iter()
+                    .filter(|member| Candidate::of(member).is_some())
+                    .count()
+            })
+            .sum(),
+    );
     for members in base_members.iter().rev() {
-        for member in *members {
-            match member {
-                ir::ContractMember::FunctionDefinition(function)
-                    if matches!(
-                        function.kind,
-                        ir::FunctionKind::Regular
-                            | ir::FunctionKind::Fallback
-                            | ir::FunctionKind::Receive
-                    ) =>
-                {
-                    let already_overridden = functions
-                        .iter()
-                        .any(|kept| overrides(binder, types, *kept, function))
-                        || getters
-                            .iter()
-                            .any(|getter| overrides(binder, types, *getter, function));
-                    if !already_overridden {
-                        functions.push(function);
-                    }
-                    // TODO(validation): if overriding multiple ancestors, the function needs to
-                    // specify the bases in a specifier
-                }
-                ir::ContractMember::StateVariableDefinition(state_variable)
-                    if matches!(
-                        state_variable.attributes.visibility,
-                        ir::StateVariableVisibility::Public
-                    ) =>
-                {
-                    // Record its getter, if it has one, so it can shadow a
-                    // matching function inherited from a base contract.
-                    getters.push(state_variable);
-                }
-                _ => {}
+        candidates.extend(members.iter().filter_map(Candidate::of));
+    }
+    // Only same-named members can override each other, so grouping the
+    // candidates by name (stably, keeping them most-derived-first within a
+    // name) leaves each one to be compared against its predecessors in the
+    // group alone. It also puts the survivors in the list's order: the nameless
+    // fallback and receive sort first, as they did before.
+    candidates.sort_by(|a, b| a.callable().name().cmp(&b.callable().name()));
+
+    let mut functions = Vec::new();
+    let mut group_start = 0;
+    for index in 0..candidates.len() {
+        if candidates[index].callable().name() != candidates[group_start].callable().name() {
+            group_start = index;
+        }
+        let Candidate::Function(function, _) = candidates[index] else {
+            continue;
+        };
+        let already_overridden = candidates[group_start..index]
+            .iter()
+            .any(|kept| kept.shadows() && overrides(binder, types, kept.callable(), function));
+        if already_overridden {
+            candidates[index] = Candidate::Function(function, false);
+        } else {
+            functions.push(Arc::clone(function));
+        }
+        // TODO(validation): if overriding multiple ancestors, the function needs to
+        // specify the bases in a specifier
+    }
+    functions
+}
+
+/// A member competing for a slot in the hierarchy's function list: a function,
+/// or a public state variable's getter, which takes the slot of a same-signature
+/// function inherited from a base contract without joining the list itself.
+#[derive(Clone, Copy)]
+enum Candidate<'a> {
+    /// The flag records whether the function survived override resolution;
+    /// only a survivor overrides the functions behind it.
+    Function(&'a ir::FunctionDefinition, bool),
+    Getter(&'a ir::StateVariableDefinition),
+}
+
+impl<'a> Candidate<'a> {
+    fn of(member: &'a ir::ContractMember) -> Option<Self> {
+        match member {
+            ir::ContractMember::FunctionDefinition(function)
+                if matches!(
+                    function.kind,
+                    ir::FunctionKind::Regular
+                        | ir::FunctionKind::Fallback
+                        | ir::FunctionKind::Receive
+                ) =>
+            {
+                Some(Self::Function(function, true))
             }
+            ir::ContractMember::StateVariableDefinition(state_variable)
+                if matches!(
+                    state_variable.attributes.visibility,
+                    ir::StateVariableVisibility::Public
+                ) =>
+            {
+                Some(Self::Getter(state_variable))
+            }
+            _ => None,
         }
     }
-    functions.sort_by(|a, b| match (&a.name, &b.name) {
-        (None, None) => Ordering::Equal,
-        (None, Some(_)) => Ordering::Less,
-        (Some(_), None) => Ordering::Greater,
-        (Some(a), Some(b)) => a.unparse().cmp(b.unparse()),
-    });
-    functions.into_iter().map(Arc::clone).collect()
+
+    fn callable(self) -> &'a dyn Callable {
+        match self {
+            Self::Function(function, _) => function,
+            Self::Getter(state_variable) => state_variable,
+        }
+    }
+
+    /// Whether the member takes the override slot of the same-signature
+    /// functions inherited behind it.
+    fn shadows(self) -> bool {
+        match self {
+            Self::Function(_, kept) => kept,
+            Self::Getter(_) => true,
+        }
+    }
 }
