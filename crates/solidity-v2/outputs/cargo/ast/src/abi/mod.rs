@@ -1,4 +1,5 @@
 mod node_extensions;
+mod serialize;
 mod types;
 
 use std::cmp::Ordering;
@@ -267,6 +268,7 @@ pub struct AbiParameter {
     node_id: Option<NodeId>, // will be `None` if the function is a generated getter
     name: Option<String>,
     abi_type: AbiType,
+    internal_type: String,
     indexed: bool,
 }
 
@@ -281,6 +283,12 @@ impl AbiParameter {
 
     pub fn abi_type(&self) -> &AbiType {
         &self.abi_type
+    }
+
+    /// The Solidity type as solc spells it in the JSON-ABI `internalType` field, e.g.
+    /// `struct C.S[]`, `enum C.E`, `contract I` or `address payable`.
+    pub fn internal_type(&self) -> &str {
+        &self.internal_type
     }
 
     /// The parameter's type rendered as its canonical-signature spelling — e.g.
@@ -342,22 +350,20 @@ pub fn selector_from_signature(signature: &str) -> u32 {
 pub(crate) fn extract_function_type_parameters_abi(
     semantic: &Arc<SemanticContext>,
     type_id: TypeId,
+    output_member_ids: &[NodeId],
 ) -> Option<(Vec<AbiParameter>, Vec<AbiParameter>)> {
     let Type::Function(function_type) = semantic.types().get_type_by_id(type_id) else {
         return None;
     };
-    // TODO: our type system doesn't track parameter names for function types,
-    // so we can't convey that information in the ABI. This is important for
-    // getters where we should transfer that information from mapping or struct
-    // types (eg. a getter that returns a struct should name its output
-    // parameters from the struct members).
+    // Function types don't track parameter names; a getter's inputs are unnamed in solc's ABI
+    // too, and its outputs are named after the struct members they are built from, when any.
     let mut inputs = Vec::new();
     for parameter_type_id in &function_type.parameter_types {
-        let abi_type = type_as_abi_type(semantic, *parameter_type_id)?;
         inputs.push(AbiParameter {
             node_id: None,
             name: None,
-            abi_type,
+            abi_type: type_as_abi_type(semantic, *parameter_type_id)?,
+            internal_type: semantic.type_abi_internal_name(*parameter_type_id),
             indexed: false,
         });
     }
@@ -367,13 +373,19 @@ pub(crate) fn extract_function_type_parameters_abi(
         Type::Tuple(TupleType { types }) => Either::Left(types.iter()),
         _ => Either::Right(std::iter::once(&function_type.return_type)),
     };
+    let mut output_names = output_member_ids.iter().map(|member_id| {
+        semantic
+            .binder()
+            .find_definition_by_id(*member_id)
+            .map(|member| member.identifier().unparse().to_string())
+    });
     let outputs = output_types
         .map(|output_type_id| {
-            let abi_type = type_as_abi_type(semantic, *output_type_id)?;
             Some(AbiParameter {
                 node_id: None,
-                name: None,
-                abi_type,
+                name: output_names.next().flatten(),
+                abi_type: type_as_abi_type(semantic, *output_type_id)?,
+                internal_type: semantic.type_abi_internal_name(*output_type_id),
                 indexed: false,
             })
         })

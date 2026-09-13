@@ -2,6 +2,7 @@ mod eip712;
 mod entries;
 mod interface_id;
 mod internal_signature;
+mod json;
 mod selectors;
 mod storage_layout;
 mod type_conversion;

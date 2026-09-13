@@ -23,7 +23,11 @@ impl StateVariableDefinitionStruct {
         else {
             unreachable!("definition is not a state variable");
         };
-        extract_function_type_parameters_abi(&self.semantic, definition.getter_type_id?)
+        extract_function_type_parameters_abi(
+            &self.semantic,
+            definition.getter_type_id?,
+            &definition.getter_member_ids,
+        )
     }
 
     pub fn compute_abi_entry(&self) -> Option<AbiEntry> {

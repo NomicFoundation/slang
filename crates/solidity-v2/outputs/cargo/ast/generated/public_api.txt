@@ -22,6 +22,8 @@ impl core::cmp::PartialOrd for slang_solidity_v2_ast::abi::AbiEntry
 pub fn slang_solidity_v2_ast::abi::AbiEntry::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
 impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiEntry
 pub fn slang_solidity_v2_ast::abi::AbiEntry::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::abi::AbiEntry
+pub fn slang_solidity_v2_ast::abi::AbiEntry::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub enum slang_solidity_v2_ast::abi::AbiType
 pub slang_solidity_v2_ast::abi::AbiType::Address
 pub slang_solidity_v2_ast::abi::AbiType::Array
@@ -113,6 +115,7 @@ pub struct slang_solidity_v2_ast::abi::AbiParameter
 impl slang_solidity_v2_ast::abi::AbiParameter
 pub fn slang_solidity_v2_ast::abi::AbiParameter::abi_type(&self) -> &slang_solidity_v2_ast::abi::AbiType
 pub fn slang_solidity_v2_ast::abi::AbiParameter::indexed(&self) -> bool
+pub fn slang_solidity_v2_ast::abi::AbiParameter::internal_type(&self) -> &str
 pub fn slang_solidity_v2_ast::abi::AbiParameter::name(&self) -> core::option::Option<&str>
 pub fn slang_solidity_v2_ast::abi::AbiParameter::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
 pub fn slang_solidity_v2_ast::abi::AbiParameter::type_name(&self) -> alloc::string::String
@@ -124,6 +127,8 @@ pub fn slang_solidity_v2_ast::abi::AbiParameter::eq(&self, &slang_solidity_v2_as
 impl core::fmt::Debug for slang_solidity_v2_ast::abi::AbiParameter
 pub fn slang_solidity_v2_ast::abi::AbiParameter::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::AbiParameter
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::abi::AbiParameter
+pub fn slang_solidity_v2_ast::abi::AbiParameter::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::abi::AbiReceive
 impl slang_solidity_v2_ast::abi::AbiReceive
 pub fn slang_solidity_v2_ast::abi::AbiReceive::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
@@ -171,8 +176,9 @@ impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::StorageIt
 pub struct slang_solidity_v2_ast::abi::TupleComponent
 impl slang_solidity_v2_ast::abi::TupleComponent
 pub fn slang_solidity_v2_ast::abi::TupleComponent::abi_type(&self) -> &slang_solidity_v2_ast::abi::AbiType
+pub fn slang_solidity_v2_ast::abi::TupleComponent::internal_type(&self) -> &str
 pub fn slang_solidity_v2_ast::abi::TupleComponent::name(&self) -> &str
-pub fn slang_solidity_v2_ast::abi::TupleComponent::new(impl core::convert::Into<alloc::string::String>, slang_solidity_v2_ast::abi::AbiType) -> Self
+pub fn slang_solidity_v2_ast::abi::TupleComponent::new(impl core::convert::Into<alloc::string::String>, slang_solidity_v2_ast::abi::AbiType, impl core::convert::Into<alloc::string::String>) -> Self
 impl core::clone::Clone for slang_solidity_v2_ast::abi::TupleComponent
 pub fn slang_solidity_v2_ast::abi::TupleComponent::clone(&self) -> slang_solidity_v2_ast::abi::TupleComponent
 impl core::cmp::Eq for slang_solidity_v2_ast::abi::TupleComponent
@@ -187,6 +193,8 @@ pub fn slang_solidity_v2_ast::abi::TupleComponent::fmt(&self, &mut core::fmt::Fo
 impl core::hash::Hash for slang_solidity_v2_ast::abi::TupleComponent
 pub fn slang_solidity_v2_ast::abi::TupleComponent::hash<__H: core::hash::Hasher>(&self, &mut __H)
 impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::TupleComponent
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::abi::TupleComponent
+pub fn slang_solidity_v2_ast::abi::TupleComponent::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub fn slang_solidity_v2_ast::abi::hash_from_signature(&str) -> [u8; 32]
 pub fn slang_solidity_v2_ast::abi::selector_from_signature(&str) -> u32
 pub type slang_solidity_v2_ast::abi::AbiMutability = slang_solidity_v2_semantic::types::FunctionTypeMutability
@@ -2344,6 +2352,7 @@ impl slang_solidity_v2_ast::ast::InterfaceDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
 impl slang_solidity_v2_ast::ast::InterfaceDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::compute_abi(&self) -> core::option::Option<slang_solidity_v2_ast::abi::ContractAbi>
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::compute_interface_id(&self) -> core::option::Option<u32>
 impl slang_solidity_v2_ast::ast::InterfaceDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
@@ -2423,6 +2432,8 @@ pub struct slang_solidity_v2_ast::ast::LibraryDefinitionStruct
 impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
+impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::compute_abi(&self) -> core::option::Option<slang_solidity_v2_ast::abi::ContractAbi>
 impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::state_variables(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::StateVariableDefinition>

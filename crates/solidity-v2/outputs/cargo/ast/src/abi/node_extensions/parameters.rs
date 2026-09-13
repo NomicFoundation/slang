@@ -21,6 +21,7 @@ impl ParametersStruct {
                 node_id: Some(node_id),
                 name,
                 abi_type,
+                internal_type: self.semantic.type_abi_internal_name(type_id),
                 indexed,
             });
         }

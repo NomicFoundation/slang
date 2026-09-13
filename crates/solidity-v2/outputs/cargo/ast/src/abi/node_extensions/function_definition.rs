@@ -99,6 +99,18 @@ impl FunctionDefinitionStruct {
         Some(format!("{name}({parameters})"))
     }
 
+    /// The key under which a function occupies its ABI slot: the canonical signature of a
+    /// regular function, the kind of a fallback or receive function, of which a contract has at
+    /// most one each. `None` for a constructor or modifier, which have no such slot.
+    pub(crate) fn compute_abi_key(&self) -> Option<String> {
+        match self.ir_node.kind {
+            ir::FunctionKind::Regular => self.compute_canonical_signature(),
+            ir::FunctionKind::Fallback => Some("fallback".to_string()),
+            ir::FunctionKind::Receive => Some("receive".to_string()),
+            ir::FunctionKind::Constructor | ir::FunctionKind::Modifier => None,
+        }
+    }
+
     /// Returns the signature a selector is hashed from: the library form for a
     /// library member, the canonical form otherwise.
     pub fn compute_selector_signature(&self) -> Option<String> {

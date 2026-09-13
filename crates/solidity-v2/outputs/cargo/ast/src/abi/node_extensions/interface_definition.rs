@@ -1,4 +1,7 @@
-use crate::ast::InterfaceDefinitionStruct;
+use slang_solidity_v2_common::collections::Set;
+
+use crate::abi::ContractAbi;
+use crate::ast::{ContractMember, Definition, InterfaceDefinitionStruct};
 
 impl InterfaceDefinitionStruct {
     /// Computes the ERC-165 interface identifier: the XOR of the 4-byte selectors of the functions
@@ -9,5 +12,49 @@ impl InterfaceDefinitionStruct {
             interface_id ^= function.compute_selector()?;
         }
         Some(interface_id)
+    }
+
+    /// The ABI over the interface's linearised hierarchy, itself first: an overriding function
+    /// stands in for the one it overrides, inherited errors and events are listed with its own.
+    /// An interface has no storage, so both layouts are empty.
+    pub fn compute_abi(&self) -> Option<ContractAbi> {
+        let mut entries = Vec::new();
+        let mut signatures = Set::default();
+        for base_id in self
+            .semantic
+            .binder()
+            .get_linearised_bases(self.ir_node.id())?
+        {
+            let Some(Definition::Interface(base)) =
+                Definition::try_create(*base_id, &self.semantic)
+            else {
+                unreachable!("an interface's linearisation holds interfaces");
+            };
+            for member in base.members().iter() {
+                match member {
+                    ContractMember::FunctionDefinition(function) => {
+                        if signatures.insert(function.compute_abi_key()?) {
+                            entries.push(function.compute_abi_entry()?);
+                        }
+                    }
+                    ContractMember::ErrorDefinition(error) => {
+                        entries.push(error.compute_abi_entry()?);
+                    }
+                    ContractMember::EventDefinition(event) => {
+                        entries.push(event.compute_abi_entry()?);
+                    }
+                    _ => {}
+                }
+            }
+        }
+        entries.sort();
+        Some(ContractAbi {
+            node_id: self.ir_node.id(),
+            name: self.ir_node.name.unparse().to_string(),
+            file_id: self.get_file_id().clone(),
+            entries,
+            storage_layout: Vec::new(),
+            transient_storage_layout: Vec::new(),
+        })
     }
 }

@@ -1,9 +1,12 @@
 use ruint::aliases::U256;
+use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::StorageLayoutBuilder;
 
 use crate::abi::{AbiEntry, ContractAbi, StorageItem};
-use crate::ast::{ContractDefinitionStruct, StateVariableDefinition, StateVariableMutability};
+use crate::ast::{
+    ContractBase, ContractDefinitionStruct, StateVariableDefinition, StateVariableMutability,
+};
 
 impl ContractDefinitionStruct {
     pub fn compute_abi(&self) -> Option<ContractAbi> {
@@ -26,9 +29,24 @@ impl ContractDefinitionStruct {
         if let Some(constructor) = self.constructor() {
             entries.push(constructor.compute_abi_entry()?);
         }
+        let mut implemented = Set::default();
         for function in &self.linearised_functions() {
             if function.is_externally_visible() {
+                implemented.insert(function.compute_abi_key()?);
                 entries.push(function.compute_abi_entry()?);
+            }
+        }
+        // The linearised functions hold only what the contract hierarchy implements; a function
+        // an interface base declares and no contract implements is still part of the ABI of the
+        // (necessarily abstract) contract.
+        for base in &self.linearised_bases() {
+            let ContractBase::Interface(interface) = base else {
+                continue;
+            };
+            for function in interface.members().iter_function_definitions() {
+                if implemented.insert(function.compute_abi_key()?) {
+                    entries.push(function.compute_abi_entry()?);
+                }
             }
         }
         for state_variable in &self.linearised_state_variables() {

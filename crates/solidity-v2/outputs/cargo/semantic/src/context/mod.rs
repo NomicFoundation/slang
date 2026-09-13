@@ -21,9 +21,9 @@ use crate::passes::{
 };
 use crate::types::{
     ArraySliceType, ArrayType, ByteArrayType, ContractType, DataLocation, EnumType, ErrorType,
-    EventType, FixedPointNumberType, FixedSizeArrayType, IntegerType, InterfaceType, LibraryType,
-    MappingType, MetaType, StructType, TupleType, Type, TypeId, TypeRegistry, UserDefinedValueType,
-    UserMetaType,
+    EventType, FixedPointNumberType, FixedSizeArrayType, FunctionType, FunctionTypeMutability,
+    IntegerType, InterfaceType, LibraryType, MappingType, MetaType, StructType, TupleType, Type,
+    TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
 };
 
 mod contract_data;
@@ -374,6 +374,87 @@ impl SemanticContext {
             }
             Type::Void => "void".to_string(),
         }
+    }
+
+    /// The type's spelling in the JSON ABI `internalType` field, as solc emits it: the kind
+    /// prefix on user-defined types (`struct C.S`, `enum C.E`, `contract I`), `address payable`,
+    /// and function types with their parameter, mutability, visibility and return spelling.
+    /// Data locations are not part of it. Types the ABI cannot carry fall back to
+    /// [`Self::type_internal_name`].
+    pub fn type_abi_internal_name(&self, type_id: TypeId) -> String {
+        match self.types.get_type_by_id(type_id) {
+            Type::Address(address) if address.is_payable => "address payable".to_string(),
+            Type::Array(ArrayType { element_type, .. }) => {
+                format!(
+                    "{element}[]",
+                    element = self.type_abi_internal_name(*element_type)
+                )
+            }
+            Type::ArraySlice(ArraySliceType { array_type_id }) => {
+                self.type_abi_internal_name(*array_type_id)
+            }
+            Type::FixedSizeArray(FixedSizeArrayType {
+                element_type, size, ..
+            }) => {
+                format!(
+                    "{element}[{size}]",
+                    element = self.type_abi_internal_name(*element_type),
+                )
+            }
+            Type::Contract(ContractType { definition_id })
+            | Type::Interface(InterfaceType { definition_id }) => {
+                format!(
+                    "contract {}",
+                    self.definition_canonical_name(*definition_id)
+                )
+            }
+            Type::Enum(EnumType { definition_id }) => {
+                format!("enum {}", self.definition_canonical_name(*definition_id))
+            }
+            Type::Struct(StructType { definition_id, .. }) => {
+                format!("struct {}", self.definition_canonical_name(*definition_id))
+            }
+            Type::Function(function_type) => self.function_type_abi_internal_name(function_type),
+            _ => self.type_internal_name(type_id),
+        }
+    }
+
+    /// `function (T1,T2) [pure|view|payable] external [returns (R1,R2)]`; `nonpayable` is
+    /// implied by its absence, and only external functions reach the ABI.
+    fn function_type_abi_internal_name(&self, function_type: &FunctionType) -> String {
+        let parameters = function_type
+            .parameter_types
+            .iter()
+            .map(|type_id| self.type_abi_internal_name(*type_id))
+            .collect::<Vec<_>>()
+            .join(",");
+        let mutability = match function_type.mutability {
+            FunctionTypeMutability::Pure => " pure",
+            FunctionTypeMutability::View => " view",
+            FunctionTypeMutability::Payable => " payable",
+            FunctionTypeMutability::NonPayable => "",
+        };
+        let visibility = if function_type.is_externally_visible() {
+            " external"
+        } else {
+            " internal"
+        };
+        let returns = match self.types.get_type_by_id(function_type.return_type) {
+            Type::Void => String::new(),
+            Type::Tuple(TupleType { types }) => format!(
+                " returns ({})",
+                types
+                    .iter()
+                    .map(|type_id| self.type_abi_internal_name(*type_id))
+                    .collect::<Vec<_>>()
+                    .join(",")
+            ),
+            _ => format!(
+                " returns ({})",
+                self.type_abi_internal_name(function_type.return_type)
+            ),
+        };
+        format!("function ({parameters}){mutability}{visibility}{returns}")
     }
 
     pub fn type_library_name(&self, type_id: TypeId) -> Option<String> {

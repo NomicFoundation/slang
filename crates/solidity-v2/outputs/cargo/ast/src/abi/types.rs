@@ -88,13 +88,15 @@ impl fmt::Display for AbiType {
 pub struct TupleComponent {
     pub(crate) name: String,
     pub(crate) ty: AbiType,
+    pub(crate) internal_type: String,
 }
 
 impl TupleComponent {
-    pub fn new(name: impl Into<String>, ty: AbiType) -> Self {
+    pub fn new(name: impl Into<String>, ty: AbiType, internal_type: impl Into<String>) -> Self {
         Self {
             name: name.into(),
             ty,
+            internal_type: internal_type.into(),
         }
     }
 
@@ -104,6 +106,11 @@ impl TupleComponent {
 
     pub fn abi_type(&self) -> &AbiType {
         &self.ty
+    }
+
+    /// The member's Solidity type as solc spells it in the JSON-ABI `internalType` field.
+    pub fn internal_type(&self) -> &str {
+        &self.internal_type
     }
 }
 
@@ -205,7 +212,13 @@ fn abi_type_from_ast_type(value: &AstType, visited_structs: &mut Set<NodeId>) ->
             for member in definition.members().iter() {
                 let name = member.name().name().to_owned();
                 let ty = abi_type_from_ast_type(&member.get_type()?, visited_structs)?;
-                components.push(TupleComponent::new(name, ty));
+                let member_type_id = member
+                    .semantic
+                    .binder()
+                    .node_typing(member.node_id())
+                    .as_type_id()?;
+                let internal_type = member.semantic.type_abi_internal_name(member_type_id);
+                components.push(TupleComponent::new(name, ty, internal_type));
             }
             visited_structs.remove(&definition.node_id());
             Some(AbiType::Tuple(components))

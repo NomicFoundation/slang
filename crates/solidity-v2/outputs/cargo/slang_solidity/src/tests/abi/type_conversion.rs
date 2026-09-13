@@ -95,8 +95,8 @@ fn converts_a_leaf_type() {
 #[test]
 fn converts_a_struct_to_a_tuple() {
     let expected = AbiType::Tuple(vec![
-        TupleComponent::new("x", uint256()),
-        TupleComponent::new("y", uint256()),
+        TupleComponent::new("x", uint256(), "uint256"),
+        TupleComponent::new("y", uint256(), "uint256"),
     ]);
     assert_eq!(
         AbiType::try_from(&state_variable_type(&get_contract_c(), "t")),
@@ -108,22 +108,24 @@ fn converts_a_struct_to_a_tuple() {
 fn converts_nested_structs_and_arrays() {
     // struct S { uint a; uint[] b; T[] c; }  where  struct T { uint x; uint y; }
     let t = AbiType::Tuple(vec![
-        TupleComponent::new("x", uint256()),
-        TupleComponent::new("y", uint256()),
+        TupleComponent::new("x", uint256(), "uint256"),
+        TupleComponent::new("y", uint256(), "uint256"),
     ]);
     let expected = AbiType::Tuple(vec![
-        TupleComponent::new("a", uint256()),
+        TupleComponent::new("a", uint256(), "uint256"),
         TupleComponent::new(
             "b",
             AbiType::Array {
                 element: Box::new(uint256()),
             },
+            "uint256[]",
         ),
         TupleComponent::new(
             "c",
             AbiType::Array {
                 element: Box::new(t),
             },
+            "struct C.T[]",
         ),
     ]);
 

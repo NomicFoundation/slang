@@ -69,22 +69,24 @@ fn test_abi_entries_with_tuples() {
     //   struct S { uint a; uint[] b; T[] c; }
     //   struct T { uint x; uint y; }
     let t = AbiType::Tuple(vec![
-        TupleComponent::new("x", uint256.clone()),
-        TupleComponent::new("y", uint256.clone()),
+        TupleComponent::new("x", uint256.clone(), "uint256"),
+        TupleComponent::new("y", uint256.clone(), "uint256"),
     ]);
     let s = AbiType::Tuple(vec![
-        TupleComponent::new("a", uint256.clone()),
+        TupleComponent::new("a", uint256.clone(), "uint256"),
         TupleComponent::new(
             "b",
             AbiType::Array {
                 element: Box::new(uint256.clone()),
             },
+            "uint256[]",
         ),
         TupleComponent::new(
             "c",
             AbiType::Array {
                 element: Box::new(t.clone()),
             },
+            "struct Test.T[]",
         ),
     ]);
 
