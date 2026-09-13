@@ -2354,7 +2354,6 @@ pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::members(&self) -> 
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::name(&self) -> slang_solidity_v2_ast::ast::Identifier
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl slang_solidity_v2_ast::ast::InterfaceDefinitionStruct
-pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::linearised_bases(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ContractBase>
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::linearised_errors(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ErrorDefinition>
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::linearised_events(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::EventDefinition>
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::linearised_functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
