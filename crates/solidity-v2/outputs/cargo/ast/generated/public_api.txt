@@ -115,6 +115,7 @@ pub fn slang_solidity_v2_ast::abi::AbiParameter::abi_type(&self) -> &slang_solid
 pub fn slang_solidity_v2_ast::abi::AbiParameter::indexed(&self) -> bool
 pub fn slang_solidity_v2_ast::abi::AbiParameter::name(&self) -> core::option::Option<&str>
 pub fn slang_solidity_v2_ast::abi::AbiParameter::node_id(&self) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
+pub fn slang_solidity_v2_ast::abi::AbiParameter::type_id(&self) -> slang_solidity_v2_semantic::types::TypeId
 pub fn slang_solidity_v2_ast::abi::AbiParameter::type_name(&self) -> alloc::string::String
 impl core::clone::Clone for slang_solidity_v2_ast::abi::AbiParameter
 pub fn slang_solidity_v2_ast::abi::AbiParameter::clone(&self) -> slang_solidity_v2_ast::abi::AbiParameter
@@ -136,10 +137,14 @@ pub struct slang_solidity_v2_ast::abi::ContractAbi
 impl slang_solidity_v2_ast::abi::ContractAbi
 pub fn slang_solidity_v2_ast::abi::ContractAbi::entries(&self) -> &[slang_solidity_v2_ast::abi::AbiEntry]
 pub fn slang_solidity_v2_ast::abi::ContractAbi::file_id(&self) -> &slang_solidity_v2_common::files::FileId
+pub fn slang_solidity_v2_ast::abi::ContractAbi::json(&self) -> slang_solidity_v2_ast::abi::JsonAbi<'_>
 pub fn slang_solidity_v2_ast::abi::ContractAbi::name(&self) -> &str
 pub fn slang_solidity_v2_ast::abi::ContractAbi::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::abi::ContractAbi::storage_layout(&self) -> &[slang_solidity_v2_ast::abi::StorageItem]
 pub fn slang_solidity_v2_ast::abi::ContractAbi::transient_storage_layout(&self) -> &[slang_solidity_v2_ast::abi::StorageItem]
+pub struct slang_solidity_v2_ast::abi::JsonAbi<'a>(_)
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::abi::JsonAbi<'_>
+pub fn slang_solidity_v2_ast::abi::JsonAbi<'_>::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 #[non_exhaustive] pub struct slang_solidity_v2_ast::abi::NotAnAbiType
 impl core::clone::Clone for slang_solidity_v2_ast::abi::NotAnAbiType
 pub fn slang_solidity_v2_ast::abi::NotAnAbiType::clone(&self) -> slang_solidity_v2_ast::abi::NotAnAbiType
@@ -172,7 +177,7 @@ pub struct slang_solidity_v2_ast::abi::TupleComponent
 impl slang_solidity_v2_ast::abi::TupleComponent
 pub fn slang_solidity_v2_ast::abi::TupleComponent::abi_type(&self) -> &slang_solidity_v2_ast::abi::AbiType
 pub fn slang_solidity_v2_ast::abi::TupleComponent::name(&self) -> &str
-pub fn slang_solidity_v2_ast::abi::TupleComponent::new(impl core::convert::Into<alloc::string::String>, slang_solidity_v2_ast::abi::AbiType) -> Self
+pub fn slang_solidity_v2_ast::abi::TupleComponent::new(impl core::convert::Into<alloc::string::String>, impl core::convert::Into<alloc::sync::Arc<slang_solidity_v2_ast::abi::AbiType>>) -> Self
 impl core::clone::Clone for slang_solidity_v2_ast::abi::TupleComponent
 pub fn slang_solidity_v2_ast::abi::TupleComponent::clone(&self) -> slang_solidity_v2_ast::abi::TupleComponent
 impl core::cmp::Eq for slang_solidity_v2_ast::abi::TupleComponent
@@ -2344,6 +2349,7 @@ impl slang_solidity_v2_ast::ast::InterfaceDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
 impl slang_solidity_v2_ast::ast::InterfaceDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::compute_abi(&self) -> core::option::Option<slang_solidity_v2_ast::abi::ContractAbi>
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::compute_interface_id(&self) -> core::option::Option<u32>
 impl slang_solidity_v2_ast::ast::InterfaceDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
@@ -2423,6 +2429,8 @@ pub struct slang_solidity_v2_ast::ast::LibraryDefinitionStruct
 impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
+impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::compute_abi(&self) -> core::option::Option<slang_solidity_v2_ast::abi::ContractAbi>
 impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::state_variables(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::StateVariableDefinition>

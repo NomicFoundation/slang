@@ -1,19 +1,20 @@
 mod node_extensions;
+mod serialize;
 mod types;
 
 use std::cmp::Ordering;
-use std::sync::Arc;
+use std::sync::{Arc, OnceLock};
 
-use itertools::Either;
+use itertools::Itertools;
 use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
-use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TupleType, Type, TypeId};
+use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 
+pub use self::serialize::JsonAbi;
 pub use self::types::{AbiType, NotAnAbiType, TupleComponent};
-use crate::abi::types::type_as_abi_type;
 
 pub struct ContractAbi {
     node_id: NodeId,
@@ -22,6 +23,8 @@ pub struct ContractAbi {
     entries: Vec<AbiEntry>,
     storage_layout: Vec<StorageItem>,
     transient_storage_layout: Vec<StorageItem>,
+    // `internalType` is rendered from the semantic types at serialization, see `JsonAbi`.
+    semantic: Arc<SemanticContext>,
 }
 
 impl ContractAbi {
@@ -47,6 +50,12 @@ impl ContractAbi {
 
     pub fn transient_storage_layout(&self) -> &[StorageItem] {
         &self.transient_storage_layout
+    }
+
+    /// The entries as solc's JSON ABI: `serde_json::to_value(abi.json())` is the `abi` array of
+    /// solc's standard JSON output.
+    pub fn json(&self) -> JsonAbi<'_> {
+        JsonAbi(self)
     }
 }
 
@@ -143,9 +152,33 @@ pub struct AbiFunction {
     inputs: Vec<AbiParameter>,
     outputs: Vec<AbiParameter>,
     state_mutability: AbiMutability,
+    // Hashed on first use: only overloads, which sort by selector, ever need it.
+    selector: OnceLock<u32>,
 }
 
 impl AbiFunction {
+    pub(crate) fn new(
+        node_id: NodeId,
+        name: String,
+        inputs: Vec<AbiParameter>,
+        outputs: Vec<AbiParameter>,
+        state_mutability: AbiMutability,
+    ) -> Self {
+        Self {
+            node_id,
+            name,
+            inputs,
+            outputs,
+            state_mutability,
+            selector: OnceLock::new(),
+        }
+    }
+
+    fn hash_selector(name: &str, inputs: &[AbiParameter]) -> u32 {
+        let parameters = inputs.iter().map(|input| &*input.abi_type).join(",");
+        selector_from_signature(&format!("{name}({parameters})"))
+    }
+
     pub fn node_id(&self) -> NodeId {
         self.node_id
     }
@@ -164,6 +197,15 @@ impl AbiFunction {
 
     pub fn state_mutability(&self) -> &AbiMutability {
         &self.state_mutability
+    }
+
+    /// The 4-byte selector, hashed from the canonical signature the inputs spell. Library
+    /// members hash the library form instead (`FunctionDefinition::compute_selector`), so this
+    /// stays crate-private: it only orders overloads.
+    pub(crate) fn selector(&self) -> u32 {
+        *self
+            .selector
+            .get_or_init(|| Self::hash_selector(&self.name, &self.inputs))
     }
 }
 
@@ -215,8 +257,10 @@ impl PartialEq for AbiEntry {
 impl Eq for AbiEntry {}
 
 // The ordering defined by this implementation is alphabetical "type" + "name",
-// same as `solc`'s. For equal names we use the `node_id` as the tie breaker to
-// keep consistency with the `PartialEq` implementation.
+// same as `solc`'s. Overloaded functions follow in ascending selector order,
+// which is where solc's interface function map puts them; other equal names
+// use the `node_id` as the tie breaker to keep consistency with the
+// `PartialEq` implementation.
 impl Ord for AbiEntry {
     fn cmp(&self, other: &Self) -> Ordering {
         match (self, other) {
@@ -237,7 +281,10 @@ impl Ord for AbiEntry {
             }
             (Self::Function(self_inner), Self::Function(other_inner)) => {
                 match self_inner.name.cmp(&other_inner.name) {
-                    Ordering::Equal => self.node_id().cmp(&other.node_id()),
+                    Ordering::Equal => self_inner
+                        .selector()
+                        .cmp(&other_inner.selector())
+                        .then_with(|| self.node_id().cmp(&other.node_id())),
                     name_ordering => name_ordering,
                 }
             }
@@ -266,7 +313,8 @@ impl PartialOrd for AbiEntry {
 pub struct AbiParameter {
     node_id: Option<NodeId>, // will be `None` if the function is a generated getter
     name: Option<String>,
-    abi_type: AbiType,
+    abi_type: Arc<AbiType>,
+    type_id: TypeId,
     indexed: bool,
 }
 
@@ -281,6 +329,12 @@ impl AbiParameter {
 
     pub fn abi_type(&self) -> &AbiType {
         &self.abi_type
+    }
+
+    /// The semantic type behind [`Self::abi_type`]. `SemanticContext::type_abi_internal_name`
+    /// spells it the way solc's JSON-ABI `internalType` field does.
+    pub fn type_id(&self) -> TypeId {
+        self.type_id
     }
 
     /// The parameter's type rendered as its canonical-signature spelling — e.g.
@@ -337,46 +391,4 @@ pub fn hash_from_signature(signature: &str) -> [u8; 32] {
 pub fn selector_from_signature(signature: &str) -> u32 {
     let selector_bytes: [u8; 4] = hash_from_signature(signature)[0..4].try_into().unwrap();
     u32::from_be_bytes(selector_bytes)
-}
-
-pub(crate) fn extract_function_type_parameters_abi(
-    semantic: &Arc<SemanticContext>,
-    type_id: TypeId,
-) -> Option<(Vec<AbiParameter>, Vec<AbiParameter>)> {
-    let Type::Function(function_type) = semantic.types().get_type_by_id(type_id) else {
-        return None;
-    };
-    // TODO: our type system doesn't track parameter names for function types,
-    // so we can't convey that information in the ABI. This is important for
-    // getters where we should transfer that information from mapping or struct
-    // types (eg. a getter that returns a struct should name its output
-    // parameters from the struct members).
-    let mut inputs = Vec::new();
-    for parameter_type_id in &function_type.parameter_types {
-        let abi_type = type_as_abi_type(semantic, *parameter_type_id)?;
-        inputs.push(AbiParameter {
-            node_id: None,
-            name: None,
-            abi_type,
-            indexed: false,
-        });
-    }
-    // A tuple as a return type from a function represents multiple return
-    // values, so we need to flatten it
-    let output_types = match semantic.types().get_type_by_id(function_type.return_type) {
-        Type::Tuple(TupleType { types }) => Either::Left(types.iter()),
-        _ => Either::Right(std::iter::once(&function_type.return_type)),
-    };
-    let outputs = output_types
-        .map(|output_type_id| {
-            let abi_type = type_as_abi_type(semantic, *output_type_id)?;
-            Some(AbiParameter {
-                node_id: None,
-                name: None,
-                abi_type,
-                indexed: false,
-            })
-        })
-        .collect::<Option<Vec<_>>>()?;
-    Some((inputs, outputs))
 }
