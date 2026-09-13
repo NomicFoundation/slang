@@ -1,15 +1,12 @@
 use std::sync::Arc;
 
 use ruint::aliases::U256;
-use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::StorageLayoutBuilder;
 
 use crate::abi::types::AbiTypeCache;
 use crate::abi::{AbiEntry, ContractAbi, StorageItem};
-use crate::ast::{
-    ContractBase, ContractDefinitionStruct, StateVariableDefinition, StateVariableMutability,
-};
+use crate::ast::{ContractDefinitionStruct, StateVariableDefinition, StateVariableMutability};
 
 impl ContractDefinitionStruct {
     pub fn compute_abi(&self) -> Option<ContractAbi> {
@@ -34,44 +31,20 @@ impl ContractDefinitionStruct {
 
     fn compute_abi_entries(&self, cache: &mut AbiTypeCache) -> Option<Vec<AbiEntry>> {
         let mut entries = Vec::new();
-        let is_abstract = self.is_abstract();
         // An abstract contract cannot be deployed, so solc leaves its constructor out.
         if let Some(constructor) = self.constructor()
-            && !is_abstract
+            && !self.is_abstract()
         {
             entries.push(constructor.compute_abi_entry_cached(cache)?);
         }
-        // The linearised functions exclude interface bases, but an interface function nothing
-        // implements is still in the ABI, and only an abstract contract can have one. The
-        // signature set is keyed by canonical signature, the same identity the linearisation's
-        // override resolution uses through its typed predicates.
-        let mut implemented = Set::default();
         for function in &self.linearised_functions() {
             if function.is_externally_visible() {
-                if is_abstract {
-                    implemented.insert(function.compute_abi_key()?);
-                }
                 entries.push(function.compute_abi_entry_cached(cache)?);
             }
         }
         for state_variable in &self.linearised_state_variables() {
             if state_variable.is_externally_visible() {
-                if is_abstract {
-                    implemented.insert(state_variable.compute_canonical_signature()?);
-                }
                 entries.push(state_variable.compute_abi_entry_cached(cache)?);
-            }
-        }
-        if is_abstract {
-            for base in &self.linearised_bases() {
-                let ContractBase::Interface(interface) = base else {
-                    continue;
-                };
-                for function in interface.members().iter_function_definitions() {
-                    if implemented.insert(function.compute_abi_key()?) {
-                        entries.push(function.compute_abi_entry_cached(cache)?);
-                    }
-                }
             }
         }
         for error in &self.linearised_errors() {
