@@ -13,16 +13,15 @@ runs:
         # Use commit time rather than author time, since we share caches across branches
         args: "--commit-time"
 
-    # The caches are built on 'main', whose commits usually post-date the PR's.
-    # A file the PR changed would therefore get a commit-time mtime OLDER than the cached
-    # artifact built from main's version of it.
-    # Bump the mtime of every file that differs from 'main' to "now" to force a rebuild.
-    # The comparison is against 'main', not the PR base: a PR stacked on another PR branch
-    # inherits that branch's changes, which are not in the cache either.
+    # The cache is built from main's tree, whose commits usually post-date the PR's. A file
+    # that differs from main therefore gets a commit-time mtime OLDER than the cached artifact
+    # built from main's version of it, and cargo would reuse that artifact. Bump every such
+    # file to "now" so it rebuilds. This includes changes a stacked PR inherits from its base
+    # branch, which are not in the cache either.
     #
-    # The checkout runs with fetch-depth 0, so 'origin/main' is already present. A two-dot
-    # diff compares the two trees directly. --diff-filter=d drops deletions (nothing on disk
-    # to touch); -z/-0 keeps paths with spaces or other special characters intact.
+    # 'origin/main' exists because the callers check out with fetch-depth 0. The two-dot diff
+    # compares the trees directly. --diff-filter=d drops deletions (nothing on disk to touch);
+    # -z/-0 keeps paths with spaces or other special characters intact.
     - name: "Touch files that differ from main"
       if: "${{ github.event_name == 'pull_request' }}"
       shell: "bash"
