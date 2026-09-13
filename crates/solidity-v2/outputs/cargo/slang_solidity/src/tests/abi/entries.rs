@@ -96,11 +96,11 @@ fn test_abi_entries_with_tuples() {
     let inputs = f.inputs();
     assert_eq!(inputs.len(), 3);
     assert_eq!(inputs[0].name(), None);
-    assert_eq!(inputs[0].abi_type(), &s);
+    assert_eq!(inputs[0].abi_type(), s);
     assert_eq!(inputs[1].name(), None);
-    assert_eq!(inputs[1].abi_type(), &t);
+    assert_eq!(inputs[1].abi_type(), t);
     assert_eq!(inputs[2].name(), Some("x"));
-    assert_eq!(inputs[2].abi_type(), &uint256);
+    assert_eq!(inputs[2].abi_type(), uint256);
     assert!(f.outputs().is_empty());
 
     // g() returns (S memory s, T memory t, uint)
@@ -112,11 +112,11 @@ fn test_abi_entries_with_tuples() {
     let outputs = g.outputs();
     assert_eq!(outputs.len(), 3);
     assert_eq!(outputs[0].name(), Some("s"));
-    assert_eq!(outputs[0].abi_type(), &s);
+    assert_eq!(outputs[0].abi_type(), s);
     assert_eq!(outputs[1].name(), Some("t"));
-    assert_eq!(outputs[1].abi_type(), &t);
+    assert_eq!(outputs[1].abi_type(), t);
     assert_eq!(outputs[2].name(), None);
-    assert_eq!(outputs[2].abi_type(), &uint256);
+    assert_eq!(outputs[2].abi_type(), uint256);
 
     // T public (getter) -> t() returns (uint256 x, uint256 y).
     // The getter flattens the struct into its members; their names aren't tracked.
@@ -127,8 +127,8 @@ fn test_abi_entries_with_tuples() {
     assert!(getter.inputs().is_empty());
     let outputs = getter.outputs();
     assert_eq!(outputs.len(), 2);
-    assert_eq!(outputs[0].abi_type(), &uint256);
-    assert_eq!(outputs[1].abi_type(), &uint256);
+    assert_eq!(outputs[0].abi_type(), uint256);
+    assert_eq!(outputs[1].abi_type(), uint256);
 
     // t_components() returns (uint, uint)
     let AbiEntry::Function(t_components) = &entries[3] else {
@@ -139,9 +139,9 @@ fn test_abi_entries_with_tuples() {
     let outputs = t_components.outputs();
     assert_eq!(outputs.len(), 2);
     assert_eq!(outputs[0].name(), None);
-    assert_eq!(outputs[0].abi_type(), &uint256);
+    assert_eq!(outputs[0].abi_type(), uint256);
     assert_eq!(outputs[1].name(), None);
-    assert_eq!(outputs[1].abi_type(), &uint256);
+    assert_eq!(outputs[1].abi_type(), uint256);
 
     // t_struct() returns (T memory)
     let AbiEntry::Function(t_struct) = &entries[4] else {
@@ -152,5 +152,5 @@ fn test_abi_entries_with_tuples() {
     let outputs = t_struct.outputs();
     assert_eq!(outputs.len(), 1);
     assert_eq!(outputs[0].name(), None);
-    assert_eq!(outputs[0].abi_type(), &t);
+    assert_eq!(outputs[0].abi_type(), t);
 }

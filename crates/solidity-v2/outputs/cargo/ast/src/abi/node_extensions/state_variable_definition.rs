@@ -1,10 +1,8 @@
+use itertools::Either;
 use slang_solidity_v2_semantic::binder;
-use slang_solidity_v2_semantic::types::Type;
+use slang_solidity_v2_semantic::types::{TupleType, Type};
 
-use crate::abi::{
-    AbiEntry, AbiFunction, AbiMutability, AbiParameter, extract_function_type_parameters_abi,
-    selector_from_signature,
-};
+use crate::abi::{AbiEntry, AbiFunction, AbiMutability, AbiParameter, selector_from_signature};
 use crate::ast::{StateVariableDefinitionStruct, StateVariableVisibility};
 
 impl StateVariableDefinitionStruct {
@@ -15,6 +13,12 @@ impl StateVariableDefinitionStruct {
         )
     }
 
+    /// The getter's ABI inputs and outputs, from its function type.
+    // TODO: our type system doesn't track parameter names for function types,
+    // so we can't convey that information in the ABI. This is important for
+    // getters where we should transfer that information from mapping or struct
+    // types (eg. a getter that returns a struct should name its output
+    // parameters from the struct members).
     fn extract_getter_type_parameters_abi(&self) -> Option<(Vec<AbiParameter>, Vec<AbiParameter>)> {
         let binder::Definition::StateVariable(definition) = self
             .semantic
@@ -23,7 +27,39 @@ impl StateVariableDefinitionStruct {
         else {
             unreachable!("definition is not a state variable");
         };
-        extract_function_type_parameters_abi(&self.semantic, definition.getter_type_id?)
+        let Type::Function(function_type) = self
+            .semantic
+            .types()
+            .get_type_by_id(definition.getter_type_id?)
+        else {
+            return None;
+        };
+        let mut inputs = Vec::with_capacity(function_type.parameter_types.len());
+        for parameter_type_id in &function_type.parameter_types {
+            inputs.push(AbiParameter::new(
+                &self.semantic,
+                None,
+                None,
+                *parameter_type_id,
+                false,
+            )?);
+        }
+
+        // A tuple return type stands for multiple return values, so it is flattened.
+        let output_types = match self
+            .semantic
+            .types()
+            .get_type_by_id(function_type.return_type)
+        {
+            Type::Tuple(TupleType { types }) => Either::Left(types.iter()),
+            _ => Either::Right(std::iter::once(&function_type.return_type)),
+        };
+        let outputs = output_types
+            .map(|output_type_id| {
+                AbiParameter::new(&self.semantic, None, None, *output_type_id, false)
+            })
+            .collect::<Option<Vec<_>>>()?;
+        Some((inputs, outputs))
     }
 
     pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
