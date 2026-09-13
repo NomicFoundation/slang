@@ -4,6 +4,7 @@ mod getters;
 mod interface_id;
 mod internal_signature;
 mod internal_type;
+mod json;
 mod library;
 mod selectors;
 mod storage_layout;
