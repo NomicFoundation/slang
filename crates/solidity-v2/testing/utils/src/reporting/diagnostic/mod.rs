@@ -1,41 +1,13 @@
-//! Utilities for defining error diagnostics.
-
-use std::ops::Range;
+//! Renders compiler diagnostics for users.
 
 use infra_utils::snapshot_markers::{
     CURRENT_SLANG_EVM_TARGET, CURRENT_SLANG_LANGUAGE_VERSION, replace_marker,
 };
-use slang_solidity_v2_common::diagnostics::DiagnosticSeverity;
+use slang_solidity_v2_common::diagnostics::{Diagnostic, DiagnosticExtensions, DiagnosticSeverity};
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
-mod implementations;
-
-/// A compiler diagnostic that can be rendered to a user.
-///
-/// TODO(v2): remove [`RenderDiagnostic`] once `NodeChecker` is deprecated. We should be using
-/// the `Diagnostic` public API directly and its provided extensions.
-pub trait RenderDiagnostic {
-    /// The character range of the source that this diagnostic applies to.
-    fn text_range(&self) -> Range<usize>;
-    /// The severity of this diagnostic.
-    fn severity(&self) -> DiagnosticSeverity;
-    /// The primary message associated with this diagnostic.
-    fn message(&self) -> String;
-    /// A stable machine-readable code identifying this diagnostic, rendered as
-    /// a `[code]` prefix (mirroring solc's `[ParserError 6275]`). Returns
-    /// `None` for diagnostic types that don't carry a code.
-    fn code(&self) -> Option<&'static str> {
-        None
-    }
-}
-
-pub fn render<D: RenderDiagnostic>(
-    diagnostic: &D,
-    source_id: &str,
-    source: &str,
-    with_color: bool,
-) -> String {
+pub fn render(diagnostic: &Diagnostic, source_id: &str, source: &str, with_color: bool) -> String {
     render_message(
         diagnostic,
         source_id,
@@ -45,8 +17,8 @@ pub fn render<D: RenderDiagnostic>(
     )
 }
 
-pub fn render_for_snapshot<D: RenderDiagnostic>(
-    diagnostic: &D,
+pub fn render_for_snapshot(
+    diagnostic: &Diagnostic,
     source_id: &str,
     source: &str,
     version: LanguageVersion,
@@ -72,8 +44,8 @@ pub fn render_for_snapshot<D: RenderDiagnostic>(
     render_message(diagnostic, source_id, source, false, message)
 }
 
-fn render_message<D: RenderDiagnostic>(
-    diagnostic: &D,
+fn render_message(
+    diagnostic: &Diagnostic,
     source_id: &str,
     source: &str,
     with_color: bool,
@@ -89,10 +61,7 @@ fn render_message<D: RenderDiagnostic>(
     let code = diagnostic.code();
 
     if source.is_empty() {
-        return match code {
-            Some(code) => format!("[{code}] {kind}: {message}\n   ─[{source_id}:0:0]"),
-            None => format!("{kind}: {message}\n   ─[{source_id}:0:0]"),
-        };
+        return format!("[{code}] {kind}: {message}\n   ─[{source_id}:0:0]");
     }
 
     // TODO(v2): Once https://github.com/zesterer/ariadne/pull/159 is released we should be able to
@@ -102,23 +71,22 @@ fn render_message<D: RenderDiagnostic>(
     // TODO(v2): Once https://github.com/zesterer/ariadne/pull/159 is released we should be able to
     // move to a newer version of ariadne and use IndexType::Byte, to avoid this conversion.
     let range = {
-        let start = source[..diagnostic.text_range().start].chars().count();
-        let end = source[..diagnostic.text_range().end].chars().count();
+        let text_range = diagnostic.text_range();
+        let start = source[..text_range.start].chars().count();
+        let end = source[..text_range.end].chars().count();
         start..end
     };
 
-    let mut report = Report::build(kind, source_id, range.start)
+    let report = Report::build(kind, source_id, range.start)
         .with_config(Config::default().with_color(with_color))
+        .with_code(code)
         .with_message(message)
         .with_label(
             Label::new((source_id, range))
                 .with_color(color)
                 .with_message(format!("{:?} occurred here.", diagnostic.severity())),
-        );
-    if let Some(code) = code {
-        report = report.with_code(code);
-    }
-    let report = report.finish();
+        )
+        .finish();
 
     let mut result = vec![];
     report

@@ -5,12 +5,11 @@ use slang_solidity::cst::{Cursor, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 
 use crate::command::{CheckBinderMode, TestOptions};
-use crate::events::{Events, SingleTestOutcome, TestCaseOutcome};
+use crate::events::{Events, TestOutcome};
 use crate::sourcify::{Contract, ContractArchive, Manifest};
 
 mod binder_v1_check;
 mod parser_v1_check;
-mod parser_v2_check;
 mod version_inference_check;
 
 pub fn test_single_contract(
@@ -57,7 +56,7 @@ pub fn run_in_parallel(archive: &ContractArchive, events: &Events, opts: &TestOp
 
 fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
     if uses_exotic_parser_bug(contract) {
-        events.test(TestCaseOutcome::Incompatible);
+        events.test(TestOutcome::Incompatible);
         return;
     }
 
@@ -66,35 +65,28 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
 
     let test_outcome = match contract.create_compilation_unit() {
         Ok(unit) => {
-            let mut v1_test_outcome = parser_v1_check::run(contract, &unit, events);
+            let mut test_outcome = parser_v1_check::run(contract, &unit, events);
 
-            if opts.check_infer_version && v1_test_outcome == SingleTestOutcome::Passed {
-                v1_test_outcome = version_inference_check::run(contract, &unit, events);
+            if opts.check_infer_version && test_outcome == TestOutcome::Passed {
+                test_outcome = version_inference_check::run(contract, &unit, events);
             }
 
-            if v1_test_outcome == SingleTestOutcome::Passed {
+            if test_outcome == TestOutcome::Passed {
                 match opts.check_binder {
                     CheckBinderMode::None => {}
                     CheckBinderMode::V1 => {
-                        v1_test_outcome = binder_v1_check::run(contract, &unit, events);
+                        test_outcome = binder_v1_check::run(contract, &unit, events);
                     }
                 }
             }
 
-            // TODO(v2): For now we only check V2 if V1 compiles, since V2 doesn't have a compilation unit.
-            // Once it does the whole sourcify check should be independent one from another.
-            let v2_test_outcome = parser_v2_check::run(contract, &unit, events);
-
-            TestCaseOutcome::Tested {
-                v1: v1_test_outcome,
-                v2: v2_test_outcome,
-            }
+            test_outcome
         }
         Err(e) => {
             if let Some(CompilationInitializationError::UnsupportedLanguageVersion(_)) =
                 e.downcast_ref::<CompilationInitializationError>()
             {
-                TestCaseOutcome::Incompatible
+                TestOutcome::Incompatible
             } else {
                 events.trace(format!(
                     "Failed to compile contract {}: {e}\n{}",
@@ -102,10 +94,7 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
                     e.backtrace()
                 ));
 
-                TestCaseOutcome::Tested {
-                    v1: SingleTestOutcome::Failed,
-                    v2: None,
-                }
+                TestOutcome::Failed
             }
         }
     };

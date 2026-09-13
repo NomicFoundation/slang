@@ -1,14 +1,10 @@
 use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::utils::LanguageFacts;
 
-use crate::events::{Events, SingleTestOutcome};
+use crate::events::{Events, TestOutcome};
 use crate::sourcify::Contract;
 
-pub(super) fn run(
-    contract: &Contract,
-    unit: &CompilationUnit,
-    events: &Events,
-) -> SingleTestOutcome {
+pub(super) fn run(contract: &Contract, unit: &CompilationUnit, events: &Events) -> TestOutcome {
     let mut did_fail = false;
     for file in unit.files() {
         let source = contract.read_file(file.id()).unwrap();
@@ -27,8 +23,8 @@ pub(super) fn run(
     }
 
     if did_fail {
-        SingleTestOutcome::Failed
+        TestOutcome::Failed
     } else {
-        SingleTestOutcome::Passed
+        TestOutcome::Passed
     }
 }
