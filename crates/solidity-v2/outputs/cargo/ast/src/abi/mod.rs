@@ -1,4 +1,5 @@
 mod node_extensions;
+mod serialize;
 mod types;
 
 use std::cmp::Ordering;
@@ -12,6 +13,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 
+pub use self::serialize::JsonAbi;
 pub use self::types::{AbiType, NotAnAbiType, TupleComponent};
 use crate::abi::types::{is_abi_type, type_as_abi_type};
 use crate::ast::Type;
@@ -68,6 +70,12 @@ impl ContractAbi {
 
     pub fn transient_storage_layout(&self) -> &[StorageItem] {
         &self.transient_storage_layout
+    }
+
+    /// The entries as solc's JSON ABI: `serde_json::to_value(abi.json())` is the `abi` array of
+    /// solc's standard JSON output.
+    pub fn json(&self) -> JsonAbi<'_> {
+        JsonAbi(self)
     }
 }
 
@@ -237,7 +245,8 @@ impl Eq for AbiEntry {}
 
 // The ordering defined by this implementation is alphabetical "type" + "name",
 // same as `solc`'s. For equal names we use the `node_id` as the tie breaker to
-// keep consistency with the `PartialEq` implementation.
+// keep consistency with the `PartialEq` implementation. solc's JSON lists
+// overloads by selector instead; `JsonAbi` reorders them when it renders.
 impl Ord for AbiEntry {
     fn cmp(&self, other: &Self) -> Ordering {
         match (self, other) {
