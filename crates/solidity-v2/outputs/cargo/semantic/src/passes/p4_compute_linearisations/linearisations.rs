@@ -3,7 +3,6 @@
 //! base-to-derived source order, and its functions flattened
 //! most-derived-first, resolving overrides.
 
-use std::cmp::Ordering;
 use std::sync::Arc;
 
 use slang_solidity_v2_common::nodes::NodeId;
@@ -78,38 +77,52 @@ fn linearise_functions(
     types: &TypeRegistry,
     base_members: &[(&[ir::ContractMember], bool)],
 ) -> Vec<ir::FunctionDefinition> {
-    // A public state variable is kept as well, so its getter can shadow a
-    // matching function inherited from a base contract.
-    let mut kept: Vec<Overridable<'_>> = Vec::new();
+    let mut candidates: Vec<Overridable<'_>> =
+        Vec::with_capacity(base_members.iter().map(|(members, _)| members.len()).sum());
     for (members, base_is_interface) in base_members.iter().rev() {
-        for member in *members {
-            let Some(candidate) = Overridable::of(member, *base_is_interface) else {
-                continue;
-            };
-            if candidate.is_modifier()
-                || kept
-                    .iter()
-                    .any(|slot| slot.overrides(binder, types, &candidate))
-            {
-                continue;
-            }
-            kept.push(candidate);
-            // TODO(validation): if overriding multiple ancestors, the function needs to
-            // specify the bases in a specifier
-        }
+        candidates.extend(candidates_of(members, *base_is_interface));
     }
-    let mut functions: Vec<ir::FunctionDefinition> = kept
-        .iter()
+    // Only same-named members can override each other, so grouping the
+    // candidates by name (stably, keeping them most-derived-first within a
+    // name) confines each comparison to the predecessors in its own group. It
+    // also leaves the survivors in the order the list wants: sorted by name,
+    // with the nameless fallback and receive first.
+    candidates.sort_by_key(Overridable::name);
+
+    let mut kept: Vec<Overridable<'_>> = Vec::with_capacity(candidates.len());
+    let mut group_start = 0;
+    for (index, candidate) in candidates.iter().enumerate() {
+        if index > 0 && candidate.name() != candidates[index - 1].name() {
+            group_start = kept.len();
+        }
+        if kept[group_start..]
+            .iter()
+            .any(|slot| slot.overrides(binder, types, candidate))
+        {
+            continue;
+        }
+        kept.push(*candidate);
+        // TODO(validation): if overriding multiple ancestors, the function needs to
+        // specify the bases in a specifier
+    }
+    kept.into_iter()
         .filter_map(|slot| match slot {
-            Overridable::Function { definition, .. } => Some(Arc::clone(*definition)),
+            Overridable::Function { definition, .. } => Some(Arc::clone(definition)),
             _ => None,
         })
-        .collect();
-    functions.sort_by(|a, b| match (&a.name, &b.name) {
-        (None, None) => Ordering::Equal,
-        (None, Some(_)) => Ordering::Less,
-        (Some(_), None) => Ordering::Greater,
-        (Some(a), Some(b)) => a.unparse().cmp(b.unparse()),
-    });
-    functions
+        .collect()
+}
+
+/// The members competing for a slot in the hierarchy's function list: the
+/// functions, and the public state variables, whose getter takes the slot of a
+/// same-signature function inherited from a base contract without joining the
+/// list itself. Modifiers are overridable too, but never part of the list.
+fn candidates_of(
+    members: &[ir::ContractMember],
+    base_is_interface: bool,
+) -> impl Iterator<Item = Overridable<'_>> {
+    members
+        .iter()
+        .filter_map(move |member| Overridable::of(member, base_is_interface))
+        .filter(|candidate| !candidate.is_modifier())
 }
