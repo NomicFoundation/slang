@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use slang_solidity_v2_common::collections::Set;
 
 use crate::abi::ContractAbi;
@@ -55,6 +57,7 @@ impl InterfaceDefinitionStruct {
             entries,
             storage_layout: Vec::new(),
             transient_storage_layout: Vec::new(),
+            semantic: Arc::clone(&self.semantic),
         })
     }
 }

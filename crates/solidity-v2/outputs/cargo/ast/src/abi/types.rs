@@ -2,7 +2,7 @@ use std::fmt;
 use std::sync::Arc;
 
 use ruint::aliases::U256;
-use slang_solidity_v2_common::collections::Set;
+use slang_solidity_v2_common::collections::{Map, Set};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::TypeId;
@@ -87,16 +87,14 @@ impl fmt::Display for AbiType {
 #[derive(Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord)]
 pub struct TupleComponent {
     pub(crate) name: String,
-    pub(crate) ty: AbiType,
-    pub(crate) internal_type: String,
+    pub(crate) ty: Arc<AbiType>,
 }
 
 impl TupleComponent {
-    pub fn new(name: impl Into<String>, ty: AbiType, internal_type: impl Into<String>) -> Self {
+    pub fn new(name: impl Into<String>, ty: impl Into<Arc<AbiType>>) -> Self {
         Self {
             name: name.into(),
-            ty,
-            internal_type: internal_type.into(),
+            ty: ty.into(),
         }
     }
 
@@ -106,11 +104,6 @@ impl TupleComponent {
 
     pub fn abi_type(&self) -> &AbiType {
         &self.ty
-    }
-
-    /// The member's Solidity type as solc spells it in the JSON-ABI `internalType` field.
-    pub fn internal_type(&self) -> &str {
-        &self.internal_type
     }
 }
 
@@ -122,8 +115,42 @@ impl TupleComponent {
 pub(crate) fn type_as_abi_type(
     semantic: &Arc<SemanticContext>,
     type_id: TypeId,
-) -> Option<AbiType> {
-    abi_type_from_ast_type(&AstType::create(type_id, semantic), &mut Set::default())
+) -> Option<Arc<AbiType>> {
+    AbiTypeCache::default().abi_type(semantic, type_id)
+}
+
+/// Per-`TypeId` memo of the ABI shape. Types are interned in the registry, so a `TypeId` names
+/// one type, and every parameter of that type shares one `Arc<AbiType>`; `None` remembers a type
+/// the ABI cannot carry.
+#[derive(Default)]
+pub(crate) struct AbiTypeCache {
+    abi_types: Map<TypeId, Option<Arc<AbiType>>>,
+}
+
+impl AbiTypeCache {
+    pub(crate) fn abi_type(
+        &mut self,
+        semantic: &Arc<SemanticContext>,
+        type_id: TypeId,
+    ) -> Option<Arc<AbiType>> {
+        self.convert(semantic, type_id, &mut Set::default())
+    }
+
+    fn convert(
+        &mut self,
+        semantic: &Arc<SemanticContext>,
+        type_id: TypeId,
+        visited_structs: &mut Set<NodeId>,
+    ) -> Option<Arc<AbiType>> {
+        if let Some(hit) = self.abi_types.get(&type_id) {
+            return hit.clone();
+        }
+        let computed =
+            abi_type_from_ast_type(&AstType::create(type_id, semantic), visited_structs, self)
+                .map(Arc::new);
+        self.abi_types.insert(type_id, computed.clone());
+        computed
+    }
 }
 
 /// Error returned by `TryFrom<&Type>` for [`AbiType`] when the given
@@ -145,14 +172,19 @@ impl TryFrom<&AstType> for AbiType {
     type Error = NotAnAbiType;
 
     fn try_from(value: &AstType) -> Result<Self, Self::Error> {
-        abi_type_from_ast_type(value, &mut Set::default()).ok_or(NotAnAbiType)
+        abi_type_from_ast_type(value, &mut Set::default(), &mut AbiTypeCache::default())
+            .ok_or(NotAnAbiType)
     }
 }
 
 /// The single source of truth for converting a Solidity type to its [`AbiType`].
 /// Both the public `TryFrom<&AstType>` and the semantic-`TypeId` entry point
 /// ([`type_as_abi_type`]) funnel through here.
-fn abi_type_from_ast_type(value: &AstType, visited_structs: &mut Set<NodeId>) -> Option<AbiType> {
+fn abi_type_from_ast_type(
+    value: &AstType,
+    visited_structs: &mut Set<NodeId>,
+    cache: &mut AbiTypeCache,
+) -> Option<AbiType> {
     match value {
         AstType::Address(_) | AstType::Contract(_) | AstType::Interface(_) => {
             Some(AbiType::Address)
@@ -185,15 +217,17 @@ fn abi_type_from_ast_type(value: &AstType, visited_structs: &mut Set<NodeId>) ->
             decimal_places: fixed.decimal_places(),
         }),
         AstType::Array(array) => {
-            let element = abi_type_from_ast_type(&array.element_type(), visited_structs)?;
+            let element = abi_type_from_ast_type(&array.element_type(), visited_structs, cache)?;
             Some(AbiType::Array {
                 element: Box::new(element),
             })
         }
         // A slice ABI-encodes exactly like the array it slices.
-        AstType::ArraySlice(slice) => abi_type_from_ast_type(&slice.array_type(), visited_structs),
+        AstType::ArraySlice(slice) => {
+            abi_type_from_ast_type(&slice.array_type(), visited_structs, cache)
+        }
         AstType::FixedSizeArray(array) => {
-            let element = abi_type_from_ast_type(&array.element_type(), visited_structs)?;
+            let element = abi_type_from_ast_type(&array.element_type(), visited_structs, cache)?;
             Some(AbiType::FixedSizeArray {
                 element: Box::new(element),
                 size: array.size(),
@@ -211,20 +245,19 @@ fn abi_type_from_ast_type(value: &AstType, visited_structs: &mut Set<NodeId>) ->
             let mut components = Vec::new();
             for member in definition.members().iter() {
                 let name = member.name().name().to_owned();
-                let ty = abi_type_from_ast_type(&member.get_type()?, visited_structs)?;
                 let member_type_id = member
                     .semantic
                     .binder()
                     .node_typing(member.node_id())
                     .as_type_id()?;
-                let internal_type = member.semantic.type_abi_internal_name(member_type_id);
-                components.push(TupleComponent::new(name, ty, internal_type));
+                let ty = cache.convert(&member.semantic, member_type_id, visited_structs)?;
+                components.push(TupleComponent::new(name, ty));
             }
             visited_structs.remove(&definition.node_id());
             Some(AbiType::Tuple(components))
         }
         AstType::UserDefinedValue(udvt) => {
-            abi_type_from_ast_type(&udvt.target_type()?, visited_structs)
+            abi_type_from_ast_type(&udvt.target_type()?, visited_structs, cache)
         }
         AstType::Error(_)
         | AstType::Event(_)

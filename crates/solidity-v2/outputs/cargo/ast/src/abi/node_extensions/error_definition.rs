@@ -1,3 +1,4 @@
+use crate::abi::types::AbiTypeCache;
 use crate::abi::{AbiEntry, AbiError, selector_from_signature};
 use crate::ast::ErrorDefinitionStruct;
 
@@ -15,7 +16,11 @@ impl ErrorDefinitionStruct {
     }
 
     pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
-        let inputs = self.parameters().compute_abi_parameters()?;
+        self.compute_abi_entry_cached(&mut AbiTypeCache::default())
+    }
+
+    pub(crate) fn compute_abi_entry_cached(&self, cache: &mut AbiTypeCache) -> Option<AbiEntry> {
+        let inputs = self.parameters().compute_abi_parameters(cache)?;
 
         Some(AbiEntry::Error(AbiError {
             node_id: self.ir_node.id(),

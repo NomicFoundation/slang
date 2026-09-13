@@ -1,6 +1,7 @@
 use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::types::Type;
 
+use crate::abi::types::AbiTypeCache;
 use crate::abi::{
     AbiEntry, AbiFunction, AbiMutability, AbiParameter, extract_function_type_parameters_abi,
     selector_from_signature,
@@ -15,7 +16,10 @@ impl StateVariableDefinitionStruct {
         )
     }
 
-    fn extract_getter_type_parameters_abi(&self) -> Option<(Vec<AbiParameter>, Vec<AbiParameter>)> {
+    fn extract_getter_type_parameters_abi(
+        &self,
+        cache: &mut AbiTypeCache,
+    ) -> Option<(Vec<AbiParameter>, Vec<AbiParameter>)> {
         let binder::Definition::StateVariable(definition) = self
             .semantic
             .binder()
@@ -30,6 +34,7 @@ impl StateVariableDefinitionStruct {
             &input_names,
             &definition.getter_member_ids,
             value_name.as_deref(),
+            cache,
         )
     }
 
@@ -59,22 +64,26 @@ impl StateVariableDefinitionStruct {
     }
 
     pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
+        self.compute_abi_entry_cached(&mut AbiTypeCache::default())
+    }
+
+    pub(crate) fn compute_abi_entry_cached(&self, cache: &mut AbiTypeCache) -> Option<AbiEntry> {
         if !self.is_externally_visible() {
             return None;
         }
-        let (inputs, outputs) = self.extract_getter_type_parameters_abi()?;
+        let (inputs, outputs) = self.extract_getter_type_parameters_abi(cache)?;
 
-        Some(AbiEntry::Function(AbiFunction {
-            node_id: self.ir_node.id(),
-            name: self.ir_node.name.unparse().to_string(),
+        Some(AbiEntry::Function(AbiFunction::new(
+            self.ir_node.id(),
+            self.ir_node.name.unparse().to_string(),
             inputs,
             outputs,
-            state_mutability: AbiMutability::View,
-        }))
+            AbiMutability::View,
+        )))
     }
 
     pub fn compute_canonical_signature(&self) -> Option<String> {
-        let (inputs, _) = self.extract_getter_type_parameters_abi()?;
+        let (inputs, _) = self.extract_getter_type_parameters_abi(&mut AbiTypeCache::default())?;
         let parameters = inputs
             .into_iter()
             .map(|parameter| parameter.type_name())

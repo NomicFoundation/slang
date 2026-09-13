@@ -2,12 +2,12 @@
 //! 0.8.35 agree): the compact strings below are solc's verbatim, so key order and `internalType`
 //! spelling are covered along with the entries themselves.
 
-use crate::abi::AbiEntry;
+use crate::abi::ContractAbi;
 use crate::define_fixture;
 use crate::tests::fixtures;
 
-fn json(entries: &[AbiEntry]) -> String {
-    serde_json::to_string(entries).expect("the ABI serializes")
+fn json(abi: &ContractAbi) -> String {
+    serde_json::to_string(&abi.json()).expect("the ABI serializes")
 }
 
 #[test]
@@ -21,7 +21,7 @@ fn tuples_and_getters_match_solc() {
         .expect("the ABI is computable");
 
     assert_eq!(
-        json(abi.entries()),
+        json(&abi),
         r#"[{"inputs":[{"components":[{"internalType":"uint256","name":"a","type":"uint256"},{"internalType":"uint256[]","name":"b","type":"uint256[]"},{"components":[{"internalType":"uint256","name":"x","type":"uint256"},{"internalType":"uint256","name":"y","type":"uint256"}],"internalType":"struct Test.T[]","name":"c","type":"tuple[]"}],"internalType":"struct Test.S","name":"","type":"tuple"},{"components":[{"internalType":"uint256","name":"x","type":"uint256"},{"internalType":"uint256","name":"y","type":"uint256"}],"internalType":"struct Test.T","name":"","type":"tuple"},{"internalType":"uint256","name":"x","type":"uint256"}],"name":"f","outputs":[],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"g","outputs":[{"components":[{"internalType":"uint256","name":"a","type":"uint256"},{"internalType":"uint256[]","name":"b","type":"uint256[]"},{"components":[{"internalType":"uint256","name":"x","type":"uint256"},{"internalType":"uint256","name":"y","type":"uint256"}],"internalType":"struct Test.T[]","name":"c","type":"tuple[]"}],"internalType":"struct Test.S","name":"s","type":"tuple"},{"components":[{"internalType":"uint256","name":"x","type":"uint256"},{"internalType":"uint256","name":"y","type":"uint256"}],"internalType":"struct Test.T","name":"t","type":"tuple"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"t","outputs":[{"internalType":"uint256","name":"x","type":"uint256"},{"internalType":"uint256","name":"y","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"t_components","outputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"t_struct","outputs":[{"components":[{"internalType":"uint256","name":"x","type":"uint256"},{"internalType":"uint256","name":"y","type":"uint256"}],"internalType":"struct Test.T","name":"","type":"tuple"}],"stateMutability":"view","type":"function"}]"#
     );
 }
@@ -35,7 +35,7 @@ fn library_matches_solc() {
 
     // `f` and `g` take storage references and `i` is internal: none of them is in the ABI.
     assert_eq!(
-        json(abi.entries()),
+        json(&abi),
         r#"[{"inputs":[{"internalType":"uint256","name":"x","type":"uint256"}],"name":"h","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"L.U","name":"u","type":"uint64"}],"name":"j","outputs":[],"stateMutability":"pure","type":"function"}]"#
     );
 }
@@ -80,7 +80,7 @@ fn interface_hierarchy_matches_solc() {
         .compute_abi()
         .expect("the ABI is computable");
     assert_eq!(
-        json(base.entries()),
+        json(&base),
         r#"[{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"v","type":"uint256"}],"name":"Pinged","type":"event"},{"inputs":[{"internalType":"uint256","name":"v","type":"uint256"}],"name":"ping","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"}]"#
     );
 
@@ -89,7 +89,7 @@ fn interface_hierarchy_matches_solc() {
         .compute_abi()
         .expect("the ABI is computable");
     assert_eq!(
-        json(derived.entries()),
+        json(&derived),
         r#"[{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"v","type":"uint256"}],"name":"Pinged","type":"event"},{"inputs":[{"internalType":"uint256","name":"v","type":"uint256"}],"name":"ping","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"pong","outputs":[],"stateMutability":"nonpayable","type":"function"}]"#
     );
 
@@ -102,7 +102,7 @@ fn interface_hierarchy_matches_solc() {
         .compute_abi()
         .expect("the ABI is computable");
     assert_eq!(
-        json(abstract_contract.entries()),
+        json(&abstract_contract),
         r#"[{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"v","type":"uint256"}],"name":"Pinged","type":"event"},{"inputs":[],"name":"extra","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"v","type":"uint256"}],"name":"ping","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"}]"#
     );
 
@@ -114,7 +114,7 @@ fn interface_hierarchy_matches_solc() {
         .compute_abi()
         .expect("the ABI is computable");
     assert_eq!(
-        json(getter.entries()),
+        json(&getter),
         r#"[{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]"#
     );
 
@@ -124,7 +124,7 @@ fn interface_hierarchy_matches_solc() {
         .compute_abi()
         .expect("the ABI is computable");
     assert_eq!(
-        json(library.entries()),
+        json(&library),
         r#"[{"inputs":[],"name":"E","type":"error"},{"anonymous":false,"inputs":[],"name":"Ev","type":"event"},{"inputs":[],"name":"X","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"x","type":"uint256"}],"name":"view_fn","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]"#
     );
 }
@@ -164,7 +164,7 @@ fn internal_types_match_solc() {
         .compute_abi()
         .expect("the ABI is computable");
     assert_eq!(
-        json(user_defined.entries()),
+        json(&user_defined),
         r#"[{"inputs":[{"internalType":"address payable","name":"p","type":"address"},{"internalType":"contract IFoo","name":"i","type":"address"},{"internalType":"enum U.E","name":"e","type":"uint8"},{"internalType":"Wad","name":"w","type":"uint256"},{"components":[{"internalType":"uint256","name":"x","type":"uint256"},{"internalType":"enum U.E","name":"e","type":"uint8"}],"internalType":"struct U.S[]","name":"arr","type":"tuple[]"}],"name":"g","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"m","outputs":[{"internalType":"uint256","name":"x","type":"uint256"},{"internalType":"enum U.E","name":"e","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"s","outputs":[{"internalType":"uint256","name":"x","type":"uint256"},{"internalType":"enum U.E","name":"e","type":"uint8"}],"stateMutability":"view","type":"function"}]"#
     );
 
@@ -177,7 +177,7 @@ fn internal_types_match_solc() {
         .compute_abi()
         .expect("the ABI is computable");
     assert_eq!(
-        json(function_types.entries()),
+        json(&function_types),
         r#"[{"inputs":[{"internalType":"function (uint256) external","name":"cb","type":"function"}],"name":"a","outputs":[],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"function (uint256) view external returns (bool)","name":"cb","type":"function"}],"name":"b","outputs":[],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"function () payable external","name":"cb","type":"function"},{"internalType":"enum E","name":"e","type":"uint8"},{"internalType":"uint256[3]","name":"xs","type":"uint256[3]"},{"internalType":"string","name":"s","type":"string"},{"internalType":"bytes","name":"bs","type":"bytes"}],"name":"c","outputs":[],"stateMutability":"pure","type":"function"}]"#
     );
 }
@@ -207,7 +207,7 @@ fn overloads_follow_selector_order() {
         .expect("the ABI is computable");
 
     assert_eq!(
-        json(abi.entries()),
+        json(&abi),
         r#"[{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"transferFromAndCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transferFromAndCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"}]"#
     );
 }
@@ -241,7 +241,7 @@ fn getters_carry_mapping_names() {
         .expect("the ABI is computable");
 
     assert_eq!(
-        json(abi.entries()),
+        json(&abi),
         r#"[{"inputs":[{"internalType":"address","name":"funder","type":"address"}],"name":"addressToAmountFunded","outputs":[{"internalType":"uint256","name":"amountFunded","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"key","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"arrays","outputs":[{"internalType":"uint256","name":"values","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"}],"name":"nested","outputs":[{"internalType":"bool","name":"ok","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"plain","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"key","type":"uint256"}],"name":"structs","outputs":[{"internalType":"uint256","name":"x","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"unnamedKey","outputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"stateMutability":"view","type":"function"}]"#
     );
 }

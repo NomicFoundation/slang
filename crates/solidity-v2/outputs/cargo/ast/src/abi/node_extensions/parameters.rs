@@ -1,11 +1,14 @@
 use slang_solidity_v2_semantic::types::TypeId;
 
 use crate::abi::AbiParameter;
-use crate::abi::types::type_as_abi_type;
+use crate::abi::types::{AbiTypeCache, type_as_abi_type};
 use crate::ast::ParametersStruct;
 
 impl ParametersStruct {
-    pub(crate) fn compute_abi_parameters(&self) -> Option<Vec<AbiParameter>> {
+    pub(crate) fn compute_abi_parameters(
+        &self,
+        cache: &mut AbiTypeCache,
+    ) -> Option<Vec<AbiParameter>> {
         let mut result = Vec::new();
         for parameter in self.ir_nodes.iter() {
             let node_id = parameter.id();
@@ -16,12 +19,11 @@ impl ParametersStruct {
             let indexed = parameter.is_indexed;
             // Bail out with `None` if any of the parameters fails typing
             let type_id = self.semantic.binder().node_typing(node_id).as_type_id()?;
-            let abi_type = type_as_abi_type(&self.semantic, type_id)?;
             result.push(AbiParameter {
                 node_id: Some(node_id),
                 name,
-                abi_type,
-                internal_type: self.semantic.type_abi_internal_name(type_id),
+                abi_type: cache.abi_type(&self.semantic, type_id)?,
+                type_id,
                 indexed,
             });
         }

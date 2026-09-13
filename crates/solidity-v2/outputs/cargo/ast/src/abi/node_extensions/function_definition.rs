@@ -1,5 +1,6 @@
 use slang_solidity_v2_ir::ir;
 
+use crate::abi::types::AbiTypeCache;
 use crate::abi::{
     AbiConstructor, AbiEntry, AbiFallback, AbiFunction, AbiMutability, AbiReceive,
     selector_from_signature,
@@ -15,12 +16,16 @@ impl FunctionDefinitionStruct {
     }
 
     pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
+        self.compute_abi_entry_cached(&mut AbiTypeCache::default())
+    }
+
+    pub(crate) fn compute_abi_entry_cached(&self, cache: &mut AbiTypeCache) -> Option<AbiEntry> {
         if !self.is_externally_visible() {
             return None;
         }
-        let inputs = self.parameters().compute_abi_parameters()?;
+        let inputs = self.parameters().compute_abi_parameters(cache)?;
         let outputs = if let Some(returns) = self.returns() {
-            returns.compute_abi_parameters()?
+            returns.compute_abi_parameters(cache)?
         } else {
             Vec::new()
         };
@@ -34,13 +39,13 @@ impl FunctionDefinitionStruct {
         let state_mutability: AbiMutability = (&self.ir_node.attributes.mutability).into();
 
         match self.ir_node.kind {
-            ir::FunctionKind::Regular => Some(AbiEntry::Function(AbiFunction {
+            ir::FunctionKind::Regular => Some(AbiEntry::Function(AbiFunction::new(
                 node_id,
-                name: name?,
+                name?,
                 inputs,
                 outputs,
                 state_mutability,
-            })),
+            ))),
             ir::FunctionKind::Constructor => Some(AbiEntry::Constructor(AbiConstructor {
                 node_id,
                 inputs,

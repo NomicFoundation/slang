@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use crate::abi::ContractAbi;
 use crate::ast::{ContractMember, FunctionMutability, LibraryDefinitionStruct, StorageLocation};
 
@@ -46,6 +48,7 @@ impl LibraryDefinitionStruct {
             entries,
             storage_layout: Vec::new(),
             transient_storage_layout: Vec::new(),
+            semantic: Arc::clone(&self.semantic),
         })
     }
 }

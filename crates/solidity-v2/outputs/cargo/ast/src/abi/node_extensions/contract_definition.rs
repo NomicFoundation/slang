@@ -1,8 +1,11 @@
+use std::sync::Arc;
+
 use ruint::aliases::U256;
 use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::StorageLayoutBuilder;
 
+use crate::abi::types::AbiTypeCache;
 use crate::abi::{AbiEntry, ContractAbi, StorageItem};
 use crate::ast::{
     ContractBase, ContractDefinitionStruct, StateVariableDefinition, StateVariableMutability,
@@ -10,9 +13,13 @@ use crate::ast::{
 
 impl ContractDefinitionStruct {
     pub fn compute_abi(&self) -> Option<ContractAbi> {
+        self.compute_abi_cached(&mut AbiTypeCache::default())
+    }
+
+    pub(crate) fn compute_abi_cached(&self, cache: &mut AbiTypeCache) -> Option<ContractAbi> {
         let name = self.ir_node.name.unparse().to_string();
         let file_id = self.get_file_id().clone();
-        let entries = self.compute_abi_entries()?;
+        let entries = self.compute_abi_entries(cache)?;
         let (storage_layout, transient_storage_layout) = self.compute_storage_layout()?;
         Some(ContractAbi {
             node_id: self.ir_node.id(),
@@ -21,48 +28,58 @@ impl ContractDefinitionStruct {
             entries,
             storage_layout,
             transient_storage_layout,
+            semantic: Arc::clone(&self.semantic),
         })
     }
 
-    fn compute_abi_entries(&self) -> Option<Vec<AbiEntry>> {
+    fn compute_abi_entries(&self, cache: &mut AbiTypeCache) -> Option<Vec<AbiEntry>> {
         let mut entries = Vec::new();
         // An abstract contract cannot be deployed, so solc leaves its constructor out.
         if let Some(constructor) = self.constructor()
             && !self.is_abstract()
         {
-            entries.push(constructor.compute_abi_entry()?);
+            entries.push(constructor.compute_abi_entry_cached(cache)?);
         }
+        // The linearised functions hold only what the contract hierarchy implements; a function
+        // an interface base declares and no contract implements, by a function or a getter, is
+        // still part of the ABI of the contract, which is then necessarily abstract. So only an
+        // abstract contract needs the set of implemented signatures, which costs a canonical
+        // signature per function.
+        let is_abstract = self.is_abstract();
         let mut implemented = Set::default();
         for function in &self.linearised_functions() {
             if function.is_externally_visible() {
-                implemented.insert(function.compute_abi_key()?);
-                entries.push(function.compute_abi_entry()?);
+                if is_abstract {
+                    implemented.insert(function.compute_abi_key()?);
+                }
+                entries.push(function.compute_abi_entry_cached(cache)?);
             }
         }
         for state_variable in &self.linearised_state_variables() {
             if state_variable.is_externally_visible() {
-                implemented.insert(state_variable.compute_canonical_signature()?);
-                entries.push(state_variable.compute_abi_entry()?);
+                if is_abstract {
+                    implemented.insert(state_variable.compute_canonical_signature()?);
+                }
+                entries.push(state_variable.compute_abi_entry_cached(cache)?);
             }
         }
-        // The linearised functions hold only what the contract hierarchy implements; a function
-        // an interface base declares and no contract implements, by a function or a getter, is
-        // still part of the ABI of the (necessarily abstract) contract.
-        for base in &self.linearised_bases() {
-            let ContractBase::Interface(interface) = base else {
-                continue;
-            };
-            for function in interface.members().iter_function_definitions() {
-                if implemented.insert(function.compute_abi_key()?) {
-                    entries.push(function.compute_abi_entry()?);
+        if is_abstract {
+            for base in &self.linearised_bases() {
+                let ContractBase::Interface(interface) = base else {
+                    continue;
+                };
+                for function in interface.members().iter_function_definitions() {
+                    if implemented.insert(function.compute_abi_key()?) {
+                        entries.push(function.compute_abi_entry_cached(cache)?);
+                    }
                 }
             }
         }
         for error in &self.linearised_errors() {
-            entries.push(error.compute_abi_entry()?);
+            entries.push(error.compute_abi_entry_cached(cache)?);
         }
         for event in &self.linearised_events() {
-            entries.push(event.compute_abi_entry()?);
+            entries.push(event.compute_abi_entry_cached(cache)?);
         }
 
         entries.sort();
