@@ -74,7 +74,7 @@ fn getter_output_abi_type(name: &str) -> AbiType {
     else {
         panic!("a state variable getter is a function");
     };
-    getter.outputs()[0].abi_type().clone()
+    getter.outputs()[0].abi_type()
 }
 
 fn uint256() -> AbiType {

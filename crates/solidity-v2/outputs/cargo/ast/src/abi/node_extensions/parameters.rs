@@ -6,23 +6,22 @@ use crate::ast::ParametersStruct;
 
 impl ParametersStruct {
     pub(crate) fn compute_abi_parameters(&self) -> Option<Vec<AbiParameter>> {
-        let mut result = Vec::new();
+        let mut result = Vec::with_capacity(self.ir_nodes.len());
         for parameter in self.ir_nodes.iter() {
             let node_id = parameter.id();
             let name = parameter
                 .name
                 .as_ref()
                 .map(|name| name.unparse().to_string());
-            let indexed = parameter.is_indexed;
             // Bail out with `None` if any of the parameters fails typing
             let type_id = self.semantic.binder().node_typing(node_id).as_type_id()?;
-            let abi_type = type_as_abi_type(&self.semantic, type_id)?;
-            result.push(AbiParameter {
-                node_id: Some(node_id),
+            result.push(AbiParameter::new(
+                &self.semantic,
+                Some(node_id),
                 name,
-                abi_type,
-                indexed,
-            });
+                type_id,
+                parameter.is_indexed,
+            )?);
         }
         Some(result)
     }
