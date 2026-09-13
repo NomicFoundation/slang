@@ -34,18 +34,17 @@ impl ContractDefinitionStruct {
 
     fn compute_abi_entries(&self, cache: &mut AbiTypeCache) -> Option<Vec<AbiEntry>> {
         let mut entries = Vec::new();
+        let is_abstract = self.is_abstract();
         // An abstract contract cannot be deployed, so solc leaves its constructor out.
         if let Some(constructor) = self.constructor()
-            && !self.is_abstract()
+            && !is_abstract
         {
             entries.push(constructor.compute_abi_entry_cached(cache)?);
         }
-        // The linearised functions hold only what the contract hierarchy implements; a function
-        // an interface base declares and no contract implements, by a function or a getter, is
-        // still part of the ABI of the contract, which is then necessarily abstract. So only an
-        // abstract contract needs the set of implemented signatures, which costs a canonical
-        // signature per function.
-        let is_abstract = self.is_abstract();
+        // The linearised functions exclude interface bases, but an interface function nothing
+        // implements is still in the ABI, and only an abstract contract can have one. The
+        // signature set is keyed by canonical signature, the same identity the linearisation's
+        // override resolution uses through its typed predicates.
         let mut implemented = Set::default();
         for function in &self.linearised_functions() {
             if function.is_externally_visible() {

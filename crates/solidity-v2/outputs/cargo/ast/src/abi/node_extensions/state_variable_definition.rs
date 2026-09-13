@@ -1,11 +1,9 @@
+use itertools::Either;
 use slang_solidity_v2_semantic::binder;
-use slang_solidity_v2_semantic::types::Type;
+use slang_solidity_v2_semantic::types::{TupleType, Type};
 
 use crate::abi::types::AbiTypeCache;
-use crate::abi::{
-    AbiEntry, AbiFunction, AbiMutability, AbiParameter, extract_function_type_parameters_abi,
-    selector_from_signature,
-};
+use crate::abi::{AbiEntry, AbiFunction, AbiMutability, AbiParameter, selector_from_signature};
 use crate::ast::{StateVariableDefinitionStruct, StateVariableVisibility, TypeName};
 
 impl StateVariableDefinitionStruct {
@@ -16,6 +14,10 @@ impl StateVariableDefinitionStruct {
         )
     }
 
+    /// The getter's ABI inputs and outputs, from its function type. Function types don't track
+    /// parameter names, so solc's are read off the declaration: mapping key names for the
+    /// inputs, and for the outputs the struct members the return type is built from, else the
+    /// innermost mapping's value name.
     fn extract_getter_type_parameters_abi(
         &self,
         cache: &mut AbiTypeCache,
@@ -27,15 +29,57 @@ impl StateVariableDefinitionStruct {
         else {
             unreachable!("definition is not a state variable");
         };
+        let Type::Function(function_type) = self
+            .semantic
+            .types()
+            .get_type_by_id(definition.getter_type_id?)
+        else {
+            return None;
+        };
         let (input_names, value_name) = self.getter_parameter_names();
-        extract_function_type_parameters_abi(
-            &self.semantic,
-            definition.getter_type_id?,
-            &input_names,
-            &definition.getter_member_ids,
-            value_name.as_deref(),
-            cache,
-        )
+
+        let mut inputs = Vec::new();
+        for (index, parameter_type_id) in function_type.parameter_types.iter().enumerate() {
+            inputs.push(AbiParameter {
+                node_id: None,
+                name: input_names.get(index).cloned().flatten(),
+                abi_type: cache.abi_type(&self.semantic, *parameter_type_id)?,
+                type_id: *parameter_type_id,
+                indexed: false,
+            });
+        }
+
+        // A tuple return type stands for multiple return values, so it is flattened.
+        let output_types = match self
+            .semantic
+            .types()
+            .get_type_by_id(function_type.return_type)
+        {
+            Type::Tuple(TupleType { types }) => Either::Left(types.iter()),
+            _ => Either::Right(std::iter::once(&function_type.return_type)),
+        };
+        let mut output_names = if definition.getter_member_ids.is_empty() {
+            Either::Left(std::iter::once(value_name))
+        } else {
+            Either::Right(definition.getter_member_ids.iter().map(|member_id| {
+                self.semantic
+                    .binder()
+                    .find_definition_by_id(*member_id)
+                    .map(|member| member.identifier().unparse().to_string())
+            }))
+        };
+        let outputs = output_types
+            .map(|output_type_id| {
+                Some(AbiParameter {
+                    node_id: None,
+                    name: output_names.next().flatten(),
+                    abi_type: cache.abi_type(&self.semantic, *output_type_id)?,
+                    type_id: *output_type_id,
+                    indexed: false,
+                })
+            })
+            .collect::<Option<Vec<_>>>()?;
+        Some((inputs, outputs))
     }
 
     /// The names solc gives a getter's parameters, read off the declared type: each mapping

@@ -41,6 +41,33 @@ fn library_matches_solc() {
 }
 
 define_fixture!(
+    LibraryStorageReturn,
+    file: "main.sol", r#"
+pragma solidity ^0.8.0;
+library L {
+    struct S { uint256 x; }
+    function slot(uint256 k) external view returns (S storage s) { assembly { s.slot := k } }
+    function value(uint256 k) external view returns (uint256) { return k; }
+}
+"#,
+);
+
+/// solc filters library functions on their return types as well as their parameters: a `view`
+/// function returning a storage reference is reachable only by `DELEGATECALL`.
+#[test]
+fn library_function_returning_storage_is_left_out() {
+    let unit = LibraryStorageReturn::build_compilation_unit();
+    let abi = fixtures::find_library(&unit, "L")
+        .compute_abi()
+        .expect("the ABI is computable");
+
+    assert_eq!(
+        json(&abi),
+        r#"[{"inputs":[{"internalType":"uint256","name":"k","type":"uint256"}],"name":"value","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]"#
+    );
+}
+
+define_fixture!(
     InterfaceHierarchy,
     file: "main.sol", r#"
 pragma solidity ^0.8.0;
@@ -127,6 +154,23 @@ fn interface_hierarchy_matches_solc() {
         json(&library),
         r#"[{"inputs":[],"name":"E","type":"error"},{"anonymous":false,"inputs":[],"name":"Ev","type":"event"},{"inputs":[],"name":"X","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"x","type":"uint256"}],"name":"view_fn","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]"#
     );
+}
+
+define_fixture!(
+    InterfaceInheritsContract,
+    file: "main.sol", r#"
+pragma solidity ^0.8.0;
+contract C { function c() external {} }
+interface I is C { function i() external; }
+"#,
+);
+
+/// solc rejects an interface with a contract base; slang has no validation yet, so the ABI is
+/// declined rather than computed.
+#[test]
+fn interface_inheriting_a_contract_has_no_abi() {
+    let unit = InterfaceInheritsContract::build_compilation_unit();
+    assert!(fixtures::find_interface(&unit, "I").compute_abi().is_none());
 }
 
 define_fixture!(

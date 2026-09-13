@@ -160,6 +160,8 @@ impl Serialize for Parameter<'_> {
 }
 
 /// The members of the struct behind a `tuple`, paired with their semantic types for `internalType`.
+/// The member types are looked up again here rather than stored on [`TupleComponent`], whose
+/// public constructor builds components without a semantic context.
 struct ComponentList<'a> {
     components: &'a [TupleComponent],
     type_id: TypeId,

@@ -55,23 +55,27 @@ pub(super) fn build_compilation_unit_from_fixture(files: &[FixtureFile]) -> Arc<
 }
 
 pub(super) fn find_interface(unit: &CompilationUnit, name: &str) -> InterfaceDefinition {
-    unit.all_definitions()
-        .filter_map(|definition| match definition {
-            Definition::Interface(interface) => Some(interface),
-            _ => None,
-        })
-        .find(|interface| interface.name().name() == name)
-        .unwrap_or_else(|| panic!("interface `{name}` is declared"))
+    find_definition(unit, name, |definition| match definition {
+        Definition::Interface(interface) if interface.name().name() == name => Some(interface),
+        _ => None,
+    })
 }
 
 pub(super) fn find_library(unit: &CompilationUnit, name: &str) -> LibraryDefinition {
+    find_definition(unit, name, |definition| match definition {
+        Definition::Library(library) if library.name().name() == name => Some(library),
+        _ => None,
+    })
+}
+
+fn find_definition<T>(
+    unit: &CompilationUnit,
+    name: &str,
+    select: impl FnMut(Definition) -> Option<T>,
+) -> T {
     unit.all_definitions()
-        .filter_map(|definition| match definition {
-            Definition::Library(library) => Some(library),
-            _ => None,
-        })
-        .find(|library| library.name().name() == name)
-        .unwrap_or_else(|| panic!("library `{name}` is declared"))
+        .find_map(select)
+        .unwrap_or_else(|| panic!("`{name}` is declared"))
 }
 
 // Fixture build tests

@@ -379,7 +379,7 @@ impl SemanticContext {
     /// The type's spelling in the JSON ABI `internalType` field, as solc emits it: the kind
     /// prefix on user-defined types (`struct C.S`, `enum C.E`, `contract I`), `address payable`,
     /// and function types with their parameter, mutability, visibility and return spelling.
-    /// Data locations are not part of it. Types the ABI cannot carry fall back to
+    /// Data locations are not part of it. Everything else spells as
     /// [`Self::type_internal_name`].
     pub fn type_abi_internal_name(&self, type_id: TypeId) -> String {
         match self.types.get_type_by_id(type_id) {

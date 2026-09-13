@@ -5,29 +5,30 @@ use crate::ast::{ContractMember, FunctionMutability, LibraryDefinitionStruct, St
 
 impl LibraryDefinitionStruct {
     /// The ABI of the library's `view` and `pure` external functions, public constants' getters,
-    /// errors and events. A function that writes state or takes a storage reference is reachable
-    /// only by `DELEGATECALL` from a contract and is left out, as solc does; a library has no
-    /// storage of its own, so both layouts are empty.
+    /// errors and events. A function that writes state or takes or returns a storage reference is
+    /// reachable only by `DELEGATECALL` from a contract and is left out, as solc does; a library
+    /// has no storage of its own, so both layouts are empty.
     pub fn compute_abi(&self) -> Option<ContractAbi> {
         let mut entries = Vec::new();
         for member in self.members().iter() {
             match member {
                 ContractMember::FunctionDefinition(function) => {
-                    let takes_storage_reference = function.parameters().iter().any(|parameter| {
-                        matches!(
-                            parameter.storage_location(),
-                            Some(StorageLocation::StorageKeyword(_))
-                        )
-                    });
+                    let references_storage = function
+                        .parameters()
+                        .iter()
+                        .chain(function.returns().iter().flat_map(|returns| returns.iter()))
+                        .any(|parameter| {
+                            matches!(
+                                parameter.storage_location(),
+                                Some(StorageLocation::StorageKeyword(_))
+                            )
+                        });
                     let reads_only = matches!(
                         function.attributes().mutability(),
                         FunctionMutability::View | FunctionMutability::Pure
                     );
-                    if reads_only
-                        && !takes_storage_reference
-                        && let Some(entry) = function.compute_abi_entry()
-                    {
-                        entries.push(entry);
+                    if function.is_externally_visible() && reads_only && !references_storage {
+                        entries.push(function.compute_abi_entry()?);
                     }
                 }
                 ContractMember::StateVariableDefinition(state_variable) => {

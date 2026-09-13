@@ -3,7 +3,7 @@ use std::sync::Arc;
 use slang_solidity_v2_common::collections::Set;
 
 use crate::abi::ContractAbi;
-use crate::ast::{ContractMember, Definition, InterfaceDefinitionStruct};
+use crate::ast::{ContractBase, ContractMember, InterfaceDefinitionStruct};
 
 impl InterfaceDefinitionStruct {
     /// Computes the ERC-165 interface identifier: the XOR of the 4-byte selectors of the functions
@@ -18,19 +18,14 @@ impl InterfaceDefinitionStruct {
 
     /// The ABI over the interface's linearised hierarchy, itself first: an overriding function
     /// stands in for the one it overrides, inherited errors and events are listed with its own.
-    /// An interface has no storage, so both layouts are empty.
+    /// An interface has no storage, so both layouts are empty. `None` when a base is a contract,
+    /// which solc rejects.
     pub fn compute_abi(&self) -> Option<ContractAbi> {
         let mut entries = Vec::new();
         let mut signatures = Set::default();
-        for base_id in self
-            .semantic
-            .binder()
-            .get_linearised_bases(self.ir_node.id())?
-        {
-            let Some(Definition::Interface(base)) =
-                Definition::try_create(*base_id, &self.semantic)
-            else {
-                unreachable!("an interface's linearisation holds interfaces");
+        for base in &self.linearised_bases() {
+            let ContractBase::Interface(base) = base else {
+                return None;
             };
             for member in base.members().iter() {
                 match member {

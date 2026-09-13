@@ -3,20 +3,18 @@ mod serialize;
 mod types;
 
 use std::cmp::Ordering;
-use std::fmt;
 use std::sync::{Arc, OnceLock};
 
-use itertools::Either;
+use itertools::Itertools;
 use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
-use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TupleType, Type, TypeId};
+use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 
 pub use self::serialize::JsonAbi;
 pub use self::types::{AbiType, NotAnAbiType, TupleComponent};
-use crate::abi::types::AbiTypeCache;
 
 pub struct ContractAbi {
     node_id: NodeId,
@@ -25,6 +23,7 @@ pub struct ContractAbi {
     entries: Vec<AbiEntry>,
     storage_layout: Vec<StorageItem>,
     transient_storage_layout: Vec<StorageItem>,
+    // `internalType` is rendered from the semantic types at serialization, see `JsonAbi`.
     semantic: Arc<SemanticContext>,
 }
 
@@ -176,19 +175,8 @@ impl AbiFunction {
     }
 
     fn hash_selector(name: &str, inputs: &[AbiParameter]) -> u32 {
-        use std::fmt::Write as _;
-        let mut hasher = Keccak256::new();
-        let mut writer = HashWriter(&mut hasher);
-        write!(writer, "{name}(").expect("hashing never fails");
-        for (index, input) in inputs.iter().enumerate() {
-            if index > 0 {
-                writer.write_str(",").expect("hashing never fails");
-            }
-            write!(writer, "{}", input.abi_type).expect("hashing never fails");
-        }
-        writer.write_str(")").expect("hashing never fails");
-        let hash: [u8; 32] = hasher.finalize().into();
-        u32::from_be_bytes(hash[0..4].try_into().unwrap())
+        let parameters = inputs.iter().map(|input| &*input.abi_type).join(",");
+        selector_from_signature(&format!("{name}({parameters})"))
     }
 
     pub fn node_id(&self) -> NodeId {
@@ -211,8 +199,10 @@ impl AbiFunction {
         &self.state_mutability
     }
 
-    /// The 4-byte selector, hashed from the canonical signature the inputs spell.
-    pub fn selector(&self) -> u32 {
+    /// The 4-byte selector, hashed from the canonical signature the inputs spell. Library
+    /// members hash the library form instead (`FunctionDefinition::compute_selector`), so this
+    /// stays crate-private: it only orders overloads.
+    pub(crate) fn selector(&self) -> u32 {
         *self
             .selector
             .get_or_init(|| Self::hash_selector(&self.name, &self.inputs))
@@ -401,71 +391,4 @@ pub fn hash_from_signature(signature: &str) -> [u8; 32] {
 pub fn selector_from_signature(signature: &str) -> u32 {
     let selector_bytes: [u8; 4] = hash_from_signature(signature)[0..4].try_into().unwrap();
     u32::from_be_bytes(selector_bytes)
-}
-
-/// Feeds `fmt::Display` output straight into the hasher, so a signature is hashed without
-/// ever being materialised as a `String`.
-struct HashWriter<'a>(&'a mut Keccak256);
-
-impl fmt::Write for HashWriter<'_> {
-    fn write_str(&mut self, s: &str) -> fmt::Result {
-        self.0.update(s.as_bytes());
-        Ok(())
-    }
-}
-
-/// The ABI parameters of a getter's function type. Function types don't track parameter
-/// names, so solc's come along: `input_names` are the mapping key names, an array index
-/// unnamed; the outputs are named after the struct members they are built from when
-/// `output_member_ids` names any, else the single output after `value_name`, the innermost
-/// mapping's value name.
-pub(crate) fn extract_function_type_parameters_abi(
-    semantic: &Arc<SemanticContext>,
-    type_id: TypeId,
-    input_names: &[Option<String>],
-    output_member_ids: &[NodeId],
-    value_name: Option<&str>,
-    cache: &mut AbiTypeCache,
-) -> Option<(Vec<AbiParameter>, Vec<AbiParameter>)> {
-    let Type::Function(function_type) = semantic.types().get_type_by_id(type_id) else {
-        return None;
-    };
-    let mut inputs = Vec::new();
-    for (index, parameter_type_id) in function_type.parameter_types.iter().enumerate() {
-        inputs.push(AbiParameter {
-            node_id: None,
-            name: input_names.get(index).cloned().flatten(),
-            abi_type: cache.abi_type(semantic, *parameter_type_id)?,
-            type_id: *parameter_type_id,
-            indexed: false,
-        });
-    }
-    // A tuple as a return type from a function represents multiple return
-    // values, so we need to flatten it
-    let output_types = match semantic.types().get_type_by_id(function_type.return_type) {
-        Type::Tuple(TupleType { types }) => Either::Left(types.iter()),
-        _ => Either::Right(std::iter::once(&function_type.return_type)),
-    };
-    let mut output_names = if output_member_ids.is_empty() {
-        Either::Left(std::iter::once(value_name.map(str::to_owned)))
-    } else {
-        Either::Right(output_member_ids.iter().map(|member_id| {
-            semantic
-                .binder()
-                .find_definition_by_id(*member_id)
-                .map(|member| member.identifier().unparse().to_string())
-        }))
-    };
-    let outputs = output_types
-        .map(|output_type_id| {
-            Some(AbiParameter {
-                node_id: None,
-                name: output_names.next().flatten(),
-                abi_type: cache.abi_type(semantic, *output_type_id)?,
-                type_id: *output_type_id,
-                indexed: false,
-            })
-        })
-        .collect::<Option<Vec<_>>>()?;
-    Some((inputs, outputs))
 }
