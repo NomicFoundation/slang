@@ -13,18 +13,22 @@ runs:
         # Use commit time rather than author time, since we share caches across branches
         args: "--commit-time"
 
-    # The caches are built on 'main', whose commits usually post-date the PR's.
+    # The caches are built on the default branch, whose commits usually post-date the PR's.
     # A file the PR changed would therefore get a commit-time mtime OLDER than the cached
-    # artifact built from main's version of it.
-    # Bump each PR-changed file's mtime to "now" to force a rebuild.
+    # artifact built from the default branch's version of it.
+    # Bump the mtime of every file that differs from the default branch to "now" to force a
+    # rebuild. The comparison is against the default branch, not the PR base: a PR stacked on
+    # another PR branch inherits that branch's changes, which are not in the cache either.
     #
-    # --diff-filter=d drops deletions (nothing on disk to touch); -z/-0 keeps
-    # paths with spaces or other special characters intact.
-    - name: "Touch PR-changed files"
+    # A two-dot diff compares the two trees directly, so a shallow fetch of the default branch
+    # is enough. --diff-filter=d drops deletions (nothing on disk to touch); -z/-0 keeps paths
+    # with spaces or other special characters intact.
+    - name: "Touch files that differ from the default branch"
       if: "${{ github.event_name == 'pull_request' }}"
       shell: "bash"
       env:
-        BASE_SHA: "${{ github.event.pull_request.base.sha }}"
+        DEFAULT_BRANCH: "${{ github.event.repository.default_branch }}"
       run: |
-        git diff --name-only --diff-filter=d -z "${BASE_SHA}" HEAD \
+        git fetch --depth=1 origin "${DEFAULT_BRANCH}"
+        git diff --name-only --diff-filter=d -z "origin/${DEFAULT_BRANCH}" HEAD \
           | xargs -0 --no-run-if-empty touch -c -m --
