@@ -366,21 +366,26 @@ pub fn selector_from_signature(signature: &str) -> u32 {
     u32::from_be_bytes(selector_bytes)
 }
 
+/// The ABI parameters of a getter's function type. Function types don't track parameter
+/// names, so solc's come along: `input_names` are the mapping key names, an array index
+/// unnamed; the outputs are named after the struct members they are built from when
+/// `output_member_ids` names any, else the single output after `value_name`, the innermost
+/// mapping's value name.
 pub(crate) fn extract_function_type_parameters_abi(
     semantic: &Arc<SemanticContext>,
     type_id: TypeId,
+    input_names: &[Option<String>],
     output_member_ids: &[NodeId],
+    value_name: Option<&str>,
 ) -> Option<(Vec<AbiParameter>, Vec<AbiParameter>)> {
     let Type::Function(function_type) = semantic.types().get_type_by_id(type_id) else {
         return None;
     };
-    // Function types don't track parameter names; a getter's inputs are unnamed in solc's ABI
-    // too, and its outputs are named after the struct members they are built from, when any.
     let mut inputs = Vec::new();
-    for parameter_type_id in &function_type.parameter_types {
+    for (index, parameter_type_id) in function_type.parameter_types.iter().enumerate() {
         inputs.push(AbiParameter {
             node_id: None,
-            name: None,
+            name: input_names.get(index).cloned().flatten(),
             abi_type: type_as_abi_type(semantic, *parameter_type_id)?,
             internal_type: semantic.type_abi_internal_name(*parameter_type_id),
             indexed: false,
@@ -392,12 +397,17 @@ pub(crate) fn extract_function_type_parameters_abi(
         Type::Tuple(TupleType { types }) => Either::Left(types.iter()),
         _ => Either::Right(std::iter::once(&function_type.return_type)),
     };
-    let mut output_names = output_member_ids.iter().map(|member_id| {
-        semantic
-            .binder()
-            .find_definition_by_id(*member_id)
-            .map(|member| member.identifier().unparse().to_string())
-    });
+    let mut output_names: Box<dyn Iterator<Item = Option<String>>> = if output_member_ids.is_empty()
+    {
+        Box::new(std::iter::once(value_name.map(str::to_owned)))
+    } else {
+        Box::new(output_member_ids.iter().map(|member_id| {
+            semantic
+                .binder()
+                .find_definition_by_id(*member_id)
+                .map(|member| member.identifier().unparse().to_string())
+        }))
+    };
     let outputs = output_types
         .map(|output_type_id| {
             Some(AbiParameter {

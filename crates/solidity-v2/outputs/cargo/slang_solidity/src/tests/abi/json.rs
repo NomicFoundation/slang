@@ -211,3 +211,37 @@ fn overloads_follow_selector_order() {
         r#"[{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"transferFromAndCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transferFromAndCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"}]"#
     );
 }
+
+define_fixture!(
+    NamedMappings,
+    file: "main.sol", r#"
+pragma solidity ^0.8.18;
+contract Named {
+    struct S { uint256 x; uint256[] ys; }
+    mapping(address funder => uint256 amountFunded) public addressToAmountFunded;
+    mapping(address owner => mapping(uint256 id => bool ok)) public nested;
+    mapping(uint256 key => S) public structs;
+    mapping(uint256 key => uint256[] values) public arrays;
+    mapping(uint256 => uint256 value) public unnamedKey;
+    uint256[] public plain;
+}
+"#,
+);
+
+/// A getter's inputs carry the mapping key names, an array index stays unnamed, and its output
+/// carries the innermost value name unless struct members name the outputs.
+#[test]
+fn getters_carry_mapping_names() {
+    let unit = NamedMappings::build_compilation_unit();
+    let abi = unit
+        .find_contract_by_name("Named")
+        .next()
+        .expect("contract Named exists")
+        .compute_abi()
+        .expect("the ABI is computable");
+
+    assert_eq!(
+        json(abi.entries()),
+        r#"[{"inputs":[{"internalType":"address","name":"funder","type":"address"}],"name":"addressToAmountFunded","outputs":[{"internalType":"uint256","name":"amountFunded","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"key","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"arrays","outputs":[{"internalType":"uint256","name":"values","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"}],"name":"nested","outputs":[{"internalType":"bool","name":"ok","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"plain","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"key","type":"uint256"}],"name":"structs","outputs":[{"internalType":"uint256","name":"x","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"unnamedKey","outputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"stateMutability":"view","type":"function"}]"#
+    );
+}
