@@ -69,8 +69,7 @@ impl fmt::Display for AbiType {
             AbiType::Tuple(components) => {
                 // A struct is always rendered as the canonical-signature form
                 // `(T1,T2,...)` used for selector/signature hashing. The JSON-ABI
-                // `tuple`/`tuple[]` spelling is intentionally not produced here; it
-                // is left to a (future) `Serialize` implementation.
+                // `tuple`/`tuple[]` spelling is `ContractAbi::json`'s.
                 write!(f, "(")?;
                 for (i, component) in components.iter().enumerate() {
                     if i > 0 {
