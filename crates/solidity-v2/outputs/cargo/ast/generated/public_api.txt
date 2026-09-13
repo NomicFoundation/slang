@@ -134,10 +134,14 @@ pub struct slang_solidity_v2_ast::abi::ContractAbi
 impl slang_solidity_v2_ast::abi::ContractAbi
 pub fn slang_solidity_v2_ast::abi::ContractAbi::entries(&self) -> &[slang_solidity_v2_ast::abi::AbiEntry]
 pub fn slang_solidity_v2_ast::abi::ContractAbi::file_id(&self) -> &slang_solidity_v2_common::files::FileId
+pub fn slang_solidity_v2_ast::abi::ContractAbi::json(&self) -> slang_solidity_v2_ast::abi::JsonAbi<'_>
 pub fn slang_solidity_v2_ast::abi::ContractAbi::name(&self) -> &str
 pub fn slang_solidity_v2_ast::abi::ContractAbi::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::abi::ContractAbi::storage_layout(&self) -> &[slang_solidity_v2_ast::abi::StorageItem]
 pub fn slang_solidity_v2_ast::abi::ContractAbi::transient_storage_layout(&self) -> &[slang_solidity_v2_ast::abi::StorageItem]
+pub struct slang_solidity_v2_ast::abi::JsonAbi<'a>(_)
+impl serde_core::ser::Serialize for slang_solidity_v2_ast::abi::JsonAbi<'_>
+pub fn slang_solidity_v2_ast::abi::JsonAbi<'_>::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 #[non_exhaustive] pub struct slang_solidity_v2_ast::abi::NotAnAbiType
 impl core::clone::Clone for slang_solidity_v2_ast::abi::NotAnAbiType
 pub fn slang_solidity_v2_ast::abi::NotAnAbiType::clone(&self) -> slang_solidity_v2_ast::abi::NotAnAbiType
