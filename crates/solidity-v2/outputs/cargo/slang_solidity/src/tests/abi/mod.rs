@@ -1,8 +1,10 @@
 mod eip712;
 mod entries;
+mod getters;
 mod interface_id;
 mod internal_signature;
 mod internal_type;
+mod library;
 mod selectors;
 mod storage_layout;
 mod type_conversion;
@@ -87,6 +89,52 @@ library L {
     function k(U[] memory xs) external pure {}
     function q(U[2] memory xs) external pure {}
     function m(mapping(uint256 => U) storage x) external {}
+}
+"#,
+);
+
+define_fixture!(
+    LibraryMembers,
+    file: "main.sol", r#"
+pragma solidity ^0.8.0;
+library LJ {
+    uint256 public constant X = 1;
+    error E();
+    event Ev();
+    function view_fn(uint256 x) external view returns (uint256) {}
+    function mut_fn(uint256 x) external returns (uint256) {}
+}
+abstract contract AB {
+    constructor(uint256 seed) {}
+    function extra() external virtual;
+}
+"#,
+);
+
+define_fixture!(
+    LibraryStorageReturn,
+    file: "main.sol", r#"
+pragma solidity ^0.8.0;
+library L {
+    struct S { uint256 x; }
+    function slot(uint256 k) external view returns (S storage s) { assembly { s.slot := k } }
+    function value(uint256 k) external view returns (uint256) { return k; }
+}
+"#,
+);
+
+define_fixture!(
+    NamedMappings,
+    file: "main.sol", r#"
+pragma solidity ^0.8.18;
+contract Named {
+    struct S { uint256 x; uint256[] ys; }
+    mapping(address funder => uint256 amountFunded) public addressToAmountFunded;
+    mapping(address owner => mapping(uint256 id => bool ok)) public nested;
+    mapping(uint256 key => S) public structs;
+    mapping(uint256 key => uint256[] values) public arrays;
+    mapping(uint256 => uint256 value) public unnamedKey;
+    uint256[] public plain;
 }
 "#,
 );
