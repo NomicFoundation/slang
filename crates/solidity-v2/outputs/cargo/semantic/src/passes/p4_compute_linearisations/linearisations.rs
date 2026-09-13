@@ -1,6 +1,7 @@
-//! Pre-computing the collections of members visible in a contract's hierarchy:
-//! its state variables, errors and events in base-to-derived source order, and
-//! its functions flattened most-derived-first, resolving overrides.
+//! Pre-computing the collections of members visible in a contract's or an
+//! interface's hierarchy: its state variables, errors and events in
+//! base-to-derived source order, and its functions flattened
+//! most-derived-first, resolving overrides.
 
 use std::cmp::Ordering;
 use std::sync::Arc;
@@ -13,8 +14,8 @@ use crate::context::ContractLinearisations;
 use crate::passes::common::Overridable;
 use crate::types::TypeRegistry;
 
-/// Walks the contract's linearised bases in reverse (most-base-first) and
-/// gathers the members visible in its hierarchy.
+/// Walks the contract's or interface's linearised bases in reverse
+/// (most-base-first) and gathers the members visible in its hierarchy.
 pub(super) fn compute_linearisations(
     binder: &Binder,
     types: &TypeRegistry,
@@ -24,12 +25,13 @@ pub(super) fn compute_linearisations(
         return ContractLinearisations::default();
     };
 
-    // The members of each *contract* base, gathered most-base-first, so the
-    // hierarchy's functions can be flattened most-derived-first at the end.
-    // Interface bases are excluded since they don't contribute functions to the
-    // linearisation: they must be implemented by inheriting contracts (enforced
-    // by the abstractness check).
-    let mut contract_base_members = Vec::with_capacity(linearised_bases.len());
+    // The members of each base, gathered most-base-first, so the hierarchy's
+    // functions can be flattened most-derived-first at the end. Interface
+    // bases contribute too: a concrete contract implements every interface
+    // function, so each declaration is overridden and dropped, while an
+    // abstract contract keeps the ones it leaves unimplemented, like any other
+    // body-less function.
+    let mut base_members = Vec::with_capacity(linearised_bases.len());
     let mut state_variables = Vec::new();
     let mut errors = Vec::new();
     let mut events = Vec::new();
@@ -55,20 +57,18 @@ pub(super) fn compute_linearisations(
             }
         }
 
-        if !base_is_interface {
-            contract_base_members.push(members);
-        }
+        base_members.push((members, base_is_interface));
     }
 
     ContractLinearisations {
-        functions: linearise_functions(binder, types, &contract_base_members),
+        functions: linearise_functions(binder, types, &base_members),
         state_variables,
         errors,
         events,
     }
 }
 
-/// Flattens the contract bases' members (gathered most-base-first) into the
+/// Flattens the bases' members (gathered most-base-first) into the
 /// hierarchy's function list: most-derived-first, dropping a function once a
 /// more-derived function or a public state variable's getter overrides it, then
 /// sorted by name. Functions are cloned out only once they're known to survive
@@ -76,15 +76,14 @@ pub(super) fn compute_linearisations(
 fn linearise_functions(
     binder: &Binder,
     types: &TypeRegistry,
-    contract_base_members: &[&[ir::ContractMember]],
+    base_members: &[(&[ir::ContractMember], bool)],
 ) -> Vec<ir::FunctionDefinition> {
-    // Only contract bases reach here, so nothing is declared in an interface.
     // A public state variable is kept as well, so its getter can shadow a
     // matching function inherited from a base contract.
     let mut kept: Vec<Overridable<'_>> = Vec::new();
-    for members in contract_base_members.iter().rev() {
+    for (members, base_is_interface) in base_members.iter().rev() {
         for member in *members {
-            let Some(candidate) = Overridable::of(member, false) else {
+            let Some(candidate) = Overridable::of(member, *base_is_interface) else {
                 continue;
             };
             if candidate.is_modifier()

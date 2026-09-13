@@ -407,6 +407,17 @@ impl Analysis {
         })
     }
 
+    pub(super) fn find_interface(&self, name: &str) -> &ir::InterfaceDefinition {
+        self.find_unique("interface", name, |member| match member {
+            ir::SourceUnitMember::InterfaceDefinition(interface)
+                if interface.name.unparse() == name =>
+            {
+                Some(interface)
+            }
+            _ => None,
+        })
+    }
+
     pub(super) fn find_library(&self, name: &str) -> &ir::LibraryDefinition {
         self.find_unique("library", name, |member| match member {
             ir::SourceUnitMember::LibraryDefinition(library) if library.name.unparse() == name => {
@@ -453,6 +464,15 @@ impl Analysis {
             .as_ref()
             .unwrap_or_else(|| panic!("`{owner}.{function}` has no body"))
     }
+}
+
+/// The names of the named functions in a linearised function list, which is
+/// already sorted by name.
+pub(super) fn function_names(functions: &[ir::FunctionDefinition]) -> Vec<String> {
+    functions
+        .iter()
+        .filter_map(|function| function.name.as_ref().map(|name| name.unparse().to_owned()))
+        .collect()
 }
 
 /// Finds the function named `name` among a contract's or library's `members`.

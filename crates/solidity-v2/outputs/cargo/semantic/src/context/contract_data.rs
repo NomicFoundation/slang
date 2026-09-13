@@ -4,7 +4,7 @@ use slang_solidity_v2_common::collections::{Map, SortedMap};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
-/// Pre-computed member linearisations for a single contract.
+/// Pre-computed member linearisations for a single contract or interface.
 #[allow(clippy::struct_field_names)]
 #[derive(Default)]
 pub(crate) struct ContractLinearisations {
@@ -42,12 +42,12 @@ impl ContractReference {
 }
 
 /// Cache of derived data about contracts stored on the `SemanticContext`. Every
-/// contract's `NodeId` has an entry in `data`.
+/// contract's and interface's `NodeId` has an entry in `linearisations`.
 pub(crate) struct ContractData {
     /// All contract definitions in this compilation unit, in registration
     /// order (deterministic iteration for `all_contracts`).
     contracts: Vec<ir::ContractDefinition>,
-    /// Per-contract linearised members, keyed by contract `NodeId`.
+    /// Linearised members, keyed by contract or interface `NodeId`.
     linearisations: Map<NodeId, ContractLinearisations>,
     /// For each contract, the contracts that its creation code embeds,
     /// mapped to the first expression embedding them. Keyed by the
@@ -113,7 +113,7 @@ impl ContractData {
     fn get(&self, contract_id: NodeId) -> &ContractLinearisations {
         self.linearisations
             .get(&contract_id)
-            .expect("contract_id is a registered contract")
+            .expect("contract_id is a registered contract or interface")
     }
 
     pub(super) fn all_contracts(&self) -> impl Iterator<Item = &ir::ContractDefinition> {
