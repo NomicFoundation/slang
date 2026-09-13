@@ -1,7 +1,7 @@
 //! Tests that a public state variable's getter overrides a same-named function
 //! inherited from a base contract, so `linearised_functions` drops it.
 
-use super::support::{Analyse, Analysis};
+use super::support::{Analyse, Analysis, function_names};
 use crate::context::SemanticContext;
 
 /// Builds a `SemanticContext` over `source`, asserting no diagnostics. Getter
@@ -20,11 +20,7 @@ fn linearised_function_names(context: &SemanticContext, contract: &str) -> Vec<S
         .find_contract_by_name(contract)
         .next()
         .unwrap_or_else(|| panic!("contract `{contract}` not found"));
-    context
-        .linearised_functions(definition.id())
-        .iter()
-        .filter_map(|function| function.name.as_ref().map(|name| name.unparse().to_owned()))
-        .collect()
+    function_names(context.linearised_functions(definition.id()))
 }
 
 #[test]
