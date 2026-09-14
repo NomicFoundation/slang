@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/public-state-variable-overrides-non-external] Error: Public state variables can only override functions with external visibility.
+    ╭─[input.sol:10:5]
+    │
+ 10 │     uint256 public override test = 42;
+    │     ─────────────────┬────────────────  
+    │                      ╰────────────────── Error occurred here.
+────╯

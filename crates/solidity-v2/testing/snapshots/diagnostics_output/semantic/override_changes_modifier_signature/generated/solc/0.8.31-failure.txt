@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[Warning 8429] Warning: Virtual modifiers are deprecated and scheduled for removal.
+   ╭─[input.sol:5:5]
+   │
+ 5 │ ╭─▶     modifier m(uint256 a) virtual {
+   ┆ ┆   
+ 7 │ ├─▶     }
+   │ │           
+   │ ╰─────────── Error occurred here.
+───╯
+
+[TypeError 1078] Error: Override changes modifier signature.
+    ╭─[input.sol:12:5]
+    │
+ 12 │ ╭─▶     modifier m(uint8 a) override {
+    ┆ ┆   
+ 14 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯

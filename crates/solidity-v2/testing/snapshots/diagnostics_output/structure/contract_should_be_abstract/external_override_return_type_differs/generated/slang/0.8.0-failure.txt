@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Diagnostics: 1
+Diagnostics: 2
 
 [structure/contract-should-be-abstract] Error: Contract "B" should be marked as abstract.
     ╭─[input.sol:15:1]
@@ -10,4 +10,14 @@ Diagnostics: 1
  24 │ ├─▶ }
     │ │       
     │ ╰─────── Error occurred here.
+────╯
+
+[semantic/override-return-types-differ] Error: Overriding function return types differ.
+    ╭─[input.sol:16:5]
+    │
+ 16 │ ╭─▶     function f(uint256[] memory a)
+    ┆ ┆   
+ 21 │ ├─▶     {
+    │ │           
+    │ ╰─────────── Error occurred here.
 ────╯

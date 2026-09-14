@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/override-changes-state-mutability] Error: Overriding function changes state mutability from "nonpayable" to "payable".
+    ╭─[input.sol:10:5]
+    │
+ 10 │     function f() public payable override {}
+    │     ──────────────────┬──────────────────  
+    │                       ╰──────────────────── Error occurred here.
+────╯

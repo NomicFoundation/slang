@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 1443] Error: Data locations of return variables have to be the same when overriding non-external functions, but they differ.
+    ╭─[input.sol:18:5]
+    │
+ 18 │ ╭─▶     function f(uint256[] calldata a)
+    ┆ ┆   
+ 25 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯
