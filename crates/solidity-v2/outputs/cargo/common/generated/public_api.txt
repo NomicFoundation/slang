@@ -2809,6 +2809,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnos
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::CannotCallViaContractTypeName(slang_solidity_v2_common::diagnostics::kinds::type_system::CannotCallViaContractTypeName)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ConstantArithmeticError(slang_solidity_v2_common::diagnostics::kinds::type_system::ConstantArithmeticError)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ExpressionNotAValue(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue)
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ExpressionNotAnLValue(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ExpressionNotCallable(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::FallbackFunctionMutability(slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionMutability)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::FallbackFunctionSignature(slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionSignature)
@@ -2821,6 +2822,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnos
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::StorageLayoutBaseNonInteger(slang_solidity_v2_common::diagnostics::kinds::type_system::StorageLayoutBaseNonInteger)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::StorageLayoutBaseNotConstant(slang_solidity_v2_common::diagnostics::kinds::type_system::StorageLayoutBaseNotConstant)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::StorageLayoutBaseOutOfRange(slang_solidity_v2_common::diagnostics::kinds::type_system::StorageLayoutBaseOutOfRange)
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::WriteToConstant(slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant)
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
@@ -2842,6 +2844,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ConstantArithmeticError) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionMutability> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
@@ -2868,6 +2872,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::StorageLayoutBaseOutOfRange) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant) -> Self
 impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
@@ -3030,6 +3036,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable
@@ -3263,6 +3288,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::StorageLayoutBaseOutOfRange::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::StorageLayoutBaseOutOfRange::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::StorageLayoutBaseOutOfRange::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub enum slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::Compilation(slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind)
 pub slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::Resolution(slang_solidity_v2_common::diagnostics::kinds::resolution::ResolutionDiagnosticKind)
@@ -3529,6 +3573,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ConstantArithmeticError) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::FallbackFunctionMutability> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -3555,6 +3601,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::StorageLayoutBaseOutOfRange) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant) -> Self
 impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -4143,6 +4191,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable::message(&self) -> alloc::string::String
@@ -4195,6 +4247,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::WriteToConstant::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub mod slang_solidity_v2_common::evm_targets
 pub enum slang_solidity_v2_common::evm_targets::EvmTarget
 pub slang_solidity_v2_common::evm_targets::EvmTarget::Amsterdam = 15

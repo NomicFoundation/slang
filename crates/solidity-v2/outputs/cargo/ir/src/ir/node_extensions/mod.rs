@@ -1,3 +1,4 @@
+mod arguments_declaration;
 mod function_definition;
 mod tuple_expression;
 mod version_pragma;
