@@ -37,11 +37,11 @@ impl StateVariableDefinitionStruct {
         let mut inputs = Vec::with_capacity(function_type.parameter_types.len());
         for parameter_type_id in &function_type.parameter_types {
             inputs.push(AbiParameter::new(
-                &self.semantic,
                 None,
                 None,
                 *parameter_type_id,
                 false,
+                &self.semantic,
             )?);
         }
 
@@ -56,7 +56,7 @@ impl StateVariableDefinitionStruct {
         };
         let outputs = output_types
             .map(|output_type_id| {
-                AbiParameter::new(&self.semantic, None, None, *output_type_id, false)
+                AbiParameter::new(None, None, *output_type_id, false, &self.semantic)
             })
             .collect::<Option<Vec<_>>>()?;
         Some((inputs, outputs))

@@ -14,6 +14,7 @@ use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 
 pub use self::types::{AbiType, NotAnAbiType, TupleComponent};
 use crate::abi::types::{is_abi_type, type_as_abi_type};
+use crate::ast::Type;
 
 pub struct ContractAbi {
     node_id: NodeId,
@@ -282,9 +283,9 @@ impl PartialOrd for AbiEntry {
     }
 }
 
-/// A parameter of an ABI entry: a view over its semantic type, the way [`crate::ast::Type`] is.
-/// The ABI shape ([`Self::abi_type`]) and the spellings are rendered from the interned `TypeId`
-/// on request rather than stored.
+/// A parameter of an ABI entry: a view over its semantic type, the way [`Type`] is. The ABI
+/// shape ([`Self::abi_type`]) and the spellings are rendered from the interned `TypeId` on
+/// request rather than stored.
 #[derive(Clone)]
 pub struct AbiParameter {
     node_id: Option<NodeId>, // will be `None` if the function is a generated getter
@@ -297,11 +298,11 @@ pub struct AbiParameter {
 impl AbiParameter {
     /// `None` when the type has no ABI representation, e.g. a mapping or a storage-only struct.
     pub(crate) fn new(
-        semantic: &Arc<SemanticContext>,
         node_id: Option<NodeId>,
         name: Option<String>,
         type_id: TypeId,
         indexed: bool,
+        semantic: &Arc<SemanticContext>,
     ) -> Option<Self> {
         if !is_abi_type(semantic, type_id) {
             return None;
@@ -323,9 +324,9 @@ impl AbiParameter {
         self.name.as_deref()
     }
 
-    /// The semantic type behind the parameter.
-    pub fn type_id(&self) -> TypeId {
-        self.type_id
+    /// The Solidity type behind the parameter.
+    pub fn get_type(&self) -> Type {
+        Type::create(self.type_id, &self.semantic)
     }
 
     pub fn abi_type(&self) -> AbiType {
@@ -352,17 +353,6 @@ impl AbiParameter {
         self.indexed
     }
 }
-
-impl PartialEq for AbiParameter {
-    fn eq(&self, other: &Self) -> bool {
-        self.node_id == other.node_id
-            && self.name == other.name
-            && self.type_id == other.type_id
-            && self.indexed == other.indexed
-    }
-}
-
-impl Eq for AbiParameter {}
 
 impl fmt::Debug for AbiParameter {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

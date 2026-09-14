@@ -16,11 +16,11 @@ impl ParametersStruct {
             // Bail out with `None` if any of the parameters fails typing
             let type_id = self.semantic.binder().node_typing(node_id).as_type_id()?;
             result.push(AbiParameter::new(
-                &self.semantic,
                 Some(node_id),
                 name,
                 type_id,
                 parameter.is_indexed,
+                &self.semantic,
             )?);
         }
         Some(result)
