@@ -2,6 +2,7 @@ mod alias_following;
 mod binder;
 mod contract_dependencies;
 mod getter_overrides;
+mod linearised_functions;
 mod overload_resolution;
 mod support;
 mod typing;
