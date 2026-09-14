@@ -107,24 +107,12 @@ impl Pass<'_> {
     /// Checks that every argument in `arguments` is a value, for a call that
     /// resolves no overloads and so has no use for their types: a modifier
     /// invocation, a base-constructor call, or an inheritance specifier.
-    // TODO: named arguments are not supported for modifier invocations or
-    // base-constructor calls in Solidity, but we check them here for
-    // completeness.
     // TODO: eventually this function should be removed and replaced by calls to
     // the argument collection function to later check that the arguments are of
     // the appropriate type.
-    pub(super) fn check_argument_values(&mut self, arguments: &ir::ArgumentsDeclaration) {
-        match arguments {
-            ir::ArgumentsDeclaration::PositionalArguments(arguments) => {
-                for argument in arguments.iter() {
-                    self.check_type_of_value_expression(argument);
-                }
-            }
-            ir::ArgumentsDeclaration::NamedArguments(arguments) => {
-                for argument in arguments.iter() {
-                    self.check_type_of_value_expression(&argument.value);
-                }
-            }
+    pub(super) fn check_positional_argument_values(&mut self, arguments: &ir::PositionalArguments) {
+        for argument in arguments.iter() {
+            self.check_type_of_value_expression(argument);
         }
     }
 

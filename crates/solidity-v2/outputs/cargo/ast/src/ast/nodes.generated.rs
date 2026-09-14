@@ -1951,11 +1951,11 @@ impl InheritanceTypeStruct {
         create_identifier_path(&self.ir_node.type_name, &self.semantic)
     }
 
-    pub fn arguments(&self) -> Option<ArgumentsDeclaration> {
+    pub fn arguments(&self) -> Option<PositionalArguments> {
         self.ir_node
             .arguments
             .as_ref()
-            .map(|ir_node| create_arguments_declaration(ir_node, &self.semantic))
+            .map(|ir_node| create_positional_arguments(ir_node, &self.semantic))
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -2181,11 +2181,11 @@ impl ModifierInvocationStruct {
         create_identifier_path(&self.ir_node.name, &self.semantic)
     }
 
-    pub fn arguments(&self) -> Option<ArgumentsDeclaration> {
+    pub fn arguments(&self) -> Option<PositionalArguments> {
         self.ir_node
             .arguments
             .as_ref()
-            .map(|ir_node| create_arguments_declaration(ir_node, &self.semantic))
+            .map(|ir_node| create_positional_arguments(ir_node, &self.semantic))
     }
 
     pub fn get_type(&self) -> Option<Type> {

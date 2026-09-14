@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[syntax/named-arguments-not-allowed] Error: Named arguments are not allowed here.
+    ╭─[input.sol:12:23]
+    │
+ 12 │ contract Named is Base({value: 2}) {}
+    │                       ──────┬─────  
+    │                             ╰─────── Error occurred here.
+────╯
