@@ -18,6 +18,7 @@ use smallvec::SmallVec;
 
 use super::HierarchyChecker;
 use crate::binder::{Binder, Definition};
+use crate::passes::common::{Callable, overrides};
 use crate::types::{FunctionType, Type, TypeRegistry};
 
 impl<'a> HierarchyChecker<'a> {
@@ -45,7 +46,10 @@ impl<'a> HierarchyChecker<'a> {
                     .iter()
                     .flat_map(|type_id| Overridable::members_of(self.binder, *type_id))
                 {
-                    by_name.entry(member.name()).or_default().push(member);
+                    by_name
+                        .entry(member.callable().name())
+                        .or_default()
+                        .push(member);
                 }
                 by_name
             })
@@ -68,13 +72,18 @@ impl<'a> HierarchyChecker<'a> {
         overriding: &Overridable<'a>,
         base_members: &[BaseMembers<'a>],
     ) -> SmallVec<[Overridable<'a>; 2]> {
-        let name = overriding.name();
+        let name = overriding.callable().name();
         let mut overridden: SmallVec<[Overridable<'a>; 2]> = SmallVec::new();
         for members in base_members {
             let nearest = members.get(&name).and_then(|candidates| {
-                candidates
-                    .iter()
-                    .find(|candidate| overriding.same_signature(self.binder, self.types, candidate))
+                candidates.iter().find(|candidate| {
+                    overrides(
+                        self.binder,
+                        self.types,
+                        overriding.callable(),
+                        candidate.callable(),
+                    )
+                })
             });
             if let Some(found) = nearest
                 && !overridden
@@ -306,16 +315,6 @@ impl<'a> Overridable<'a> {
         }
     }
 
-    /// The name, or `None` for a fallback or receive.
-    fn name(&self) -> Option<&'a str> {
-        match self {
-            Self::Function { definition, .. } | Self::Modifier(definition) => {
-                definition.name.as_ref().map(|name| name.unparse())
-            }
-            Self::StateVariable(state_variable) => Some(state_variable.name.unparse()),
-        }
-    }
-
     fn describe(&self) -> &'static str {
         match self {
             Self::Function { .. } => "function",
@@ -440,39 +439,12 @@ impl<'a> Overridable<'a> {
         }
     }
 
-    /// Whether `other` occupies the same override slot as this member.
-    fn same_signature(
-        &self,
-        binder: &'a Binder,
-        types: &'a TypeRegistry,
-        other: &Overridable<'a>,
-    ) -> bool {
-        if self.is_modifier() != other.is_modifier() || self.name() != other.name() {
-            return false;
+    /// The member as the shared override relation sees it.
+    fn callable(&self) -> &'a dyn Callable {
+        match self {
+            Self::Function { definition, .. } | Self::Modifier(definition) => *definition,
+            Self::StateVariable(state_variable) => *state_variable,
         }
-        if self.is_modifier() {
-            return true;
-        }
-        if self.function_kind() != other.function_kind() {
-            return false;
-        }
-        // A fallback or receive has no selector, so its parameters take no
-        // part in the signature.
-        if self.function_kind() != ir::FunctionKind::Regular {
-            return true;
-        }
-        // A member whose parameters aren't all typed is reported on its own.
-        // Treating it as matching anything here would invent an override.
-        let (Some(self_type), Some(other_type)) = (
-            self.function_type(binder, types),
-            other.function_type(binder, types),
-        ) else {
-            return false;
-        };
-        types.parameter_lists_are_indistinguishable(
-            &self_type.parameter_types,
-            &other_type.parameter_types,
-        )
     }
 }
 
