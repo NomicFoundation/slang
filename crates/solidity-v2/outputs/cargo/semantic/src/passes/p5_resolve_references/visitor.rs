@@ -10,7 +10,9 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 use super::Pass;
 use crate::binder::{Reference, Resolution, Typing, UsingOperator};
 use crate::built_ins::InternalBuiltIn;
-use crate::passes::common::filter_overriden_definitions;
+use crate::passes::common::{
+    filter_overridden_definitions, filter_overridden_definitions_by_selector,
+};
 use crate::types::{
     AddressType, ArraySliceType, ArrayType, BytesType, FixedSizeArrayType, MappingType, MetaType,
     Number, StringType, TupleType, Type, UserMetaType,
@@ -166,7 +168,7 @@ impl Visitor for Pass<'_> {
                 } else {
                     let scope_id = self.current_scope_id();
                     let resolution = self.resolve_symbol_in_scope(scope_id, symbol);
-                    filter_overriden_definitions(self.binder, self.types, resolution)
+                    filter_overridden_definitions(self.binder, self.types, resolution)
                 };
 
                 // Set the typing for the `Identifier` node.
@@ -398,7 +400,14 @@ impl Visitor for Pass<'_> {
         let operand_typing = self.check_typing_of_expression(&node.operand).clone();
         let member_resolution =
             self.resolve_symbol_in_typing(&operand_typing, node.member.unparse());
-        let resolution = filter_overriden_definitions(self.binder, self.types, member_resolution);
+        // `super.f` sees the bases' functions as declared. Any other member,
+        // whether reached through a contract value or a type name, collapses
+        // by selector.
+        let resolution = if matches!(operand_typing, Typing::Super) {
+            filter_overridden_definitions(self.binder, self.types, member_resolution)
+        } else {
+            filter_overridden_definitions_by_selector(self.binder, self.types, member_resolution)
+        };
 
         // Reading a contract's code pulls in its bytecode.
         if matches!(
