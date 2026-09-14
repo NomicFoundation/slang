@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     '@bytecodealliance/preview2-shim':
-      specifier: ^0.23.0
-      version: 0.23.0
+      specifier: ^0.24.0
+      version: 0.24.0
     '@changesets/changelog-github':
       specifier: ^0.7.0
       version: 0.7.0
@@ -148,7 +148,7 @@ importers:
     dependencies:
       '@bytecodealliance/preview2-shim':
         specifier: 'catalog:'
-        version: 0.23.0
+        version: 0.24.0
 
   crates/solidity/outputs/npm/tests:
     devDependencies:
@@ -435,8 +435,8 @@ packages:
   '@bytecodealliance/preview2-shim@0.17.9':
     resolution: {integrity: sha512-i0R3eQBe6PA/o/1EFE3Owe4In2rcccb6QxnjpntM/lPe3/duJ0bRQTVZM2Ufpo99X4eofGeltQUkape1C91FFA==}
 
-  '@bytecodealliance/preview2-shim@0.23.0':
-    resolution: {integrity: sha512-wO4Hp3w0lTvvUDKwwoTjJYp4Tu80OTfE7BIQRV9n1V64+KJdZW9l4K6fm7nFbNfwUUeHCwu3rExWBWEpu0BoIw==}
+  '@bytecodealliance/preview2-shim@0.24.0':
+    resolution: {integrity: sha512-w47lxOptKWkw43gI5z8cpMMnZ01LbyyDf1ZCvVcu44BQl6sfhhvDu7BDDC512PjW5o2tOtR2wFMh9pevxeByvQ==}
 
   '@bytecodealliance/weval@0.3.4':
     resolution: {integrity: sha512-+GCKtZXhPj7qyDl5pR0F3PTEk8tWINV8dv1tUbKMjMXvqjHIkvzalkWo5ZL2kCKwh8Bwn8rWpSmyvRC/Nlu9nQ==}
@@ -4256,7 +4256,7 @@ snapshots:
 
   '@bytecodealliance/preview2-shim@0.17.9': {}
 
-  '@bytecodealliance/preview2-shim@0.23.0':
+  '@bytecodealliance/preview2-shim@0.24.0':
     dependencies:
       '@bytecodealliance/jco-node-fs': 0.2.0
 
@@ -5341,7 +5341,7 @@ snapshots:
       detect-libc: 2.1.2
       is-glob: 4.0.3
       node-addon-api: 7.1.1
-      picomatch: 4.0.5
+      picomatch: 4.0.7
     optionalDependencies:
       '@parcel/watcher-android-arm64': 2.6.0
       '@parcel/watcher-darwin-arm64': 2.6.0
@@ -6284,6 +6284,10 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.5
 
+  fdir@6.5.0(picomatch@4.0.7):
+    optionalDependencies:
+      picomatch: 4.0.7
+
   file-type@3.9.0: {}
 
   file-type@5.2.0: {}
@@ -6757,12 +6761,12 @@ snapshots:
       '@types/node': 24.13.3
       anymatch: 3.1.3
       fb-watchman: 2.0.2
-      fdir: 6.5.0(picomatch@4.0.5)
+      fdir: 6.5.0(picomatch@4.0.7)
       graceful-fs: 4.2.11
       jest-regex-util: 30.5.0
       jest-util: 30.5.1
       jest-worker: 30.5.1
-      picomatch: 4.0.5
+      picomatch: 4.0.7
 
   jest-leak-detector@30.5.1:
     dependencies:
@@ -6966,7 +6970,7 @@ snapshots:
       chalk: 4.1.2
       ci-info: 4.4.0
       graceful-fs: 4.2.11
-      picomatch: 4.0.5
+      picomatch: 4.0.7
 
   jest-validate@29.7.0:
     dependencies:
