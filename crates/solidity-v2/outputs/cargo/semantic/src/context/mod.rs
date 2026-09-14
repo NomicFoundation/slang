@@ -369,11 +369,10 @@ impl SemanticContext {
         }
     }
 
-    /// The type's spelling in the JSON ABI `internalType` field, as solc emits it: the kind
-    /// prefix on user-defined types (`struct C.S`, `enum C.E`, `contract I`), `address payable`,
-    /// and function types with their parameter, mutability, visibility and return spelling.
-    /// Data locations are not part of it. Everything else spells as
-    /// [`Self::type_internal_name`].
+    /// The type as solc's `Type::toString(true)` spells it, which is the JSON ABI `internalType`:
+    /// a kind prefix on user-defined types (`struct C.S`, `enum C.E`, `contract I`),
+    /// `address payable`, and function types with their parameters, mutability, `external` and
+    /// returns; never a data location. Everything else spells as [`Self::type_internal_name`].
     pub fn type_abi_internal_name(&self, type_id: TypeId) -> String {
         match self.types.get_type_by_id(type_id) {
             Type::Address(address) if address.is_payable => "address payable".to_string(),
@@ -381,17 +380,6 @@ impl SemanticContext {
                 format!(
                     "{element}[]",
                     element = self.type_abi_internal_name(*element_type)
-                )
-            }
-            Type::ArraySlice(ArraySliceType { array_type_id }) => {
-                self.type_abi_internal_name(*array_type_id)
-            }
-            Type::FixedSizeArray(FixedSizeArrayType {
-                element_type, size, ..
-            }) => {
-                format!(
-                    "{element}[{size}]",
-                    element = self.type_abi_internal_name(*element_type),
                 )
             }
             Type::Contract(ContractType { definition_id })
@@ -404,16 +392,24 @@ impl SemanticContext {
             Type::Enum(EnumType { definition_id }) => {
                 format!("enum {}", self.definition_canonical_name(*definition_id))
             }
+            Type::FixedSizeArray(FixedSizeArrayType {
+                element_type, size, ..
+            }) => {
+                format!(
+                    "{element}[{size}]",
+                    element = self.type_abi_internal_name(*element_type),
+                )
+            }
+            Type::Function(function_type) => self.function_type_abi_internal_name(function_type),
             Type::Struct(StructType { definition_id, .. }) => {
                 format!("struct {}", self.definition_canonical_name(*definition_id))
             }
-            Type::Function(function_type) => self.function_type_abi_internal_name(function_type),
             _ => self.type_internal_name(type_id),
         }
     }
 
-    /// `function (T1,T2) [pure|view|payable] external [returns (R1,R2)]`; `nonpayable` is
-    /// implied by its absence, and only external functions reach the ABI.
+    /// `function (T1,T2) [pure|view|payable] [external] [returns (R1,R2)]`: `nonpayable` and
+    /// `internal` are implied by their absence, as in solc.
     fn function_type_abi_internal_name(&self, function_type: &FunctionType) -> String {
         let parameters = function_type
             .parameter_types
@@ -430,7 +426,7 @@ impl SemanticContext {
         let visibility = if function_type.is_externally_visible() {
             " external"
         } else {
-            " internal"
+            ""
         };
         let returns = match self.types.get_type_by_id(function_type.return_type) {
             Type::Void => String::new(),
