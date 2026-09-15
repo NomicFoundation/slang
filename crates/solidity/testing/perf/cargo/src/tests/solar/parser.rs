@@ -1,9 +1,9 @@
 use std::hint::black_box;
 use std::path::PathBuf;
 
-use solar::ast::{self};
-use solar::interface::Session;
-use solar::parse::Parser;
+use solar_parse::Parser;
+use solar_parse::ast::{self};
+use solar_parse::interface::Session;
 
 use crate::dataset::SolidityProject;
 
@@ -19,7 +19,7 @@ fn go(project: &SolidityProject, count: bool) -> usize {
     // From Solar's docs: Create a new session with a buffer emitter.
     // This is required to capture the emitted diagnostics and to return them at the end.
     let sess = Session::builder()
-        .with_buffer_emitter(solar::interface::ColorChoice::Auto)
+        .with_buffer_emitter(solar_parse::interface::ColorChoice::Auto)
         .build();
 
     let source_map = sess.source_map();
@@ -33,7 +33,7 @@ fn go(project: &SolidityProject, count: bool) -> usize {
     let mut result = 0;
     // Enter the context and parse the file.
     // `enter_sequential` runs the closure on the current thread
-    let _ = sess.enter_sequential(|| -> solar::interface::Result<()> {
+    let _ = sess.enter_sequential(|| -> solar_parse::interface::Result<()> {
         // Use one arena for the entire parsing
         let arena = ast::Arena::new();
 
