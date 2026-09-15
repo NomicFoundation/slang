@@ -120,4 +120,9 @@ impl NodeIdGenerator {
     pub fn histogram(&self) -> &NodeKindHistogram {
         &self.histogram
     }
+
+    /// Consumes the generator and returns its histogram.
+    pub fn into_histogram(self) -> NodeKindHistogram {
+        self.histogram
+    }
 }
