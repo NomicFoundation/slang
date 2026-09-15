@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ int256 constant C3 = 64; // solc only allows signed base slots since 0.8.37
+   │                 ─┬  
+   │                  ╰── name: 1
+   │ 
+ 3 │ contract X3 layout at C3 {
+   │          ─┬           ─┬  
+   │           ╰─────────────── name: 2
+   │                        │  
+   │                        ╰── ref: 1
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ │   int256 constant C3 = 64; // solc only allows signed base slots since 0.8.37
+   │ │   ──────────────────────────────────────┬─────────────────────────────────────  
+   │ │                                         ╰─────────────────────────────────────── definiens: 1
+ 2 │ ╭─▶ 
+   ┆ ┆   
+ 4 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 2
+───╯

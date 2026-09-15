@@ -1,0 +1,34 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 3 │         uint64 slot = block.slotnum; // added in 0.8.37
+   │                ──┬─   ──┬── ───┬───  
+   │                  ╰─────────────────── name: 3
+   │                         │      │     
+   │                         ╰──────────── ref: built-in
+   │                                │     
+   │                                ╰───── ref: built-in
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test() public {
+ 3 │ │ │           uint64 slot = block.slotnum; // added in 0.8.37
+   │ │ │   ────────────────────────────┬───────────────────────────  
+   │ │ │                               ╰───────────────────────────── definiens: 3
+ 4 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 5 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

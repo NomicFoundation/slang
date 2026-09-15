@@ -27,7 +27,7 @@ language_macros::compile!(Language(
         "0.8.2", "0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8", "0.8.9", "0.8.10", "0.8.11",
         "0.8.12", "0.8.13", "0.8.14", "0.8.15", "0.8.16", "0.8.17", "0.8.18", "0.8.19", "0.8.20",
         "0.8.21", "0.8.22", "0.8.23", "0.8.24", "0.8.25", "0.8.26", "0.8.27", "0.8.28", "0.8.29",
-        "0.8.30", "0.8.31", "0.8.32", "0.8.33", "0.8.34", "0.8.35", "0.8.36"
+        "0.8.30", "0.8.31", "0.8.32", "0.8.33", "0.8.34", "0.8.35", "0.8.36", "0.8.37"
     ],
     sections = [
         Section(
@@ -128,7 +128,10 @@ language_macros::compile!(Language(
                             variants = [
                                 EnumVariant(reference = ABIEncoderV2Keyword),
                                 EnumVariant(reference = SMTCheckerKeyword),
-                                EnumVariant(reference = SolidityKeyword, enabled = From("0.8.21")),
+                                EnumVariant(
+                                    reference = SolidityKeyword,
+                                    enabled = Range(from = "0.8.21", till = "0.8.37")
+                                ),
                                 EnumVariant(reference = StringLiteral)
                             ]
                         ),
@@ -6426,6 +6429,7 @@ language_macros::compile!(Language(
                         BuiltInField(definition = "uint gaslimit"),
                         BuiltInField(definition = "uint number"),
                         BuiltInField(definition = "uint prevrandao", enabled = From("0.8.18")),
+                        BuiltInField(definition = "uint64 slotnum", enabled = From("0.8.37")),
                         BuiltInField(definition = "uint timestamp")
                     ],
                     functions = [BuiltInFunction(
@@ -7197,6 +7201,13 @@ language_macros::compile!(Language(
                     parameters = ["uint256 x"],
                     return_type = "uint256",
                     enabled = From("0.8.31")
+                ),
+                // 'Amsterdam' hard-fork updates:
+                BuiltInFunction(
+                    name = "slotnum",
+                    parameters = [],
+                    return_type = "uint256",
+                    enabled = From("0.8.37")
                 )
             ]
         )

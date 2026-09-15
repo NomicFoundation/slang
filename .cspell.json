@@ -42,6 +42,7 @@
     "pipenv",
     "remappings",
     "rustup",
+    "slotnum",
     "sourcify",
     "struct",
     "structs",

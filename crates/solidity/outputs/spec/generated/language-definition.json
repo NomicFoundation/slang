@@ -118,7 +118,8 @@
     "0.8.33",
     "0.8.34",
     "0.8.35",
-    "0.8.36"
+    "0.8.36",
+    "0.8.37"
   ],
   "sections": [
     {
@@ -234,7 +235,7 @@
                   "variants": [
                     { "reference": "ABIEncoderV2Keyword" },
                     { "reference": "SMTCheckerKeyword" },
-                    { "reference": "SolidityKeyword", "enabled": { "From": { "from": "0.8.21" } } },
+                    { "reference": "SolidityKeyword", "enabled": { "Range": { "from": "0.8.21", "till": "0.8.37" } } },
                     { "reference": "StringLiteral" }
                   ]
                 }
@@ -8945,6 +8946,7 @@
                 { "definition": "uint gaslimit" },
                 { "definition": "uint number" },
                 { "definition": "uint prevrandao", "enabled": { "From": { "from": "0.8.18" } } },
+                { "definition": "uint64 slotnum", "enabled": { "From": { "from": "0.8.37" } } },
                 { "definition": "uint timestamp" }
               ],
               "functions": [
@@ -9622,6 +9624,11 @@
               "return_type": "uint256",
               "enabled": { "From": { "from": "0.8.31" } }
             }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "slotnum", "return_type": "uint256", "enabled": { "From": { "from": "0.8.37" } } }
           }
         }
       ]
