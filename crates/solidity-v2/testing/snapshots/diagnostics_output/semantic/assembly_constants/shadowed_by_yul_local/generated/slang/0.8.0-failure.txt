@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/external-declaration-shadowing] Error: This declaration shadows a declaration outside the inline assembly block.
+    ╭─[input.sol:11:17]
+    │
+ 11 │             let K := 1
+    │                 ┬  
+    │                 ╰── Error occurred here.
+────╯

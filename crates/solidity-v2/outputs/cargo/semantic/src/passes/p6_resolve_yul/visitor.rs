@@ -150,9 +150,35 @@ impl Visitor for Pass<'_> {
         true
     }
 
+    fn enter_yul_variable_assignment_statement(
+        &mut self,
+        node: &ir::YulVariableAssignmentStatement,
+    ) -> bool {
+        // Only the paths on the left are assigned to, so visit them and the
+        // assigned expression separately.
+        for path in node.variables.iter() {
+            self.resolve_yul_path(path, true);
+        }
+        ir::visitor::accept_yul_expression(&node.expression, self);
+
+        // We already visited our children
+        false
+    }
+
     fn enter_yul_path(&mut self, items: &ir::YulPath) -> bool {
+        self.resolve_yul_path(items, false);
+
+        // We already visited our children
+        false
+    }
+}
+
+impl Pass<'_> {
+    // Resolves the identifiers of a Yul path and records a reference for each
+    // one. `is_lvalue` says whether the path is assigned to.
+    fn resolve_yul_path(&mut self, items: &ir::YulPath, is_lvalue: bool) {
         if items.is_empty() {
-            return false;
+            return;
         }
 
         let mut item_iter = items.iter();
@@ -187,6 +213,8 @@ impl Visitor for Pass<'_> {
         let reference = Reference::new(Arc::clone(identifier), resolution.clone());
         self.binder.insert_reference(reference);
 
+        self.check_solidity_reference(identifier, &resolution, suffix, is_lvalue);
+
         if let Some(suffix) = suffix {
             let resolution = self.resolve_yul_suffix(suffix.unparse(), &resolution);
             self.record_solidity_reference(&resolution);
@@ -202,7 +230,5 @@ impl Visitor for Pass<'_> {
                 Resolution::Unresolved,
             ));
         }
-
-        false
     }
 }
