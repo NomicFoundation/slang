@@ -23,7 +23,7 @@ slang_solidity_v2_cst = { workspace = true }
 slang_solidity_v2_ir = { workspace = true }
 slang_solidity_v2_parser = { workspace = true }
 slang_solidity_v2_semantic = { workspace = true }
-solar = { workspace = true }
+solar-parse = { workspace = true }
 solidity_testing_utils = { workspace = true }
 streaming-iterator = { workspace = true }
 tree-sitter-solidity = { workspace = true }

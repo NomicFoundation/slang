@@ -184,7 +184,7 @@ serde_json = { version = "1.0.143", features = ["preserve_order"] }
 sha3 = { version = "0.12.0" }
 similar-asserts = { version = "2.0.0" }
 smallvec = { version = "1.15.0", features = ["union"] }
-solar = { version = "0.2.0", package = "solar-compiler" }
+solar-parse = { version = "0.2.0" }
 streaming-iterator = { version = "0.1.9" }
 string-interner = { version = "0.20.0", features = [
     "std",
