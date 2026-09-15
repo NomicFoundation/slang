@@ -7,5 +7,5 @@ Diagnostics: 1
    │
  4 │ pragma experimental "solidity";
    │ ───────────────┬───────────────  
-   │                ╰───────────────── Error occurred here.
+   │                ╰───────────────── Warning occurred here.
 ───╯

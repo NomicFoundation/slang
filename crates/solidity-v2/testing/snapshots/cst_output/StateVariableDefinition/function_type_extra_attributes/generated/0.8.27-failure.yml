@@ -13,7 +13,7 @@ Source: >
   10 │     function() internal public pure u;                                           │ 444..482
   11 │ }                                                                                │ 483..484
 
-Errors: # 5 total
+Diagnostics: # 5 total
   - >
     [syntax/invalid-mutability] Error: Invalid mutability for this definition. Expected 'ConstantKeyword' or 'ImmutableKeyword' or 'TransientKeyword'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/StateVariableDefinition/function_type_extra_attributes/input.sol:6:32]

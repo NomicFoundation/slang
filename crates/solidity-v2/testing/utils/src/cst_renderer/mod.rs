@@ -3,8 +3,8 @@
 //! ## Output format
 //!
 //! - **`Source:`** — annotated source lines with byte ranges.
-//! - **`Error:`** (failure) — rendered diagnostic output.
-//! - **`Tree:`** (successful parser) — nested CST structure with inline previews and byte ranges.
+//! - **`Diagnostics:`** — rendered diagnostic output.
+//! - **`Tree:`** — nested CST structure with inline previews and byte ranges.
 //!
 //! ## Symbol legend
 //!
@@ -65,12 +65,13 @@ pub fn render(
         diagnostics,
     } = result;
 
-    let errors: Vec<String> = diagnostics
+    // Write the diagnostics
+    let diagnostics: Vec<String> = diagnostics
         .iter()
-        .map(|e| diagnostic::render_for_snapshot(e, source_id, source, version, target))
+        .map(|d| diagnostic::render_for_snapshot(d, source_id, source, version, target))
         .collect();
 
-    let is_success = !write_errors(&mut w, &errors).unwrap();
+    let is_success = !write_diagnostics(&mut w, &diagnostics).unwrap();
 
     // Write the Tree
     writeln!(&mut w, "Tree:").unwrap();
@@ -221,16 +222,16 @@ fn render_preview(source: &str, range: &Range<usize>) -> String {
     }
 }
 
-fn write_errors(w: &mut String, errors: &Vec<String>) -> Result<bool, std::fmt::Error> {
-    if errors.is_empty() {
+fn write_diagnostics(w: &mut String, diagnostics: &Vec<String>) -> Result<bool, std::fmt::Error> {
+    if diagnostics.is_empty() {
         return Ok(false);
     }
 
-    writeln!(w, "Errors: # {count} total", count = errors.len())?;
+    writeln!(w, "Diagnostics: # {count} total", count = diagnostics.len())?;
 
-    for error in errors {
+    for diagnostic in diagnostics {
         writeln!(w, "  - >")?;
-        for line in error.lines() {
+        for line in diagnostic.lines() {
             writeln!(w, "    {line}")?;
         }
     }

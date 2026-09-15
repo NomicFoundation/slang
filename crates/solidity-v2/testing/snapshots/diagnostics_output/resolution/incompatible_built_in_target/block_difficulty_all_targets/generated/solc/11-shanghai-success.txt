@@ -7,5 +7,5 @@ Diagnostics: 1
    │
  9 │         return block.difficulty;
    │                ────────┬───────  
-   │                        ╰───────── Error occurred here.
+   │                        ╰───────── Warning occurred here.
 ───╯

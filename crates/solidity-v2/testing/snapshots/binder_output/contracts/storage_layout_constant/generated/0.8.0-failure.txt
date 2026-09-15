@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Parse errors:
+Diagnostics:
 [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.29'.
    ╭─[input.sol:5:13]
    │

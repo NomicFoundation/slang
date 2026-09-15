@@ -6,7 +6,7 @@ Source: >
   3  │     modifier mod(string storage memory a) { _; }                                                                                │ 141..189
   4  │ }                                                                                                                               │ 190..191
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected MemoryKeyword. One of AtKeyword, CloseParen, Comma, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ModifierDefinition/parameter_multiple_storage_locations/input.sol:3:33]

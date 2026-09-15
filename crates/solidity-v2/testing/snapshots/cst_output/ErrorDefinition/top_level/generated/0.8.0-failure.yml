@@ -5,7 +5,7 @@ Source: >
   2  │ error MyError();                                                                                    │ 100..116
   3  │ // <<<                                                                                              │ 117..123
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ErrorDefinition/top_level/input.sol:2:1]

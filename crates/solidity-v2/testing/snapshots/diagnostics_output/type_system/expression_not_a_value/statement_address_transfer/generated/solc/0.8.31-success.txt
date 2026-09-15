@@ -7,5 +7,5 @@ Diagnostics: 1
     │
  10 │     payable(this).transfer;
     │     ───────────┬──────────  
-    │                ╰──────────── Error occurred here.
+    │                ╰──────────── Warning occurred here.
 ────╯

@@ -7,7 +7,7 @@ Diagnostics: 2
    │
  7 │ pragma abicoder v1;
    │ ─────────┬─────────  
-   │          ╰─────────── Error occurred here.
+   │          ╰─────────── Warning occurred here.
 ───╯
 
 [SyntaxError 8273] Error: ABI coder v1 has already been selected through "pragma abicoder v1".

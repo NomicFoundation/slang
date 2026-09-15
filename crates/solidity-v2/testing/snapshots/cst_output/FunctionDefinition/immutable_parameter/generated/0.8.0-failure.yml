@@ -11,7 +11,7 @@ Source: >
   8  │     function f(uint immutable x) internal pure {}                                │ 297..346
   9  │ }                                                                                │ 347..348
 
-Errors: # 1 total
+Diagnostics: # 1 total
   - >
     [syntax/unexpected-terminal] Error: Unexpected ImmutableKeyword. One of AtKeyword, CallDataKeyword, CloseParen, Comma, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, MemoryKeyword, OpenBracket, RevertKeyword, StorageKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionDefinition/immutable_parameter/input.sol:8:21]
