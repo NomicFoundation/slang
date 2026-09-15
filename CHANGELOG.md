@@ -1,5 +1,11 @@
 # changelog
 
+## 1.3.9
+
+### Patch Changes
+
+- [#2144](https://github.com/NomicFoundation/slang/pull/2144) [`c82d84e`](https://github.com/NomicFoundation/slang/commit/c82d84ee3b0892c29f55af4668465d911c6c438e) Thanks [@teofr](https://github.com/teofr)! - Add support for Solidity `0.8.37`.
+
 ## 1.3.8
 
 ### Patch Changes
