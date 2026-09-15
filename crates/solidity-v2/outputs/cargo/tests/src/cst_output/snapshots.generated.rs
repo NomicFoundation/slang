@@ -558,6 +558,15 @@ mod decimal_number_expression {
     }
 }
 
+mod emit_statement {
+    use super::*;
+
+    #[test]
+    fn emit_empty() -> Result<()> {
+        run("EmitStatement", "emit_empty")
+    }
+}
+
 mod enum_definition {
     use super::*;
 
