@@ -16,6 +16,14 @@
       },
       {
         "specifier": {
+          "type": "Range",
+          "from": "Homestead",
+          "till": "Constantinople"
+        },
+        "reason": "solc warns that 'Support for EVM versions older than constantinople is deprecated', which slang has no equivalent for, so slang reports nothing at all on these targets. Unrelated to `mcopy`."
+      },
+      {
+        "specifier": {
           "type": "From",
           "from": "Cancun"
         },

@@ -7,14 +7,29 @@ use std::path::Path;
 use anyhow::Result;
 pub use config::{TestConfig, TestMatrix};
 use infra_utils::codegen::CodegenFileSystem;
+use slang_solidity_v2_common::diagnostics::{DiagnosticCollection, DiagnosticSeverity};
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
+use strum::Display;
 
 /// Result of running a single iteration of a snapshot test.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+/// Ordered by severity (highest to lowest).
+#[derive(Clone, Copy, Debug, Display, PartialEq, Eq, PartialOrd, Ord)]
+#[strum(serialize_all = "kebab-case")]
 pub enum SnapshotStatus {
-    Success,
     Failure,
+    Warning,
+    Success,
+}
+
+impl SnapshotStatus {
+    pub fn from_diagnostics(diagnostics: &DiagnosticCollection) -> Self {
+        match diagnostics.highest_severity() {
+            Some(DiagnosticSeverity::Error) => Self::Failure,
+            Some(DiagnosticSeverity::Warning) => Self::Warning,
+            None => Self::Success,
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -68,10 +83,7 @@ where
         if last_contents.as_ref() != Some(&outcome.contents) {
             let filename = format!(
                 "{version}-{status}.{extension}",
-                status = match outcome.status {
-                    SnapshotStatus::Success => "success",
-                    SnapshotStatus::Failure => "failure",
-                },
+                status = outcome.status,
                 extension = outcome.extension,
             );
 
@@ -108,10 +120,7 @@ where
             let name = target.to_string().to_lowercase();
             let filename = format!(
                 "{index:02}-{name}-{status}.{extension}",
-                status = match outcome.status {
-                    SnapshotStatus::Success => "success",
-                    SnapshotStatus::Failure => "failure",
-                },
+                status = outcome.status,
                 extension = outcome.extension,
             );
 

@@ -82,8 +82,7 @@ impl<'a> ReportData<'a> {
     }
 
     pub(crate) fn all_resolved(&self) -> bool {
-        self.compilation.diagnostics().is_empty()
-            && self.unbound_identifiers.is_empty()
+        self.unbound_identifiers.is_empty()
             && self
                 .all_references
                 .iter()

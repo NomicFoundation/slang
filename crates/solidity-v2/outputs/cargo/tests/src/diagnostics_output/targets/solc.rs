@@ -11,6 +11,7 @@ use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::diagnostics_output::targets::{TargetOutcome, TestTarget};
+use crate::snapshots::SnapshotStatus;
 
 pub(crate) struct SolcTarget {
     binaries: SortedMap<Version, Binary>,
@@ -87,11 +88,15 @@ impl TestTarget for SolcTarget {
         let output = binary.run(&input)?;
         let diagnostics = output.errors.unwrap_or_default();
 
-        // Only error-severity diagnostics decide the status; warnings/info are
-        // rendered but count as success.
-        let compilation_succeeded = !diagnostics
+        let status = diagnostics
             .iter()
-            .any(|diagnostic| diagnostic.severity == Severity::Error);
+            .map(|diagnostic| match diagnostic.severity {
+                Severity::Error => SnapshotStatus::Failure,
+                Severity::Warning => SnapshotStatus::Warning,
+                Severity::Info => SnapshotStatus::Success,
+            })
+            .min()
+            .unwrap_or(SnapshotStatus::Success);
 
         let rendered = diagnostics
             .into_iter()
@@ -103,7 +108,7 @@ impl TestTarget for SolcTarget {
 
         Ok(TargetOutcome {
             diagnostics: rendered,
-            compilation_succeeded,
+            status,
         })
     }
 }

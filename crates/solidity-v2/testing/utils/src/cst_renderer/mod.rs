@@ -44,16 +44,13 @@ pub(crate) fn format_label_kind(label: &str, kind: &str) -> String {
 }
 
 /// Render a parse result (success or failure) to YAML format.
-///
-/// Returns a tuple of (`is_success`, `rendered_output`), where `is_success` is true if
-/// `result` had no errors.
 pub fn render(
     source: &str,
     source_id: &str,
     result: &ParseOutput,
     version: LanguageVersion,
     target: EvmTarget,
-) -> (bool, String) {
+) -> String {
     let mut w = String::new();
 
     // Write the source code
@@ -66,12 +63,12 @@ pub fn render(
     } = result;
 
     // Write the diagnostics
-    let diagnostics: Vec<String> = diagnostics
+    let rendered: Vec<String> = diagnostics
         .iter()
         .map(|d| diagnostic::render_for_snapshot(d, source_id, source, version, target))
         .collect();
 
-    let is_success = !write_diagnostics(&mut w, &diagnostics).unwrap();
+    write_diagnostics(&mut w, &rendered).unwrap();
 
     // Write the Tree
     writeln!(&mut w, "Tree:").unwrap();
@@ -81,7 +78,7 @@ pub fn render(
         w.push_str(&frag);
     }
 
-    (is_success, w)
+    w
 }
 
 /// Helper to accumulate rendered children, merge their ranges,
@@ -222,19 +219,19 @@ fn render_preview(source: &str, range: &Range<usize>) -> String {
     }
 }
 
-fn write_diagnostics(w: &mut String, diagnostics: &Vec<String>) -> Result<bool, std::fmt::Error> {
-    if diagnostics.is_empty() {
-        return Ok(false);
+fn write_diagnostics(w: &mut String, rendered: &[String]) -> Result<(), std::fmt::Error> {
+    if rendered.is_empty() {
+        return Ok(());
     }
 
-    writeln!(w, "Diagnostics: # {count} total", count = diagnostics.len())?;
+    writeln!(w, "Diagnostics: # {count} total", count = rendered.len())?;
 
-    for diagnostic in diagnostics {
+    for diagnostic in rendered {
         writeln!(w, "  - >")?;
         for line in diagnostic.lines() {
             writeln!(w, "    {line}")?;
         }
     }
 
-    Ok(true)
+    Ok(())
 }

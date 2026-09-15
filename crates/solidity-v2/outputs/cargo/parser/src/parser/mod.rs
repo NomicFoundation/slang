@@ -76,30 +76,31 @@ impl Parser {
             diagnostics: DiagnosticCollection::default(),
             language_version,
         };
-        let result = parser.parse(&mut ctx, lexer);
-        match result {
+
+        let source_unit = match parser.parse(&mut ctx, lexer) {
             Ok(source_unit) => {
-                // TODO(v2): these tests should really go through 'CompilationUnit' once it is ready.
-                // This way, we won't have to call individual validation APIs.
-                // All errors should be collected during the compilation unit construction.
+                // Most validation happens during the 'CompilationUnit' building, but this specific
+                // check is done here to make sure that other 'Parser' users can still be informed of any
+                // inconsistency between the source unit and the expected syntax version.
                 validate_syntax_version(
                     &source_unit,
                     language_version,
                     file_id,
                     &mut ctx.diagnostics,
                 );
-                ParseOutput {
-                    source_unit,
-                    diagnostics: ctx.diagnostics,
-                }
+
+                source_unit
             }
             Err(e) => {
                 convert_parse_error(file_id, &mut ctx.diagnostics, e);
-                ParseOutput {
-                    source_unit: new_source_unit(new_source_unit_members(vec![])),
-                    diagnostics: ctx.diagnostics,
-                }
+
+                new_source_unit(new_source_unit_members(vec![]))
             }
+        };
+
+        ParseOutput {
+            source_unit,
+            diagnostics: ctx.diagnostics,
         }
     }
 }

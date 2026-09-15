@@ -1,0 +1,14 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "From",
+          "from": "0.8.0"
+        },
+        "reason": "solc emits `Warning 6133` for a statement whose expression has no effect. Slang does not model that check, and the test is only here to confirm the expression is accepted as a value, so Slang stays silent while solc warns on every version."
+      }
+    ]
+  }
+}

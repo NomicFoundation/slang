@@ -3568,6 +3568,11 @@ mod syntax {
     }
 
     #[test]
+    fn missing_version_pragma() -> Result<()> {
+        run("syntax", "missing_version_pragma")
+    }
+
+    #[test]
     fn more_than_one_inheritance_list() -> Result<()> {
         run("syntax", "more_than_one_inheritance_list")
     }

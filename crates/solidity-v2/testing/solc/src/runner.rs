@@ -2,6 +2,7 @@ use std::path::Path;
 
 use anyhow::{Context, Result};
 use slang_solidity_v2_common::collections::SortedMap;
+use slang_solidity_v2_common::diagnostics::DiagnosticSeverity;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use solidity_v2_testing_utils::compilation;
@@ -61,13 +62,19 @@ fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) ->
     };
 
     let unit = compilation::compile(&files, language_version, evm_target);
-    let diagnostics = unit.diagnostics();
 
-    if diagnostics.is_empty() {
+    if match unit.diagnostics().highest_severity() {
+        // Only consider errors as a test failure.
+        Some(DiagnosticSeverity::Error) => false,
+        // Skip less severe diagnostics.
+        Some(DiagnosticSeverity::Warning) => true,
+        None => true,
+    } {
         return Ok(Outcome::Passed);
     }
 
-    let rendered = diagnostics
+    let diagnostics = unit
+        .diagnostics()
         .iter()
         .map(|diagnostic| {
             let file_id = diagnostic.file_id();
@@ -76,7 +83,5 @@ fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) ->
         })
         .collect();
 
-    Ok(Outcome::Failed {
-        diagnostics: rendered,
-    })
+    Ok(Outcome::Failed { diagnostics })
 }
