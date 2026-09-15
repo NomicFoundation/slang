@@ -1,0 +1,14 @@
+{
+  "matrix": {
+    "type": "SingleTargetAllVersions",
+    "expected_solc_divergence": [
+      {
+        "specifier": {
+          "type": "From",
+          "from": "0.8.0"
+        },
+        "reason": "This input intentionally omits the SPDX license header, which is the whole point of the test: it makes solc emit `Warning 1878`, a file-level diagnostic with no source span. Slang does not model SPDX license identifiers at all, so it stays silent and succeeds while solc warns, on every version."
+      }
+    ]
+  }
+}

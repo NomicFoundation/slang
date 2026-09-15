@@ -7,6 +7,7 @@
 
 use slang_solidity_v2::compilation::{CompilationUnit, Configuration, FileId, ImportResolver};
 use slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport;
+use slang_solidity_v2_common::diagnostics::{DiagnosticExtensions, DiagnosticSeverity};
 
 use crate::dataset::SolidityProject;
 use crate::tests::slang_v2::common::{parse_evm_target, parse_version};
@@ -33,10 +34,21 @@ pub fn run(project: Input) -> Output {
         resolver: ProjectImportResolver { project },
     });
 
+    // Only errors mean the pipeline went wrong. These are real-world sources,
+    // and some of them earn a warning: `ens_registrar_controller` holds a file
+    // with no `pragma solidity`, for one.
+    let errors: Vec<_> = unit
+        .diagnostics()
+        .iter()
+        .filter(|diagnostic| match diagnostic.severity() {
+            DiagnosticSeverity::Error => true,
+            DiagnosticSeverity::Warning => false,
+        })
+        .collect();
+
     assert!(
-        unit.diagnostics().is_empty(),
-        "compilation produced diagnostics: {diagnostics:#?}",
-        diagnostics = unit.diagnostics()
+        errors.is_empty(),
+        "compilation produced errors: {errors:#?}"
     );
 
     unit

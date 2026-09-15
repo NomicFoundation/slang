@@ -13,6 +13,14 @@
           "till": "Homestead"
         },
         "reason": "solc 0.8.24 declines the Frontier target outright ('Invalid EVM version requested'), which counts as a rejection, while slang accepts the declaration. Unrelated to `blobhash`."
+      },
+      {
+        "specifier": {
+          "type": "Range",
+          "from": "Homestead",
+          "till": "Constantinople"
+        },
+        "reason": "solc warns that 'Support for EVM versions older than constantinople is deprecated', which slang has no equivalent for, so slang reports nothing at all on these targets. Unrelated to `blobhash`."
       }
     ]
   }

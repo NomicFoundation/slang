@@ -1,8 +1,10 @@
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use slang_solidity_v2_common::collections::{Set, SortedMap};
-use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::compilation::{
     DuplicatedFileId, MissingImportedFile,
+};
+use slang_solidity_v2_common::diagnostics::{
+    DiagnosticCollection, DiagnosticExtensions, DiagnosticSeverity,
 };
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::versions::LanguageVersion;
@@ -16,6 +18,7 @@ use slang_solidity_v2_semantic::context::{
 use super::configuration::{Configuration, ImportResolver};
 use super::file::InternalFile;
 use super::unit::CompilationUnit;
+use super::validation::validate_cst;
 
 impl CompilationUnit {
     /// Compiles the given source files into a [`CompilationUnit`].
@@ -152,8 +155,20 @@ fn parse_file(
 ) -> (ParsedFile<'_>, DiagnosticCollection) {
     let ParseOutput {
         source_unit,
-        diagnostics,
+        mut diagnostics,
     } = Parser::parse(&file_id, contents, language_version);
+
+    if diagnostics
+        .iter()
+        .all(|diagnostic| match diagnostic.severity() {
+            DiagnosticSeverity::Error => false,
+            DiagnosticSeverity::Warning => true,
+        })
+    {
+        // Only run validation if there are no parser errors.
+        // Otherwise, we risk validating recovered "stub" nodes.
+        validate_cst(&source_unit, &file_id, &mut diagnostics);
+    }
 
     let parsed_file = ParsedFile {
         file_id,

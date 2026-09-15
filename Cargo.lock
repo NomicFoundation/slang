@@ -4580,6 +4580,7 @@ dependencies = [
  "slang_solidity_v2_common",
  "slang_solidity_v2_parser",
  "solidity_v2_testing_utils",
+ "strum",
 ]
 
 [[package]]

@@ -10,7 +10,7 @@ use slang_solidity_v2_common::collections::{SortedMap, SortedSet};
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::diagnostics_output::targets::{SlangTarget, SolcTarget, TargetOutcome, TestTarget};
-use crate::snapshots::{self, SnapshotOutcome, SnapshotStatus, TestConfig, TestMatrix};
+use crate::snapshots::{self, SnapshotOutcome, TestConfig, TestMatrix};
 use crate::utils::multi_part_file::split_multi_file;
 
 pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
@@ -81,12 +81,6 @@ fn make_outcome(
     target: slang_solidity_v2_common::evm_targets::EvmTarget,
     outcome: &TargetOutcome,
 ) -> SnapshotOutcome {
-    let status = if outcome.compilation_succeeded {
-        SnapshotStatus::Success
-    } else {
-        SnapshotStatus::Failure
-    };
-
     let diagnostics = &outcome.diagnostics;
 
     let mut contents = String::new();
@@ -99,7 +93,7 @@ fn make_outcome(
     SnapshotOutcome {
         version,
         target,
-        status,
+        status: outcome.status,
         contents,
         extension: "txt",
     }
