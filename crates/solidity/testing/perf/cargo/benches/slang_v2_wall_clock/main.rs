@@ -75,6 +75,31 @@ fn parser(bencher: Bencher<'_, '_>, project_name: &str) {
         .bench(|| black_box(tests::slang_v2::parser::run(black_box(project))));
 }
 
+/// Lowers every already-parsed CST into the IR, without parsing or any of the
+/// later stages.
+///
+/// Parsing happens in the (untimed) input setup, so what this measures is the
+/// lowering alone.
+#[divan::bench(args = PROJECTS, max_time = MAX_TIME_SECS)]
+fn ir_builder(bencher: Bencher<'_, '_>, project_name: &str) {
+    let project = tests::slang_v2::parser::setup(project_name);
+
+    with_throughput_counters(bencher, project)
+        .with_inputs(|| tests::slang_v2::ir_builder::setup(project_name))
+        .bench_values(|input| black_box(tests::slang_v2::ir_builder::run(black_box(input))));
+}
+
+/// Builds the semantic context over an already-lowered IR, without parsing, IR
+/// building, or ABI computation.
+#[divan::bench(args = PROJECTS, max_time = MAX_TIME_SECS)]
+fn semantic(bencher: Bencher<'_, '_>, project_name: &str) {
+    let project = tests::slang_v2::parser::setup(project_name);
+
+    with_throughput_counters(bencher, project)
+        .with_inputs(|| tests::slang_v2::semantic::setup(project_name))
+        .bench_values(|input| black_box(tests::slang_v2::semantic::run(black_box(input))));
+}
+
 /// How the pipeline scales with the size of the thread pool it is given.
 ///
 /// The benchmarks above take every core; these pin one project to pools of
