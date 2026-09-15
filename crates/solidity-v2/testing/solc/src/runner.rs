@@ -2,7 +2,7 @@ use std::path::Path;
 
 use anyhow::{Context, Result};
 use slang_solidity_v2_common::collections::SortedMap;
-use slang_solidity_v2_common::diagnostics::{DiagnosticExtensions, DiagnosticSeverity};
+use slang_solidity_v2_common::diagnostics::DiagnosticSeverity;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use solidity_v2_testing_utils::compilation;
@@ -63,15 +63,19 @@ fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) ->
 
     let unit = compilation::compile(&files, language_version, evm_target);
 
-    let errors: Vec<_> = unit
+    if match unit.diagnostics().highest_severity() {
+        // Only consider errors as a test failure.
+        Some(DiagnosticSeverity::Error) => false,
+        // Skip less severe diagnostics.
+        Some(DiagnosticSeverity::Warning) => true,
+        None => true,
+    } {
+        return Ok(Outcome::Passed);
+    }
+
+    let diagnostics = unit
         .diagnostics()
         .iter()
-        .filter(|diagnostic| match diagnostic.severity() {
-            // Only consider errors as a test failure.
-            DiagnosticSeverity::Error => true,
-            // Skip less severe diagnostics.
-            DiagnosticSeverity::Warning => false,
-        })
         .map(|diagnostic| {
             let file_id = diagnostic.file_id();
             let source = files.get(file_id).map(String::as_str).unwrap_or_default();
@@ -79,11 +83,5 @@ fn run_test_case(test_case: &IsolTestCase, language_version: LanguageVersion) ->
         })
         .collect();
 
-    if errors.is_empty() {
-        return Ok(Outcome::Passed);
-    }
-
-    Ok(Outcome::Failed {
-        diagnostics: errors,
-    })
+    Ok(Outcome::Failed { diagnostics })
 }

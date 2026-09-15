@@ -18,17 +18,9 @@
         "specifier": {
           "type": "Range",
           "from": "Homestead",
-          "till": "Constantinople"
-        },
-        "reason": "solc warns that 'Support for EVM versions older than constantinople is deprecated', which slang has no equivalent for, so slang reports nothing at all on these targets. Unrelated to `mcopy`."
-      },
-      {
-        "specifier": {
-          "type": "Range",
-          "from": "Homestead",
           "till": "Cancun"
         },
-        "reason": "Before Cancun reserves it, solc still warns that '\"mcopy\" will be promoted to Yul reserved identifier in the future'. Slang models the name as either reserved or free, with no grace-period warning, so it reports nothing on these targets."
+        "reason": "Before Cancun reserves it, solc warns that 'mcopy will be promoted to Yul reserved identifier in the future'. Slang models the name as either reserved or free, with no grace-period warning, so it reports nothing on these targets. Below Constantinople, solc also warns that 'Support for EVM versions older than constantinople is deprecated', which slang has no equivalent for either."
       }
     ]
   }

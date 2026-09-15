@@ -3,9 +3,7 @@ use slang_solidity_v2_common::collections::{Set, SortedMap};
 use slang_solidity_v2_common::diagnostics::kinds::compilation::{
     DuplicatedFileId, MissingImportedFile,
 };
-use slang_solidity_v2_common::diagnostics::{
-    DiagnosticCollection, DiagnosticExtensions, DiagnosticSeverity,
-};
+use slang_solidity_v2_common::diagnostics::{DiagnosticCollection, DiagnosticSeverity};
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes as cst;
@@ -158,15 +156,13 @@ fn parse_file(
         mut diagnostics,
     } = Parser::parse(&file_id, contents, language_version);
 
-    if diagnostics
-        .iter()
-        .all(|diagnostic| match diagnostic.severity() {
-            DiagnosticSeverity::Error => false,
-            DiagnosticSeverity::Warning => true,
-        })
-    {
+    if match diagnostics.highest_severity() {
+        Some(DiagnosticSeverity::Error) => false,
+        Some(DiagnosticSeverity::Warning) => true,
+        None => true,
+    } {
         // Only run validation if there are no parser errors.
-        // Otherwise, we risk validating recovered "stub" nodes.
+        // Otherwise, we risk validating error-recovery "stub" nodes.
         validate_cst(&source_unit, &file_id, &mut diagnostics);
     }
 

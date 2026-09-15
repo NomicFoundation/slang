@@ -3,7 +3,9 @@ use std::ops::Range;
 use itertools::Itertools;
 
 use crate::diagnostics::diagnostic::Diagnostic;
+use crate::diagnostics::extensions::DiagnosticExtensions;
 use crate::diagnostics::kinds::DiagnosticKind;
+use crate::diagnostics::severity::DiagnosticSeverity;
 use crate::files::FileId;
 
 /// An ordered collection of [`Diagnostic`] values produced during a single
@@ -23,6 +25,14 @@ impl DiagnosticCollection {
     ) {
         self.contents
             .push(Diagnostic::new(file_id, text_range, kind));
+    }
+
+    /// Returns the severity of the most severe diagnostic, or `None` if empty.
+    pub fn highest_severity(&self) -> Option<DiagnosticSeverity> {
+        self.contents
+            .iter()
+            .map(DiagnosticExtensions::severity)
+            .min()
     }
 
     /// Returns `true` if the collection contains no diagnostics.

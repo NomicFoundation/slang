@@ -3753,6 +3753,7 @@ pub fn slang_solidity_v2_common::diagnostics::Diagnostic::message(&self) -> allo
 pub fn slang_solidity_v2_common::diagnostics::Diagnostic::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::DiagnosticCollection
 impl slang_solidity_v2_common::diagnostics::DiagnosticCollection
+pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::highest_severity(&self) -> core::option::Option<slang_solidity_v2_common::diagnostics::DiagnosticSeverity>
 pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::is_empty(&self) -> bool
 pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = &slang_solidity_v2_common::diagnostics::Diagnostic>
 pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::push(&mut self, slang_solidity_v2_common::files::FileId, core::ops::range::Range<usize>, impl core::convert::Into<slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind>)

@@ -7,7 +7,7 @@ use std::path::Path;
 use anyhow::Result;
 pub use config::{TestConfig, TestMatrix};
 use infra_utils::codegen::CodegenFileSystem;
-use slang_solidity_v2_common::diagnostics::{Diagnostic, DiagnosticExtensions, DiagnosticSeverity};
+use slang_solidity_v2_common::diagnostics::{DiagnosticCollection, DiagnosticSeverity};
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use strum::Display;
@@ -23,17 +23,12 @@ pub enum SnapshotStatus {
 }
 
 impl SnapshotStatus {
-    pub fn from_diagnostics<'a>(diagnostics: impl IntoIterator<Item = &'a Diagnostic>) -> Self {
-        let mut status = Self::Success;
-
-        for diagnostic in diagnostics {
-            match diagnostic.severity() {
-                DiagnosticSeverity::Error => return Self::Failure,
-                DiagnosticSeverity::Warning => status = Self::Warning,
-            }
+    pub fn from_diagnostics(diagnostics: &DiagnosticCollection) -> Self {
+        match diagnostics.highest_severity() {
+            Some(DiagnosticSeverity::Error) => Self::Failure,
+            Some(DiagnosticSeverity::Warning) => Self::Warning,
+            None => Self::Success,
         }
-
-        status
     }
 }
 
