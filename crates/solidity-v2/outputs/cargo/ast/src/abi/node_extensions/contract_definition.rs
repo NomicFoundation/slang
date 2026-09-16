@@ -2,26 +2,11 @@ use ruint::aliases::U256;
 use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::StorageLayoutBuilder;
 
-use crate::abi::{AbiEntry, ContractAbi, StorageItem};
+use crate::abi::{ContractAbi, StorageItem};
 use crate::ast::{ContractDefinitionStruct, StateVariableDefinition, StateVariableMutability};
 
 impl ContractDefinitionStruct {
     pub fn compute_abi(&self) -> Option<ContractAbi> {
-        let name = self.ir_node.name.unparse().to_string();
-        let file_id = self.get_file_id().clone();
-        let entries = self.compute_abi_entries()?;
-        let (storage_layout, transient_storage_layout) = self.compute_storage_layout()?;
-        Some(ContractAbi {
-            node_id: self.ir_node.id(),
-            name,
-            file_id,
-            entries,
-            storage_layout,
-            transient_storage_layout,
-        })
-    }
-
-    fn compute_abi_entries(&self) -> Option<Vec<AbiEntry>> {
         let mut entries = Vec::new();
         if let Some(constructor) = self.constructor() {
             entries.push(constructor.compute_abi_entry()?);
@@ -42,9 +27,15 @@ impl ContractDefinitionStruct {
         for event in &self.linearised_events() {
             entries.push(event.compute_abi_entry()?);
         }
-
-        entries.sort();
-        Some(entries)
+        let (storage_layout, transient_storage_layout) = self.compute_storage_layout()?;
+        Some(ContractAbi::new(
+            self.ir_node.id(),
+            self.ir_node.name.unparse().to_string(),
+            self.get_file_id().clone(),
+            entries,
+            storage_layout,
+            transient_storage_layout,
+        ))
     }
 
     /// Retrieves the custom base slot for this contract, if specified. This is

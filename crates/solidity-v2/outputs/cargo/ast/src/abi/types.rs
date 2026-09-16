@@ -119,6 +119,59 @@ pub(crate) fn type_as_abi_type(
     abi_type_from_ast_type(&AstType::create(type_id, semantic), &mut Set::default())
 }
 
+/// Whether the type has an ABI representation, decided the way [`abi_type_from_ast_type`]
+/// does but without building it: nothing is allocated for a type that will be rendered later.
+pub(crate) fn is_abi_type(semantic: &Arc<SemanticContext>, type_id: TypeId) -> bool {
+    has_abi_type(&AstType::create(type_id, semantic), &mut Set::default())
+}
+
+/// Mirrors the `None` arms of [`abi_type_from_ast_type`]; keep the two in step.
+fn has_abi_type(value: &AstType, visited_structs: &mut Set<NodeId>) -> bool {
+    match value {
+        AstType::Address(_)
+        | AstType::Boolean(_)
+        | AstType::ByteArray(_)
+        | AstType::Bytes(_)
+        | AstType::Contract(_)
+        | AstType::Enum(_)
+        | AstType::FixedPointNumber(_)
+        | AstType::Function(_)
+        | AstType::Integer(_)
+        | AstType::Interface(_)
+        | AstType::String(_) => true,
+        AstType::Array(array) => has_abi_type(&array.element_type(), visited_structs),
+        AstType::ArraySlice(slice) => has_abi_type(&slice.array_type(), visited_structs),
+        AstType::FixedSizeArray(array) => has_abi_type(&array.element_type(), visited_structs),
+        AstType::Struct(struct_type) => {
+            let AstDefinition::Struct(definition) = struct_type.definition() else {
+                unreachable!("a struct type resolves to a struct definition");
+            };
+            if !visited_structs.insert(definition.node_id()) {
+                return false;
+            }
+            let representable = definition.members().iter().all(|member| {
+                member
+                    .get_type()
+                    .is_some_and(|member_type| has_abi_type(&member_type, visited_structs))
+            });
+            visited_structs.remove(&definition.node_id());
+            representable
+        }
+        AstType::UserDefinedValue(udvt) => udvt
+            .target_type()
+            .is_some_and(|target| has_abi_type(&target, visited_structs)),
+        AstType::Error(_)
+        | AstType::Event(_)
+        | AstType::Library(_)
+        | AstType::Literal(_)
+        | AstType::Mapping(_)
+        | AstType::MetaType(_)
+        | AstType::Tuple(_)
+        | AstType::UserMetaType(_)
+        | AstType::Void(_) => false,
+    }
+}
+
 /// Error returned by `TryFrom<&Type>` for [`AbiType`] when the given
 /// [`Type`](crate::ast::Type) has no ABI representation — e.g. a mapping, an
 /// internal tuple, a library, or a malformed recursive struct.

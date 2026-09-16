@@ -74,7 +74,7 @@ fn getter_output_abi_type(name: &str) -> AbiType {
     else {
         panic!("a state variable getter is a function");
     };
-    getter.outputs()[0].abi_type().clone()
+    getter.outputs()[0].abi_type()
 }
 
 fn uint256() -> AbiType {
@@ -236,4 +236,78 @@ fn display_spellings() {
         .to_string(),
         "uint256[]"
     );
+}
+
+define_fixture!(
+    ParameterKinds,
+    file: "main.sol", r#"
+pragma solidity ^0.8.0;
+interface I { function f() external; }
+library L {}
+type Wad is uint256;
+contract C {
+    enum E { A }
+    struct T { uint x; E e; }
+    struct WithMapping { mapping(uint => uint) m; }
+    struct Node { Node[] children; }
+
+    function accepted(
+        address payable a, bool b, bytes calldata c, string memory s, function(uint) external f,
+        int128 i, E e, bytes4 b4, uint[] memory arr, uint[2] memory fixedArr, T memory t, Wad w,
+        C self, I iface
+    ) external pure {}
+    function mappingParameter(mapping(uint => uint) storage m) external {}
+    function structWithMapping(WithMapping storage m) external {}
+    function recursiveStruct(Node memory n) external pure {}
+    function libraryParameter(L l) external pure {}
+}
+"#,
+);
+
+#[test]
+fn abi_entries_accept_exactly_the_parameters_with_an_abi_type() {
+    // `AbiParameter` decides whether a type has an ABI representation without building it, so
+    // an entry must exist exactly when the public `TryFrom` conversion succeeds for every
+    // parameter, and the two must then agree on the `AbiType`.
+    let unit = ParameterKinds::build_compilation_unit();
+    let contract = unit
+        .find_contract_by_name("C")
+        .next()
+        .expect("contract C exists");
+
+    let mut checked = 0;
+    for function in contract.linearised_functions() {
+        let name = function
+            .name()
+            .expect("functions are named")
+            .name()
+            .to_owned();
+        let parameters = function.parameters().iter().collect::<Vec<_>>();
+        let convertible = parameters.iter().all(|parameter| {
+            parameter
+                .get_type()
+                .is_some_and(|parameter_type| AbiType::try_from(&parameter_type).is_ok())
+        });
+
+        let entry = function.compute_abi_entry();
+        assert_eq!(
+            entry.is_some(),
+            convertible,
+            "acceptance mismatch for `{name}`"
+        );
+        if let Some(AbiEntry::Function(entry)) = entry {
+            for (input, parameter) in entry.inputs().iter().zip(&parameters) {
+                let expected = AbiType::try_from(&parameter.get_type().expect("typed above"))
+                    .expect("converted above");
+                assert_eq!(input.abi_type(), expected, "type mismatch in `{name}`");
+                assert_eq!(
+                    AbiType::try_from(&input.get_type()),
+                    Ok(expected),
+                    "the parameter's view resolves to a different type in `{name}`"
+                );
+            }
+        }
+        checked += 1;
+    }
+    assert_eq!(checked, 5, "every function in the fixture was checked");
 }
