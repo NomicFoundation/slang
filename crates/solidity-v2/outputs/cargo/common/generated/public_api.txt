@@ -4838,6 +4838,7 @@ pub slang_solidity_v2_common::versions::LanguageVersionSpecifier::Till
 pub slang_solidity_v2_common::versions::LanguageVersionSpecifier::Till::till: slang_solidity_v2_common::versions::LanguageVersion
 impl slang_solidity_v2_common::versions::LanguageVersionSpecifier
 pub fn slang_solidity_v2_common::versions::LanguageVersionSpecifier::contains(&self, slang_solidity_v2_common::versions::LanguageVersion) -> bool
+pub fn slang_solidity_v2_common::versions::LanguageVersionSpecifier::intersect(&self, &Self) -> core::option::Option<Self>
 impl slang_solidity_v2_common::versions::LanguageVersionSpecifier
 pub const fn slang_solidity_v2_common::versions::LanguageVersionSpecifier::from(slang_solidity_v2_common::versions::LanguageVersion) -> Self
 pub const fn slang_solidity_v2_common::versions::LanguageVersionSpecifier::range(slang_solidity_v2_common::versions::LanguageVersion, slang_solidity_v2_common::versions::LanguageVersion) -> Self

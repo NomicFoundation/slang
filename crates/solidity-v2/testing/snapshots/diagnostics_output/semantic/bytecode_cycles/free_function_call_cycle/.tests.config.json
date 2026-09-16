@@ -1,14 +1,11 @@
 {
-  "matrix": {
-    "type": "SingleTargetAllVersions",
-    "expected_solc_divergence": [
-      {
-        "specifier": {
-          "type": "Till",
-          "till": "0.8.4"
-        },
-        "reason": "solc detects bytecode cycles across all function calls only since '0.8.4'. Slang implements the '0.8.4' semantics for every version, so it also reports this cycle on '0.8.0' to '0.8.3', where solc misses it."
-      }
-    ]
-  }
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "Till",
+        "till": "0.8.4"
+      },
+      "reason": "solc detects bytecode cycles across all function calls only since '0.8.4'. Slang implements the '0.8.4' semantics for every version, so it also reports this cycle on '0.8.0' to '0.8.3', where solc misses it."
+    }
+  ]
 }

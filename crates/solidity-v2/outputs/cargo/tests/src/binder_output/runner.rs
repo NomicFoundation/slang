@@ -8,7 +8,7 @@ use solidity_v2_testing_utils::compilation;
 
 use super::report::binder_report;
 use super::report_data::ReportData;
-use crate::snapshots::{self, SnapshotOutcome, SnapshotStatus, TestConfig, TestMatrix};
+use crate::snapshots::{self, SnapshotOutcome, SnapshotStatus, TestCase, TestConfig};
 use crate::utils::multi_part_file::split_multi_file;
 
 pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
@@ -30,21 +30,17 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         .collect();
 
     let test_config = TestConfig::resolve(&test_dir)?;
-    match &test_config.matrix {
-        TestMatrix::SingleVersionAllTargets(matrix) => ensure!(
-            matrix.expected_solc_divergence.is_empty(),
-            "Not comparing with 'solc' in 'binder_output' tests"
-        ),
-        TestMatrix::SingleTargetAllVersions(matrix) => ensure!(
-            matrix.expected_solc_divergence.is_empty(),
-            "Not comparing with 'solc' in 'binder_output' tests"
-        ),
-    }
+    let test_cases: Vec<TestCase> = test_config.test_cases().collect();
+
+    ensure!(
+        test_cases.iter().all(|case| !case.expected_solc_divergence),
+        "Not comparing with 'solc' in 'binder_output' tests"
+    );
 
     snapshots::generate_snapshots(
         &test_dir,
         &mut fs,
-        &test_config,
+        &test_cases,
         "generated",
         |version, target| {
             let compilation = compilation::compile(&files, version, target);
