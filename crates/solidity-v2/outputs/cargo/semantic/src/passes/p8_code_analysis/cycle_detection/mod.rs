@@ -138,7 +138,7 @@ impl DependencyGraph {
 mod tests {
     use super::*;
 
-    fn graph(edges: Vec<(usize, Vec<usize>)>) -> DependencyGraph {
+    fn graph(edges: Vec<(u64, Vec<u64>)>) -> DependencyGraph {
         DependencyGraph::new(
             edges
                 .into_iter()
@@ -152,12 +152,12 @@ mod tests {
         )
     }
 
-    fn find_cycle(graph: &DependencyGraph, root: usize) -> CycleSearchResult {
+    fn find_cycle(graph: &DependencyGraph, root: u64) -> CycleSearchResult {
         graph.find_cycle(NodeId::from(root))
     }
 
     /// An acyclic chain `0 -> 1 -> ... -> length - 1`.
-    fn chain(length: usize) -> DependencyGraph {
+    fn chain(length: u64) -> DependencyGraph {
         graph(
             (0..length)
                 .map(|id| {
@@ -260,39 +260,39 @@ mod tests {
 
     #[test]
     fn deep_acyclic_chain_exceeds_depth_limit() {
-        let graph = chain(DependencyGraph::MAX_DEPTH + 10);
+        let graph = chain(DependencyGraph::MAX_DEPTH as u64 + 10);
 
         assert_eq!(
             find_cycle(&graph, 0),
             CycleSearchResult::DepthExceeded {
-                node: NodeId::from(DependencyGraph::MAX_DEPTH - 1)
+                node: NodeId::from(DependencyGraph::MAX_DEPTH as u64 - 1)
             }
         );
     }
 
     #[test]
     fn chain_reaching_max_depth_is_rejected() {
-        let graph = chain(DependencyGraph::MAX_DEPTH);
+        let graph = chain(DependencyGraph::MAX_DEPTH as u64);
 
         assert_eq!(
             find_cycle(&graph, 0),
             CycleSearchResult::DepthExceeded {
-                node: NodeId::from(DependencyGraph::MAX_DEPTH - 1)
+                node: NodeId::from(DependencyGraph::MAX_DEPTH as u64 - 1)
             }
         );
     }
 
     #[test]
     fn chain_below_max_depth_is_accepted() {
-        let graph = chain(DependencyGraph::MAX_DEPTH - 1);
+        let graph = chain(DependencyGraph::MAX_DEPTH as u64 - 1);
 
         assert_eq!(find_cycle(&graph, 0), CycleSearchResult::None);
     }
 
     /// An oversized chain `2 -> 3 -> ... -> end`, entered by roots 0 and 1.
     /// Searches from 0, 1 and 2 all give up, each at a different node.
-    fn oversized_chain(extra_edges: Vec<(usize, Vec<usize>)>) -> DependencyGraph {
-        let chain_end = DependencyGraph::MAX_DEPTH + 1;
+    fn oversized_chain(extra_edges: Vec<(u64, Vec<u64>)>) -> DependencyGraph {
+        let chain_end: u64 = DependencyGraph::MAX_DEPTH as u64 + 1;
         let mut edges = vec![(0, vec![2]), (1, vec![2])];
         edges.extend((2..=chain_end).map(|id| {
             let successors = if id < chain_end { vec![id + 1] } else { vec![] };
@@ -314,7 +314,7 @@ mod tests {
             vec![(
                 NodeId::from(0),
                 CycleSearchResult::DepthExceeded {
-                    node: NodeId::from(DependencyGraph::MAX_DEPTH)
+                    node: NodeId::from(DependencyGraph::MAX_DEPTH as u64)
                 }
             )]
         );
@@ -324,7 +324,7 @@ mod tests {
     fn cycles_are_still_reported_after_an_exhaustion() {
         // A cycle declared after the oversized chain. Dropping the repeated
         // give-ups must not drop the cycle behind them.
-        let first = DependencyGraph::MAX_DEPTH + 2;
+        let first = DependencyGraph::MAX_DEPTH as u64 + 2;
         let second = first + 1;
         let graph = oversized_chain(vec![(first, vec![second]), (second, vec![first])]);
 
@@ -334,7 +334,7 @@ mod tests {
                 (
                     NodeId::from(0),
                     CycleSearchResult::DepthExceeded {
-                        node: NodeId::from(DependencyGraph::MAX_DEPTH)
+                        node: NodeId::from(DependencyGraph::MAX_DEPTH as u64)
                     }
                 ),
                 (
@@ -366,7 +366,7 @@ mod tests {
         // same way (its `CycleDetector` skips processed vertices before its own
         // depth check), so re-checking depth here would diverge from solc.
         let target = 1;
-        let chain_end = DependencyGraph::MAX_DEPTH - 1;
+        let chain_end = DependencyGraph::MAX_DEPTH as u64 - 1;
         let mut edges = vec![(0, vec![target, 2]), (target, vec![])];
         edges.extend((2..=chain_end).map(|id| {
             let next = if id < chain_end { id + 1 } else { target };

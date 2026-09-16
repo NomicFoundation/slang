@@ -2785,7 +2785,7 @@ impl slang_solidity_v2_ir::ir::TextRange for slang_solidity_v2_ir::ir::NewExpres
 pub fn slang_solidity_v2_ir::ir::NewExpressionStruct::calculate_text_range(&self) -> core::option::Option<core::ops::range::Range<usize>>
 pub struct slang_solidity_v2_ir::ir::NodeIdGenerator
 impl slang_solidity_v2_ir::ir::NodeIdGenerator
-pub fn slang_solidity_v2_ir::ir::NodeIdGenerator::allocated_count(&self) -> usize
+pub fn slang_solidity_v2_ir::ir::NodeIdGenerator::allocated_count(&self) -> u64
 pub fn slang_solidity_v2_ir::ir::NodeIdGenerator::histogram(&self) -> &slang_solidity_v2_ir::ir::NodeKindHistogram
 pub fn slang_solidity_v2_ir::ir::NodeIdGenerator::next_id_of(&mut self, slang_solidity_v2_ir::ir::NodeKind) -> slang_solidity_v2_common::nodes::NodeId
 impl core::default::Default for slang_solidity_v2_ir::ir::NodeIdGenerator
