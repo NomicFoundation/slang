@@ -1,3 +1,5 @@
+use std::cmp::Reverse;
+
 use rayon::iter::{ParallelBridge, ParallelIterator};
 use slang_solidity_v2_common::collections::{Set, SortedMap};
 use slang_solidity_v2_common::diagnostics::kinds::compilation::{
@@ -124,7 +126,19 @@ fn parse_and_build_ir(
         return paired.map(parse_and_lower).collect();
     }
 
-    paired.par_bridge().map(parse_and_lower).collect()
+    // Longest-processing-time-first: sort the files by size, good scheduling
+    // heuristic.
+    let mut ordered = paired.collect::<Vec<_>>();
+    ordered.sort_by_key(|((_, contents), _)| Reverse(contents.len()));
+
+    // `par_bridge()` is necessary rather than `into_par_iter()` to guarantee
+    // files are processed from first to last, rather than dividing the
+    // sequence in halves.
+    ordered
+        .into_iter()
+        .par_bridge()
+        .map(parse_and_lower)
+        .collect()
 }
 
 /// Parses one source file, lowers it into its IR representation.
