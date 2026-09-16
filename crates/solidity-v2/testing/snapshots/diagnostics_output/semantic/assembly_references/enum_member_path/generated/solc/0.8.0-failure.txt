@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 8198] Error: Identifier not found.
+    ╭─[input.sol:11:22]
+    │
+ 11 │             let t := E.A
+    │                      ─┬─  
+    │                       ╰─── Error occurred here.
+────╯

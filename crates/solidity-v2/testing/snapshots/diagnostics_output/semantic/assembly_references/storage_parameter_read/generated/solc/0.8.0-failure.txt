@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9068] Error: You have to use the ".slot" or ".offset" suffix to access storage reference variables.
+   ╭─[input.sol:7:17]
+   │
+ 7 │             pop(a)
+   │                 ┬  
+   │                 ╰── Error occurred here.
+───╯

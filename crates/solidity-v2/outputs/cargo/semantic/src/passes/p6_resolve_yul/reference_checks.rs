@@ -1,15 +1,29 @@
 use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_common::diagnostics::kinds::semantic::{
-    YulAssignmentToConstant, YulForwardReferencedConstant, YulSuffixOnConstant,
-    YulUnsupportedConstant,
+    UnsupportedReferenceKind, YulAssignmentToConstant, YulAssignmentToNonVariable,
+    YulAssignmentToOffset, YulAssignmentToStateVariable, YulCalldataArrayAccess, YulCalldataSuffix,
+    YulExternalFunctionAccess, YulForwardReferencedConstant, YulFunctionPointerSuffix,
+    YulImmutableAccess, YulInternalFunctionPointerSuffix, YulStorageSuffix,
+    YulStorageVariableAccess, YulSuffixOnConstant, YulUnsupportedConstant, YulUnsupportedReference,
+    YulUnsupportedSuffix,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::NodeIdentity;
 
 use super::Pass;
-use crate::binder::{Binder, Definition, Resolution, Typing};
-use crate::types::{LiteralKind, Type};
+use crate::binder::{Binder, Definition, Reference, Resolution, Typing};
+use crate::built_ins::InternalBuiltIn;
+use crate::types::{
+    ArrayType, BytesType, DataLocation, FunctionTypeVisibility, LiteralKind, StringType, Type,
+};
+
+// Whether a path is read or assigned to.
+#[derive(Clone, Copy, Eq, PartialEq)]
+pub(super) enum AccessKind {
+    Read,
+    Write,
+}
 
 // What the end of the chain from a referenced constant holds.
 enum RootSearchResult {
@@ -27,8 +41,8 @@ impl Pass<'_> {
         &mut self,
         identifier: &ir::Identifier,
         resolution: &Resolution,
-        suffix: Option<&ir::Identifier>,
-        is_lvalue: bool,
+        suffix: Option<&Reference>,
+        access: AccessKind,
     ) {
         let Some(definition_id) = self
             .binder
@@ -42,19 +56,141 @@ impl Pass<'_> {
         };
 
         match definition {
+            // Yul locals are internal references, nothing to validate.
+            Definition::YulFunction(_)
+            | Definition::YulParameter(_)
+            | Definition::YulVariable(_) => {}
             Definition::Constant(_) => {
-                self.check_constant_reference(identifier, definition_id, suffix, is_lvalue);
+                self.check_constant_reference(identifier, definition_id, suffix, access);
             }
-            Definition::StateVariable(variable) => {
-                if matches!(
-                    variable.ir_node.attributes.mutability,
-                    ir::StateVariableMutability::Constant
-                ) {
-                    self.check_constant_reference(identifier, definition_id, suffix, is_lvalue);
+            Definition::StateVariable(variable) => match variable.ir_node.attributes.mutability {
+                ir::StateVariableMutability::Constant => {
+                    self.check_constant_reference(identifier, definition_id, suffix, access);
+                }
+                ir::StateVariableMutability::Immutable => {
+                    self.push_diagnostic(identifier, YulImmutableAccess);
+                }
+                ir::StateVariableMutability::Mutable | ir::StateVariableMutability::Transient => {
+                    self.check_variable_reference(identifier, definition_id, suffix, access);
+                }
+            },
+            Definition::Variable(_) | Definition::Parameter(_) => {
+                self.check_variable_reference(identifier, definition_id, suffix, access);
+            }
+            _ => self.check_declaration_reference(identifier, definition_id, suffix, access),
+        }
+    }
+
+    // Validates a reference to a variable. A storage variable is addressed
+    // through `.slot` and `.offset`, a dynamic calldata array through
+    // `.offset` and `.length`, and an external function pointer through
+    // `.selector` and `.address`. Everything else is read directly and takes
+    // no suffix.
+    fn check_variable_reference(
+        &mut self,
+        identifier: &ir::Identifier,
+        definition_id: NodeId,
+        suffix: Option<&Reference>,
+        access: AccessKind,
+    ) {
+        // A variable whose type did not resolve cannot be classified, so its
+        // references are not checked.
+        let Typing::Resolved(type_id) = self.binder.node_typing(definition_id) else {
+            return;
+        };
+
+        // A state variable has a slot of its own, where a local or a parameter
+        // only ever points at one.
+        let is_state_variable = matches!(
+            self.binder.find_definition_by_id(definition_id),
+            Some(Definition::StateVariable(_))
+        );
+
+        let variable_type = self.types.get_type_by_id(*type_id);
+        if is_state_variable || variable_type.data_location() == Some(DataLocation::Storage) {
+            match suffix {
+                None => self.push_diagnostic(identifier, YulStorageVariableAccess),
+                Some(suffix) => {
+                    if !matches!(
+                        suffix.resolution,
+                        Resolution::BuiltIn(InternalBuiltIn::YulSlot | InternalBuiltIn::YulOffset)
+                    ) {
+                        self.push_diagnostic(&suffix.identifier, YulStorageSuffix);
+                    } else if access == AccessKind::Write {
+                        if is_state_variable {
+                            self.push_diagnostic(&suffix.identifier, YulAssignmentToStateVariable);
+                        } else if matches!(
+                            suffix.resolution,
+                            Resolution::BuiltIn(InternalBuiltIn::YulOffset)
+                        ) {
+                            self.push_diagnostic(&suffix.identifier, YulAssignmentToOffset);
+                        }
+                    }
                 }
             }
-            // TODO(validation): Add other diagnostics.
-            _ => {}
+        } else if is_dynamic_calldata_array(variable_type) {
+            match suffix {
+                None => self.push_diagnostic(identifier, YulCalldataArrayAccess),
+                Some(suffix) => {
+                    if !matches!(
+                        suffix.resolution,
+                        Resolution::BuiltIn(
+                            InternalBuiltIn::YulOffset | InternalBuiltIn::YulLengthField
+                        )
+                    ) {
+                        self.push_diagnostic(&suffix.identifier, YulCalldataSuffix);
+                    }
+                }
+            }
+        } else if let Type::Function(function_type) = variable_type {
+            let is_external = function_type.visibility == FunctionTypeVisibility::External;
+            match suffix {
+                None => {
+                    if is_external {
+                        self.push_diagnostic(identifier, YulExternalFunctionAccess);
+                    }
+                }
+                Some(suffix) => {
+                    if !matches!(
+                        suffix.resolution,
+                        Resolution::BuiltIn(
+                            InternalBuiltIn::YulSelector | InternalBuiltIn::YulAddressField
+                        )
+                    ) {
+                        self.push_diagnostic(&suffix.identifier, YulFunctionPointerSuffix);
+                    } else if !is_external {
+                        self.push_diagnostic(&suffix.identifier, YulInternalFunctionPointerSuffix);
+                    }
+                }
+            }
+        } else if let Some(suffix) = suffix {
+            self.push_diagnostic(&suffix.identifier, YulUnsupportedSuffix);
+        }
+    }
+
+    // Validates a reference to a declaration that is not a variable. It has
+    // no addressable parts and cannot be assigned to. Only a library can be
+    // read, which yields its address.
+    fn check_declaration_reference(
+        &mut self,
+        identifier: &ir::Identifier,
+        definition_id: NodeId,
+        suffix: Option<&Reference>,
+        access: AccessKind,
+    ) {
+        if let Some(suffix) = suffix {
+            self.push_diagnostic(&suffix.identifier, YulUnsupportedSuffix);
+        } else if access == AccessKind::Write {
+            self.push_diagnostic(identifier, YulAssignmentToNonVariable);
+        } else {
+            let definition = self
+                .binder
+                .find_definition_by_id(definition_id)
+                .expect("the dispatch resolved this definition");
+            if !matches!(definition, Definition::Library(_)) {
+                let kind = declaration_kind(definition);
+                self.push_diagnostic(identifier, YulUnsupportedReference { kind });
+            }
         }
     }
 
@@ -63,8 +199,8 @@ impl Pass<'_> {
         &mut self,
         identifier: &ir::Identifier,
         definition_id: NodeId,
-        suffix: Option<&ir::Identifier>,
-        is_lvalue: bool,
+        suffix: Option<&Reference>,
+        access: AccessKind,
     ) {
         // An uninitialized constant is already reported during IR build.
         if self.binder.constant_value(definition_id).is_none() {
@@ -72,7 +208,7 @@ impl Pass<'_> {
         }
 
         // Constants are read only.
-        if is_lvalue {
+        if access == AccessKind::Write {
             self.push_diagnostic(identifier, YulAssignmentToConstant);
             return;
         }
@@ -80,7 +216,7 @@ impl Pass<'_> {
         // A constant has no storage slot and no addressable parts, so no
         // suffix applies to it.
         if let Some(suffix) = suffix {
-            self.push_diagnostic(suffix, YulSuffixOnConstant);
+            self.push_diagnostic(&suffix.identifier, YulSuffixOnConstant);
             return;
         }
 
@@ -174,6 +310,52 @@ impl Pass<'_> {
                     | LiteralKind::Address { .. }
             )
         )
+    }
+}
+
+fn is_dynamic_calldata_array(variable_type: &Type) -> bool {
+    matches!(
+        variable_type,
+        Type::Array(ArrayType {
+            location: DataLocation::Calldata,
+            ..
+        }) | Type::Bytes(BytesType {
+            location: DataLocation::Calldata
+        }) | Type::String(StringType {
+            location: DataLocation::Calldata
+        })
+    )
+}
+
+// The kind of a declaration that assembly cannot reference.
+fn declaration_kind(definition: &Definition) -> UnsupportedReferenceKind {
+    match definition {
+        Definition::Contract(_) => UnsupportedReferenceKind::Contract,
+        Definition::Enum(_) => UnsupportedReferenceKind::Enum,
+        Definition::Error(_) => UnsupportedReferenceKind::Error,
+        Definition::Event(_) => UnsupportedReferenceKind::Event,
+        Definition::Function(_) => UnsupportedReferenceKind::Function,
+        Definition::Import(_) | Definition::ImportedSymbol(_) => UnsupportedReferenceKind::Import,
+        Definition::Interface(_) => UnsupportedReferenceKind::Interface,
+        Definition::Modifier(_) => UnsupportedReferenceKind::Modifier,
+        Definition::Struct(_) => UnsupportedReferenceKind::Struct,
+        Definition::UserDefinedValueType(_) => UnsupportedReferenceKind::UserDefinedValueType,
+        // Name lookup walks block, contract and file scopes only. Members are
+        // registered in the scope of their enum or struct, and a type
+        // parameter is registered in no scope at all.
+        Definition::EnumMember(_) | Definition::StructMember(_) | Definition::TypeParameter(_) => {
+            unreachable!("a name lookup cannot find these declarations")
+        }
+        Definition::Library(_)
+        | Definition::Constant(_)
+        | Definition::StateVariable(_)
+        | Definition::Variable(_)
+        | Definition::Parameter(_)
+        | Definition::YulFunction(_)
+        | Definition::YulParameter(_)
+        | Definition::YulVariable(_) => {
+            unreachable!("assembly can reference these declarations")
+        }
     }
 }
 

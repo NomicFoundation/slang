@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/yul-unsupported-reference] Error: This is a function. Only variables and libraries can be referenced in inline assembly.
+   ╭─[input.sol:9:22]
+   │
+ 9 │             let t := g
+   │                      ┬  
+   │                      ╰── Error occurred here.
+───╯
