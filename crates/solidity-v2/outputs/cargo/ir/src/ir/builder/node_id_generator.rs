@@ -40,7 +40,7 @@ impl Default for NodeKindHistogram {
 /// While allocating IDs it also accumulates a [`NodeKindHistogram`] of the
 /// kinds it has been asked to allocate (see [`Self::histogram`]).
 pub struct NodeIdGenerator {
-    next_id: usize,
+    next_id: u64,
     histogram: NodeKindHistogram,
 }
 
@@ -56,7 +56,7 @@ impl NodeIdGenerator {
     }
 
     /// The total number of `NodeId`s allocated by this generator so far.
-    pub fn allocated_count(&self) -> usize {
+    pub fn allocated_count(&self) -> u64 {
         self.next_id.saturating_sub(1)
     }
 
@@ -69,7 +69,7 @@ impl NodeIdGenerator {
 impl Default for NodeIdGenerator {
     fn default() -> Self {
         Self {
-            next_id: 1usize,
+            next_id: 1u64,
             histogram: NodeKindHistogram::default(),
         }
     }
