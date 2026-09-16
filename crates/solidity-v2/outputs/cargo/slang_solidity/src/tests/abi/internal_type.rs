@@ -1,5 +1,9 @@
 //! `AbiParameter::internal_type()` spells the type the way solc's JSON-ABI `internalType` field
-//! does (checked against solc 0.8.34 `--abi` for the same source).
+//! does. The fixture builds at `LanguageVersion::LATEST`; the expected spellings were taken by
+//! hand from solc 0.8.34 `--abi` on the same source, not from a solc run in the test.
+// TODO: compare these spellings against a solc run at the fixture's own version instead of
+// pinning them by hand. Until then, a failure after a `LATEST` bump means re-deriving the
+// expectation from solc, not editing it.
 
 use crate::abi::AbiEntry;
 use crate::define_fixture;

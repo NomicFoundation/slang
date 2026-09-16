@@ -1,5 +1,4 @@
 use itertools::Either;
-use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::types::{FunctionType, TupleType, Type};
 
 use crate::abi::{AbiEntry, AbiFunction, AbiMutability, AbiParameter, selector_from_signature};
@@ -15,17 +14,8 @@ impl StateVariableDefinitionStruct {
 
     /// The type of the variable's generated getter, if it has one.
     fn getter_function_type(&self) -> Option<&FunctionType> {
-        let binder::Definition::StateVariable(definition) = self
-            .semantic
-            .binder()
-            .find_definition_by_id(self.ir_node.id())?
-        else {
-            unreachable!("definition is not a state variable");
-        };
-        let Type::Function(function_type) = self
-            .semantic
-            .types()
-            .get_type_by_id(definition.getter_type_id?)
+        let Type::Function(function_type) =
+            self.semantic.types().get_type_by_id(self.getter_type_id()?)
         else {
             unreachable!("getter type is not a function");
         };

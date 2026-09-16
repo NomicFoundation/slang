@@ -295,21 +295,27 @@ fn abi_entries_accept_exactly_the_parameters_with_an_abi_type() {
             convertible,
             "acceptance mismatch for `{name}`"
         );
-        if let Some(AbiEntry::Function(entry)) = entry {
-            assert_eq!(
-                entry.inputs().len(),
-                parameters.len(),
-                "the entry dropped a parameter of `{name}`"
-            );
-            for (input, parameter) in entry.inputs().iter().zip(&parameters) {
-                let expected = AbiType::try_from(&parameter.get_type().expect("typed above"))
-                    .expect("converted above");
-                assert_eq!(input.abi_type(), expected, "type mismatch in `{name}`");
+        match entry {
+            None => {}
+            Some(AbiEntry::Function(entry)) => {
                 assert_eq!(
-                    AbiType::try_from(&input.get_type()),
-                    Ok(expected),
-                    "the parameter's view resolves to a different type in `{name}`"
+                    entry.inputs().len(),
+                    parameters.len(),
+                    "the entry dropped a parameter of `{name}`"
                 );
+                for (input, parameter) in entry.inputs().iter().zip(&parameters) {
+                    let expected = AbiType::try_from(&parameter.get_type().expect("typed above"))
+                        .expect("converted above");
+                    assert_eq!(input.abi_type(), expected, "type mismatch in `{name}`");
+                    assert_eq!(
+                        AbiType::try_from(&input.get_type()),
+                        Ok(expected),
+                        "the parameter's view resolves to a different type in `{name}`"
+                    );
+                }
+            }
+            Some(other) => {
+                panic!("`{name}` is a regular function, but its ABI entry is {other:?}")
             }
         }
         checked += 1;
