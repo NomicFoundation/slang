@@ -1,14 +1,11 @@
 {
-  "matrix": {
-    "type": "SingleTargetAllVersions",
-    "expected_solc_divergence": [
-      {
-        "specifier": {
-          "type": "Till",
-          "till": "0.8.4"
-        },
-        "reason": "Before '0.8.4' solc reported error 4579 on the `new D()` written inside `Base`, without reachability analysis. Slang implements the '0.8.4' call graph semantics for every version and accepts this on '0.8.0' to '0.8.3' as well."
-      }
-    ]
-  }
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "Till",
+        "till": "0.8.4"
+      },
+      "reason": "Before '0.8.4' solc reported error 4579 on the `new D()` written inside `Base`, without reachability analysis. Slang implements the '0.8.4' call graph semantics for every version and accepts this on '0.8.0' to '0.8.3' as well."
+    }
+  ]
 }

@@ -1,0 +1,6 @@
+{
+  "override_evm_target": {
+    "value": "Istanbul",
+    "reason": "`blobhash` needs a Cancun target, and Istanbul is pre-Cancun and accepted by every supported solc, so the target gate fires at every language version."
+  }
+}

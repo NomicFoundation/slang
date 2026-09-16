@@ -4,13 +4,12 @@ use anyhow::{Result, bail};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
-use semver::Version;
 use slang_solidity_v2::compilation::FileId;
-use slang_solidity_v2_common::collections::{SortedMap, SortedSet};
+use slang_solidity_v2_common::collections::SortedMap;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::diagnostics_output::targets::{SlangTarget, SolcTarget, TargetOutcome, TestTarget};
-use crate::snapshots::{self, SnapshotOutcome, TestConfig, TestMatrix};
+use crate::snapshots::{self, SnapshotOutcome, TestCase, TestConfig};
 use crate::utils::multi_part_file::split_multi_file;
 
 pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
@@ -33,22 +32,15 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         .collect();
 
     let test_config = TestConfig::resolve(&test_dir)?;
-    let solc_versions: SortedSet<Version> = match test_config.matrix {
-        TestMatrix::SingleTargetAllVersions(_) => {
-            LanguageVersion::ALL.iter().map(|v| (*v).into()).collect()
-        }
-        TestMatrix::SingleVersionAllTargets(ref matrix) => {
-            SortedSet::from_iter([matrix.version.into()])
-        }
-    };
+    let test_cases: Vec<TestCase> = test_config.test_cases().collect();
 
     let slang_target = SlangTarget;
-    let solc_target = SolcTarget::new(solc_versions)?;
+    let solc_target = SolcTarget::new()?;
 
     let slang_outcomes = snapshots::generate_snapshots(
         &test_dir,
         &mut fs,
-        &test_config,
+        &test_cases,
         &format!("generated/{}", slang_target.name()),
         |version, target| {
             let outcome = slang_target.compile(&files, version, target)?;
@@ -59,7 +51,7 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
     let solc_outcomes = snapshots::generate_snapshots(
         &test_dir,
         &mut fs,
-        &test_config,
+        &test_cases,
         &format!("generated/{}", solc_target.name()),
         |version, target| {
             let outcome = solc_target.compile(&files, version, target)?;
@@ -70,7 +62,7 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
     compare_outcomes(
         group_name,
         test_name,
-        &test_config,
+        &test_cases,
         &slang_outcomes,
         &solc_outcomes,
     )
@@ -102,55 +94,41 @@ fn make_outcome(
 fn compare_outcomes(
     group_name: &str,
     test_name: &str,
-    config: &TestConfig,
+    test_cases: &[TestCase],
     slang_outcomes: &[SnapshotOutcome],
     solc_outcomes: &[SnapshotOutcome],
 ) -> Result<()> {
-    // Both runs iterate the same axis in the same order.
-    assert_eq!(slang_outcomes.len(), solc_outcomes.len());
+    // Both runs iterate the same cases in the same order.
+    assert_eq!(slang_outcomes.len(), test_cases.len());
+    assert_eq!(solc_outcomes.len(), test_cases.len());
 
     let mut report = String::new();
     let mut is_valid = true;
 
-    for (slang, solc) in slang_outcomes.iter().zip(solc_outcomes) {
+    for ((case, slang), solc) in test_cases.iter().zip(slang_outcomes).zip(solc_outcomes) {
         assert_eq!(slang.version, solc.version);
         assert_eq!(slang.target, solc.target);
 
-        let (label, expected_divergence) = match &config.matrix {
-            TestMatrix::SingleTargetAllVersions(matrix) => (
-                slang.version.to_string(),
-                matrix
-                    .expected_solc_divergence
-                    .iter()
-                    .any(|specifier| specifier.contains(slang.version)),
-            ),
-            TestMatrix::SingleVersionAllTargets(matrix) => (
-                slang.target.to_string(),
-                matrix
-                    .expected_solc_divergence
-                    .iter()
-                    .any(|specifier| specifier.contains(slang.target)),
-            ),
-        };
-
+        let expected_divergence = case.expected_solc_divergence;
         let found_divergence = slang.status != solc.status;
 
         if found_divergence != expected_divergence {
             is_valid = false;
-
-            writeln!(
-                report,
-                "  - {label}: slang={slang_status:?}, solc={solc_status:?} ({outcome})",
-                slang_status = slang.status,
-                solc_status = solc.status,
-                outcome = match (found_divergence, expected_divergence) {
-                    (false, false) => "statuses match, as expected",
-                    (true, true) => "statuses differ, as expected",
-                    (true, false) => "ERROR: unexpected status divergence",
-                    (false, true) => "ERROR: expected status divergence no longer happens",
-                }
-            )?;
         }
+
+        writeln!(
+            report,
+            "  - {version}: slang={slang_status:?}, solc={solc_status:?} ({outcome})",
+            version = slang.version,
+            slang_status = slang.status,
+            solc_status = solc.status,
+            outcome = match (found_divergence, expected_divergence) {
+                (false, false) => "statuses match, as expected",
+                (true, true) => "statuses differ, as expected",
+                (true, false) => "--> ERROR: unexpected status divergence",
+                (false, true) => "--> ERROR: expected status divergence no longer happens",
+            }
+        )?;
     }
 
     if is_valid {

@@ -1,34 +1,15 @@
 {
-  "matrix": {
-    "type": "SingleVersionAllTargets",
-    "version": {
-      "value": "0.8.23",
-      "reason": "The last version before `mcopy` exists, so no target makes it a built-in."
-    },
-    "expected_solc_divergence": [
-      {
-        "specifier": {
-          "type": "Range",
-          "from": "Frontier",
-          "till": "Homestead"
-        },
-        "reason": "solc 0.8.23 declines the Frontier target outright ('Invalid EVM version requested'), which counts as a rejection, while slang accepts the declaration."
+  "override_evm_target": {
+    "value": "Cancun",
+    "reason": "Cancun is the target that makes the 'mcopy' built-in available, so pinning every version to it is the only way to show the language-version gate deciding on its own."
+  },
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "Till",
+        "till": "0.8.24"
       },
-      {
-        "specifier": {
-          "type": "Range",
-          "from": "Homestead",
-          "till": "Constantinople"
-        },
-        "reason": "solc warns that 'Support for EVM versions older than constantinople is deprecated', which slang has no equivalent for, so slang reports nothing at all on these targets. Unrelated to `mcopy`."
-      },
-      {
-        "specifier": {
-          "type": "From",
-          "from": "Cancun"
-        },
-        "reason": "Cancun support only arrives in solc 0.8.24, so 0.8.23 declines these targets ('Invalid EVM version requested') while slang accepts the declaration — which is the point of this test."
-      }
-    ]
-  }
+      "reason": "Cancun support only arrives in solc 0.8.24, so every version here declines the target outright ('Invalid EVM version requested'), which counts as a rejection. slang analyzes the input and accepts the declaration, which is the point of this test."
+    }
+  ]
 }
