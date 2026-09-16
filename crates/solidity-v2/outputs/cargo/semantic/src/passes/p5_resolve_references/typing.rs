@@ -87,6 +87,8 @@ impl Pass<'_> {
         // The typing is matched down to a `Copy` outcome first, which releases
         // the borrow of `binder` it came from and lets the reporting below take
         // the pass mutably.
+        // __SLANG_VALUE_TYPING__ keep the typings that denote a value in sync
+        // with the guard in `Self::check_lvalues_under`
         let outcome = match self.check_typing_of_expression(node) {
             Typing::Resolved(type_id) | Typing::This(type_id) => Ok(Some(*type_id)),
             // An overload set has already been reported and sunk above.
@@ -104,36 +106,33 @@ impl Pass<'_> {
         }
     }
 
-    /// The type of `node` in a position that is written to: the left operand
-    /// of an assignment, or the operand of `delete`, `++` or `--`. Reports what
-    /// [`Self::check_type_of_value_expression`] does, and on top of it an
-    /// expression which is a value but does not denote a location that can be
-    /// written to.
-    pub(super) fn check_type_of_lvalue_expression(
-        &mut self,
-        node: &ir::Expression,
-    ) -> Option<TypeId> {
-        let type_id = self.check_type_of_value_expression(node);
-        self.check_lvalue_expression(node);
-        type_id
-    }
-
     /// Reports every expression written to under `node` that does not denote a
-    /// writable location.
-    fn check_lvalue_expression(&mut self, node: &ir::Expression) {
+    /// writable location: the left operand of an assignment, or the operand of
+    /// `delete`, `++` or `--`. Descends through a tuple on its own, so a
+    /// component of one is judged at its own range however deeply it is
+    /// nested, whereas [`Self::check_type_of_value_expression`] judges only
+    /// the expression it is given and leaves the components of a tuple to the
+    /// visitor. A write position is also a value position, so that check runs
+    /// alongside this one.
+    pub(super) fn check_lvalues_under(&mut self, node: &ir::Expression) {
         // A tuple on the left hand side is written component-wise, so each
         // component is a write position of its own, and an omitted one writes
         // nothing. A single component is parenthesisation of the same write.
         if let ir::Expression::TupleExpression(tuple) = node {
             for item in tuple.items.iter() {
                 if let Some(expression) = &item.expression {
-                    self.check_lvalue_expression(expression);
+                    self.check_lvalues_under(expression);
                 }
             }
             return;
         }
         // Only an expression that typed as a value is judged: one that did not
         // is either unresolved or already reported.
+        // __SLANG_VALUE_TYPING__ keep in sync with the typings
+        // `Self::check_type_of_value_expression` accepts. The two cannot share
+        // an accessor on `Typing`: this one only asks whether there is a value,
+        // while that one also tells an unresolved typing, which reports
+        // nothing, from one naming something that is not a value, which does.
         if !matches!(
             self.raw_typing_of_expression(node),
             Typing::Resolved(_) | Typing::This(_)
@@ -206,12 +205,12 @@ impl Pass<'_> {
                 let ir::Expression::MemberAccessExpression(member_access) = &call.operand else {
                     return WriteTarget::NotALocation;
                 };
-                let appends_an_element = call.arguments.is_empty()
+                let is_empty_push_call = call.arguments.is_empty()
                     && matches!(
                         self.resolution_of_identifier(member_access.member.id()),
                         Some(Resolution::BuiltIn(InternalBuiltIn::ArrayPush(_)))
                     );
-                if appends_an_element {
+                if is_empty_push_call {
                     WriteTarget::WritableLocation
                 } else {
                     WriteTarget::NotALocation
@@ -235,9 +234,10 @@ impl Pass<'_> {
             Some(
                 Definition::Variable(_) | Definition::Parameter(_) | Definition::StructMember(_),
             ) => WriteTarget::WritableLocation,
-            // A `constant` state variable keeps its own definition kind unless
-            // it is `public`, in which case it stays a state variable and its
-            // mutability is what tells it apart.
+            // A `public constant` state variable produces a getter, so it's
+            // collected as a `Definition::StateVariable`. Non public ones are
+            // converted to `ConstantDefinition` in the IR, so they are
+            // collected as `Definition::Constant`.
             // TODO(validation) SDR[756]: an `immutable` one is a location only
             // within the constructor of the contract declaring it, and is
             // treated as writable everywhere until then. That needs a

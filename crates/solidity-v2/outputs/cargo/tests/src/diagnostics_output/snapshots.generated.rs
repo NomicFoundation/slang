@@ -4188,6 +4188,11 @@ mod type_system {
         }
 
         #[test]
+        fn lhs_tuple_component() -> Result<()> {
+            run("type_system/expression_not_a_value", "lhs_tuple_component")
+        }
+
+        #[test]
         fn logical_operator_operand() -> Result<()> {
             run(
                 "type_system/expression_not_a_value",
@@ -4319,6 +4324,14 @@ mod type_system {
         }
 
         #[test]
+        fn accepted_function_type_variable() -> Result<()> {
+            run(
+                "type_system/expression_not_an_lvalue",
+                "accepted_function_type_variable",
+            )
+        }
+
+        #[test]
         fn accepted_locations() -> Result<()> {
             run("type_system/expression_not_an_lvalue", "accepted_locations")
         }
@@ -4427,6 +4440,14 @@ mod type_system {
             run(
                 "type_system/expression_not_an_lvalue",
                 "incremented_call_result",
+            )
+        }
+
+        #[test]
+        fn nested_tuple_component() -> Result<()> {
+            run(
+                "type_system/expression_not_an_lvalue",
+                "nested_tuple_component",
             )
         }
 

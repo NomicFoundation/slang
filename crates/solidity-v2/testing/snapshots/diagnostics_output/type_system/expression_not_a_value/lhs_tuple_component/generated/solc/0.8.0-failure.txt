@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 4247] Error: Expression has to be an lvalue.
+    ╭─[input.sol:10:6]
+    │
+ 10 │     (abi, right) = (1, 2);
+    │      ─┬─  
+    │       ╰─── Error occurred here.
+────╯
+
+[TypeError 7407] Error: Type tuple(int_const 1,int_const 2) is not implicitly convertible to expected type tuple(abi,uint256).
+    ╭─[input.sol:10:20]
+    │
+ 10 │     (abi, right) = (1, 2);
+    │                    ───┬──  
+    │                       ╰──── Error occurred here.
+────╯
