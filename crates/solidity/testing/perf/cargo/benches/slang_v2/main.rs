@@ -13,6 +13,7 @@ use tests::slang_v2::compute_contracts_abi::setup as compute_contracts_abi_setup
 use tests::slang_v2::ir_builder::setup as ir_builder_setup;
 use tests::slang_v2::parser::setup as parser_setup;
 use tests::slang_v2::semantic::setup as semantic_setup;
+use tests::slang_v2::serialize_contracts_abi::setup as serialize_contracts_abi_setup;
 
 mod __dependencies_used_in_lib__ {
     use anyhow as _;
@@ -115,6 +116,17 @@ bench_projects! {
 }
 
 bench_projects! {
+    #[library_benchmark(setup = serialize_contracts_abi_setup)]
+    fn serialize_contracts_abi(
+        input: tests::slang_v2::serialize_contracts_abi::Input,
+    ) -> tests::slang_v2::serialize_contracts_abi::Output {
+        black_box(tests::slang_v2::serialize_contracts_abi::run(
+            black_box(input),
+        ))
+    }
+}
+
+bench_projects! {
     #[library_benchmark(setup = ast_visitor_setup)]
     fn ast_visitor(
         input: tests::slang_v2::ast_visitor::Input,
@@ -139,7 +151,7 @@ bench_projects! {
 library_benchmark_group!(
     name = pipeline;
     // __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)
-    benchmarks = parser, ir_builder, semantic, compute_contracts_abi, ast_visitor, ast_analysis,
+    benchmarks = parser, ir_builder, semantic, compute_contracts_abi, serialize_contracts_abi, ast_visitor, ast_analysis,
 );
 
 main!(
