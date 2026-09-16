@@ -296,6 +296,11 @@ fn abi_entries_accept_exactly_the_parameters_with_an_abi_type() {
             "acceptance mismatch for `{name}`"
         );
         if let Some(AbiEntry::Function(entry)) = entry {
+            assert_eq!(
+                entry.inputs().len(),
+                parameters.len(),
+                "the entry dropped a parameter of `{name}`"
+            );
             for (input, parameter) in entry.inputs().iter().zip(&parameters) {
                 let expected = AbiType::try_from(&parameter.get_type().expect("typed above"))
                     .expect("converted above");
@@ -309,5 +314,5 @@ fn abi_entries_accept_exactly_the_parameters_with_an_abi_type() {
         }
         checked += 1;
     }
-    assert_eq!(checked, 5, "every function in the fixture was checked");
+    assert_eq!(checked, 5, "the fixture declares 5 functions");
 }
