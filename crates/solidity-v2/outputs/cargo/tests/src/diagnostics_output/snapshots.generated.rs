@@ -2722,6 +2722,22 @@ mod structure {
         }
 
         #[test]
+        fn internal_override_data_location() -> Result<()> {
+            run(
+                "structure/contract_should_be_abstract",
+                "internal_override_data_location",
+            )
+        }
+
+        #[test]
+        fn unimplemented_fallback() -> Result<()> {
+            run(
+                "structure/contract_should_be_abstract",
+                "unimplemented_fallback",
+            )
+        }
+
+        #[test]
         fn unimplemented_function() -> Result<()> {
             run(
                 "structure/contract_should_be_abstract",
@@ -2742,6 +2758,22 @@ mod structure {
             run(
                 "structure/contract_should_be_abstract",
                 "unimplemented_modifier",
+            )
+        }
+
+        #[test]
+        fn unimplemented_override_of_implemented() -> Result<()> {
+            run(
+                "structure/contract_should_be_abstract",
+                "unimplemented_override_of_implemented",
+            )
+        }
+
+        #[test]
+        fn unimplemented_receive() -> Result<()> {
+            run(
+                "structure/contract_should_be_abstract",
+                "unimplemented_receive",
             )
         }
     }
