@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/write-to-constant] Error: Cannot write to a constant variable.
+    ╭─[input.sol:11:5]
+    │
+ 11 │     LIMIT = 2;
+    │     ──┬──  
+    │       ╰──── Error occurred here.
+────╯

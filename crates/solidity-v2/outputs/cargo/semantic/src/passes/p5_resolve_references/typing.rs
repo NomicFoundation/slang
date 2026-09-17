@@ -4,9 +4,9 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     AmbiguousReference, MemberNotFound, NoMatchingCallableDeclaration,
 };
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    CannotCallViaContractTypeName, ExpressionNotAValue, ExpressionNotCallable,
-    IncompatibleConditionalBranches, LiteralTooLarge, NotAValueKind,
-    PartiallyAppliedFunctionUsedAsValue,
+    CannotCallViaContractTypeName, ExpressionNotAValue, ExpressionNotAnLValue,
+    ExpressionNotCallable, IncompatibleConditionalBranches, LiteralTooLarge, NotAValueKind,
+    PartiallyAppliedFunctionUsedAsValue, WriteToConstant,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -15,7 +15,7 @@ use slang_solidity_v2_ir::ir::NodeIdentity;
 use super::Pass;
 use super::disambiguation::OverloadMatch;
 use crate::binder::{Binder, Definition, Resolution, Typing};
-use crate::built_ins::BuiltInCallError;
+use crate::built_ins::{BuiltInCallError, InternalBuiltIn};
 use crate::context::FileNodeMapper;
 use crate::passes::common::node_location;
 use crate::types::{
@@ -87,6 +87,8 @@ impl Pass<'_> {
         // The typing is matched down to a `Copy` outcome first, which releases
         // the borrow of `binder` it came from and lets the reporting below take
         // the pass mutably.
+        // __SLANG_VALUE_TYPING__ keep the typings that denote a value in sync
+        // with the guard in `Self::check_lvalues_under`
         let outcome = match self.check_typing_of_expression(node) {
             Typing::Resolved(type_id) | Typing::This(type_id) => Ok(Some(*type_id)),
             // An overload set has already been reported and sunk above.
@@ -102,6 +104,166 @@ impl Pass<'_> {
                 None
             }
         }
+    }
+
+    /// Reports every expression written to under `node` that does not denote a
+    /// writable location: the left operand of an assignment, or the operand of
+    /// `delete`, `++` or `--`. Descends through a tuple on its own, so a
+    /// component of one is judged at its own range however deeply it is
+    /// nested, whereas [`Self::check_type_of_value_expression`] judges only
+    /// the expression it is given and leaves the components of a tuple to the
+    /// visitor. A write position is also a value position, so that check runs
+    /// alongside this one.
+    pub(super) fn check_lvalues_under(&mut self, node: &ir::Expression) {
+        // A tuple on the left hand side is written component-wise, so each
+        // component is a write position of its own, and an omitted one writes
+        // nothing. A single component is parenthesisation of the same write.
+        if let ir::Expression::TupleExpression(tuple) = node {
+            for item in tuple.items.iter() {
+                if let Some(expression) = &item.expression {
+                    self.check_lvalues_under(expression);
+                }
+            }
+            return;
+        }
+        // Only an expression that typed as a value is judged: one that did not
+        // is either unresolved or already reported.
+        // __SLANG_VALUE_TYPING__ keep in sync with the typings
+        // `Self::check_type_of_value_expression` accepts. The two cannot share
+        // an accessor on `Typing`: this one only asks whether there is a value,
+        // while that one also tells an unresolved typing, which reports
+        // nothing, from one naming something that is not a value, which does.
+        if !matches!(
+            self.raw_typing_of_expression(node),
+            Typing::Resolved(_) | Typing::This(_)
+        ) {
+            return;
+        }
+        match self.write_target_of(node) {
+            WriteTarget::WritableLocation => {}
+            WriteTarget::Constant => self.report_write_to_constant(node),
+            WriteTarget::NotALocation => self.report_expression_not_an_lvalue(node),
+        }
+    }
+
+    /// What `node`, in a position that is written to, denotes.
+    ///
+    /// A location that comes back [`WriteTarget::WritableLocation`] may still
+    /// be read-only for a reason of its own, which is not judged here.
+    // TODO(validation) SDR[1325,1071]: report writes to an element of a
+    // calldata array, and to a member of a calldata struct.
+    fn write_target_of(&self, node: &ir::Expression) -> WriteTarget {
+        match node {
+            ir::Expression::Identifier(identifier) => {
+                self.write_target_of_reference(identifier.id())
+            }
+            ir::Expression::MemberAccessExpression(member_access) => {
+                let operand_typing = self.raw_typing_of_expression(&member_access.operand);
+                // A member reached through a contract or interface reference is
+                // an external access, which reads through the member's getter;
+                // there is no setter to write through. Qualified by the name of
+                // a base contract instead (`Base.x`), a state variable is the
+                // same location as its plain name.
+                if self.typing_is_contract_reference(operand_typing) {
+                    return WriteTarget::NotALocation;
+                }
+                // Reaching a member through a type name rather than a value
+                // (`S.field`) is already a resolution failure, so there is
+                // nothing left to judge here.
+                self.write_target_of_reference(member_access.member.id())
+            }
+            ir::Expression::IndexAccessExpression(index_access) => {
+                // An element of an array or a mapping is a location in its
+                // own right. A single byte of a fixed-size byte array
+                // (`Type::ByteArray`) is deliberately left out: it is copied
+                // out of the word holding it, so it cannot be modified in
+                // place. So is a range index, which yields a slice: a
+                // read-only view of the array it comes from.
+                let indexes_a_location = !index_access.is_slice
+                    && self
+                        .raw_typing_of_expression(&index_access.operand)
+                        .as_type_id()
+                        .is_some_and(|type_id| {
+                            matches!(
+                                self.types.get_type_by_id(type_id),
+                                Type::Array(_)
+                                    | Type::FixedSizeArray(_)
+                                    | Type::Bytes(_)
+                                    | Type::Mapping(_)
+                            )
+                        });
+                if indexes_a_location {
+                    WriteTarget::WritableLocation
+                } else {
+                    WriteTarget::NotALocation
+                }
+            }
+            // `push()` appends an element and yields a reference to it, which
+            // is the one call that denotes a location. `push(value)` writes the
+            // element itself and yields nothing.
+            ir::Expression::FunctionCallExpression(call) => {
+                let ir::Expression::MemberAccessExpression(member_access) = &call.operand else {
+                    return WriteTarget::NotALocation;
+                };
+                let is_empty_push_call = call.arguments.is_empty()
+                    && matches!(
+                        self.resolution_of_identifier(member_access.member.id()),
+                        Some(Resolution::BuiltIn(InternalBuiltIn::ArrayPush(_)))
+                    );
+                if is_empty_push_call {
+                    WriteTarget::WritableLocation
+                } else {
+                    WriteTarget::NotALocation
+                }
+            }
+            _ => WriteTarget::NotALocation,
+        }
+    }
+
+    /// What the declaration behind the identifier at `node_id` denotes: a
+    /// location where it holds a value that lives somewhere (a variable, a
+    /// parameter, a state variable or a member of a struct), and nothing
+    /// writable where it declares no value at all (a function, a type, an enum
+    /// member).
+    fn write_target_of_reference(&self, node_id: NodeId) -> WriteTarget {
+        let definition = self
+            .resolution_of_identifier(node_id)
+            .and_then(Resolution::as_definition_id)
+            .and_then(|definition_id| self.binder.find_definition_by_id(definition_id));
+        match definition {
+            Some(
+                Definition::Variable(_) | Definition::Parameter(_) | Definition::StructMember(_),
+            ) => WriteTarget::WritableLocation,
+            // A `public constant` state variable produces a getter, so it's
+            // collected as a `Definition::StateVariable`. Non public ones are
+            // converted to `ConstantDefinition` in the IR, so they are
+            // collected as `Definition::Constant`.
+            // TODO(validation) SDR[756]: an `immutable` one is a location only
+            // within the constructor of the contract declaring it, and is
+            // treated as writable everywhere until then. That needs a
+            // `WriteTarget` variant of its own, plus the enclosing function off
+            // the scope stack to tell the constructor from the rest.
+            Some(Definition::StateVariable(state_variable)) => {
+                if matches!(
+                    state_variable.ir_node.attributes.mutability,
+                    ir::StateVariableMutability::Constant
+                ) {
+                    WriteTarget::Constant
+                } else {
+                    WriteTarget::WritableLocation
+                }
+            }
+            Some(Definition::Constant(_)) => WriteTarget::Constant,
+            _ => WriteTarget::NotALocation,
+        }
+    }
+
+    /// The resolution of the reference made through the identifier at
+    /// `node_id`, if one was made there.
+    fn resolution_of_identifier(&self, node_id: NodeId) -> Option<&Resolution> {
+        self.binder
+            .find_reference_by_identifier_node_id(node_id)
+            .map(|reference| &reference.resolution)
     }
 
     /// Checks that every argument in `arguments` is a value, for a call that
@@ -122,6 +284,23 @@ impl Pass<'_> {
     #[inline(never)]
     fn report_expression_not_a_value(&mut self, node: &ir::Expression, kind: NotAValueKind) {
         self.push_diagnostic(node, ExpressionNotAValue { kind });
+    }
+
+    /// Reports `node` as written to where it does not denote a writable
+    /// location. Kept out of line for the same reason as
+    /// [`Self::report_ambiguous_reference`].
+    #[cold]
+    #[inline(never)]
+    fn report_expression_not_an_lvalue(&mut self, node: &ir::Expression) {
+        self.push_diagnostic(node, ExpressionNotAnLValue);
+    }
+
+    /// Reports `node` as a write to a `constant` declaration. Kept out of line
+    /// for the same reason as [`Self::report_ambiguous_reference`].
+    #[cold]
+    #[inline(never)]
+    fn report_write_to_constant(&mut self, node: &ir::Expression) {
+        self.push_diagnostic(node, WriteToConstant);
     }
 
     /// Narrows an overload lookup for a call down to the selected candidate,
@@ -1208,4 +1387,18 @@ impl Pass<'_> {
         let bytes = digits.div_ceil(2).max(1);
         Some(LiteralKind::HexInteger { value, bytes })
     }
+}
+
+/// What an expression in a position that is written to denotes, which decides
+/// whether the write is valid and, where it is not, what to report.
+enum WriteTarget {
+    /// A location the write can go to.
+    WritableLocation,
+    /// A `constant` declaration: it holds a value, but one fixed at compile
+    /// time, so there is no location behind it to write to.
+    Constant,
+    /// No location at all: a computed value such as a call result or an
+    /// operator application, an external access that reads through a getter,
+    /// or a name that denotes no value in the first place.
+    NotALocation,
 }
