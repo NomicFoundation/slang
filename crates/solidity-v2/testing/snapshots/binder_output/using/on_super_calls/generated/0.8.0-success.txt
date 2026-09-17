@@ -29,7 +29,7 @@ Bindings:
   3 │ contract A {
     │          ┬  
     │          ╰── name: 1
-  4 │     function total() public returns (uint256) {}
+  4 │     function total() public virtual returns (uint256) {}
     │              ──┬──  
     │                ╰──── name: 2
     │ 
@@ -41,7 +41,7 @@ Bindings:
   7 │     using Lib for uint256;
     │           ─┬─  
     │            ╰─── ref: 5
-  8 │     function total() public returns (uint256) {
+  8 │     function total() public override returns (uint256) {
     │              ──┬──  
     │                ╰──── name: 4
   9 │         return super.total().nop();

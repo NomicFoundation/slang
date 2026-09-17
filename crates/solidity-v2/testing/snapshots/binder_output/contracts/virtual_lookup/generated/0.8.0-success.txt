@@ -25,7 +25,7 @@ Bindings:
   3 │ contract Base {
     │          ──┬─  
     │            ╰─── name: 1
-  4 │     function foo() public {}
+  4 │     function foo() public virtual {}
     │              ─┬─  
     │               ╰─── name: 2
   5 │     function bar() public {
@@ -40,7 +40,7 @@ Bindings:
     │             ╰───────────── name: 4
     │                       │   
     │                       ╰─── ref: 1
- 11 │     function foo() public {}
+ 11 │     function foo() public override {}
     │              ─┬─  
     │               ╰─── name: 5
 ────╯
