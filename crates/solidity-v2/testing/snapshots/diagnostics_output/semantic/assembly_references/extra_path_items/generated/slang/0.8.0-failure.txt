@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[semantic/yul-multiple-suffixes] Error: Only one suffix is allowed.
+   ╭─[input.sol:9:22]
+   │
+ 9 │             let t := x.slot.slot.slot
+   │                      ────────┬───────  
+   │                              ╰───────── Error occurred here.
+───╯

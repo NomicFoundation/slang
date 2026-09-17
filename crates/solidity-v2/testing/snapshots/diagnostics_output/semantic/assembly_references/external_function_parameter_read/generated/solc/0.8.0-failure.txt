@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9857] Error: Only types that use one stack slot are supported.
+   ╭─[input.sol:7:22]
+   │
+ 7 │             let t := fp
+   │                      ─┬  
+   │                       ╰── Error occurred here.
+───╯
