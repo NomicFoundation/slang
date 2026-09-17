@@ -55,8 +55,8 @@ jobs:
       - name: "infra check"
         run: "${SFW_PREFIX:-} ./scripts/bin/infra check"
 
-      - name: "infra test"
-        run: "./scripts/bin/infra test"
+      - name: "task test"
+        run: "./bin/task test"
 
       - name: "task lint"
         # GH_TOKEN lets zizmor run its online audits (known-vulnerabilities,

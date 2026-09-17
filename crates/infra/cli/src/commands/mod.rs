@@ -40,9 +40,7 @@ pub enum AppCommand {
     ///
     /// Running this command without any args will check everything.
     Check(CheckController),
-    /// Run unit tests.
-    ///
-    /// Running this command without any args will test everything.
+    /// Report the 'task' command that runs unit tests instead.
     Test(TestController),
     /// Report the 'task' command that runs linters instead.
     Lint(LintController),
@@ -71,7 +69,7 @@ impl AppCommand {
         match self {
             AppCommand::Setup(controller) => controller.execute()?,
             AppCommand::Check(controller) => controller.execute()?,
-            AppCommand::Test(controller) => controller.execute(),
+            AppCommand::Test(_) => TestController::execute(),
             AppCommand::Lint(_) => LintController::execute()?,
             AppCommand::Ci(controller) => controller.execute()?,
             AppCommand::Run(controller) => controller.execute(),

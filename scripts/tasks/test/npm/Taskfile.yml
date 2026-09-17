@@ -1,0 +1,13 @@
+version: "3"
+
+tasks:
+  "default":
+    desc: "Run 'jest' tests for all NPM packages."
+    cmds:
+      # 'NODE_OPTIONS' turns on ESM support (our tests are ESM), and 'NODE_NO_WARNINGS'
+      # silences the experimental-feature warning it prints (too much noise).
+      #
+      # Assigned inline rather than via the 'env' key, because 'task' lets the ambient
+      # environment take precedence over it, which would drop them wherever the caller
+      # already exports 'NODE_OPTIONS'.
+      - "NODE_OPTIONS='--experimental-vm-modules' NODE_NO_WARNINGS='1' jest {{.CLI_ARGS}}"

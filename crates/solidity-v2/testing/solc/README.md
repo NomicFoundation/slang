@@ -12,13 +12,13 @@ release tag and runs slang against them pinned to that same language version.
 ## Usage
 
 The whole `(version, test)` matrix is a **single test**, and runs as part of the
-regular `infra test` (and, in turn, `infra ci`) like any other:
+regular `task test` (and, in turn, `infra ci`) like any other:
 
 ```sh
-infra test cargo solc_semantic_suite
+task test:cargo -- solc_semantic_suite
 
 # Check locally without rewriting the baseline (as CI does):
-CI=1 infra test cargo solc_semantic_suite
+CI=1 task test:cargo -- solc_semantic_suite
 ```
 
 The first run clones `solc`'s repository into `target/solc-comparison/`; every

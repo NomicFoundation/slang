@@ -71,7 +71,7 @@ v1 and v2 implementations coexist in the same `main` branch.
 
 Available binaries in `./bin/`: `cargo`, `node`, `npm`, `npx`, `pnpm`, `gh`, `python3`, `pip`, `task`, and more.
 
-**Don't run linters/formatters directly**, but always use `./bin/task lint` to ensure consistent configuration and versions.
+**Don't run tests or linters/formatters directly**, but always use `./bin/task test` and `./bin/task lint` to ensure consistent configuration and versions.
 
 ## Build & Development Commands
 
@@ -83,20 +83,23 @@ The project uses a custom `infra` CLI that orchestrates all build operations. Us
 ./scripts/bin/infra setup --help # See setup subcommands (cargo, npm, etc.)
 ./scripts/bin/infra check        # Codegen + cargo check + npm check + public API check
 ./scripts/bin/infra check --help # See check subcommands (codegen, cargo, npm, public-api)
-./scripts/bin/infra test         # Run all tests (cargo nextest + jest)
-./scripts/bin/infra test --help  # See test subcommands (cargo, npm) and passthrough args
 ./scripts/bin/infra ci           # Full CI run: setup + check + test + lint
 ```
 
 Always run `infra setup` when initializing a new workspace, to ensure all tools/dependencies are available.
 
-Linting is orchestrated by [`task`](https://taskfile.dev) instead, defined in `$REPO_ROOT/Taskfile.yml`:
+Testing and linting are orchestrated by [`task`](https://taskfile.dev) instead, defined in `$REPO_ROOT/Taskfile.yml`:
 
 ```sh
-./bin/task --list       # See all available tasks
-./bin/task lint         # Run all linters, in parallel
-./bin/task lint:rustfmt # Run a single linter
+./bin/task --list        # See all available tasks
+./bin/task test          # Run all tests (cargo nextest + jest), in parallel
+./bin/task test:cargo:v2 # Run a single test group
+./bin/task lint          # Run all linters, in parallel
+./bin/task lint:rustfmt  # Run a single linter
 ```
+
+Arguments after `--` are passed through to the underlying tool (`nextest`/`jest`), e.g.
+`./bin/task test:cargo -- my_test_filter` or `./bin/task test:npm -- cursor`.
 
 You can also use `nextest` directly for faster iteration on Rust tests:
 

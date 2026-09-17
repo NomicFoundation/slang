@@ -10,3 +10,4 @@ set:
 
 includes:
   lint: "./scripts/tasks/lint/Taskfile.yml"
+  test: "./scripts/tasks/test/Taskfile.yml"
