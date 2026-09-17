@@ -2,18 +2,19 @@ mod node_extensions;
 mod types;
 
 use std::cmp::Ordering;
+use std::fmt;
 use std::sync::Arc;
 
-use itertools::Either;
 use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
-use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TupleType, Type, TypeId};
+use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 
 pub use self::types::{AbiType, NotAnAbiType, TupleComponent};
-use crate::abi::types::type_as_abi_type;
+use crate::abi::types::{is_abi_type, type_as_abi_type};
+use crate::ast::Type;
 
 pub struct ContractAbi {
     node_id: NodeId,
@@ -25,6 +26,26 @@ pub struct ContractAbi {
 }
 
 impl ContractAbi {
+    /// Builds the ABI with its entries sorted, see [`AbiEntry`]'s `Ord`.
+    pub(crate) fn new(
+        node_id: NodeId,
+        name: String,
+        file_id: FileId,
+        mut entries: Vec<AbiEntry>,
+        storage_layout: Vec<StorageItem>,
+        transient_storage_layout: Vec<StorageItem>,
+    ) -> Self {
+        entries.sort();
+        Self {
+            node_id,
+            name,
+            file_id,
+            entries,
+            storage_layout,
+            transient_storage_layout,
+        }
+    }
+
     pub fn node_id(&self) -> NodeId {
         self.node_id
     }
@@ -262,15 +283,39 @@ impl PartialOrd for AbiEntry {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+/// A parameter of an ABI entry: a view over its semantic type, the way [`Type`] is. The ABI
+/// shape ([`Self::abi_type`]) and the spellings are rendered from the interned `TypeId` on
+/// request rather than stored.
+#[derive(Clone)]
 pub struct AbiParameter {
     node_id: Option<NodeId>, // will be `None` if the function is a generated getter
     name: Option<String>,
-    abi_type: AbiType,
+    type_id: TypeId,
     indexed: bool,
+    semantic: Arc<SemanticContext>,
 }
 
 impl AbiParameter {
+    /// `None` when the type has no ABI representation, e.g. a mapping or a storage-only struct.
+    pub(crate) fn new(
+        node_id: Option<NodeId>,
+        name: Option<String>,
+        type_id: TypeId,
+        indexed: bool,
+        semantic: &Arc<SemanticContext>,
+    ) -> Option<Self> {
+        if !is_abi_type(semantic, type_id) {
+            return None;
+        }
+        Some(Self {
+            node_id,
+            name,
+            type_id,
+            indexed,
+            semantic: Arc::clone(semantic),
+        })
+    }
+
     pub fn node_id(&self) -> Option<NodeId> {
         self.node_id
     }
@@ -279,23 +324,45 @@ impl AbiParameter {
         self.name.as_deref()
     }
 
-    pub fn abi_type(&self) -> &AbiType {
-        &self.abi_type
+    /// The Solidity type behind the parameter.
+    pub fn get_type(&self) -> Type {
+        Type::create(self.type_id, &self.semantic)
+    }
+
+    pub fn abi_type(&self) -> AbiType {
+        type_as_abi_type(&self.semantic, self.type_id).expect(
+            "the type was checked to have an ABI representation when the parameter was built",
+        )
     }
 
     /// The parameter's type rendered as its canonical-signature spelling — e.g.
     /// `uint256`, `uint256[]`, or `(uint256,uint256)` for a struct. This is the
     /// form used for selector/signature hashing, **not** the JSON-ABI `"type"`
-    /// field (which spells structs as `tuple`/`tuple[]`).
-    ///
-    /// Allocates a fresh `String` on each call; prefer [`AbiParameter::abi_type`]
-    /// for allocation-free, structured access.
+    /// field (structs there are `tuple`/`tuple[]`, which nothing renders yet), nor
+    /// its `"internalType"` field, which is [`Self::internal_type`].
     pub fn type_name(&self) -> String {
-        self.abi_type.to_string()
+        self.abi_type().to_string()
+    }
+
+    /// The type as solc's JSON-ABI `internalType` spells it: `struct C.S[]`, `enum C.E`,
+    /// `contract I`, `address payable`, a user-defined value type by name.
+    pub fn internal_type(&self) -> String {
+        self.semantic.type_abi_internal_name(self.type_id)
     }
 
     pub fn indexed(&self) -> bool {
         self.indexed
+    }
+}
+
+impl fmt::Debug for AbiParameter {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("AbiParameter")
+            .field("node_id", &self.node_id)
+            .field("name", &self.name)
+            .field("type_id", &self.type_id)
+            .field("indexed", &self.indexed)
+            .finish_non_exhaustive()
     }
 }
 
@@ -337,46 +404,4 @@ pub fn hash_from_signature(signature: &str) -> [u8; 32] {
 pub fn selector_from_signature(signature: &str) -> u32 {
     let selector_bytes: [u8; 4] = hash_from_signature(signature)[0..4].try_into().unwrap();
     u32::from_be_bytes(selector_bytes)
-}
-
-pub(crate) fn extract_function_type_parameters_abi(
-    semantic: &Arc<SemanticContext>,
-    type_id: TypeId,
-) -> Option<(Vec<AbiParameter>, Vec<AbiParameter>)> {
-    let Type::Function(function_type) = semantic.types().get_type_by_id(type_id) else {
-        return None;
-    };
-    // TODO: our type system doesn't track parameter names for function types,
-    // so we can't convey that information in the ABI. This is important for
-    // getters where we should transfer that information from mapping or struct
-    // types (eg. a getter that returns a struct should name its output
-    // parameters from the struct members).
-    let mut inputs = Vec::new();
-    for parameter_type_id in &function_type.parameter_types {
-        let abi_type = type_as_abi_type(semantic, *parameter_type_id)?;
-        inputs.push(AbiParameter {
-            node_id: None,
-            name: None,
-            abi_type,
-            indexed: false,
-        });
-    }
-    // A tuple as a return type from a function represents multiple return
-    // values, so we need to flatten it
-    let output_types = match semantic.types().get_type_by_id(function_type.return_type) {
-        Type::Tuple(TupleType { types }) => Either::Left(types.iter()),
-        _ => Either::Right(std::iter::once(&function_type.return_type)),
-    };
-    let outputs = output_types
-        .map(|output_type_id| {
-            let abi_type = type_as_abi_type(semantic, *output_type_id)?;
-            Some(AbiParameter {
-                node_id: None,
-                name: None,
-                abi_type,
-                indexed: false,
-            })
-        })
-        .collect::<Option<Vec<_>>>()?;
-    Some((inputs, outputs))
 }
