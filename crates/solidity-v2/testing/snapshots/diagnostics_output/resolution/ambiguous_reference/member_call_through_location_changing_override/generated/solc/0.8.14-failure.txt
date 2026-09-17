@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 7723] Error: Data locations of parameters have to be the same when overriding non-external functions, but they differ.
+    ╭─[input.sol:15:5]
+    │
+ 15 │ ╭─▶     function f(uint256[] calldata a) public override returns (uint256) {
+    ┆ ┆   
+ 17 │ ├─▶     }
+    │ │           
+    │ ╰─────────── Error occurred here.
+────╯

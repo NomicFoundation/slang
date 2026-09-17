@@ -47,12 +47,51 @@ pub(crate) fn resolve_identifier_path_in_scope(
 
 /// When a symbol resolves to an ambiguous set of Solidity functions
 /// (overloads/virtuals), drop the ones overridden by a previously seen
-/// definition. This reads function typing information, so it requires
+/// definition with the same declared parameter types. Two functions that differ in a data
+/// location are two overloads here. This is how a bare name or a `super`
+/// member is looked up. This reads function typing information, so it requires
 /// `p3_type_definitions` to have run.
-pub(crate) fn filter_overriden_definitions(
+pub(crate) fn filter_overridden_definitions(
     binder: &Binder,
     types: &TypeRegistry,
     resolution: Resolution,
+) -> Resolution {
+    filter_overridden_functions(binder, types, resolution, |candidate, earlier| {
+        candidate.parameter_types == earlier.parameter_types
+    })
+}
+
+/// The same for the members of a contract value, reached through `this` or an
+/// expression of a contract or interface type, and for the members of a type
+/// name. Those collapse by selector, so `calldata` and `memory` count as the
+/// same parameter and a base is overridden even when a data location differs.
+/// A type name's members are the declarations the contract makes
+/// itself, which cannot share a selector, so collapsing the inherited
+/// candidates by selector leaves the same set.
+pub(crate) fn filter_overridden_definitions_by_selector(
+    binder: &Binder,
+    types: &TypeRegistry,
+    resolution: Resolution,
+) -> Resolution {
+    filter_overridden_functions(binder, types, resolution, |candidate, earlier| {
+        types.parameter_lists_are_indistinguishable(
+            &candidate.parameter_types,
+            &earlier.parameter_types,
+        )
+    })
+}
+
+/// Walks the candidates most-derived first and drops each function that an
+/// earlier candidate overrides according to `overridden_by`. Only contract and
+/// interface members carry an implicit receiver, so free and library functions
+/// never override each other, even when they share a signature. Two of them
+/// attached to the same type by different `using` directives are competing
+/// candidates, not an override pair.
+fn filter_overridden_functions(
+    binder: &Binder,
+    types: &TypeRegistry,
+    resolution: Resolution,
+    overridden_by: impl Fn(&FunctionType, &FunctionType) -> bool,
 ) -> Resolution {
     // TODO: it may be possible/desirable to use information procured in
     // `p4_compute_linearisations` here.
@@ -68,11 +107,13 @@ pub(crate) fn filter_overriden_definitions(
                     let Type::Function(function_type) = types.get_type_by_id(type_id) else {
                         unreachable!("type of function definition is not a function");
                     };
-                    if seen_function_types.iter().any(|seen_function_type| {
-                        types
-                            .function_type_overrides_in_hierarchy(seen_function_type, function_type)
-                    }) {
-                        // the function type is overriden by some other previously seen definition
+                    if function_type.implicit_receiver_type.is_some()
+                        && seen_function_types.iter().any(|seen_function_type| {
+                            seen_function_type.implicit_receiver_type.is_some()
+                                && overridden_by(function_type, seen_function_type)
+                        })
+                    {
+                        // the function is overridden by some other previously seen definition
                         continue;
                     }
                     seen_function_types.push(function_type);
