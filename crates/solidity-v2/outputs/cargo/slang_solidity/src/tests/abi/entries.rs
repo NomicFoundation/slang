@@ -158,7 +158,7 @@ fn test_abi_entries_with_tuples() {
 /// An abstract contract cannot run its constructor, so solc leaves it out of the ABI.
 #[test]
 fn abstract_contract_has_no_constructor_entry() {
-    let unit = super::LibraryMembers::build_compilation_unit();
+    let unit = super::AbstractConstructor::build_compilation_unit();
     let abi = unit
         .find_contract_by_name("AB")
         .next()

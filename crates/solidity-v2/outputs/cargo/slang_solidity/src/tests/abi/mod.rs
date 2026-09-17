@@ -104,6 +104,13 @@ library LJ {
     function view_fn(uint256 x) external view returns (uint256) {}
     function mut_fn(uint256 x) external returns (uint256) {}
 }
+"#,
+);
+
+define_fixture!(
+    AbstractConstructor,
+    file: "main.sol", r#"
+pragma solidity ^0.8.0;
 abstract contract AB {
     constructor(uint256 seed) {}
     function extra() external virtual;
@@ -132,6 +139,7 @@ contract Named {
     mapping(address funder => uint256 amountFunded) public addressToAmountFunded;
     mapping(address owner => mapping(uint256 id => bool ok)) public nested;
     mapping(uint256 key => S) public structs;
+    mapping(uint256 key => S[] items) public structArrays;
     mapping(uint256 key => uint256[] values) public arrays;
     mapping(uint256 => uint256 value) public unnamedKey;
     uint256[] public plain;
