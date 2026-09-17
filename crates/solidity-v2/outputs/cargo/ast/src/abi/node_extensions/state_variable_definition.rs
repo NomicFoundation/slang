@@ -22,24 +22,24 @@ impl StateVariableDefinitionStruct {
         Some(function_type)
     }
 
-    /// The getter's ABI inputs and outputs, from its function type. Function types don't track
-    /// parameter names, so solc's are read off the declaration: mapping key names for the
-    /// inputs, and for the outputs the struct members the return type is built from, else the
-    /// innermost mapping's value name.
+    /// The getter's ABI inputs and outputs, named as solc names them.
     fn extract_getter_type_parameters_abi(&self) -> Option<(Vec<AbiParameter>, Vec<AbiParameter>)> {
         let function_type = self.getter_function_type()?;
         let (input_names, value_name) = self.getter_parameter_names();
 
-        let mut inputs = Vec::with_capacity(function_type.parameter_types.len());
-        for (index, parameter_type_id) in function_type.parameter_types.iter().enumerate() {
-            inputs.push(AbiParameter::new(
-                None,
-                input_names.get(index).cloned().flatten(),
-                *parameter_type_id,
-                false,
-                &self.semantic,
-            )?);
-        }
+        debug_assert_eq!(
+            input_names.len(),
+            function_type.parameter_types.len(),
+            "getter inputs follow the declared mapping and array nesting"
+        );
+        let inputs = function_type
+            .parameter_types
+            .iter()
+            .zip(input_names)
+            .map(|(parameter_type_id, name)| {
+                AbiParameter::new(None, name, *parameter_type_id, false, &self.semantic)
+            })
+            .collect::<Option<Vec<_>>>()?;
 
         // A tuple as a return type from a function represents multiple return
         // values, so we need to flatten it
@@ -51,33 +51,33 @@ impl StateVariableDefinitionStruct {
             Type::Tuple(TupleType { types }) => Either::Left(types.iter()),
             _ => Either::Right(std::iter::once(&function_type.return_type)),
         };
-        let getter_struct_members = self.getter_struct_members();
-        let mut output_names = if getter_struct_members.is_empty() {
+        let member_ids = self.getter_member_ids();
+        let output_names = if member_ids.is_empty() {
             Either::Left(std::iter::once(value_name))
         } else {
-            Either::Right(
-                getter_struct_members
-                    .iter()
-                    .map(|member| Some(member.name().name().to_string())),
-            )
+            Either::Right(member_ids.iter().map(|member_id| {
+                let Some(member) = self.semantic.binder().find_definition_by_id(*member_id) else {
+                    unreachable!("getter member without a definition");
+                };
+                Some(member.identifier().unparse().to_string())
+            }))
         };
+        debug_assert_eq!(
+            output_types.len(),
+            output_names.len(),
+            "getter outputs are the struct members or the single value"
+        );
         let outputs = output_types
-            .map(|output_type_id| {
-                AbiParameter::new(
-                    None,
-                    output_names.next().flatten(),
-                    *output_type_id,
-                    false,
-                    &self.semantic,
-                )
+            .zip(output_names)
+            .map(|(output_type_id, name)| {
+                AbiParameter::new(None, name, *output_type_id, false, &self.semantic)
             })
             .collect::<Option<Vec<_>>>()?;
         Some((inputs, outputs))
     }
 
-    /// The names solc gives a getter's parameters, read off the declared type: each mapping
-    /// key's name for the inputs, an array index unnamed, and the innermost mapping's value
-    /// name for the output.
+    /// solc's getter parameter names, read off the declared type: each mapping key's name for
+    /// the inputs, an array index unnamed, and the innermost mapping's value name for the output.
     fn getter_parameter_names(&self) -> (Vec<Option<String>>, Option<String>) {
         let mut input_names = Vec::new();
         let mut value_name = None;

@@ -68,6 +68,11 @@ fn struct_getter_outputs_are_named_after_the_members() {
     assert_eq!(names(structs.inputs()), [Some("key")]);
     assert_eq!(names(structs.outputs()), [Some("x")]);
 
+    // The array index is unnamed and the members still name the outputs.
+    let struct_arrays = getter(&abi, "structArrays");
+    assert_eq!(names(struct_arrays.inputs()), [Some("key"), None]);
+    assert_eq!(names(struct_arrays.outputs()), [Some("x")]);
+
     let unit = super::AbiWithTuples::build_compilation_unit();
     let abi = unit
         .find_contract_by_name("Test")
