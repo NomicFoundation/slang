@@ -32,16 +32,16 @@ use crate::types::TypeRegistry;
 ///   unimplemented (see [`abstractness`]), and the override diagnostics for a
 ///   member that overrides an inherited one it isn't allowed to, or in a way it
 ///   isn't allowed to (see [`overrides`]); and
-/// - pre-compute, per contract, the collections of functions, state variables,
-///   errors and events visible in its hierarchy, stored in a `ContractData`
-///   (see [`linearisations`]).
+/// - pre-compute, per contract and interface, the collections of functions,
+///   state variables, errors and events visible in its hierarchy, stored in a
+///   `ContractData` (see [`linearisations`]).
 ///
 /// The two are independent traversals with different needs: the checks fold
 /// the bases' members into per-name state, driven by a [`HierarchyChecker`],
 /// the per-type analogue of the per-file `Pass` structs the other passes use,
-/// while the collections just filter and gather IR members. Interfaces only
-/// take part in the checks, and libraries — which have no bases at all — only
-/// in the duplicate-declaration ones, over their own members.
+/// while the collections just filter and gather IR members. Libraries — which
+/// have no bases at all — only take part in the duplicate-declaration checks,
+/// over their own members.
 ///
 /// Once every type has been checked, the same duplicate-declaration checks run
 /// over the free functions and events visible at file level.
@@ -71,42 +71,33 @@ pub fn run(
     let mut reported_duplicate = Set::default();
 
     for (definition_id, definition) in binder.definitions() {
-        match definition {
+        // A library has no bases, so its "hierarchy" is itself; it's walked
+        // here so that its own members take part in the duplicate-declaration
+        // checks (the other checks are no-ops for a single-type hierarchy that
+        // can't be abstract). An interface is checked and linearised like a
+        // contract, but is not listed among the contracts.
+        let linearise = match definition {
             Definition::Contract(contract) => {
                 contracts.push(Arc::clone(&contract.ir_node));
-                HierarchyChecker::check(
-                    binder,
-                    types,
-                    language_version,
-                    file_node_mapper,
-                    diagnostics,
-                    &mut reported_redeclaration,
-                    &mut reported_duplicate,
-                    *definition_id,
-                );
-                let linearisations = compute_linearisations(binder, types, *definition_id);
-                linearisations_by_id.insert(*definition_id, linearisations);
+                true
             }
-            // Interfaces don't get a `ContractData` entry, but their members
-            // still take part in redeclaration checks.
-            //
-            // A library has no bases, so its "hierarchy" is itself; it's walked
-            // here so that its own members take part in the
-            // duplicate-declaration checks (the other checks are no-ops for a
-            // single-type hierarchy that can't be abstract).
-            Definition::Interface(_) | Definition::Library(_) => {
-                HierarchyChecker::check(
-                    binder,
-                    types,
-                    language_version,
-                    file_node_mapper,
-                    diagnostics,
-                    &mut reported_redeclaration,
-                    &mut reported_duplicate,
-                    *definition_id,
-                );
-            }
-            _ => {}
+            Definition::Interface(_) => true,
+            Definition::Library(_) => false,
+            _ => continue,
+        };
+        HierarchyChecker::check(
+            binder,
+            types,
+            language_version,
+            file_node_mapper,
+            diagnostics,
+            &mut reported_redeclaration,
+            &mut reported_duplicate,
+            *definition_id,
+        );
+        if linearise {
+            let linearisations = compute_linearisations(binder, types, *definition_id);
+            linearisations_by_id.insert(*definition_id, linearisations);
         }
     }
 
