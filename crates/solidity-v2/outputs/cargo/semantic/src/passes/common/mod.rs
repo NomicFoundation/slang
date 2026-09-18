@@ -16,7 +16,6 @@ mod resolution;
 
 pub(crate) use node_extensions::node_location;
 pub(crate) use resolution::{
-    bases_after, filter_overriden_definitions, find_definition_namespace_scope_id,
-    function_overrides, has_virtual_semantics, most_derived_override,
-    resolve_identifier_path_in_scope, super_override,
+    filter_overriden_definitions, find_definition_namespace_scope_id,
+    resolve_identifier_path_in_scope,
 };

@@ -581,6 +581,11 @@ mod resolution {
         }
 
         #[test]
+        fn super_in_interface() -> Result<()> {
+            run("resolution/identifier_not_found", "super_in_interface")
+        }
+
+        #[test]
         fn super_in_library() -> Result<()> {
             run("resolution/identifier_not_found", "super_in_library")
         }

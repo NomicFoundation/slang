@@ -68,10 +68,10 @@ pub enum Typing {
     /// Typing of the `this` keyword. Resolving a member of `this` requires
     /// special lookup rules.
     This(TypeId),
-    /// Typing of the `super` keyword, carrying the contract or interface it is
-    /// written in: the anchor a `super` member resolution starts after in the
-    /// linearisation of the contract being compiled. Resolving members requires
-    /// special lookup rules.
+    /// Typing of the `super` keyword, carrying the contract it is written in:
+    /// the enclosing contract a `super` member resolution starts after in the linearisation
+    /// of the contract being compiled. Resolving members requires special
+    /// lookup rules.
     Super(NodeId),
 }
 
@@ -304,6 +304,19 @@ impl Binder {
 
     pub fn get_linearised_bases(&self, node_id: NodeId) -> Option<&Vec<NodeId>> {
         self.linearisations.get(&node_id)
+    }
+
+    /// The part of `contract_id`'s linearisation that a member of `super`
+    /// written in `enclosing_contract` searches: the bases after the enclosing contract, and none
+    /// when the enclosing contract is not one of them.
+    pub fn bases_after(&self, contract_id: NodeId, enclosing_contract: NodeId) -> &[NodeId] {
+        let Some(bases) = self.get_linearised_bases(contract_id) else {
+            return &[];
+        };
+        match bases.iter().position(|base| *base == enclosing_contract) {
+            Some(position) => &bases[position + 1..],
+            None => &[],
+        }
     }
 
     #[cfg(test)]
@@ -619,13 +632,7 @@ impl Binder {
                         return Resolution::Unresolved;
                     }
                 }
-                ResolveOptions::Super(node_id) => {
-                    if let Some(index) = linearisations.iter().position(|id| *id == node_id) {
-                        &linearisations[index + 1..]
-                    } else {
-                        return Resolution::Unresolved;
-                    }
-                }
+                ResolveOptions::Super(node_id) => self.bases_after(contract_scope.node_id, node_id),
             };
             let mut results = DefinitionIds::new();
             // How many of `results` the most derived base that declares the

@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 4726] Error: Functions in interfaces cannot have an implementation.
+   ╭─[input.sol:7:5]
+   │
+ 7 │ ╭─▶     function g() external {
+   ┆ ┆   
+ 9 │ ├─▶     }
+   │ │           
+   │ ╰─────────── Error occurred here.
+───╯
+
+[TypeError 9582] Error: Member "f" not found or not visible after argument-dependent lookup in type(contract super I).
+   ╭─[input.sol:8:9]
+   │
+ 8 │         super.f();
+   │         ───┬───  
+   │            ╰───── Error occurred here.
+───╯

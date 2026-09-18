@@ -1,4 +1,4 @@
-pub(crate) mod common;
+mod common;
 pub(crate) mod p1_collect_definitions;
 pub(crate) mod p2_linearise_contracts;
 pub(crate) mod p3_type_definitions;

@@ -15,9 +15,7 @@ use slang_solidity_v2_ir::ir;
 pub use storage_layout::{StorageLayoutBuilder, StoragePosition, StorageSize};
 
 use crate::binder::{Binder, BinderCapacities, Definition, Reference};
-use crate::passes::common::{
-    bases_after, has_virtual_semantics, most_derived_override, super_override,
-};
+use crate::overrides::{Overrides, VirtualTarget};
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_compute_linearisations,
     p5_resolve_references, p6_resolve_yul, p7_contract_properties, p8_code_analysis,
@@ -209,47 +207,66 @@ impl SemanticContext {
         self.contract_data.linearised_functions(contract_id)
     }
 
-    /// The function a bare-name reference to `function` runs in code compiled
-    /// into `contract_id`: the most-derived override in the contract's
-    /// hierarchy when the declaration is `virtual` or an interface member, the
-    /// declaration itself otherwise, and also when nothing in the hierarchy
-    /// overrides it. `contract_id` must be a registered contract definition.
+    /// What a bare-name reference to `function` runs in code compiled into
+    /// `contract_id`: the most-derived override in the contract's hierarchy
+    /// when the declaration is `virtual`, an interface member or a modifier,
+    /// the getter of a public state variable that overrides it, and the
+    /// declaration itself
+    /// otherwise, as when nothing in the hierarchy overrides it. `contract_id`
+    /// must be a registered contract definition, and `function` one its
+    /// hierarchy declares: the search matches signatures, not declaration
+    /// sites, so an unrelated contract's same-signature function would match.
     pub fn resolve_virtual<'a>(
         &'a self,
         contract_id: NodeId,
         function: &'a ir::FunctionDefinition,
-    ) -> &'a ir::FunctionDefinition {
-        if !has_virtual_semantics(&self.binder, function) {
-            return function;
+    ) -> VirtualTarget<'a> {
+        let overrides = Overrides::new(&self.binder, &self.types);
+        if matches!(function.kind, ir::FunctionKind::Modifier) {
+            let bases = self
+                .binder
+                .get_linearised_bases(contract_id)
+                .expect("the contract being compiled is linearised");
+            let name = function
+                .name
+                .as_ref()
+                .expect("a modifier is named")
+                .unparse();
+            return VirtualTarget::Function(
+                overrides.modifier_target(bases, name).unwrap_or(function),
+            );
         }
-        most_derived_override(
-            &self.binder,
-            &self.types,
-            self.linearised_functions(contract_id),
-            function,
-        )
-        .unwrap_or(function)
+        if !overrides.has_virtual_semantics(function) {
+            return VirtualTarget::Function(function);
+        }
+        if let Some(target) =
+            overrides.virtual_target(self.linearised_functions(contract_id), function)
+        {
+            return VirtualTarget::Function(target);
+        }
+        match overrides.overriding_getter(self.linearised_state_variables(contract_id), function) {
+            Some(state_variable) => VirtualTarget::Getter(state_variable),
+            None => VirtualTarget::Function(function),
+        }
     }
 
     /// The function `super.f` runs for `function` in code compiled into
-    /// `contract_id`, when written in the contract `anchor_id`: the nearest
-    /// implemented override after the anchor in `contract_id`'s linearisation,
-    /// or the declaration itself when none follows it. `anchor_id` must be a
-    /// contract in `contract_id`'s linearisation.
+    /// `contract_id`, when written in the contract `enclosing_contract`: the nearest
+    /// implemented override after the enclosing contract in `contract_id`'s linearisation,
+    /// or the declaration itself when none follows it, as when `enclosing_contract` is
+    /// not in that linearisation at all.
     pub fn resolve_super<'a>(
         &'a self,
         contract_id: NodeId,
         function: &'a ir::FunctionDefinition,
-        anchor_id: NodeId,
+        enclosing_contract: NodeId,
     ) -> &'a ir::FunctionDefinition {
-        let bases = self
-            .binder
-            .get_linearised_bases(contract_id)
-            .expect("the contract being compiled is linearised");
-        let Some(bases) = bases_after(bases, anchor_id) else {
-            return function;
-        };
-        super_override(&self.binder, &self.types, bases, function).unwrap_or(function)
+        Overrides::new(&self.binder, &self.types)
+            .super_target(
+                self.binder.bases_after(contract_id, enclosing_contract),
+                function,
+            )
+            .unwrap_or(function)
     }
 
     /// For each contract, the contracts that its creation code embeds through
