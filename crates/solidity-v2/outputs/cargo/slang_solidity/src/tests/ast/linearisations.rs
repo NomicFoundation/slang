@@ -169,17 +169,20 @@ fn test_linearised_functions_keep_one_fallback_whatever_its_signature() {
 }
 
 #[test]
-fn test_resolve_virtual_of_a_fallback_is_the_fallback() {
+fn test_resolve_virtual_of_a_virtual_fallback_is_its_override() {
     let unit = FallbackOverride::build_compilation_unit();
 
+    let base = unit
+        .find_contract_by_name("Base")
+        .next()
+        .expect("can find contract");
     let derived = unit
         .find_contract_by_name("Derived")
         .next()
         .expect("can find contract");
-    let fallback = &derived.functions()[0];
     assert_eq!(
-        derived.resolve_virtual(fallback).node_id(),
-        fallback.node_id(),
-        "a nameless function has no `Definition` to look up"
+        derived.resolve_virtual(&base.functions()[0]).node_id(),
+        derived.functions()[0].node_id(),
+        "the derived fallback is what runs in code compiled into Derived"
     );
 }

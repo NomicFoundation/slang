@@ -665,15 +665,17 @@ impl Visitor for Pass<'_> {
     fn visit_super_keyword(&mut self, node: &ir::SuperKeyword) {
         // `super` is anchored at the contract it is written in, which is the
         // lexical one here; the contract being compiled decides the
-        // linearisation the anchor is searched in. A library is in no
-        // linearisation, so it anchors nothing.
-        let anchor = self.current_contract_node_id().filter(|node_id| {
+        // linearisation the enclosing contract is searched in. A library is in no
+        // linearisation, so it encloses nothing.
+        let enclosing_contract = self.current_contract_node_id().filter(|node_id| {
             matches!(
-                self.binder.find_definition_by_id(*node_id),
-                Some(Definition::Contract(_) | Definition::Interface(_))
+                self.binder
+                    .find_definition_by_id(*node_id)
+                    .expect("a contract scope belongs to a definition"),
+                Definition::Contract(_)
             )
         });
-        match anchor {
+        match enclosing_contract {
             Some(node_id) => self
                 .binder
                 .set_node_typing(node.id(), Typing::Super(node_id)),
@@ -684,7 +686,10 @@ impl Visitor for Pass<'_> {
     fn visit_this_keyword(&mut self, node: &ir::ThisKeyword) {
         // `this` is a special keyword that resolves to the current contract or library type
         if let Some(node_id) = self.current_contract_node_id() {
-            let type_id = self.contract_type_id(node_id);
+            let type_ = self
+                .type_of_definition(node_id)
+                .expect("a contract scope belongs to a contract, interface or library definition");
+            let type_id = self.types.register_type(type_);
             self.binder
                 .set_node_typing(node.id(), Typing::This(type_id));
         } else {

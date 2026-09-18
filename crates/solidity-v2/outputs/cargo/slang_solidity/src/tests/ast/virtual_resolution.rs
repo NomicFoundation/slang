@@ -1,10 +1,10 @@
 //! `ContractDefinition::resolve_virtual`, `ContractDefinition::resolve_super`,
-//! and the anchor `super` carries: the queries a compiler needs to pick the
+//! and the enclosing contract `super` carries: the queries a compiler needs to pick the
 //! implementation a call runs when a base's body is compiled into a derived
 //! contract.
 
-use crate::ast::visitor::{Visitor, accept_function_definition};
-use crate::ast::{ContractBase, ContractDefinition, Definition, Expression, FunctionDefinition};
+use crate::ast::visitor::Visitor;
+use crate::ast::{self, ContractDefinition, Definition, Expression, FunctionDefinition};
 use crate::compilation::CompilationUnit;
 use crate::define_fixture;
 
@@ -78,16 +78,16 @@ fn function(unit: &CompilationUnit, owner: &str, name: &str, arity: usize) -> Fu
         .expect("the owner declares the function")
 }
 
-/// Captures the anchor of every `super` keyword under a node.
+/// Captures the enclosing contract of every `super` keyword under a node.
 #[derive(Default)]
-struct SuperAnchors {
-    anchors: Vec<Option<ContractBase>>,
+struct SuperEnclosingContracts {
+    enclosing_contracts: Vec<Option<ContractDefinition>>,
 }
 
-impl Visitor for SuperAnchors {
+impl Visitor for SuperEnclosingContracts {
     fn enter_expression(&mut self, node: &Expression) -> bool {
         if let Expression::SuperKeyword(keyword) = node {
-            self.anchors.push(keyword.anchor());
+            self.enclosing_contracts.push(keyword.enclosing_contract());
         }
         true
     }
@@ -182,7 +182,7 @@ fn test_resolve_virtual_implements_a_bodiless_declaration() {
 }
 
 #[test]
-fn test_resolve_super_runs_the_implementation_after_the_anchor() {
+fn test_resolve_super_runs_the_implementation_after_the_enclosing_contract() {
     let unit = Hierarchy::build_compilation_unit();
     let c_f = function(&unit, "C", "f", 0);
 
@@ -225,14 +225,14 @@ fn test_resolve_super_skips_a_bodiless_override() {
 fn test_super_is_anchored_at_the_contract_it_is_written_in() {
     let unit = Hierarchy::build_compilation_unit();
 
-    let mut finder = SuperAnchors::default();
-    accept_function_definition(&function(&unit, "B", "f", 0), &mut finder);
+    let mut finder = SuperEnclosingContracts::default();
+    ast::visitor::accept_function_definition(&function(&unit, "B", "f", 0), &mut finder);
 
-    let [Some(ContractBase::Contract(anchor))] = finder.anchors.as_slice() else {
+    let [Some(enclosing_contract)] = finder.enclosing_contracts.as_slice() else {
         panic!("B.f has one `super`, anchored at a contract");
     };
     assert_eq!(
-        anchor.node_id(),
+        enclosing_contract.node_id(),
         contract(&unit, "B").node_id(),
         "`super` in B.f is anchored at B"
     );

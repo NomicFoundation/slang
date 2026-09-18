@@ -3,13 +3,11 @@
 
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
-    AmbiguousReference, MemberNotFound, NoMatchingCallableDeclaration, ResolutionDiagnosticKind,
+    AmbiguousReference, MemberNotFound, NoMatchingCallableDeclaration,
 };
-use slang_solidity_v2_ir::ir;
 
-use super::support::{diagnostic_kinds, only_diagnostic};
+use super::support::diagnostic_kinds;
 use super::{Analyse, Analysis, expression, expression_statement_types, expressions};
-use crate::binder::Typing;
 use crate::types::{
     ByteArrayType, BytesType, ContractType, DataLocation, IntegerType, LibraryType, StringType,
     TupleType, Type,
@@ -25,69 +23,6 @@ fn statement_types(analysis: &Analysis, owner: &str, function: &str) -> Vec<Opti
         analysis.binder(),
         analysis.types(),
     )
-}
-
-#[test]
-fn test_super_keyword_carries_the_contract_it_is_written_in() {
-    let source = r#"
-        pragma solidity *;
-        contract A {
-            function f() public virtual {}
-        }
-        contract B is A {
-            function g() public {
-                super.f();
-            }
-        }
-        "#;
-
-    let analysis = Analysis::of_source(source)
-        .run(Analyse::References)
-        .expect_no_diagnostics();
-
-    let body = analysis.function_body("B", "g");
-    let statement = body.statements.first().expect("g has a statement");
-    let ir::Statement::ExpressionStatement(expression_statement) = statement else {
-        panic!("expected an expression statement");
-    };
-    let ir::Expression::FunctionCallExpression(call) = &expression_statement.expression else {
-        panic!("expected a function call expression");
-    };
-    let ir::Expression::MemberAccessExpression(member_access) = &call.operand else {
-        panic!("expected a member access expression");
-    };
-    let ir::Expression::SuperKeyword(super_keyword) = &member_access.operand else {
-        panic!("expected a super keyword");
-    };
-
-    let Typing::Super(anchor) = analysis.binder().node_typing(super_keyword.id()) else {
-        panic!("`super` should be typed as `Typing::Super`");
-    };
-    assert_eq!(
-        *anchor,
-        analysis.find_contract("B").id(),
-        "`super` carries the contract it is written in"
-    );
-}
-
-#[test]
-fn test_super_keyword_in_a_library_is_unresolved() {
-    let source = r#"
-        pragma solidity *;
-        library L {
-            function f() internal pure {}
-            function g() internal pure {
-                super.f();
-            }
-        }
-        "#;
-
-    let analysis = Analysis::of_source(source).run(Analyse::References);
-
-    assert!(matches!(
-        only_diagnostic(&analysis.diagnostics).kind(),
-        DiagnosticKind::Resolution(ResolutionDiagnosticKind::IdentifierNotFound(_))
-    ));
 }
 
 #[test]

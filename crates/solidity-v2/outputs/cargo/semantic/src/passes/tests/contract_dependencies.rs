@@ -9,10 +9,12 @@ use slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDepend
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_ir::ir;
 
-use super::support::{Analyse, Analysis, only_diagnostic};
+use super::support::{Analyse, Analysis, find_function, only_diagnostic};
 use crate::binder::Definition;
 use crate::context::SemanticContext;
+use crate::overrides::VirtualTarget;
 
 /// These tests pin Istanbul: the dependency walk is target independent, and
 /// the oldest supported target keeps any target-gated built-in out of the way.
@@ -36,6 +38,28 @@ fn contract_id(context: &SemanticContext, name: &str) -> NodeId {
         .next()
         .expect("contract exists")
         .id()
+}
+
+/// The function or modifier `name` declared by the contract or interface
+/// `owner`, which `linearised_functions` may not list.
+fn declared_function(context: &SemanticContext, owner: &str, name: &str) -> ir::FunctionDefinition {
+    let members = context
+        .binder()
+        .definitions()
+        .values()
+        .find_map(|definition| match definition {
+            Definition::Contract(contract) if contract.ir_node.name.unparse() == owner => {
+                Some(&contract.ir_node.members[..])
+            }
+            Definition::Interface(interface) if interface.ir_node.name.unparse() == owner => {
+                Some(&interface.ir_node.members[..])
+            }
+            _ => None,
+        })
+        .expect("owner exists");
+    find_function(members, name)
+        .expect("function exists")
+        .clone()
 }
 
 fn library_id(context: &SemanticContext, name: &str) -> NodeId {
@@ -925,17 +949,128 @@ fn a_units_own_reference_wins_over_the_constant_it_uses() {
 #[test]
 fn super_anchored_outside_the_linearisation_resolves_to_the_declaration() {
     let context = build_context(
-        "contract A {
+        "contract Base {
             function f() public virtual {}
+        }
+        contract Derived is Base {
+            function f() public virtual override {}
         }
         contract Unrelated {}",
     );
 
-    let a = contract_id(&context, "A");
+    let derived = contract_id(&context, "Derived");
     let unrelated = contract_id(&context, "Unrelated");
-    let f = &context.linearised_functions(a)[0];
+    let f = &context.linearised_functions(derived)[0];
 
-    assert_eq!(context.resolve_super(a, f, unrelated).id(), f.id());
+    assert_eq!(
+        context.resolve_super(derived, f, unrelated).id(),
+        f.id(),
+        "an enclosing_contract outside the linearisation searches no base, not every base"
+    );
+}
+
+#[test]
+fn resolve_virtual_of_a_calldata_parameter_overridden_by_memory() {
+    // `function_type_overrides` is asymmetric: the relaxation requires the
+    // overridden function to be `external`, so the argument order matters.
+    let context = build_context(
+        "contract Base {
+            function f(uint256[] calldata a) external virtual returns (uint256) { return a.length; }
+        }
+        contract Derived is Base {
+            function f(uint256[] memory a) public override returns (uint256) { return a.length; }
+        }",
+    );
+
+    let base = contract_id(&context, "Base");
+    let derived = contract_id(&context, "Derived");
+    let base_f = &context.linearised_functions(base)[0];
+    let derived_f = &context.linearised_functions(derived)[0];
+
+    let VirtualTarget::Function(target) = context.resolve_virtual(derived, base_f) else {
+        panic!("a function, not a getter, overrides Base.f");
+    };
+    assert_eq!(target.id(), derived_f.id());
+}
+
+#[test]
+fn resolve_virtual_of_an_unimplemented_interface_member_is_the_declaration() {
+    let context = build_context(
+        "interface I {
+            function f() external;
+        }
+        abstract contract A is I {}",
+    );
+
+    let a = contract_id(&context, "A");
+    let f = declared_function(&context, "I", "f");
+
+    assert!(
+        context.linearised_functions(a).is_empty(),
+        "A leaves f unimplemented, so its function list is empty"
+    );
+    let VirtualTarget::Function(target) = context.resolve_virtual(a, &f) else {
+        panic!("no getter overrides an unimplemented interface member");
+    };
+    assert_eq!(
+        target.id(),
+        f.id(),
+        "the declaration is the target when the hierarchy implements nothing"
+    );
+}
+
+#[test]
+fn resolve_virtual_of_a_virtual_modifier_is_its_override() {
+    let context = build_context(
+        "contract Base {
+            modifier m() virtual { _; }
+            function f() public m {}
+        }
+        contract Derived is Base {
+            modifier m() override { _; }
+        }",
+    );
+
+    let derived = contract_id(&context, "Derived");
+    let base_m = declared_function(&context, "Base", "m");
+    let derived_m = declared_function(&context, "Derived", "m");
+
+    let VirtualTarget::Function(target) = context.resolve_virtual(derived, &base_m) else {
+        panic!("a modifier is never overridden by a getter");
+    };
+    assert_eq!(
+        target.id(),
+        derived_m.id(),
+        "Derived.m is what runs in code compiled into Derived"
+    );
+}
+
+#[test]
+fn resolve_virtual_of_a_function_a_getter_overrides() {
+    let context = build_context(
+        "contract Base {
+            function f() external view virtual returns (uint256) { return 1; }
+        }
+        contract Derived is Base {
+            uint256 public override f;
+        }",
+    );
+
+    let base = contract_id(&context, "Base");
+    let derived = contract_id(&context, "Derived");
+    let f = &context.linearised_functions(base)[0];
+
+    assert!(
+        context.linearised_functions(derived).is_empty(),
+        "the getter drops Base.f from Derived's functions"
+    );
+    assert!(
+        matches!(
+            context.resolve_virtual(derived, f),
+            VirtualTarget::Getter(_)
+        ),
+        "the getter, not Base.f, is what runs in code compiled into Derived"
+    );
 }
 
 #[test]

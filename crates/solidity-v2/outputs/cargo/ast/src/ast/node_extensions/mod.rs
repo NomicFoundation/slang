@@ -23,6 +23,9 @@ mod state_variable_definition;
 mod string_expression;
 mod super_keyword;
 
+mod virtual_target;
+pub use virtual_target::VirtualTarget;
+
 mod user_defined_operators;
 pub use user_defined_operators::UserDefinedOperatorExpression;
 

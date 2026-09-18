@@ -1,3 +1,5 @@
+use slang_solidity_v2_semantic::overrides::VirtualTarget as SemanticVirtualTarget;
+
 use super::super::nodes::{
     create_error_definition, create_event_definition, create_function_definition,
     create_state_variable_definition,
@@ -6,7 +8,7 @@ use super::super::{
     ContractDefinition, ContractDefinitionStruct, Definition, ErrorDefinition, EventDefinition,
     FunctionDefinition, FunctionKind, FunctionMutability, StateVariableDefinition,
 };
-use super::ContractBase;
+use super::{ContractBase, VirtualTarget};
 
 impl ContractDefinitionStruct {
     pub fn direct_bases(&self) -> Vec<ContractBase> {
@@ -110,26 +112,35 @@ impl ContractDefinitionStruct {
     /// into this contract: the most-derived override in this contract's
     /// hierarchy when `function` is `virtual` or an interface member, and
     /// `function` itself otherwise.
-    pub fn resolve_virtual(&self, function: &FunctionDefinition) -> FunctionDefinition {
-        create_function_definition(
-            self.semantic
-                .resolve_virtual(self.ir_node.id(), &function.ir_node),
-            &self.semantic,
-        )
+    pub fn resolve_virtual(&self, function: &FunctionDefinition) -> VirtualTarget {
+        match self
+            .semantic
+            .resolve_virtual(self.ir_node.id(), &function.ir_node)
+        {
+            SemanticVirtualTarget::Function(target) => {
+                VirtualTarget::Function(create_function_definition(target, &self.semantic))
+            }
+            SemanticVirtualTarget::Getter(state_variable) => VirtualTarget::Getter(
+                create_state_variable_definition(state_variable, &self.semantic),
+            ),
+        }
     }
 
     /// The function `super.f` runs for `function` in code compiled into this
-    /// contract when written in the contract `anchor`: the nearest implemented
-    /// override after `anchor` in this contract's linearisation, or `function`
+    /// contract when written in the contract `enclosing_contract`: the nearest implemented
+    /// override after `enclosing_contract` in this contract's linearisation, or `function`
     /// itself when none follows.
     pub fn resolve_super(
         &self,
         function: &FunctionDefinition,
-        anchor: &ContractDefinition,
+        enclosing_contract: &ContractDefinition,
     ) -> FunctionDefinition {
         create_function_definition(
-            self.semantic
-                .resolve_super(self.ir_node.id(), &function.ir_node, anchor.node_id()),
+            self.semantic.resolve_super(
+                self.ir_node.id(),
+                &function.ir_node,
+                enclosing_contract.node_id(),
+            ),
             &self.semantic,
         )
     }
