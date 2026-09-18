@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9098] Error: Overriding function visibility differs.
+    ╭─[input.sol:10:5]
+    │
+ 10 │     function f() external override {}
+    │     ────────────────┬────────────────  
+    │                     ╰────────────────── Error occurred here.
+────╯

@@ -11,7 +11,7 @@ interface IOwnable {
 }
 
 contract Test is IOwnable {
-    function owner() external returns (address) {}
+    function owner() external override returns (address) {}
 
     function test() public onlyOwner {}
 }

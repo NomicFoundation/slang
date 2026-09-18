@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 9456] Error: Overriding function is missing "override" specifier.
+    ╭─[input.sol:12:5]
+    │
+ 12 │     fallback() external {}
+    │     ───────────┬──────────  
+    │                ╰──────────── Error occurred here.
+────╯
+
+[TypeError 9456] Error: Overriding function is missing "override" specifier.
+    ╭─[input.sol:14:5]
+    │
+ 14 │     receive() external payable {}
+    │     ──────────────┬──────────────  
+    │                   ╰──────────────── Error occurred here.
+────╯
