@@ -2,7 +2,7 @@
 //! and for the outputs the struct members the return type is built from, else the innermost
 //! mapping's value name. An array index stays unnamed.
 
-use crate::abi::{AbiEntry, AbiFunction, ContractAbi};
+use crate::abi::{AbiEntry, AbiFunction, AbiParameter, ContractAbi};
 
 fn getter<'a>(abi: &'a ContractAbi, name: &str) -> &'a AbiFunction {
     abi.entries()
@@ -14,7 +14,7 @@ fn getter<'a>(abi: &'a ContractAbi, name: &str) -> &'a AbiFunction {
         .unwrap_or_else(|| panic!("getter `{name}` is in the ABI"))
 }
 
-fn names(parameters: &[crate::abi::AbiParameter]) -> Vec<Option<&str>> {
+fn names(parameters: &[AbiParameter]) -> Vec<Option<&str>> {
     parameters
         .iter()
         .map(|parameter| parameter.name())

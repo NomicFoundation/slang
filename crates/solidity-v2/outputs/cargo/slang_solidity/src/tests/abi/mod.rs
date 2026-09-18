@@ -119,12 +119,14 @@ abstract contract AB {
 );
 
 define_fixture!(
-    LibraryStorageReturn,
+    LibraryStorageSignature,
     file: "main.sol", r#"
 pragma solidity ^0.8.0;
 library L {
     struct S { uint256 x; }
     function slot(uint256 k) external view returns (S storage s) { assembly { s.slot := k } }
+    function peek(S storage s) external view returns (uint256) { return s.x; }
+    function peekArr(uint256[] storage xs) public view returns (uint256) { return xs.length; }
     function value(uint256 k) external view returns (uint256) { return k; }
 }
 "#,

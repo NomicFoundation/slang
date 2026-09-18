@@ -22,16 +22,17 @@ fn storage_references_and_internal_functions_are_left_out() {
     let abi = fixtures::find_library(&unit, "L")
         .compute_abi()
         .expect("the ABI is computable");
-    // `f` and `g` take storage references and `i` is internal.
+    // `f` and `g` write state and `i` is internal.
     assert_eq!(entry_names(&abi), ["function h", "function j"]);
     assert!(abi.storage_layout().is_empty());
+    assert!(abi.transient_storage_layout().is_empty());
 }
 
-/// solc filters on the return types as well: a `view` function returning a storage reference is
-/// reachable only by `DELEGATECALL`.
+/// A `view` function that takes or returns a storage reference is reachable only by
+/// `DELEGATECALL`; solc filters on both halves of the signature.
 #[test]
-fn storage_reference_returns_are_left_out() {
-    let unit = super::LibraryStorageReturn::build_compilation_unit();
+fn storage_references_in_the_signature_are_left_out() {
+    let unit = super::LibraryStorageSignature::build_compilation_unit();
     let abi = fixtures::find_library(&unit, "L")
         .compute_abi()
         .expect("the ABI is computable");

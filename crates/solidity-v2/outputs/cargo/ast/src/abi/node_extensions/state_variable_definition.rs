@@ -27,7 +27,7 @@ impl StateVariableDefinitionStruct {
         let function_type = self.getter_function_type()?;
         let (input_names, value_name) = self.getter_parameter_names();
 
-        debug_assert_eq!(
+        assert_eq!(
             input_names.len(),
             function_type.parameter_types.len(),
             "getter inputs follow the declared mapping and array nesting"
@@ -62,7 +62,7 @@ impl StateVariableDefinitionStruct {
                 Some(member.identifier().unparse().to_string())
             }))
         };
-        debug_assert_eq!(
+        assert_eq!(
             output_types.len(),
             output_names.len(),
             "getter outputs are the struct members or the single value"
