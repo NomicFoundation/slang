@@ -2,7 +2,7 @@ use itertools::Either;
 use slang_solidity_v2_semantic::types::{FunctionType, TupleType, Type};
 
 use crate::abi::{AbiEntry, AbiFunction, AbiMutability, AbiParameter, selector_from_signature};
-use crate::ast::{StateVariableDefinitionStruct, StateVariableVisibility};
+use crate::ast::{StateVariableDefinitionStruct, StateVariableVisibility, TypeName};
 
 impl StateVariableDefinitionStruct {
     pub fn is_externally_visible(&self) -> bool {
@@ -22,24 +22,24 @@ impl StateVariableDefinitionStruct {
         Some(function_type)
     }
 
-    /// The getter's ABI inputs and outputs, from its function type.
-    // TODO: our type system doesn't track parameter names for function types,
-    // so we can't convey that information in the ABI. This is important for
-    // getters where we should transfer that information from mapping or struct
-    // types (eg. a getter that returns a struct should name its output
-    // parameters from the struct members).
+    /// The getter's ABI inputs and outputs, named as solc names them.
     fn extract_getter_type_parameters_abi(&self) -> Option<(Vec<AbiParameter>, Vec<AbiParameter>)> {
         let function_type = self.getter_function_type()?;
-        let mut inputs = Vec::with_capacity(function_type.parameter_types.len());
-        for parameter_type_id in &function_type.parameter_types {
-            inputs.push(AbiParameter::new(
-                None,
-                None,
-                *parameter_type_id,
-                false,
-                &self.semantic,
-            )?);
-        }
+        let (input_names, value_name) = self.getter_parameter_names();
+
+        assert_eq!(
+            input_names.len(),
+            function_type.parameter_types.len(),
+            "getter inputs follow the declared mapping and array nesting"
+        );
+        let inputs = function_type
+            .parameter_types
+            .iter()
+            .zip(input_names)
+            .map(|(parameter_type_id, name)| {
+                AbiParameter::new(None, name, *parameter_type_id, false, &self.semantic)
+            })
+            .collect::<Option<Vec<_>>>()?;
 
         // A tuple as a return type from a function represents multiple return
         // values, so we need to flatten it
@@ -51,12 +51,53 @@ impl StateVariableDefinitionStruct {
             Type::Tuple(TupleType { types }) => Either::Left(types.iter()),
             _ => Either::Right(std::iter::once(&function_type.return_type)),
         };
+        let member_ids = self.getter_member_ids();
+        let output_names = if member_ids.is_empty() {
+            Either::Left(std::iter::once(value_name))
+        } else {
+            Either::Right(member_ids.iter().map(|member_id| {
+                let Some(member) = self.semantic.binder().find_definition_by_id(*member_id) else {
+                    unreachable!("getter member without a definition");
+                };
+                Some(member.identifier().unparse().to_string())
+            }))
+        };
+        assert_eq!(
+            output_types.len(),
+            output_names.len(),
+            "getter outputs are the struct members or the single value"
+        );
         let outputs = output_types
-            .map(|output_type_id| {
-                AbiParameter::new(None, None, *output_type_id, false, &self.semantic)
+            .zip(output_names)
+            .map(|(output_type_id, name)| {
+                AbiParameter::new(None, name, *output_type_id, false, &self.semantic)
             })
             .collect::<Option<Vec<_>>>()?;
         Some((inputs, outputs))
+    }
+
+    /// solc's getter parameter names, read off the declared type: each mapping key's name for
+    /// the inputs, an array index unnamed, and the innermost mapping's value name for the output.
+    fn getter_parameter_names(&self) -> (Vec<Option<String>>, Option<String>) {
+        let mut input_names = Vec::new();
+        let mut value_name = None;
+        let mut type_name = self.type_name();
+        loop {
+            match type_name {
+                TypeName::MappingType(mapping) => {
+                    input_names.push(mapping.key_type().name().map(|name| name.name().to_owned()));
+                    let value = mapping.value_type();
+                    value_name = value.name().map(|name| name.name().to_owned());
+                    type_name = value.type_name();
+                }
+                TypeName::ArrayTypeName(array) => {
+                    input_names.push(None);
+                    type_name = array.operand();
+                }
+                _ => break,
+            }
+        }
+        (input_names, value_name)
     }
 
     pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
