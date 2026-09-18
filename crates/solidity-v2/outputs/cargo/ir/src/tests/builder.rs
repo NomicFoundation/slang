@@ -31,7 +31,7 @@ contract MyContract {
         "Parser diagnostics: {diagnostics:?}"
     );
 
-    let mut id_generator = ir::NodeIdGenerator::default();
+    let mut id_generator = super::single_file_id_generator();
 
     let ir::BuildOutput {
         ir_root,
@@ -122,7 +122,7 @@ contract MyContract {
         "Parser diagnostics: {diagnostics:?}"
     );
 
-    let mut id_generator = ir::NodeIdGenerator::default();
+    let mut id_generator = super::single_file_id_generator();
     let ir::BuildOutput { diagnostics, .. } = ir::build(
         &"test.sol".into(),
         &source_unit,
@@ -139,7 +139,7 @@ contract MyContract {
 
     // Every allocated node is recorded exactly once, so the histogram total
     // must match the number of IDs handed out.
-    assert_eq!(histogram.total() as usize, id_generator.allocated_count());
+    assert_eq!(u64::from(histogram.total()), id_generator.allocated_count());
 
     // Spot-check a few known kinds in the snippet above.
     assert_eq!(1, histogram.count(ir::NodeKind::ContractDefinition));
@@ -169,7 +169,7 @@ contract Test is Base layout at 0 {}
         "Parser diagnostics: {diagnostics:?}"
     );
 
-    let mut id_generator = ir::NodeIdGenerator::default();
+    let mut id_generator = super::single_file_id_generator();
 
     let ir::BuildOutput {
         ir_root,
@@ -247,7 +247,7 @@ contract Test {
         "Parser diagnostics: {diagnostics:?}"
     );
 
-    let mut id_generator = ir::NodeIdGenerator::default();
+    let mut id_generator = super::single_file_id_generator();
 
     let ir::BuildOutput {
         ir_root,

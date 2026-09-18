@@ -119,7 +119,7 @@ fn test_override_is_a_contract_member_relationship() {
     let mut types = TypeRegistry::new(LanguageVersion::LATEST);
     let return_type = types.void();
 
-    let mut contract_type_of = |definition_id: usize| {
+    let mut contract_type_of = |definition_id: u64| {
         types.register_type(Type::Contract(ContractType {
             definition_id: definition_id.into(),
         }))

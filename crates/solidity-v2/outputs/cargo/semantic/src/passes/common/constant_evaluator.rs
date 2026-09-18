@@ -779,7 +779,9 @@ mod tests {
             "Parser diagnostics: {diagnostics:?}"
         );
 
-        let mut id_generator = ir::NodeIdGenerator::default();
+        let mut id_generator = ir::NodeIdGroups::default()
+            .next()
+            .expect("a fresh id space has a first group");
         let ir::BuildOutput {
             ir_root,
             diagnostics,

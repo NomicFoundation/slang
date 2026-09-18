@@ -19,3 +19,11 @@ mod builder;
 mod text_range;
 mod version_pragma;
 mod visitor;
+
+/// The generator for the first group of a fresh id space, for the tests that
+/// build a single file and so only ever need the one.
+fn single_file_id_generator() -> crate::ir::NodeIdGenerator {
+    crate::ir::NodeIdGroups::default()
+        .next()
+        .expect("a fresh id space has a first group")
+}
