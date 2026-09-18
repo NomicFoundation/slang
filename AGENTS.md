@@ -107,12 +107,13 @@ You can also use `nextest` directly for faster iteration on Rust tests:
 
 ## Parallelism (v2)
 
-`CompilationUnit::create()` parses source files in parallel over `rayon`'s ambient thread pool
-(the caller's installed pool, or the global one otherwise); IR building and semantic analysis are
-still sequential. Fewer than two sources skip `rayon` altogether and parse on the calling thread,
-where the scheduling overhead isn't worth it. There is no knob on the `Configuration` to opt out:
-to bound or serialize the work, call `create()` inside `rayon::ThreadPool::install` on a pool of
-your own. One invariant holds it together: **output must not depend on the concurrency choice.**
+`CompilationUnit::create()` parses source files and builds the IR in parallel over `rayon`'s ambient
+thread pool (the caller's installed pool, or the global one otherwise); import resolution and
+semantic analysis are still sequential. Fewer
+than two sources skip `rayon` altogether and run on the calling thread, where the scheduling
+overhead isn't worth it. There is no knob on the `Configuration` to opt out: to bound or serialize
+the work, call `create()` inside `rayon::ThreadPool::install` on a pool of your own. One invariant
+holds it together: **the compilation's results must not depend on the concurrency choice.**
 
 Node ids are what make that hold. `ir::NodeIdGroups` partitions the id space into equally
 sized, disjoint groups, and is the only way to get an `ir::NodeIdGenerator`: iterating it hands out
