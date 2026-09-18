@@ -33,7 +33,7 @@
 mod aliases {
     use std::hash::BuildHasherDefault;
 
-    use fxhash::FxHasher;
+    use rustc_hash::FxHasher;
 
     /// `FxHash` (`rustc`'s hasher). Seedless, so hashing is fully deterministic
     /// from run to run, unlike `RandomState`'s random per-process seed.
