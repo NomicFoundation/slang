@@ -1,15 +1,12 @@
 {
-  "matrix": {
-    "type": "SingleTargetAllVersions",
-    "expected_solc_divergence": [
-      {
-        "specifier": {
-          "type": "Range",
-          "from": "0.8.4",
-          "till": "0.8.5"
-        },
-        "reason": "solc '0.8.4' missed super calls that skip an unimplemented declaration in the virtual resolution order, fixed in '0.8.5'. Slang implements the fixed semantics for every version, so it also reports this cycle on '0.8.4'."
-      }
-    ]
-  }
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "Range",
+        "from": "0.8.4",
+        "till": "0.8.5"
+      },
+      "reason": "solc '0.8.4' missed super calls that skip an unimplemented declaration in the virtual resolution order, fixed in '0.8.5'. Slang implements the fixed semantics for every version, so it also reports this cycle on '0.8.4'."
+    }
+  ]
 }

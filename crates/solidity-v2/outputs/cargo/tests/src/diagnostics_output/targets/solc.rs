@@ -18,10 +18,11 @@ pub(crate) struct SolcTarget {
 }
 
 impl SolcTarget {
-    pub(crate) fn new(versions: impl IntoIterator<Item = Version>) -> Result<Self> {
-        Ok(Self {
-            binaries: Binary::fetch_all(versions)?,
-        })
+    pub(crate) fn new() -> Result<Self> {
+        let all_versions = LanguageVersion::ALL.iter().copied().map(Version::from);
+        let binaries = Binary::fetch_all(all_versions)?;
+
+        Ok(Self { binaries })
     }
 }
 

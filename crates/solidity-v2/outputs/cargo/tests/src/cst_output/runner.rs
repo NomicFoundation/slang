@@ -4,8 +4,9 @@ use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use slang_solidity_v2_parser::Parser as V2Parser;
 use solidity_v2_testing_utils::cst_renderer::render;
+use solidity_v2_testing_utils::evm_targets::default_evm_target;
 
-use crate::snapshots::{self, SnapshotOutcome, SnapshotStatus, TestConfig, TestMatrix};
+use crate::snapshots::{self, SnapshotOutcome, SnapshotStatus, TestCase, TestConfig};
 
 pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     let test_dir = CargoWorkspace::locate_source_crate("solidity_v2_testing_snapshots")?
@@ -21,21 +22,23 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     let mut fs = CodegenFileSystem::default();
 
     let test_config = TestConfig::resolve(&test_dir)?;
-    match &test_config.matrix {
-        TestMatrix::SingleVersionAllTargets(matrix) => ensure!(
-            matrix.expected_solc_divergence.is_empty(),
+    let test_cases: Vec<TestCase> = test_config.test_cases().collect();
+
+    for case in &test_cases {
+        ensure!(
+            !case.expected_solc_divergence,
             "Not comparing with 'solc' in 'cst_output' tests"
-        ),
-        TestMatrix::SingleTargetAllVersions(matrix) => ensure!(
-            matrix.expected_solc_divergence.is_empty(),
-            "Not comparing with 'solc' in 'cst_output' tests"
-        ),
+        );
+        ensure!(
+            case.evm_target == default_evm_target(case.language_version),
+            "Parsing doesn't currently depend on the EVM target, so 'cst_output' tests cannot pin it"
+        );
     }
 
     snapshots::generate_snapshots(
         &test_dir,
         &mut fs,
-        &test_config,
+        &test_cases,
         "generated",
         |version, target| {
             let output = V2Parser::parse(&file_id, &source, version);

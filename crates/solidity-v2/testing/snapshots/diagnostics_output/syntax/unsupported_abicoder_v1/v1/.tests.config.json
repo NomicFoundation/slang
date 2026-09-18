@@ -1,14 +1,11 @@
 {
-  "matrix": {
-    "type": "SingleTargetAllVersions",
-    "expected_solc_divergence": [
-      {
-        "specifier": {
-          "type": "From",
-          "from": "0.8.0"
-        },
-        "reason": "Slang always reports a lone `abicoder v1` as unsupported. solc accepts it on every version — silently before '0.8.31', and from '0.8.31' onwards with only a `Warning 9511: ABI coder v1 is deprecated`, which is not an error — so solc succeeds while Slang fails throughout."
-      }
-    ]
-  }
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "From",
+        "from": "0.8.0"
+      },
+      "reason": "Slang always reports a lone `abicoder v1` as unsupported. solc accepts it on every version — silently before '0.8.31', and from '0.8.31' onwards with only a `Warning 9511: ABI coder v1 is deprecated`, which is not an error — so solc succeeds while Slang fails throughout."
+    }
+  ]
 }
