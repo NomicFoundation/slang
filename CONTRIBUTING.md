@@ -49,7 +49,7 @@ You can access all such commands (from the hermit environment) by just running t
 
 ## Task Runner
 
-Linting is orchestrated by [Task](https://taskfile.dev), a task runner installed through Hermit like any other tool, so `task` is available on the `$PATH` of an activated environment (or as `$REPO_ROOT/bin/task`). Start with `task --list` to see what is available.
+Testing and linting are orchestrated by [Task](https://taskfile.dev), a task runner installed through Hermit like any other tool, so `task` is available on the `$PATH` of an activated environment (or as `$REPO_ROOT/bin/task`). Start with `task --list` to see what is available.
 
 The root `$REPO_ROOT/Taskfile.yml` only wires up the files under `$REPO_ROOT/scripts/tasks/`, one per command group, which is where the tasks themselves live.
 

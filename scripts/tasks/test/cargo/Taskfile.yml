@@ -1,0 +1,74 @@
+version: "3"
+
+vars:
+  CARGO_CI_FLAGS:
+    sh: "scripts/tasks/_utils/rustflags.sh"
+
+  NEXTEST_ARGS: "--workspace --all-features --tests --lib --bins --examples {{.CARGO_CI_FLAGS}}"
+
+  V2: "package(/^(codegen|language|slang_solidity|solidity)_v2(_|$)/)"
+  V1: "package(/^(codegen|language|slang_solidity|solidity|metaslang)(_|$)/) - ({{.V2}})"
+  INFRA: "package(/^infra_/)"
+
+tasks:
+  "default":
+    desc: "Run 'cargo nextest' for all crates, features, and targets."
+    deps:
+      - "verify-groups"
+    cmds:
+      - "cargo nextest run --no-fail-fast {{.NEXTEST_ARGS}} {{.CLI_ARGS}}"
+
+  "v1":
+    desc: "Run 'cargo nextest' for the v1 crates."
+    deps:
+      - "verify-groups"
+    cmds:
+      - 'cargo nextest run --no-fail-fast --filter-expr "{{.V1}}" {{.NEXTEST_ARGS}} {{.CLI_ARGS}}'
+
+  "v2":
+    desc: "Run 'cargo nextest' for the v2 crates."
+    deps:
+      - "verify-groups"
+    cmds:
+      - 'cargo nextest run --no-fail-fast --filter-expr "{{.V2}}" {{.NEXTEST_ARGS}} {{.CLI_ARGS}}'
+
+  "infra":
+    # TODO(infra): this is going away, once the rest of `infra_cli` is depreacted/removed.
+    desc: "Run 'cargo nextest' for the build tooling crates."
+    deps:
+      - "verify-groups"
+    cmds:
+      - 'cargo nextest run --no-fail-fast --filter-expr "{{.INFRA}}" {{.NEXTEST_ARGS}} {{.CLI_ARGS}}'
+
+  "verify-groups":
+    desc: "Check that the groups above leave no test unclaimed."
+    silent: true
+    internal: true
+    deps:
+      - "build-binaries"
+    cmds:
+      - |
+        ungrouped="$(cargo nextest list \
+          --filter-expr 'not (({{.V1}}) | ({{.V2}}) | ({{.INFRA}}))' \
+          {{.NEXTEST_ARGS}} \
+        )"
+
+        if [[ -n "${ungrouped}" ]]; then
+          echo >&2 "Found the following tests outside any group:"
+          echo >&2 ""
+          echo >&2 "${ungrouped}"
+          echo >&2 ""
+          echo >&2 "Error:"
+          echo >&2 "The above tests are in no 'task test:cargo:*' group."
+          echo >&2 "Widen the selectors in '{{.TASKFILE}}' to cover them."
+          echo >&2 ""
+          exit 1
+        fi
+
+        echo "OK: every test is in exactly one group."
+
+  "build-binaries":
+    desc: "Build test binaries (for reporting)."
+    internal: true
+    cmds:
+      - "cargo test --no-run {{.NEXTEST_ARGS}}"

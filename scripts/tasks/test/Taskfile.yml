@@ -1,0 +1,12 @@
+version: "3"
+
+includes:
+  cargo: "./cargo/Taskfile.yml"
+  npm: "./npm/Taskfile.yml"
+
+tasks:
+  "default":
+    desc: "Test everything."
+    deps:
+      - "cargo"
+      - "npm"
