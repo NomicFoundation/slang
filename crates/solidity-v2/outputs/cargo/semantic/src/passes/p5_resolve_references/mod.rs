@@ -162,4 +162,11 @@ impl<'a> Pass<'a> {
         }
         None
     }
+
+    /// The definition the current contract scope belongs to: a contract,
+    /// interface or library.
+    fn current_contract_node_id(&self) -> Option<NodeId> {
+        let scope_id = self.current_contract_scope_id()?;
+        Some(self.binder.get_scope_by_id(scope_id).node_id())
+    }
 }

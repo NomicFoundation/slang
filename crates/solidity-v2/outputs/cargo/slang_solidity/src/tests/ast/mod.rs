@@ -14,5 +14,6 @@ mod meta_type;
 mod node_location;
 mod number_literals;
 mod typing;
+mod virtual_resolution;
 mod visitor;
 mod yul_literals;

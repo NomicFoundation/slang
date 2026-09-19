@@ -7,7 +7,7 @@ use slang_solidity_v2_ir::ir;
 use super::references::{CallableReference, UnitReferences};
 use crate::binder::{Binder, Definition};
 use crate::context::{ContractData, ContractReference};
-use crate::passes::common::function_overrides;
+use crate::overrides::Overrides;
 use crate::types::TypeRegistry;
 
 /// One contract's dependencies, keyed by the dependency's id and mapped to
@@ -265,47 +265,27 @@ impl DependencyCollector<'_> {
         }
 
         match self.binder.find_definition_by_id(declaration) {
-            Some(Definition::Function(function)) => self
-                .contract_data
-                .linearised_functions(self.contract_id)
-                .iter()
-                .find(|candidate| {
-                    function_overrides(self.binder, self.types, candidate, &function.ir_node)
-                })
+            Some(Definition::Function(function)) => Overrides::new(self.binder, self.types)
+                .virtual_target(
+                    self.contract_data.linearised_functions(self.contract_id),
+                    &function.ir_node,
+                )
                 .map_or(declaration, |resolved| resolved.id()),
-            Some(Definition::Modifier(modifier)) => {
-                let name = modifier
-                    .ir_node
-                    .name
-                    .as_ref()
-                    .expect("modifiers are named")
-                    .unparse();
-                self.resolve_modifier_by_name(name).unwrap_or(declaration)
-            }
-            _ => declaration,
-        }
-    }
-
-    fn resolve_modifier_by_name(&self, name: &str) -> Option<NodeId> {
-        // Most-derived first. Modifiers cannot overload, the name suffices.
-        for base_id in self.binder.get_linearised_bases(self.contract_id)? {
-            let Some(Definition::Contract(base)) = self.binder.find_definition_by_id(*base_id)
-            else {
-                continue;
-            };
-            for member in base.ir_node.members.iter() {
-                if let ir::ContractMember::FunctionDefinition(function) = member
-                    && matches!(function.kind, ir::FunctionKind::Modifier)
-                    && function
+            Some(Definition::Modifier(modifier)) => Overrides::new(self.binder, self.types)
+                .modifier_target(
+                    self.binder
+                        .get_linearised_bases(self.contract_id)
+                        .map_or(&[][..], Vec::as_slice),
+                    modifier
+                        .ir_node
                         .name
                         .as_ref()
-                        .is_some_and(|candidate| candidate.unparse() == name)
-                {
-                    return Some(function.id());
-                }
-            }
+                        .expect("modifiers are named")
+                        .unparse(),
+                )
+                .map_or(declaration, |resolved| resolved.id()),
+            _ => declaration,
         }
-        None
     }
 
     /// Resolves which implementation a `super.f()` call runs when compiled
@@ -316,33 +296,12 @@ impl DependencyCollector<'_> {
         else {
             return declaration;
         };
-
-        // `super` searches the collected contract's linearisation, starting
-        // after the contract the call is written in.
-        let Some(bases) = self.binder.get_linearised_bases(self.contract_id) else {
-            return declaration;
-        };
-        let Some(position) = bases.iter().position(|base| *base == enclosing_contract) else {
-            return declaration;
-        };
-
-        // The nearest override with a body wins.
-        for base_id in &bases[position + 1..] {
-            let members = match self.binder.find_definition_by_id(*base_id) {
-                Some(Definition::Contract(base)) => &base.ir_node.members[..],
-                Some(Definition::Interface(base)) => &base.ir_node.members[..],
-                _ => continue,
-            };
-            for member in members {
-                if let ir::ContractMember::FunctionDefinition(candidate) = member
-                    && matches!(candidate.kind, ir::FunctionKind::Regular)
-                    && candidate.body.is_some()
-                    && function_overrides(self.binder, self.types, candidate, &function.ir_node)
-                {
-                    return candidate.id();
-                }
-            }
-        }
-        declaration
+        Overrides::new(self.binder, self.types)
+            .super_target(
+                self.binder
+                    .bases_after(self.contract_id, enclosing_contract),
+                &function.ir_node,
+            )
+            .map_or(declaration, |resolved| resolved.id())
     }
 }
