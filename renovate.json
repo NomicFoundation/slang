@@ -133,6 +133,11 @@
       "groupName": "pnpm"
     },
     {
+      "description": "changesets: the action hard-validates the CLI major and refuses to run on a mismatch (action v1 requires CLI v2, action v2 requires CLI v3), and changelog-github moved to ESM together with CLI v3, so the three must move in one PR. Nothing in PR CI runs publish.yml's changesets job, so a mismatch would first surface on a push to main. Must come after per-manager grouping rules so this groupName takes precedence.",
+      "matchPackageNames": ["changesets/action", "@changesets/cli", "@changesets/changelog-github"],
+      "groupName": "changesets"
+    },
+    {
       "description": "node: engines.node is a major-range guard; the exact runtime version is owned by Hermit. Don't let the npm manager bump engines.node, since its datasource (nodejs.org) leads the Hermit package index — an npm-only bump breaks engine-strict because Hermit can't install the new version yet. Node minor/patch flows through Hermit only; majors are bumped manually (see @types/node rule).",
       "matchManagers": ["npm"],
       "matchPackageNames": ["node"],
