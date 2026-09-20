@@ -1,3 +1,4 @@
+use crate::abi::selector_from_signature;
 use crate::ast::ContractBase;
 use crate::define_fixture;
 
@@ -21,6 +22,14 @@ abstract contract Implementer is IThing {}
 interface IMarker is IERC165 {}
 
 abstract contract MarkerImplementer is IMarker {}
+
+interface IAccount {
+    receive() external payable;
+    fallback() external payable;
+    function state() external view returns (uint256);
+}
+
+abstract contract AccountImplementer is IAccount {}
 "#,
 );
 
@@ -63,4 +72,22 @@ fn interface_id_is_zero_without_own_functions() {
         panic!("IMarker base is not an interface");
     };
     assert_eq!(marker.compute_interface_id(), Some(0));
+}
+
+#[test]
+fn interface_id_skips_receive_and_fallback() {
+    let unit = InterfaceIds::build_compilation_unit();
+    let implementer = unit
+        .find_contract_by_name("AccountImplementer")
+        .next()
+        .expect("AccountImplementer contract can be found");
+
+    let bases = implementer.linearised_bases();
+    let ContractBase::Interface(account) = &bases[1] else {
+        panic!("IAccount base is not an interface");
+    };
+    assert_eq!(
+        account.compute_interface_id(),
+        Some(selector_from_signature("state()"))
+    );
 }
