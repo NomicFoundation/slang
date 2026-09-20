@@ -32,6 +32,16 @@ impl ChangesetsController {
             "Package version does not match workspace version."
         );
 
+        // 'changeset version' fails when there is nothing to consume, so check first:
+        let has_changesets = FileWalker::from_repo_root()
+            .find([".changeset/*.md"])?
+            .any(|path| !path.ends_with("README.md"));
+
+        if !has_changesets {
+            println!("No pending changesets. Skipping.");
+            return Ok(());
+        }
+
         // This command will:
         // 1) Consume/delete any changeset files currently in "$REPO_ROOT/.changeset"
         // 2) Update the CHANGELOG.md file for the NPM package.
