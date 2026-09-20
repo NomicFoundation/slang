@@ -331,7 +331,14 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_state_variable_definition(&mut self, node: &ir::StateVariableDefinition) {
-        let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Storage));
+        // A `constant` occupies no storage slot. Only a `public` one reaches
+        // here; the IR builder lowers the rest to a `ConstantDefinition`.
+        let location = if node.attributes.mutability == ir::StateVariableMutability::Constant {
+            DataLocation::Memory
+        } else {
+            DataLocation::Storage
+        };
+        let type_id = self.resolve_type_name(&node.type_name, Some(location));
         self.binder.set_node_type(node.id(), type_id);
         // if required, we will compute the type of the getter after all
         // definitions have been typed
