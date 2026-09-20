@@ -133,6 +133,7 @@ impl TestConfig {
             // Check if an entry is too wide for the tested language versions:
             if let Some(versions) = self.override_language_versions.as_ref() {
                 ensure!(
+                    // `entry.intersect(entry)` normalizes different forms like `Till(x)` and `Range(EARLIEST, x)`
                     entry.intersect(versions) == entry.intersect(entry),
                     "`expected_solc_divergence` entry '{entry:?}' is not inside \
                      `override_language_versions` '{versions:?}'."

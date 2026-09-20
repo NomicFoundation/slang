@@ -524,10 +524,10 @@ mod resolution {
         }
 
         #[test]
-        fn yul_variable_shadows_blobhash_before_introduction() -> Result<()> {
+        fn yul_variable_shadows_blobhash_cancun() -> Result<()> {
             run(
                 "resolution/external_declaration_shadowing",
-                "yul_variable_shadows_blobhash_before_introduction",
+                "yul_variable_shadows_blobhash_cancun",
             )
         }
 
