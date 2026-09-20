@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Cancun'.
+   ╭─[input.sol:9:16]
+   │
+ 9 │         return blobhash(0);
+   │                ────┬───  
+   │                    ╰───── Error occurred here.
+───╯
+
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.24'.
+   ╭─[input.sol:9:16]
+   │
+ 9 │         return blobhash(0);
+   │                ────┬───  
+   │                    ╰───── Error occurred here.
+───╯

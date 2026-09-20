@@ -1,0 +1,15 @@
+{
+  "override_evm_target": {
+    "value": "Cancun",
+    "reason": "Cancun is the target that makes the built-in available, so pinning every version to it is the only way to show the language-version gate deciding on its own."
+  },
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "Till",
+        "till": "0.8.24"
+      },
+      "reason": "Cancun support only arrives in solc 0.8.24, so every version here declines the target outright ('Invalid EVM version requested'), which counts as a rejection. slang analyzes the input and accepts the declaration, which is the point of this test."
+    }
+  ]
+}

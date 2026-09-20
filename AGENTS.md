@@ -182,58 +182,40 @@ Every field is optional and resolved independently, with the closest
 config file providing it winning — so a nested config only needs to
 override the individual fields it cares about.
 
-Fields:
-
-- `matrix` picks which `(LanguageVersion, EvmTarget)` axis to vary; the
-  other axis is pinned by a `target`/`version` object holding its `value` and
-  a `reason`. It is required: resolution fails if no config file in the chain
-  provides it, so each suite defines it at its root.
-
-    Pin the target, iterating every language version:
+- `override_language_versions`: when unset, it runs all language versions:
 
     ```json
     {
-        "matrix": {
-            "type": "SingleTargetAllVersions",
-            "target": {
-                "value": "Istanbul",
-                "reason": "Explain why this target was pinned..."
-            }
+        "override_language_versions": {
+            "specifier": { "type": "From", "from": "0.8.1" },
+            "reason": "Explain why the other versions cannot run this..."
         }
     }
     ```
 
-    Or pin the version, iterating every EVM target:
+- `override_evm_target`: when unset, it uses the `solc` default target for each version:
 
     ```json
     {
-        "matrix": {
-            "type": "SingleVersionAllTargets",
-            "version": {
-                "value": "0.8.35",
-                "reason": "Explain why this version was pinned..."
-            }
+        "override_evm_target": {
+            "value": "Paris",
+            "reason": "Explain why the target is pinned..."
         }
     }
     ```
 
-    Both variants accept an optional `expected_solc_divergence` list,
-    declaring where slang and solc are expected to disagree on the status
-    (success/failure) of a snapshot — for diagnostics where Slang is
-    intentionally stricter/looser than solc. Each entry has a `reason`, and a
-    `specifier` ( `EvmTargetSpecifier` or `LanguageVersionSpecifier`).
+- `expected_solc_divergence`: when unset: expects that both `slang` and `solc`
+  result in the same outcome (success/warning/failure) for all versions. It can
+  contain multiple non-overlapping entries:
 
     ```json
     {
-        "matrix": {
-            "type": "SingleTargetAllVersions",
-            "expected_solc_divergence": [
-                {
-                    "specifier": { "type": "Till", "till": "0.8.4" },
-                    "reason": "Explain why slang and solc are expected to disagree..."
-                }
-            ]
-        }
+        "expected_solc_divergence": [
+            {
+                "specifier": { "type": "Till", "till": "0.8.4" },
+                "reason": "Explain why slang and solc are expected to disagree..."
+            }
+        ]
     }
     ```
 

@@ -1,9 +1,6 @@
 {
-  "matrix": {
-    "type": "SingleTargetAllVersions",
-    "target": {
-      "value": "Paris",
-      "reason": "'difficulty' was replaced by 'prevrandao' in 'Paris', so it must be rejected on that target regardless of the language version."
-    }
+  "override_evm_target": {
+    "value": "Paris",
+    "reason": "'difficulty' was replaced by 'prevrandao' in 'Paris', so it must be rejected on that target regardless of the language version."
   }
 }

@@ -1,0 +1,15 @@
+{
+  "override_evm_target": {
+    "value": "Istanbul",
+    "reason": "`mcopy` needs a Cancun target, and Istanbul is pre-Cancun and accepted by every supported solc, so the name stays free at every language version."
+  },
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "From",
+        "from": "0.8.35"
+      },
+      "reason": "From '0.8.35' solc warns that 'mcopy' will be promoted to Yul reserved identifier in the future (`Warning 5470`) while the built-in is unavailable. Slang models the name as either reserved or free, with no grace-period warning, so it stays silent. Neither side rejects the declaration, which is what this test asserts."
+    }
+  ]
+}

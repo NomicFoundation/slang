@@ -1,13 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Diagnostics:
-[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'London'.
-    ╭─[input.sol:11:13]
-    │
- 11 │             basefee()
-    │             ───┬───  
-    │                ╰───── Error occurred here.
-────╯
 [resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Cancun'.
     ╭─[input.sol:12:13]
     │
@@ -49,13 +42,6 @@ Diagnostics:
  49 │             mcopy()
     │             ──┬──  
     │               ╰──── Error occurred here.
-────╯
-[resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Paris'.
-    ╭─[input.sol:62:13]
-    │
- 62 │             prevrandao()
-    │             ─────┬────  
-    │                  ╰────── Error occurred here.
 ────╯
 [resolution/incompatible-built-in-target] Error: This built-in was introduced in EVM target 'Cancun'.
     ╭─[input.sol:83:13]

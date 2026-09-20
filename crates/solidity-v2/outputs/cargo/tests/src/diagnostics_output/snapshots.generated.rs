@@ -125,6 +125,14 @@ mod resolution {
         }
 
         #[test]
+        fn not_yet_reserved_on_pre_cancun_target() -> Result<()> {
+            run(
+                "resolution/built_in_redeclaration",
+                "not_yet_reserved_on_pre_cancun_target",
+            )
+        }
+
+        #[test]
         fn not_yet_reserved_until_fork() -> Result<()> {
             run(
                 "resolution/built_in_redeclaration",
@@ -516,10 +524,10 @@ mod resolution {
         }
 
         #[test]
-        fn yul_variable_shadows_blobhash_before_introduction() -> Result<()> {
+        fn yul_variable_shadows_blobhash_cancun() -> Result<()> {
             run(
                 "resolution/external_declaration_shadowing",
-                "yul_variable_shadows_blobhash_before_introduction",
+                "yul_variable_shadows_blobhash_cancun",
             )
         }
 
@@ -1238,18 +1246,26 @@ mod resolution {
         }
 
         #[test]
-        fn block_difficulty_all_targets() -> Result<()> {
+        fn blobhash_pre_cancun() -> Result<()> {
             run(
                 "resolution/incompatible_built_in_target",
-                "block_difficulty_all_targets",
+                "blobhash_pre_cancun",
             )
         }
 
         #[test]
-        fn block_prevrandao_all_targets() -> Result<()> {
+        fn block_difficulty() -> Result<()> {
             run(
                 "resolution/incompatible_built_in_target",
-                "block_prevrandao_all_targets",
+                "block_difficulty",
+            )
+        }
+
+        #[test]
+        fn block_prevrandao() -> Result<()> {
+            run(
+                "resolution/incompatible_built_in_target",
+                "block_prevrandao",
             )
         }
 

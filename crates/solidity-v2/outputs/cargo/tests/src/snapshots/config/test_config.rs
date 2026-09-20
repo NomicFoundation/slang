@@ -2,19 +2,33 @@ use std::path::Path;
 
 use anyhow::{Context, Result, ensure};
 use infra_utils::paths::PathExtensions;
-use serde::Deserialize;
+use slang_solidity_v2_common::evm_targets::EvmTarget;
+use slang_solidity_v2_common::versions::{LanguageVersion, LanguageVersionSpecifier};
+use solidity_v2_testing_utils::evm_targets::default_evm_target;
 
-use super::test_matrix::{RawTestMatrix, TestMatrix};
+use crate::snapshots::config::TestCase;
+use crate::snapshots::config::raw::test_config::RawTestConfig;
 
 /// The name of the per-test configuration file.
 const CONFIG_FILE_NAME: &str = ".tests.config.json";
 
-/// Resolved test configuration.
-#[derive(Clone, Debug)]
+/// Resolved test configuration. Every test runs at all language versions,
+/// analyzing each at the EVM target `solc` of that version defaults to, unless
+/// the config narrows either axis.
+#[derive(Default)]
 pub struct TestConfig {
-    /// Declares how the test iterates over the `LanguageVersion`/`EvmTarget` matrix.
-    /// Exactly one axis varies per test — the other is pinned by the config.
-    pub matrix: TestMatrix,
+    /// Narrows the language versions the test runs at. This governs the whole
+    /// run: both the slang and the solc side only ever see these versions.
+    pub(super) override_language_versions: Option<LanguageVersionSpecifier>,
+
+    /// Pins every language version to this EVM target, instead of the one its
+    /// own `solc` defaults to.
+    pub(super) override_evm_target: Option<EvmTarget>,
+
+    /// The language versions where slang and solc are expected to disagree on
+    /// the status (success/failure) of a snapshot. Used for diagnostics where
+    /// slang intentionally diverges from solc.
+    pub(super) expected_solc_divergence: Option<Vec<LanguageVersionSpecifier>>,
 }
 
 impl TestConfig {
@@ -25,10 +39,11 @@ impl TestConfig {
     ///
     /// Every field is resolved independently, with the closest config file
     /// providing it winning. This way, nested configs only need to override the
-    /// individual fields they care about.
+    /// individual fields they care about, and a test without any config file
+    /// in its chain gets the defaults.
     pub fn resolve(test_dir: &Path) -> Result<Self> {
         let mut current_dir = test_dir;
-        let mut resolved = RawTestConfig::default();
+        let mut resolved = Self::default();
 
         loop {
             let config_path = current_dir.join(CONFIG_FILE_NAME);
@@ -40,11 +55,14 @@ impl TestConfig {
                 let raw: RawTestConfig = serde_json::from_str(&contents)
                     .with_context(|| format!("Failed to parse test config: {config_path:?}"))?;
 
-                resolved.absorb(raw);
+                let config = Self::try_from(raw)
+                    .with_context(|| format!("Invalid test config: {config_path:?}"))?;
+
+                resolved.absorb(config);
             }
 
             // Search only within the owning crate: stop once we reach the
-            // directory holding its `Cargo.toml`, failing if anything is still missing.
+            // directory holding its `Cargo.toml`.
             if current_dir.join("Cargo.toml").exists() {
                 break;
             }
@@ -52,52 +70,85 @@ impl TestConfig {
             current_dir = current_dir.unwrap_parent();
         }
 
-        resolved.try_into().with_context(|| {
-            format!(
-                "Failed to resolve `{CONFIG_FILE_NAME}` for test directory {test_dir:?} within its \
-                 crate. Each test suite must define the required fields at its root directory."
-            )
+        resolved.validate().with_context(|| {
+            format!("Failed to resolve `{CONFIG_FILE_NAME}` for test directory {test_dir:?}.")
         })
     }
-}
 
-#[derive(Default, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct RawTestConfig {
-    /// Every field is optional: values not provided here are inherited from the
-    /// closest parent directory that does provide them.
-    matrix: Option<RawTestMatrix>,
-}
+    /// The cells the test runs, in order: every selected language version, at
+    /// the target it is analyzed at.
+    pub fn test_cases(&self) -> impl Iterator<Item = TestCase> + '_ {
+        LanguageVersion::ALL
+            .iter()
+            .copied()
+            .filter(|version| {
+                self.override_language_versions
+                    .as_ref()
+                    .is_none_or(|specifier| specifier.contains(*version))
+            })
+            .map(|language_version| TestCase {
+                language_version,
+                evm_target: self
+                    .override_evm_target
+                    .unwrap_or_else(|| default_evm_target(language_version)),
+                expected_solc_divergence: self.expected_solc_divergence.as_ref().is_some_and(
+                    |entries| {
+                        entries
+                            .iter()
+                            .any(|specifier| specifier.contains(language_version))
+                    },
+                ),
+            })
+    }
 
-impl RawTestConfig {
     /// Absorbs fields from `parent`, a config file further up the traversal, for
     /// every field that `self` doesn't already provide.
     fn absorb(&mut self, parent: Self) {
         let Self {
-            matrix: parent_matrix,
+            override_language_versions: parent_override_language_versions,
+            override_evm_target: parent_override_evm_target,
+            expected_solc_divergence: parent_expected_solc_divergence,
         } = parent;
 
-        if let Some(parent_matrix) = parent_matrix {
-            if let Some(matrix) = self.matrix.as_mut() {
-                matrix.absorb(parent_matrix);
-            } else {
-                self.matrix = Some(parent_matrix);
+        self.override_language_versions = self
+            .override_language_versions
+            .take()
+            .or(parent_override_language_versions);
+
+        self.override_evm_target = self
+            .override_evm_target
+            .take()
+            .or(parent_override_evm_target);
+
+        self.expected_solc_divergence = self
+            .expected_solc_divergence
+            .take()
+            .or(parent_expected_solc_divergence);
+    }
+
+    fn validate(self) -> Result<Self> {
+        let entries = self.expected_solc_divergence.as_deref().unwrap_or_default();
+
+        for (index, entry) in entries.iter().enumerate() {
+            // Check if an entry is too wide for the tested language versions:
+            if let Some(versions) = self.override_language_versions.as_ref() {
+                ensure!(
+                    // `entry.intersect(entry)` normalizes different forms like `Till(x)` and `Range(EARLIEST, x)`
+                    entry.intersect(versions) == entry.intersect(entry),
+                    "`expected_solc_divergence` entry '{entry:?}' is not inside \
+                     `override_language_versions` '{versions:?}'."
+                );
+            }
+
+            // Check for overlap between different entries:
+            for other in &entries[index + 1..] {
+                ensure!(
+                    entry.intersect(other).is_none(),
+                    "`expected_solc_divergence` entries '{entry:?}' and '{other:?}' overlap."
+                );
             }
         }
-    }
-}
 
-impl TryFrom<RawTestConfig> for TestConfig {
-    type Error = anyhow::Error;
-
-    fn try_from(raw: RawTestConfig) -> Result<Self> {
-        let RawTestConfig { matrix } = raw;
-
-        Ok(Self {
-            matrix: matrix
-                .context("No config file provides the `matrix` field.")?
-                .try_into()
-                .context("Invalid `matrix` field.")?,
-        })
+        Ok(self)
     }
 }

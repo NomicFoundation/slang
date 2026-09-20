@@ -1,18 +1,11 @@
 {
-  "matrix": {
-    "type": "SingleVersionAllTargets",
-    "version": {
-      "value": "0.8.36",
-      "reason": "`difficulty` is not gated by language version; iterating the EVM target shows the built-in/reserved flip at Paris."
-    },
-    "expected_solc_divergence": [
-      {
-        "specifier": {
-          "type": "From",
-          "from": "Paris"
-        },
-        "reason": "TODO(validation) SDR[1180]: From Paris the `difficulty` opcode is superseded by `prevrandao`, so slang's availability-gated built-in check no longer fires and the declaration falls through to acceptance."
-      }
-    ]
-  }
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "From",
+        "from": "0.8.18"
+      },
+      "reason": "TODO(validation) SDR[1180]: from 0.8.18 the default EVM target is Paris, where `difficulty` is no longer an available built-in, so slang's availability-gated check stops firing and accepts the declaration. solc keeps rejecting the name as reserved (DeclarationError 5017)."
+    }
+  ]
 }

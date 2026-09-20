@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[DeclarationError 7576] Error: Undeclared identifier. Did you mean "blockhash"?
+   ╭─[input.sol:9:16]
+   │
+ 9 │         return blobhash(0);
+   │                ────┬───  
+   │                    ╰───── Error occurred here.
+───╯

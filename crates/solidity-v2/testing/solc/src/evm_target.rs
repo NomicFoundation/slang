@@ -1,30 +1,6 @@
 use anyhow::{Context, Result};
-use inflector::Inflector;
-use infra_utils::solc::default_evm_version;
-use semver::Version;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
-use slang_solidity_v2_common::versions::LanguageVersion;
-
-/// The EVM target `solc` of the given language version defaults to when a test
-/// doesn't specify one.
-pub fn default_evm_target(language_version: LanguageVersion) -> Result<EvmTarget> {
-    let version: Version = language_version.into();
-    let name = default_evm_version(&version);
-
-    parse_evm_target_name(name).with_context(|| {
-        format!("'{name}' is the default EVM version of {version}, but is not a known EVM target.")
-    })
-}
-
-/// Maps an `evmVersion` name as written by `solc` (camelCase, e.g.
-/// `tangerineWhistle`) to the corresponding [`EvmTarget`], whose own `Display`
-/// is `PascalCase`.
-fn parse_evm_target_name(name: &str) -> Option<EvmTarget> {
-    EvmTarget::ALL
-        .iter()
-        .copied()
-        .find(|target| target.to_string().to_camel_case() == name)
-}
+use solidity_v2_testing_utils::evm_targets::parse_evm_target_name;
 
 /// `isoltest`'s placeholder for an EVM version that has not been released yet,
 /// written in place of a target name (e.g. `EVMVersion: =@future`).
@@ -107,18 +83,14 @@ pub fn resolve_evm_target(setting: Option<&str>, default: EvmTarget) -> Result<P
     }
 
     // Otherwise pick the supported target satisfying the constraint that sits
-    // closest to the default (the nearest above for an unmet lower bound, the
-    // nearest below for an unmet upper bound).
-    let index_of = |target: EvmTarget| EvmTarget::ALL.iter().position(|t| *t == target);
-    let default_index = index_of(default);
+    // closest to the default. Targets are declared oldest first and numbered
+    // from zero, so the distance between two discriminants is how many forks
+    // apart they are.
     EvmTarget::ALL
         .iter()
         .copied()
         .filter(|target| satisfies(*target))
-        .min_by_key(|target| match (index_of(*target), default_index) {
-            (Some(i), Some(d)) => i.abs_diff(d),
-            _ => usize::MAX,
-        })
+        .min_by_key(|target| (*target as usize).abs_diff(default as usize))
         .map(ParsedTarget::Target)
         .with_context(|| format!("No supported EVM target satisfies 'EVMVersion: {setting}'."))
 }
@@ -126,26 +98,6 @@ pub fn resolve_evm_target(setting: Option<&str>, default: EvmTarget) -> Result<P
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn parses_solc_evm_version_names() {
-        assert_eq!(
-            parse_evm_target_name("tangerineWhistle"),
-            Some(EvmTarget::TangerineWhistle)
-        );
-        assert_eq!(parse_evm_target_name("istanbul"), Some(EvmTarget::Istanbul));
-        // `solc` writes these in camelCase, and nothing else is a name it uses.
-        assert_eq!(parse_evm_target_name("Istanbul"), None);
-        assert_eq!(parse_evm_target_name("TangerineWhistle"), None);
-        assert_eq!(parse_evm_target_name("nonesuch"), None);
-    }
-
-    #[test]
-    fn every_supported_version_has_a_default_target() {
-        for &version in LanguageVersion::ALL {
-            assert!(default_evm_target(version).is_ok(), "{version}");
-        }
-    }
 
     #[test]
     fn resolves_evm_version_constraints() {
