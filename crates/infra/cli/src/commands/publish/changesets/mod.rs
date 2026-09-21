@@ -32,10 +32,17 @@ impl ChangesetsController {
             "Package version does not match workspace version."
         );
 
-        // 'changeset version' fails when there is nothing to consume, so check first:
+        // 'changeset version' fails when there is nothing to consume, so check first,
+        // ignoring the same markdown files the CLI ignores:
         let has_changesets = FileWalker::from_repo_root()
             .find([".changeset/*.md"])?
-            .any(|path| !path.ends_with("README.md"));
+            .any(|path| {
+                let name = path.unwrap_name();
+                !name.starts_with('.')
+                    && !["README.md", "AGENTS.md", "CLAUDE.md", "GEMINI.md"]
+                        .iter()
+                        .any(|ignored| ignored.eq_ignore_ascii_case(name))
+            });
 
         if !has_changesets {
             println!("No pending changesets. Skipping.");
