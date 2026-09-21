@@ -499,6 +499,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
 
 [[package]]
+name = "base64"
+version = "0.23.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ac07cdecf99051d9a5238b80f35af32cdeba5b336e55d957b318b50137e18da5"
+
+[[package]]
 name = "base64ct"
 version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -909,9 +915,9 @@ dependencies = [
 
 [[package]]
 name = "console"
-version = "0.16.4"
+version = "0.16.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4fe5f465a4f6fee88fad41b85d990f84c835335e85b5d9e6e63e0d06d28cba7c"
+checksum = "e96a4956774c13c126a8b5af4daa79384f4d826534c95a02d76afb39e2ab64e3"
 dependencies = [
  "encode_unicode",
  "libc",
@@ -1903,7 +1909,7 @@ version = "0.1.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dc2fdfdbff08affe55bb779f33b053aa1fe5dd5b54c257343c17edfa55711bdb"
 dependencies = [
- "base64",
+ "base64 0.22.1",
  "bytes",
  "futures-channel",
  "futures-core",
@@ -2055,7 +2061,7 @@ version = "0.18.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9433806cd6b4ec1aba79c021c7e4c58fb4c3b9977c085062e611ac929998fb0c"
 dependencies = [
- "console 0.16.4",
+ "console 0.16.6",
  "portable-atomic",
  "unicode-width 0.2.1",
  "unit-prefix",
@@ -2090,7 +2096,7 @@ dependencies = [
  "serde_json",
  "strum",
  "tempfile",
- "toml 1.1.5+spec-1.1.0",
+ "toml 1.1.6+spec-1.1.0",
 ]
 
 [[package]]
@@ -2100,7 +2106,7 @@ dependencies = [
  "Inflector",
  "anyhow",
  "ariadne",
- "console 0.16.4",
+ "console 0.16.6",
  "httpdate",
  "ignore",
  "itertools 0.15.0",
@@ -2115,7 +2121,7 @@ dependencies = [
  "similar-asserts 2.0.0",
  "strum",
  "tera",
- "toml 1.1.5+spec-1.1.0",
+ "toml 1.1.6+spec-1.1.0",
  "url",
 ]
 
@@ -3014,9 +3020,9 @@ dependencies = [
 
 [[package]]
 name = "public-api"
-version = "0.52.1"
+version = "0.52.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d410e0b50432be9a8708e0bab4f5e0ddfde07236cc7f9481476aa9c5ef60ece3"
+checksum = "d102ca8df9d07fa01215671136dd188312ebdd901b7f7e70765c51df87dd35e1"
 dependencies = [
  "hashbag",
  "rustdoc-types",
@@ -3272,11 +3278,11 @@ checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 
 [[package]]
 name = "reqwest"
-version = "0.13.4"
+version = "0.13.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "219c5811de6525e5416c7d5d53bb656d3afdbc6c5af816e0802bcfa42dbdc1c3"
+checksum = "16a1cfa75cc186dd73d5818e510e042e40927bccc9c236b061cea97e1eb08029"
 dependencies = [
- "base64",
+ "base64 0.23.1",
  "bytes",
  "encoding_rs",
  "futures-channel",
@@ -3421,15 +3427,15 @@ dependencies = [
  "cargo_metadata",
  "serde",
  "thiserror 2.0.20",
- "toml 1.1.5+spec-1.1.0",
+ "toml 1.1.6+spec-1.1.0",
  "tracing",
 ]
 
 [[package]]
 name = "rustdoc-types"
-version = "0.57.3"
+version = "0.59.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7e6919c49bdd9cca072b3b502d16c073d0a4d3b7283ff6e0c86a5f6e6b07bbfe"
+checksum = "b3e25ff539c83e47de65a6a790446186286d3a64bfadc780ed557cc3410d9509"
 dependencies = [
  "serde",
  "serde_derive",
@@ -3445,7 +3451,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys",
- "windows-sys 0.61.2",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -3502,7 +3508,7 @@ dependencies = [
  "security-framework",
  "security-framework-sys",
  "webpki-root-certs",
- "windows-sys 0.61.2",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -3728,7 +3734,7 @@ version = "3.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "76a5c54c7310e7b8b9577c286d7e399ddd876c3e12b3ed917a8aabc4b96e9e8c"
 dependencies = [
- "base64",
+ "base64 0.22.1",
  "bs58",
  "chrono",
  "hex",
@@ -3831,7 +3837,7 @@ version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "997e6ca38e97437973fc9f7f50a50d1274cacd874341a4960fea90067291038c"
 dependencies = [
- "console 0.16.4",
+ "console 0.16.6",
  "similar 3.1.0",
 ]
 
@@ -3960,9 +3966,9 @@ dependencies = [
 
 [[package]]
 name = "smallvec"
-version = "1.16.0"
+version = "1.16.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b9be42f50aa861c555654aa3a37f52f4b1074bacf4e48fe0ef7fa584e80f1f0f"
+checksum = "ba467056f1b547ed52077911161fc86985becbc60e8e1857c8a144dab0def891"
 
 [[package]]
 name = "snapshot-testing"
@@ -4195,7 +4201,7 @@ version = "1.3.9"
 dependencies = [
  "anyhow",
  "clap",
- "console 0.16.4",
+ "console 0.16.6",
  "indicatif",
  "infra_utils",
  "itertools 0.15.0",
@@ -4213,7 +4219,7 @@ version = "1.3.9"
 dependencies = [
  "anyhow",
  "clap",
- "console 0.16.4",
+ "console 0.16.6",
  "indicatif",
  "infra_utils",
  "rayon",
@@ -4471,10 +4477,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "target-triple"
-version = "1.0.0"
+name = "target-tuple"
+version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "591ef38edfb78ca4771ee32cf494cb8771944bee237a9b91fc9c1424ac4b777b"
+checksum = "876fef147edbcbddc8ac5cbbba92c7b86519e314e86638596c09673b2ed01e7f"
 
 [[package]]
 name = "tempfile"
@@ -4486,14 +4492,14 @@ dependencies = [
  "getrandom 0.3.3",
  "once_cell",
  "rustix",
- "windows-sys 0.61.2",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
 name = "tera"
-version = "2.3.0"
+version = "2.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "52fca06a22977165c6821c26e2bf0387cd7e0822107a6854d5fbb787307c4194"
+checksum = "61e0cadeeb54426080b4c5395d59769ce8293f542cc25511c167c742b2175809"
 dependencies = [
  "globset",
  "indexmap 2.14.2",
@@ -4675,9 +4681,9 @@ dependencies = [
 
 [[package]]
 name = "toml"
-version = "1.1.5+spec-1.1.0"
+version = "1.1.6+spec-1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "12c0ba9680044b4ce98d391a62094047eada0d64860b80166c39f4a6b5640785"
+checksum = "920602543f0911ab71da12c50d59701da54c196d1a2bf5cb4b75667f137a406a"
 dependencies = [
  "indexmap 2.14.2",
  "serde_core",
@@ -4848,17 +4854,17 @@ checksum = "e421abadd41a4225275504ea4d6566923418b7f05506fbc9c0fe86ba7396114b"
 
 [[package]]
 name = "trybuild"
-version = "1.0.120"
+version = "1.0.121"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1e605bf6b39357663d8ba4e984f8be8da8df6bb32e81031d6889024ea8fd68e4"
+checksum = "c0cabaa10be1917331a313866bd94526343e03c77bcf69144b62b072ad35d47c"
 dependencies = [
  "glob",
  "serde",
  "serde_derive",
  "serde_json",
- "target-triple",
+ "target-tuple",
  "termcolor",
- "toml 1.1.5+spec-1.1.0",
+ "toml 1.1.6+spec-1.1.0",
 ]
 
 [[package]]
