@@ -901,13 +901,6 @@ impl Pass<'_> {
         arguments: &[ir::Expression],
     ) -> Typing {
         let operand_typing = self.raw_typing_of_expression(&node.operand).clone();
-        let is_encode_call = matches!(
-            operand_typing,
-            Typing::BuiltIn(InternalBuiltIn::AbiEncodeCall)
-        );
-        if is_encode_call && let Some(callee) = arguments.first() {
-            self.externalize_encode_call_callee(callee);
-        }
         let argument_types = self.collect_positional_argument_types(arguments);
 
         match operand_typing {
@@ -933,6 +926,11 @@ impl Pass<'_> {
                 }
             }
             Typing::BuiltIn(built_in) => {
+                if built_in == InternalBuiltIn::AbiEncodeCall
+                    && let Some(callee) = arguments.first()
+                {
+                    self.record_encode_call_callee_type(node, callee);
+                }
                 match self
                     .built_ins_resolver()
                     .type_of_function_call(&built_in, argument_types.as_deref())
@@ -982,27 +980,23 @@ impl Pass<'_> {
         }
     }
 
-    /// Re-types the callee of `abi.encodeCall` to the function type it is
-    /// encoded against: solc converts the callee with
-    /// `asExternallyCallableFunction`, which turns every `calldata` parameter
-    /// into `memory`. A callee that is no externally callable function is left
-    /// as it is.
-    fn externalize_encode_call_callee(&mut self, callee: &ir::Expression) {
+    /// Records on the `abi.encodeCall` at `node` the function type it encodes
+    /// against: solc converts the callee with `asExternallyCallableFunction`,
+    /// which turns every `calldata` parameter into `memory`. The callee's own
+    /// typing is left as it is; nothing is recorded for a callee that is no
+    /// externally callable function.
+    fn record_encode_call_callee_type(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        callee: &ir::Expression,
+    ) {
         let Typing::Resolved(type_id) = *self.raw_typing_of_expression(callee) else {
             return;
         };
-        let Some(externalized_type_id) = self.externalized_callee_type_id(type_id) else {
-            return;
-        };
-        if externalized_type_id == type_id {
-            return;
+        if let Some(externalized_type_id) = self.externalized_callee_type_id(type_id) {
+            self.binder
+                .set_encode_call_callee_type(node.id(), externalized_type_id);
         }
-
-        let node_id = callee
-            .node_id()
-            .expect("expression should have a NodeId to re-type it");
-        self.binder
-            .update_node_typing(node_id, Typing::Resolved(externalized_type_id));
     }
 
     /// The type an externally callable callee is dispatched through, for a

@@ -875,7 +875,7 @@ contract C {
 "#,
 );
 
-/// Captures the type of the callee argument of every `abi.encodeCall` call.
+/// Captures the type every `abi.encodeCall` call encodes against.
 #[derive(Default)]
 struct EncodeCallCalleeTypes {
     types: Vec<Option<ast::Type>>,
@@ -889,17 +889,13 @@ impl Visitor for EncodeCallCalleeTypes {
         if member_access.member().resolve_to_built_in() != Some(BuiltIn::AbiEncodeCall) {
             return true;
         }
-        let ast::ArgumentsDeclaration::PositionalArguments(arguments) = node.arguments() else {
-            return true;
-        };
-        self.types
-            .extend(arguments.iter().next().map(|callee| callee.get_type()));
+        self.types.push(node.encode_call_callee_type());
         true
     }
 }
 
-/// The callee types of the fixture's `abi.encodeCall` calls, in source order:
-/// `I.f`, `Other.publicFn`, `this.g`, `p`.
+/// The types the fixture's `abi.encodeCall` calls encode against, in source
+/// order of their callees: `I.f`, `Other.publicFn`, `this.g`, `p`.
 fn encode_call_callee_types() -> [ast::Type; 4] {
     let unit = EncodeCallShapes::build_compilation_unit();
 
@@ -911,7 +907,7 @@ fn encode_call_callee_types() -> [ast::Type; 4] {
     let callees: Vec<ast::Type> = finder
         .types
         .into_iter()
-        .map(|callee| callee.expect("each callee has a resolved type"))
+        .map(|callee| callee.expect("each call records the type it encodes against"))
         .collect();
     callees
         .try_into()
@@ -945,17 +941,17 @@ fn assert_external_taking_bytes_in_memory(shape: &str, callee: &ast::Type) {
 }
 
 #[test]
-fn test_encode_call_declaration_callee_is_externalized() {
+fn test_encode_call_declaration_callee_type() {
     let [via_interface, via_foreign, via_this, _] = encode_call_callee_types();
 
     assert_external_taking_bytes_in_memory("I.f", &via_interface);
     assert_external_taking_bytes_in_memory("Other.publicFn", &via_foreign);
-    // A member access already externalizes `this.g`, so the callee is left as it is.
+    // A member access already externalizes `this.g`, so the call records its own type.
     assert_external_taking_bytes_in_memory("this.g", &via_this);
 }
 
 #[test]
-fn test_encode_call_pointer_callee_is_externalized() {
+fn test_encode_call_pointer_callee_type() {
     let [_, _, _, via_pointer] = encode_call_callee_types();
 
     assert_external_taking_bytes_in_memory("p", &via_pointer);
