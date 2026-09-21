@@ -78,7 +78,7 @@ jobs:
       contents: "write" # to create new branches
       pull-requests: "write" # to create new pull requests for changesets
     outputs:
-      hasChangesets: "${{ steps.runChangesets.outputs.hasChangesets }}"
+      hasChangesets: "${{ steps.runChangesets.outputs.has-changesets }}"
       publishNeeded: "${{ steps.checkVersion.outputs.publishNeeded || 'false' }}"
     steps:
       - name: "Checkout Repository"
@@ -100,18 +100,19 @@ jobs:
 
       - name: "Create/Update Changesets Pull Request"
         id: "runChangesets"
-        uses: "changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d" # v1.9.0
+        uses: "changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51" # v2.1.2
         with:
-          title: "Bump Slang Version"
-          commit: "Bump Slang Version"
-          createGithubReleases: false
-          version: "git stash pop" # Stash created by 'infra publish changesets'
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          pr-title: "Bump Slang Version"
+          commit-message: "Bump Slang Version"
+          version-script: "git stash pop" # Stash created by 'infra publish changesets'
+          # Tags and releases come from 'infra publish github-release' below, never from the action.
+          create-github-releases: false
+          push-git-tags: false
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "Check if publish needed"
         id: "checkVersion"
-        if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
+        if: "${{ steps.runChangesets.outputs.has-changesets == 'false' }}"
         run: |
           RESULT="$(./scripts/bin/infra publish github-release --check-only)"
           echo "publishNeeded=${RESULT}" >> "$GITHUB_OUTPUT"
@@ -124,7 +125,7 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "infra publish mkdocs --target latest-release"
-        if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
+        if: "${{ steps.runChangesets.outputs.has-changesets == 'false' }}"
         run: "./scripts/bin/infra publish mkdocs --target latest-release"
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
