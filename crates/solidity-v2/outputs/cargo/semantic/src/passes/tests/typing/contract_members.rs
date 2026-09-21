@@ -108,6 +108,32 @@ fn test_data_locations_of_state_variable_and_getter_accesses() {
 }
 
 #[test]
+fn test_data_location_of_constant_state_variable() {
+    // Only a `public` constant is typed as a state variable; a cast inherits its
+    // operand's location, so `bytes(NAME)` follows the constant.
+    let (typings, _) = expressions(&["NAME", "bytes(NAME)", "t.NAME()"])
+        .with_members(
+            r#"
+            string public constant NAME = "slang";
+            Test t;
+            "#,
+        )
+        .into_types();
+    let expected = vec![
+        Some(Type::String(StringType {
+            location: DataLocation::Memory,
+        })),
+        Some(Type::Bytes(BytesType {
+            location: DataLocation::Memory,
+        })),
+        Some(Type::String(StringType {
+            location: DataLocation::Memory,
+        })),
+    ];
+    assert_eq!(typings, expected);
+}
+
+#[test]
 fn test_external_signature_relocates_parameters_and_results() {
     // The ABI boundary decodes a calldata-located reference into fresh memory,
     // so an externally callable signature names both its parameters and its
