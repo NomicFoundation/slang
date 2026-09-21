@@ -1,8 +1,9 @@
 use itertools::Either;
+use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::types::{FunctionType, TupleType, Type};
 
 use crate::abi::{AbiEntry, AbiFunction, AbiMutability, AbiParameter, selector_from_signature};
-use crate::ast::{StateVariableDefinitionStruct, StateVariableVisibility, TypeName};
+use crate::ast::{StateVariableDefinitionStruct, StateVariableVisibility};
 
 impl StateVariableDefinitionStruct {
     pub fn is_externally_visible(&self) -> bool {
@@ -81,18 +82,17 @@ impl StateVariableDefinitionStruct {
     fn getter_parameter_names(&self) -> (Vec<Option<String>>, Option<String>) {
         let mut input_names = Vec::new();
         let mut value_name = None;
-        let mut type_name = self.type_name();
+        let mut type_name = &self.ir_node.type_name;
         loop {
             match type_name {
-                TypeName::MappingType(mapping) => {
-                    input_names.push(mapping.key_type().name().map(|name| name.name().to_owned()));
-                    let value = mapping.value_type();
-                    value_name = value.name().map(|name| name.name().to_owned());
-                    type_name = value.type_name();
+                ir::TypeName::MappingType(mapping) => {
+                    input_names.push(parameter_name(&mapping.key_type));
+                    value_name = parameter_name(&mapping.value_type);
+                    type_name = &mapping.value_type.type_name;
                 }
-                TypeName::ArrayTypeName(array) => {
+                ir::TypeName::ArrayTypeName(array) => {
                     input_names.push(None);
-                    type_name = array.operand();
+                    type_name = &array.operand;
                 }
                 _ => break,
             }
@@ -153,4 +153,11 @@ impl StateVariableDefinitionStruct {
         self.compute_canonical_signature()
             .map(|sig| selector_from_signature(&sig))
     }
+}
+
+fn parameter_name(parameter: &ir::Parameter) -> Option<String> {
+    parameter
+        .name
+        .as_ref()
+        .map(|name| name.unparse().to_string())
 }
