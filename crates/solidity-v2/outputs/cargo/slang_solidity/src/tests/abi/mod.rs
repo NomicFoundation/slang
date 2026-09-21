@@ -108,7 +108,7 @@ library LJ {
 );
 
 define_fixture!(
-    AbstractConstructor,
+    AbstractContract,
     file: "main.sol", r#"
 pragma solidity ^0.8.0;
 abstract contract AB {
