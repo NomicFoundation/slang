@@ -13,9 +13,9 @@ impl<'a> HierarchyChecker<'a> {
     /// public state variable takes a slot through its getter, which is always
     /// implemented. Bases are visited most-base-first, so a member here is
     /// more-derived than anything already recorded and takes over the matching
-    /// slot. Slots are grouped by name, so a candidate is only ever compared
-    /// against same-named slots. `in_interface` says whether this base is an
-    /// interface.
+    /// slot when it has a body. Slots are grouped by name, so a candidate is
+    /// only ever compared against same-named slots. `in_interface` says
+    /// whether this base is an interface.
     pub(super) fn record_abstract(
         &mut self,
         members: &'a [ir::ContractMember],
@@ -31,7 +31,12 @@ impl<'a> HierarchyChecker<'a> {
             let slots = abstract_slots.entry(candidate.name()).or_default();
             for slot in slots.iter_mut() {
                 if candidate.overrides(binder, types, slot) {
-                    *slot = candidate;
+                    // A bodiless override is reported by the override check
+                    // and leaves the slot as it is, so it cannot make an
+                    // implemented member unimplemented again.
+                    if candidate.is_implemented() {
+                        *slot = candidate;
+                    }
                     continue 'members;
                 }
             }
