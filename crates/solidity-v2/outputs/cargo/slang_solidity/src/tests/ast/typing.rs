@@ -1,3 +1,5 @@
+use slang_solidity_v2_common::built_ins::BuiltIn;
+
 use super::fixtures;
 use crate::ast::visitor::{Visitor, accept_source_unit};
 use crate::{ast, define_fixture};
@@ -840,6 +842,12 @@ interface I {
     function f(bytes calldata data) external returns (uint256);
 }
 
+contract Other {
+    function publicFn(bytes calldata data) public returns (uint256) {
+        return data.length;
+    }
+}
+
 contract C {
     function g(bytes calldata data) external returns (uint256) {
         return data.length;
@@ -847,6 +855,10 @@ contract C {
 
     function viaInterface(bytes calldata data) external view returns (bytes memory) {
         return abi.encodeCall(I.f, (data));
+    }
+
+    function viaForeign(bytes calldata data) external view returns (bytes memory) {
+        return abi.encodeCall(Other.publicFn, (data));
     }
 
     function viaThis(bytes calldata data) external view returns (bytes memory) {
@@ -874,7 +886,7 @@ impl Visitor for EncodeCallCalleeTypes {
         let ast::Expression::MemberAccessExpression(member_access) = node.operand() else {
             return true;
         };
-        if member_access.member().unparse() != "encodeCall" {
+        if member_access.member().resolve_to_built_in() != Some(BuiltIn::AbiEncodeCall) {
             return true;
         }
         let ast::ArgumentsDeclaration::PositionalArguments(arguments) = node.arguments() else {
@@ -886,8 +898,9 @@ impl Visitor for EncodeCallCalleeTypes {
     }
 }
 
-#[test]
-fn test_encode_call_callee_is_externalized() {
+/// The callee types of the fixture's `abi.encodeCall` calls, in source order:
+/// `I.f`, `Other.publicFn`, `this.g`, `p`.
+fn encode_call_callee_types() -> [ast::Type; 4] {
     let unit = EncodeCallShapes::build_compilation_unit();
 
     let mut finder = EncodeCallCalleeTypes::default();
@@ -900,31 +913,50 @@ fn test_encode_call_callee_is_externalized() {
         .into_iter()
         .map(|callee| callee.expect("each callee has a resolved type"))
         .collect();
-    assert_eq!(callees.len(), 3, "three `abi.encodeCall` calls");
+    callees
+        .try_into()
+        .unwrap_or_else(|callees: Vec<ast::Type>| {
+            panic!("four `abi.encodeCall` calls, found {}", callees.len())
+        })
+}
 
-    // The callee types as the function solc dispatches through: external, with
-    // every `calldata` parameter converted to `memory`.
-    for (shape, callee) in ["I.f", "this.g", "p"].iter().zip(&callees) {
-        let ast::Type::Function(function) = callee else {
-            panic!("the `{shape}` callee should type as a function");
-        };
-        assert_eq!(
-            function.visibility(),
-            ast::FunctionTypeVisibility::External,
-            "the `{shape}` callee is externally callable"
-        );
+fn assert_external_taking_bytes_in_memory(shape: &str, callee: &ast::Type) {
+    let ast::Type::Function(function) = callee else {
+        panic!("the `{shape}` callee should type as a function");
+    };
+    assert_eq!(
+        function.visibility(),
+        ast::FunctionTypeVisibility::External,
+        "the `{shape}` callee is externally callable"
+    );
 
-        let parameter_types = function.parameter_types();
-        let [parameter] = parameter_types.as_slice() else {
-            panic!("the `{shape}` callee should take one parameter");
-        };
-        let ast::Type::Bytes(parameter) = parameter else {
-            panic!("the `{shape}` parameter should type as bytes");
-        };
-        assert_eq!(
-            parameter.location(),
-            ast::DataLocation::Memory,
-            "the `{shape}` callee takes its bytes in memory"
-        );
-    }
+    let parameter_types = function.parameter_types();
+    let [parameter] = parameter_types.as_slice() else {
+        panic!("the `{shape}` callee should take one parameter");
+    };
+    let ast::Type::Bytes(parameter) = parameter else {
+        panic!("the `{shape}` parameter should type as bytes");
+    };
+    assert_eq!(
+        parameter.location(),
+        ast::DataLocation::Memory,
+        "the `{shape}` callee takes its bytes in memory"
+    );
+}
+
+#[test]
+fn test_encode_call_declaration_callee_is_externalized() {
+    let [via_interface, via_foreign, via_this, _] = encode_call_callee_types();
+
+    assert_external_taking_bytes_in_memory("I.f", &via_interface);
+    assert_external_taking_bytes_in_memory("Other.publicFn", &via_foreign);
+    // A member access already externalizes `this.g`, so the callee is left as it is.
+    assert_external_taking_bytes_in_memory("this.g", &via_this);
+}
+
+#[test]
+fn test_encode_call_pointer_callee_is_externalized() {
+    let [_, _, _, via_pointer] = encode_call_callee_types();
+
+    assert_external_taking_bytes_in_memory("p", &via_pointer);
 }

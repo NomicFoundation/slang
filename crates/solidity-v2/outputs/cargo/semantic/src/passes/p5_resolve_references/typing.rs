@@ -901,6 +901,13 @@ impl Pass<'_> {
         arguments: &[ir::Expression],
     ) -> Typing {
         let operand_typing = self.raw_typing_of_expression(&node.operand).clone();
+        let is_encode_call = matches!(
+            operand_typing,
+            Typing::BuiltIn(InternalBuiltIn::AbiEncodeCall)
+        );
+        if is_encode_call && let Some(callee) = arguments.first() {
+            self.externalize_encode_call_callee(callee);
+        }
         let argument_types = self.collect_positional_argument_types(arguments);
 
         match operand_typing {
@@ -926,11 +933,6 @@ impl Pass<'_> {
                 }
             }
             Typing::BuiltIn(built_in) => {
-                if built_in == InternalBuiltIn::AbiEncodeCall
-                    && let Some(callee) = arguments.first()
-                {
-                    self.externalize_encode_call_callee(callee);
-                }
                 match self
                     .built_ins_resolver()
                     .type_of_function_call(&built_in, argument_types.as_deref())
@@ -989,38 +991,42 @@ impl Pass<'_> {
         let Typing::Resolved(type_id) = *self.raw_typing_of_expression(callee) else {
             return;
         };
-
-        let externalized_type_id = match self.types.get_type_by_id(type_id) {
-            Type::Function(function_type) => {
-                if !matches!(function_type.visibility, FunctionTypeVisibility::External) {
-                    return;
-                }
-                self.types.externalize_function_type(type_id)
-            }
-            // A contract or interface type name reaches a declaration rather
-            // than a callable value; solc encodes `I.f` and a foreign `C.f`
-            // against the type the declaration is dispatched through.
-            Type::UserMetaType(UserMetaType { definition_id }) => {
-                let definition_id = *definition_id;
-                match self.binder.find_definition_by_id(definition_id) {
-                    Some(Definition::Function(function_definition)) => {
-                        match function_definition.externalized_type_id {
-                            Some(externalized_type_id) => externalized_type_id,
-                            None => return,
-                        }
-                    }
-                    _ => return,
-                }
-            }
-            _ => return,
+        let Some(externalized_type_id) = self.externalized_callee_type_id(type_id) else {
+            return;
         };
+        if externalized_type_id == type_id {
+            return;
+        }
 
-        if externalized_type_id != type_id {
-            let node_id = callee
-                .node_id()
-                .expect("expression should have a NodeId to re-type it");
-            self.binder
-                .update_node_typing(node_id, Typing::Resolved(externalized_type_id));
+        let node_id = callee
+            .node_id()
+            .expect("expression should have a NodeId to re-type it");
+        self.binder
+            .update_node_typing(node_id, Typing::Resolved(externalized_type_id));
+    }
+
+    /// The type an externally callable callee is dispatched through, for a
+    /// function value and for a declaration reached through a contract or
+    /// interface type name (`I.f`, a foreign `C.f`) alike.
+    fn externalized_callee_type_id(&mut self, type_id: TypeId) -> Option<TypeId> {
+        match self.types.get_type_by_id(type_id) {
+            // A `Public` function type here was named without a receiver, so it
+            // is reached internally; the declaration form is a `UserMetaType`.
+            Type::Function(function_type) => {
+                matches!(function_type.visibility, FunctionTypeVisibility::External)
+                    .then(|| self.types.externalize_function_type(type_id))
+            }
+            // solc encodes `I.f` and a foreign `C.f` against the type the
+            // declaration is dispatched through.
+            Type::UserMetaType(UserMetaType { definition_id }) => {
+                match self.binder.find_definition_by_id(*definition_id) {
+                    Some(Definition::Function(function_definition)) => {
+                        function_definition.externalized_type_id
+                    }
+                    _ => None,
+                }
+            }
+            _ => None,
         }
     }
 
