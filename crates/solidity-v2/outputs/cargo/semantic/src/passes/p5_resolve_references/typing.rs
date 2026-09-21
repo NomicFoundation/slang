@@ -926,6 +926,11 @@ impl Pass<'_> {
                 }
             }
             Typing::BuiltIn(built_in) => {
+                if built_in == InternalBuiltIn::AbiEncodeCall
+                    && let Some(callee) = arguments.first()
+                {
+                    self.externalize_encode_call_callee(callee);
+                }
                 match self
                     .built_ins_resolver()
                     .type_of_function_call(&built_in, argument_types.as_deref())
@@ -972,6 +977,50 @@ impl Pass<'_> {
                     Typing::Unresolved
                 }
             }
+        }
+    }
+
+    /// Re-types the callee of `abi.encodeCall` to the function type it is
+    /// encoded against: solc converts the callee with
+    /// `asExternallyCallableFunction`, which turns every `calldata` parameter
+    /// into `memory`. A callee that is no externally callable function is left
+    /// as it is.
+    fn externalize_encode_call_callee(&mut self, callee: &ir::Expression) {
+        let Typing::Resolved(type_id) = *self.raw_typing_of_expression(callee) else {
+            return;
+        };
+
+        let externalized_type_id = match self.types.get_type_by_id(type_id) {
+            Type::Function(function_type) => {
+                if !matches!(function_type.visibility, FunctionTypeVisibility::External) {
+                    return;
+                }
+                self.types.externalize_function_type(type_id)
+            }
+            // A contract or interface type name reaches a declaration rather
+            // than a callable value; solc encodes `I.f` and a foreign `C.f`
+            // against the type the declaration is dispatched through.
+            Type::UserMetaType(UserMetaType { definition_id }) => {
+                let definition_id = *definition_id;
+                match self.binder.find_definition_by_id(definition_id) {
+                    Some(Definition::Function(function_definition)) => {
+                        match function_definition.externalized_type_id {
+                            Some(externalized_type_id) => externalized_type_id,
+                            None => return,
+                        }
+                    }
+                    _ => return,
+                }
+            }
+            _ => return,
+        };
+
+        if externalized_type_id != type_id {
+            let node_id = callee
+                .node_id()
+                .expect("expression should have a NodeId to re-type it");
+            self.binder
+                .update_node_typing(node_id, Typing::Resolved(externalized_type_id));
         }
     }
 

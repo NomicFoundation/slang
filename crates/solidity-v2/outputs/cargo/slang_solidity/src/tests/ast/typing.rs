@@ -829,3 +829,102 @@ fn test_nameless_external_function_has_no_externalized_type() {
         "a receive carries no name to select on"
     );
 }
+
+define_fixture!(
+    EncodeCallShapes,
+    file: "main.sol", r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+interface I {
+    function f(bytes calldata data) external returns (uint256);
+}
+
+contract C {
+    function g(bytes calldata data) external returns (uint256) {
+        return data.length;
+    }
+
+    function viaInterface(bytes calldata data) external view returns (bytes memory) {
+        return abi.encodeCall(I.f, (data));
+    }
+
+    function viaThis(bytes calldata data) external view returns (bytes memory) {
+        return abi.encodeCall(this.g, (data));
+    }
+
+    function viaPointer(
+        function(bytes calldata) external returns (uint256) p,
+        bytes calldata data
+    ) external view returns (bytes memory) {
+        return abi.encodeCall(p, (data));
+    }
+}
+"#,
+);
+
+/// Captures the type of the callee argument of every `abi.encodeCall` call.
+#[derive(Default)]
+struct EncodeCallCalleeTypes {
+    types: Vec<Option<ast::Type>>,
+}
+
+impl Visitor for EncodeCallCalleeTypes {
+    fn enter_function_call_expression(&mut self, node: &ast::FunctionCallExpression) -> bool {
+        let ast::Expression::MemberAccessExpression(member_access) = node.operand() else {
+            return true;
+        };
+        if member_access.member().unparse() != "encodeCall" {
+            return true;
+        }
+        let ast::ArgumentsDeclaration::PositionalArguments(arguments) = node.arguments() else {
+            return true;
+        };
+        self.types
+            .extend(arguments.iter().next().map(|callee| callee.get_type()));
+        true
+    }
+}
+
+#[test]
+fn test_encode_call_callee_is_externalized() {
+    let unit = EncodeCallShapes::build_compilation_unit();
+
+    let mut finder = EncodeCallCalleeTypes::default();
+    for file in unit.files() {
+        accept_source_unit(&file.ast(), &mut finder);
+    }
+
+    let callees: Vec<ast::Type> = finder
+        .types
+        .into_iter()
+        .map(|callee| callee.expect("each callee has a resolved type"))
+        .collect();
+    assert_eq!(callees.len(), 3, "three `abi.encodeCall` calls");
+
+    // The callee types as the function solc dispatches through: external, with
+    // every `calldata` parameter converted to `memory`.
+    for (shape, callee) in ["I.f", "this.g", "p"].iter().zip(&callees) {
+        let ast::Type::Function(function) = callee else {
+            panic!("the `{shape}` callee should type as a function");
+        };
+        assert_eq!(
+            function.visibility(),
+            ast::FunctionTypeVisibility::External,
+            "the `{shape}` callee is externally callable"
+        );
+
+        let parameter_types = function.parameter_types();
+        let [parameter] = parameter_types.as_slice() else {
+            panic!("the `{shape}` callee should take one parameter");
+        };
+        let ast::Type::Bytes(parameter) = parameter else {
+            panic!("the `{shape}` parameter should type as bytes");
+        };
+        assert_eq!(
+            parameter.location(),
+            ast::DataLocation::Memory,
+            "the `{shape}` callee takes its bytes in memory"
+        );
+    }
+}

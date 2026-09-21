@@ -474,8 +474,9 @@ impl Binder {
 
     /// Overwrites a node's typing that was already set, used when a later step
     /// refines it (eg. narrowing an `Undetermined` call operand to the selected
-    /// overload). Unlike [`Self::set_node_typing`], an existing typing is
-    /// expected.
+    /// overload, or re-typing the `abi.encodeCall` callee to the function type
+    /// it is encoded against). Unlike [`Self::set_node_typing`], an existing
+    /// typing is expected.
     pub(crate) fn update_node_typing(&mut self, node_id: NodeId, typing: Typing) {
         let previous_typing = self.node_typing.insert(node_id, typing);
         debug_assert!(
