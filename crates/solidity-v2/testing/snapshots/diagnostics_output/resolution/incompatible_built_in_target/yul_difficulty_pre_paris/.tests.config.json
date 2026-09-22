@@ -2,5 +2,14 @@
   "override_evm_target": {
     "value": "Istanbul",
     "reason": "The Yul 'difficulty' built-in is gated by EVM target only, so on a pre-Paris target it must stay available on every language version."
-  }
+  },
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "From",
+        "from": "0.8.37"
+      },
+      "reason": "From '0.8.37' solc deprecates every EVM version older than London and warns about it, which is about the pinned Istanbul target rather than `difficulty`. Slang has no such deprecation, so it stays silent. Neither side rejects the input, which is what this test asserts."
+    }
+  ]
 }

@@ -173,6 +173,14 @@ mod resolution {
         }
 
         #[test]
+        fn not_yet_reserved_until_amsterdam() -> Result<()> {
+            run(
+                "resolution/built_in_redeclaration",
+                "not_yet_reserved_until_amsterdam",
+            )
+        }
+
+        #[test]
         fn not_yet_reserved_until_fork() -> Result<()> {
             run(
                 "resolution/built_in_redeclaration",
@@ -201,6 +209,14 @@ mod resolution {
             run(
                 "resolution/built_in_redeclaration",
                 "reserved_before_own_fork",
+            )
+        }
+
+        #[test]
+        fn reserved_on_amsterdam_target() -> Result<()> {
+            run(
+                "resolution/built_in_redeclaration",
+                "reserved_on_amsterdam_target",
             )
         }
 
@@ -1318,6 +1334,19 @@ mod resolution {
         }
 
         #[test]
+        fn block_slotnum() -> Result<()> {
+            run("resolution/incompatible_built_in_target", "block_slotnum")
+        }
+
+        #[test]
+        fn block_slotnum_on_amsterdam() -> Result<()> {
+            run(
+                "resolution/incompatible_built_in_target",
+                "block_slotnum_on_amsterdam",
+            )
+        }
+
+        #[test]
         fn yul_difficulty_post_paris() -> Result<()> {
             run(
                 "resolution/incompatible_built_in_target",
@@ -1330,6 +1359,19 @@ mod resolution {
             run(
                 "resolution/incompatible_built_in_target",
                 "yul_difficulty_pre_paris",
+            )
+        }
+
+        #[test]
+        fn yul_slotnum() -> Result<()> {
+            run("resolution/incompatible_built_in_target", "yul_slotnum")
+        }
+
+        #[test]
+        fn yul_slotnum_on_amsterdam() -> Result<()> {
+            run(
+                "resolution/incompatible_built_in_target",
+                "yul_slotnum_on_amsterdam",
             )
         }
     }
@@ -5484,6 +5526,14 @@ mod type_system {
             run(
                 "type_system/storage_layout_base_slot",
                 "int_constant_negative",
+            )
+        }
+
+        #[test]
+        fn int_constant_positive() -> Result<()> {
+            run(
+                "type_system/storage_layout_base_slot",
+                "int_constant_positive",
             )
         }
 

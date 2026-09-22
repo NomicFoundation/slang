@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.21'.
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.21', and deprecated in version '0.8.37'.
    ╭─[input.sol:4:21]
    │
  4 │ pragma experimental solidity;

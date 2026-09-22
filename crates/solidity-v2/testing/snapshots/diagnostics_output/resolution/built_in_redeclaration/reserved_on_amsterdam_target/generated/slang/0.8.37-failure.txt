@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/built-in-redeclaration] Error: Cannot use the built-in name 'slotnum' as a declaration.
+    ╭─[input.sol:11:17]
+    │
+ 11 │             let slotnum := 1
+    │                 ───┬───  
+    │                    ╰───── Error occurred here.
+────╯

@@ -1,0 +1,6 @@
+{
+  "override_evm_target": {
+    "value": "Amsterdam",
+    "reason": "`block.slotnum` needs an Amsterdam target, which no version defaults to, so the built-in has to be pinned there to be reachable for the reference to bind."
+  }
+}

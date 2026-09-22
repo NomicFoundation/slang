@@ -235,8 +235,8 @@ const EXPECTED_FAILURES: &[ExpectedFailures] = {
             reason: r"`pragma experimental solidity` selects solc's experimental Solidity \
                        front-end, slang doesn't support experimental solidity.",
             cases: &[
-                ExpectedCase::from("experimental/stub.sol", V0_8_24),
-                ExpectedCase::from("experimental/type_class.sol", V0_8_24),
+                ExpectedCase::range("experimental/stub.sol", V0_8_24, V0_8_37),
+                ExpectedCase::range("experimental/type_class.sol", V0_8_24, V0_8_37),
             ],
         },
         ExpectedFailures {

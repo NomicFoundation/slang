@@ -46,6 +46,7 @@ pub enum InternalBuiltIn {
     BlockGaslimit,
     BlockNumber,
     BlockPrevrandao,
+    BlockSlotnum,
     BlockTimestamp,
 
     MsgData,
@@ -162,6 +163,7 @@ pub enum InternalBuiltIn {
     YulSignextend,
     YulSload,
     YulSlt,
+    YulSlotnum,
     YulSmod,
     YulSstore,
     YulStaticcall,
@@ -219,6 +221,7 @@ impl InternalBuiltIn {
             Self::BlockGaslimit => BuiltIn::BlockGaslimit,
             Self::BlockNumber => BuiltIn::BlockNumber,
             Self::BlockPrevrandao => BuiltIn::BlockPrevrandao,
+            Self::BlockSlotnum => BuiltIn::BlockSlotnum,
             Self::BlockTimestamp => BuiltIn::BlockTimestamp,
 
             Self::MsgData => BuiltIn::MsgData,
@@ -335,6 +338,7 @@ impl InternalBuiltIn {
             Self::YulSignextend => BuiltIn::YulSignextend,
             Self::YulSload => BuiltIn::YulSload,
             Self::YulSlt => BuiltIn::YulSlt,
+            Self::YulSlotnum => BuiltIn::YulSlotnum,
             Self::YulSmod => BuiltIn::YulSmod,
             Self::YulSstore => BuiltIn::YulSstore,
             Self::YulStaticcall => BuiltIn::YulStaticcall,

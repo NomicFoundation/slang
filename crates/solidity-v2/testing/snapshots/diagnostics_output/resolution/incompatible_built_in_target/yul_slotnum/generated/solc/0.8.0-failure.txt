@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[DeclarationError 4619] Error: Function not found.
+   ╭─[input.sol:8:20]
+   │
+ 8 │             ret := slotnum()
+   │                    ───┬───  
+   │                       ╰───── Error occurred here.
+───╯
+
+[DeclarationError 8678] Error: Variable count does not match number of values (1 vs. 0)
+   ╭─[input.sol:8:13]
+   │
+ 8 │             ret := slotnum()
+   │             ────────┬───────  
+   │                     ╰───────── Error occurred here.
+───╯

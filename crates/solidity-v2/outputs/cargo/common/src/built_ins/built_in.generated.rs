@@ -37,6 +37,7 @@ pub enum BuiltIn {
     BlockGaslimit,
     BlockNumber,
     BlockPrevrandao,
+    BlockSlotnum,
     BlockTimestamp,
 
     MsgData,
@@ -153,6 +154,7 @@ pub enum BuiltIn {
     YulSignextend,
     YulSload,
     YulSlt,
+    YulSlotnum,
     YulSmod,
     YulSstore,
     YulStaticcall,

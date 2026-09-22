@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[Warning 8506] Warning: Experimental pragma ABIEncoderV2 is deprecated and will be removed in a future release.
+   ╭─[input.sol:6:1]
+   │
+ 6 │ pragma experimental ABIEncoderV2;
+   │ ────────────────┬────────────────  
+   │                 ╰────────────────── Warning occurred here.
+───╯
