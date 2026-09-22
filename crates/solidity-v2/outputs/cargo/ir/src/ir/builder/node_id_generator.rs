@@ -100,10 +100,14 @@ impl NodeIdGenerator {
     /// any it has previously returned, and records `kind` in the histogram.
     ///
     /// Ids of distinct groups never collide.
+    ///
+    /// # Panics
+    ///
+    /// When the group has exhausted its id range.
     pub fn next_id_of(&mut self, kind: NodeKind) -> NodeId {
         self.histogram.record(kind);
         let id = self.next_id;
-        debug_assert!(
+        assert!(
             id >> Self::GROUP_SHIFT == self.base >> Self::GROUP_SHIFT,
             "group exhausted its node-id range"
         );
@@ -112,8 +116,8 @@ impl NodeIdGenerator {
     }
 
     /// The total number of `NodeId`s allocated by this generator so far.
-    pub fn allocated_count(&self) -> u64 {
-        self.next_id - self.base - 1
+    pub fn allocated_count(&self) -> usize {
+        usize::try_from(self.next_id - self.base - 1).expect("a group's node count fits in usize")
     }
 
     /// The per-kind histogram of the nodes allocated so far.
