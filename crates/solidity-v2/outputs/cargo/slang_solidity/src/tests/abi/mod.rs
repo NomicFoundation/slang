@@ -143,6 +143,10 @@ contract Named {
     mapping(uint256 key => S) public structs;
     mapping(uint256 key => S[] items) public structArrays;
     mapping(uint256 key => uint256[] values) public arrays;
+    mapping(uint256 key => uint256[][] values) public arrays2;
+    mapping(uint256 key => mapping(uint256 => uint256[] inner)) public throughArray;
+    mapping(uint256 key => bytes blob) public bytesValue;
+    mapping(uint256 key => uint256[] values)[] public outerArray;
     mapping(uint256 => uint256 value) public unnamedKey;
     uint256[] public plain;
 }

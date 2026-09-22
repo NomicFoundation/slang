@@ -44,6 +44,19 @@ fn getter_inputs_carry_mapping_key_names_and_outputs_the_value_name() {
     assert_eq!(names(arrays.inputs()), [Some("key"), None]);
     assert_eq!(names(arrays.outputs()), [Some("values")]);
 
+    let arrays2 = getter(&abi, "arrays2");
+    assert_eq!(names(arrays2.inputs()), [Some("key"), None, None]);
+    assert_eq!(names(arrays2.outputs()), [Some("values")]);
+    let through = getter(&abi, "throughArray");
+    assert_eq!(names(through.inputs()), [Some("key"), None, None]);
+    assert_eq!(names(through.outputs()), [Some("inner")]);
+    let bytes_value = getter(&abi, "bytesValue");
+    assert_eq!(names(bytes_value.inputs()), [Some("key")]);
+    assert_eq!(names(bytes_value.outputs()), [Some("blob")]);
+    let outer = getter(&abi, "outerArray");
+    assert_eq!(names(outer.inputs()), [None, Some("key"), None]);
+    assert_eq!(names(outer.outputs()), [Some("values")]);
+
     let unnamed_key = getter(&abi, "unnamedKey");
     assert_eq!(names(unnamed_key.inputs()), [None]);
     assert_eq!(names(unnamed_key.outputs()), [Some("value")]);
