@@ -154,3 +154,16 @@ fn test_abi_entries_with_tuples() {
     assert_eq!(outputs[0].name(), None);
     assert_eq!(outputs[0].abi_type(), t);
 }
+
+/// An abstract contract cannot run its constructor, so solc leaves it out of the ABI.
+#[test]
+fn abstract_contract_has_no_constructor_entry() {
+    let unit = super::AbstractContract::build_compilation_unit();
+    let abi = unit
+        .find_contract_by_name("AB")
+        .next()
+        .expect("contract AB exists")
+        .compute_abi()
+        .expect("the ABI is computable");
+    assert!(matches!(abi.entries(), [AbiEntry::Function(f)] if f.name() == "extra"));
+}

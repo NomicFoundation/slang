@@ -2418,6 +2418,8 @@ impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
 impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::compute_abi(&self) -> core::option::Option<slang_solidity_v2_ast::abi::ContractAbi>
+impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::state_variables(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::StateVariableDefinition>
 impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct

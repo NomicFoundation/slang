@@ -2822,6 +2822,8 @@ pub slang_solidity_v2_ir::ir::ParameterStruct::storage_location: core::option::O
 pub slang_solidity_v2_ir::ir::ParameterStruct::type_name: slang_solidity_v2_ir::ir::TypeName
 impl slang_solidity_v2_ir::ir::ParameterStruct
 pub fn slang_solidity_v2_ir::ir::ParameterStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl slang_solidity_v2_ir::ir::ParameterStruct
+pub fn slang_solidity_v2_ir::ir::ParameterStruct::name_as_string(&self) -> core::option::Option<alloc::string::String>
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ParameterStruct
 pub fn slang_solidity_v2_ir::ir::ParameterStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ParameterStruct

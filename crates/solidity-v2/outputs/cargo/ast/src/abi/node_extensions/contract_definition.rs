@@ -8,7 +8,10 @@ use crate::ast::{ContractDefinitionStruct, StateVariableDefinition, StateVariabl
 impl ContractDefinitionStruct {
     pub fn compute_abi(&self) -> Option<ContractAbi> {
         let mut entries = Vec::new();
-        if let Some(constructor) = self.constructor() {
+        // An abstract contract cannot be deployed, so leave its constructor out.
+        if let Some(constructor) = self.constructor()
+            && !self.is_abstract()
+        {
             entries.push(constructor.compute_abi_entry()?);
         }
         for function in &self.linearised_functions() {
