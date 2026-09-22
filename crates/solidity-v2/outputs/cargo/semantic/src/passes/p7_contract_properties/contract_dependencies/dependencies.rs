@@ -7,7 +7,7 @@ use slang_solidity_v2_ir::ir;
 use super::references::{CallableReference, UnitReferences};
 use crate::binder::{Binder, Definition};
 use crate::context::{ContractData, ContractReference};
-use crate::passes::common::function_overrides;
+use crate::passes::common::Overridable;
 use crate::types::TypeRegistry;
 
 /// One contract's dependencies, keyed by the dependency's id and mapped to
@@ -265,43 +265,43 @@ impl DependencyCollector<'_> {
         }
 
         match self.binder.find_definition_by_id(declaration) {
-            Some(Definition::Function(function)) => self
-                .contract_data
-                .linearised_functions(self.contract_id)
-                .iter()
-                .find(|candidate| {
-                    function_overrides(self.binder, self.types, candidate, &function.ir_node)
-                })
-                .map_or(declaration, |resolved| resolved.id()),
-            Some(Definition::Modifier(modifier)) => {
-                let name = modifier
-                    .ir_node
-                    .name
-                    .as_ref()
-                    .expect("modifiers are named")
-                    .unparse();
-                self.resolve_modifier_by_name(name).unwrap_or(declaration)
+            Some(Definition::Function(function)) => {
+                // Dispatch only asks whether two members share a slot, which
+                // never reads the interface flag, so it is left `false`.
+                let overridden = Overridable::of_function(&function.ir_node, false)
+                    .expect("a function definition is a regular function");
+                self.contract_data
+                    .linearised_functions(self.contract_id)
+                    .iter()
+                    .find(|candidate| {
+                        Overridable::of_function(candidate, false)
+                            .expect("a linearised function is never a constructor")
+                            .overrides(self.binder, self.types, &overridden)
+                    })
+                    .map_or(declaration, |resolved| resolved.id())
             }
+            Some(Definition::Modifier(modifier)) => self
+                .resolve_modifier(&modifier.ir_node)
+                .unwrap_or(declaration),
             _ => declaration,
         }
     }
 
-    fn resolve_modifier_by_name(&self, name: &str) -> Option<NodeId> {
+    fn resolve_modifier(&self, modifier: &ir::FunctionDefinition) -> Option<NodeId> {
         // Most-derived first. Modifiers cannot overload, the name suffices.
+        // The interface flag is never read here, so it is left `false`.
+        let overridden =
+            Overridable::of_function(modifier, false).expect("a modifier definition is a modifier");
         for base_id in self.binder.get_linearised_bases(self.contract_id)? {
             let Some(Definition::Contract(base)) = self.binder.find_definition_by_id(*base_id)
             else {
                 continue;
             };
             for member in base.ir_node.members.iter() {
-                if let ir::ContractMember::FunctionDefinition(function) = member
-                    && matches!(function.kind, ir::FunctionKind::Modifier)
-                    && function
-                        .name
-                        .as_ref()
-                        .is_some_and(|candidate| candidate.unparse() == name)
+                if let Some(candidate) = Overridable::of(member, false)
+                    && candidate.overrides(self.binder, self.types, &overridden)
                 {
-                    return Some(function.id());
+                    return Some(candidate.node_id());
                 }
             }
         }
@@ -327,6 +327,9 @@ impl DependencyCollector<'_> {
         };
 
         // The nearest override with a body wins.
+        // The interface flag is never read here, so it is left `false`.
+        let overridden = Overridable::of_function(&function.ir_node, false)
+            .expect("a function definition is a regular function");
         for base_id in &bases[position + 1..] {
             let members = match self.binder.find_definition_by_id(*base_id) {
                 Some(Definition::Contract(base)) => &base.ir_node.members[..],
@@ -334,12 +337,12 @@ impl DependencyCollector<'_> {
                 _ => continue,
             };
             for member in members {
-                if let ir::ContractMember::FunctionDefinition(candidate) = member
-                    && matches!(candidate.kind, ir::FunctionKind::Regular)
-                    && candidate.body.is_some()
-                    && function_overrides(self.binder, self.types, candidate, &function.ir_node)
+                if let Some(candidate) = Overridable::of(member, false)
+                    && candidate.function_kind() == ir::FunctionKind::Regular
+                    && candidate.is_implemented()
+                    && candidate.overrides(self.binder, self.types, &overridden)
                 {
-                    return candidate.id();
+                    return candidate.node_id();
                 }
             }
         }
