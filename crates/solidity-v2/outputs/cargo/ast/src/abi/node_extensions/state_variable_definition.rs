@@ -1,5 +1,5 @@
 use itertools::Either;
-use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::types::{FunctionType, TupleType, Type};
 
 use crate::abi::{AbiEntry, AbiFunction, AbiMutability, AbiParameter, selector_from_signature};
@@ -23,21 +23,24 @@ impl StateVariableDefinitionStruct {
         Some(function_type)
     }
 
+    /// The declared name of a getter parameter; an unnamed one has no definition.
+    fn getter_parameter_name(&self, definition_id: Option<NodeId>) -> Option<String> {
+        let Some(definition) = self.semantic.binder().find_definition_by_id(definition_id?) else {
+            unreachable!("getter parameter without a definition");
+        };
+        Some(definition.identifier().unparse().to_string())
+    }
+
     /// The getter's ABI inputs and outputs.
     fn extract_getter_type_parameters_abi(&self) -> Option<(Vec<AbiParameter>, Vec<AbiParameter>)> {
         let function_type = self.getter_function_type()?;
-        let (input_names, output_names) = self.compute_input_output_parameter_names();
 
-        assert_eq!(
-            input_names.len(),
-            function_type.parameter_types.len(),
-            "getter inputs follow the declared mapping and array nesting"
-        );
         let inputs = function_type
             .parameter_types
             .iter()
-            .zip(input_names)
-            .map(|(parameter_type_id, name)| {
+            .zip(self.getter_input_definition_ids())
+            .map(|(parameter_type_id, definition_id)| {
+                let name = self.getter_parameter_name(*definition_id);
                 AbiParameter::new(None, name, *parameter_type_id, false, &self.semantic)
             })
             .collect::<Option<Vec<_>>>()?;
@@ -52,57 +55,14 @@ impl StateVariableDefinitionStruct {
             Type::Tuple(TupleType { types }) => Either::Left(types.iter()),
             _ => Either::Right(std::iter::once(&function_type.return_type)),
         };
-        assert_eq!(
-            output_types.len(),
-            output_names.len(),
-            "getter outputs are the struct members or the single value"
-        );
         let outputs = output_types
-            .zip(output_names)
-            .map(|(output_type_id, name)| {
+            .zip(self.getter_output_definition_ids())
+            .map(|(output_type_id, definition_id)| {
+                let name = self.getter_parameter_name(*definition_id);
                 AbiParameter::new(None, name, *output_type_id, false, &self.semantic)
             })
             .collect::<Option<Vec<_>>>()?;
         Some((inputs, outputs))
-    }
-
-    /// Compute getter parameter names, extracting them from the declared type: each mapping key's
-    /// name for the inputs, an array index unnamed, and for the outputs the struct members the
-    /// getter returns, else the innermost mapping's value name.
-    fn compute_input_output_parameter_names(&self) -> (Vec<Option<String>>, Vec<Option<String>>) {
-        let mut input_names = Vec::new();
-        let mut value_name = None;
-        let mut type_name = &self.ir_node.type_name;
-        loop {
-            match type_name {
-                ir::TypeName::MappingType(mapping) => {
-                    input_names.push(mapping.key_type.name_as_string());
-                    value_name = mapping.value_type.name_as_string();
-                    type_name = &mapping.value_type.type_name;
-                }
-                ir::TypeName::ArrayTypeName(array) => {
-                    input_names.push(None);
-                    type_name = &array.operand;
-                }
-                _ => break,
-            }
-        }
-        let member_ids = self.getter_member_ids();
-        let output_names = if member_ids.is_empty() {
-            vec![value_name]
-        } else {
-            member_ids
-                .iter()
-                .map(|member_id| {
-                    let Some(member) = self.semantic.binder().find_definition_by_id(*member_id)
-                    else {
-                        unreachable!("getter member without a definition");
-                    };
-                    Some(member.identifier().unparse().to_string())
-                })
-                .collect()
-        };
-        (input_names, output_names)
     }
 
     pub fn compute_abi_entry(&self) -> Option<AbiEntry> {

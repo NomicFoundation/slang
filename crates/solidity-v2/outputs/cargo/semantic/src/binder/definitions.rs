@@ -138,9 +138,12 @@ pub struct ParameterDefinition {
 pub struct StateVariableDefinition {
     pub ir_node: ir::StateVariableDefinition,
     pub getter_type_id: Option<TypeId>,
+    // The mapping key each getter input comes from, `None` for an unnamed key
+    // or an array index.
+    pub getter_input_definition_ids: Vec<Option<NodeId>>,
     // The struct members the getter's return type is built from, in declaration
-    // order.
-    pub getter_member_ids: Vec<NodeId>,
+    // order, otherwise the innermost mapping value it returns.
+    pub getter_output_definition_ids: Vec<Option<NodeId>>,
     // This is the scope the variable is defined in, and is used to change the
     // resolution context in the `CompileConstantEvaluator`.
     pub(crate) enclosing_scope_id: ScopeId,
@@ -498,7 +501,8 @@ impl Definition {
         Self::StateVariable(StateVariableDefinition {
             ir_node: Arc::clone(ir_node),
             getter_type_id: None,
-            getter_member_ids: Vec::new(),
+            getter_input_definition_ids: Vec::new(),
+            getter_output_definition_ids: Vec::new(),
             enclosing_scope_id,
         })
     }
