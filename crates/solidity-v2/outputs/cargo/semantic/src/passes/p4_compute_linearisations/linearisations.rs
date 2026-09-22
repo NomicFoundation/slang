@@ -70,8 +70,9 @@ pub(super) fn compute_linearisations(
 /// Flattens the bases' members (gathered most-base-first) into the
 /// hierarchy's function list: most-derived-first, dropping a function once a
 /// more-derived function or a public state variable's getter overrides it, then
-/// sorted by name. Functions are cloned out only once they're known to survive
-/// override resolution.
+/// sorted by name, with the nameless receive and then fallback leading.
+/// Functions are cloned out only once they're known to survive override
+/// resolution.
 fn linearise_functions(
     binder: &Binder,
     types: &TypeRegistry,
@@ -86,8 +87,13 @@ fn linearise_functions(
     // candidates by name (stably, keeping them most-derived-first within a
     // name) confines each comparison to the predecessors in its own group. It
     // also leaves the survivors in the order the list wants: sorted by name,
-    // with the nameless fallback and receive first.
-    candidates.sort_by_key(Overridable::name);
+    // with the nameless receive and then fallback first.
+    candidates.sort_by_key(|candidate| {
+        (
+            candidate.name(),
+            candidate.function_kind() == ir::FunctionKind::Fallback,
+        )
+    });
 
     let mut kept: Vec<Overridable<'_>> = Vec::with_capacity(candidates.len());
     let mut group_start = 0;
