@@ -23,10 +23,10 @@ impl StateVariableDefinitionStruct {
         Some(function_type)
     }
 
-    /// The getter's ABI inputs and outputs, named as solc names them.
+    /// The getter's ABI inputs and outputs.
     fn extract_getter_type_parameters_abi(&self) -> Option<(Vec<AbiParameter>, Vec<AbiParameter>)> {
         let function_type = self.getter_function_type()?;
-        let (input_names, value_name) = self.getter_parameter_names();
+        let (input_names, output_names) = self.compute_input_output_parameter_names();
 
         assert_eq!(
             input_names.len(),
@@ -52,17 +52,6 @@ impl StateVariableDefinitionStruct {
             Type::Tuple(TupleType { types }) => Either::Left(types.iter()),
             _ => Either::Right(std::iter::once(&function_type.return_type)),
         };
-        let member_ids = self.getter_member_ids();
-        let output_names = if member_ids.is_empty() {
-            Either::Left(std::iter::once(value_name))
-        } else {
-            Either::Right(member_ids.iter().map(|member_id| {
-                let Some(member) = self.semantic.binder().find_definition_by_id(*member_id) else {
-                    unreachable!("getter member without a definition");
-                };
-                Some(member.identifier().unparse().to_string())
-            }))
-        };
         assert_eq!(
             output_types.len(),
             output_names.len(),
@@ -77,17 +66,18 @@ impl StateVariableDefinitionStruct {
         Some((inputs, outputs))
     }
 
-    /// solc's getter parameter names, read off the declared type: each mapping key's name for
-    /// the inputs, an array index unnamed, and the innermost mapping's value name for the output.
-    fn getter_parameter_names(&self) -> (Vec<Option<String>>, Option<String>) {
+    /// Compute getter parameter names, extracting them from the declared type: each mapping key's
+    /// name for the inputs, an array index unnamed, and for the outputs the struct members the
+    /// getter returns, else the innermost mapping's value name.
+    fn compute_input_output_parameter_names(&self) -> (Vec<Option<String>>, Vec<Option<String>>) {
         let mut input_names = Vec::new();
         let mut value_name = None;
         let mut type_name = &self.ir_node.type_name;
         loop {
             match type_name {
                 ir::TypeName::MappingType(mapping) => {
-                    input_names.push(parameter_name(&mapping.key_type));
-                    value_name = parameter_name(&mapping.value_type);
+                    input_names.push(mapping.key_type.name_as_string());
+                    value_name = mapping.value_type.name_as_string();
                     type_name = &mapping.value_type.type_name;
                 }
                 ir::TypeName::ArrayTypeName(array) => {
@@ -97,7 +87,22 @@ impl StateVariableDefinitionStruct {
                 _ => break,
             }
         }
-        (input_names, value_name)
+        let member_ids = self.getter_member_ids();
+        let output_names = if member_ids.is_empty() {
+            vec![value_name]
+        } else {
+            member_ids
+                .iter()
+                .map(|member_id| {
+                    let Some(member) = self.semantic.binder().find_definition_by_id(*member_id)
+                    else {
+                        unreachable!("getter member without a definition");
+                    };
+                    Some(member.identifier().unparse().to_string())
+                })
+                .collect()
+        };
+        (input_names, output_names)
     }
 
     pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
@@ -153,11 +158,4 @@ impl StateVariableDefinitionStruct {
         self.compute_canonical_signature()
             .map(|sig| selector_from_signature(&sig))
     }
-}
-
-fn parameter_name(parameter: &ir::Parameter) -> Option<String> {
-    parameter
-        .name
-        .as_ref()
-        .map(|name| name.unparse().to_string())
 }

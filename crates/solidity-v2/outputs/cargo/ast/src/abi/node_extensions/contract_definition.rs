@@ -8,7 +8,7 @@ use crate::ast::{ContractDefinitionStruct, StateVariableDefinition, StateVariabl
 impl ContractDefinitionStruct {
     pub fn compute_abi(&self) -> Option<ContractAbi> {
         let mut entries = Vec::new();
-        // An abstract contract cannot be deployed, so solc leaves its constructor out.
+        // An abstract contract cannot be deployed, so leave its constructor out.
         if let Some(constructor) = self.constructor()
             && !self.is_abstract()
         {

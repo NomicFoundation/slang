@@ -7,7 +7,7 @@ use crate::ast::{
 impl LibraryDefinitionStruct {
     /// The ABI of the library's `view` and `pure` external functions, public constants' getters,
     /// errors and events. A function that writes state or takes or returns a storage reference is
-    /// reachable only by `DELEGATECALL` from a contract and is left out, as solc does; a library
+    /// reachable only by `DELEGATECALL` from a contract and is left out. A library
     /// has no storage of its own, so both layouts are empty.
     pub fn compute_abi(&self) -> Option<ContractAbi> {
         let entries = self
@@ -19,6 +19,7 @@ impl LibraryDefinitionStruct {
                 {
                     Some(function.compute_abi_entry())
                 }
+                // Library state variables are all constant, the p1 structural checks reject the rest.
                 ContractMember::StateVariableDefinition(state_variable)
                     if state_variable.is_externally_visible() =>
                 {
