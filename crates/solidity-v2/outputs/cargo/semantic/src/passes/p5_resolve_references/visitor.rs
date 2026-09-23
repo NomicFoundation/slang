@@ -415,7 +415,7 @@ impl Visitor for Pass<'_> {
         // `super.f` sees the bases' functions as declared. Any other member,
         // whether reached through a contract value or a type name, collapses
         // by selector.
-        let resolution = if matches!(operand_typing, Typing::Super) {
+        let resolution = if matches!(operand_typing, Typing::Super(_)) {
             filter_overridden_definitions(self.binder, self.types, member_resolution)
         } else {
             filter_overridden_definitions_by_selector(self.binder, self.types, member_resolution)
