@@ -346,14 +346,7 @@ fn test_resolve_virtual_handles_implicit_interface_virtuality() {
         .unwrap();
     let a = contract(&unit, "A");
     let b = contract(&unit, "B");
-    let declarations: Vec<_> = interface
-        .members()
-        .iter()
-        .filter_map(|member| match member {
-            ast::ContractMember::FunctionDefinition(function) => Some(function),
-            _ => None,
-        })
-        .collect();
+    let declarations = interface.functions();
     assert_eq!(declarations.len(), 2);
     for declaration in declarations {
         assert_eq!(

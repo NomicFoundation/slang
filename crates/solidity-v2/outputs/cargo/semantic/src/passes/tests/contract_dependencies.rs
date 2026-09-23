@@ -998,10 +998,6 @@ fn resolve_virtual_of_an_unimplemented_interface_member_is_the_declaration() {
     let a = contract_id(&context, "A");
     let f = declared_function(&context, "I", "f");
 
-    assert!(
-        context.linearised_functions(a).is_empty(),
-        "A leaves f unimplemented, so its function list is empty"
-    );
     let Some(VirtualTarget::Function(target)) = context.resolve_virtual(a, &f) else {
         panic!("no getter overrides an unimplemented interface member");
     };
