@@ -413,6 +413,24 @@ pub fn hash_from_signature(signature: &str) -> [u8; 32] {
     Keccak256::digest(signature).into()
 }
 
+/// Keccak-256 over a signature written piece by piece, so a selector needs no signature string.
+#[derive(Default)]
+pub(crate) struct SignatureHasher(Keccak256);
+
+impl fmt::Write for SignatureHasher {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        self.0.update(s.as_bytes());
+        Ok(())
+    }
+}
+
+impl SignatureHasher {
+    pub(crate) fn selector(self) -> u32 {
+        let hash: [u8; 32] = self.0.finalize().into();
+        u32::from_be_bytes(hash[0..4].try_into().unwrap())
+    }
+}
+
 pub fn selector_from_signature(signature: &str) -> u32 {
     let selector_bytes: [u8; 4] = hash_from_signature(signature)[0..4].try_into().unwrap();
     u32::from_be_bytes(selector_bytes)

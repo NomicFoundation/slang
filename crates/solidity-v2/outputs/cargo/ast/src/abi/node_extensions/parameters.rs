@@ -1,3 +1,5 @@
+use std::fmt::{self, Write as _};
+
 use slang_solidity_v2_semantic::types::TypeId;
 
 use crate::abi::AbiParameter;
@@ -27,25 +29,45 @@ impl ParametersStruct {
     }
 
     pub(crate) fn compute_canonical_signature(&self) -> Option<String> {
-        self.join_parameter_names(|type_id| {
-            Some(type_as_abi_type(&self.semantic, type_id)?.to_string())
-        })
+        let mut signature = String::new();
+        self.write_canonical_signature(&mut signature)?;
+        Some(signature)
     }
 
     pub(crate) fn compute_internal_signature(&self) -> Option<String> {
-        self.join_parameter_names(|type_id| Some(self.semantic.type_internal_name(type_id)))
+        let mut signature = String::new();
+        self.write_parameter_names(&mut signature, |out, type_id| {
+            out.write_str(&self.semantic.type_internal_name(type_id))
+                .ok()
+        })?;
+        Some(signature)
     }
 
-    pub(crate) fn compute_library_signature(&self) -> Option<String> {
-        self.join_parameter_names(|type_id| self.semantic.type_library_name(type_id))
+    pub(crate) fn write_canonical_signature<W: fmt::Write>(&self, out: &mut W) -> Option<()> {
+        self.write_parameter_names(out, |out, type_id| {
+            write!(out, "{}", type_as_abi_type(&self.semantic, type_id)?).ok()
+        })
     }
 
-    fn join_parameter_names(&self, type_name: impl Fn(TypeId) -> Option<String>) -> Option<String> {
-        let mut result = Vec::new();
-        for type_id in self.parameter_types_iter() {
-            result.push(type_name(type_id?)?);
+    pub(crate) fn write_library_signature<W: fmt::Write>(&self, out: &mut W) -> Option<()> {
+        self.write_parameter_names(out, |out, type_id| {
+            out.write_str(&self.semantic.type_library_name(type_id)?)
+                .ok()
+        })
+    }
+
+    fn write_parameter_names<W: fmt::Write>(
+        &self,
+        out: &mut W,
+        write_type: impl Fn(&mut W, TypeId) -> Option<()>,
+    ) -> Option<()> {
+        for (index, type_id) in self.parameter_types_iter().enumerate() {
+            if index > 0 {
+                out.write_char(',').ok()?;
+            }
+            write_type(out, type_id?)?;
         }
-        Some(result.join(","))
+        Some(())
     }
 
     fn parameter_types_iter(&self) -> impl Iterator<Item = Option<TypeId>> + '_ {
