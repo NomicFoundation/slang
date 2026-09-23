@@ -40,8 +40,9 @@ fn main() {
 // Only 0.8.x-compatible projects belong here.
 // Edit this constant (and only this constant) to add or remove a project.
 // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-const PROJECTS: [&str; 9] = [
+const PROJECTS: [&str; 10] = [
     "uniswap",
+    "uniswap_v4_core",
     "multicall3",
     "create_x",
     "ui_pool_data_provider_v3",

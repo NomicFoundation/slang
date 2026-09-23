@@ -32,6 +32,17 @@ fn load_projects_internal() -> Result<ProjectMap> {
         map.insert(project.name, sol_project);
     }
 
+    for input in config.standard_json_inputs {
+        let file_name = format!("{name}.json", name = input.name);
+        fetch::fetch_json_url(&input.url, &working_directory_path, &file_name)?;
+
+        let project = SolidityProject::build_from_standard_json_input(
+            &working_directory_path.join(&file_name),
+            &input,
+        )?;
+        map.insert(input.name, project);
+    }
+
     for file in config.files {
         fetch::fetch(&file.hash, &working_directory_path)?;
 
@@ -48,6 +59,17 @@ fn load_projects_internal() -> Result<ProjectMap> {
     }
 
     Ok(map)
+}
+
+/// A `solc` standard JSON input, as passed to `solc --standard-json`.
+///
+/// It describes what to compile rather than what was compiled, so it carries no
+/// compiler version and no fully qualified contract name; those come from the
+/// benchmark configuration instead.
+#[derive(Deserialize)]
+struct StandardJsonInputFile {
+    sources: BTreeMap<String, Source>,
+    settings: CompilerSettings,
 }
 
 /// Structure for deserealizing the metadata from a json file.
@@ -73,6 +95,7 @@ struct Compilation {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct CompilerSettings {
+    #[serde(default)]
     pub remappings: Vec<String>,
     #[serde(default)]
     pub evm_version: Option<String>,
@@ -128,6 +151,18 @@ impl TryFrom<Metadata> for SolidityProject {
     }
 }
 
+fn read_json<T: serde::de::DeserializeOwned>(json_file: &Path) -> Result<T> {
+    let json_str = match fs::read_to_string(json_file) {
+        Ok(json_str) => json_str,
+        Err(e) => bail!("Error reading file {json_file:?}: {e}"),
+    };
+
+    match serde_json::from_str(&json_str) {
+        Ok(value) => Ok(value),
+        Err(e) => bail!("Error parsing file {json_file:?}: {e}"),
+    }
+}
+
 fn import_resolver_from<'a, T: Iterator<Item = &'a String>>(
     compiler_settings: &CompilerSettings,
     sources: T,
@@ -153,15 +188,44 @@ fn import_resolver_from<'a, T: Iterator<Item = &'a String>>(
 }
 
 impl SolidityProject {
+    pub fn build_from_standard_json_input(
+        json_file: &Path,
+        input: &config::StandardJsonInput,
+    ) -> Result<Self> {
+        let file: StandardJsonInputFile = read_json(json_file)?;
+
+        let sources: BTreeMap<String, String> = file
+            .sources
+            .into_iter()
+            .map(|(path, source)| (path, source.content))
+            .collect();
+
+        if !sources.contains_key(&input.entrypoint) {
+            bail!(
+                "Entrypoint {entrypoint:?} is not among the sources of {json_file:?}",
+                entrypoint = input.entrypoint
+            );
+        }
+
+        let import_resolver = import_resolver_from(&file.settings, sources.keys());
+
+        let evm_version = match file.settings.evm_version {
+            Some(evm_version) => evm_version,
+            None => default_evm_version(&Version::parse(&input.compiler_version)?).to_owned(),
+        };
+
+        Ok(SolidityProject {
+            name: input.name.clone(),
+            sources,
+            entrypoint: input.entrypoint.clone(),
+            compiler_version: input.compiler_version.clone(),
+            evm_version,
+            import_resolver,
+        })
+    }
+
     pub fn build(json_file: &Path) -> Result<Self> {
-        let json_str = match fs::read_to_string(json_file) {
-            Ok(json_str) => json_str,
-            Err(e) => bail!("Error reading file {json_file:?}: {e}"),
-        };
-        let metadata = match serde_json::from_str::<Metadata>(&json_str) {
-            Ok(metadata) => metadata,
-            Err(e) => bail!("Error parsing file {json_file:?}: {e}\nWhile parsing:\n{json_str}"),
-        };
+        let metadata: Metadata = read_json(json_file)?;
         let sself: Self = Self::try_from(metadata)?;
         Ok(sself)
     }

@@ -47,6 +47,59 @@ pub fn fetch(address: &str, base_path: &Path) -> Result<()> {
     Ok(())
 }
 
+/// Downloads an arbitrary JSON document into `base_path/file_name`, retrying
+/// with the same backoff as [`fetch`] and skipping the download when the file
+/// is already cached there.
+pub fn fetch_json_url(url: &str, base_path: &Path, file_name: &str) -> Result<()> {
+    let destination = base_path.join(file_name);
+
+    if destination.exists() {
+        return Ok(());
+    }
+
+    let mut retries = 0;
+    let contents = loop {
+        retries += 1;
+
+        match try_fetch_json_url(url) {
+            Ok(contents) => break contents,
+            Err(err) => {
+                println!("Error fetching {url} (attempt {retries}/{MAX_RETRIES}): {err}");
+                if retries <= MAX_RETRIES {
+                    thread::sleep(Duration::from_secs(2 ^ retries));
+                } else {
+                    bail!("Giving up after {retries} attempts.");
+                }
+            }
+        }
+    };
+
+    fs::create_dir_all(base_path)?;
+    fs::write(destination, contents)?;
+
+    Ok(())
+}
+
+/// Unlike [`try_fetch_project`], this validates the body by parsing it rather
+/// than by its `content-type`: raw file hosts commonly serve `.json` as
+/// `text/plain`. The body is written through verbatim, so the cached file stays
+/// byte-identical to the upstream one and can be checksummed against it.
+fn try_fetch_json_url(url: &str) -> Result<String> {
+    let response = reqwest::blocking::get(url)?;
+
+    if response.status() != reqwest::StatusCode::OK {
+        bail!("Status code is {status}", status = response.status());
+    }
+
+    let body = response.text()?;
+
+    if serde_json::from_str::<Value>(&body).is_err() {
+        bail!("body is not valid JSON");
+    }
+
+    Ok(body)
+}
+
 fn try_fetch_project(url: &str) -> Result<String> {
     let response = reqwest::blocking::get(url)?;
 

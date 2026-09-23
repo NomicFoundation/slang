@@ -61,5 +61,14 @@
       "file": "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol",
       "comment": "File in the 75% of LOCs in mainnet shard 01"
     }
+  ],
+  "standardJsonInputs": [
+    {
+      "name": "uniswap_v4_core",
+      "url": "https://raw.githubusercontent.com/NomicFoundation/solx/c948f54ab8384cbe320db1b448556cad1d020db4/tests/benchmark/fixtures/uniswap-v4-core-solx/solx-legacy-dwarf.json",
+      "compilerVersion": "0.8.26",
+      "entrypoint": "project/src/PoolManager.sol",
+      "comment": "Whole-repo build of uniswap/v4-core including its test suite. Distinct from 'uniswap' above, which is only the deployed PoolManager's import closure: this adds ~30 forge test files and forge-std (machine-generated 'safeconsole.sol' alone is 427KB), and has no aliased duplicate paths. Pinned to a solx commit: see tests/benchmark/fixtures/manifest.json there for provenance."
+    }
   ]
 }

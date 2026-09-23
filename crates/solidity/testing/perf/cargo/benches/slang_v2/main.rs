@@ -1,6 +1,7 @@
 #![allow(clippy::exit)]
 
 use std::hint::black_box;
+use std::sync::OnceLock;
 
 use gungraun::{library_benchmark, library_benchmark_group, main};
 use solidity_testing_perf_cargo::config::benchmark_config_with_num_callers;
@@ -20,7 +21,6 @@ mod __dependencies_used_in_lib__ {
     use inflector as _;
     use infra_utils as _;
     use paste as _;
-    use rayon as _;
     use semver as _;
     use serde as _;
     use serde_json as _;
@@ -60,6 +60,7 @@ macro_rules! bench_projects {
     ) => {
         #[$lb]
         #[bench::uniswap("uniswap")]
+        #[bench::uniswap_v4_core("uniswap_v4_core")]
         #[bench::multicall3("multicall3")]
         #[bench::create_x("create_x")]
         #[bench::ui_pool_data_provider_v3("ui_pool_data_provider_v3")]
@@ -125,6 +126,46 @@ bench_projects! {
     }
 }
 
+// The whole pipeline behind one `CompilationUnit::create()` call, the way
+// consumers drive it, rather than a single stage.
+//
+// Pinned to a single-threaded pool, unlike its wall-clock counterpart. Run as
+// it ships, the parallel parse inside `create()` spreads over rayon workers
+// whose callgrind part files come back empty, so the count covers only the
+// share the calling thread stole: 34% low on the 160-file project, drifting
+// 0.3-0.7% between identical runs where the stages above sit at ~0.01%.
+// Serialised, every instruction is attributed and repeat runs are identical.
+bench_projects! {
+    #[library_benchmark(setup = full_compilation_setup)]
+    fn full_compilation(
+        input: tests::slang_v2::full_compilation::Input,
+    ) -> tests::slang_v2::full_compilation::Output {
+        black_box(serial_pool().install(|| {
+            tests::slang_v2::full_compilation::run(black_box(input))
+        }))
+    }
+}
+
+/// Builds the pool during `setup`, which gungraun excludes from the measurement,
+/// so that spawning its thread isn't charged to the benchmark.
+fn full_compilation_setup(project: &str) -> tests::slang_v2::full_compilation::Input {
+    let input = tests::slang_v2::full_compilation::setup(project);
+    let _ = serial_pool();
+
+    input
+}
+
+fn serial_pool() -> &'static rayon::ThreadPool {
+    static POOL: OnceLock<rayon::ThreadPool> = OnceLock::new();
+
+    POOL.get_or_init(|| {
+        rayon::ThreadPoolBuilder::new()
+            .num_threads(1)
+            .build()
+            .expect("thread pool builds")
+    })
+}
+
 bench_projects! {
     #[library_benchmark(setup = ast_analysis_setup)]
     fn ast_analysis(
@@ -140,6 +181,7 @@ library_benchmark_group!(
     name = pipeline;
     // __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)
     benchmarks = parser, ir_builder, semantic, compute_contracts_abi, ast_visitor, ast_analysis,
+        full_compilation,
 );
 
 main!(
