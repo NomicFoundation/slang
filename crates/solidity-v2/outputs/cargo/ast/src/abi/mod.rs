@@ -25,6 +25,7 @@ pub struct ContractAbi {
     entries: Vec<AbiEntry>,
     storage_layout: Vec<StorageItem>,
     transient_storage_layout: Vec<StorageItem>,
+    semantic: Arc<SemanticContext>,
 }
 
 impl ContractAbi {
@@ -36,6 +37,7 @@ impl ContractAbi {
         mut entries: Vec<AbiEntry>,
         storage_layout: Vec<StorageItem>,
         transient_storage_layout: Vec<StorageItem>,
+        semantic: &Arc<SemanticContext>,
     ) -> Self {
         entries.sort();
         Self {
@@ -45,6 +47,7 @@ impl ContractAbi {
             entries,
             storage_layout,
             transient_storage_layout,
+            semantic: Arc::clone(semantic),
         }
     }
 
