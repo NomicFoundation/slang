@@ -62,7 +62,7 @@ impl CompilationUnit {
         let sources = collect_sources(sources.into_iter(), &mut diagnostics);
 
         let parsed_files = parse_files(sources, language_version, &mut diagnostics);
-        let (files, id_generator) = build_ir(
+        let (files, node_kinds) = build_ir(
             &mut resolver,
             parsed_files,
             language_version,
@@ -73,7 +73,7 @@ impl CompilationUnit {
             language_version,
             evm_target,
             &files,
-            Some(id_generator.histogram()),
+            Some(&node_kinds),
             &mut diagnostics,
         );
 
@@ -110,12 +110,10 @@ struct ParsedFile<'s> {
 
 /// Parses every source file, in parallel over [`rayon`]'s global thread pool.
 ///
-/// The result must stay sorted by [`FileId`], since [`build_ir`] hands out node
-/// ids by walking it — hence the `Vec` and the *indexed* `unzip`, which fills
-/// the output by input position rather than by whoever finishes first.
-///
-/// TODO(v2): giving each file an independent node-id space would free this
-/// phase to schedule as it likes. It'll be necessary once IR building is parallelized.
+/// The result must stay sorted by [`FileId`]: [`build_ir`] keys each file's
+/// node-id space off its position here, so the order fixes the ids. That is why
+/// this collects from an *indexed* `unzip`, which fills the output by input
+/// position rather than by whoever finishes first.
 fn parse_files<'s>(
     sources: SortedMap<FileId, &'s str>,
     language_version: LanguageVersion,
@@ -180,12 +178,18 @@ fn parse_file(
 ///
 /// Because the full set of files is known up front, an import resolving outside
 /// of it is reported here, rather than being discovered while loading files.
+///
+/// Each file is lowered with its own [`ir::NodeIdGenerator`], taken from
+/// [`ir::NodeIdGroups`] in the order the (sorted) files come in, so a
+/// file's node ids depend only on its position — not on the order or
+/// concurrency of lowering. The per-file node-kind histograms are folded into
+/// one whole-compilation histogram for pre-sizing later stages.
 fn build_ir<R: ImportResolver>(
     resolver: &mut R,
     parsed_files: Vec<ParsedFile<'_>>,
     language_version: LanguageVersion,
     diagnostics: &mut DiagnosticCollection,
-) -> (Vec<InternalFile>, ir::NodeIdGenerator) {
+) -> (Vec<InternalFile>, ir::NodeKindHistogram) {
     // Cloning a `FileId` is only a reference-count bump, so collecting them all
     // up front is cheap, and lets every file be resolved against the full set.
     let known_files: Set<FileId> = parsed_files
@@ -193,7 +197,8 @@ fn build_ir<R: ImportResolver>(
         .map(|parsed_file| parsed_file.file_id.clone())
         .collect();
 
-    let mut id_generator = ir::NodeIdGenerator::default();
+    let mut node_kinds = ir::NodeKindHistogram::default();
+    let mut id_groups = ir::NodeIdGroups::default();
 
     let files = parsed_files
         .into_iter()
@@ -204,6 +209,9 @@ fn build_ir<R: ImportResolver>(
                 source_unit,
             } = parsed_file;
 
+            let mut id_generator = id_groups
+                .next()
+                .expect("file count fits in the node-id space");
             let BuildOutput {
                 ir_root,
                 diagnostics: ir_diagnostics,
@@ -215,6 +223,7 @@ fn build_ir<R: ImportResolver>(
                 &mut id_generator,
             );
             diagnostics.extend(ir_diagnostics);
+            node_kinds.absorb(id_generator.histogram());
 
             let mut file = InternalFile::new(file_id, ir_root);
             for SourceUnitImport {
@@ -250,5 +259,5 @@ fn build_ir<R: ImportResolver>(
         })
         .collect();
 
-    (files, id_generator)
+    (files, node_kinds)
 }

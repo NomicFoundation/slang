@@ -2790,10 +2790,16 @@ impl slang_solidity_v2_ir::ir::NodeIdGenerator
 pub fn slang_solidity_v2_ir::ir::NodeIdGenerator::allocated_count(&self) -> usize
 pub fn slang_solidity_v2_ir::ir::NodeIdGenerator::histogram(&self) -> &slang_solidity_v2_ir::ir::NodeKindHistogram
 pub fn slang_solidity_v2_ir::ir::NodeIdGenerator::next_id_of(&mut self, slang_solidity_v2_ir::ir::NodeKind) -> slang_solidity_v2_common::nodes::NodeId
-impl core::default::Default for slang_solidity_v2_ir::ir::NodeIdGenerator
-pub fn slang_solidity_v2_ir::ir::NodeIdGenerator::default() -> Self
+pub struct slang_solidity_v2_ir::ir::NodeIdGroups
+impl core::default::Default for slang_solidity_v2_ir::ir::NodeIdGroups
+pub fn slang_solidity_v2_ir::ir::NodeIdGroups::default() -> slang_solidity_v2_ir::ir::NodeIdGroups
+impl core::iter::traits::iterator::Iterator for slang_solidity_v2_ir::ir::NodeIdGroups
+pub type slang_solidity_v2_ir::ir::NodeIdGroups::Item = slang_solidity_v2_ir::ir::NodeIdGenerator
+pub fn slang_solidity_v2_ir::ir::NodeIdGroups::next(&mut self) -> core::option::Option<slang_solidity_v2_ir::ir::NodeIdGenerator>
+impl core::iter::traits::marker::FusedIterator for slang_solidity_v2_ir::ir::NodeIdGroups
 pub struct slang_solidity_v2_ir::ir::NodeKindHistogram
 impl slang_solidity_v2_ir::ir::NodeKindHistogram
+pub fn slang_solidity_v2_ir::ir::NodeKindHistogram::absorb(&mut self, &slang_solidity_v2_ir::ir::NodeKindHistogram)
 pub fn slang_solidity_v2_ir::ir::NodeKindHistogram::count(&self, slang_solidity_v2_ir::ir::NodeKind) -> u32
 pub fn slang_solidity_v2_ir::ir::NodeKindHistogram::total(&self) -> u32
 impl core::clone::Clone for slang_solidity_v2_ir::ir::NodeKindHistogram
