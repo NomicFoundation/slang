@@ -131,9 +131,13 @@ fn parse_and_build_ir(
     let mut ordered = paired.collect::<Vec<_>>();
     ordered.sort_by_key(|((_, contents), _)| Reverse(contents.len()));
 
-    // `par_bridge()` is necessary rather than `into_par_iter()` to guarantee
-    // files are processed from first to last, rather than dividing the
-    // sequence in halves.
+    // `into_par_iter` splits the collection into contiguous chunks, and schedules
+    // each chunk with a worker, that means the first chunk will have all the heavy
+    // work, and the last chunk all the light work.
+    //
+    // `par_bridge` is a bit slower, since it synchronizes the threads and gives out
+    // tasks one at a time, but it means tasks are scheduled in order (from heaviest
+    // to lightest)
     ordered
         .into_iter()
         .par_bridge()
