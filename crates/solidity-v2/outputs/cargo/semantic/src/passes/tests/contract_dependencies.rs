@@ -1077,7 +1077,7 @@ fn dispatch_rejects_invalid_contract_ids_and_foreign_declarations() {
         find_function(analysis.find_members("Unrelated"), "f").expect("Unrelated declares f");
     assert_eq!(f.id(), foreign_f.id());
 
-    for invalid in [NodeId::from(usize::MAX), f.id()] {
+    for invalid in [NodeId::from(u64::MAX), f.id()] {
         assert!(context.resolve_virtual(invalid, f).is_none());
         assert!(context.resolve_super(invalid, f, a).is_none());
         assert!(context.resolve_super(b, f, invalid).is_none());
