@@ -26,10 +26,10 @@ pub(super) fn compute_linearisations(
 
     // The members of each base, gathered most-base-first, so the hierarchy's
     // functions can be flattened most-derived-first at the end. Interface
-    // bases contribute too: a concrete contract implements every interface
-    // function, so each declaration is overridden and dropped, while an
-    // abstract contract keeps the ones it leaves unimplemented, like any other
-    // body-less function.
+    // bases contribute too: a valid concrete contract implements every
+    // interface function, so each declaration is overridden and dropped, while
+    // an abstract contract keeps the ones it leaves unimplemented, like any
+    // other body-less function.
     let mut base_members = Vec::with_capacity(linearised_bases.len());
     let mut state_variables = Vec::new();
     let mut errors = Vec::new();
