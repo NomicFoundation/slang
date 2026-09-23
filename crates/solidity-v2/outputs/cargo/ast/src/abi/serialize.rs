@@ -3,19 +3,17 @@
 //! the semantic type, keys in alphabetical order, and overloads in ascending selector order.
 //! `serde_json::to_value(abi.json())` is the `abi` field of solc's standard JSON.
 
-use std::fmt::{self, Write as _};
 use std::sync::Arc;
 
 use serde::Serialize;
 use serde::ser::{SerializeMap, SerializeSeq, Serializer};
-use sha3::{Digest, Keccak256};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{self, TypeId};
 
 use crate::abi::types::type_as_abi_type;
-use crate::abi::{AbiEntry, AbiFunction, AbiMutability, AbiParameter, ContractAbi};
+use crate::abi::{AbiEntry, AbiMutability, AbiParameter, ContractAbi};
 use crate::ast::Definition as AstDefinition;
 
 /// A contract's entries as solc's JSON ABI; see [`ContractAbi::json`].
@@ -39,10 +37,7 @@ impl Serialize for JsonAbi<'_> {
                 continue;
             }
             let mut overloads: Vec<&AbiEntry> = run.iter().collect();
-            overloads.sort_by_cached_key(|entry| match entry {
-                AbiEntry::Function(function) => selector(function),
-                _ => unreachable!("only functions share a name"),
-            });
+            overloads.sort_by_cached_key(|entry| selector(entry, &self.0.semantic));
             for entry in overloads {
                 seq.serialize_element(&Entry { entry, library })?;
             }
@@ -58,28 +53,19 @@ fn same_function_name(this: &AbiEntry, other: &AbiEntry) -> bool {
     }
 }
 
-/// The selector of the canonical signature, streamed into keccak without building the signature
-/// string. Library members hash the library form instead (`FunctionDefinition::compute_selector`),
-/// so this only orders overloads.
-fn selector(function: &AbiFunction) -> u32 {
-    struct Hasher(Keccak256);
-    impl fmt::Write for Hasher {
-        fn write_str(&mut self, s: &str) -> fmt::Result {
-            self.0.update(s.as_bytes());
-            Ok(())
-        }
-    }
-    let mut hasher = Hasher(Keccak256::new());
-    write!(hasher, "{}(", function.name()).expect("hashing cannot fail");
-    for (index, input) in function.inputs().iter().enumerate() {
-        if index > 0 {
-            hasher.write_str(",").expect("hashing cannot fail");
-        }
-        write!(hasher, "{}", input.abi_type()).expect("hashing cannot fail");
-    }
-    hasher.write_str(")").expect("hashing cannot fail");
-    let hash: [u8; 32] = hasher.0.finalize().into();
-    u32::from_be_bytes(hash[0..4].try_into().unwrap())
+/// A library member's selector hashes the library signature, which spells enums and structs by
+/// name, so it orders a library's overloads differently from the canonical signature.
+fn selector(entry: &AbiEntry, semantic: &Arc<SemanticContext>) -> u32 {
+    let AbiEntry::Function(function) = entry else {
+        unreachable!("only functions share a name");
+    };
+    let selector = match AstDefinition::try_create(function.node_id(), semantic) {
+        Some(AstDefinition::Function(definition)) => definition.compute_selector(),
+        // A public state variable's getter can overload an inherited function.
+        Some(AstDefinition::StateVariable(definition)) => definition.compute_selector(),
+        _ => unreachable!("an ABI function is a function or a state variable's getter"),
+    };
+    selector.expect("a function in the ABI is externally visible")
 }
 
 struct Entry<'a> {

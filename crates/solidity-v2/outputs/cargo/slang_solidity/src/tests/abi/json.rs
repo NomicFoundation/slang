@@ -141,6 +141,33 @@ fn overloads_follow_selector_order() {
     );
 }
 
+define_fixture!(
+    GetterOverload,
+    file: "main.sol", r#"
+pragma solidity ^0.8.0;
+contract Base { function balanceOf(address owner) public view virtual returns (uint256) {} }
+contract Token is Base { mapping(address => mapping(address => uint256)) public balanceOf; }
+"#,
+);
+
+/// A getter overloads an inherited function of the same name: `balanceOf(address)`
+/// (`0x70a08231`) precedes the getter's `balanceOf(address,address)` (`0xf7888aec`).
+#[test]
+fn getters_are_ordered_among_overloads() {
+    let unit = GetterOverload::build_compilation_unit();
+    let abi = unit
+        .find_contract_by_name("Token")
+        .next()
+        .expect("contract Token exists")
+        .compute_abi()
+        .expect("the ABI is computable");
+
+    assert_eq!(
+        json(&abi),
+        r#"[{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]"#
+    );
+}
+
 /// A getter's inputs carry the mapping key names, an array index stays unnamed, and its output
 /// carries the innermost value name unless struct members name the outputs.
 #[test]
@@ -186,6 +213,34 @@ fn abstract_contract_has_no_constructor() {
     assert_eq!(
         json(&abstract_contract),
         r#"[{"inputs":[],"name":"extra","outputs":[],"stateMutability":"nonpayable","type":"function"}]"#
+    );
+}
+
+define_fixture!(
+    LibraryOverloads,
+    file: "main.sol", r#"
+pragma solidity ^0.8.0;
+library L {
+    enum E { A }
+    function f2(E e) external pure {}
+    function f2(E e, uint256 x) external pure {}
+}
+"#,
+);
+
+/// A library's overloads follow its library selectors: `f2(L.E)` (`0x50e32ca7`) precedes
+/// `f2(L.E,uint256)` (`0xc02d3b40`), though the canonical `f2(uint8)` (`0xc6e24941`) would follow
+/// `f2(uint8,uint256)` (`0xc3671c83`).
+#[test]
+fn library_overloads_follow_library_selector_order() {
+    let unit = LibraryOverloads::build_compilation_unit();
+    let abi = fixtures::find_library(&unit, "L")
+        .compute_abi()
+        .expect("the ABI is computable");
+
+    assert_eq!(
+        json(&abi),
+        r#"[{"inputs":[{"internalType":"enum L.E","name":"e","type":"L.E"}],"name":"f2","outputs":[],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"enum L.E","name":"e","type":"L.E"},{"internalType":"uint256","name":"x","type":"uint256"}],"name":"f2","outputs":[],"stateMutability":"pure","type":"function"}]"#
     );
 }
 
