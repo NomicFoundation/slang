@@ -12,11 +12,10 @@ impl SuperKeywordStruct {
         else {
             return None;
         };
-        let Definition::Contract(enclosing_contract) =
+        let Some(Definition::Contract(enclosing_contract)) =
             Definition::try_create(*enclosing_contract, &self.semantic)
-                .expect("the `super` enclosing_contract is a definition")
         else {
-            unreachable!("expected the `super` enclosing_contract to be a contract");
+            unreachable!("the `super` enclosing contract is a contract definition");
         };
         Some(enclosing_contract)
     }

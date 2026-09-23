@@ -306,19 +306,6 @@ impl Binder {
         self.linearisations.get(&node_id)
     }
 
-    /// The part of `contract_id`'s linearisation that a member of `super`
-    /// written in `enclosing_contract` searches: the bases after the enclosing contract, and none
-    /// when the enclosing contract is not one of them.
-    pub fn bases_after(&self, contract_id: NodeId, enclosing_contract: NodeId) -> &[NodeId] {
-        let Some(bases) = self.get_linearised_bases(contract_id) else {
-            return &[];
-        };
-        match bases.iter().position(|base| *base == enclosing_contract) {
-            Some(position) => &bases[position + 1..],
-            None => &[],
-        }
-    }
-
     #[cfg(test)]
     pub(crate) fn linearisations(&self) -> &Map<NodeId, Vec<NodeId>> {
         &self.linearisations

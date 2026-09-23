@@ -75,7 +75,7 @@ impl Pass<'_> {
                 self.resolve_symbol_in_type(type_ids[0], symbol)
             }
             Typing::Resolved(type_id) => self.resolve_symbol_in_type(*type_id, symbol),
-            Typing::This(_) | Typing::Super(_) => {
+            Typing::Super(enclosing_contract) => {
                 // TODO: the contract scope here is not necessarily the current
                 // lexical scope; for compilation we should set it to the scope
                 // of the contract being compiled, as this will affect the
@@ -83,28 +83,36 @@ impl Pass<'_> {
                 // resolution. This affects the first parameter to
                 // `resolve_in_contract_scope`, not the `node_id` of the
                 // resolution option which is always lexical.
+                let scope_id = self
+                    .binder
+                    .scope_id_for_node_id(*enclosing_contract)
+                    .expect("a contract has a scope");
+                self.binder.resolve_in_contract_scope(
+                    scope_id,
+                    symbol,
+                    ResolveOptions::Super(*enclosing_contract),
+                )
+            }
+            Typing::This(receiver_type_id) => {
                 if let Some(scope_id) = self.current_contract_scope_id() {
                     let node_id = self.binder.get_scope_by_id(scope_id).node_id();
-                    let options = if matches!(typing, Typing::This(_)) {
-                        ResolveOptions::This(node_id)
-                    } else {
-                        ResolveOptions::Super(node_id)
-                    };
                     // TODO(validation) SDR[34]: for `this` resolutions we need to check
                     // that the returned definitions are externally available
                     // (ie. either `external` or `public`)
                     let mut definition_ids = self
                         .binder
-                        .resolve_in_contract_scope(scope_id, symbol, options)
+                        .resolve_in_contract_scope(
+                            scope_id,
+                            symbol,
+                            ResolveOptions::This(node_id),
+                        )
                         .get_definition_ids();
 
                     // Consider active `using` directives for `this`
-                    if let Typing::This(receiver_type_id) = typing
-                        && matches!(
-                            self.types.get_type_by_id(*receiver_type_id),
-                            Type::Contract(_)
-                        )
-                    {
+                    if matches!(
+                        self.types.get_type_by_id(*receiver_type_id),
+                        Type::Contract(_)
+                    ) {
                         self.add_attached_functions_for_type(
                             *receiver_type_id,
                             symbol,

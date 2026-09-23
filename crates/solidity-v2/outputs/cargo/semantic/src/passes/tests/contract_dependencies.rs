@@ -4,14 +4,11 @@
 //! The last section pins the walk orders where slang records a different
 //! expression than solc for a dependency they both find.
 
-use std::sync::Arc;
-
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_ir::ir;
 
 use super::support::{Analyse, Analysis, find_function, only_diagnostic};
 use crate::binder::Definition;
@@ -39,26 +36,6 @@ fn contract_id(context: &SemanticContext, name: &str) -> NodeId {
         .next()
         .expect("contract exists")
         .id()
-}
-
-/// The function or modifier `name` declared by the contract or interface
-/// `owner`, which `linearised_functions` may not list.
-fn declared_function(context: &SemanticContext, owner: &str, name: &str) -> ir::FunctionDefinition {
-    let members = context
-        .binder()
-        .definitions()
-        .values()
-        .find_map(|definition| match definition {
-            Definition::Contract(contract) if contract.ir_node.name.unparse() == owner => {
-                Some(&contract.ir_node.members[..])
-            }
-            Definition::Interface(interface) if interface.ir_node.name.unparse() == owner => {
-                Some(&interface.ir_node.members[..])
-            }
-            _ => None,
-        })
-        .expect("owner exists");
-    Arc::clone(find_function(members, name).expect("function exists"))
 }
 
 fn library_id(context: &SemanticContext, name: &str) -> NodeId {
@@ -988,17 +965,19 @@ fn resolve_virtual_of_a_calldata_parameter_overridden_by_memory() {
 
 #[test]
 fn resolve_virtual_of_an_unimplemented_interface_member_is_the_declaration() {
-    let context = build_context(
+    let analysis = analyse(
         "interface I {
             function f() external;
         }
         abstract contract A is I {}",
-    );
+    )
+    .expect_no_diagnostics();
+    let context = analysis.context();
 
-    let a = contract_id(&context, "A");
-    let f = declared_function(&context, "I", "f");
+    let a = contract_id(context, "A");
+    let f = find_function(analysis.find_members("I"), "f").expect("I declares f");
 
-    let Some(VirtualTarget::Function(target)) = context.resolve_virtual(a, &f) else {
+    let Some(VirtualTarget::Function(target)) = context.resolve_virtual(a, f) else {
         panic!("no getter overrides an unimplemented interface member");
     };
     assert_eq!(
@@ -1010,7 +989,7 @@ fn resolve_virtual_of_an_unimplemented_interface_member_is_the_declaration() {
 
 #[test]
 fn resolve_virtual_of_a_virtual_modifier_is_its_override() {
-    let context = build_context(
+    let analysis = analyse(
         "contract Base {
             modifier m() virtual { _; }
             function f() public m {}
@@ -1018,13 +997,16 @@ fn resolve_virtual_of_a_virtual_modifier_is_its_override() {
         contract Derived is Base {
             modifier m() override { _; }
         }",
-    );
+    )
+    .expect_no_diagnostics();
+    let context = analysis.context();
 
-    let derived = contract_id(&context, "Derived");
-    let base_m = declared_function(&context, "Base", "m");
-    let derived_m = declared_function(&context, "Derived", "m");
+    let derived = contract_id(context, "Derived");
+    let base_m = find_function(analysis.find_members("Base"), "m").expect("Base declares m");
+    let derived_m =
+        find_function(analysis.find_members("Derived"), "m").expect("Derived declares m");
 
-    let Some(VirtualTarget::Function(target)) = context.resolve_virtual(derived, &base_m) else {
+    let Some(VirtualTarget::Function(target)) = context.resolve_virtual(derived, base_m) else {
         panic!("a modifier is never overridden by a getter");
     };
     assert_eq!(
@@ -1084,23 +1066,25 @@ fn dispatch_rejects_invalid_contract_ids_and_foreign_declarations() {
     let source = "contract A { function f() public virtual {} }
         contract B is A { function f() public override {} }
         contract Unrelated { function f() public virtual {} }";
-    let context = build_context(source);
-    let foreign = build_context(source);
-    let a = contract_id(&context, "A");
-    let b = contract_id(&context, "B");
-    let f = declared_function(&context, "A", "f");
-    let foreign_f = declared_function(&foreign, "A", "f");
-    let unrelated_f = declared_function(&context, "Unrelated", "f");
+    let analysis = analyse(source).expect_no_diagnostics();
+    let foreign = analyse(source).expect_no_diagnostics();
+    let context = analysis.context();
+    let a = contract_id(context, "A");
+    let b = contract_id(context, "B");
+    let f = find_function(analysis.find_members("A"), "f").expect("A declares f");
+    let foreign_f = find_function(foreign.find_members("A"), "f").expect("A declares f");
+    let unrelated_f =
+        find_function(analysis.find_members("Unrelated"), "f").expect("Unrelated declares f");
     assert_eq!(f.id(), foreign_f.id());
 
     for invalid in [NodeId::from(usize::MAX), f.id()] {
-        assert!(context.resolve_virtual(invalid, &f).is_none());
-        assert!(context.resolve_super(invalid, &f, a).is_none());
-        assert!(context.resolve_super(b, &f, invalid).is_none());
+        assert!(context.resolve_virtual(invalid, f).is_none());
+        assert!(context.resolve_super(invalid, f, a).is_none());
+        assert!(context.resolve_super(b, f, invalid).is_none());
     }
-    for invalid in [&foreign_f, &unrelated_f] {
+    for invalid in [foreign_f, unrelated_f] {
         assert!(context.resolve_virtual(b, invalid).is_none());
         assert!(context.resolve_super(b, invalid, b).is_none());
     }
-    assert!(context.resolve_super(a, &f, a).is_none());
+    assert!(context.resolve_super(a, f, a).is_none());
 }

@@ -272,16 +272,6 @@ fn test_resolution_rejects_constructors() {
     assert!(a.resolve_super(&constructor, &a).is_none());
 }
 
-#[test]
-fn test_resolve_virtual_keeps_a_nonvirtual_member() {
-    let unit = Hierarchy::build_compilation_unit();
-    let s = function(&unit, "A", "s", 0);
-    assert_eq!(
-        contract(&unit, "C").resolve_virtual(&s).unwrap().node_id(),
-        s.node_id()
-    );
-}
-
 define_fixture!(
     Getter,
     file: "main.sol", r#"

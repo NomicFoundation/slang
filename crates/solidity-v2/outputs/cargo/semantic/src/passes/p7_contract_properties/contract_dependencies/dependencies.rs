@@ -294,7 +294,9 @@ impl DependencyCollector<'_> {
         modifier_target(
             self.binder,
             self.types,
-            self.binder.get_linearised_bases(self.contract_id)?,
+            self.binder
+                .get_linearised_bases(self.contract_id)
+                .expect("p2 linearises every contract"),
             overridden,
         )
         .map(|target| target.id())
@@ -317,7 +319,9 @@ impl DependencyCollector<'_> {
             self.binder,
             self.types,
             self.binder
-                .bases_after(self.contract_id, enclosing_contract),
+                .get_linearised_bases(self.contract_id)
+                .expect("p2 linearises every contract"),
+            enclosing_contract,
             overridden,
         )
         .map_or(declaration, |target| target.id())

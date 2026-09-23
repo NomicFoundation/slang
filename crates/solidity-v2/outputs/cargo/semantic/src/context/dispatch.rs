@@ -1,5 +1,3 @@
-//! Dispatch searches shared by the public queries and dependency analysis.
-
 use std::sync::Arc;
 
 use slang_solidity_v2_common::nodes::NodeId;
@@ -78,7 +76,7 @@ impl SemanticContext {
         function: &'a ir::FunctionDefinition,
         enclosing_contract: NodeId,
     ) -> Option<&'a ir::FunctionDefinition> {
-        let (_, member) = self.dispatch_member(contract_id, function)?;
+        let (bases, member) = self.dispatch_member(contract_id, function)?;
         if member.function_kind() != ir::FunctionKind::Regular
             || !matches!(
                 self.binder.find_definition_by_id(enclosing_contract),
@@ -87,12 +85,7 @@ impl SemanticContext {
         {
             return None;
         }
-        super_target(
-            &self.binder,
-            &self.types,
-            self.binder.bases_after(contract_id, enclosing_contract),
-            member,
-        )
+        super_target(&self.binder, &self.types, bases, enclosing_contract, member)
     }
 
     fn dispatch_member<'a>(
@@ -106,7 +99,10 @@ impl SemanticContext {
         ) {
             return None;
         }
-        let bases = self.binder.get_linearised_bases(contract_id)?;
+        let bases = self
+            .binder
+            .get_linearised_bases(contract_id)
+            .expect("p2 linearises every contract");
         let member = bases
             .iter()
             .flat_map(|base| Overridable::members_of(&self.binder, *base))
@@ -152,21 +148,22 @@ pub(crate) fn modifier_target<'a>(
         })
 }
 
-/// Finds the nearest implemented regular function in a super search's bases.
+/// Finds the nearest implemented function after `enclosing_contract` in the
+/// linearisation `bases`; `None` when the enclosing contract is not in it.
 pub(crate) fn super_target<'a>(
     binder: &'a Binder,
     types: &'a TypeRegistry,
     bases: &[NodeId],
+    enclosing_contract: NodeId,
     member: Overridable<'a>,
 ) -> Option<&'a ir::FunctionDefinition> {
-    bases
+    let position = bases.iter().position(|base| *base == enclosing_contract)?;
+    bases[position + 1..]
         .iter()
         .flat_map(|base| Overridable::members_of(binder, *base))
         .find_map(|candidate| match candidate {
             Overridable::Function { definition, .. }
-                if candidate.function_kind() == ir::FunctionKind::Regular
-                    && candidate.is_implemented()
-                    && candidate.overrides(binder, types, &member) =>
+                if candidate.is_implemented() && candidate.overrides(binder, types, &member) =>
             {
                 Some(definition)
             }
