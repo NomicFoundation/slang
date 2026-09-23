@@ -2,6 +2,7 @@ use std::ops::Range;
 
 pub use contract_data::ContractReference;
 pub(crate) use contract_data::{ContractData, ContractLinearisations};
+pub use dispatch::VirtualTarget;
 pub(crate) use file_node_mapper::FileNodeMapper;
 use ruint::aliases::U256;
 use slang_solidity_v2_common::collections::{Set, SortedMap};
@@ -27,6 +28,7 @@ use crate::types::{
 };
 
 mod contract_data;
+pub(crate) mod dispatch;
 mod file_node_mapper;
 mod storage_layout;
 

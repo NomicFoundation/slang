@@ -94,7 +94,7 @@ impl Pass<'_> {
             // An overload set has already been reported and sunk above.
             Typing::Unresolved | Typing::Undetermined(_) => Ok(None),
             Typing::BuiltIn(_) => Err(NotAValueKind::BuiltIn),
-            Typing::Super => Err(NotAValueKind::Super),
+            Typing::Super(_) => Err(NotAValueKind::Super),
             Typing::NewExpression(_) => Err(NotAValueKind::UncalledNew),
         };
         match outcome {
@@ -741,10 +741,9 @@ impl Pass<'_> {
     /// derives from it (solc's "Foreign" access). The linearisation includes
     /// the contract itself, so containment means local/deriving access.
     pub(crate) fn is_foreign_contract(&self, contract_id: NodeId) -> bool {
-        let Some(scope_id) = self.current_contract_scope_id() else {
+        let Some(current_contract_id) = self.current_contract_node_id() else {
             return true;
         };
-        let current_contract_id = self.binder.get_scope_by_id(scope_id).node_id();
         !self
             .binder
             .get_linearised_bases(current_contract_id)
@@ -909,7 +908,7 @@ impl Pass<'_> {
                 // is only uncallable as a consequence.
                 Typing::Unresolved
             }
-            Typing::This(_) | Typing::Super => {
+            Typing::This(_) | Typing::Super(_) => {
                 // `this` and `super` name a contract instance, not a callable
                 self.report_operand_not_callable(node);
                 Typing::Unresolved
@@ -1142,7 +1141,7 @@ impl Pass<'_> {
                 // is only uncallable as a consequence.
                 (Typing::Unresolved, None)
             }
-            Typing::This(_) | Typing::Super => {
+            Typing::This(_) | Typing::Super(_) => {
                 // `this` and `super` name a contract instance, not a callable
                 self.report_operand_not_callable(node);
                 (Typing::Unresolved, None)

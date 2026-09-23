@@ -68,9 +68,11 @@ pub enum Typing {
     /// Typing of the `this` keyword. Resolving a member of `this` requires
     /// special lookup rules.
     This(TypeId),
-    /// Typing of the `super` keyword. Resolving members requires special lookup
-    /// rules.
-    Super,
+    /// Typing of the `super` keyword, carrying the contract it is written in:
+    /// the enclosing contract a `super` member resolution starts after in the linearisation
+    /// of the contract being compiled. Resolving members requires special
+    /// lookup rules.
+    Super(NodeId),
 }
 
 impl Typing {

@@ -10,9 +10,9 @@ use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
-use super::support::{Analyse, Analysis, only_diagnostic};
+use super::support::{Analyse, Analysis, find_function, only_diagnostic};
 use crate::binder::Definition;
-use crate::context::SemanticContext;
+use crate::context::{SemanticContext, VirtualTarget};
 
 /// These tests pin Istanbul: the dependency walk is target independent, and
 /// the oldest supported target keeps any target-gated built-in out of the way.
@@ -920,4 +920,171 @@ fn a_units_own_reference_wins_over_the_constant_it_uses() {
         .rfind("type(B).creationCode")
         .expect("reference exists");
     assert_eq!(in_function, reference.range().start);
+}
+
+#[test]
+fn super_anchored_outside_the_linearisation_is_rejected() {
+    let context = build_context(
+        "contract Base {
+            function f() public virtual {}
+        }
+        contract Derived is Base {
+            function f() public virtual override {}
+        }
+        contract Unrelated {}",
+    );
+
+    let derived = contract_id(&context, "Derived");
+    let unrelated = contract_id(&context, "Unrelated");
+    let f = &context.linearised_functions(derived)[0];
+
+    assert!(context.resolve_super(derived, f, unrelated).is_none());
+}
+
+#[test]
+fn resolve_virtual_of_a_calldata_parameter_overridden_by_memory() {
+    let context = build_context(
+        "contract Base {
+            function f(uint256[] calldata a) external virtual returns (uint256) { return a.length; }
+        }
+        contract Derived is Base {
+            function f(uint256[] memory a) public override returns (uint256) { return a.length; }
+        }",
+    );
+
+    let base = contract_id(&context, "Base");
+    let derived = contract_id(&context, "Derived");
+    let base_f = &context.linearised_functions(base)[0];
+    let derived_f = &context.linearised_functions(derived)[0];
+
+    let Some(VirtualTarget::Function(target)) = context.resolve_virtual(derived, base_f) else {
+        panic!("a function, not a getter, overrides Base.f");
+    };
+    assert_eq!(target.id(), derived_f.id());
+}
+
+#[test]
+fn resolve_virtual_of_an_unimplemented_interface_member_is_the_declaration() {
+    let analysis = analyse(
+        "interface I {
+            function f() external;
+        }
+        abstract contract A is I {}",
+    )
+    .expect_no_diagnostics();
+    let context = analysis.context();
+
+    let a = contract_id(context, "A");
+    let f = find_function(analysis.find_members("I"), "f").expect("I declares f");
+
+    let Some(VirtualTarget::Function(target)) = context.resolve_virtual(a, f) else {
+        panic!("no getter overrides an unimplemented interface member");
+    };
+    assert_eq!(
+        target.id(),
+        f.id(),
+        "the declaration is the target when the hierarchy implements nothing"
+    );
+}
+
+#[test]
+fn resolve_virtual_of_a_virtual_modifier_is_its_override() {
+    let analysis = analyse(
+        "contract Base {
+            modifier m() virtual { _; }
+            function f() public m {}
+        }
+        contract Derived is Base {
+            modifier m() override { _; }
+        }",
+    )
+    .expect_no_diagnostics();
+    let context = analysis.context();
+
+    let derived = contract_id(context, "Derived");
+    let base_m = find_function(analysis.find_members("Base"), "m").expect("Base declares m");
+    let derived_m =
+        find_function(analysis.find_members("Derived"), "m").expect("Derived declares m");
+
+    let Some(VirtualTarget::Function(target)) = context.resolve_virtual(derived, base_m) else {
+        panic!("a modifier is never overridden by a getter");
+    };
+    assert_eq!(
+        target.id(),
+        derived_m.id(),
+        "Derived.m is what runs in code compiled into Derived"
+    );
+}
+
+#[test]
+fn resolve_virtual_of_a_function_a_getter_overrides() {
+    let context = build_context(
+        "contract Base {
+            function f() external view virtual returns (uint256) { return 1; }
+        }
+        contract Derived is Base {
+            uint256 public override f;
+        }",
+    );
+
+    let base = contract_id(&context, "Base");
+    let derived = contract_id(&context, "Derived");
+    let f = &context.linearised_functions(base)[0];
+
+    assert!(
+        context.linearised_functions(derived).is_empty(),
+        "the getter drops Base.f from Derived's functions"
+    );
+    assert!(
+        matches!(
+            context.resolve_virtual(derived, f),
+            Some(VirtualTarget::Getter(_))
+        ),
+        "the getter, not Base.f, is what runs in code compiled into Derived"
+    );
+}
+
+#[test]
+fn super_from_a_fallback_skips_a_base_fallback() {
+    let context = build_context(
+        "contract Base {
+            fallback() external virtual {}
+        }
+        contract Derived is Base {
+            fallback() external override {}
+        }",
+    );
+
+    let derived = contract_id(&context, "Derived");
+    let fallback = &context.linearised_functions(derived)[0];
+
+    assert!(context.resolve_super(derived, fallback, derived).is_none());
+}
+
+#[test]
+fn dispatch_rejects_invalid_contract_ids_and_foreign_declarations() {
+    let source = "contract A { function f() public virtual {} }
+        contract B is A { function f() public override {} }
+        contract Unrelated { function f() public virtual {} }";
+    let analysis = analyse(source).expect_no_diagnostics();
+    let foreign = analyse(source).expect_no_diagnostics();
+    let context = analysis.context();
+    let a = contract_id(context, "A");
+    let b = contract_id(context, "B");
+    let f = find_function(analysis.find_members("A"), "f").expect("A declares f");
+    let foreign_f = find_function(foreign.find_members("A"), "f").expect("A declares f");
+    let unrelated_f =
+        find_function(analysis.find_members("Unrelated"), "f").expect("Unrelated declares f");
+    assert_eq!(f.id(), foreign_f.id());
+
+    for invalid in [NodeId::from(u64::MAX), f.id()] {
+        assert!(context.resolve_virtual(invalid, f).is_none());
+        assert!(context.resolve_super(invalid, f, a).is_none());
+        assert!(context.resolve_super(b, f, invalid).is_none());
+    }
+    for invalid in [foreign_f, unrelated_f] {
+        assert!(context.resolve_virtual(b, invalid).is_none());
+        assert!(context.resolve_super(b, invalid, b).is_none());
+    }
+    assert!(context.resolve_super(a, f, a).is_none());
 }

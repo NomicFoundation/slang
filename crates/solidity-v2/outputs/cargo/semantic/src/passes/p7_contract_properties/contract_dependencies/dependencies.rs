@@ -6,6 +6,7 @@ use slang_solidity_v2_ir::ir;
 
 use super::references::{CallableReference, UnitReferences};
 use crate::binder::{Binder, Definition};
+use crate::context::dispatch::{function_target, modifier_target, super_target};
 use crate::context::{ContractData, ContractReference};
 use crate::passes::common::Overridable;
 use crate::types::TypeRegistry;
@@ -270,15 +271,13 @@ impl DependencyCollector<'_> {
                 // never reads the interface flag, so it is left `false`.
                 let overridden = Overridable::of_function(&function.ir_node, false)
                     .expect("a function definition is a regular function");
-                self.contract_data
-                    .linearised_functions(self.contract_id)
-                    .iter()
-                    .find(|candidate| {
-                        Overridable::of_function(candidate, false)
-                            .expect("a linearised function is never a constructor")
-                            .overrides(self.binder, self.types, &overridden)
-                    })
-                    .map_or(declaration, |resolved| resolved.id())
+                function_target(
+                    self.binder,
+                    self.types,
+                    self.contract_data.linearised_functions(self.contract_id),
+                    overridden,
+                )
+                .map_or(declaration, |resolved| resolved.id())
             }
             Some(Definition::Modifier(modifier)) => self
                 .resolve_modifier(&modifier.ir_node)
@@ -292,20 +291,15 @@ impl DependencyCollector<'_> {
         // The interface flag is never read here, so it is left `false`.
         let overridden =
             Overridable::of_function(modifier, false).expect("a modifier definition is a modifier");
-        for base_id in self.binder.get_linearised_bases(self.contract_id)? {
-            let Some(Definition::Contract(base)) = self.binder.find_definition_by_id(*base_id)
-            else {
-                continue;
-            };
-            for member in base.ir_node.members.iter() {
-                if let Some(candidate) = Overridable::of(member, false)
-                    && candidate.overrides(self.binder, self.types, &overridden)
-                {
-                    return Some(candidate.node_id());
-                }
-            }
-        }
-        None
+        modifier_target(
+            self.binder,
+            self.types,
+            self.binder
+                .get_linearised_bases(self.contract_id)
+                .expect("p2 linearises every contract"),
+            overridden,
+        )
+        .map(|target| target.id())
     }
 
     /// Resolves which implementation a `super.f()` call runs when compiled
@@ -317,35 +311,19 @@ impl DependencyCollector<'_> {
             return declaration;
         };
 
-        // `super` searches the collected contract's linearisation, starting
-        // after the contract the call is written in.
-        let Some(bases) = self.binder.get_linearised_bases(self.contract_id) else {
-            return declaration;
-        };
-        let Some(position) = bases.iter().position(|base| *base == enclosing_contract) else {
-            return declaration;
-        };
-
         // The nearest override with a body wins.
         // The interface flag is never read here, so it is left `false`.
         let overridden = Overridable::of_function(&function.ir_node, false)
             .expect("a function definition is a regular function");
-        for base_id in &bases[position + 1..] {
-            let members = match self.binder.find_definition_by_id(*base_id) {
-                Some(Definition::Contract(base)) => &base.ir_node.members[..],
-                Some(Definition::Interface(base)) => &base.ir_node.members[..],
-                _ => continue,
-            };
-            for member in members {
-                if let Some(candidate) = Overridable::of(member, false)
-                    && candidate.function_kind() == ir::FunctionKind::Regular
-                    && candidate.is_implemented()
-                    && candidate.overrides(self.binder, self.types, &overridden)
-                {
-                    return candidate.node_id();
-                }
-            }
-        }
-        declaration
+        super_target(
+            self.binder,
+            self.types,
+            self.binder
+                .get_linearised_bases(self.contract_id)
+                .expect("p2 linearises every contract"),
+            enclosing_contract,
+            overridden,
+        )
+        .map_or(declaration, |target| target.id())
     }
 }

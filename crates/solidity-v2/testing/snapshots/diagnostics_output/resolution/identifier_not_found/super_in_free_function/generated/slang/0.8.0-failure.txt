@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/identifier-not-found] Error: Identifier not found.
+   ╭─[input.sol:7:5]
+   │
+ 7 │     super.f();
+   │     ──┬──  
+   │       ╰──── Error occurred here.
+───╯
