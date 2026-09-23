@@ -32,6 +32,7 @@ pub struct BuildOutput {
     pub diagnostics: DiagnosticCollection,
 }
 
+#[inline(never)]
 pub fn build_source_unit(
     file_id: &FileId,
     source_unit: &input::SourceUnit,

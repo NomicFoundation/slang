@@ -38,6 +38,7 @@ use structure_checks::YulForLoopClause;
 /// Solidity scopes (so Yul can reference Solidity declarations), but no Solidity
 /// scope ever points into a Yul scope, and nothing outside an assembly block
 /// references a Yul definition.
+#[inline(never)]
 pub fn run(
     binder: &mut Binder,
     language_version: LanguageVersion,

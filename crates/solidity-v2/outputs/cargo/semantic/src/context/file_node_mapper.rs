@@ -21,6 +21,7 @@ pub(crate) struct FileNodeMapper {
 }
 
 impl FileNodeMapper {
+    #[inline(never)]
     pub(crate) fn build_from(files: &[impl SemanticFile]) -> Self {
         let mut files: Vec<FileNodeInfo> = files
             .iter()

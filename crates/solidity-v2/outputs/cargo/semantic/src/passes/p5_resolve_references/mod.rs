@@ -20,6 +20,7 @@ mod visitor;
 /// containing expressions and statements. Both these actions are co-dependant
 /// and happen concurrently for each node, and their results are store in the
 /// `Binder` instance.
+#[inline(never)]
 pub fn run(
     files: &[impl SemanticFile],
     binder: &mut Binder,

@@ -17,6 +17,7 @@ mod c3;
 
 /// In this pass we collect all bases of contracts and interfaces and then
 /// compute the linearisation for each of them.
+#[inline(never)]
 pub fn run(
     files: &[impl SemanticFile],
     binder: &mut Binder,

@@ -350,6 +350,7 @@ impl Binder {
         self.operator_functions.get(&node_id).copied()
     }
 
+    #[inline(never)]
     pub(crate) fn update_definitions_to_references_index(&mut self) {
         // Build reverse mapping from definitions to references
         let mut definitions: Map<NodeId, Vec<NodeId>> =

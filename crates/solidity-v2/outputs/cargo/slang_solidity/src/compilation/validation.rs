@@ -3,6 +3,7 @@ use slang_solidity_v2_common::diagnostics::kinds::syntax::MissingVersionPragma;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_cst::structured_cst::nodes::{Pragma, SourceUnit, SourceUnitMember};
 
+#[inline(never)]
 pub fn validate_cst(
     source_unit: &SourceUnit,
     file_id: &FileId,

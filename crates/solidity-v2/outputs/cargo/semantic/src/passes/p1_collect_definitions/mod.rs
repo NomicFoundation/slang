@@ -22,6 +22,7 @@ mod visitor;
 /// instantiates a `Binder` object which will store all this information as well
 /// as references and typing information for the nodes, to be resolved in later
 /// passes.
+#[inline(never)]
 pub fn run(
     files: &[impl SemanticFile],
     binder: &mut Binder,

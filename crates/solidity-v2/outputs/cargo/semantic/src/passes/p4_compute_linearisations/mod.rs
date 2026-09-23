@@ -51,6 +51,7 @@ use crate::types::TypeRegistry;
 /// of this pass. Eventually we could use the linearisation information produced
 /// here to aid in expressions/statements resolution and typing, but it's fully
 /// independent for now.
+#[inline(never)]
 pub fn run(
     binder: &Binder,
     types: &TypeRegistry,

@@ -83,6 +83,7 @@ impl CompilationUnit {
 
 /// Collects the given sources by file ID, keeping the last contents given for
 /// an ID and reporting every repetition as a [`DuplicatedFileId`] diagnostic.
+#[inline(never)]
 fn collect_sources<'s>(
     sources: impl Iterator<Item = (FileId, &'s str)>,
     diagnostics: &mut DiagnosticCollection,
@@ -116,6 +117,7 @@ struct ParsedFile<'s> {
 ///
 /// TODO(v2): giving each file an independent node-id space would free this
 /// phase to schedule as it likes. It'll be necessary once IR building is parallelized.
+#[inline(never)]
 fn parse_files<'s>(
     sources: SortedMap<FileId, &'s str>,
     language_version: LanguageVersion,
@@ -146,6 +148,7 @@ fn parse_files<'s>(
 
 /// Parses one source file, returning its diagnostics rather than pushing them
 /// into a shared collection, so that it can run on any thread.
+#[inline(never)]
 fn parse_file(
     file_id: FileId,
     contents: &str,
@@ -180,6 +183,7 @@ fn parse_file(
 ///
 /// Because the full set of files is known up front, an import resolving outside
 /// of it is reported here, rather than being discovered while loading files.
+#[inline(never)]
 fn build_ir<R: ImportResolver>(
     resolver: &mut R,
     parsed_files: Vec<ParsedFile<'_>>,

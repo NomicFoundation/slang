@@ -85,6 +85,7 @@ pub struct SemanticContext {
 }
 
 impl SemanticContext {
+    #[inline(never)]
     pub fn build_from(
         language_version: LanguageVersion,
         evm_target: EvmTarget,
@@ -101,6 +102,11 @@ impl SemanticContext {
         let mut types = TypeRegistry::new(language_version);
         let file_node_mapper = FileNodeMapper::build_from(files);
 
+        // Each pass below is `#[inline(never)]`, as are the phases in
+        // `CompilationUnit::create`. Folded into their caller, their cost
+        // scatters across whatever they were folded into and a profile can no
+        // longer say what a phase cost; they run once per compilation, so the
+        // call is free at this granularity.
         p1_collect_definitions::run(files, &mut binder, language_version, diagnostics);
         p2_linearise_contracts::run(files, &mut binder, diagnostics);
         p3_type_definitions::run(

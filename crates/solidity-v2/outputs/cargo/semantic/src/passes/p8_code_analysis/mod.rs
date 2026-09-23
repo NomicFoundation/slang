@@ -14,6 +14,7 @@ use crate::types::TypeRegistry;
 /// This pass hosts analyses that emit diagnostics over the fully resolved
 /// program, ie. they can only run after all references have been recorded.
 /// It produces no data for later consumption.
+#[inline(never)]
 pub fn run(
     binder: &Binder,
     contract_data: &ContractData,
