@@ -1,7 +1,9 @@
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit as InputSourceUnit;
 use slang_solidity_v2_ir::ir::visitor::{Visitor, accept_source_unit};
-use slang_solidity_v2_ir::ir::{self, NodeIdGenerator, SourceUnit, SourceUnitMember};
+use slang_solidity_v2_ir::ir::{
+    self, NodeIdGroups, NodeKindHistogram, SourceUnit, SourceUnitMember,
+};
 
 use crate::dataset::SolidityProject;
 use crate::tests::slang_v2::common::parse_version;
@@ -14,7 +16,7 @@ pub struct Input {
 
 pub struct Output {
     pub(crate) ir_source_units: Vec<SourceUnit>,
-    pub(crate) id_generator: NodeIdGenerator,
+    pub(crate) node_kinds: NodeKindHistogram,
 }
 
 pub fn setup(project: &str) -> Input {
@@ -34,9 +36,15 @@ pub fn run(input: Input) -> Output {
 }
 
 pub fn test(input: Input) -> Output {
-    let mut id_generator = NodeIdGenerator::default();
+    // One generator per file, folded into a single histogram, the way
+    // `CompilationUnit::create` does it.
+    let mut id_groups = NodeIdGroups::default();
+    let mut node_kinds = NodeKindHistogram::default();
     let mut ir_source_units = Vec::new();
     for (name, source) in input.source_units {
+        let mut id_generator = id_groups
+            .next()
+            .expect("file count fits in the node-id space");
         let contents = input
             .project
             .sources
@@ -59,12 +67,13 @@ pub fn test(input: Input) -> Output {
             "IR builder produced diagnostics: {diagnostics:#?}"
         );
 
+        node_kinds.absorb(id_generator.histogram());
         ir_source_units.push(ir_root);
     }
 
     Output {
         ir_source_units,
-        id_generator,
+        node_kinds,
     }
 }
 

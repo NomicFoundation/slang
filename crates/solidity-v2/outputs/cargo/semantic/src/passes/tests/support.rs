@@ -19,7 +19,7 @@ use slang_solidity_v2_common::evm_targets::EvmTarget;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
+use slang_solidity_v2_ir::ir::{self, NodeIdGenerator, NodeIdGroups};
 use slang_solidity_v2_parser::{ParseOutput, Parser};
 
 use crate::binder::Binder;
@@ -101,7 +101,7 @@ fn build_file(
 /// The files are built in the order given, which is the order the binder sees
 /// their nodes in, and hence the order a file-scope lookup resolves them in.
 fn build_files(sources: &[(&str, &str)], language_version: LanguageVersion) -> Vec<TestFile> {
-    let mut id_generator = NodeIdGenerator::default();
+    let mut id_groups = NodeIdGroups::default();
 
     let mut seen = Set::default();
     if let Some((first_duplicate, _)) = sources.iter().find(|(name, _)| !seen.insert(name)) {
@@ -111,6 +111,10 @@ fn build_files(sources: &[(&str, &str)], language_version: LanguageVersion) -> V
     sources
         .iter()
         .map(|(name, contents)| {
+            let mut id_generator = id_groups
+                .next()
+                .expect("file count fits in the node-id space");
+
             let mut file = build_file(
                 (*name).into(),
                 contents,

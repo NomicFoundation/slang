@@ -29,7 +29,7 @@ fn build_pragma(expression: &str) -> (ir::VersionPragma, Vec<String>) {
         "`{expression}` failed to parse: {diagnostics:?}"
     );
 
-    let mut id_generator = ir::NodeIdGenerator::default();
+    let mut id_generator = super::single_file_id_generator();
     let ir::BuildOutput {
         ir_root,
         diagnostics,
@@ -611,7 +611,7 @@ fn an_unreadable_pragma_does_not_suppress_the_check_on_another() {
     } = Parser::parse(&file_id, contents, LanguageVersion::LATEST);
     assert!(diagnostics.is_empty(), "failed to parse: {diagnostics:?}");
 
-    let mut id_generator = ir::NodeIdGenerator::default();
+    let mut id_generator = super::single_file_id_generator();
     let ir::BuildOutput { diagnostics, .. } = ir::build(
         &file_id,
         &source_unit,

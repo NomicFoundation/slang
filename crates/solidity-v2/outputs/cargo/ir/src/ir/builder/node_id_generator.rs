@@ -1,3 +1,5 @@
+use std::iter::FusedIterator;
+
 use crate::ir::nodes::{NodeId, NodeKind};
 
 /// A per-kind tally of the nodes allocated by a [`NodeIdGenerator`].
@@ -25,6 +27,13 @@ impl NodeKindHistogram {
     pub fn total(&self) -> u32 {
         self.counts.iter().sum()
     }
+
+    /// Adds the per-kind counts of `other` into this histogram.
+    pub fn absorb(&mut self, other: &NodeKindHistogram) {
+        for (total, count) in self.counts.iter_mut().zip(other.counts.iter()) {
+            *total += *count;
+        }
+    }
 }
 
 impl Default for NodeKindHistogram {
@@ -35,42 +44,89 @@ impl Default for NodeKindHistogram {
     }
 }
 
-/// A strictly monotonically increasing `NodeId` generator.
+/// The node-id space, partitioned into equally sized, disjoint groups.
+///
+/// Iterating yields one group at a time, as the [`NodeIdGenerator`] that
+/// allocates within it.
+#[derive(Default)]
+pub struct NodeIdGroups {
+    /// Using `u64` so that the very last group is still yielded before the
+    /// group is exhausted.
+    next_group: u64,
+}
+
+impl Iterator for NodeIdGroups {
+    type Item = NodeIdGenerator;
+
+    /// The generator for the next group, or `None` once the space is exhausted.
+    fn next(&mut self) -> Option<NodeIdGenerator> {
+        let group = u32::try_from(self.next_group).ok()?;
+        self.next_group += 1;
+
+        Some(NodeIdGenerator::for_group(group))
+    }
+}
+
+impl FusedIterator for NodeIdGroups {}
+
+/// A strictly monotonically increasing `NodeId` generator for one group's
+/// range.
 ///
 /// While allocating IDs it also accumulates a [`NodeKindHistogram`] of the
 /// kinds it has been asked to allocate (see [`Self::histogram`]).
 pub struct NodeIdGenerator {
-    next_id: usize,
+    base: u64,
+    next_id: u64,
     histogram: NodeKindHistogram,
 }
 
 impl NodeIdGenerator {
-    /// Returns a `NodeId` greater than any previously returned by this
-    /// generator and records a new `kind` in the histogram.
-    /// The returned ID is unique and suitable for use as a total-order key.
+    /// Bit width of a group's id range.
+    const GROUP_SHIFT: u8 = 32;
+
+    /// Creates the generator for the group at index `group`.
+    fn for_group(group: u32) -> Self {
+        let base = u64::from(group) << Self::GROUP_SHIFT;
+
+        Self {
+            base,
+            // Id 0 is never allocated.
+            next_id: base + 1,
+            histogram: NodeKindHistogram::default(),
+        }
+    }
+
+    /// Returns the next `NodeId` in this generator's group range, greater than
+    /// any it has previously returned, and records `kind` in the histogram.
+    ///
+    /// Ids of distinct groups never collide.
+    ///
+    /// # Panics
+    ///
+    /// When the group has exhausted its id range.
     pub fn next_id_of(&mut self, kind: NodeKind) -> NodeId {
         self.histogram.record(kind);
         let id = self.next_id;
+        assert!(
+            id >> Self::GROUP_SHIFT == self.base >> Self::GROUP_SHIFT,
+            "group exhausted its node-id range"
+        );
         self.next_id += 1;
         id.into()
     }
 
     /// The total number of `NodeId`s allocated by this generator so far.
     pub fn allocated_count(&self) -> usize {
-        self.next_id.saturating_sub(1)
+        usize::try_from(self.next_id - self.base - 1).expect("a group's node count fits in usize")
     }
 
     /// The per-kind histogram of the nodes allocated so far.
     pub fn histogram(&self) -> &NodeKindHistogram {
         &self.histogram
     }
-}
 
-impl Default for NodeIdGenerator {
-    fn default() -> Self {
-        Self {
-            next_id: 1usize,
-            histogram: NodeKindHistogram::default(),
-        }
+    /// Consumes the generator and returns its histogram.
+    pub fn into_histogram(self) -> NodeKindHistogram {
+        self.histogram
     }
 }
