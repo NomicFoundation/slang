@@ -1,4 +1,6 @@
-use slang_solidity_v2_semantic::overrides::VirtualTarget as SemanticVirtualTarget;
+use std::sync::Arc;
+
+use slang_solidity_v2_semantic::context::VirtualTarget as SemanticVirtualTarget;
 
 use super::super::nodes::{
     create_error_definition, create_event_definition, create_function_definition,
@@ -108,41 +110,52 @@ impl ContractDefinitionStruct {
             .collect()
     }
 
-    /// The function a bare-name reference to `function` runs in code compiled
-    /// into this contract: the most-derived override in this contract's
-    /// hierarchy when `function` is `virtual` or an interface member, and
-    /// `function` itself otherwise.
-    pub fn resolve_virtual(&self, function: &FunctionDefinition) -> VirtualTarget {
-        match self
-            .semantic
-            .resolve_virtual(self.ir_node.id(), &function.ir_node)
-        {
-            SemanticVirtualTarget::Function(target) => {
-                VirtualTarget::Function(create_function_definition(target, &self.semantic))
-            }
-            SemanticVirtualTarget::Getter(state_variable) => VirtualTarget::Getter(
-                create_state_variable_definition(state_variable, &self.semantic),
-            ),
-        }
+    /// Resolves `function` in code compiled into this contract. Virtual members
+    /// select their most-derived override, including public variable getters;
+    /// nonvirtual members and declarations with no override resolve to themselves.
+    ///
+    /// Returns `None` unless `function` is a function or modifier declared in
+    /// this contract's hierarchy and belongs to the same compilation unit.
+    /// Constructors and free or library functions are not accepted.
+    pub fn resolve_virtual(&self, function: &FunctionDefinition) -> Option<VirtualTarget> {
+        Some(
+            match self
+                .semantic
+                .resolve_virtual(self.ir_node.id(), &function.ir_node)?
+            {
+                SemanticVirtualTarget::Function(target) => {
+                    VirtualTarget::Function(create_function_definition(target, &self.semantic))
+                }
+                SemanticVirtualTarget::Getter(state_variable) => VirtualTarget::Getter(
+                    create_state_variable_definition(state_variable, &self.semantic),
+                ),
+            },
+        )
     }
 
-    /// The function `super.f` runs for `function` in code compiled into this
-    /// contract when written in the contract `enclosing_contract`: the nearest implemented
-    /// override after `enclosing_contract` in this contract's linearisation, or `function`
-    /// itself when none follows.
+    /// Resolves `super.f` for `function`, written in `enclosing_contract` and
+    /// compiled into this contract. Returns the nearest implemented regular
+    /// function after the enclosing contract in this contract's linearisation.
+    ///
+    /// Returns `None` if either argument is outside this contract's hierarchy
+    /// or compilation unit, `function` is not regular, or no implementation
+    /// follows. Super targets are functions, never getters.
     pub fn resolve_super(
         &self,
         function: &FunctionDefinition,
         enclosing_contract: &ContractDefinition,
-    ) -> FunctionDefinition {
-        create_function_definition(
+    ) -> Option<FunctionDefinition> {
+        if !Arc::ptr_eq(&self.semantic, &enclosing_contract.semantic) {
+            return None;
+        }
+        Some(create_function_definition(
             self.semantic.resolve_super(
                 self.ir_node.id(),
                 &function.ir_node,
                 enclosing_contract.node_id(),
-            ),
+            )?,
             &self.semantic,
-        )
+        ))
     }
 
     pub fn errors(&self) -> Vec<ErrorDefinition> {

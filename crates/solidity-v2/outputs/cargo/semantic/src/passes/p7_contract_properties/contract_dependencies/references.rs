@@ -10,7 +10,7 @@ use super::units::{CodeUnit, visit_code_unit};
 use crate::binder::{Binder, Definition, Resolution, Typing};
 use crate::built_ins::InternalBuiltIn;
 use crate::context::ContractReference;
-use crate::overrides::Overrides;
+use crate::passes::common::Overridable;
 use crate::types::{Type, TypeRegistry};
 
 /// A reference to a callable or constant found in a code unit.
@@ -320,9 +320,21 @@ impl ReferenceCollector<'_> {
         for &definition_id in definition_ids {
             match self.binder.find_definition_by_id(definition_id) {
                 Some(Definition::Function(function)) => {
-                    let reference = if Overrides::new(self.binder, self.types)
-                        .has_virtual_semantics(&function.ir_node)
-                    {
+                    // A free or library function has no overrides to dispatch to.
+                    let in_interface = match self.enclosing_definition_of(definition_id) {
+                        Some(Definition::Contract(_)) => Some(false),
+                        Some(Definition::Interface(_)) => Some(true),
+                        None | Some(Definition::Library(_)) => None,
+                        Some(_) => unreachable!(
+                            "a function is free or a member of a contract, interface or library"
+                        ),
+                    };
+                    let is_virtual = in_interface
+                        .and_then(|in_interface| {
+                            Overridable::of_function(&function.ir_node, in_interface)
+                        })
+                        .is_some_and(|member| member.is_virtual());
+                    let reference = if is_virtual {
                         CallableReference::Virtual(definition_id)
                     } else {
                         CallableReference::Static(definition_id)

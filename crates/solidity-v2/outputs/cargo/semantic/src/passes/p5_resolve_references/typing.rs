@@ -741,10 +741,9 @@ impl Pass<'_> {
     /// derives from it (solc's "Foreign" access). The linearisation includes
     /// the contract itself, so containment means local/deriving access.
     pub(crate) fn is_foreign_contract(&self, contract_id: NodeId) -> bool {
-        let Some(scope_id) = self.current_contract_scope_id() else {
+        let Some(current_contract_id) = self.current_contract_node_id() else {
             return true;
         };
-        let current_contract_id = self.binder.get_scope_by_id(scope_id).node_id();
         !self
             .binder
             .get_linearised_bases(current_contract_id)

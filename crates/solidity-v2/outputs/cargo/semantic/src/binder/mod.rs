@@ -632,7 +632,13 @@ impl Binder {
                         return Resolution::Unresolved;
                     }
                 }
-                ResolveOptions::Super(node_id) => self.bases_after(contract_scope.node_id, node_id),
+                ResolveOptions::Super(node_id) => {
+                    if let Some(index) = linearisations.iter().position(|id| *id == node_id) {
+                        &linearisations[index + 1..]
+                    } else {
+                        return Resolution::Unresolved;
+                    }
+                }
             };
             let mut results = DefinitionIds::new();
             // How many of `results` the most derived base that declares the

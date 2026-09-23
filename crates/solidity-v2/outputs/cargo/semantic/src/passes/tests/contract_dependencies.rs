@@ -4,6 +4,8 @@
 //! The last section pins the walk orders where slang records a different
 //! expression than solc for a dependency they both find.
 
+use std::sync::Arc;
+
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::kinds::semantic::CyclicBytecodeDependency;
 use slang_solidity_v2_common::evm_targets::EvmTarget;
@@ -13,8 +15,7 @@ use slang_solidity_v2_ir::ir;
 
 use super::support::{Analyse, Analysis, find_function, only_diagnostic};
 use crate::binder::Definition;
-use crate::context::SemanticContext;
-use crate::overrides::VirtualTarget;
+use crate::context::{SemanticContext, VirtualTarget};
 
 /// These tests pin Istanbul: the dependency walk is target independent, and
 /// the oldest supported target keeps any target-gated built-in out of the way.
@@ -57,9 +58,7 @@ fn declared_function(context: &SemanticContext, owner: &str, name: &str) -> ir::
             _ => None,
         })
         .expect("owner exists");
-    find_function(members, name)
-        .expect("function exists")
-        .clone()
+    Arc::clone(find_function(members, name).expect("function exists"))
 }
 
 fn library_id(context: &SemanticContext, name: &str) -> NodeId {
@@ -947,7 +946,7 @@ fn a_units_own_reference_wins_over_the_constant_it_uses() {
 }
 
 #[test]
-fn super_anchored_outside_the_linearisation_resolves_to_the_declaration() {
+fn super_anchored_outside_the_linearisation_is_rejected() {
     let context = build_context(
         "contract Base {
             function f() public virtual {}
@@ -962,17 +961,11 @@ fn super_anchored_outside_the_linearisation_resolves_to_the_declaration() {
     let unrelated = contract_id(&context, "Unrelated");
     let f = &context.linearised_functions(derived)[0];
 
-    assert_eq!(
-        context.resolve_super(derived, f, unrelated).id(),
-        f.id(),
-        "an enclosing_contract outside the linearisation searches no base, not every base"
-    );
+    assert!(context.resolve_super(derived, f, unrelated).is_none());
 }
 
 #[test]
 fn resolve_virtual_of_a_calldata_parameter_overridden_by_memory() {
-    // `function_type_overrides` is asymmetric: the relaxation requires the
-    // overridden function to be `external`, so the argument order matters.
     let context = build_context(
         "contract Base {
             function f(uint256[] calldata a) external virtual returns (uint256) { return a.length; }
@@ -987,7 +980,7 @@ fn resolve_virtual_of_a_calldata_parameter_overridden_by_memory() {
     let base_f = &context.linearised_functions(base)[0];
     let derived_f = &context.linearised_functions(derived)[0];
 
-    let VirtualTarget::Function(target) = context.resolve_virtual(derived, base_f) else {
+    let Some(VirtualTarget::Function(target)) = context.resolve_virtual(derived, base_f) else {
         panic!("a function, not a getter, overrides Base.f");
     };
     assert_eq!(target.id(), derived_f.id());
@@ -1009,7 +1002,7 @@ fn resolve_virtual_of_an_unimplemented_interface_member_is_the_declaration() {
         context.linearised_functions(a).is_empty(),
         "A leaves f unimplemented, so its function list is empty"
     );
-    let VirtualTarget::Function(target) = context.resolve_virtual(a, &f) else {
+    let Some(VirtualTarget::Function(target)) = context.resolve_virtual(a, &f) else {
         panic!("no getter overrides an unimplemented interface member");
     };
     assert_eq!(
@@ -1035,7 +1028,7 @@ fn resolve_virtual_of_a_virtual_modifier_is_its_override() {
     let base_m = declared_function(&context, "Base", "m");
     let derived_m = declared_function(&context, "Derived", "m");
 
-    let VirtualTarget::Function(target) = context.resolve_virtual(derived, &base_m) else {
+    let Some(VirtualTarget::Function(target)) = context.resolve_virtual(derived, &base_m) else {
         panic!("a modifier is never overridden by a getter");
     };
     assert_eq!(
@@ -1067,7 +1060,7 @@ fn resolve_virtual_of_a_function_a_getter_overrides() {
     assert!(
         matches!(
             context.resolve_virtual(derived, f),
-            VirtualTarget::Getter(_)
+            Some(VirtualTarget::Getter(_))
         ),
         "the getter, not Base.f, is what runs in code compiled into Derived"
     );
@@ -1087,9 +1080,31 @@ fn super_from_a_fallback_skips_a_base_fallback() {
     let derived = contract_id(&context, "Derived");
     let fallback = &context.linearised_functions(derived)[0];
 
-    assert_eq!(
-        context.resolve_super(derived, fallback, derived).id(),
-        fallback.id(),
-        "only a regular function is a `super` target"
-    );
+    assert!(context.resolve_super(derived, fallback, derived).is_none());
+}
+
+#[test]
+fn dispatch_rejects_invalid_contract_ids_and_foreign_declarations() {
+    let source = "contract A { function f() public virtual {} }
+        contract B is A { function f() public override {} }
+        contract Unrelated { function f() public virtual {} }";
+    let context = build_context(source);
+    let foreign = build_context(source);
+    let a = contract_id(&context, "A");
+    let b = contract_id(&context, "B");
+    let f = declared_function(&context, "A", "f");
+    let foreign_f = declared_function(&foreign, "A", "f");
+    let unrelated_f = declared_function(&context, "Unrelated", "f");
+    assert_eq!(f.id(), foreign_f.id());
+
+    for invalid in [NodeId::from(usize::MAX), f.id()] {
+        assert!(context.resolve_virtual(invalid, &f).is_none());
+        assert!(context.resolve_super(invalid, &f, a).is_none());
+        assert!(context.resolve_super(b, &f, invalid).is_none());
+    }
+    for invalid in [&foreign_f, &unrelated_f] {
+        assert!(context.resolve_virtual(b, invalid).is_none());
+        assert!(context.resolve_super(b, invalid, b).is_none());
+    }
+    assert!(context.resolve_super(a, &f, a).is_none());
 }

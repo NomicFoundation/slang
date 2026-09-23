@@ -181,7 +181,10 @@ fn test_resolve_virtual_of_a_virtual_fallback_is_its_override() {
         .next()
         .expect("can find contract");
     assert_eq!(
-        derived.resolve_virtual(&base.functions()[0]).node_id(),
+        derived
+            .resolve_virtual(&base.functions()[0])
+            .unwrap()
+            .node_id(),
         derived.functions()[0].node_id(),
         "the derived fallback is what runs in code compiled into Derived"
     );
