@@ -415,22 +415,28 @@ impl Analysis {
     /// The members of the contract, interface or library named `name`, for
     /// tests that don't care which of the three declared it.
     pub(super) fn find_members(&self, name: &str) -> &[ir::ContractMember] {
-        self.find_unique("contract, interface or library", name, |member| match member {
-            ir::SourceUnitMember::ContractDefinition(contract)
-                if contract.name.unparse() == name =>
-            {
-                Some(&contract.members)
-            }
-            ir::SourceUnitMember::InterfaceDefinition(interface)
-                if interface.name.unparse() == name =>
-            {
-                Some(&interface.members)
-            }
-            ir::SourceUnitMember::LibraryDefinition(library) if library.name.unparse() == name => {
-                Some(&library.members)
-            }
-            _ => None,
-        })
+        self.find_unique(
+            "contract, interface or library",
+            name,
+            |member| match member {
+                ir::SourceUnitMember::ContractDefinition(contract)
+                    if contract.name.unparse() == name =>
+                {
+                    Some(&contract.members)
+                }
+                ir::SourceUnitMember::InterfaceDefinition(interface)
+                    if interface.name.unparse() == name =>
+                {
+                    Some(&interface.members)
+                }
+                ir::SourceUnitMember::LibraryDefinition(library)
+                    if library.name.unparse() == name =>
+                {
+                    Some(&library.members)
+                }
+                _ => None,
+            },
+        )
     }
 
     /// The body of `function`, declared by the contract or library `owner`.

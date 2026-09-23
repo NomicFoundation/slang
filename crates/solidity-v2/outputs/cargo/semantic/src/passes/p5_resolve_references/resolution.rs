@@ -101,11 +101,7 @@ impl Pass<'_> {
                     // (ie. either `external` or `public`)
                     let mut definition_ids = self
                         .binder
-                        .resolve_in_contract_scope(
-                            scope_id,
-                            symbol,
-                            ResolveOptions::This(node_id),
-                        )
+                        .resolve_in_contract_scope(scope_id, symbol, ResolveOptions::This(node_id))
                         .get_definition_ids();
 
                     // Consider active `using` directives for `this`
