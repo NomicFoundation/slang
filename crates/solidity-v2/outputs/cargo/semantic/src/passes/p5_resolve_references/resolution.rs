@@ -76,13 +76,9 @@ impl Pass<'_> {
             }
             Typing::Resolved(type_id) => self.resolve_symbol_in_type(*type_id, symbol),
             Typing::Super(enclosing_contract) => {
-                // TODO: the contract scope here is not necessarily the current
-                // lexical scope; for compilation we should set it to the scope
-                // of the contract being compiled, as this will affect the
-                // linearisation and hence the result of this `super`
-                // resolution. This affects the first parameter to
-                // `resolve_in_contract_scope`, not the `node_id` of the
-                // resolution option which is always lexical.
+                // This resolves `super` against the linearisation of the contract it is
+                // written in; which function runs depends on the contract being compiled,
+                // see `SemanticContext::resolve_super`.
                 let scope_id = self
                     .binder
                     .scope_id_for_node_id(*enclosing_contract)
