@@ -350,7 +350,7 @@ impl AbiParameter {
     /// The parameter's type rendered as its canonical-signature spelling — e.g.
     /// `uint256`, `uint256[]`, or `(uint256,uint256)` for a struct. This is the
     /// form used for selector/signature hashing, **not** the JSON-ABI `"type"`
-    /// field (structs there are `tuple`/`tuple[]`, which nothing renders yet), nor
+    /// field (structs there are `tuple`/`tuple[]`, see [`ContractAbi::json`]), nor
     /// its `"internalType"` field, which is [`Self::internal_type`].
     pub fn type_name(&self) -> String {
         self.abi_type().to_string()
