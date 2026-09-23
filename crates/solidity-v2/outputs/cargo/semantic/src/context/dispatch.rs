@@ -4,7 +4,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use super::SemanticContext;
-use crate::binder::{Binder, Definition};
+use crate::binder::{Binder, Definition, Scope};
 use crate::passes::common::Overridable;
 use crate::types::TypeRegistry;
 
@@ -103,15 +103,24 @@ impl SemanticContext {
             .binder
             .get_linearised_bases(contract_id)
             .expect("p2 linearises every contract");
-        let member = bases
-            .iter()
-            .flat_map(|base| Overridable::members_of(&self.binder, *base))
-            .find(|member| match member {
-                Overridable::Function { definition, .. } | Overridable::Modifier(definition) => {
-                    Arc::ptr_eq(definition, function)
-                }
-                Overridable::StateVariable(_) => false,
-            })?;
+        let scope_id = self.binder.scope_id_for_node_id(function.id())?;
+        let parent_scope_id = match self.binder.get_scope_by_id(scope_id) {
+            Scope::Function(function_scope) => function_scope.parent_scope_id,
+            Scope::Modifier(modifier_scope) => modifier_scope.parent_scope_id,
+            _ => return None,
+        };
+        let enclosing_node_id = self.binder.get_scope_by_id(parent_scope_id).node_id();
+        if !bases.contains(&enclosing_node_id) {
+            return None;
+        }
+        let member =
+            Overridable::members_of(&self.binder, enclosing_node_id).find(
+                |member| match member {
+                    Overridable::Function { definition, .. }
+                    | Overridable::Modifier(definition) => Arc::ptr_eq(definition, function),
+                    Overridable::StateVariable(_) => false,
+                },
+            )?;
         Some((bases, member))
     }
 }
