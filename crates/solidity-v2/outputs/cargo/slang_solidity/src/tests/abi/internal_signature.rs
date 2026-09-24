@@ -17,11 +17,11 @@ fn test_compute_internal_signature() {
 
     assert_eq!(
         functions[0].compute_internal_signature(),
-        Some("receive()".to_string())
+        Some("fallback()".to_string())
     );
     assert_eq!(
         functions[1].compute_internal_signature(),
-        Some("fallback()".to_string())
+        Some("receive()".to_string())
     );
     assert_eq!(
         functions[2].compute_internal_signature(),

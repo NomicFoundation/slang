@@ -3,11 +3,11 @@
 Diagnostics: 2
 
 [semantic/cyclic-bytecode-dependency] Error: Circular contract bytecode dependency.
-    ╭─[input.sol:11:9]
+    ╭─[input.sol:15:9]
     │
- 11 │         new B();
-    │         ──┬──  
-    │           ╰──── Error occurred here.
+ 15 │         type(B).creationCode;
+    │         ──────────┬─────────  
+    │                   ╰─────────── Error occurred here.
 ────╯
 
 [semantic/cyclic-bytecode-dependency] Error: Circular contract bytecode dependency.

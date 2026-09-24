@@ -1,8 +1,8 @@
-//! Pre-computing the collections of members visible in a contract's hierarchy:
-//! its state variables, errors and events in base-to-derived source order, and
-//! its functions flattened most-derived-first, resolving overrides.
+//! Pre-computing the collections of members visible in a contract's or an
+//! interface's hierarchy: its state variables, errors and events in
+//! base-to-derived source order, and its functions flattened
+//! most-derived-first, resolving overrides.
 
-use std::cmp::Ordering;
 use std::sync::Arc;
 
 use slang_solidity_v2_common::nodes::NodeId;
@@ -13,8 +13,8 @@ use crate::context::ContractLinearisations;
 use crate::passes::common::Overridable;
 use crate::types::TypeRegistry;
 
-/// Walks the contract's linearised bases in reverse (most-base-first) and
-/// gathers the members visible in its hierarchy.
+/// Walks the contract's or interface's linearised bases in reverse
+/// (most-base-first) and gathers the members visible in its hierarchy.
 pub(super) fn compute_linearisations(
     binder: &Binder,
     types: &TypeRegistry,
@@ -24,12 +24,13 @@ pub(super) fn compute_linearisations(
         return ContractLinearisations::default();
     };
 
-    // The members of each *contract* base, gathered most-base-first, so the
-    // hierarchy's functions can be flattened most-derived-first at the end.
-    // Interface bases are excluded since they don't contribute functions to the
-    // linearisation: they must be implemented by inheriting contracts (enforced
-    // by the abstractness check).
-    let mut contract_base_members = Vec::with_capacity(linearised_bases.len());
+    // The members of each base, gathered most-base-first, so the hierarchy's
+    // functions can be flattened most-derived-first at the end. Interface
+    // bases contribute too: a valid concrete contract implements every
+    // interface function, so each declaration is overridden and dropped, while
+    // an abstract contract keeps the ones it leaves unimplemented, like any
+    // other body-less function.
+    let mut base_members = Vec::with_capacity(linearised_bases.len());
     let mut state_variables = Vec::new();
     let mut errors = Vec::new();
     let mut events = Vec::new();
@@ -55,62 +56,79 @@ pub(super) fn compute_linearisations(
             }
         }
 
-        if !base_is_interface {
-            contract_base_members.push(members);
-        }
+        base_members.push((members, base_is_interface));
     }
 
     ContractLinearisations {
-        functions: linearise_functions(binder, types, &contract_base_members),
+        functions: linearise_functions(binder, types, &base_members),
         state_variables,
         errors,
         events,
     }
 }
 
-/// Flattens the contract bases' members (gathered most-base-first) into the
+/// Flattens the bases' members (gathered most-base-first) into the
 /// hierarchy's function list: most-derived-first, dropping a function once a
 /// more-derived function or a public state variable's getter overrides it, then
-/// sorted by name. Functions are cloned out only once they're known to survive
-/// override resolution.
+/// sorted by name, with the nameless fallback and then receive leading.
+/// Functions are cloned out only once they're known to survive override
+/// resolution.
 fn linearise_functions(
     binder: &Binder,
     types: &TypeRegistry,
-    contract_base_members: &[&[ir::ContractMember]],
+    base_members: &[(&[ir::ContractMember], bool)],
 ) -> Vec<ir::FunctionDefinition> {
-    // Only contract bases reach here, so nothing is declared in an interface.
-    // A public state variable is kept as well, so its getter can shadow a
-    // matching function inherited from a base contract.
-    let mut kept: Vec<Overridable<'_>> = Vec::new();
-    for members in contract_base_members.iter().rev() {
-        for member in *members {
-            let Some(candidate) = Overridable::of(member, false) else {
-                continue;
-            };
-            if candidate.is_modifier()
-                || kept
-                    .iter()
-                    .any(|slot| slot.overrides(binder, types, &candidate))
-            {
-                continue;
-            }
-            kept.push(candidate);
-            // TODO(validation): if overriding multiple ancestors, the function needs to
-            // specify the bases in a specifier
-        }
+    let mut candidates: Vec<Overridable<'_>> =
+        Vec::with_capacity(base_members.iter().map(|(members, _)| members.len()).sum());
+    for (members, base_is_interface) in base_members.iter().rev() {
+        candidates.extend(candidates_of(members, *base_is_interface));
     }
-    let mut functions: Vec<ir::FunctionDefinition> = kept
-        .iter()
+    // Only same-named members can override each other, so grouping the
+    // candidates by name (stably, keeping them most-derived-first within a
+    // name) confines each comparison to the predecessors in its own group. It
+    // also leaves the survivors in the order the list wants: sorted by name,
+    // with the nameless fallback and then receive first.
+    candidates.sort_by_key(|candidate| {
+        (
+            candidate.name(),
+            candidate.function_kind() == ir::FunctionKind::Receive,
+        )
+    });
+
+    let mut kept: Vec<Overridable<'_>> = Vec::with_capacity(candidates.len());
+    let mut group_start = 0;
+    for (index, candidate) in candidates.iter().enumerate() {
+        if index > 0 && candidate.name() != candidates[index - 1].name() {
+            group_start = kept.len();
+        }
+        if kept[group_start..]
+            .iter()
+            .any(|slot| slot.overrides(binder, types, candidate))
+        {
+            continue;
+        }
+        kept.push(*candidate);
+        // TODO(validation): if overriding multiple ancestors, the function needs to
+        // specify the bases in a specifier
+    }
+    kept.into_iter()
         .filter_map(|slot| match slot {
-            Overridable::Function { definition, .. } => Some(Arc::clone(*definition)),
+            Overridable::Function { definition, .. } => Some(Arc::clone(definition)),
             _ => None,
         })
-        .collect();
-    functions.sort_by(|a, b| match (&a.name, &b.name) {
-        (None, None) => Ordering::Equal,
-        (None, Some(_)) => Ordering::Less,
-        (Some(_), None) => Ordering::Greater,
-        (Some(a), Some(b)) => a.unparse().cmp(b.unparse()),
-    });
-    functions
+        .collect()
+}
+
+/// The members competing for a slot in the hierarchy's function list: the
+/// functions, and the public state variables, whose getter takes the slot of a
+/// same-signature function inherited from a base contract without joining the
+/// list itself. Modifiers are overridable too, but never part of the list.
+fn candidates_of(
+    members: &[ir::ContractMember],
+    base_is_interface: bool,
+) -> impl Iterator<Item = Overridable<'_>> {
+    members
+        .iter()
+        .filter_map(move |member| Overridable::of(member, base_is_interface))
+        .filter(|candidate| !candidate.is_modifier())
 }

@@ -200,10 +200,13 @@ impl SemanticContext {
     }
 
     /// Returns the pre-computed list of functions visible in the given
-    /// contract's hierarchy (per C3 linearisation), with overrides resolved and
-    /// sorted by name. A function overridden by a public state variable's getter
-    /// is dropped from the list. `contract_id` must be a registered contract
-    /// definition.
+    /// contract's or interface's hierarchy (per C3 linearisation, interface
+    /// bases included), with overrides resolved and sorted by name, led by the
+    /// nameless fallback and then receive. A function overridden by a public
+    /// state variable's getter is dropped from the list. An interface function
+    /// no contract implements stays, so only an abstract contract or an
+    /// interface lists one. `contract_id` must be a registered contract or
+    /// interface definition.
     pub fn linearised_functions(&self, contract_id: NodeId) -> &[ir::FunctionDefinition] {
         self.contract_data.linearised_functions(contract_id)
     }
@@ -235,8 +238,8 @@ impl SemanticContext {
 
     /// Returns the pre-computed list of state variables visible in the given
     /// contract's hierarchy, in storage-layout order (most-base first, then
-    /// each contract's own variables). `contract_id` must be a registered
-    /// contract definition.
+    /// each contract's own variables), empty for an interface. `contract_id`
+    /// must be a registered contract or interface definition.
     pub fn linearised_state_variables(
         &self,
         contract_id: NodeId,
@@ -245,17 +248,17 @@ impl SemanticContext {
     }
 
     /// Returns the pre-computed list of errors visible in the given contract's
-    /// hierarchy (including base contracts and interfaces, in reverse
-    /// linearisation order). `contract_id` must be a registered contract
-    /// definition.
+    /// or interface's hierarchy (including base contracts and interfaces, in
+    /// reverse linearisation order). `contract_id` must be a registered contract
+    /// or interface definition.
     pub fn linearised_errors(&self, contract_id: NodeId) -> &[ir::ErrorDefinition] {
         self.contract_data.linearised_errors(contract_id)
     }
 
     /// Returns the pre-computed list of events visible in the given contract's
-    /// hierarchy (including base contracts and interfaces, in reverse
-    /// linearisation order). `contract_id` must be a registered contract
-    /// definition.
+    /// or interface's hierarchy (including base contracts and interfaces, in
+    /// reverse linearisation order). `contract_id` must be a registered contract
+    /// or interface definition.
     pub fn linearised_events(&self, contract_id: NodeId) -> &[ir::EventDefinition] {
         self.contract_data.linearised_events(contract_id)
     }

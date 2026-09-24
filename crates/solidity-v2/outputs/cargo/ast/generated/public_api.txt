@@ -2352,6 +2352,9 @@ impl slang_solidity_v2_ast::ast::InterfaceDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::compute_interface_id(&self) -> core::option::Option<u32>
 impl slang_solidity_v2_ast::ast::InterfaceDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
+pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::linearised_errors(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ErrorDefinition>
+pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::linearised_events(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::EventDefinition>
+pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::linearised_functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
 impl slang_solidity_v2_ast::ast::InterfaceDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
