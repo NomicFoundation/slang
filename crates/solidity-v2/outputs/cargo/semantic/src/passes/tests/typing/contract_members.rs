@@ -572,3 +572,24 @@ fn test_static_library_call_is_not_partially_applied() {
     let typings = statement_types(&analysis, "Test", "__test");
     assert_eq!(typings, vec![Some(Type::Boolean)]);
 }
+
+#[test]
+fn test_address_literal_receives_functions_attached_to_address() {
+    let source = r#"
+        pragma solidity *;
+        library L {
+            function tag(address a) internal pure returns (bool) { a; return true; }
+        }
+        contract Test {
+            using L for address;
+            function __test() internal pure {
+                0xb701a286753ADe3704e1DcFD93507454A2307641.tag();
+            }
+        }
+        "#;
+    let analysis = Analysis::of_source(source)
+        .run(Analyse::References)
+        .expect_no_diagnostics();
+    let typings = statement_types(&analysis, "Test", "__test");
+    assert_eq!(typings, vec![Some(Type::Boolean)]);
+}
