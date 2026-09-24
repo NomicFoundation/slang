@@ -1,0 +1,10 @@
+{
+  "name": "relative_imports",
+  "chain_id": 0,
+  "version": "0.8.0",
+  "target": "src/Token.sol",
+  "sources": {
+    "src/Token.sol": "// SPDX-License-Identifier: MIT\npragma solidity >=0.8.0;\n\nimport \"./interfaces/IToken.sol\";\n\ncontract Token is IToken {\n    mapping(address => uint256) private balances;\n\n    function balanceOf(address owner) external view override returns (uint256) {\n        return balances[owner];\n    }\n}\n",
+    "src/interfaces/IToken.sol": "// SPDX-License-Identifier: MIT\npragma solidity >=0.8.0;\n\ninterface IToken {\n    function balanceOf(address owner) external view returns (uint256);\n}\n"
+  }
+}
