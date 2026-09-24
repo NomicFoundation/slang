@@ -265,6 +265,11 @@ mod contracts {
     }
 
     #[test]
+    fn functions_named_receive_fallback() -> Result<()> {
+        run("contracts", "functions_named_receive_fallback")
+    }
+
+    #[test]
     fn implicit_conversion_to_address() -> Result<()> {
         run("contracts", "implicit_conversion_to_address")
     }
