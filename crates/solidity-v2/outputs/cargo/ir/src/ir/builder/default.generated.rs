@@ -2294,6 +2294,38 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     // Collapsed choices
     //
 
+    pub(super) fn build_function_name(
+        &mut self,
+        source: &input::FunctionName,
+    ) -> output::Identifier {
+        match source {
+            input::FunctionName::Identifier(terminal) => {
+                let text = self.unparse_range(terminal.range.clone());
+                Arc::new(output::IdentifierStruct {
+                    id: self.next_id(output::NodeKind::Identifier),
+                    range: terminal.range.clone(),
+                    text,
+                })
+            }
+            input::FunctionName::FallbackKeyword(terminal) => {
+                let text = self.unparse_range(terminal.range.clone());
+                Arc::new(output::IdentifierStruct {
+                    id: self.next_id(output::NodeKind::Identifier),
+                    range: terminal.range.clone(),
+                    text,
+                })
+            }
+            input::FunctionName::ReceiveKeyword(terminal) => {
+                let text = self.unparse_range(terminal.range.clone());
+                Arc::new(output::IdentifierStruct {
+                    id: self.next_id(output::NodeKind::Identifier),
+                    range: terminal.range.clone(),
+                    text,
+                })
+            }
+        }
+    }
+
     pub(super) fn build_identifier_path_element(
         &mut self,
         source: &input::IdentifierPathElement,

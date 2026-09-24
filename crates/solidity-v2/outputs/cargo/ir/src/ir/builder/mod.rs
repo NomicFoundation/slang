@@ -239,14 +239,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     ) -> output::FunctionDefinition {
         let id = self.next_id(output::NodeKind::FunctionDefinition);
         let range = source.calculate_text_range().unwrap_or_default();
-        let (kind, name) = match &source.name {
-            input::FunctionName::Identifier(identifier) => (
-                output::FunctionKind::Regular,
-                Some(self.build_identifier(identifier)),
-            ),
-            input::FunctionName::FallbackKeyword(_) => (output::FunctionKind::Fallback, None),
-            input::FunctionName::ReceiveKeyword(_) => (output::FunctionKind::Receive, None),
-        };
+        let name = Some(self.build_function_name(&source.name));
         let parameters = self.build_parameters_declaration(&source.parameters);
         let attributes = self.build_function_attributes(&source.attributes);
         let returns = source
@@ -258,7 +251,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         Arc::new(output::FunctionDefinitionStruct {
             id,
             range,
-            kind,
+            kind: output::FunctionKind::Regular,
             name,
             parameters,
             attributes,
