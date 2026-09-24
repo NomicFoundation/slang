@@ -16,7 +16,7 @@ impl StateVariableDefinitionStruct {
         definition.getter_type_id
     }
 
-    pub(crate) fn getter_member_ids(&self) -> &[NodeId] {
+    pub(crate) fn getter_input_definition_ids(&self) -> &[Option<NodeId>] {
         let Some(binder::Definition::StateVariable(definition)) = self
             .semantic
             .binder()
@@ -24,7 +24,18 @@ impl StateVariableDefinitionStruct {
         else {
             unreachable!("state variable node without a state variable definition");
         };
-        &definition.getter_member_ids
+        &definition.getter_input_definition_ids
+    }
+
+    pub(crate) fn getter_output_definition_ids(&self) -> &[Option<NodeId>] {
+        let Some(binder::Definition::StateVariable(definition)) = self
+            .semantic
+            .binder()
+            .find_definition_by_id(self.ir_node.id())
+        else {
+            unreachable!("state variable node without a state variable definition");
+        };
+        &definition.getter_output_definition_ids
     }
 
     /// Returns the type of the getter generated for this state variable, or
@@ -36,16 +47,15 @@ impl StateVariableDefinitionStruct {
     /// Returns the struct members the getter's return type is built from, in
     /// declaration order, or an empty list if it is not built from a struct.
     pub fn getter_struct_members(&self) -> Vec<StructMember> {
-        self.getter_member_ids()
+        self.getter_output_definition_ids()
             .iter()
-            .map(|member_id| {
-                let Some(Definition::StructMember(member)) =
-                    Definition::try_create(*member_id, &self.semantic)
-                else {
-                    unreachable!("getter member is not a struct member");
-                };
-                member
-            })
+            .filter_map(
+                |output_id| match Definition::try_create((*output_id)?, &self.semantic) {
+                    Some(Definition::StructMember(member)) => Some(member),
+                    Some(_) => None,
+                    None => unreachable!("getter output without a definition"),
+                },
+            )
             .collect()
     }
 }

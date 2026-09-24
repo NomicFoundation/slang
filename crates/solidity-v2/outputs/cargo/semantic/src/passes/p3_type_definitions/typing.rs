@@ -9,6 +9,17 @@ use crate::types::{
     StringType, StructType, TupleType, Type, TypeId, UserDefinedValueType,
 };
 
+pub(super) struct GetterType {
+    pub(super) type_id: TypeId,
+    pub(super) input_definition_ids: Vec<Option<NodeId>>,
+    pub(super) output_definition_ids: Vec<Option<NodeId>>,
+}
+
+/// A mapping parameter is collected as a definition only when it is named.
+fn named_parameter_definition_id(parameter: &ir::Parameter) -> Option<NodeId> {
+    parameter.name.is_some().then(|| parameter.id())
+}
+
 impl Pass<'_> {
     pub(super) fn type_of_identifier_path(
         &mut self,
@@ -183,17 +194,81 @@ impl Pass<'_> {
         Some(self.types.externalize_function_type(type_id))
     }
 
+    /// The type a getter returns for a struct, together with the members it is
+    /// built from: a tuple with all value type and string/bytes fields, in
+    /// declaration order. It won't return nested mappings or arrays, and is
+    /// `None` when a member's type cannot be resolved or nothing is returnable.
+    fn compute_struct_getter_return_type(
+        &mut self,
+        struct_definition_id: NodeId,
+    ) -> Option<(TypeId, Vec<Option<NodeId>>)> {
+        // We iterate the struct's IR members directly: the struct scope is a
+        // name->id map with no stable ordering, but the getter's tuple must
+        // preserve the source field order.
+        let Some(Definition::Struct(struct_definition)) =
+            self.binder.find_definition_by_id(struct_definition_id)
+        else {
+            unreachable!("struct type does not refer to a struct definition");
+        };
+        let member_ids: Vec<NodeId> = struct_definition
+            .ir_node
+            .members
+            .iter()
+            .map(|member| member.id())
+            .collect();
+
+        let mut types = Vec::new();
+        let mut returned_member_ids = Vec::new();
+        for member_id in member_ids {
+            let Some(member_type_id) = self.binder.node_typing(member_id).as_type_id() else {
+                // member type cannot be resolved
+                return None;
+            };
+            let member_type = self.types.get_type_by_id(member_type_id);
+            if !member_type.can_return_from_getter_directly() {
+                continue;
+            }
+            let member_type_id = if member_type
+                .data_location()
+                .is_none_or(|location| location == DataLocation::Memory)
+            {
+                member_type_id
+            } else {
+                // Data location is always memory for getters, so we
+                // need to override it if necessary
+                let member_type = member_type.clone();
+                self.types
+                    .register_type_with_data_location(member_type, DataLocation::Memory)
+            };
+            types.push(member_type_id);
+            returned_member_ids.push(Some(member_id));
+        }
+
+        let return_type = match types.len() {
+            0 => return None,
+            1 => types[0],
+            _ => self.types.register_type(Type::Tuple(TupleType { types })),
+        };
+        Some((return_type, returned_member_ids))
+    }
+
     /// Computes the type of the getter generated for a public state variable,
-    /// together with the struct members its return type is built from.
+    /// together with the declarations its parameters take their names from.
+    /// `type_name` is the variable's declared type, walked in step with its
+    /// semantic type.
     pub(super) fn compute_getter_type(
         &mut self,
         receiver_type_id: Option<TypeId>,
         definition_id: NodeId,
         type_id: TypeId,
-    ) -> Option<(TypeId, Vec<NodeId>)> {
+        type_name: &ir::TypeName,
+    ) -> Option<GetterType> {
         let mut return_type = type_id;
+        let mut declared_type_name = type_name;
         let mut parameter_types = Vec::new();
+        let mut input_definition_ids = Vec::new();
         let mut returned_member_ids = Vec::new();
+        let mut value_definition_id = None;
 
         loop {
             match self.types.get_type_by_id(return_type) {
@@ -221,69 +296,35 @@ impl Pass<'_> {
                 }
 
                 Type::Struct(StructType { definition_id, .. }) => {
-                    // For structs the getter will return a tuple with all value
-                    // type and string/bytes fields, in declaration order. It
-                    // won't return nested mappings or arrays.
-                    // We iterate the struct's IR members directly: the struct
-                    // scope is a name->id map with no stable ordering, but the
-                    // getter's tuple must preserve the source field order.
-                    let Some(Definition::Struct(struct_definition)) =
-                        self.binder.find_definition_by_id(*definition_id)
-                    else {
-                        unreachable!("struct type does not refer to a struct definition");
-                    };
-                    let member_ids: Vec<NodeId> = struct_definition
-                        .ir_node
-                        .members
-                        .iter()
-                        .map(|member| member.id())
-                        .collect();
-                    let mut types = Vec::new();
-                    for member_id in member_ids {
-                        let Some(member_type_id) = self.binder.node_typing(member_id).as_type_id()
-                        else {
-                            // member type cannot be resolved
-                            return None;
-                        };
-                        let member_type = self.types.get_type_by_id(member_type_id);
-                        if !member_type.can_return_from_getter_directly() {
-                            continue;
-                        }
-                        let member_type_id = if member_type
-                            .data_location()
-                            .is_none_or(|location| location == DataLocation::Memory)
-                        {
-                            member_type_id
-                        } else {
-                            // Data location is always memory for getters, so we
-                            // need to override it if necessary
-                            let member_type = member_type.clone();
-                            self.types
-                                .register_type_with_data_location(member_type, DataLocation::Memory)
-                        };
-                        types.push(member_type_id);
-                        returned_member_ids.push(member_id);
-                    }
-                    return_type = match types.len() {
-                        0 => return None,
-                        1 => types[0],
-                        _ => self.types.register_type(Type::Tuple(TupleType { types })),
-                    };
+                    let struct_definition_id = *definition_id;
+                    (return_type, returned_member_ids) =
+                        self.compute_struct_getter_return_type(struct_definition_id)?;
                     break;
                 }
 
                 // non-scalar types
                 Type::Array(ArrayType { element_type, .. })
                 | Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) => {
+                    let ir::TypeName::ArrayTypeName(array) = declared_type_name else {
+                        unreachable!("an array type is declared by an array type name");
+                    };
+                    declared_type_name = &array.operand;
                     return_type = *element_type;
                     parameter_types.push(self.types.uint256());
+                    input_definition_ids.push(None);
                 }
                 Type::Mapping(MappingType {
                     key_type_id,
                     value_type_id,
                 }) => {
+                    let ir::TypeName::MappingType(mapping) = declared_type_name else {
+                        unreachable!("a mapping type is declared by a mapping type name");
+                    };
+                    declared_type_name = &mapping.value_type.type_name;
                     return_type = *value_type_id;
                     parameter_types.push(*key_type_id);
+                    input_definition_ids.push(named_parameter_definition_id(&mapping.key_type));
+                    value_definition_id = named_parameter_definition_id(&mapping.value_type);
                 }
 
                 // invalid types
@@ -301,6 +342,12 @@ impl Pass<'_> {
             }
         }
 
+        let output_definition_ids = if returned_member_ids.is_empty() {
+            vec![value_definition_id]
+        } else {
+            returned_member_ids
+        };
+
         let getter_type = Type::Function(FunctionType {
             definition_id: Some(definition_id),
             implicit_receiver_type: receiver_type_id,
@@ -310,7 +357,11 @@ impl Pass<'_> {
             mutability: FunctionTypeMutability::View,
             partially_applied: false,
         });
-        Some((self.types.register_type(getter_type), returned_member_ids))
+        Some(GetterType {
+            type_id: self.types.register_type(getter_type),
+            input_definition_ids,
+            output_definition_ids,
+        })
     }
 
     pub(super) fn visit_parameters(&mut self, parameters: &ir::Parameters) {

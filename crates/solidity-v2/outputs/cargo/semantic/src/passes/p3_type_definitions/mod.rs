@@ -156,17 +156,21 @@ impl<'a> Pass<'a> {
                     continue;
                 };
 
-                let Some((getter_type_id, getter_member_ids)) =
-                    self.compute_getter_type(receiver_type_id, node_id, type_id)
-                else {
+                let Some(getter_type) = self.compute_getter_type(
+                    receiver_type_id,
+                    node_id,
+                    type_id,
+                    &state_var_definition.type_name,
+                ) else {
                     continue;
                 };
                 let Definition::StateVariable(definition) = self.binder.get_definition_mut(node_id)
                 else {
                     unreachable!("definition is not a state variable");
                 };
-                definition.getter_type_id = Some(getter_type_id);
-                definition.getter_member_ids = getter_member_ids;
+                definition.getter_type_id = Some(getter_type.type_id);
+                definition.getter_input_definition_ids = getter_type.input_definition_ids;
+                definition.getter_output_definition_ids = getter_type.output_definition_ids;
             }
         }
     }
