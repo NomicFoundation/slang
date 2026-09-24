@@ -190,11 +190,14 @@ pub enum LiteralKind {
     Rational {
         value: BigRational,
     },
+    /// A hex string literal, eg. `hex"a000"`, with its decoded bytes.
     HexString {
-        bytes: usize,
+        value: Box<[u8]>,
     },
+    /// A regular or unicode string literal, with its bytes once escape
+    /// sequences are decoded.
     String {
-        bytes: usize,
+        value: Box<[u8]>,
     },
     Address {
         value: U160,
