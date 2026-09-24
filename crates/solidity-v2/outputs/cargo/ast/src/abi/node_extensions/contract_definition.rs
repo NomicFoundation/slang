@@ -1,4 +1,5 @@
 use ruint::aliases::U256;
+use slang_solidity_v2_common::collections::Set;
 use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::StorageLayoutBuilder;
 
@@ -24,11 +25,22 @@ impl ContractDefinitionStruct {
                 entries.push(state_variable.compute_abi_entry()?);
             }
         }
-        for error in &self.linearised_errors() {
-            entries.push(error.compute_abi_entry()?);
+        // solc lists the errors and events the code reaches with the ones the
+        // hierarchy declares, each definition once.
+        let mut listed = Set::default();
+        for error in self.linearised_errors().iter().chain(&self.used_errors()) {
+            if listed.insert(error.node_id()) {
+                entries.push(error.compute_abi_entry()?);
+            }
         }
-        for event in &self.linearised_events() {
-            entries.push(event.compute_abi_entry()?);
+        for event in self
+            .linearised_events()
+            .iter()
+            .chain(&self.emitted_events())
+        {
+            if listed.insert(event.node_id()) {
+                entries.push(event.compute_abi_entry()?);
+            }
         }
         let (storage_layout, transient_storage_layout) = self.compute_storage_layout()?;
         Some(ContractAbi::new(

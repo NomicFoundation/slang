@@ -1,4 +1,6 @@
-use crate::abi::ContractAbi;
+use slang_solidity_v2_common::collections::Set;
+
+use crate::abi::{AbiEntry, ContractAbi};
 use crate::ast::{
     ContractMember, FunctionDefinition, FunctionMutability, LibraryDefinitionStruct,
     StorageLocation,
@@ -10,7 +12,7 @@ impl LibraryDefinitionStruct {
     /// reachable only by `DELEGATECALL` from a contract and is left out. A library
     /// has no storage of its own, so both layouts are empty.
     pub fn compute_abi(&self) -> Option<ContractAbi> {
-        let entries = self
+        let mut entries = self
             .members()
             .iter()
             .filter_map(|member| match member {
@@ -30,6 +32,18 @@ impl LibraryDefinitionStruct {
                 _ => None,
             })
             .collect::<Option<Vec<_>>>()?;
+        // The errors and events its code reaches beyond its own, each once.
+        let own_errors_and_events: Set<_> = entries.iter().map(AbiEntry::node_id).collect();
+        for error in &self.used_errors() {
+            if !own_errors_and_events.contains(&error.node_id()) {
+                entries.push(error.compute_abi_entry()?);
+            }
+        }
+        for event in &self.emitted_events() {
+            if !own_errors_and_events.contains(&event.node_id()) {
+                entries.push(event.compute_abi_entry()?);
+            }
+        }
         Some(ContractAbi::new(
             self.ir_node.id(),
             self.ir_node.name.unparse().to_string(),
