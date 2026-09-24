@@ -1,0 +1,9 @@
+{
+  "name": "single_file",
+  "chain_id": 0,
+  "version": "0.8.20",
+  "target": "Counter.sol",
+  "sources": {
+    "Counter.sol": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.20;\n\ncontract Counter {\n    uint256 public count;\n\n    function increment() external {\n        count += 1;\n    }\n}\n"
+  }
+}

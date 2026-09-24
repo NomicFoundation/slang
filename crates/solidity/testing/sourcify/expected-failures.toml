@@ -1,0 +1,28 @@
+# Failure buckets `run-corpus` tolerates, keyed by check and diagnostic code. Every
+# entry names the reason and the issue tracking it, or `deliberate = true` where Slang
+# rejects on purpose what solc lets through. A bucket that stops firing on the full corpus
+# is reported as stale (`--stale-check`), so the entry leaves with the fix.
+
+[[failures]]
+check = "bind"
+code = "resolution/no-matching-callable-declaration"
+reason = "An address literal argument does not select the `address` overload (`_safeMint(0xb701…, 1)`)."
+issue = "https://github.com/NomicFoundation/slang/issues/2179"
+
+[[failures]]
+check = "bind"
+code = "resolution/member-not-found"
+reason = "An address literal argument does not select the `address` overload of a library or contract member (`Clones.clone(0xeA34…)`, #2179); `type(AbstractContract).interfaceId` is not found (#2180); `C.Error.selector` that solc 0.8.35 rejects too."
+issue = "https://github.com/NomicFoundation/slang/issues/2179"
+
+[[failures]]
+check = "bind"
+code = "resolution/ambiguous-reference"
+reason = "`MultiMint.initialize.selector` sees the `initialize` overload MultiMint inherits; solc exposes only its own declarations through the type name."
+issue = "https://github.com/NomicFoundation/slang/issues/2149"
+
+[[failures]]
+check = "parse"
+code = "syntax/incompatible-version-pragma"
+reason = "`pragma solidity 0.8.34.0;`: solc's version matcher ignores the fourth component; Slang rejects the malformed version on purpose."
+deliberate = true

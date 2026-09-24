@@ -4,6 +4,8 @@
 #![allow(clippy::self_named_module_files)]
 
 mod command;
+mod corpus;
+mod corpus_run;
 mod events;
 mod reporting;
 mod results;
@@ -30,6 +32,8 @@ fn main() -> Result<()> {
         Commands::ShowCombinedResults(results_command) => {
             run_show_combined_results_command(results_command)
         }
+        Commands::RunCorpus(corpus_command) => corpus_run::run(&corpus_command),
+        Commands::Report(report_command) => corpus_run::report(&report_command),
     }
 }
 
