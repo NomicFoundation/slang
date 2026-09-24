@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9640] Error: Explicit type conversion not allowed from "uint8[] memory" to "uint256[] memory".
+   ╭─[input.sol:7:17]
+   │
+ 7 │         return (uint256[](a), uint8[](a));
+   │                 ──────┬─────  
+   │                       ╰─────── Error occurred here.
+───╯

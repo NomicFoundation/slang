@@ -115,6 +115,14 @@ impl Number {
         }
     }
 
+    /// Whether the value converts to a fixed-point type without truncation:
+    /// scaled by `10^decimal_places`, it must be an integer within `bits`.
+    pub(crate) fn fits_fixed_point(&self, signed: bool, bits: u32, decimal_places: u32) -> bool {
+        let scaled =
+            self.to_rational() * BigRational::from(BigInt::from(10u32).pow(decimal_places));
+        scaled.is_integer() && integer_literal_fits(&scaled.to_integer(), signed, bits)
+    }
+
     fn to_rational(&self) -> BigRational {
         match self {
             Self::Integer(value) => BigRational::from(value.clone()),

@@ -955,8 +955,9 @@ impl Pass<'_> {
 
     /// Collects the types of `arguments` for a callee that accepts a type name
     /// in one of them: the second argument of `abi.decode`, the function
-    /// `abi.encodeCall` encodes a call to, and the library name a conversion
-    /// takes in `address(L)`. Which of them is valid is up to the callee.
+    /// `abi.encodeCall` encodes a call to, and the argument of a conversion,
+    /// which only allows the library name in `address(L)`. Which of them is
+    /// valid is up to the callee.
     pub(super) fn collect_argument_types_allowing_type_names(
         &mut self,
         arguments: &[ir::Expression],
@@ -995,7 +996,7 @@ impl Pass<'_> {
         // [`Self::collect_argument_types_allowing_type_names`].
         let accepts_type_names = match &operand_typing {
             Typing::BuiltIn(_) => true,
-            Typing::Resolved(type_id) => self.types.get_type_by_id(*type_id).is_meta_type(),
+            Typing::Resolved(type_id) => self.is_conversion_callee(*type_id),
             _ => false,
         };
         let argument_types = if accepts_type_names {
@@ -1093,6 +1094,26 @@ impl Pass<'_> {
         if let Some(operand_node_id) = operand.node_id() {
             self.binder
                 .update_node_typing(operand_node_id, Typing::Resolved(candidate_type_id));
+        }
+    }
+
+    /// Whether calling `type_id` is an explicit conversion (eg. `uint(x)` or
+    /// `MyEnum(x)`), rather than a struct construction or a call that names an
+    /// error or event.
+    fn is_conversion_callee(&self, type_id: TypeId) -> bool {
+        match self.types.get_type_by_id(type_id) {
+            Type::MetaType(_) => true,
+            Type::UserMetaType(UserMetaType { definition_id }) => matches!(
+                self.binder.find_definition_by_id(*definition_id),
+                Some(
+                    Definition::Contract(_)
+                        | Definition::Interface(_)
+                        | Definition::Library(_)
+                        | Definition::Enum(_)
+                        | Definition::UserDefinedValueType(_)
+                )
+            ),
+            _ => false,
         }
     }
 
