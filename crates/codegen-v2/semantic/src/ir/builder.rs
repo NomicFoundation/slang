@@ -135,8 +135,10 @@ fn unify_function_types(mutator: &mut IrModelMutator) {
     mutator.remove_sequence_field("FunctionDefinition", "body");
     mutator.add_sequence_field("FunctionDefinition", "body", "Block", true);
 
-    // We don't need FunctionName or FunctionBody anymore
-    mutator.remove_type("FunctionName");
+    // `function receive()` and `function fallback()` are regular functions named after the
+    // keyword, so every `FunctionName` variant becomes an `Identifier`
+    mutator.collapse_choice("FunctionName", "Identifier");
+    // We don't need FunctionBody anymore
     mutator.remove_type("FunctionBody");
 }
 
