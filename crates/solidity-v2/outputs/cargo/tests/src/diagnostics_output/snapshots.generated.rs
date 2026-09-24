@@ -4964,6 +4964,11 @@ mod type_system {
         }
 
         #[test]
+        fn assigned_type_name() -> Result<()> {
+            run("type_system/expression_not_a_value", "assigned_type_name")
+        }
+
+        #[test]
         fn base_constructor_argument() -> Result<()> {
             run(
                 "type_system/expression_not_a_value",
@@ -5034,6 +5039,11 @@ mod type_system {
         }
 
         #[test]
+        fn deleted_type_name() -> Result<()> {
+            run("type_system/expression_not_a_value", "deleted_type_name")
+        }
+
+        #[test]
         fn emit_argument() -> Result<()> {
             run("type_system/expression_not_a_value", "emit_argument")
         }
@@ -5043,6 +5053,14 @@ mod type_system {
             run(
                 "type_system/expression_not_a_value",
                 "function_declaration_built_in_argument",
+            )
+        }
+
+        #[test]
+        fn incremented_type_name() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "incremented_type_name",
             )
         }
 
@@ -5062,6 +5080,14 @@ mod type_system {
         #[test]
         fn lhs_tuple_component() -> Result<()> {
             run("type_system/expression_not_a_value", "lhs_tuple_component")
+        }
+
+        #[test]
+        fn lhs_tuple_type_name_component() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "lhs_tuple_type_name_component",
+            )
         }
 
         #[test]
@@ -5109,8 +5135,24 @@ mod type_system {
         }
 
         #[test]
+        fn nested_tuple_type_name_component() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "nested_tuple_type_name_component",
+            )
+        }
+
+        #[test]
         fn operator_operand() -> Result<()> {
             run("type_system/expression_not_a_value", "operator_operand")
+        }
+
+        #[test]
+        fn returned_tuple_of_type_names() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "returned_tuple_of_type_names",
+            )
         }
 
         #[test]
@@ -5184,6 +5226,14 @@ mod type_system {
         #[test]
         fn tuple_component() -> Result<()> {
             run("type_system/expression_not_a_value", "tuple_component")
+        }
+
+        #[test]
+        fn tuple_with_type_name_and_value() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "tuple_with_type_name_and_value",
+            )
         }
 
         #[test]

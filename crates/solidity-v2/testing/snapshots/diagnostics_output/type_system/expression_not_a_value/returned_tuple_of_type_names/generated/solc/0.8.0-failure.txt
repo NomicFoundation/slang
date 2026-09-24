@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 5992] Error: Return argument type tuple(type(enum Test.E),type(enum Test.E)) is not implicitly convertible to expected type tuple(enum Test.E,enum Test.E).
+    ╭─[input.sol:11:12]
+    │
+ 11 │     return (E, E);
+    │            ───┬──  
+    │               ╰──── Error occurred here.
+────╯
