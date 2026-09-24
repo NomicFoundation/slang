@@ -4967,6 +4967,14 @@ mod type_system {
         }
 
         #[test]
+        fn array_element_type_widening() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "array_element_type_widening",
+            )
+        }
+
+        #[test]
         fn bytes_to_fixed_bytes() -> Result<()> {
             run(
                 "type_system/explicit_conversion_not_allowed",
@@ -5083,6 +5091,14 @@ mod type_system {
             run(
                 "type_system/explicit_conversion_not_allowed",
                 "integer_literal_out_of_range",
+            )
+        }
+
+        #[test]
+        fn integer_literal_to_fixed_point() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "integer_literal_to_fixed_point",
             )
         }
 
@@ -5549,6 +5565,14 @@ mod type_system {
             run(
                 "type_system/expression_not_a_value",
                 "type_name_overloaded_call_argument",
+            )
+        }
+
+        #[test]
+        fn type_name_struct_constructor_argument() -> Result<()> {
+            run(
+                "type_system/expression_not_a_value",
+                "type_name_struct_constructor_argument",
             )
         }
 
