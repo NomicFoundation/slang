@@ -152,3 +152,16 @@ contract Named {
 }
 "#,
 );
+
+define_fixture!(
+    FunctionsNamedReceiveAndFallback,
+    file: "main.sol", r#"
+pragma solidity ^0.8.0;
+contract C {
+    receive() external payable {}
+    fallback() external {}
+    function receive(uint256 x) external pure returns (uint256) { return x; }
+    function fallback() external payable {}
+}
+"#,
+);

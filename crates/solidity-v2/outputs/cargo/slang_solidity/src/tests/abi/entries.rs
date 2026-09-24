@@ -167,3 +167,17 @@ fn abstract_contract_has_no_constructor_entry() {
         .expect("the ABI is computable");
     assert!(matches!(abi.entries(), [AbiEntry::Function(f)] if f.name() == "extra"));
 }
+
+/// With the `function` keyword, `receive` and `fallback` are ordinary names: solc lists both
+/// as functions with selectors, next to the real receive and fallback functions.
+#[test]
+fn functions_named_receive_and_fallback_are_regular_functions() {
+    let unit = super::FunctionsNamedReceiveAndFallback::build_compilation_unit();
+    let contracts_abi = unit.compute_contracts_abi();
+    let entries = contracts_abi[0].entries();
+    assert_eq!(entries.len(), 4);
+    assert!(matches!(entries[0], AbiEntry::Fallback(_)));
+    assert!(matches!(&entries[1], AbiEntry::Function(f) if f.name() == "fallback"));
+    assert!(matches!(&entries[2], AbiEntry::Function(f) if f.name() == "receive"));
+    assert!(matches!(entries[3], AbiEntry::Receive(_)));
+}

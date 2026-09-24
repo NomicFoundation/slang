@@ -7,6 +7,7 @@ mod pragmas;
 mod try_catch;
 mod yul;
 
+use std::ops::Range;
 use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -244,8 +245,16 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                 output::FunctionKind::Regular,
                 Some(self.build_identifier(identifier)),
             ),
-            input::FunctionName::FallbackKeyword(_) => (output::FunctionKind::Fallback, None),
-            input::FunctionName::ReceiveKeyword(_) => (output::FunctionKind::Receive, None),
+            // `function receive()` and `function fallback()` are regular functions with those
+            // names, as in solc; the special ones are declared without `function`.
+            input::FunctionName::FallbackKeyword(keyword) => (
+                output::FunctionKind::Regular,
+                Some(self.build_keyword_identifier(keyword.range.clone())),
+            ),
+            input::FunctionName::ReceiveKeyword(keyword) => (
+                output::FunctionKind::Regular,
+                Some(self.build_keyword_identifier(keyword.range.clone())),
+            ),
         };
         let parameters = self.build_parameters_declaration(&source.parameters);
         let attributes = self.build_function_attributes(&source.attributes);
@@ -264,6 +273,14 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             attributes,
             returns,
             body,
+        })
+    }
+
+    fn build_keyword_identifier(&mut self, range: Range<usize>) -> output::Identifier {
+        Arc::new(output::IdentifierStruct {
+            id: self.next_id(output::NodeKind::Identifier),
+            text: self.unparse_range(range.clone()),
+            range,
         })
     }
 
