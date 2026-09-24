@@ -478,6 +478,15 @@ impl Pass<'_> {
         }
     }
 
+    /// Registers the type a type definition (eg. a contract or a struct)
+    /// declares, returning its id.
+    fn type_id_of_type_definition(&mut self, definition_id: NodeId) -> TypeId {
+        let type_ = self
+            .type_of_definition(definition_id)
+            .expect("definition kind is handled by type_of_definition");
+        self.types.register_type(type_)
+    }
+
     pub(super) fn type_of_definition(&self, definition_id: NodeId) -> Option<Type> {
         let definition = self.binder.find_definition_by_id(definition_id)?;
         definition.try_into().ok()
@@ -1103,16 +1112,10 @@ impl Pass<'_> {
     fn is_conversion_callee(&self, type_id: TypeId) -> bool {
         match self.types.get_type_by_id(type_id) {
             Type::MetaType(_) => true,
-            Type::UserMetaType(UserMetaType { definition_id }) => matches!(
-                self.binder.find_definition_by_id(*definition_id),
-                Some(
-                    Definition::Contract(_)
-                        | Definition::Interface(_)
-                        | Definition::Library(_)
-                        | Definition::Enum(_)
-                        | Definition::UserDefinedValueType(_)
-                )
-            ),
+            Type::UserMetaType(UserMetaType { definition_id }) => self
+                .binder
+                .find_definition_by_id(*definition_id)
+                .is_some_and(Definition::is_type_conversion_target),
             _ => false,
         }
     }
@@ -1160,18 +1163,9 @@ impl Pass<'_> {
                 // other values convert via `wrap`/`unwrap`.
                 let definition_id = *definition_id;
                 match self.binder.find_definition_by_id(definition_id) {
-                    Some(
-                        Definition::Contract(_)
-                        | Definition::Interface(_)
-                        | Definition::Library(_)
-                        | Definition::Enum(_)
-                        | Definition::UserDefinedValueType(_),
-                    ) => {
+                    Some(definition) if definition.is_type_conversion_target() => {
                         // TODO(validation) SDR[868]: only one argument expected
-                        let type_ = self
-                            .type_of_definition(definition_id)
-                            .expect("definition kind is handled by type_of_definition");
-                        let type_id = self.types.register_type(type_);
+                        let type_id = self.type_id_of_type_definition(definition_id);
                         if let Some([argument_type_id]) = argument_types {
                             self.typing_of_cast(node, *argument_type_id, type_id)
                         } else {
@@ -1179,10 +1173,7 @@ impl Pass<'_> {
                         }
                     }
                     Some(Definition::Struct(_)) => {
-                        let type_ = self
-                            .type_of_definition(definition_id)
-                            .expect("definition kind is handled by type_of_definition");
-                        Typing::Resolved(self.types.register_type(type_))
+                        Typing::Resolved(self.type_id_of_type_definition(definition_id))
                     }
                     Some(Definition::Error(_)) => {
                         // TODO(validation): an error instance is only valid in
