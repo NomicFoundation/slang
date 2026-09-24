@@ -1,0 +1,52 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["Base" @ base.sol:3:10] (contract)
+- Def: #2 ["x" @ base.sol:4:25] (parameter, type: uint256)
+- Def: #3 ["Aliased" @ main.sol:3:17] (imported symbol)
+- Def: #4 ["Derived" @ main.sol:5:10] (contract)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Base" @ main.sol:3:9] -> #1
+- Ref: ["Aliased" @ main.sol:5:21] -> #3
+- Ref: ["Aliased" @ main.sol:6:19] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[base.sol:1:1]
+   │
+ 3 │ contract Base {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 4 │     constructor(uint256 x) {}
+   │                         ┬  
+   │                         ╰── name: 2
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 3 │ import {Base as Aliased} from "base.sol";
+   │         ──┬─    ───┬───  
+   │           ╰────────────── ref: 1
+   │                    │     
+   │                    ╰───── name: 3
+   │ 
+ 5 │ contract Derived is Aliased {
+   │          ───┬───    ───┬───  
+   │             ╰──────────────── name: 4
+   │                        │     
+   │                        ╰───── ref: 3
+ 6 │     constructor() Aliased(1) {}
+   │                   ───┬───  
+   │                      ╰───── ref: 3
+───╯
