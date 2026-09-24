@@ -1,4 +1,5 @@
 use std::ops::Range;
+use std::sync::OnceLock;
 
 use slang_solidity_v2_common::collections::{Map, SortedMap};
 use slang_solidity_v2_common::nodes::NodeId;
@@ -41,6 +42,14 @@ impl ContractReference {
     }
 }
 
+/// The errors each contract's or library's creation or deployed code can
+/// revert with and the events it can emit, in first-reached order.
+#[derive(Default)]
+pub(crate) struct UsedErrorsAndEvents {
+    pub(crate) errors: Map<NodeId, Vec<ir::ErrorDefinition>>,
+    pub(crate) events: Map<NodeId, Vec<ir::EventDefinition>>,
+}
+
 /// Cache of derived data about contracts stored on the `SemanticContext`. Every
 /// contract's and interface's `NodeId` has an entry in `linearisations`.
 pub(crate) struct ContractData {
@@ -55,6 +64,9 @@ pub(crate) struct ContractData {
     creation_bytecode_dependencies: SortedMap<NodeId, SortedMap<NodeId, ContractReference>>,
     /// The same for the deployed code.
     deployed_bytecode_dependencies: SortedMap<NodeId, SortedMap<NodeId, ContractReference>>,
+    /// Filled by p7 when it walks the code for bytecode dependencies anyway,
+    /// otherwise on first use.
+    used_errors_and_events: OnceLock<UsedErrorsAndEvents>,
 }
 
 impl ContractData {
@@ -67,6 +79,7 @@ impl ContractData {
             linearisations: data,
             creation_bytecode_dependencies: SortedMap::default(),
             deployed_bytecode_dependencies: SortedMap::default(),
+            used_errors_and_events: OnceLock::new(),
         }
     }
 
@@ -77,6 +90,20 @@ impl ContractData {
     ) {
         self.creation_bytecode_dependencies = creation;
         self.deployed_bytecode_dependencies = deployed;
+    }
+
+    pub(crate) fn set_used_errors_and_events(&mut self, used: UsedErrorsAndEvents) {
+        assert!(
+            self.used_errors_and_events.set(used).is_ok(),
+            "used errors and events are computed once"
+        );
+    }
+
+    pub(crate) fn used_errors_and_events(
+        &self,
+        compute: impl FnOnce() -> UsedErrorsAndEvents,
+    ) -> &UsedErrorsAndEvents {
+        self.used_errors_and_events.get_or_init(compute)
     }
 
     /// For each contract, the contracts that its creation code embeds.

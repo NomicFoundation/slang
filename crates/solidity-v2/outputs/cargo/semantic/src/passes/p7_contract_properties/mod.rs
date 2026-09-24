@@ -9,3 +9,5 @@ use crate::types::TypeRegistry;
 pub(crate) fn run(binder: &Binder, contract_data: &mut ContractData, types: &TypeRegistry) {
     contract_dependencies::run(binder, contract_data, types);
 }
+
+pub(crate) use contract_dependencies::used_errors_and_events;
