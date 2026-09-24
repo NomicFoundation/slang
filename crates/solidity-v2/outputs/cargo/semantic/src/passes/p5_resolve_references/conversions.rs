@@ -7,8 +7,7 @@ use super::Pass;
 use crate::binder::Definition;
 use crate::types::{
     AddressType, ArraySliceType, ByteArrayType, ContractType, EnumType, FixedPointNumberType,
-    IntegerType, InterfaceType, LibraryType, LiteralKind, Number, Type, TypeId, UserMetaType,
-    literals,
+    IntegerType, InterfaceType, LiteralKind, Number, Type, TypeId, UserMetaType, literals,
 };
 
 impl Pass<'_> {
@@ -51,9 +50,7 @@ impl Pass<'_> {
                 | LiteralKind::Rational { .. }),
             ) => self.number_literal_explicitly_convertible_to(kind, to_type),
 
-            Type::FixedPointNumber(_) => {
-                matches!(to_type, Type::FixedPointNumber(_) | Type::Integer(_))
-            }
+            Type::FixedPointNumber(_) => fixed_point_explicitly_convertible_to(to_type),
 
             Type::ByteArray(ByteArrayType { width }) => match to_type {
                 Type::ByteArray(_) => true,
@@ -66,17 +63,13 @@ impl Pass<'_> {
             // `this` in a library is typed as the library.
             Type::Library(_) => matches!(to_type, Type::Address(AddressType { is_payable: false })),
 
-            Type::Contract(_) | Type::Interface(_) => {
-                let Type::Address(AddressType { is_payable }) = to_type else {
-                    return false;
-                };
-                let from_definition_id = self
-                    .types
-                    .get_type_by_id(from_type_id)
-                    .get_definition_id()
-                    .unwrap();
-                !is_payable || self.is_payable_contract(from_definition_id)
-            }
+            Type::Contract(ContractType { definition_id })
+            | Type::Interface(InterfaceType { definition_id }) => match to_type {
+                Type::Address(AddressType { is_payable }) => {
+                    !is_payable || self.is_payable_contract(*definition_id)
+                }
+                _ => false,
+            },
 
             // `bytes` and `string` convert into each other within the same data
             // location, and `bytes` into `bytesN`.
@@ -117,7 +110,7 @@ impl Pass<'_> {
             | Type::Interface(InterfaceType { definition_id }) => {
                 is_payable || !self.is_payable_contract(*definition_id)
             }
-            Type::Library(LibraryType { .. }) => true,
+            Type::Library(_) => true,
             Type::Integer(IntegerType { is_signed, bits }) => {
                 !is_payable && !is_signed && *bits == 160
             }
@@ -150,9 +143,7 @@ impl Pass<'_> {
                 Some(Type::Integer(IntegerType { is_signed, bits })) => {
                     integer_explicitly_convertible_to(is_signed, bits, to_type)
                 }
-                Some(Type::FixedPointNumber(_)) => {
-                    matches!(to_type, Type::FixedPointNumber(_) | Type::Integer(_))
-                }
+                Some(Type::FixedPointNumber(_)) => fixed_point_explicitly_convertible_to(to_type),
                 _ => false,
             },
         }
@@ -212,4 +203,8 @@ fn integer_explicitly_convertible_to(is_signed: bool, bits: u32, to_type: &Type)
         }) => is_signed == *to_signed && bits == *to_bits,
         _ => false,
     }
+}
+
+fn fixed_point_explicitly_convertible_to(to_type: &Type) -> bool {
+    matches!(to_type, Type::FixedPointNumber(_) | Type::Integer(_))
 }
