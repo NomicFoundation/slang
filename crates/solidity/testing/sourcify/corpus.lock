@@ -1,6 +1,6 @@
 # The Sourcify corpus snapshot the PR workflow runs (`sourcify_smoke.yml`). Bumping it
 # is a one-line PR whose CI run shows exactly what the new contracts change.
 repo = "nebasuke/sourcify-corpora"
-tag = "sourcify-corpus-solc-0.8.34-0.8.36-20260920"
-asset = "sourcify-corpus-solc-0.8.34-0.8.36-20260920.tar.xz"
-sha256 = "0642e21776808674fb3fc50d352fc666dd7e8d062a322de51d44ab288fd0eb2e"
+tag = "sourcify-corpus-0.8.x-20260924"
+asset = "sourcify-corpus-pr-subset.tar.xz"
+sha256 = "42845f19a71578a95c972fa6696d6c2437f19c591e7debefa3d588ed83ec3939"
