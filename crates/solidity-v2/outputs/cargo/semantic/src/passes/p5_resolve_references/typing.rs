@@ -104,7 +104,8 @@ impl Pass<'_> {
 
     /// Reports every component of `tuple`, however deeply nested, that names
     /// a type or a module rather than a value, and returns whether there was
-    /// any.
+    /// any. Kept out of line, as only tuples reach it.
+    #[inline(never)]
     fn report_type_names_in_tuple(&mut self, tuple: &ir::TupleExpression) -> bool {
         let mut found = false;
         for expression in tuple
@@ -954,10 +955,12 @@ impl Pass<'_> {
         self.collect_argument_types(arguments, Self::check_type_of_value_or_type_name_expression)
     }
 
+    // Generic over the check, rather than taking a function pointer, so that
+    // each use can inline it.
     fn collect_argument_types(
         &mut self,
         arguments: &[ir::Expression],
-        check: fn(&mut Self, &ir::Expression) -> Option<TypeId>,
+        check: impl Fn(&mut Self, &ir::Expression) -> Option<TypeId>,
     ) -> Option<Vec<TypeId>> {
         // Every argument is checked before the result is folded, so one that has
         // no type does not stop the rest from being checked (and reported).

@@ -5536,6 +5536,14 @@ mod type_system {
                 "tuple_element_widths",
             )
         }
+
+        #[test]
+        fn tuple_with_unresolved_component() -> Result<()> {
+            run(
+                "type_system/incompatible_conditional_branches",
+                "tuple_with_unresolved_component",
+            )
+        }
     }
 
     mod invalid_base {
