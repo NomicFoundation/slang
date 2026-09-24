@@ -26,3 +26,9 @@ check = "parse"
 code = "syntax/incompatible-version-pragma"
 reason = "`pragma solidity 0.8.34.0;`: solc's version matcher ignores the fourth component; Slang rejects the malformed version on purpose."
 deliberate = true
+
+[[failures]]
+check = "parse"
+code = "syntax/unsupported-abicoder-v1"
+reason = "`pragma abicoder v1` selects the legacy ABI coder; Slang supports v2 only, on purpose."
+deliberate = true
