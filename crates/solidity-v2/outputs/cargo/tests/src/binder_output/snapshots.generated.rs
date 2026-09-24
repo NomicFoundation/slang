@@ -1058,6 +1058,11 @@ mod modifiers {
     }
 
     #[test]
+    fn base_constructor_via_named_alias() -> Result<()> {
+        run("modifiers", "base_constructor_via_named_alias")
+    }
+
+    #[test]
     fn diamond() -> Result<()> {
         run("modifiers", "diamond")
     }
@@ -1075,6 +1080,11 @@ mod modifiers {
     #[test]
     fn inherited() -> Result<()> {
         run("modifiers", "inherited")
+    }
+
+    #[test]
+    fn interface_base_constructor() -> Result<()> {
+        run("modifiers", "interface_base_constructor")
     }
 
     #[test]

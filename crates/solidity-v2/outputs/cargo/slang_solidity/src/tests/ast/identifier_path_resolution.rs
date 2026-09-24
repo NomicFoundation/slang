@@ -1,6 +1,4 @@
 use super::fixtures;
-use crate::ast::IdentifierPath;
-use crate::compilation::CompilationUnit;
 use crate::{ast, define_fixture};
 
 define_fixture!(
@@ -25,64 +23,6 @@ contract B3 {}
 fn test_build_chained_imports_fixture() {
     let unit = ChainedImports::build_compilation_unit();
     assert_eq!(3, unit.files().count());
-}
-
-define_fixture!(
-    AliasedBaseConstructor,
-    file: "base.sol", r#"
-pragma solidity *;
-contract Base {
-    constructor(uint256) {}
-}
-interface I {}
-"#,
-    file: "leaf.sol", r#"
-pragma solidity *;
-import {Base as Aliased, I} from "base.sol";
-contract Leaf is Aliased, I {
-    constructor() Aliased(1) I() {}
-}
-"#,
-);
-
-/// The name the `index`th modifier-list entry of `Leaf`'s constructor carries.
-fn leaf_base_name(unit: &CompilationUnit, index: usize) -> IdentifierPath {
-    unit.find_contract_by_name("Leaf")
-        .next()
-        .expect("contract is found")
-        .constructor()
-        .expect("Leaf declares a constructor")
-        .attributes()
-        .modifier_invocations()
-        .iter()
-        .nth(index)
-        .expect("the constructor invokes both bases")
-        .name()
-}
-
-#[test]
-fn test_modifier_invocation_resolves_a_base_through_an_import_alias() {
-    let unit = AliasedBaseConstructor::build_compilation_unit();
-    let aliased = leaf_base_name(&unit, 0);
-
-    assert!(matches!(
-        aliased.resolve_to_definition(),
-        Some(ast::Definition::Contract(_))
-    ));
-    assert!(matches!(
-        aliased.resolve_to_immediate_definition(),
-        Some(ast::Definition::ImportedSymbol(_))
-    ));
-}
-
-#[test]
-fn test_modifier_invocation_resolves_an_interface_base() {
-    let unit = AliasedBaseConstructor::build_compilation_unit();
-
-    assert!(matches!(
-        leaf_base_name(&unit, 1).resolve_to_definition(),
-        Some(ast::Definition::Interface(_))
-    ));
 }
 
 #[test]

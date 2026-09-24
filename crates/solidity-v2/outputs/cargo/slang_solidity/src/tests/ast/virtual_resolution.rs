@@ -5,8 +5,7 @@
 
 use crate::ast::visitor::Visitor;
 use crate::ast::{
-    self, ContractDefinition, Definition, Expression, FunctionDefinition, FunctionKind,
-    ModifierInvocation,
+    self, ContractDefinition, Definition, Expression, FunctionDefinition, ModifierInvocation,
 };
 use crate::compilation::CompilationUnit;
 use crate::define_fixture;
@@ -41,6 +40,7 @@ abstract contract A is I {
 }
 
 contract B is A {
+    constructor() A() {}
     modifier guarded() override { _; }
     function f() public virtual override returns (uint256) { return super.f() + 2; }
     function g() public virtual override returns (uint256) { return 20; }
@@ -63,17 +63,14 @@ fn contract(unit: &CompilationUnit, name: &str) -> ContractDefinition {
         .expect("the fixture declares the contract")
 }
 
-/// The functions and modifiers `owner`, a contract, interface or library, itself declares.
-fn function_definitions(unit: &CompilationUnit, owner: &str) -> Vec<FunctionDefinition> {
+/// The function `name` with `arity` parameters that `owner`, a contract, interface or library,
+/// itself declares.
+fn function(unit: &CompilationUnit, owner: &str, name: &str, arity: usize) -> FunctionDefinition {
     unit.all_definitions()
         .find_map(|definition| match definition {
-            Definition::Contract(contract) if contract.name().name() == owner => Some(
-                contract
-                    .functions()
-                    .into_iter()
-                    .chain(contract.modifiers())
-                    .collect(),
-            ),
+            Definition::Contract(contract) if contract.name().name() == owner => {
+                Some(contract.functions())
+            }
             Definition::Interface(interface) if interface.name().name() == owner => {
                 Some(interface.functions())
             }
@@ -83,11 +80,6 @@ fn function_definitions(unit: &CompilationUnit, owner: &str) -> Vec<FunctionDefi
             _ => None,
         })
         .expect("the fixture declares the owner")
-}
-
-/// The function `name` with `arity` parameters that `owner` itself declares.
-fn function(unit: &CompilationUnit, owner: &str, name: &str, arity: usize) -> FunctionDefinition {
-    function_definitions(unit, owner)
         .into_iter()
         .find(|function| {
             function.name().is_some_and(|found| found.name() == name)
@@ -96,12 +88,13 @@ fn function(unit: &CompilationUnit, owner: &str, name: &str, arity: usize) -> Fu
         .expect("the owner declares the function")
 }
 
-/// The one modifier `owner` declares.
+/// The one modifier the contract `owner` declares.
 fn modifier(unit: &CompilationUnit, owner: &str) -> FunctionDefinition {
-    function_definitions(unit, owner)
+    contract(unit, owner)
+        .modifiers()
         .into_iter()
-        .find(|member| matches!(member.kind(), FunctionKind::Modifier))
-        .expect("the owner declares a modifier")
+        .next()
+        .expect("the contract declares a modifier")
 }
 
 /// The one modifier-list entry on `owner`'s function `name`.
@@ -311,6 +304,25 @@ fn test_resolve_modifier_declines_a_modifier_outside_the_hierarchy() {
             .resolve_modifier(&invocation(&unit, "L", "attached"))
             .is_none(),
         "L's modifier is not in C's hierarchy although the hierarchy declares one of the same name"
+    );
+}
+
+#[test]
+fn test_resolve_modifier_declines_a_base_constructor_call() {
+    let unit = Hierarchy::build_compilation_unit();
+
+    let base_call = contract(&unit, "B")
+        .constructor()
+        .expect("B declares a constructor")
+        .attributes()
+        .modifier_invocations()
+        .iter()
+        .next()
+        .expect("B's constructor calls A's");
+
+    assert!(
+        contract(&unit, "C").resolve_modifier(&base_call).is_none(),
+        "A() in B's constructor calls a base constructor, not a modifier"
     );
 }
 

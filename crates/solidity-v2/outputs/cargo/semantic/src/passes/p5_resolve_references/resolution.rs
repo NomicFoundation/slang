@@ -10,11 +10,10 @@ use slang_solidity_v2_ir::ir;
 
 use super::{Pass, ScopeFrame};
 use crate::binder::{
-    Definition, DefinitionIds, Reference, Resolution, ResolveOptions, ScopeId, Typing,
-    UsingDirective, UsingOperator,
+    Definition, DefinitionIds, ModifierLookup, Reference, Resolution, ResolveOptions, ScopeId,
+    Typing, UsingDirective, UsingOperator,
 };
 use crate::built_ins::BuiltInsResolver;
-use crate::passes::common::conflicts::underlying_declarations;
 use crate::passes::common::constant_evaluator::{
     ConstantResolver, EvaluationError, evaluate_compile_time_constant,
 };
@@ -302,16 +301,19 @@ impl Pass<'_> {
                 .all(|parameter_type_id| *parameter_type_id == operand_type_id)
     }
 
-    /// The first candidate a modifier-list entry can name: a modifier, or a
-    /// base, which is how a constructor's base-argument lists are parsed. A
-    /// base may be named through an import alias, so the aliases are followed
-    /// for the test while the reference keeps the alias, as every other does.
+    /// Picks the first candidate a modifier-list entry can name: a modifier, or
+    /// a base contract or interface, since base constructor calls share the
+    /// modifier-list syntax. A base can be named through an import alias, so
+    /// aliases are followed to check each candidate's kind, but the result
+    /// still points at the alias, like every other reference.
     fn resolve_first_modifier_or_base(&self, resolution: &Resolution) -> Resolution {
         resolution
             .get_definition_ids()
             .into_iter()
             .find(|definition_id| {
-                underlying_declarations(self.binder, *definition_id)
+                self.binder
+                    .follow_symbol_aliases(Resolution::Definition(*definition_id))
+                    .get_definition_ids()
                     .iter()
                     .any(|aliased_id| {
                         matches!(
@@ -352,6 +354,15 @@ impl Pass<'_> {
             // contract only (ie. it's a contract modifier, a modifier in a
             // base, or it's the identifier of a base of the current contract)
             let resolution = if index == identifier_path.len() - 1 {
+                // A modifier found lexically is looked up virtually; one found
+                // as a member of a named contract is that contract's own.
+                let lookup = if index == 0 {
+                    ModifierLookup::Virtual
+                } else {
+                    ModifierLookup::Static
+                };
+                self.binder
+                    .set_modifier_lookup(modifier_invocation.id(), lookup);
                 self.resolve_first_modifier_or_base(&resolution)
             } else {
                 resolution

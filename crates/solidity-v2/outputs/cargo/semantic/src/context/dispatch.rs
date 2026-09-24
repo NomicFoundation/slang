@@ -4,7 +4,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use super::SemanticContext;
-use crate::binder::{Binder, Definition, Scope};
+use crate::binder::{Binder, Definition, ModifierLookup, Scope};
 use crate::passes::common::Overridable;
 use crate::types::TypeRegistry;
 
@@ -29,14 +29,13 @@ impl SemanticContext {
         function: &'a ir::FunctionDefinition,
     ) -> Option<VirtualTarget<'a>> {
         let (bases, member) = self.dispatch_member(contract_id, function)?;
-        if !member.is_virtual() {
-            return Some(VirtualTarget::Function(function));
-        }
         if member.is_modifier() {
             return Some(VirtualTarget::Function(
-                modifier_target(&self.binder, &self.types, bases, member)
-                    .expect("a virtual modifier is at least its own target"),
+                self.dispatch_modifier(bases, function),
             ));
+        }
+        if !member.is_virtual() {
+            return Some(VirtualTarget::Function(function));
         }
         if let Some(target) = function_target(
             &self.binder,
@@ -88,30 +87,57 @@ impl SemanticContext {
         super_target(&self.binder, &self.types, bases, enclosing_contract, member)
     }
 
-    /// Resolves the modifier-list entry `invocation` in code compiled into
-    /// `contract_id`. A bare name selects the most-derived modifier of that
-    /// name in the hierarchy; a qualified name like `A.m` runs the declaration
-    /// it names, as does a nonvirtual one.
+    /// Finds the modifier that `invocation` runs when compiled into
+    /// `contract_id`. A bare `m` runs the most-derived override of `m`. A
+    /// qualified `A.m` always runs `A`'s own `m`, and so does a `m` that is not
+    /// virtual.
     ///
-    /// Returns `None` when the entry names a base rather than a modifier, as a
-    /// constructor's base-argument list does, or when the modifier it names is
-    /// not declared in `contract_id`'s hierarchy in this context.
+    /// Returns `None` if `invocation` comes from another compilation unit, if
+    /// it calls a base constructor instead of a modifier, or if the modifier
+    /// is not declared in `contract_id` or its bases.
     pub fn resolve_modifier(
         &self,
         contract_id: NodeId,
         invocation: &ir::ModifierInvocation,
     ) -> Option<&ir::FunctionDefinition> {
-        let definition_id =
-            self.resolve_reference_identifier_to_definition_id(invocation.name.last()?.id())?;
+        let name = invocation
+            .name
+            .last()
+            .expect("an identifier path has at least one identifier");
+        let reference = self
+            .binder
+            .find_reference_by_identifier_node_id(name.id())?;
+        if !Arc::ptr_eq(&reference.identifier, name) {
+            return None;
+        }
+        let definition_id = self
+            .binder
+            .follow_symbol_aliases(reference.resolution.clone())
+            .as_definition_id()?;
         let Definition::Modifier(modifier) = self.binder.find_definition_by_id(definition_id)?
         else {
             return None;
         };
-        let (bases, member) = self.dispatch_member(contract_id, &modifier.ir_node)?;
-        if invocation.name.len() > 1 || !member.is_virtual() {
-            return Some(&modifier.ir_node);
+        let (bases, _) = self.dispatch_member(contract_id, &modifier.ir_node)?;
+        Some(match self.binder.modifier_lookup(invocation.id()) {
+            ModifierLookup::Virtual => self.dispatch_modifier(bases, &modifier.ir_node),
+            ModifierLookup::Static => &modifier.ir_node,
+        })
+    }
+
+    /// Returns the most-derived override of `modifier` in `bases` if it is
+    /// virtual, or `modifier` itself if it is not.
+    fn dispatch_modifier<'a>(
+        &'a self,
+        bases: &[NodeId],
+        modifier: &'a ir::FunctionDefinition,
+    ) -> &'a ir::FunctionDefinition {
+        let member = Overridable::Modifier(modifier);
+        if !member.is_virtual() {
+            return modifier;
         }
         modifier_target(&self.binder, &self.types, bases, member)
+            .expect("a virtual modifier is at least its own target")
     }
 
     fn dispatch_member<'a>(

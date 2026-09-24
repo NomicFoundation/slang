@@ -1112,3 +1112,32 @@ fn dispatch_rejects_invalid_contract_ids_and_foreign_declarations() {
     }
     assert!(context.resolve_super(a, f, a).is_none());
 }
+
+#[test]
+fn resolve_modifier_rejects_invalid_contract_ids_and_foreign_invocations() {
+    let source = "contract A {
+            modifier m() virtual { _; }
+            function f() public m {}
+        }
+        contract B is A { modifier m() override { _; } }";
+
+    let analysis = analyse(source).expect_no_diagnostics();
+    let foreign = analyse(source).expect_no_diagnostics();
+    let context = analysis.context();
+
+    let b = contract_id(context, "B");
+    let f = find_function(analysis.find_members("A"), "f").expect("A declares f");
+    let foreign_f = find_function(foreign.find_members("A"), "f").expect("A declares f");
+
+    let invocation = &f.attributes.modifier_invocations[0];
+    let foreign_invocation = &foreign_f.attributes.modifier_invocations[0];
+    assert_eq!(invocation.id(), foreign_invocation.id());
+
+    assert!(context.resolve_modifier(b, invocation).is_some());
+    assert!(context.resolve_modifier(b, foreign_invocation).is_none());
+    assert!(
+        context
+            .resolve_modifier(NodeId::from(u64::MAX), invocation)
+            .is_none()
+    );
+}
