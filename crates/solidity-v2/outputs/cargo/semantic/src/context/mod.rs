@@ -202,7 +202,7 @@ impl SemanticContext {
     /// Returns the pre-computed list of functions visible in the given
     /// contract's or interface's hierarchy (per C3 linearisation, interface
     /// bases included), with overrides resolved and sorted by name, led by the
-    /// nameless receive and then fallback. A function overridden by a public
+    /// nameless fallback and then receive. A function overridden by a public
     /// state variable's getter is dropped from the list. An interface function
     /// no contract implements stays, so only an abstract contract or an
     /// interface lists one. `contract_id` must be a registered contract or

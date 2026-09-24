@@ -70,7 +70,7 @@ pub(super) fn compute_linearisations(
 /// Flattens the bases' members (gathered most-base-first) into the
 /// hierarchy's function list: most-derived-first, dropping a function once a
 /// more-derived function or a public state variable's getter overrides it, then
-/// sorted by name, with the nameless receive and then fallback leading.
+/// sorted by name, with the nameless fallback and then receive leading.
 /// Functions are cloned out only once they're known to survive override
 /// resolution.
 fn linearise_functions(
@@ -87,11 +87,11 @@ fn linearise_functions(
     // candidates by name (stably, keeping them most-derived-first within a
     // name) confines each comparison to the predecessors in its own group. It
     // also leaves the survivors in the order the list wants: sorted by name,
-    // with the nameless receive and then fallback first.
+    // with the nameless fallback and then receive first.
     candidates.sort_by_key(|candidate| {
         (
             candidate.name(),
-            candidate.function_kind() == ir::FunctionKind::Fallback,
+            candidate.function_kind() == ir::FunctionKind::Receive,
         )
     });
 

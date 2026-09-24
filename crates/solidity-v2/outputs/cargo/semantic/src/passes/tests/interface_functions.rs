@@ -1,7 +1,7 @@
 //! Tests that interface bases take part in `linearised_functions`: a
 //! declaration nothing implements stays in an abstract contract's list, an
-//! interface's own hierarchy is linearised, and an inherited receive leads the
-//! list ahead of a fallback.
+//! interface's own hierarchy is linearised, and an inherited fallback leads the
+//! list ahead of a receive.
 
 use slang_solidity_v2_ir::ir;
 
@@ -71,15 +71,15 @@ fn interface_hierarchy_is_linearised_with_overrides() {
 }
 
 #[test]
-fn receive_and_fallback_lead_the_list() {
+fn fallback_and_receive_lead_the_list() {
     let analysis = Analysis::of_source(
         r#"
         pragma solidity *;
-        interface IReceiver {
-            receive() external payable;
+        interface IFallback {
+            fallback() external;
         }
-        abstract contract Sink is IReceiver {
-            fallback() external {}
+        abstract contract Sink is IFallback {
+            receive() external payable {}
             function drain() external virtual;
         }
         "#,
@@ -90,14 +90,14 @@ fn receive_and_fallback_lead_the_list() {
 
     let functions = context.linearised_functions(analysis.find_contract("Sink").id());
     assert_eq!(functions.len(), 3);
-    assert_eq!(functions[0].kind, ir::FunctionKind::Receive);
-    assert_eq!(functions[1].kind, ir::FunctionKind::Fallback);
+    assert_eq!(functions[0].kind, ir::FunctionKind::Fallback);
+    assert_eq!(functions[1].kind, ir::FunctionKind::Receive);
     assert_eq!(
         functions[2].name.as_ref().map(|name| name.unparse()),
         Some("drain")
     );
-    // The receive `Sink` lists is `IReceiver`'s declaration, which nothing implements.
-    let receiver_functions =
-        context.linearised_functions(analysis.find_interface("IReceiver").id());
-    assert_eq!(functions[0].id(), receiver_functions[0].id());
+    // The fallback `Sink` lists is `IFallback`'s declaration, which nothing implements.
+    let fallback_functions =
+        context.linearised_functions(analysis.find_interface("IFallback").id());
+    assert_eq!(functions[0].id(), fallback_functions[0].id());
 }
