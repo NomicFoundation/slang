@@ -4,8 +4,9 @@ use slang_solidity_v2_common::nodes::NodeId;
 
 use super::binder::{Binder, Definition, Typing};
 use super::types::{
-    AddressType, ArrayType, BytesType, ContractType, DataLocation, LiteralKind, MetaType,
-    TupleType, Type, TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
+    AddressType, ArrayType, BytesType, ContractType, DataLocation, FunctionTypeVisibility,
+    LiteralKind, MetaType, TupleType, Type, TypeId, TypeRegistry, UserDefinedValueType,
+    UserMetaType,
 };
 
 mod availability;
@@ -503,7 +504,10 @@ impl<'a> BuiltInsResolver<'a> {
         let type_id = match built_in {
             InternalBuiltIn::AbiDecode => self.type_of_abi_decode(argument_types)?,
             InternalBuiltIn::AbiEncode => self.types.bytes_memory(),
-            InternalBuiltIn::AbiEncodeCall => self.types.bytes_memory(),
+            InternalBuiltIn::AbiEncodeCall => {
+                self.externalize_encode_call_callee(argument_types);
+                self.types.bytes_memory()
+            }
             InternalBuiltIn::AbiEncodePacked => self.types.bytes_memory(),
             InternalBuiltIn::AbiEncodeWithSelector => self.types.bytes_memory(),
             InternalBuiltIn::AbiEncodeWithSignature => self.types.bytes_memory(),
@@ -568,6 +572,20 @@ impl<'a> BuiltInsResolver<'a> {
             }
         };
         Ok(type_id)
+    }
+
+    /// Interns the externalized type of an `External` callee for the AST to look up.
+    /// A `Public` function value was named without a receiver, so it is internal; a
+    /// declaration reached through a type name already carries its externalized type.
+    fn externalize_encode_call_callee(&mut self, argument_types: &[TypeId]) {
+        let Some(&callee) = argument_types.first() else {
+            return;
+        };
+        if let Type::Function(function_type) = self.types.get_type_by_id(callee)
+            && function_type.visibility == FunctionTypeVisibility::External
+        {
+            self.types.externalize_function_type(callee);
+        }
     }
 
     fn type_of_abi_decode(

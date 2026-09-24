@@ -23,6 +23,9 @@ pub struct TypeRegistry {
     // between contract/interface types. The `NodeId`s correspond to the
     // `definition_id` in the respective `Type` variants.
     super_types: Map<NodeId, Vec<NodeId>>,
+    // Each function type `externalize_function_type` was given, mapped to its
+    // answer, identity included.
+    externalized_function_types: Map<TypeId, TypeId>,
     // Some implicit conversion rules are version dependant. The version is
     // threaded in here so we can gate those rules on it.
     language_version: LanguageVersion,
@@ -93,6 +96,7 @@ impl TypeRegistry {
         Self {
             types,
             super_types: Map::default(),
+            externalized_function_types: Map::default(),
             language_version,
 
             address_type_id: TypeId(address_type),
@@ -507,6 +511,7 @@ impl TypeRegistry {
                 .all(|parameter_type_id| self.is_externalized(*parameter_type_id))
             && self.is_externalized(function_type.return_type)
         {
+            self.externalized_function_types.insert(type_id, type_id);
             return type_id;
         }
         let function_type = function_type.clone();
@@ -520,7 +525,16 @@ impl TypeRegistry {
             return_type: self.externalize_type(function_type.return_type),
             ..function_type
         };
-        self.register_type(Type::Function(externalized_function_type))
+        let externalized_type_id = self.register_type(Type::Function(externalized_function_type));
+        self.externalized_function_types
+            .insert(type_id, externalized_type_id);
+        externalized_type_id
+    }
+
+    /// The externalized form of the function type `type_id`, if analysis asked
+    /// for it. `None` means it was never externalized, not that it has no such form.
+    pub fn externalized_function_type_id(&self, type_id: TypeId) -> Option<TypeId> {
+        self.externalized_function_types.get(&type_id).copied()
     }
 
     // Marks a function type as partially applied:

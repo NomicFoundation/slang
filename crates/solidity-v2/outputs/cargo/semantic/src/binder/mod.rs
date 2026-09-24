@@ -121,10 +121,6 @@ pub struct Binder {
     /// the type matching the result type, and hence stored in the typing of
     /// the expression (ie. `node_typing` above).
     common_operand_typing: Map<NodeId, Typing>,
-    /// Function type an `abi.encodeCall` encodes its arguments against: its
-    /// callee with every `calldata` parameter turned into `memory`, indexed by
-    /// the call expression's `NodeId`. The callee keeps its own typing.
-    encode_call_callee_types: Map<NodeId, TypeId>,
     /// Linearisations, as a vector of definitions, indexed by the
     /// contract/interface definition's `NodeId`
     linearisations: Map<NodeId, Vec<NodeId>>,
@@ -486,19 +482,6 @@ impl Binder {
             previous_typing.is_some(),
             "update_node_typing called on node {node_id:?} with no existing typing"
         );
-    }
-
-    /// The function type the `abi.encodeCall` at `node_id` encodes against,
-    /// `None` for a callee that is no externally callable function.
-    pub fn encode_call_callee_type_id(&self, node_id: NodeId) -> Option<TypeId> {
-        self.encode_call_callee_types.get(&node_id).copied()
-    }
-
-    pub(crate) fn set_encode_call_callee_type(&mut self, node_id: NodeId, type_id: TypeId) {
-        let previous = self.encode_call_callee_types.insert(node_id, type_id);
-        if previous.is_some() {
-            unreachable!("encode call callee type for node {node_id:?} already set");
-        }
     }
 
     pub(crate) fn set_common_operand_type(&mut self, node_id: NodeId, type_id: Option<TypeId>) {

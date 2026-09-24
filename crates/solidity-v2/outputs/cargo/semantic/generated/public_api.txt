@@ -78,7 +78,6 @@ pub fn slang_solidity_v2_semantic::binder::Binder::assembly_block_referenced_def
 pub fn slang_solidity_v2_semantic::binder::Binder::common_operand_typing(&self, slang_solidity_v2_common::nodes::NodeId) -> &slang_solidity_v2_semantic::binder::Typing
 pub fn slang_solidity_v2_semantic::binder::Binder::definitions(&self) -> &slang_solidity_v2_common::collections::aliases::Map<slang_solidity_v2_common::nodes::NodeId, slang_solidity_v2_semantic::binder::Definition>
 pub fn slang_solidity_v2_semantic::binder::Binder::enclosing_definition_node_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_common::nodes::NodeId>
-pub fn slang_solidity_v2_semantic::binder::Binder::encode_call_callee_type_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<slang_solidity_v2_semantic::types::TypeId>
 pub fn slang_solidity_v2_semantic::binder::Binder::find_definition_by_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&slang_solidity_v2_semantic::binder::Definition>
 pub fn slang_solidity_v2_semantic::binder::Binder::find_definition_by_identifier_node_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&slang_solidity_v2_semantic::binder::Definition>
 pub fn slang_solidity_v2_semantic::binder::Binder::find_reference_by_identifier_node_id(&self, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&slang_solidity_v2_semantic::binder::Reference>
@@ -769,6 +768,7 @@ impl core::marker::Copy for slang_solidity_v2_semantic::types::TypeId
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::TypeId
 pub struct slang_solidity_v2_semantic::types::TypeRegistry
 impl slang_solidity_v2_semantic::types::TypeRegistry
+pub fn slang_solidity_v2_semantic::types::TypeRegistry::externalized_function_type_id(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<slang_solidity_v2_semantic::types::TypeId>
 pub fn slang_solidity_v2_semantic::types::TypeRegistry::get_type_by_id(&self, slang_solidity_v2_semantic::types::TypeId) -> &slang_solidity_v2_semantic::types::Type
 pub fn slang_solidity_v2_semantic::types::TypeRegistry::number_value_of_type_id(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<slang_solidity_v2_semantic::types::Number>
 pub fn slang_solidity_v2_semantic::types::TypeRegistry::type_id_is_function_and_overrides(&self, slang_solidity_v2_semantic::types::TypeId, slang_solidity_v2_semantic::types::TypeId) -> bool

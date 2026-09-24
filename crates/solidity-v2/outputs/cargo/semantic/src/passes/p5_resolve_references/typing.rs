@@ -926,11 +926,6 @@ impl Pass<'_> {
                 }
             }
             Typing::BuiltIn(built_in) => {
-                if built_in == InternalBuiltIn::AbiEncodeCall
-                    && let Some(callee) = arguments.first()
-                {
-                    self.record_encode_call_callee_type(node, callee);
-                }
                 match self
                     .built_ins_resolver()
                     .type_of_function_call(&built_in, argument_types.as_deref())
@@ -977,50 +972,6 @@ impl Pass<'_> {
                     Typing::Unresolved
                 }
             }
-        }
-    }
-
-    /// Records on the `abi.encodeCall` at `node` the function type it encodes
-    /// against: solc converts the callee with `asExternallyCallableFunction`,
-    /// which turns every `calldata` parameter into `memory`. The callee's own
-    /// typing is left as it is; nothing is recorded for a callee that is no
-    /// externally callable function.
-    fn record_encode_call_callee_type(
-        &mut self,
-        node: &ir::FunctionCallExpression,
-        callee: &ir::Expression,
-    ) {
-        let Typing::Resolved(type_id) = *self.raw_typing_of_expression(callee) else {
-            return;
-        };
-        if let Some(externalized_type_id) = self.externalized_callee_type_id(type_id) {
-            self.binder
-                .set_encode_call_callee_type(node.id(), externalized_type_id);
-        }
-    }
-
-    /// The type an externally callable callee is dispatched through, for a
-    /// function value and for a declaration reached through a contract or
-    /// interface type name (`I.f`, a foreign `C.f`) alike.
-    fn externalized_callee_type_id(&mut self, type_id: TypeId) -> Option<TypeId> {
-        match self.types.get_type_by_id(type_id) {
-            // A `Public` function type here was named without a receiver, so it
-            // is reached internally; the declaration form is a `UserMetaType`.
-            Type::Function(function_type) => {
-                matches!(function_type.visibility, FunctionTypeVisibility::External)
-                    .then(|| self.types.externalize_function_type(type_id))
-            }
-            // solc encodes `I.f` and a foreign `C.f` against the type the
-            // declaration is dispatched through.
-            Type::UserMetaType(UserMetaType { definition_id }) => {
-                match self.binder.find_definition_by_id(*definition_id) {
-                    Some(Definition::Function(function_definition)) => {
-                        function_definition.externalized_type_id
-                    }
-                    _ => None,
-                }
-            }
-            _ => None,
         }
     }
 

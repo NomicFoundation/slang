@@ -1,3 +1,7 @@
+use slang_solidity_v2_ir::ir::{self, NodeIdentity};
+use slang_solidity_v2_semantic::built_ins::InternalBuiltIn;
+use slang_solidity_v2_semantic::{binder, types};
+
 use super::super::{FunctionCallExpressionStruct, Type};
 
 impl FunctionCallExpressionStruct {
@@ -10,16 +14,46 @@ impl FunctionCallExpressionStruct {
         })
     }
 
-    /// For an `abi.encodeCall`, the function type the call encodes its
-    /// arguments against: the callee as solc dispatches it, with every
-    /// `calldata` parameter turned into `memory`. The callee's own type is
-    /// unchanged by this; `None` for any other call, and for a callee that is
-    /// no externally callable function.
+    /// For an `abi.encodeCall`, the externalized function type the call encodes
+    /// its arguments against, with `calldata` parameters transformed into
+    /// `memory`. `None` for any other call, and for a callee that is not an
+    /// externally callable function.
     pub fn encode_call_callee_type(&self) -> Option<Type> {
-        let type_id = self
-            .semantic
+        let semantic = &self.semantic;
+        let binder::Typing::BuiltIn(InternalBuiltIn::AbiEncodeCall) = semantic
             .binder()
-            .encode_call_callee_type_id(self.ir_node.id())?;
-        Some(Type::create(type_id, &self.semantic))
+            .node_typing(self.ir_node.operand.node_id()?)
+        else {
+            return None;
+        };
+        let ir::ArgumentsDeclaration::PositionalArguments(arguments) = &self.ir_node.arguments
+        else {
+            return None;
+        };
+        let callee_type_id = semantic
+            .binder()
+            .node_typing(arguments.first()?.node_id()?)
+            .as_type_id()?;
+        let type_id = match semantic.types().get_type_by_id(callee_type_id) {
+            // A `Public` function value was named without a receiver, so it is internal.
+            types::Type::Function(function_type)
+                if function_type.visibility == types::FunctionTypeVisibility::External =>
+            {
+                semantic
+                    .types()
+                    .externalized_function_type_id(callee_type_id)
+            }
+            // A declaration reached through a type name carries its externalized type.
+            types::Type::UserMetaType(types::UserMetaType { definition_id }) => {
+                match semantic.binder().find_definition_by_id(*definition_id) {
+                    Some(binder::Definition::Function(definition)) => {
+                        definition.externalized_type_id
+                    }
+                    _ => None,
+                }
+            }
+            _ => None,
+        }?;
+        Some(Type::create(type_id, semantic))
     }
 }
