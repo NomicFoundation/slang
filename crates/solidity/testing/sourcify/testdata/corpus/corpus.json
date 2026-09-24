@@ -1,0 +1,5 @@
+{
+  "format_version": 1,
+  "description": "In-repo test cases, run by unit tests and the PR workflow. Add a contract JSON under contracts/ to add a case.",
+  "contract_count": 3
+}

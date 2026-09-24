@@ -19,9 +19,11 @@ slang_solidity = { workspace = true, features = [
   "__private_ariadne_errors",
   "__private_testing_utils",
 ] }
+slang_solidity_v2 = { workspace = true }
 solidity_testing_utils = { workspace = true }
 solidity_v2_testing_utils = { workspace = true }
 tar = { workspace = true }
+toml = { workspace = true }
 
 [lints]
 workspace = true
