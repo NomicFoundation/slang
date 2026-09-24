@@ -206,6 +206,23 @@ impl Binder {
         self.enclosing_definitions.get(&node_id).copied()
     }
 
+    /// Whether `definition_id` is declared by a library.
+    pub(crate) fn is_library_function(&self, definition_id: Option<NodeId>) -> bool {
+        definition_id
+            .and_then(|definition_id| self.enclosing_definition_node_id(definition_id))
+            .and_then(|owner_id| self.find_definition_by_id(owner_id))
+            .is_some_and(|definition| matches!(definition, Definition::Library(_)))
+    }
+
+    /// Whether `definition_id` is a modifier. A modifier has a function type so
+    /// that its invocation can be checked against its parameters, but it is not
+    /// callable from an expression.
+    pub(crate) fn is_modifier_definition(&self, definition_id: Option<NodeId>) -> bool {
+        definition_id
+            .and_then(|definition_id| self.find_definition_by_id(definition_id))
+            .is_some_and(|definition| matches!(definition, Definition::Modifier(_)))
+    }
+
     pub(crate) fn insert_scope(&mut self, scope: Scope) -> ScopeId {
         let scope_id = ScopeId(self.scopes.len());
 

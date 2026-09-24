@@ -1,5 +1,7 @@
 use slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind;
-use slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable;
+use slang_solidity_v2_common::diagnostics::kinds::type_system::{
+    EncodeCallCalleeNotExternal, ExpressionNotCallable,
+};
 use slang_solidity_v2_common::nodes::NodeId;
 
 use super::binder::{Binder, Definition, Typing};
@@ -24,6 +26,9 @@ pub use internal::InternalBuiltIn;
 pub(crate) enum BuiltInCallError {
     /// The call is invalid, and this is the diagnostic to report for it.
     Diagnostic(DiagnosticKind),
+    /// The call is invalid because of one argument, and this is the diagnostic
+    /// to report at that argument.
+    ArgumentDiagnostic { index: usize, kind: DiagnosticKind },
     /// The call is invalid, but no diagnostic is implemented for it yet. The
     /// `TODO(validation)` comment at each site tracks what is missing.
     // TODO: remove when proper diagnostics are implemented
@@ -508,7 +513,7 @@ impl<'a> BuiltInsResolver<'a> {
             InternalBuiltIn::AbiDecode => self.type_of_abi_decode(argument_types)?,
             InternalBuiltIn::AbiEncode => self.types.bytes_memory(),
             InternalBuiltIn::AbiEncodeCall => {
-                self.externalize_encode_call_callee(argument_types);
+                self.check_encode_call_callee(argument_types)?;
                 self.types.bytes_memory()
             }
             InternalBuiltIn::AbiEncodePacked => self.types.bytes_memory(),
@@ -577,17 +582,50 @@ impl<'a> BuiltInsResolver<'a> {
         Ok(type_id)
     }
 
-    /// Interns the externalized type of an `External` callee for the AST to look up.
-    /// A `Public` function value was named without a receiver, so it is internal; a
-    /// declaration reached through a type name already carries its externalized type.
-    fn externalize_encode_call_callee(&mut self, argument_types: &[TypeId]) {
+    /// Checks that the `abi.encodeCall` callee is called externally, and interns
+    /// the type the call encodes against for the AST to look up.
+    fn check_encode_call_callee(
+        &mut self,
+        argument_types: &[TypeId],
+    ) -> Result<(), BuiltInCallError> {
         let Some(&callee) = argument_types.first() else {
-            return;
+            return Ok(());
         };
-        if let Type::Function(function_type) = self.types.get_type_by_id(callee)
-            && function_type.visibility == FunctionTypeVisibility::External
-        {
-            self.types.externalize_function_type(callee);
+        let not_external = || BuiltInCallError::ArgumentDiagnostic {
+            index: 0,
+            kind: EncodeCallCalleeNotExternal.into(),
+        };
+        match self.types.get_type_by_id(callee) {
+            Type::Function(function_type) => {
+                // TODO(validation) SDR[1240, 1241, 1242]: report a modifier callee, it is no
+                // function value.
+                if self
+                    .binder
+                    .is_modifier_definition(function_type.definition_id)
+                {
+                    return Ok(());
+                }
+                // A `Public` value was named without a receiver; a library function is
+                // delegate-called.
+                if self.binder.is_library_function(function_type.definition_id)
+                    || function_type.visibility != FunctionTypeVisibility::External
+                {
+                    return Err(not_external());
+                }
+                self.types.externalize_function_type(callee);
+                Ok(())
+            }
+            // A function reached through a type name already carries its externalized type.
+            Type::UserMetaType(UserMetaType { definition_id }) => {
+                match self.binder.find_definition_by_id(*definition_id) {
+                    Some(Definition::Event(_) | Definition::Error(_)) => Err(not_external()),
+                    // TODO(validation) SDR[1240, 1241, 1242]: report a type name that declares
+                    // no function.
+                    _ => Ok(()),
+                }
+            }
+            // TODO(validation) SDR[1240, 1241, 1242]: report a callee that is no function value.
+            _ => Ok(()),
         }
     }
 

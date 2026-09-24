@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.13'.
+   ╭─[input.sol:9:11]
+   │
+ 9 │     using {f} for uint256;
+   │           ─┬─  
+   │            ╰─── Error occurred here.
+───╯
+
+[type-system/encode-call-callee-not-external] Error: Expected regular external function type, or external view on public function.
+    ╭─[input.sol:14:31]
+    │
+ 14 │         return abi.encodeCall(x.f, (1));
+    │                               ─┬─  
+    │                                ╰─── Error occurred here.
+────╯
