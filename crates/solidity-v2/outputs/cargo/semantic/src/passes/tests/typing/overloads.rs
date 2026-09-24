@@ -101,7 +101,7 @@ fn test_overload_resolution_rejects_byte_array_narrowing() {
 fn test_overload_resolution_selects_address_overload_for_address_literal() {
     let setup = "
         function pick(address a, uint256 v) internal pure returns (uint8) { a; v; return 1; }
-        function pick(uint256 v) internal pure returns (uint16) { v; return 2; }
+        function pick(uint256 u, uint256 v) internal pure returns (uint16) { u; v; return 2; }
     ";
     let (type_, _) = expression("pick(0xb701a286753ADe3704e1DcFD93507454A2307641, 1)")
         .with_members(setup)
