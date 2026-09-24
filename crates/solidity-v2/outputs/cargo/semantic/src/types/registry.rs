@@ -189,7 +189,7 @@ impl TypeRegistry {
                 Type::Address(_),
             ) => *from_payable,
 
-            // An address literal has type `address` (non-payable) since 0.8.0.
+            // solc types an address literal as non-payable `address`.
             (
                 Type::Literal(LiteralKind::Address { .. }),
                 Type::Address(AddressType { is_payable }),
