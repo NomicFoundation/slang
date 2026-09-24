@@ -182,13 +182,6 @@ fn test_explicit_enum_cast() {
         matches!(type_, Type::Enum(_)),
         "expected `E(1)` to type as the enum, got {type_:?}",
     );
-
-    // User defined value types are not castable by name: conversion goes
-    // through `wrap`/`unwrap`.
-    let (type_, _) = expression("T(1)")
-        .with_members("type T is uint256;")
-        .into_type();
-    assert_eq!(type_, None);
 }
 
 #[test]

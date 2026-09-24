@@ -14,12 +14,12 @@ pragma solidity ^0.8.29;
 contract C {
     struct S { uint a; }
 
-    function f(uint x, bytes memory b) internal pure {
+    function f(uint x, bytes memory b, uint[] memory a) internal pure {
         S(x);
         abi.decode(b, (uint[]));
         uint(x);
         (uint)(x);
-        uint[](x);
+        uint[](a);
     }
 }
 "#,
@@ -130,7 +130,7 @@ fn meta_type_ast_wrappers_are_reachable_via_get_type() {
     let parenthesized_cast = &calls[3];
     assert!(parenthesized_cast.is_type_conversion());
 
-    // `uint[](x)`: an array-type cast; the operand `uint[]` is an index-access
+    // `uint[](a)`: an array-type cast; the operand `uint[]` is an index-access
     // expression carrying a `Type::MetaType` wrapping the array type, so it is
     // a type conversion rather than a function call.
     let array_cast = &calls[4];

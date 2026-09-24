@@ -3553,6 +3553,7 @@ pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnos
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ArrayLengthZero(slang_solidity_v2_common::diagnostics::kinds::type_system::ArrayLengthZero)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::CannotCallViaContractTypeName(slang_solidity_v2_common::diagnostics::kinds::type_system::CannotCallViaContractTypeName)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ConstantArithmeticError(slang_solidity_v2_common::diagnostics::kinds::type_system::ConstantArithmeticError)
+pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ExplicitConversionNotAllowed(slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ExpressionNotAValue(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ExpressionNotAnLValue(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue)
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::ExpressionNotCallable(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotCallable)
@@ -3587,6 +3588,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::CannotCallViaContractTypeName) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ConstantArithmeticError> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ConstantArithmeticError) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
@@ -3761,6 +3764,25 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ConstantArithmeticError::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ConstantArithmeticError::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ConstantArithmeticError::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed::eq(&self, &slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed> for slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::TypeSystemDiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue
 pub slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue::kind: slang_solidity_v2_common::diagnostics::kinds::type_system::NotAValueKind
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue
@@ -4378,6 +4400,8 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_syst
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::CannotCallViaContractTypeName) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ConstantArithmeticError> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ConstantArithmeticError) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAnLValue> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -5120,6 +5144,10 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ConstantArithmeticError::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ConstantArithmeticError::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ConstantArithmeticError::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExplicitConversionNotAllowed::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::type_system::ExpressionNotAValue::message(&self) -> alloc::string::String

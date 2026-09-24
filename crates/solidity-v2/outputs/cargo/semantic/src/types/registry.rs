@@ -150,6 +150,10 @@ impl TypeRegistry {
         self.super_types.insert(type_node_id, super_type_node_ids);
     }
 
+    pub(crate) fn language_version(&self) -> LanguageVersion {
+        self.language_version
+    }
+
     pub fn get_type_by_id(&self, type_id: TypeId) -> &Type {
         self.types.get_index(type_id.0).unwrap()
     }
@@ -252,10 +256,11 @@ impl TypeRegistry {
                 Type::ByteArray(ByteArrayType { width }),
             ) if *bytes == *width => true,
 
+            // A string literal fits any `bytesN` at least as long as it is.
             (
                 Type::Literal(LiteralKind::HexString { bytes } | LiteralKind::String { bytes }),
                 Type::ByteArray(ByteArrayType { width }),
-            ) if *bytes == *width as usize => true,
+            ) => *bytes <= *width as usize,
 
             (
                 Type::Array(ArrayType {
