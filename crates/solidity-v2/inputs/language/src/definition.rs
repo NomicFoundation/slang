@@ -247,14 +247,19 @@ language_v2_macros::compile!(Language(
                         items = [
                             Trivia(
                                 name = PragmaWhitespace,
-                                scanner = OneOrMore(Choice([Atom(" "), Atom("\t")]))
+                                scanner = OneOrMore(Fragment(PragmaSpaceOrTab))
+                            ),
+                            Fragment(
+                                name = PragmaSpaceOrTab,
+                                scanner = Choice([Atom(" "), Atom("\t")])
                             ),
                             Trivia(
                                 name = PragmaEndOfLine,
-                                scanner = Choice([
-                                    Atom("\n"),
-                                    Sequence([Atom("\r"), Optional(Atom("\n"))])
-                                ])
+                                scanner = Fragment(PragmaLineBreak)
+                            ),
+                            Fragment(
+                                name = PragmaLineBreak,
+                                scanner = Choice([Atom("\n"), Sequence([Atom("\r"), Optional(Atom("\n"))])])
                             ),
                             Trivia(
                                 name = PragmaSingleLineComment,
@@ -277,18 +282,30 @@ language_v2_macros::compile!(Language(
                             ),
                             Trivia(
                                 name = PragmaSingleLineNatSpecComment,
-                                scanner =
-                                    Sequence([Atom("///"), ZeroOrMore(Not(['\r', '\n']))])
+                                // Match consecutive `///` lines, each line keeps its line break, except for the last line of the file.
+                                scanner = Sequence([
+                                    Atom("///"),
+                                    Optional(Fragment(PragmaSingleLineNatSpecText)),
+                                    Optional(Sequence([
+                                        Fragment(PragmaLineBreak),
+                                        ZeroOrMore(Sequence([ZeroOrMore(Fragment(PragmaSpaceOrTab)), Atom("///"), Optional(Fragment(PragmaSingleLineNatSpecText)), Fragment(PragmaLineBreak)])),
+                                        Optional(Sequence([ZeroOrMore(Fragment(PragmaSpaceOrTab)), Atom("///"), Fragment(PragmaSingleLineNatSpecText)]))
+                                    ]))
+                                ])
+                            ),
+                            Fragment(
+                                name = PragmaSingleLineNatSpecText,
+                                // The text of a `///` line, which can't start with `/`
+                                scanner = Sequence([Not(['/', '\r', '\n']), ZeroOrMore(Not(['\r', '\n']))])
                             ),
                             Trivia(
                                 name = PragmaMultiLineNatSpecComment,
                                 // https://stackoverflow.com/a/36328890
                                 scanner = Sequence([
                                     Atom("/**"),
-                                    Optional(Sequence([
-                                        Not(['/', '*']),
-                                        ZeroOrMore(Not(['*']))
-                                    ])),
+                                    // `/**/` and `/***` are regular comments
+                                    Not(['/', '*']),
+                                    ZeroOrMore(Not(['*'])),
                                     OneOrMore(Atom("*")),
                                     ZeroOrMore(Sequence([
                                         Not(['/', '*']),
@@ -1510,14 +1527,19 @@ language_v2_macros::compile!(Language(
                             items = [
                                 Trivia(
                                     name = Whitespace,
-                                    scanner = OneOrMore(Choice([Atom(" "), Atom("\t")]))
+                                    scanner = OneOrMore(Fragment(SpaceOrTab))
+                                ),
+                                Fragment(
+                                    name = SpaceOrTab,
+                                    scanner = Choice([Atom(" "), Atom("\t")])
                                 ),
                                 Trivia(
                                     name = EndOfLine,
-                                    scanner = Choice([
-                                        Atom("\n"),
-                                        Sequence([Atom("\r"), Optional(Atom("\n"))])
-                                    ])
+                                    scanner = Fragment(LineBreak)
+                                ),
+                                Fragment(
+                                    name = LineBreak,
+                                    scanner = Choice([Atom("\n"), Sequence([Atom("\r"), Optional(Atom("\n"))])])
                                 ),
                                 Trivia(
                                     name = SingleLineComment,
@@ -1540,18 +1562,30 @@ language_v2_macros::compile!(Language(
                                 ),
                                 Trivia(
                                     name = SingleLineNatSpecComment,
-                                    scanner =
-                                        Sequence([Atom("///"), ZeroOrMore(Not(['\r', '\n']))])
+                                    // Match consecutive `///` lines, each line keeps its line break, except for the last line of the file.
+                                    scanner = Sequence([
+                                        Atom("///"),
+                                        Optional(Fragment(SingleLineNatSpecText)),
+                                        Optional(Sequence([
+                                            Fragment(LineBreak),
+                                            ZeroOrMore(Sequence([ZeroOrMore(Fragment(SpaceOrTab)), Atom("///"), Optional(Fragment(SingleLineNatSpecText)), Fragment(LineBreak)])),
+                                            Optional(Sequence([ZeroOrMore(Fragment(SpaceOrTab)), Atom("///"), Fragment(SingleLineNatSpecText)]))
+                                        ]))
+                                    ])
+                                ),
+                                Fragment(
+                                    name = SingleLineNatSpecText,
+                                    // The text of a `///` line, which can't start with `/`
+                                    scanner = Sequence([Not(['/', '\r', '\n']), ZeroOrMore(Not(['\r', '\n']))])
                                 ),
                                 Trivia(
                                     name = MultiLineNatSpecComment,
                                     // https://stackoverflow.com/a/36328890
                                     scanner = Sequence([
                                         Atom("/**"),
-                                        Optional(Sequence([
-                                            Not(['/', '*']),
-                                            ZeroOrMore(Not(['*']))
-                                        ])),
+                                        // `/**/` and `/***` are regular comments
+                                        Not(['/', '*']),
+                                        ZeroOrMore(Not(['*'])),
                                         OneOrMore(Atom("*")),
                                         ZeroOrMore(Sequence([
                                             Not(['/', '*']),
@@ -4408,14 +4442,19 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                         items = [
                             Trivia(
                                 name = YulWhitespace,
-                                scanner = OneOrMore(Choice([Atom(" "), Atom("\t")]))
+                                scanner = OneOrMore(Fragment(YulSpaceOrTab))
+                            ),
+                            Fragment(
+                                name = YulSpaceOrTab,
+                                scanner = Choice([Atom(" "), Atom("\t")])
                             ),
                             Trivia(
                                 name = YulEndOfLine,
-                                scanner = Choice([
-                                    Atom("\n"),
-                                    Sequence([Atom("\r"), Optional(Atom("\n"))])
-                                ])
+                                scanner = Fragment(YulLineBreak)
+                            ),
+                            Fragment(
+                                name = YulLineBreak,
+                                scanner = Choice([Atom("\n"), Sequence([Atom("\r"), Optional(Atom("\n"))])])
                             ),
                             Trivia(
                                 name = YulSingleLineComment,
@@ -4438,18 +4477,30 @@ IdentifierPathTailElement: (Period, IdentifierPathElement) = {
                             ),
                             Trivia(
                                 name = YulSingleLineNatSpecComment,
-                                scanner =
-                                    Sequence([Atom("///"), ZeroOrMore(Not(['\r', '\n']))])
+                                // Match consecutive `///` lines, each line keeps its line break, except for the last line of the file.
+                                scanner = Sequence([
+                                    Atom("///"),
+                                    Optional(Fragment(YulSingleLineNatSpecText)),
+                                    Optional(Sequence([
+                                        Fragment(YulLineBreak),
+                                        ZeroOrMore(Sequence([ZeroOrMore(Fragment(YulSpaceOrTab)), Atom("///"), Optional(Fragment(YulSingleLineNatSpecText)), Fragment(YulLineBreak)])),
+                                        Optional(Sequence([ZeroOrMore(Fragment(YulSpaceOrTab)), Atom("///"), Fragment(YulSingleLineNatSpecText)]))
+                                    ]))
+                                ])
+                            ),
+                            Fragment(
+                                name = YulSingleLineNatSpecText,
+                                // The text of a `///` line, which can't start with `/`
+                                scanner = Sequence([Not(['/', '\r', '\n']), ZeroOrMore(Not(['\r', '\n']))])
                             ),
                             Trivia(
                                 name = YulMultiLineNatSpecComment,
                                 // https://stackoverflow.com/a/36328890
                                 scanner = Sequence([
                                     Atom("/**"),
-                                    Optional(Sequence([
-                                        Not(['/', '*']),
-                                        ZeroOrMore(Not(['*']))
-                                    ])),
+                                    // `/**/` and `/***` are regular comments
+                                    Not(['/', '*']),
+                                    ZeroOrMore(Not(['*'])),
                                     OneOrMore(Atom("*")),
                                     ZeroOrMore(Sequence([
                                         Not(['/', '*']),
