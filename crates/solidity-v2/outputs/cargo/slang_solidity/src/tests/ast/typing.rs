@@ -2,6 +2,8 @@ use slang_solidity_v2_common::built_ins::BuiltIn;
 
 use super::fixtures;
 use crate::ast::visitor::{Visitor, accept_source_unit};
+use crate::compilation::CompilationUnit;
+use crate::tests::support;
 use crate::{ast, define_fixture};
 
 define_fixture!(
@@ -894,29 +896,29 @@ impl Visitor for EncodeCallCalleeTypes {
     }
 }
 
-/// The types the fixture's `abi.encodeCall` calls encode against, in source
-/// order of their callees: `I.f`, `Other.publicFn`, `this.g`, `p`.
-fn encode_call_callee_types() -> [ast::Type; 4] {
+/// What the fixture's `abi.encodeCall` calls encode against, in source order
+/// of their callees: `I.f`, `Other.publicFn`, `this.g`, `p`.
+fn encode_call_callee_types() -> [Option<ast::Type>; 4] {
     let unit = EncodeCallShapes::build_compilation_unit();
-
-    let mut finder = EncodeCallCalleeTypes::default();
-    for file in unit.files() {
-        accept_source_unit(&file.ast(), &mut finder);
-    }
-
-    let callees: Vec<ast::Type> = finder
-        .types
-        .into_iter()
-        .map(|callee| callee.expect("each call records the type it encodes against"))
-        .collect();
-    callees
+    encode_call_callee_types_in(&unit)
         .try_into()
-        .unwrap_or_else(|callees: Vec<ast::Type>| {
+        .unwrap_or_else(|callees: Vec<Option<ast::Type>>| {
             panic!("four `abi.encodeCall` calls, found {}", callees.len())
         })
 }
 
-fn assert_external_taking_bytes_in_memory(shape: &str, callee: &ast::Type) {
+fn encode_call_callee_types_in(unit: &CompilationUnit) -> Vec<Option<ast::Type>> {
+    let mut finder = EncodeCallCalleeTypes::default();
+    for file in unit.files() {
+        accept_source_unit(&file.ast(), &mut finder);
+    }
+    finder.types
+}
+
+fn assert_external_taking_bytes_in_memory(shape: &str, callee: Option<ast::Type>) {
+    let Some(callee) = callee else {
+        panic!("the call on `{shape}` should have a type it encodes against");
+    };
     let ast::Type::Function(function) = callee else {
         panic!("the `{shape}` callee should type as a function");
     };
@@ -941,18 +943,49 @@ fn assert_external_taking_bytes_in_memory(shape: &str, callee: &ast::Type) {
 }
 
 #[test]
-fn test_encode_call_declaration_callee_type() {
-    let [via_interface, via_foreign, via_this, _] = encode_call_callee_types();
+fn test_encode_call_type_name_callee_type() {
+    let [via_interface, via_foreign, _, _] = encode_call_callee_types();
 
-    assert_external_taking_bytes_in_memory("I.f", &via_interface);
-    assert_external_taking_bytes_in_memory("Other.publicFn", &via_foreign);
-    // A member access already externalizes `this.g`, so the call records its own type.
-    assert_external_taking_bytes_in_memory("this.g", &via_this);
+    assert_external_taking_bytes_in_memory("I.f", via_interface);
+    assert_external_taking_bytes_in_memory("Other.publicFn", via_foreign);
 }
 
 #[test]
-fn test_encode_call_pointer_callee_type() {
-    let [_, _, _, via_pointer] = encode_call_callee_types();
+fn test_encode_call_function_value_callee_type() {
+    let [_, _, via_this, via_pointer] = encode_call_callee_types();
 
-    assert_external_taking_bytes_in_memory("p", &via_pointer);
+    assert_external_taking_bytes_in_memory("this.g", via_this);
+    assert_external_taking_bytes_in_memory("p", via_pointer);
+}
+
+/// Compiled directly rather than through the fixture macro, which asserts the
+/// unit has no diagnostics; rejecting this callee is a diagnostic of its own.
+#[test]
+fn test_encode_call_internal_reference_callee_has_no_type() {
+    let unit = support::compile([(
+        "main.sol".into(),
+        r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+contract C {
+    function publicFn(bytes calldata data) public pure returns (uint256) {
+        return data.length;
+    }
+
+    function encode(bytes calldata data) external pure returns (bytes memory) {
+        return abi.encodeCall(publicFn, (data));
+    }
+}
+"#,
+    )]);
+
+    let callees = encode_call_callee_types_in(&unit);
+    let [callee] = callees.as_slice() else {
+        panic!("one `abi.encodeCall` call, found {}", callees.len());
+    };
+    assert!(
+        callee.is_none(),
+        "a bare `publicFn` callee is an internal reference, with no type to encode against"
+    );
 }
