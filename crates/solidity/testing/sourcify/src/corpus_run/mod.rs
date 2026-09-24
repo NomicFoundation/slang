@@ -85,7 +85,7 @@ pub fn run(cmd: &RunCorpusCommand) -> Result<()> {
         }
         summary.lock().expect("summary lock").add(&outcome);
         let n = done.fetch_add(1, Ordering::Relaxed) + 1;
-        if n % 1000 == 0 || n == total {
+        if n.is_multiple_of(1000) || n == total {
             eprintln!("{n}/{total}");
         }
         Ok(())
