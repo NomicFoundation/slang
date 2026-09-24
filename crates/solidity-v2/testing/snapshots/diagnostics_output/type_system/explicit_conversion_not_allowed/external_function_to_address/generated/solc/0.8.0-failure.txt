@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 5030] Error: Explicit type conversion not allowed from "function () external" to "address". To obtain the address of the contract of the function, you can use the .address member of the function.
+   ╭─[input.sol:8:17]
+   │
+ 8 │         return (address(this.g), this.g.address);
+   │                 ───────┬───────  
+   │                        ╰───────── Error occurred here.
+───╯

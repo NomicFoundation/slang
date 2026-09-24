@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/explicit-conversion-not-allowed] Error: Explicit type conversion is not allowed from the argument's type to the target type.
+   ╭─[input.sol:8:16]
+   │
+ 8 │         return uint256(this.g);
+   │                ───────┬───────  
+   │                       ╰───────── Error occurred here.
+───╯
