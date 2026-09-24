@@ -1,5 +1,6 @@
 //! Aggregates outcomes into the census and applies the expected-failures gate.
 
+use std::cmp::Reverse;
 use std::collections::BTreeMap;
 use std::fmt::Write;
 
@@ -141,7 +142,7 @@ impl Summary {
             .unwrap();
             writeln!(out, "|---|---|---|---|---|---|").unwrap();
             let mut buckets: Vec<_> = self.buckets.iter().collect();
-            buckets.sort_by(|(_, a), (_, b)| b.contracts.cmp(&a.contracts));
+            buckets.sort_by_key(|(_, bucket)| Reverse(bucket.contracts));
             for (key, bucket) in buckets {
                 let status = match expected.get(key) {
                     Some(entry) if entry.deliberate => "deliberate".to_owned(),
@@ -166,7 +167,7 @@ impl Summary {
             writeln!(out).unwrap();
             writeln!(out, "{title}:").unwrap();
             let mut entries: Vec<_> = map.iter().collect();
-            entries.sort_by(|(_, a), (_, b)| b.contracts.cmp(&a.contracts));
+            entries.sort_by_key(|(_, bucket)| Reverse(bucket.contracts));
             for (key, bucket) in entries {
                 writeln!(
                     out,
