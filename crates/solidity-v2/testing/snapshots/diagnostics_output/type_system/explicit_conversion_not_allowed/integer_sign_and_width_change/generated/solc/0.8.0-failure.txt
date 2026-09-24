@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9640] Error: Explicit type conversion not allowed from "uint16" to "int8".
+   ╭─[input.sol:7:17]
+   │
+ 7 │         return (int8(x), int16(x), uint8(x));
+   │                 ───┬───  
+   │                    ╰───── Error occurred here.
+───╯

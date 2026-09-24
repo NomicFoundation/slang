@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9640] Error: Explicit type conversion not allowed from "int_const -1" to "address".
+   ╭─[input.sol:6:17]
+   │
+ 6 │         return (address(-1), address(0), address(0x1234));
+   │                 ─────┬─────  
+   │                      ╰─────── Error occurred here.
+───╯

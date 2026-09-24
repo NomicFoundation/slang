@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9640] Error: Explicit type conversion not allowed from "int_const -1" to "MyUInt".
+   ╭─[input.sol:9:17]
+   │
+ 9 │         return (MyUInt(-1), MyUInt.wrap(1));
+   │                 ─────┬────  
+   │                      ╰────── Error occurred here.
+───╯

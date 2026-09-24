@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 7398] Error: Explicit type conversion not allowed from non-payable "address" to "contract P", which has a payable fallback function.
+    ╭─[input.sol:10:17]
+    │
+ 10 │         return (P(a), P(payable(a)));
+    │                 ──┬─  
+    │                   ╰─── Error occurred here.
+────╯
