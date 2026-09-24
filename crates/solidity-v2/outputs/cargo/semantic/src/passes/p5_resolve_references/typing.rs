@@ -5,8 +5,9 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
 };
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
     CannotCallViaContractTypeName, ExplicitConversionNotAllowed, ExpressionNotAValue,
-    ExpressionNotAnLValue, ExpressionNotCallable, IncompatibleConditionalBranches, LiteralTooLarge,
-    NotAValueKind, PartiallyAppliedFunctionUsedAsValue, WriteToConstant,
+    ExpressionNotAnLValue, ExpressionNotCallable, IncompatibleConditionalBranches,
+    InvalidUtf8StringLiteral, LiteralTooLarge, NotAValueKind, PartiallyAppliedFunctionUsedAsValue,
+    WriteToConstant,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -19,9 +20,9 @@ use crate::built_ins::{BuiltInCallError, InternalBuiltIn};
 use crate::context::FileNodeMapper;
 use crate::passes::common::node_location;
 use crate::types::{
-    AddressType, ArraySliceType, ArrayType, ContractType, DataLocation, ErrorType, EventType,
-    FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType, LiteralKind, MetaType,
-    NoMobileType, Number, StringType, Type, TypeId, UserMetaType, literals,
+    AddressType, ArraySliceType, ArrayType, ContractType, ConversionError, DataLocation, ErrorType,
+    EventType, FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType, LiteralKind,
+    MetaType, NoMobileType, Number, StringType, Type, TypeId, UserMetaType, literals,
 };
 
 impl Pass<'_> {
@@ -948,8 +949,14 @@ impl Pass<'_> {
         } else {
             target_type_id
         };
-        if !self.explicitly_convertible_to(argument_type_id, type_id) {
-            self.push_diagnostic(node, ExplicitConversionNotAllowed);
+        match self.check_explicit_conversion(argument_type_id, type_id) {
+            Ok(()) => {}
+            Err(ConversionError::NotAllowed) => {
+                self.push_diagnostic(node, ExplicitConversionNotAllowed);
+            }
+            Err(ConversionError::InvalidUtf8 { position }) => {
+                self.push_diagnostic(node, InvalidUtf8StringLiteral { position });
+            }
         }
         Typing::Resolved(type_id)
     }

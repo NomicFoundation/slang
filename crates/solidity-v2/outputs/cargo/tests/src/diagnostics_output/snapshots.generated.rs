@@ -5860,6 +5860,26 @@ mod type_system {
         }
     }
 
+    mod invalid_utf_8_string_literal {
+        use super::*;
+
+        #[test]
+        fn escaped_string_to_string() -> Result<()> {
+            run(
+                "type_system/invalid_utf8_string_literal",
+                "escaped_string_to_string",
+            )
+        }
+
+        #[test]
+        fn hex_string_to_string() -> Result<()> {
+            run(
+                "type_system/invalid_utf8_string_literal",
+                "hex_string_to_string",
+            )
+        }
+    }
+
     mod literal_too_large {
         use super::*;
 

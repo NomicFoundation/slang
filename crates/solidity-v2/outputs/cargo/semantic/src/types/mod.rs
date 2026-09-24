@@ -295,6 +295,18 @@ impl From<&ir::FunctionMutability> for FunctionTypeMutability {
     }
 }
 
+/// Why a value of one type does not convert to another. Where a conversion is
+/// checked decides which diagnostic, if any, reports it.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum ConversionError {
+    /// No conversion rule applies to the pair of types.
+    NotAllowed,
+    /// A string literal whose bytes are not valid UTF-8 converts to `bytes`,
+    /// but not to `string`. `position` is the byte offset of the first invalid
+    /// sequence.
+    InvalidUtf8 { position: usize },
+}
+
 pub(crate) trait ImplicitlyConvertible<T> {
     fn implicitly_convertible_to(&self, target: T) -> bool;
 }

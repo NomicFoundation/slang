@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/invalid-utf8-string-literal] Error: This string literal cannot be converted to 'string': it contains an invalid UTF-8 sequence at byte 1.
+   ╭─[input.sol:7:17]
+   │
+ 7 │         return (string(hex"41a000"), string(hex"c3a9"), bytes(hex"41a000"));
+   │                 ─────────┬─────────  
+   │                          ╰─────────── Error occurred here.
+───╯
