@@ -278,3 +278,45 @@ fn library_functions_spell_types_by_name() {
         r#"[{"inputs":[{"internalType":"enum L.E","name":"e","type":"uint8"},{"internalType":"contract C","name":"c","type":"address"}],"name":"Err","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"enum L.E","name":"e","type":"uint8"},{"components":[{"internalType":"enum L.E","name":"e","type":"uint8"},{"internalType":"contract C","name":"c","type":"address"},{"internalType":"uint256","name":"x","type":"uint256"}],"indexed":false,"internalType":"struct L.S","name":"s","type":"tuple"}],"name":"Ev","type":"event"},{"inputs":[{"internalType":"contract C","name":"c","type":"C"},{"internalType":"contract I","name":"i","type":"I"},{"internalType":"enum L.E[]","name":"es","type":"L.E[]"},{"internalType":"enum L.E[2]","name":"ef","type":"L.E[2]"},{"internalType":"enum G","name":"g","type":"G"},{"internalType":"W","name":"w","type":"uint64"}],"name":"a","outputs":[{"internalType":"enum L.E","name":"","type":"L.E"}],"stateMutability":"pure","type":"function"},{"inputs":[{"components":[{"internalType":"enum L.E","name":"e","type":"L.E"},{"internalType":"contract C","name":"c","type":"C"},{"internalType":"uint256","name":"x","type":"uint256"}],"internalType":"struct L.S","name":"s","type":"tuple"},{"components":[{"internalType":"enum L.E","name":"e","type":"L.E"},{"internalType":"contract C","name":"c","type":"C"},{"internalType":"uint256","name":"x","type":"uint256"}],"internalType":"struct L.S[]","name":"ss","type":"tuple[]"}],"name":"b","outputs":[{"components":[{"internalType":"enum L.E","name":"e","type":"L.E"},{"internalType":"contract C","name":"c","type":"C"},{"internalType":"uint256","name":"x","type":"uint256"}],"internalType":"struct L.S","name":"","type":"tuple"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"function (uint256) external returns (enum L.E)","name":"cb","type":"function"}],"name":"d","outputs":[],"stateMutability":"pure","type":"function"}]"#
     );
 }
+
+#[test]
+fn derived_interface_matches_solc() {
+    let unit = super::InterfaceHierarchy::build_compilation_unit();
+    let abi = fixtures::find_interface(&unit, "IDerived")
+        .compute_abi()
+        .expect("the ABI is computable");
+
+    assert_eq!(
+        json(&abi),
+        r#"[{"inputs":[{"internalType":"address","name":"who","type":"address"}],"name":"Denied","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Moved","type":"event"},{"anonymous":false,"inputs":[],"name":"Paused","type":"event"},{"stateMutability":"nonpayable","type":"fallback"},{"inputs":[],"name":"balance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"move","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"pause","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}]"#
+    );
+}
+
+#[test]
+fn reached_errors_and_events_match_solc() {
+    let unit = super::ReachedErrorsAndEvents::build_compilation_unit();
+    let abi = unit
+        .find_contract_by_name("C")
+        .next()
+        .expect("contract C exists")
+        .compute_abi()
+        .expect("the ABI is computable");
+
+    assert_eq!(
+        json(&abi),
+        r#"[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"InConstructor","type":"error"},{"inputs":[],"name":"InInternalLib","type":"error"},{"inputs":[],"name":"InModifier","type":"error"},{"inputs":[],"name":"Qualified","type":"error"},{"inputs":[],"name":"ViaPointer","type":"error"},{"inputs":[],"name":"ViaRequire","type":"error"},{"anonymous":false,"inputs":[],"name":"EvFree","type":"event"},{"anonymous":false,"inputs":[],"name":"QEv","type":"event"},{"inputs":[],"name":"a","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"bool","name":"c","type":"bool"}],"name":"b","outputs":[],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"e","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"f","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"g","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"h","outputs":[],"stateMutability":"nonpayable","type":"function"}]"#
+    );
+}
+
+#[test]
+fn library_reached_errors_match_solc() {
+    let unit = super::ReachedErrorsAndEvents::build_compilation_unit();
+    let abi = fixtures::find_library(&unit, "Int")
+        .compute_abi()
+        .expect("the ABI is computable");
+
+    assert_eq!(
+        json(&abi),
+        r#"[{"inputs":[],"name":"InLibCallee","type":"error"},{"inputs":[],"name":"ext","outputs":[],"stateMutability":"pure","type":"function"}]"#
+    );
+}
