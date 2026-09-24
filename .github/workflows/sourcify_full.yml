@@ -18,7 +18,7 @@ on:
       - "crates/solidity/testing/sourcify/**"
       - "scripts/tasks/sourcify/**"
       - ".github/workflows/sourcify_full.yml"
-  workflow_dispatch:
+  workflow_dispatch: {}
 
 permissions: {}
 
@@ -71,7 +71,15 @@ jobs:
       fail-fast: false
       matrix:
         # Must stay in sync with SHARD_COUNT above.
-        shard_index: [0, 1, 2, 3, 4, 5, 6, 7]
+        shard_index:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
 
     steps:
       - name: "Checkout Repository"
