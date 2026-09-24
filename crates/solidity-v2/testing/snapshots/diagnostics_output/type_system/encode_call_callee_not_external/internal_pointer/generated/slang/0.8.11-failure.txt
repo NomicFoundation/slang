@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/encode-call-callee-not-external] Error: Expected regular external function type, or external view on public function.
+    ╭─[input.sol:11:31]
+    │
+ 11 │         return abi.encodeCall(p, (1));
+    │                               ┬  
+    │                               ╰── Error occurred here.
+────╯

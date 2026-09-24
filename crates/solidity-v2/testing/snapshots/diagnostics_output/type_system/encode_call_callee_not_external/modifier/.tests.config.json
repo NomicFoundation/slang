@@ -1,0 +1,11 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "From",
+        "from": "0.8.11"
+      },
+      "reason": "TODO(validation): solc rejects a modifier as the `abi.encodeCall` callee with `TypeError 5511` (expected a function pointer). Slang has no diagnostic for a callee that is not a function value yet, and must not report it as a non-external function."
+    }
+  ]
+}

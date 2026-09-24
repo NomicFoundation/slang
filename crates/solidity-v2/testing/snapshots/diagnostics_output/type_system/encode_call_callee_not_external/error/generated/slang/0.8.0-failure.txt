@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 3
+
+[syntax/incompatible-syntax-version] Error: This syntax was introduced in version '0.8.4'.
+   ╭─[input.sol:4:1]
+   │
+ 4 │ error E(uint256 a);
+   │ ─────────┬─────────  
+   │          ╰─────────── Error occurred here.
+───╯
+
+[resolution/incompatible-built-in-version] Error: This built-in was introduced in version '0.8.11'.
+   ╭─[input.sol:9:20]
+   │
+ 9 │         return abi.encodeCall(E, (1));
+   │                    ─────┬────  
+   │                         ╰────── Error occurred here.
+───╯
+
+[type-system/encode-call-callee-not-external] Error: Expected regular external function type, or external view on public function.
+   ╭─[input.sol:9:31]
+   │
+ 9 │         return abi.encodeCall(E, (1));
+   │                               ┬  
+   │                               ╰── Error occurred here.
+───╯

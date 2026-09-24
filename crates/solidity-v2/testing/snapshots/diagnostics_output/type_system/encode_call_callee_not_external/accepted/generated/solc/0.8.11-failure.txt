@@ -1,0 +1,43 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 5
+
+[TypeError 3509] Error: Function must be "public" or "external".
+    ╭─[input.sol:42:28]
+    │
+ 42 │         a = abi.encodeCall(I.f, (data));
+    │                            ─┬─  
+    │                             ╰─── Error occurred here.
+────╯
+
+[TypeError 3509] Error: Function must be "public" or "external".
+    ╭─[input.sol:43:28]
+    │
+ 43 │         b = abi.encodeCall(Other.externalFn, (1));
+    │                            ────────┬───────  
+    │                                    ╰───────── Error occurred here.
+────╯
+
+[TypeError 3509] Error: Function must be "public" or "external".
+    ╭─[input.sol:44:28]
+    │
+ 44 │         c = abi.encodeCall(Other.publicFn, (1));
+    │                            ───────┬──────  
+    │                                   ╰──────── Error occurred here.
+────╯
+
+[TypeError 3509] Error: Function must be "public" or "external". Did you forget to prefix "this."?
+    ╭─[input.sol:48:28]
+    │
+ 48 │         h = abi.encodeCall(C.externalFn, (data));
+    │                            ──────┬─────  
+    │                                  ╰─────── Error occurred here.
+────╯
+
+[TypeError 3509] Error: Function must be "public" or "external".
+    ╭─[input.sol:60:28]
+    │
+ 60 │         a = abi.encodeCall(Base.externalFn, (data));
+    │                            ───────┬───────  
+    │                                   ╰───────── Error occurred here.
+────╯
