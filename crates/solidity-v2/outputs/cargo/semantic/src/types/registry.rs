@@ -270,9 +270,9 @@ impl TypeRegistry {
 
             // A string literal fits any `bytesN` at least as long as it is.
             (
-                Type::Literal(LiteralKind::HexString { bytes } | LiteralKind::String { bytes }),
+                Type::Literal(LiteralKind::HexString { value } | LiteralKind::String { value }),
                 Type::ByteArray(ByteArrayType { width }),
-            ) => *bytes <= *width as usize,
+            ) => value.len() <= *width as usize,
 
             (
                 Type::Array(ArrayType {
@@ -755,7 +755,8 @@ impl TypeRegistry {
     /// Computes the mobile type of `type_id` and returns its `TypeId`, or why
     /// it has none.
     pub(crate) fn compute_mobile_type(&mut self, type_id: TypeId) -> Result<TypeId, NoMobileType> {
-        match self.get_type_by_id(type_id).clone() {
+        // Matched by reference, since a literal may own a large string value.
+        match self.get_type_by_id(type_id) {
             Type::Literal(kind) => {
                 let mobile = kind.mobile_type().ok_or(NoMobileType::LiteralTooLarge)?;
                 Ok(self.register_type(mobile))
@@ -763,8 +764,11 @@ impl TypeRegistry {
             // A calldata slice decays to the array it slices — this is what lets
             // `bytes calldata b = data[:3];` type-check. Mirrors solc's
             // `ArraySliceType::mobileType`.
-            Type::ArraySlice(ArraySliceType { array_type_id }) => Ok(array_type_id),
+            Type::ArraySlice(ArraySliceType { array_type_id }) => Ok(*array_type_id),
             Type::Tuple(TupleType { types: element_ids }) => {
+                // Copied out, since computing each element's type needs the
+                // registry mutably.
+                let element_ids = element_ids.clone();
                 let mobile_ids = element_ids
                     .iter()
                     .map(|id| self.compute_mobile_type(*id))

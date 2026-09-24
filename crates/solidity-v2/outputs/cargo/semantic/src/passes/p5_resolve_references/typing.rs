@@ -1458,18 +1458,15 @@ impl Pass<'_> {
         // vs `Integer`); regular and unicode strings share `String` since they
         // are indistinguishable once decoded.
         let kind = match node {
-            ir::StringExpression::StringLiterals(literals) => {
-                let value = literals::value_of_string_literals(literals);
-                LiteralKind::String { bytes: value.len() }
-            }
-            ir::StringExpression::HexStringLiterals(literals) => {
-                let value = literals::value_of_hex_string_literals(literals);
-                LiteralKind::HexString { bytes: value.len() }
-            }
-            ir::StringExpression::UnicodeStringLiterals(literals) => {
-                let value = literals::value_of_unicode_string_literals(literals);
-                LiteralKind::String { bytes: value.len() }
-            }
+            ir::StringExpression::StringLiterals(literals) => LiteralKind::String {
+                value: literals::value_of_string_literals(literals).into_boxed_slice(),
+            },
+            ir::StringExpression::HexStringLiterals(literals) => LiteralKind::HexString {
+                value: literals::value_of_hex_string_literals(literals).into_boxed_slice(),
+            },
+            ir::StringExpression::UnicodeStringLiterals(literals) => LiteralKind::String {
+                value: literals::value_of_unicode_string_literals(literals).into_boxed_slice(),
+            },
         };
         Type::Literal(kind)
     }

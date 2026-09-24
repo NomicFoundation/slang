@@ -419,13 +419,13 @@ pub slang_solidity_v2_semantic::types::LiteralKind::HexInteger
 pub slang_solidity_v2_semantic::types::LiteralKind::HexInteger::bytes: u32
 pub slang_solidity_v2_semantic::types::LiteralKind::HexInteger::value: num_bigint::biguint::BigUint
 pub slang_solidity_v2_semantic::types::LiteralKind::HexString
-pub slang_solidity_v2_semantic::types::LiteralKind::HexString::bytes: usize
+pub slang_solidity_v2_semantic::types::LiteralKind::HexString::value: alloc::boxed::Box<[u8]>
 pub slang_solidity_v2_semantic::types::LiteralKind::Integer
 pub slang_solidity_v2_semantic::types::LiteralKind::Integer::value: num_bigint::bigint::BigInt
 pub slang_solidity_v2_semantic::types::LiteralKind::Rational
 pub slang_solidity_v2_semantic::types::LiteralKind::Rational::value: num_rational::BigRational
 pub slang_solidity_v2_semantic::types::LiteralKind::String
-pub slang_solidity_v2_semantic::types::LiteralKind::String::bytes: usize
+pub slang_solidity_v2_semantic::types::LiteralKind::String::value: alloc::boxed::Box<[u8]>
 impl slang_solidity_v2_semantic::types::LiteralKind
 pub fn slang_solidity_v2_semantic::types::LiteralKind::mobile_type(&self) -> core::option::Option<slang_solidity_v2_semantic::types::Type>
 impl core::clone::Clone for slang_solidity_v2_semantic::types::LiteralKind
