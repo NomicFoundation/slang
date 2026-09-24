@@ -251,7 +251,8 @@ fn test_array_literal_unresolved_when_elements_incompatible() {
 
 #[test]
 fn test_conditional_expression_unifies_byte_arrays() {
-    let (expr_type, types) = expression("true ? bytes32(0) : bytes32(1)").into_resolved_type();
+    let (expr_type, types) =
+        expression("true ? bytes32(0) : bytes32(uint256(1))").into_resolved_type();
     assert_eq!(expr_type, *types.get_type_by_id(types.bytes32()));
 }
 
@@ -266,7 +267,7 @@ fn test_conditional_expression_widens_byte_arrays() {
 
 #[test]
 fn test_array_literal_unifies_byte_array_elements() {
-    let (expr_type, types) = expression("[bytes32(0), bytes32(1)]").into_resolved_type();
+    let (expr_type, types) = expression("[bytes32(0), bytes32(uint256(1))]").into_resolved_type();
     let Type::FixedSizeArray(FixedSizeArrayType {
         element_type,
         size,

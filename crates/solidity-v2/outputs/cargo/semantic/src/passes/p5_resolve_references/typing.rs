@@ -4,9 +4,9 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     AmbiguousReference, MemberNotFound, NoMatchingCallableDeclaration,
 };
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    CannotCallViaContractTypeName, ExpressionNotAValue, ExpressionNotAnLValue,
-    ExpressionNotCallable, IncompatibleConditionalBranches, LiteralTooLarge, NotAValueKind,
-    PartiallyAppliedFunctionUsedAsValue, WriteToConstant,
+    CannotCallViaContractTypeName, ExplicitConversionNotAllowed, ExpressionNotAValue,
+    ExpressionNotAnLValue, ExpressionNotCallable, IncompatibleConditionalBranches, LiteralTooLarge,
+    NotAValueKind, PartiallyAppliedFunctionUsedAsValue, WriteToConstant,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -920,10 +920,16 @@ impl Pass<'_> {
         )
     }
 
-    fn typing_of_cast(&mut self, argument_type_id: TypeId, target_type_id: TypeId) -> Typing {
-        // TODO(validation) SDR[40]: this is a cast to the given type, but we
-        // need to verify that the (single) argument is convertible
-        //
+    /// Types the explicit conversion of the single argument of `node` to
+    /// `target_type_id`, reporting it when the conversion is not allowed. The
+    /// conversion is still typed as the target then, so that its uses are
+    /// checked as usual.
+    fn typing_of_cast(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        argument_type_id: TypeId,
+        target_type_id: TypeId,
+    ) -> Typing {
         // The resulting cast type inherits the data location of the argument.
         let argument_type = self.types.get_type_by_id(argument_type_id);
         let type_id = if let Some(data_location) = argument_type.data_location() {
@@ -933,6 +939,9 @@ impl Pass<'_> {
         } else {
             target_type_id
         };
+        if !self.explicitly_convertible_to(argument_type_id, type_id) {
+            self.push_diagnostic(node, ExplicitConversionNotAllowed);
+        }
         Typing::Resolved(type_id)
     }
 
@@ -1119,15 +1128,15 @@ impl Pass<'_> {
                 // This is an explicit cast to the (meta-)type, eg. `uint(x)`.
                 let target_type_id = *target_type_id;
                 if let Some([argument_type_id]) = argument_types {
-                    self.typing_of_cast(*argument_type_id, target_type_id)
+                    self.typing_of_cast(node, *argument_type_id, target_type_id)
                 } else {
                     Typing::Unresolved
                 }
             }
             Type::UserMetaType(UserMetaType { definition_id }) => {
-                // A cast to the underlying type of the definition (eg.
-                // `MyEnum(1)`), or a struct construction. UDVTs are not
-                // castable by name (they convert via `wrap`/`unwrap`).
+                // A cast to the type of the definition (eg. `MyEnum(1)`), or a
+                // struct construction. A UDVT only converts from itself, as
+                // other values convert via `wrap`/`unwrap`.
                 let definition_id = *definition_id;
                 match self.binder.find_definition_by_id(definition_id) {
                     Some(
@@ -1135,14 +1144,20 @@ impl Pass<'_> {
                         | Definition::Interface(_)
                         | Definition::Library(_)
                         | Definition::Enum(_)
-                        | Definition::Struct(_),
+                        | Definition::UserDefinedValueType(_),
                     ) => {
-                        // TODO(validation) SDR[39]: for contract, interface
-                        // and library targets the type of the (single)
-                        // argument should be an address
-                        // TODO(validation) SDR[868]: For enums, only one argument expected
-                        // TODO(validation) SDR[1698]: For enums, check the type of the argument is compatible
-
+                        // TODO(validation) SDR[868]: only one argument expected
+                        let type_ = self
+                            .type_of_definition(definition_id)
+                            .expect("definition kind is handled by type_of_definition");
+                        let type_id = self.types.register_type(type_);
+                        if let Some([argument_type_id]) = argument_types {
+                            self.typing_of_cast(node, *argument_type_id, type_id)
+                        } else {
+                            Typing::Resolved(type_id)
+                        }
+                    }
+                    Some(Definition::Struct(_)) => {
                         let type_ = self
                             .type_of_definition(definition_id)
                             .expect("definition kind is handled by type_of_definition");
@@ -1173,13 +1188,6 @@ impl Pass<'_> {
 
                         self.diagnostics
                             .push(file_id, range, CannotCallViaContractTypeName);
-                        Typing::Unresolved
-                    }
-                    Some(Definition::UserDefinedValueType(_)) => {
-                        // TODO(validation) SDR[1698]: a UDVT is callable
-                        // syntactically but not castable by name, so this is a
-                        // disallowed conversion rather than a callability
-                        // error.
                         Typing::Unresolved
                     }
                     Some(_) => {
