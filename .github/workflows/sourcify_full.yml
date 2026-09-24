@@ -1,0 +1,177 @@
+name: "sourcify_full"
+
+# Every verified solc 0.8.x contract on Sourcify (the release pinned in
+# crates/solidity/testing/sourcify/corpus.lock) compiled with Slang v2, in shards that
+# each hold one asset at a time. Runs on the `ci:sourcify` label, on demand, and on
+# every push to main that touches the v2 crates; main runs queue instead of cancelling
+# so every merge keeps its own verdict.
+
+on:
+  pull_request:
+    types:
+      - "labeled"
+  push:
+    branches:
+      - "main"
+    paths:
+      - "crates/solidity-v2/**"
+      - "crates/solidity/testing/sourcify/**"
+      - "scripts/tasks/sourcify/**"
+      - ".github/workflows/sourcify_full.yml"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref_name }}"
+
+env:
+  SHARD_COUNT: 8
+
+jobs:
+  build:
+    if: "${{ github.event_name != 'pull_request' || github.event.label.name == 'ci:sourcify' }}"
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    permissions:
+      contents: "read"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
+
+      - name: "Common Setup"
+        uses: "./.github/actions/common-setup"
+        with:
+          infra-setup: "false"
+          sfw-optional: "true"
+
+      - name: "Build sourcify binary"
+        run: "${SFW_PREFIX:-} ./bin/task sourcify:build"
+
+      - name: "Save sourcify binary"
+        uses: "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a" # v7.0.1
+        with:
+          name: "solidity_testing_sourcify"
+          path: "./target/release/solidity_testing_sourcify"
+          retention-days: 1
+
+  shard:
+    needs: "build"
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    timeout-minutes: 90
+
+    permissions:
+      contents: "read"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # Must stay in sync with SHARD_COUNT above.
+        shard_index: [0, 1, 2, 3, 4, 5, 6, 7]
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: "Free up disk space"
+        uses: "./.github/actions/free-disk-space"
+
+      - name: "Restore sourcify binary"
+        uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c" # v8.0.1
+        with:
+          name: "solidity_testing_sourcify"
+          path: "./target/release"
+
+      - name: "Run shard"
+        env:
+          GH_TOKEN: "${{ github.token }}"
+          SHARD_INDEX: "${{ matrix.shard_index }}"
+        run: |
+          chmod +x ./target/release/solidity_testing_sourcify
+          ./target/release/solidity_testing_sourcify lock shard --count "$SHARD_COUNT" --index "$SHARD_INDEX" \
+            | scripts/tasks/sourcify/run-assets.sh ./target/release/solidity_testing_sourcify target/sourcify/results --report-only
+
+      - name: "Save shard results"
+        if: "!cancelled()"
+        uses: "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a" # v7.0.1
+        with:
+          name: "sourcify-results-${{ matrix.shard_index }}"
+          path: "target/sourcify/results"
+          if-no-files-found: "error"
+          retention-days: 14
+
+  report:
+    needs:
+      - "build"
+      - "shard"
+    if: "!cancelled() && needs.build.result == 'success'"
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    permissions:
+      contents: "read"
+      pull-requests: "write" # the census goes on the PR as a comment
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: "Restore sourcify binary"
+        uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c" # v8.0.1
+        with:
+          name: "solidity_testing_sourcify"
+          path: "./target/release"
+
+      - name: "Restore shard results"
+        uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c" # v8.0.1
+        with:
+          pattern: "sourcify-results-*"
+          path: "target/sourcify/results"
+
+      # Report-only until the first full census is triaged into expected-failures.toml;
+      # then drop the flag and the gate decides.
+      - name: "Report"
+        run: |
+          chmod +x ./target/release/solidity_testing_sourcify
+          find target/sourcify/results -name '*.jsonl' -print0 \
+            | xargs -0 ./target/release/solidity_testing_sourcify report --stale-check --report target/sourcify/report.md --report-only
+          {
+            echo "## Sourcify corpus: ${SHARD_COUNT} shards, $(find target/sourcify/results -name '*.jsonl' | wc -l) assets"
+            cat target/sourcify/report.md
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: "Save census"
+        if: "!cancelled()"
+        uses: "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a" # v7.0.1
+        with:
+          name: "sourcify-census"
+          path: "target/sourcify/report.md"
+          retention-days: 90
+
+      - name: "Comment on the PR"
+        if: "${{ github.event_name == 'pull_request' }}"
+        env:
+          GH_TOKEN: "${{ github.token }}"
+          PR_NUMBER: "${{ github.event.pull_request.number }}"
+          HEAD_SHA: "${{ github.event.pull_request.head.sha }}"
+        run: |
+          marker="<!-- sourcify-full-report -->"
+          {
+            echo "$marker"
+            echo "### Sourcify corpus run for $HEAD_SHA"
+            echo
+            cat target/sourcify/report.md
+          } > comment.md
+          existing="$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" --paginate --jq ".[] | select(.body | startswith(\"$marker\")) | .id" | head -1)"
+          if [ -n "$existing" ]; then
+            gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${existing}" -F body=@comment.md > /dev/null
+          else
+            gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" -F body=@comment.md > /dev/null
+          fi
