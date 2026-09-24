@@ -2453,7 +2453,7 @@ impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::LibraryMembersSt
 pub fn slang_solidity_v2_ast::ast::LibraryMembersStruct::serialize<S: serde_core::ser::Serializer>(&self, S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::LiteralType
 impl slang_solidity_v2_ast::ast::LiteralType
-pub fn slang_solidity_v2_ast::ast::LiteralType::kind(&self) -> slang_solidity_v2_semantic::types::LiteralKind
+pub fn slang_solidity_v2_ast::ast::LiteralType::kind(&self) -> &slang_solidity_v2_semantic::types::LiteralKind
 pub fn slang_solidity_v2_ast::ast::LiteralType::mobile_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 impl core::clone::Clone for slang_solidity_v2_ast::ast::LiteralType
 pub fn slang_solidity_v2_ast::ast::LiteralType::clone(&self) -> slang_solidity_v2_ast::ast::LiteralType

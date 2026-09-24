@@ -94,7 +94,8 @@ define_type_variant!(UserMeta);
 
 #[derive(Clone)]
 pub struct LiteralType {
-    inner: LiteralKind,
+    type_id: TypeId,
+    semantic: Arc<SemanticContext>,
 }
 
 #[derive(Clone)]
@@ -113,41 +114,95 @@ impl Type {
     }
 
     pub(crate) fn create(type_id: TypeId, semantic: &Arc<SemanticContext>) -> Self {
-        let type_ = semantic.types().get_type_by_id(type_id).clone();
+        // Matched by reference, so that a literal is not copied: it may own a
+        // large string value, and is read back from the registry instead.
+        let type_ = semantic.types().get_type_by_id(type_id);
         let semantic = Arc::clone(semantic);
         match type_ {
-            types::Type::Address(inner) => Self::Address(AddressType { inner }),
-            types::Type::Array(inner) => Self::Array(ArrayType { inner, semantic }),
-            types::Type::ArraySlice(inner) => Self::ArraySlice(ArraySliceType { inner, semantic }),
+            types::Type::Address(inner) => Self::Address(AddressType {
+                inner: inner.clone(),
+            }),
+            types::Type::Array(inner) => Self::Array(ArrayType {
+                inner: inner.clone(),
+                semantic,
+            }),
+            types::Type::ArraySlice(inner) => Self::ArraySlice(ArraySliceType {
+                inner: inner.clone(),
+                semantic,
+            }),
             types::Type::Boolean => Self::Boolean(BooleanType),
-            types::Type::ByteArray(inner) => Self::ByteArray(ByteArrayType { inner }),
-            types::Type::Bytes(inner) => Self::Bytes(BytesType { inner }),
-            types::Type::Contract(inner) => Self::Contract(ContractType { inner, semantic }),
-            types::Type::Enum(inner) => Self::Enum(EnumType { inner, semantic }),
-            types::Type::Error(inner) => Self::Error(ErrorType { inner, semantic }),
-            types::Type::Event(inner) => Self::Event(EventType { inner, semantic }),
-            types::Type::FixedSizeArray(inner) => {
-                Self::FixedSizeArray(FixedSizeArrayType { inner, semantic })
-            }
-            types::Type::FixedPointNumber(inner) => {
-                Self::FixedPointNumber(FixedPointNumberType { inner })
-            }
-            types::Type::Function(inner) => Self::Function(FunctionType { inner, semantic }),
-            types::Type::Integer(inner) => Self::Integer(IntegerType { inner }),
-            types::Type::Interface(inner) => Self::Interface(InterfaceType { inner, semantic }),
-            types::Type::Library(inner) => Self::Library(LibraryType { inner, semantic }),
-            types::Type::Literal(inner) => Self::Literal(LiteralType { inner }),
-            types::Type::Mapping(inner) => Self::Mapping(MappingType { inner, semantic }),
-            types::Type::MetaType(inner) => Self::MetaType(MetaType { inner, semantic }),
-            types::Type::String(inner) => Self::String(StringType { inner }),
-            types::Type::Struct(inner) => Self::Struct(StructType { inner, semantic }),
-            types::Type::Tuple(inner) => Self::Tuple(TupleType { inner, semantic }),
-            types::Type::UserDefinedValue(inner) => {
-                Self::UserDefinedValue(UserDefinedValueType { inner, semantic })
-            }
-            types::Type::UserMetaType(inner) => {
-                Self::UserMetaType(UserMetaType { inner, semantic })
-            }
+            types::Type::ByteArray(inner) => Self::ByteArray(ByteArrayType {
+                inner: inner.clone(),
+            }),
+            types::Type::Bytes(inner) => Self::Bytes(BytesType {
+                inner: inner.clone(),
+            }),
+            types::Type::Contract(inner) => Self::Contract(ContractType {
+                inner: inner.clone(),
+                semantic,
+            }),
+            types::Type::Enum(inner) => Self::Enum(EnumType {
+                inner: inner.clone(),
+                semantic,
+            }),
+            types::Type::Error(inner) => Self::Error(ErrorType {
+                inner: inner.clone(),
+                semantic,
+            }),
+            types::Type::Event(inner) => Self::Event(EventType {
+                inner: inner.clone(),
+                semantic,
+            }),
+            types::Type::FixedSizeArray(inner) => Self::FixedSizeArray(FixedSizeArrayType {
+                inner: inner.clone(),
+                semantic,
+            }),
+            types::Type::FixedPointNumber(inner) => Self::FixedPointNumber(FixedPointNumberType {
+                inner: inner.clone(),
+            }),
+            types::Type::Function(inner) => Self::Function(FunctionType {
+                inner: inner.clone(),
+                semantic,
+            }),
+            types::Type::Integer(inner) => Self::Integer(IntegerType {
+                inner: inner.clone(),
+            }),
+            types::Type::Interface(inner) => Self::Interface(InterfaceType {
+                inner: inner.clone(),
+                semantic,
+            }),
+            types::Type::Library(inner) => Self::Library(LibraryType {
+                inner: inner.clone(),
+                semantic,
+            }),
+            types::Type::Literal(_) => Self::Literal(LiteralType { type_id, semantic }),
+            types::Type::Mapping(inner) => Self::Mapping(MappingType {
+                inner: inner.clone(),
+                semantic,
+            }),
+            types::Type::MetaType(inner) => Self::MetaType(MetaType {
+                inner: inner.clone(),
+                semantic,
+            }),
+            types::Type::String(inner) => Self::String(StringType {
+                inner: inner.clone(),
+            }),
+            types::Type::Struct(inner) => Self::Struct(StructType {
+                inner: inner.clone(),
+                semantic,
+            }),
+            types::Type::Tuple(inner) => Self::Tuple(TupleType {
+                inner: inner.clone(),
+                semantic,
+            }),
+            types::Type::UserDefinedValue(inner) => Self::UserDefinedValue(UserDefinedValueType {
+                inner: inner.clone(),
+                semantic,
+            }),
+            types::Type::UserMetaType(inner) => Self::UserMetaType(UserMetaType {
+                inner: inner.clone(),
+                semantic,
+            }),
             types::Type::Void => Self::Void(VoidType),
         }
     }
@@ -341,8 +396,11 @@ impl LibraryType {
 
 impl LiteralType {
     /// Returns the narrowed kind of this literal type.
-    pub fn kind(&self) -> LiteralKind {
-        self.inner.clone()
+    pub fn kind(&self) -> &LiteralKind {
+        let types::Type::Literal(kind) = self.semantic.types().get_type_by_id(self.type_id) else {
+            unreachable!("a literal type wrapper refers to a literal type");
+        };
+        kind
     }
 
     /// Returns the non-literal mobile type this literal can flow into (e.g.,
@@ -352,7 +410,7 @@ impl LiteralType {
     /// represented (eg. integer would require more than 256 bits).
     // __SLANG_MOBILE_TYPE__ keep in sync with `LiteralKind::mobile_type`
     pub fn mobile_type(&self) -> Option<Type> {
-        self.inner.mobile_type().and_then(|mobile| match mobile {
+        self.kind().mobile_type().and_then(|mobile| match mobile {
             types::Type::Integer(inner) => Some(Type::Integer(IntegerType { inner })),
             types::Type::FixedPointNumber(inner) => {
                 Some(Type::FixedPointNumber(FixedPointNumberType { inner }))
