@@ -42,6 +42,7 @@ impl Pass<'_> {
         // `using L for *`)
         // - If the type is a function type, it may have an associated
         // definition ID from the function definition where it is derived from.
+        // - If the type is an address literal, directives for `address` apply.
         let type_id = self
             .types
             .find_canonical_type_id(type_id)

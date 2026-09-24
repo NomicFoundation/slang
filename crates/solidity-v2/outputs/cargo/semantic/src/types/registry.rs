@@ -708,6 +708,7 @@ impl TypeRegistry {
                 mutability: *mutability,
                 partially_applied: false,
             }),
+            Type::Literal(LiteralKind::Address { .. }) => return Some(self.address()),
 
             Type::Address(_)
             | Type::Boolean
