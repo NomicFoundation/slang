@@ -189,6 +189,12 @@ impl TypeRegistry {
                 Type::Address(_),
             ) => *from_payable,
 
+            // An address literal has type `address` (non-payable) since 0.8.0.
+            (
+                Type::Literal(LiteralKind::Address { .. }),
+                Type::Address(AddressType { is_payable }),
+            ) => !is_payable,
+
             (
                 Type::Integer(IntegerType {
                     is_signed: from_signed,
