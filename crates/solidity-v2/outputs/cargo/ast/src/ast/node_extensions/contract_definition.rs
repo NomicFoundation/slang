@@ -205,4 +205,23 @@ impl ContractDefinitionStruct {
             .map(|ir_node| create_event_definition(ir_node, &self.semantic))
             .collect()
     }
+
+    /// The errors this contract's code can revert with, wherever they are
+    /// declared, see `SemanticContext::used_errors`.
+    pub fn used_errors(&self) -> Vec<ErrorDefinition> {
+        self.semantic
+            .used_errors(self.ir_node.id())
+            .iter()
+            .map(|ir_node| create_error_definition(ir_node, &self.semantic))
+            .collect()
+    }
+
+    /// The events this contract's code can emit, wherever they are declared.
+    pub fn emitted_events(&self) -> Vec<EventDefinition> {
+        self.semantic
+            .emitted_events(self.ir_node.id())
+            .iter()
+            .map(|ir_node| create_event_definition(ir_node, &self.semantic))
+            .collect()
+    }
 }
