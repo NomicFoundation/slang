@@ -306,6 +306,26 @@ mod tests {
     }
 
     #[test]
+    fn storage_mismatches_count_once_per_contract_and_code() {
+        let record: CorpusContract = serde_json::from_str(
+            r#"{"name":"x","chain_id":0,"version":"0.8.30","target":"a.sol",
+                "sources":{"a.sol":"contract A { uint256 a; uint256 b; }"},
+                "artifacts":{"storageLayout":{
+                    "storage":[{"label":"a","offset":0,"slot":"0","type":"t_x"},
+                               {"label":"b","offset":0,"slot":"1","type":"t_x"}],
+                    "types":{"t_x":{"label":"uint128"}}}}}"#,
+        )
+        .unwrap();
+        let outcome = check(&record, Path::new("0_x.json"), false);
+        let failures: Vec<(String, usize)> = outcome
+            .failures
+            .iter()
+            .map(|failure| (failure.key(), failure.count))
+            .collect();
+        assert_eq!(failures, [("storage_types:[*].type".to_owned(), 2)]);
+    }
+
+    #[test]
     fn unsupported_versions_and_targets_are_skips() {
         let mut record: CorpusContract = serde_json::from_str(
             r#"{"name":"x","chain_id":0,"version":"0.7.6","target":"a.sol","sources":{"a.sol":"contract A {}"}}"#,
