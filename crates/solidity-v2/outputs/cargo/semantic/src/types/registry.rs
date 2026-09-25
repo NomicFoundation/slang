@@ -23,6 +23,12 @@ pub struct TypeRegistry {
     // between contract/interface types. The `NodeId`s correspond to the
     // `definition_id` in the respective `Type` variants.
     super_types: Map<NodeId, Vec<NodeId>>,
+    // Each function type `externalize_function_type` was given, mapped to its
+    // answer, identity included.
+    // TODO(v2): externalized types also live on the function definition (p3) and in
+    // member-access typings (p5); keep them only here. A bare reference to a
+    // `public` function should type as internal, as in solc.
+    externalized_function_types: Map<TypeId, TypeId>,
     // Some implicit conversion rules are version dependant. The version is
     // threaded in here so we can gate those rules on it.
     language_version: LanguageVersion,
@@ -98,6 +104,7 @@ impl TypeRegistry {
         Self {
             types,
             super_types: Map::default(),
+            externalized_function_types: Map::default(),
             language_version,
 
             address_type_id: TypeId(address_type),
@@ -501,7 +508,8 @@ impl TypeRegistry {
     // Changes a function type to have external visibility and its parameters and
     // results normalized for that (ie. `calldata` location is changed to `memory`),
     // returning the interned result's id, which is the input itself when the
-    // type already has that shape.
+    // type already has that shape. Remembers the pair for
+    // `externalized_function_type_id`.
     pub(crate) fn externalize_function_type(&mut self, type_id: TypeId) -> TypeId {
         let Type::Function(function_type) = self.get_type_by_id(type_id) else {
             unreachable!("can only externalize a function type");
@@ -513,6 +521,7 @@ impl TypeRegistry {
                 .all(|parameter_type_id| self.is_externalized(*parameter_type_id))
             && self.is_externalized(function_type.return_type)
         {
+            self.externalized_function_types.insert(type_id, type_id);
             return type_id;
         }
         let function_type = function_type.clone();
@@ -526,7 +535,16 @@ impl TypeRegistry {
             return_type: self.externalize_type(function_type.return_type),
             ..function_type
         };
-        self.register_type(Type::Function(externalized_function_type))
+        let externalized_type_id = self.register_type(Type::Function(externalized_function_type));
+        self.externalized_function_types
+            .insert(type_id, externalized_type_id);
+        externalized_type_id
+    }
+
+    /// The externalized form of the function type `type_id`, if analysis asked
+    /// for it. `None` means it was never externalized, not that it has no such form.
+    pub fn externalized_function_type_id(&self, type_id: TypeId) -> Option<TypeId> {
+        self.externalized_function_types.get(&type_id).copied()
     }
 
     // Marks a function type as partially applied:

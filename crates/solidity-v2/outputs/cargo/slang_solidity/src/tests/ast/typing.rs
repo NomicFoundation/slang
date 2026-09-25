@@ -1,5 +1,9 @@
+use slang_solidity_v2_common::built_ins::BuiltIn;
+
 use super::fixtures;
 use crate::ast::visitor::{Visitor, accept_source_unit};
+use crate::compilation::CompilationUnit;
+use crate::tests::support;
 use crate::{ast, define_fixture};
 
 define_fixture!(
@@ -827,5 +831,161 @@ fn test_nameless_external_function_has_no_externalized_type() {
     assert!(
         receive.externalized_type().is_none(),
         "a receive carries no name to select on"
+    );
+}
+
+define_fixture!(
+    EncodeCallShapes,
+    file: "main.sol", r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+interface I {
+    function f(bytes calldata data) external returns (uint256);
+}
+
+contract Other {
+    function publicFn(bytes calldata data) public returns (uint256) {
+        return data.length;
+    }
+}
+
+contract C {
+    function g(bytes calldata data) external returns (uint256) {
+        return data.length;
+    }
+
+    function viaInterface(bytes calldata data) external view returns (bytes memory) {
+        return abi.encodeCall(I.f, (data));
+    }
+
+    function viaForeign(bytes calldata data) external view returns (bytes memory) {
+        return abi.encodeCall(Other.publicFn, (data));
+    }
+
+    function viaThis(bytes calldata data) external view returns (bytes memory) {
+        return abi.encodeCall(this.g, (data));
+    }
+
+    function viaPointer(
+        function(bytes calldata) external returns (uint256) p,
+        bytes calldata data
+    ) external view returns (bytes memory) {
+        return abi.encodeCall(p, (data));
+    }
+}
+"#,
+);
+
+/// Captures the type every `abi.encodeCall` call encodes against.
+#[derive(Default)]
+struct EncodeCallCalleeTypes {
+    types: Vec<Option<ast::Type>>,
+}
+
+impl Visitor for EncodeCallCalleeTypes {
+    fn enter_function_call_expression(&mut self, node: &ast::FunctionCallExpression) -> bool {
+        let ast::Expression::MemberAccessExpression(member_access) = node.operand() else {
+            return true;
+        };
+        if member_access.member().resolve_to_built_in() != Some(BuiltIn::AbiEncodeCall) {
+            return true;
+        }
+        self.types.push(node.encode_call_callee_type());
+        true
+    }
+}
+
+/// What the fixture's `abi.encodeCall` calls encode against, in source order
+/// of their callees: `I.f`, `Other.publicFn`, `this.g`, `p`.
+fn encode_call_callee_types() -> [Option<ast::Type>; 4] {
+    let unit = EncodeCallShapes::build_compilation_unit();
+    encode_call_callee_types_in(&unit)
+        .try_into()
+        .unwrap_or_else(|callees: Vec<Option<ast::Type>>| {
+            panic!("four `abi.encodeCall` calls, found {}", callees.len())
+        })
+}
+
+fn encode_call_callee_types_in(unit: &CompilationUnit) -> Vec<Option<ast::Type>> {
+    let mut finder = EncodeCallCalleeTypes::default();
+    for file in unit.files() {
+        accept_source_unit(&file.ast(), &mut finder);
+    }
+    finder.types
+}
+
+fn assert_external_taking_bytes_in_memory(shape: &str, callee: Option<ast::Type>) {
+    let Some(callee) = callee else {
+        panic!("the call on `{shape}` should have a type it encodes against");
+    };
+    let ast::Type::Function(function) = callee else {
+        panic!("the `{shape}` callee should type as a function");
+    };
+    assert_eq!(
+        function.visibility(),
+        ast::FunctionTypeVisibility::External,
+        "the `{shape}` callee is externally callable"
+    );
+
+    let parameter_types = function.parameter_types();
+    let [parameter] = parameter_types.as_slice() else {
+        panic!("the `{shape}` callee should take one parameter");
+    };
+    let ast::Type::Bytes(parameter) = parameter else {
+        panic!("the `{shape}` parameter should type as bytes");
+    };
+    assert_eq!(
+        parameter.location(),
+        ast::DataLocation::Memory,
+        "the `{shape}` callee takes its bytes in memory"
+    );
+}
+
+#[test]
+fn test_encode_call_type_name_callee_type() {
+    let [via_interface, via_foreign, _, _] = encode_call_callee_types();
+
+    assert_external_taking_bytes_in_memory("I.f", via_interface);
+    assert_external_taking_bytes_in_memory("Other.publicFn", via_foreign);
+}
+
+#[test]
+fn test_encode_call_function_value_callee_type() {
+    let [_, _, via_this, via_pointer] = encode_call_callee_types();
+
+    assert_external_taking_bytes_in_memory("this.g", via_this);
+    assert_external_taking_bytes_in_memory("p", via_pointer);
+}
+
+/// Compiled directly rather than through the fixture macro, which asserts the
+/// unit has no diagnostics; rejecting this callee is a diagnostic of its own.
+#[test]
+fn test_encode_call_internal_reference_callee_has_no_type() {
+    let unit = support::compile([(
+        "main.sol".into(),
+        r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+contract C {
+    function publicFn(bytes calldata data) public pure returns (uint256) {
+        return data.length;
+    }
+
+    function encode(bytes calldata data) external pure returns (bytes memory) {
+        return abi.encodeCall(publicFn, (data));
+    }
+}
+"#,
+    )]);
+
+    let callees = encode_call_callee_types_in(&unit);
+    let [callee] = callees.as_slice() else {
+        panic!("one `abi.encodeCall` call, found {}", callees.len());
+    };
+    assert!(
+        callee.is_none(),
+        "a bare `publicFn` callee is an internal reference, with no type to encode against"
     );
 }

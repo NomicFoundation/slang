@@ -776,6 +776,7 @@ impl core::marker::Copy for slang_solidity_v2_semantic::types::TypeId
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::TypeId
 pub struct slang_solidity_v2_semantic::types::TypeRegistry
 impl slang_solidity_v2_semantic::types::TypeRegistry
+pub fn slang_solidity_v2_semantic::types::TypeRegistry::externalized_function_type_id(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<slang_solidity_v2_semantic::types::TypeId>
 pub fn slang_solidity_v2_semantic::types::TypeRegistry::get_type_by_id(&self, slang_solidity_v2_semantic::types::TypeId) -> &slang_solidity_v2_semantic::types::Type
 pub fn slang_solidity_v2_semantic::types::TypeRegistry::number_value_of_type_id(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<slang_solidity_v2_semantic::types::Number>
 pub struct slang_solidity_v2_semantic::types::UserDefinedValueType

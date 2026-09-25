@@ -1983,6 +1983,7 @@ pub fn slang_solidity_v2_ast::ast::FunctionCallExpressionStruct::get_type(&self)
 pub fn slang_solidity_v2_ast::ast::FunctionCallExpressionStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::FunctionCallExpressionStruct::operand(&self) -> slang_solidity_v2_ast::ast::Expression
 impl slang_solidity_v2_ast::ast::FunctionCallExpressionStruct
+pub fn slang_solidity_v2_ast::ast::FunctionCallExpressionStruct::encode_call_callee_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub fn slang_solidity_v2_ast::ast::FunctionCallExpressionStruct::is_type_conversion(&self) -> bool
 impl core::clone::Clone for slang_solidity_v2_ast::ast::FunctionCallExpressionStruct
 pub fn slang_solidity_v2_ast::ast::FunctionCallExpressionStruct::clone(&self) -> slang_solidity_v2_ast::ast::FunctionCallExpressionStruct
