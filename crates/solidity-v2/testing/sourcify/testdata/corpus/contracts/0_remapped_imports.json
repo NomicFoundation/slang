@@ -3,9 +3,7 @@
   "chain_id": 0,
   "version": "0.8.28",
   "target": "contracts/Vault.sol",
-  "remappings": [
-    ":@lib/=dependencies/lib/src/"
-  ],
+  "remappings": [":@lib/=dependencies/lib/src/"],
   "sources": {
     "contracts/Vault.sol": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.28;\n\nimport {Ownable} from \"@lib/Ownable.sol\";\n\ncontract Vault is Ownable {\n    error NotAllowed();\n\n    receive() external payable {}\n\n    function withdraw(uint256 amount) external onlyOwner {\n        (bool ok, ) = msg.sender.call{value: amount}(\"\");\n        if (!ok) {\n            revert NotAllowed();\n        }\n    }\n}\n",
     "dependencies/lib/src/Ownable.sol": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.28;\n\nabstract contract Ownable {\n    address public owner = msg.sender;\n\n    modifier onlyOwner() {\n        require(msg.sender == owner, \"not owner\");\n        _;\n    }\n}\n"
