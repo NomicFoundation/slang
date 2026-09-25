@@ -6,5 +6,59 @@
   "sources": {
     "src/Token.sol": "// SPDX-License-Identifier: MIT\npragma solidity >=0.8.0;\n\nimport \"./interfaces/IToken.sol\";\n\ncontract Token is IToken {\n    mapping(address => uint256) private balances;\n\n    function balanceOf(address owner) external view override returns (uint256) {\n        return balances[owner];\n    }\n}\n",
     "src/interfaces/IToken.sol": "// SPDX-License-Identifier: MIT\npragma solidity >=0.8.0;\n\ninterface IToken {\n    function balanceOf(address owner) external view returns (uint256);\n}\n"
+  },
+  "artifacts": {
+    "abi": [
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          }
+        ],
+        "name": "balanceOf",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ],
+    "storageLayout": {
+      "storage": [
+        {
+          "astId": 8,
+          "contract": "src/Token.sol:Token",
+          "label": "balances",
+          "offset": 0,
+          "slot": "0",
+          "type": "t_mapping(t_address,t_uint256)"
+        }
+      ],
+      "types": {
+        "t_address": {
+          "encoding": "inplace",
+          "label": "address",
+          "numberOfBytes": "20"
+        },
+        "t_mapping(t_address,t_uint256)": {
+          "encoding": "mapping",
+          "key": "t_address",
+          "label": "mapping(address => uint256)",
+          "numberOfBytes": "32",
+          "value": "t_uint256"
+        },
+        "t_uint256": {
+          "encoding": "inplace",
+          "label": "uint256",
+          "numberOfBytes": "32"
+        }
+      }
+    }
   }
 }

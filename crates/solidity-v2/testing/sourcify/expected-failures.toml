@@ -420,3 +420,9 @@ contracts = [
   "1_0x5be35b691f8275556b05ddf578e491a63c214889",
   "1_0xe4fe7c08f22de2db8edb31dee53ed30e88dbaf6c",
 ]
+
+[[failures]]
+check = "storage_types"
+code = "[*].type"
+reason = "Slang spells a function type as `function` where solc's storage label carries the signature; every mismatch in the corpus is a function-typed variable, bare or inside a mapping."
+issue = "https://github.com/NomicFoundation/slang/issues/2196"
