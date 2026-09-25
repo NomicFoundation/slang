@@ -1,6 +1,7 @@
 mod eip712;
 mod entries;
 mod getters;
+mod interface_abi;
 mod interface_id;
 mod internal_signature;
 mod internal_type;
@@ -162,6 +163,26 @@ contract C {
     fallback() external {}
     function receive(uint256 x) external pure returns (uint256) { return x; }
     function fallback() external payable {}
+}
+"#,
+);
+
+define_fixture!(
+    InterfaceHierarchy,
+    file: "main.sol", r#"
+pragma solidity ^0.8.0;
+interface IBase {
+    error Denied(address who);
+    event Moved(uint256 indexed amount);
+    function balance() external view returns (uint256);
+    function move(uint256 amount) external;
+}
+interface IDerived is IBase {
+    event Paused();
+    function move(uint256 amount) external override;
+    function pause() external;
+    receive() external payable;
+    fallback() external;
 }
 "#,
 );
