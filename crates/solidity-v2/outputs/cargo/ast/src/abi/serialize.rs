@@ -53,8 +53,7 @@ fn same_function_name(this: &AbiEntry, other: &AbiEntry) -> bool {
     }
 }
 
-/// A library member's selector hashes the library signature, which spells enums and structs by
-/// name, so it orders a library's overloads differently from the canonical signature.
+/// A library member's selector hashes the library signature, not the canonical one.
 fn selector(entry: &AbiEntry, semantic: &Arc<SemanticContext>) -> u32 {
     let AbiEntry::Function(function) = entry else {
         unreachable!("only functions share a name");

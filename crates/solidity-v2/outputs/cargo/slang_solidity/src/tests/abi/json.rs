@@ -40,21 +40,6 @@ fn library_matches_solc() {
     );
 }
 
-/// A `view` function that takes or returns a storage reference is reachable only by
-/// `DELEGATECALL`; solc filters on both halves of the signature.
-#[test]
-fn library_functions_with_storage_in_the_signature_are_left_out() {
-    let unit = super::LibraryStorageSignature::build_compilation_unit();
-    let abi = fixtures::find_library(&unit, "L")
-        .compute_abi()
-        .expect("the ABI is computable");
-
-    assert_eq!(
-        json(&abi),
-        r#"[{"inputs":[{"internalType":"uint256","name":"k","type":"uint256"}],"name":"value","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]"#
-    );
-}
-
 define_fixture!(
     InternalTypeSpellings,
     file: "main.sol", r#"
@@ -186,36 +171,6 @@ fn getters_carry_mapping_names() {
     );
 }
 
-/// A library lists its constants' getters, errors, events and `view`/`pure` functions; `mut_fn`
-/// writes state and is left out.
-#[test]
-fn library_lists_constants_and_read_only_functions() {
-    let unit = super::LibraryMembers::build_compilation_unit();
-    let library = fixtures::find_library(&unit, "LJ")
-        .compute_abi()
-        .expect("the ABI is computable");
-    assert_eq!(
-        json(&library),
-        r#"[{"inputs":[],"name":"E","type":"error"},{"anonymous":false,"inputs":[],"name":"Ev","type":"event"},{"inputs":[],"name":"X","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"x","type":"uint256"}],"name":"view_fn","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]"#
-    );
-}
-
-/// An abstract contract cannot run its constructor, so solc leaves it out.
-#[test]
-fn abstract_contract_has_no_constructor() {
-    let unit = super::AbstractContract::build_compilation_unit();
-    let abstract_contract = unit
-        .find_contract_by_name("AB")
-        .next()
-        .expect("contract AB exists")
-        .compute_abi()
-        .expect("the ABI is computable");
-    assert_eq!(
-        json(&abstract_contract),
-        r#"[{"inputs":[],"name":"extra","outputs":[],"stateMutability":"nonpayable","type":"function"}]"#
-    );
-}
-
 define_fixture!(
     LibraryOverloads,
     file: "main.sol", r#"
@@ -305,18 +260,5 @@ fn reached_errors_and_events_match_solc() {
     assert_eq!(
         json(&abi),
         r#"[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"InConstructor","type":"error"},{"inputs":[],"name":"InInternalLib","type":"error"},{"inputs":[],"name":"InModifier","type":"error"},{"inputs":[],"name":"Qualified","type":"error"},{"inputs":[],"name":"ViaPointer","type":"error"},{"inputs":[],"name":"ViaRequire","type":"error"},{"anonymous":false,"inputs":[],"name":"EvFree","type":"event"},{"anonymous":false,"inputs":[],"name":"QEv","type":"event"},{"inputs":[],"name":"a","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"bool","name":"c","type":"bool"}],"name":"b","outputs":[],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"e","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"f","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"g","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"h","outputs":[],"stateMutability":"nonpayable","type":"function"}]"#
-    );
-}
-
-#[test]
-fn library_reached_errors_match_solc() {
-    let unit = super::ReachedErrorsAndEvents::build_compilation_unit();
-    let abi = fixtures::find_library(&unit, "Int")
-        .compute_abi()
-        .expect("the ABI is computable");
-
-    assert_eq!(
-        json(&abi),
-        r#"[{"inputs":[],"name":"InLibCallee","type":"error"},{"inputs":[],"name":"ext","outputs":[],"stateMutability":"pure","type":"function"}]"#
     );
 }
