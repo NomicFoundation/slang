@@ -1,0 +1,12 @@
+{
+  "expected_solc_divergence": [
+    {
+      "specifier": {
+        "type": "Range",
+        "from": "0.8.11",
+        "till": "0.8.12"
+      },
+      "reason": "solc 0.8.11 required the `abi.encodeCall` callee to be an external function value, and only started accepting a function declaration reached through a contract or interface type name (`I.f`, `Other.externalFn`, `Other.publicFn`) in 0.8.12. Slang does not gate the accepted callee shapes by language version."
+    }
+  ]
+}

@@ -4955,6 +4955,115 @@ mod type_system {
         }
     }
 
+    mod encode_call_callee_not_external {
+        use super::*;
+
+        #[test]
+        fn accepted() -> Result<()> {
+            run("type_system/encode_call_callee_not_external", "accepted")
+        }
+
+        #[test]
+        fn attached_free_function() -> Result<()> {
+            run(
+                "type_system/encode_call_callee_not_external",
+                "attached_free_function",
+            )
+        }
+
+        #[test]
+        fn bound_library() -> Result<()> {
+            run(
+                "type_system/encode_call_callee_not_external",
+                "bound_library",
+            )
+        }
+
+        #[test]
+        fn contract_event() -> Result<()> {
+            run(
+                "type_system/encode_call_callee_not_external",
+                "contract_event",
+            )
+        }
+
+        #[test]
+        fn error() -> Result<()> {
+            run("type_system/encode_call_callee_not_external", "error")
+        }
+
+        #[test]
+        fn event() -> Result<()> {
+            run("type_system/encode_call_callee_not_external", "event")
+        }
+
+        #[test]
+        fn free_function() -> Result<()> {
+            run(
+                "type_system/encode_call_callee_not_external",
+                "free_function",
+            )
+        }
+
+        #[test]
+        fn internal_pointer() -> Result<()> {
+            run(
+                "type_system/encode_call_callee_not_external",
+                "internal_pointer",
+            )
+        }
+
+        #[test]
+        fn internal_via_type_name() -> Result<()> {
+            run(
+                "type_system/encode_call_callee_not_external",
+                "internal_via_type_name",
+            )
+        }
+
+        #[test]
+        fn library_via_type_name() -> Result<()> {
+            run(
+                "type_system/encode_call_callee_not_external",
+                "library_via_type_name",
+            )
+        }
+
+        #[test]
+        fn modifier() -> Result<()> {
+            run("type_system/encode_call_callee_not_external", "modifier")
+        }
+
+        #[test]
+        fn public_bare() -> Result<()> {
+            run("type_system/encode_call_callee_not_external", "public_bare")
+        }
+
+        #[test]
+        fn public_from_base() -> Result<()> {
+            run(
+                "type_system/encode_call_callee_not_external",
+                "public_from_base",
+            )
+        }
+
+        #[test]
+        fn public_via_own_type_name() -> Result<()> {
+            run(
+                "type_system/encode_call_callee_not_external",
+                "public_via_own_type_name",
+            )
+        }
+
+        #[test]
+        fn public_via_super() -> Result<()> {
+            run(
+                "type_system/encode_call_callee_not_external",
+                "public_via_super",
+            )
+        }
+    }
+
     mod expression_not_a_value {
         use super::*;
 

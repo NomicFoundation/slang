@@ -931,7 +931,7 @@ impl Pass<'_> {
                 {
                     Ok(type_id) => Typing::Resolved(type_id),
                     Err(error) => {
-                        self.report_built_in_call_error(node, error);
+                        self.report_built_in_call_error(node, arguments, error);
                         Typing::Unresolved
                     }
                 }
@@ -1013,7 +1013,7 @@ impl Pass<'_> {
                 ..
             }) => {
                 let (definition_id, return_type) = (*definition_id, *return_type);
-                if self.is_modifier_definition(definition_id) {
+                if self.binder.is_modifier_definition(definition_id) {
                     self.report_operand_not_callable(node);
                     Typing::Unresolved
                 } else {
@@ -1217,7 +1217,7 @@ impl Pass<'_> {
                 ..
             }) => {
                 let (definition_id, return_type) = (*definition_id, *return_type);
-                if self.is_modifier_definition(definition_id) {
+                if self.binder.is_modifier_definition(definition_id) {
                     self.report_operand_not_callable(node);
                     // The definition is still returned so the argument names
                     // resolve against the modifier's parameters.
@@ -1301,28 +1301,24 @@ impl Pass<'_> {
         self.diagnostics.push(file_id, range, ExpressionNotCallable);
     }
 
-    /// Reports a built-in call that produced no result type, at the call site.
+    /// Reports a built-in call that produced no result type, at the call site
+    /// or at the argument the error names.
     /// The failures that carry no diagnostic are silent by design: either the
     /// check is not implemented yet, or what the call depends on already
     /// reported its own failure.
     fn report_built_in_call_error(
         &mut self,
         node: &ir::FunctionCallExpression,
+        arguments: &[ir::Expression],
         error: BuiltInCallError,
     ) {
         match error {
             BuiltInCallError::Diagnostic(kind) => self.push_diagnostic(node, kind),
+            BuiltInCallError::ArgumentDiagnostic { index, kind } => {
+                self.push_diagnostic(&arguments[index], kind);
+            }
             BuiltInCallError::NotReportedYet | BuiltInCallError::UnresolvedDependency => {}
         }
-    }
-
-    /// Whether `definition_id` is a modifier. A modifier has a function type so
-    /// that its invocation can be checked against its parameters, but it is not
-    /// callable from an expression.
-    fn is_modifier_definition(&self, definition_id: Option<NodeId>) -> bool {
-        definition_id
-            .and_then(|definition_id| self.binder.find_definition_by_id(definition_id))
-            .is_some_and(|definition| matches!(definition, Definition::Modifier(_)))
     }
 }
 

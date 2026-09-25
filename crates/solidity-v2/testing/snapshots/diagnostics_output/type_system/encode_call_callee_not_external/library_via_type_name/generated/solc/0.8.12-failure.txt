@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 3509] Error: Expected regular external function type, or external view on public function. Provided internal function.
+    ╭─[input.sol:12:24]
+    │
+ 12 │         abi.encodeCall(L.fInternal, (1, "123"));
+    │                        ─────┬─────  
+    │                             ╰─────── Error occurred here.
+────╯
+
+[TypeError 3509] Error: Expected regular external function type, or external view on public function. Cannot use library functions for abi.encodeCall.
+    ╭─[input.sol:13:24]
+    │
+ 13 │         abi.encodeCall(L.fExternal, (1, "123"));
+    │                        ─────┬─────  
+    │                             ╰─────── Error occurred here.
+────╯

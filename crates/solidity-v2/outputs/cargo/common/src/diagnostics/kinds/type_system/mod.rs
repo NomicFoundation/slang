@@ -5,6 +5,7 @@ mod array_length_too_large;
 mod array_length_zero;
 mod cannot_call_via_contract_type_name;
 mod constant_arithmetic_error;
+mod encode_call_callee_not_external;
 mod expression_not_a_value;
 mod expression_not_an_lvalue;
 mod expression_not_callable;
@@ -28,6 +29,7 @@ pub use array_length_too_large::ArrayLengthTooLarge;
 pub use array_length_zero::ArrayLengthZero;
 pub use cannot_call_via_contract_type_name::CannotCallViaContractTypeName;
 pub use constant_arithmetic_error::ConstantArithmeticError;
+pub use encode_call_callee_not_external::EncodeCallCalleeNotExternal;
 pub use expression_not_a_value::{ExpressionNotAValue, NotAValueKind};
 pub use expression_not_an_lvalue::ExpressionNotAnLValue;
 pub use expression_not_callable::ExpressionNotCallable;
@@ -95,6 +97,8 @@ define_diagnostic_kind! {
         CannotCallViaContractTypeName(CannotCallViaContractTypeName),
         /// The callee of a call is not callable.
         ExpressionNotCallable(ExpressionNotCallable),
+        /// The callee of `abi.encodeCall` is not an externally callable function.
+        EncodeCallCalleeNotExternal(EncodeCallCalleeNotExternal),
         /// An expression in a position that requires a value names a built-in,
         /// `super`, or an uncalled `new` instead. Its `kind` says which.
         ExpressionNotAValue(ExpressionNotAValue),
