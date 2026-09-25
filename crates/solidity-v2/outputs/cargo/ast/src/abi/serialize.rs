@@ -3,6 +3,7 @@
 //! the semantic type, keys in alphabetical order, and overloads in ascending selector order.
 //! `serde_json::to_value(abi.json())` is the `abi` field of solc's standard JSON.
 
+use std::fmt;
 use std::sync::Arc;
 
 use serde::Serialize;
@@ -177,7 +178,7 @@ struct Parameter<'a> {
 
 impl Serialize for Parameter<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let (json_type, struct_id) = json_type(self.type_id, self.semantic, self.library);
+        let struct_id = struct_behind(self.type_id, self.semantic);
         let mut map = serializer.serialize_map(Some(
             3 + usize::from(struct_id.is_some()) + usize::from(self.indexed.is_some()),
         ))?;
@@ -199,7 +200,14 @@ impl Serialize for Parameter<'_> {
             &self.semantic.type_abi_internal_name(self.type_id),
         )?;
         map.serialize_entry("name", self.name)?;
-        map.serialize_entry("type", &json_type)?;
+        map.serialize_entry(
+            "type",
+            &JsonType {
+                type_id: self.type_id,
+                library: self.library,
+                semantic: self.semantic,
+            },
+        )?;
         map.end()
     }
 }
@@ -238,52 +246,76 @@ impl Serialize for ComponentList<'_> {
     }
 }
 
-/// The JSON-ABI `type` string and, for a struct or an array of structs, the struct: a struct is
-/// `tuple`, `tuple[]` or `tuple[N]`, everything else its canonical name, except that a library
-/// function spells enums, contracts and interfaces by name. The parameter was checked to have an
-/// ABI representation when it was built, so the type is never declined here.
-fn json_type(
+/// The JSON-ABI `type` string: a struct is `tuple`, `tuple[]` or `tuple[N]`, everything else its
+/// canonical name, except that a library function spells enums, contracts and interfaces by name.
+/// The parameter was checked to have an ABI representation when it was built, so the type is never
+/// declined here.
+struct JsonType<'a> {
     type_id: TypeId,
-    semantic: &Arc<SemanticContext>,
     library: bool,
-) -> (String, Option<NodeId>) {
-    match semantic.types().get_type_by_id(type_id) {
-        types::Type::Array(types::ArrayType { element_type, .. }) => {
-            let (element, struct_id) = json_type(*element_type, semantic, library);
-            (format!("{element}[]"), struct_id)
+    semantic: &'a Arc<SemanticContext>,
+}
+
+impl JsonType<'_> {
+    fn of(&self, type_id: TypeId) -> Self {
+        JsonType { type_id, ..*self }
+    }
+}
+
+impl fmt::Display for JsonType<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.semantic.types().get_type_by_id(self.type_id) {
+            types::Type::Array(types::ArrayType { element_type, .. }) => {
+                write!(f, "{}[]", self.of(*element_type))
+            }
+            types::Type::FixedSizeArray(types::FixedSizeArrayType {
+                element_type, size, ..
+            }) => write!(f, "{}[{size}]", self.of(*element_type)),
+            types::Type::ArraySlice(types::ArraySliceType { array_type_id }) => {
+                self.of(*array_type_id).fmt(f)
+            }
+            types::Type::UserDefinedValue(types::UserDefinedValueType { definition_id }) => {
+                let Some(binder::Definition::UserDefinedValueType(definition)) =
+                    self.semantic.binder().find_definition_by_id(*definition_id)
+                else {
+                    unreachable!("a user-defined value type resolves to its definition");
+                };
+                let target_type_id = definition
+                    .target_type_id
+                    .expect("a user-defined value type in the ABI has a resolved underlying type");
+                self.of(target_type_id).fmt(f)
+            }
+            types::Type::Struct(_) => f.write_str("tuple"),
+            types::Type::Contract(_) | types::Type::Enum(_) | types::Type::Interface(_)
+                if self.library =>
+            {
+                f.write_str(&self.semantic.type_internal_name(self.type_id))
+            }
+            _ => type_as_abi_type(self.semantic, self.type_id)
+                .expect("a scalar in the ABI has an ABI type")
+                .fmt(f),
         }
-        types::Type::FixedSizeArray(types::FixedSizeArrayType {
-            element_type, size, ..
-        }) => {
-            let (element, struct_id) = json_type(*element_type, semantic, library);
-            (format!("{element}[{size}]"), struct_id)
+    }
+}
+
+impl Serialize for JsonType<'_> {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        serializer.collect_str(self)
+    }
+}
+
+/// The struct behind a `tuple` type, through any arrays.
+fn struct_behind(type_id: TypeId, semantic: &SemanticContext) -> Option<NodeId> {
+    match semantic.types().get_type_by_id(type_id) {
+        types::Type::Array(types::ArrayType { element_type, .. })
+        | types::Type::FixedSizeArray(types::FixedSizeArrayType { element_type, .. }) => {
+            struct_behind(*element_type, semantic)
         }
         types::Type::ArraySlice(types::ArraySliceType { array_type_id }) => {
-            json_type(*array_type_id, semantic, library)
+            struct_behind(*array_type_id, semantic)
         }
-        types::Type::UserDefinedValue(types::UserDefinedValueType { definition_id }) => {
-            let Some(binder::Definition::UserDefinedValueType(definition)) =
-                semantic.binder().find_definition_by_id(*definition_id)
-            else {
-                unreachable!("a user-defined value type resolves to its definition");
-            };
-            let target_type_id = definition
-                .target_type_id
-                .expect("a user-defined value type in the ABI has a resolved underlying type");
-            json_type(target_type_id, semantic, library)
-        }
-        types::Type::Struct(types::StructType { definition_id, .. }) => {
-            ("tuple".to_string(), Some(*definition_id))
-        }
-        types::Type::Contract(_) | types::Type::Enum(_) | types::Type::Interface(_) if library => {
-            (semantic.type_internal_name(type_id), None)
-        }
-        _ => (
-            type_as_abi_type(semantic, type_id)
-                .expect("a scalar in the ABI has an ABI type")
-                .to_string(),
-            None,
-        ),
+        types::Type::Struct(types::StructType { definition_id, .. }) => Some(*definition_id),
+        _ => None,
     }
 }
 
