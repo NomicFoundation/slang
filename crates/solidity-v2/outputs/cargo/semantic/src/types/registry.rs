@@ -203,12 +203,6 @@ impl TypeRegistry {
                 Type::Address(_),
             ) => *from_payable,
 
-            // solc types an address literal as non-payable `address`.
-            (
-                Type::Literal(LiteralKind::Address { .. }),
-                Type::Address(AddressType { is_payable }),
-            ) => !is_payable,
-
             (
                 Type::Integer(IntegerType {
                     is_signed: from_signed,
@@ -708,7 +702,6 @@ impl TypeRegistry {
                 mutability: *mutability,
                 partially_applied: false,
             }),
-            Type::Literal(LiteralKind::Address { .. }) => return Some(self.address()),
 
             Type::Address(_)
             | Type::Boolean

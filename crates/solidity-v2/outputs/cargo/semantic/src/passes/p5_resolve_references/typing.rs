@@ -1,4 +1,4 @@
-use ruint::aliases::{U160, U256};
+use ruint::aliases::U256;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     AmbiguousReference, MemberNotFound, NoMatchingCallableDeclaration,
@@ -1475,9 +1475,9 @@ impl Pass<'_> {
         Type::Literal(kind)
     }
 
-    pub(super) fn hex_number_literal_kind(
+    pub(super) fn type_of_hex_number_expression(
         hex_number_expression: &ir::HexNumberExpression,
-    ) -> Option<LiteralKind> {
+    ) -> Option<Type> {
         let mut hex_number = hex_number_expression.literal.unparse().to_owned();
         hex_number.retain(|character| character != '_');
         // Source-text byte width: `0x` prefix is stripped
@@ -1485,11 +1485,7 @@ impl Pass<'_> {
         if digits == 40 {
             // TODO(validation) SDR[38]: verify the address is valid (ie. has a valid checksum)
             // We need at least an implementation of SHA3 to compute the checksum
-
-            // Skip `0x` prefix and parse the hexadecimal number.
-            // `U160::from_str_radix` ignores `_` separators.
-            let value = U160::from_str_radix(&hex_number[2..], 16).ok()?;
-            return Some(LiteralKind::Address { value });
+            return Some(Type::Address(AddressType { is_payable: false }));
         }
         let value = Number::from_hex_number_expression(hex_number_expression)?
             .into_integer()
@@ -1499,14 +1495,14 @@ impl Pass<'_> {
         // Each pair of hex digits is one byte. An odd digit count spans no
         // whole number of bytes, so the literal is a plain integer.
         if digits % 2 == 1 {
-            return Some(LiteralKind::Integer {
+            return Some(Type::Literal(LiteralKind::Integer {
                 value: value.into(),
-            });
+            }));
         }
-        Some(LiteralKind::HexInteger {
+        Some(Type::Literal(LiteralKind::HexInteger {
             value,
             bytes: digits / 2,
-        })
+        }))
     }
 }
 

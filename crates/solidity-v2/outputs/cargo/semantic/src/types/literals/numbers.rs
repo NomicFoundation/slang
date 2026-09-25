@@ -16,15 +16,21 @@ pub enum Number {
     Rational(BigRational),
 }
 
+/// The integer a hex number literal spells, whatever its type (a 40-digit one is an `address`).
+pub fn value_of_hex_number_expression(
+    hex_number_expression: &ir::HexNumberExpression,
+) -> Option<BigInt> {
+    let hex = hex_number_expression.literal.unparse();
+    // Skip `0x` prefix and parse the hexadecimal number.
+    // `BigInt::from_str_radix` can handle `_` separators.
+    BigInt::from_str_radix(&hex[2..], 16).ok()
+}
+
 impl Number {
     pub(crate) fn from_hex_number_expression(
         hex_number_expression: &ir::HexNumberExpression,
     ) -> Option<Self> {
-        let hex = hex_number_expression.literal.unparse();
-        // Skip `0x` prefix and parse the hexadecimal number.
-        // `BigInt::from_str_radix` can handle `_` separators.
-        let value = BigInt::from_str_radix(&hex[2..], 16).ok()?;
-        Some(Self::Integer(value))
+        value_of_hex_number_expression(hex_number_expression).map(Self::Integer)
     }
 
     pub(crate) fn from_decimal_number_expression(
@@ -68,7 +74,6 @@ impl Number {
 
     pub fn from_literal_kind(kind: &LiteralKind) -> Option<Self> {
         match kind {
-            LiteralKind::Address { value } => Some(Self::Integer(value.into())),
             LiteralKind::Integer { value } => Some(Self::Integer(value.clone())),
             LiteralKind::HexInteger { value, .. } => Some(Self::Integer(value.clone().into())),
             LiteralKind::Rational { value } => Some(Self::Rational(value.clone())),
