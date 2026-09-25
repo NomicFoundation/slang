@@ -1,6 +1,276 @@
-# The Sourcify corpus snapshot the PR workflow runs (`sourcify_smoke.yml`). Bumping it
-# is a one-line PR whose CI run shows exactly what the new contracts change.
+# The Sourcify corpus snapshot the workflows run: the PR tier takes `pr`, the full tier
+# bin-packs `assets` into shards by `bytes` (`lock shard`). Bumping the tag is a one-line
+# PR whose CI run shows exactly what the new contracts change.
+
 repo = "nebasuke/sourcify-corpora"
 tag = "sourcify-corpus-0.8.x-20260924"
+
+[pr]
 asset = "sourcify-corpus-pr-subset.tar.xz"
 sha256 = "42845f19a71578a95c972fa6696d6c2437f19c591e7debefa3d588ed83ec3939"
+
+[[assets]]
+name = "sourcify-corpus-0.8.0.tar.xz"
+version = "0.8.0"
+contracts = 38858
+bytes = 69202620
+sha256 = "63c9acd4b2ebf8aeb39004b81983cea3de59ee0b827503b3eaa31cfd3b6b6be8"
+
+[[assets]]
+name = "sourcify-corpus-0.8.1.tar.xz"
+version = "0.8.1"
+contracts = 8053
+bytes = 13256652
+sha256 = "3cdd714a3982f7e8f4481175a0c005b33f792572d1ce42a1ace3b2de5ae43876"
+
+[[assets]]
+name = "sourcify-corpus-0.8.2.tar.xz"
+version = "0.8.2"
+contracts = 15587
+bytes = 27044456
+sha256 = "b6a8b97e99f26893943a0ed6e73c55e04a59948aacc83b44db4cafdfb45ffc08"
+
+[[assets]]
+name = "sourcify-corpus-0.8.3.tar.xz"
+version = "0.8.3"
+contracts = 6735
+bytes = 13782272
+sha256 = "e8e81b6ddc5cfdf419c80d99b9b19714013a849ecd7a61e0e379020d0d279529"
+
+[[assets]]
+name = "sourcify-corpus-0.8.4.tar.xz"
+version = "0.8.4"
+contracts = 82269
+bytes = 227004976
+sha256 = "b423c4506562f7f66c95ee7d2574fdaa2641522bfeaf2aea2178732532ff0cf8"
+
+[[assets]]
+name = "sourcify-corpus-0.8.5.tar.xz"
+version = "0.8.5"
+contracts = 4848
+bytes = 7011208
+sha256 = "a1c238ecca7ba9f2faf200a6413fa186b82ffb8888c9bfcf37904b620c466a9c"
+
+[[assets]]
+name = "sourcify-corpus-0.8.6.tar.xz"
+version = "0.8.6"
+contracts = 17169
+bytes = 41171000
+sha256 = "32f6ec5f63b9a5adce1ea341d44ab4b222b31d4048a8e64291af2e5b63af83b4"
+
+[[assets]]
+name = "sourcify-corpus-0.8.7.tar.xz"
+version = "0.8.7"
+contracts = 79750
+bytes = 156404608
+sha256 = "f5b5612ce650e52f1c3ac5106bca76e651914a41b6a73dd4695fe3c62d8b5ef8"
+
+[[assets]]
+name = "sourcify-corpus-0.8.8.tar.xz"
+version = "0.8.8"
+contracts = 8766
+bytes = 18711384
+sha256 = "ff7a646d5ce3c0d5ceb92cd63c55969795daaec46fd0f8d546fbf3db5f47bc5e"
+
+[[assets]]
+name = "sourcify-corpus-0.8.9.tar.xz"
+version = "0.8.9"
+contracts = 83603
+bytes = 272645660
+sha256 = "f26414260ffaeca00472f42ab3fc32fcabe23d1a4d2fb236ceacc0dbb5057bf4"
+
+[[assets]]
+name = "sourcify-corpus-0.8.10.tar.xz"
+version = "0.8.10"
+contracts = 31943
+bytes = 91518440
+sha256 = "b9157287913889bea61befe46789239418a553f79b20e095e2633f2b84f0cf04"
+
+[[assets]]
+name = "sourcify-corpus-0.8.11.tar.xz"
+version = "0.8.11"
+contracts = 19411
+bytes = 53093588
+sha256 = "0bd7dbed5e921d423dfa69ff1a97a6561e5d6341863f44d6bb45ba2ac8a2067a"
+
+[[assets]]
+name = "sourcify-corpus-0.8.12.tar.xz"
+version = "0.8.12"
+contracts = 16067
+bytes = 50060108
+sha256 = "66de587d1dd139f5b18e0b9f76429065bcdd9ba82100c461643ace0f5cf56339"
+
+[[assets]]
+name = "sourcify-corpus-0.8.13.tar.xz"
+version = "0.8.13"
+contracts = 30600
+bytes = 113114344
+sha256 = "556c2e00730d3dd2e1bff13c2ccc7cce3ab63a9527a9e1f9f9b8d9560196b5fe"
+
+[[assets]]
+name = "sourcify-corpus-0.8.14.tar.xz"
+version = "0.8.14"
+contracts = 12651
+bytes = 34549280
+sha256 = "4ac8531335c2de77698c608f35d2c0133cdf78162abbfafe7161e98c9a71c62d"
+
+[[assets]]
+name = "sourcify-corpus-0.8.15.tar.xz"
+version = "0.8.15"
+contracts = 28369
+bytes = 97145848
+sha256 = "21cb6e8da00a86e49e55e399fae7650fc00b42ea02fafb4f17cc0b2f50bd1249"
+
+[[assets]]
+name = "sourcify-corpus-0.8.16.tar.xz"
+version = "0.8.16"
+contracts = 21418
+bytes = 78639236
+sha256 = "c916dbd2065639c4a30b3dc2e5c46b521fe94401c6a82c5c1bb424c25b9081b0"
+
+[[assets]]
+name = "sourcify-corpus-0.8.17.tar.xz"
+version = "0.8.17"
+contracts = 176360
+bytes = 530238372
+sha256 = "c9759d169aedf9258b56c6e854e20dd79da4a61ed42578f09b98f7582d1b9081"
+
+[[assets]]
+name = "sourcify-corpus-0.8.18.tar.xz"
+version = "0.8.18"
+contracts = 60079
+bytes = 196694408
+sha256 = "a8bb8611c500b6cb645f90f1844fcbeb805375c6c4ec73bfe6df46f4af6c5aa4"
+
+[[assets]]
+name = "sourcify-corpus-0.8.19.tar.xz"
+version = "0.8.19"
+contracts = 97980
+bytes = 401764828
+sha256 = "c3cf58aca071e3e464c4b641961eb58121e9a5421a22ffcb93865edc3a6ab671"
+
+[[assets]]
+name = "sourcify-corpus-0.8.20.tar.xz"
+version = "0.8.20"
+contracts = 229367
+bytes = 857047560
+sha256 = "8e32d066cda2ecf64d0bfa5ea277f289d7b8a63b58b8d430c51b4a2ec076271e"
+
+[[assets]]
+name = "sourcify-corpus-0.8.21.tar.xz"
+version = "0.8.21"
+contracts = 33848
+bytes = 141662804
+sha256 = "f3c126b8fe829bf232a8f4a406ae22c3204b0e40c3a05f2e5e68c234c713b6c0"
+
+[[assets]]
+name = "sourcify-corpus-0.8.22.tar.xz"
+version = "0.8.22"
+contracts = 43542
+bytes = 195311524
+sha256 = "695a6a5dff0d8f5994f0394ccba1be343537aa1a4c9d3fe720561689cb023c5f"
+
+[[assets]]
+name = "sourcify-corpus-0.8.23.tar.xz"
+version = "0.8.23"
+contracts = 47741
+bytes = 226332124
+sha256 = "13f77dd7fddaaacb0ecd32884d9d1ea8fd4374c28133bc51191691dd2fa628e2"
+
+[[assets]]
+name = "sourcify-corpus-0.8.24.tar.xz"
+version = "0.8.24"
+contracts = 186291
+bytes = 852045948
+sha256 = "52b116c9dff94081e498b8a1dfe24059e9bae8ce0ebc510af443cf1686e70eaf"
+
+[[assets]]
+name = "sourcify-corpus-0.8.25.tar.xz"
+version = "0.8.25"
+contracts = 55282
+bytes = 262095084
+sha256 = "e95657935fd63354f73f5031ebfce7246832e90659918f60e74ecf5981b23871"
+
+[[assets]]
+name = "sourcify-corpus-0.8.26.tar.xz"
+version = "0.8.26"
+contracts = 136442
+bytes = 654178716
+sha256 = "d080c1ab8a9660c6ba611991028947694ccf9969baf70e3b9d1556e7365ab258"
+
+[[assets]]
+name = "sourcify-corpus-0.8.27.tar.xz"
+version = "0.8.27"
+contracts = 52034
+bytes = 218692592
+sha256 = "f2e30290cf4e6e696dce87fb9b0c8fbb5b445734f97302e18a1ae1b4894e2b2d"
+
+[[assets]]
+name = "sourcify-corpus-0.8.28.tar.xz"
+version = "0.8.28"
+contracts = 146744
+bytes = 856628392
+sha256 = "dfc0dacddea4dc98df522498f480d73aff04284c752b1f15fc022f5f722e6ef1"
+
+[[assets]]
+name = "sourcify-corpus-0.8.29.tar.xz"
+version = "0.8.29"
+contracts = 27306
+bytes = 108659468
+sha256 = "1739c93022a696d1e328f91a01afba0360759ff3637b802ecb48d0c11252ef7e"
+
+[[assets]]
+name = "sourcify-corpus-0.8.30.tar.xz"
+version = "0.8.30"
+contracts = 189509
+bytes = 577408732
+sha256 = "65371b31e6ae77554dba6bca4dc020156d60afdb844fc34925db347c16de1dc4"
+
+[[assets]]
+name = "sourcify-corpus-0.8.31.tar.xz"
+version = "0.8.31"
+contracts = 148670
+bytes = 149815884
+sha256 = "4a0822b7a4865db9369c31c094a3c7eb99ee386f59e071b6738d4ed232f2c24e"
+
+[[assets]]
+name = "sourcify-corpus-0.8.32.tar.xz"
+version = "0.8.32"
+contracts = 9125
+bytes = 7109180
+sha256 = "33cbcef7224ee38bcba596622f6677a4f72c143c657aec23c759847ba0239f2f"
+
+[[assets]]
+name = "sourcify-corpus-0.8.33.tar.xz"
+version = "0.8.33"
+contracts = 17356
+bytes = 69745632
+sha256 = "b110afb962eb933b2ba444b915723dc15f0ed2a995440dd0bbaab054c1153ab4"
+
+[[assets]]
+name = "sourcify-corpus-0.8.34.tar.xz"
+version = "0.8.34"
+contracts = 131386
+bytes = 242040224
+sha256 = "b6a463e507aadcdf543656526c8dee626b998f9a6dcbad7abbc9d3e27d1e07f8"
+
+[[assets]]
+name = "sourcify-corpus-0.8.35.tar.xz"
+version = "0.8.35"
+contracts = 23142
+bytes = 58372080
+sha256 = "ca612e9adbd3bb0fbec998b291ffec1ef06c4dc7eb3675e2bc185c1af0011214"
+
+[[assets]]
+name = "sourcify-corpus-0.8.36.tar.xz"
+version = "0.8.36"
+contracts = 7414
+bytes = 36300976
+sha256 = "81548966ae3cf5a08b9cbddfddf92cb9292c1d4821be19f06036a844e3f636f2"
+
+[[assets]]
+name = "sourcify-corpus-0.8.37.tar.xz"
+version = "0.8.37"
+contracts = 961
+bytes = 2876776
+sha256 = "89e1e098c8cda428bb656b732e5b57d67c9d7930748a9e8585c8baaa56d4817c"
