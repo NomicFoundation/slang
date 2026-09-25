@@ -358,7 +358,6 @@ impl LiteralType {
                 Some(Type::FixedPointNumber(FixedPointNumberType { inner }))
             }
             types::Type::String(inner) => Some(Type::String(StringType { inner })),
-            types::Type::Address(inner) => Some(Type::Address(AddressType { inner })),
             _ => None,
         })
     }

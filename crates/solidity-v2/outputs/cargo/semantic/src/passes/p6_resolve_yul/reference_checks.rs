@@ -294,8 +294,8 @@ impl Pass<'_> {
 
     // Whether the expression is a number that carries no type of its own,
     // which is what arithmetic over literals evaluates to. Integers, hex
-    // numbers, rationals and addresses count as numbers here. String
-    // literals do not, and neither does a value with a concrete type.
+    // numbers and rationals count as numbers here. String literals do not,
+    // and neither does a value with a concrete type.
     fn is_untyped_number_expression(&self, expression: &ir::Expression) -> bool {
         let node_id = expression.node_id().expect("expressions have node ids");
         let Typing::Resolved(type_id) = self.binder.node_typing(node_id) else {
@@ -307,7 +307,6 @@ impl Pass<'_> {
                 LiteralKind::Integer { .. }
                     | LiteralKind::HexInteger { .. }
                     | LiteralKind::Rational { .. }
-                    | LiteralKind::Address { .. }
             )
         )
     }

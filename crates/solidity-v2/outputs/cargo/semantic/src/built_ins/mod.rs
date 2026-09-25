@@ -5,8 +5,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use super::binder::{Binder, Definition, Typing};
 use super::types::{
     AddressType, ArrayType, BytesType, ContractType, DataLocation, FunctionTypeVisibility,
-    LiteralKind, MetaType, TupleType, Type, TypeId, TypeRegistry, UserDefinedValueType,
-    UserMetaType,
+    MetaType, TupleType, Type, TypeId, TypeRegistry, UserDefinedValueType, UserMetaType,
 };
 
 mod availability;
@@ -340,9 +339,6 @@ impl<'a> BuiltInsResolver<'a> {
                 }
             }
             Type::Integer(_) => None,
-            Type::Literal(LiteralKind::Address { .. }) => {
-                Self::lookup_member_of_address(symbol, false)
-            }
             Type::Literal(_) => None,
             Type::Mapping(_) => None,
             // The meta-type of `bytes`/`string` exposes the `concat` built-in.

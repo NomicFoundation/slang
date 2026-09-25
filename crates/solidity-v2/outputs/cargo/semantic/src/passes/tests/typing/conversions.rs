@@ -4,12 +4,12 @@
 
 use num_bigint::{BigInt, BigUint};
 use num_rational::BigRational;
-use ruint::aliases::{U160, U256};
+use ruint::aliases::U256;
 
 use super::expression;
 use crate::types::{
-    AddressType, ByteArrayType, DataLocation, FixedSizeArrayType, IntegerType, LiteralKind,
-    MappingType, StringType, TupleType, Type, TypeId, TypeRegistry,
+    ByteArrayType, DataLocation, FixedSizeArrayType, IntegerType, LiteralKind, MappingType,
+    StringType, TupleType, Type, TypeId, TypeRegistry,
 };
 
 fn register_uint_type(types: &mut TypeRegistry, bits: u32) -> TypeId {
@@ -142,24 +142,6 @@ fn test_hex_literal_to_byte_array_conversion() {
     assert!(types.implicitly_convertible_to(dec_0, bytes4));
     assert!(types.implicitly_convertible_to(hex_0x0, bytes2));
     assert!(types.implicitly_convertible_to(hex_0x0000, bytes4));
-}
-
-#[test]
-fn test_address_literal_converts_to_non_payable_address_only() {
-    let (_, mut types) = expression("0").into_resolved_type();
-
-    let address = types.register_type(Type::Address(AddressType { is_payable: false }));
-    let address_payable = types.register_type(Type::Address(AddressType { is_payable: true }));
-    let uint160 = register_uint_type(&mut types, 160);
-    let bytes20 = types.register_type(Type::ByteArray(ByteArrayType { width: 20 }));
-    let literal = types.register_type(Type::Literal(LiteralKind::Address {
-        value: U160::from(0xb701_a286_u64),
-    }));
-
-    assert!(types.implicitly_convertible_to(literal, address));
-    assert!(!types.implicitly_convertible_to(literal, address_payable));
-    assert!(!types.implicitly_convertible_to(literal, uint160));
-    assert!(!types.implicitly_convertible_to(literal, bytes20));
 }
 
 #[test]
