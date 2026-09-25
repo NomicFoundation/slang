@@ -24,11 +24,113 @@ issue = "https://github.com/NomicFoundation/slang/issues/2149"
 [[failures]]
 check = "parse"
 code = "syntax/incompatible-version-pragma"
-reason = "`pragma solidity 0.8.34.0;`: solc's version matcher ignores the fourth component; Slang rejects the malformed version on purpose."
+reason = "Four-component versions (`pragma solidity 0.8.34.0;`, `^0.8.17.0`): solc's matcher ignores the fourth component, Slang rejects the malformed version on purpose. Every contract in this bucket has one."
 deliberate = true
 
 [[failures]]
 check = "parse"
 code = "syntax/unsupported-abicoder-v1"
 reason = "`pragma abicoder v1` selects the legacy ABI coder; Slang supports v2 only, on purpose."
+deliberate = true
+
+[[failures]]
+check = "parse"
+code = "syntax/unsupported-experimental-smt-checker"
+reason = "`pragma experimental SMTChecker` asks for a checker Slang does not ship; solc treats it as a no-op without a solver."
+deliberate = true
+
+[[failures]]
+check = "validate"
+code = "structure/duplicate-abicoder-specifier"
+reason = "`pragma abicoder v2` followed by `pragma experimental ABIEncoderV2`: solc only rejects the reverse order, Slang rejects any second selection."
+deliberate = true
+
+[[failures]]
+check = "parse"
+code = "syntax/invalid-version-specifier"
+reason = "`pragma solidity *0.8.7`: solc's version matcher accepts the stray `*`, Slang rejects the malformed specifier."
+deliberate = true
+
+[[failures]]
+check = "validate"
+code = "semantic/missing-override-specifier"
+reason = "solc 0.8.8–0.8.11 checked only the first inherited declaration per signature through an intermediate contract; Slang applies the 0.8.12 rule to every version."
+issue = "https://github.com/NomicFoundation/slang/issues/2188"
+
+[[failures]]
+check = "validate"
+code = "semantic/override-visibility-differs"
+reason = "Same masking as #2188: the `public virtual` behind an interface declaration is never compared on solc ≤0.8.11."
+issue = "https://github.com/NomicFoundation/slang/issues/2188"
+
+[[failures]]
+check = "validate"
+code = "semantic/overriding-non-virtual-member"
+reason = "Same masking as #2188 for a non-virtual implementation behind a virtual declaration; one 0.8.18 contract in the bucket is a corpus artefact solc rejects too."
+issue = "https://github.com/NomicFoundation/slang/issues/2188"
+
+[[failures]]
+check = "validate"
+code = "type-system/incompatible-conditional-branches"
+reason = "Three shapes solc unifies and Slang does not: fixed-size arrays of reference elements across data locations (#2189), tuple assignments of different arity (#2190), function types differing in visibility and mutability (#2191)."
+issue = "https://github.com/NomicFoundation/slang/issues/2189"
+
+[[failures]]
+check = "parse"
+code = "syntax/unexpected-terminal"
+reason = "Duplicate `indexed` on an event parameter, accepted by solc before 0.8.18 (#2192); the rest are version pragmas solc's matcher swallows (`^0.8.1.`, `^0.8.20 - <0.8.31`), rejected on purpose."
+issue = "https://github.com/NomicFoundation/slang/issues/2192"
+
+[[failures]]
+check = "validate"
+code = "type-system/expression-not-a-value"
+reason = "`(msg, 'text');` as an expression statement: solc never evaluates the tuple, Slang rejects the builtin as a value."
+issue = "https://github.com/NomicFoundation/slang/issues/2193"
+
+[[failures]]
+check = "validate"
+code = "type-system/receive-function-parameters"
+reason = "`function receive(address, uint256)` is an ordinary function in solc; Slang's IR classifies it as the receive function. Fixed on main after this harness's base."
+issue = "https://github.com/NomicFoundation/slang/issues/2129"
+
+[[failures]]
+check = "validate"
+code = "structure/multiple-receive-functions"
+reason = "Same as `receive-function-parameters`: the misclassified `function receive(...)` next to a real `receive()`."
+issue = "https://github.com/NomicFoundation/slang/issues/2129"
+
+[[failures]]
+check = "validate"
+code = "semantic/linearisation-impossible"
+reason = "Not a divergence: the one record bundles sources solc rejects for the same reason; the verified target is a single library. The harness compiles every file in a record, not the target's import closure."
+deliberate = true
+
+[[failures]]
+check = "bind"
+code = "resolution/identifier-redeclaration"
+reason = "A name declared in a file and again elsewhere in an import cycle: solc's per-import symbol snapshot hides one, Slang's transitive closure sees both."
+issue = "https://github.com/NomicFoundation/slang/issues/2194"
+
+[[failures]]
+check = "bind"
+code = "resolution/identifier-not-found"
+reason = "Follow-on of #2194: every use of the name it reports as redeclared."
+issue = "https://github.com/NomicFoundation/slang/issues/2194"
+
+[[failures]]
+check = "bind"
+code = "resolution/ambiguous-yul-reference"
+reason = "A constant imported by name through two routes resolves in Solidity but is ambiguous inside assembly."
+issue = "https://github.com/NomicFoundation/slang/issues/2195"
+
+[[failures]]
+check = "bind"
+code = "resolution/imported-declaration-not-found"
+reason = "Follow-on of a version pragma with a trailing dot (`pragma solidity ^0.8.1.;`), rejected on purpose: the file never parses, so nothing can be imported from it."
+deliberate = true
+
+[[failures]]
+check = "bind"
+code = "resolution/identifier-not-library-name"
+reason = "Same follow-on as `imported-declaration-not-found`: a `using` directive naming a library from the file that failed to parse."
 deliberate = true
