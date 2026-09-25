@@ -432,6 +432,7 @@ impl SignatureHasher {
 }
 
 pub fn selector_from_signature(signature: &str) -> u32 {
-    let selector_bytes: [u8; 4] = hash_from_signature(signature)[0..4].try_into().unwrap();
-    u32::from_be_bytes(selector_bytes)
+    let mut hasher = SignatureHasher::default();
+    hasher.0.update(signature.as_bytes());
+    hasher.selector()
 }
