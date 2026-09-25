@@ -83,7 +83,6 @@ pub struct EventDefinition {
 #[derive(Debug)]
 pub struct FunctionDefinition {
     pub ir_node: ir::FunctionDefinition,
-    pub externalized_type_id: Option<TypeId>,
     pub(crate) parameters_scope_id: ScopeId,
 }
 
@@ -424,7 +423,6 @@ impl Definition {
         );
         Self::Function(FunctionDefinition {
             ir_node: Arc::clone(ir_node),
-            externalized_type_id: None,
             parameters_scope_id,
         })
     }

@@ -704,21 +704,14 @@ impl Pass<'_> {
         &mut self,
         resolution: &Resolution,
     ) -> Typing {
-        // Check if the target is a state variable with a getter or a function
-        // with an externalized type; the member is accessed through that type.
+        // Check if the target is a state variable with a getter; the member is
+        // accessed through that type.
         if let Resolution::Definition(definition_id) = resolution
-            && let Some(member_type_id) =
-                match self.binder.find_definition_by_id(*definition_id).unwrap() {
-                    Definition::StateVariable(state_var_definition) => {
-                        state_var_definition.getter_type_id
-                    }
-                    Definition::Function(function_definition) => {
-                        function_definition.externalized_type_id
-                    }
-                    _ => None,
-                }
+            && let Definition::StateVariable(state_var_definition) =
+                self.binder.find_definition_by_id(*definition_id).unwrap()
+            && let Some(getter_type_id) = state_var_definition.getter_type_id
         {
-            return Typing::Resolved(member_type_id);
+            return Typing::Resolved(getter_type_id);
         }
 
         let mut typing = self.typing_of_resolution(resolution);

@@ -3,6 +3,7 @@ use slang_solidity_v2_semantic::built_ins::InternalBuiltIn;
 use slang_solidity_v2_semantic::{binder, types};
 
 use super::super::{FunctionCallExpressionStruct, Type};
+use super::function_definition::externalized_type_id_of_function;
 
 impl FunctionCallExpressionStruct {
     /// Returns `true` if this call is a type conversion (e.g. `uint256(x)`,
@@ -45,12 +46,7 @@ impl FunctionCallExpressionStruct {
             }
             // A declaration reached through a type name carries its externalized type.
             types::Type::UserMetaType(types::UserMetaType { definition_id }) => {
-                match semantic.binder().find_definition_by_id(*definition_id) {
-                    Some(binder::Definition::Function(definition)) => {
-                        definition.externalized_type_id
-                    }
-                    _ => None,
-                }
+                externalized_type_id_of_function(semantic, *definition_id)
             }
             _ => None,
         }?;

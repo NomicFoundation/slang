@@ -25,9 +25,8 @@ pub struct TypeRegistry {
     super_types: Map<NodeId, Vec<NodeId>>,
     // Each function type `externalize_function_type` was given, mapped to its
     // answer, identity included.
-    // TODO(v2): externalized types also live on the function definition (p3) and in
-    // member-access typings (p5); keep them only here. A bare reference to a
-    // `public` function should type as internal, as in solc.
+    // TODO(v2): a bare reference to a `public` function should type as internal,
+    // as in solc.
     externalized_function_types: Map<TypeId, TypeId>,
     // Some implicit conversion rules are version dependant. The version is
     // threaded in here so we can gate those rules on it.
