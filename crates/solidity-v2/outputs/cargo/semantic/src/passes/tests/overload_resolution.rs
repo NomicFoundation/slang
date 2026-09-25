@@ -218,3 +218,44 @@ contract C {
         "expected the overload taking an internal function"
     );
 }
+
+/// An `abi.encodeCall` with no arguments passes `()`, which has to type for the
+/// call around it to select an overload.
+#[test]
+fn test_encode_call_with_empty_tuple_argument_selects_overload() {
+    const SOURCE: &str = r###"
+pragma solidity *;
+interface I {
+    function m() external;
+}
+
+contract C {
+    function f() private pure returns (uint256) {
+        return 0;
+    }
+
+    function f(uint256 a, bytes memory data) private pure returns (uint256) {
+        return a + data.length;
+    }
+
+    function test() internal pure returns (uint256) {
+        return f(1, abi.encodeCall(I.m, ()));
+    }
+}
+    "###;
+
+    let analysis = Analysis::of_source(SOURCE)
+        .run(Analyse::References)
+        .expect_no_diagnostics();
+
+    let contract = analysis.find_contract("C");
+    let overloads = function_definition_ids(contract, "f");
+    assert_eq!(2, overloads.len(), "expected both `f` overloads");
+
+    let resolutions = resolutions_of(analysis.binder(), "f");
+    assert_eq!(
+        vec![Resolution::Definition(overloads[1])],
+        resolutions,
+        "expected the overload taking the encoded call"
+    );
+}
