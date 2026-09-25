@@ -740,6 +740,11 @@ mod expressions {
     }
 
     #[test]
+    fn funcalls_overload_encode_call_empty_tuple() -> Result<()> {
+        run("expressions", "funcalls_overload_encode_call_empty_tuple")
+    }
+
+    #[test]
     fn funcalls_overload_indexed() -> Result<()> {
         run("expressions", "funcalls_overload_indexed")
     }

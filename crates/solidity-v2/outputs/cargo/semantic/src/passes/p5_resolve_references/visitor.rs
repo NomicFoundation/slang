@@ -389,7 +389,7 @@ impl Visitor for Pass<'_> {
             // it sees this same typing.
             match &node.items.first().unwrap().expression {
                 Some(expression) => self.check_typing_of_expression(expression).clone(),
-                // `()` is the empty tuple; its context decides whether it is accepted.
+                // `()` is the empty tuple, solc's `tuple()`.
                 None => Typing::Resolved(
                     self.types
                         .register_type(Type::Tuple(TupleType { types: Vec::new() })),
