@@ -319,60 +319,71 @@ fn test_bitwise_operations_unresolved_for_rationals() {
     assert_eq!(type_, None);
 }
 
+fn string_literal(value: &[u8]) -> Type {
+    Type::Literal(LiteralKind::String {
+        value: value.into(),
+    })
+}
+
+fn hex_string_literal(value: &[u8]) -> Type {
+    Type::Literal(LiteralKind::HexString {
+        value: value.into(),
+    })
+}
+
 #[test]
-fn test_string_literal_byte_count_with_escapes() {
+fn test_string_literal_value_with_escapes() {
     // Plain ASCII: one byte per char.
     let (type_, _) = expression(r#""abc""#).into_resolved_type();
-    assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 3 }));
+    assert_eq!(type_, string_literal(b"abc"));
 
     // Each `\n`, `\t`, etc. decodes to a single byte.
     let (type_, _) = expression(r#""\n\t\\""#).into_resolved_type();
-    assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 3 }));
+    assert_eq!(type_, string_literal(b"\n\t\\"));
 
     // `\xNN` escapes decode to one byte each, regardless of the 4-char source
     // length per escape.
     let (type_, _) = expression(r#""\x41\x42""#).into_resolved_type();
-    assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 2 }));
+    assert_eq!(type_, string_literal(b"AB"));
 
     // Line continuations (`\<newline>`) decode to nothing.
     let (type_, _) = expression("\"a\\\nb\"").into_resolved_type();
-    assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 2 }));
+    assert_eq!(type_, string_literal(b"ab"));
 
-    // Concatenated string literals: byte counts add up across pieces.
+    // Concatenated string literals: the pieces are joined.
     let (type_, _) = expression(r#""abc" "de""#).into_resolved_type();
-    assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 5 }));
+    assert_eq!(type_, string_literal(b"abcde"));
 }
 
 #[test]
-fn test_unicode_string_literal_byte_count() {
+fn test_unicode_string_literal_value() {
     // ASCII unicode-string literal: one byte per char.
     let (type_, _) = expression(r#"unicode"abc""#).into_resolved_type();
-    assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 3 }));
+    assert_eq!(type_, string_literal(b"abc"));
 
-    // Multi-byte UTF-8 passes through with its full byte length:
-    // `€` is 3 bytes in UTF-8.
+    // Multi-byte UTF-8 passes through as its encoding: `€` is 3 bytes.
     let (type_, _) = expression(r#"unicode"€""#).into_resolved_type();
-    assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 3 }));
+    assert_eq!(type_, string_literal("€".as_bytes()));
 
-    // `\uNNNN` escapes decode to their UTF-8 byte length:
+    // `\uNNNN` escapes decode to their UTF-8 encoding:
     // `\u20AC` (€) → 3 bytes, `\u00A2` (¢) → 2 bytes, `\u0024` ($) → 1 byte.
     let (type_, _) = expression(r#"unicode"\u20AC\u00A2\u0024""#).into_resolved_type();
-    assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 6 }));
+    assert_eq!(type_, string_literal("€¢$".as_bytes()));
 }
 
 #[test]
-fn test_hex_string_literal_byte_count() {
+fn test_hex_string_literal_value() {
     // Pairs of hex digits, no separators: one byte per pair.
     let (type_, _) = expression(r#"hex"414243""#).into_resolved_type();
-    assert_eq!(type_, Type::Literal(LiteralKind::HexString { bytes: 3 }));
+    assert_eq!(type_, hex_string_literal(b"ABC"));
 
-    // Underscore separators don't contribute to the decoded length.
+    // Underscore separators don't contribute to the decoded value.
     let (type_, _) = expression(r#"hex"41_42""#).into_resolved_type();
-    assert_eq!(type_, Type::Literal(LiteralKind::HexString { bytes: 2 }));
+    assert_eq!(type_, hex_string_literal(b"AB"));
 
-    // Concatenated hex string literals: byte counts add up across pieces.
+    // Concatenated hex string literals: the pieces are joined.
     let (type_, _) = expression(r#"hex"4142" hex"43""#).into_resolved_type();
-    assert_eq!(type_, Type::Literal(LiteralKind::HexString { bytes: 3 }));
+    assert_eq!(type_, hex_string_literal(b"ABC"));
 }
 
 #[test]

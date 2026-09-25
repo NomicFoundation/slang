@@ -6,31 +6,38 @@ use slang_solidity_v2_ir::ir;
 use super::Pass;
 use crate::binder::Definition;
 use crate::types::{
-    AddressType, ArraySliceType, ByteArrayType, ContractType, EnumType, FixedPointNumberType,
-    IntegerType, InterfaceType, LiteralKind, Number, Type, TypeId, UserMetaType, literals,
+    AddressType, ArraySliceType, ByteArrayType, ContractType, ConversionError, EnumType,
+    FixedPointNumberType, IntegerType, InterfaceType, LiteralKind, Number, Type, TypeId,
+    UserMetaType, literals,
 };
 
 impl Pass<'_> {
-    /// Whether a value of type `from_type_id` can be explicitly converted to
-    /// `to_type_id`, eg. in `uint8(x)`. Every implicit conversion is also an
-    /// explicit one. A reference target is expected to be already relocated to
-    /// the data location of the argument.
-    pub(super) fn explicitly_convertible_to(
+    /// Checks whether a value of type `from_type_id` can be explicitly
+    /// converted to `to_type_id`, eg. in `uint8(x)`, and if not, why. Every
+    /// implicit conversion is also an explicit one. A reference target is
+    /// expected to be already relocated to the data location of the argument.
+    pub(super) fn check_explicit_conversion(
         &self,
         from_type_id: TypeId,
         to_type_id: TypeId,
-    ) -> bool {
-        if self
+    ) -> Result<(), ConversionError> {
+        let implicit = self
             .types
-            .implicitly_convertible_to(from_type_id, to_type_id)
-        {
-            return true;
+            .check_implicit_conversion(from_type_id, to_type_id);
+        if implicit.is_ok() {
+            return implicit;
         }
         let to_type = self.types.get_type_by_id(to_type_id);
 
-        match self.types.get_type_by_id(from_type_id) {
+        let allowed = match self.types.get_type_by_id(from_type_id) {
             Type::ArraySlice(ArraySliceType { array_type_id }) => {
-                self.explicitly_convertible_to(*array_type_id, to_type_id)
+                return self.check_explicit_conversion(*array_type_id, to_type_id);
+            }
+
+            // A string literal only converts implicitly, so why it does not is
+            // why its explicit conversion fails too.
+            Type::Literal(LiteralKind::String { .. } | LiteralKind::HexString { .. }) => {
+                return implicit;
             }
 
             Type::Address(AddressType { is_payable }) => {
@@ -100,6 +107,11 @@ impl Pass<'_> {
             // Function values have no expressible conversion target, and the rest
             // only convert implicitly.
             _ => false,
+        };
+        if allowed {
+            Ok(())
+        } else {
+            Err(ConversionError::NotAllowed)
         }
     }
 

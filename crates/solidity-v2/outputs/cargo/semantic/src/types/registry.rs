@@ -10,7 +10,7 @@ use super::{
     FixedPointNumberType, FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType,
     InterfaceType, LiteralKind, Number, StringType, StructType, TupleType, Type, TypeId,
 };
-use crate::types::ImplicitlyConvertible;
+use crate::types::{ConversionError, ImplicitlyConvertible};
 
 /// The `TypeRegistry` stores an index of registered types, both elementary
 /// types and user defined types. Each type is given a `TypeId` for efficient
@@ -165,14 +165,25 @@ impl TypeRegistry {
         self.types.get_index(type_id.0).unwrap()
     }
 
-    #[allow(clippy::too_many_lines)]
     pub(crate) fn implicitly_convertible_to(
         &self,
         from_type_id: TypeId,
         to_type_id: TypeId,
     ) -> bool {
+        self.check_implicit_conversion(from_type_id, to_type_id)
+            .is_ok()
+    }
+
+    /// Checks whether a value of type `from_type_id` implicitly converts to
+    /// `to_type_id`, and if not, why.
+    #[allow(clippy::too_many_lines)]
+    pub(crate) fn check_implicit_conversion(
+        &self,
+        from_type_id: TypeId,
+        to_type_id: TypeId,
+    ) -> Result<(), ConversionError> {
         if from_type_id == to_type_id {
-            return true;
+            return Ok(());
         }
         let from_type = self.get_type_by_id(from_type_id);
         let to_type = self.get_type_by_id(to_type_id);
@@ -181,11 +192,10 @@ impl TypeRegistry {
         // to itself, handled above). Mirrors solc's
         // `ArraySliceType::isImplicitlyConvertibleTo`.
         if let Type::ArraySlice(ArraySliceType { array_type_id }) = from_type {
-            let array_type_id = *array_type_id;
-            return self.implicitly_convertible_to(array_type_id, to_type_id);
+            return self.check_implicit_conversion(*array_type_id, to_type_id);
         }
 
-        match (from_type, to_type) {
+        let allowed = match (from_type, to_type) {
             (
                 Type::Address(AddressType {
                     is_payable: from_payable,
@@ -248,9 +258,21 @@ impl TypeRegistry {
 
             (Type::Integer(_), Type::Literal(_)) => false,
 
+            // Only a string literal whose bytes are valid UTF-8 converts to
+            // `string`, whereas any converts to `bytes`.
+            (
+                Type::Literal(LiteralKind::HexString { value } | LiteralKind::String { value }),
+                Type::String(StringType { location }),
+            ) if *location == DataLocation::Memory || *location == DataLocation::Calldata => {
+                return std::str::from_utf8(value).map(|_| ()).map_err(|error| {
+                    ConversionError::InvalidUtf8 {
+                        position: error.valid_up_to(),
+                    }
+                });
+            }
             (
                 Type::Literal(LiteralKind::HexString { .. } | LiteralKind::String { .. }),
-                Type::String(StringType { location }) | Type::Bytes(BytesType { location }),
+                Type::Bytes(BytesType { location }),
             ) if *location == DataLocation::Memory || *location == DataLocation::Calldata => true,
 
             // Zero (any source — decimal, hex, or folded) is always
@@ -277,9 +299,9 @@ impl TypeRegistry {
 
             // A string literal fits any `bytesN` at least as long as it is.
             (
-                Type::Literal(LiteralKind::HexString { bytes } | LiteralKind::String { bytes }),
+                Type::Literal(LiteralKind::HexString { value } | LiteralKind::String { value }),
                 Type::ByteArray(ByteArrayType { width }),
-            ) => *bytes <= *width as usize,
+            ) => value.len() <= *width as usize,
 
             (
                 Type::Array(ArrayType {
@@ -418,6 +440,11 @@ impl TypeRegistry {
 
             // TODO: add more implicit conversion rules
             _ => false,
+        };
+        if allowed {
+            Ok(())
+        } else {
+            Err(ConversionError::NotAllowed)
         }
     }
 
@@ -773,7 +800,8 @@ impl TypeRegistry {
     /// Computes the mobile type of `type_id` and returns its `TypeId`, or why
     /// it has none.
     pub(crate) fn compute_mobile_type(&mut self, type_id: TypeId) -> Result<TypeId, NoMobileType> {
-        match self.get_type_by_id(type_id).clone() {
+        // Matched by reference, since a literal may own a large string value.
+        match self.get_type_by_id(type_id) {
             Type::Literal(kind) => {
                 let mobile = kind.mobile_type().ok_or(NoMobileType::LiteralTooLarge)?;
                 Ok(self.register_type(mobile))
@@ -781,8 +809,11 @@ impl TypeRegistry {
             // A calldata slice decays to the array it slices — this is what lets
             // `bytes calldata b = data[:3];` type-check. Mirrors solc's
             // `ArraySliceType::mobileType`.
-            Type::ArraySlice(ArraySliceType { array_type_id }) => Ok(array_type_id),
+            Type::ArraySlice(ArraySliceType { array_type_id }) => Ok(*array_type_id),
             Type::Tuple(TupleType { types: element_ids }) => {
+                // Copied out, since computing each element's type needs the
+                // registry mutably.
+                let element_ids = element_ids.clone();
                 let mobile_ids = element_ids
                     .iter()
                     .map(|id| self.compute_mobile_type(*id))

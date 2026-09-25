@@ -190,11 +190,14 @@ pub enum LiteralKind {
     Rational {
         value: BigRational,
     },
+    /// A hex string literal, eg. `hex"a000"`, with its decoded bytes.
     HexString {
-        bytes: usize,
+        value: Box<[u8]>,
     },
+    /// A regular or unicode string literal, with its bytes once escape
+    /// sequences are decoded.
     String {
-        bytes: usize,
+        value: Box<[u8]>,
     },
     Address {
         value: U160,
@@ -290,6 +293,18 @@ impl From<&ir::FunctionMutability> for FunctionTypeMutability {
             ir::FunctionMutability::Payable => Self::Payable,
         }
     }
+}
+
+/// Why a value of one type does not convert to another. Where a conversion is
+/// checked decides which diagnostic, if any, reports it.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum ConversionError {
+    /// No conversion rule applies to the pair of types.
+    NotAllowed,
+    /// A string literal whose bytes are not valid UTF-8 converts to `bytes`,
+    /// but not to `string`. `position` is the byte offset of the first invalid
+    /// sequence.
+    InvalidUtf8 { position: usize },
 }
 
 pub(crate) trait ImplicitlyConvertible<T> {
