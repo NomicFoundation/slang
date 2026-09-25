@@ -33,6 +33,9 @@ pub struct CorpusContract {
     pub version: String,
     /// Virtual path of the compilation entrypoint (the `settings.compilationTarget` key).
     pub target: String,
+    /// Name of the deployed contract in `target`, when the snapshot records it.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub target_contract: Option<String>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub remappings: Vec<String>,
     /// Virtual path -> source content.

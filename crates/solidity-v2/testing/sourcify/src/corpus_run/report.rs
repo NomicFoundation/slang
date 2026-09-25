@@ -84,6 +84,8 @@ pub struct Summary {
     /// Panic message and location -> contracts.
     pub panics: SortedMap<String, Tally>,
     pub skips: SortedMap<String, Tally>,
+    /// `check: reason` -> contracts the check could not run on.
+    pub skipped_checks: SortedMap<String, Tally>,
 }
 
 impl Summary {
@@ -108,6 +110,12 @@ impl Summary {
             self.passed += 1;
         } else if outcome.panic.is_none() {
             self.failed += 1;
+        }
+        for (check, reason) in &outcome.skipped_checks {
+            self.skipped_checks
+                .entry(format!("{check}: {reason}"))
+                .or_default()
+                .add(&outcome.id, "");
         }
         for failure in &outcome.failures {
             let bucket = self.buckets.entry(failure.key()).or_default();
@@ -173,7 +181,11 @@ impl Summary {
         for category in Category::ALL {
             census.write_table(&mut out, category);
         }
-        for (title, map) in [("Panics", &self.panics), ("Skipped", &self.skips)] {
+        for (title, map) in [
+            ("Panics", &self.panics),
+            ("Skipped", &self.skips),
+            ("Checks skipped", &self.skipped_checks),
+        ] {
             if map.is_empty() {
                 continue;
             }
@@ -470,6 +482,7 @@ mod tests {
             panic: panic.map(str::to_owned),
             failures,
             warnings: 0,
+            skipped_checks: SortedMap::new(),
         }
     }
 
