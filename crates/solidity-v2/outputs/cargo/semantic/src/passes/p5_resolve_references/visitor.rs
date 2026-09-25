@@ -389,7 +389,11 @@ impl Visitor for Pass<'_> {
             // it sees this same typing.
             match &node.items.first().unwrap().expression {
                 Some(expression) => self.check_typing_of_expression(expression).clone(),
-                None => Typing::Unresolved,
+                // `()` is the empty tuple, solc's `tuple()`.
+                None => Typing::Resolved(
+                    self.types
+                        .register_type(Type::Tuple(TupleType { types: Vec::new() })),
+                ),
             }
         } else {
             let mut types = Vec::new();
