@@ -1,6 +1,8 @@
 //! Output checks against the solc artifacts a corpus record carries for its target
 //! contract: the ABI, and the storage layout.
 
+use std::collections::BTreeMap;
+
 use serde_json::Value;
 use slang_solidity_v2::abi::ContractAbi;
 use slang_solidity_v2::ast::Definition;
@@ -88,9 +90,8 @@ pub fn check_storage_layout(abi: &ContractAbi, artifacts: &Value) -> Result<Vec<
     let solc_types = artifacts.pointer("/storageLayout/types");
     let slang_items = abi.storage_layout();
 
-    let mut failures = Vec::new();
     if slang_items.len() != solc_items.len() {
-        failures.push(Failure {
+        return Ok(vec![Failure {
             check: Check::StorageLayout,
             code: "count".to_owned(),
             count: 1,
@@ -99,22 +100,31 @@ pub fn check_storage_layout(abi: &ContractAbi, artifacts: &Value) -> Result<Vec<
                 slang_items.len(),
                 solc_items.len()
             ),
-        });
-        return Ok(failures);
+        }]);
     }
+    // One failure per code, as for diagnostics, so a bucket counts contracts, not items.
+    let mut failures: BTreeMap<(Check, String), Failure> = BTreeMap::new();
+    let mut add = |check: Check, code: String, message: String| {
+        failures
+            .entry((check, code.clone()))
+            .and_modify(|failure| failure.count += 1)
+            .or_insert(Failure {
+                check,
+                code,
+                count: 1,
+                message,
+            });
+    };
     for (index, (slang, solc)) in slang_items.iter().zip(solc_items).enumerate() {
         let solc_label = solc["label"].as_str().unwrap_or_default();
         let solc_slot = solc["slot"].as_str().unwrap_or_default();
         let solc_offset = solc["offset"].as_u64().unwrap_or_default();
         let mut mismatch = |field: &str, slang_value: String, solc_value: String| {
-            failures.push(Failure {
-                check: Check::StorageLayout,
-                code: format!("[*].{field}"),
-                count: 1,
-                message: format!(
-                    "item {index} `{solc_label}`: slang {slang_value}, solc {solc_value}"
-                ),
-            });
+            add(
+                Check::StorageLayout,
+                format!("[*].{field}"),
+                format!("item {index} `{solc_label}`: slang {slang_value}, solc {solc_value}"),
+            );
         };
         if slang.label() != solc_label {
             mismatch("label", slang.label().to_owned(), solc_label.to_owned());
@@ -134,16 +144,15 @@ pub fn check_storage_layout(abi: &ContractAbi, artifacts: &Value) -> Result<Vec<
             .and_then(|types| types[solc_type]["label"].as_str())
             .unwrap_or(solc_type);
         if slang.type_name() != solc_type_label {
-            failures.push(Failure {
-                check: Check::StorageTypes,
-                code: "[*].type".to_owned(),
-                count: 1,
-                message: format!(
+            add(
+                Check::StorageTypes,
+                "[*].type".to_owned(),
+                format!(
                     "item {index} `{solc_label}`: slang `{}`, solc `{solc_type_label}`",
                     slang.type_name()
                 ),
-            });
+            );
         }
     }
-    Ok(failures)
+    Ok(failures.into_values().collect())
 }
