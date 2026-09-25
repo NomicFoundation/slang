@@ -33,14 +33,14 @@ impl LibraryDefinitionStruct {
             })
             .collect::<Option<Vec<_>>>()?;
         // The errors and events its code reaches beyond its own, each once.
-        let own_errors_and_events: Set<_> = entries.iter().map(AbiEntry::node_id).collect();
+        let mut listed: Set<_> = entries.iter().map(AbiEntry::node_id).collect();
         for error in &self.used_errors() {
-            if !own_errors_and_events.contains(&error.node_id()) {
+            if listed.insert(error.node_id()) {
                 entries.push(error.compute_abi_entry()?);
             }
         }
-        for event in &self.emitted_events() {
-            if !own_errors_and_events.contains(&event.node_id()) {
+        for event in &self.used_events() {
+            if listed.insert(event.node_id()) {
                 entries.push(event.compute_abi_entry()?);
             }
         }

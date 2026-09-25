@@ -72,32 +72,34 @@ pub(super) fn build(
             deployed_dependencies.insert(*definition_id, deployed);
         }
         if !collector.errors.is_empty() {
-            let errors =
-                collector
-                    .errors
-                    .iter()
-                    .map(|id| match binder.find_definition_by_id(*id) {
-                        Some(Definition::Error(error)) => Arc::clone(&error.ir_node),
-                        _ => unreachable!("a collected error is an error definition"),
-                    });
-            used.errors.insert(*definition_id, errors.collect());
+            let errors = collector.errors.iter();
+            let errors = errors.map(|id| error_definition(binder, *id)).collect();
+            used.errors.insert(*definition_id, errors);
         }
         if !collector.events.is_empty() {
-            let events =
-                collector
-                    .events
-                    .iter()
-                    .map(|id| match binder.find_definition_by_id(*id) {
-                        Some(Definition::Event(event)) => Arc::clone(&event.ir_node),
-                        _ => unreachable!("a collected event is an event definition"),
-                    });
-            used.events.insert(*definition_id, events.collect());
+            let events = collector.events.iter();
+            let events = events.map(|id| event_definition(binder, *id)).collect();
+            used.events.insert(*definition_id, events);
         }
     }
     ContractDependencies {
         creation: creation_dependencies,
         deployed: deployed_dependencies,
         used_errors_and_events: used,
+    }
+}
+
+fn error_definition(binder: &Binder, id: NodeId) -> ir::ErrorDefinition {
+    match binder.find_definition_by_id(id) {
+        Some(Definition::Error(error)) => Arc::clone(&error.ir_node),
+        _ => unreachable!("a collected error is an error definition"),
+    }
+}
+
+fn event_definition(binder: &Binder, id: NodeId) -> ir::EventDefinition {
+    match binder.find_definition_by_id(id) {
+        Some(Definition::Event(event)) => Arc::clone(&event.ir_node),
+        _ => unreachable!("a collected event is an event definition"),
     }
 }
 

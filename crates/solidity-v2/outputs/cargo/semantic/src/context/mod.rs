@@ -252,7 +252,7 @@ impl SemanticContext {
 
     /// The same for the events the given contract's or library's code can
     /// emit.
-    pub fn emitted_events(&self, definition_id: NodeId) -> &[ir::EventDefinition] {
+    pub fn used_events(&self, definition_id: NodeId) -> &[ir::EventDefinition] {
         self.used_errors_and_events()
             .events
             .get(&definition_id)

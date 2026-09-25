@@ -16,8 +16,9 @@ impl LibraryDefinitionStruct {
             .collect()
     }
 
-    /// The errors this library's code can revert with, wherever they are
-    /// declared, see `SemanticContext::used_errors`.
+    /// The errors this library's external and public functions can revert
+    /// with, directly or through the code they reach, wherever they are
+    /// declared.
     pub fn used_errors(&self) -> Vec<ErrorDefinition> {
         self.semantic
             .used_errors(self.ir_node.id())
@@ -26,10 +27,11 @@ impl LibraryDefinitionStruct {
             .collect()
     }
 
-    /// The events this library's code can emit, wherever they are declared.
-    pub fn emitted_events(&self) -> Vec<EventDefinition> {
+    /// The events this library's external and public functions can emit,
+    /// directly or through the code they reach, wherever they are declared.
+    pub fn used_events(&self) -> Vec<EventDefinition> {
         self.semantic
-            .emitted_events(self.ir_node.id())
+            .used_events(self.ir_node.id())
             .iter()
             .map(|ir_node| create_event_definition(ir_node, &self.semantic))
             .collect()
