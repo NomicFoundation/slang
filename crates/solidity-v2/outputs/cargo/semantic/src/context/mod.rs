@@ -1,3 +1,4 @@
+use std::fmt::Write;
 use std::ops::Range;
 
 pub use contract_data::ContractReference;
@@ -285,19 +286,23 @@ impl SemanticContext {
     /// Qualifies a nested definition with its enclosing scope, as solc's
     /// `canonicalName` does: `L.S`, `C.E`.
     pub(crate) fn definition_canonical_name(&self, definition_id: NodeId) -> String {
-        let name = self
-            .binder
-            .find_definition_by_id(definition_id)
-            .unwrap()
-            .identifier()
-            .unparse();
-        match self.binder.enclosing_definition_node_id(definition_id) {
-            Some(enclosing) => format!(
-                "{scope}.{name}",
-                scope = self.definition_canonical_name(enclosing)
-            ),
-            None => name.to_string(),
+        let mut name = String::new();
+        self.write_definition_canonical_name(definition_id, &mut name);
+        name
+    }
+
+    fn write_definition_canonical_name(&self, definition_id: NodeId, out: &mut String) {
+        if let Some(enclosing) = self.binder.enclosing_definition_node_id(definition_id) {
+            self.write_definition_canonical_name(enclosing, out);
+            out.push('.');
         }
+        out.push_str(
+            self.binder
+                .find_definition_by_id(definition_id)
+                .unwrap()
+                .identifier()
+                .unparse(),
+        );
     }
 
     pub fn type_internal_name(&self, type_id: TypeId) -> String {
@@ -385,84 +390,96 @@ impl SemanticContext {
     /// mutability, `external` and returns; never a data location. Everything else spells as
     /// [`Self::type_internal_name`].
     pub fn type_abi_internal_name(&self, type_id: TypeId) -> String {
+        // Sized on the ABI benchmarks: most names fit without the buffer regrowing.
+        let mut name = String::with_capacity(32);
+        self.write_type_abi_internal_name(type_id, &mut name);
+        name
+    }
+
+    fn write_type_abi_internal_name(&self, type_id: TypeId, out: &mut String) {
         match self.types.get_type_by_id(type_id) {
-            Type::Address(address) if address.is_payable => "address payable".to_string(),
+            Type::Address(address) if address.is_payable => out.push_str("address payable"),
             Type::Array(ArrayType { element_type, .. }) => {
-                format!(
-                    "{element}[]",
-                    element = self.type_abi_internal_name(*element_type)
-                )
+                self.write_type_abi_internal_name(*element_type, out);
+                out.push_str("[]");
             }
             Type::Contract(ContractType { definition_id })
             | Type::Interface(InterfaceType { definition_id }) => {
-                format!(
-                    "contract {}",
-                    self.definition_canonical_name(*definition_id)
-                )
+                out.push_str("contract ");
+                self.write_definition_canonical_name(*definition_id, out);
             }
             Type::Enum(EnumType { definition_id }) => {
-                format!("enum {}", self.definition_canonical_name(*definition_id))
+                out.push_str("enum ");
+                self.write_definition_canonical_name(*definition_id, out);
             }
             Type::FixedSizeArray(FixedSizeArrayType {
                 element_type, size, ..
             }) => {
-                format!(
-                    "{element}[{size}]",
-                    element = self.type_abi_internal_name(*element_type),
-                )
+                self.write_type_abi_internal_name(*element_type, out);
+                write!(out, "[{size}]").unwrap();
             }
-            Type::Function(function_type) => self.function_type_abi_internal_name(function_type),
+            Type::Function(function_type) => {
+                self.write_function_type_abi_internal_name(function_type, out);
+            }
             Type::Mapping(MappingType {
                 key_type_id,
                 value_type_id,
-            }) => format!(
-                "mapping({key_type} => {value_type})",
-                key_type = self.type_abi_internal_name(*key_type_id),
-                value_type = self.type_abi_internal_name(*value_type_id)
-            ),
-            Type::Struct(StructType { definition_id, .. }) => {
-                format!("struct {}", self.definition_canonical_name(*definition_id))
+            }) => {
+                out.push_str("mapping(");
+                self.write_type_abi_internal_name(*key_type_id, out);
+                out.push_str(" => ");
+                self.write_type_abi_internal_name(*value_type_id, out);
+                out.push(')');
             }
-            _ => self.type_internal_name(type_id),
+            Type::Struct(StructType { definition_id, .. }) => {
+                out.push_str("struct ");
+                self.write_definition_canonical_name(*definition_id, out);
+            }
+            _ => out.push_str(&self.type_internal_name(type_id)),
+        }
+    }
+
+    fn write_type_abi_internal_names(&self, type_ids: &[TypeId], out: &mut String) {
+        for (index, type_id) in type_ids.iter().enumerate() {
+            if index > 0 {
+                out.push(',');
+            }
+            self.write_type_abi_internal_name(*type_id, out);
         }
     }
 
     /// `function (T1,T2) [pure|view|payable] [external] [returns (R1,R2)]`: `nonpayable` and
     /// `internal` are implied by their absence, as in solc.
-    fn function_type_abi_internal_name(&self, function_type: &FunctionType) -> String {
-        let parameters = function_type
-            .parameter_types
-            .iter()
-            .map(|type_id| self.type_abi_internal_name(*type_id))
-            .collect::<Vec<_>>()
-            .join(",");
-        let mutability = match function_type.mutability {
+    fn write_function_type_abi_internal_name(
+        &self,
+        function_type: &FunctionType,
+        out: &mut String,
+    ) {
+        out.push_str("function (");
+        self.write_type_abi_internal_names(&function_type.parameter_types, out);
+        out.push(')');
+        out.push_str(match function_type.mutability {
             FunctionTypeMutability::Pure => " pure",
             FunctionTypeMutability::View => " view",
             FunctionTypeMutability::Payable => " payable",
             FunctionTypeMutability::NonPayable => "",
-        };
-        let visibility = if function_type.is_externally_visible() {
-            " external"
-        } else {
-            ""
-        };
-        let returns = match self.types.get_type_by_id(function_type.return_type) {
-            Type::Void => String::new(),
-            Type::Tuple(TupleType { types }) => format!(
-                " returns ({})",
-                types
-                    .iter()
-                    .map(|type_id| self.type_abi_internal_name(*type_id))
-                    .collect::<Vec<_>>()
-                    .join(",")
-            ),
-            _ => format!(
-                " returns ({})",
-                self.type_abi_internal_name(function_type.return_type)
-            ),
-        };
-        format!("function ({parameters}){mutability}{visibility}{returns}")
+        });
+        if function_type.is_externally_visible() {
+            out.push_str(" external");
+        }
+        match self.types.get_type_by_id(function_type.return_type) {
+            Type::Void => {}
+            Type::Tuple(TupleType { types }) => {
+                out.push_str(" returns (");
+                self.write_type_abi_internal_names(types, out);
+                out.push(')');
+            }
+            _ => {
+                out.push_str(" returns (");
+                self.write_type_abi_internal_name(function_type.return_type, out);
+                out.push(')');
+            }
+        }
     }
 
     pub fn type_library_name(&self, type_id: TypeId) -> Option<String> {
