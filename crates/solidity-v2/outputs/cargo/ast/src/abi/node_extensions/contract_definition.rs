@@ -33,11 +33,7 @@ impl ContractDefinitionStruct {
                 entries.push(error.compute_abi_entry()?);
             }
         }
-        for event in self
-            .linearised_events()
-            .iter()
-            .chain(&self.emitted_events())
-        {
+        for event in self.linearised_events().iter().chain(&self.used_events()) {
             if listed.insert(event.node_id()) {
                 entries.push(event.compute_abi_entry()?);
             }
