@@ -344,6 +344,33 @@ fn test_super_is_anchored_at_the_contract_it_is_written_in() {
 }
 
 #[test]
+fn test_resolution_rejects_arguments_of_a_foreign_compilation_unit() {
+    let unit = Hierarchy::build_compilation_unit();
+    let foreign_unit = Hierarchy::build_compilation_unit();
+    let c = contract(&unit, "C");
+    let foreign_c = contract(&foreign_unit, "C");
+    let foreign_a_f = function(&foreign_unit, "A", "f", 0);
+    let foreign_bare = invocation(&foreign_unit, "A", "bare");
+    assert_eq!(c.node_id(), foreign_c.node_id());
+    assert_eq!(
+        function(&unit, "A", "f", 0).node_id(),
+        foreign_a_f.node_id()
+    );
+    assert_eq!(
+        invocation(&unit, "A", "bare").node_id(),
+        foreign_bare.node_id()
+    );
+
+    assert!(c.resolve_virtual(&foreign_a_f).is_none());
+    assert!(c.resolve_super(&foreign_a_f, &c).is_none());
+    assert!(
+        c.resolve_super(&function(&unit, "C", "f", 0), &foreign_c)
+            .is_none()
+    );
+    assert!(c.resolve_modifier(&foreign_bare).is_none());
+}
+
+#[test]
 fn test_resolution_rejects_constructors() {
     let unit = Hierarchy::build_compilation_unit();
     let a = contract(&unit, "A");
