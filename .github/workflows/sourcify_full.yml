@@ -143,13 +143,13 @@ jobs:
           pattern: "sourcify-results-*"
           path: "target/sourcify/results"
 
-      # Report-only until the first full census is triaged into expected-failures.toml;
-      # then drop the flag and the gate decides.
+      # The gate: a failure bucket outside expected-failures.toml, or a listed bucket that
+      # no longer fires anywhere in the corpus, fails the run.
       - name: "Report"
         run: |
           chmod +x ./target/release/solidity_testing_sourcify
           find target/sourcify/results -name '*.jsonl' -print0 \
-            | xargs -0 ./target/release/solidity_testing_sourcify report --stale-check --report target/sourcify/report.md --report-only
+            | xargs -0 ./target/release/solidity_testing_sourcify report --stale-check --report target/sourcify/report.md
           {
             echo "## Sourcify corpus: ${SHARD_COUNT} shards, $(find target/sourcify/results -name '*.jsonl' | wc -l) assets"
             cat target/sourcify/report.md
