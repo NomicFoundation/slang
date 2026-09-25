@@ -76,7 +76,7 @@ impl Serialize for Entry<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let parameters = |parameters| ParameterList {
             parameters,
-            indexed: false,
+            event_inputs: false,
             library: false,
         };
         match self.entry {
@@ -104,7 +104,7 @@ impl Serialize for Entry<'_> {
                     "inputs",
                     &ParameterList {
                         parameters: event.inputs(),
-                        indexed: true,
+                        event_inputs: true,
                         library: false,
                     },
                 )?;
@@ -121,15 +121,15 @@ impl Serialize for Entry<'_> {
             AbiEntry::Function(function) => {
                 // Only a library's functions spell enums, contracts and interfaces by name; its
                 // errors and events use the canonical types.
-                let parameters = |parameters| ParameterList {
+                let function_parameters = |parameters| ParameterList {
                     parameters,
-                    indexed: false,
+                    event_inputs: false,
                     library: self.library,
                 };
                 let mut map = serializer.serialize_map(Some(5))?;
-                map.serialize_entry("inputs", &parameters(function.inputs()))?;
+                map.serialize_entry("inputs", &function_parameters(function.inputs()))?;
                 map.serialize_entry("name", function.name())?;
-                map.serialize_entry("outputs", &parameters(function.outputs()))?;
+                map.serialize_entry("outputs", &function_parameters(function.outputs()))?;
                 map.serialize_entry("stateMutability", &Mutability(function.state_mutability()))?;
                 map.serialize_entry("type", "function")?;
                 map.end()
@@ -144,10 +144,9 @@ impl Serialize for Entry<'_> {
     }
 }
 
-/// A parameter list; `indexed` is written only for event inputs, as in solc.
 struct ParameterList<'a> {
     parameters: &'a [AbiParameter],
-    indexed: bool,
+    event_inputs: bool,
     library: bool,
 }
 
@@ -158,7 +157,7 @@ impl Serialize for ParameterList<'_> {
             seq.serialize_element(&Parameter {
                 name: parameter.name().unwrap_or_default(),
                 type_id: parameter.type_id,
-                indexed: self.indexed.then(|| parameter.indexed()),
+                indexed: self.event_inputs.then(|| parameter.indexed()),
                 library: self.library,
                 semantic: &parameter.semantic,
             })?;
@@ -167,9 +166,7 @@ impl Serialize for ParameterList<'_> {
     }
 }
 
-/// `{components?, indexed?, internalType, name, type}`: `components` only when the type is or
-/// contains a struct, `indexed` only for event inputs. Struct members are parameters too, minus
-/// `indexed`.
+/// A parameter, event input or struct member.
 struct Parameter<'a> {
     name: &'a str,
     type_id: TypeId,
