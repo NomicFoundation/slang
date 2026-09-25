@@ -246,6 +246,30 @@ fn function_value_taken_after_deployment_stays_out_of_the_creation_map() {
 }
 
 #[test]
+fn bare_modifier_invocation_runs_the_override() {
+    // The bare `m` on the inherited `f` runs C's override, so its `new B()`
+    // is reachable.
+    let source = "
+        pragma solidity *;
+        contract A {
+            modifier m() virtual { _; }
+            function f() public m {}
+        }
+        contract C is A {
+            modifier m() override { new B(); _; }
+        }
+        contract B {}";
+    let context = build_context(source);
+
+    let a = contract_id(&context, "A");
+    let c = contract_id(&context, "C");
+    let b = contract_id(&context, "B");
+
+    assert!(context.deployed_bytecode_dependencies()[&c].contains_key(&b));
+    assert!(!context.deployed_bytecode_dependencies().contains_key(&a));
+}
+
+#[test]
 fn qualified_modifier_invocation_runs_the_named_modifier() {
     // `A.m` runs A's modifier even though C overrides it.
     let source = "
@@ -1062,29 +1086,47 @@ fn super_from_a_fallback_skips_a_base_fallback() {
 }
 
 #[test]
-fn dispatch_rejects_invalid_contract_ids_and_foreign_declarations() {
+fn dispatch_rejects_invalid_contract_ids_and_unrelated_declarations() {
     let source = "contract A { function f() public virtual {} }
         contract B is A { function f() public override {} }
         contract Unrelated { function f() public virtual {} }";
     let analysis = analyse(source).expect_no_diagnostics();
-    let foreign = analyse(source).expect_no_diagnostics();
     let context = analysis.context();
     let a = contract_id(context, "A");
     let b = contract_id(context, "B");
     let f = find_function(analysis.find_members("A"), "f").expect("A declares f");
-    let foreign_f = find_function(foreign.find_members("A"), "f").expect("A declares f");
     let unrelated_f =
         find_function(analysis.find_members("Unrelated"), "f").expect("Unrelated declares f");
-    assert_eq!(f.id(), foreign_f.id());
 
     for invalid in [NodeId::from(u64::MAX), f.id()] {
         assert!(context.resolve_virtual(invalid, f).is_none());
         assert!(context.resolve_super(invalid, f, a).is_none());
         assert!(context.resolve_super(b, f, invalid).is_none());
     }
-    for invalid in [foreign_f, unrelated_f] {
-        assert!(context.resolve_virtual(b, invalid).is_none());
-        assert!(context.resolve_super(b, invalid, b).is_none());
-    }
+    assert!(context.resolve_virtual(b, unrelated_f).is_none());
+    assert!(context.resolve_super(b, unrelated_f, b).is_none());
     assert!(context.resolve_super(a, f, a).is_none());
+}
+
+#[test]
+fn resolve_modifier_rejects_invalid_contract_ids() {
+    let source = "contract A {
+            modifier m() virtual { _; }
+            function f() public m {}
+        }
+        contract B is A { modifier m() override { _; } }";
+
+    let analysis = analyse(source).expect_no_diagnostics();
+    let context = analysis.context();
+
+    let b = contract_id(context, "B");
+    let f = find_function(analysis.find_members("A"), "f").expect("A declares f");
+    let invocation = &f.attributes.modifier_invocations[0];
+
+    assert!(context.resolve_modifier(b, invocation).is_some());
+    assert!(
+        context
+            .resolve_modifier(NodeId::from(u64::MAX), invocation)
+            .is_none()
+    );
 }

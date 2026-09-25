@@ -8,7 +8,8 @@ use super::super::nodes::{
 };
 use super::super::{
     ContractDefinition, ContractDefinitionStruct, Definition, ErrorDefinition, EventDefinition,
-    FunctionDefinition, FunctionKind, FunctionMutability, StateVariableDefinition,
+    FunctionDefinition, FunctionKind, FunctionMutability, ModifierInvocation,
+    StateVariableDefinition,
 };
 use super::{ContractBase, VirtualTarget};
 
@@ -118,6 +119,9 @@ impl ContractDefinitionStruct {
     /// this contract's hierarchy and belongs to the same compilation unit.
     /// Constructors and free or library functions are not accepted.
     pub fn resolve_virtual(&self, function: &FunctionDefinition) -> Option<VirtualTarget> {
+        if !Arc::ptr_eq(&self.semantic, &function.semantic) {
+            return None;
+        }
         Some(
             match self
                 .semantic
@@ -145,7 +149,9 @@ impl ContractDefinitionStruct {
         function: &FunctionDefinition,
         enclosing_contract: &ContractDefinition,
     ) -> Option<FunctionDefinition> {
-        if !Arc::ptr_eq(&self.semantic, &enclosing_contract.semantic) {
+        if !Arc::ptr_eq(&self.semantic, &function.semantic)
+            || !Arc::ptr_eq(&self.semantic, &enclosing_contract.semantic)
+        {
             return None;
         }
         Some(create_function_definition(
@@ -154,6 +160,24 @@ impl ContractDefinitionStruct {
                 &function.ir_node,
                 enclosing_contract.node_id(),
             )?,
+            &self.semantic,
+        ))
+    }
+
+    /// Finds the modifier that `invocation` runs in code compiled into this
+    /// contract. A bare `m` runs the most-derived override of `m`. A qualified
+    /// `A.m` always runs `A`'s own `m`, and so does a `m` that is not virtual.
+    ///
+    /// Returns `None` if `invocation` comes from another compilation unit, if
+    /// it calls a base constructor instead of a modifier, or if the modifier
+    /// is not declared in this contract or its bases.
+    pub fn resolve_modifier(&self, invocation: &ModifierInvocation) -> Option<FunctionDefinition> {
+        if !Arc::ptr_eq(&self.semantic, &invocation.semantic) {
+            return None;
+        }
+        Some(create_function_definition(
+            self.semantic
+                .resolve_modifier(self.ir_node.id(), &invocation.ir_node)?,
             &self.semantic,
         ))
     }

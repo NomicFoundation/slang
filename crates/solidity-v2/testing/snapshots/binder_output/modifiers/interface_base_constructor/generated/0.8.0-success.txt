@@ -1,0 +1,34 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (2):
+- Def: #1 ["I" @ input.sol:3:11] (interface)
+- Def: #2 ["Derived" @ input.sol:5:10] (contract)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["I" @ input.sol:5:21] -> #1
+- Ref: ["I" @ input.sol:6:19] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 3 │ interface I {}
+   │           ┬  
+   │           ╰── name: 1
+   │ 
+ 5 │ contract Derived is I {
+   │          ───┬───    ┬  
+   │             ╰────────── name: 2
+   │                     │  
+   │                     ╰── ref: 1
+ 6 │     constructor() I() {}
+   │                   ┬  
+   │                   ╰── ref: 1
+───╯

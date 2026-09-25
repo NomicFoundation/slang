@@ -1,10 +1,12 @@
-//! `ContractDefinition::resolve_virtual`, `ContractDefinition::resolve_super`,
-//! and the enclosing contract `super` carries: the queries a compiler needs to pick the
-//! implementation a call runs when a base's body is compiled into a derived
-//! contract.
+//! `ContractDefinition::resolve_virtual`, `resolve_super` and
+//! `resolve_modifier`, and the enclosing contract `super` carries: the queries
+//! a compiler needs to pick the implementation a call or a modifier invocation
+//! runs when a base's body is compiled into a derived contract.
 
 use crate::ast::visitor::Visitor;
-use crate::ast::{self, ContractDefinition, Definition, Expression, FunctionDefinition};
+use crate::ast::{
+    self, ContractDefinition, Definition, Expression, FunctionDefinition, ModifierInvocation,
+};
 use crate::compilation::CompilationUnit;
 use crate::define_fixture;
 
@@ -19,13 +21,18 @@ interface I {
 }
 
 library L {
+    modifier guarded() { _; }
     function s() internal pure returns (uint256) { return 0; }
+    function attached() internal guarded {}
 }
 
 function s() pure returns (uint256) { return 0; }
 
 abstract contract A is I {
     constructor() {}
+    modifier guarded() virtual { _; }
+    function bare() public guarded {}
+    function qualified() public A.guarded {}
     function f() public virtual returns (uint256) { return 1; }
     function f(uint256 x) public virtual returns (uint256) { return x; }
     function g() public virtual returns (uint256);
@@ -33,6 +40,8 @@ abstract contract A is I {
 }
 
 contract B is A {
+    constructor() A() {}
+    modifier guarded() override { _; }
     function f() public virtual override returns (uint256) { return super.f() + 2; }
     function g() public virtual override returns (uint256) { return 20; }
     function i() external virtual override returns (uint256) { return 100; }
@@ -77,6 +86,25 @@ fn function(unit: &CompilationUnit, owner: &str, name: &str, arity: usize) -> Fu
                 && function.parameters().len() == arity
         })
         .expect("the owner declares the function")
+}
+
+/// The one modifier the contract `owner` declares.
+fn modifier(unit: &CompilationUnit, owner: &str) -> FunctionDefinition {
+    contract(unit, owner)
+        .modifiers()
+        .into_iter()
+        .next()
+        .expect("the contract declares a modifier")
+}
+
+/// The one modifier-list entry on `owner`'s function `name`.
+fn invocation(unit: &CompilationUnit, owner: &str, name: &str) -> ModifierInvocation {
+    function(unit, owner, name, 0)
+        .attributes()
+        .modifier_invocations()
+        .iter()
+        .next()
+        .expect("the function carries a modifier-list entry")
 }
 
 /// Captures the enclosing contract of every `super` keyword under a node.
@@ -234,6 +262,71 @@ fn test_resolve_super_skips_a_bodiless_override() {
 }
 
 #[test]
+fn test_resolve_modifier_picks_the_most_derived_override() {
+    let unit = Hierarchy::build_compilation_unit();
+    let bare = invocation(&unit, "A", "bare");
+
+    assert_eq!(
+        contract(&unit, "C")
+            .resolve_modifier(&bare)
+            .map(|target| target.node_id()),
+        Some(modifier(&unit, "B").node_id()),
+        "compiled into C, a bare entry naming A's virtual modifier runs B's override"
+    );
+    assert_eq!(
+        contract(&unit, "A")
+            .resolve_modifier(&bare)
+            .map(|target| target.node_id()),
+        Some(modifier(&unit, "A").node_id()),
+        "compiled into A, nothing overrides it, so it runs itself"
+    );
+}
+
+#[test]
+fn test_resolve_modifier_keeps_a_qualified_declaration() {
+    let unit = Hierarchy::build_compilation_unit();
+
+    assert_eq!(
+        contract(&unit, "C")
+            .resolve_modifier(&invocation(&unit, "A", "qualified"))
+            .map(|target| target.node_id()),
+        Some(modifier(&unit, "A").node_id()),
+        "a qualified entry names its target, so B's override does not run"
+    );
+}
+
+#[test]
+fn test_resolve_modifier_declines_a_modifier_outside_the_hierarchy() {
+    let unit = Hierarchy::build_compilation_unit();
+
+    assert!(
+        contract(&unit, "C")
+            .resolve_modifier(&invocation(&unit, "L", "attached"))
+            .is_none(),
+        "L's modifier is not in C's hierarchy although the hierarchy declares one of the same name"
+    );
+}
+
+#[test]
+fn test_resolve_modifier_declines_a_base_constructor_call() {
+    let unit = Hierarchy::build_compilation_unit();
+
+    let base_call = contract(&unit, "B")
+        .constructor()
+        .expect("B declares a constructor")
+        .attributes()
+        .modifier_invocations()
+        .iter()
+        .next()
+        .expect("B's constructor calls A's");
+
+    assert!(
+        contract(&unit, "C").resolve_modifier(&base_call).is_none(),
+        "A() in B's constructor calls a base constructor, not a modifier"
+    );
+}
+
+#[test]
 fn test_super_is_anchored_at_the_contract_it_is_written_in() {
     let unit = Hierarchy::build_compilation_unit();
 
@@ -251,16 +344,30 @@ fn test_super_is_anchored_at_the_contract_it_is_written_in() {
 }
 
 #[test]
-fn test_resolve_super_rejects_an_enclosing_contract_of_a_foreign_compilation_unit() {
+fn test_resolution_rejects_arguments_of_a_foreign_compilation_unit() {
     let unit = Hierarchy::build_compilation_unit();
     let foreign_unit = Hierarchy::build_compilation_unit();
     let c = contract(&unit, "C");
     let foreign_c = contract(&foreign_unit, "C");
+    let foreign_a_f = function(&foreign_unit, "A", "f", 0);
+    let foreign_bare = invocation(&foreign_unit, "A", "bare");
     assert_eq!(c.node_id(), foreign_c.node_id());
+    assert_eq!(
+        function(&unit, "A", "f", 0).node_id(),
+        foreign_a_f.node_id()
+    );
+    assert_eq!(
+        invocation(&unit, "A", "bare").node_id(),
+        foreign_bare.node_id()
+    );
+
+    assert!(c.resolve_virtual(&foreign_a_f).is_none());
+    assert!(c.resolve_super(&foreign_a_f, &c).is_none());
     assert!(
         c.resolve_super(&function(&unit, "C", "f", 0), &foreign_c)
             .is_none()
     );
+    assert!(c.resolve_modifier(&foreign_bare).is_none());
 }
 
 #[test]

@@ -2720,6 +2720,8 @@ pub slang_solidity_v2_ir::ir::ModifierInvocationStruct::name: slang_solidity_v2_
 pub slang_solidity_v2_ir::ir::ModifierInvocationStruct::range: core::ops::range::Range<usize>
 impl slang_solidity_v2_ir::ir::ModifierInvocationStruct
 pub fn slang_solidity_v2_ir::ir::ModifierInvocationStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl slang_solidity_v2_ir::ir::ModifierInvocationStruct
+pub fn slang_solidity_v2_ir::ir::ModifierInvocationStruct::is_qualified(&self) -> bool
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::ModifierInvocationStruct
 pub fn slang_solidity_v2_ir::ir::ModifierInvocationStruct::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl slang_solidity_v2_ir::ir::NodeIdentity for slang_solidity_v2_ir::ir::ModifierInvocationStruct
