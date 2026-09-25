@@ -78,7 +78,7 @@ pub fn target_abi(unit: &CompilationUnit, record: &CorpusContract) -> Result<Con
 
 /// The storage layout checks: `storage_layout` compares each slot's label, slot and
 /// offset with solc's `storageLayout.storage`; `storage_types` compares the type
-/// spelling with solc's label for that type, which is the softer of the two.
+/// spelling with solc's label for that type.
 pub fn check_storage_layout(abi: &ContractAbi, artifacts: &Value) -> Result<Vec<Failure>, String> {
     // solc writes `{"storage": [], "types": null}` for a contract without storage.
     let solc_items = artifacts
@@ -133,7 +133,7 @@ pub fn check_storage_layout(abi: &ContractAbi, artifacts: &Value) -> Result<Vec<
         let solc_type_label = solc_types
             .and_then(|types| types[solc_type]["label"].as_str())
             .unwrap_or(solc_type);
-        if normalise_type(slang.type_name()) != normalise_type(solc_type_label) {
+        if slang.type_name() != solc_type_label {
             failures.push(Failure {
                 check: Check::StorageTypes,
                 code: "[*].type".to_owned(),
@@ -146,14 +146,4 @@ pub fn check_storage_layout(abi: &ContractAbi, artifacts: &Value) -> Result<Vec<
         }
     }
     Ok(failures)
-}
-
-/// solc labels user-defined types with their kind (`struct C.S`, `enum E`,
-/// `contract I`) and Slang with the canonical name alone.
-fn normalise_type(label: &str) -> String {
-    label
-        .replace("struct ", "")
-        .replace("enum ", "")
-        .replace("contract ", "")
-        .replace("address payable", "address")
 }
