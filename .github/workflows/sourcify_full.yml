@@ -2,13 +2,16 @@ name: "sourcify_full"
 
 # Every verified solc 0.8.x contract on Sourcify (the release pinned in
 # crates/solidity/testing/sourcify/corpus.lock) compiled with Slang v2, in shards that
-# each hold one asset at a time. Runs on the `ci:sourcify` label, on demand, and on
-# every push to main that touches the v2 crates; main runs queue instead of cancelling
-# so every merge keeps its own verdict.
+# each hold one asset at a time. Runs on every push to a PR carrying the `ci:sourcify`
+# label (like `ci:perf`), on demand, and on every push to main that touches the v2
+# crates; main runs queue instead of cancelling so every merge keeps its own verdict.
 
 on:
   pull_request:
     types:
+      - "opened"
+      - "synchronize"
+      - "reopened"
       - "labeled"
   push:
     branches:
@@ -22,15 +25,23 @@ on:
 
 permissions: {}
 
+# PR runs cancel stale ones; main pushes queue for one verdict per merge.
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref_name }}"
+  cancel-in-progress: "${{ github.event_name == 'pull_request' }}"
 
 env:
   SHARD_COUNT: 8
 
 jobs:
   build:
-    if: "${{ github.event_name != 'pull_request' || github.event.label.name == 'ci:sourcify' }}"
+    # Fork PRs get a read-only token, so the report job could not comment; unlabelled PRs skip.
+    if: >-
+      ${{
+        github.event_name != 'pull_request'
+        || (contains(github.event.pull_request.labels.*.name, 'ci:sourcify')
+          && github.event.pull_request.head.repo.full_name == github.repository)
+      }}
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
     permissions:
