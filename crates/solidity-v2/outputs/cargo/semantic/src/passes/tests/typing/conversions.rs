@@ -8,8 +8,8 @@ use ruint::aliases::U256;
 
 use super::expression;
 use crate::types::{
-    ByteArrayType, DataLocation, FixedSizeArrayType, IntegerType, LiteralKind, MappingType,
-    StringType, TupleType, Type, TypeId, TypeRegistry,
+    ByteArrayType, DataLocation, FixedPointNumberType, FixedSizeArrayType, IntegerType,
+    LiteralKind, MappingType, StringType, TupleType, Type, TypeId, TypeRegistry,
 };
 
 fn register_uint_type(types: &mut TypeRegistry, bits: u32) -> TypeId {
@@ -243,15 +243,29 @@ fn test_array_literal_unresolved_when_elements_incompatible() {
     // uint8 (1) and int8 (-1) cannot be unified (same bit width, opposite sign).
     let (type_, _) = expression("[1, -1]").into_type();
     assert_eq!(type_, None);
+}
 
-    // Non-reducing rationals don't reify yet — array unification fails.
-    let (type_, _) = expression("[0.5, 1]").into_type();
-    assert_eq!(type_, None);
+#[test]
+fn test_array_literal_unifies_integer_into_fixed_point_element() {
+    // `1` fits the `ufixed8x1` that `0.5` reifies to, so both elements take it.
+    let (expr_type, types) = expression("[0.5, 1]").into_resolved_type();
+    let Type::FixedSizeArray(FixedSizeArrayType { element_type, .. }) = expr_type else {
+        panic!("expected FixedSizeArray, got {expr_type:?}");
+    };
+    assert_eq!(
+        *types.get_type_by_id(element_type),
+        Type::FixedPointNumber(FixedPointNumberType {
+            is_signed: false,
+            bits: 8,
+            decimal_places: 1,
+        })
+    );
 }
 
 #[test]
 fn test_conditional_expression_unifies_byte_arrays() {
-    let (expr_type, types) = expression("true ? bytes32(0) : bytes32(1)").into_resolved_type();
+    let (expr_type, types) =
+        expression("true ? bytes32(0) : bytes32(uint256(1))").into_resolved_type();
     assert_eq!(expr_type, *types.get_type_by_id(types.bytes32()));
 }
 
@@ -266,7 +280,7 @@ fn test_conditional_expression_widens_byte_arrays() {
 
 #[test]
 fn test_array_literal_unifies_byte_array_elements() {
-    let (expr_type, types) = expression("[bytes32(0), bytes32(1)]").into_resolved_type();
+    let (expr_type, types) = expression("[bytes32(0), bytes32(uint256(1))]").into_resolved_type();
     let Type::FixedSizeArray(FixedSizeArrayType {
         element_type,
         size,

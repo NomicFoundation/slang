@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9640] Error: Explicit type conversion not allowed from "int_const 1" to "bool".
+   ╭─[input.sol:6:17]
+   │
+ 6 │         return (bool(1), bool(b));
+   │                 ───┬───  
+   │                    ╰───── Error occurred here.
+───╯

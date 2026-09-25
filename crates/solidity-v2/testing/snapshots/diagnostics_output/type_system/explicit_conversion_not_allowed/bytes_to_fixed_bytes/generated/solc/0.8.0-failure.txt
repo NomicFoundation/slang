@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9640] Error: Explicit type conversion not allowed from "bytes memory" to "bytes32".
+   ╭─[input.sol:6:16]
+   │
+ 6 │         return bytes32(b);
+   │                ─────┬────  
+   │                     ╰────── Error occurred here.
+───╯

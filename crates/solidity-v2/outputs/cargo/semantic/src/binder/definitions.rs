@@ -286,6 +286,21 @@ impl Definition {
         matches!(self, Self::YulFunction(_))
     }
 
+    /// Whether calling the name of this definition converts its argument to
+    /// the type it declares, eg. `MyEnum(1)` or `C(addr)`. A struct name is
+    /// called to construct one instead, and an error or event to instantiate
+    /// it.
+    pub(crate) fn is_type_conversion_target(&self) -> bool {
+        matches!(
+            self,
+            Self::Contract(_)
+                | Self::Interface(_)
+                | Self::Library(_)
+                | Self::Enum(_)
+                | Self::UserDefinedValueType(_)
+        )
+    }
+
     pub(crate) fn is_private_or_internally_visible(&self) -> bool {
         if let Self::Function(function_definition) = self {
             !matches!(

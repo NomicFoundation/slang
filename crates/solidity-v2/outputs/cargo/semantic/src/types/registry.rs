@@ -7,8 +7,8 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use super::literals::numbers;
 use super::{
     AddressType, ArraySliceType, ArrayType, ByteArrayType, BytesType, ContractType, DataLocation,
-    FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType, InterfaceType,
-    LiteralKind, Number, StringType, StructType, TupleType, Type, TypeId,
+    FixedPointNumberType, FixedSizeArrayType, FunctionType, FunctionTypeVisibility, IntegerType,
+    InterfaceType, LiteralKind, Number, StringType, StructType, TupleType, Type, TypeId,
 };
 use crate::types::ImplicitlyConvertible;
 
@@ -157,6 +157,10 @@ impl TypeRegistry {
         self.super_types.insert(type_node_id, super_type_node_ids);
     }
 
+    pub(crate) fn language_version(&self) -> LanguageVersion {
+        self.language_version
+    }
+
     pub fn get_type_by_id(&self, type_id: TypeId) -> &Type {
         self.types.get_index(type_id.0).unwrap()
     }
@@ -228,8 +232,20 @@ impl TypeRegistry {
             // been normalised to `LiteralKind::Integer` at construction time.
             (Type::Literal(LiteralKind::Rational { .. }), Type::Integer(_)) => false,
 
-            // TODO: Rational -> FixedPointNumber once v2 models implicit
-            // conversion of rational literals to fixed-point types.
+            (
+                Type::Literal(
+                    kind @ (LiteralKind::Integer { .. }
+                    | LiteralKind::HexInteger { .. }
+                    | LiteralKind::Rational { .. }),
+                ),
+                Type::FixedPointNumber(FixedPointNumberType {
+                    is_signed,
+                    bits,
+                    decimal_places,
+                }),
+            ) => Number::from_literal_kind(kind)
+                .is_some_and(|value| value.fits_fixed_point(*is_signed, *bits, *decimal_places)),
+
             (Type::Integer(_), Type::Literal(_)) => false,
 
             (
@@ -259,10 +275,11 @@ impl TypeRegistry {
                 Type::ByteArray(ByteArrayType { width }),
             ) if *bytes == *width => true,
 
+            // A string literal fits any `bytesN` at least as long as it is.
             (
                 Type::Literal(LiteralKind::HexString { bytes } | LiteralKind::String { bytes }),
                 Type::ByteArray(ByteArrayType { width }),
-            ) if *bytes == *width as usize => true,
+            ) => *bytes <= *width as usize,
 
             (
                 Type::Array(ArrayType {
@@ -274,8 +291,10 @@ impl TypeRegistry {
                     location: to_location,
                 }),
             ) => {
+                // Elements are not converted one by one, so their types must
+                // match exactly, apart from the data location.
                 from_location.implicitly_convertible_to(*to_location)
-                    && self.implicitly_convertible_to(*from_element_type, *to_element_type)
+                    && self.equal_ignoring_location(*from_element_type, *to_element_type)
             }
 
             (
@@ -293,7 +312,7 @@ impl TypeRegistry {
                 // conversion rules are strict and only allow changing data
                 // location (from storage/calldata to memory)
                 *from_size == *to_size
-                    && *from_element_type == *to_element_type
+                    && self.equal_ignoring_location(*from_element_type, *to_element_type)
                     && from_location.implicitly_convertible_to(*to_location)
             }
 
@@ -398,6 +417,56 @@ impl TypeRegistry {
             }
 
             // TODO: add more implicit conversion rules
+            _ => false,
+        }
+    }
+
+    /// Whether both types are the same once their data locations (and those
+    /// of any nested reference types) are disregarded.
+    fn equal_ignoring_location(&self, left_type_id: TypeId, right_type_id: TypeId) -> bool {
+        if left_type_id == right_type_id {
+            return true;
+        }
+        match (
+            self.get_type_by_id(left_type_id),
+            self.get_type_by_id(right_type_id),
+        ) {
+            (
+                Type::Array(ArrayType {
+                    element_type: left_element_type,
+                    ..
+                }),
+                Type::Array(ArrayType {
+                    element_type: right_element_type,
+                    ..
+                }),
+            ) => self.equal_ignoring_location(*left_element_type, *right_element_type),
+            (
+                Type::FixedSizeArray(FixedSizeArrayType {
+                    element_type: left_element_type,
+                    size: left_size,
+                    ..
+                }),
+                Type::FixedSizeArray(FixedSizeArrayType {
+                    element_type: right_element_type,
+                    size: right_size,
+                    ..
+                }),
+            ) => {
+                left_size == right_size
+                    && self.equal_ignoring_location(*left_element_type, *right_element_type)
+            }
+            (
+                Type::Struct(StructType {
+                    definition_id: left_definition_id,
+                    ..
+                }),
+                Type::Struct(StructType {
+                    definition_id: right_definition_id,
+                    ..
+                }),
+            ) => left_definition_id == right_definition_id,
+            (Type::Bytes(_), Type::Bytes(_)) | (Type::String(_), Type::String(_)) => true,
             _ => false,
         }
     }

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9640] Error: Explicit type conversion not allowed from "int256[10] storage ref" to "int256[] storage pointer".
+   ╭─[input.sol:8:30]
+   │
+ 8 │         int256[] storage y = int256[](x);
+   │                              ─────┬─────  
+   │                                   ╰─────── Error occurred here.
+───╯

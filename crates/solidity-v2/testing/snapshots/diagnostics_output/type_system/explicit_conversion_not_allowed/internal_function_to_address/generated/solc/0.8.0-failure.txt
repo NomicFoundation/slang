@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9640] Error: Explicit type conversion not allowed from "function () returns (address)" to "address".
+   ╭─[input.sol:8:16]
+   │
+ 8 │         return address(g);
+   │                ─────┬────  
+   │                     ╰────── Error occurred here.
+───╯

@@ -4,9 +4,9 @@ use slang_solidity_v2_common::diagnostics::kinds::resolution::{
     AmbiguousReference, MemberNotFound, NoMatchingCallableDeclaration,
 };
 use slang_solidity_v2_common::diagnostics::kinds::type_system::{
-    CannotCallViaContractTypeName, ExpressionNotAValue, ExpressionNotAnLValue,
-    ExpressionNotCallable, IncompatibleConditionalBranches, LiteralTooLarge, NotAValueKind,
-    PartiallyAppliedFunctionUsedAsValue, WriteToConstant,
+    CannotCallViaContractTypeName, ExplicitConversionNotAllowed, ExpressionNotAValue,
+    ExpressionNotAnLValue, ExpressionNotCallable, IncompatibleConditionalBranches, LiteralTooLarge,
+    NotAValueKind, PartiallyAppliedFunctionUsedAsValue, WriteToConstant,
 };
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -478,6 +478,15 @@ impl Pass<'_> {
         }
     }
 
+    /// Registers the type a type definition (eg. a contract or a struct)
+    /// declares, returning its id.
+    fn type_id_of_type_definition(&mut self, definition_id: NodeId) -> TypeId {
+        let type_ = self
+            .type_of_definition(definition_id)
+            .expect("definition kind is handled by type_of_definition");
+        self.types.register_type(type_)
+    }
+
     pub(super) fn type_of_definition(&self, definition_id: NodeId) -> Option<Type> {
         let definition = self.binder.find_definition_by_id(definition_id)?;
         definition.try_into().ok()
@@ -920,10 +929,16 @@ impl Pass<'_> {
         )
     }
 
-    fn typing_of_cast(&mut self, argument_type_id: TypeId, target_type_id: TypeId) -> Typing {
-        // TODO(validation) SDR[40]: this is a cast to the given type, but we
-        // need to verify that the (single) argument is convertible
-        //
+    /// Types the explicit conversion of the single argument of `node` to
+    /// `target_type_id`, reporting it when the conversion is not allowed. The
+    /// conversion is still typed as the target then, so that its uses are
+    /// checked as usual.
+    fn typing_of_cast(
+        &mut self,
+        node: &ir::FunctionCallExpression,
+        argument_type_id: TypeId,
+        target_type_id: TypeId,
+    ) -> Typing {
         // The resulting cast type inherits the data location of the argument.
         let argument_type = self.types.get_type_by_id(argument_type_id);
         let type_id = if let Some(data_location) = argument_type.data_location() {
@@ -933,6 +948,9 @@ impl Pass<'_> {
         } else {
             target_type_id
         };
+        if !self.explicitly_convertible_to(argument_type_id, type_id) {
+            self.push_diagnostic(node, ExplicitConversionNotAllowed);
+        }
         Typing::Resolved(type_id)
     }
 
@@ -946,8 +964,9 @@ impl Pass<'_> {
 
     /// Collects the types of `arguments` for a callee that accepts a type name
     /// in one of them: the second argument of `abi.decode`, the function
-    /// `abi.encodeCall` encodes a call to, and the library name a conversion
-    /// takes in `address(L)`. Which of them is valid is up to the callee.
+    /// `abi.encodeCall` encodes a call to, and the argument of a conversion,
+    /// which only allows the library name in `address(L)`. Which of them is
+    /// valid is up to the callee.
     pub(super) fn collect_argument_types_allowing_type_names(
         &mut self,
         arguments: &[ir::Expression],
@@ -986,7 +1005,7 @@ impl Pass<'_> {
         // [`Self::collect_argument_types_allowing_type_names`].
         let accepts_type_names = match &operand_typing {
             Typing::BuiltIn(_) => true,
-            Typing::Resolved(type_id) => self.types.get_type_by_id(*type_id).is_meta_type(),
+            Typing::Resolved(type_id) => self.is_conversion_callee(*type_id),
             _ => false,
         };
         let argument_types = if accepts_type_names {
@@ -1087,6 +1106,20 @@ impl Pass<'_> {
         }
     }
 
+    /// Whether calling `type_id` is an explicit conversion (eg. `uint(x)` or
+    /// `MyEnum(x)`), rather than a struct construction or a call that names an
+    /// error or event.
+    fn is_conversion_callee(&self, type_id: TypeId) -> bool {
+        match self.types.get_type_by_id(type_id) {
+            Type::MetaType(_) => true,
+            Type::UserMetaType(UserMetaType { definition_id }) => self
+                .binder
+                .find_definition_by_id(*definition_id)
+                .is_some_and(Definition::is_type_conversion_target),
+            _ => false,
+        }
+    }
+
     /// Types a call whose operand is (or was disambiguated to) `type_id`: a
     /// function value is an actual call, a meta type is a cast (or a struct
     /// construction), and the user meta type of a function is a non-callable
@@ -1119,34 +1152,28 @@ impl Pass<'_> {
                 // This is an explicit cast to the (meta-)type, eg. `uint(x)`.
                 let target_type_id = *target_type_id;
                 if let Some([argument_type_id]) = argument_types {
-                    self.typing_of_cast(*argument_type_id, target_type_id)
+                    self.typing_of_cast(node, *argument_type_id, target_type_id)
                 } else {
                     Typing::Unresolved
                 }
             }
             Type::UserMetaType(UserMetaType { definition_id }) => {
-                // A cast to the underlying type of the definition (eg.
-                // `MyEnum(1)`), or a struct construction. UDVTs are not
-                // castable by name (they convert via `wrap`/`unwrap`).
+                // A cast to the type of the definition (eg. `MyEnum(1)`), or a
+                // struct construction. A UDVT only converts from itself, as
+                // other values convert via `wrap`/`unwrap`.
                 let definition_id = *definition_id;
                 match self.binder.find_definition_by_id(definition_id) {
-                    Some(
-                        Definition::Contract(_)
-                        | Definition::Interface(_)
-                        | Definition::Library(_)
-                        | Definition::Enum(_)
-                        | Definition::Struct(_),
-                    ) => {
-                        // TODO(validation) SDR[39]: for contract, interface
-                        // and library targets the type of the (single)
-                        // argument should be an address
-                        // TODO(validation) SDR[868]: For enums, only one argument expected
-                        // TODO(validation) SDR[1698]: For enums, check the type of the argument is compatible
-
-                        let type_ = self
-                            .type_of_definition(definition_id)
-                            .expect("definition kind is handled by type_of_definition");
-                        Typing::Resolved(self.types.register_type(type_))
+                    Some(definition) if definition.is_type_conversion_target() => {
+                        // TODO(validation) SDR[868]: only one argument expected
+                        let type_id = self.type_id_of_type_definition(definition_id);
+                        if let Some([argument_type_id]) = argument_types {
+                            self.typing_of_cast(node, *argument_type_id, type_id)
+                        } else {
+                            Typing::Resolved(type_id)
+                        }
+                    }
+                    Some(Definition::Struct(_)) => {
+                        Typing::Resolved(self.type_id_of_type_definition(definition_id))
                     }
                     Some(Definition::Error(_)) => {
                         // TODO(validation): an error instance is only valid in
@@ -1173,13 +1200,6 @@ impl Pass<'_> {
 
                         self.diagnostics
                             .push(file_id, range, CannotCallViaContractTypeName);
-                        Typing::Unresolved
-                    }
-                    Some(Definition::UserDefinedValueType(_)) => {
-                        // TODO(validation) SDR[1698]: a UDVT is callable
-                        // syntactically but not castable by name, so this is a
-                        // disallowed conversion rather than a callability
-                        // error.
                         Typing::Unresolved
                     }
                     Some(_) => {

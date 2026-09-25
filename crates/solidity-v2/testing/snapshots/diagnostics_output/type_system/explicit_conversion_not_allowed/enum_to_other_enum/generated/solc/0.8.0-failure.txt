@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9640] Error: Explicit type conversion not allowed from "enum C.Paper" to "enum C.Ground".
+    ╭─[input.sol:10:17]
+    │
+ 10 │         return (Ground(p), Ground(uint8(p)));
+    │                 ────┬────  
+    │                     ╰────── Error occurred here.
+────╯
