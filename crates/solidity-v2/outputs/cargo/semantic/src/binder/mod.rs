@@ -115,9 +115,6 @@ pub struct Binder {
     /// User-defined operator functions, indexed by the `NodeId` of the
     /// operator expression that invokes them
     operator_functions: Map<NodeId, NodeId>,
-    /// How each modifier invocation selects the modifier it runs, indexed by
-    /// the `NodeId` of the invocation
-    modifier_lookups: Map<NodeId, ModifierLookup>,
     /// `Typing` information for each relevant `NodeId` of the AST
     node_typing: Map<NodeId, Typing>,
     /// Common type both operands of a comparison reconcile to before the
@@ -159,15 +156,6 @@ pub(crate) enum ResolveOptions {
     /// Starts at the contract _following_ `node_id` (ie. its parent) for an
     /// internal lookup.
     Super(NodeId),
-}
-
-/// How a modifier invocation selects the modifier it runs.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) enum ModifierLookup {
-    /// A bare `m` runs the most-derived override of `m`.
-    Virtual,
-    /// A qualified `A.m` always runs `A`'s own `m`.
-    Static,
 }
 
 /// A group of definitions, identified by their `NodeId`s. Held inline up to a
@@ -362,18 +350,6 @@ impl Binder {
     /// `node_id` invokes, if it resolved to one.
     pub fn resolved_operator_function(&self, node_id: NodeId) -> Option<NodeId> {
         self.operator_functions.get(&node_id).copied()
-    }
-
-    pub(crate) fn set_modifier_lookup(&mut self, node_id: NodeId, lookup: ModifierLookup) {
-        self.modifier_lookups.insert(node_id, lookup);
-    }
-
-    /// How the modifier invocation with `node_id` selects the modifier it runs.
-    pub(crate) fn modifier_lookup(&self, node_id: NodeId) -> ModifierLookup {
-        *self
-            .modifier_lookups
-            .get(&node_id)
-            .expect("p5 records the lookup of every modifier invocation")
     }
 
     pub(crate) fn update_definitions_to_references_index(&mut self) {

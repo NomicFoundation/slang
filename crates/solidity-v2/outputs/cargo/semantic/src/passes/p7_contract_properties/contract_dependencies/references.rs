@@ -367,8 +367,8 @@ impl ReferenceCollector<'_> {
         // A bare name like `m` resolves to the most derived override. A
         // qualified name like `A.m` opts out of virtual lookup and always
         // runs A's modifier. Both can resolve to the same declaration, so
-        // only the number of path segments tells them apart.
-        let reference = if node.name.len() == 1 && modifier.ir_node.attributes.is_virtual {
+        // only the qualifier tells them apart.
+        let reference = if !node.is_qualified() && modifier.ir_node.attributes.is_virtual {
             CallableReference::Virtual(definition_id)
         } else {
             CallableReference::Static(definition_id)

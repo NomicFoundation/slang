@@ -2,7 +2,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use super::SemanticContext;
-use crate::binder::{Binder, Definition, ModifierLookup, Scope};
+use crate::binder::{Binder, Definition, Scope};
 use crate::passes::common::Overridable;
 use crate::types::TypeRegistry;
 
@@ -114,9 +114,10 @@ impl SemanticContext {
             return None;
         };
         let (bases, _) = self.dispatch_member(contract_id, &modifier.ir_node)?;
-        Some(match self.binder.modifier_lookup(invocation.id()) {
-            ModifierLookup::Virtual => self.dispatch_modifier(bases, &modifier.ir_node),
-            ModifierLookup::Static => &modifier.ir_node,
+        Some(if invocation.is_qualified() {
+            &modifier.ir_node
+        } else {
+            self.dispatch_modifier(bases, &modifier.ir_node)
         })
     }
 

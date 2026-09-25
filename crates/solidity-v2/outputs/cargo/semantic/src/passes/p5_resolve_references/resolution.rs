@@ -10,8 +10,8 @@ use slang_solidity_v2_ir::ir;
 
 use super::{Pass, ScopeFrame};
 use crate::binder::{
-    Definition, DefinitionIds, ModifierLookup, Reference, Resolution, ResolveOptions, ScopeId,
-    Typing, UsingDirective, UsingOperator,
+    Definition, DefinitionIds, Reference, Resolution, ResolveOptions, ScopeId, Typing,
+    UsingDirective, UsingOperator,
 };
 use crate::built_ins::BuiltInsResolver;
 use crate::passes::common::constant_evaluator::{
@@ -354,15 +354,6 @@ impl Pass<'_> {
             // contract only (ie. it's a contract modifier, a modifier in a
             // base, or it's the identifier of a base of the current contract)
             let resolution = if index == identifier_path.len() - 1 {
-                // A modifier found lexically is looked up virtually; one found
-                // as a member of a named contract is that contract's own.
-                let lookup = if index == 0 {
-                    ModifierLookup::Virtual
-                } else {
-                    ModifierLookup::Static
-                };
-                self.binder
-                    .set_modifier_lookup(modifier_invocation.id(), lookup);
                 self.resolve_first_modifier_or_base(&resolution)
             } else {
                 resolution
