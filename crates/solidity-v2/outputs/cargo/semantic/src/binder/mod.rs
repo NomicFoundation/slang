@@ -28,17 +28,6 @@ pub(crate) use scopes::{
     ScopeDefinitionIds, UsingDirective, UsingOperator,
 };
 
-/// The reach through which a struct meets a cycle of the unit's struct graph.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Recursion {
-    /// A cycle is reachable through dynamic arrays, mappings, fixed-size arrays
-    /// or nested structs.
-    Indirect,
-    /// The struct lies on a cycle closed by a function type, and no cycle is
-    /// reachable from it through anything else.
-    Function,
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub(crate) struct ScopeId(usize);
 

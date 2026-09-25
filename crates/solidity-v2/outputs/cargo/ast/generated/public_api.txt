@@ -191,7 +191,6 @@ pub type slang_solidity_v2_ast::abi::AbiMutability = slang_solidity_v2_semantic:
 pub mod slang_solidity_v2_ast::ast
 pub use slang_solidity_v2_ast::ast::LiteralKind
 pub use slang_solidity_v2_ast::ast::Number
-pub use slang_solidity_v2_ast::ast::Recursion
 pub mod slang_solidity_v2_ast::ast::visitor
 pub trait slang_solidity_v2_ast::ast::visitor::Visitor
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_abicoder_pragma(&mut self, &slang_solidity_v2_ast::ast::AbicoderPragma) -> bool
@@ -3073,7 +3072,6 @@ pub fn slang_solidity_v2_ast::ast::StructDefinitionStruct::name(&self) -> slang_
 pub fn slang_solidity_v2_ast::ast::StructDefinitionStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl slang_solidity_v2_ast::ast::StructDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::StructDefinitionStruct::is_recursive(&self) -> bool
-pub fn slang_solidity_v2_ast::ast::StructDefinitionStruct::recursion(&self) -> core::option::Option<slang_solidity_v2_semantic::binder::Recursion>
 impl core::clone::Clone for slang_solidity_v2_ast::ast::StructDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::StructDefinitionStruct::clone(&self) -> slang_solidity_v2_ast::ast::StructDefinitionStruct
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::StructDefinitionStruct

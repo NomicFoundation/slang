@@ -22,8 +22,6 @@ mod source_unit;
 mod state_variable_definition;
 mod string_expression;
 mod struct_definition;
-pub use struct_definition::Recursion;
-
 mod super_keyword;
 
 mod virtual_target;

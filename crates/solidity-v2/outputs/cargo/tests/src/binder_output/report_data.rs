@@ -345,10 +345,7 @@ fn definition_type(definition: &Definition) -> String {
                 type_or_unresolved(state_variable.get_type())
             )
         }
-        Definition::Struct(structure) => match structure.recursion() {
-            Some(recursion) => format!("struct, recursive: {recursion:?}"),
-            None => "struct".to_string(),
-        },
+        Definition::Struct(_) => "struct".to_string(),
         Definition::StructMember(struct_member) => {
             format!(
                 "struct member, type: {}",

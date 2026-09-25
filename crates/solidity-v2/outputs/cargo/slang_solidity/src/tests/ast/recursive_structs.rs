@@ -1,6 +1,5 @@
-//! `StructDefinition::is_recursive`: which structs lie on or reach a cycle
-//! solc's `recursive` annotation marks, and which close one through a function
-//! type alone.
+//! `StructDefinition::is_recursive`: which structs refer to themselves through
+//! their members' types.
 
 use slang_solidity_v2_common::collections::Map;
 
@@ -54,46 +53,31 @@ fn classified() -> Map<String, bool> {
 }
 
 #[test]
-fn test_a_struct_on_a_cycle_of_arrays_or_mappings_is_recursive() {
+fn test_a_struct_referring_to_itself_through_any_member_type_is_recursive() {
     let structs = classified();
     assert!(structs["ThroughArray"]);
     assert!(structs["SelfMapping"]);
     assert!(structs["FixedUnderDynamic"]);
     assert!(structs["ByValueOfArrayRecursive"]);
     assert!(structs["ArrayOfByValue"]);
-}
-
-#[test]
-fn test_a_struct_reaching_such_a_cycle_is_recursive() {
-    let structs = classified();
-    assert!(structs["NestingRecursive"]);
-    assert!(structs["NestingNesting"]);
-    assert!(structs["ThroughMapping"]);
-}
-
-#[test]
-fn test_a_struct_on_a_cycle_closed_by_a_function_type_is_recursive() {
-    let structs = classified();
     assert!(structs["ThroughFunction"]);
     assert!(structs["Multi"]);
     assert!(structs["ArrayIntoFunctionCycle"]);
     assert!(structs["FunctionBackToArray"]);
-}
-
-#[test]
-fn test_a_function_cycle_through_a_recursive_struct_leaves_the_rest_literal() {
-    let structs = classified();
+    assert!(structs["OnFunctionCycleWithRecursive"]);
     assert!(structs["ArrayRecursiveOnFunctionCycle"]);
-    assert!(!structs["OnFunctionCycleWithRecursive"]);
 }
 
 #[test]
-fn test_a_struct_on_no_cycle_is_not_recursive() {
+fn test_a_struct_only_reaching_a_recursive_one_is_not_recursive() {
     let structs = classified();
     assert!(!structs["Plain"]);
+    assert!(!structs["NestingRecursive"]);
+    assert!(!structs["NestingNesting"]);
+    assert!(!structs["ThroughMapping"]);
+    assert!(!structs["ReachingMulti"]);
     assert!(!structs["ReachingThroughFunction"]);
     assert!(!structs["FunctionOverArray"]);
     assert!(!structs["FunctionOverMapping"]);
     assert!(!structs["ReachingFunctionCycle"]);
-    assert!(!structs["ReachingMulti"]);
 }

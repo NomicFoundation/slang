@@ -1,4 +1,4 @@
-use slang_solidity_v2_common::collections::{Map, Set, SortedMap};
+use slang_solidity_v2_common::collections::{Set, SortedMap};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 
@@ -11,7 +11,7 @@ mod constants;
 mod structs;
 
 pub(crate) fn run(
-    binder: &mut Binder,
+    binder: &Binder,
     contract_data: &ContractData,
     types: &TypeRegistry,
     file_node_mapper: &FileNodeMapper,
@@ -40,17 +40,14 @@ enum CycleSearchResult {
     /// node's first successor on the path to the cycle (or the node itself when
     /// it refers directly to itself).
     Cycle { via: NodeId },
-    /// The search gave up on a path longer than [`DependencyGraph::MAX_DEPTH`].
-    /// `node` is the node at which the limit was hit.
+    /// The search gave up on a path longer than [`DependencyGraph::MAX_DEPTH`]. `node` is
+    /// the node at which the limit was hit.
     DepthExceeded { node: NodeId },
     /// No cycle is reachable from the searched node.
     None,
 }
 
 impl DependencyGraph {
-    /// The path length at which solc's cycle checks give up, imposed on its
-    /// `CycleDetector` by `DeclarationTypeChecker`, `PostTypeChecker` and
-    /// `CompilerStack` alike.
     // __SLANG_CONSTANT_CYCLE_MAX_DEPTH__ keep in sync with `find_root_constant`
     const MAX_DEPTH: usize = 256;
 
@@ -82,39 +79,6 @@ impl DependencyGraph {
 
     fn find_cycle(&self, node: NodeId) -> CycleSearchResult {
         self.visit(node, &mut Vec::new(), &mut Set::default())
-    }
-
-    /// The nodes that reach themselves. This and [`Self::nodes_reaching_cycles`]
-    /// stand for solc's `recursive` annotation, which walks without a limit, so
-    /// both iterate: [`Self::visit`] recurses natively, and
-    /// [`Self::MAX_DEPTH`] bounds its frames as much as its paths.
-    fn nodes_on_cycles(&self) -> Set<NodeId> {
-        self.edges
-            .keys()
-            .copied()
-            .filter(|&node| self.reaches_itself(node))
-            .collect()
-    }
-
-    /// The nodes from which a cycle is reachable: those on one and every node
-    /// reaching them.
-    fn nodes_reaching_cycles(&self) -> Set<NodeId> {
-        let mut predecessors: Map<NodeId, Vec<NodeId>> = Map::default();
-        for (node, successors) in &self.edges {
-            for successor in successors {
-                predecessors.entry(*successor).or_default().push(*node);
-            }
-        }
-        let mut reaching = self.nodes_on_cycles();
-        let mut pending: Vec<NodeId> = reaching.iter().copied().collect();
-        while let Some(node) = pending.pop() {
-            for &predecessor in predecessors.get(&node).into_iter().flatten() {
-                if reaching.insert(predecessor) {
-                    pending.push(predecessor);
-                }
-            }
-        }
-        reaching
     }
 
     fn visit(
@@ -167,22 +131,6 @@ impl DependencyGraph {
         }
 
         result
-    }
-
-    fn reaches_itself(&self, node: NodeId) -> bool {
-        let mut visited = Set::default();
-        let mut pending = vec![node];
-        while let Some(current) = pending.pop() {
-            for &successor in self.edges.get(&current).into_iter().flatten() {
-                if successor == node {
-                    return true;
-                }
-                if visited.insert(successor) {
-                    pending.push(successor);
-                }
-            }
-        }
-        false
     }
 }
 
@@ -454,48 +402,5 @@ mod tests {
                 "node {id} should be cycle-free"
             );
         }
-    }
-
-    #[test]
-    fn nodes_on_cycles_omits_a_node_that_only_reaches_one() {
-        let graph = graph(vec![(0, vec![1]), (1, vec![2]), (2, vec![1])]);
-
-        assert_eq!(
-            graph.nodes_on_cycles(),
-            [NodeId::from(1), NodeId::from(2)].into_iter().collect()
-        );
-    }
-
-    #[test]
-    fn nodes_reaching_cycles_keeps_a_node_that_only_reaches_one() {
-        let graph = graph(vec![(0, vec![1]), (1, vec![2]), (2, vec![3]), (3, vec![2])]);
-
-        assert_eq!(
-            graph.nodes_reaching_cycles(),
-            [
-                NodeId::from(0),
-                NodeId::from(1),
-                NodeId::from(2),
-                NodeId::from(3)
-            ]
-            .into_iter()
-            .collect()
-        );
-    }
-
-    #[test]
-    fn a_ring_past_the_depth_limit_puts_every_node_on_a_cycle() {
-        let length = DependencyGraph::MAX_DEPTH as u64 + 4;
-        let tail = length;
-        let mut edges: Vec<(u64, Vec<u64>)> = (0..length)
-            .map(|id| (id, vec![(id + 1) % length]))
-            .collect();
-        edges.push((tail, vec![0]));
-        let ring = graph(edges);
-
-        assert_eq!(
-            ring.nodes_on_cycles(),
-            (0..length).map(NodeId::from).collect()
-        );
     }
 }

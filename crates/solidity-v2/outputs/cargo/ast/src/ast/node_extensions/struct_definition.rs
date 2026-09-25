@@ -1,26 +1,34 @@
-use slang_solidity_v2_semantic::binder;
-pub use slang_solidity_v2_semantic::binder::Recursion;
+use slang_solidity_v2_common::collections::Set;
 
-use super::super::StructDefinitionStruct;
+use super::super::visitor::{self, Visitor};
+use super::super::{Definition, IdentifierPath, StructDefinition, StructDefinitionStruct};
 
 impl StructDefinitionStruct {
-    /// The reach through which this struct meets a cycle of the unit's struct
-    /// graph, or `None` when it meets none. Every cycle carries a struct
-    /// reached through a dynamic array, a mapping or a function type, so
-    /// keeping only [`Recursion::Indirect`] gives solc's `recursive` set
-    /// exactly.
-    pub fn recursion(&self) -> Option<Recursion> {
-        let Some(binder::Definition::Struct(definition)) = self
-            .semantic
-            .binder()
-            .find_definition_by_id(self.ir_node.id())
-        else {
-            unreachable!("definition is not a struct");
-        };
-        definition.recursion
-    }
-
+    /// Whether the struct's type refers to itself through its members' types.
     pub fn is_recursive(&self) -> bool {
-        self.recursion().is_some()
+        let mut visited = Set::default();
+        let mut pending = NamedStructs(Vec::new());
+        visitor::accept_struct_definition(self, &mut pending);
+        while let Some(definition) = pending.0.pop() {
+            if definition.node_id() == self.node_id() {
+                return true;
+            }
+            if visited.insert(definition.node_id()) {
+                visitor::accept_struct_definition(&definition, &mut pending);
+            }
+        }
+        false
+    }
+}
+
+/// The struct definitions the visited identifier paths resolve to.
+struct NamedStructs(Vec<StructDefinition>);
+
+impl Visitor for NamedStructs {
+    fn enter_identifier_path(&mut self, node: &IdentifierPath) -> bool {
+        if let Some(Definition::Struct(definition)) = node.resolve_to_definition() {
+            self.0.push(definition);
+        }
+        true
     }
 }
