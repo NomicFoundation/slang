@@ -25,6 +25,9 @@ pub struct TypeRegistry {
     super_types: Map<NodeId, Vec<NodeId>>,
     // Each function type `externalize_function_type` was given, mapped to its
     // answer, identity included.
+    // TODO(v2): externalized types also live on the function definition (p3) and in
+    // member-access typings (p5); keep them only here. A bare reference to a
+    // `public` function should type as internal, as in solc.
     externalized_function_types: Map<TypeId, TypeId>,
     // Some implicit conversion rules are version dependant. The version is
     // threaded in here so we can gate those rules on it.
@@ -499,7 +502,8 @@ impl TypeRegistry {
     // Changes a function type to have external visibility and its parameters and
     // results normalized for that (ie. `calldata` location is changed to `memory`),
     // returning the interned result's id, which is the input itself when the
-    // type already has that shape.
+    // type already has that shape. Remembers the pair for
+    // `externalized_function_type_id`.
     pub(crate) fn externalize_function_type(&mut self, type_id: TypeId) -> TypeId {
         let Type::Function(function_type) = self.get_type_by_id(type_id) else {
             unreachable!("can only externalize a function type");
