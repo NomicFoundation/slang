@@ -379,10 +379,11 @@ impl SemanticContext {
         }
     }
 
-    /// The type as solc's `Type::toString(true)` spells it, which is the JSON ABI `internalType`:
-    /// a kind prefix on user-defined types (`struct C.S`, `enum C.E`, `contract I`),
-    /// `address payable`, and function types with their parameters, mutability, `external` and
-    /// returns; never a data location. Everything else spells as [`Self::type_internal_name`].
+    /// The type as solc's `Type::toString(true)` spells it, which is the JSON ABI `internalType`
+    /// and the storage layout label: a kind prefix on user-defined types (`struct C.S`,
+    /// `enum C.E`, `contract I`), `address payable`, and function types with their parameters,
+    /// mutability, `external` and returns; never a data location. Everything else spells as
+    /// [`Self::type_internal_name`].
     pub fn type_abi_internal_name(&self, type_id: TypeId) -> String {
         match self.types.get_type_by_id(type_id) {
             Type::Address(address) if address.is_payable => "address payable".to_string(),
@@ -411,6 +412,14 @@ impl SemanticContext {
                 )
             }
             Type::Function(function_type) => self.function_type_abi_internal_name(function_type),
+            Type::Mapping(MappingType {
+                key_type_id,
+                value_type_id,
+            }) => format!(
+                "mapping({key_type} => {value_type})",
+                key_type = self.type_abi_internal_name(*key_type_id),
+                value_type = self.type_abi_internal_name(*value_type_id)
+            ),
             Type::Struct(StructType { definition_id, .. }) => {
                 format!("struct {}", self.definition_canonical_name(*definition_id))
             }
