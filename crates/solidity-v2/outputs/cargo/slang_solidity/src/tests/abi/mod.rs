@@ -9,6 +9,7 @@ mod library;
 mod selectors;
 mod storage_layout;
 mod type_conversion;
+mod used_errors_and_events;
 
 use super::fixtures;
 use crate::define_fixture;
@@ -183,6 +184,80 @@ interface IDerived is IBase {
     function pause() external;
     receive() external payable;
     fallback() external;
+}
+"#,
+);
+
+define_fixture!(
+    ReachedErrorsAndEvents,
+    file: "main.sol", r#"
+pragma solidity ^0.8.27;
+error SelectorOnly();
+error Unreached();
+error ViaPointer();
+error InModifier();
+error InConstructor();
+error ViaRequire();
+error InPublicLib();
+error InInternalLib();
+error InLibCallee();
+event EvUnreached();
+event EvFree();
+interface IOther { error Qualified(); event QEv(); }
+library Pub { function p() public pure { revert InPublicLib(); } }
+library Int {
+    function i() internal pure { revert InInternalLib(); }
+    function ext() external pure { callee(); }
+    function callee() internal pure { revert InLibCallee(); }
+}
+contract C {
+    modifier m() { if (msg.value > 1) revert InModifier(); _; }
+    constructor() { if (block.number == 0) revert InConstructor(); }
+    function unreached() internal pure { revert Unreached(); }
+    function evUnreached() internal { emit EvUnreached(); }
+    function pointed() internal pure { revert ViaPointer(); }
+    function a() external m payable returns (bytes4) { return SelectorOnly.selector; }
+    function b(bool c) external pure { require(c, ViaRequire()); }
+    function e() external { Pub.p(); Int.i(); emit EvFree(); }
+    function f() external { function() internal pure fp = pointed; fp(); }
+    function g() external { revert IOther.Qualified(); }
+    function h() external { emit IOther.QEv(); }
+}
+"#,
+);
+
+define_fixture!(
+    ReachedFromAbstractBase,
+    file: "main.sol", r#"
+pragma solidity ^0.8.27;
+error FromAbstract();
+error FromBaseUsedByChild();
+event EvAbstract();
+abstract contract A {
+    function f() external { revert FromAbstract(); }
+    function g() external virtual;
+    function h() internal pure { revert FromBaseUsedByChild(); }
+    function k() public { emit EvAbstract(); }
+}
+contract B is A {
+    function g() external pure override { h(); }
+}
+"#,
+);
+
+define_fixture!(
+    ReachedWithContractReference,
+    file: "main.sol", r#"
+pragma solidity ^0.8.27;
+error FromFactory();
+event Deployed(address child);
+contract Child {}
+contract Factory {
+    function make() external returns (Child child) {
+        child = new Child();
+        if (address(child) == address(0)) revert FromFactory();
+        emit Deployed(address(child));
+    }
 }
 "#,
 );

@@ -205,4 +205,26 @@ impl ContractDefinitionStruct {
             .map(|ir_node| create_event_definition(ir_node, &self.semantic))
             .collect()
     }
+
+    /// The errors this contract's constructor, entry points and function
+    /// pointers can revert with, directly or through the code they reach,
+    /// wherever they are declared.
+    pub fn used_errors(&self) -> Vec<ErrorDefinition> {
+        self.semantic
+            .used_errors(self.ir_node.id())
+            .iter()
+            .map(|ir_node| create_error_definition(ir_node, &self.semantic))
+            .collect()
+    }
+
+    /// The events this contract's constructor, entry points and function
+    /// pointers can emit, directly or through the code they reach, wherever
+    /// they are declared.
+    pub fn used_events(&self) -> Vec<EventDefinition> {
+        self.semantic
+            .used_events(self.ir_node.id())
+            .iter()
+            .map(|ir_node| create_event_definition(ir_node, &self.semantic))
+            .collect()
+    }
 }

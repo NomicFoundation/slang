@@ -40,6 +40,12 @@ pub(super) struct UnitReferences {
     /// value. They can still run through a stored pointer, so the ones found
     /// in creation code also seed the deployed walk.
     pub(super) indirect_calls: OrderedSet<CallableReference>,
+    /// Errors this unit reverts with, by `revert E(...)` or a call `E(...)`
+    /// as in `require(c, E(...))`. A reference that is not a call, eg.
+    /// `E.selector`, does not count.
+    pub(super) errors: OrderedSet<NodeId>,
+    /// Events this unit emits.
+    pub(super) events: OrderedSet<NodeId>,
 }
 
 /// Collects every unit's references.
@@ -57,12 +63,16 @@ pub(super) fn collect(
             contracts: Vec::new(),
             calls: OrderedSet::default(),
             indirect_calls: OrderedSet::default(),
+            errors: OrderedSet::default(),
+            events: OrderedSet::default(),
             direct_callees: Set::default(),
         };
         visit_code_unit(unit, &mut collector);
         if !collector.contracts.is_empty()
             || !collector.calls.is_empty()
             || !collector.indirect_calls.is_empty()
+            || !collector.errors.is_empty()
+            || !collector.events.is_empty()
         {
             unit_references.insert(
                 unit.id,
@@ -70,6 +80,8 @@ pub(super) fn collect(
                     contracts: collector.contracts,
                     calls: collector.calls,
                     indirect_calls: collector.indirect_calls,
+                    errors: collector.errors,
+                    events: collector.events,
                 },
             );
         }
@@ -128,6 +140,8 @@ struct ReferenceCollector<'a> {
     // reported when several paths reach the same dependency.
     calls: OrderedSet<CallableReference>,
     indirect_calls: OrderedSet<CallableReference>,
+    errors: OrderedSet<NodeId>,
+    events: OrderedSet<NodeId>,
     // Callee expression node ids. A function referenced outside this set
     // has its value taken instead of being called.
     direct_callees: Set<NodeId>,
@@ -352,6 +366,25 @@ impl ReferenceCollector<'_> {
         }
     }
 
+    /// The error or event a `revert` or `emit` statement, or a call, names.
+    fn named_definition(&self, name: &ir::Identifier) -> Option<&Definition> {
+        let Resolution::Definition(definition_id) = self.resolved_reference(name)? else {
+            return None;
+        };
+        self.binder.find_definition_by_id(definition_id)
+    }
+
+    fn collect_error_call(&mut self, callee: &ir::Expression) {
+        let name = match callee {
+            ir::Expression::Identifier(identifier) => identifier,
+            ir::Expression::MemberAccessExpression(member_access) => &member_access.member,
+            _ => return,
+        };
+        if let Some(Definition::Error(error)) = self.named_definition(name) {
+            self.errors.insert(error.ir_node.id());
+        }
+    }
+
     /// Records the modifier a modifier invocation runs.
     fn collect_modifier_invocation(&mut self, node: &ir::ModifierInvocation) {
         let Some(name) = node.name.last() else {
@@ -421,6 +454,25 @@ impl Visitor for ReferenceCollector<'_> {
         // as a direct call.
         if let Some(callee_id) = node.operand.node_id() {
             self.direct_callees.insert(callee_id);
+        }
+        self.collect_error_call(&node.operand);
+        true
+    }
+
+    fn enter_revert_statement(&mut self, node: &ir::RevertStatement) -> bool {
+        if let Some(name) = node.error.last()
+            && let Some(Definition::Error(error)) = self.named_definition(name)
+        {
+            self.errors.insert(error.ir_node.id());
+        }
+        true
+    }
+
+    fn enter_emit_statement(&mut self, node: &ir::EmitStatement) -> bool {
+        if let Some(name) = node.event.last()
+            && let Some(Definition::Event(event)) = self.named_definition(name)
+        {
+            self.events.insert(event.ir_node.id());
         }
         true
     }

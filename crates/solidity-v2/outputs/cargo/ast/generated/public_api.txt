@@ -1636,6 +1636,8 @@ pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::resolve_modifier(&s
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::resolve_super(&self, &slang_solidity_v2_ast::ast::FunctionDefinition, &slang_solidity_v2_ast::ast::ContractDefinition) -> core::option::Option<slang_solidity_v2_ast::ast::FunctionDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::resolve_virtual(&self, &slang_solidity_v2_ast::ast::FunctionDefinition) -> core::option::Option<slang_solidity_v2_ast::ast::VirtualTarget>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::state_variables(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::StateVariableDefinition>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::used_errors(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ErrorDefinition>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::used_events(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::EventDefinition>
 impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
@@ -2437,6 +2439,8 @@ pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::compute_abi(&self) -
 impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::state_variables(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::StateVariableDefinition>
+pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::used_errors(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::ErrorDefinition>
+pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::used_events(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::EventDefinition>
 impl slang_solidity_v2_ast::ast::LibraryDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::get_file_id(&self) -> &slang_solidity_v2_common::files::FileId
 pub fn slang_solidity_v2_ast::ast::LibraryDefinitionStruct::get_text_range(&self) -> &core::ops::range::Range<usize>

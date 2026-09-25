@@ -318,6 +318,8 @@ pub fn slang_solidity_v2_semantic::context::SemanticContext::storage_size_of_typ
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_abi_internal_name(&self, slang_solidity_v2_semantic::types::TypeId) -> alloc::string::String
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_internal_name(&self, slang_solidity_v2_semantic::types::TypeId) -> alloc::string::String
 pub fn slang_solidity_v2_semantic::context::SemanticContext::type_library_name(&self, slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<alloc::string::String>
+pub fn slang_solidity_v2_semantic::context::SemanticContext::used_errors(&self, slang_solidity_v2_common::nodes::NodeId) -> &[slang_solidity_v2_ir::ir::nodes::ErrorDefinition]
+pub fn slang_solidity_v2_semantic::context::SemanticContext::used_events(&self, slang_solidity_v2_common::nodes::NodeId) -> &[slang_solidity_v2_ir::ir::nodes::EventDefinition]
 impl slang_solidity_v2_semantic::context::SemanticContext
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_modifier(&self, slang_solidity_v2_common::nodes::NodeId, &slang_solidity_v2_ir::ir::nodes::ModifierInvocation) -> core::option::Option<&slang_solidity_v2_ir::ir::nodes::FunctionDefinition>
 pub fn slang_solidity_v2_semantic::context::SemanticContext::resolve_super<'a>(&'a self, slang_solidity_v2_common::nodes::NodeId, &'a slang_solidity_v2_ir::ir::nodes::FunctionDefinition, slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&'a slang_solidity_v2_ir::ir::nodes::FunctionDefinition>
