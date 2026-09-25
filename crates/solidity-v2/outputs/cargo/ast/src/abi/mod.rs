@@ -1,4 +1,5 @@
 mod node_extensions;
+mod serialize;
 mod types;
 
 use std::cmp::Ordering;
@@ -12,6 +13,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 
+pub use self::serialize::JsonAbi;
 pub use self::types::{AbiType, NotAnAbiType, TupleComponent};
 use crate::abi::types::{is_abi_type, type_as_abi_type};
 use crate::ast::Type;
@@ -23,6 +25,7 @@ pub struct ContractAbi {
     entries: Vec<AbiEntry>,
     storage_layout: Vec<StorageItem>,
     transient_storage_layout: Vec<StorageItem>,
+    semantic: Arc<SemanticContext>,
 }
 
 impl ContractAbi {
@@ -34,6 +37,7 @@ impl ContractAbi {
         mut entries: Vec<AbiEntry>,
         storage_layout: Vec<StorageItem>,
         transient_storage_layout: Vec<StorageItem>,
+        semantic: &Arc<SemanticContext>,
     ) -> Self {
         entries.sort();
         Self {
@@ -43,6 +47,7 @@ impl ContractAbi {
             entries,
             storage_layout,
             transient_storage_layout,
+            semantic: Arc::clone(semantic),
         }
     }
 
@@ -68,6 +73,12 @@ impl ContractAbi {
 
     pub fn transient_storage_layout(&self) -> &[StorageItem] {
         &self.transient_storage_layout
+    }
+
+    /// The entries as solc's JSON ABI: `serde_json::to_value(abi.json())` is the `abi` array of
+    /// solc's standard JSON output.
+    pub fn json(&self) -> JsonAbi<'_> {
+        JsonAbi(self)
     }
 }
 
@@ -237,7 +248,8 @@ impl Eq for AbiEntry {}
 
 // The ordering defined by this implementation is alphabetical "type" + "name",
 // same as `solc`'s. For equal names we use the `node_id` as the tie breaker to
-// keep consistency with the `PartialEq` implementation.
+// keep consistency with the `PartialEq` implementation. solc's JSON lists
+// overloads by selector instead; `JsonAbi` reorders them when it renders.
 impl Ord for AbiEntry {
     fn cmp(&self, other: &Self) -> Ordering {
         match (self, other) {
@@ -338,7 +350,7 @@ impl AbiParameter {
     /// The parameter's type rendered as its canonical-signature spelling — e.g.
     /// `uint256`, `uint256[]`, or `(uint256,uint256)` for a struct. This is the
     /// form used for selector/signature hashing, **not** the JSON-ABI `"type"`
-    /// field (structs there are `tuple`/`tuple[]`, which nothing renders yet), nor
+    /// field (structs there are `tuple`/`tuple[]`, see [`ContractAbi::json`]), nor
     /// its `"internalType"` field, which is [`Self::internal_type`].
     pub fn type_name(&self) -> String {
         self.abi_type().to_string()
@@ -401,7 +413,26 @@ pub fn hash_from_signature(signature: &str) -> [u8; 32] {
     Keccak256::digest(signature).into()
 }
 
+/// Keccak-256 over a signature written piece by piece, so a selector needs no signature string.
+#[derive(Default)]
+pub(crate) struct SignatureHasher(Keccak256);
+
+impl fmt::Write for SignatureHasher {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        self.0.update(s.as_bytes());
+        Ok(())
+    }
+}
+
+impl SignatureHasher {
+    pub(crate) fn selector(self) -> u32 {
+        let hash: [u8; 32] = self.0.finalize().into();
+        u32::from_be_bytes(hash[0..4].try_into().unwrap())
+    }
+}
+
 pub fn selector_from_signature(signature: &str) -> u32 {
-    let selector_bytes: [u8; 4] = hash_from_signature(signature)[0..4].try_into().unwrap();
-    u32::from_be_bytes(selector_bytes)
+    let mut hasher = SignatureHasher::default();
+    hasher.0.update(signature.as_bytes());
+    hasher.selector()
 }

@@ -109,6 +109,12 @@ mod unit_tests {
         );
 
         define_payload_test_and_assert_count_eq!(
+            serialize_contracts_abi,
+            count_concrete_contracts,
+            super::CONCRETE_CONTRACT_COUNT
+        );
+
+        define_payload_test_and_assert_count_eq!(
             ast_visitor,
             count_identifiers,
             super::IDENTIFIER_COUNT
