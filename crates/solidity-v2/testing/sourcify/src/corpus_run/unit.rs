@@ -68,16 +68,7 @@ pub fn create(
     let import_remaps = record
         .remappings
         .iter()
-        .filter_map(|remapping| {
-            // The corpus keeps solc's `[context:]prefix=target` spelling; the resolver
-            // wants the context separator present.
-            let remapping = if remapping.contains(':') {
-                remapping.clone()
-            } else {
-                format!(":{remapping}")
-            };
-            ImportRemap::new(&remapping).ok()
-        })
+        .filter_map(|remapping| ImportRemap::new(remapping).ok())
         .filter(|remap| !remap.has_known_bug())
         .collect();
 
