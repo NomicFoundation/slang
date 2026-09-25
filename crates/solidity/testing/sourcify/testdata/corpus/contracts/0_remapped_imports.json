@@ -7,5 +7,63 @@
   "sources": {
     "contracts/Vault.sol": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.28;\n\nimport {Ownable} from \"@lib/Ownable.sol\";\n\ncontract Vault is Ownable {\n    error NotAllowed();\n\n    receive() external payable {}\n\n    function withdraw(uint256 amount) external onlyOwner {\n        (bool ok, ) = msg.sender.call{value: amount}(\"\");\n        if (!ok) {\n            revert NotAllowed();\n        }\n    }\n}\n",
     "dependencies/lib/src/Ownable.sol": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.28;\n\nabstract contract Ownable {\n    address public owner = msg.sender;\n\n    modifier onlyOwner() {\n        require(msg.sender == owner, \"not owner\");\n        _;\n    }\n}\n"
+  },
+  "artifacts": {
+    "abi": [
+      {
+        "inputs": [],
+        "name": "NotAllowed",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "withdraw",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "stateMutability": "payable",
+        "type": "receive"
+      }
+    ],
+    "storageLayout": {
+      "storage": [
+        {
+          "astId": 43,
+          "contract": "contracts/Vault.sol:Vault",
+          "label": "owner",
+          "offset": 0,
+          "slot": "0",
+          "type": "t_address"
+        }
+      ],
+      "types": {
+        "t_address": {
+          "encoding": "inplace",
+          "label": "address",
+          "numberOfBytes": "20"
+        }
+      }
+    }
   }
 }

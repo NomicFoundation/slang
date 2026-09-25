@@ -273,3 +273,9 @@ code = "resolution/identifier-not-library-name"
 reason = "Follow-on of the trailing-dot pragma rejected on purpose: a `using` directive naming a library from the file that failed to parse."
 deliberate = true
 contracts = ["11155111_0x19e2b7829b7338f89b574289a29cc8b8ef7c4acb"]
+
+[[failures]]
+check = "storage_types"
+code = "[*].type"
+reason = "Slang spells storage types without solc's label conventions: no `struct `/`enum `/`contract ` kind prefix, `address payable` as `address`, and a function type as `function` without its signature."
+issue = "https://github.com/NomicFoundation/slang/issues/2196"
