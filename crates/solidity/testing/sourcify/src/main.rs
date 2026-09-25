@@ -4,6 +4,8 @@
 #![allow(clippy::self_named_module_files)]
 
 mod command;
+mod corpus;
+mod corpus_run;
 mod events;
 mod reporting;
 mod results;
@@ -11,6 +13,7 @@ mod run;
 mod sourcify;
 
 use std::path::PathBuf;
+use std::process::ExitCode;
 
 use anyhow::Result;
 use clap::Parser;
@@ -23,13 +26,26 @@ use results::{AllResults, display_all_results};
 use run::{run_in_parallel, run_with_trace, test_single_contract};
 use sourcify::{ContractArchive, Manifest};
 
-fn main() -> Result<()> {
+fn main() -> ExitCode {
+    match run() {
+        Ok(()) => ExitCode::SUCCESS,
+        Err(error) => {
+            // The message is the verdict; anyhow's backtrace would bury it in CI logs.
+            eprintln!("Error: {error:#}");
+            ExitCode::FAILURE
+        }
+    }
+}
+
+fn run() -> Result<()> {
     let command::Cli { command } = command::Cli::parse();
     match command {
         Commands::Test(test_command) => run_test_command(test_command),
         Commands::ShowCombinedResults(results_command) => {
             run_show_combined_results_command(results_command)
         }
+        Commands::RunCorpus(corpus_command) => corpus_run::run(&corpus_command),
+        Commands::Report(report_command) => corpus_run::report(&report_command),
     }
 }
 
