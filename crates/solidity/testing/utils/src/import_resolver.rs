@@ -15,9 +15,14 @@ impl ImportResolver {
     pub fn resolve_import(&self, source_id: &str, import_path: &str) -> Option<String> {
         let source_virtual_path = self.get_virtual_path(source_id)?;
 
-        if let Some(remapped_import) = self.remap_import(&source_virtual_path, import_path) {
-            // Paths that have been remapped don't need to go through path resolution.
-            return self.get_source_id(&remapped_import);
+        // solc resolves `./` and `../` against the importing file before it applies
+        // remappings, so a `./=lib/` remapping never sees a relative import.
+        let is_relative = import_path.starts_with("./") || import_path.starts_with("../");
+        if !is_relative
+            && let Some(remapped_import) = self.remap_import(&source_virtual_path, import_path)
+            && let Some(source_id) = self.get_source_id(&remapped_import)
+        {
+            return Some(source_id);
         }
 
         if import_path.starts_with('@') {
@@ -37,17 +42,20 @@ impl ImportResolver {
             resolve_relative_import(&source_virtual_path, import_path).ok()?
         };
 
+        // solc applies remappings to the normalised path, so a remapping wins over a
+        // source unit that happens to exist under the unremapped name.
+        if !source_is_url
+            && let Some(remapped_import) = self.remap_import(&source_virtual_path, &resolved_path)
+            && let Some(source_id) = self.get_source_id(&remapped_import)
+        {
+            return Some(source_id);
+        }
+
         self.get_source_id(&resolved_path).or_else(|| {
             if source_is_url {
                 // Sometimes imports from URL-imports don't share the URL prefix
                 self.get_source_id(import_path)
-            } else if let Some(remapped_import) =
-                self.remap_import(&source_virtual_path, &resolved_path)
-            {
-                // Sometimes relative paths still need to be remapped after being resolved
-                self.get_source_id(&remapped_import)
             } else {
-                // All other cases just say we couldn't resolve anything
                 None
             }
         })
@@ -75,11 +83,11 @@ impl ImportResolver {
         self.import_remaps
             .iter()
             .filter(|remap| remap.matches(source_virtual_path, import_path))
-            .reduce(|longest, current| {
-                if current.match_len() > longest.match_len() {
+            .reduce(|best, current| {
+                if current.match_rank() >= best.match_rank() {
                     current
                 } else {
-                    longest
+                    best
                 }
             })
             .map(|remap| import_path.replacen(&remap.prefix, &remap.target, 1))
@@ -98,7 +106,10 @@ pub struct SourceMap {
 
 impl SourceMap {
     fn matches_virtual_path(&self, virtual_path: &str) -> bool {
-        self.virtual_path == virtual_path || self.virtual_path.replace("//", "/") == virtual_path
+        // Path resolution collapses `//`, including the one after a URL scheme, so
+        // compare both sides collapsed.
+        self.virtual_path == virtual_path
+            || self.virtual_path.replace("//", "/") == virtual_path.replace("//", "/")
     }
 
     fn matches_source_id(&self, source_id: &str) -> bool {
@@ -120,21 +131,20 @@ pub struct ImportRemap {
 }
 
 impl ImportRemap {
+    /// `[context:]prefix=target`, as solc spells it. The context separator is the `:`
+    /// before the `=`; one after it belongs to the target (`solmate/=D:/lib/solmate/src/`).
     pub fn new(remap_str: &str) -> Result<ImportRemap> {
-        let Some((context, rest)) = remap_str.split_once(':') else {
-            bail!("{remap_str}: Could not separate context from mapping");
-        };
-
-        let Some((prefix, target)) = rest.split_once('=') else {
+        let Some((context_and_prefix, target)) = remap_str.split_once('=') else {
             bail!("{remap_str}: Could not separate prefix and target");
         };
 
+        let (context, prefix) = match context_and_prefix.split_once(':') {
+            Some((context, prefix)) => (Some(context).filter(|c| !c.is_empty()), prefix),
+            None => (None, context_and_prefix),
+        };
+
         Ok(ImportRemap {
-            context: if context.is_empty() {
-                None
-            } else {
-                Some(context.into())
-            },
+            context: context.map(Into::into),
             prefix: prefix.into(),
             target: target.into(),
         })
@@ -151,12 +161,15 @@ impl ImportRemap {
         context_matches && import_path.starts_with(&self.prefix)
     }
 
-    /// The `match_size` is the length of the remap context + the length of the remap
-    /// prefix. This is used to compare `ImportRemap`s: if a source file + import path combo matches
-    /// two or more `ImportRemap`s, then it should use the one with the biggest match, since
-    /// that one will be the most specific.
-    fn match_len(&self) -> usize {
-        self.context.as_ref().map_or(0, |c| c.len()) + self.prefix.len()
+    /// Among the remappings that match, solc takes the longest context first, the
+    /// longest prefix second, and the last one listed on a tie
+    /// (`CompilerStack::applyRemapping`), so a short contextual remapping beats a
+    /// long global one and a repeated prefix means its last target.
+    fn match_rank(&self) -> (usize, usize) {
+        (
+            self.context.as_ref().map_or(0, |c| c.len()),
+            self.prefix.len(),
+        )
     }
 
     /// Sometimes contracts contain a remapping entry that, for whatever reason,
@@ -226,8 +239,12 @@ fn resolve_relative_url_import(source_path: &str, import_path: &str) -> Result<S
 
     let resolved_path = resolve_relative_import(path, import_path)?;
 
+    let port = url
+        .port()
+        .map(|port| format!(":{port}"))
+        .unwrap_or_default();
     Ok(format!(
-        "{scheme}://{host}/{resolved_path}",
+        "{scheme}://{host}{port}/{resolved_path}",
         scheme = url.scheme(),
         host = url.host_str().unwrap(),
     ))
@@ -248,6 +265,123 @@ mod test {
             &[("src/main.sol", "entry"), ("src/a/other.sol", "target")],
         );
         test_import(&resolver, "entry", "src/a/other.sol", "target");
+    }
+
+    #[test]
+    fn a_drive_letter_in_the_target_is_not_a_context() {
+        let resolver = new_resolver(
+            &["solmate/=D:/lib/solmate/src/"],
+            &[
+                ("src/main.sol", "entry"),
+                ("D:/lib/solmate/src/utils/Math.sol", "target"),
+            ],
+        );
+        test_import(&resolver, "entry", "solmate/utils/Math.sol", "target");
+    }
+
+    #[test]
+    fn a_relative_import_resolves_before_remappings_apply() {
+        let resolver = new_resolver(
+            &["./=lib/"],
+            &[
+                ("lib/contracts/eip/ERC1155.sol", "entry"),
+                ("lib/contracts/eip/interface/IERC1155.sol", "target"),
+            ],
+        );
+        test_import(&resolver, "entry", "./interface/IERC1155.sol", "target");
+    }
+
+    #[test]
+    fn a_contextual_remapping_beats_a_longer_global_one() {
+        let resolver = new_resolver(
+            &[
+                "@openzeppelin/contracts-upgradeable/=lib/oz-upgradeable/contracts/",
+                "lib/t-rex/:@openzeppelin/=lib/t-rex/node_modules/@openzeppelin/",
+            ],
+            &[
+                ("lib/t-rex/contracts/Module.sol", "entry"),
+                (
+                    "lib/t-rex/node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+                    "target",
+                ),
+                (
+                    "lib/oz-upgradeable/contracts/proxy/utils/Initializable.sol",
+                    "other",
+                ),
+            ],
+        );
+        test_import(
+            &resolver,
+            "entry",
+            "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+            "target",
+        );
+    }
+
+    #[test]
+    fn a_relative_import_from_a_url_with_a_double_slash() {
+        let resolver = new_resolver(
+            &[],
+            &[
+                (
+                    "https://github.com/oz/blob/v5//contracts/token/ERC1155.sol",
+                    "entry",
+                ),
+                (
+                    "https://github.com/oz/blob/v5//contracts/token/IERC1155.sol",
+                    "target",
+                ),
+            ],
+        );
+        test_import(&resolver, "entry", "./IERC1155.sol", "target");
+    }
+
+    #[test]
+    fn the_last_of_two_equal_remappings_wins() {
+        let resolver = new_resolver(
+            &[
+                "@openzeppelin/=node_modules/@openzeppelin/contracts/",
+                "@openzeppelin/=node_modules/@openzeppelin/",
+            ],
+            &[
+                ("src/A.sol", "entry"),
+                (
+                    "node_modules/@openzeppelin/contracts/token/IERC20.sol",
+                    "target",
+                ),
+            ],
+        );
+        test_import(
+            &resolver,
+            "entry",
+            "@openzeppelin/contracts/token/IERC20.sol",
+            "target",
+        );
+    }
+
+    #[test]
+    fn a_relative_import_from_a_url_keeps_the_port() {
+        let resolver = new_resolver(
+            &[],
+            &[
+                ("http://47.99.87.207:8080/token/ERC20.sol", "entry"),
+                ("http://47.99.87.207:8080/token/IERC20.sol", "target"),
+            ],
+        );
+        test_import(&resolver, "entry", "./IERC20.sol", "target");
+    }
+
+    #[test]
+    fn a_remapping_applies_to_the_normalised_relative_path_first() {
+        let resolver = new_resolver(
+            &["axelar/=lib/axelar/"],
+            &[
+                ("axelar/executable/Executable.sol", "entry"),
+                ("axelar/interfaces/IGateway.sol", "unremapped"),
+                ("lib/axelar/interfaces/IGateway.sol", "target"),
+            ],
+        );
+        test_import(&resolver, "entry", "../interfaces/IGateway.sol", "target");
     }
 
     #[test]
