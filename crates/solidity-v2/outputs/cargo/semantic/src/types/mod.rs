@@ -1,7 +1,7 @@
 use literals::numbers;
 use num_bigint::{BigInt, BigUint};
 use num_rational::BigRational;
-use ruint::aliases::{U160, U256};
+use ruint::aliases::U256;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -196,9 +196,6 @@ pub enum LiteralKind {
     String {
         bytes: usize,
     },
-    Address {
-        value: U160,
-    },
 }
 
 impl LiteralKind {
@@ -220,7 +217,6 @@ impl LiteralKind {
                     location: DataLocation::Memory,
                 }))
             }
-            LiteralKind::Address { .. } => Some(Type::Address(AddressType { is_payable: false })),
         }
     }
 }
