@@ -1,12 +1,14 @@
 //! `run-corpus`: compiles every contract of a corpus snapshot with Slang v2 and
 //! classifies what it reports; `report`: the same census from saved results.
 
+mod artifacts;
 mod expected;
 mod outcome;
 mod report;
 mod unit;
 
 use std::cell::RefCell;
+use std::collections::BTreeMap;
 use std::io::{BufRead, BufWriter, Write};
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::{Path, PathBuf};
@@ -17,7 +19,7 @@ use std::time::Instant;
 use anyhow::{Context, Result};
 use expected::ExpectedFailures;
 use infra_utils::terminal::Terminal;
-use outcome::{Outcome, classify};
+use outcome::{Check, Outcome, classify};
 use rayon::prelude::*;
 use report::Summary;
 use slang_solidity_v2::diagnostics::{Diagnostic, DiagnosticExtensions, DiagnosticSeverity};
@@ -154,6 +156,7 @@ fn check(record: &CorpusContract, path: &Path, print_diagnostics: bool) -> Outco
         panic: None,
         failures: Vec::new(),
         warnings: 0,
+        skipped_checks: BTreeMap::new(),
     };
 
     let (version, target) = match unit::language_version(record)
@@ -173,17 +176,36 @@ fn check(record: &CorpusContract, path: &Path, print_diagnostics: bool) -> Outco
         if print_diagnostics {
             print_errors(record, &outcome.id, unit.diagnostics().iter());
         }
-        classify(
+        let (mut failures, warnings) = classify(
             unit.diagnostics()
                 .iter()
                 .map(|diagnostic| diagnostic.kind()),
-        )
+        );
+        let mut skipped_checks = BTreeMap::new();
+        match &record.artifacts {
+            Some(artifacts) => match artifacts::target_abi(&unit, record) {
+                Ok(abi) => match artifacts::check_storage_layout(&abi, artifacts) {
+                    Ok(storage_failures) => failures.extend(storage_failures),
+                    Err(reason) => {
+                        skipped_checks.insert(Check::StorageLayout.to_string(), reason);
+                    }
+                },
+                Err(reason) => {
+                    skipped_checks.insert(Check::StorageLayout.to_string(), reason);
+                }
+            },
+            None => {
+                skipped_checks.insert(Check::StorageLayout.to_string(), "no artifacts".to_owned());
+            }
+        }
+        (failures, warnings, skipped_checks)
     }));
     outcome.ms = started.elapsed().as_millis();
     match result {
-        Ok((failures, warnings)) => {
+        Ok((failures, warnings, skipped_checks)) => {
             outcome.failures = failures;
             outcome.warnings = warnings;
+            outcome.skipped_checks = skipped_checks;
         }
         Err(_) => outcome.panic = Some(take_panic_message()),
     }
@@ -272,6 +294,13 @@ mod tests {
         .unwrap();
         let outcome = check(&record, Path::new("0_x.json"), false);
         let keys: Vec<String> = outcome.failures.iter().map(outcome::Failure::key).collect();
+        assert_eq!(
+            outcome
+                .skipped_checks
+                .get("storage_layout")
+                .map(String::as_str),
+            Some("no artifacts")
+        );
         assert!(keys.iter().any(|key| key.starts_with("bind:")), "{keys:?}");
         assert_eq!(outcome.evm_target.as_deref(), Some("Prague"));
     }
