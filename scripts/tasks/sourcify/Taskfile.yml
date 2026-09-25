@@ -42,7 +42,7 @@ tasks:
       - "{{.BIN}} lock shard --count {{.SHARD_COUNT}} --index {{.SHARD_INDEX}} | scripts/tasks/sourcify/run-assets.sh {{.BIN}} {{.RESULTS}} --report-only"
 
   "report":
-    desc: "Render the census and apply the gate over every shard's results: task sourcify:report [REPORT_FLAGS=--report-only]."
+    desc: "Render the census and apply the gate over every shard's results (task sourcify:report, REPORT_FLAGS=--report-only to only look)."
     deps:
       - "build"
     cmds:
