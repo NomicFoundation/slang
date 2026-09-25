@@ -989,3 +989,30 @@ contract C {
         "a bare `publicFn` callee is an internal reference, with no type to encode against"
     );
 }
+
+define_fixture!(
+    EncodeCallPointerWithEmptyTuple,
+    file: "main.sol", r#"
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+contract C {
+    function encode(function() external p) external pure returns (bytes memory) {
+        return abi.encodeCall(p, ());
+    }
+}
+"#,
+);
+
+#[test]
+fn test_encode_call_pointer_callee_with_empty_tuple_has_type() {
+    let unit = EncodeCallPointerWithEmptyTuple::build_compilation_unit();
+    let callees = encode_call_callee_types_in(&unit);
+    let [Some(ast::Type::Function(callee))] = callees.as_slice() else {
+        panic!("the `abi.encodeCall` on `p` should have a function type it encodes against");
+    };
+    assert!(
+        callee.parameter_types().is_empty(),
+        "`p` takes no parameters"
+    );
+}
