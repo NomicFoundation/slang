@@ -344,19 +344,6 @@ fn test_super_is_anchored_at_the_contract_it_is_written_in() {
 }
 
 #[test]
-fn test_resolve_super_rejects_an_enclosing_contract_of_a_foreign_compilation_unit() {
-    let unit = Hierarchy::build_compilation_unit();
-    let foreign_unit = Hierarchy::build_compilation_unit();
-    let c = contract(&unit, "C");
-    let foreign_c = contract(&foreign_unit, "C");
-    assert_eq!(c.node_id(), foreign_c.node_id());
-    assert!(
-        c.resolve_super(&function(&unit, "C", "f", 0), &foreign_c)
-            .is_none()
-    );
-}
-
-#[test]
 fn test_resolution_rejects_constructors() {
     let unit = Hierarchy::build_compilation_unit();
     let a = contract(&unit, "A");

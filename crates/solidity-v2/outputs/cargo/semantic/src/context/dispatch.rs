@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -21,8 +19,8 @@ impl SemanticContext {
     /// themselves, including unimplemented members of abstract contracts.
     ///
     /// Returns `None` unless `contract_id` identifies a linearised contract and
-    /// `function` is a function or modifier declared in its hierarchy in this
-    /// context. Constructors and free or library functions are not accepted.
+    /// `function` is a function or modifier declared in its hierarchy.
+    /// Constructors and free or library functions are not accepted.
     pub fn resolve_virtual<'a>(
         &'a self,
         contract_id: NodeId,
@@ -67,8 +65,8 @@ impl SemanticContext {
     /// the compiled contract's linearisation, skipping bodiless declarations.
     ///
     /// Returns `None` if the inputs do not belong to that contract's hierarchy,
-    /// `function` is not a regular function from this context, or no matching
-    /// implementation follows. A super target is always a function, never a getter.
+    /// `function` is not a regular function, or no matching implementation
+    /// follows. A super target is always a function, never a getter.
     pub fn resolve_super<'a>(
         &'a self,
         contract_id: NodeId,
@@ -92,9 +90,9 @@ impl SemanticContext {
     /// qualified `A.m` always runs `A`'s own `m`, and so does a `m` that is not
     /// virtual.
     ///
-    /// Returns `None` if `invocation` comes from another compilation unit, if
-    /// it calls a base constructor instead of a modifier, or if the modifier
-    /// is not declared in `contract_id` or its bases.
+    /// Returns `None` if `invocation` calls a base constructor instead of a
+    /// modifier, or if the modifier is not declared in `contract_id` or its
+    /// bases.
     pub fn resolve_modifier(
         &self,
         contract_id: NodeId,
@@ -107,9 +105,6 @@ impl SemanticContext {
         let reference = self
             .binder
             .find_reference_by_identifier_node_id(name.id())?;
-        if !Arc::ptr_eq(&reference.identifier, name) {
-            return None;
-        }
         let definition_id = self
             .binder
             .follow_symbol_aliases(reference.resolution.clone())
@@ -143,7 +138,7 @@ impl SemanticContext {
     fn dispatch_member<'a>(
         &'a self,
         contract_id: NodeId,
-        function: &ir::FunctionDefinition,
+        function: &'a ir::FunctionDefinition,
     ) -> Option<(&'a [NodeId], Overridable<'a>)> {
         if !matches!(
             self.binder.find_definition_by_id(contract_id),
@@ -165,15 +160,11 @@ impl SemanticContext {
         if !bases.contains(&enclosing_node_id) {
             return None;
         }
-        let member =
-            Overridable::members_of(&self.binder, enclosing_node_id).find(
-                |member| match member {
-                    Overridable::Function { definition, .. }
-                    | Overridable::Modifier(definition) => Arc::ptr_eq(definition, function),
-                    Overridable::StateVariable(_) => false,
-                },
-            )?;
-        Some((bases, member))
+        let in_interface = matches!(
+            self.binder.find_definition_by_id(enclosing_node_id),
+            Some(Definition::Interface(_))
+        );
+        Some((bases, Overridable::of_function(function, in_interface)?))
     }
 }
 

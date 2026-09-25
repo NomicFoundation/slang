@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use slang_solidity_v2_semantic::context::VirtualTarget as SemanticVirtualTarget;
 
 use super::super::nodes::{
@@ -116,8 +114,8 @@ impl ContractDefinitionStruct {
     /// nonvirtual members and declarations with no override resolve to themselves.
     ///
     /// Returns `None` unless `function` is a function or modifier declared in
-    /// this contract's hierarchy and belongs to the same compilation unit.
-    /// Constructors and free or library functions are not accepted.
+    /// this contract's hierarchy. Constructors and free or library functions
+    /// are not accepted.
     pub fn resolve_virtual(&self, function: &FunctionDefinition) -> Option<VirtualTarget> {
         Some(
             match self
@@ -138,17 +136,14 @@ impl ContractDefinitionStruct {
     /// compiled into this contract. Returns the nearest implemented regular
     /// function after the enclosing contract in this contract's linearisation.
     ///
-    /// Returns `None` if either argument is outside this contract's hierarchy
-    /// or compilation unit, `function` is not regular, or no implementation
-    /// follows. Super targets are functions, never getters.
+    /// Returns `None` if either argument is outside this contract's hierarchy,
+    /// `function` is not regular, or no implementation follows. Super targets
+    /// are functions, never getters.
     pub fn resolve_super(
         &self,
         function: &FunctionDefinition,
         enclosing_contract: &ContractDefinition,
     ) -> Option<FunctionDefinition> {
-        if !Arc::ptr_eq(&self.semantic, &enclosing_contract.semantic) {
-            return None;
-        }
         Some(create_function_definition(
             self.semantic.resolve_super(
                 self.ir_node.id(),
@@ -163,9 +158,9 @@ impl ContractDefinitionStruct {
     /// contract. A bare `m` runs the most-derived override of `m`. A qualified
     /// `A.m` always runs `A`'s own `m`, and so does a `m` that is not virtual.
     ///
-    /// Returns `None` if `invocation` comes from another compilation unit, if
-    /// it calls a base constructor instead of a modifier, or if the modifier
-    /// is not declared in this contract or its bases.
+    /// Returns `None` if `invocation` calls a base constructor instead of a
+    /// modifier, or if the modifier is not declared in this contract or its
+    /// bases.
     pub fn resolve_modifier(&self, invocation: &ModifierInvocation) -> Option<FunctionDefinition> {
         Some(create_function_definition(
             self.semantic
