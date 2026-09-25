@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 4247] Error: Expression has to be an lvalue.
+   ╭─[input.sol:9:5]
+   │
+ 9 │     uint++;
+   │     ──┬─  
+   │       ╰─── Error occurred here.
+───╯
+
+[TypeError 9767] Error: Built-in unary operator ++ cannot be applied to type type(uint256).
+   ╭─[input.sol:9:5]
+   │
+ 9 │     uint++;
+   │     ───┬──  
+   │        ╰──── Error occurred here.
+───╯
