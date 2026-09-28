@@ -162,6 +162,10 @@ impl Pass<'_> {
     /// Whether the contract or interface accepts plain ether transfers: it, or
     /// a base in its linearisation, declares a `receive` function or a
     /// `payable` `fallback`.
+    ///
+    /// TODO: this duplicates `ContractDefinition::is_payable` in the AST crate.
+    /// Share one predicate over the linearised functions once `ContractData`
+    /// is available to this pass.
     fn is_payable_contract(&self, definition_id: NodeId) -> bool {
         let bases = self
             .binder

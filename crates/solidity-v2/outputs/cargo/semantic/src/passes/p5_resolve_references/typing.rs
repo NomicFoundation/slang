@@ -1351,10 +1351,7 @@ impl Pass<'_> {
                 match self.binder.find_definition_by_id(definition_id) {
                     Some(Definition::Struct(_)) => {
                         // struct construction
-                        let type_ = self
-                            .type_of_definition(definition_id)
-                            .expect("struct definitions are handled by type_of_definition");
-                        let type_id = self.types.register_type(type_);
+                        let type_id = self.type_id_of_type_definition(definition_id);
                         (Typing::Resolved(type_id), Some(definition_id))
                     }
                     Some(Definition::Error(_)) => {

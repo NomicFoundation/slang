@@ -77,6 +77,10 @@ impl ContractDefinitionStruct {
     /// Whether the contract accepts a plain ETH transfer: it, or any base in
     /// its linearisation, declares a `receive()` function or a `payable`
     /// `fallback()` (solc's `ContractType::isPayable`).
+    ///
+    /// TODO: the explicit conversion check in the semantic crate duplicates
+    /// this (`is_payable_contract`). Share one predicate over the linearised
+    /// functions once `ContractData` is available to that pass.
     pub fn is_payable(&self) -> bool {
         self.linearised_functions().iter().any(|function| {
             matches!(function.kind(), FunctionKind::Receive)
