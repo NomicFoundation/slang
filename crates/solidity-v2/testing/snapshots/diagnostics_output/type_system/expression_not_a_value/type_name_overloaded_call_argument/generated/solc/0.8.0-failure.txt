@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9322] Error: No matching declaration found after argument-dependent lookup.
+    ╭─[input.sol:16:5]
+    │
+ 16 │     f(uint);
+    │     ┬  
+    │     ╰── Error occurred here.
+────╯

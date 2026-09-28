@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[type-system/expression-not-a-value] Error: This expression denoting a type or module cannot be used as a value.
+   ╭─[input.sol:9:17]
+   │
+ 9 │     uint256 x = uint;
+   │                 ──┬─  
+   │                   ╰─── Error occurred here.
+───╯

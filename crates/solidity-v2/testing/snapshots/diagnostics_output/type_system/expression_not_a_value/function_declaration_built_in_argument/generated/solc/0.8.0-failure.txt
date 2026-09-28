@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9582] Error: Member "encodeCall" not found or not visible after argument-dependent lookup in abi.
+    ╭─[input.sol:13:16]
+    │
+ 13 │         return abi.encodeCall(C.g, (1));
+    │                ───────┬──────  
+    │                       ╰──────── Error occurred here.
+────╯

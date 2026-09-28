@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 4247] Error: Expression has to be an lvalue.
+    ╭─[input.sol:12:9]
+    │
+ 12 │     (x, E) = (1, E.A);
+    │         ┬  
+    │         ╰── Error occurred here.
+────╯
+
+[TypeError 7407] Error: Type tuple(int_const 1,enum Test.E) is not implicitly convertible to expected type tuple(uint256,type(enum Test.E)).
+    ╭─[input.sol:12:14]
+    │
+ 12 │     (x, E) = (1, E.A);
+    │              ────┬───  
+    │                  ╰───── Error occurred here.
+────╯

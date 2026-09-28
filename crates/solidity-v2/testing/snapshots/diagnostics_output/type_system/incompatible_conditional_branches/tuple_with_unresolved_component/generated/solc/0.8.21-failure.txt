@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 9717] Error: Invalid mobile type in true expression.
+   ╭─[input.sol:8:16]
+   │
+ 8 │     return c ? (1, super) : (1, 2);
+   │                ─────┬────  
+   │                     ╰────── Error occurred here.
+───╯

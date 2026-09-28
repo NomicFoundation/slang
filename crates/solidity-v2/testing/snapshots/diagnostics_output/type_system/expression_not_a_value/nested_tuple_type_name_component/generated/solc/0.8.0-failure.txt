@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[TypeError 7407] Error: Type tuple(int_const 1,tuple(int_const 2,type(uint256))) is not implicitly convertible to expected type tuple(uint256,tuple(uint256,uint256)).
+    ╭─[input.sol:11:19]
+    │
+ 11 │     (x, (y, z)) = (1, (2, uint));
+    │                   ───────┬──────  
+    │                          ╰──────── Error occurred here.
+────╯

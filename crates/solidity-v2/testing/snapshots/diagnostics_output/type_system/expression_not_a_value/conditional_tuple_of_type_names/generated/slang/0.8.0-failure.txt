@@ -1,19 +1,35 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Diagnostics: 2
+Diagnostics: 4
 
 [type-system/expression-not-a-value] Error: This expression denoting a type or module cannot be used as a value.
-   ╭─[input.sol:7:16]
+   ╭─[input.sol:7:17]
    │
  7 │     return c ? (uint, bool) : (uint, bool);
-   │                ──────┬─────  
-   │                      ╰─────── Error occurred here.
+   │                 ──┬─  
+   │                   ╰─── Error occurred here.
 ───╯
 
 [type-system/expression-not-a-value] Error: This expression denoting a type or module cannot be used as a value.
-   ╭─[input.sol:7:31]
+   ╭─[input.sol:7:23]
    │
  7 │     return c ? (uint, bool) : (uint, bool);
-   │                               ──────┬─────  
-   │                                     ╰─────── Error occurred here.
+   │                       ──┬─  
+   │                         ╰─── Error occurred here.
+───╯
+
+[type-system/expression-not-a-value] Error: This expression denoting a type or module cannot be used as a value.
+   ╭─[input.sol:7:32]
+   │
+ 7 │     return c ? (uint, bool) : (uint, bool);
+   │                                ──┬─  
+   │                                  ╰─── Error occurred here.
+───╯
+
+[type-system/expression-not-a-value] Error: This expression denoting a type or module cannot be used as a value.
+   ╭─[input.sol:7:38]
+   │
+ 7 │     return c ? (uint, bool) : (uint, bool);
+   │                                      ──┬─  
+   │                                        ╰─── Error occurred here.
 ───╯
