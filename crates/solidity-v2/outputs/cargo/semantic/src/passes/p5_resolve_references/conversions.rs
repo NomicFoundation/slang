@@ -124,7 +124,10 @@ impl Pass<'_> {
             return false;
         };
         match to_type {
-            Type::ByteArray(_) | Type::Integer(_) => false,
+            Type::ByteArray(_) | Type::Integer(_) => {
+                // Valid conversions are already handled by the implicit conversion check
+                false
+            }
             Type::Address(AddressType { is_payable }) => {
                 value.is_zero()
                     || (!is_payable

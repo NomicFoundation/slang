@@ -218,6 +218,11 @@ impl TypeRegistry {
             }
 
             (
+                Type::Integer(IntegerType { is_signed, bits }),
+                Type::FixedPointNumber(fixed_point_type),
+            ) => numbers::integer_type_fits_fixed_point(*is_signed, *bits, fixed_point_type),
+
+            (
                 Type::Literal(LiteralKind::Integer { value }),
                 Type::Integer(IntegerType { is_signed, bits }),
             ) => numbers::integer_literal_fits(value, *is_signed, *bits),

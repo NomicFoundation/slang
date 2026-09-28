@@ -5119,10 +5119,26 @@ mod type_system {
         }
 
         #[test]
+        fn integer_to_narrower_fixed_point() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "integer_to_narrower_fixed_point",
+            )
+        }
+
+        #[test]
         fn integer_to_payable_address() -> Result<()> {
             run(
                 "type_system/explicit_conversion_not_allowed",
                 "integer_to_payable_address",
+            )
+        }
+
+        #[test]
+        fn integer_to_wider_fixed_point() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "integer_to_wider_fixed_point",
             )
         }
 
@@ -5802,6 +5818,22 @@ mod type_system {
             run(
                 "type_system/incompatible_conditional_branches",
                 "byte_array_and_literal_zero",
+            )
+        }
+
+        #[test]
+        fn integer_and_narrower_fixed_point() -> Result<()> {
+            run(
+                "type_system/incompatible_conditional_branches",
+                "integer_and_narrower_fixed_point",
+            )
+        }
+
+        #[test]
+        fn integer_and_wider_fixed_point() -> Result<()> {
+            run(
+                "type_system/incompatible_conditional_branches",
+                "integer_and_wider_fixed_point",
             )
         }
 

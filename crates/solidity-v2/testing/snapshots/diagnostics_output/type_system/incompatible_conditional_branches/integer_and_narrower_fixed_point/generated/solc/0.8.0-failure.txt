@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 2
+
+[TypeError 1080] Error: True expression's type int256 does not match false expression's type fixed128x18.
+   ╭─[input.sol:7:16]
+   │
+ 7 │         return c ? x : y;
+   │                ────┬────  
+   │                    ╰────── Error occurred here.
+───╯
+
+[TypeError 6359] Error: Return argument type int256 is not implicitly convertible to expected type (type of first return variable) fixed128x18.
+   ╭─[input.sol:7:16]
+   │
+ 7 │         return c ? x : y;
+   │                ────┬────  
+   │                    ╰────── Error occurred here.
+───╯

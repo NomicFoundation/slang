@@ -329,6 +329,28 @@ pub(crate) fn integer_literal_fits(value: &BigInt, signed: bool, bits: u32) -> b
     integer_bits_required(value, signed) <= bits
 }
 
+/// Returns true if every value of the integer type described by `signed` and
+/// `bits` fits in the given fixed-point type, ie. both ends of its range do.
+pub(crate) fn integer_type_fits_fixed_point(
+    signed: bool,
+    bits: u32,
+    fixed_point_type: &FixedPointNumberType,
+) -> bool {
+    let max = (BigInt::one() << (bits - u32::from(signed))) - 1u32;
+    let min = if signed {
+        -(BigInt::one() << (bits - 1))
+    } else {
+        BigInt::zero()
+    };
+    [min, max].into_iter().all(|value| {
+        Number::Integer(value).fits_fixed_point(
+            fixed_point_type.is_signed,
+            fixed_point_type.bits,
+            fixed_point_type.decimal_places,
+        )
+    })
+}
+
 /// Whether `value` is within the range a Solidity integer type can hold. Those
 /// are at most 256 bits wide, so a larger value is out of range.
 pub(crate) fn within_integer_range(value: &BigInt) -> bool {
