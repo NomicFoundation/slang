@@ -353,6 +353,7 @@ pub fn slang_solidity_v2_semantic::context::SemanticFile::resolved_import_by_nod
 pub fn slang_solidity_v2_semantic::context::extract_imports_from_source_unit(&slang_solidity_v2_ir::ir::nodes::SourceUnit) -> alloc::vec::Vec<slang_solidity_v2_semantic::context::SourceUnitImport>
 pub mod slang_solidity_v2_semantic::types
 pub mod slang_solidity_v2_semantic::types::literals
+pub fn slang_solidity_v2_semantic::types::literals::value_of_hex_number_expression(&slang_solidity_v2_ir::ir::nodes::HexNumberExpression) -> core::option::Option<num_bigint::bigint::BigInt>
 pub fn slang_solidity_v2_semantic::types::literals::value_of_hex_string_literals(&[slang_solidity_v2_ir::ir::nodes::HexStringLiteral]) -> alloc::vec::Vec<u8>
 pub fn slang_solidity_v2_semantic::types::literals::value_of_string_literals(&[slang_solidity_v2_ir::ir::nodes::StringLiteral]) -> alloc::vec::Vec<u8>
 pub fn slang_solidity_v2_semantic::types::literals::value_of_unicode_string_literals(&[slang_solidity_v2_ir::ir::nodes::UnicodeStringLiteral]) -> alloc::vec::Vec<u8>
@@ -414,8 +415,6 @@ pub fn slang_solidity_v2_semantic::types::FunctionTypeVisibility::hash<__H: core
 impl core::marker::Copy for slang_solidity_v2_semantic::types::FunctionTypeVisibility
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::FunctionTypeVisibility
 pub enum slang_solidity_v2_semantic::types::LiteralKind
-pub slang_solidity_v2_semantic::types::LiteralKind::Address
-pub slang_solidity_v2_semantic::types::LiteralKind::Address::value: ruint::aliases::U160
 pub slang_solidity_v2_semantic::types::LiteralKind::HexInteger
 pub slang_solidity_v2_semantic::types::LiteralKind::HexInteger::bytes: u32
 pub slang_solidity_v2_semantic::types::LiteralKind::HexInteger::value: num_bigint::biguint::BigUint

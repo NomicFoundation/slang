@@ -206,8 +206,8 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_hex_number_expression(&mut self, node: &ir::HexNumberExpression) {
-        let type_id = Self::hex_number_literal_kind(node)
-            .map(|kind| self.types.register_type(Type::Literal(kind)));
+        let type_id =
+            Self::type_of_hex_number_expression(node).map(|type_| self.types.register_type(type_));
         self.binder.set_node_type(node.id(), type_id);
     }
 

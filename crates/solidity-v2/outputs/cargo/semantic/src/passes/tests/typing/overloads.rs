@@ -98,6 +98,60 @@ fn test_overload_resolution_rejects_byte_array_narrowing() {
 }
 
 #[test]
+fn test_overload_resolution_selects_address_overload_for_address_literal() {
+    let setup = "
+        function pick(address a, uint256 v) internal pure returns (uint8) { a; v; return 1; }
+        function pick(uint256 u, uint256 v) internal pure returns (uint16) { u; v; return 2; }
+    ";
+    let (type_, _) = expression("pick(0xb701a286753ADe3704e1DcFD93507454A2307641, 1)")
+        .with_members(setup)
+        .into_resolved_type();
+    assert_eq!(
+        type_,
+        Type::Integer(IntegerType {
+            is_signed: false,
+            bits: 8,
+        })
+    );
+}
+
+#[test]
+fn test_member_overload_resolution_selects_address_overload_for_address_literal() {
+    let setup = "
+        function pick(address a) external pure returns (uint8) { a; return 1; }
+        function pick(uint256 v) external pure returns (uint16) { v; return 2; }
+    ";
+    let (type_, _) = expression("this.pick(0xb701a286753ADe3704e1DcFD93507454A2307641)")
+        .with_members(setup)
+        .into_resolved_type();
+    assert_eq!(
+        type_,
+        Type::Integer(IntegerType {
+            is_signed: false,
+            bits: 8,
+        })
+    );
+}
+
+#[test]
+fn test_address_literal_does_not_match_address_payable_overload() {
+    let setup = "
+        function pick(address a) internal pure returns (uint8) { a; return 1; }
+        function pick(address payable a) internal pure returns (uint16) { a; return 2; }
+    ";
+    let (type_, _) = expression("pick(0xb701a286753ADe3704e1DcFD93507454A2307641)")
+        .with_members(setup)
+        .into_resolved_type();
+    assert_eq!(
+        type_,
+        Type::Integer(IntegerType {
+            is_signed: false,
+            bits: 8,
+        })
+    );
+}
+
+#[test]
 fn test_meta_type_argument_does_not_match_overloads() {
     // Passing a type name as an argument must not match any overload
     // candidate during disambiguation.

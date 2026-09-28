@@ -448,7 +448,6 @@ fn type_display(type_: &Type) -> String {
             LiteralKind::Rational { value } => format!("lit-rational({value})"),
             LiteralKind::HexString { bytes } => format!("lit-hexstring({bytes})"),
             LiteralKind::String { bytes } => format!("lit-string({bytes})"),
-            LiteralKind::Address { value } => format!("lit-address({value})"),
         },
         Type::Mapping(mapping) => {
             format!(
