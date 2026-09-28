@@ -83,15 +83,21 @@ fn test_storage_layout() {
 
     assert_layout_item_eq!(layout[0], "a", uint!(0_U256), 0, "uint256");
     assert_layout_item_eq!(layout[1], "e", uint!(1_U256), 0, "uint8[]");
-    assert_layout_item_eq!(layout[2], "f", uint!(2_U256), 0, "mapping(uint256 => S)");
+    assert_layout_item_eq!(
+        layout[2],
+        "f",
+        uint!(2_U256),
+        0,
+        "mapping(uint256 => struct S)"
+    );
     assert_layout_item_eq!(layout[3], "g", uint!(3_U256), 0, "uint16");
     assert_layout_item_eq!(layout[4], "h", uint!(3_U256), 2, "uint16");
-    assert_layout_item_eq!(layout[5], "s", uint!(4_U256), 0, "S");
+    assert_layout_item_eq!(layout[5], "s", uint!(4_U256), 0, "struct S");
     assert_layout_item_eq!(layout[6], "k", uint!(5_U256), 0, "int8");
     assert_layout_item_eq!(layout[7], "l", uint!(5_U256), 1, "bytes21");
     assert_layout_item_eq!(layout[8], "m", uint!(6_U256), 0, "uint8[10]");
     assert_layout_item_eq!(layout[9], "n", uint!(7_U256), 0, "bytes5[8]");
-    assert_layout_item_eq!(layout[10], "t", uint!(9_U256), 0, "T[2]");
+    assert_layout_item_eq!(layout[10], "t", uint!(9_U256), 0, "struct T[2]");
     assert_layout_item_eq!(layout[11], "o", uint!(13_U256), 0, "bytes5");
 
     let transient_layout = counter_abi.transient_storage_layout();
@@ -165,7 +171,7 @@ fn test_struct_members_packing_into_a_full_slot_occupy_one_slot() {
     let layout = g_abi.storage_layout();
 
     assert_eq!(layout.len(), 2);
-    assert_layout_item_eq!(layout[0], "s", uint!(0_U256), 0, "PerfectFit");
+    assert_layout_item_eq!(layout[0], "s", uint!(0_U256), 0, "struct PerfectFit");
     assert_layout_item_eq!(layout[1], "tail", uint!(1_U256), 0, "uint256");
 }
 
@@ -332,7 +338,7 @@ fn test_oversized_base_slot_has_no_layout() {
 }
 
 // A struct declared inside a contract is laid out under its scope-qualified
-// name, the same spelling a library selector hashes.
+// name.
 define_fixture!(
     NestedStructLayout,
     file: "main.sol", r#"
@@ -358,5 +364,76 @@ fn test_nested_struct_lays_out_under_its_qualified_name() {
     let layout = contract_abi.storage_layout();
 
     assert_eq!(layout.len(), 1);
-    assert_layout_item_eq!(layout[0], "nested", uint!(0_U256), 0, "C.Inner");
+    assert_layout_item_eq!(layout[0], "nested", uint!(0_U256), 0, "struct C.Inner");
+}
+
+// Expected type names are solc 0.8.35's `storageLayout` labels for this source.
+define_fixture!(
+    TypeLabels,
+    file: "main.sol", r#"
+pragma solidity *;
+interface I {}
+struct S { uint256 a; }
+type U is uint64;
+
+contract Store {
+    struct TokenData { uint256 id; }
+    enum E { A }
+
+    function (uint256, TokenData memory) view returns (string memory) internal renderer;
+    mapping(bytes4 => function (bytes memory)) internal handlers;
+    function (uint256) external returns (bool) ext;
+    function () pure internal noargs;
+    function (address payable) payable external pay;
+    mapping(uint256 => S) structs;
+    S[] structArray;
+    TokenData[2] fixedStructs;
+    E e;
+    mapping(E => I[]) enumKeys;
+    I i;
+    address payable owner;
+    address plain;
+    U u;
+    mapping(address => mapping(uint256 => S)) nested;
+}
+"#,
+);
+
+#[test]
+fn test_type_names_match_solc_labels() {
+    let unit = TypeLabels::build_compilation_unit();
+    let contract = unit
+        .find_contract_by_name("Store")
+        .next()
+        .expect("contract can be found");
+    let contract_abi = contract.compute_abi().expect("can compute ABI");
+    let type_names: Vec<_> = contract_abi
+        .storage_layout()
+        .iter()
+        .map(|item| (item.label(), item.type_name()))
+        .collect();
+
+    assert_eq!(
+        type_names,
+        [
+            (
+                "renderer",
+                "function (uint256,struct Store.TokenData) view returns (string)"
+            ),
+            ("handlers", "mapping(bytes4 => function (bytes))"),
+            ("ext", "function (uint256) external returns (bool)"),
+            ("noargs", "function () pure"),
+            ("pay", "function (address payable) payable external"),
+            ("structs", "mapping(uint256 => struct S)"),
+            ("structArray", "struct S[]"),
+            ("fixedStructs", "struct Store.TokenData[2]"),
+            ("e", "enum Store.E"),
+            ("enumKeys", "mapping(enum Store.E => contract I[])"),
+            ("i", "contract I"),
+            ("owner", "address payable"),
+            ("plain", "address"),
+            ("u", "U"),
+            ("nested", "mapping(address => mapping(uint256 => struct S))"),
+        ]
+    );
 }

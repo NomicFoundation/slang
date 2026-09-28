@@ -96,7 +96,7 @@ impl ContractDefinitionStruct {
             let position = builder.allocate(variable_size)?;
 
             let label = state_variable.ir_node.name.unparse().to_string();
-            let type_name = self.semantic.type_internal_name(variable_type_id);
+            let type_name = self.semantic.type_abi_internal_name(variable_type_id);
             storage_layout.push(StorageItem {
                 node_id,
                 label,
