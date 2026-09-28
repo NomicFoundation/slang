@@ -4959,6 +4959,14 @@ mod type_system {
         use super::*;
 
         #[test]
+        fn address_to_library() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "address_to_library",
+            )
+        }
+
+        #[test]
         fn array_element_type_change() -> Result<()> {
             run(
                 "type_system/explicit_conversion_not_allowed",
@@ -5079,6 +5087,14 @@ mod type_system {
         }
 
         #[test]
+        fn fixed_point_to_fixed_bytes() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "fixed_point_to_fixed_bytes",
+            )
+        }
+
+        #[test]
         fn fixed_size_storage_array_to_dynamic() -> Result<()> {
             run(
                 "type_system/explicit_conversion_not_allowed",
@@ -5151,6 +5167,14 @@ mod type_system {
         }
 
         #[test]
+        fn library_to_address() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "library_to_address",
+            )
+        }
+
+        #[test]
         fn literal_out_of_enum_range() -> Result<()> {
             run(
                 "type_system/explicit_conversion_not_allowed",
@@ -5195,6 +5219,14 @@ mod type_system {
             run(
                 "type_system/explicit_conversion_not_allowed",
                 "non_payable_address_to_payable_contract",
+            )
+        }
+
+        #[test]
+        fn payable_address_to_fixed_bytes() -> Result<()> {
+            run(
+                "type_system/explicit_conversion_not_allowed",
+                "payable_address_to_fixed_bytes",
             )
         }
 
