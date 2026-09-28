@@ -26,7 +26,7 @@ impl<F: SemanticFile> Pass<'_, F> {
     fn visit_lvalue(&mut self, expression: &ir::Expression) {
         match expression {
             ir::Expression::TupleExpression(tuple) => {
-                if tuple.is_empty_tuple() {
+                if tuple.items.is_empty() {
                     self.report(tuple, EmptyTupleOnLhs);
                     return;
                 }
@@ -463,9 +463,8 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         // Any tuple reaching here is in a read position: l-value tuples are
         // traversed by `visit_lvalue` and never recursed into here. A missing
         // component slot is not allowed in a read position. The empty tuple `()`
-        // (a single empty component) is a valid value, so only tuples with more
-        // than one component are considered.
-        if node.items.len() > 1 && node.items.iter().any(|item| item.expression.is_none()) {
+        // has no components, so it is never flagged.
+        if node.items.iter().any(|item| item.expression.is_none()) {
             self.report(node, EmptyTupleComponent);
         }
 

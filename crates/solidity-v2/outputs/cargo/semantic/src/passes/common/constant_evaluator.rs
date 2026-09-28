@@ -413,7 +413,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
             let inner_expression = tuple_expression.items[0]
                 .expression
                 .as_ref()
-                .ok_or(EvaluationError::CouldNotEvaluate)?;
+                .expect("the parser never produces a single omitted component");
             self.evaluate_expression(inner_expression)
         } else {
             Err(EvaluationError::CouldNotEvaluate)

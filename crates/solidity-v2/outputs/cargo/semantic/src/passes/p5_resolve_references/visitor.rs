@@ -389,7 +389,7 @@ impl Visitor for Pass<'_> {
             // it sees this same typing.
             match &node.items.first().unwrap().expression {
                 Some(expression) => self.check_typing_of_expression(expression).clone(),
-                None => Typing::Unresolved,
+                None => unreachable!("the parser never produces a single omitted component"),
             }
         } else {
             let mut types = Vec::with_capacity(node.items.len());

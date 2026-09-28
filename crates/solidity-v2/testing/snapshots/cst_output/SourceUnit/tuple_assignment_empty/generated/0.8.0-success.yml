@@ -43,8 +43,7 @@ Tree:
                                   - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "() = foo" (261..269)
                                       - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "()" (261..263)
                                           - (open_paren꞉ OpenParen): "(" # (261..262)
-                                          - (items꞉ TupleValues):
-                                              - (item꞉ TupleValue): []
+                                          - (items꞉ TupleValues): []
                                           - (close_paren꞉ CloseParen): ")" # (262..263)
                                       - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (264..265)
                                       - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (266..269)
@@ -78,8 +77,7 @@ Tree:
                                   - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "() = foo" (321..329)
                                       - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "()" (321..323)
                                           - (open_paren꞉ OpenParen): "(" # (321..322)
-                                          - (items꞉ TupleValues):
-                                              - (item꞉ TupleValue): []
+                                          - (items꞉ TupleValues): []
                                           - (close_paren꞉ CloseParen): ")" # (322..323)
                                       - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (324..325)
                                       - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (326..329)

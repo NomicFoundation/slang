@@ -3623,9 +3623,11 @@ NoFunctionType: FunctionType = {};
 #[inline]
 TupleValues: TupleValues = {
     <prefix: TuplePrefix> => {
-        // We need to add an extra empty element here, since the trailing comma indicates
-        // an additional empty tuple value.
-        let elements = (0..=prefix).map(|_| new_tuple_value(None)).collect();
+        // No commas is the empty tuple `()`, with no elements at all. Otherwise we need to
+        // add an extra empty element, since the trailing comma indicates an additional
+        // empty tuple value.
+        let count = if prefix == 0 { 0 } else { prefix + 1 };
+        let elements = (0..count).map(|_| new_tuple_value(None)).collect();
         new_tuple_values(elements)
     },
     <prefix: TuplePrefix> <differentiator: Expression> <tuple_value: (Comma <Separated<Comma, <TupleValue>>>)?>  => {

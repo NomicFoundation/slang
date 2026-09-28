@@ -87,6 +87,10 @@ Added types in V2:
 - `UntypedDeclarationNames`, `UntypedTupleDeclaration`
 - `UntypedTupleDeclarationElements`, `UntypedTupleDeclarationElement`
 
+### TupleExpression
+
+- The empty tuple `()` now has no `items`, instead of a single `TupleValue` with no `expression`.
+
 ### String Literal Simplifications
 
 Combined single-quoted and double-quoted token pairs into single tokens with `Choice([...])` scanners, removing intermediate enum wrappers. This flattens the CST for string literals.
