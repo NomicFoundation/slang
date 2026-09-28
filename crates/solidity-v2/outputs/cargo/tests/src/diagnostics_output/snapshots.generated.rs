@@ -83,6 +83,14 @@ mod resolution {
         }
 
         #[test]
+        fn overloaded_call_invalid_utf8_string_literal() -> Result<()> {
+            run(
+                "resolution/ambiguous_reference",
+                "overloaded_call_invalid_utf8_string_literal",
+            )
+        }
+
+        #[test]
         fn overloaded_call_named_arguments() -> Result<()> {
             run(
                 "resolution/ambiguous_reference",

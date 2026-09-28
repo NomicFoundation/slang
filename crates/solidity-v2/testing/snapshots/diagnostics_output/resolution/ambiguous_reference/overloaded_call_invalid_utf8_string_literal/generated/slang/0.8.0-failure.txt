@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+[resolution/ambiguous-reference] Error: No unique declaration found for 'g'.
+    ╭─[input.sol:12:9]
+    │
+ 12 │         g(hex"41");
+    │         ┬  
+    │         ╰── Error occurred here.
+────╯
