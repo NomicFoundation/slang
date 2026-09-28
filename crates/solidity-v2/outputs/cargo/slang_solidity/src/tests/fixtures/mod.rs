@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::ast::{Definition, LibraryDefinition};
+use crate::ast::{Definition, InterfaceDefinition, LibraryDefinition};
 use crate::compilation::{CompilationUnit, FileId};
 use crate::tests::support;
 
@@ -52,6 +52,16 @@ pub(super) fn build_compilation_unit_from_fixture(files: &[FixtureFile]) -> Arc<
     );
 
     Arc::new(unit)
+}
+
+pub(super) fn find_interface(unit: &CompilationUnit, name: &str) -> InterfaceDefinition {
+    unit.all_definitions()
+        .filter_map(|definition| match definition {
+            Definition::Interface(interface) => Some(interface),
+            _ => None,
+        })
+        .find(|interface| interface.name().name() == name)
+        .unwrap_or_else(|| panic!("interface `{name}` is declared"))
 }
 
 pub(super) fn find_library(unit: &CompilationUnit, name: &str) -> LibraryDefinition {

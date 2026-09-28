@@ -2351,6 +2351,7 @@ impl slang_solidity_v2_ast::ast::InterfaceDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
 impl slang_solidity_v2_ast::ast::InterfaceDefinitionStruct
+pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::compute_abi(&self) -> core::option::Option<slang_solidity_v2_ast::abi::ContractAbi>
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::compute_interface_id(&self) -> core::option::Option<u32>
 impl slang_solidity_v2_ast::ast::InterfaceDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::InterfaceDefinitionStruct::functions(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::FunctionDefinition>
