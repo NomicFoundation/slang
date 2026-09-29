@@ -33,8 +33,7 @@ Tree:
                               - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "( )\n// <<<\n;" (128..140)
                                   - (expression꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "( )" (128..131)
                                       - (open_paren꞉ OpenParen): "(" # (128..129)
-                                      - (items꞉ TupleValues):
-                                          - (item꞉ TupleValue): []
+                                      - (items꞉ TupleValues): []
                                       - (close_paren꞉ CloseParen): ")" # (130..131)
                                   - (semicolon꞉ Semicolon): ";" # (139..140)
                           - (close_brace꞉ CloseBrace): "}" # (145..146)

@@ -34,14 +34,12 @@ Tree:
                                   - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "() = ()" (141..148)
                                       - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "()" (141..143)
                                           - (open_paren꞉ OpenParen): "(" # (141..142)
-                                          - (items꞉ TupleValues):
-                                              - (item꞉ TupleValue): []
+                                          - (items꞉ TupleValues): []
                                           - (close_paren꞉ CloseParen): ")" # (142..143)
                                       - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (144..145)
                                       - (right_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "()" (146..148)
                                           - (open_paren꞉ OpenParen): "(" # (146..147)
-                                          - (items꞉ TupleValues):
-                                              - (item꞉ TupleValue): []
+                                          - (items꞉ TupleValues): []
                                           - (close_paren꞉ CloseParen): ")" # (147..148)
                                   - (semicolon꞉ Semicolon): ";" # (148..149)
                           - (close_brace꞉ CloseBrace): "}" # (162..163)
