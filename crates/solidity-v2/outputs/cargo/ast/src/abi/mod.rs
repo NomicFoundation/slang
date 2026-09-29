@@ -7,9 +7,11 @@ use std::sync::Arc;
 
 use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
+use slang_solidity_v2_common::collections::Map;
 use slang_solidity_v2_common::files::FileId;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
+pub use slang_solidity_v2_semantic::context::StorageSize;
 use slang_solidity_v2_semantic::types::{FunctionTypeMutability, TypeId};
 
 pub use self::types::{AbiType, NotAnAbiType, TupleComponent};
@@ -21,8 +23,8 @@ pub struct ContractAbi {
     name: String,
     file_id: FileId,
     entries: Vec<AbiEntry>,
-    storage_layout: Vec<StorageItem>,
-    transient_storage_layout: Vec<StorageItem>,
+    storage_layout: StorageLayout,
+    transient_storage_layout: StorageLayout,
 }
 
 impl ContractAbi {
@@ -32,8 +34,8 @@ impl ContractAbi {
         name: String,
         file_id: FileId,
         mut entries: Vec<AbiEntry>,
-        storage_layout: Vec<StorageItem>,
-        transient_storage_layout: Vec<StorageItem>,
+        storage_layout: StorageLayout,
+        transient_storage_layout: StorageLayout,
     ) -> Self {
         entries.sort();
         Self {
@@ -62,11 +64,11 @@ impl ContractAbi {
         &self.entries
     }
 
-    pub fn storage_layout(&self) -> &[StorageItem] {
+    pub fn storage_layout(&self) -> &StorageLayout {
         &self.storage_layout
     }
 
-    pub fn transient_storage_layout(&self) -> &[StorageItem] {
+    pub fn transient_storage_layout(&self) -> &StorageLayout {
         &self.transient_storage_layout
     }
 }
@@ -366,13 +368,59 @@ impl fmt::Debug for AbiParameter {
     }
 }
 
+/// The state variables of one kind of storage, persistent or transient, and
+/// the types they are laid out with.
+#[derive(Clone, Debug, Default)]
+pub struct StorageLayout {
+    items: Vec<StorageItem>,
+    types: Vec<StorageType>,
+    type_indices: Map<TypeId, usize>,
+}
+
+impl StorageLayout {
+    /// `type_indices` maps each type's `TypeId` to its index in `types`.
+    pub(crate) fn new(
+        items: Vec<StorageItem>,
+        types: Vec<StorageType>,
+        type_indices: Map<TypeId, usize>,
+    ) -> Self {
+        Self {
+            items,
+            types,
+            type_indices,
+        }
+    }
+
+    /// The state variables, in the order they are laid out.
+    pub fn items(&self) -> &[StorageItem] {
+        &self.items
+    }
+
+    /// Every type the items refer to, directly or through another type, in the
+    /// order they are first reached.
+    pub fn types(&self) -> &[StorageType] {
+        &self.types
+    }
+
+    /// The entry of [`Self::types`] for `type_id`, as named by a
+    /// [`StorageItem`] or a [`StorageTypeKind`].
+    pub fn storage_type(&self, type_id: TypeId) -> Option<&StorageType> {
+        self.type_indices
+            .get(&type_id)
+            .map(|index| &self.types[*index])
+    }
+}
+
+/// A state variable, or a struct member, and where it is stored. A struct
+/// member's slot is relative to the start of the struct.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StorageItem {
     node_id: NodeId,
     label: String,
     slot: U256,
     offset: usize,
-    type_name: String,
+    type_id: TypeId,
+    type_name: Arc<str>,
 }
 
 impl StorageItem {
@@ -392,9 +440,65 @@ impl StorageItem {
         self.offset
     }
 
+    /// The key of the item's type in [`StorageLayout::types`].
+    pub fn type_id(&self) -> TypeId {
+        self.type_id
+    }
+
     pub fn type_name(&self) -> &str {
         &self.type_name
     }
+}
+
+/// How a type is laid out in storage.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct StorageType {
+    type_id: TypeId,
+    label: Arc<str>,
+    size: StorageSize,
+    kind: StorageTypeKind,
+}
+
+impl StorageType {
+    pub fn type_id(&self) -> TypeId {
+        self.type_id
+    }
+
+    /// The type's name, as [`StorageItem::type_name`] spells it.
+    pub fn label(&self) -> &str {
+        &self.label
+    }
+
+    /// How much storage the type occupies: whole slots, or a width in bytes
+    /// for a value type that can share a slot with its neighbours.
+    pub fn size(&self) -> StorageSize {
+        self.size
+    }
+
+    pub fn kind(&self) -> &StorageTypeKind {
+        &self.kind
+    }
+}
+
+/// How a type's contents are arranged in storage. Every `TypeId` is a key in
+/// the [`StorageLayout::types`] of the layout it belongs to.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum StorageTypeKind {
+    /// A value type, stored in place.
+    Value,
+    /// A `bytes` or `string`, stored in its slot when short and at the slot's
+    /// hash otherwise.
+    Bytes,
+    /// A dynamic array: its slot holds the length, and the elements start at
+    /// the slot's hash.
+    DynamicArray { element: TypeId },
+    /// A fixed-size array, with its elements stored in place.
+    FixedSizeArray { element: TypeId },
+    /// A mapping: its slot is empty, each value is at the hash of its key and
+    /// the slot.
+    Mapping { key: TypeId, value: TypeId },
+    /// A struct, with its members stored in place, in declaration order.
+    Struct { members: Vec<StorageItem> },
 }
 
 pub fn hash_from_signature(signature: &str) -> [u8; 32] {

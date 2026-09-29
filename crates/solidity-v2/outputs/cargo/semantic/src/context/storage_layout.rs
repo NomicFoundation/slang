@@ -1,4 +1,7 @@
 use ruint::aliases::U256;
+use slang_solidity_v2_common::nodes::NodeId;
+
+use crate::types::TypeId;
 
 pub(super) const SLOT_SIZE: usize = 32;
 
@@ -17,6 +20,42 @@ pub enum StorageSize {
 pub struct StoragePosition {
     pub slot: U256,
     pub offset: usize,
+}
+
+/// How a type is laid out in storage: its size, and how its contents are
+/// arranged. Every `TypeId` it refers to is the type as it is in storage, so
+/// a struct member and a state variable of the same type share one.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct StorageTypeLayout {
+    pub size: StorageSize,
+    pub kind: StorageTypeKind,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum StorageTypeKind {
+    /// A value type, stored in place.
+    Value,
+    /// A `bytes` or `string`, stored in its slot when short and at the slot's
+    /// hash otherwise.
+    Bytes,
+    /// A dynamic array: its slot holds the length, and the elements start at
+    /// the slot's hash.
+    DynamicArray { element: TypeId },
+    /// A fixed-size array, with its elements stored in place.
+    FixedSizeArray { element: TypeId },
+    /// A mapping: its slot is empty, each value is at the hash of its key and
+    /// the slot.
+    Mapping { key: TypeId, value: TypeId },
+    /// A struct, with its members stored in place, in declaration order.
+    Struct { members: Vec<StorageMember> },
+}
+
+/// A struct member's position, relative to the start of the struct.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct StorageMember {
+    pub node_id: NodeId,
+    pub type_id: TypeId,
+    pub position: StoragePosition,
 }
 
 /// Assigns each state variable or struct member its storage position in

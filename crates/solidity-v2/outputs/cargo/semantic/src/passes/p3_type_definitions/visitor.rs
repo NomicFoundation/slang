@@ -381,6 +381,10 @@ impl Visitor for Pass<'_> {
 
     fn leave_struct_member(&mut self, node: &ir::StructMember) {
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Inherited));
+        if let Some(type_id) = type_id {
+            // Storage layouts need the member's type as it is in storage.
+            self.types.register_storage_relocation(type_id);
+        }
         self.binder.set_node_type(node.id(), type_id);
     }
 

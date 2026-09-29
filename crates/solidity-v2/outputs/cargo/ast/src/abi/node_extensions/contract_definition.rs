@@ -1,9 +1,14 @@
-use ruint::aliases::U256;
-use slang_solidity_v2_common::collections::Set;
-use slang_solidity_v2_semantic::binder;
-use slang_solidity_v2_semantic::context::StorageLayoutBuilder;
+use std::sync::Arc;
 
-use crate::abi::{ContractAbi, StorageItem};
+use ruint::aliases::U256;
+use slang_solidity_v2_common::collections::{DefaultWithCapacity, Map, Set};
+use slang_solidity_v2_semantic::binder;
+use slang_solidity_v2_semantic::context::{
+    self as semantic, SemanticContext, StorageLayoutBuilder,
+};
+use slang_solidity_v2_semantic::types::TypeId;
+
+use crate::abi::{ContractAbi, StorageItem, StorageLayout, StorageType, StorageTypeKind};
 use crate::ast::{ContractDefinitionStruct, StateVariableDefinition, StateVariableMutability};
 
 impl ContractDefinitionStruct {
@@ -64,8 +69,9 @@ impl ContractDefinitionStruct {
     }
 
     /// Computes the layouts of both permanent and transient state variables
-    fn compute_storage_layout(&self) -> Option<(Vec<StorageItem>, Vec<StorageItem>)> {
+    fn compute_storage_layout(&self) -> Option<(StorageLayout, StorageLayout)> {
         let all_state_variables = self.linearised_state_variables();
+        let mut type_names = StorageTypeNames::new(&self.semantic);
 
         // TODO(validation) SDR[2]: it is an error if any contract in the hierarchy
         // other than the leaf has a custom offset layout
@@ -77,6 +83,7 @@ impl ContractDefinitionStruct {
                     StateVariableMutability::Mutable
                 )
             }),
+            &mut type_names,
         )?;
         let transient_storage_layout = self.lay_out_state_variables(
             U256::ZERO,
@@ -86,6 +93,7 @@ impl ContractDefinitionStruct {
                     StateVariableMutability::Transient
                 )
             }),
+            &mut type_names,
         )?;
         Some((storage_layout, transient_storage_layout))
     }
@@ -94,8 +102,9 @@ impl ContractDefinitionStruct {
         &self,
         base_slot: U256,
         variables: impl Iterator<Item = &'a StateVariableDefinition>,
-    ) -> Option<Vec<StorageItem>> {
-        let mut storage_layout = Vec::new();
+        type_names: &mut StorageTypeNames<'_>,
+    ) -> Option<StorageLayout> {
+        let mut items = Vec::new();
         let mut builder = StorageLayoutBuilder::new(base_slot);
         for state_variable in variables {
             let node_id = state_variable.ir_node.id();
@@ -104,15 +113,122 @@ impl ContractDefinitionStruct {
             let position = builder.allocate(variable_size)?;
 
             let label = state_variable.ir_node.name.unparse().to_string();
-            let type_name = self.semantic.type_abi_internal_name(variable_type_id);
-            storage_layout.push(StorageItem {
+            let type_name = type_names.get(variable_type_id);
+            items.push(StorageItem {
                 node_id,
                 label,
                 slot: position.slot,
                 offset: position.offset,
+                type_id: variable_type_id,
                 type_name,
             });
         }
-        Some(storage_layout)
+        let (types, type_indices) = self.compute_storage_types(&items, type_names)?;
+        Some(StorageLayout::new(items, types, type_indices))
+    }
+
+    /// Describes the types of `items`, and every type those refer to, in the
+    /// order they are first reached, along with each one's index in that order.
+    fn compute_storage_types(
+        &self,
+        items: &[StorageItem],
+        type_names: &mut StorageTypeNames<'_>,
+    ) -> Option<(Vec<StorageType>, Map<TypeId, usize>)> {
+        let mut type_ids = Vec::with_capacity(items.len());
+        let mut type_indices = Map::default_with_capacity(items.len());
+        let mut reach = |type_id: TypeId, type_ids: &mut Vec<TypeId>| {
+            let next_index = type_ids.len();
+            if *type_indices.entry(type_id).or_insert(next_index) == next_index {
+                type_ids.push(type_id);
+            }
+        };
+        for item in items {
+            reach(item.type_id, &mut type_ids);
+        }
+
+        let mut storage_types = Vec::with_capacity(type_ids.len());
+        let mut index = 0;
+        while let Some(&type_id) = type_ids.get(index) {
+            index += 1;
+            let layout = self.semantic.storage_type_layout(type_id)?;
+            let kind = match layout.kind {
+                semantic::StorageTypeKind::Value => StorageTypeKind::Value,
+                semantic::StorageTypeKind::Bytes => StorageTypeKind::Bytes,
+                semantic::StorageTypeKind::DynamicArray { element } => {
+                    reach(element, &mut type_ids);
+                    StorageTypeKind::DynamicArray { element }
+                }
+                semantic::StorageTypeKind::FixedSizeArray { element } => {
+                    reach(element, &mut type_ids);
+                    StorageTypeKind::FixedSizeArray { element }
+                }
+                semantic::StorageTypeKind::Mapping { key, value } => {
+                    reach(key, &mut type_ids);
+                    reach(value, &mut type_ids);
+                    StorageTypeKind::Mapping { key, value }
+                }
+                semantic::StorageTypeKind::Struct { members } => {
+                    let mut member_items = Vec::with_capacity(members.len());
+                    for member in members {
+                        reach(member.type_id, &mut type_ids);
+                        let label = self
+                            .semantic
+                            .binder()
+                            .find_definition_by_id(member.node_id)?
+                            .identifier()
+                            .unparse()
+                            .to_string();
+                        member_items.push(StorageItem {
+                            node_id: member.node_id,
+                            label,
+                            slot: member.position.slot,
+                            offset: member.position.offset,
+                            type_id: member.type_id,
+                            type_name: type_names.get(member.type_id),
+                        });
+                    }
+                    StorageTypeKind::Struct {
+                        members: member_items,
+                    }
+                }
+            };
+            storage_types.push(StorageType {
+                type_id,
+                label: type_names.get(type_id),
+                size: layout.size,
+                kind,
+            });
+        }
+        Some((storage_types, type_indices))
+    }
+}
+
+/// Spells each storage type once per contract, sharing the name between the
+/// items, struct members and table entries that use it.
+struct StorageTypeNames<'a> {
+    semantic: &'a SemanticContext,
+    names: Map<TypeId, Arc<str>>,
+    buffer: String,
+}
+
+impl<'a> StorageTypeNames<'a> {
+    fn new(semantic: &'a SemanticContext) -> Self {
+        Self {
+            semantic,
+            names: Map::default(),
+            buffer: String::new(),
+        }
+    }
+
+    fn get(&mut self, type_id: TypeId) -> Arc<str> {
+        if let Some(name) = self.names.get(&type_id) {
+            return Arc::clone(name);
+        }
+        self.buffer.clear();
+        self.semantic
+            .write_type_abi_internal_name(type_id, &mut self.buffer);
+        let name: Arc<str> = Arc::from(self.buffer.as_str());
+        self.names.insert(type_id, Arc::clone(&name));
+        name
     }
 }
