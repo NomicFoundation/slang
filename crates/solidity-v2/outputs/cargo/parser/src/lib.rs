@@ -3,4 +3,5 @@
 mod lexer;
 mod parser;
 
+pub use lexer::{Lexeme, LexemeKind, Lexer};
 pub use parser::{ParseOutput, Parser};
