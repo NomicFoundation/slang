@@ -20,7 +20,6 @@ slang_solidity = { workspace = true, features = [
   "__private_testing_utils",
 ] }
 solidity_testing_utils = { workspace = true }
-solidity_v2_testing_utils = { workspace = true }
 tar = { workspace = true }
 
 [lints]

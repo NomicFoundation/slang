@@ -3,7 +3,7 @@ use std::ops::RangeInclusive;
 use std::path::PathBuf;
 use std::str::FromStr;
 
-use clap::{Parser, Subcommand, ValueEnum};
+use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
 pub struct Cli {
@@ -54,15 +54,9 @@ pub struct TestOptions {
     #[arg(long, default_value_t = false)]
     pub check_infer_version: bool,
 
-    /// Run bindings tests
-    #[arg(long, value_enum, default_value_t = CheckBinderMode::None)]
-    pub check_binder: CheckBinderMode,
-}
-
-#[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
-pub enum CheckBinderMode {
-    None,
-    V1,
+    /// Run bindings tests.
+    #[arg(long, default_value_t = false)]
+    pub check_binder: bool,
 }
 
 #[derive(Debug, Parser)]

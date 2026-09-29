@@ -1,15 +1,12 @@
 use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::utils::LanguageFacts;
 
-use crate::events::{Events, SingleTestOutcome};
+use crate::events::{Events, TestOutcome};
 use crate::sourcify::Contract;
 
-pub(super) fn run(
-    contract: &Contract,
-    unit: &CompilationUnit,
-    events: &Events,
-) -> SingleTestOutcome {
-    let mut did_fail = false;
+pub(super) fn run(contract: &Contract, unit: &CompilationUnit, events: &Events) -> TestOutcome {
+    let mut outcome = TestOutcome::Passed;
+
     for file in unit.files() {
         let source = contract.read_file(file.id()).unwrap();
         if !LanguageFacts::infer_language_versions(&source).any(|v| *v == contract.version) {
@@ -22,13 +19,9 @@ pub(super) fn run(
                 version = contract.version,
                 contract_name = contract.name,
             ));
-            did_fail = true;
+            outcome = TestOutcome::Failed;
         }
     }
 
-    if did_fail {
-        SingleTestOutcome::Failed
-    } else {
-        SingleTestOutcome::Passed
-    }
+    outcome
 }

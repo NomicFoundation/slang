@@ -17,12 +17,9 @@ on:
         default: false
       check_binder:
         description: "Check name bindings on contracts reporting if there's any unresolved symbol."
-        type: "choice"
-        required: true
-        default: "none"
-        options:
-          - "none"
-          - "v1"
+        type: "boolean"
+        required: false
+        default: false
   workflow_call:
     inputs:
       chain_id:
@@ -36,9 +33,9 @@ on:
         default: false
       check_binder:
         description: "Check name bindings on contracts reporting if there's any unresolved symbol."
-        type: "string"
+        type: "boolean"
         required: false
-        default: "none"
+        default: false
 
 permissions: {}
 
@@ -165,15 +162,13 @@ jobs:
           name: "solidity_testing_sourcify_${{ inputs.chain_id }}"
 
       - name: "Run Tests"
-        env:
-          CHECK_BINDER: "${{ inputs.check_binder }}"
         run: |
           chmod +x solidity_testing_sourcify
           ./scripts/bin/with-hermit ./solidity_testing_sourcify test \
               --chain-id ${{ inputs.chain_id }} \
               --shard-count ${{ env.SHARD_COUNT }} \
               --shard-index ${{ matrix.shard_index }} \
-              --check-binder="$CHECK_BINDER" \
+              ${{ inputs.check_binder == true && '--check-binder' || '' }} \
               ${{ inputs.check_infer_version == true && '--check-infer-version' || '' }}
 
       - name: "Write shard results to output"
