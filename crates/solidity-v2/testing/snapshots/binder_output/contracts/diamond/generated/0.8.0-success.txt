@@ -2,12 +2,12 @@
 
 Definitions (7):
 - Def: #1 ["A" @ input.sol:3:10] (contract)
-- Def: #2 ["foo" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #2 ["foo" @ input.sol:4:14] (function, type: function () returns ())
 - Def: #3 ["B" @ input.sol:8:10] (contract)
-- Def: #4 ["foo" @ input.sol:9:14] (function, type: function () returns void)
+- Def: #4 ["foo" @ input.sol:9:14] (function, type: function () returns ())
 - Def: #5 ["C" @ input.sol:13:10] (contract)
 - Def: #6 ["D" @ input.sol:16:10] (contract)
-- Def: #7 ["foo" @ input.sol:17:14] (function, type: function () returns void)
+- Def: #7 ["foo" @ input.sol:17:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

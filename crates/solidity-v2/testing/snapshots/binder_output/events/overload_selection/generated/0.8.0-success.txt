@@ -7,7 +7,7 @@ Definitions (7):
 - Def: #4 ["y" @ input.sol:4:28] (parameter, type: uint256)
 - Def: #5 ["Foo" @ input.sol:5:11] (event)
 - Def: #6 ["flag" @ input.sol:5:20] (parameter, type: bool)
-- Def: #7 ["test" @ input.sol:7:14] (function, type: function () returns void)
+- Def: #7 ["test" @ input.sol:7:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

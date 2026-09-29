@@ -13,10 +13,10 @@ Diagnostics:
 
 Definitions (6):
 - Def: #1 ["FooUtils" @ input.sol:3:9] (library)
-- Def: #2 ["nop" @ input.sol:4:14] (function, type: function (address) returns void)
+- Def: #2 ["nop" @ input.sol:4:14] (function, type: function (address) returns ())
 - Def: #3 ["Foo" @ input.sol:7:10] (contract)
 - Def: #4 ["Test" @ input.sol:9:10] (contract)
-- Def: #5 ["test" @ input.sol:12:14] (function, type: function (Foo) returns void)
+- Def: #5 ["test" @ input.sol:12:14] (function, type: function (Foo) returns ())
 - Def: #6 ["f" @ input.sol:12:23] (parameter, type: Foo)
 
 ------------------------------------------------------------------------

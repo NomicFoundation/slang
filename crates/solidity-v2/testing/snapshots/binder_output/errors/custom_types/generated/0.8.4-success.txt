@@ -8,7 +8,7 @@ Definitions (8):
 - Def: #5 ["Failure" @ input.sol:9:11] (error)
 - Def: #6 ["severity" @ input.sol:10:18] (parameter, type: Severity)
 - Def: #7 ["cause" @ input.sol:11:16] (parameter, type: string memory)
-- Def: #8 ["test" @ input.sol:14:14] (function, type: function () returns void)
+- Def: #8 ["test" @ input.sol:14:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

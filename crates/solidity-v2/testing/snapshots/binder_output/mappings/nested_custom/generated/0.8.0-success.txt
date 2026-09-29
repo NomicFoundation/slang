@@ -8,7 +8,7 @@ Definitions (14):
 - Def: #5 ["Values" @ input.sol:5:12] (struct)
 - Def: #6 ["balance" @ input.sol:6:14] (struct member, type: uint256)
 - Def: #7 ["vaults" @ input.sol:8:49] (state var, type: address => Kind => Values storage)
-- Def: #8 ["store" @ input.sol:10:14] (function, type: function (address, Kind, uint256) returns void)
+- Def: #8 ["store" @ input.sol:10:14] (function, type: function (address, Kind, uint256) returns ())
 - Def: #9 ["_addr" @ input.sol:10:28] (parameter, type: address)
 - Def: #10 ["_kind" @ input.sol:10:40] (parameter, type: Kind)
 - Def: #11 ["_amount" @ input.sol:10:52] (parameter, type: uint256)

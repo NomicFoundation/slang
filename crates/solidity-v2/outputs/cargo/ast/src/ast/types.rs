@@ -39,7 +39,6 @@ pub enum Type {
     Tuple(TupleType),
     UserDefinedValue(UserDefinedValueType),
     UserMetaType(UserMetaType),
-    Void(VoidType),
 }
 
 macro_rules! define_value_type_variant {
@@ -100,9 +99,6 @@ pub struct LiteralType {
 #[derive(Clone)]
 pub struct BooleanType;
 
-#[derive(Clone)]
-pub struct VoidType;
-
 impl Type {
     pub fn try_create_for_node_id(
         node_id: NodeId,
@@ -148,7 +144,6 @@ impl Type {
             types::Type::UserMetaType(inner) => {
                 Self::UserMetaType(UserMetaType { inner, semantic })
             }
-            types::Type::Void => Self::Void(VoidType),
         }
     }
 
@@ -439,5 +434,3 @@ impl UserDefinedValueType {
         ))
     }
 }
-
-impl VoidType {}

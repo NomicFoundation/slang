@@ -5,7 +5,7 @@ Definitions (6):
 - Def: #2 ["x" @ input.sol:4:14] (function, type: function () returns uint256)
 - Def: #3 ["Test" @ input.sol:7:10] (contract)
 - Def: #4 ["x" @ input.sol:8:26] (state var, type: uint256)
-- Def: #5 ["test" @ input.sol:10:14] (function, type: function () returns void)
+- Def: #5 ["test" @ input.sol:10:14] (function, type: function () returns ())
 - Def: #6 ["a" @ input.sol:12:17] (yul variable)
 
 ------------------------------------------------------------------------

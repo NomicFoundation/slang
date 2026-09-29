@@ -5,7 +5,7 @@ Definitions (5):
 - Def: #2 ["foo" @ input.sol:4:14] (modifier)
 - Def: #3 ["Test" @ input.sol:7:10] (contract)
 - Def: #4 ["foo" @ input.sol:8:14] (modifier)
-- Def: #5 ["test" @ input.sol:9:14] (function, type: function () returns void)
+- Def: #5 ["test" @ input.sol:9:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

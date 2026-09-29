@@ -6,11 +6,11 @@ Definitions (12):
 - Def: #3 ["get" @ input.sol:6:14] (function, type: function (address, uint256) returns bool)
 - Def: #4 ["_addr1" @ input.sol:6:26] (parameter, type: address)
 - Def: #5 ["_i" @ input.sol:6:42] (parameter, type: uint256)
-- Def: #6 ["set" @ input.sol:10:14] (function, type: function (address, uint256, bool) returns void)
+- Def: #6 ["set" @ input.sol:10:14] (function, type: function (address, uint256, bool) returns ())
 - Def: #7 ["_addr1" @ input.sol:10:26] (parameter, type: address)
 - Def: #8 ["_i" @ input.sol:10:42] (parameter, type: uint256)
 - Def: #9 ["_boo" @ input.sol:10:51] (parameter, type: bool)
-- Def: #10 ["remove" @ input.sol:14:14] (function, type: function (address, uint256) returns void)
+- Def: #10 ["remove" @ input.sol:14:14] (function, type: function (address, uint256) returns ())
 - Def: #11 ["_addr1" @ input.sol:14:29] (parameter, type: address)
 - Def: #12 ["_i" @ input.sol:14:45] (parameter, type: uint256)
 

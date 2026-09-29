@@ -5,7 +5,7 @@ Definitions (10):
 - Def: #2 ["Choice" @ input.sol:4:10] (enum)
 - Def: #3 ["Yes" @ input.sol:4:19] (enum member of Choice)
 - Def: #4 ["No" @ input.sol:4:24] (enum member of Choice)
-- Def: #5 ["test" @ input.sol:6:14] (function, type: function () returns void)
+- Def: #5 ["test" @ input.sol:6:14] (function, type: function () returns ())
 - Def: #6 ["x" @ input.sol:7:14] (variable, type: int256)
 - Def: #7 ["y" @ input.sol:7:21] (variable, type: int256)
 - Def: #8 ["z" @ input.sol:8:14] (variable, type: int256)

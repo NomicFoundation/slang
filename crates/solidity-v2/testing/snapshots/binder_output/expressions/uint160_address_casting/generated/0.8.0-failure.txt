@@ -13,10 +13,10 @@ Diagnostics:
 
 Definitions (6):
 - Def: #1 ["Utils" @ input.sol:3:9] (library)
-- Def: #2 ["foo" @ input.sol:4:14] (function, type: function (address payable) returns void)
+- Def: #2 ["foo" @ input.sol:4:14] (function, type: function (address payable) returns ())
 - Def: #3 ["_to" @ input.sol:4:34] (parameter, type: address payable)
 - Def: #4 ["Test" @ input.sol:7:10] (contract)
-- Def: #5 ["test" @ input.sol:10:14] (function, type: function (address) returns void)
+- Def: #5 ["test" @ input.sol:10:14] (function, type: function (address) returns ())
 - Def: #6 ["_to" @ input.sol:10:27] (parameter, type: address)
 
 ------------------------------------------------------------------------

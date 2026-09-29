@@ -6,7 +6,7 @@ Definitions (8):
 - Def: #3 ["x" @ input.sol:4:27] (parameter, type: int256)
 - Def: #4 ["overloaded" @ input.sol:8:12] (function, type: function () returns uint256)
 - Def: #5 ["Test" @ input.sol:13:10] (contract)
-- Def: #6 ["someFunc" @ input.sol:14:12] (function, type: function (Other, int256) returns void)
+- Def: #6 ["someFunc" @ input.sol:14:12] (function, type: function (Other, int256) returns ())
 - Def: #7 ["x" @ input.sol:14:27] (parameter, type: Other)
 - Def: #8 ["y" @ input.sol:14:34] (parameter, type: int256)
 

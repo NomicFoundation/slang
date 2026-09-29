@@ -13,12 +13,12 @@ Diagnostics:
 
 Definitions (7):
 - Def: #1 ["A" @ input.sol:4:10] (contract)
-- Def: #2 ["f" @ input.sol:5:14] (function, type: function (uint256) returns void)
+- Def: #2 ["f" @ input.sol:5:14] (function, type: function (uint256) returns ())
 - Def: #3 ["x" @ input.sol:5:21] (parameter, type: uint256)
-- Def: #4 ["f" @ input.sol:6:14] (function, type: function (bool) returns void)
+- Def: #4 ["f" @ input.sol:6:14] (function, type: function (bool) returns ())
 - Def: #5 ["b" @ input.sol:6:21] (parameter, type: bool)
 - Def: #6 ["B" @ input.sol:9:10] (contract)
-- Def: #7 ["g" @ input.sol:10:14] (function, type: function () returns void)
+- Def: #7 ["g" @ input.sol:10:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

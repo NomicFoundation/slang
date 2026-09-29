@@ -8,7 +8,7 @@ Definitions (8):
 - Def: #5 ["Log" @ input.sol:6:11] (event)
 - Def: #6 ["level" @ input.sol:7:18] (parameter, type: Severity)
 - Def: #7 ["message" @ input.sol:8:16] (parameter, type: string memory)
-- Def: #8 ["test" @ input.sol:11:14] (function, type: function () returns void)
+- Def: #8 ["test" @ input.sol:11:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

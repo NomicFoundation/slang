@@ -5,10 +5,10 @@ Definitions (9):
 - Def: #2 ["myMap" @ input.sol:4:40] (state var, type: address => uint256)
 - Def: #3 ["get" @ input.sol:6:14] (function, type: function (address) returns uint256)
 - Def: #4 ["_addr" @ input.sol:6:26] (parameter, type: address)
-- Def: #5 ["set" @ input.sol:10:14] (function, type: function (address, uint256) returns void)
+- Def: #5 ["set" @ input.sol:10:14] (function, type: function (address, uint256) returns ())
 - Def: #6 ["_addr" @ input.sol:10:26] (parameter, type: address)
 - Def: #7 ["_i" @ input.sol:10:41] (parameter, type: uint256)
-- Def: #8 ["remove" @ input.sol:14:14] (function, type: function (address) returns void)
+- Def: #8 ["remove" @ input.sol:14:14] (function, type: function (address) returns ())
 - Def: #9 ["_addr" @ input.sol:14:29] (parameter, type: address)
 
 ------------------------------------------------------------------------

@@ -18,7 +18,7 @@ Definitions (25):
 - Def: #15 ["goal" @ input.sol:20:60] (parameter, type: uint256)
 - Def: #16 ["campaignID" @ input.sol:20:87] (parameter, type: uint256)
 - Def: #17 ["c" @ input.sol:22:26] (variable, type: Campaign storage)
-- Def: #18 ["contribute" @ input.sol:27:14] (function, type: function (uint256) returns void)
+- Def: #18 ["contribute" @ input.sol:27:14] (function, type: function (uint256) returns ())
 - Def: #19 ["campaignID" @ input.sol:27:30] (parameter, type: uint256)
 - Def: #20 ["c" @ input.sol:28:26] (variable, type: Campaign storage)
 - Def: #21 ["checkGoalReached" @ input.sol:33:14] (function, type: function (uint256) returns bool)

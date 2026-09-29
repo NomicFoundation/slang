@@ -2,9 +2,9 @@
 
 Definitions (4):
 - Def: #1 ["ArrayHelper" @ input.sol:3:9] (library)
-- Def: #2 ["asArray" @ input.sol:4:14] (function, type: function (string memory[1] memory) returns void)
+- Def: #2 ["asArray" @ input.sol:4:14] (function, type: function (string memory[1] memory) returns ())
 - Def: #3 ["items" @ input.sol:4:39] (parameter, type: string memory[1] memory)
-- Def: #4 ["test" @ input.sol:9:10] (function, type: function () returns void)
+- Def: #4 ["test" @ input.sol:9:10] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

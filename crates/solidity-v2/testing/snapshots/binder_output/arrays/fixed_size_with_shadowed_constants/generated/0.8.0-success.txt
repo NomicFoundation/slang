@@ -5,12 +5,12 @@ Definitions (11):
 - Def: #2 ["Y" @ input.sol:4:15] (constant, type: uint256)
 - Def: #3 ["Test" @ input.sol:6:10] (contract)
 - Def: #4 ["X" @ input.sol:7:19] (constant, type: uint256)
-- Def: #5 ["test" @ input.sol:12:14] (function, type: function () returns void)
+- Def: #5 ["test" @ input.sol:12:14] (function, type: function () returns ())
 - Def: #6 ["x" @ input.sol:13:24] (variable, type: uint256[4] memory)
 - Def: #7 ["Lib" @ input.sol:18:9] (library)
-- Def: #8 ["nop" @ input.sol:19:14] (function, type: function (uint256[4] memory) returns void)
+- Def: #8 ["nop" @ input.sol:19:14] (function, type: function (uint256[4] memory) returns ())
 - Def: #9 ["self" @ input.sol:19:33] (parameter, type: uint256[4] memory)
-- Def: #10 ["nop" @ input.sol:20:14] (function, type: function (uint256[5] memory) returns void)
+- Def: #10 ["nop" @ input.sol:20:14] (function, type: function (uint256[5] memory) returns ())
 - Def: #11 ["self" @ input.sol:20:33] (parameter, type: uint256[5] memory)
 
 ------------------------------------------------------------------------

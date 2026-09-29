@@ -6,7 +6,7 @@ Definitions (6):
 - Def: #3 ["level" @ lib.sol:3:29] (parameter, type: uint256)
 - Def: #4 ["Renamed" @ main.sol:3:16] (imported symbol)
 - Def: #5 ["Test" @ main.sol:5:10] (contract)
-- Def: #6 ["test" @ main.sol:6:14] (function, type: function () returns void)
+- Def: #6 ["test" @ main.sol:6:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

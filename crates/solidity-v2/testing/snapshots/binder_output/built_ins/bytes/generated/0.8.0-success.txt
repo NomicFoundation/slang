@@ -2,11 +2,11 @@
 
 Definitions (9):
 - Def: #1 ["Test" @ input.sol:3:10] (contract)
-- Def: #2 ["testBytes" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #2 ["testBytes" @ input.sol:4:14] (function, type: function () returns ())
 - Def: #3 ["b1" @ input.sol:5:22] (variable, type: bytes memory)
 - Def: #4 ["b2" @ input.sol:6:22] (variable, type: bytes memory)
 - Def: #5 ["b3" @ input.sol:7:22] (variable, type: bytes memory)
-- Def: #6 ["testString" @ input.sol:11:14] (function, type: function () returns void)
+- Def: #6 ["testString" @ input.sol:11:14] (function, type: function () returns ())
 - Def: #7 ["s1" @ input.sol:12:23] (variable, type: string memory)
 - Def: #8 ["s2" @ input.sol:13:23] (variable, type: string memory)
 - Def: #9 ["s3" @ input.sol:14:23] (variable, type: string memory)

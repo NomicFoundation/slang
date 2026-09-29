@@ -2,9 +2,9 @@
 
 Definitions (4):
 - Def: #1 ["Lib" @ input.sol:3:9] (library)
-- Def: #2 ["nop" @ input.sol:4:14] (function, type: function (bytes calldata) returns void)
+- Def: #2 ["nop" @ input.sol:4:14] (function, type: function (bytes calldata) returns ())
 - Def: #3 ["Test" @ input.sol:7:10] (contract)
-- Def: #4 ["test" @ input.sol:9:14] (function, type: function () returns void)
+- Def: #4 ["test" @ input.sol:9:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

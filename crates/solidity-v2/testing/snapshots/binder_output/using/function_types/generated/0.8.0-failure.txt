@@ -12,12 +12,12 @@ Diagnostics:
 ------------------------------------------------------------------------
 
 Definitions (6):
-- Def: #1 ["invoke" @ input.sol:5:10] (function, type: function (function (uint256) returns void) returns void)
-- Def: #2 ["x" @ input.sol:5:32] (parameter, type: function (uint256) returns void)
-- Def: #3 ["foo" @ input.sol:9:10] (function, type: function (uint256) returns void)
+- Def: #1 ["invoke" @ input.sol:5:10] (function, type: function (function (uint256) returns ()) returns ())
+- Def: #2 ["x" @ input.sol:5:32] (parameter, type: function (uint256) returns ())
+- Def: #3 ["foo" @ input.sol:9:10] (function, type: function (uint256) returns ())
 - Def: #4 ["x" @ input.sol:9:19] (parameter, type: uint256)
-- Def: #5 ["test" @ input.sol:11:10] (function, type: function () returns void)
-- Def: #6 ["bar" @ input.sol:14:21] (variable, type: function (uint256) returns void)
+- Def: #5 ["test" @ input.sol:11:10] (function, type: function () returns ())
+- Def: #6 ["bar" @ input.sol:14:21] (variable, type: function (uint256) returns ())
 
 ------------------------------------------------------------------------
 

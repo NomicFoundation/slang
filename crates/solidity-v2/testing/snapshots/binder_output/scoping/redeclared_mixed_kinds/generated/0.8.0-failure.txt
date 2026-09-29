@@ -34,13 +34,13 @@ Diagnostics:
 
 Definitions (11):
 - Def: #1 ["S" @ input.sol:3:10] (contract)
-- Def: #2 ["f" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #2 ["f" @ input.sol:4:14] (function, type: function () returns ())
 - Def: #3 ["S" @ input.sol:7:8] (struct)
 - Def: #4 ["u" @ input.sol:8:10] (struct member, type: uint256)
 - Def: #5 ["Test" @ input.sol:11:10] (contract)
 - Def: #6 ["dup" @ input.sol:12:11] (error)
 - Def: #7 ["code" @ input.sol:12:20] (parameter, type: uint256)
-- Def: #8 ["dup" @ input.sol:14:14] (function, type: function (bool) returns void)
+- Def: #8 ["dup" @ input.sol:14:14] (function, type: function (bool) returns ())
 - Def: #9 ["flag" @ input.sol:14:23] (parameter, type: bool)
 - Def: #10 ["test" @ input.sol:16:14] (function, type: unresolved)
 - Def: #11 ["s" @ input.sol:16:28] (parameter, type: unresolved)

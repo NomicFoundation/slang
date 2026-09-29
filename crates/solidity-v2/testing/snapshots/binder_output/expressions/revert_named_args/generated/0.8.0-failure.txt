@@ -25,7 +25,7 @@ Definitions (5):
 - Def: #2 ["Failure" @ input.sol:4:11] (error)
 - Def: #3 ["severity" @ input.sol:5:14] (parameter, type: uint256)
 - Def: #4 ["cause" @ input.sol:6:16] (parameter, type: string memory)
-- Def: #5 ["test" @ input.sol:9:14] (function, type: function () returns void)
+- Def: #5 ["test" @ input.sol:9:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

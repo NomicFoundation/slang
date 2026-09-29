@@ -4,7 +4,7 @@ Definitions (5):
 - Def: #1 ["Lib" @ input.sol:3:9] (library)
 - Def: #2 ["to160" @ input.sol:4:14] (function, type: function (uint256) returns uint160)
 - Def: #3 ["Test" @ input.sol:7:10] (contract)
-- Def: #4 ["test" @ input.sol:10:14] (function, type: function () returns void)
+- Def: #4 ["test" @ input.sol:10:14] (function, type: function () returns ())
 - Def: #5 ["ratio" @ input.sol:11:17] (variable, type: uint256)
 
 ------------------------------------------------------------------------

@@ -6,7 +6,7 @@ Definitions (6):
 - Def: #3 ["Other" @ input.sol:7:10] (contract)
 - Def: #4 ["_name" @ input.sol:8:20] (state var, type: string storage)
 - Def: #5 ["Test" @ input.sol:11:10] (contract)
-- Def: #6 ["test" @ input.sol:12:14] (function, type: function () returns void)
+- Def: #6 ["test" @ input.sol:12:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

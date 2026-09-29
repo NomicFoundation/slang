@@ -2,11 +2,11 @@
 
 Definitions (6):
 - Def: #1 ["A" @ input.sol:3:10] (contract)
-- Def: #2 ["f" @ input.sol:4:14] (function, type: function (int256) returns void)
+- Def: #2 ["f" @ input.sol:4:14] (function, type: function (int256) returns ())
 - Def: #3 ["_x" @ input.sol:4:20] (parameter, type: int256)
 - Def: #4 ["_x" @ input.sol:6:21] (parameter, type: int256)
 - Def: #5 ["Test" @ input.sol:9:10] (contract)
-- Def: #6 ["foo" @ input.sol:10:14] (function, type: function () returns void)
+- Def: #6 ["foo" @ input.sol:10:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

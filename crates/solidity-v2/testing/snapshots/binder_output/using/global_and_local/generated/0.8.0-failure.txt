@@ -26,7 +26,7 @@ Definitions (9):
 - Def: #5 ["nop" @ lib.sol:12:14] (function, type: function (Amount) returns Amount)
 - Def: #6 ["x" @ lib.sol:12:25] (parameter, type: Amount)
 - Def: #7 ["Test" @ main.sol:5:10] (contract)
-- Def: #8 ["test" @ main.sol:8:14] (function, type: function () returns void)
+- Def: #8 ["test" @ main.sol:8:14] (function, type: function () returns ())
 - Def: #9 ["x" @ main.sol:9:16] (variable, type: Amount)
 
 ------------------------------------------------------------------------

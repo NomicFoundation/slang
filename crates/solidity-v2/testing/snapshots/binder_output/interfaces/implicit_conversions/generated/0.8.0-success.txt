@@ -5,12 +5,12 @@ Definitions (11):
 - Def: #2 ["Bar" @ input.sol:4:10] (contract)
 - Def: #3 ["Foo" @ input.sol:5:10] (contract)
 - Def: #4 ["Lib" @ input.sol:7:9] (library)
-- Def: #5 ["useIFoo" @ input.sol:8:14] (function, type: function (IFoo) returns void)
-- Def: #6 ["useIFoo" @ input.sol:9:14] (function, type: function (uint256) returns void)
-- Def: #7 ["useBar" @ input.sol:10:14] (function, type: function (Bar) returns void)
-- Def: #8 ["useBar" @ input.sol:11:14] (function, type: function (uint256) returns void)
+- Def: #5 ["useIFoo" @ input.sol:8:14] (function, type: function (IFoo) returns ())
+- Def: #6 ["useIFoo" @ input.sol:9:14] (function, type: function (uint256) returns ())
+- Def: #7 ["useBar" @ input.sol:10:14] (function, type: function (Bar) returns ())
+- Def: #8 ["useBar" @ input.sol:11:14] (function, type: function (uint256) returns ())
 - Def: #9 ["Test" @ input.sol:14:10] (contract)
-- Def: #10 ["test" @ input.sol:17:14] (function, type: function () returns void)
+- Def: #10 ["test" @ input.sol:17:14] (function, type: function () returns ())
 - Def: #11 ["foo" @ input.sol:18:13] (variable, type: Foo)
 
 ------------------------------------------------------------------------

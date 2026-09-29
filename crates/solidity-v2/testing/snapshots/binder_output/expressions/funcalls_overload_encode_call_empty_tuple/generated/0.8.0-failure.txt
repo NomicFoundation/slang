@@ -13,7 +13,7 @@ Diagnostics:
 
 Definitions (8):
 - Def: #1 ["I" @ input.sol:3:11] (interface)
-- Def: #2 ["m" @ input.sol:4:12] (function, type: function () returns void)
+- Def: #2 ["m" @ input.sol:4:12] (function, type: function () returns ())
 - Def: #3 ["Test" @ input.sol:7:10] (contract)
 - Def: #4 ["f" @ input.sol:8:12] (function, type: function () returns uint256)
 - Def: #5 ["f" @ input.sol:10:12] (function, type: function (uint256, bytes memory) returns uint256)

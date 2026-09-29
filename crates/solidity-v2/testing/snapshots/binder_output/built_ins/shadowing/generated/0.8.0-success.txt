@@ -3,11 +3,11 @@
 Definitions (7):
 - Def: #1 ["Test" @ input.sol:3:10] (contract)
 - Def: #2 ["tx" @ input.sol:4:9] (state var, type: int256)
-- Def: #3 ["test" @ input.sol:6:14] (function, type: function () returns void)
+- Def: #3 ["test" @ input.sol:6:14] (function, type: function () returns ())
 - Def: #4 ["block" @ input.sol:7:13] (variable, type: int256)
-- Def: #5 ["sha256" @ input.sol:13:14] (function, type: function () returns void)
-- Def: #6 ["sha256" @ input.sol:16:10] (function, type: function () returns void)
-- Def: #7 ["top_level" @ input.sol:18:10] (function, type: function () returns void)
+- Def: #5 ["sha256" @ input.sol:13:14] (function, type: function () returns ())
+- Def: #6 ["sha256" @ input.sol:16:10] (function, type: function () returns ())
+- Def: #7 ["top_level" @ input.sol:18:10] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

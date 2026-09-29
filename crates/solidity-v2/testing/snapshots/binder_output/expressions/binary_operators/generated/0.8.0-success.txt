@@ -7,7 +7,7 @@ Definitions (9):
 - Def: #4 ["nop_bool" @ input.sol:5:14] (function, type: function (bool) returns bool)
 - Def: #5 ["x" @ input.sol:5:28] (parameter, type: bool)
 - Def: #6 ["Test" @ input.sol:8:10] (contract)
-- Def: #7 ["test" @ input.sol:11:14] (function, type: function (uint256, uint256) returns void)
+- Def: #7 ["test" @ input.sol:11:14] (function, type: function (uint256, uint256) returns ())
 - Def: #8 ["a" @ input.sol:11:24] (parameter, type: uint256)
 - Def: #9 ["b" @ input.sol:11:32] (parameter, type: uint256)
 

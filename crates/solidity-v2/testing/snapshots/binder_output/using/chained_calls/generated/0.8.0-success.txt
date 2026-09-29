@@ -9,7 +9,7 @@ Definitions (12):
 - Def: #6 ["bar" @ input.sol:8:14] (function, type: function (uint256) returns Bar memory)
 - Def: #7 ["x" @ input.sol:8:23] (parameter, type: uint256)
 - Def: #8 ["Test" @ input.sol:11:10] (contract)
-- Def: #9 ["test" @ input.sol:13:14] (function, type: function (uint256, Bar memory) returns void)
+- Def: #9 ["test" @ input.sol:13:14] (function, type: function (uint256, Bar memory) returns ())
 - Def: #10 ["a" @ input.sol:13:24] (parameter, type: uint256)
 - Def: #11 ["b" @ input.sol:13:42] (parameter, type: Bar memory)
 - Def: #12 ["xs" @ input.sol:14:23] (variable, type: uint256[] memory)

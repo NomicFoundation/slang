@@ -2,10 +2,10 @@
 
 Definitions (5):
 - Def: #1 ["Base" @ input.sol:3:10] (contract)
-- Def: #2 ["in_base" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #2 ["in_base" @ input.sol:4:14] (function, type: function () returns ())
 - Def: #3 ["Middle" @ input.sol:6:10] (contract)
 - Def: #4 ["Test" @ input.sol:7:10] (contract)
-- Def: #5 ["in_base" @ input.sol:8:14] (function, type: function () returns void)
+- Def: #5 ["in_base" @ input.sol:8:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

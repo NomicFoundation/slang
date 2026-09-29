@@ -5,7 +5,7 @@ Definitions (7):
 - Def: #2 ["sig" @ input.sol:4:14] (function, type: function (uint256, bytes4) returns uint256)
 - Def: #3 ["sig" @ input.sol:5:14] (function, type: function (uint256, string memory) returns uint256)
 - Def: #4 ["Test" @ input.sol:8:10] (contract)
-- Def: #5 ["test" @ input.sol:10:14] (function, type: function (uint256) returns void)
+- Def: #5 ["test" @ input.sol:10:14] (function, type: function (uint256) returns ())
 - Def: #6 ["x" @ input.sol:10:24] (parameter, type: uint256)
 - Def: #7 ["s" @ input.sol:11:23] (variable, type: string memory)
 

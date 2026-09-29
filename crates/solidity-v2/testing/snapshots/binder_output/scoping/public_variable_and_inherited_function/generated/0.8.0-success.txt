@@ -8,7 +8,7 @@ Definitions (9):
 - Def: #5 ["value" @ input.sol:19:14] (function, type: function () returns uint256)
 - Def: #6 ["qualified" @ input.sol:23:14] (function, type: function () returns uint256)
 - Def: #7 ["external_call" @ input.sol:27:14] (function, type: function () returns uint256)
-- Def: #8 ["assembly_use" @ input.sol:31:14] (function, type: function () returns void)
+- Def: #8 ["assembly_use" @ input.sol:31:14] (function, type: function () returns ())
 - Def: #9 ["y" @ input.sol:33:17] (yul variable)
 
 ------------------------------------------------------------------------

@@ -7,7 +7,7 @@ Definitions (12):
 - Def: #4 ["down" @ input.sol:4:21] (enum member of Type)
 - Def: #5 ["count" @ input.sol:5:14] (function, type: function () returns uint256)
 - Def: #6 ["MutableCounter" @ input.sol:8:11] (interface)
-- Def: #7 ["increment" @ input.sol:9:14] (function, type: function () returns void)
+- Def: #7 ["increment" @ input.sol:9:14] (function, type: function () returns ())
 - Def: #8 ["Test" @ input.sol:12:10] (contract)
 - Def: #9 ["test" @ input.sol:13:14] (function, type: function (address) returns uint256)
 - Def: #10 ["_counter" @ input.sol:13:27] (parameter, type: address)

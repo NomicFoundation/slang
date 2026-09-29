@@ -3,7 +3,7 @@
 Definitions (4):
 - Def: #1 ["FOO" @ constants.sol:3:18] (constant, type: uint256)
 - Def: #2 ["Test" @ main.sol:5:10] (contract)
-- Def: #3 ["test" @ main.sol:6:14] (function, type: function () returns void)
+- Def: #3 ["test" @ main.sol:6:14] (function, type: function () returns ())
 - Def: #4 ["x" @ main.sol:8:17] (yul variable)
 
 ------------------------------------------------------------------------

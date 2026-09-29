@@ -2,7 +2,7 @@
 
 Definitions (13):
 - Def: #1 ["Test" @ input.sol:3:10] (contract)
-- Def: #2 ["test" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #2 ["test" @ input.sol:4:14] (function, type: function () returns ())
 - Def: #3 ["v1" @ input.sol:5:16] (variable, type: bytes4)
 - Def: #4 ["v2" @ input.sol:6:17] (variable, type: address)
 - Def: #5 ["v3" @ input.sol:8:16] (variable, type: bytes4)
@@ -11,9 +11,9 @@ Definitions (13):
 - Def: #8 ["v5" @ input.sol:12:17] (variable, type: address)
 - Def: #9 ["v6" @ input.sol:14:16] (variable, type: bytes4)
 - Def: #10 ["Foo" @ input.sol:18:11] (interface)
-- Def: #11 ["bar" @ input.sol:19:14] (function, type: function () returns void)
+- Def: #11 ["bar" @ input.sol:19:14] (function, type: function () returns ())
 - Def: #12 ["Baz" @ input.sol:22:9] (library)
-- Def: #13 ["quux" @ input.sol:23:14] (function, type: function () returns void)
+- Def: #13 ["quux" @ input.sol:23:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

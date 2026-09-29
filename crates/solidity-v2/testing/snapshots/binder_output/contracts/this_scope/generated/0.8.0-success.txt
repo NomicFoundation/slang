@@ -2,7 +2,7 @@
 
 Definitions (3):
 - Def: #1 ["Test" @ input.sol:3:10] (contract)
-- Def: #2 ["foo" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #2 ["foo" @ input.sol:4:14] (function, type: function () returns ())
 - Def: #3 ["bar" @ input.sol:6:14] (function, type: function () returns int256)
 
 ------------------------------------------------------------------------

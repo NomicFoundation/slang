@@ -15,7 +15,7 @@ Definitions (4):
 - Def: #1 ["Utils" @ input.sol:3:9] (library)
 - Def: #2 ["Foo" @ input.sol:4:11] (event)
 - Def: #3 ["x" @ input.sol:4:20] (parameter, type: uint256)
-- Def: #4 ["test" @ input.sol:6:14] (function, type: function () returns void)
+- Def: #4 ["test" @ input.sol:6:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

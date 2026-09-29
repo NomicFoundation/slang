@@ -2,7 +2,7 @@
 
 Definitions (6):
 - Def: #1 ["Foo" @ input.sol:3:10] (contract)
-- Def: #2 ["bar" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #2 ["bar" @ input.sol:4:14] (function, type: function () returns ())
 - Def: #3 ["a" @ input.sol:6:15] (variable, type: fixed128x18)
 - Def: #4 ["b" @ input.sol:7:16] (variable, type: ufixed128x18)
 - Def: #5 ["c" @ input.sol:8:21] (variable, type: fixed128x18)

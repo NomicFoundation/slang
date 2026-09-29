@@ -20,7 +20,7 @@ Diagnostics:
 
 Definitions (6):
 - Def: #1 ["Test" @ input.sol:3:10] (contract)
-- Def: #2 ["test" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #2 ["test" @ input.sol:4:14] (function, type: function () returns ())
 - Def: #3 ["foo" @ input.sol:6:13] (variable, type: Foo)
 - Def: #4 ["bar" @ input.sol:9:13] (variable, type: Bar)
 - Def: #5 ["Foo" @ input.sol:14:10] (contract)

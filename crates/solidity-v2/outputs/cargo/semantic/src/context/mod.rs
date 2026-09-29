@@ -380,7 +380,6 @@ impl SemanticContext {
             Type::UserMetaType(UserMetaType { definition_id }) => {
                 format!("type({})", self.definition_canonical_name(*definition_id))
             }
-            Type::Void => "void".to_string(),
         }
     }
 
@@ -467,18 +466,19 @@ impl SemanticContext {
         if function_type.is_externally_visible() {
             out.push_str(" external");
         }
-        match self.types.get_type_by_id(function_type.return_type) {
-            Type::Void => {}
-            Type::Tuple(TupleType { types }) => {
+        if let Type::Tuple(TupleType { types }) =
+            self.types.get_type_by_id(function_type.return_type)
+        {
+            // An empty tuple is not printed
+            if !types.is_empty() {
                 out.push_str(" returns (");
                 self.write_type_abi_internal_names(types, out);
                 out.push(')');
             }
-            _ => {
-                out.push_str(" returns (");
-                self.write_type_abi_internal_name(function_type.return_type, out);
-                out.push(')');
-            }
+        } else {
+            out.push_str(" returns (");
+            self.write_type_abi_internal_name(function_type.return_type, out);
+            out.push(')');
         }
     }
 
@@ -610,8 +610,7 @@ impl SemanticContext {
             | Type::Literal(_)
             | Type::MetaType(_)
             | Type::Tuple(_)
-            | Type::UserMetaType(_)
-            | Type::Void => None,
+            | Type::UserMetaType(_) => None,
         }
     }
 }

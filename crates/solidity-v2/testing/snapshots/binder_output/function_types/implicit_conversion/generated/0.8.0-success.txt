@@ -2,19 +2,19 @@
 
 Definitions (14):
 - Def: #1 ["Test" @ input.sol:3:10] (contract)
-- Def: #2 ["memory_internal" @ input.sol:4:14] (function, type: function (bytes memory) returns void)
-- Def: #3 ["memory_external" @ input.sol:5:14] (function, type: function (bytes memory) returns void)
-- Def: #4 ["memory_private" @ input.sol:6:14] (function, type: function (bytes memory) returns void)
-- Def: #5 ["memory_public" @ input.sol:7:14] (function, type: function (bytes memory) returns void)
-- Def: #6 ["calldata_internal" @ input.sol:9:14] (function, type: function (bytes calldata) returns void)
-- Def: #7 ["calldata_external" @ input.sol:10:14] (function, type: function (bytes calldata) returns void)
-- Def: #8 ["calldata_private" @ input.sol:11:14] (function, type: function (bytes calldata) returns void)
-- Def: #9 ["calldata_public" @ input.sol:12:14] (function, type: function (bytes calldata) returns void)
-- Def: #10 ["memory_callback" @ input.sol:14:14] (function, type: function (function (bytes memory) returns void) returns void)
-- Def: #11 ["memory_callback" @ input.sol:15:14] (function, type: function (function (bytes memory) returns void) returns void)
-- Def: #12 ["calldata_callback" @ input.sol:17:14] (function, type: function (function (bytes calldata) returns void) returns void)
-- Def: #13 ["calldata_callback" @ input.sol:19:14] (function, type: function (function (bytes calldata) returns void) returns void)
-- Def: #14 ["test" @ input.sol:21:14] (function, type: function () returns void)
+- Def: #2 ["memory_internal" @ input.sol:4:14] (function, type: function (bytes memory) returns ())
+- Def: #3 ["memory_external" @ input.sol:5:14] (function, type: function (bytes memory) returns ())
+- Def: #4 ["memory_private" @ input.sol:6:14] (function, type: function (bytes memory) returns ())
+- Def: #5 ["memory_public" @ input.sol:7:14] (function, type: function (bytes memory) returns ())
+- Def: #6 ["calldata_internal" @ input.sol:9:14] (function, type: function (bytes calldata) returns ())
+- Def: #7 ["calldata_external" @ input.sol:10:14] (function, type: function (bytes calldata) returns ())
+- Def: #8 ["calldata_private" @ input.sol:11:14] (function, type: function (bytes calldata) returns ())
+- Def: #9 ["calldata_public" @ input.sol:12:14] (function, type: function (bytes calldata) returns ())
+- Def: #10 ["memory_callback" @ input.sol:14:14] (function, type: function (function (bytes memory) returns ()) returns ())
+- Def: #11 ["memory_callback" @ input.sol:15:14] (function, type: function (function (bytes memory) returns ()) returns ())
+- Def: #12 ["calldata_callback" @ input.sol:17:14] (function, type: function (function (bytes calldata) returns ()) returns ())
+- Def: #13 ["calldata_callback" @ input.sol:19:14] (function, type: function (function (bytes calldata) returns ()) returns ())
+- Def: #14 ["test" @ input.sol:21:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

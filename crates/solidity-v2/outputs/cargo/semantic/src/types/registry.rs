@@ -95,7 +95,7 @@ impl TypeRegistry {
             is_signed: false,
             bits: 8,
         }));
-        let (void_type, _) = types.insert_full(Type::Void);
+        let (void_type, _) = types.insert_full(Type::Tuple(TupleType { types: Vec::new() }));
 
         let (boolean_bytes_tuple_type, _) = types.insert_full(Type::Tuple(TupleType {
             types: vec![TypeId(boolean_type), TypeId(bytes_memory_type)],
@@ -385,7 +385,7 @@ impl TypeRegistry {
                 Type::Tuple(TupleType { types: to_types }),
             ) => {
                 // TODO(validation) SDR[59]: assignment LHS holes (`(a, ) = f()`)
-                // are modeled as `Void` tuple elements, which reject any
+                // are modeled as empty tuple elements, which reject any
                 // concrete source element here. solc instead skips empty
                 // target components (`TupleType::isImplicitlyConvertibleTo`),
                 // so once assignments are validated with this rule, holes need
@@ -624,8 +624,7 @@ impl TypeRegistry {
             | Type::MetaType(_)
             | Type::Tuple(_)
             | Type::UserDefinedValue(_)
-            | Type::UserMetaType(_)
-            | Type::Void => return Some(type_id),
+            | Type::UserMetaType(_) => return Some(type_id),
         };
         self.find_type(&canonical_type)
     }
@@ -695,8 +694,7 @@ impl TypeRegistry {
             | Type::Mapping(_)
             | Type::MetaType(_)
             | Type::UserDefinedValue(_)
-            | Type::UserMetaType(_)
-            | Type::Void => type_,
+            | Type::UserMetaType(_) => type_,
         };
         self.register_type(type_with_location)
     }
@@ -951,6 +949,7 @@ impl TypeRegistry {
     pub(crate) fn uint8(&self) -> TypeId {
         self.uint8_type_id
     }
+    /// An alias for the empty tuple `()` type.
     pub(crate) fn void(&self) -> TypeId {
         self.void_type_id
     }

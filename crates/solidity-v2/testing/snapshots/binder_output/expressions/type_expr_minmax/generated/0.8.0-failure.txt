@@ -25,7 +25,7 @@ Definitions (7):
 - Def: #4 ["id" @ input.sol:8:14] (function, type: function (Answer) returns Answer)
 - Def: #5 ["ans" @ input.sol:8:24] (parameter, type: Answer)
 - Def: #6 ["Test" @ input.sol:13:10] (contract)
-- Def: #7 ["testFunc" @ input.sol:16:14] (function, type: function () returns void)
+- Def: #7 ["testFunc" @ input.sol:16:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

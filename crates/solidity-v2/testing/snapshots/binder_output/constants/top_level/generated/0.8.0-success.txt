@@ -2,7 +2,7 @@
 
 Definitions (10):
 - Def: #1 ["Constants" @ input.sol:3:10] (contract)
-- Def: #2 ["test" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #2 ["test" @ input.sol:4:14] (function, type: function () returns ())
 - Def: #3 ["Direction" @ input.sol:11:6] (enum)
 - Def: #4 ["NORTH" @ input.sol:11:18] (enum member of Direction)
 - Def: #5 ["SOUTH" @ input.sol:11:25] (enum member of Direction)

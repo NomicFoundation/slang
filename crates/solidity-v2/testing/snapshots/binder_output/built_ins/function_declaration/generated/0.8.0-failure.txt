@@ -27,15 +27,15 @@ Diagnostics:
 
 Definitions (10):
 - Def: #1 ["I" @ input.sol:3:11] (interface)
-- Def: #2 ["i" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #2 ["i" @ input.sol:4:14] (function, type: function () returns ())
 - Def: #3 ["C" @ input.sol:7:10] (contract)
-- Def: #4 ["ext" @ input.sol:8:14] (function, type: function () returns void)
-- Def: #5 ["pub" @ input.sol:9:14] (function, type: function () returns void)
-- Def: #6 ["tC" @ input.sol:10:14] (function, type: function () returns void)
+- Def: #4 ["ext" @ input.sol:8:14] (function, type: function () returns ())
+- Def: #5 ["pub" @ input.sol:9:14] (function, type: function () returns ())
+- Def: #6 ["tC" @ input.sol:10:14] (function, type: function () returns ())
 - Def: #7 ["D" @ input.sol:15:10] (contract)
-- Def: #8 ["tD" @ input.sol:16:14] (function, type: function () returns void)
+- Def: #8 ["tD" @ input.sol:16:14] (function, type: function () returns ())
 - Def: #9 ["E" @ input.sol:21:10] (contract)
-- Def: #10 ["test" @ input.sol:22:14] (function, type: function () returns void)
+- Def: #10 ["test" @ input.sol:22:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

@@ -2,9 +2,9 @@
 
 Definitions (5):
 - Def: #1 ["Lib" @ input.sol:3:9] (library)
-- Def: #2 ["nop" @ input.sol:4:14] (function, type: function (uint256) returns void)
+- Def: #2 ["nop" @ input.sol:4:14] (function, type: function (uint256) returns ())
 - Def: #3 ["Test" @ input.sol:7:10] (contract)
-- Def: #4 ["test" @ input.sol:9:14] (function, type: function (uint256) returns void)
+- Def: #4 ["test" @ input.sol:9:14] (function, type: function (uint256) returns ())
 - Def: #5 ["x" @ input.sol:9:24] (parameter, type: uint256)
 
 ------------------------------------------------------------------------

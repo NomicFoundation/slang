@@ -4,7 +4,7 @@ Definitions (7):
 - Def: #1 ["Utils" @ input.sol:3:19] (contract)
 - Def: #2 ["_FOO" @ input.sol:4:31] (constant, type: uint256)
 - Def: #3 ["Test" @ input.sol:7:10] (contract)
-- Def: #4 ["test" @ input.sol:8:14] (function, type: function () returns void)
+- Def: #4 ["test" @ input.sol:8:14] (function, type: function () returns ())
 - Def: #5 ["x" @ input.sol:10:17] (yul variable)
 - Def: #6 ["foo" @ input.sol:12:22] (yul function)
 - Def: #7 ["x1" @ input.sol:13:21] (yul variable)

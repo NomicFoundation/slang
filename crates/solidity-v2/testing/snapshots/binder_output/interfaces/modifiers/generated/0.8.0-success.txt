@@ -6,7 +6,7 @@ Definitions (6):
 - Def: #3 ["onlyOwner" @ input.sol:7:14] (modifier)
 - Def: #4 ["Test" @ input.sol:13:10] (contract)
 - Def: #5 ["owner" @ input.sol:14:14] (function, type: function () returns address)
-- Def: #6 ["test" @ input.sol:16:14] (function, type: function () returns void)
+- Def: #6 ["test" @ input.sol:16:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

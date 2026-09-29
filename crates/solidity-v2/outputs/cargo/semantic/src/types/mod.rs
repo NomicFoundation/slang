@@ -52,7 +52,6 @@ pub enum Type {
     /// The meta-type of a user defined type referred to by name, eg. the
     /// identifier of a contract, struct or enum.
     UserMetaType(UserMetaType),
-    Void,
 }
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
@@ -449,8 +448,7 @@ impl Type {
             | Type::UserMetaType(_)
             // Neither are error/event instantiations.
             | Type::Error(_)
-            | Type::Event(_)
-            | Type::Void => false,
+            | Type::Event(_) => false,
         }
     }
 
@@ -504,11 +502,7 @@ impl Type {
     pub(crate) fn can_be_array_element(&self) -> bool {
         !matches!(
             self,
-            Type::Mapping(_)
-                | Type::Tuple(_)
-                | Type::MetaType(_)
-                | Type::UserMetaType(_)
-                | Type::Void
+            Type::Mapping(_) | Type::Tuple(_) | Type::MetaType(_) | Type::UserMetaType(_)
         )
     }
 }

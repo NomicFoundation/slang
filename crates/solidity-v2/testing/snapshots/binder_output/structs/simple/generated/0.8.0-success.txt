@@ -5,7 +5,7 @@ Definitions (8):
 - Def: #2 ["Campaign" @ input.sol:4:12] (struct)
 - Def: #3 ["beneficiary" @ input.sol:5:25] (struct member, type: address payable)
 - Def: #4 ["fundingGoal" @ input.sol:6:14] (struct member, type: uint256)
-- Def: #5 ["newCampaign" @ input.sol:9:14] (function, type: function (address payable, uint256) returns void)
+- Def: #5 ["newCampaign" @ input.sol:9:14] (function, type: function (address payable, uint256) returns ())
 - Def: #6 ["beneficiary" @ input.sol:9:42] (parameter, type: address payable)
 - Def: #7 ["goal" @ input.sol:9:60] (parameter, type: uint256)
 - Def: #8 ["c" @ input.sol:10:26] (variable, type: Campaign storage)

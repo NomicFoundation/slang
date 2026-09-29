@@ -10,7 +10,7 @@ Definitions (22):
 - Def: #7 ["South" @ input.sol:10:29] (enum member of Direction)
 - Def: #8 ["West" @ input.sol:10:36] (enum member of Direction)
 - Def: #9 ["East" @ input.sol:10:42] (enum member of Direction)
-- Def: #10 ["test" @ input.sol:12:14] (function, type: function () returns void)
+- Def: #10 ["test" @ input.sol:12:14] (function, type: function () returns ())
 - Def: #11 ["v1" @ input.sol:13:23] (variable, type: string memory)
 - Def: #12 ["v2" @ input.sol:14:22] (variable, type: bytes memory)
 - Def: #13 ["v3" @ input.sol:15:22] (variable, type: bytes memory)
