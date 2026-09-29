@@ -1890,6 +1890,10 @@ pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::references(&self) -
 impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_abi(&self) -> core::option::Option<slang_solidity_v2_ast::abi::ContractAbi>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_interface_id(&self) -> core::option::Option<u32>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_storage_items(&self) -> core::option::Option<alloc::vec::Vec<slang_solidity_v2_ast::abi::StorageItem>>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_storage_layout(&self) -> core::option::Option<slang_solidity_v2_ast::abi::StorageLayout>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_transient_storage_items(&self) -> core::option::Option<alloc::vec::Vec<slang_solidity_v2_ast::abi::StorageItem>>
+pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::compute_transient_storage_layout(&self) -> core::option::Option<slang_solidity_v2_ast::abi::StorageLayout>
 impl slang_solidity_v2_ast::ast::ContractDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::constructor(&self) -> core::option::Option<slang_solidity_v2_ast::ast::FunctionDefinition>
 pub fn slang_solidity_v2_ast::ast::ContractDefinitionStruct::creation_bytecode_dependencies(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Definition>
