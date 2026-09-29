@@ -10,12 +10,9 @@ on:
         default: false
       check_binder:
         description: "Check name bindings on contracts reporting if there's any unresolved symbol."
-        type: "choice"
-        required: true
-        default: "none"
-        options:
-          - "none"
-          - "v1"
+        type: "boolean"
+        required: false
+        default: false
 
 permissions: {}
 

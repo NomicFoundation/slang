@@ -11,7 +11,6 @@ Inflector = { workspace = true }
 infra_utils = { workspace = true }
 regex = { workspace = true }
 semver = { workspace = true }
-slang_solidity = { workspace = true }
 slang_solidity_v2 = { workspace = true }
 slang_solidity_v2_common = { workspace = true }
 slang_solidity_v2_cst = { workspace = true }
