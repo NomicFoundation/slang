@@ -2,7 +2,7 @@
 
 Definitions (2):
 - Def: #1 ["AssemblyBuiltIns" @ input.sol:3:10] (contract)
-- Def: #2 ["test" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #2 ["test" @ input.sol:4:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

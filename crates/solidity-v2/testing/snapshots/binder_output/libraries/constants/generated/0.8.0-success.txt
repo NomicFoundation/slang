@@ -6,7 +6,7 @@ Definitions (6):
 - Def: #3 ["Y" @ input.sol:5:26] (state var, type: uint256)
 - Def: #4 ["test" @ input.sol:7:14] (function, type: function () returns uint256)
 - Def: #5 ["Test" @ input.sol:12:10] (contract)
-- Def: #6 ["test" @ input.sol:13:14] (function, type: function () returns void)
+- Def: #6 ["test" @ input.sol:13:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

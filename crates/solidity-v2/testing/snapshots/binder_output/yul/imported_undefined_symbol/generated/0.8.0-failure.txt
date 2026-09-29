@@ -14,9 +14,9 @@ Diagnostics:
 Definitions (6):
 - Def: #1 ["slot" @ input.sol:3:10] (imported symbol)
 - Def: #2 ["Foo" @ input.sol:5:10] (contract)
-- Def: #3 ["useSlotInAssembly" @ input.sol:6:14] (function, type: function () returns void)
+- Def: #3 ["useSlotInAssembly" @ input.sol:6:14] (function, type: function () returns ())
 - Def: #4 ["value" @ input.sol:7:14] (variable, type: uint256)
-- Def: #5 ["useSlotInSolidity" @ input.sol:13:14] (function, type: function () returns void)
+- Def: #5 ["useSlotInSolidity" @ input.sol:13:14] (function, type: function () returns ())
 - Def: #6 ["value" @ input.sol:14:14] (variable, type: uint256)
 
 ------------------------------------------------------------------------

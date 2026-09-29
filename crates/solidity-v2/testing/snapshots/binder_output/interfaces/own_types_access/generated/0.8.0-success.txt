@@ -4,7 +4,7 @@ Definitions (5):
 - Def: #1 ["IFoo" @ input.sol:3:11] (interface)
 - Def: #2 ["Bar" @ input.sol:4:12] (struct)
 - Def: #3 ["value" @ input.sol:5:13] (struct member, type: int256)
-- Def: #4 ["test" @ input.sol:7:14] (function, type: function (Bar memory) returns void)
+- Def: #4 ["test" @ input.sol:7:14] (function, type: function (Bar memory) returns ())
 - Def: #5 ["bar" @ input.sol:7:30] (parameter, type: Bar memory)
 
 ------------------------------------------------------------------------

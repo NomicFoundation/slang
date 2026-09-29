@@ -480,7 +480,6 @@ pub slang_solidity_v2_semantic::types::Type::Struct(slang_solidity_v2_semantic::
 pub slang_solidity_v2_semantic::types::Type::Tuple(slang_solidity_v2_semantic::types::TupleType)
 pub slang_solidity_v2_semantic::types::Type::UserDefinedValue(slang_solidity_v2_semantic::types::UserDefinedValueType)
 pub slang_solidity_v2_semantic::types::Type::UserMetaType(slang_solidity_v2_semantic::types::UserMetaType)
-pub slang_solidity_v2_semantic::types::Type::Void
 impl slang_solidity_v2_semantic::types::Type
 pub fn slang_solidity_v2_semantic::types::Type::can_return_from_getter_directly(&self) -> bool
 pub fn slang_solidity_v2_semantic::types::Type::data_location(&self) -> core::option::Option<slang_solidity_v2_semantic::types::DataLocation>

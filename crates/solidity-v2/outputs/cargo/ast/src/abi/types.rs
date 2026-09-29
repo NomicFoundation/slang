@@ -167,8 +167,7 @@ fn has_abi_type(value: &AstType, visited_structs: &mut Set<NodeId>) -> bool {
         | AstType::Mapping(_)
         | AstType::MetaType(_)
         | AstType::Tuple(_)
-        | AstType::UserMetaType(_)
-        | AstType::Void(_) => false,
+        | AstType::UserMetaType(_) => false,
     }
 }
 
@@ -273,7 +272,6 @@ fn abi_type_from_ast_type(value: &AstType, visited_structs: &mut Set<NodeId>) ->
         | AstType::Mapping(_)
         | AstType::MetaType(_)
         | AstType::Tuple(_)
-        | AstType::UserMetaType(_)
-        | AstType::Void(_) => None,
+        | AstType::UserMetaType(_) => None,
     }
 }

@@ -4,7 +4,7 @@ Definitions (5):
 - Def: #1 ["Test" @ input.sol:3:10] (contract)
 - Def: #2 ["Value" @ input.sol:4:12] (struct)
 - Def: #3 ["x" @ input.sol:5:13] (struct member, type: int256)
-- Def: #4 ["test" @ input.sol:7:14] (function, type: function (function () returns Value memory) returns void)
+- Def: #4 ["test" @ input.sol:7:14] (function, type: function (function () returns Value memory) returns ())
 - Def: #5 ["f" @ input.sol:7:53] (parameter, type: function () returns Value memory)
 
 ------------------------------------------------------------------------

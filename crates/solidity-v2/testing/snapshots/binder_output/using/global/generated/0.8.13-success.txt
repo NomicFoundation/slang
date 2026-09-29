@@ -3,11 +3,11 @@
 Definitions (8):
 - Def: #1 ["Counter" @ counter.sol:3:8] (struct)
 - Def: #2 ["value" @ counter.sol:4:10] (struct member, type: uint256)
-- Def: #3 ["increment" @ counter.sol:7:10] (function, type: function (Counter memory) returns void)
+- Def: #3 ["increment" @ counter.sol:7:10] (function, type: function (Counter memory) returns ())
 - Def: #4 ["_counter" @ counter.sol:7:35] (parameter, type: Counter memory)
 - Def: #5 ["Counter" @ main.sol:3:9] (imported symbol)
 - Def: #6 ["Test" @ main.sol:5:10] (contract)
-- Def: #7 ["test" @ main.sol:6:14] (function, type: function (Counter memory) returns void)
+- Def: #7 ["test" @ main.sol:6:14] (function, type: function (Counter memory) returns ())
 - Def: #8 ["c" @ main.sol:6:34] (parameter, type: Counter memory)
 
 ------------------------------------------------------------------------

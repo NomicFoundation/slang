@@ -35,8 +35,8 @@ Diagnostics:
 Definitions (8):
 - Def: #1 ["Test" @ input.sol:3:10] (contract)
 - Def: #2 ["InvalidState" @ input.sol:4:11] (error)
-- Def: #3 ["testRevert" @ input.sol:6:14] (function, type: function () returns void)
-- Def: #4 ["testOtherRevert" @ input.sol:10:14] (function, type: function () returns void)
+- Def: #3 ["testRevert" @ input.sol:6:14] (function, type: function () returns ())
+- Def: #4 ["testOtherRevert" @ input.sol:10:14] (function, type: function () returns ())
 - Def: #5 ["code" @ input.sol:11:13] (variable, type: int256)
 - Def: #6 ["Utils" @ input.sol:16:9] (library)
 - Def: #7 ["GenericError" @ input.sol:17:11] (error)

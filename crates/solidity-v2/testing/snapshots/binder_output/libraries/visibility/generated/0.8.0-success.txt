@@ -13,7 +13,7 @@ Definitions (13):
 - Def: #10 ["UsingLib" @ input.sol:16:10] (contract)
 - Def: #11 ["choice" @ input.sol:17:18] (state var, type: Choice)
 - Def: #12 ["book" @ input.sol:18:16] (state var, type: Book storage)
-- Def: #13 ["test" @ input.sol:20:14] (function, type: function () returns void)
+- Def: #13 ["test" @ input.sol:20:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

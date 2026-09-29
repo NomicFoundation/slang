@@ -2,10 +2,10 @@
 
 Definitions (6):
 - Def: #1 ["Lib" @ input.sol:3:9] (library)
-- Def: #2 ["increment" @ input.sol:4:14] (function, type: function (uint256) returns void)
+- Def: #2 ["increment" @ input.sol:4:14] (function, type: function (uint256) returns ())
 - Def: #3 ["x" @ input.sol:4:29] (parameter, type: uint256)
 - Def: #4 ["Test" @ input.sol:7:10] (contract)
-- Def: #5 ["test" @ input.sol:10:14] (function, type: function (uint256) returns void)
+- Def: #5 ["test" @ input.sol:10:14] (function, type: function (uint256) returns ())
 - Def: #6 ["x" @ input.sol:10:24] (parameter, type: uint256)
 
 ------------------------------------------------------------------------

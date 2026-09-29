@@ -5,7 +5,7 @@ Definitions (8):
 - Def: #2 ["owner" @ input.sol:4:21] (type param)
 - Def: #3 ["index" @ input.sol:4:46] (type param)
 - Def: #4 ["_ownedTokens" @ input.sol:4:73] (state var, type: address => uint256 => uint256)
-- Def: #5 ["test" @ input.sol:6:14] (function, type: function (address) returns void)
+- Def: #5 ["test" @ input.sol:6:14] (function, type: function (address) returns ())
 - Def: #6 ["from" @ input.sol:6:27] (parameter, type: address)
 - Def: #7 ["index" @ input.sol:7:25] (type param)
 - Def: #8 ["_ownedTokensByOwner" @ input.sol:7:51] (variable, type: uint256 => uint256)

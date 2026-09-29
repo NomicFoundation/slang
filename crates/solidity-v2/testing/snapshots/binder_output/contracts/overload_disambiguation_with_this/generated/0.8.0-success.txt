@@ -9,7 +9,7 @@ Definitions (9):
 - Def: #6 ["balanceOf" @ input.sol:12:14] (function, type: function (address) returns uint256)
 - Def: #7 ["Test" @ input.sol:15:10] (contract)
 - Def: #8 ["token" @ input.sol:17:11] (state var, type: Token)
-- Def: #9 ["test" @ input.sol:19:14] (function, type: function () returns void)
+- Def: #9 ["test" @ input.sol:19:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

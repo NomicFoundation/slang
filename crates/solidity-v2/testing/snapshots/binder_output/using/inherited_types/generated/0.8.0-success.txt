@@ -5,11 +5,11 @@ Definitions (10):
 - Def: #2 ["Info" @ input.sol:4:12] (struct)
 - Def: #3 ["amount" @ input.sol:5:17] (struct member, type: uint256)
 - Def: #4 ["Math" @ input.sol:8:9] (library)
-- Def: #5 ["nop" @ input.sol:9:14] (function, type: function (uint256) returns void)
+- Def: #5 ["nop" @ input.sol:9:14] (function, type: function (uint256) returns ())
 - Def: #6 ["x" @ input.sol:9:26] (parameter, type: uint256)
 - Def: #7 ["Test" @ input.sol:11:10] (contract)
 - Def: #8 ["infos" @ input.sol:12:30] (state var, type: uint256 => Info storage)
-- Def: #9 ["test" @ input.sol:14:14] (function, type: function (uint256) returns void)
+- Def: #9 ["test" @ input.sol:14:14] (function, type: function (uint256) returns ())
 - Def: #10 ["x" @ input.sol:14:27] (parameter, type: uint256)
 
 ------------------------------------------------------------------------

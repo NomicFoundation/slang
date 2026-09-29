@@ -4,11 +4,11 @@ Definitions (8):
 - Def: #1 ["Base" @ input.sol:3:10] (contract)
 - Def: #2 ["receive" @ input.sol:4:14] (function, type: function (uint256) returns uint256)
 - Def: #3 ["x" @ input.sol:4:30] (parameter, type: uint256)
-- Def: #4 ["fallback" @ input.sol:8:14] (function, type: function () returns void)
+- Def: #4 ["fallback" @ input.sol:8:14] (function, type: function () returns ())
 - Def: #5 ["Derived" @ input.sol:11:10] (contract)
 - Def: #6 ["receive" @ input.sol:16:14] (function, type: function (uint256) returns uint256)
 - Def: #7 ["y" @ input.sol:16:30] (parameter, type: uint256)
-- Def: #8 ["fallback" @ input.sol:20:14] (function, type: function () returns void)
+- Def: #8 ["fallback" @ input.sol:20:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

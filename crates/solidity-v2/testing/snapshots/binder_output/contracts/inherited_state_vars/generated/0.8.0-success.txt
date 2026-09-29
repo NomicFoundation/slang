@@ -6,7 +6,7 @@ Definitions (6):
 - Def: #3 ["Middle" @ input.sol:6:10] (contract)
 - Def: #4 ["in_middle" @ input.sol:7:9] (state var, type: int256)
 - Def: #5 ["Test" @ input.sol:9:10] (contract)
-- Def: #6 ["test" @ input.sol:10:14] (function, type: function () returns void)
+- Def: #6 ["test" @ input.sol:10:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

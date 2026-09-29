@@ -5,10 +5,10 @@ Definitions (9):
 - Def: #2 ["allowance" @ input.sol:4:14] (function, type: function (address) returns uint256)
 - Def: #3 ["owner" @ input.sol:4:32] (parameter, type: address)
 - Def: #4 ["Math" @ input.sol:6:9] (library)
-- Def: #5 ["nop" @ input.sol:7:14] (function, type: function (uint256) returns void)
+- Def: #5 ["nop" @ input.sol:7:14] (function, type: function (uint256) returns ())
 - Def: #6 ["x" @ input.sol:7:26] (parameter, type: uint256)
 - Def: #7 ["Test" @ input.sol:9:9] (library)
-- Def: #8 ["test" @ input.sol:12:14] (function, type: function (IERC20Upgradable) returns void)
+- Def: #8 ["test" @ input.sol:12:14] (function, type: function (IERC20Upgradable) returns ())
 - Def: #9 ["token" @ input.sol:12:36] (parameter, type: IERC20Upgradable)
 
 ------------------------------------------------------------------------

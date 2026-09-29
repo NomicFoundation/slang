@@ -294,8 +294,7 @@ impl Pass<'_> {
                 | Type::Literal(_)
                 | Type::MetaType(_)
                 | Type::Tuple(_)
-                | Type::UserMetaType(_)
-                | Type::Void => {
+                | Type::UserMetaType(_) => {
                     unreachable!("cannot compute the getter type for {type_id:?}")
                 }
             }

@@ -3,9 +3,9 @@
 Definitions (6):
 - Def: #1 ["f" @ main.sol:3:14] (imported symbol)
 - Def: #2 ["Test" @ main.sol:7:10] (contract)
-- Def: #3 ["test" @ main.sol:8:14] (function, type: function (uint256) returns void)
+- Def: #3 ["test" @ main.sol:8:14] (function, type: function (uint256) returns ())
 - Def: #4 ["a" @ main.sol:8:24] (parameter, type: uint256)
-- Def: #5 ["g" @ other.sol:3:10] (function, type: function (uint256) returns void)
+- Def: #5 ["g" @ other.sol:3:10] (function, type: function (uint256) returns ())
 - Def: #6 ["a" @ other.sol:3:17] (parameter, type: uint256)
 
 ------------------------------------------------------------------------

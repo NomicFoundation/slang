@@ -4,7 +4,7 @@ Definitions (5):
 - Def: #1 ["FOO" @ constants.sol:3:18] (constant, type: uint256)
 - Def: #2 ["FOO" @ main.sol:3:9] (imported symbol)
 - Def: #3 ["Test" @ main.sol:5:10] (contract)
-- Def: #4 ["test" @ main.sol:6:14] (function, type: function () returns void)
+- Def: #4 ["test" @ main.sol:6:14] (function, type: function () returns ())
 - Def: #5 ["x" @ main.sol:8:17] (yul variable)
 
 ------------------------------------------------------------------------

@@ -5,13 +5,13 @@ Definitions (12):
 - Def: #2 ["BASE_SIZE" @ input.sol:4:19] (constant, type: uint256)
 - Def: #3 ["Test" @ input.sol:7:10] (contract)
 - Def: #4 ["TEST_SIZE" @ input.sol:8:19] (constant, type: uint256)
-- Def: #5 ["test" @ input.sol:12:14] (function, type: function () returns void)
+- Def: #5 ["test" @ input.sol:12:14] (function, type: function () returns ())
 - Def: #6 ["a" @ input.sol:13:24] (variable, type: uint256[4] memory)
 - Def: #7 ["b" @ input.sol:14:32] (variable, type: uint256[4] memory)
 - Def: #8 ["c" @ input.sol:15:32] (variable, type: uint256[4] memory)
 - Def: #9 ["d" @ input.sol:16:50] (variable, type: uint256[4] memory)
 - Def: #10 ["Lib" @ input.sol:24:9] (library)
-- Def: #11 ["nop" @ input.sol:25:14] (function, type: function (uint256[4] memory) returns void)
+- Def: #11 ["nop" @ input.sol:25:14] (function, type: function (uint256[4] memory) returns ())
 - Def: #12 ["self" @ input.sol:25:33] (parameter, type: uint256[4] memory)
 
 ------------------------------------------------------------------------

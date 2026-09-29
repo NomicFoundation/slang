@@ -21,7 +21,7 @@ Definitions (23):
 - Def: #18 ["iface_struct" @ input.sol:25:30] (struct member, type: IfaceStruct (inherited))
 - Def: #19 ["direction" @ input.sol:26:21] (struct member, type: Direction)
 - Def: #20 ["w" @ input.sol:27:9] (struct member, type: int256)
-- Def: #21 ["hello" @ input.sol:30:12] (function, type: function () returns void)
+- Def: #21 ["hello" @ input.sol:30:12] (function, type: function () returns ())
 - Def: #22 ["s" @ input.sol:31:25] (variable, type: SampleStruct memory)
 - Def: #23 ["ls" @ input.sol:38:28] (variable, type: LibStruct memory)
 

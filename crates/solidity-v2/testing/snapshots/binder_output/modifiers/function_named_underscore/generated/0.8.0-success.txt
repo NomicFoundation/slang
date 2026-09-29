@@ -3,8 +3,8 @@
 Definitions (4):
 - Def: #1 ["Foo" @ input.sol:3:10] (contract)
 - Def: #2 ["aModifier" @ input.sol:4:14] (modifier)
-- Def: #3 ["_" @ input.sol:8:14] (function, type: function () returns void)
-- Def: #4 ["bar" @ input.sol:10:14] (function, type: function () returns void)
+- Def: #3 ["_" @ input.sol:8:14] (function, type: function () returns ())
+- Def: #4 ["bar" @ input.sol:10:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

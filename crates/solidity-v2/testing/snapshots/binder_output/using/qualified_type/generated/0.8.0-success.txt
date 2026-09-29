@@ -5,10 +5,10 @@ Definitions (8):
 - Def: #2 ["Value" @ input.sol:4:12] (struct)
 - Def: #3 ["x" @ input.sol:5:13] (struct member, type: int256)
 - Def: #4 ["getValue" @ input.sol:7:14] (function, type: function () returns Value memory)
-- Def: #5 ["use" @ input.sol:8:14] (function, type: function (Value memory) returns void)
+- Def: #5 ["use" @ input.sol:8:14] (function, type: function (Value memory) returns ())
 - Def: #6 ["x" @ input.sol:8:31] (parameter, type: Value memory)
 - Def: #7 ["Test" @ input.sol:10:10] (contract)
-- Def: #8 ["test" @ input.sol:12:14] (function, type: function () returns void)
+- Def: #8 ["test" @ input.sol:12:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

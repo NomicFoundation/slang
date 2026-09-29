@@ -27,7 +27,7 @@ Definitions (13):
 - Def: #6 ["SitStill" @ input.sol:5:55] (enum member of ActionChoices)
 - Def: #7 ["choice" @ input.sol:7:19] (state var, type: ActionChoices)
 - Def: #8 ["defaultChoice" @ input.sol:8:28] (constant, type: ActionChoices)
-- Def: #9 ["setGoStraight" @ input.sol:10:14] (function, type: function () returns void)
+- Def: #9 ["setGoStraight" @ input.sol:10:14] (function, type: function () returns ())
 - Def: #10 ["getChoice" @ input.sol:17:14] (function, type: function () returns ActionChoices)
 - Def: #11 ["getDefaultChoice" @ input.sol:21:14] (function, type: function () returns uint256)
 - Def: #12 ["getLargestValue" @ input.sol:25:14] (function, type: function () returns ActionChoices)

@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (1):
-- Def: #1 ["test" @ input.sol:3:10] (function, type: function () returns void)
+- Def: #1 ["test" @ input.sol:3:10] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

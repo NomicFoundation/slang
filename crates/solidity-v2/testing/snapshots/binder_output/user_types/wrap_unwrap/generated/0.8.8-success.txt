@@ -3,7 +3,7 @@
 Definitions (5):
 - Def: #1 ["ShortString" @ input.sol:3:6] (udvt, type: meta-type)
 - Def: #2 ["Test" @ input.sol:5:10] (contract)
-- Def: #3 ["test" @ input.sol:6:14] (function, type: function (bytes32) returns void)
+- Def: #3 ["test" @ input.sol:6:14] (function, type: function (bytes32) returns ())
 - Def: #4 ["data" @ input.sol:6:27] (parameter, type: bytes32)
 - Def: #5 ["s" @ input.sol:7:21] (variable, type: ShortString)
 

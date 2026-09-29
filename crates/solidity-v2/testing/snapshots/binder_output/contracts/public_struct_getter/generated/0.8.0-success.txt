@@ -10,7 +10,7 @@ Definitions (13):
 - Def: #7 ["y" @ input.sol:7:33] (struct member, type: uint256)
 - Def: #8 ["multi" @ input.sol:8:18] (state var, type: Multi storage)
 - Def: #9 ["Test" @ input.sol:11:10] (contract)
-- Def: #10 ["test" @ input.sol:12:14] (function, type: function (Base) returns void)
+- Def: #10 ["test" @ input.sol:12:14] (function, type: function (Base) returns ())
 - Def: #11 ["base" @ input.sol:12:24] (parameter, type: Base)
 - Def: #12 ["x" @ input.sol:14:15] (variable, type: uint256)
 - Def: #13 ["y" @ input.sol:14:23] (variable, type: uint256)

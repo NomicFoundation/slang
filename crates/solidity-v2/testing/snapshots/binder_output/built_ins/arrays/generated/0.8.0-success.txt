@@ -3,7 +3,7 @@
 Definitions (4):
 - Def: #1 ["Test" @ input.sol:3:10] (contract)
 - Def: #2 ["a" @ input.sol:4:12] (state var, type: uint256[] storage)
-- Def: #3 ["testArray" @ input.sol:5:14] (function, type: function () returns void)
+- Def: #3 ["testArray" @ input.sol:5:14] (function, type: function () returns ())
 - Def: #4 ["b" @ input.sol:6:24] (variable, type: uint256[] storage)
 
 ------------------------------------------------------------------------

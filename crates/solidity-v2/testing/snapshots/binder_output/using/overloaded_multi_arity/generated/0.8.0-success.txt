@@ -2,15 +2,15 @@
 
 Definitions (13):
 - Def: #1 ["Lib" @ input.sol:3:9] (library)
-- Def: #2 ["nop" @ input.sol:4:14] (function, type: function (uint256, uint256) returns void)
+- Def: #2 ["nop" @ input.sol:4:14] (function, type: function (uint256, uint256) returns ())
 - Def: #3 ["a" @ input.sol:4:26] (parameter, type: uint256)
 - Def: #4 ["b" @ input.sol:4:37] (parameter, type: uint256)
-- Def: #5 ["nop" @ input.sol:5:14] (function, type: function (uint256, uint256, uint256) returns void)
+- Def: #5 ["nop" @ input.sol:5:14] (function, type: function (uint256, uint256, uint256) returns ())
 - Def: #6 ["a" @ input.sol:5:26] (parameter, type: uint256)
 - Def: #7 ["b" @ input.sol:5:37] (parameter, type: uint256)
 - Def: #8 ["c" @ input.sol:5:48] (parameter, type: uint256)
 - Def: #9 ["Test" @ input.sol:8:10] (contract)
-- Def: #10 ["test" @ input.sol:11:14] (function, type: function (uint256, uint256, uint256) returns void)
+- Def: #10 ["test" @ input.sol:11:14] (function, type: function (uint256, uint256, uint256) returns ())
 - Def: #11 ["x" @ input.sol:11:27] (parameter, type: uint256)
 - Def: #12 ["y" @ input.sol:11:38] (parameter, type: uint256)
 - Def: #13 ["z" @ input.sol:11:49] (parameter, type: uint256)

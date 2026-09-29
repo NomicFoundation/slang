@@ -5,7 +5,7 @@ Definitions (6):
 - Def: #2 ["owner" @ input.sol:4:20] (state var, type: address)
 - Def: #3 ["validAddress" @ input.sol:6:14] (modifier)
 - Def: #4 ["_addr" @ input.sol:6:35] (parameter, type: address)
-- Def: #5 ["changeOwner" @ input.sol:11:14] (function, type: function (address) returns void)
+- Def: #5 ["changeOwner" @ input.sol:11:14] (function, type: function (address) returns ())
 - Def: #6 ["_newOwner" @ input.sol:11:34] (parameter, type: address)
 
 ------------------------------------------------------------------------

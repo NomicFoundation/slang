@@ -3,10 +3,10 @@
 Definitions (7):
 - Def: #1 ["IERC20" @ input.sol:3:11] (interface)
 - Def: #2 ["SafeERC20" @ input.sol:5:9] (library)
-- Def: #3 ["safeApprove" @ input.sol:6:14] (function, type: function (IERC20) returns void)
+- Def: #3 ["safeApprove" @ input.sol:6:14] (function, type: function (IERC20) returns ())
 - Def: #4 ["token" @ input.sol:6:33] (parameter, type: IERC20)
 - Def: #5 ["Test" @ input.sol:8:10] (contract)
-- Def: #6 ["test" @ input.sol:10:14] (function, type: function (address) returns void)
+- Def: #6 ["test" @ input.sol:10:14] (function, type: function (address) returns ())
 - Def: #7 ["token" @ input.sol:10:27] (parameter, type: address)
 
 ------------------------------------------------------------------------

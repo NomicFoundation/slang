@@ -8,7 +8,7 @@ Definitions (10):
 - Def: #5 ["add" @ input.sol:9:14] (function, type: function (Point memory, Point memory) returns Point memory)
 - Def: #6 ["add" @ input.sol:10:14] (function, type: function (uint256, uint256) returns uint256)
 - Def: #7 ["Test" @ input.sol:13:10] (contract)
-- Def: #8 ["test" @ input.sol:17:14] (function, type: function (Point calldata) returns void)
+- Def: #8 ["test" @ input.sol:17:14] (function, type: function (Point calldata) returns ())
 - Def: #9 ["x" @ input.sol:17:40] (parameter, type: Point calldata)
 - Def: #10 ["p" @ input.sol:18:28] (variable, type: Point memory)
 

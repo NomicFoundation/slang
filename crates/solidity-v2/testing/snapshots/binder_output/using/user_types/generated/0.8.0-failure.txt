@@ -28,14 +28,14 @@ Diagnostics:
 Definitions (11):
 - Def: #1 ["ShortString" @ input.sol:3:6] (udvt, type: meta-type)
 - Def: #2 ["Test" @ input.sol:5:10] (contract)
-- Def: #3 ["test" @ input.sol:9:14] (function, type: function (bytes32) returns void)
+- Def: #3 ["test" @ input.sol:9:14] (function, type: function (bytes32) returns ())
 - Def: #4 ["data" @ input.sol:9:27] (parameter, type: bytes32)
 - Def: #5 ["s" @ input.sol:10:21] (variable, type: ShortString)
 - Def: #6 ["ShortStringLib" @ input.sol:17:9] (library)
-- Def: #7 ["nop" @ input.sol:18:14] (function, type: function (ShortString) returns void)
+- Def: #7 ["nop" @ input.sol:18:14] (function, type: function (ShortString) returns ())
 - Def: #8 ["x" @ input.sol:18:30] (parameter, type: ShortString)
 - Def: #9 ["BytesLib" @ input.sol:21:9] (library)
-- Def: #10 ["pon" @ input.sol:22:14] (function, type: function (bytes32) returns void)
+- Def: #10 ["pon" @ input.sol:22:14] (function, type: function (bytes32) returns ())
 - Def: #11 ["x" @ input.sol:22:26] (parameter, type: bytes32)
 
 ------------------------------------------------------------------------

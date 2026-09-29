@@ -13,12 +13,12 @@ Diagnostics:
 
 Definitions (7):
 - Def: #1 ["A" @ input.sol:3:10] (contract)
-- Def: #2 ["f" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #2 ["f" @ input.sol:4:14] (function, type: function () returns ())
 - Def: #3 ["A" @ input.sol:7:10] (contract)
-- Def: #4 ["g" @ input.sol:8:14] (function, type: function () returns void)
+- Def: #4 ["g" @ input.sol:8:14] (function, type: function () returns ())
 - Def: #5 ["Test" @ input.sol:11:10] (contract)
 - Def: #6 ["a" @ input.sol:12:7] (state var, type: unresolved)
-- Def: #7 ["test" @ input.sol:14:14] (function, type: function () returns void)
+- Def: #7 ["test" @ input.sol:14:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

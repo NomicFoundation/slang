@@ -373,7 +373,6 @@ impl<'a> BuiltInsResolver<'a> {
             Type::Struct(_) => None,
             Type::Tuple(_) => None,
             Type::UserDefinedValue(_) => None,
-            Type::Void => None,
         }
     }
 

@@ -9,7 +9,7 @@ Definitions (9):
 - Def: #6 ["Failure" @ input.sol:5:11] (error)
 - Def: #7 ["cause" @ input.sol:6:15] (parameter, type: Cause)
 - Def: #8 ["details" @ input.sol:7:16] (parameter, type: string memory)
-- Def: #9 ["test" @ input.sol:9:14] (function, type: function () returns void)
+- Def: #9 ["test" @ input.sol:9:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

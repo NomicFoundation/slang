@@ -9,7 +9,7 @@ Definitions (9):
 - Def: #6 ["foo" @ input.sol:10:27] (constant, type: bool)
 - Def: #7 ["bar" @ input.sol:11:18] (state var, type: bool)
 - Def: #8 ["quux" @ input.sol:12:10] (state var, type: bool)
-- Def: #9 ["test" @ input.sol:14:14] (function, type: function () returns void)
+- Def: #9 ["test" @ input.sol:14:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

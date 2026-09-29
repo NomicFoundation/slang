@@ -2,12 +2,12 @@
 
 Definitions (7):
 - Def: #1 ["Utils" @ input.sol:3:9] (library)
-- Def: #2 ["foo" @ input.sol:4:14] (function, type: function (ITest) returns void)
+- Def: #2 ["foo" @ input.sol:4:14] (function, type: function (ITest) returns ())
 - Def: #3 ["subject" @ input.sol:4:24] (parameter, type: ITest)
 - Def: #4 ["ITest" @ input.sol:7:11] (interface)
 - Def: #5 ["Test" @ input.sol:9:10] (contract)
-- Def: #6 ["bar" @ input.sol:12:14] (function, type: function () returns void)
-- Def: #7 ["test" @ input.sol:14:14] (function, type: function () returns void)
+- Def: #6 ["bar" @ input.sol:12:14] (function, type: function () returns ())
+- Def: #7 ["test" @ input.sol:14:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

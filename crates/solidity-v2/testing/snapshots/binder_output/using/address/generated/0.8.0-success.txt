@@ -2,10 +2,10 @@
 
 Definitions (6):
 - Def: #1 ["Address" @ input.sol:3:9] (library)
-- Def: #2 ["sendValue" @ input.sol:4:14] (function, type: function (address payable) returns void)
+- Def: #2 ["sendValue" @ input.sol:4:14] (function, type: function (address payable) returns ())
 - Def: #3 ["recipient" @ input.sol:4:40] (parameter, type: address payable)
 - Def: #4 ["Test" @ input.sol:6:10] (contract)
-- Def: #5 ["test" @ input.sol:8:14] (function, type: function (address) returns void)
+- Def: #5 ["test" @ input.sol:8:14] (function, type: function (address) returns ())
 - Def: #6 ["_rcpt" @ input.sol:8:27] (parameter, type: address)
 
 ------------------------------------------------------------------------

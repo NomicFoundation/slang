@@ -1,15 +1,15 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (9):
-- Def: #1 ["foo" @ input.sol:3:10] (function, type: function () returns void)
-- Def: #2 ["bar" @ input.sol:4:10] (function, type: function () returns void)
+- Def: #1 ["foo" @ input.sol:3:10] (function, type: function () returns ())
+- Def: #2 ["bar" @ input.sol:4:10] (function, type: function () returns ())
 - Def: #3 ["Base" @ input.sol:6:10] (contract)
-- Def: #4 ["bar" @ input.sol:7:14] (function, type: function () returns void)
+- Def: #4 ["bar" @ input.sol:7:14] (function, type: function () returns ())
 - Def: #5 ["Test" @ input.sol:10:10] (contract)
 - Def: #6 ["x" @ input.sol:11:9] (state var, type: int256)
-- Def: #7 ["test" @ input.sol:13:14] (function, type: function (int256) returns void)
+- Def: #7 ["test" @ input.sol:13:14] (function, type: function (int256) returns ())
 - Def: #8 ["x" @ input.sol:13:23] (parameter, type: int256)
-- Def: #9 ["foo" @ input.sol:19:14] (function, type: function () returns void)
+- Def: #9 ["foo" @ input.sol:19:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

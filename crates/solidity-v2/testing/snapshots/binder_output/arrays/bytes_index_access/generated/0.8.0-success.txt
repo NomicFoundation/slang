@@ -2,12 +2,12 @@
 
 Definitions (8):
 - Def: #1 ["Utils" @ input.sol:3:9] (library)
-- Def: #2 ["foo" @ input.sol:4:14] (function, type: function (bytes memory) returns void)
+- Def: #2 ["foo" @ input.sol:4:14] (function, type: function (bytes memory) returns ())
 - Def: #3 ["x" @ input.sol:4:31] (parameter, type: bytes memory)
-- Def: #4 ["foo" @ input.sol:5:14] (function, type: function (bytes1) returns void)
+- Def: #4 ["foo" @ input.sol:5:14] (function, type: function (bytes1) returns ())
 - Def: #5 ["x" @ input.sol:5:25] (parameter, type: bytes1)
 - Def: #6 ["Test" @ input.sol:8:10] (contract)
-- Def: #7 ["test" @ input.sol:12:14] (function, type: function (bytes calldata) returns void)
+- Def: #7 ["test" @ input.sol:12:14] (function, type: function (bytes calldata) returns ())
 - Def: #8 ["name" @ input.sol:12:34] (parameter, type: bytes calldata)
 
 ------------------------------------------------------------------------

@@ -5,7 +5,7 @@ Definitions (5):
 - Def: #2 ["beforeRun" @ lib.sol:4:14] (modifier)
 - Def: #3 ["Base" @ main.sol:3:9] (imported symbol)
 - Def: #4 ["Test" @ main.sol:5:10] (contract)
-- Def: #5 ["test" @ main.sol:6:14] (function, type: function () returns void)
+- Def: #5 ["test" @ main.sol:6:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

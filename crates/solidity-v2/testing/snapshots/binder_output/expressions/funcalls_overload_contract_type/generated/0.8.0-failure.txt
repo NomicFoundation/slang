@@ -16,7 +16,7 @@ Definitions (7):
 - Def: #2 ["add" @ input.sol:4:14] (function, type: function (address) returns int256)
 - Def: #3 ["add" @ input.sol:5:14] (function, type: function (int256, int256) returns int256)
 - Def: #4 ["Bar" @ input.sol:8:10] (contract)
-- Def: #5 ["someFunc" @ input.sol:9:14] (function, type: function (Foo, address) returns void)
+- Def: #5 ["someFunc" @ input.sol:9:14] (function, type: function (Foo, address) returns ())
 - Def: #6 ["other" @ input.sol:9:27] (parameter, type: Foo)
 - Def: #7 ["x" @ input.sol:9:42] (parameter, type: address)
 

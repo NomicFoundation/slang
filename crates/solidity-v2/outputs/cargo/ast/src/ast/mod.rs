@@ -19,7 +19,7 @@ pub use types::{
     AddressType, ArraySliceType, ArrayType, BooleanType, ByteArrayType, BytesType, ContractType,
     EnumType, ErrorType, EventType, FixedPointNumberType, FixedSizeArrayType, FunctionType,
     IntegerType, InterfaceType, LiteralKind, LiteralType, MappingType, MetaType, Number,
-    StringType, StructType, TupleType, Type, UserDefinedValueType, UserMetaType, VoidType,
+    StringType, StructType, TupleType, Type, UserDefinedValueType, UserMetaType,
 };
 
 #[path = "visitor.generated.rs"]

@@ -4,9 +4,9 @@ Definitions (6):
 - Def: #1 ["Ownable" @ input.sol:3:19] (contract)
 - Def: #2 ["owner" @ input.sol:4:22] (state var, type: address)
 - Def: #3 ["default_visibility" @ input.sol:5:13] (state var, type: address)
-- Def: #4 ["_internal_only" @ input.sol:6:14] (function, type: function () returns void)
+- Def: #4 ["_internal_only" @ input.sol:6:14] (function, type: function () returns ())
 - Def: #5 ["Test" @ input.sol:8:10] (contract)
-- Def: #6 ["test" @ input.sol:9:14] (function, type: function () returns void)
+- Def: #6 ["test" @ input.sol:9:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

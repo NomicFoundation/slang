@@ -8,7 +8,7 @@ Definitions (8):
 - Def: #5 ["x" @ input.sol:9:14] (struct member, type: uint256)
 - Def: #6 ["y" @ input.sol:10:14] (struct member, type: uint256)
 - Def: #7 ["foo" @ input.sol:12:25] (state var, type: Bar storage)
-- Def: #8 ["test" @ input.sol:14:14] (function, type: function () returns void)
+- Def: #8 ["test" @ input.sol:14:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

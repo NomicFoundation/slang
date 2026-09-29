@@ -2,11 +2,11 @@
 
 Definitions (8):
 - Def: #1 ["Lib" @ input.sol:3:9] (library)
-- Def: #2 ["nopCalldata" @ input.sol:4:14] (function, type: function (bytes calldata) returns void)
-- Def: #3 ["nopMemory" @ input.sol:5:14] (function, type: function (bytes memory) returns void)
+- Def: #2 ["nopCalldata" @ input.sol:4:14] (function, type: function (bytes calldata) returns ())
+- Def: #3 ["nopMemory" @ input.sol:5:14] (function, type: function (bytes memory) returns ())
 - Def: #4 ["Test" @ input.sol:8:10] (contract)
 - Def: #5 ["s" @ input.sol:10:11] (state var, type: bytes storage)
-- Def: #6 ["test" @ input.sol:11:14] (function, type: function (bytes calldata) returns void)
+- Def: #6 ["test" @ input.sol:11:14] (function, type: function (bytes calldata) returns ())
 - Def: #7 ["c" @ input.sol:11:34] (parameter, type: bytes calldata)
 - Def: #8 ["m" @ input.sol:12:22] (variable, type: bytes memory)
 

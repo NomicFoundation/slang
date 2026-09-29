@@ -16,7 +16,7 @@ Definitions (5):
 - Def: #2 ["g" @ input.sol:2:12] (function, type: function () returns uint256)
 - Def: #3 ["Test" @ input.sol:7:10] (contract)
 - Def: #4 ["g" @ input.sol:8:12] (function, type: function () returns uint256)
-- Def: #5 ["parenthesised" @ input.sol:12:12] (function, type: function () returns void)
+- Def: #5 ["parenthesised" @ input.sol:12:12] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

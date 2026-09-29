@@ -5,7 +5,7 @@ Definitions (9):
 - Def: #2 ["Answer" @ input.sol:4:10] (enum)
 - Def: #3 ["Yes" @ input.sol:4:19] (enum member of Answer)
 - Def: #4 ["No" @ input.sol:4:24] (enum member of Answer)
-- Def: #5 ["setAnswer" @ input.sol:6:14] (function, type: function (Answer) returns void)
+- Def: #5 ["setAnswer" @ input.sol:6:14] (function, type: function (Answer) returns ())
 - Def: #6 ["ans" @ input.sol:6:31] (parameter, type: Answer)
 - Def: #7 ["getAnswer" @ input.sol:9:14] (function, type: function () returns Answer)
 - Def: #8 ["ans" @ input.sol:9:49] (parameter, type: Answer)

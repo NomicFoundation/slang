@@ -2,11 +2,11 @@
 
 Definitions (8):
 - Def: #1 ["Test" @ input.sol:3:10] (contract)
-- Def: #2 ["test" @ input.sol:4:14] (function, type: function () returns void)
-- Def: #3 ["process" @ input.sol:9:14] (function, type: function (uint256, address) returns void)
+- Def: #2 ["test" @ input.sol:4:14] (function, type: function () returns ())
+- Def: #3 ["process" @ input.sol:9:14] (function, type: function (uint256, address) returns ())
 - Def: #4 ["qty" @ input.sol:9:30] (parameter, type: uint256)
 - Def: #5 ["rcpt" @ input.sol:9:43] (parameter, type: address)
-- Def: #6 ["process" @ input.sol:10:14] (function, type: function (string memory, uint256) returns void)
+- Def: #6 ["process" @ input.sol:10:14] (function, type: function (string memory, uint256) returns ())
 - Def: #7 ["symbol" @ input.sol:10:36] (parameter, type: string memory)
 - Def: #8 ["qty" @ input.sol:10:52] (parameter, type: uint256)
 

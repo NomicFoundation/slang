@@ -2,11 +2,11 @@
 
 Definitions (7):
 - Def: #1 ["IFoo" @ input.sol:3:11] (interface)
-- Def: #2 ["foo" @ input.sol:4:14] (function, type: function (address, uint256) returns void)
+- Def: #2 ["foo" @ input.sol:4:14] (function, type: function (address, uint256) returns ())
 - Def: #3 ["LibFoo" @ input.sol:7:9] (library)
-- Def: #4 ["foo" @ input.sol:8:14] (function, type: function (IFoo, uint256) returns void)
+- Def: #4 ["foo" @ input.sol:8:14] (function, type: function (IFoo, uint256) returns ())
 - Def: #5 ["Test" @ input.sol:11:10] (contract)
-- Def: #6 ["test" @ input.sol:14:14] (function, type: function (IFoo) returns void)
+- Def: #6 ["test" @ input.sol:14:14] (function, type: function (IFoo) returns ())
 - Def: #7 ["f" @ input.sol:14:24] (parameter, type: IFoo)
 
 ------------------------------------------------------------------------

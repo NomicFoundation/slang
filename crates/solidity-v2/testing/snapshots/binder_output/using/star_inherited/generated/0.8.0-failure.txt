@@ -13,11 +13,11 @@ Diagnostics:
 
 Definitions (7):
 - Def: #1 ["Lib" @ input.sol:3:9] (library)
-- Def: #2 ["increment" @ input.sol:4:14] (function, type: function (uint256) returns void)
+- Def: #2 ["increment" @ input.sol:4:14] (function, type: function (uint256) returns ())
 - Def: #3 ["x" @ input.sol:4:29] (parameter, type: uint256)
 - Def: #4 ["Base" @ input.sol:7:10] (contract)
 - Def: #5 ["Test" @ input.sol:11:10] (contract)
-- Def: #6 ["test" @ input.sol:12:14] (function, type: function (uint256) returns void)
+- Def: #6 ["test" @ input.sol:12:14] (function, type: function (uint256) returns ())
 - Def: #7 ["x" @ input.sol:12:24] (parameter, type: uint256)
 
 ------------------------------------------------------------------------

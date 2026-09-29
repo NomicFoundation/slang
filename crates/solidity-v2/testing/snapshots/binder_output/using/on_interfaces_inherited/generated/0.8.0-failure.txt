@@ -18,7 +18,7 @@ Definitions (8):
 - Def: #4 ["IFoo" @ input.sol:6:11] (interface)
 - Def: #5 ["Base" @ input.sol:8:10] (contract)
 - Def: #6 ["Test" @ input.sol:11:10] (contract)
-- Def: #7 ["test" @ input.sol:12:14] (function, type: function (address) returns void)
+- Def: #7 ["test" @ input.sol:12:14] (function, type: function (address) returns ())
 - Def: #8 ["x" @ input.sol:12:27] (parameter, type: address)
 
 ------------------------------------------------------------------------

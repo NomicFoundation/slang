@@ -491,7 +491,6 @@ fn type_display(type_: &Type) -> String {
         Type::UserDefinedValue(user_defined_value) => {
             definition_name(&user_defined_value.definition())
         }
-        Type::Void(_) => "void".to_string(),
     }
 }
 

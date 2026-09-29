@@ -8,7 +8,7 @@ Definitions (8):
 - Def: #5 ["B" @ input.sol:11:10] (contract)
 - Def: #6 ["foo" @ input.sol:12:14] (modifier)
 - Def: #7 ["Test" @ input.sol:15:10] (contract)
-- Def: #8 ["test" @ input.sol:16:14] (function, type: function () returns void)
+- Def: #8 ["test" @ input.sol:16:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 

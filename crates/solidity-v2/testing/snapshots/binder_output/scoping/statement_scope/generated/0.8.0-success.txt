@@ -4,7 +4,7 @@ Definitions (5):
 - Def: #1 ["Base" @ input.sol:3:10] (contract)
 - Def: #2 ["foo" @ input.sol:4:14] (function, type: function () returns address)
 - Def: #3 ["Test" @ input.sol:7:10] (contract)
-- Def: #4 ["test" @ input.sol:8:14] (function, type: function () returns void)
+- Def: #4 ["test" @ input.sol:8:14] (function, type: function () returns ())
 - Def: #5 ["foo" @ input.sol:9:15] (variable, type: bool)
 
 ------------------------------------------------------------------------

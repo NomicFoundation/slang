@@ -27,7 +27,7 @@ Definitions (9):
 - Def: #6 ["Renamed" @ main.sol:5:17] (imported symbol)
 - Def: #7 ["Renamed" @ main.sol:5:34] (imported symbol)
 - Def: #8 ["Test" @ main.sol:7:10] (contract)
-- Def: #9 ["test" @ main.sol:8:14] (function, type: function () returns void)
+- Def: #9 ["test" @ main.sol:8:14] (function, type: function () returns ())
 
 ------------------------------------------------------------------------
 
