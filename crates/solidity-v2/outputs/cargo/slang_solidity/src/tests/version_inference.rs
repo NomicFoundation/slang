@@ -421,6 +421,28 @@ fn pragmas_in_comments_and_strings_do_not_count() {
 }
 
 #[test]
+fn pragma_text_after_the_directives_is_not_a_directive() {
+    // The directive heads the source, and everything spelling `pragma` after it
+    // is not one: lexing has to reach each of them to tell.
+    let source = r#"
+        pragma solidity 0.8.10;
+        contract A {
+            uint256 notpragma;
+            string s = "pragma solidity 0.8.1;";
+            function pragmatic() public {}
+        }
+        /* pragma solidity 0.8.2; */
+        // pragma solidity 0.8.3;"#;
+
+    assert_eq!(infer(source), vec![LanguageVersion::V0_8_10]);
+}
+
+#[test]
+fn no_pragma_text_at_all() {
+    assert_eq!(infer("contract A { uint256 x; }"), all_versions());
+}
+
+#[test]
 fn trivia_inside_the_pragma() {
     let source = "pragma /* a */ solidity // b\r\n  >=0.8.4 /* c */\t<0.8.6 ;";
 
