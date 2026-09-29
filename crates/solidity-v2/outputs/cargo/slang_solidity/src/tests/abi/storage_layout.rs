@@ -613,3 +613,46 @@ fn test_storage_types_leave_out_constants_and_immutables() {
     );
     assert!(abi.transient_storage_layout().types().is_empty());
 }
+
+// The layouts and items computed on their own match the ones in the ABI,
+// custom base slot included.
+#[test]
+fn test_storage_layouts_without_the_abi() {
+    let unit = StorageLayout::build_compilation_unit();
+    for name in ["C", "D", "E"] {
+        let contract = unit
+            .find_contract_by_name(name)
+            .next()
+            .expect("contract can be found");
+        let abi = contract.compute_abi().expect("can compute ABI");
+        let storage_layout = contract
+            .compute_storage_layout()
+            .expect("can compute the storage layout");
+        let transient_storage_layout = contract
+            .compute_transient_storage_layout()
+            .expect("can compute the transient storage layout");
+
+        assert_eq!(storage_layout.items(), abi.storage_layout().items());
+        assert_eq!(storage_layout.types(), abi.storage_layout().types());
+        assert_eq!(
+            transient_storage_layout.items(),
+            abi.transient_storage_layout().items()
+        );
+        assert_eq!(
+            transient_storage_layout.types(),
+            abi.transient_storage_layout().types()
+        );
+
+        let storage_items = contract
+            .compute_storage_items()
+            .expect("can compute the storage items");
+        let transient_storage_items = contract
+            .compute_transient_storage_items()
+            .expect("can compute the transient storage items");
+        assert_eq!(storage_items, abi.storage_layout().items());
+        assert_eq!(
+            transient_storage_items,
+            abi.transient_storage_layout().items()
+        );
+    }
+}
