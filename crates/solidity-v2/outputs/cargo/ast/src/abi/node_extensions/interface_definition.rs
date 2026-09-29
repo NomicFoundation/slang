@@ -1,6 +1,6 @@
 use slang_solidity_v2_ir::ir;
 
-use crate::abi::ContractAbi;
+use crate::abi::{ContractAbi, StorageLayout};
 use crate::ast::{ContractBase, InterfaceDefinitionStruct};
 
 impl InterfaceDefinitionStruct {
@@ -37,8 +37,8 @@ impl InterfaceDefinitionStruct {
             self.ir_node.name.unparse().to_string(),
             self.get_file_id().clone(),
             entries,
-            Vec::new(),
-            Vec::new(),
+            StorageLayout::default(),
+            StorageLayout::default(),
             &self.semantic,
         ))
     }
